@@ -1,61 +1,40 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Som Automotivo</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #111;
-            color: white;
-            text-align: center;
-            padding: 50px;
-        }
+// ==========================
+// Função para mudar a cor do balão
+// ==========================
+function changeBalloonColor() {
+    const balloon = document.querySelector('.balloon');
+    const colors = ['#ff4d4d', '#4d94ff', '#4dff88', '#ffcc00', '#ff66cc'];
+    const currentColor = balloon.style.backgroundColor;
+    let newColor;
 
-        button {
-            padding: 10px 20px;
-            margin: 10px;
-            font-size: 1em;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            background: #ff6600;
-            color: white;
-        }
+    do {
+        newColor = colors[Math.floor(Math.random() * colors.length)];
+    } while (newColor === currentColor);
 
-        button:hover {
-            background: #ff8533;
-        }
-    </style>
-</head>
-<body>
+    balloon.style.backgroundColor = newColor;
+}
 
-    <h1>🎵 Som Automotivo</h1>
-    <audio id="carAudio" src="audio/musica.mp3"></audio>
+// Adiciona evento de clique no balão
+const balloon = document.querySelector('.balloon');
+if (balloon) {
+    balloon.addEventListener('click', changeBalloonColor);
+}
 
-    <div>
-        <button onclick="playAudio()">▶️ Tocar</button>
-        <button onclick="pauseAudio()">⏸️ Pausar</button>
-        <button onclick="stopAudio()">⏹️ Parar</button>
-    </div>
+// ==========================
+// Função para alternar tema claro/escuro
+// ==========================
+function toggleTheme() {
+    const body = document.body;
+    body.classList.toggle('dark-theme');
+}
 
-    <script>
-        const audio = document.getElementById('carAudio');
-
-        function playAudio() {
-            audio.play();
-        }
-
-        function pauseAudio() {
-            audio.pause();
-        }
-
-        function stopAudio() {
-            audio.pause();
-            audio.currentTime = 0;
-        }
-    </script>
-
-</body>
-</html>
+// ==========================
+// Menu interativo (alerta de clique)
+// ==========================
+const navLinks = document.querySelectorAll('header nav a');
+navLinks.forEach(link => {
+    link.addEventListener('click', function(event) {
+        event.preventDefault();
+        alert('Você clicou em: ' + link.textContent);
+    });
+});
