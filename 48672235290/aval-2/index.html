@@ -1,0 +1,1793 @@
+0<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Sistema Solar</title>
+
+<style>
+  body {
+    margin: 0;
+    background: black;
+    overflow: hidden;
+  }
+
+  .sol {
+    width: 80px;
+    height: 80px;
+    background: yellow;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 40px yellow;
+  }
+
+  .orbita {
+    position: absolute;
+    border: 1px dashed rgba(255,255,255,0.2);
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .planeta {
+    position: absolute;
+    border-radius: 50%;
+    top: 50%;
+    left: 100%;
+    transform: translate(-50%, -50%);
+  }
+
+  /* Órbitas */
+  .mercurio { width: 120px; height: 120px; animation: girar 4s linear infinite; }
+  .venus    { width: 170px; height: 170px; animation: girar 7s linear infinite; }
+  .terra    { width: 230px; height: 230px; animation: girar 10s linear infinite; }
+  .marte    { width: 300px; height: 300px; animation: girar 15s linear infinite; }
+
+  /* Planetas */
+  .mercurio .planeta { width: 8px; height: 8px; background: gray; }
+  .venus .planeta    { width: 12px; height: 12px; background: orange; }
+  .terra .planeta    { width: 14px; height: 14px; background: blue; }
+  .marte .planeta    { width: 10px; height: 10px; background: red; }
+
+  @keyframes girar {
+    from { transform: translate(-50%, -50%) rotate(0deg); }
+    to   { transform: translate(-50%, -50%) rotate(360deg); }
+  }
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+<div class="sol"></div>
+
+<div class="orbita mercurio">
+  <div class="planeta"></div>
+</div>
+
+<div class="orbita venus">
+  <div class="planeta"></div>
+</div>
+
+<div class="orbita terra">
+  <div class="planeta"></div>
+</div>
+
+<div class="orbita marte">
+  <div class="planeta"></div>
+</div>
+
+<script src="script.js"></script></body>
+</html>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Sistema Solar</title>
+
+<style>
+  body {
+    margin: 0;
+    background: black;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+  }
+
+  /* HEADER */
+  header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    text-align: center;
+    padding: 15px;
+    font-size: 22px;
+    letter-spacing: 2px;
+    z-index: 10;
+  }
+
+  canvas {
+    display: block;
+  }
+</style>
+</head>
+
+<body>
+
+<header>
+  🌌 Sistema Solar Interativo
+</header>
+
+<canvas id="espaco"></canvas>
+
+<script>
+const canvas = document.getElementById("espaco");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+const centroX = canvas.width / 2;
+const centroY = canvas.height / 2;
+
+// Planetas
+const planetas = [
+  { nome: "Mercúrio", raio: 60, tamanho: 4, cor: "gray", velocidade: 0.04 },
+  { nome: "Vênus", raio: 90, tamanho: 6, cor: "orange", velocidade: 0.03 },
+  { nome: "Terra", raio: 130, tamanho: 7, cor: "blue", velocidade: 0.02 },
+  { nome: "Marte", raio: 170, tamanho: 6, cor: "red", velocidade: 0.015 },
+  { nome: "Júpiter", raio: 220, tamanho: 12, cor: "#d2b48c", velocidade: 0.01 },
+  { nome: "Saturno", raio: 280, tamanho: 10, cor: "#deb887", velocidade: 0.008 }
+];
+
+planetas.forEach(p => p.angulo = Math.random() * Math.PI * 2);
+
+function desenhar() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Sol
+  ctx.beginPath();
+  ctx.arc(centroX, centroY, 20, 0, Math.PI * 2);
+  ctx.fillStyle = "yellow";
+  ctx.fill();
+
+  planetas.forEach(p => {
+    // órbita
+    ctx.beginPath();
+    ctx.arc(centroX, centroY, p.raio, 0, Math.PI * 2);
+    ctx.strokeStyle = "rgba(255,255,255,0.1)";
+    ctx.stroke();
+
+    let x = centroX + Math.cos(p.angulo) * p.raio;
+    let y = centroY + Math.sin(p.angulo) * p.raio;
+
+    // planeta
+    ctx.beginPath();
+    ctx.arc(x, y, p.tamanho, 0, Math.PI * 2);
+    ctx.fillStyle = p.cor;
+    ctx.fill();
+
+    p.angulo += p.velocidade;
+  });
+
+  requestAnimationFrame(desenhar);
+}
+
+desenhar();
+
+window.addEventListener("resize", () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+</script>
+
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Sistema Solar</title>
+
+<style>
+  body {
+    margin: 0;
+    background: black;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+  }
+
+  /* HEADER */
+  header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    text-align: center;
+    padding: 10px;
+    z-index: 10;
+  }
+
+  header h1 {
+    margin: 0;
+    font-size: 22px;
+    letter-spacing: 2px;
+  }
+
+  canvas {
+    display: block;
+  }
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>🌌 Sistema Solar Interativo</h1>
+</header>
+
+<canvas id="espaco"></canvas>
+
+<script>
+const canvas = document.getElementById("espaco");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+const centroX = canvas.width / 2;
+const centroY = canvas.height / 2;
+
+// Planetas
+const planetas = [
+  { nome: "Mercúrio", raio: 60, tamanho: 4, cor: "gray", velocidade: 0.04 },
+  { nome: "Vênus", raio: 90, tamanho: 6, cor: "orange", velocidade: 0.03 },
+  { nome: "Terra", raio: 130, tamanho: 7, cor: "blue", velocidade: 0.02 },
+  { nome: "Marte", raio: 170, tamanho: 6, cor: "red", velocidade: 0.015 },
+  { nome: "Júpiter", raio: 220, tamanho: 12, cor: "#d2b48c", velocidade: 0.01 },
+  { nome: "Saturno", raio: 280, tamanho: 10, cor: "#deb887", velocidade: 0.008 }
+];
+
+planetas.forEach(p => p.angulo = Math.random() * Math.PI * 2);
+
+function desenhar() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Sol
+  ctx.beginPath();
+  ctx.arc(centroX, centroY, 20, 0, Math.PI * 2);
+  ctx.fillStyle = "yellow";
+  ctx.fill();
+
+  planetas.forEach(p => {
+    // órbita
+    ctx.beginPath();
+    ctx.arc(centroX, centroY, p.raio, 0, Math.PI * 2);
+    ctx.strokeStyle = "rgba(255,255,255,0.1)";
+    ctx.stroke();
+
+    let x = centroX + Math.cos(p.angulo) * p.raio;
+    let y = centroY + Math.sin(p.angulo) * p.raio;
+
+    // planeta
+    ctx.beginPath();
+    ctx.arc(x, y, p.tamanho, 0, Math.PI * 2);
+    ctx.fillStyle = p.cor;
+    ctx.fill();
+
+    p.angulo += p.velocidade;
+  });
+
+  requestAnimationFrame(desenhar);
+}
+
+desenhar();
+
+window.addEventListener("resize", () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+</script>
+
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Sistema Solar</title>
+
+<style>
+  body {
+    margin: 0;
+    background: black;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+  }
+
+  /* HEADER */
+  header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    text-align: center;
+    padding: 10px;
+    z-index: 10;
+  }
+
+  header h1 {
+    margin: 0;
+    font-size: 22px;
+    letter-spacing: 2px;
+  }
+
+  header p {
+    margin: 5px 0 0 0;
+    font-size: 14px;
+    color: #ccc;
+  }
+
+  canvas {
+    display: block;
+  }
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>🌌 Sistema Solar Interativo</h1>
+  <p>Veja os planetas orbitando o Sol em tempo real!</p>
+</header>
+
+<canvas id="espaco"></canvas>
+
+<script>
+const canvas = document.getElementById("espaco");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+const centroX = canvas.width / 2;
+const centroY = canvas.height / 2;
+
+// Planetas
+const planetas = [
+  { nome: "Mercúrio", raio: 60, tamanho: 4, cor: "gray", velocidade: 0.04 },
+  { nome: "Vênus", raio: 90, tamanho: 6, cor: "orange", velocidade: 0.03 },
+  { nome: "Terra", raio: 130, tamanho: 7, cor: "blue", velocidade: 0.02 },
+  { nome: "Marte", raio: 170, tamanho: 6, cor: "red", velocidade: 0.015 },
+  { nome: "Júpiter", raio: 220, tamanho: 12, cor: "#d2b48c", velocidade: 0.01 },
+  { nome: "Saturno", raio: 280, tamanho: 10, cor: "#deb887", velocidade: 0.008 }
+];
+
+planetas.forEach(p => p.angulo = Math.random() * Math.PI * 2);
+
+function desenhar() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Sol
+  ctx.beginPath();
+  ctx.arc(centroX, centroY, 20, 0, Math.PI * 2);
+  ctx.fillStyle = "yellow";
+  ctx.fill();
+
+  planetas.forEach(p => {
+    // órbita
+    ctx.beginPath();
+    ctx.arc(centroX, centroY, p.raio, 0, Math.PI * 2);
+    ctx.strokeStyle = "rgba(255,255,255,0.1)";
+    ctx.stroke();
+
+    let x = centroX + Math.cos(p.angulo) * p.raio;
+    let y = centroY + Math.sin(p.angulo) * p.raio;
+
+    // planeta
+    ctx.beginPath();
+    ctx.arc(x, y, p.tamanho, 0, Math.PI * 2);
+    ctx.fillStyle = p.cor;
+    ctx.fill();
+
+    p.angulo += p.velocidade;
+  });
+
+  requestAnimationFrame(desenhar);
+}
+
+desenhar();
+
+window.addEventListener("resize", () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+</script>
+
+</body>
+</html> 
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Sistema Solar</title>
+
+<style>
+  body {
+    margin: 0;
+    background: black;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+  }
+
+  /* HEADER */
+  header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: rgba(0,0,0,0.85);
+    color: white;
+    text-align: center;
+    padding: 10px;
+    z-index: 10;
+  }
+
+  header h1 {
+    margin: 0;
+    font-size: 22px;
+    letter-spacing: 2px;
+  }
+
+  header p {
+    margin: 5px 0 10px 0;
+    font-size: 14px;
+    color: #ccc;
+  }
+
+  /* NAV */
+  nav {
+    margin-top: 5px;
+  }
+
+  nav a {
+    color: #fff;
+    text-decoration: none;
+    margin: 0 12px;
+    font-size: 14px;
+    transition: color 0.3s;
+  }
+
+  nav a:hover {
+    color: #ffcc00;
+  }
+
+  canvas {
+    display: block;
+  }
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>🌌 Sistema Solar Interativo</h1>
+  <p>Veja os planetas orbitando o Sol em tempo real!</p>
+  
+  <nav>
+    <a href="#mercurio">Mercúrio</a>
+    <a href="#venus">Vênus</a>
+    <a href="#terra">Terra</a>
+    <a href="#marte">Marte</a>
+    <a href="#jupiter">Júpiter</a>
+    <a href="#saturno">Saturno</a>
+  </nav>
+</header>
+
+<canvas id="espaco"></canvas>
+
+<script>
+const canvas = document.getElementById("espaco");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+const centroX = canvas.width / 2;
+const centroY = canvas.height / 2;
+
+// Planetas
+const planetas = [
+  { nome: "Mercúrio", raio: 60, tamanho: 4, cor: "gray", velocidade: 0.04 },
+  { nome: "Vênus", raio: 90, tamanho: 6, cor: "orange", velocidade: 0.03 },
+  { nome: "Terra", raio: 130, tamanho: 7, cor: "blue", velocidade: 0.02 },
+  { nome: "Marte", raio: 170, tamanho: 6, cor: "red", velocidade: 0.015 },
+  { nome: "Júpiter", raio: 220, tamanho: 12, cor: "#d2b48c", velocidade: 0.01 },
+  { nome: "Saturno", raio: 280, tamanho: 10, cor: "#deb887", velocidade: 0.008 }
+];
+
+planetas.forEach(p => p.angulo = Math.random() * Math.PI * 2);
+
+function desenhar() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Sol
+  ctx.beginPath();
+  ctx.arc(centroX, centroY, 20, 0, Math.PI * 2);
+  ctx.fillStyle = "yellow";
+  ctx.fill();
+
+  planetas.forEach(p => {
+    // órbita
+    ctx.beginPath();
+    ctx.arc(centroX, centroY, p.raio, 0, Math.PI * 2);
+    ctx.strokeStyle = "rgba(255,255,255,0.1)";
+    ctx.stroke();
+
+    let x = centroX + Math.cos(p.angulo) * p.raio;
+    let y = centroY + Math.sin(p.angulo) * p.raio;
+
+    // planeta
+    ctx.beginPath();
+    ctx.arc(x, y, p.tamanho, 0, Math.PI * 2);
+    ctx.fillStyle = p.cor;
+    ctx.fill();
+
+    p.angulo += p.velocidade;
+  });
+
+  requestAnimationFrame(desenhar);
+}
+
+desenhar();
+
+window.addEventListener("resize", () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+</script>
+
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Sistema Solar</title>
+
+<style>
+  body {
+    margin: 0;
+    background: black;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+  }
+
+  /* HEADER */
+  header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: rgba(0,0,0,0.85);
+    color: white;
+    text-align: center;
+    padding: 10px;
+    z-index: 10;
+  }
+
+  header h1 {
+    margin: 0;
+    font-size: 22px;
+    letter-spacing: 2px;
+  }
+
+  header p {
+    margin: 5px 0 10px 0;
+    font-size: 14px;
+    color: #ccc;
+  }
+
+  /* NAV */
+  nav {
+    margin-top: 5px;
+  }
+
+  nav a {
+    color: #fff;
+    text-decoration: none;
+    margin: 0 12px;
+    font-size: 14px;
+    transition: color 0.3s;
+  }
+
+  nav a:hover {
+    color: #ffcc00;
+  }
+
+  /* ASIDE */
+  aside {
+    position: fixed;
+    right: 0;
+    top: 70px;
+    width: 220px;
+    height: calc(100% - 70px);
+    background: rgba(0,0,0,0.8);
+    color: white;
+    padding: 15px;
+    overflow-y: auto;
+    font-size: 14px;
+    box-shadow: -2px 0 5px rgba(0,0,0,0.5);
+  }
+
+  canvas {
+    display: block;
+  }
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>🌌 Sistema Solar Interativo</h1>
+  <p>Veja os planetas orbitando o Sol em tempo real!</p>
+  
+  <nav>
+    <a href="#mercurio">Mercúrio</a>
+    <a href="#venus">Vênus</a>
+    <a href="#terra">Terra</a>
+    <a href="#marte">Marte</a>
+    <a href="#jupiter">Júpiter</a>
+    <a href="#saturno">Saturno</a>
+  </nav>
+</header>
+
+<aside>
+  <h2>Informações</h2>
+  <p><strong>Mercúrio:</strong> Menor planeta do Sistema Solar.</p>
+  <p><strong>Vênus:</strong> Planeta mais quente.</p>
+  <p><strong>Terra:</strong> Nosso planeta, com água e vida.</p>
+  <p><strong>Marte:</strong> Planeta vermelho, potencial para exploração.</p>
+  <p><strong>Júpiter:</strong> Maior planeta, gasoso.</p>
+  <p><strong>Saturno:</strong> Conhecido por seus anéis.</p>
+</aside>
+
+<canvas id="espaco"></canvas>
+
+<script>
+const canvas = document.getElementById("espaco");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+const centroX = canvas.width / 2;
+const centroY = canvas.height / 2;
+
+// Planetas
+const planetas = [
+  { nome: "Mercúrio", raio: 60, tamanho: 4, cor: "gray", velocidade: 0.04 },
+  { nome: "Vênus", raio: 90, tamanho: 6, cor: "orange", velocidade: 0.03 },
+  { nome: "Terra", raio: 130, tamanho: 7, cor: "blue", velocidade: 0.02 },
+  { nome: "Marte", raio: 170, tamanho: 6, cor: "red", velocidade: 0.015 },
+  { nome: "Júpiter", raio: 220, tamanho: 12, cor: "#d2b48c", velocidade: 0.01 },
+  { nome: "Saturno", raio: 280, tamanho: 10, cor: "#deb887", velocidade: 0.008 }
+];
+
+planetas.forEach(p => p.angulo = Math.random() * Math.PI * 2);
+
+function desenhar() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Sol
+  ctx.beginPath();
+  ctx.arc(centroX, centroY, 20, 0, Math.PI * 2);
+  ctx.fillStyle = "yellow";
+  ctx.fill();
+
+  planetas.forEach(p => {
+    // órbita
+    ctx.beginPath();
+    ctx.arc(centroX, centroY, p.raio, 0, Math.PI * 2);
+    ctx.strokeStyle = "rgba(255,255,255,0.1)";
+    ctx.stroke();
+
+    let x = centroX + Math.cos(p.angulo) * p.raio;
+    let y = centroY + Math.sin(p.angulo) * p.raio;
+
+    // planeta
+    ctx.beginPath();
+    ctx.arc(x, y, p.tamanho, 0, Math.PI * 2);
+    ctx.fillStyle = p.cor;
+    ctx.fill();
+
+    p.angulo += p.velocidade;
+  });
+
+  requestAnimationFrame(desenhar);
+}
+
+desenhar();
+
+window.addEventListener("resize", () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+</script>
+
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Sistema Solar</title>
+
+<style>
+  body {
+    margin: 0;
+    background: black;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+  }
+
+  /* HEADER */
+  header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: rgba(0,0,0,0.85);
+    color: white;
+    text-align: center;
+    padding: 10px;
+    z-index: 10;
+  }
+
+  header h1 {
+    margin: 0;
+    font-size: 22px;
+    letter-spacing: 2px;
+  }
+
+  header p {
+    margin: 5px 0 10px 0;
+    font-size: 14px;
+    color: #ccc;
+  }
+
+  /* NAV */
+  nav {
+    margin-top: 5px;
+  }
+
+  nav a {
+    color: #fff;
+    text-decoration: none;
+    margin: 0 12px;
+    font-size: 14px;
+    transition: color 0.3s;
+  }
+
+  nav a:hover {
+    color: #ffcc00;
+  }
+
+  /* ASIDE */
+  aside {
+    position: fixed;
+    right: 0;
+    top: 70px;
+    width: 220px;
+    height: calc(100% - 70px);
+    background: rgba(0,0,0,0.8);
+    color: white;
+    padding: 15px;
+    overflow-y: auto;
+    font-size: 14px;
+    box-shadow: -2px 0 5px rgba(0,0,0,0.5);
+  }
+
+  aside h2 {
+    margin-top: 0;
+    font-size: 18px;
+    text-align: center;
+  }
+
+  aside h3 {
+    margin: 10px 0 5px 0;
+    font-size: 16px;
+    color: #ffcc00;
+  }
+
+  canvas {
+    display: block;
+  }
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>🌌 Sistema Solar Interativo</h1>
+  <p>Veja os planetas orbitando o Sol em tempo real!</p>
+  
+  <nav>
+    <a href="#mercurio">Mercúrio</a>
+    <a href="#venus">Vênus</a>
+    <a href="#terra">Terra</a>
+    <a href="#marte">Marte</a>
+    <a href="#jupiter">Júpiter</a>
+    <a href="#saturno">Saturno</a>
+  </nav>
+</header>
+
+<aside>
+  <h2>Informações dos Planetas</h2>
+
+  <h3>Mercúrio</h3>
+  <p>Menor planeta do Sistema Solar e mais próximo do Sol.</p>
+
+  <h3>Vênus</h3>
+  <p>Planeta mais quente, com atmosfera densa e cheia de nuvens.</p>
+
+  <h3>Terra</h3>
+  <p>Nosso planeta, com água, vida e clima variado.</p>
+
+  <h3>Marte</h3>
+  <p>Planeta vermelho, potencial para futuras missões humanas.</p>
+
+  <h3>Júpiter</h3>
+  <p>Maior planeta do Sistema Solar, gasoso e com grande mancha vermelha.</p>
+
+  <h3>Saturno</h3>
+  <p>Conhecido por seus impressionantes anéis de gelo e rocha.</p>
+</aside>
+
+<canvas id="espaco"></canvas>
+
+<script>
+const canvas = document.getElementById("espaco");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+const centroX = canvas.width / 2;
+const centroY = canvas.height / 2;
+
+// Planetas
+const planetas = [
+  { nome: "Mercúrio", raio: 60, tamanho: 4, cor: "gray", velocidade: 0.04 },
+  { nome: "Vênus", raio: 90, tamanho: 6, cor: "orange", velocidade: 0.03 },
+  { nome: "Terra", raio: 130, tamanho: 7, cor: "blue", velocidade: 0.02 },
+  { nome: "Marte", raio: 170, tamanho: 6, cor: "red", velocidade: 0.015 },
+  { nome: "Júpiter", raio: 220, tamanho: 12, cor: "#d2b48c", velocidade: 0.01 },
+  { nome: "Saturno", raio: 280, tamanho: 10, cor: "#deb887", velocidade: 0.008 }
+];
+
+planetas.forEach(p => p.angulo = Math.random() * Math.PI * 2);
+
+function desenhar() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Sol
+  ctx.beginPath();
+  ctx.arc(centroX, centroY, 20, 0, Math.PI * 2);
+  ctx.fillStyle = "yellow";
+  ctx.fill();
+
+  planetas.forEach(p => {
+    // órbita
+    ctx.beginPath();
+    ctx.arc(centroX, centroY, p.raio, 0, Math.PI * 2);
+    ctx.strokeStyle = "rgba(255,255,255,0.1)";
+    ctx.stroke();
+
+    let x = centroX + Math.cos(p.angulo) * p.raio;
+    let y = centroY + Math.sin(p.angulo) * p.raio;
+
+    // planeta
+    ctx.beginPath();
+    ctx.arc(x, y, p.tamanho, 0, Math.PI * 2);
+    ctx.fillStyle = p.cor;
+    ctx.fill();
+
+    p.angulo += p.velocidade;
+  });
+
+  requestAnimationFrame(desenhar);
+}
+
+desenhar();
+
+window.addEventListener("resize", () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+</script>
+
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Sistema Solar</title>
+
+<style>
+  body {
+    margin: 0;
+    background: black;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+  }
+
+  /* HEADER */
+  header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: rgba(0,0,0,0.85);
+    color: white;
+    text-align: center;
+    padding: 10px;
+    z-index: 10;
+  }
+
+  header h1 {
+    margin: 0;
+    font-size: 22px;
+    letter-spacing: 2px;
+  }
+
+  header p {
+    margin: 5px 0 10px 0;
+    font-size: 14px;
+    color: #ccc;
+  }
+
+  /* NAV */
+  nav {
+    margin-top: 5px;
+  }
+
+  nav a {
+    color: #fff;
+    text-decoration: none;
+    margin: 0 12px;
+    font-size: 14px;
+    transition: color 0.3s;
+  }
+
+  nav a:hover {
+    color: #ffcc00;
+  }
+
+  /* ASIDE */
+  aside {
+    position: fixed;
+    right: 0;
+    top: 70px;
+    width: 220px;
+    height: calc(100% - 70px);
+    background: rgba(0,0,0,0.8);
+    color: white;
+    padding: 15px;
+    overflow-y: auto;
+    font-size: 14px;
+    box-shadow: -2px 0 5px rgba(0,0,0,0.5);
+  }
+
+  aside h2 {
+    margin-top: 0;
+    font-size: 18px;
+    text-align: center;
+  }
+
+  aside h3 {
+    margin: 10px 0 5px 0;
+    font-size: 16px;
+    color: #ffcc00;
+  }
+
+  main {
+    margin-top: 70px; /* evita que o header cubra o canvas */
+  }
+
+  canvas {
+    display: block;
+  }
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>🌌 Sistema Solar Interativo</h1>
+  <p>Veja os planetas orbitando o Sol em tempo real!</p>
+  
+  <nav>
+    <a href="#mercurio">Mercúrio</a>
+    <a href="#venus">Vênus</a>
+    <a href="#terra">Terra</a>
+    <a href="#marte">Marte</a>
+    <a href="#jupiter">Júpiter</a>
+    <a href="#saturno">Saturno</a>
+  </nav>
+</header>
+
+<aside>
+  <h2>Informações dos Planetas</h2>
+
+  <h3>Mercúrio</h3>
+  <p>Menor planeta do Sistema Solar e mais próximo do Sol.</p>
+
+  <h3>Vênus</h3>
+  <p>Planeta mais quente, com atmosfera densa e cheia de nuvens.</p>
+
+  <h3>Terra</h3>
+  <p>Nosso planeta, com água, vida e clima variado.</p>
+
+  <h3>Marte</h3>
+  <p>Planeta vermelho, potencial para futuras missões humanas.</p>
+
+  <h3>Júpiter</h3>
+  <p>Maior planeta do Sistema Solar, gasoso e com grande mancha vermelha.</p>
+
+  <h3>Saturno</h3>
+  <p>Conhecido por seus impressionantes anéis de gelo e rocha.</p>
+</aside>
+
+<main>
+  <canvas id="espaco"></canvas>
+</main>
+
+<script>
+const canvas = document.getElementById("espaco");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+const centroX = canvas.width / 2;
+const centroY = canvas.height / 2;
+
+// Planetas
+const planetas = [
+  { nome: "Mercúrio", raio: 60, tamanho: 4, cor: "gray", velocidade: 0.04 },
+  { nome: "Vênus", raio: 90, tamanho: 6, cor: "orange", velocidade: 0.03 },
+  { nome: "Terra", raio: 130, tamanho: 7, cor: "blue", velocidade: 0.02 },
+  { nome: "Marte", raio: 170, tamanho: 6, cor: "red", velocidade: 0.015 },
+  { nome: "Júpiter", raio: 220, tamanho: 12, cor: "#d2b48c", velocidade: 0.01 },
+  { nome: "Saturno", raio: 280, tamanho: 10, cor: "#deb887", velocidade: 0.008 }
+];
+
+planetas.forEach(p => p.angulo = Math.random() * Math.PI * 2);
+
+function desenhar() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Sol
+  ctx.beginPath();
+  ctx.arc(centroX, centroY, 20, 0, Math.PI * 2);
+  ctx.fillStyle = "yellow";
+  ctx.fill();
+
+  planetas.forEach(p => {
+    // órbita
+    ctx.beginPath();
+    ctx.arc(centroX, centroY, p.raio, 0, Math.PI * 2);
+    ctx.strokeStyle = "rgba(255,255,255,0.1)";
+    ctx.stroke();
+
+    let x = centroX + Math.cos(p.angulo) * p.raio;
+    let y = centroY + Math.sin(p.angulo) * p.raio;
+
+    // planeta
+    ctx.beginPath();
+    ctx.arc(x, y, p.tamanho, 0, Math.PI * 2);
+    ctx.fillStyle = p.cor;
+    ctx.fill();
+
+    p.angulo += p.velocidade;
+  });
+
+  requestAnimationFrame(desenhar);
+}
+
+desenhar();
+
+window.addEventListener("resize", () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+</script>
+
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Sistema Solar</title>
+
+<style>
+  body {
+    margin: 0;
+    background: black;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+  }
+
+  /* HEADER */
+  header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: rgba(0,0,0,0.85);
+    color: white;
+    text-align: center;
+    padding: 10px;
+    z-index: 10;
+  }
+
+  header h1 {
+    margin: 0;
+    font-size: 22px;
+    letter-spacing: 2px;
+  }
+
+  header p {
+    margin: 5px 0 10px 0;
+    font-size: 14px;
+    color: #ccc;
+  }
+
+  /* NAV */
+  nav {
+    margin-top: 5px;
+  }
+
+  nav a {
+    color: #fff;
+    text-decoration: none;
+    margin: 0 12px;
+    font-size: 14px;
+    transition: color 0.3s;
+  }
+
+  nav a:hover {
+    color: #ffcc00;
+  }
+
+  /* ASIDE */
+  aside {
+    position: fixed;
+    right: 0;
+    top: 70px;
+    width: 240px;
+    height: calc(100% - 70px);
+    background: rgba(0,0,0,0.8);
+    color: white;
+    padding: 15px;
+    overflow-y: auto;
+    font-size: 14px;
+    box-shadow: -2px 0 5px rgba(0,0,0,0.5);
+  }
+
+  aside h2 {
+    margin-top: 0;
+    font-size: 18px;
+    text-align: center;
+  }
+
+  aside article {
+    margin-bottom: 15px;
+  }
+
+  aside h3 {
+    margin: 10px 0 5px 0;
+    font-size: 16px;
+    color: #ffcc00;
+  }
+
+  main {
+    margin-top: 70px; /* evita que o header cubra o canvas */
+  }
+
+  canvas {
+    display: block;
+  }
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>🌌 Sistema Solar Interativo</h1>
+  <p>Veja os planetas orbitando o Sol em tempo real!</p>
+  
+  <nav>
+    <a href="#mercurio">Mercúrio</a>
+    <a href="#venus">Vênus</a>
+    <a href="#terra">Terra</a>
+    <a href="#marte">Marte</a>
+    <a href="#jupiter">Júpiter</a>
+    <a href="#saturno">Saturno</a>
+  </nav>
+</header>
+
+<aside>
+  <h2>Informações dos Planetas</h2>
+
+  <article id="mercurio">
+    <h3>Mercúrio</h3>
+    <p>Menor planeta do Sistema Solar e mais próximo do Sol.</p>
+  </article>
+
+  <article id="venus">
+    <h3>Vênus</h3>
+    <p>Planeta mais quente, com atmosfera densa e cheia de nuvens.</p>
+  </article>
+
+  <article id="terra">
+    <h3>Terra</h3>
+    <p>Nosso planeta, com água, vida e clima variado.</p>
+  </article>
+
+  <article id="marte">
+    <h3>Marte</h3>
+    <p>Planeta vermelho, potencial para futuras missões humanas.</p>
+  </article>
+
+  <article id="jupiter">
+    <h3>Júpiter</h3>
+    <p>Maior planeta do Sistema Solar, gasoso e com grande mancha vermelha.</p>
+  </article>
+
+  <article id="saturno">
+    <h3>Saturno</h3>
+    <p>Conhecido por seus impressionantes anéis de gelo e rocha.</p>
+  </article>
+</aside>
+
+<main>
+  <canvas id="espaco"></canvas>
+</main>
+
+<script>
+const canvas = document.getElementById("espaco");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+const centroX = canvas.width / 2;
+const centroY = canvas.height / 2;
+
+// Planetas
+const planetas = [
+  { nome: "Mercúrio", raio: 60, tamanho: 4, cor: "gray", velocidade: 0.04 },
+  { nome: "Vênus", raio: 90, tamanho: 6, cor: "orange", velocidade: 0.03 },
+  { nome: "Terra", raio: 130, tamanho: 7, cor: "blue", velocidade: 0.02 },
+  { nome: "Marte", raio: 170, tamanho: 6, cor: "red", velocidade: 0.015 },
+  { nome: "Júpiter", raio: 220, tamanho: 12, cor: "#d2b48c", velocidade: 0.01 },
+  { nome: "Saturno", raio: 280, tamanho: 10, cor: "#deb887", velocidade: 0.008 }
+];
+
+planetas.forEach(p => p.angulo = Math.random() * Math.PI * 2);
+
+function desenhar() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Sol
+  ctx.beginPath();
+  ctx.arc(centroX, centroY, 20, 0, Math.PI * 2);
+  ctx.fillStyle = "yellow";
+  ctx.fill();
+
+  planetas.forEach(p => {
+    // órbita
+    ctx.beginPath();
+    ctx.arc(centroX, centroY, p.raio, 0, Math.PI * 2);
+    ctx.strokeStyle = "rgba(255,255,255,0.1)";
+    ctx.stroke();
+
+    let x = centroX + Math.cos(p.angulo) * p.raio;
+    let y = centroY + Math.sin(p.angulo) * p.raio;
+
+    // planeta
+    ctx.beginPath();
+    ctx.arc(x, y, p.tamanho, 0, Math.PI * 2);
+    ctx.fillStyle = p.cor;
+    ctx.fill();
+
+    p.angulo += p.velocidade;
+  });
+
+  requestAnimationFrame(desenhar);
+}
+
+desenhar();
+
+window.addEventListener("resize", () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+</script>
+
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Sistema Solar</title>
+
+<style>
+  body {
+    margin: 0;
+    background: black;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+  }
+
+  /* HEADER */
+  header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: rgba(0,0,0,0.85);
+    color: white;
+    text-align: center;
+    padding: 10px;
+    z-index: 10;
+  }
+
+  header h1 {
+    margin: 0;
+    font-size: 22px;
+    letter-spacing: 2px;
+  }
+
+  header p {
+    margin: 5px 0 10px 0;
+    font-size: 14px;
+    color: #ccc;
+  }
+
+  /* NAV */
+  nav {
+    margin-top: 5px;
+  }
+
+  nav a {
+    color: #fff;
+    text-decoration: none;
+    margin: 0 12px;
+    font-size: 14px;
+    transition: color 0.3s;
+  }
+
+  nav a:hover {
+    color: #ffcc00;
+  }
+
+  /* ASIDE */
+  aside {
+    position: fixed;
+    right: 0;
+    top: 70px;
+    width: 240px;
+    height: calc(100% - 70px);
+    background: rgba(0,0,0,0.8);
+    color: white;
+    padding: 15px;
+    overflow-y: auto;
+    font-size: 14px;
+    box-shadow: -2px 0 5px rgba(0,0,0,0.5);
+  }
+
+  aside h2 {
+    margin-top: 0;
+    font-size: 18px;
+    text-align: center;
+  }
+
+  aside article {
+    margin-bottom: 15px;
+  }
+
+  aside h3 {
+    margin: 10px 0 5px 0;
+    font-size: 16px;
+    color: #ffcc00;
+  }
+
+  aside img {
+    width: 100%;
+    border-radius: 5px;
+    margin-bottom: 5px;
+  }
+
+  main {
+    margin-top: 70px; /* evita que o header cubra o canvas */
+  }
+
+  canvas {
+    display: block;
+  }
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>🌌 Sistema Solar Interativo</h1>
+  <p>Veja os planetas orbitando o Sol em tempo real!</p>
+  
+  <nav>
+    <a href="#mercurio">Mercúrio</a>
+    <a href="#venus">Vênus</a>
+    <a href="#terra">Terra</a>
+    <a href="#marte">Marte</a>
+    <a href="#jupiter">Júpiter</a>
+    <a href="#saturno">Saturno</a>
+  </nav>
+</header>
+
+<aside>
+  <h2>Informações dos Planetas</h2>
+
+  <article id="mercurio">
+    <h3>Mercúrio</h3>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/4/4a/Mercury_in_true_color.jpg" alt="Mercúrio">
+    <p>Menor planeta do Sistema Solar e mais próximo do Sol.</p>
+  </article>
+
+  <article id="venus">
+    <h3>Vênus</h3>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/e/e5/Venus-real_color.jpg" alt="Vênus">
+    <p>Planeta mais quente, com atmosfera densa e cheia de nuvens.</p>
+  </article>
+
+  <article id="terra">
+    <h3>Terra</h3>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/9/97/The_Earth_seen_from_Apollo_17.jpg" alt="Terra">
+    <p>Nosso planeta, com água, vida e clima variado.</p>
+  </article>
+
+  <article id="marte">
+    <h3>Marte</h3>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/0/02/OSIRIS_Mars_true_color.jpg" alt="Marte">
+    <p>Planeta vermelho, potencial para futuras missões humanas.</p>
+  </article>
+
+  <article id="jupiter">
+    <h3>Júpiter</h3>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/e/e2/Jupiter.jpg" alt="Júpiter">
+    <p>Maior planeta do Sistema Solar, gasoso e com grande mancha vermelha.</p>
+  </article>
+
+  <article id="saturno">
+    <h3>Saturno</h3>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c7/Saturn_during_Equinox.jpg" alt="Saturno">
+    <p>Conhecido por seus impressionantes anéis de gelo e rocha.</p>
+  </article>
+</aside>
+
+<main>
+  <canvas id="espaco"></canvas>
+</main>
+
+<script>
+const canvas = document.getElementById("espaco");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+const centroX = canvas.width / 2;
+const centroY = canvas.height / 2;
+
+// Planetas
+const planetas = [
+  { nome: "Mercúrio", raio: 60, tamanho: 4, cor: "gray", velocidade: 0.04 },
+  { nome: "Vênus", raio: 90, tamanho: 6, cor: "orange", velocidade: 0.03 },
+  { nome: "Terra", raio: 130, tamanho: 7, cor: "blue", velocidade: 0.02 },
+  { nome: "Marte", raio: 170, tamanho: 6, cor: "red", velocidade: 0.015 },
+  { nome: "Júpiter", raio: 220, tamanho: 12, cor: "#d2b48c", velocidade: 0.01 },
+  { nome: "Saturno", raio: 280, tamanho: 10, cor: "#deb887", velocidade: 0.008 }
+];
+
+planetas.forEach(p => p.angulo = Math.random() * Math.PI * 2);
+
+function desenhar() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Sol
+  ctx.beginPath();
+  ctx.arc(centroX, centroY, 20, 0, Math.PI * 2);
+  ctx.fillStyle = "yellow";
+  ctx.fill();
+
+  planetas.forEach(p => {
+    // órbita
+    ctx.beginPath();
+    ctx.arc(centroX, centroY, p.raio, 0, Math.PI * 2);
+    ctx.strokeStyle = "rgba(255,255,255,0.1)";
+    ctx.stroke();
+
+    let x = centroX + Math.cos(p.angulo) * p.raio;
+    let y = centroY + Math.sin(p.angulo) * p.raio;
+
+    // planeta
+    ctx.beginPath();
+    ctx.arc(x, y, p.tamanho, 0, Math.PI * 2);
+    ctx.fillStyle = p.cor;
+    ctx.fill();
+
+    p.angulo += p.velocidade;
+  });
+
+  requestAnimationFrame(desenhar);
+}
+
+desenhar();
+
+window.addEventListener("resize", () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+</script>
+
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Sistema Solar</title>
+
+<style>
+  body {
+    margin: 0;
+    background: black;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+  }
+
+  /* HEADER */
+  header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: rgba(0,0,0,0.85);
+    color: white;
+    text-align: center;
+    padding: 10px;
+    z-index: 10;
+  }
+
+  header h1 {
+    margin: 0;
+    font-size: 22px;
+    letter-spacing: 2px;
+  }
+
+  header p {
+    margin: 5px 0 10px 0;
+    font-size: 14px;
+    color: #ccc;
+  }
+
+  /* NAV */
+  nav {
+    margin-top: 5px;
+  }
+
+  nav a {
+    color: #fff;
+    text-decoration: none;
+    margin: 0 12px;
+    font-size: 14px;
+    transition: color 0.3s;
+  }
+
+  nav a:hover {
+    color: #ffcc00;
+  }
+
+  /* ASIDE */
+  aside {
+    position: fixed;
+    right: 0;
+    top: 70px;
+    width: 240px;
+    height: calc(100% - 140px); /* altura ajustada para footer */
+    background: rgba(0,0,0,0.8);
+    color: white;
+    padding: 15px;
+    overflow-y: auto;
+    font-size: 14px;
+    box-shadow: -2px 0 5px rgba(0,0,0,0.5);
+  }
+
+  aside h2 {
+    margin-top: 0;
+    font-size: 18px;
+    text-align: center;
+  }
+
+  aside article {
+    margin-bottom: 15px;
+  }
+
+  aside h3 {
+    margin: 10px 0 5px 0;
+    font-size: 16px;
+    color: #ffcc00;
+  }
+
+  aside img {
+    width: 100%;
+    border-radius: 5px;
+    margin-bottom: 5px;
+  }
+
+  /* MAIN */
+  main {
+    margin-top: 70px; /* evita que o header cubra o canvas */
+  }
+
+  canvas {
+    display: block;
+  }
+
+  /* FOOTER */
+  footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background: rgba(0,0,0,0.85);
+    color: #ccc;
+    text-align: center;
+    padding: 8px;
+    font-size: 14px;
+    z-index: 10;
+    letter-spacing: 1px;
+  }
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>🌌 Sistema Solar Interativo</h1>
+  <p>Veja os planetas orbitando o Sol em tempo real!</p>
+  
+  <nav>
+    <a href="#mercurio">Mercúrio</a>
+    <a href="#venus">Vênus</a>
+    <a href="#terra">Terra</a>
+    <a href="#marte">Marte</a>
+    <a href="#jupiter">Júpiter</a>
+    <a href="#saturno">Saturno</a>
+  </nav>
+</header>
+
+<aside>
+  <h2>Informações dos Planetas</h2>
+
+  <article id="mercurio">
+    <h3>Mercúrio</h3>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/4/4a/Mercury_in_true_color.jpg" alt="Mercúrio">
+    <p>Menor planeta do Sistema Solar e mais próximo do Sol.</p>
+  </article>
+
+  <article id="venus">
+    <h3>Vênus</h3>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/e/e5/Venus-real_color.jpg" alt="Vênus">
+    <p>Planeta mais quente, com atmosfera densa e cheia de nuvens.</p>
+  </article>
+
+  <article id="terra">
+    <h3>Terra</h3>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/9/97/The_Earth_seen_from_Apollo_17.jpg" alt="Terra">
+    <p>Nosso planeta, com água, vida e clima variado.</p>
+  </article>
+
+  <article id="marte">
+    <h3>Marte</h3>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/0/02/OSIRIS_Mars_true_color.jpg" alt="Marte">
+    <p>Planeta vermelho, potencial para futuras missões humanas.</p>
+  </article>
+
+  <article id="jupiter">
+    <h3>Júpiter</h3>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/e/e2/Jupiter.jpg" alt="Júpiter">
+    <p>Maior planeta do Sistema Solar, gasoso e com grande mancha vermelha.</p>
+  </article>
+
+  <article id="saturno">
+    <h3>Saturno</h3>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c7/Saturn_during_Equinox.jpg" alt="Saturno">
+    <p>Conhecido por seus impressionantes anéis de gelo e rocha.</p>
+  </article>
+</aside>
+
+<main>
+  <canvas id="espaco"></canvas>
+</main>
+
+<footer>
+  © 2026 Sistema Solar Interativo - Desenvolvido por Você | Imagens de domínio público
+</footer>
+
+<script>
+const canvas = document.getElementById("espaco");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+const centroX = canvas.width / 2;
+const centroY = canvas.height / 2;
+
+// Planetas
+const planetas = [
+  { nome: "Mercúrio", raio: 60, tamanho: 4, cor: "gray", velocidade: 0.04 },
+  { nome: "Vênus", raio: 90, tamanho: 6, cor: "orange", velocidade: 0.03 },
+  { nome: "Terra", raio: 130, tamanho: 7, cor: "blue", velocidade: 0.02 },
+  { nome: "Marte", raio: 170, tamanho: 6, cor: "red", velocidade: 0.015 },
+  { nome: "Júpiter", raio: 220, tamanho: 12, cor: "#d2b48c", velocidade: 0.01 },
+  { nome: "Saturno", raio: 280, tamanho: 10, cor: "#deb887", velocidade: 0.008 }
+];
+
+planetas.forEach(p => p.angulo = Math.random() * Math.PI * 2);
+
+function desenhar() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Sol
+  ctx.beginPath();
+  ctx.arc(centroX, centroY, 20, 0, Math.PI * 2);
+  ctx.fillStyle = "yellow";
+  ctx.fill();
+
+  planetas.forEach(p => {
+    // órbita
+    ctx.beginPath();
+    ctx.arc(centroX, centroY, p.raio, 0, Math.PI * 2);
+    ctx.strokeStyle = "rgba(255,255,255,0.1)";
+    ctx.stroke();
+
+    let x = centroX + Math.cos(p.angulo) * p.raio;
+    let y = centroY + Math.sin(p.angulo) * p.raio;
+
+    // planeta
+    ctx.beginPath();
+    ctx.arc(x, y, p.tamanho, 0, Math.PI * 2);
+    ctx.fillStyle = p.cor;
+    ctx.fill();
+
+    p.angulo += p.velocidade;
+  });
+
+  requestAnimationFrame(desenhar);
+}
+
+desenhar();
+
+window.addEventListener("resize", () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+</script>
+
+</body>
+</html>
