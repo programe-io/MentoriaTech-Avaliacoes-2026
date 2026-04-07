@@ -1,0 +1,1298 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Jogo da Velha</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 50px;
+      background: #f0f0f0;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    .tabuleiro {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      gap: 5px;
+      justify-content: center;
+      margin: auto;
+    }
+
+    .casa {
+      width: 100px;
+      height: 100px;
+      font-size: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border: 2px solid #333;
+      background: #fff;
+      transition: background 0.3s;
+    }
+
+    .casa:hover {
+      background: #ddd;
+    }
+
+    #status {
+      margin-top: 20px;
+      font-size: 1.2rem;
+    }
+
+    button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+  </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+<h1>Jogo da Velha</h1>
+
+<div class="tabuleiro">
+  <div class="casa"></div>
+  <div class="casa"></div>
+  <div class="casa"></div>
+
+  <div class="casa"></div>
+  <div class="casa"></div>
+  <div class="casa"></div>
+
+  <div class="casa"></div>
+  <div class="casa"></div>
+  <div class="casa"></div>
+</div>
+
+<p id="status">Vez do jogador: X</p>
+<button onclick="reiniciar()">Reiniciar</button>
+
+<script>
+  const casas = document.querySelectorAll(".casa");
+  const status = document.getElementById("status");
+
+  let jogador = "X";
+  let jogoAtivo = true;
+
+  // Combinações vencedoras
+  const combinacoes = [
+    [0,1,2],[3,4,5],[6,7,8],
+    [0,3,6],[1,4,7],[2,5,8],
+    [0,4,8],[2,4,6]
+  ];
+
+  casas.forEach((casa, index) => {
+    casa.addEventListener("click", () => jogar(casa));
+  });
+
+  function jogar(casa) {
+    if (casa.textContent !== "" || !jogoAtivo) return;
+
+    casa.textContent = jogador;
+
+    if (verificarVencedor()) {
+      status.textContent = `Jogador ${jogador} venceu!`;
+      jogoAtivo = false;
+      return;
+    }
+
+    if ([...casas].every(c => c.textContent !== "")) {
+      status.textContent = "Empate!";
+      jogoAtivo = false;
+      return;
+    }
+
+    jogador = jogador === "X" ? "O" : "X";
+    status.textContent = `Vez do jogador: ${jogador}`;
+  }
+
+  function verificarVencedor() {
+    return combinacoes.some(comb => {
+      const [a, b, c] = comb;
+      return casas[a].textContent &&
+             casas[a].textContent === casas[b].textContent &&
+             casas[a].textContent === casas[c].textContent;
+    });
+  }
+
+  function reiniciar() {
+    casas.forEach(c => c.textContent = "");
+    jogador = "X";
+    jogoAtivo = true;
+    status.textContent = "Vez do jogador: X";
+  }
+</script>
+
+<script src="script.js"></script></body>
+</html>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Jogo da Velha</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #f0f0f0;
+      margin: 50px 0;
+    }
+
+    header {
+      background-color: #333;
+      color: white;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 30px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 2rem;
+    }
+
+    .tabuleiro {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      gap: 5px;
+      justify-content: center;
+      margin: 20px auto;
+    }
+
+    .casa {
+      width: 100px;
+      height: 100px;
+      font-size: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border: 2px solid #333;
+      background: #fff;
+      transition: background 0.3s;
+    }
+
+    .casa:hover {
+      background: #ddd;
+    }
+
+    #status {
+      margin-top: 20px;
+      font-size: 1.2rem;
+    }
+
+    button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Jogo da Velha</h1>
+  <p>Divirta-se jogando contra um amigo!</p>
+</header>
+
+<div class="tabuleiro">
+  <div class="casa"></div>
+  <div class="casa"></div>
+  <div class="casa"></div>
+  <div class="casa"></div>
+  <div class="casa"></div>
+  <div class="casa"></div>
+  <div class="casa"></div>
+  <div class="casa"></div>
+  <div class="casa"></div>
+</div>
+
+<p id="status">Vez do jogador: X</p>
+<button onclick="reiniciar()">Reiniciar</button>
+
+<script>
+  const casas = document.querySelectorAll(".casa");
+  const status = document.getElementById("status");
+
+  let jogador = "X";
+  let jogoAtivo = true;
+
+  const combinacoes = [
+    [0,1,2],[3,4,5],[6,7,8],
+    [0,3,6],[1,4,7],[2,5,8],
+    [0,4,8],[2,4,6]
+  ];
+
+  casas.forEach(casa => {
+    casa.addEventListener("click", () => jogar(casa));
+  });
+
+  function jogar(casa) {
+    if (casa.textContent !== "" || !jogoAtivo) return;
+
+    casa.textContent = jogador;
+
+    if (verificarVencedor()) {
+      status.textContent = `Jogador ${jogador} venceu!`;
+      jogoAtivo = false;
+      return;
+    }
+
+    if ([...casas].every(c => c.textContent !== "")) {
+      status.textContent = "Empate!";
+      jogoAtivo = false;
+      return;
+    }
+
+    jogador = jogador === "X" ? "O" : "X";
+    status.textContent = `Vez do jogador: ${jogador}`;
+  }
+
+  function verificarVencedor() {
+    return combinacoes.some(comb => {
+      const [a, b, c] = comb;
+      return casas[a].textContent &&
+             casas[a].textContent === casas[b].textContent &&
+             casas[a].textContent === casas[c].textContent;
+    });
+  }
+
+  function reiniciar() {
+    casas.forEach(c => c.textContent = "");
+    jogador = "X";
+    jogoAtivo = true;
+    status.textContent = "Vez do jogador: X";
+  }
+</script>
+
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Jogo da Velha com Nav</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #f0f0f0;
+      margin-top: 50px;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    nav {
+      margin-bottom: 20px;
+      background-color: #333;
+      padding: 10px;
+      border-radius: 8px;
+    }
+
+    nav button {
+      padding: 10px 20px;
+      font-size: 1rem;
+      margin: 0 10px;
+      cursor: pointer;
+      border: none;
+      border-radius: 5px;
+      background-color: #fff;
+      transition: background 0.3s;
+    }
+
+    nav button:hover {
+      background-color: #ddd;
+    }
+
+    .tabuleiro {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      gap: 5px;
+      justify-content: center;
+      margin: 20px auto;
+    }
+
+    .casa {
+      width: 100px;
+      height: 100px;
+      font-size: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border: 2px solid #333;
+      background: #fff;
+      transition: background 0.3s;
+    }
+
+    .casa:hover {
+      background: #ddd;
+    }
+
+    #status {
+      margin-top: 20px;
+      font-size: 1.2rem;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Jogo da Velha</h1>
+
+<nav>
+  <button onclick="reiniciar()">Reiniciar</button>
+  <button onclick="alert('Modo de jogo ainda não implementado')">Modo de Jogo</button>
+</nav>
+
+<div class="tabuleiro">
+  <div class="casa"></div>
+  <div class="casa"></div>
+  <div class="casa"></div>
+  <div class="casa"></div>
+  <div class="casa"></div>
+  <div class="casa"></div>
+  <div class="casa"></div>
+  <div class="casa"></div>
+  <div class="casa"></div>
+</div>
+
+<p id="status">Vez do jogador: X</p>
+
+<script>
+  const casas = document.querySelectorAll(".casa");
+  const status = document.getElementById("status");
+
+  let jogador = "X";
+  let jogoAtivo = true;
+
+  const combinacoes = [
+    [0,1,2],[3,4,5],[6,7,8],
+    [0,3,6],[1,4,7],[2,5,8],
+    [0,4,8],[2,4,6]
+  ];
+
+  casas.forEach(casa => {
+    casa.addEventListener("click", () => jogar(casa));
+  });
+
+  function jogar(casa) {
+    if (casa.textContent !== "" || !jogoAtivo) return;
+
+    casa.textContent = jogador;
+
+    if (verificarVencedor()) {
+      status.textContent = `Jogador ${jogador} venceu!`;
+      jogoAtivo = false;
+      return;
+    }
+
+    if ([...casas].every(c => c.textContent !== "")) {
+      status.textContent = "Empate!";
+      jogoAtivo = false;
+      return;
+    }
+
+    jogador = jogador === "X" ? "O" : "X";
+    status.textContent = `Vez do jogador: ${jogador}`;
+  }
+
+  function verificarVencedor() {
+    return combinacoes.some(comb => {
+      const [a, b, c] = comb;
+      return casas[a].textContent &&
+             casas[a].textContent === casas[b].textContent &&
+             casas[a].textContent === casas[c].textContent;
+    });
+  }
+
+  function reiniciar() {
+    casas.forEach(c => c.textContent = "");
+    jogador = "X";
+    jogoAtivo = true;
+    status.textContent = "Vez do jogador: X";
+  }
+</script>
+
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Jogo da Velha com links</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #f0f0f0;
+      margin-top: 50px;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    .tabuleiro {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      gap: 5px;
+      justify-content: center;
+      margin: 20px auto;
+    }
+
+    .casa {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100px;
+      height: 100px;
+      font-size: 2rem;
+      border: 2px solid #333;
+      background: #fff;
+      text-decoration: none;
+      color: #333;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .casa:hover {
+      background: #ddd;
+    }
+
+    #status {
+      margin-top: 20px;
+      font-size: 1.2rem;
+    }
+
+    button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Jogo da Velha com &lt;a&gt;</h1>
+
+<div class="tabuleiro">
+  <a href="#" class="casa"></a>
+  <a href="#" class="casa"></a>
+  <a href="#" class="casa"></a>
+  <a href="#" class="casa"></a>
+  <a href="#" class="casa"></a>
+  <a href="#" class="casa"></a>
+  <a href="#" class="casa"></a>
+  <a href="#" class="casa"></a>
+  <a href="#" class="casa"></a>
+</div>
+
+<p id="status">Vez do jogador: X</p>
+<button onclick="reiniciar()">Reiniciar</button>
+
+<script>
+  const casas = document.querySelectorAll(".casa");
+  const status = document.getElementById("status");
+
+  let jogador = "X";
+  let jogoAtivo = true;
+
+  const combinacoes = [
+    [0,1,2],[3,4,5],[6,7,8],
+    [0,3,6],[1,4,7],[2,5,8],
+    [0,4,8],[2,4,6]
+  ];
+
+  casas.forEach(casa => {
+    casa.addEventListener("click", function(event) {
+      event.preventDefault(); // evita que o link navegue
+      jogar(casa);
+    });
+  });
+
+  function jogar(casa) {
+    if (casa.textContent !== "" || !jogoAtivo) return;
+
+    casa.textContent = jogador;
+
+    if (verificarVencedor()) {
+      status.textContent = `Jogador ${jogador} venceu!`;
+      jogoAtivo = false;
+      return;
+    }
+
+    if ([...casas].every(c => c.textContent !== "")) {
+      status.textContent = "Empate!";
+      jogoAtivo = false;
+      return;
+    }
+
+    jogador = jogador === "X" ? "O" : "X";
+    status.textContent = `Vez do jogador: ${jogador}`;
+  }
+
+  function verificarVencedor() {
+    return combinacoes.some(comb => {
+      const [a, b, c] = comb;
+      return casas[a].textContent &&
+             casas[a].textContent === casas[b].textContent &&
+             casas[a].textContent === casas[c].textContent;
+    });
+  }
+
+  function reiniciar() {
+    casas.forEach(c => c.textContent = "");
+    jogador = "X";
+    jogoAtivo = true;
+    status.textContent = "Vez do jogador: X";
+  }
+</script>
+
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Jogo da Velha com Aside</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f0f0;
+      margin: 50px;
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+    }
+
+    main {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    .tabuleiro {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      gap: 5px;
+      margin-top: 20px;
+    }
+
+    .casa {
+      width: 100px;
+      height: 100px;
+      font-size: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border: 2px solid #333;
+      background: #fff;
+      transition: background 0.3s;
+    }
+
+    .casa:hover {
+      background: #ddd;
+    }
+
+    aside {
+      background-color: #fff;
+      padding: 20px;
+      border: 2px solid #333;
+      border-radius: 10px;
+      width: 200px;
+      height: fit-content;
+    }
+
+    #status, #placarX, #placarO {
+      margin-top: 15px;
+      font-size: 1.1rem;
+    }
+
+    button {
+      margin-top: 15px;
+      padding: 10px 15px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<main>
+  <h1>Jogo da Velha</h1>
+
+  <div class="tabuleiro">
+    <div class="casa"></div>
+    <div class="casa"></div>
+    <div class="casa"></div>
+    <div class="casa"></div>
+    <div class="casa"></div>
+    <div class="casa"></div>
+    <div class="casa"></div>
+    <div class="casa"></div>
+    <div class="casa"></div>
+  </div>
+
+  <p id="status">Vez do jogador: X</p>
+</main>
+
+<aside>
+  <h2>Placar</h2>
+  <p id="placarX">Jogador X: 0</p>
+  <p id="placarO">Jogador O: 0</p>
+  <button onclick="reiniciar()">Reiniciar</button>
+  <p>Dicas:</p>
+  <ul>
+    <li>X começa sempre.</li>
+    <li>Vença completando 3 casas em linha.</li>
+  </ul>
+</aside>
+
+<script>
+  const casas = document.querySelectorAll(".casa");
+  const status = document.getElementById("status");
+  const placarX = document.getElementById("placarX");
+  const placarO = document.getElementById("placarO");
+
+  let jogador = "X";
+  let jogoAtivo = true;
+  let pontosX = 0;
+  let pontosO = 0;
+
+  const combinacoes = [
+    [0,1,2],[3,4,5],[6,7,8],
+    [0,3,6],[1,4,7],[2,5,8],
+    [0,4,8],[2,4,6]
+  ];
+
+  casas.forEach(casa => {
+    casa.addEventListener("click", () => jogar(casa));
+  });
+
+  function jogar(casa) {
+    if (casa.textContent !== "" || !jogoAtivo) return;
+
+    casa.textContent = jogador;
+
+    if (verificarVencedor()) {
+      status.textContent = `Jogador ${jogador} venceu!`;
+      jogoAtivo = false;
+      if (jogador === "X") pontosX++; else pontosO++;
+      atualizarPlacar();
+      return;
+    }
+
+    if ([...casas].every(c => c.textContent !== "")) {
+      status.textContent = "Empate!";
+      jogoAtivo = false;
+      return;
+    }
+
+    jogador = jogador === "X" ? "O" : "X";
+    status.textContent = `Vez do jogador: ${jogador}`;
+  }
+
+  function verificarVencedor() {
+    return combinacoes.some(comb => {
+      const [a,b,c] = comb;
+      return casas[a].textContent &&
+             casas[a].textContent === casas[b].textContent &&
+             casas[a].textContent === casas[c].textContent;
+    });
+  }
+
+  function reiniciar() {
+    casas.forEach(c => c.textContent = "");
+    jogador = "X";
+    jogoAtivo = true;
+    status.textContent = "Vez do jogador: X";
+  }
+
+  function atualizarPlacar() {
+    placarX.textContent = `Jogador X: ${pontosX}`;
+    placarO.textContent = `Jogador O: ${pontosO}`;
+  }
+</script>
+
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Jogo da Velha com H3</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #f0f0f0;
+      margin-top: 50px;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    h3 {
+      color: #555;
+      margin-top: 20px;
+    }
+
+    .tabuleiro {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      gap: 5px;
+      justify-content: center;
+      margin: 20px auto;
+    }
+
+    .casa {
+      width: 100px;
+      height: 100px;
+      font-size: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border: 2px solid #333;
+      background: #fff;
+      transition: background 0.3s;
+    }
+
+    .casa:hover {
+      background: #ddd;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Jogo da Velha</h1>
+<h3 id="status">Vez do jogador: X</h3>
+
+<div class="tabuleiro">
+  <div class="casa"></div>
+  <div class="casa"></div>
+  <div class="casa"></div>
+  <div class="casa"></div>
+  <div class="casa"></div>
+  <div class="casa"></div>
+  <div class="casa"></div>
+  <div class="casa"></div>
+  <div class="casa"></div>
+</div>
+
+<button onclick="reiniciar()">Reiniciar</button>
+
+<script>
+  const casas = document.querySelectorAll(".casa");
+  const status = document.getElementById("status");
+
+  let jogador = "X";
+  let jogoAtivo = true;
+
+  const combinacoes = [
+    [0,1,2],[3,4,5],[6,7,8],
+    [0,3,6],[1,4,7],[2,5,8],
+    [0,4,8],[2,4,6]
+  ];
+
+  casas.forEach(casa => {
+    casa.addEventListener("click", () => jogar(casa));
+  });
+
+  function jogar(casa) {
+    if (casa.textContent !== "" || !jogoAtivo) return;
+
+    casa.textContent = jogador;
+
+    if (verificarVencedor()) {
+      status.textContent = `Jogador ${jogador} venceu!`;
+      jogoAtivo = false;
+      return;
+    }
+
+    if ([...casas].every(c => c.textContent !== "")) {
+      status.textContent = "Empate!";
+      jogoAtivo = false;
+      return;
+    }
+
+    jogador = jogador === "X" ? "O" : "X";
+    status.textContent = `Vez do jogador: ${jogador}`;
+  }
+
+  function verificarVencedor() {
+    return combinacoes.some(comb => {
+      const [a, b, c] = comb;
+      return casas[a].textContent &&
+             casas[a].textContent === casas[b].textContent &&
+             casas[a].textContent === casas[c].textContent;
+    });
+  }
+
+  function reiniciar() {
+    casas.forEach(c => c.textContent = "");
+    jogador = "X";
+    jogoAtivo = true;
+    status.textContent = "Vez do jogador: X";
+  }
+</script>
+
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Jogo da Velha com Article</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #f0f0f0;
+      margin-top: 50px;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    article {
+      display: inline-block;
+      background: #fff;
+      padding: 20px;
+      border: 2px solid #333;
+      border-radius: 10px;
+    }
+
+    .tabuleiro {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      gap: 5px;
+      margin-top: 20px;
+    }
+
+    .casa {
+      width: 100px;
+      height: 100px;
+      font-size: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border: 2px solid #333;
+      background: #fff;
+      transition: background 0.3s;
+    }
+
+    .casa:hover {
+      background: #ddd;
+    }
+
+    #status {
+      margin-top: 20px;
+      font-size: 1.2rem;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Jogo da Velha</h1>
+
+<article>
+  <div class="tabuleiro">
+    <div class="casa"></div>
+    <div class="casa"></div>
+    <div class="casa"></div>
+    <div class="casa"></div>
+    <div class="casa"></div>
+    <div class="casa"></div>
+    <div class="casa"></div>
+    <div class="casa"></div>
+    <div class="casa"></div>
+  </div>
+
+  <p id="status">Vez do jogador: X</p>
+  <button onclick="reiniciar()">Reiniciar</button>
+</article>
+
+<script>
+  const casas = document.querySelectorAll(".casa");
+  const status = document.getElementById("status");
+
+  let jogador = "X";
+  let jogoAtivo = true;
+
+  const combinacoes = [
+    [0,1,2],[3,4,5],[6,7,8],
+    [0,3,6],[1,4,7],[2,5,8],
+    [0,4,8],[2,4,6]
+  ];
+
+  casas.forEach(casa => {
+    casa.addEventListener("click", () => jogar(casa));
+  });
+
+  function jogar(casa) {
+    if (casa.textContent !== "" || !jogoAtivo) return;
+
+    casa.textContent = jogador;
+
+    if (verificarVencedor()) {
+      status.textContent = `Jogador ${jogador} venceu!`;
+      jogoAtivo = false;
+      return;
+    }
+
+    if ([...casas].every(c => c.textContent !== "")) {
+      status.textContent = "Empate!";
+      jogoAtivo = false;
+      return;
+    }
+
+    jogador = jogador === "X" ? "O" : "X";
+    status.textContent = `Vez do jogador: ${jogador}`;
+  }
+
+  function verificarVencedor() {
+    return combinacoes.some(comb => {
+      const [a,b,c] = comb;
+      return casas[a].textContent &&
+             casas[a].textContent === casas[b].textContent &&
+             casas[a].textContent === casas[c].textContent;
+    });
+  }
+
+  function reiniciar() {
+    casas.forEach(c => c.textContent = "");
+    jogador = "X";
+    jogoAtivo = true;
+    status.textContent = "Vez do jogador: X";
+  }
+</script>
+
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Jogo da Velha com Imagens</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #f0f0f0;
+      margin-top: 50px;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    .tabuleiro {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      gap: 5px;
+      justify-content: center;
+      margin: 20px auto;
+    }
+
+    .casa {
+      width: 100px;
+      height: 100px;
+      cursor: pointer;
+      border: 2px solid #333;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+      transition: background 0.3s;
+    }
+
+    .casa:hover {
+      background: #ddd;
+    }
+
+    .casa img {
+      width: 80%;
+      height: 80%;
+      object-fit: contain;
+    }
+
+    #status {
+      margin-top: 20px;
+      font-size: 1.2rem;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Jogo da Velha com Imagens</h1>
+
+<div class="tabuleiro">
+  <div class="casa"><img src="" alt=""></div>
+  <div class="casa"><img src="" alt=""></div>
+  <div class="casa"><img src="" alt=""></div>
+  <div class="casa"><img src="" alt=""></div>
+  <div class="casa"><img src="" alt=""></div>
+  <div class="casa"><img src="" alt=""></div>
+  <div class="casa"><img src="" alt=""></div>
+  <div class="casa"><img src="" alt=""></div>
+  <div class="casa"><img src="" alt=""></div>
+</div>
+
+<p id="status">Vez do jogador: X</p>
+<button onclick="reiniciar()">Reiniciar</button>
+
+<script>
+  const casas = document.querySelectorAll(".casa");
+  const status = document.getElementById("status");
+
+  let jogador = "X";
+  let jogoAtivo = true;
+
+  // URLs ou caminhos das imagens para X e O
+  const imgX = "https://upload.wikimedia.org/wikipedia/commons/3/38/X_mark.svg";
+  const imgO = "https://upload.wikimedia.org/wikipedia/commons/2/2d/O_mark.svg";
+
+  const combinacoes = [
+    [0,1,2],[3,4,5],[6,7,8],
+    [0,3,6],[1,4,7],[2,5,8],
+    [0,4,8],[2,4,6]
+  ];
+
+  casas.forEach(casa => {
+    casa.addEventListener("click", () => jogar(casa));
+  });
+
+  function jogar(casa) {
+    const img = casa.querySelector("img");
+    if (img.src || !jogoAtivo) return;
+
+    img.src = jogador === "X" ? imgX : imgO;
+
+    if (verificarVencedor()) {
+      status.textContent = `Jogador ${jogador} venceu!`;
+      jogoAtivo = false;
+      return;
+    }
+
+    if ([...casas].every(c => c.querySelector("img").src)) {
+      status.textContent = "Empate!";
+      jogoAtivo = false;
+      return;
+    }
+
+    jogador = jogador === "X" ? "O" : "X";
+    status.textContent = `Vez do jogador: ${jogador}`;
+  }
+
+  function verificarVencedor() {
+    return combinacoes.some(comb => {
+      const [a,b,c] = comb;
+      const imgA = casas[a].querySelector("img").src;
+      const imgB = casas[b].querySelector("img").src;
+      const imgC = casas[c].querySelector("img").src;
+      return imgA && imgA === imgB && imgA === imgC;
+    });
+  }
+
+  function reiniciar() {
+    casas.forEach(c => c.querySelector("img").src = "");
+    jogador = "X";
+    jogoAtivo = true;
+    status.textContent = "Vez do jogador: X";
+  }
+</script>
+
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Jogo da Velha com Footer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #f0f0f0;
+      margin: 50px;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    main {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .tabuleiro {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      gap: 5px;
+      margin-top: 20px;
+    }
+
+    .casa {
+      width: 100px;
+      height: 100px;
+      font-size: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border: 2px solid #333;
+      background: #fff;
+      transition: background 0.3s;
+    }
+
+    .casa:hover {
+      background: #ddd;
+    }
+
+    footer {
+      margin-top: 30px;
+      background-color: #fff;
+      padding: 15px;
+      border: 2px solid #333;
+      border-radius: 10px;
+      width: fit-content;
+      display: inline-block;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    #status {
+      margin-bottom: 10px;
+      font-size: 1.2rem;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Jogo da Velha</h1>
+
+<main>
+  <div class="tabuleiro">
+    <div class="casa"></div>
+    <div class="casa"></div>
+    <div class="casa"></div>
+    <div class="casa"></div>
+    <div class="casa"></div>
+    <div class="casa"></div>
+    <div class="casa"></div>
+    <div class="casa"></div>
+    <div class="casa"></div>
+  </div>
+</main>
+
+<footer>
+  <p id="status">Vez do jogador: X</p>
+  <button onclick="reiniciar()">Reiniciar</button>
+</footer>
+
+<script>
+  const casas = document.querySelectorAll(".casa");
+  const status = document.getElementById("status");
+
+  let jogador = "X";
+  let jogoAtivo = true;
+
+  const combinacoes = [
+    [0,1,2],[3,4,5],[6,7,8],
+    [0,3,6],[1,4,7],[2,5,8],
+    [0,4,8],[2,4,6]
+  ];
+
+  casas.forEach(casa => {
+    casa.addEventListener("click", () => jogar(casa));
+  });
+
+  function jogar(casa) {
+    if (casa.textContent !== "" || !jogoAtivo) return;
+
+    casa.textContent = jogador;
+
+    if (verificarVencedor()) {
+      status.textContent = `Jogador ${jogador} venceu!`;
+      jogoAtivo = false;
+      return;
+    }
+
+    if ([...casas].every(c => c.textContent !== "")) {
+      status.textContent = "Empate!";
+      jogoAtivo = false;
+      return;
+    }
+
+    jogador = jogador === "X" ? "O" : "X";
+    status.textContent = `Vez do jogador: ${jogador}`;
+  }
+
+  function verificarVencedor() {
+    return combinacoes.some(comb => {
+      const [a, b, c] = comb;
+      return casas[a].textContent &&
+             casas[a].textContent === casas[b].textContent &&
+             casas[a].textContent === casas[c].textContent;
+    });
+  }
+
+  function reiniciar() {
+    casas.forEach(c => c.textContent = "");
+    jogador = "X";
+    jogoAtivo = true;
+    status.textContent = "Vez do jogador: X";
+  }
+</script>
+
+</body>
+</html>
