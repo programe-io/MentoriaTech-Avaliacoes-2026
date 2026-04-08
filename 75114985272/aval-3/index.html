@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Praia com Sol</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+
+    .ceu {
+      width: 100%;
+      height: 60vh;
+      background: linear-gradient(to bottom, #87CEEB, #FFD700);
+      position: relative;
+    }
+
+    .sol {
+      width: 100px;
+      height: 100px;
+      background: yellow;
+      border-radius: 50%;
+      position: absolute;
+      top: 50px;
+      right: 100px;
+      box-shadow: 0 0 50px rgba(255, 255, 0, 0.8);
+    }
+
+    .mar {
+      width: 100%;
+      height: 20vh;
+      background: #1E90FF;
+    }
+
+    .areia {
+      width: 100%;
+      height: 20vh;
+      background: #F4A460;
+    }
+  </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+  <div class="ceu">
+    <div class="sol"></div>
+  </div>
+
+  <div class="mar"></div>
+  <div class="areia"></div>
+
+<script src="script.js"></script></body>
+</html>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Praia Animada</title>
+<style>
+  body {
+    margin: 0;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+  }
+
+  /* Header */
+  header {
+    width: 100%;
+    height: 60px;
+    background-color: rgba(255, 255, 255, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 0;
+    z-index: 10;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  }
+
+  header h1 {
+    margin: 0;
+    font-size: 24px;
+    color: #333;
+  }
+
+  /* Céu */
+  .ceu {
+    width: 100%;
+    height: 60vh;
+    background: linear-gradient(to bottom, #87CEEB, #FFD700);
+    position: relative;
+    margin-top: 60px; /* desloca o céu abaixo do header */
+  }
+
+  /* Sol */
+  .sol {
+    width: 120px;
+    height: 120px;
+    background: radial-gradient(circle, #FFD700, #FFA500);
+    border-radius: 50%;
+    position: absolute;
+    top: 40px;
+    left: 50px;
+    box-shadow: 0 0 60px rgba(255, 215, 0, 0.9);
+  }
+
+  /* Mar */
+  .mar {
+    width: 100%;
+    height: 20vh;
+    background: #1E90FF;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Ondas animadas */
+  .onda {
+    position: absolute;
+    width: 200%;
+    height: 100%;
+    background: rgba(255,255,255,0.3);
+    border-radius: 50%;
+    bottom: 0;
+    animation: moverOnda 6s linear infinite;
+  }
+
+  @keyframes moverOnda {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* Areia */
+  .areia {
+    width: 100%;
+    height: 20vh;
+    background: #F4A460;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Praia Animada</h1>
+</header>
+
+<div class="ceu">
+  <div class="sol"></div>
+</div>
+
+<div class="mar">
+  <div class="onda"></div>
+</div>
+
+<div class="areia"></div>
+
+<script>
+  const sol = document.querySelector('.sol');
+  let posX = 50;
+  let posY = 40;
+  let direction = 1;
+
+  function animarSol() {
+    posX += 0.5 * direction;
+    if(posX > window.innerWidth - 120 || posX < 0){
+      direction *= -1;
+    }
+    posY = 100 * Math.sin((posX / window.innerWidth) * Math.PI) + 50;
+
+    sol.style.left = posX + 'px';
+    sol.style.top = posY + 'px';
+
+    requestAnimationFrame(animarSol);
+  }
+
+  animarSol();
+</script>
+
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Praia Animada</title>
+<style>
+  body {
+    margin: 0;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+  }
+
+  /* Header com nav */
+  header {
+    width: 100%;
+    height: 60px;
+    background-color: rgba(255, 255, 255, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    position: fixed;
+    top: 0;
+    z-index: 10;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  }
+
+  header h1 {
+    margin: 0;
+    font-size: 24px;
+    color: #333;
+  }
+
+  nav ul {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+  }
+
+  nav ul li {
+    margin-left: 20px;
+  }
+
+  nav ul li a {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+    transition: color 0.3s;
+  }
+
+  nav ul li a:hover {
+    color: #FFA500;
+  }
+
+  /* Céu */
+  .ceu {
+    width: 100%;
+    height: 60vh;
+    background: linear-gradient(to bottom, #87CEEB, #FFD700);
+    position: relative;
+    margin-top: 60px; /* desloca o céu abaixo do header */
+  }
+
+  /* Sol */
+  .sol {
+    width: 120px;
+    height: 120px;
+    background: radial-gradient(circle, #FFD700, #FFA500);
+    border-radius: 50%;
+    position: absolute;
+    top: 40px;
+    left: 50px;
+    box-shadow: 0 0 60px rgba(255, 215, 0, 0.9);
+  }
+
+  /* Mar */
+  .mar {
+    width: 100%;
+    height: 20vh;
+    background: #1E90FF;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Ondas animadas */
+  .onda {
+    position: absolute;
+    width: 200%;
+    height: 100%;
+    background: rgba(255,255,255,0.3);
+    border-radius: 50%;
+    bottom: 0;
+    animation: moverOnda 6s linear infinite;
+  }
+
+  @keyframes moverOnda {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* Areia */
+  .areia {
+    width: 100%;
+    height: 20vh;
+    background: #F4A460;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Praia Animada</h1>
+  <nav>
+    <ul>
+      <li><a href="#">Início</a></li>
+      <li><a href="#">Galeria</a></li>
+      <li><a href="#">Sobre</a></li>
+      <li><a href="#">Contato</a></li>
+    </ul>
+  </nav>
+</header>
+
+<div class="ceu">
+  <div class="sol"></div>
+</div>
+
+<div class="mar">
+  <div class="onda"></div>
+</div>
+
+<div class="areia"></div>
+
+<script>
+  const sol = document.querySelector('.sol');
+  let posX = 50;
+  let posY = 40;
+  let direction = 1;
+
+  function animarSol() {
+    posX += 0.5 * direction;
+    if(posX > window.innerWidth - 120 || posX < 0){
+      direction *= -1;
+    }
+    posY = 100 * Math.sin((posX / window.innerWidth) * Math.PI) + 50;
+
+    sol.style.left = posX + 'px';
+    sol.style.top = posY + 'px';
+
+    requestAnimationFrame(animarSol);
+  }
+
+  animarSol();
+</script>
+
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Praia Animada</title>
+<style>
+  body {
+    margin: 0;
+    overflow-x: hidden;
+    font-family: Arial, sans-serif;
+  }
+
+  /* Header com nav */
+  header {
+    width: 100%;
+    height: 60px;
+    background-color: rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    position: fixed;
+    top: 0;
+    z-index: 10;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  }
+
+  header h1 {
+    margin: 0;
+    font-size: 24px;
+    color: #333;
+  }
+
+  nav ul {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+  }
+
+  nav ul li {
+    margin-left: 20px;
+  }
+
+  nav ul li a {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+    transition: color 0.3s;
+  }
+
+  nav ul li a:hover {
+    color: #FFA500;
+  }
+
+  /* Main */
+  main {
+    margin-top: 60px; /* abaixo do header */
+    padding: 20px;
+    background: #E0FFFF;
+    min-height: 200px;
+    text-align: center;
+  }
+
+  main h2 {
+    color: #333;
+  }
+
+  main p {
+    color: #555;
+    max-width: 600px;
+    margin: 10px auto;
+    line-height: 1.6;
+  }
+
+  /* Céu */
+  .ceu {
+    width: 100%;
+    height: 60vh;
+    background: linear-gradient(to bottom, #87CEEB, #FFD700);
+    position: relative;
+  }
+
+  /* Sol */
+  .sol {
+    width: 120px;
+    height: 120px;
+    background: radial-gradient(circle, #FFD700, #FFA500);
+    border-radius: 50%;
+    position: absolute;
+    top: 40px;
+    left: 50px;
+    box-shadow: 0 0 60px rgba(255, 215, 0, 0.9);
+  }
+
+  /* Mar */
+  .mar {
+    width: 100%;
+    height: 20vh;
+    background: #1E90FF;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Ondas animadas */
+  .onda {
+    position: absolute;
+    width: 200%;
+    height: 100%;
+    background: rgba(255,255,255,0.3);
+    border-radius: 50%;
+    bottom: 0;
+    animation: moverOnda 6s linear infinite;
+  }
+
+  @keyframes moverOnda {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* Areia */
+  .areia {
+    width: 100%;
+    height: 20vh;
+    background: #F4A460;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Praia Animada</h1>
+  <nav>
+    <ul>
+      <li><a href="#">Início</a></li>
+      <li><a href="#">Galeria</a></li>
+      <li><a href="#">Sobre</a></li>
+      <li><a href="#">Contato</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+  <h2>Bem-vindo à Praia Animada!</h2>
+  <p>
+    Desfrute de uma experiência relaxante com o sol, o mar e a areia. 
+    Navegue pelo nosso site para ver galerias, aprender mais sobre a praia e descobrir dicas de lazer.
+  </p>
+</main>
+
+<div class="ceu">
+  <div class="sol"></div>
+</div>
+
+<div class="mar">
+  <div class="onda"></div>
+</div>
+
+<div class="areia"></div>
+
+<script>
+  const sol = document.querySelector('.sol');
+  let posX = 50;
+  let posY = 40;
+  let direction = 1;
+
+  function animarSol() {
+    posX += 0.5 * direction;
+    if(posX > window.innerWidth - 120 || posX < 0){
+      direction *= -1;
+    }
+    posY = 100 * Math.sin((posX / window.innerWidth) * Math.PI) + 50;
+
+    sol.style.left = posX + 'px';
+    sol.style.top = posY + 'px';
+
+    requestAnimationFrame(animarSol);
+  }
+
+  animarSol();
+</script>
+
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Praia Animada</title>
+<style>
+  body {
+    margin: 0;
+    overflow-x: hidden;
+    font-family: Arial, sans-serif;
+  }
+
+  /* Header com nav */
+  header {
+    width: 100%;
+    height: 60px;
+    background-color: rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    position: fixed;
+    top: 0;
+    z-index: 10;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  }
+
+  header h1 {
+    margin: 0;
+    font-size: 24px;
+    color: #333;
+  }
+
+  nav ul {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+  }
+
+  nav ul li {
+    margin-left: 20px;
+  }
+
+  nav ul li a {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+    transition: color 0.3s;
+  }
+
+  nav ul li a:hover {
+    color: #FFA500;
+  }
+
+  /* Main */
+  main {
+    margin-top: 60px; /* abaixo do header */
+    padding: 20px;
+    background: #E0FFFF;
+    text-align: center;
+  }
+
+  main h2 {
+    color: #333;
+  }
+
+  main p {
+    color: #555;
+    max-width: 600px;
+    margin: 10px auto 30px auto;
+    line-height: 1.6;
+  }
+
+  /* Galeria de imagens */
+  .galeria {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  .galeria img {
+    width: 250px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    transition: transform 0.3s;
+  }
+
+  .galeria img:hover {
+    transform: scale(1.05);
+  }
+
+  /* Céu */
+  .ceu {
+    width: 100%;
+    height: 60vh;
+    background: linear-gradient(to bottom, #87CEEB, #FFD700);
+    position: relative;
+  }
+
+  /* Sol */
+  .sol {
+    width: 120px;
+    height: 120px;
+    background: radial-gradient(circle, #FFD700, #FFA500);
+    border-radius: 50%;
+    position: absolute;
+    top: 40px;
+    left: 50px;
+    box-shadow: 0 0 60px rgba(255, 215, 0, 0.9);
+  }
+
+  /* Mar */
+  .mar {
+    width: 100%;
+    height: 20vh;
+    background: #1E90FF;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Ondas animadas */
+  .onda {
+    position: absolute;
+    width: 200%;
+    height: 100%;
+    background: rgba(255,255,255,0.3);
+    border-radius: 50%;
+    bottom: 0;
+    animation: moverOnda 6s linear infinite;
+  }
+
+  @keyframes moverOnda {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* Areia */
+  .areia {
+    width: 100%;
+    height: 20vh;
+    background: #F4A460;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Praia Animada</h1>
+  <nav>
+    <ul>
+      <li><a href="#">Início</a></li>
+      <li><a href="#">Galeria</a></li>
+      <li><a href="#">Sobre</a></li>
+      <li><a href="#">Contato</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+  <h2>Bem-vindo à Praia Animada!</h2>
+  <p>
+    Desfrute de uma experiência relaxante com o sol, o mar e a areia. 
+    Navegue pelo nosso site para ver galerias, aprender mais sobre a praia e descobrir dicas de lazer.
+  </p>
+
+  <div class="galeria">
+    <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e" alt="Praia 1">
+    <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb" alt="Praia 2">
+    <img src="https://images.unsplash.com/photo-1493558103817-58b2924bce98" alt="Praia 3">
+    <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e" alt="Praia 4">
+  </div>
+</main>
+
+<div class="ceu">
+  <div class="sol"></div>
+</div>
+
+<div class="mar">
+  <div class="onda"></div>
+</div>
+
+<div class="areia"></div>
+
+<script>
+  const sol = document.querySelector('.sol');
+  let posX = 50;
+  let posY = 40;
+  let direction = 1;
+
+  function animarSol() {
+    posX += 0.5 * direction;
+    if(posX > window.innerWidth - 120 || posX < 0){
+      direction *= -1;
+    }
+    posY = 100 * Math.sin((posX / window.innerWidth) * Math.PI) + 50;
+
+    sol.style.left = posX + 'px';
+    sol.style.top = posY + 'px';
+
+    requestAnimationFrame(animarSol);
+  }
+
+  animarSol();
+</script>
+
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Praia Animada</title>
+<style>
+  body {
+    margin: 0;
+    overflow-x: hidden;
+    font-family: Arial, sans-serif;
+  }
+
+  /* Header com nav */
+  header {
+    width: 100%;
+    height: 60px;
+    background-color: rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    position: fixed;
+    top: 0;
+    z-index: 10;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  }
+
+  header h1 {
+    margin: 0;
+    font-size: 24px;
+    color: #333;
+  }
+
+  nav ul {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+  }
+
+  nav ul li {
+    margin-left: 20px;
+  }
+
+  nav ul li a {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+    transition: color 0.3s;
+  }
+
+  nav ul li a:hover {
+    color: #FFA500;
+  }
+
+  /* Main */
+  main {
+    margin-top: 60px;
+    padding: 20px;
+    background: #E0FFFF;
+    text-align: center;
+  }
+
+  main h2 {
+    color: #333;
+  }
+
+  main p {
+    color: #555;
+    max-width: 600px;
+    margin: 10px auto 30px auto;
+    line-height: 1.6;
+  }
+
+  /* Span destacado */
+  .destaque {
+    color: #FFA500;
+    font-weight: bold;
+  }
+
+  /* Galeria de imagens */
+  .galeria {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  .galeria img {
+    width: 250px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    transition: transform 0.3s;
+  }
+
+  .galeria img:hover {
+    transform: scale(1.05);
+  }
+
+  /* Céu */
+  .ceu {
+    width: 100%;
+    height: 60vh;
+    background: linear-gradient(to bottom, #87CEEB, #FFD700);
+    position: relative;
+  }
+
+  /* Sol */
+  .sol {
+    width: 120px;
+    height: 120px;
+    background: radial-gradient(circle, #FFD700, #FFA500);
+    border-radius: 50%;
+    position: absolute;
+    top: 40px;
+    left: 50px;
+    box-shadow: 0 0 60px rgba(255, 215, 0, 0.9);
+  }
+
+  /* Mar */
+  .mar {
+    width: 100%;
+    height: 20vh;
+    background: #1E90FF;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Ondas animadas */
+  .onda {
+    position: absolute;
+    width: 200%;
+    height: 100%;
+    background: rgba(255,255,255,0.3);
+    border-radius: 50%;
+    bottom: 0;
+    animation: moverOnda 6s linear infinite;
+  }
+
+  @keyframes moverOnda {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* Areia */
+  .areia {
+    width: 100%;
+    height: 20vh;
+    background: #F4A460;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Praia Animada</h1>
+  <nav>
+    <ul>
+      <li><a href="#">Início</a></li>
+      <li><a href="#">Galeria</a></li>
+      <li><a href="#">Sobre</a></li>
+      <li><a href="#">Contato</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+  <h2>Bem-vindo à Praia Animada!</h2>
+  <p>
+    Desfrute de uma experiência relaxante com o 
+    <span class="destaque">sol</span>, o 
+    <span class="destaque">mar</span> e a 
+    <span class="destaque">areia</span>. Navegue pelo nosso site para ver galerias, aprender mais sobre a praia e descobrir dicas de lazer.
+  </p>
+
+  <div class="galeria">
+    <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e" alt="Praia 1">
+    <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb" alt="Praia 2">
+    <img src="https://images.unsplash.com/photo-1493558103817-58b2924bce98" alt="Praia 3">
+    <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e" alt="Praia 4">
+  </div>
+</main>
+
+<div class="ceu">
+  <div class="sol"></div>
+</div>
+
+<div class="mar">
+  <div class="onda"></div>
+</div>
+
+<div class="areia"></div>
+
+<script>
+  const sol = document.querySelector('.sol');
+  let posX = 50;
+  let posY = 40;
+  let direction = 1;
+
+  function animarSol() {
+    posX += 0.5 * direction;
+    if(posX > window.innerWidth - 120 || posX < 0){
+      direction *= -1;
+    }
+    posY = 100 * Math.sin((posX / window.innerWidth) * Math.PI) + 50;
+
+    sol.style.left = posX + 'px';
+    sol.style.top = posY + 'px';
+
+    requestAnimationFrame(animarSol);
+  }
+
+  animarSol();
+</script>
+
+</body>
+</html>
