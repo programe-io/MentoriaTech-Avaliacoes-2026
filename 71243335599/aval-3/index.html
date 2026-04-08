@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Jogo da Velha</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+    h1 {
+      margin-top: 20px;
+    }
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      gap: 5px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+    .cell {
+      width: 100px;
+      height: 100px;
+      font-size: 2em;
+      cursor: pointer;
+      background-color: #f0f0f0;
+      border: 1px solid #333;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .cell:hover {
+      background-color: #ddd;
+    }
+    #status {
+      margin-top: 20px;
+      font-size: 1.2em;
+    }
+    button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      font-size: 1em;
+    }
+  </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+  <h1>Jogo da Velha</h1>
+
+  <div class="board" id="board"></div>
+
+  <div id="status">Vez do jogador X</div>
+  <button onclick="resetGame()">Reiniciar</button>
+
+  <script>
+    const board = document.getElementById("board");
+    const statusText = document.getElementById("status");
+
+    let currentPlayer = "X";
+    let cells = ["", "", "", "", "", "", "", "", ""];
+    let gameActive = true;
+
+    function createBoard() {
+      board.innerHTML = "";
+      cells.forEach((cell, index) => {
+        const div = document.createElement("div");
+        div.classList.add("cell");
+        div.addEventListener("click", () => makeMove(index));
+        div.textContent = cell;
+        board.appendChild(div);
+      });
+    }
+
+    function makeMove(index) {
+      if (cells[index] !== "" || !gameActive) return;
+
+      cells[index] = currentPlayer;
+      checkWinner();
+      currentPlayer = currentPlayer === "X" ? "O" : "X";
+      statusText.textContent = `Vez do jogador ${currentPlayer}`;
+      createBoard();
+    }
+
+    function checkWinner() {
+      const winPatterns = [
+        [0,1,2],[3,4,5],[6,7,8],
+        [0,3,6],[1,4,7],[2,5,8],
+        [0,4,8],[2,4,6]
+      ];
+
+      for (let pattern of winPatterns) {
+        const [a, b, c] = pattern;
+        if (cells[a] && cells[a] === cells[b] && cells[a] === cells[c]) {
+          statusText.textContent = `Jogador ${cells[a]} venceu!`;
+          gameActive = false;
+          return;
+        }
+      }
+
+      if (!cells.includes("")) {
+        statusText.textContent = "Empate!";
+        gameActive = false;
+      }
+    }
+
+    function resetGame() {
+      cells = ["", "", "", "", "", "", "", "", ""];
+      currentPlayer = "X";
+      gameActive = true;
+      statusText.textContent = "Vez do jogador X";
+      createBoard();
+    }
+
+    createBoard();
+  </script>
+
+<script src="script.js"></script></body>
+</html>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Jogo da Velha</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <h1>🎮 Jogo da Velha</h1>
+    <p>Divirta-se jogando contra outro jogador!</p>
+  </header>
+
+  <!-- STATUS -->
+  <div id="status">Vez do jogador X</div>
+
+  <!-- TABULEIRO -->
+  <div class="board">
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+  </div>
+
+  <!-- BOTÃO REINICIAR -->
+  <button onclick="resetGame()">Reiniciar</button>
+
+  <script src="script.js"></script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Jogo da Velha</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <h1>🎮 Jogo da Velha</h1>
+    <p>Divirta-se jogando contra outro jogador!</p>
+  </header>
+
+  <!-- NAV -->
+  <nav>
+    <ul class="menu">
+      <li><a href="#">Início</a></li>
+      <li><a href="#">Regras</a></li>
+      <li><a href="#">Sobre</a></li>
+    </ul>
+  </nav>
+
+  <!-- STATUS -->
+  <div id="status">Vez do jogador X</div>
+
+  <!-- TABULEIRO -->
+  <div class="board">
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+  </div>
+
+  <!-- BOTÃO REINICIAR -->
+  <button onclick="resetGame()">Reiniciar</button>
+
+  <script src="script.js"></script>
+</body>
+</html>
+/* Menu de navegação */
+nav {
+  margin-bottom: 20px;
+}
+
+nav ul.menu {
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  padding: 0;
+}
+
+nav ul.menu li a {
+  text-decoration: none;
+  color: #4facfe;
+  font-weight: bold;
+  padding: 8px 15px;
+  border-radius: 5px;
+  transition: 0.3s;
+}
+
+nav ul.menu li a:hover {
+  background-color: #4facfe;
+  color: white;
+}<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Jogo da Velha</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <h1>🎮 Jogo da Velha</h1>
+    <p>Divirta-se jogando contra outro jogador!</p>
+  </header>
+
+  <!-- NAV -->
+  <nav>
+    <ul class="menu">
+      <li><a href="#">Início</a></li>
+      <li><a href="#">Regras</a></li>
+      <li><a href="#">Sobre</a></li>
+    </ul>
+  </nav>
+
+  <!-- CONTEÚDO PRINCIPAL -->
+  <main>
+    <!-- STATUS -->
+    <div id="status">Vez do jogador X</div>
+
+    <!-- TABULEIRO -->
+    <div class="board">
+      <div class="cell"></div>
+      <div class="cell"></div>
+      <div class="cell"></div>
+      <div class="cell"></div>
+      <div class="cell"></div>
+      <div class="cell"></div>
+      <div class="cell"></div>
+      <div class="cell"></div>
+      <div class="cell"></div>
+    </div>
+
+    <!-- BOTÃO REINICIAR -->
+    <button onclick="resetGame()">Reiniciar</button>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Jogo da Velha</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <h1>🎮 Jogo da Velha</h1>
+    <p>Divirta-se jogando contra outro jogador!</p>
+    <!-- IMAGEM NO HEADER -->
+    <img src="logo.png" alt="Logo do Jogo da Velha" class="header-img">
+  </header>
+
+  <!-- NAV -->
+  <nav>
+    <ul class="menu">
+      <li><a href="#">Início</a></li>
+      <li><a href="#">Regras</a></li>
+      <li><a href="#">Sobre</a></li>
+    </ul>
+  </nav>
+
+  <!-- CONTEÚDO PRINCIPAL -->
+  <main>
+    <!-- STATUS -->
+    <div id="status">Vez do jogador X</div>
+
+    <!-- TABULEIRO -->
+    <div class="board">
+      <div class="cell"></div>
+      <div class="cell"></div>
+      <div class="cell"></div>
+      <div class="cell"></div>
+      <div class="cell"></div>
+      <div class="cell"></div>
+      <div class="cell"></div>
+      <div class="cell"></div>
+      <div class="cell"></div>
+    </div>
+
+    <!-- BOTÃO REINICIAR -->
+    <button onclick="resetGame()">Reiniciar</button>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Jogo da Velha</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <h1>🎮 Jogo da Velha</h1>
+    <p>Divirta-se jogando contra outro jogador!</p>
+    <img src="logo.png" alt="Logo do Jogo da Velha" class="header-img">
+  </header>
+
+  <!-- NAV -->
+  <nav>
+    <ul class="menu">
+      <li><a href="#">Início</a></li>
+      <li><a href="#">Regras</a></li>
+      <li><a href="#">Sobre</a></li>
+    </ul>
+  </nav>
+
+  <!-- CONTEÚDO PRINCIPAL -->
+  <main>
+    <!-- SUBTÍTULO -->
+    <h2>🏁 Seção do Jogo</h2>
+
+    <!-- STATUS -->
+    <div id="status">Vez do jogador X</div>
+
+    <!-- TABULEIRO -->
+    <div class="board">
+      <div class="cell"></div>
+      <div class="cell"></div>
+      <div class="cell"></div>
+      <div class="cell"></div>
+      <div class="cell"></div>
+      <div class="cell"></div>
+      <div class="cell"></div>
+      <div class="cell"></div>
+      <div class="cell"></div>
+    </div>
+
+    <!-- BOTÃO REINICIAR -->
+    <button onclick="resetGame()">Reiniciar</button>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Jogo da Velha</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <h1>🎮 Jogo da Velha</h1>
+    <p>Divirta-se jogando contra outro jogador!</p>
+    <img src="logo.png" alt="Logo do Jogo da Velha" class="header-img">
+  </header>
+
+  <!-- NAV -->
+  <nav>
+    <ul class="menu">
+      <li><a href="#">Início</a></li>
+      <li><a href="#">Regras</a></li>
+      <li><a href="#">Sobre</a></li>
+    </ul>
+  </nav>
+
+  <!-- CONTEÚDO PRINCIPAL -->
+  <main>
+    <!-- SUBTÍTULO -->
+    <h2>🏁 Seção do Jogo</h2>
+
+    <!-- STATUS -->
+    <div id="status">Vez do jogador <span id="current-player">X</span></div>
+
+    <!-- TABULEIRO -->
+    <div class="board">
+      <div class="cell"></div>
+      <div class="cell"></div>
+      <div class="cell"></div>
+      <div class="cell"></div>
+      <div class="cell"></div>
+      <div class="cell"></div>
+      <div class="cell"></div>
+      <div class="cell"></div>
+      <div class="cell"></div>
+    </div>
+
+    <!-- BOTÃO REINICIAR -->
+    <button onclick="resetGame()">Reiniciar</button>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
