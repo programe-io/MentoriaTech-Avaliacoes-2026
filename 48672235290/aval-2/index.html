@@ -1,1793 +1,468 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-<meta charset="UTF-8">
-<title>Sistema Solar</title>
+  <meta charset="UTF-8">
+  <title>Jogo da Velha</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
 
-<style>
-  body {
-    margin: 0;
-    background: black;
-    overflow: hidden;
-  }
+    h1 {
+      margin-top: 20px;
+    }
 
-  .sol {
-    width: 80px;
-    height: 80px;
-    background: yellow;
-    border-radius: 50%;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    box-shadow: 0 0 40px yellow;
-  }
+    .tabuleiro {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      gap: 5px;
+      justify-content: center;
+      margin-top: 20px;
+    }
 
-  .orbita {
-    position: absolute;
-    border: 1px dashed rgba(255,255,255,0.2);
-    border-radius: 50%;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
+    .celula {
+      width: 100px;
+      height: 100px;
+      font-size: 2em;
+      cursor: pointer;
+      background: #f0f0f0;
+      border: 2px solid #333;
+    }
 
-  .planeta {
-    position: absolute;
-    border-radius: 50%;
-    top: 50%;
-    left: 100%;
-    transform: translate(-50%, -50%);
-  }
+    .celula:hover {
+      background: #ddd;
+    }
 
-  /* Órbitas */
-  .mercurio { width: 120px; height: 120px; animation: girar 4s linear infinite; }
-  .venus    { width: 170px; height: 170px; animation: girar 7s linear infinite; }
-  .terra    { width: 230px; height: 230px; animation: girar 10s linear infinite; }
-  .marte    { width: 300px; height: 300px; animation: girar 15s linear infinite; }
+    #status {
+      margin-top: 20px;
+      font-size: 1.2em;
+    }
 
-  /* Planetas */
-  .mercurio .planeta { width: 8px; height: 8px; background: gray; }
-  .venus .planeta    { width: 12px; height: 12px; background: orange; }
-  .terra .planeta    { width: 14px; height: 14px; background: blue; }
-  .marte .planeta    { width: 10px; height: 10px; background: red; }
-
-  @keyframes girar {
-    from { transform: translate(-50%, -50%) rotate(0deg); }
-    to   { transform: translate(-50%, -50%) rotate(360deg); }
-  }
-</style>
+    button {
+      margin-top: 15px;
+      padding: 10px 15px;
+      font-size: 1em;
+    }
+  </style>
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="style.css" rel="stylesheet"></head>
-
 <body>
 
-<div class="sol"></div>
+  <h1>Jogo da Velha</h1>
 
-<div class="orbita mercurio">
-  <div class="planeta"></div>
-</div>
+  <div class="tabuleiro" id="tabuleiro"></div>
 
-<div class="orbita venus">
-  <div class="planeta"></div>
-</div>
+  <div id="status">Vez do jogador X</div>
+  <button onclick="reiniciar()">Reiniciar</button>
 
-<div class="orbita terra">
-  <div class="planeta"></div>
-</div>
+  <script>
+    const tabuleiro = document.getElementById("tabuleiro");
+    const status = document.getElementById("status");
 
-<div class="orbita marte">
-  <div class="planeta"></div>
-</div>
+    let jogador = "X";
+    let jogo = ["", "", "", "", "", "", "", "", ""];
+    let ativo = true;
+
+    function criarTabuleiro() {
+      tabuleiro.innerHTML = "";
+      jogo.forEach((valor, index) => {
+        const celula = document.createElement("div");
+        celula.classList.add("celula");
+        celula.innerText = valor;
+        celula.addEventListener("click", () => jogar(index));
+        tabuleiro.appendChild(celula);
+      });
+    }
+
+    function jogar(index) {
+      if (jogo[index] !== "" || !ativo) return;
+
+      jogo[index] = jogador;
+      criarTabuleiro();
+
+      if (verificarVitoria()) {
+        status.innerText = `Jogador ${jogador} venceu!`;
+        ativo = false;
+        return;
+      }
+
+      if (!jogo.includes("")) {
+        status.innerText = "Empate!";
+        ativo = false;
+        return;
+      }
+
+      jogador = jogador === "X" ? "O" : "X";
+      status.innerText = `Vez do jogador ${jogador}`;
+    }
+
+    function verificarVitoria() {
+      const combinacoes = [
+        [0,1,2], [3,4,5], [6,7,8],
+        [0,3,6], [1,4,7], [2,5,8],
+        [0,4,8], [2,4,6]
+      ];
+
+      return combinacoes.some(comb => {
+        const [a, b, c] = comb;
+        return jogo[a] && jogo[a] === jogo[b] && jogo[a] === jogo[c];
+      });
+    }
+
+    function reiniciar() {
+      jogo = ["", "", "", "", "", "", "", "", ""];
+      jogador = "X";
+      ativo = true;
+      status.innerText = "Vez do jogador X";
+      criarTabuleiro();
+    }
+
+    criarTabuleiro();
+  </script>
 
 <script src="script.js"></script></body>
 </html>
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-<meta charset="UTF-8">
-<title>Sistema Solar</title>
-
-<style>
-  body {
-    margin: 0;
-    background: black;
-    overflow: hidden;
-    font-family: Arial, sans-serif;
-  }
-
-  /* HEADER */
-  header {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    background: rgba(0,0,0,0.7);
-    color: white;
-    text-align: center;
-    padding: 15px;
-    font-size: 22px;
-    letter-spacing: 2px;
-    z-index: 10;
-  }
-
-  canvas {
-    display: block;
-  }
-</style>
+  <meta charset="UTF-8">
+  <title>Jogo da Velha</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-<header>
-  🌌 Sistema Solar Interativo
-</header>
+  <!-- Header -->
+  <header>
+    <h1>Jogo da Velha</h1>
+    <p>Vez do jogador: <span id="player">X</span></p>
+  </header>
 
-<canvas id="espaco"></canvas>
+  <!-- Tabuleiro -->
+  <div class="game">
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+  </div>
 
-<script>
-const canvas = document.getElementById("espaco");
-const ctx = canvas.getContext("2d");
+  <!-- Botão -->
+  <button onclick="resetGame()">Reiniciar</button>
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-
-const centroX = canvas.width / 2;
-const centroY = canvas.height / 2;
-
-// Planetas
-const planetas = [
-  { nome: "Mercúrio", raio: 60, tamanho: 4, cor: "gray", velocidade: 0.04 },
-  { nome: "Vênus", raio: 90, tamanho: 6, cor: "orange", velocidade: 0.03 },
-  { nome: "Terra", raio: 130, tamanho: 7, cor: "blue", velocidade: 0.02 },
-  { nome: "Marte", raio: 170, tamanho: 6, cor: "red", velocidade: 0.015 },
-  { nome: "Júpiter", raio: 220, tamanho: 12, cor: "#d2b48c", velocidade: 0.01 },
-  { nome: "Saturno", raio: 280, tamanho: 10, cor: "#deb887", velocidade: 0.008 }
-];
-
-planetas.forEach(p => p.angulo = Math.random() * Math.PI * 2);
-
-function desenhar() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  // Sol
-  ctx.beginPath();
-  ctx.arc(centroX, centroY, 20, 0, Math.PI * 2);
-  ctx.fillStyle = "yellow";
-  ctx.fill();
-
-  planetas.forEach(p => {
-    // órbita
-    ctx.beginPath();
-    ctx.arc(centroX, centroY, p.raio, 0, Math.PI * 2);
-    ctx.strokeStyle = "rgba(255,255,255,0.1)";
-    ctx.stroke();
-
-    let x = centroX + Math.cos(p.angulo) * p.raio;
-    let y = centroY + Math.sin(p.angulo) * p.raio;
-
-    // planeta
-    ctx.beginPath();
-    ctx.arc(x, y, p.tamanho, 0, Math.PI * 2);
-    ctx.fillStyle = p.cor;
-    ctx.fill();
-
-    p.angulo += p.velocidade;
-  });
-
-  requestAnimationFrame(desenhar);
-}
-
-desenhar();
-
-window.addEventListener("resize", () => {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-});
-</script>
-
+  <script src="script.js"></script>
 </body>
 </html>
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-<meta charset="UTF-8">
-<title>Sistema Solar</title>
-
-<style>
-  body {
-    margin: 0;
-    background: black;
-    overflow: hidden;
-    font-family: Arial, sans-serif;
-  }
-
-  /* HEADER */
-  header {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    background: rgba(0,0,0,0.7);
-    color: white;
-    text-align: center;
-    padding: 10px;
-    z-index: 10;
-  }
-
-  header h1 {
-    margin: 0;
-    font-size: 22px;
-    letter-spacing: 2px;
-  }
-
-  canvas {
-    display: block;
-  }
-</style>
+  <meta charset="UTF-8">
+  <title>Jogo da Velha</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-<header>
-  <h1>🌌 Sistema Solar Interativo</h1>
-</header>
+  <!-- Header -->
+  <header>
+    <h1>Jogo da Velha</h1>
+    <p>Vez do jogador: <span id="player">X</span></p>
 
-<canvas id="espaco"></canvas>
+    <!-- Navegação -->
+    <nav>
+      <ul>
+        <li><a href="#">Início</a></li>
+        <li><a href="#">Regras</a></li>
+        <li><a href="#" onclick="resetGame()">Reiniciar</a></li>
+      </ul>
+    </nav>
+  </header>
 
-<script>
-const canvas = document.getElementById("espaco");
-const ctx = canvas.getContext("2d");
+  <!-- Tabuleiro -->
+  <div class="game">
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+  </div>
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-
-const centroX = canvas.width / 2;
-const centroY = canvas.height / 2;
-
-// Planetas
-const planetas = [
-  { nome: "Mercúrio", raio: 60, tamanho: 4, cor: "gray", velocidade: 0.04 },
-  { nome: "Vênus", raio: 90, tamanho: 6, cor: "orange", velocidade: 0.03 },
-  { nome: "Terra", raio: 130, tamanho: 7, cor: "blue", velocidade: 0.02 },
-  { nome: "Marte", raio: 170, tamanho: 6, cor: "red", velocidade: 0.015 },
-  { nome: "Júpiter", raio: 220, tamanho: 12, cor: "#d2b48c", velocidade: 0.01 },
-  { nome: "Saturno", raio: 280, tamanho: 10, cor: "#deb887", velocidade: 0.008 }
-];
-
-planetas.forEach(p => p.angulo = Math.random() * Math.PI * 2);
-
-function desenhar() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  // Sol
-  ctx.beginPath();
-  ctx.arc(centroX, centroY, 20, 0, Math.PI * 2);
-  ctx.fillStyle = "yellow";
-  ctx.fill();
-
-  planetas.forEach(p => {
-    // órbita
-    ctx.beginPath();
-    ctx.arc(centroX, centroY, p.raio, 0, Math.PI * 2);
-    ctx.strokeStyle = "rgba(255,255,255,0.1)";
-    ctx.stroke();
-
-    let x = centroX + Math.cos(p.angulo) * p.raio;
-    let y = centroY + Math.sin(p.angulo) * p.raio;
-
-    // planeta
-    ctx.beginPath();
-    ctx.arc(x, y, p.tamanho, 0, Math.PI * 2);
-    ctx.fillStyle = p.cor;
-    ctx.fill();
-
-    p.angulo += p.velocidade;
-  });
-
-  requestAnimationFrame(desenhar);
-}
-
-desenhar();
-
-window.addEventListener("resize", () => {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-});
-</script>
-
+  <script src="script.js"></script>
 </body>
 </html>
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-<meta charset="UTF-8">
-<title>Sistema Solar</title>
-
-<style>
-  body {
-    margin: 0;
-    background: black;
-    overflow: hidden;
-    font-family: Arial, sans-serif;
-  }
-
-  /* HEADER */
-  header {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    background: rgba(0,0,0,0.7);
-    color: white;
-    text-align: center;
-    padding: 10px;
-    z-index: 10;
-  }
-
-  header h1 {
-    margin: 0;
-    font-size: 22px;
-    letter-spacing: 2px;
-  }
-
-  header p {
-    margin: 5px 0 0 0;
-    font-size: 14px;
-    color: #ccc;
-  }
-
-  canvas {
-    display: block;
-  }
-</style>
+  <meta charset="UTF-8">
+  <title>Jogo da Velha</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-<header>
-  <h1>🌌 Sistema Solar Interativo</h1>
-  <p>Veja os planetas orbitando o Sol em tempo real!</p>
-</header>
+  <!-- Header -->
+  <header>
+    <h1>Jogo da Velha</h1>
+    <p>Vez do jogador: <span id="player">X</span></p>
 
-<canvas id="espaco"></canvas>
+    <nav>
+      <ul>
+        <li><a href="#">Início</a></li>
+        <li><a href="#">Regras</a></li>
+        <li><a href="#" onclick="resetGame()">Reiniciar</a></li>
+      </ul>
+    </nav>
+  </header>
 
-<script>
-const canvas = document.getElementById("espaco");
-const ctx = canvas.getContext("2d");
+  <!-- Conteúdo principal -->
+  <main style="display: flex; justify-content: center; gap: 30px;">
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+    <!-- Tabuleiro -->
+    <div class="game">
+      <div class="cell"></div>
+      <div class="cell"></div>
+      <div class="cell"></div>
+      <div class="cell"></div>
+      <div class="cell"></div>
+      <div class="cell"></div>
+      <div class="cell"></div>
+      <div class="cell"></div>
+      <div class="cell"></div>
+    </div>
 
-const centroX = canvas.width / 2;
-const centroY = canvas.height / 2;
+    <!-- Aside (barra lateral) -->
+    <aside>
+      <h2>Informações</h2>
+      <p>Jogador X vs Jogador O</p>
 
-// Planetas
-const planetas = [
-  { nome: "Mercúrio", raio: 60, tamanho: 4, cor: "gray", velocidade: 0.04 },
-  { nome: "Vênus", raio: 90, tamanho: 6, cor: "orange", velocidade: 0.03 },
-  { nome: "Terra", raio: 130, tamanho: 7, cor: "blue", velocidade: 0.02 },
-  { nome: "Marte", raio: 170, tamanho: 6, cor: "red", velocidade: 0.015 },
-  { nome: "Júpiter", raio: 220, tamanho: 12, cor: "#d2b48c", velocidade: 0.01 },
-  { nome: "Saturno", raio: 280, tamanho: 10, cor: "#deb887", velocidade: 0.008 }
-];
+      <h3>Regras:</h3>
+      <ul>
+        <li>O jogo é para dois jogadores.</li>
+        <li>Vence quem alinhar 3 símbolos.</li>
+        <li>Pode ser na horizontal, vertical ou diagonal.</li>
+      </ul>
 
-planetas.forEach(p => p.angulo = Math.random() * Math.PI * 2);
+      <h3>Placar:</h3>
+      <p>X: 0</p>
+      <p>O: 0</p>
+    </aside>
 
-function desenhar() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  </main>
 
-  // Sol
-  ctx.beginPath();
-  ctx.arc(centroX, centroY, 20, 0, Math.PI * 2);
-  ctx.fillStyle = "yellow";
-  ctx.fill();
-
-  planetas.forEach(p => {
-    // órbita
-    ctx.beginPath();
-    ctx.arc(centroX, centroY, p.raio, 0, Math.PI * 2);
-    ctx.strokeStyle = "rgba(255,255,255,0.1)";
-    ctx.stroke();
-
-    let x = centroX + Math.cos(p.angulo) * p.raio;
-    let y = centroY + Math.sin(p.angulo) * p.raio;
-
-    // planeta
-    ctx.beginPath();
-    ctx.arc(x, y, p.tamanho, 0, Math.PI * 2);
-    ctx.fillStyle = p.cor;
-    ctx.fill();
-
-    p.angulo += p.velocidade;
-  });
-
-  requestAnimationFrame(desenhar);
-}
-
-desenhar();
-
-window.addEventListener("resize", () => {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-});
-</script>
-
+  <script src="script.js"></script>
 </body>
 </html>
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-<meta charset="UTF-8">
-<title>Sistema Solar</title>
-
-<style>
-  body {
-    margin: 0;
-    background: black;
-    overflow: hidden;
-    font-family: Arial, sans-serif;
-  }
-
-  /* HEADER */
-  header {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    background: rgba(0,0,0,0.85);
-    color: white;
-    text-align: center;
-    padding: 10px;
-    z-index: 10;
-  }
-
-  header h1 {
-    margin: 0;
-    font-size: 22px;
-    letter-spacing: 2px;
-  }
-
-  header p {
-    margin: 5px 0 10px 0;
-    font-size: 14px;
-    color: #ccc;
-  }
-
-  /* NAV */
-  nav {
-    margin-top: 5px;
-  }
-
-  nav a {
-    color: #fff;
-    text-decoration: none;
-    margin: 0 12px;
-    font-size: 14px;
-    transition: color 0.3s;
-  }
-
-  nav a:hover {
-    color: #ffcc00;
-  }
-
-  canvas {
-    display: block;
-  }
-</style>
+  <meta charset="UTF-8">
+  <title>Jogo da Velha</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-<header>
-  <h1>🌌 Sistema Solar Interativo</h1>
-  <p>Veja os planetas orbitando o Sol em tempo real!</p>
-  
-  <nav>
-    <a href="#mercurio">Mercúrio</a>
-    <a href="#venus">Vênus</a>
-    <a href="#terra">Terra</a>
-    <a href="#marte">Marte</a>
-    <a href="#jupiter">Júpiter</a>
-    <a href="#saturno">Saturno</a>
-  </nav>
-</header>
+  <!-- Header -->
+  <header>
+    <h1>Jogo da Velha</h1>
+    <p>Vez do jogador: <span id="player">X</span></p>
 
-<canvas id="espaco"></canvas>
+    <nav>
+      <ul>
+        <li><a href="#">Início</a></li>
+        <li><a href="#">Regras</a></li>
+        <li><a href="#" onclick="resetGame()">Reiniciar</a></li>
+      </ul>
+    </nav>
+  </header>
 
-<script>
-const canvas = document.getElementById("espaco");
-const ctx = canvas.getContext("2d");
+  <!-- Conteúdo principal -->
+  <main style="display: flex; justify-content: center; gap: 30px;">
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+    <!-- Article (conteúdo principal do jogo) -->
+    <article>
+      <h2>Tabuleiro</h2>
 
-const centroX = canvas.width / 2;
-const centroY = canvas.height / 2;
+      <div class="game">
+        <div class="cell"></div>
+        <div class="cell"></div>
+        <div class="cell"></div>
+        <div class="cell"></div>
+        <div class="cell"></div>
+        <div class="cell"></div>
+        <div class="cell"></div>
+        <div class="cell"></div>
+        <div class="cell"></div>
+      </div>
+    </article>
 
-// Planetas
-const planetas = [
-  { nome: "Mercúrio", raio: 60, tamanho: 4, cor: "gray", velocidade: 0.04 },
-  { nome: "Vênus", raio: 90, tamanho: 6, cor: "orange", velocidade: 0.03 },
-  { nome: "Terra", raio: 130, tamanho: 7, cor: "blue", velocidade: 0.02 },
-  { nome: "Marte", raio: 170, tamanho: 6, cor: "red", velocidade: 0.015 },
-  { nome: "Júpiter", raio: 220, tamanho: 12, cor: "#d2b48c", velocidade: 0.01 },
-  { nome: "Saturno", raio: 280, tamanho: 10, cor: "#deb887", velocidade: 0.008 }
-];
+    <!-- Aside -->
+    <aside>
+      <h2>Informações</h2>
+      <p>Jogador X vs Jogador O</p>
 
-planetas.forEach(p => p.angulo = Math.random() * Math.PI * 2);
+      <h3>Regras:</h3>
+      <ul>
+        <li>O jogo é para dois jogadores.</li>
+        <li>Vence quem alinhar 3 símbolos.</li>
+        <li>Horizontal, vertical ou diagonal.</li>
+      </ul>
 
-function desenhar() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+      <h3>Placar:</h3>
+      <p>X: 0</p>
+      <p>O: 0</p>
+    </aside>
 
-  // Sol
-  ctx.beginPath();
-  ctx.arc(centroX, centroY, 20, 0, Math.PI * 2);
-  ctx.fillStyle = "yellow";
-  ctx.fill();
+  </main>
 
-  planetas.forEach(p => {
-    // órbita
-    ctx.beginPath();
-    ctx.arc(centroX, centroY, p.raio, 0, Math.PI * 2);
-    ctx.strokeStyle = "rgba(255,255,255,0.1)";
-    ctx.stroke();
-
-    let x = centroX + Math.cos(p.angulo) * p.raio;
-    let y = centroY + Math.sin(p.angulo) * p.raio;
-
-    // planeta
-    ctx.beginPath();
-    ctx.arc(x, y, p.tamanho, 0, Math.PI * 2);
-    ctx.fillStyle = p.cor;
-    ctx.fill();
-
-    p.angulo += p.velocidade;
-  });
-
-  requestAnimationFrame(desenhar);
-}
-
-desenhar();
-
-window.addEventListener("resize", () => {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-});
-</script>
-
+  <script src="script.js"></script>
 </body>
 </html>
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-<meta charset="UTF-8">
-<title>Sistema Solar</title>
-
-<style>
-  body {
-    margin: 0;
-    background: black;
-    overflow: hidden;
-    font-family: Arial, sans-serif;
-  }
-
-  /* HEADER */
-  header {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    background: rgba(0,0,0,0.85);
-    color: white;
-    text-align: center;
-    padding: 10px;
-    z-index: 10;
-  }
-
-  header h1 {
-    margin: 0;
-    font-size: 22px;
-    letter-spacing: 2px;
-  }
-
-  header p {
-    margin: 5px 0 10px 0;
-    font-size: 14px;
-    color: #ccc;
-  }
-
-  /* NAV */
-  nav {
-    margin-top: 5px;
-  }
-
-  nav a {
-    color: #fff;
-    text-decoration: none;
-    margin: 0 12px;
-    font-size: 14px;
-    transition: color 0.3s;
-  }
-
-  nav a:hover {
-    color: #ffcc00;
-  }
-
-  /* ASIDE */
-  aside {
-    position: fixed;
-    right: 0;
-    top: 70px;
-    width: 220px;
-    height: calc(100% - 70px);
-    background: rgba(0,0,0,0.8);
-    color: white;
-    padding: 15px;
-    overflow-y: auto;
-    font-size: 14px;
-    box-shadow: -2px 0 5px rgba(0,0,0,0.5);
-  }
-
-  canvas {
-    display: block;
-  }
-</style>
+  <meta charset="UTF-8">
+  <title>Jogo da Velha</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-<header>
-  <h1>🌌 Sistema Solar Interativo</h1>
-  <p>Veja os planetas orbitando o Sol em tempo real!</p>
-  
-  <nav>
-    <a href="#mercurio">Mercúrio</a>
-    <a href="#venus">Vênus</a>
-    <a href="#terra">Terra</a>
-    <a href="#marte">Marte</a>
-    <a href="#jupiter">Júpiter</a>
-    <a href="#saturno">Saturno</a>
-  </nav>
-</header>
+  <!-- Header -->
+  <header>
+    <!-- Imagem do logo -->
+    <img src="logo.png" alt="Logo do Jogo da Velha" width="80" style="vertical-align: middle; margin-right: 15px;">
+    <h1 style="display: inline;">Jogo da Velha</h1>
+    <p>Vez do jogador: <span id="player">X</span></p>
 
-<aside>
-  <h2>Informações</h2>
-  <p><strong>Mercúrio:</strong> Menor planeta do Sistema Solar.</p>
-  <p><strong>Vênus:</strong> Planeta mais quente.</p>
-  <p><strong>Terra:</strong> Nosso planeta, com água e vida.</p>
-  <p><strong>Marte:</strong> Planeta vermelho, potencial para exploração.</p>
-  <p><strong>Júpiter:</strong> Maior planeta, gasoso.</p>
-  <p><strong>Saturno:</strong> Conhecido por seus anéis.</p>
-</aside>
+    <nav>
+      <ul>
+        <li><a href="#">Início</a></li>
+        <li><a href="#">Regras</a></li>
+        <li><a href="#" onclick="resetGame()">Reiniciar</a></li>
+      </ul>
+    </nav>
+  </header>
 
-<canvas id="espaco"></canvas>
+  <!-- Conteúdo principal -->
+  <main style="display: flex; justify-content: center; gap: 30px;">
 
-<script>
-const canvas = document.getElementById("espaco");
-const ctx = canvas.getContext("2d");
+    <!-- Article (conteúdo principal do jogo) -->
+    <article>
+      <h2>Tabuleiro</h2>
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+      <div class="game">
+        <div class="cell"></div>
+        <div class="cell"></div>
+        <div class="cell"></div>
+        <div class="cell"></div>
+        <div class="cell"></div>
+        <div class="cell"></div>
+        <div class="cell"></div>
+        <div class="cell"></div>
+        <div class="cell"></div>
+      </div>
+    </article>
 
-const centroX = canvas.width / 2;
-const centroY = canvas.height / 2;
+    <!-- Aside -->
+    <aside>
+      <h2>Informações</h2>
+      <!-- Imagem extra no aside -->
+      <img src="info.png" alt="Dica do Jogo" width="150" style="margin-bottom: 10px;">
+      <p>Jogador X vs Jogador O</p>
 
-// Planetas
-const planetas = [
-  { nome: "Mercúrio", raio: 60, tamanho: 4, cor: "gray", velocidade: 0.04 },
-  { nome: "Vênus", raio: 90, tamanho: 6, cor: "orange", velocidade: 0.03 },
-  { nome: "Terra", raio: 130, tamanho: 7, cor: "blue", velocidade: 0.02 },
-  { nome: "Marte", raio: 170, tamanho: 6, cor: "red", velocidade: 0.015 },
-  { nome: "Júpiter", raio: 220, tamanho: 12, cor: "#d2b48c", velocidade: 0.01 },
-  { nome: "Saturno", raio: 280, tamanho: 10, cor: "#deb887", velocidade: 0.008 }
-];
+      <h3>Regras:</h3>
+      <ul>
+        <li>O jogo é para dois jogadores.</li>
+        <li>Vence quem alinhar 3 símbolos.</li>
+        <li>Horizontal, vertical ou diagonal.</li>
+      </ul>
 
-planetas.forEach(p => p.angulo = Math.random() * Math.PI * 2);
+      <h3>Placar:</h3>
+      <p>X: 0</p>
+      <p>O: 0</p>
+    </aside>
 
-function desenhar() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  </main>
 
-  // Sol
-  ctx.beginPath();
-  ctx.arc(centroX, centroY, 20, 0, Math.PI * 2);
-  ctx.fillStyle = "yellow";
-  ctx.fill();
-
-  planetas.forEach(p => {
-    // órbita
-    ctx.beginPath();
-    ctx.arc(centroX, centroY, p.raio, 0, Math.PI * 2);
-    ctx.strokeStyle = "rgba(255,255,255,0.1)";
-    ctx.stroke();
-
-    let x = centroX + Math.cos(p.angulo) * p.raio;
-    let y = centroY + Math.sin(p.angulo) * p.raio;
-
-    // planeta
-    ctx.beginPath();
-    ctx.arc(x, y, p.tamanho, 0, Math.PI * 2);
-    ctx.fillStyle = p.cor;
-    ctx.fill();
-
-    p.angulo += p.velocidade;
-  });
-
-  requestAnimationFrame(desenhar);
-}
-
-desenhar();
-
-window.addEventListener("resize", () => {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-});
-</script>
-
+  <script src="script.js"></script>
 </body>
 </html>
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-<meta charset="UTF-8">
-<title>Sistema Solar</title>
-
-<style>
-  body {
-    margin: 0;
-    background: black;
-    overflow: hidden;
-    font-family: Arial, sans-serif;
-  }
-
-  /* HEADER */
-  header {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    background: rgba(0,0,0,0.85);
-    color: white;
-    text-align: center;
-    padding: 10px;
-    z-index: 10;
-  }
-
-  header h1 {
-    margin: 0;
-    font-size: 22px;
-    letter-spacing: 2px;
-  }
-
-  header p {
-    margin: 5px 0 10px 0;
-    font-size: 14px;
-    color: #ccc;
-  }
-
-  /* NAV */
-  nav {
-    margin-top: 5px;
-  }
-
-  nav a {
-    color: #fff;
-    text-decoration: none;
-    margin: 0 12px;
-    font-size: 14px;
-    transition: color 0.3s;
-  }
-
-  nav a:hover {
-    color: #ffcc00;
-  }
-
-  /* ASIDE */
-  aside {
-    position: fixed;
-    right: 0;
-    top: 70px;
-    width: 220px;
-    height: calc(100% - 70px);
-    background: rgba(0,0,0,0.8);
-    color: white;
-    padding: 15px;
-    overflow-y: auto;
-    font-size: 14px;
-    box-shadow: -2px 0 5px rgba(0,0,0,0.5);
-  }
-
-  aside h2 {
-    margin-top: 0;
-    font-size: 18px;
-    text-align: center;
-  }
-
-  aside h3 {
-    margin: 10px 0 5px 0;
-    font-size: 16px;
-    color: #ffcc00;
-  }
-
-  canvas {
-    display: block;
-  }
-</style>
+  <meta charset="UTF-8">
+  <title>Jogo da Velha</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-<header>
-  <h1>🌌 Sistema Solar Interativo</h1>
-  <p>Veja os planetas orbitando o Sol em tempo real!</p>
-  
-  <nav>
-    <a href="#mercurio">Mercúrio</a>
-    <a href="#venus">Vênus</a>
-    <a href="#terra">Terra</a>
-    <a href="#marte">Marte</a>
-    <a href="#jupiter">Júpiter</a>
-    <a href="#saturno">Saturno</a>
-  </nav>
-</header>
-
-<aside>
-  <h2>Informações dos Planetas</h2>
-
-  <h3>Mercúrio</h3>
-  <p>Menor planeta do Sistema Solar e mais próximo do Sol.</p>
-
-  <h3>Vênus</h3>
-  <p>Planeta mais quente, com atmosfera densa e cheia de nuvens.</p>
-
-  <h3>Terra</h3>
-  <p>Nosso planeta, com água, vida e clima variado.</p>
-
-  <h3>Marte</h3>
-  <p>Planeta vermelho, potencial para futuras missões humanas.</p>
-
-  <h3>Júpiter</h3>
-  <p>Maior planeta do Sistema Solar, gasoso e com grande mancha vermelha.</p>
-
-  <h3>Saturno</h3>
-  <p>Conhecido por seus impressionantes anéis de gelo e rocha.</p>
-</aside>
-
-<canvas id="espaco"></canvas>
-
-<script>
-const canvas = document.getElementById("espaco");
-const ctx = canvas.getContext("2d");
-
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-
-const centroX = canvas.width / 2;
-const centroY = canvas.height / 2;
-
-// Planetas
-const planetas = [
-  { nome: "Mercúrio", raio: 60, tamanho: 4, cor: "gray", velocidade: 0.04 },
-  { nome: "Vênus", raio: 90, tamanho: 6, cor: "orange", velocidade: 0.03 },
-  { nome: "Terra", raio: 130, tamanho: 7, cor: "blue", velocidade: 0.02 },
-  { nome: "Marte", raio: 170, tamanho: 6, cor: "red", velocidade: 0.015 },
-  { nome: "Júpiter", raio: 220, tamanho: 12, cor: "#d2b48c", velocidade: 0.01 },
-  { nome: "Saturno", raio: 280, tamanho: 10, cor: "#deb887", velocidade: 0.008 }
-];
-
-planetas.forEach(p => p.angulo = Math.random() * Math.PI * 2);
-
-function desenhar() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  // Sol
-  ctx.beginPath();
-  ctx.arc(centroX, centroY, 20, 0, Math.PI * 2);
-  ctx.fillStyle = "yellow";
-  ctx.fill();
-
-  planetas.forEach(p => {
-    // órbita
-    ctx.beginPath();
-    ctx.arc(centroX, centroY, p.raio, 0, Math.PI * 2);
-    ctx.strokeStyle = "rgba(255,255,255,0.1)";
-    ctx.stroke();
-
-    let x = centroX + Math.cos(p.angulo) * p.raio;
-    let y = centroY + Math.sin(p.angulo) * p.raio;
-
-    // planeta
-    ctx.beginPath();
-    ctx.arc(x, y, p.tamanho, 0, Math.PI * 2);
-    ctx.fillStyle = p.cor;
-    ctx.fill();
-
-    p.angulo += p.velocidade;
-  });
-
-  requestAnimationFrame(desenhar);
-}
-
-desenhar();
-
-window.addEventListener("resize", () => {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-});
-</script>
-
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<title>Sistema Solar</title>
-
-<style>
-  body {
-    margin: 0;
-    background: black;
-    overflow: hidden;
-    font-family: Arial, sans-serif;
-  }
-
-  /* HEADER */
-  header {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    background: rgba(0,0,0,0.85);
-    color: white;
-    text-align: center;
-    padding: 10px;
-    z-index: 10;
-  }
-
-  header h1 {
-    margin: 0;
-    font-size: 22px;
-    letter-spacing: 2px;
-  }
-
-  header p {
-    margin: 5px 0 10px 0;
-    font-size: 14px;
-    color: #ccc;
-  }
-
-  /* NAV */
-  nav {
-    margin-top: 5px;
-  }
-
-  nav a {
-    color: #fff;
-    text-decoration: none;
-    margin: 0 12px;
-    font-size: 14px;
-    transition: color 0.3s;
-  }
-
-  nav a:hover {
-    color: #ffcc00;
-  }
-
-  /* ASIDE */
-  aside {
-    position: fixed;
-    right: 0;
-    top: 70px;
-    width: 220px;
-    height: calc(100% - 70px);
-    background: rgba(0,0,0,0.8);
-    color: white;
-    padding: 15px;
-    overflow-y: auto;
-    font-size: 14px;
-    box-shadow: -2px 0 5px rgba(0,0,0,0.5);
-  }
-
-  aside h2 {
-    margin-top: 0;
-    font-size: 18px;
-    text-align: center;
-  }
-
-  aside h3 {
-    margin: 10px 0 5px 0;
-    font-size: 16px;
-    color: #ffcc00;
-  }
-
-  main {
-    margin-top: 70px; /* evita que o header cubra o canvas */
-  }
-
-  canvas {
-    display: block;
-  }
-</style>
-</head>
-
-<body>
-
-<header>
-  <h1>🌌 Sistema Solar Interativo</h1>
-  <p>Veja os planetas orbitando o Sol em tempo real!</p>
-  
-  <nav>
-    <a href="#mercurio">Mercúrio</a>
-    <a href="#venus">Vênus</a>
-    <a href="#terra">Terra</a>
-    <a href="#marte">Marte</a>
-    <a href="#jupiter">Júpiter</a>
-    <a href="#saturno">Saturno</a>
-  </nav>
-</header>
-
-<aside>
-  <h2>Informações dos Planetas</h2>
-
-  <h3>Mercúrio</h3>
-  <p>Menor planeta do Sistema Solar e mais próximo do Sol.</p>
-
-  <h3>Vênus</h3>
-  <p>Planeta mais quente, com atmosfera densa e cheia de nuvens.</p>
-
-  <h3>Terra</h3>
-  <p>Nosso planeta, com água, vida e clima variado.</p>
-
-  <h3>Marte</h3>
-  <p>Planeta vermelho, potencial para futuras missões humanas.</p>
-
-  <h3>Júpiter</h3>
-  <p>Maior planeta do Sistema Solar, gasoso e com grande mancha vermelha.</p>
-
-  <h3>Saturno</h3>
-  <p>Conhecido por seus impressionantes anéis de gelo e rocha.</p>
-</aside>
-
-<main>
-  <canvas id="espaco"></canvas>
-</main>
-
-<script>
-const canvas = document.getElementById("espaco");
-const ctx = canvas.getContext("2d");
-
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-
-const centroX = canvas.width / 2;
-const centroY = canvas.height / 2;
-
-// Planetas
-const planetas = [
-  { nome: "Mercúrio", raio: 60, tamanho: 4, cor: "gray", velocidade: 0.04 },
-  { nome: "Vênus", raio: 90, tamanho: 6, cor: "orange", velocidade: 0.03 },
-  { nome: "Terra", raio: 130, tamanho: 7, cor: "blue", velocidade: 0.02 },
-  { nome: "Marte", raio: 170, tamanho: 6, cor: "red", velocidade: 0.015 },
-  { nome: "Júpiter", raio: 220, tamanho: 12, cor: "#d2b48c", velocidade: 0.01 },
-  { nome: "Saturno", raio: 280, tamanho: 10, cor: "#deb887", velocidade: 0.008 }
-];
-
-planetas.forEach(p => p.angulo = Math.random() * Math.PI * 2);
-
-function desenhar() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  // Sol
-  ctx.beginPath();
-  ctx.arc(centroX, centroY, 20, 0, Math.PI * 2);
-  ctx.fillStyle = "yellow";
-  ctx.fill();
-
-  planetas.forEach(p => {
-    // órbita
-    ctx.beginPath();
-    ctx.arc(centroX, centroY, p.raio, 0, Math.PI * 2);
-    ctx.strokeStyle = "rgba(255,255,255,0.1)";
-    ctx.stroke();
-
-    let x = centroX + Math.cos(p.angulo) * p.raio;
-    let y = centroY + Math.sin(p.angulo) * p.raio;
-
-    // planeta
-    ctx.beginPath();
-    ctx.arc(x, y, p.tamanho, 0, Math.PI * 2);
-    ctx.fillStyle = p.cor;
-    ctx.fill();
-
-    p.angulo += p.velocidade;
-  });
-
-  requestAnimationFrame(desenhar);
-}
-
-desenhar();
-
-window.addEventListener("resize", () => {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-});
-</script>
-
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<title>Sistema Solar</title>
-
-<style>
-  body {
-    margin: 0;
-    background: black;
-    overflow: hidden;
-    font-family: Arial, sans-serif;
-  }
-
-  /* HEADER */
-  header {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    background: rgba(0,0,0,0.85);
-    color: white;
-    text-align: center;
-    padding: 10px;
-    z-index: 10;
-  }
-
-  header h1 {
-    margin: 0;
-    font-size: 22px;
-    letter-spacing: 2px;
-  }
-
-  header p {
-    margin: 5px 0 10px 0;
-    font-size: 14px;
-    color: #ccc;
-  }
-
-  /* NAV */
-  nav {
-    margin-top: 5px;
-  }
-
-  nav a {
-    color: #fff;
-    text-decoration: none;
-    margin: 0 12px;
-    font-size: 14px;
-    transition: color 0.3s;
-  }
-
-  nav a:hover {
-    color: #ffcc00;
-  }
-
-  /* ASIDE */
-  aside {
-    position: fixed;
-    right: 0;
-    top: 70px;
-    width: 240px;
-    height: calc(100% - 70px);
-    background: rgba(0,0,0,0.8);
-    color: white;
-    padding: 15px;
-    overflow-y: auto;
-    font-size: 14px;
-    box-shadow: -2px 0 5px rgba(0,0,0,0.5);
-  }
-
-  aside h2 {
-    margin-top: 0;
-    font-size: 18px;
-    text-align: center;
-  }
-
-  aside article {
-    margin-bottom: 15px;
-  }
-
-  aside h3 {
-    margin: 10px 0 5px 0;
-    font-size: 16px;
-    color: #ffcc00;
-  }
-
-  main {
-    margin-top: 70px; /* evita que o header cubra o canvas */
-  }
-
-  canvas {
-    display: block;
-  }
-</style>
-</head>
-
-<body>
-
-<header>
-  <h1>🌌 Sistema Solar Interativo</h1>
-  <p>Veja os planetas orbitando o Sol em tempo real!</p>
-  
-  <nav>
-    <a href="#mercurio">Mercúrio</a>
-    <a href="#venus">Vênus</a>
-    <a href="#terra">Terra</a>
-    <a href="#marte">Marte</a>
-    <a href="#jupiter">Júpiter</a>
-    <a href="#saturno">Saturno</a>
-  </nav>
-</header>
-
-<aside>
-  <h2>Informações dos Planetas</h2>
-
-  <article id="mercurio">
-    <h3>Mercúrio</h3>
-    <p>Menor planeta do Sistema Solar e mais próximo do Sol.</p>
-  </article>
-
-  <article id="venus">
-    <h3>Vênus</h3>
-    <p>Planeta mais quente, com atmosfera densa e cheia de nuvens.</p>
-  </article>
-
-  <article id="terra">
-    <h3>Terra</h3>
-    <p>Nosso planeta, com água, vida e clima variado.</p>
-  </article>
-
-  <article id="marte">
-    <h3>Marte</h3>
-    <p>Planeta vermelho, potencial para futuras missões humanas.</p>
-  </article>
-
-  <article id="jupiter">
-    <h3>Júpiter</h3>
-    <p>Maior planeta do Sistema Solar, gasoso e com grande mancha vermelha.</p>
-  </article>
-
-  <article id="saturno">
-    <h3>Saturno</h3>
-    <p>Conhecido por seus impressionantes anéis de gelo e rocha.</p>
-  </article>
-</aside>
-
-<main>
-  <canvas id="espaco"></canvas>
-</main>
-
-<script>
-const canvas = document.getElementById("espaco");
-const ctx = canvas.getContext("2d");
-
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-
-const centroX = canvas.width / 2;
-const centroY = canvas.height / 2;
-
-// Planetas
-const planetas = [
-  { nome: "Mercúrio", raio: 60, tamanho: 4, cor: "gray", velocidade: 0.04 },
-  { nome: "Vênus", raio: 90, tamanho: 6, cor: "orange", velocidade: 0.03 },
-  { nome: "Terra", raio: 130, tamanho: 7, cor: "blue", velocidade: 0.02 },
-  { nome: "Marte", raio: 170, tamanho: 6, cor: "red", velocidade: 0.015 },
-  { nome: "Júpiter", raio: 220, tamanho: 12, cor: "#d2b48c", velocidade: 0.01 },
-  { nome: "Saturno", raio: 280, tamanho: 10, cor: "#deb887", velocidade: 0.008 }
-];
-
-planetas.forEach(p => p.angulo = Math.random() * Math.PI * 2);
-
-function desenhar() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  // Sol
-  ctx.beginPath();
-  ctx.arc(centroX, centroY, 20, 0, Math.PI * 2);
-  ctx.fillStyle = "yellow";
-  ctx.fill();
-
-  planetas.forEach(p => {
-    // órbita
-    ctx.beginPath();
-    ctx.arc(centroX, centroY, p.raio, 0, Math.PI * 2);
-    ctx.strokeStyle = "rgba(255,255,255,0.1)";
-    ctx.stroke();
-
-    let x = centroX + Math.cos(p.angulo) * p.raio;
-    let y = centroY + Math.sin(p.angulo) * p.raio;
-
-    // planeta
-    ctx.beginPath();
-    ctx.arc(x, y, p.tamanho, 0, Math.PI * 2);
-    ctx.fillStyle = p.cor;
-    ctx.fill();
-
-    p.angulo += p.velocidade;
-  });
-
-  requestAnimationFrame(desenhar);
-}
-
-desenhar();
-
-window.addEventListener("resize", () => {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-});
-</script>
-
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<title>Sistema Solar</title>
-
-<style>
-  body {
-    margin: 0;
-    background: black;
-    overflow: hidden;
-    font-family: Arial, sans-serif;
-  }
-
-  /* HEADER */
-  header {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    background: rgba(0,0,0,0.85);
-    color: white;
-    text-align: center;
-    padding: 10px;
-    z-index: 10;
-  }
-
-  header h1 {
-    margin: 0;
-    font-size: 22px;
-    letter-spacing: 2px;
-  }
-
-  header p {
-    margin: 5px 0 10px 0;
-    font-size: 14px;
-    color: #ccc;
-  }
-
-  /* NAV */
-  nav {
-    margin-top: 5px;
-  }
-
-  nav a {
-    color: #fff;
-    text-decoration: none;
-    margin: 0 12px;
-    font-size: 14px;
-    transition: color 0.3s;
-  }
-
-  nav a:hover {
-    color: #ffcc00;
-  }
-
-  /* ASIDE */
-  aside {
-    position: fixed;
-    right: 0;
-    top: 70px;
-    width: 240px;
-    height: calc(100% - 70px);
-    background: rgba(0,0,0,0.8);
-    color: white;
-    padding: 15px;
-    overflow-y: auto;
-    font-size: 14px;
-    box-shadow: -2px 0 5px rgba(0,0,0,0.5);
-  }
-
-  aside h2 {
-    margin-top: 0;
-    font-size: 18px;
-    text-align: center;
-  }
-
-  aside article {
-    margin-bottom: 15px;
-  }
-
-  aside h3 {
-    margin: 10px 0 5px 0;
-    font-size: 16px;
-    color: #ffcc00;
-  }
-
-  aside img {
-    width: 100%;
-    border-radius: 5px;
-    margin-bottom: 5px;
-  }
-
-  main {
-    margin-top: 70px; /* evita que o header cubra o canvas */
-  }
-
-  canvas {
-    display: block;
-  }
-</style>
-</head>
-
-<body>
-
-<header>
-  <h1>🌌 Sistema Solar Interativo</h1>
-  <p>Veja os planetas orbitando o Sol em tempo real!</p>
-  
-  <nav>
-    <a href="#mercurio">Mercúrio</a>
-    <a href="#venus">Vênus</a>
-    <a href="#terra">Terra</a>
-    <a href="#marte">Marte</a>
-    <a href="#jupiter">Júpiter</a>
-    <a href="#saturno">Saturno</a>
-  </nav>
-</header>
-
-<aside>
-  <h2>Informações dos Planetas</h2>
-
-  <article id="mercurio">
-    <h3>Mercúrio</h3>
-    <img src="https://upload.wikimedia.org/wikipedia/commons/4/4a/Mercury_in_true_color.jpg" alt="Mercúrio">
-    <p>Menor planeta do Sistema Solar e mais próximo do Sol.</p>
-  </article>
-
-  <article id="venus">
-    <h3>Vênus</h3>
-    <img src="https://upload.wikimedia.org/wikipedia/commons/e/e5/Venus-real_color.jpg" alt="Vênus">
-    <p>Planeta mais quente, com atmosfera densa e cheia de nuvens.</p>
-  </article>
-
-  <article id="terra">
-    <h3>Terra</h3>
-    <img src="https://upload.wikimedia.org/wikipedia/commons/9/97/The_Earth_seen_from_Apollo_17.jpg" alt="Terra">
-    <p>Nosso planeta, com água, vida e clima variado.</p>
-  </article>
-
-  <article id="marte">
-    <h3>Marte</h3>
-    <img src="https://upload.wikimedia.org/wikipedia/commons/0/02/OSIRIS_Mars_true_color.jpg" alt="Marte">
-    <p>Planeta vermelho, potencial para futuras missões humanas.</p>
-  </article>
-
-  <article id="jupiter">
-    <h3>Júpiter</h3>
-    <img src="https://upload.wikimedia.org/wikipedia/commons/e/e2/Jupiter.jpg" alt="Júpiter">
-    <p>Maior planeta do Sistema Solar, gasoso e com grande mancha vermelha.</p>
-  </article>
-
-  <article id="saturno">
-    <h3>Saturno</h3>
-    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c7/Saturn_during_Equinox.jpg" alt="Saturno">
-    <p>Conhecido por seus impressionantes anéis de gelo e rocha.</p>
-  </article>
-</aside>
-
-<main>
-  <canvas id="espaco"></canvas>
-</main>
-
-<script>
-const canvas = document.getElementById("espaco");
-const ctx = canvas.getContext("2d");
-
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-
-const centroX = canvas.width / 2;
-const centroY = canvas.height / 2;
-
-// Planetas
-const planetas = [
-  { nome: "Mercúrio", raio: 60, tamanho: 4, cor: "gray", velocidade: 0.04 },
-  { nome: "Vênus", raio: 90, tamanho: 6, cor: "orange", velocidade: 0.03 },
-  { nome: "Terra", raio: 130, tamanho: 7, cor: "blue", velocidade: 0.02 },
-  { nome: "Marte", raio: 170, tamanho: 6, cor: "red", velocidade: 0.015 },
-  { nome: "Júpiter", raio: 220, tamanho: 12, cor: "#d2b48c", velocidade: 0.01 },
-  { nome: "Saturno", raio: 280, tamanho: 10, cor: "#deb887", velocidade: 0.008 }
-];
-
-planetas.forEach(p => p.angulo = Math.random() * Math.PI * 2);
-
-function desenhar() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  // Sol
-  ctx.beginPath();
-  ctx.arc(centroX, centroY, 20, 0, Math.PI * 2);
-  ctx.fillStyle = "yellow";
-  ctx.fill();
-
-  planetas.forEach(p => {
-    // órbita
-    ctx.beginPath();
-    ctx.arc(centroX, centroY, p.raio, 0, Math.PI * 2);
-    ctx.strokeStyle = "rgba(255,255,255,0.1)";
-    ctx.stroke();
-
-    let x = centroX + Math.cos(p.angulo) * p.raio;
-    let y = centroY + Math.sin(p.angulo) * p.raio;
-
-    // planeta
-    ctx.beginPath();
-    ctx.arc(x, y, p.tamanho, 0, Math.PI * 2);
-    ctx.fillStyle = p.cor;
-    ctx.fill();
-
-    p.angulo += p.velocidade;
-  });
-
-  requestAnimationFrame(desenhar);
-}
-
-desenhar();
-
-window.addEventListener("resize", () => {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-});
-</script>
-
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<title>Sistema Solar</title>
-
-<style>
-  body {
-    margin: 0;
-    background: black;
-    overflow: hidden;
-    font-family: Arial, sans-serif;
-  }
-
-  /* HEADER */
-  header {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    background: rgba(0,0,0,0.85);
-    color: white;
-    text-align: center;
-    padding: 10px;
-    z-index: 10;
-  }
-
-  header h1 {
-    margin: 0;
-    font-size: 22px;
-    letter-spacing: 2px;
-  }
-
-  header p {
-    margin: 5px 0 10px 0;
-    font-size: 14px;
-    color: #ccc;
-  }
-
-  /* NAV */
-  nav {
-    margin-top: 5px;
-  }
-
-  nav a {
-    color: #fff;
-    text-decoration: none;
-    margin: 0 12px;
-    font-size: 14px;
-    transition: color 0.3s;
-  }
-
-  nav a:hover {
-    color: #ffcc00;
-  }
-
-  /* ASIDE */
-  aside {
-    position: fixed;
-    right: 0;
-    top: 70px;
-    width: 240px;
-    height: calc(100% - 140px); /* altura ajustada para footer */
-    background: rgba(0,0,0,0.8);
-    color: white;
-    padding: 15px;
-    overflow-y: auto;
-    font-size: 14px;
-    box-shadow: -2px 0 5px rgba(0,0,0,0.5);
-  }
-
-  aside h2 {
-    margin-top: 0;
-    font-size: 18px;
-    text-align: center;
-  }
-
-  aside article {
-    margin-bottom: 15px;
-  }
-
-  aside h3 {
-    margin: 10px 0 5px 0;
-    font-size: 16px;
-    color: #ffcc00;
-  }
-
-  aside img {
-    width: 100%;
-    border-radius: 5px;
-    margin-bottom: 5px;
-  }
-
-  /* MAIN */
-  main {
-    margin-top: 70px; /* evita que o header cubra o canvas */
-  }
-
-  canvas {
-    display: block;
-  }
-
-  /* FOOTER */
-  footer {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    background: rgba(0,0,0,0.85);
-    color: #ccc;
-    text-align: center;
-    padding: 8px;
-    font-size: 14px;
-    z-index: 10;
-    letter-spacing: 1px;
-  }
-</style>
-</head>
-
-<body>
-
-<header>
-  <h1>🌌 Sistema Solar Interativo</h1>
-  <p>Veja os planetas orbitando o Sol em tempo real!</p>
-  
-  <nav>
-    <a href="#mercurio">Mercúrio</a>
-    <a href="#venus">Vênus</a>
-    <a href="#terra">Terra</a>
-    <a href="#marte">Marte</a>
-    <a href="#jupiter">Júpiter</a>
-    <a href="#saturno">Saturno</a>
-  </nav>
-</header>
-
-<aside>
-  <h2>Informações dos Planetas</h2>
-
-  <article id="mercurio">
-    <h3>Mercúrio</h3>
-    <img src="https://upload.wikimedia.org/wikipedia/commons/4/4a/Mercury_in_true_color.jpg" alt="Mercúrio">
-    <p>Menor planeta do Sistema Solar e mais próximo do Sol.</p>
-  </article>
-
-  <article id="venus">
-    <h3>Vênus</h3>
-    <img src="https://upload.wikimedia.org/wikipedia/commons/e/e5/Venus-real_color.jpg" alt="Vênus">
-    <p>Planeta mais quente, com atmosfera densa e cheia de nuvens.</p>
-  </article>
-
-  <article id="terra">
-    <h3>Terra</h3>
-    <img src="https://upload.wikimedia.org/wikipedia/commons/9/97/The_Earth_seen_from_Apollo_17.jpg" alt="Terra">
-    <p>Nosso planeta, com água, vida e clima variado.</p>
-  </article>
-
-  <article id="marte">
-    <h3>Marte</h3>
-    <img src="https://upload.wikimedia.org/wikipedia/commons/0/02/OSIRIS_Mars_true_color.jpg" alt="Marte">
-    <p>Planeta vermelho, potencial para futuras missões humanas.</p>
-  </article>
-
-  <article id="jupiter">
-    <h3>Júpiter</h3>
-    <img src="https://upload.wikimedia.org/wikipedia/commons/e/e2/Jupiter.jpg" alt="Júpiter">
-    <p>Maior planeta do Sistema Solar, gasoso e com grande mancha vermelha.</p>
-  </article>
-
-  <article id="saturno">
-    <h3>Saturno</h3>
-    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c7/Saturn_during_Equinox.jpg" alt="Saturno">
-    <p>Conhecido por seus impressionantes anéis de gelo e rocha.</p>
-  </article>
-</aside>
-
-<main>
-  <canvas id="espaco"></canvas>
-</main>
-
-<footer>
-  © 2026 Sistema Solar Interativo - Desenvolvido por Você | Imagens de domínio público
-</footer>
-
-<script>
-const canvas = document.getElementById("espaco");
-const ctx = canvas.getContext("2d");
-
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-
-const centroX = canvas.width / 2;
-const centroY = canvas.height / 2;
-
-// Planetas
-const planetas = [
-  { nome: "Mercúrio", raio: 60, tamanho: 4, cor: "gray", velocidade: 0.04 },
-  { nome: "Vênus", raio: 90, tamanho: 6, cor: "orange", velocidade: 0.03 },
-  { nome: "Terra", raio: 130, tamanho: 7, cor: "blue", velocidade: 0.02 },
-  { nome: "Marte", raio: 170, tamanho: 6, cor: "red", velocidade: 0.015 },
-  { nome: "Júpiter", raio: 220, tamanho: 12, cor: "#d2b48c", velocidade: 0.01 },
-  { nome: "Saturno", raio: 280, tamanho: 10, cor: "#deb887", velocidade: 0.008 }
-];
-
-planetas.forEach(p => p.angulo = Math.random() * Math.PI * 2);
-
-function desenhar() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  // Sol
-  ctx.beginPath();
-  ctx.arc(centroX, centroY, 20, 0, Math.PI * 2);
-  ctx.fillStyle = "yellow";
-  ctx.fill();
-
-  planetas.forEach(p => {
-    // órbita
-    ctx.beginPath();
-    ctx.arc(centroX, centroY, p.raio, 0, Math.PI * 2);
-    ctx.strokeStyle = "rgba(255,255,255,0.1)";
-    ctx.stroke();
-
-    let x = centroX + Math.cos(p.angulo) * p.raio;
-    let y = centroY + Math.sin(p.angulo) * p.raio;
-
-    // planeta
-    ctx.beginPath();
-    ctx.arc(x, y, p.tamanho, 0, Math.PI * 2);
-    ctx.fillStyle = p.cor;
-    ctx.fill();
-
-    p.angulo += p.velocidade;
-  });
-
-  requestAnimationFrame(desenhar);
-}
-
-desenhar();
-
-window.addEventListener("resize", () => {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-});
-</script>
-
+  <!-- Header -->
+  <header>
+    <!-- Imagem do logo -->
+    <img src="logo.png" alt="Logo do Jogo da Velha" width="80" style="vertical-align: middle; margin-right: 15px;">
+    <h1 style="display: inline;">Jogo da Velha</h1>
+    <p>Vez do jogador: <span id="player">X</span></p>
+
+    <nav>
+      <ul>
+        <li><a href="#">Início</a></li>
+        <li><a href="#">Regras</a></li>
+        <li><a href="#" onclick="resetGame()">Reiniciar</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Conteúdo principal -->
+  <main style="display: flex; justify-content: center; gap: 30px;">
+
+    <!-- Article (conteúdo principal do jogo) -->
+    <article>
+      <h2>Tabuleiro</h2>
+
+      <div class="game">
+        <div class="cell"></div>
+        <div class="cell"></div>
+        <div class="cell"></div>
+        <div class="cell"></div>
+        <div class="cell"></div>
+        <div class="cell"></div>
+        <div class="cell"></div>
+        <div class="cell"></div>
+        <div class="cell"></div>
+      </div>
+    </article>
+
+    <!-- Aside -->
+    <aside>
+      <h2>Informações</h2>
+      <img src="info.png" alt="Dica do Jogo" width="150" style="margin-bottom: 10px;">
+      <p>Jogador X vs Jogador O</p>
+
+      <h3>Regras:</h3>
+      <ul>
+        <li>O jogo é para dois jogadores.</li>
+        <li>Vence quem alinhar 3 símbolos.</li>
+        <li>Horizontal, vertical ou diagonal.</li>
+      </ul>
+
+      <h3>Placar:</h3>
+      <p>X: 0</p>
+      <p>O: 0</p>
+    </aside>
+
+  </main>
+
+  <!-- Footer -->
+  <footer style="text-align: center; color: white; margin-top: 30px; padding: 15px; background: #1e1e2f;">
+    <p>&copy; 2026 Jogo da Velha. Todos os direitos reservados.</p>
+    <p>Desenvolvido por Você</p>
+  </footer>
+
+  <script src="script.js"></script>
 </body>
 </html>

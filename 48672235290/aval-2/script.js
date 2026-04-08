@@ -1,90 +1,66 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<title>Sistema Solar JS</title>
+const cells = document.querySelectorAll('.cell');
+let currentPlayer = 'X';
+let board = ["", "", "", "", "", "", "", "", ""];
+let gameActive = true;
 
-<style>
-  body {
-    margin: 0;
-    background: black;
-    overflow: hidden;
-  }
-
-  canvas {
-    display: block;
-  }
-</style>
-</head>
-
-<body>
-
-<canvas id="espaco"></canvas>
-
-<script>
-const canvas = document.getElementById("espaco");
-const ctx = canvas.getContext("2d");
-
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-
-const centroX = canvas.width / 2;
-const centroY = canvas.height / 2;
-
-// Planetas
-const planetas = [
-  { nome: "Mercúrio", raio: 60, tamanho: 4, cor: "gray", velocidade: 0.04 },
-  { nome: "Vênus", raio: 90, tamanho: 6, cor: "orange", velocidade: 0.03 },
-  { nome: "Terra", raio: 130, tamanho: 7, cor: "blue", velocidade: 0.02 },
-  { nome: "Marte", raio: 170, tamanho: 6, cor: "red", velocidade: 0.015 },
-  { nome: "Júpiter", raio: 220, tamanho: 12, cor: "#d2b48c", velocidade: 0.01 },
-  { nome: "Saturno", raio: 280, tamanho: 10, cor: "#deb887", velocidade: 0.008 }
+const winningConditions = [
+  [0,1,2],
+  [3,4,5],
+  [6,7,8],
+  [0,3,6],
+  [1,4,7],
+  [2,5,8],
+  [0,4,8],
+  [2,4,6]
 ];
 
-// Ângulo inicial
-planetas.forEach(p => p.angulo = Math.random() * Math.PI * 2);
+function handleClick(index) {
+  if (board[index] !== "" || !gameActive) return;
 
-function desenhar() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  board[index] = currentPlayer;
+  cells[index].textContent = currentPlayer;
+  cells[index].classList.add(currentPlayer.toLowerCase());
 
-  // Sol
-  ctx.beginPath();
-  ctx.arc(centroX, centroY, 20, 0, Math.PI * 2);
-  ctx.fillStyle = "yellow";
-  ctx.fill();
-
-  planetas.forEach(p => {
-    // órbita (linha)
-    ctx.beginPath();
-    ctx.arc(centroX, centroY, p.raio, 0, Math.PI * 2);
-    ctx.strokeStyle = "rgba(255,255,255,0.1)";
-    ctx.stroke();
-
-    // posição do planeta
-    let x = centroX + Math.cos(p.angulo) * p.raio;
-    let y = centroY + Math.sin(p.angulo) * p.raio;
-
-    // planeta
-    ctx.beginPath();
-    ctx.arc(x, y, p.tamanho, 0, Math.PI * 2);
-    ctx.fillStyle = p.cor;
-    ctx.fill();
-
-    // atualizar ângulo (movimento)
-    p.angulo += p.velocidade;
-  });
-
-  requestAnimationFrame(desenhar);
+  checkWinner();
 }
 
-desenhar();
+function checkWinner() {
+  let win = false;
 
-// Ajustar tela ao redimensionar
-window.addEventListener("resize", () => {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-});
-</script>
+  for (let condition of winningConditions) {
+    const [a, b, c] = condition;
+    if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+      win = true;
+      break;
+    }
+  }
 
-</body>
-</html>
+  if (win) {
+    alert(`Jogador ${currentPlayer} venceu!`);
+    gameActive = false;
+    return;
+  }
+
+  if (!board.includes("")) {
+    alert("Empate!");
+    gameActive = false;
+    return;
+  }
+
+  currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+}
+
+// Adiciona evento de clique em cada célula
+cells.forEach((cell, index) => {
+  cell.addEventListener('click', () => handleClick(index));
+});<button onclick="resetGame()">Reiniciar</button>
+function resetGame() {
+  board = ["", "", "", "", "", "", "", "", ""];
+  gameActive = true;
+  currentPlayer = 'X';
+
+  cells.forEach(cell => {
+    cell.textContent = "";
+    cell.classList.remove('x', 'o');
+  });
+}
