@@ -1,0 +1,86 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Jogo do Clique</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #111;
+      color: white;
+    }
+
+    h1 {
+      margin: 20px 0;
+    }
+
+    #gameArea {
+      width: 100%;
+      height: 80vh;
+      position: relative;
+      background: #222;
+      overflow: hidden;
+    }
+
+    .target {
+      width: 50px;
+      height: 50px;
+      background: red;
+      border-radius: 50%;
+      position: absolute;
+      cursor: pointer;
+    }
+
+    #score {
+      font-size: 20px;
+    }
+  </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+  <h1>🎯 Jogo do Clique</h1>
+  <p id="score">Pontos: 0</p>
+  <div id="gameArea"></div>
+
+  <script>
+    const gameArea = document.getElementById("gameArea");
+    const scoreDisplay = document.getElementById("score");
+
+    let score = 0;
+
+    function createTarget() {
+      const target = document.createElement("div");
+      target.classList.add("target");
+
+      const x = Math.random() * (gameArea.clientWidth - 50);
+      const y = Math.random() * (gameArea.clientHeight - 50);
+
+      target.style.left = x + "px";
+      target.style.top = y + "px";
+
+      target.onclick = () => {
+        score++;
+        scoreDisplay.textContent = "Pontos: " + score;
+        target.remove();
+      };
+
+      gameArea.appendChild(target);
+
+      // remove automaticamente depois de 1.5s
+      setTimeout(() => {
+        if (gameArea.contains(target)) {
+          target.remove();
+        }
+      }, 1500);
+    }
+
+    // cria um alvo a cada 1 segundo
+    setInterval(createTarget, 1000);
+  </script>
+
+<script src="script.js"></script></body>
+</html>
