@@ -1,84 +1,82 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Jogo do Clique</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      text-align: center;
-      background: #111;
-      color: white;
-    }
+<meta charset="UTF-8">
+<title>Jogo CSS</title>
+<style>
+body {
+  background: #111;
+  color: white;
+  text-align: center;
+  font-family: Arial;
+}
 
-    h1 {
-      margin: 20px 0;
-    }
+h1 {
+  margin-top: 20px;
+}
 
-    #gameArea {
-      width: 100%;
-      height: 80vh;
-      position: relative;
-      background: #222;
-      overflow: hidden;
-    }
+.game {
+  position: relative;
+  width: 300px;
+  height: 300px;
+  margin: 30px auto;
+  background: #222;
+  overflow: hidden;
+}
 
-    .target {
-      width: 50px;
-      height: 50px;
-      background: red;
-      border-radius: 50%;
-      position: absolute;
-      cursor: pointer;
-    }
+/* alvo */
+.target {
+  width: 60px;
+  height: 60px;
+  background: red;
+  border-radius: 50%;
+  position: absolute;
+  animation: move 3s infinite linear;
+  cursor: pointer;
+}
 
-    #score {
-      font-size: 20px;
-    }
-  </style>
+/* movimento */
+@keyframes move {
+  0% { top: 0; left: 0; }
+  25% { top: 0; left: 240px; }
+  50% { top: 240px; left: 240px; }
+  75% { top: 240px; left: 0; }
+  100% { top: 0; left: 0; }
+}
+
+/* esconder checkbox */
+input {
+  display: none;
+}
+
+/* quando clicar */
+input:checked + .target {
+  background: green;
+  animation: none;
+}
+
+/* mensagem */
+.message {
+  opacity: 0;
+  transition: 0.3s;
+}
+
+input:checked ~ .message {
+  opacity: 1;
+}
+</style>
 </head>
 <body>
 
-  <h1>🎯 Jogo do Clique</h1>
-  <p id="score">Pontos: 0</p>
-  <div id="gameArea"></div>
+<h1>🎯 Clique no alvo!</h1>
 
-  <script>
-    const gameArea = document.getElementById("gameArea");
-    const scoreDisplay = document.getElementById("score");
-
-    let score = 0;
-
-    function createTarget() {
-      const target = document.createElement("div");
-      target.classList.add("target");
-
-      const x = Math.random() * (gameArea.clientWidth - 50);
-      const y = Math.random() * (gameArea.clientHeight - 50);
-
-      target.style.left = x + "px";
-      target.style.top = y + "px";
-
-      target.onclick = () => {
-        score++;
-        scoreDisplay.textContent = "Pontos: " + score;
-        target.remove();
-      };
-
-      gameArea.appendChild(target);
-
-      // remove automaticamente depois de 1.5s
-      setTimeout(() => {
-        if (gameArea.contains(target)) {
-          target.remove();
-        }
-      }, 1500);
-    }
-
-    // cria um alvo a cada 1 segundo
-    setInterval(createTarget, 1000);
-  </script>
+<div class="game">
+  <label>
+    <input type="checkbox">
+    <div class="target"></div>
+    <p class="message">Acertou! 🎉</p>
+  </label>
+</div>
 
 </body>
 </html>

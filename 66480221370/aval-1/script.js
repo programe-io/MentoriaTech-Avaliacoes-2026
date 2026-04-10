@@ -1,86 +1,126 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Jogo do Clique</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      text-align: center;
-      background: #111;
-      color: white;
-    }
+<meta charset="UTF-8">
+<title>Desvie dos Inimigos</title>
+<style>
+body {
+  margin: 0;
+  background: black;
+  overflow: hidden;
+  font-family: Arial;
+  color: white;
+}
 
-    h1 {
-      margin: 20px 0;
-    }
+#game {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+}
 
-    #gameArea {
-      width: 100%;
-      height: 80vh;
-      position: relative;
-      background: #222;
-      overflow: hidden;
-    }
+.player {
+  width: 50px;
+  height: 50px;
+  background: lime;
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+}
 
-    .target {
-      width: 50px;
-      height: 50px;
-      background: red;
-      border-radius: 50%;
-      position: absolute;
-      cursor: pointer;
-    }
+.enemy {
+  width: 40px;
+  height: 40px;
+  background: red;
+  position: absolute;
+  top: 0;
+}
 
-    #score {
-      font-size: 20px;
-    }
-  </style>
+#score {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+}
+</style>
 </head>
 <body>
 
-  <h1>🎯 Jogo do Clique</h1>
-  <p id="score">Pontos: 0</p>
-  <div id="gameArea"></div>
+<div id="game">
+  <div id="player" class="player"></div>
+  <div id="score">Tempo: 0</div>
+</div>
 
-  <script>
-    const gameArea = document.getElementById("gameArea");
-    const scoreDisplay = document.getElementById("score");
+<script>
+const player = document.getElementById("player");
+const game = document.getElementById("game");
+const scoreDisplay = document.getElementById("score");
 
-    let score = 0;
+let playerX = window.innerWidth / 2;
+let speed = 7;
+let enemies = [];
+let time = 0;
+let gameOver = false;
 
-    function createTarget() {
-      const target = document.createElement("div");
-      target.classList.add("target");
+// movimento
+document.addEventListener("keydown", (e) => {
+  if (e.key === "ArrowLeft") playerX -= speed;
+  if (e.key === "ArrowRight") playerX += speed;
 
-      const x = Math.random() * (gameArea.clientWidth - 50);
-      const y = Math.random() * (gameArea.clientHeight - 50);
+  player.style.left = playerX + "px";
+});
 
-      target.style.left = x + "px";
-      target.style.top = y + "px";
+// criar inimigos
+function createEnemy() {
+  const enemy = document.createElement("div");
+  enemy.classList.add("enemy");
 
-      target.onclick = () => {
-        score++;
-        scoreDisplay.textContent = "Pontos: " + score;
-        target.remove();
-      };
+  enemy.style.left = Math.random() * window.innerWidth + "px";
 
-      gameArea.appendChild(target);
+  game.appendChild(enemy);
+  enemies.push(enemy);
+}
 
-      // remove automaticamente depois de 1.5s
-      setTimeout(() => {
-        if (gameArea.contains(target)) {
-          target.remove();
-        }
-      }, 1500);
+// loop do jogo
+function update() {
+  if (gameOver) return;
+
+  time++;
+  scoreDisplay.textContent = "Tempo: " + Math.floor(time / 10);
+
+  enemies.forEach((enemy, index) => {
+    let y = enemy.offsetTop + 5;
+    enemy.style.top = y + "px";
+
+    // colisão
+    const pRect = player.getBoundingClientRect();
+    const eRect = enemy.getBoundingClientRect();
+
+    if (
+      pRect.left < eRect.right &&
+      pRect.right > eRect.left &&
+      pRect.top < eRect.bottom &&
+      pRect.bottom > eRect.top
+    ) {
+      alert("Game Over! Tempo: " + Math.floor(time / 10));
+      gameOver = true;
     }
 
-    // cria um alvo a cada 1 segundo
-    setInterval(createTarget, 1000);
-  </script>
+    // remove inimigo fora da tela
+    if (y > window.innerHeight) {
+      enemy.remove();
+      enemies.splice(index, 1);
+    }
+  });
+
+  requestAnimationFrame(update);
+}
+
+// spawn inimigos
+setInterval(createEnemy, 800);
+
+// iniciar
+update();
+</script>
 
 </body>
 </html>
-
-
