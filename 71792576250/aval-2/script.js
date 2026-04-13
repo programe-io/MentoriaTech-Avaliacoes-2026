@@ -1,62 +1,73 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Lua com JavaScript</title>
+    <meta charset="UTF-8">
+    <title>Signo de Gêmeos com JavaScript</title>
 
-  <style>
-    body {
-      margin: 0;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      background: radial-gradient(circle, #000020, #000000);
-      font-family: Arial, sans-serif;
-      color: white;
-    \}
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #141e30, #243b55);
+            font-family: Arial, sans-serif;
+            color: white;
+        \}
 
-    .lua {
-      width: 180px;
-      height: 180px;
-      border-radius: 50%;
-      background-size: cover;
-      background-position: center;
-      box-shadow: 0 0 30px white;
-      border: 3px solid white;
-      transition: transform 0.5s;
-    \}
+        .card {
+            background: rgba(255,255,255,0.1);
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            width: 320px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.6);
+        \}
 
-    button {
-      margin-top: 20px;
-      padding: 10px 20px;
-      font-size: 16px;
-      cursor: pointer;
-      border: none;
-      border-radius: 8px;
-    \}
-  </style>
+        img {
+            width: 180px;
+            margin: 20px 0;
+        \}
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            background: #00c6ff;
+            color: black;
+            font-weight: bold;
+            cursor: pointer;
+        \}
+
+        button:hover {
+            background: #0072ff;
+            color: white;
+        \}
+    </style>
 </head>
-
 <body>
 
-  <h1>🌙 Lua com JavaScript</h1>
+    <div class="card">
+        <h1>♊ Gêmeos</h1>
 
-  <div class="lua" id="lua"></div>
+        <!-- Aqui a imagem será inserida -->
+        <div id="imagem"></div>
 
-  <button onclick="mostrarLua()">Mostrar Lua</button>
+        <p>Signo comunicativo, curioso e versátil.</p>
 
-  <script>
-    function mostrarLua() {
-      const lua = document.getElementById("lua");
+        <button onclick="mostrarImagem()">Mostrar imagem</button>
+    </div>
 
-      lua.style.backgroundImage =
-        "url('https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.jpg')";
+    <script>
+        function mostrarImagem() {
+            const div = document.getElementById("imagem");
 
-      lua.style.transform = "scale(1.1)";
-    \}
-  </script>
+            div.innerHTML = `
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Gemini_symbol.svg/512px-Gemini_symbol.svg.png" alt="Signo de Gêmeos">
+            `;
+        \}
+    </script>
 
 </body>
 </html>$0
