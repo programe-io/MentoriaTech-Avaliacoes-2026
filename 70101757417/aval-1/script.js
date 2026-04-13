@@ -1,37 +1,18 @@
-const senhaCorreta = "1234";
+let senhaCorreta = "1234";
 let tentativas = 3;
 
-function verificarSenha() {
-  let mensagem = document.getElementById("mensagem");
-    let input = document.getElementById("senha");
+function verificar() {
+  let senha = document.getElementById("senha").value;
+    let msg = document.getElementById("msg");
 
-      // Simulando lógica de repetição (como do/while)
-        if (tentativas > 0) {
-            let senhaDigitada = input.value;
+      if (senha === senhaCorreta) {
+          msg.innerText = "Bem-vindo!";
+            } else {
+                tentativas--;
+                    msg.innerText = "Erro! Restam " + tentativas;
 
-                if (senhaDigitada === senhaCorreta) {
-                      mensagem.style.color = "green";
-                            mensagem.textContent = "Bem-vindo! Acesso permitido.";
-                                  bloquearSistema();
-                                      } else {
-                                            tentativas--;
-
-                                                  if (tentativas > 0) {
-                                                          mensagem.style.color = "orange";
-                                                                  mensagem.textContent = `Senha incorreta! Restam ${tentativas} tentativa(s).`;
-                                                                        } else {
-                                                                                mensagem.style.color = "red";
-                                                                                        mensagem.textContent = "Acesso bloqueado!";
-                                                                                                bloquearSistema();
-                                                                                                      }
-                                                                                                          }
-                                                                                                            }
-
-                                                                                                              input.value = "";
-                                                                                                                input.focus();
-                                                                                                                }
-
-                                                                                                                function bloquearSistema() {
-                                                                                                                  document.querySelector("button").disabled = true;
-                                                                                                                    document.getElementById("senha").disabled = true;
-                                                                                                                    }
+                        if (tentativas === 0) {
+                              msg.innerText = "Acesso bloqueado!";
+                                  }
+                                    }
+                                    }
