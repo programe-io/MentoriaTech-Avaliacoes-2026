@@ -1,35 +1,22 @@
-// 1. Selecionando elementos do HTML
-const botao = document.querySelector('.btn-primary');
-const titulo = document.querySelector('h1');
-const container = document.querySelector('.card');
+// 1. Selecionamos os elementos que vamos manipular
+const botao = document.getElementById('botao');
+const lampada = document.getElementById('lampada');
+const titulo = document.getElementById('titulo');
 
-// 2. Adicionando um "Ouvinte de Eventos" (Event Listener)
+// 2. Criamos o evento de clique
 botao.addEventListener('click', () => {
-    // Altera o texto do título
-    titulo.innerText = "Mágica feita! ✨";
     
-    // Altera o estilo via JS
-    container.style.borderColor = "#6c5ce7";
-    container.style.borderWidth = "2px";
-    container.style.borderStyle = "solid";
+    // O método 'toggle' adiciona a classe se ela não existe, e remove se existe
+    lampada.classList.toggle('ligada');
 
-    // Chama uma função de saudação
-    mostrarSaudacaoPersonalizada();
-});
-
-// 3. Função com lógica e Template Strings
-function mostrarSaudacaoPersonalizada() {
-    const hora = new Date().getHours();
-    let saudacao = "";
-
-    if (hora < 12) {
-        saudacao = "Bom dia!";
-    } else if (hora < 18) {
-        saudacao = "Boa tarde!";
+    // 3. Mudamos o texto dependendo se a classe 'ligada' está lá
+    if (lampada.classList.contains('ligada')) {
+        titulo.innerText = "A luz está ACESA! 💡";
+        titulo.style.color = "yellow";
+        document.body.style.backgroundColor = "#444";
     } else {
-        saudacao = "Boa noite!";
+        titulo.innerText = "A lâmpada está apagada";
+        titulo.style.color = "white";
+        document.body.style.backgroundColor = "#222";
     }
-
-    console.log(`${saudacao} O script foi executado com sucesso.`);
-    alert(`${saudacao} Você clicou no botão.`);
-}
+});
