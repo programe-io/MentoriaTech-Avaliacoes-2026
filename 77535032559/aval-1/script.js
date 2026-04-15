@@ -1,119 +1,91 @@
-// BANCO DE DADOS LOCAL
-let userAccount = {
-    balance: 50000.00,
-    portfolio: []
-};
+class TradingApp {
+    constructor() {
+        this.canvas = document.getElementById('mainChart');
+        this.ctx = this.canvas.getContext('2d');
+        this.candles = [];
+        this.currentPrice = 1.09243;
+        this.init();
+    }
 
-const assets = [
-    { id: 'AAPL', name: 'Apple Inc.', price: 185.20, type: 'Stock' },
-    { id: 'TSLA', name: 'Tesla Motors', price: 242.50, type: 'Stock' },
-    { id: 'BTC', name: 'Bitcoin', price: 64200.0, type: 'Cripto' },
-    { id: 'ETH', name: 'Ethereum', price: 3450.0, type: 'Cripto' },
-    { id: 'NVDA', name: 'Nvidia Corp', price: 480.10, type: 'Stock' },
-    { id: 'AMZN', name: 'Amazon', price: 145.30, type: 'Stock' },
-    { id: 'SOL', name: 'Solana', price: 98.40, type: 'Cripto' },
-];
+    init() {
+        this.resize();
+        window.addEventListener('resize', () => this.resize());
+        this.generateHistory(); // Cria dados iniciais
+        this.startTick();       // Inicia o mercado em tempo real
+        this.render();          // Inicia o loop de desenho
+    }
 
-let currentAsset = assets[2]; // Começa com BTC
+    resize() {
+        this.canvas.width = this.canvas.offsetWidth;
+        this.canvas.height = this.canvas.offsetHeight;
+    }
 
-// INICIALIZAÇÃO
-document.addEventListener('DOMContentLoaded', () => {
-    renderMarket();
-    initChart();
-    updateUI();
-});
-
-// NAVEGAÇÃO
-function showPage(id) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById(`page-${id}`).classList.add('active');
-    event.currentTarget.classList.add('active');
-}
-
-// RENDERIZAR MERCADO DE COMPRA
-function renderMarket() {
-    const grid = document.getElementById('market-grid');
-    grid.innerHTML = '';
-    assets.forEach(asset => {
-        grid.innerHTML += `
-            <div class="asset-card">
-                <small>${asset.type}</small>
-                <h3>${asset.id}</h3>
-                <p>$ ${asset.price.toFixed(2)}</p>
-                <button onclick="buyAsset('${asset.id}')">COMPRAR</button>
-            </div>
-        `;
-    });
-}
-
-// LOGICA DE INVESTIMENTO (HOLD)
-function buyAsset(assetId) {
-    const asset = assets.find(a => a.id === assetId);
-    if (userAccount.balance >= asset.price) {
-        userAccount.balance -= asset.price;
-        
-        const existing = userAccount.portfolio.find(p => p.id === assetId);
-        if (existing) {
-            existing.qty += 1;
-        } else {
-            userAccount.portfolio.push({ id: asset.id, qty: 1, avgPrice: asset.price });
+    generateHistory() {
+        for (let i = 0; i < 50; i++) {
+            this.addCandle();
         }
-        
-        alert(`Sucesso! Você agora é dono de 1 cota de ${asset.name}`);
-        updateUI();
-        renderPortfolio();
-    } else {
-        alert("Saldo insuficiente!");
+    }
+
+    addCandle() {
+        const lastOpen = this.candles.length > 0 ? this.candles[this.candles.length - 1].close : this.currentPrice;
+        const close = lastOpen + (Math.random() - 0.5) * 0.002;
+        this.candles.push({
+            open: lastOpen,
+            close: close,
+            high: Math.max(lastOpen, close) + Math.random() * 0.001,
+            low: Math.min(lastOpen, close) - Math.random() * 0.001
+        });
+    }
+
+    startTick() {
+        setInterval(() => {
+            // Simula variação de micro-preço (Tick)
+            const change = (Math.random() - 0.5) * 0.0005;
+            this.currentPrice += change;
+            
+            // Atualiza a última vela ou cria uma nova a cada minuto
+            let lastCandle = this.candles[this.candles.length - 1];
+            lastCandle.close = this.currentPrice;
+            if (this.currentPrice > lastCandle.high) lastCandle.high = this.currentPrice;
+            if (this.currentPrice < lastCandle.low) lastCandle.low = this.currentPrice;
+
+            document.getElementById('live-price').innerText = this.currentPrice.toFixed(5);
+        }, 100);
+    }
+
+    render() {
+        const { ctx, canvas, candles } = this;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const candleWidth = (canvas.width / 60);
+        const spacing = 10;
+
+        candles.forEach((c, i) => {
+            const x = i * (candleWidth + spacing);
+            const isBull = c.close >= c.open;
+            
+            ctx.fillStyle = isBull ? "#00ff73" : "#ff3e3e";
+            ctx.strokeStyle = ctx.fillStyle;
+
+            // Desenhar Pavio (High/Low)
+            ctx.beginPath();
+            ctx.moveTo(x + candleWidth/2, canvas.height - (c.high * 100 - 100)); // Simulação de escala
+            ctx.lineTo(x + candleWidth/2, canvas.height - (c.low * 100 - 100));
+            ctx.stroke();
+
+            // Desenhar Corpo
+            const bodyHeight = Math.abs(c.close - c.open) * 5000; // Multiplicador para visibilidade
+            const y = canvas.height - (Math.max(c.open, c.close) * 100 - 100);
+            ctx.fillRect(x, y, candleWidth, Math.max(bodyHeight, 2));
+        });
+
+        requestAnimationFrame(() => this.render());
+    }
+
+    executeTrade(type) {
+        console.log(`Ordem de ${type} executada em ${this.currentPrice.toFixed(5)}`);
+        // Aqui entraria a lógica de expiração e verificação de Win/Loss
     }
 }
 
-// RENDERIZAR CARTEIRA
-function renderPortfolio() {
-    const container = document.getElementById('portfolio-items');
-    container.innerHTML = '';
-    userAccount.portfolio.forEach(item => {
-        container.innerHTML += `
-            <tr>
-                <td><b>${item.id}</b></td>
-                <td>${item.qty}</td>
-                <td>$ ${item.avgPrice.toFixed(2)}</td>
-                <td>$ ${(item.qty * item.avgPrice).toFixed(2)}</td>
-            </tr>
-        `;
-    });
-}
-
-// MOTOR DE TRADING (QUICK TRADE)
-function executeQuickTrade(dir) {
-    const amt = parseFloat(document.getElementById('trade-amount').value);
-    if (userAccount.balance >= amt) {
-        userAccount.balance -= amt;
-        updateUI();
-        alert(`Ordem de ${dir} em ${currentAsset.id} aberta com $${amt}`);
-    }
-}
-
-function updateUI() {
-    document.getElementById('balance-val').innerText = `$ ${userAccount.balance.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
-}
-
-// GRÁFICO REALISTA
-let chart;
-function initChart() {
-    const ctx = document.getElementById('liveChart').getContext('2d');
-    chart = new Chart(ctx, {
-        type: 'line',
-        data: { labels: Array(20).fill(''), datasets: [{ data: Array(20).fill(64000), borderColor: '#00ff88', tension: 0.3, pointRadius: 0 }] },
-        options: { responsive: true, maintainAspectRatio: false, scales: { y: { grid: { color: '#222' } }, x: { display: false } } }
-    });
-
-    setInterval(() => {
-        const last = chart.data.datasets[0].data[19];
-        const next = last + (Math.random() * 40 - 20);
-        chart.data.datasets[0].data.shift();
-        chart.data.datasets[0].data.push(next);
-        chart.update('none');
-        document.getElementById('live-price-display').innerText = `$ ${next.toFixed(2)}`;
-    }, 800);
-}
+const app = new TradingApp();
