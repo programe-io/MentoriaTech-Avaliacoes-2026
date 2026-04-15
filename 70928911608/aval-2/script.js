@@ -1,4 +1,5 @@
 function executar() {
+
     let nome = document.getElementById("nome").value;
     let idade = Number(document.getElementById("idade").value);
     let nota = Number(document.getElementById("nota").value);
@@ -6,39 +7,38 @@ function executar() {
 
     let resultado = document.getElementById("resultado");
 
-    // SWITCH (menu)
-    switch(opcao) {
+    switch (opcao) {
 
-        case "1": // Situação do aluno
+        case "1":
+            // IF + OPERADORES RELACIONAIS + LÓGICOS
 
-            // IF + operadores relacionais + lógicos
             if (nota >= 7 && idade >= 18) {
-                resultado.innerHTML = nome + " está aprovado e é maior de idade.";
-            
+                resultado.innerHTML = nome + " está APROVADO e é maior de idade.";
+
             } else if (nota >= 7 && idade < 18) {
-                resultado.innerHTML = nome + " está aprovado, mas é menor de idade.";
-            
+                resultado.innerHTML = nome + " está APROVADO e é menor de idade.";
+
             } else if (nota >= 5 || idade >= 18) {
-                resultado.innerHTML = nome + " está em recuperação.";
-            
+                resultado.innerHTML = nome + " está em RECUPERAÇÃO.";
+
             } else {
-                resultado.innerHTML = nome + " está reprovado.";
+                resultado.innerHTML = nome + " está REPROVADO.";
             }
 
         break;
 
-        case "2": // Categoria por idade
+        case "2":
+            // CONDICIONAIS ENCADEADAS
 
-            // IF encadeado (condicional)
             if (idade < 12) {
                 resultado.innerHTML = "Categoria: Criança";
-            
-            } else if (idade >= 12 && idade < 18) {
+
+            } else if (idade >= 12 && idade <= 17) {
                 resultado.innerHTML = "Categoria: Adolescente";
-            
-            } else if (idade >= 18 && idade < 60) {
+
+            } else if (idade >= 18 && idade <= 59) {
                 resultado.innerHTML = "Categoria: Adulto";
-            
+
             } else {
                 resultado.innerHTML = "Categoria: Idoso";
             }
