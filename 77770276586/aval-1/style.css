@@ -1,0 +1,24 @@
+def adicionar_transacao(tipo, categoria, valor, data):
+    conexao = sqlite3.connect("financas.db")
+    cursor = conexao.cursor()
+    cursor.execute("INSERT INTO transacoes (tipo, categoria, valor, data) VALUES (?, ?, ?, ?)",
+                   (tipo, categoria, valor, data))
+    conexao.commit()
+    conexao.close()
+
+def exibir_extrato():
+    conexao = sqlite3.connect("financas.db")
+    cursor = conexao.cursor()
+    cursor.execute("SELECT * FROM transacoes")
+    dados = cursor.fetchall()
+    
+    saldo = 0
+    print("\n--- EXTRATO ---")
+    for linha in dados:
+        print(f"{linha[4]} | {linha[1]}: {linha[2]} - R$ {linha[3]:.2f}")
+        if linha[1] == 'Receita':
+            saldo += linha[3]
+        else:
+            saldo -= linha[3]
+    
+    print(f"----------------\nSALDO ATUAL: R$ {saldo:.2f}\n")
