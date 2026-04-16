@@ -1,58 +1,42 @@
-let timer;
-let timeLeft = 25 * 60; // 25 minutos em segundos
-let isRunning = false;
+let startTime, elapsedTime = 0, timerInterval;
 
-const minutesDisplay = document.getElementById('minutes');
-const secondsDisplay = document.getElementById('seconds');
-const startBtn = document.getElementById('start');
-const pauseBtn = document.getElementById('pause');
-const resetBtn = document.getElementById('reset');
+function timeToString(time) {
+  let diffInHrs = time / 3600000;
+  let hh = Math.floor(diffInHrs);
 
-function updateDisplay() {
-    const minutes = Math.floor(timeLeft / 60);
-    const seconds = timeLeft % 60;
-    
-    minutesDisplay.textContent = minutes.toString().padStart(2, '0');
-    secondsDisplay.textContent = seconds.toString().padStart(2, '0');
+  let diffInMin = (diffInHrs - hh) * 60;
+  let mm = Math.floor(diffInMin);
+
+  let diffInSec = (diffInMin - mm) * 60;
+  let ss = Math.floor(diffInSec);
+
+  let diffInMs = (diffInSec - ss) * 100;
+  let ms = Math.floor(diffInMs);
+
+  return `${hh.toString().padStart(2, "0")}:${mm.toString().padStart(2, "0")}:${ss.toString().padStart(2, "0")}.${ms.toString().padStart(2, "0")}`;
 }
 
-function startTimer() {
-    if (isRunning) return;
-    
-    isRunning = true;
-    timer = setInterval(() => {
-        if (timeLeft > 0) {
-            timeLeft--;
-            updateDisplay();
-        } else {
-            clearInterval(timer);
-            alert("Tempo esgotado! Hora de uma pausa.");
-            isRunning = false;
-        }
-    }, 1000);
+function start() {
+  startTime = Date.now() - elapsedTime;
+  timerInterval = setInterval(() => {
+    elapsedTime = Date.now() - startTime;
+    document.getElementById("display").innerHTML = timeToString(elapsedTime);
+  }, 10);
 }
 
-function pauseTimer() {
-    clearInterval(timer);
-    isRunning = false;
+function pause() {
+  clearInterval(timerInterval);
 }
 
-function resetTimer() {
-    pauseTimer();
-    timeLeft = 25 * 60;
-    updateDisplay();
+function reset() {
+  clearInterval(timerInterval);
+  document.getElementById("display").innerHTML = "00:00:00.00";
+  elapsedTime = 0;
+  document.getElementById("laps").innerHTML = "";
 }
 
-function setTimer(minutes) {
-    pauseTimer();
-    timeLeft = minutes * 60;
-    updateDisplay();
+function lap() {
+  let li = document.createElement("li");
+  li.innerText = `Volta: ${timeToString(elapsedTime)}`;
+  document.getElementById("laps").appendChild(li);
 }
-
-// Event Listeners
-startBtn.addEventListener('click', startTimer);
-pauseBtn.addEventListener('click', pauseTimer);
-resetBtn.addEventListener('click', resetTimer);
-
-// Inicializar display
-updateDisplay();
