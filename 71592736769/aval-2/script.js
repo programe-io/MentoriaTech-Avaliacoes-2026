@@ -1,19 +1,51 @@
-const stages = [
-  { name: "Nebulosa", class: "nebula" },
-  { name: "Estrela", class: "star" },
-  { name: "Gigante Vermelha", class: "red-giant" },
-  { name: "Supernova", class: "supernova" },
-  { name: "Buraco Negro", class: "black-hole" }
+// Lista de fases da estrela
+const fases = [
+  { nome: "Protoestrela", classe: "protoestrela" },
+  { nome: "Sequência Principal", classe: "sequencia-principal" },
+  { nome: "Gigante Vermelha", classe: "gigante-vermelha" },
+  { nome: "Supernova", classe: "supernova" },
+  { nome: "Anã Branca", classe: "ana-branca" }
 ];
 
-let current = 0;
+let indice = 0;
 
-function nextStage() {
-  current = (current + 1) % stages.length;
+function proximaFase() {
+  const estrela = document.getElementById("estrela");
+  const texto = document.getElementById("fase");
 
-  const star = document.getElementById("star");
-  const stageText = document.getElementById("stage");
+  indice++;
 
-  star.className = stages[current].class;
-  stageText.textContent = stages[current].name;
+  // Se passar do limite, reinicia
+  if (indice >= fases.length) {
+    indice = 0;
+  }
+
+  // Aplica nova fase
+  estrela.className = fases[indice].classe;
+  texto.textContent = fases[indice].nome;
+
+  // Se for supernova, avança automaticamente depois
+  if (fases[indice].classe === "supernova") {
+    setTimeout(() => {
+      indice++;
+      if (indice >= fases.length) indice = 0;
+
+      estrela.className = fases[indice].classe;
+      texto.textContent = fases[indice].nome;
+    }, 800);
+  }
+}
+
+// Modo automático (opcional)
+let auto = false;
+let intervalo;
+
+function toggleAuto() {
+  auto = !auto;
+
+  if (auto) {
+    intervalo = setInterval(proximaFase, 2000);
+  } else {
+    clearInterval(intervalo);
+  }
 }
