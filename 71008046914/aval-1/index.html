@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Intercâmbio SEDUC - Mundo Global</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial;
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    color: white;
+}
+
+/* CABEÇALHO */
+header {
+    text-align: center;
+    padding: 30px;
+    background: rgba(0,0,0,0.4);
+}
+
+header img {
+    width: 110px;
+    margin-top: 10px;
+}
+
+/* CONTEÚDO */
+section {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 20px;
+}
+
+.card {
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(10px);
+    margin: 15px;
+    padding: 20px;
+    width: 280px;
+    border-radius: 15px;
+    transition: 0.3s;
+}
+
+.card:hover {
+    transform: scale(1.05);
+    background: rgba(255,255,255,0.2);
+}
+
+h2 {
+    color: #00e5ff;
+}
+
+/* BOTÕES */
+button {
+    margin: 10px;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    background: #ff9800;
+    color: white;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #e68900;
+}
+
+/* ROBÔS */
+.robo1 {
+    position: fixed;
+    bottom: 20px;
+    left: 0;
+    font-size: 40px;
+    animation: andar 10s linear infinite;
+}
+
+.robo2 {
+    position: fixed;
+    top: 120px;
+    right: 20px;
+    font-size: 35px;
+    animation: flutuar 3s infinite alternate;
+}
+
+@keyframes andar {
+    0% { left: 0; }
+    100% { left: 90%; }
+}
+
+@keyframes flutuar {
+    from { transform: translateY(0); }
+    to { transform: translateY(-25px); }
+}
+
+/* QUIZ */
+.quiz {
+    text-align: center;
+    width: 100%;
+    margin-top: 20px;
+}
+
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+<header>
+    <h1>🌍 Intercâmbio SEDUC</h1>
+    <p>Conectando estudantes ao mundo</p>
+
+    <!-- LOGO SEDUC -->
+    <img src="seduc.png" alt="SEDUC">
+</header>
+
+<section>
+
+<div class="card">
+    <h2>✈️ O que é?</h2>
+    <p>O programa de intercâmbio da SEDUC permite que alunos vivenciem experiências de estudo em outros países.</p>
+</div>
+
+<div class="card">
+    <h2>🌎 Como funciona?</h2>
+    <p>Os estudantes passam por uma seleção com provas, desempenho escolar e entrevistas.</p>
+</div>
+
+<div class="card">
+    <h2>🎯 Objetivo</h2>
+    <p>Desenvolver conhecimento, cultura e ampliar oportunidades de vida e carreira.</p>
+</div>
+
+<div class="card">
+    <h2>📚 Requisitos</h2>
+    <p>Bom desempenho escolar, frequência e dedicação aos estudos.</p>
+</div>
+
+<div class="card">
+    <h2>💡 Benefícios</h2>
+    <p>Aprender novos idiomas, conhecer culturas e melhorar o futuro acadêmico.</p>
+</div>
+
+</section>
+
+<!-- QUIZ -->
+<div class="quiz">
+    <h2>🧠 Quiz Intercâmbio</h2>
+
+    <p id="pergunta">Clique em iniciar</p>
+
+    <button onclick="responder(0)">A</button>
+    <button onclick="responder(1)">B</button>
+    <button onclick="responder(2)">C</button>
+    <button onclick="responder(3)">D</button>
+
+    <br>
+    <button onclick="iniciar()">Iniciar Quiz</button>
+
+    <h3>Pontos: <span id="pontos">0</span></h3>
+</div>
+
+<!-- ROBÔS -->
+<div class="robo1">🤖</div>
+<div class="robo2">🤖</div>
+
+<script>
+const perguntas = [
+{
+    p: "O intercâmbio da SEDUC serve para:",
+    o: ["Viajar a passeio", "Estudar em outro país", "Fazer turismo", "Trabalhar"],
+    r: 1
+},
+{
+    p: "Um requisito importante é:",
+    o: ["Faltas na escola", "Bom desempenho escolar", "Não estudar", "Jogos"],
+    r: 1
+},
+{
+    p: "O objetivo principal é:",
+    o: ["Diversão", "Desenvolvimento educacional", "Esportes", "Viagens aleatórias"],
+    r: 1
+}
+];
+
+let atual = 0;
+let pontos = 0;
+
+function iniciar() {
+    atual = 0;
+    pontos = 0;
+    document.getElementById("pontos").textContent = pontos;
+    mostrar();
+}
+
+function mostrar() {
+    if (atual >= perguntas.length) {
+        document.getElementById("pergunta").textContent =
+        "Fim do quiz! Pontuação: " + pontos;
+        return;
+    }
+
+    let q = perguntas[atual];
+
+    document.getElementById("pergunta").textContent =
+    q.p + " (A: " + q.o[0] + " B: " + q.o[1] +
+    " C: " + q.o[2] + " D: " + q.o[3] + ")";
+}
+
+function responder(op) {
+    if (perguntas[atual].r === op) {
+        pontos++;
+    }
+
+    document.getElementById("pontos").textContent = pontos;
+    atual++;
+    mostrar();
+}
+</script>
+
+<script src="script.js"></script></body>
+</html>
