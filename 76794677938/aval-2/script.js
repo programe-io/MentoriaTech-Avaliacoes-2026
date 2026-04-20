@@ -1,30 +1,48 @@
-// Espera o carregamento da página
-document.addEventListener("DOMContentLoaded", function () {
+// Espera carregar tudo
+document.addEventListener("DOMContentLoaded", () => {
 
-    // Criar um botão dinamicamente
-    const botao = document.createElement("button");
-    botao.textContent = "Clique aqui";
-    document.querySelector("main").appendChild(botao);
+    // MENU: destacar link ativo ao clicar
+    const links = document.querySelectorAll("nav a");
 
-    // Criar um parágrafo para mostrar mensagens
-    const mensagem = document.createElement("p");
-    document.querySelector("main").appendChild(mensagem);
-
-    // Evento de clique
-    botao.addEventListener("click", function () {
-        mensagem.textContent = "Você clicou no botão! 🎉";
-        mensagem.style.color = "#ff3c00";
+    links.forEach(link => {
+        link.addEventListener("click", () => {
+            links.forEach(l => l.style.color = "white");
+            link.style.color = "#00c3ff";
+        \});
     \});
 
-    // Mostrar hora atual
-    const hora = document.createElement("p");
-    document.querySelector("main").appendChild(hora);
+    // ARTIGOS: mostrar alerta ao clicar
+    const artigos = document.querySelectorAll("article");
 
-    function atualizarHora() {
-        const agora = new Date();
-        hora.textContent = "Hora atual: " + agora.toLocaleTimeString();
-    \}
+    artigos.forEach((artigo, index) => {
+        artigo.addEventListener("click", () => {
+            alert(`Você clicou no artigo \${index + 1\}`);
+        \});
+    \});
 
-    setInterval(atualizarHora, 1000);
-    atualizarHora();
+    // IMAGEM: efeito de zoom ao clicar
+    const imagens = document.querySelectorAll("img");
+
+    imagens.forEach(img => {
+        img.addEventListener("click", () => {
+            if (img.style.transform === "scale(1.2)") {
+                img.style.transform = "scale(1)";
+            \} else {
+                img.style.transform = "scale(1.2)";
+            \}
+            img.style.transition = "0.3s";
+        \});
+    \});
+
+    // SCROLL SUAVE para navegação
+    document.querySelectorAll('nav a').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            const destino = document.querySelector(this.getAttribute("href"));
+            destino.scrollIntoView({
+                behavior: "smooth"
+            \});
+        \});
+    \});
+
 \});$0
