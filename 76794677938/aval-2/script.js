@@ -1,4 +1,4 @@
-// Espera carregar tudo
+
 document.addEventListener("DOMContentLoaded", () => {
 
     // MENU: destacar link ativo ao clicar
