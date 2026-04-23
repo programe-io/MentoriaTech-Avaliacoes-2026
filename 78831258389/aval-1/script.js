@@ -1,14 +1,14 @@
-function executarCodigo() {
-      const html = document.querySelectorAll("textarea")[0].value;
-        const css = document.querySelectorAll("textarea")[1].value;
-          const js = document.querySelectorAll("textarea")[2].value;
+const btn = document.getElementById("btn");
+const msg = document.getElementById("msg");
 
-            const preview = document.getElementById("preview");
+btn.addEventListener("mouseover", () => {
+  const x = Math.random() * (window.innerWidth - 100);
+    const y = Math.random() * (window.innerHeight - 50);
 
-              preview.srcdoc = `
-                  <style>${css}</style>
-                      ${html}
-                          <script>${js}<\/script>
-                            `;
-                            }
-}
+      btn.style.left = x + "px";
+        btn.style.top = y + "px";
+        });
+
+        btn.addEventListener("click", () => {
+          msg.innerText = "😱 Você conseguiu clicar!";
+          });
