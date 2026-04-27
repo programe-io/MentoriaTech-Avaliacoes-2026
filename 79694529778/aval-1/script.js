@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+
+<html lang="pt-br">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <title>Filmes & Séries</title>
+
+  <style>
+
+    body {
+
+      margin: 0;
+
+      font-family: Arial;
+
+      background: #0f0f0f;
+
+      color: white;
+
+    }
+
+    header {
+
+      background: black;
+
+      padding: 15px;
+
+      text-align: center;
+
+      font-size: 24px;
+
+      color: #ff2e63;
+
+    }
+
+    .container {
+
+      display: flex;
+
+      flex-wrap: wrap;
+
+      justify-content: center;
+
+      padding: 20px;
+
+    }
+
+    .card {
+
+      background: #1c1c1c;
+
+      margin: 10px;
+
+      border-radius: 10px;
+
+      width: 200px;
+
+      cursor: pointer;
+
+      transition: 0.3s;
+
+    }
+
+    .card:hover {
+
+      transform: scale(1.05);
+
+    }
+
+    .card img {
+
+      width: 100%;
+
+      border-radius: 10px 10px 0 0;
+
+    }
+
+    .card h3 {
+
+      margin: 10px;
+
+      font-size: 18px;
+
+    }
+
+    .card p {
+
+      margin: 10px;
+
+      color: #aaa;
+
+    }
+
+    .modal {
+
+      display: none;
+
+      position: fixed;
+
+      top: 0;
+
+      left: 0;
+
+      width: 100%;
+
+      height: 100%;
+
+      background: rgba(0,0,0,0.8);
+
+      justify-content: center;
+
+      align-items: center;
+
+    }
+
+    .modal-content {
+
+      background: #222;
+
+      padding: 20px;
+
+      border-radius: 10px;
+
+      width: 300px;
+
+    }
+
+    button {
+
+      background: #ff2e63;
+
+      border: none;
+
+      padding: 10px;
+
+      color: white;
+
+      cursor: pointer;
+
+      margin-top: 10px;
+
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+<header>🎬 Filmes & Séries</header>
+
+<div class="container" id="lista"></div>
+
+<div class="modal" id="modal">
+
+  <div class="modal-content">
+
+    <h2 id="titulo"></h2>
+
+    <p id="descricao"></p>
+
+    <button onclick="fechar()">Fechar</button>
+
+  </div>
+
+</div>
+
+<script>
+
+  const filmes = [
+
+    {
+
+      nome: "Stranger Things",
+
+      nota: "⭐ 8.7",
+
+      img: "https://i.imgur.com/3KX2F3E.jpg",
+
+      descricao: "Um grupo de amigos enfrenta mistérios sobrenaturais."
+
+    },
+
+    {
+
+      nome: "Breaking Bad",
+
+      nota: "⭐ 9.5",
+
+      img: "https://i.imgur.com/9Xn4K7P.jpg",
+
+      descricao: "Um professor vira produtor de drogas."
+
+    },
+
+    {
+
+      nome: "Vingadores: Ultimato",
+
+      nota: "⭐ 8.4",
+
+      img: "https://i.imgur.com/EuFpZ9M.jpg",
+
+      descricao: "Heróis se unem para salvar o universo."
+
+    }
+
+  ];
+
+  const lista = document.getElementById("lista");
+
+  filmes.forEach(filme => {
+
+    lista.innerHTML += `
+
+      <div class="card" onclick="abrir('${filme.nome}', '${filme.descricao}')">
+
+        <img src="${filme.img}">
+
+        <h3>${filme.nome}</h3>
+
+        <p>${filme.nota}</p>
+
+      </div>
+
+    `;
+
+  });
+
+  function abrir(titulo, descricao) {
+
+    document.getElementById("titulo").innerText = titulo;
+
+    document.getElementById("descricao").innerText = descricao;
+
+    document.getElementById("modal").style.display = "flex";
+
+  }
+
+  function fechar() {
+
+    document.getElementById("modal").style.display = "none";
+
+  }
+
+</script>
+
+</body>
+
+</html>
