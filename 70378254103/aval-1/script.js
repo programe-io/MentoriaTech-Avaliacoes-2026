@@ -1,21 +1,29 @@
-let senhaCorreta = "4321";
-let tentativa;
+const SENHA_CORRETA = "4321";
 let tentativasRestantes = 3;
 
-do {
-    tentativa = prompt("Digite a senha (4 dígitos):");
+function verificarSenha() {
+    const input = document.getElementById('senhaInput');
+        const msgDiv = document.getElementById('mensagem');
+            const senhaDigitada = input.value;
 
-        if (tentativa === senhaCorreta) {
-                alert("Bem-vindo! Acesso liberado.");
-                        break;
-                            } else {
-                                    tentativasRestantes--;
-                                            
-                                                    if (tentativasRestantes > 0) {
-                                                                alert("Senha incorreta! Tentativas restantes: " + tentativasRestantes);
+                // Lógica principal
+                    if (tentativasRestantes > 0) {
+                            if (senhaDigitada === SENHA_CORRETA) {
+                                        msgDiv.innerHTML = "<span class='sucesso'>Acesso Permitido. Bem-vindo!</span>";
+                                                    input.disabled = true;
+                                                                tentativasRestantes = 0; // Finaliza o ciclo
                                                                         } else {
-                                                                                    alert("Acesso bloqueado! Número máximo de tentativas excedido.");
-                                                                                            }
-                                                                                                }
-
-                                                                                                } while (tentativasRestantes > 0);
+                                                                                    tentativasRestantes--;
+                                                                                                
+                                                                                                            if (tentativasRestantes > 0) {
+                                                                                                                            msgDiv.innerHTML = `<span class='erro'>Senha incorreta! <br> Você tem mais ${tentativasRestantes} tentativa(s).</span>`;
+                                                                                                                                        } else {
+                                                                                                                                                        msgDiv.innerHTML = "<span class='erro'>ACESSO BLOQUEADO! <br> Limite de tentativas excedido.</span>";
+                                                                                                                                                                        input.disabled = true;
+                                                                                                                                                                                    }
+                                                                                                                                                                                            }
+                                                                                                                                                                                                }
+                                                                                                                                                                                                    input.value = ""; // Limpa o campo para a próxima tentativa
+                                                                                                                                                                                                        input.focus();
+                                                                                                                                                                                                        }
+                                                                                                                                                                                                        
