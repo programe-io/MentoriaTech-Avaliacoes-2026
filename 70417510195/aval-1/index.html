@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Caixa Eletrônico</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f2f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      text-align: center;
+      width: 300px;
+    }
+
+    input {
+      padding: 10px;
+      width: 80%;
+      margin-bottom: 15px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      background-color: #007BFF;
+      color: white;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .mensagem {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    .erro {
+      color: red;
+    }
+
+    .sucesso {
+      color: green;
+    }
+  </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+  <div class="container">
+    <h2>Caixa Eletrônico</h2>
+    <input type="password" id="senha" placeholder="Digite sua senha">
+    <br>
+    <button onclick="verificarSenha()">Entrar</button>
+    <div id="mensagem" class="mensagem"></div>
+  </div>
+
+  <script>
+    const senhaCorreta = "1234";
+    let tentativas = 0;
+    const maxTentativas = 3;
+
+    function verificarSenha() {
+      const senhaDigitada = document.getElementById("senha").value;
+      const mensagem = document.getElementById("mensagem");
+
+      if (tentativas >= maxTentativas) {
+        mensagem.textContent = "Acesso bloqueado!";
+        mensagem.className = "mensagem erro";
+        return;
+      }
+
+      if (senhaDigitada === senhaCorreta) {
+        mensagem.textContent = "Bem-vindo! Acesso permitido.";
+        mensagem.className = "mensagem sucesso";
+      } else {
+        tentativas++;
+        let restantes = maxTentativas - tentativas;
+
+        if (restantes > 0) {
+          mensagem.textContent = "Senha incorreta! Tentativas restantes: " + restantes;
+          mensagem.className = "mensagem erro";
+        } else {
+          mensagem.textContent = "Acesso bloqueado! Número máximo de tentativas excedido.";
+          mensagem.className = "mensagem erro";
+        }
+      }
+    }
+  </script>
+
+<script src="script.js"></script></body>
+</html>
