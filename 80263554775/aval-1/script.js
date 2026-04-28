@@ -1,18 +1,25 @@
-let numero = Math.floor(Math.random() * 100) + 1;
-let tentativas = 0;
+let pontos = 0;
+let intervalo;
 
-function verificar() {
-  const palpite = Number(document.getElementById("palpite").value);
-    const dica = document.getElementById("dica");
+function iniciarJogo() {
+  pontos = 0;
+    document.getElementById("pontos").innerText = pontos;
 
-      tentativas++;
-        document.getElementById("tentativas").innerText = tentativas;
+      intervalo = setInterval(moverAlvo, 1000);
+      }
 
-          if (palpite === numero) {
-              dica.innerText = "🎉 Acertou!";
-                } else if (palpite > numero) {
-                    dica.innerText = "📉 Muito alto!";
-                      } else {
-                          dica.innerText = "📈 Muito baixo!";
-                            }
-                            }
+      function moverAlvo() {
+        let alvo = document.getElementById("alvo");
+
+          let x = Math.random() * 250;
+            let y = Math.random() * 250;
+
+              alvo.style.left = x + "px";
+                alvo.style.top = y + "px";
+                  alvo.style.display = "block";
+                  }
+
+                  function ganharPonto() {
+                    pontos++;
+                      document.getElementById("pontos").innerText = pontos;
+                      }
