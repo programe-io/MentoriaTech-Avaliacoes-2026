@@ -1,21 +1,38 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <title>Link com JavaScript</title>
-</head>
-<body>
 
-    <h1>Exemplo de link em JavaScript</h1>
 
-    <div id="container"></div>
+const emojis = ["🐶","🐱","🐸","🦊","🐼","🐵","🐯","🦁"];
+let cartas = [...emojis, ...emojis]; // pares
+cartas.sort(() => Math.random() - 0.5);
 
-    <script>
-        // Criar o elemento de link
-        const link = document.createElement("a");
+const tabuleiro = document.getElementById("tabuleiro");
+let primeira = null;
+let segunda = null;
+let travar = false;
 
-        // Definir o destino
-        link.href = "https://www.google.com";
+cartas.forEach((emoji) => {
+  const carta = document.createElement("div");
+  carta.classList.add("carta");
+  carta.dataset.valor = emoji;
 
-        // Texto do link
-        link.innerText = " 
+  carta.addEventListener("click", () => {
+    if (travar || carta.innerText) return;
+
+    carta.innerText = emoji;
+    carta.classList.add("virada");
+
+    if (!primeira) {
+      primeira = carta;
+    } else {
+      segunda = carta;
+      travar = true;
+
+      if (primeira.dataset.valor === segunda.dataset.valor) {
+        primeira = null;
+        segunda = null;
+        travar = false;
+      } else {
+        setTimeout(() => {
+          primeira.innerText = "";
+          segunda.innerText = "";
+          primeira.classList.remove("virada");
+          segunda.classList.remove("virada");
