@@ -1,95 +1,86 @@
-const perguntas = [
-    {
-        pergunta: "O intercâmbio da SEDUC tem como objetivo principal:",
-        opcoes: [
-            "Passeio turístico",
-            "Desenvolvimento educacional e cultural",
-            "Jogos esportivos",
-            "Férias escolares"
-        ],
-        correta: 1
-    },
-    {
-        pergunta: "Como os alunos são selecionados?",
-        opcoes: [
-            "Sorteio aleatório",
-            "Bom desempenho escolar e provas",
-            "Indicação de amigos",
-            "Compra de vaga"
-        ],
-        correta: 1
-    },
-    {
-        pergunta: "O intercâmbio ajuda o estudante a:",
-        opcoes: [
-            "Aprender novos idiomas e culturas",
-            "Ficar fora da escola",
-            "Jogar videogame",
-            "Evitar estudar"
-        ],
-        correta: 0
-    },
-    {
-        pergunta: "Quem organiza o programa?",
-        opcoes: [
-            "SEDUC",
-            "Clubes esportivos",
-            "Empresas privadas de jogos",
-            "Redes sociais"
-        ],
-        correta: 0
-    }
-];
+// ===============================
+// TROCAR NOTÍCIAS (MENU)
+// ===============================
+function mostrarPost(id) {
+  const posts = document.querySelectorAll(".post");
 
-let atual = 0;
-let pontos = 0;
+  posts.forEach(post => {
+    post.style.display = "none";
+  });
 
-// elementos do HTML
-const perguntaEl = document.getElementById("pergunta");
-const pontosEl = document.getElementById("pontos");
-
-// sons (opcional)
-const somAcerto = new Audio("https://www.soundjay.com/buttons/sounds/button-3.mp3");
-const somErro = new Audio("https://www.soundjay.com/buttons/sounds/button-10.mp3");
-
-// iniciar quiz
-function iniciar() {
-    atual = 0;
-    pontos = 0;
-    pontosEl.textContent = pontos;
-    mostrarPergunta();
+  document.getElementById(id).style.display = "block";
 }
 
-// mostrar pergunta
-function mostrarPergunta() {
-    if (atual >= perguntas.length) {
-        perguntaEl.textContent = "🎉 Fim do quiz! Sua pontuação foi: " + pontos;
-        return;
+// ===============================
+// UPLOAD DE IMAGEM (INSERIR FOTO)
+// ===============================
+const input = document.getElementById("uploadImagem");
+const preview = document.getElementById("preview");
+
+if (input) {
+  input.addEventListener("change", function () {
+    const arquivo = this.files[0];
+
+    if (arquivo) {
+      const leitor = new FileReader();
+
+      leitor.onload = function (e) {
+        preview.src = e.target.result;
+        preview.style.display = "block";
+      };
+
+      leitor.readAsDataURL(arquivo);
     }
-
-    let q = perguntas[atual];
-
-    perguntaEl.innerHTML = `
-        <strong>${q.pergunta}</strong><br><br>
-        A) ${q.opcoes[0]}<br>
-        B) ${q.opcoes[1]}<br>
-        C) ${q.opcoes[2]}<br>
-        D) ${q.opcoes[3]}
-    `;
+  });
 }
 
-// responder
-function responder(opcao) {
-    if (perguntas[atual].correta === opcao) {
-        pontos++;
-        somAcerto.play();
-        alert("✔ Resposta correta!");
-    } else {
-        somErro.play();
-        alert("❌ Resposta errada!");
-    }
+// ===============================
+// CARROSSEL AUTOMÁTICO (OPCIONAL)
+// ===============================
+let slideIndex = 0;
 
-    pontosEl.textContent = pontos;
-    atual++;
-    mostrarPergunta();
+function iniciarCarrossel() {
+  const slides = document.querySelectorAll(".slide");
+
+  if (slides.length === 0) return;
+
+  slides.forEach(slide => {
+    slide.style.display = "none";
+  });
+
+  slideIndex++;
+  if (slideIndex > slides.length) {
+    slideIndex = 1;
+  }
+
+  slides[slideIndex - 1].style.display = "block";
+
+  setTimeout(iniciarCarrossel, 3000);
 }
+
+// ===============================
+// ANIMAÇÃO AO ROLAR A PÁGINA
+// ===============================
+function animarScroll() {
+  const elementos = document.querySelectorAll(".post");
+
+  elementos.forEach(el => {
+    const posicao = el.getBoundingClientRect().top;
+    const alturaTela = window.innerHeight;
+
+    if (posicao < alturaTela - 50) {
+      el.style.opacity = "1";
+      el.style.transform = "translateY(0)";
+    }
+  });
+}
+
+// ===============================
+// INICIAR TUDO
+// ===============================
+window.onload = function () {
+  iniciarCarrossel();
+  animarScroll();
+};
+
+window.addEventListener("scroll", animarScroll);
