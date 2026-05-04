@@ -9,4 +9,4 @@ function verificar() {
     msg.style.color = "red";
     msg.innerText = "Senha incorreta ❌";
   }
-}   
+}
