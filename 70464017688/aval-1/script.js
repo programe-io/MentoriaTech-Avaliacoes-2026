@@ -1,20 +1,12 @@
- let senhaCorreta = "1234";
-let tentativas = 3;
-let senha;
-let autenticado = false;
+function verificar() {
+  const senha = document.getElementById("senha").value;
+  const msg = document.getElementById("msg");
 
-do {
-    senha = prompt(`Digite a senha (Tentativas restantes: \${tentativas\}):`);
-
-    if (senha === senhaCorreta) {
-        alert("Bem-vindo!");
-        autenticado = true;
-    \} else {
-        tentativas--;
-        if (tentativas > 0) {
-            alert("Senha incorreta. Tente novamente.");
-        \} else {
-            alert("Acesso bloqueado!");
-        \}
-    \}
-\} while (tentativas > 0 && !autenticado);$0
+  if (senha === "2424") {
+    msg.style.color = "lightgreen";
+    msg.innerText = "Acesso liberado ✅";
+  } else {
+    msg.style.color = "red";
+    msg.innerText = "Senha incorreta ❌";
+  }
+}   
