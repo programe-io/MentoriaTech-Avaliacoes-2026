@@ -1,19 +1,26 @@
-// Função chamada ao clicar no botão
-function mostrarMensagem() {
-  alert("Olá! JavaScript funcionando com sucesso!");
-  }
+// Seleciona o botão
+const botao = document.querySelector("button");
 
-  // Muda a cor do fundo automaticamente
-  function mudarCor() {
-    const cores = ["#f4f4f4", "#dff6ff", "#ffe4e1", "#e8ffd7"];
-      
-        const corAleatoria = cores[Math.floor(Math.random() * cores.length)];
-          
-            document.body.style.background = corAleatoria;
-            }
+// Contador de cliques
+let cliques = 0;
 
-            // Executa a função a cada 3 segundos
-            setInterval(mudarCor, 3000);
+// Evento de clique
+botao.addEventListener("click", function () {
+  cliques++;
 
-            // Mostra mensagem no console
-            console.log("Arquivo JavaScript carregado!");
+    // Mostra quantidade de cliques
+      botao.innerText = `Cliques: ${cliques}`;
+
+        // Muda a cor do botão aleatoriamente
+          const cores = ["#ff4757", "#1e90ff", "#2ed573", "#ffa502", "#a55eea"];
+
+            const corAleatoria =
+                cores[Math.floor(Math.random() * cores.length)];
+
+                  botao.style.background = corAleatoria;
+                  });
+
+                  // Mensagem ao carregar a página
+                  window.onload = function () {
+                    console.log("Página carregada com sucesso!");
+                    };
