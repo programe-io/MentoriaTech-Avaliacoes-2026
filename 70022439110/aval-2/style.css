@@ -1,0 +1,83 @@
+* {
+      margin: 0;
+        padding: 0;
+          box-sizing: border-box;
+            font-family: Arial, sans-serif;
+            }
+
+            body {
+              background-color: #f4f4f4;
+                color: #333;
+                }
+
+                header {
+                  background-color: #4a90e2;
+                    color: white;
+                      padding: 20px;
+                        text-align: center;
+                        }
+
+                        nav {
+                          background-color: #333;
+                            padding: 15px;
+                              text-align: center;
+                              }
+
+                              nav a {
+                                color: white;
+                                  text-decoration: none;
+                                    margin: 0 15px;
+                                      font-weight: bold;
+                                      }
+
+                                      nav a:hover {
+                                        color: #4a90e2;
+                                        }
+
+                                        main {
+                                          display: flex;
+                                            gap: 20px;
+                                              padding: 20px;
+                                              }
+
+                                              article {
+                                                flex: 3;
+                                                  background: white;
+                                                    padding: 20px;
+                                                      border-radius: 10px;
+                                                      }
+
+                                                      article img {
+                                                        margin-top: 15px;
+                                                          border-radius: 10px;
+                                                          }
+
+                                                          aside {
+                                                            flex: 1;
+                                                              background: white;
+                                                                padding: 20px;
+                                                                  border-radius: 10px;
+                                                                  }
+
+                                                                  button {
+                                                                    margin-top: 15px;
+                                                                      padding: 10px 15px;
+                                                                        border: none;
+                                                                          background-color: #4a90e2;
+                                                                            color: white;
+                                                                              border-radius: 5px;
+                                                                                cursor: pointer;
+                                                                                }
+
+                                                                                button:hover {
+                                                                                  background-color: #357abd;
+                                                                                  }
+
+                                                                                  footer {
+                                                                                    background-color: #333;
+                                                                                      color: white;
+                                                                                        text-align: center;
+                                                                                          padding: 15px;
+                                                                                            margin-top: 20px;
+                                                                                            }
+}
