@@ -230,7 +230,7 @@
 
             <h2>Registrar Movimentação</h2>
 
-            <form>
+            <form id="formFinanceiro"
 
                 <label>Tipo de Movimentação</label>
 
@@ -300,7 +300,9 @@
 
                 <tbody>
 
-                    <tr>
+                    <tbody>
+
+                </table>
                         <td>001</td>
                         <td class="entrada">Entrada</td>
                         <td>Mensalidade</td>
@@ -418,6 +420,48 @@
 
 </body>
 </html>
-<span class="status-financeiro">
-    Sistema financeiro escolar ativo
+<script>
+
+const form = document.getElementById("formFinanceiro");
+const tabela = document.querySelector("tbody");
+
+let contador = 1;
+
+form.addEventListener("submit", function(event){
+
+    event.preventDefault();
+
+    const selects = document.querySelectorAll("select");
+    const inputs = document.querySelectorAll("input");
+
+    const tipo = selects[0].value;
+    const descricao = inputs[0].value;
+    const valor = inputs[1].value;
+    const categoria = selects[1].value;
+    const data = document.querySelector('input[type="date"]').value;
+
+    const linha = document.createElement("tr");
+
+    linha.innerHTML = `
+        <td>${contador}</td>
+        <td class="${tipo === 'Entrada' ? 'entrada' : 'saida'}">
+            ${tipo}
+        </td>
+        <td>${descricao}</td>
+        <td>${categoria}</td>
+        <td>R$ ${valor}</td>
+        <td>${data}</td>
+    `;
+
+    tabela.appendChild(linha);
+
+    contador++;
+
+    form.reset();
+
+});
+
+</script>
+<span class="texto-financeiro">
+    Entrada financeira registrada com sucesso
 </span>
