@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Caixa Eletrônico</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: #f4f4f4;
+    }
+    .atm {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      width: 320px;
+      text-align: center;
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    #mensagem {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+  </style>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+  <div class="atm">
+    <h2>Caixa Eletrônico</h2>
+    <input type="password" id="senha" placeholder="Digite sua senha">
+    <input type="text" id="nascimento" placeholder="Digite seu dia de nascimento" style="display:none;">
+    <button id="recuperarBtn" onclick="recuperarSenha()" style="display:none; background:#28a745;">Recuperar Senha</button>
+    <button onclick="validarSenha()">Entrar</button>
+    <p id="mensagem"></p>
+  </div>
+
+  <script>
+    let senhaCorreta = "348090";
+    let tentativas = 0;
+    let tentativasMaximas = 3;
+    let diaNascimento = "01/01/2001";
+
+    function validarSenha() {
+      let senha;
+      let mensagem = document.getElementById("mensagem");
+
+      do {
+        senha = document.getElementById("senha").value;
+
+        if (senha === senhaCorreta) {
+          mensagem.innerHTML = "Bem-vindo! Acesso liberado.";
+          mensagem.style.color = "green";
+          break;
+        } else {
+          tentativas++;
+
+          if (tentativas < tentativasMaximas) {
+            mensagem.innerHTML = "Senha incorreta. Restam " + (tentativasMaximas - tentativas) + " tentativas.";
+            mensagem.style.color = "orange";
+            break;
+          } else {
+            mensagem.innerHTML = "Acesso bloqueado. Deseja recuperar a senha?";
+            mensagem.style.color = "red";
+            document.getElementById("senha").disabled = true;
+            document.getElementById("nascimento").style.display = "block";
+            document.getElementById("recuperarBtn").style.display = "block";
+            break;
+          }
+        }
+      } while (tentativas < tentativasMaximas);
+    }
+  
+    function recuperarSenha() {
+      let nascimento = document.getElementById("nascimento").value;
+      let mensagem = document.getElementById("mensagem");
+
+      if (nascimento === diaNascimento) {
+        let novaSenha = prompt("Digite sua nova senha:");
+        senhaCorreta = novaSenha;
+        mensagem.innerHTML = "Senha redefinida com sucesso!";
+        mensagem.style.color = "green";
+        document.getElementById("senha").disabled = false;
+        document.getElementById("nascimento").style.display = "none";
+        document.getElementById("recuperarBtn").style.display = "none";
+        tentativas = 0;
+      } else {
+        mensagem.innerHTML = "Data incorreta. Acesso negado.";
+        mensagem.style.color = "red";
+      }
+    }
+  </script>
+<script src="script.js"></script></body>
+</html>
