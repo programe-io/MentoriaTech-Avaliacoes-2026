@@ -1,0 +1,1 @@
+alert("Bem-vindo ao Restaurante Sabor Caseiro!");
