@@ -87,9 +87,7 @@
       margin-top:40px;
     }
   </style>
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="style.css" rel="stylesheet"></head>
+</head>
 
 <body>
 
@@ -142,5 +140,5 @@
     }
   </script>
 
-<script src="script.js"></script></body>
+</body>
 </html>
