@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog do Jackson - Free Fire Nostalgia</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            /* Imagem do jogo como fundo de tela total */
+            background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT75Kxc3pALF4ZxMW1MGy2IsYC3L6G_yfqOvQ&s');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #e1e1e6;
+        }
+
+        /* HEADER */
+        header {
+            background-color: rgba(255, 87, 34, 0.9); /* Laranja ligeiramente transparente */
+            color: white;
+            text-align: center;
+            padding: 2.5rem 1rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+
+        /* NAV */
+        nav {
+            background-color: rgba(26, 26, 30, 0.95);
+            display: flex;
+            justify-content: center;
+            padding: 0.7rem;
+            border-bottom: 2px solid #ff5722;
+        }
+        nav button {
+            background: none;
+            border: none;
+            color: #a8a8b3;
+            font-size: 1rem;
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            margin: 0 0.5rem;
+            border-radius: 4px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        nav button.ativo, nav button:hover {
+            color: white;
+            background-color: #ff5722;
+        }
+
+        /* CONTAINER DO MAIN E ASIDE */
+        .container {
+            max-width: 1100px;
+            margin: 2rem auto;
+            display: flex;
+            gap: 2rem;
+            padding: 0 1rem;
+        }
+
+        /* MAIN */
+        main {
+            flex: 3;
+        }
+
+        /* CONTROLE DE EXIBIÇÃO DAS SEÇÕES */
+        .aba-conteudo {
+            display: none; /* Esconde as seções por padrão */
+        }
+        .aba-conteudo.ativa {
+            display: block; /* Mostra apenas a seção ativa */
+        }
+
+        /* ARTICLE E SECTION */
+        article, .galeria-section {
+            background: rgba(32, 32, 36, 0.92); /* Fundo escuro semi-transparente para dar leitura */
+            padding: 1.8rem;
+            margin-bottom: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            border-left: 4px solid #ff5722;
+        }
+        article h3, .galeria-section h2 {
+            margin-top: 0;
+            color: white;
+        }
+        article h3 {
+            font-size: 1.6rem;
+        }
+        .meta-dados {
+            font-size: 0.85rem;
+            color: #8d8d99;
+            margin-bottom: 1.5rem;
+        }
+        
+        /* Estilização da Imagem do Post Principal */
+        .img-ff {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+            border-radius: 6px;
+            margin-bottom: 1.5rem;
+            border: 2px solid #323238;
+        }
+
+        article p, .galeria-section p {
+            line-height: 1.6;
+            color: #c4c4cc;
+        }
+
+        /* ESTRUTURA ULTRA REALISTA DA GALERIA DE FOTOS */
+        .grid-fotos {
+            display: block;
+            margin-top: 1.5rem;
+        }
+
+        .item-foto {
+            margin-bottom: 2.5rem;
+            background: #121214;
+            padding: 0; /* Remove padding para a imagem preencher as bordas superiores */
+            border-radius: 10px;
+            border: 1px solid rgba(255, 87, 34, 0.2);
+            overflow: hidden; /* Garante que o zoom da imagem não saia do card */
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+
+        /* Efeito Realista ao passar o mouse no Card */
+        .item-foto:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 87, 34, 0.6);
+            box-shadow: 0 12px 30px rgba(255, 87, 34, 0.2);
+        }
+
+        /* Container interno da imagem para controlar o Zoom */
+        .foto-wrapper {
+            width: 100%;
+            overflow: hidden;
+            height: auto;
+            border-bottom: 3px solid #ff5722;
+        }
+
+        /* Imagem com transição de Zoom realista */
+        .item-foto img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .item-foto:hover img {
+            transform: scale(1.05); /* Zoom elegante e realista */
+        }
+
+        /* Texto abaixo da foto realista */
+        .item-foto p {
+            margin: 0;
+            padding: 1.2rem;
+            text-align: center;
+            font-size: 0.95rem;
+            color: #ffffff; /* Texto em branco total */
+            font-weight: 500;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), rgba(18,18,20,0));
+        }
+
+        /* ASIDE - TEXTOS EM BRANCO TOTAL */
+        aside {
+            flex: 1;
+            background: rgba(32, 32, 36, 0.92);
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            height: fit-content;
+        }
+        aside h3 {
+            margin-top: 0;
+            border-bottom: 2px solid #ff5722;
+            padding-bottom: 0.5rem;
+            color: white;
+        }
+        /* Garantindo cores brancas e legíveis na lateral */
+        aside p {
+            color: #ffffff !important; 
+            line-height: 1.5;
+        }
+        aside strong {
+            color: #ff5722; /* Destaca o nome do Jackson em Laranja */
+        }
+        aside ul {
+            list-style: none;
+            padding: 0;
+        }
+        aside li {
+            margin-bottom: 0.8rem;
+        }
+        aside a {
+            color: #ffffff; /* Links em branco */
+            text-decoration: none;
+            font-weight: 500;
+            transition: 0.2s;
+        }
+        aside a:hover {
+            color: #ff5722;
+            padding-left: 5px;
+        }
+
+        /* FOOTER */
+        footer {
+            background-color: rgba(26, 26, 30, 0.95);
+            color: #8d8d99;
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: 4rem;
+            border-top: 1px solid #323238;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+    <!-- HEADER -->
+    <header>
+        <h1>Drop do Jackson</h1>
+        <p>Lembranças, gameplays e a pura diversão dos games.</p>
+    </header>
+
+    <!-- NAV -->
+    <nav>
+        <button id="btn-sobre" class="ativo" onclick="mudarAba('sobre')">Sobre o Jogo</button>
+        <button id="btn-imagens" onclick="mudarAba('imagens')">Imagens</button>
+    </nav>
+
+    <!-- CONTAINER -->
+    <div class="container">
+
+        <!-- MAIN -->
+        <main>
+            
+            <!-- ABA 1: SOBRE O JOGO -->
+            <div id="conteudo-sobre" class="aba-conteudo ativa">
+                <section>
+                    <h2>Destaque do Dia</h2>
+                    <article>
+                        <h3>Free Fire em 2017: A Época de Ouro da Diversão</h3>
+                        <div class="meta-dados">Postado hoje por <strong>Jackson</strong></div>
+                        
+                        <img class="img-ff" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT75Kxc3pALF4ZxMW1MGy2IsYC3L6G_yfqOvQ&s" alt="Free Fire 2017">
+
+                        <p>Quem viveu o lançamento do Free Fire lá no final de 2017 sabe a vibe incrível que era. Os gráficos eram super simples, o mapa Bermuda ainda estava no começo, mas nada disso importava. O que valia de verdade era juntar a rapaziada no chat de voz para passar a tarde inteira jogando.</p>
+                        
+                        <p>Não tinha essa pressão por ranqueada perfeita ou skins ultra raras. O jogo era bom de verdade porque a gente entrava para rir, tentar sobreviver até o final e comemorar aquele "Booyah!" como se fosse uma final de campeonato mundial. Jogar videogame sempre foi sobre isso: desconectar um pouco da rotina e se divertir com os amigos de forma leve.</p>
+                        
+                        <a href="#" style="color: #ff5722; font-weight: bold; text-decoration: none;">Deixe seu comentário...</a>
+                    </article>
+                </section>
+            </div>
+
+            <!-- ABA 2: IMAGENS (GALERIA ULTRA REALISTA) -->
+            <div id="conteudo-imagens" class="aba-conteudo">
+                <section class="galeria-section">
+                    <h2>Galeria Antiga (2017)</h2>
+                    <p>Veja alguns dos registros mais nostálgicos das primeiras temporadas do lobby e do avião clássico:</p>
+
+                    <div class="grid-fotos">
+                        <div class="item-foto">
+                            <div class="foto-wrapper">
+                                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT75Kxc3pALF4ZxMW1MGy2IsYC3L6G_yfqOvQ&s" alt="Lobby Clássico">
+                            </div>
+                            <p>O lobby lendário e o avião que deu início a tudo em 2017.</p>
+                        </div>
+
+                        
+                        <div class="item-foto">
+                            <div class="foto-wrapper">
+                                <img src="https://i.pinimg.com/236x/e3/0e/23/e30e23c967d7d3a277095da639f6da59.jpg" alt="Bermuda 2017">
+                                <div class="item-foto">
+                            <div class="foto-wrapper">
+                                <img src="https://s2-techtudo.glbimg.com/OoY6UfIdyVOPOhpzyFXNUm9XsOM=/0x0:742x782/984x0/smart/filters:strip_icc()/i.s3.glbimg.com/v1/AUTH_08fbf48bc0524877943fe86e43087e7a/internal_photos/bs/2025/p/a/bA1lVkTIyBlUnBx1d41Q/1753970722307809.jpg" alt="Bermuda 2017">
+                            </div>
+                            <p>A simplicidade visual onde a única meta era fazer o Booyah.</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+        </main>
+
+        <!-- ASIDE (TEXTOS BRANCOS ATUALIZADOS) -->
+        <aside>
+            <h3>Sobre o Autor</h3>
+            <p>E aí, beleza? Sou o <strong>Jackson</strong>. Jogo desde a época em que o Free Fire cabia em qualquer celular fraco. Curto relembrar os velhos tempos e trocar ideia sobre como os jogos nos divertem.</p>
+            
+            <h3>Menu Nostalgia</h3>
+            <ul>
+                <li><a href="#" onclick="mudarAba('sobre')">Anos Iniciais (2017)</a></li>
+                <li><a href="#" onclick="mudarAba('imagens')">Ver Galeria de Fotos</a></li>
+            </ul>
+        </aside>
+
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>&copy; 2026 - Criado por Jackson. Todos os direitos reservados.</p>
+    </footer>
+
+    <!-- SCRIPT DE NAVEGAÇÃO -->
+    <script>
+        function mudarAba(aba) {
+            document.getElementById('conteudo-sobre').classList.remove('ativa');
+            document.getElementById('conteudo-imagens').classList.remove('ativa');
+            
+            document.getElementById('btn-sobre').classList.remove('ativo');
+            document.getElementById('btn-imagens').classList.remove('ativo');
+            
+            if(aba === 'sobre') {
+                document.getElementById('conteudo-sobre').classList.add('ativa');
+                document.getElementById('btn-sobre').classList.add('ativo');
+            } else if(aba === 'imagens') {
+                document.getElementById('conteudo-imagens').classList.add('ativa');
+                document.getElementById('btn-imagens').classList.add('ativo');
+            }
+        }
+    </script>
+
+<script src="script.js"></script></body>
+</html>
