@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz: O Incrível Mundo de Gumball</title>
+    <style>
+        /* Estilos base inspirados nas cores da série */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #00bfff; /* Azul Gumball */
+            color: #333;
+            display: flex;
+            flex-direction: column; /* Alinha o container e o rodapé verticalmente */
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        .quiz-container {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            width: 100%;
+            max-width: 600px;
+            padding: 30px;
+            box-sizing: border-box;
+            border: 4px solid #ffcc00; /* Amarelo Darwin */
+        }
+
+        h1 {
+            text-align: center;
+            color: #ff4500; /* Laranja Anais/Ricardo */
+            margin-top: 0;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .question {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        .options-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .option-item {
+            margin-bottom: 12px;
+        }
+
+        .option-item input[type="radio"] {
+            display: none;
+        }
+
+        .option-item label {
+            display: block;
+            padding: 14px 18px;
+            background-color: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 1.05rem;
+        }
+
+        .option-item label:hover {
+            background-color: #e2e6ea;
+            border-color: #dae0e5;
+        }
+
+        /* Quando o utilizador seleciona a opção */
+        .option-item input[type="radio"]:checked + label {
+            background-color: #e7f1ff;
+            border-color: #00bfff;
+            color: #008b8b;
+            font-weight: bold;
+        }
+
+        .actions {
+            margin-top: 25px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        button {
+            background-color: #ff4500;
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.15s ease;
+            box-shadow: 0 4px 0 #b33000;
+        }
+
+        button:hover {
+            background-color: #e63e00;
+        }
+
+        button:active {
+            transform: translateY(4px);
+            box-shadow: none;
+        }
+
+        /* Ecrã de Resultados */
+        .result-screen {
+            text-align: center;
+        }
+
+        .score {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #00bfff;
+            margin: 20px 0;
+            text-shadow: 2px 2px 0px #ffcc00;
+        }
+
+        /* Rodapé de Créditos Ajustado */
+        .footer-credits {
+            font-size: 13px;
+            color: #ffffff;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+    <div class="quiz-container">
+        <div id="quiz-conten
+                correct: 1
+            },
+            {
+                question: "3. Quem é o membro mais inteligente e estratégico da família Watterson?",t"></div>
+    </div>
+
+    <p class="footer-credits">Site feito por Rhuan/Yng_Lopex - 2026</p>
+
+    <script>
+        // Banco de dados das perguntas sobre a série
+        const quizData = [
+            {
+                question: "1. Que tipo de animal é o Darwin, o melhor amigo e irmão adotivo do Gumball?",
+                options: [
+                    "Um gato azul",
+                    "Um coelho cor-de-rosa",
+                    "Um peixe dourado que ganhou pernas",
+                    "Um dinossauro t-rex"
+                ],
+                correct: 2
+            },
+            {
+                question: "2. Qual é o nome da cidade fictícia onde a família Watterson vive?",
+                options: [
+                    "Springfield",
+                    "Elmore",
+                    "Fenda do Biquíni",
+                    "Beach City"
+                ],
+                options: [
+                    "Gumball",
+                    "Ricardo (o pai)",
+                    "Anais (a irmã mais nova)",
+                    "Darwin"
+                ],
+                correct: 2
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        const quizContent = document.getElementById('quiz-content');
+
+        function loadQuestion() {
+            const currentData = quizData[currentQuestionIndex];
+            
+            let optionsHTML = '';
+            currentData.options.forEach((option, index) => {
+                optionsHTML += `
+                    <li class="option-item">
+                        <input type="radio" id="option_${index}" name="quiz_option" value="${index}">
+                        <label for="option_${index}">${option}</label>
+                    </li>
+                `;
+            });
+
+            quizContent.innerHTML = `
+                <h1>Quiz: Gumball!</h1>
+                <div class="question">${currentData.question}</div>
+                <ul class="options-list">
+                    ${optionsHTML}
+                </ul>
+                <div class="actions">
+                    <button onclick="submitAnswer()">Próxima</button>
+                </div>
+            `;
+        }
+
+        function submitAnswer() {
+            const selectedOption = document.querySelector('input[name="quiz_option"]:checked');
+            
+            if (!selectedOption) {
+                alert("Escolhe uma opção antes de avançar!");
+                return;
+            }
+
+            const answerIndex = parseInt(selectedOption.value);
+
+            if (answerIndex === quizData[currentQuestionIndex].correct) {
+                score++;
+            }
+
+            currentQuestionIndex++;
+
+            if (currentQuestionIndex < quizData.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            let message = '';
+            if (score === quizData.length) {
+                message = "Incrível! Tu conheces Elmore como ninguém! 🎯🐱🐠";
+            } else if (score >= 1) {
+                message = "Bom trabalho! O Ricardo ficaria orgulhoso (ou com fome). 🥪";
+            } else {
+                message = "Parece que foste parar ao Vácuo! Tenta outra vez. 🕳️";
+            }
+
+            quizContent.innerHTML = `
+                <div class="result-screen">
+                    <h1>Fim do Quiz!</h1>
+                    <p>Acertaste:</p>
+                    <div class="score">${score} / ${quizData.length}</div>
+                    <p>${message}</p>
+                    <div class="actions" style="justify-content: center;">
+                        <button onclick="restartQuiz()">Jogar Novamente</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function restartQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            loadQuestion();
+        }
+
+        // Iniciar o jogo
+        loadQuestion();
+    </script>
+</body>
+</html>
