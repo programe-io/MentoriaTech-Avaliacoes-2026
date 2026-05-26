@@ -4,13 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Um Pouco Sobre Mim</title>
-<link href="style.css" rel="stylesheet"></head>
+</head>
 <body>
+<header>
+    <div class="logo">
+        <h1>Meu Blog Pessoal</h1>
+        <p>Compartilhando ideias e conhecimentos</p>
+    </div>
 
-    <header>
-        <h1>Meu Portfólio Pessoal</h1>
-        <p>Conheça um pouco sobre mim</p>
-    </header>
+    <nav>
+        <a href="#">Início</a>
+        <a href="#">Sobre</a>
+        <a href="#">Projetos</a>
+        <a href="#">Contato</a>
+    </nav>
+</header>
 
     <main>
 
@@ -58,5 +66,5 @@
         Desenvolvido por SEU NOME - 2026
     </footer>
 
-<script src="script.js"></script></body>
+</body>
 </html>
