@@ -2,143 +2,143 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Minha Página Web</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Minha Página Web</title>
 
-  <style>
-    *{
-      margin:0;
-      padding:0;
-      box-sizing:border-box;
-      font-family: Arial, sans-serif;
-    }
+        <style>
+            *{
+                  margin:0;
+                        padding:0;
+                              box-sizing:border-box;
+                                    font-family: Arial, sans-serif;
+                                        }
 
-    body{
-      background: #f0f4f8;
-      color:#333;
-    }
+                                            body{
+                                                  background: #f0f4f8;
+                                                        color:#333;
+                                                            }
 
-    header{
-      background: linear-gradient(90deg,#4facfe,#00f2fe);
-      color:white;
-      text-align:center;
-      padding:30px;
-    }
+                                                                header{
+                                                                      background: linear-gradient(90deg,#4facfe,#00f2fe);
+                                                                            color:white;
+                                                                                  text-align:center;
+                                                                                        padding:30px;
+                                                                                            }
 
-    nav{
-      background:#222;
-      padding:15px;
-      text-align:center;
-    }
+                                                                                                nav{
+                                                                                                      background:#222;
+                                                                                                            padding:15px;
+                                                                                                                  text-align:center;
+                                                                                                                      }
 
-    nav a{
-      color:white;
-      text-decoration:none;
-      margin:0 15px;
-      font-weight:bold;
-      transition:0.3s;
-    }
+                                                                                                                          nav a{
+                                                                                                                                color:white;
+                                                                                                                                      text-decoration:none;
+                                                                                                                                            margin:0 15px;
+                                                                                                                                                  font-weight:bold;
+                                                                                                                                                        transition:0.3s;
+                                                                                                                                                            }
 
-    nav a:hover{
-      color:#00f2fe;
-    }
+                                                                                                                                                                nav a:hover{
+                                                                                                                                                                      color:#00f2fe;
+                                                                                                                                                                          }
 
-    .container{
-      width:90%;
-      max-width:1000px;
-      margin:40px auto;
-      display:grid;
-      grid-template-columns: repeat(auto-fit,minmax(250px,1fr));
-      gap:20px;
-    }
+                                                                                                                                                                              .container{
+                                                                                                                                                                                    width:90%;
+                                                                                                                                                                                          max-width:1000px;
+                                                                                                                                                                                                margin:40px auto;
+                                                                                                                                                                                                      display:grid;
+                                                                                                                                                                                                            grid-template-columns: repeat(auto-fit,minmax(250px,1fr));
+                                                                                                                                                                                                                  gap:20px;
+                                                                                                                                                                                                                      }
 
-    .card{
-      background:white;
-      padding:20px;
-      border-radius:12px;
-      box-shadow:0 4px 10px rgba(0,0,0,0.1);
-      transition:0.3s;
-    }
+                                                                                                                                                                                                                          .card{
+                                                                                                                                                                                                                                background:white;
+                                                                                                                                                                                                                                      padding:20px;
+                                                                                                                                                                                                                                            border-radius:12px;
+                                                                                                                                                                                                                                                  box-shadow:0 4px 10px rgba(0,0,0,0.1);
+                                                                                                                                                                                                                                                        transition:0.3s;
+                                                                                                                                                                                                                                                            }
 
-    .card:hover{
-      transform:translateY(-5px);
-    }
+                                                                                                                                                                                                                                                                .card:hover{
+                                                                                                                                                                                                                                                                      transform:translateY(-5px);
+                                                                                                                                                                                                                                                                          }
 
-    button{
-      background:#4facfe;
-      color:white;
-      border:none;
-      padding:12px 20px;
-      border-radius:8px;
-      cursor:pointer;
-      margin-top:15px;
-      transition:0.3s;
-    }
+                                                                                                                                                                                                                                                                              button{
+                                                                                                                                                                                                                                                                                    background:#4facfe;
+                                                                                                                                                                                                                                                                                          color:white;
+                                                                                                                                                                                                                                                                                                border:none;
+                                                                                                                                                                                                                                                                                                      padding:12px 20px;
+                                                                                                                                                                                                                                                                                                            border-radius:8px;
+                                                                                                                                                                                                                                                                                                                  cursor:pointer;
+                                                                                                                                                                                                                                                                                                                        margin-top:15px;
+                                                                                                                                                                                                                                                                                                                              transition:0.3s;
+                                                                                                                                                                                                                                                                                                                                  }
 
-    button:hover{
-      background:#00c6fb;
-    }
+                                                                                                                                                                                                                                                                                                                                      button:hover{
+                                                                                                                                                                                                                                                                                                                                            background:#00c6fb;
+                                                                                                                                                                                                                                                                                                                                                }
 
-    footer{
-      background:#222;
-      color:white;
-      text-align:center;
-      padding:20px;
-      margin-top:40px;
-    }
-  </style>
-</head>
+                                                                                                                                                                                                                                                                                                                                                    footer{
+                                                                                                                                                                                                                                                                                                                                                          background:#222;
+                                                                                                                                                                                                                                                                                                                                                                color:white;
+                                                                                                                                                                                                                                                                                                                                                                      text-align:center;
+                                                                                                                                                                                                                                                                                                                                                                            padding:20px;
+                                                                                                                                                                                                                                                                                                                                                                                  margin-top:40px;
+                                                                                                                                                                                                                                                                                                                                                                                      }
+                                                                                                                                                                                                                                                                                                                                                                                        </style>
+                                                                                                                                                                                                                                                                                                                                                                                        </head>
 
-<body>
+                                                                                                                                                                                                                                                                                                                                                                                        <body>
 
-  <header>
-    <h1>Minha Página Web</h1>
-    <p>HTML + CSS + JavaScript</p>
-  </header>
+                                                                                                                                                                                                                                                                                                                                                                                          <header>
+                                                                                                                                                                                                                                                                                                                                                                                              <h1>Minha Página Web</h1>
+                                                                                                                                                                                                                                                                                                                                                                                                  <p>HTML + CSS + JavaScript</p>
+                                                                                                                                                                                                                                                                                                                                                                                                    </header>
 
-  <nav>
-    <a href="#">Início</a>
-    <a href="#">Sobre</a>
-    <a href="#">Contato</a>
-  </nav>
+                                                                                                                                                                                                                                                                                                                                                                                                      <nav>
+                                                                                                                                                                                                                                                                                                                                                                                                          <a href="#">Início</a>
+                                                                                                                                                                                                                                                                                                                                                                                                              <a href="#">Sobre</a>
+                                                                                                                                                                                                                                                                                                                                                                                                                  <a href="#">Contato</a>
+                                                                                                                                                                                                                                                                                                                                                                                                                    </nav>
 
-  <section class="container">
+                                                                                                                                                                                                                                                                                                                                                                                                                      <section class="container">
 
-    <div class="card">
-      <h2>HTML</h2>
-      <p>Estrutura da página.</p>
-      <button onclick="mostrarMensagem('Você clicou em HTML!')">
-        Clique Aqui
-      </button>
-    </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                          <div class="card">
+                                                                                                                                                                                                                                                                                                                                                                                                                                <h2>HTML</h2>
+                                                                                                                                                                                                                                                                                                                                                                                                                                      <p>Estrutura da página.</p>
+                                                                                                                                                                                                                                                                                                                                                                                                                                            <button onclick="mostrarMensagem('Você clicou em HTML!')">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                    Clique Aqui
+                                                                                                                                                                                                                                                                                                                                                                                                                                                          </button>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                              </div>
 
-    <div class="card">
-      <h2>CSS</h2>
-      <p>Estilo e aparência do site.</p>
-      <button onclick="mostrarMensagem('Você clicou em CSS!')">
-        Clique Aqui
-      </button>
-    </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                  <div class="card">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <h2>CSS</h2>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                              <p>Estilo e aparência do site.</p>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <button onclick="mostrarMensagem('Você clicou em CSS!')">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            Clique Aqui
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  </button>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      </div>
 
-    <div class="card">
-      <h2>JavaScript</h2>
-      <p>Interatividade da página.</p>
-      <button onclick="mostrarMensagem('Você clicou em JavaScript!')">
-        Clique Aqui
-      </button>
-    </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          <div class="card">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <h2>JavaScript</h2>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      <p>Interatividade da página.</p>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <button onclick="mostrarMensagem('Você clicou em JavaScript!')">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    Clique Aqui
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          </button>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              </div>
 
-  </section>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </section>
 
-  <footer>
-    <p>© 2026 - Página criada por Verônica</p>
-  </footer>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  <footer>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      <p>© 2026 - Página criada por Verônica</p>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        </footer>
 
-  <script>
-    function mostrarMensagem(texto){
-      alert(texto);
-    }
-  </script>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          <script>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              function mostrarMensagem(texto){
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    alert(texto);
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          </script>
 
-</body>
-</html>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          </body>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          </html>
