@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Classificação de Produtos</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f2f2f2;
+    }
+
+    header {
+      background: #333;
+      color: white;
+      padding: 15px;
+      text-align: center;
+    }
+
+    nav {
+      background: #444;
+      padding: 10px;
+      text-align: center;
+    }
+
+    nav a {
+      color: white;
+      margin: 0 10px;
+      text-decoration: none;
+    }
+
+    main {
+      display: flex;
+      gap: 20px;
+      padding: 20px;
+    }
+
+    aside {
+      width: 25%;
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+    }
+
+    article {
+      flex: 1;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+    }
+
+    img {
+      width: 100%;
+      border-radius: 10px;
+      margin-top: 10px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+    }
+
+    button {
+      padding: 10px;
+      background: green;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: darkgreen;
+    }
+
+    #resultado {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    .destaque {
+      color: red;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <h1>Classificação de Produtos</h1>
+    <p>Analise a quantidade de produtos e veja a classificação</p>
+  </header>
+
+  <nav>
+    <a href="#">Início</a>
+    <a href="#">Sistema</a>
+    <a href="#">Contato</a>
+  </nav>
+
+  <main>
+
+    <aside>
+      <h3>Regras</h3>
+
+      <img src="https://cdn-icons-png.flaticon.com/512/190/190411.png" alt="Ícone de regras">
+
+      <p>Mais de <span class="destaque">50</span> = Alta</p>
+      <p>Mais de <span class="destaque">20</span> = Média</p>
+      <p><span class="destaque">20 ou menos</span> = Baixa</p>
+    </aside>
+
+    <article>
+
+      <h2>Entrada de dados</h2>
+
+      <img src="https://cdn-icons-png.flaticon.com/512/992/992651.png" alt="Cálculo">
+
+      <label>Quantidade de produtos:</label>
+      <input type="number" id="quantProdutos">
+
+      <button onclick="processar()">Processar</button>
+
+      <div id="resultado"></div>
+
+    </article>
+
+  </main>
+
+  <script>
+    function processar() {
+      let quantProdutos = Number(document.getElementById("quantProdutos").value);
+
+      let baixa = 0;
+      let media = 0;
+      let alta = 0;
+
+      let i = 0;
+
+      while (i < quantProdutos) {
+
+        let quantidade = Number(prompt("Informe a quantidade do produto " + (i + 1)));
+
+        if (quantidade > 50) {
+          alta++;
+        } 
+        else if (quantidade > 20) {
+          media++;
+        } 
+        else {
+          baixa++;
+        }
+
+        i++;
+      }
+
+      document.getElementById("resultado").innerHTML =
+        `Baixa: <span class="destaque">${baixa}</span> <br>
+         Média: <span class="destaque">${media}</span> <br>
+         Alta: <span class="destaque">${alta}</span>`;
+    }
+  </script>
+
+</body>
+
+</html>
