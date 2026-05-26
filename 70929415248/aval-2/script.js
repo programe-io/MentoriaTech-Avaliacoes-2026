@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prática 02</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #1e1e1e;
+            color: white;
+        }
+
+        header {
+            background-color: #111;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 3px solid #00bfff;
+        }
+
+        header img {
+            width: 120px;
+            margin-bottom: 10px;
+        }
+
+        header h1 {
+            color: #00bfff;
+            margin: 10px 0;
+        }
+
+        header h3 {
+            margin: 5px 0;
+            color: #90ee90;
+        }
+
+        header span {
+            font-size: 18px;
+            color: #ffffff;
+        }
+
+        header p {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #ccc;
+        }
+
+        nav {
+            background-color: #00bfff;
+            padding: 15px;
+            text-align: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: bold;
+        }
+
+        nav a:hover {
+            color: #111;
+        }
+
+        .container {
+            display: flex;
+        }
+
+        aside {
+            width: 250px;
+            background-color: #2b2b2b;
+            padding: 20px;
+            min-height: 500px;
+            border-right: 2px solid #00bfff;
+        }
+
+        aside h2 {
+            color: #00bfff;
+        }
+
+        aside ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        aside ul li {
+            margin: 15px 0;
+        }
+
+        aside ul li a {
+            color: #90ee90;
+            text-decoration: none;
+        }
+
+        aside ul li a:hover {
+            color: white;
+        }
+
+        main {
+            flex: 1;
+            padding: 30px;
+        }
+
+        article {
+            background-color: #2b2b2b;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 5px solid #00bfff;
+        }
+
+        article h2 {
+            color: #00bfff;
+        }
+
+        article p {
+            color: #ddd;
+            line-height: 1.6;
+        }
+
+        .resultado {
+            margin-top: 30px;
+            font-size: 22px;
+            color: #90ee90;
+        }
+
+        footer {
+            background-color: #111;
+            text-align: center;
+            padding: 20px;
+            margin-top: 30px;
+            border-top: 3px solid #00bfff;
+        }
+
+        footer p {
+            margin: 5px;
+            color: #ccc;
+        }
+
+        footer span {
+            color: #90ee90;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Logo">
+
+        <h1>JavaScript</h1>
+
+        <h3>Prática 02</h3>
+
+        <span>Somando os N primeiros números pares</span>
+
+        <p>
+            Este programa em JavaScript lê um número inteiro N
+            e calcula a soma dos N primeiros números pares.
+        </p>
+    </header>
+
+    <nav>
+        <a href="#">Início</a>
+        <a href="#">Exercícios</a>
+        <a href="#">JavaScript</a>
+        <a href="#">Contato</a>
+    </nav>
+
+    <div class="container">
+
+        <aside>
+            <h2>Menu Lateral</h2>
+
+            <ul>
+                <li><a href="#">Variáveis</a></li>
+                <li><a href="#">Laços</a></li>
+                <li><a href="#">Condições</a></li>
+                <li><a href="#">Funções</a></li>
+            </ul>
+        </aside>
+
+        <main>
+
+            <article>
+                <h2>Sobre o Exercício</h2>
+
+                <p>
+                    O objetivo deste exercício é ler um número inteiro N
+                    e calcular a soma dos N primeiros números pares
+                    utilizando a linguagem JavaScript.
+                </p>
+
+                <p>
+                    O programa utiliza estruturas de repetição,
+                    operadores matemáticos e variáveis para realizar
+                    o cálculo automaticamente.
+                </p>
+
+                <div class="resultado" id="resultado"></div>
+            </article>
+
+        </main>
+
+    </div>
+
+    <footer>
+        <p>Desenvolvido para estudos de HTML, CSS e JavaScript</p>
+
+        <p>
+            © 2025 - <span>Projeto Prática 02</span>
+        </p>
+    </footer>
+
+    <script>
+        let valorN = Number(prompt("Informe o valor de N:"));
+        let contador = 0;
+        let somaPares = 0;
+
+        for (let i = 1; contador < valorN; i++) {
+
+            if (i % 2 == 0) {
+                somaPares = somaPares + i;
+                contador++;
+            }
+        }
+
+        document.getElementById("resultado").innerHTML =
+            `A soma dos ${valorN} primeiros números pares é ${somaPares}`;
+    </script>
+
+</body>
+</html>
