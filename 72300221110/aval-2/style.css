@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prática 02</title>
+
+  <style>
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+    }
+
+    header {
+      background-color: #1e3a8a;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+
+    nav {
+      background-color: #2563eb;
+      padding: 10px;
+      text-align: center;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin: 0 15px;
+      font-weight: bold;
+    }
+
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    .container {
+      display: flex;
+      padding: 20px;
+      gap: 20px;
+    }
+
+    aside {
+      width: 250px;
+      background-color: #dbeafe;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    aside h2 {
+      color: #1e3a8a;
+    }
+
+    aside img {
+      width: 100%;
+      border-radius: 10px;
+      margin-top: 10px;
+    }
+
+    main {
+      flex: 1;
+    }
+
+    article {
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+    }
+
+    h3 {
+      color: #2563eb;
+      text-align: center;
+      margin-bottom: 15px;
+    }
+
+    p {
+      font-size: 18px;
+      color: #333;
+      text-align: center;
+    }
+
+    footer {
+      background-color: #1e3a8a;
+      color: white;
+      text-align: center;
+      padding: 15px;
+      margin-top: 20px;
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <h1>Prática 02 - Soma dos N primeiros números pares</h1>
+  </header>
+
+  <nav>
+    <a href="#">Início</a>
+    <a href="#">Exercícios</a>
+    <a href="#">Contato</a>
+  </nav>
+
+  <div class="container">
+
+    <aside>
+
+      <h2>Informações</h2>
+
+      <img 
+        src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" 
+        alt="Imagem ilustrativa">
+
+      <p>
+        Este exercício calcula a soma dos N primeiros números pares usando JavaScript.
+      </p>
+
+    </aside>
+
+    <main>
+
+      <article>
+
+        <h3>Resultado do Cálculo</h3>
+
+        <p id="resultado">
+          Resultado aparecerá aqui...
+        </p>
+
+      </article>
+
+    </main>
+
+  </div>
+
+  <footer>
+    <p>Desenvolvido para prática de HTML, CSS e JavaScript</p>
+  </footer>
+
+  <script>
+
+    // Solicita o valor de N
+    let valorN = prompt("Informe o valor de N:");
+
+    let contador = 0;
+    let somaPares = 0;
+
+    // Calcula a soma dos N primeiros números pares
+    for (let i = 1; contador < valorN; i++) {
+
+      if (i % 2 == 0) {
+        somaPares += i;
+        contador++;
+      }
+
+    }
+
+    // Mostra o resultado na página
+    document.getElementById("resultado").innerHTML =
+      `A soma dos ${valorN} primeiros números pares é <strong>${somaPares}</strong>`;
+
+  </script>
+
+</body>
+
+</html>
