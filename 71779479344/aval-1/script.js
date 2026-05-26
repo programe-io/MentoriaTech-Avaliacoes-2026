@@ -1,22 +1,30 @@
-// contador de cliques
-let contador = 0;
+/**
+ * Podcast CETI Paulo Freire - Controle do Player de Áudio
+ */
+document.addEventListener('DOMContentLoaded', () => {
+    // --- Seleção de Elementos do DOM ---
+    const audio = document.getElementById('main-audio');
+    const playPauseBtn = document.getElementById('btn-play-pause');
+    const progressBar = document.getElementById('progress-bar');
+    const currentTimeText = document.getElementById('current-time');
+    const durationText = document.getElementById('duration');
+    const currentTitle = document.getElementById('current-title');
+    const currentDesc = document.getElementById('current-description');
+    
+    // Todos os cards de episódios da página
+    const episodeCards = document.querySelectorAll('.episode-card');
 
-// função chamada ao clicar no botão
-function clicarBotao() {
-    contador++;
+    // --- Configuração dos Cliques nos Cards ---
+    episodeCards.forEach(card => {
+        card.querySelector('.listen-btn').addEventListener('click', () => {
+            // Captura os dados configurados no HTML do card
+            const audioSrc = card.getAttribute('data-src');
+            const title = card.getAttribute('data-title');
+            const desc = card.getAttribute('data-desc');
 
-    // atualiza o texto na tela
-    document.getElementById("contador").innerText = 
-        "Você clicou " + contador + " vezes";
+            // 1. Atualiza os textos do player principal
+            currentTitle.textContent = title;
+            currentDesc.textContent = desc;
 
-    // mensagem dinâmica
-    let mensagem = document.getElementById("mensagem");
-
-    if (contador === 5) {
-        mensagem.innerText = "🔥 Tá viciado em clicar hein!";
-    } else if (contador === 10) {
-        mensagem.innerText = "🚀 Caramba, 10 cliques!";
-    } else if (contador >= 20) {
-        mensagem.innerText = "💀 Já pode parar kkkkk";
-    }
-}
+            // 2. Injeta o novo arquivo de áudio no player
+            audio.src = audioSrc;
