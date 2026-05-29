@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soma dos Números Pares</title>
+
+    <style>
+
+        nav{
+            background-color: lightgray;
+            padding: 10px;
+        }
+
+        nav a{
+            margin-right: 15px;
+            text-decoration: none;
+            color: black;
+        }
+
+        main{
+            margin-top: 20px;
+            padding: 15px;
+        }
+
+        article{
+            background-color: #ffffff;
+            padding: 15px;
+            border: 1px solid #ccc;
+        }
+
+        aside{
+            background-color: #f0f0f0;
+            width: 250px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+
+        img{
+            width: 250px;
+            margin-top: 15px;
+        }
+
+        footer{
+            background-color: lightgray;
+            text-align: center;
+            padding: 10px;
+            margin-top: 20px;
+        }
+
+    </style>
+
+</head>
+
+<header>
+
+    <nav>
+        <a href="#">Início</a>
+        <a href="#">Cálculo</a>
+        <a href="#">Contato</a>
+    </nav>
+
+</header>
+
+<body>
+
+    <main>
+
+        <article>
+
+            <h1>Soma dos números pares</h1>
+
+            <p>Digite um valor para calcular a soma dos números pares.</p>
+
+            <img src="https://cdn-icons-png.flaticon.com/512/2721/2721297.png" alt="Imagem matemática">
+
+            <aside>
+
+                <h3>Informações</h3>
+
+                <p>
+                    Este programa calcula a soma dos números pares
+                    de 1 até o valor informado.
+                </p>
+
+            </aside>
+
+            <script>
+
+                let valorN = prompt("Informe o valor de N:");
+                let contador = 0;
+                let somaPares = 0;
+
+                for(let i = contador; i <= valorN; i++){
+
+                    if(i % 2 == 0){
+
+                        somaPares = somaPares + i;
+                        contador++;
+
+                    }
+
+                }
+
+                document.write("<p>A soma dos pares de 1 até " + valorN + " é " + somaPares + "</p>");
+
+            </script>
+
+        </article>
+
+    </main>
+
+    <footer>
+
+        <p>Desenvolvido para atividade de HTML, CSS e JavaScript.</p>
+
+    </footer>
+
+</body>
+
+</html>
