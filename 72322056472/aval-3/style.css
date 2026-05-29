@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Organização de Produtos</title>
+
+    <style>
+
+        body{
+            font-family: Arial, Helvetica, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav{
+            background-color: lightgray;
+            padding: 15px;
+        }
+
+        nav a{
+            text-decoration: none;
+            margin-right: 20px;
+            color: black;
+            font-weight: bold;
+        }
+
+        main{
+            padding: 20px;
+        }
+
+        article{
+            border: 1px solid #ccc;
+            padding: 20px;
+            background-color: #ffffff;
+        }
+
+        aside{
+            background-color: #f0f0f0;
+            padding: 15px;
+            width: 250px;
+            margin-top: 20px;
+        }
+
+        img{
+            width: 250px;
+            margin-top: 15px;
+        }
+
+        .resultado{
+            background-color: #e6e6e6;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 10px;
+        }
+
+        span{
+            color: blue;
+            font-weight: bold;
+        }
+
+        footer{
+            background-color: lightgray;
+            text-align: center;
+            padding: 15px;
+            margin-top: 20px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <header>
+
+        <nav>
+
+            <a href="#">Início</a>
+            <a href="#">Produtos</a>
+            <a href="#">Contato</a>
+
+        </nav>
+
+    </header>
+
+    <main>
+
+        <article>
+
+            <h1>Organização de Produtos</h1>
+
+            <p>
+                Este programa calcula quantas caixas serão necessárias
+                para organizar os produtos.
+            </p>
+
+            <img src="https://cdn-icons-png.flaticon.com/512/3081/3081559.png" alt="Caixas de produtos">
+
+            <aside>
+
+                <h3>Informações</h3>
+
+                <p>
+                    O sistema organiza os produtos em caixas
+                    <span>grandes</span>,
+                    <span>médias</span>,
+                    <span>pequenas</span> e
+                    <span>extra</span>.
+                </p>
+
+            </aside>
+
+            <div class="resultado">
+
+                <h2>Resultado</h2>
+
+                <script>
+
+                    /* Variáveis da Regra Negócio */
+
+                    let quantCaixaExtra = 0;
+                    let quantCaixaGrande = 0;
+                    let quantCaixaMedia = 0;
+                    let quantCaixaPequena = 0;
+
+                    /* Entrada de Dados */
+
+                    let quantProdutos = prompt("Informe a quant. de produtos a ser organizados:");
+
+                    /* Processo */
+
+                    while(quantProdutos > 0){
+
+                        if(quantProdutos >= 50){
+
+                            quantCaixaExtra++;
+                            quantProdutos -= 50;
+
+                        }
+
+                        else if(quantProdutos >= 20){
+
+                            quantCaixaGrande++;
+                            quantProdutos -= 20;
+
+                        }
+
+                        else if(quantProdutos >= 5){
+
+                            quantCaixaMedia++;
+                            quantProdutos -= 5;
+
+                        }
+
+                        else{
+
+                            quantCaixaPequena++;
+                            quantProdutos -= 1;
+
+                        }
+
+                    }
+
+                    document.write("<p>Caixas utilizadas:</p>");
+
+                    document.write("<p>Caixas Extra (50 produtos): "
+                    + quantCaixaExtra + "</p>");
+
+                    document.write("<p>Caixas Grandes (20 produtos): "
+                    + quantCaixaGrande + "</p>");
+
+                    document.write("<p>Caixas Médias (5 produtos): "
+                    + quantCaixaMedia + "</p>");
+
+                    document.write("<p>Caixas Pequenas (1 produto): "
+                    + quantCaixaPequena + "</p>");
+
+                </script>
+
+            </div>
+
+        </article>
+
+    </main>
+
+    <footer>
+
+        <p>
+            Desenvolvido para atividade de HTML, CSS e JavaScript.
+        </p>
+
+    </footer>
+
+</body>
+
+</html>
