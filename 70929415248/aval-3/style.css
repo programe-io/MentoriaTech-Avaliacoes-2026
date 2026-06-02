@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Organização de Produtos</title>
+</head>
+<body>
+
+    <header>
+        <h1>Organização de Produtos</h1>
+    </header>
+
+    <nav>
+        <a href="#">Início</a> |
+        <a href="#">Produtos</a> |
+        <a href="#">Contato</a>
+    </nav>
+
+    <img src="imagem.jpg" alt="Imagem ilustrativa de organização de produtos" width="300">
+
+    <main>
+        <h2>Resultado do Cálculo</h2>
+
+        <div id="resultado">
+            <p>Caixas extra-grande: <span id="extra"></span></p>
+            <p>Caixas grande: <span id="grande"></span></p>
+            <p>Caixas média: <span id="media"></span></p>
+            <p>Caixas pequena: <span id="pequena"></span></p>
+        </div>
+    </main>
+
+    <script>
+        let quantProdutos = Number(prompt("Informe a quantidade de produtos a serem organizados: "));
+
+        let quantCaixaExtra = 0;
+        let quantCaixaGrande = 0;
+        let quantCaixaMedia = 0;
+        let quantCaixaPequena = 0;
+
+        while (quantProdutos > 0) {
+            if (quantProdutos >= 50) {
+                quantCaixaExtra++;
+                quantProdutos -= 50;
+            } else if (quantProdutos >= 20) {
+                quantCaixaGrande++;
+                quantProdutos -= 20;
+            } else if (quantProdutos >= 5) {
+                quantCaixaMedia++;
+                quantProdutos -= 5;
+            } else {
+                quantCaixaPequena++;
+                quantProdutos -= 1;
+            }
+        }
+
+        document.getElementById("extra").innerText = quantCaixaExtra;
+        document.getElementById("grande").innerText = quantCaixaGrande;
+        document.getElementById("media").innerText = quantCaixaMedia;
+        document.getElementById("pequena").innerText = quantCaixaPequena;
+    </script>
+
+</body>
+</html>
