@@ -1,1 +1,27 @@
-í)(ñà¢áß
+// Aguarda todo o HTML da p√°gina carregar antes de executar o c√≥digo
+document.addEventListener('DOMContentLoaded', () => {
+    
+    // 1. Captura os elementos do HTML que vamos interagir
+    const botao = document.getElementById('meuBotao');
+    const card = document.querySelector('.card');
+
+    // 2. Cria um efeito de clique no bot√£o principal
+    botao.addEventListener('click', () => {
+        // Altera o texto do bot√£o
+        botao.textContent = "Logado com Sucesso! üéâ";
+        botao.style.backgroundColor = "#10b981"; // Muda a cor para verde
+        
+        // Cria um novo par√°grafo dinamicamente
+        const mensagemSucesso = document.createElement('p');
+        mensagemSucesso.innerText = "Parab√©ns! O JavaScript detectou seu clique e modificou a p√°gina em tempo real.";
+        mensagemSucesso.style.color = "#10b981";
+        mensagemSucesso.style.marginTop = "1rem";
+        mensagemSucesso.style.fontWeight = "bold";
+        
+        // Evita que adicione v√°rias mensagens se clicar mais de uma vez
+        if (card.children.length < 4) {
+            card.appendChild(mensagemSucesso);
+        }
+    });
+
+});
