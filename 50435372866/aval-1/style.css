@@ -1,12 +1,4 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <link href="style.css" rel="stylesheet">
-</head>
-<body>
-  <h1>🌸 Meu Blog Pessoal 🌸</h1>
+<h1>🌸 Meu Blog Pessoal 🌸</h1>
 
 <h2>Quem sou eu?</h2>
 
@@ -55,8 +47,3 @@
 <hr>
 
 <p>Blog criado por Kassandra ❤️</p>
-
-  <script src="script.js"></script>
-  
-</body>
-</html>
