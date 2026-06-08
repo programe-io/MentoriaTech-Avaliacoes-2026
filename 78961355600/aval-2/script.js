@@ -399,9 +399,7 @@
             h2 { font-size: 2rem; }
         }
     </style>
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"><link href="style.css" rel="stylesheet"></head>
+</head>
 <body>
     <nav>
         <div class="container">
@@ -584,5 +582,5 @@
         <p class="quote">"What's your favorite scary movie?" - Ghostface</p>
         <p>Feito com ❤️, café e muito terror por @daily.yarla | 2026</p>
     </footer>
-<script src="script.js"></script></body>
+</body>
 </html>
