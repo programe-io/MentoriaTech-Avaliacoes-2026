@@ -1,5 +1,4 @@
-function mostrarMensagem(){
-
-    alert("Pelé foi o maior jogador da história do futebol!");
-
+function mostrarMensagem() {
+    document.getElementById("curiosidade").innerHTML =
+        "Pelé é o único jogador da história a conquistar 3 Copas do Mundo (1958, 1962 e 1970).";
 }
