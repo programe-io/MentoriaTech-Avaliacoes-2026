@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Enciclopédia Suicide Mouse FNF</title>
+
+<style>
+
+body{
+    background-image:
+        linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)),
+        url("fundo.jpg");
+
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+
+    color: white;
+    font-family: Courier New, monospace;
+
+    margin: 0;
+    padding: 0;
+
+    animation: flicker 8s infinite;
+}
+
+@keyframes flicker{
+    0%,100%{
+        opacity:1;
+    }
+
+    98%{
+        opacity:0.97;
+    }
+
+    99%{
+        opacity:0.94;
+    }
+}
+
+header{
+    text-align:center;
+    padding:40px;
+    background-color:rgba(0,0,0,0.6);
+}
+
+header h1{
+    color:#c0c0c0;
+}
+
+nav{
+    background-color:rgba(15,15,15,0.9);
+    padding:15px;
+    text-align:center;
+}
+
+nav a{
+    color:#cfcfcf;
+    text-decoration:none;
+    margin:0 15px;
+}
+
+nav a:hover{
+    color:white;
+}
+
+.container{
+    width:80%;
+    margin:auto;
+    padding:20px;
+}
+
+.mod{
+    background-color:rgba(20,20,20,0.85);
+
+    border-left:4px solid #666;
+
+    padding:20px;
+    margin-top:20px;
+
+    border-radius:10px;
+}
+
+.mod img{
+    width:300px;
+    max-width:100%;
+    border-radius:8px;
+}
+
+footer{
+    text-align:center;
+    padding:20px;
+    margin-top:40px;
+    background-color:rgba(0,0,0,0.7);
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>Enciclopédia dos Mods de Suicide Mouse</h1>
+
+    <p>
+        Arquivo digital contendo informações sobre mods alternativos
+        inspirados em Suicide Mouse para Friday Night Funkin'.
+    </p>
+</header>
+
+<nav>
+    <a href="#wi">Wednesday's Infidelity</a>
+    <a href="#unknown">Unknown Suffering</a>
+    <a href="#extras">Curiosidades</a>
+</nav>
+
+<div class="container">
+
+    <div class="mod" id="wi">
+
+        <h2>Wednesday's Infidelity</h2>
+
+        <img src="imagens/wi.jpg" alt="Wednesday's Infidelity">
+
+        <p>
+            Um dos mods mais conhecidos inspirados em Suicide Mouse.
+            Possui várias fases e diferentes versões do personagem.
+        </p>
+
+    </div>
+
+    <div class="mod" id="unknown">
+
+        <h2>Unknown Suffering</h2>
+
+        <img src="imagens/unknown.jpg" alt="Unknown Suffering">
+
+        <p>
+            Uma das músicas mais famosas do universo de Wednesday's
+            Infidelity, conhecida pelo clima pesado e atmosfera triste.
+        </p>
+
+    </div>
+
+    <div class="mod" id="extras">
+
+        <h2>Curiosidades</h2>
+
+        <ul>
+            <li>Existem diversas versões fan-made de Suicide Mouse.</li>
+            <li>Muitos mods expandem a história original.</li>
+            <li>Os estilos variam entre terror psicológico e horror analógico.</li>
+        </ul>
+
+    </div>
+
+</div>
+
+<footer>
+    Enciclopédia FNF • Projeto de fã
+</footer>
+
+</body>
+</html>
