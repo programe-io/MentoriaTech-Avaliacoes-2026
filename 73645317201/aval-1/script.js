@@ -1,0 +1,1 @@
+https://github.com/ColorlibHQ/gentelella/commit/45437d4ae624cdbae6096ba2b41f41744b9967b1
