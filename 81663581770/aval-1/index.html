@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>O Jogo da Dayla da Moto</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #222;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow: hidden;
+            color: white;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+            color: #ff4757;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        #gameCanvas {
+            border: 4px solid #ff4757;
+            border-radius: 10px;
+            background-color: #333;
+            box-shadow: 0px 10px 20px rgba(0,0,0,0.3);
+            max-width: 100%;
+        }
+
+        .instrucoes {
+            margin-top: 15px;
+            font-size: 14px;
+            text-align: center;
+            color: #ccc;
+        }
+
+        .btn-controle {
+            margin-top: 15px;
+            display: none;
+        }
+
+        /* Controles para celular */
+        @media (max-width: 600px) {
+            .btn-controle {
+                display: flex;
+                gap: 20px;
+            }
+            .btn {
+                padding: 15px 30px;
+                background-color: #ff4757;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                font-size: 18px;
+                font-weight: bold;
+            }
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+    <h1>Dayla Linda da Moto 🏍️✨</h1>
+    <canvas id="gameCanvas" width="600" height="400"></canvas>
+
+    <div class="instrucoes">
+        <p><strong>Como jogar:</strong> Use as setas do teclado <strong>PARA CIMA</strong> e <strong>PARA BAIXO</strong> para desviar dos buracos!</p>
+    </div>
+
+    <div class="btn-controle">
+        <button class="btn" id="btnSubir">⬆️ Sobe</button>
+        <button class="btn" id="btnDescer">⬇️ Desce</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+
+        // Configurações do jogo
+        let score = 0;
+        let gameOver = false;
+        let gameSpeed = 5;
+
+        // Dados da Dayla da Moto
+        const dayla = {
+            x: 50,
+            y: 200,
+            width: 60,
+            height: 40,
+            speed: 7,
+            cor: "#ff4757"
+        };
+
+        // Obstáculos (Buracos ou cones na pista)
+        const obstacles = [];
+        const obstacleSpawnRate = 90; // Quanto menor, mais rápido aparecem
+        let frameCount = 0;
+
+        // Captura de comandos do teclado
+        const keys = {};
+        window.addEventListener("keydown", (e) => keys[e.code] = true);
+        window.addEventListener("keyup", (e) => keys[e.code] = false);
+
+        // Controles de toque para celular
+        document.getElementById("btnSubir").addEventListener("touchstart", () => keys["ArrowUp"] = true);
+        document.getElementById("btnSubir").addEventListener("touchend", () => keys["ArrowUp"] = false);
+        document.getElementById("btnDescer").addEventListener("touchstart", () => keys["ArrowDown"] = true);
+        document.getElementById("btnDescer").addEventListener("touchend", () => keys["ArrowDown"] = false);
+
+        function spawnObstacle() {
+            const size = Math.random() * (40 - 20) + 20;
+            // Define uma linha aleatória na estrada para o obstáculo aparecer
+            const posY = Math.random() * (canvas.height - size - 40) + 20; 
+            obstacles.push({
+                x: canvas.width,
+                y: posY,
+                width: size,
+                height: size,
+                cor: "#ffa502"
+            });
+        }
+
+        function checkCollision(rect1, rect2) {
+            return rect1.x < rect2.x + rect2.width &&
+                   rect1.x + rect1.width > rect2.x &&
+                   rect1.y < rect2.y + rect2.height &&
+                   rect1.y + rect1.height > rect2.y;
+        }
+
+        function update() {
+            if (gameOver) return;
+
+            frameCount++;
+            score++;
+
+            // Aumenta a velocidade do jogo aos poucos
+            if (score % 500 === 0) {
+                gameSpeed += 0.5;
+            }
+
+            // Movimento da Dayla
+            if ((keys["ArrowUp"] || keys["KeyW"]) && dayla.y > 10) {
+                dayla.y -= dayla.speed;
+            }
+            if ((keys["ArrowDown"] || keys["KeyS"]) && dayla.y < canvas.height - dayla.height - 10) {
+                dayla.y += dayla.speed;
+            }
+
+            // Criar novos obstáculos
+            if (frameCount % obstacleSpawnRate === 0) {
+                spawnObstacle();
+            }
+
+            // Mover e checar obstáculos
+            for (let i = obstacles.length - 1; i >= 0; i--) {
+                obstacles[i].x -= gameSpeed;
+
+                // Colisão
+                if (checkCollision(dayla, obstacles[i])) {
+                    gameOver = true;
+                }
+
+                // Remove obstáculos que saíram da tela
+                if (obstacles[i].x + obstacles[i].width < 0) {
+                    obstacles.splice(i, 1);
+                }
+            }
+        }
+
+        function draw() {
+            // Limpar o canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Desenhar a Estrada (Linhas guias)
+            ctx.strokeStyle = "#555";
+            ctx.lineWidth = 4;
+            ctx.setLineDash([20, 20]);
+            ctx.beginPath();
+            ctx.moveTo(0, canvas.height / 2);
+            ctx.lineTo(canvas.width, canvas.height / 2);
+            ctx.stroke();
+            ctx.setLineDash([]); // Reseta o tracejado
+
+            // Desenhar a Dayla (Representada por uma moto estilizada)
+            ctx.fillStyle = dayla.cor;
+            // Corpo da moto/Dayla
+            ctx.fillRect(dayla.x, dayla.y, dayla.width, dayla.height);
+            // Rodas
+            ctx.fillStyle = "#000";
+            ctx.beginPath();
+            ctx.arc(dayla.x + 10, dayla.y + dayla.height, 10, 0, Math.PI * 2);
+            ctx.arc(dayla.x + dayla.width - 10, dayla.y + dayla.height, 10, 0, Math.PI * 2);
+            ctx.fill();
+            // Cabelo esvoaçante da Dayla linda
+            ctx.fillStyle = "#ff6b81";
+            ctx.fillRect(dayla.x - 5, dayla.y + 5, 15, 15);
+
+            // Desenhar Obstáculos (Cones/Buracos)
+            for (let obs of obstacles) {
+                ctx.fillStyle = obs.cor;
+                ctx.beginPath();
+                ctx.moveTo(obs.x + obs.width / 2, obs.y);
+                ctx.lineTo(obs.x, obs.y + obs.height);
+                ctx.lineTo(obs.x + obs.width, obs.y + obs.height);
+                ctx.closePath();
+                ctx.fill();
+            }
+
+            // Desenhar Pontuação
+            ctx.fillStyle = "#fff";
+            ctx.font = "20px Arial";
+            ctx.fillText(`Pontos: ${score}`, 20, 30);
+
+            // Tela de Game Over
+            if (gameOver) {
+                ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                ctx.fillStyle = "#ff4757";
+                ctx.font = "40px Arial";
+                ctx.textAlign = "center";
+                ctx.fillText("Fim de Jogo!", canvas.width / 2, canvas.height / 2 - 10);
+                
+                ctx.fillStyle = "#fff";
+                ctx.font = "20px Arial";
+                ctx.fillText(`Pontuação Final: ${score}`, canvas.width / 2, canvas.height / 2 + 30);
+                ctx.fillText("Pressione F5 ou recarregue a página para reiniciar", canvas.width / 2, canvas.height / 2 + 70);
+            }
+        }
+
+        function gameLoop() {
+            update();
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Inicia o jogo
+        gameLoop();
+    </script>
+<script src="script.js"></script></body>
+</html>
