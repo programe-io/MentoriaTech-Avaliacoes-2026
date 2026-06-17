@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hyperline CSS 3D | Ultra Graphics Edition</title>
+    <style>
+        /* --- CONFIGURAÇÃO DE RENDERIZAÇÃO ULTRA --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background: radial-gradient(circle at center, #87ceeb 0%, #4a90e2 70%, #1d426d 100%);
+            overflow: hidden;
+            height: 100vh;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            perspective: 900px;
+            /* Efeito HDR/Bloom via filtro de contraste e saturação na tela toda */
+            filter: saturate(1.2) contrast(1.1) brightness(1.05);
+        }
+
+        /* --- MOTOR DE CÂMERA 3D --- */
+        #mundo-3d {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            transform-style: preserve-3d;
+            transform: translateZ(-250px) rotateX(68deg) rotateZ(0deg);
+            will-change: transform; /* Otimização de performance para GPU */
+        }
+
+        /* --- PISTA ESPELHADA COM ASFAALTO MOLHADO --- */
+        .asfalto {
+            position: absolute;
+            width: 5000px;
+            height: 5000px;
+            background: #1e222b;
+            /* Textura dupla: linhas de trânsito brilhantes + reflexo especular de asfalto */
+            background-image: 
+                linear-gradient(90deg, transparent 49.5%, rgba(255,255,255,0.6) 50%, transparent 50.5%),
+                radial-gradient(rgba(255,255,255,0.03) 1px, transparent 0);
+            background-size: 5000px 5000px, 15px 15px;
+            transform: translate(-50%, -50%);
+            box-shadow: inset 0 0 500px rgba(0,0,0,0.8);
+        }
+
+        /* --- MONTAGEM DO HYPERCAR WIDEBODY --- */
+        .carro-container {
+            position: absolute;
+            width: 80px;
+            height: 160px;
+            transform-style: preserve-3d;
+            transform: translate(-40px, -80px) translateZ(12px);
+        }
+
+        /* Sombra de Oclusão Ambiental Realista (Soft Shadow) */
+        .carro-sombra {
+            position: absolute;
+            width: 120px;
+            height: 200px;
+            background: radial-gradient(rgba(0,0,0,0.6) 30%, rgba(0,0,0,0) 70%);
+            filter: blur(12px);
+            transform: translate(-60px, -100px) translateZ(-10px);
+            border-radius: 30px;
+            pointer-events: none;
+        }
+
+        /* Pintura de Luxo: Efeito Metálico Candy Camaleão com Reflexo */
+        .face {
+            position: absolute;
+            background: linear-gradient(135deg, #ff0055 0%, #990033 50%, #550022 100%);
+            border: 1px solid rgba(0,0,0,0.3);
+            /* Camada de Verniz Brilhante (Clearcoat) simulada por box-shadow interno */
+            box-shadow: inset 0 0 25px rgba(255,255,255,0.25), inset 0 2px 5px rgba(255,255,255,0.5);
+        }
+
+        /* Ajustes Geométricos do Carro (Mais Largo e Imponente) */
+        .chassi-topo  { width: 80px; height: 160px; transform: translateZ(24px); background: conic-gradient(from 45deg, #ff0055, #cc0044, #ff0055); }
+        .chassi-baixo { width: 80px; height: 160px; transform: rotateY(180deg); background: #0b0c10; }
+        .chassi-frente { width: 80px; height: 24px;  transform: rotateX(-90deg); transform-origin: top; background: #990033; }
+        .chassi-tras   { width: 80px; height: 24px;  transform: translateY(160px) rotateX(-90deg); transform-origin: top; background: #330011; }
+        .chassi-esq    { width: 24px; height: 160px; transform: rotateY(-90deg); transform-origin: left; background: #cc0044; }
+        .chassi-dir    { width: 24px; height: 160px; transform: translateX(80px) rotateY(-90deg); transform-origin: left; background: #770022; }
+
+        /* Cabine Estilo Fibra de Carbono e Vidro Perolizado */
+        .cabine-container {
+            position: absolute;
+            width: 56px;
+            height: 85px;
+            left: 12px;
+            top: 45px;
+            transform-style: preserve-3d;
+            transform: translateZ(24px);
+        }
+        .cabine-face {
+            position: absolute;
+            background: linear-gradient(135deg, rgba(20, 25, 35, 0.95), rgba(0, 180, 216, 0.3));
+            border: 1px solid rgba(0,0,0,0.5);
+            backdrop-filter: blur(2px);
+        }
+        .cabine-topo   { width: 56px; height: 55px; transform: translateZ(18px); background: #111; box-shadow: inset 0 0 10px rgba(255,255,255,0.1); }
+        .cabine-frente { width: 56px; height: 25px; transform: rotateX(-34deg); transform-origin: top; background: linear-gradient(to bottom, rgba(10,15,25,0.9), rgba(0, 180, 216, 0.5)); }
+        .cabine-tras   { width: 56px; height: 20px; transform: translateY(85px) rotateX(-90deg); transform-origin: top; }
+        .cabine-esq    { width: 18px; height: 85px; transform: rotateY(-90deg); transform-origin: left; }
+        .cabine-dir    { width: 18px; height: 85px; transform: translateX(56px) rotateY(-90deg); transform-origin: left; }
+
+        /* Rodas Esportivas de Alumínio e Pinças de Freio Brembo */
+        .roda-3d {
+            position: absolute;
+            width: 16px;
+            height: 36px;
+            transform-style: preserve-3d;
+        }
+        .roda-face-pneu {
+            position: absolute;
+            width: 16px;
+            height: 36px;
+            background: linear-gradient(to right, #151617 20%, #282a2d 50%, #151617 80%);
+            border-radius: 6px;
+            box-shadow: inset 0 0 8px rgba(0,0,0,0.8);
+        }
+        /* Calotas Cromadas com Miolo Escuro */
+        .roda-face-jante {
+            position: absolute;
+            width: 36px;
+            height: 36px;
+            background: radial-gradient(circle, #000 20%, #dcdcdc 50%, #555 75%, #111 100%);
+            border: 2px solid #222;
+            border-radius: 50%;
+            transform: rotateY(90deg) translateZ(8px);
+        }
+        .roda-face-jante-interna {
+            position: absolute;
+            width: 36px;
+            height: 36px;
+            background: #111;
+            border-radius: 50%;
+            transform: rotateY(90deg) translateZ(-8px);
+        }
+
+        .r-fl { top: 25px; left: -14px; }
+        .r-fr { top: 25px; right: -14px; }
+        .r-bl { bottom: 25px; left: -14px; }
+        .r-br { bottom: 25px; right: -14px; }
+
+        /* Projeção Física de Luzes Volumétricas (Faróis) */
+        .farol-neon {
+            position: absolute;
+            width: 18px;
+            height: 8px;
+            background: #e6f2ff;
+            box-shadow: 0 0 20px #fff, 0 0 40px #00b4d8;
+            top: 0;
+            border-radius: 2px;
+        }
+        .f-l { left: 6px; }
+        .f-r { right: 6px; }
+
+        /* Feixe de Luz Realista projetado no Chão */
+        .feixe-luz {
+            position: absolute;
+            width: 80px;
+            height: 300px;
+            background: linear-gradient(to bottom, rgba(0, 180, 216, 0.4) 0%, rgba(0,0,0,0) 100%);
+            clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%);
+            transform-origin: top center;
+            transform: rotateX(90deg) translateY(-160px) translateZ(10px);
+            filter: blur(5px);
+            pointer-events: none;
+        }
+
+        /* --- ARQUITETURA DA CIDADE LUXUOSA COM NEON --- */
+        .predio {
+            position: absolute;
+            width: 220px;
+            height: 220px;
+            transform-style: preserve-3d;
+        }
+        .p-face {
+            position: absolute;
+            background: linear-gradient(to bottom, #23273a, #0f111a);
+            border: 1px solid #111;
+            /* Padrão avançado de Janelas Iluminadas de Escritórios */
+            background-image: 
+                linear-gradient(rgba(0, 180, 216, 0.4) 2px, transparent 2px),
+                linear-gradient(90deg, rgba(255, 255, 150, 0.3) 2px, transparent 2px);
+            background-size: 15px 25px;
+            box-shadow: inset 0 0 40px rgba(0,0,0,0.8);
+        }
+        .p-topo   { width: 220px; height: 220px; transform: translateZ(500px); background: #13151f; background-image: none; border: 3px solid #ff0055; box-shadow: 0 0 30px #ff0055; }
+        .p-frente { width: 220px; height: 500px; transform: rotateX(-90deg); transform-origin: top; }
+        .p-tras   { width: 220px; height: 500px; transform: translateY(220px) rotateX(-90deg); transform-origin: top; }
+        .p-esq    { width: 500px; height: 220px; transform: rotateY(-90deg); transform-origin: left; }
+        .p-dir    { width: 500px; height: 220px; transform: translateX(220px) rotateY(-90deg); transform-origin: left; }
+
+        /* --- INTERFACE DO USUÁRIO (HUD PREMIUM) --- */
+        .hud {
+            position: absolute;
+            top: 25px;
+            left: 25px;
+            background: rgba(11, 12, 16, 0.85);
+            border: 1px solid #ff0055;
+            padding: 18px 28px;
+            border-radius: 8px;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            z-index: 100;
+        }
+        .hud h1 { font-size: 16px; color: #fff; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 4px; }
+        .hud p { font-size: 11px; color: #a0aec0; }
+        .hud span { color: #ff0055; font-weight: bold; }
+
+        .speedometer {
+            position: absolute;
+            bottom: 35px;
+            right: 35px;
+            background: radial-gradient(circle, #1a1c23 0%, #0d0e12 100%);
+            color: #fff;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border: 2px solid #00b4d8;
+            box-shadow: 0 0 25px rgba(0, 180, 216, 0.4);
+            z-index: 100;
+        }
+        .speedometer .value { font-size: 32px; font-weight: 700; font-family: monospace; text-shadow: 0 0 10px #00b4d8; }
+        .speedometer .unit { font-size: 9px; color: #00b4d8; text-transform: uppercase; letter-spacing: 1px; }
+    </style>
+</head>
+<body>
+
+    <div class="hud">
+        <h1>Hyperline 3D • Ultra</h1>
+        <p>Engine: <span>CSS Matrix Transforms Hardware Accelerated</span></p>
+        <p>Graphics: <span>Specular Chameleon Shaders Active</span></p>
+    </div>
+
+    <div class="speedometer">
+        <div class="value" id="vel-txt">0</div>
+        <div class="unit">km/h</div>
+    </div>
+
+    <div id="mundo-3d">
+        <div class="asfalto"></div>
+
+        <div class="predio" style="left: -400px; top: -500px;">
+            <div class="p-face p-topo"></div><div class="p-face p-frente"></div><div class="p-face p-tras"></div><div class="p-face p-esq"></div><div class="p-face p-dir"></div>
+        </div>
+        <div class="predio" style="left: 300px; top: -400px;">
+            <div class="p-face p-topo"></div><div class="p-face p-frente"></div><div class="p-face p-tras"></div><div class="p-face p-esq"></div><div class="p-face p-dir"></div>
+        </div>
+        <div class="predio" style="left: -150px; top: 450px;">
+            <div class="p-face p-topo" style="border-color:#00b4d8; box-shadow: 0 0 30px #00b4d8;"></div><div class="p-face p-frente"></div><div class="p-face p-tras"></div><div class="p-face p-esq"></div><div class="p-face p-dir"></div>
+        </div>
+
+        <div class="carro-sombra" id="css-sombra"></div>
+
+        <div class="carro-container" id="css-carro">
+            
+            <div class="face chassi-topo">
+                <div class="farol-neon f-l"></div>
+                <div class="farol-neon f-r"></div>
+                <div class="feixe-luz" style="left: -10px;"></div>
+                <div class="feixe-luz" style="right: -10px;"></div>
+            </div>
+            <div class="face chassi-baixo"></div>
+            <div class="face chassi-frente"></div>
+            <div class="face chassi-tras"></div>
+            <div class="face chassi-esq"></div>
+            <div class="face chassi-dir"></div>
+
+            <div class="cabine-container">
+                <div class="cabine-face cabine-topo"></div>
+                <div class="cabine-face cabine-frente"></div>
+                <div class="cabine-face cabine-tras"></div>
+                <div class="cabine-face cabine-esq"></div>
+                <div class="cabine-face cabine-dir"></div>
+            </div>
+
+            <div class="roda-3d r-fl" id="r-fl">
+                <div class="roda-face-pneu"></div><div class="roda-face-jante"></div><div class="roda-face-jante-interna"></div>
+            </div>
+            <div class="roda-3d r-fr" id="r-fr">
+                <div class="roda-face-pneu"></div><div class="roda-face-jante"></div><div class="roda-face-jante-interna"></div>
+            </div>
+            <div class="roda-3d r-bl" id="r-bl">
+                <div class="roda-face-pneu"></div><div class="roda-face-jante"></div><div class="roda-face-jante-interna"></div>
+            </div>
+            <div class="roda-3d r-br" id="r-br">
+                <div class="roda-face-pneu"></div><div class="roda-face-jante"></div><div class="roda-face-jante-interna"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- LOOP DE FÍSICA INERCIAL AVANÇADA ---
+        const carro = document.getElementById('css-carro');
+        const Sombra = document.getElementById('css-sombra');
+        const mundo = document.getElementById('mundo-3d');
+        const rodaFL = document.getElementById('r-fl');
+        const rodaFR = document.getElementById('r-fr');
+        const rodaBL = document.getElementById('r-bl');
+        const rodaBR = document.getElementById('r-br');
+        const velTxt = document.getElementById('vel-txt');
+
+        let fisica = {
+            x: 0, y: 0,
+            velocidade: 0,
+            angulo: 0,
+            maxVel: 11,
+            aceleracao: 0.22,
+            friccao: 0.07,
+            freio: 0.4,
+            velVira: 0.048
+        };
+
+        let comandos = { frente: false, tras: false, esquerda: false, direita: false, freioMao: false };
+        let rotacaoPneuRoll = 0;
+
+        window.addEventListener('keydown', (e) => {
+            const k = e.key.toLowerCase();
+            if(k === 'w' || k === 'arrowup') comandos.frente = true;
+            if(k === 's' || k === 'arrowdown') comandos.tras = true;
+            if(k === 'a' || k === 'arrowleft') comandos.esquerda = true;
+            if(k === 'd' || k === 'arrowright') comandos.direita = true;
+            if(e.key === ' ') comandos.freioMao = true;
+            if(k === 'r') { fisica.x = 0; fisica.y = 0; fisica.velocidade = 0; fisica.angulo = 0; }
+        });
+
+        window.addEventListener('keyup', (e) => {
+            const k = e.key.toLowerCase();
+            if(k === 'w' || k === 'arrowup') comandos.frente = false;
+            if(k === 's' || k === 'arrowdown') comandos.tras = false;
+            if(k === 'a' || k === 'arrowleft') comandos.esquerda = false;
+            if(k === 'd' || k === 'arrowright') comandos.direita = false;
+            if(e.key === ' ') comandos.freioMao = false;
+        });
+
+        function renderLoop() {
+            // Motores Inerciais
+            if (comandos.frente) {
+                fisica.velocidade += fisica.aceleracao;
+                if (fisica.velocidade > fisica.maxVel) fisica.velocidade = fisica.maxVel;
+            } else if (comandos.tras) {
+                fisica.velocidade -= fisica.aceleracao * 0.5;
+                if (fisica.velocidade < -fisica.maxVel * 0.4) fisica.velocidade = -fisica.maxVel * 0.4;
+            } else {
+                if (fisica.velocidade > 0) fisica.velocidade -= fisica.friccao;
+                if (fisica.velocidade < 0) fisica.velocidade += fisica.friccao;
+                if (Math.abs(fisica.velocidade) < 0.05) fisica.velocidade = 0;
+            }
+
+            if (comandos.freioMao) {
+                if (fisica.velocidade > 0) fisica.velocidade -= fisica.freio;
+                if (fisica.velocidade < 0) fisica.velocidade += fisica.freio;
+            }
+
+            // Controle de Esterço das Rodas e Curvatura Geométrica
+            let anguloRodasVisuais = 0;
+            if (Math.abs(fisica.velocidade) > 0.15) {
+                const reInversor = fisica.velocidade > 0 ? 1 : -1;
+                if (comandos.esquerda) {
+                    fisica.angulo -= fisica.velVira * reInversor;
+                    anguloRodasVisuais = -26;
+                } else if (comandos.direita) {
+                    fisica.angulo += fisica.velVira * reInversor;
+                    anguloRodasVisuais = 26;
+                }
+            }
+
+            // Movimentação Cartesiana Trigonômétrica
+            fisica.x += Math.sin(fisica.angulo) * fisica.velocidade;
+            fisica.y -= Math.cos(fisica.angulo) * fisica.velocidade;
+
+            // Giro Dinâmico Rotação dos Pneus (Eixo X)
+            rotacaoPneuRoll -= fisica.velocidade * 5;
+
+            // Renderizar Rotações dos Pneus Individuais mantendo as Jantes alinhadas em 3D
+            rodaFL.style.transform = `rotateZ(${anguloRodasVisuais}deg) rotateX(${rotacaoPneuRoll}deg)`;
+            rodaFR.style.transform = `rotateZ(${anguloRodasVisuais}deg) rotateX(${rotacaoPneuRoll}deg)`;
+            rodaBL.style.transform = `rotateX(${rotacaoPneuRoll}deg)`;
+            rodaBR.style.transform = `rotateX(${rotacaoPneuRoll}deg)`;
+
+            // Atualização da Matriz de Transformação do Carro e Sombra Oclusiva
+            const anguloGraus = fisica.angulo * (180 / Math.PI);
+            carro.style.transform = `translate3d(${fisica.x - 40}px, ${fisica.y - 80}px, 12px) rotateZ(${anguloGraus}deg)`;
+            Sombra.style.transform = `translate3d(${fisica.x - 60}px, ${fisica.y - 100}px, -10px) rotateZ(${anguloGraus}deg)`;
+
+            // Câmera Dinâmica Cinemática Fixa (Move o Espaço de forma inversa)
+            mundo.style.transform = `translateZ(-280px) rotateX(66deg) rotateZ(${-anguloGraus}deg) translate3d(${-fisica.x}px, ${-fisica.y}px, 0px)`;
+
+            // Atualizar Valor Real do Painel de Instrumentos
+            velTxt.innerText = Math.round(Math.abs(fisica.velocidade) * 32);
+
+            requestAnimationFrame(renderLoop);
+        }
+
+        // Boot da Engine Grafica
+        renderLoop();
+    </script>
+</body>
+</html>
