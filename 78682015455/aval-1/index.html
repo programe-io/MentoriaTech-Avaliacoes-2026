@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apex Driving 3D | Luxury Supercars</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background-color: #05070a;
+            color: #fff;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        #canvas-3d {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* Painel de Instrumentos / Interface Superior */
+        .hud {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 10;
+            background: rgba(10, 14, 22, 0.85);
+            border: 1px solid rgba(197, 160, 89, 0.3);
+            padding: 15px 25px;
+            border-radius: 8px;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            pointer-events: auto;
+        }
+        .hud h1 {
+            font-size: 18px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+            color: #fff;
+        }
+        .hud p {
+            font-size: 13px;
+            color: #8fa0b5;
+            margin-bottom: 5px;
+        }
+        .hud span {
+            color: #c5a059;
+            font-weight: bold;
+        }
+
+        /* Velocímetro Digital */
+        .speedometer {
+            position: absolute;
+            bottom: 30px;
+            right: 30px;
+            z-index: 10;
+            background: radial-gradient(circle, rgba(18, 24, 38, 0.9) 0%, rgba(6, 9, 13, 0.95) 100%);
+            border: 2px solid #c5a059;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 0 20px rgba(197, 160, 89, 0.3);
+        }
+        .speedometer .number {
+            font-size: 28px;
+            font-weight: bold;
+            color: #fff;
+            font-family: monospace;
+        }
+        .speedometer .unit {
+            font-size: 10px;
+            color: #c5a059;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Seletor de Carros Lateral */
+        .garage-selector {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .garage-selector button {
+            background: rgba(10, 14, 22, 0.85);
+            color: #fff;
+            border: 1px solid #2e3846;
+            padding: 10px 18px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            backdrop-filter: blur(8px);
+        }
+        .garage-selector button:hover, .garage-selector button.active {
+            border-color: #c5a059;
+            color: #c5a059;
+            background: rgba(197, 160, 89, 0.1);
+            box-shadow: 0 0 10px rgba(197, 160, 89, 0.2);
+        }
+
+        /* Instruções de Controlo */
+        .controls-hint {
+            position: absolute;
+            bottom: 30px;
+            left: 30px;
+            z-index: 10;
+            background: rgba(0,0,0,0.6);
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 11px;
+            color: #b5bdcb;
+            border: 1px solid rgba(255,255,255,0.1);
+            line-height: 1.6;
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"></head>
+<body>
+
+    <div id="canvas-3d"></div>
+
+    <div class="hud">
+        <h1>Apex Driving 3D</h1>
+        <p>Modelo: <span id="txt-modelo">Rosso Desportivo</span></p>
+        <p>Motor: <span id="txt-motor">V8 Bi-Turbo (720 cv)</span></p>
+    </div>
+
+    <div class="garage-selector">
+        <button class="active" onclick="mudarCarro(0, this)">Rosso Sport</button>
+        <button onclick="mudarCarro(1, this)">Mamba Track</button>
+        <button onclick="mudarCarro(2, this)">Ouro Concept</button>
+    </div>
+
+    <div class="speedometer">
+        <div class="number" id="txt-velocidade">0</div>
+        <div class="unit">km/h</div>
+    </div>
+
+    <div class="controls-hint">
+        <strong>CONTROLOS:</strong><br>
+        • Acelerar/Virar: Setas ou W, A, S, D<br>
+        • Travão de Mão: BARRA DE ESPAÇO<br>
+        • Resetar Carro: R
+    </div>
+
+<script>
+    // --- VARIÁVEIS GLOBAIS DO JOGO ---
+    let cena, camera, renderizador;
+    let carroMestre, grupoRodas = [];
+    let pistaObstaculos = [];
+    
+    // Dados técnicos dos modelos de luxo
+    const modelosDisponiveis = [
+        { nome: "Rosso Desportivo", motor: "V8 Bi-Turbo (720 cv)", cor: 0xd32f2f, peso: 1.0, aero: 0.12 },
+        { nome: "Mamba Track Edition", motor: "V10 Aspirado (850 cv)", cor: 0x00c853, peso: 0.9, aero: 0.15 },
+        { nome: "Ouro Puro Concept", motor: "Quad-Eletrico (1200 cv)", cor: 0xd4af37, peso: 1.2, aero: 0.08 }
+    ];
+
+    // Física e Estado de Movimento do Carro
+    let carroFisica = {
+        x: 0, z: 0, y: 0.3,
+        velocidade: 0,
+        angulo: 0,
+        maxVelocidade: 0.8,
+        aceleracao: 0.015,
+        friccao: 0.008,
+        travao: 0.03,
+        velocidadeRotacao: 0.04
+    };
+
+    // Estado das Teclas Pressionadas
+    let teclas = { Freio: false, Esquerda: false, Direita: false, TravaMao: false };
+    // Mapeamento alternativo para suportar simultaneamente Setas e WASD
+    let acelerando = false;
+    let fazendoReis = false;
+
+    // --- INICIALIZAÇÃO DO MOTOR GRÁFICO 3D ---
+    function init() {
+        const container = document.getElementById("canvas-3d");
+
+        // Criação do cenário e efeitos de atmosfera (nevoeiro sofisticado)
+        cena = new THREE.Scene();
+        cena.background = new THREE.Color(0x0a0f1d);
+        cena.fog = new THREE.FogExp2(0x0a0f1d, 0.025);
+
+        // Câmara Dinâmica em terceira pessoa (atrás do carro)
+        camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+        
+        // Renderizador de Alta Performance
+        renderizador = new THREE.WebGLRenderer({ antialias: true });
+        renderizador.setSize(window.innerWidth, window.innerHeight);
+        renderizador.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderizador.shadowMap.enabled = true;
+        renderizador.shadowMap.type = THREE.PCFSoftShadowMap;
+        container.appendChild(renderizador.domElement);
+
+        // ILUMINAÇÃO ESTÚDIO NOTURNO
+        const luzAmbiente = new THREE.AmbientLight(0xffffff, 0.2);
+        cena.add(luzAmbiente);
+
+        // Luz Direcional Principal (Simula a Lua / Luz de teto)
+        const luzSol = new THREE.DirectionalLight(0xffffff, 1.2);
+        luzSol.position.set(20, 40, 20);
+        lSol = luzSol; // Guardar referência rápida
+        luzSol.castShadow = true;
+        luzSol.shadow.mapSize.width = 2048;
+        luzSol.shadow.mapSize.height = 2048;
+        luzSol.shadow.camera.near = 0.5;
+        luzSol.shadow.camera.far = 150;
+        const d = 40;
+        luzSol.shadow.camera.left = -d;
+        luzSol.shadow.camera.right = d;
+        luzSol.shadow.camera.top = d;
+        luzSol.shadow.camera.bottom = -d;
+        cena.add(luzSol);
+
+        // CONSTRUÇÃO DO MAPA (Pista Avançada)
+        construirMundo();
+
+        // Construir o carro padrão inicial (Rosso)
+        montarCarro3D(modelosDisponiveis[0].cor);
+
+        // Ativar escuta do teclado
+        configurarTeclado();
+
+        // Iniciar loop infinito de atualização (frames)
+        loop();
+    }
+
+    // --- CONSTRUÇÃO DOS ELEMENTOS DO CENÁRIO ---
+    function construirMundo() {
+        // Chão / Asfalto de Corridas
+        const chaoGeo = new THREE.PlaneGeometry(300, 300);
+        const chaoMat = new THREE.MeshStandardMaterial({ color: 0x111622, roughness: 0.6, metalness: 0.1 });
+        const chao = new THREE.Mesh(chaoGeo, chaoMat);
+        chao.rotation.x = -Math.PI / 2;
+        chao.receiveShadow = true;
+        cena.add(chao);
+
+        // Grid Neon Decorativo na Pista
+        const gridPista = new THREE.GridHelper(300, 60, 0xc5a059, 0x1d273a);
+        gridPista.position.y = 0.01;
+        cena.add(gridPista);
+
+        // Adicionar Rampas e Obstáculos 3D para diversão
+        criarObstaculo(new THREE.BoxGeometry(10, 1.5, 15), 0x243147, 0, 0, -30, 0.1); // Rampa 1
+        criarObstaculo(new THREE.BoxGeometry(20, 3, 5), 0xc5a059, 15, 0, 20, 0);     // Barreira
+        criarObstaculo(new THREE.BoxGeometry(8, 4, 8), 0x1d273a, -20, 0, 0, 0);      // Cubo gigante
+        
+        // Postes de Iluminação Neon na Pista
+        for(let i = -100; i <= 100; i += 40) {
+            if(i === 0) continue;
+            criarPosteLuz(20, i);
+            criarPosteLuz(-20, i);
+        }
+    }
+
+    function criarObstaculo(geometria, cor, x, y, z, rotX = 0) {
+        const material = new THREE.MeshStandardMaterial({ color: cor, roughness: 0.4, metalness: 0.5 });
+        const mesh = new THREE.Mesh(geometria, material);
+        mesh.position.set(x, y + geometria.parameters.height/2, z);
+        mesh.rotation.x = rotX;
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;
+        cena.add(mesh);
+        pistaObstaculos.push(mesh); // Guardado para futuras colisões
+    }
+
+    function criarPosteLuz(x, z) {
+        const posteGrupo = new THREE.Group();
+        
+        const hasteGeo = new THREE.CylinderGeometry(0.1, 0.1, 6, 8);
+        const hasteMat = new THREE.MeshStandardMaterial({ color: 0x2e3846 });
+        const haste = new THREE.Mesh(hasteGeo, hasteMat);
+        haste.position.y = 3;
+        posteGrupo.add(haste);
+
+        const luzGeo = new THREE.BoxGeometry(0.6, 0.2, 1.2);
+        const luzMat = new THREE.MeshBasicMaterial({ color: 0x00e5ff });
+        const luzTopo = new THREE.Mesh(luzGeo, luzMat);
+        luzTopo.position.set(x > 0 ? -0.5 : 0.5, 6, 0);
+        posteGrupo.add(luzTopo);
+
+        // Fonte de luz real 3D emitida pelo poste
+        const pointLight = new THREE.PointLight(0x00e5ff, 0.8, 15);
+        pointLight.position.set(x > 0 ? -0.5 : 0.5, 5.8, 0);
+        posteGrupo.add(pointLight);
+
+        posteGrupo.position.set(x, 0, z);
+        cena.add(posteGrupo);
+    }
+
+    // --- MODELAGEM DO CARRO DE LUXO EM 3D CONTROLE TOTAL ---
+    function montarCarro3D(corHex) {
+        if (carroMestre) cena.remove(carroMestre);
+        grupoRodas = [];
+
+        carroMestre = new THREE.Group();
+
+        // 1. Corpo/Chassi Aerodinâmico
+        const chassiGeo = new THREE.BoxGeometry(1.4, 0.35, 3.0);
+        const chassiMat = new THREE.MeshStandardMaterial({
+            color: corHex,
+            metalness: 0.9,
+            roughness: 0.1,
+            clearcoat: 1.0
+        });
+        const chassi = new THREE.Mesh(chassiGeo, chassiMat);
+        chassi.position.y = 0.3;
+        chassi.castShadow = true;
+        chassi.receiveShadow = true;
+        carroMestre.add(chassi);
+
+        // 2. Cabine Fume Confort
+        const cabineGeo = new THREE.SphereGeometry(0.45, 16, 16);
+        const cabineMat = new THREE.MeshStandardMaterial({ color: 0x0a0a0a, roughness: 0.1, metalness: 0.9 });
+        const cabine = new THREE.Mesh(cabineGeo, cabineMat);
+        cabine.position.set(0, 0.45, -0.1);
+        cabine.scale.set(1.1, 0.8, 2.2);
+        cabine.castShadow = true;
+        carroMestre.add(cabine);
+
+        // 3. Aileron Traseiro (Desportivo)
+        const aileronSuporteGeo = new THREE.BoxGeometry(0.05, 0.3, 0.1);
+        const suporteL = new THREE.Mesh(aileronSuporteGeo, cabineMat);
+        suporteL.position.set(0.5, 0.5, 1.3);
+        const suporteR = suporteL.clone();
+        suporteR.position.x = -0.5;
+        carroMestre.add(suporteL, suporteR);
+
+        const asaGeo = new THREE.BoxGeometry(1.5, 0.04, 0.3);
+        const asa = new THREE.Mesh(asaGeo, chassiMat);
+        asa.position.set(0, 0.65, 1.3);
+        asa.castShadow = true;
+        carroMestre.add(asa);
+
+        // 4. Faróis de LED Funcionais (Visuais)
+        const farolGeo = new THREE.BoxGeometry(0.2, 0.08, 0.1);
+        const farolMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+        const farolL = new THREE.Mesh(farolGeo, farolMat);
+        farolL.position.set(0.5, 0.25, -1.5);
+        const farolR = farolL.clone();
+        farolR.position.x = -0.5;
+        carroMestre.add(farolL, farolR);
+
+        // 5. Rodas Cromadas de Baixo Perfil
+        const pneuGeo = new THREE.CylinderGeometry(0.32, 0.32, 0.25, 24);
+        pneuGeo.rotateZ(Math.PI / 2); // Deita o cilindro na orientação da roda
+        const pneuMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.8 });
+        const janteMat = new THREE.MeshStandardMaterial({ color: 0xdddddd, metalness: 0.9, roughness: 0.2 });
+
+        const posRodas = [
+            { x: 0.75, y: 0.22, z: -0.9 },  { x: -0.75, y: 0.22, z: -0.9 }, // Dianteiras
+            { x: 0.75, y: 0.22, z: 0.9 },   { x: -0.75, y: 0.22, z: 0.9 }   // Traseiras
+        ];
+
+        posRodas.forEach((pos, index) => {
+            const pneu = new THREE.Mesh(pneuGeo, pneuMat);
+            const janteGeo = new THREE.CylinderGeometry(0.2, 0.2, 0.27, 12);
+            janteGeo.rotateZ(Math.PI / 2);
+            const jante = new THREE.Mesh(janteGeo, janteMat);
+            pneu.add(jante);
+            
+            pneu.position.set(pos.x, pos.y, pos.z);
+            pneu.castShadow = true;
+            carroMestre.add(pneu);
+            grupoRodas.push(pneu); // Guardado para girar nas curvas e aceleração
+        });
+
+        cena.add(carroMestre);
+        
+        // Reposiciona a física para o local do spawn
+        carroMestre.position.set(carroFisica.x, carroFisica.y, carroFisica.z);
+    }
+
+    // Mudar de modelo na Garagem Lateral
+    function mudarCarro(idx, botao) {
+        // Atualiza botões do HTML
+        document.querySelectorAll('.garage-selector button').forEach(b => b.classList.remove('active'));
+        botao.classList.add('active');
+
+        // Atualiza textos
+        document.getElementById("txt-modelo").innerText = modelosDisponiveis[idx].nome;
+        document.getElementById("txt-motor").innerText = modelosDisponiveis[idx].motor;
+
+        // Reconfigura comportamento físico sutil baseado no veículo
+        let modelo = modelosDisponiveis[idx];
+        if(idx === 1) { // Pista
+            carroFisica.maxVelocidade = 1.0;
+            carroFisica.aceleracao = 0.02;
+        } else if(idx === 2) { // Elétrico Concept
+            carroFisica.maxVelocidade = 1.2;
+            carroFisica.aceleracao = 0.03;
+        } else { // Desportivo padrão
+            carroFisica.maxVelocidade = 0.8;
+            carroFisica.aceleracao = 0.015;
+        }
+
+        // Reconstrói visual do carro 3D
+        montarCarro3D(modelo.cor);
+    }
+
+    // --- CAPTAÇÃO DE COMANDOS DO TECLADO ---
+    function configurarTeclado() {
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowUp' || e.key.toLowerCase() === 'w') acelerando = true;
+            if (e.key === 'ArrowDown' || e.key.toLowerCase() === 's') fazendoReis = true;
+            if (e.key === 'ArrowLeft' || e.key.toLowerCase() === 'a') teclas.Esquerda = true;
+            if (e.key === 'ArrowRight' || e.key.toLowerCase() === 'd') teclas.Direita = true;
+            if (e.key === ' ') teclas.TravaMao = true;
+            if (e.key.toLowerCase() === 'r') resetCarro();
+        });
+
+        window.addEventListener('keyup', (e) => {
+            if (e.key === 'ArrowUp' || e.key.toLowerCase() === 'w') acelerando = false;
+            if (e.key === 'ArrowDown' || e.key.toLowerCase() === 's') fazendoReis = false;
+            if (e.key === 'ArrowLeft' || e.key.toLowerCase() === 'a') teclas.Esquerda = false;
+            if (e.key === 'ArrowRight' || e.key.toLowerCase() === 'd') teclas.Direita = false;
+            if (e.key === ' ') teclas.TravaMao = false;
+        });
+    }
+
+    function resetCarro() {
+        carroFisica.x = 0;
+        carroFisica.z = 0;
+        carroFisica.y = 0.3;
+        carroFisica.velocidade = 0;
+        carroFisica.angulo = 0;
+        carroMestre.rotation.set(0, 0, 0);
+    }
+
+    // --- LOOP PRINCIPAL DE FÍSICA E RENDERIZAÇÃO ---
+    function loop() {
+        requestAnimationFrame(loop);
+
+        // 1. Cálculo da Física de Condução
+        if (acelerando) {
+            carroFisica.velocidade += carroFisica.aceleracao;
+            if (carroFisica.velocidade > carroFisica.maxVelocidade) carroFisica.velocidade = carroFisica.maxVelocidade;
+        } else if (fazendoReis) {
+            carroFisica.velocidade -= carroFisica.aceleracao * 0.6;
+            if (carroFisica.velocidade < -carroFisica.maxVelocidade * 0.4) carroFisica.velocidade = -carroFisica.maxVelocidade * 0.4;
+        } else {
+            // Aplicação natural de atrito / desaceleração gradual
+            if (carroFisica.velocidade > 0) carroFisica.velocidade -= carroFisica.friccao;
+            if (carroFisica.velocidade < 0) carroFisica.velocidade += carroFisica.friccao;
+            if (Math.abs(carroFisica.velocidade) < 0.005) carroFisica.velocidade = 0;
+        }
+
+        // Travão de mão ativo (Drift mecânico)
+        if (teclas.TravaMao) {
+            if (carroFisica.velocidade > 0) carroFisica.velocidade -= carroFisica.travao;
+            if (carroFisica.velocidade < 0) carroFisica.velocidade += carroFisica.travao;
+        }
+
+        // Rotação/Direção baseada na velocidade do veículo (carro parado não vira)
+        if (Math.abs(carroFisica.velocidade) > 0.05) {
+            const direcaoInvertidaRe = carroFisica.velocidade > 0 ? 1 : -1;
+            if (teclas.Esquerda) carroFisica.angulo += carroFisica.velocidadeRotacao * direcaoInvertidaRe;
+            if (teclas.Direita) carroFisica.angulo -= carroFisica.velocidadeRotacao * direcaoInvertidaRe;
+        }
+
+        // Traduz vetor de velocidade para os eixos X e Z do plano 3D
+        carroFisica.x -= Math.sin(carroFisica.angulo) * carroFisica.velocidade;
+        carroFisica.z -= Math.cos(carroFisica.angulo) * carroFisica.velocidade;
+
+        // Limites invisíveis da pista (fronteiras do mapa) para não cair no infinito
+        carroFisica.x = Math.max(-145, Math.min(145, carroFisica.x));
+        carroFisica.z = Math.max(-145, Math.min(145, carroFisica.z));
+
+        // Aplica transformações físicas de posição e rotação ao modelo do carro 3D
+        if (carroMestre) {
+            carroMestre.position.x = carroFisica.x;
+            carroMestre.position.z = carroFisica.z;
+            carroMestre.rotation.y = carroFisica.angulo;
+
+            // Animação visual das rodas (Giro baseado no movimento)
+            grupoRodas.forEach((roda, i) => {
+                roda.rotation.x -= carroFisica.velocidade * 1.5;
+                
+                // Rodas dianteiras viram visualmente para a esquerda/direita ao curvar
+                if (i < 2) { 
+                    if (teclas.Esquerda) roda.rotation.y = 0.3;
+                    else if (teclas.Direita) roda.rotation.y = -0.3;
+                    else roda.rotation.y = 0;
+                }
+            });
+        }
+
+        // 2. Movimentação da Câmara Inteligente (Suave / Cinematic Chase Cam)
+        const distanciaAtras = 5.5;
+        const alturaCam = 2.2;
+        
+        // Calcula a posição ideal atrás do veículo baseada no ângulo atual
+        const cameraAlvoX = carroFisica.x + Math.sin(carroFisica.angulo) * distanciaAtras;
+        const cameraAlvoZ = carroFisica.z + Math.cos(carroFisica.angulo) * distanciaAtras;
+        
+        // Interpolação Linear (Lerp) para suavizar o seguimento da câmara
+        camera.position.x += (cameraAlvoX - camera.position.x) * 0.1;
+        camera.position.z += (cameraAlvoZ - camera.position.z) * 0.1;
+        camera.position.y += ((carroFisica.y + alturaCam) - camera.position.y) * 0.1;
+        
+        // Foca o olhar da câmara ligeiramente à frente do capot do carro
+        camera.lookAt(carroFisica.x, carroFisica.y + 0.4, carroFisica.z);
+
+        // 3. Atualização do Velocímetro Digital no HUD
+        const velocidadeKMH = Math.round(Math.abs(carroFisica.velocidade) * 320);
+        document.getElementById("txt-velocidade").innerText = velocidadeKMH;
+
+        // Renderiza o frame atualizado na tela
+        renderizador.render(cena, camera);
+    }
+
+    // Atualiza as proporções 3D se a janela do navegador mudar de tamanho
+    window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderizador.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // Arranca o jogo assim que a página carregar
+    window.onload = init;
+</script>
+<script src="script.js"></script></body>
+</html>www
