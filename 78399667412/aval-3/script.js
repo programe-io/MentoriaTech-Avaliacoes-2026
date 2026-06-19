@@ -1,0 +1,1 @@
+console.log("Site do Kratos carregado!");
