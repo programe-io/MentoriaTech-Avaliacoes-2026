@@ -1,37 +1,45 @@
-// Mensagem ao carregar a página
-console.log("Página carregada com sucesso!");
+/**
+ * Script de Interatividade da Página
+ */
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. Elementos do DOM
+    const botaoExemplo = document.querySelector('.botao');
+    const container = document.querySelector('.container');
 
-// Função para exibir um alerta
-function mostrarMensagem() {
-    alert("Olá! Você clicou no botão.");
-}
+    // 2. Função de Saudação baseada no horário
+    function atualizarSaudacao() {
+        const horaAtual = new Date().getHours();
+        let saudacao = '';
 
-// Função para alterar o texto de um elemento
-function alterarTexto() {
-    const titulo = document.getElementById("titulo");
-    titulo.textContent = "Texto alterado com JavaScript!";
-}
+        if (horaAtual >= 5 && horaAtual < 12) {
+            saudacao = 'Bom dia!';
+        } else if (horaAtual >= 12 && horaAtual < 18) {
+            saudacao = 'Boa tarde!';
+        } else {
+            saudacao = 'Boa noite!';
+        }
 
-// Exemplo de contador
-let contador = 0;
+        console.log(`${saudacao} O script foi carregado com sucesso.`);
+    }
 
-function aumentarContador() {
-    contador++;
-    document.getElementById("contador").textContent = contador;
-}
+    // 3. Evento de Clique no Botão (Alternar Tema Escuro)
+    if (botaoExemplo) {
+        botaoExemplo.addEventListener('click', (evento) => {
+            // Evita que o link '#' recarregue a página ou role para o topo
+            evento.preventDefault(); 
+            
+            // Alterna uma classe de estilo no corpo da página
+            document.body.classList.toggle('modo-escuro');
+            
+            // Altera o texto do botão dinamicamente
+            if (document.body.classList.contains('modo-escuro')) {
+                botaoExemplo.textContent = 'Mudar para Modo Claro';
+            } else {
+                botaoExemplo.textContent = 'Clique Aqui';
+            }
+        });
+    }
 
-// Exemplo de mudança de cor aleatória
-function mudarCor() {
-    const cores = [
-        "#e74c3c",
-        "#3498db",
-        "#2ecc71",
-        "#f1c40f",
-        "#9b59b6"
-    ];
-
-    const corAleatoria =
-        cores[Math.floor(Math.random() * cores.length)];
-
-    document.body.style.backgroundColor = corAleatoria;
-}
+    // Executa a saudação inicial ao carregar a página
+    atualizarSaudacao();
+});
