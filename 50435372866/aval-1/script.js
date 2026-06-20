@@ -1,49 +1,63 @@
-<h1>🌸 Meu Blog Pessoal 🌸</h1>
+<!DOCTYPE html>
 
-<h2>Quem sou eu?</h2>
+<html lang="pt-BR">
 
-<p>
+<head>
 
-    Olá! Meu nome é Kassandra. Este é o meu primeiro blog criado em HTML.
+    <meta charset="UTF-8">
 
-    Gosto de cantar, ler livros, aprender coisas novas e passar tempo com minha família e amigos.
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-</p>
+    <title>Meu Blog</title>
 
-<h2>Meus hobbies</h2>
+    <link rel="stylesheet" href="style.css">
 
-<ul>
+</head>
 
-    <li>🎵 Cantar</li>
+<body>
 
-    <li>📚 Ler livros</li>
+    <header>
 
-    <li>💻 Estudar programação</li>
+        <h1>Meu Blog</h1>
 
-    <li>⛪ Participar das atividades da igreja</li>
+        <p>Bem-vindo ao meu blog pessoal!</p>
 
-</ul>
+    </header>
 
-<h2>Minha música favorita</h2>
+    <main>
 
-<p>
+        <section class="post">
 
-    Eu gosto de ouvir músicas que me inspiram e me ajudam a ficar feliz e confiante.
+            <h2>Sobre Mim</h2>
 
-</p>
+            <p>Olá! Meu nome é Kassandra e estou aprendendo HTML e CSS.</p>
 
-<h2>Meus objetivos</h2>
+        </section>
 
-<p>
+        <section class="post">
 
-    Quero aprender mais sobre tecnologia, melhorar meus estudos e alcançar meus sonhos.
+            <h2>Meus Hobbies</h2>
 
-</p>
+            <p>Gosto de cantar, ouvir músicas e aprender programação.</p>
 
-<h2>Contato</h2>
+        </section>
 
-<p>Email: meuemail@exemplo.com</p>
+        <section class="post">
 
-<hr>
+            <h2>Meu Objetivo</h2>
 
-<p>Blog criado por Kassandra ❤️</p>
+            <p>Quero aprender desenvolvimento web e criar meus próprios sites.</p>
+
+        </section>
+
+    </main>
+
+    <footer>
+
+        <p>© 2026 - Meu Blog</p>
+
+    </footer>
+
+</body>
+
+</html>
