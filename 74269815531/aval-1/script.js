@@ -1,208 +1,127 @@
-<script>
-        // DADOS DO CARDÁPIO
-        const produtos = [
-            {
-                id: 1,
-                nome: "PF Completo",
-                desc: "Arroz, feijão, bife acebolado, farofa, salada",
-                preco: 18.00,
-                categoria: "pf",
-                img: "https://spcuriosos.com.br/wp-content/uploads/2012/10/pratofeito.jpg?w=200"
-            },
-            {
-                id: 2,
-                nome: "Galinha Caipira",
-                desc: "Acompanha baião de dois e paçoca",
-                preco: 22.00,
-                categoria: "pf",
-                img: "https://areademulher.r7.com/wp-content/uploads/2023/02/3-11.jpg?w=200"
-            },
-            {
-                id: 3,
-                nome: "Pizza",
-                desc: "Tradicional, com arroz branco",
-                preco: 25.00,
-                categoria: "pf",
-                img: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=200"
-            },
-            {
-                id: 4,
-                nome: " Pepsi 1L",
-                desc: "Gelada",
-                preco: 8.00,
-                categoria: "bebidas",
-                img: "https://images.unsplash.com/photo-1629203851122-3726ecdf080e?w=200"
-            },
-            {
-                id: 5,
-                nome: "Suco de Caju 500ml",
-                desc: "Natural da fruta",
-                preco: 6.00,
-                categoria: "bebidas",
-                img: "https://espaconatelie.com.br/wp-content/uploads/2026/02/suco-de-caju-natural.webp?w=200"
-            },
-            {
-                id: 6,
-                nome: "Combo Almoço",
-                desc: "PF + Suco + Doce | Sai R$ 25",
-                preco: 25.00,
-                categoria: "promocao",
-                img: "https://assets.planne.com.br/apps/6IPXOTF1VEP/images/high/If1fWA1MU4CrofcKd1mFeebda8iun44Whyqd1oyi.jpg?w=200"
-            }
-        ];
+<script src="script.js">
+// ===== 1. MENU MOBILE =====
+const menuBtn = document.querySelector('#menu-btn');
+const navbar = document.querySelector('.navbar');
 
-        // CONFIGURAÇÕES
-        const NUMERO_WHATSAPP = "5589999221649"; // Número atualizado conforme pedido
-        const TAXA_ENTREGA = 3.00;
-        let carrinho = [];
-        let categoriaAtual = 'todos';
+menuBtn.onclick = () => {
+    navbar.classList.toggle('active');
+}
 
-        // RENDERIZA PRODUTOS NA TELA
-        function renderizarProdutos() {
-            const lista = document.getElementById('lista-produtos');
-            const busca = document.getElementById('busca-input').value.toLowerCase();
+// Fecha menu quando clica num link
+document.querySelectorAll('.navbar a').forEach(link => {
+    link.onclick = () => {
+        navbar.classList.remove('active');
+    }
+});
+
+// ===== 2. QUIZ FUNCIONANDO =====
+let pontos = 0;
+const totalPerguntas = document.querySelectorAll('.pergunta').length;
+
+document.querySelectorAll('.pergunta').forEach(pergunta => {
+    const opcoes = pergunta.querySelectorAll('input');
+    
+    opcoes.forEach(input => {
+        input.onclick = () => {
+            // Se já respondeu essa pergunta, não conta ponto de novo
+            if(pergunta.classList.contains('respondida')) return;
             
-            let produtosFiltrados = produtos.filter(p => {
-                const matchCategoria = categoriaAtual === 'todos' || p.categoria === categoriaAtual;
-                const matchBusca = p.nome.toLowerCase().includes(busca) || p.desc.toLowerCase().includes(busca);
-                return matchCategoria && matchBusca;
-            });
-
-            lista.innerHTML = '<h2 class="secao-titulo">Mais Pedidos</h2>';
+            pergunta.classList.add('respondida');
+            const todasOpcoes = pergunta.querySelectorAll('.opcao');
             
-            produtosFiltrados.forEach(produto => {
-                lista.innerHTML += `
-                    <div class="card">
-                        <img src="${produto.img}" alt="${produto.nome}">
-                        <div class="card-info">
-                            <div>
-                                <div class="card-titulo">${produto.nome}</div>
-                                <div class="card-desc">${produto.desc}</div>
-                            </div>
-                            <div class="card-footer">
-                                <div class="preco">R$ ${produto.preco.toFixed(2).replace('.', ',')}</div>
-                                <button class="add-btn" onclick="adicionarCarrinho(${produto.id}, event)">Adicionar</button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-        }
-
-        // ADICIONAR AO CARRINHO
-        function adicionarCarrinho(id, event) {
-            const produto = produtos.find(p => p.id === id);
-            const itemExistente = carrinho.find(item => item.id === id);
-            
-            if (itemExistente) {
-                itemExistente.qtd++;
+            // Pinta tudo
+            if(input.parentElement.classList.contains('correta')){
+                input.parentElement.style.background = '#2ecc71'; // Verde
+                input.parentElement.style.color = '#fff';
+                pontos++;
             } else {
-                carrinho.push({...produto, qtd: 1});
+                input.parentElement.style.background = '#e74c3c'; // Vermelho
+                input.parentElement.style.color = '#fff';
+                // Mostra qual era a certa
+                pergunta.querySelector('.correta').style.background = '#2ecc71';
+                pergunta.querySelector('.correta').style.color = '#fff';
             }
             
-            atualizarCarrinho();
+            // Desabilita os outros inputs da mesma pergunta
+            opcoes.forEach(op => op.disabled = true);
             
-            // Feedback visual seguro no botão clicado
-            if (event && event.target) {
-                const btn = event.target;
-                btn.innerText = "Adicionado ✓";
-                btn.style.background = "#2E7D32";
-                setTimeout(() => {
-                    btn.innerText = "Adicionar";
-                    btn.style.background = "var(--cor-primaria)";
-                }, 800);
+            // Se respondeu tudo, mostra resultado
+            if(document.querySelectorAll('.pergunta.respondida').length === totalPerguntas){
+                setTimeout(mostrarResultado, 500);
             }
         }
+    });
+});
 
-        // REMOVER DO CARRINHO (Botão de segurança adicionado)
-        function removerCarrinho(id) {
-            const itemExistente = carrinho.find(item => item.id === id);
-            if (itemExistente) {
-                itemExistente.qtd--;
-                if (itemExistente.qtd === 0) {
-                    carrinho = carrinho.filter(item => item.id !== id);
-                }
-            }
-            atualizarCarrinho();
-        }
+function mostrarResultado() {
+    const porcentagem = (pontos / totalPerguntas) * 100;
+    let mensagem = '';
+    
+    if(porcentagem == 100) mensagem = 'Caçador nível Men of Letters! Você é o Chuck?';
+    else if(porcentagem >= 70) mensagem = 'Quase um Winchester! Falta pouco pra caçar sozinho.';
+    else if(porcentagem >= 50) mensagem = 'Nível Bobby Singer. Dá pro gasto na caçada.';
+    else mensagem = 'Idjit! Hora de maratonar SPN de novo na Prime Video.';
+    
+    alert(`Você acertou ${pontos} de ${totalPerguntas}!\n${mensagem}`);
+}
 
-        // ATUALIZA OS VALORES DA INTERFACE
-        function atualizarCarrinho() {
-            const totalProdutos = carrinho.reduce((sum, item) => sum + (item.preco * item.qtd), 0);
-            const totalComTaxa = totalProdutos + TAXA_ENTREGA;
-            
-            // Atualiza os preços na tela principal e modal
-            document.getElementById('total-carrinho').innerText = totalProdutos.toFixed(2).replace('.', ',');
-            document.getElementById('total-final').innerText = totalComTaxa.toFixed(2).replace('.', ',');
-            document.getElementById('modal-subtotal').innerText = "R$ " + totalProdutos.toFixed(2).replace('.', ',');
-            document.getElementById('modal-total').innerText = "R$ " + totalComTaxa.toFixed(2).replace('.', ',');
-            
-            // Mostra ou esconde a barra fixa inferior
-            document.getElementById('carrinho-fixo').classList.toggle('ativo', carrinho.length > 0);
-            
-            // Lista os itens dentro do Modal
-            const itensHtml = carrinho.map(item => `
-                <div class="item-carrinho">
-                    <span>${item.qtd}x ${item.nome}</span>
-                    <div class="item-acoes">
-                        <span>R$ ${(item.preco * item.qtd).toFixed(2).replace('.', ',')}</span>
-                        <button class="remove-btn" onclick="removerCarrinho(${item.id})">❌</button>
-                    </div>
-                </div>
-            `).join('');
-            
-            document.getElementById('itens-carrinho').innerHTML = itensHtml || '<p style="color:#666; text-align:center; padding: 20px 0;">Seu carrinho está vazio</p>';
-        }
+// ===== 3. TOCAR CARRY ON WAYWARD SON =====
+const audio = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'); // Troca pelo link da música
+audio.volume = 0.3;
 
-        // CONTROLE DE CATEGORIAS
-        function filtrarCategoria(cat, event) {
-            categoriaAtual = cat;
-            document.querySelectorAll('.categoria').forEach(btn => btn.classList.remove('ativa'));
-            if (event && event.target) {
-                event.target.classList.add('ativa');
-            }
-            renderizarProdutos();
-        }
+// Cria botão flutuante pra música
+const btnMusica = document.createElement('button');
+btnMusica.innerHTML = '▶️ Carry On';
+btnMusica.style.cssText = `
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 15px;
+    background: #d35400;
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    z-index: 1000;
+    font-weight: bold;
+`;
+document.body.appendChild(btnMusica);
 
-        // FILTRAR POR DIGITAÇÃO
-        function filtrarProdutos() {
-            renderizarProdutos();
-        }
+let tocando = false;
+btnMusica.onclick = () => {
+    if(tocando){
+        audio.pause();
+        btnMusica.innerHTML = '▶️ Carry On';
+    } else {
+        audio.play();
+        btnMusica.innerHTML = '⏸️ Pausar';
+    }
+    tocando = !tocando;
+}
 
-        // MODAL CONTROLE
-        function abrirCarrinho() {
-            document.getElementById('modal-carrinho').style.display = 'block';
-        }
+// ===== 4. SCROLL SUAVE NOS LINKS =====
+document.querySelectorAll('a[href^="#"]').forEach(ancora => {
+    ancora.onclick = function(e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    }
+});
 
-        function fecharCarrinho() {
-            document.getElementById('modal-carrinho').style.display = 'none';
-        }
+// ===== 5. EASTER EGG: DIGITA "idjits" =====
+let sequencia = '';
+const palavraSecreta = 'idjits';
 
-        // REDIRECIONAMENTO AUTOMÁTICO SEGURO PARA O WHATSAPP
-        function finalizarPedido() {
-            if (carrinho.length === 0) return;
-            
-            let msg = "Olá! Quero fazer um pedido:\n\n";
-            carrinho.forEach(item => {
-                const subtotalItem = (item.preco * item.qtd).toFixed(2).replace('.', ',');
-                msg += `${item.qtd}x ${item.nome} - R$ ${subtotalItem}\n`;
-            });
-            
-            const totalGeral = carrinho.reduce((sum, item) => sum + (item.preco * item.qtd), 0) + TAXA_ENTREGA;
-            msg += `\nTaxa de entrega: R$ ${TAXA_ENTREGA.toFixed(2).replace('.', ',')}\n`;
-            msg += `*Total: R$ ${totalGeral.toFixed(2).replace('.', ',')}*\n\n`;
-            msg += "Endereço para entrega: ";
-            
-            // encodeURIComponent converte o texto e as quebras de linha de forma nativa e limpa
-            const textoFormatado = encodeURIComponent(msg);
-            
-            // Usamos o link direto da API para forçar a abertura do app sem bloqueios
-            const urlWhatsApp = `https://api.whatsapp.com/send?phone=${NUMERO_WHATSAPP}&text=${textoFormatado}`;
-            
-            // Redireciona na mesma aba garantindo que o celular abra o app automaticamente
-            window.location.href = urlWhatsApp;
-        }
+document.addEventListener('keydown', (e) => {
+    sequencia += e.key.toLowerCase();
+    sequencia = sequencia.slice(-palavraSecreta.length);
+    
+    if(sequencia === palavraSecreta){
+        alert('Bitch! Jerk! Achou o easter egg dos Winchesters!');
+        document.body.style.backgroundImage = "url('dean.jpg')";
+    }
+});
 
-        // INICIALIZAÇÃO
-        renderizarProdutos();
-    </script>
+console.log('Supernatural JS carregado. Salvar pessoas, caçar bugs, o negócio da família.');
+</script>
