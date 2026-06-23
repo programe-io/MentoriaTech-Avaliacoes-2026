@@ -1,0 +1,310 @@
+/* ==========================================================================
+   1. VARIÁVEIS DE DESIGN E CONFIGURAÇÕES GERAIS
+   ========================================================================== */
+:root {
+    --primary-color: #4a2c2a;    /* Marrom chocolate */
+    --accent-color: #e07a5f;     /* Laranja suave / Tom pastel */
+    --bg-color: #f4f1de;         /* Creme de fundo */
+    --card-bg: #ffffff;          /* Branco para os blocos */
+    --text-color: #3d405b;       /* Cinza escuro para leitura confortável */
+    --success-color: #2a9d8f;    /* Verde para itens concluídos */
+    --hover-bg: #fdfaf6;          /* Fundo sutil para o hover dos ingredientes */
+    --transition-fast: 0.2s ease;
+    --transition-normal: 0.3s ease;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
+/* ==========================================================================
+   2. LAYOUT E ESTRUTURA (HEADER, CONTAINER, FOOTER)
+   ========================================================================== */
+header {
+    background-color: var(--primary-color);
+    color: #ffffff;
+    text-align: center;
+    padding: 2.5rem 1rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+header p {
+    font-style: italic;
+    opacity: 0.9;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+.section-card {
+    background-color: var(--card-bg);
+    padding: 2rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+h2 {
+    color: var(--primary-color);
+    border-bottom: 2px solid var(--accent-color);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.instruction-tip {
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+}
+
+footer {
+    text-align: center;
+    padding: 2rem;
+    opacity: 0.7;
+    font-size: 0.9rem;
+}
+
+/* Classes utilitárias */
+.hidden {
+    display: none !important;
+}
+
+/* ==========================================================================
+   3. BOTÕES E CONTROLES
+   ========================================================================== */
+.controls {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 2rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+button {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1rem;
+    transition: transform var(--transition-fast), filter var(--transition-fast), outline var(--transition-fast);
+}
+
+button:hover {
+    transform: scale(1.03);
+    filter: brightness(1.1);
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+.btn-scale {
+    background-color: var(--accent-color);
+    color: #ffffff;
+}
+
+.btn-nav {
+    background-color: var(--primary-color);
+    color: #ffffff;
+}
+
+.btn-back {
+    background-color: #333333;
+    color: #ffffff;
+    margin-bottom: 1.5rem;
+}
+
+/* Estado ativo para o botão multiplicador selecionado */
+button.active {
+    outline: 3px solid var(--success-color);
+    outline-offset: 2px;
+}
+
+/* ==========================================================================
+   4. SEÇÃO MASSA: INGREDIENTES E PASSOS
+   ========================================================================== */
+.ingredient-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.ingredient-item {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    background-color: var(--card-bg);
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color var(--transition-fast), 
+                border-color var(--transition-fast), 
+                transform var(--transition-fast), 
+                box-shadow var(--transition-fast);
+}
+
+/* Efeito Hover nos Ingredientes */
+.ingredient-item:hover {
+    background-color: var(--hover-bg);
+    border-color: var(--accent-color);
+    transform: translateX(6px);
+    box-shadow: 3px 4px 10px rgba(224, 122, 95, 0.12);
+}
+
+/* Destaque numérico das quantidades */
+.qty {
+    font-weight: bold;
+    color: var(--accent-color);
+    font-size: 1.15rem;
+    transition: color var(--transition-fast);
+}
+
+/* Estado: Ingrediente já selecionado/riscado */
+.ingredient-item.checked {
+    background-color: #f1f3f5;
+    border-color: #cbd5e1;
+    color: #94a3b8;
+    text-decoration: line-through;
+    transform: none;
+    box-shadow: none;
+}
+
+.ingredient-item.checked .qty {
+    color: #94a3b8;
+}
+
+/* Modo de Preparo */
+.step-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.step-item {
+    padding: 1.2rem;
+    background: #f9f9f9;
+    border-left: 5px solid var(--accent-color);
+    border-radius: 0 8px 8px 0;
+    cursor: pointer;
+    user-select: none;
+    transition: transform var(--transition-fast), background-color var(--transition-fast), border-left-color var(--transition-fast), opacity var(--transition-fast);
+}
+
+.step-item:hover {
+    transform: translateX(4px);
+}
+
+/* Estado: Passo Concluído */
+.step-item.done {
+    background: #e8f5e9;
+    border-left-color: var(--success-color);
+    opacity: 0.6;
+    text-decoration: line-through;
+    transform: none;
+}
+
+/* ==========================================================================
+   5. SEÇÃO COBERTURAS (CARDS & GRID)
+   ========================================================================== */
+.frosting-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+    margin-top: 0.5rem;
+}
+
+.frosting-card {
+    background-color: var(--card-bg);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    border: 1px solid #eaeaea;
+    display: flex;
+    flex-direction: column;
+    transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+/* Efeito Hover nos Cards de Cobertura */
+.frosting-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 25px rgba(74, 44, 42, 0.15);
+}
+
+.frosting-body {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.frosting-badge {
+    color: #ffffff;
+    padding: 5px 14px;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    font-weight: bold;
+    border-radius: 20px;
+    display: inline-block;
+    margin-bottom: 12px;
+    align-self: flex-start;
+    letter-spacing: 0.5px;
+}
+
+.badge-creamy { background-color: var(--primary-color); }
+.badge-crunchy { background-color: var(--accent-color); }
+
+.frosting-title {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+    font-weight: 700;
+}
+
+.frosting-ingredients-title {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    color: #888888;
+    letter-spacing: 0.8px;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.frosting-ingredients {
+    list-style: none;
+    margin-bottom: 2rem;
+}
+
+.frosting-ingredients li {
+    padding: 8px 0;
+    border-bottom: 1px dashed #e2e8f0;
+    font-size: 0.95rem;
+}
+
+.frosting-method {
+    background-color: #faf8f5;
+    padding: 1rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    color: #4a4a4a;
+    border-left: 4px solid var(--accent-color);
+    margin-top: auto; /* Garante alinhamento na base mesmo com textos diferentes */
+}
