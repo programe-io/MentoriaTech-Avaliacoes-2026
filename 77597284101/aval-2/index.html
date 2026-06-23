@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo de Moto 2D</title>
+    <style>
+        body {
+            margin: 0;
+            background-color: #222;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: white;
+            font-family: Arial, sans-serif;
+            flex-direction: column;
+        }
+        canvas {
+            border: 4px solid #fff;
+            background-color: #444;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+        h1 {
+            margin-bottom: 10px;
+        }
+        p {
+            margin-top: 10px;
+            color: #aaa;
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+    <h1>Desvio de Moto</h1>
+    <canvas id="gameCanvas" width="800" height="400"></canvas>
+    <p>Use as setas para CIMA e para BAIXO para desviar dos obstáculos!</p>
+
+    <script>
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+
+        // Configurações da Moto (Jogador)
+        const moto = {
+            x: 50,
+            y: 180,
+            largura: 60,
+            altura: 30,
+            velocidade: 7,
+            cor: "#ff3333"
+        };
+
+        // Teclas pressionadas
+        const teclas = {
+            ArrowUp: false,
+            ArrowDown: false
+        };
+
+        // Configurações dos Obstáculos
+        const obstaculos = [];
+        const largObstaculo = 40;
+        const altObstaculo = 40;
+        let velocidadeObstaculo = 5;
+        let frequenciaObstaculo = 90; // Quanto menor, mais rápido surgem
+        let contagemQuadros = 0;
+
+        let pontuacao = 0;
+        let jogoAtivo = true;
+
+        // Ouvintes de eventos do teclado
+        window.addEventListener("keydown", (e) => {
+            if (e.key in teclas) teclas[e.key] = true;
+        });
+
+        window.addEventListener("keyup", (e) => {
+            if (e.key in teclas) teclas[e.key] = false;
+        });
+
+        // Função para criar obstáculos aleatórios
+        function gerarObstaculos() {
+            contagemQuadros++;
+            if (contagemQuadros % frequenciaObstaculo === 0) {
+                const yAleatorio = Math.random() * (canvas.height - altObstaculo);
+                obstaculos.push({ x: canvas.width, y: yAleatorio });
+                
+                // Aumenta a dificuldade gradualmente
+                if (velocidadeObstaculo < 15) velocidadeObstaculo += 0.2;
+                if (frequenciaObstaculo > 40) frequenciaObstaculo -= 2;
+            }
+        }
+
+        // Atualiza as posições do jogo
+        function atualizar() {
+            if (!jogoAtivo) return;
+
+            // Movimento da Moto
+            if (teclas.ArrowUp && moto.y > 0) {
+                moto.y -= moto.velocidade;
+            }
+            if (teclas.ArrowDown && moto.y < canvas.height - moto.altura) {
+                moto.y += moto.velocidade;
+            }
+
+            // Movimento e colisão dos obstáculos
+            for (let i = obstaculos.length - 1; i >= 0; i--) {
+                obstaculos[i].x -= velocidadeObstaculo;
+
+                // Verifica colisão (AABB Box Collision)
+                if (
+                    moto.x < obstaculos[i].x + largObstaculo &&
+                    moto.x + moto.largura > obstaculos[i].x &&
+                    moto.y < obstaculos[i].y + altObstaculo &&
+                    moto.y + moto.altura > obstaculos[i].y
+                ) {
+                    jogoAtivo = false;
+                    alert(`Fim de Jogo! Sua pontuação foi: ${pontuacao}`);
+                    document.location.reload();
+                }
+
+                // Remove obstáculos que saíram da tela e soma pontos
+                if (obstaculos[i].x + largObstaculo < 0) {
+                    obstaculos.splice(i, 1);
+                    pontuacao++;
+                }
+            }
+
+            gerarObstaculos();
+        }
+
+        // Desenha os elementos na tela
+        function desenhar() {
+            // Limpa a tela
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Desenha as faixas da estrada (Efeito visual)
+            ctx.strokeStyle = "#fff";
+            ctx.setLineDash([20, 20]);
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(0, canvas.height / 2);
+            ctx.lineTo(canvas.width, canvas.height / 2);
+            ctx.stroke();
+
+            // Desenha a Moto (Representada por um retângulo estilizado)
+            ctx.fillStyle = moto.cor;
+            ctx.fillRect(moto.x, moto.y, moto.largura, moto.altura);
+            // Rodas da moto
+            ctx.fillStyle = "#000";
+            ctx.fillRect(moto.x + 5, moto.y + moto.altura, 12, 8);
+            ctx.fillRect(moto.x + moto.largura - 17, moto.y + moto.altura, 12, 8);
+
+            // Desenha os Obstáculos (Quadrados cinzas/buracos)
+            ctx.fillStyle = "#ffaa00";
+            for (let obs of obstaculos) {
+                ctx.fillRect(obs.x, obs.y, largObstaculo, altObstaculo);
+            }
+
+            // Desenha a Pontuação
+            ctx.fillStyle = "#fff";
+            ctx.font = "20px Arial";
+            ctx.fillText(`Pontos: ${pontuacao}`, 20, 30);
+        }
+
+        // Loop principal do jogo
+        function gameLoop() {
+            atualizar();
+            desenhar();
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Inicia o jogo
+        gameLoop();
+    </script>
+<script src="script.js"></script></body> <header>
+</html><nav> <a><aside><h3><main><article><img><footer<<footer><footer>

@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moto Rider Pro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+        }
+
+        body {
+            background: #0b0f19;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Container do Jogo Estilo Console */
+        .game-wrapper {
+            position: relative;
+            background: linear-gradient(145deg, #131927, #0e131f);
+            padding: 16px;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 
+                        0 0 40px rgba(0, 229, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Header de Informações */
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 0 10px;
+        }
+
+        h1 {
+            font-size: 1.6rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: linear-gradient(90deg, #00f2fe, #4facfe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stats {
+            display: flex;
+            gap: 20px;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .stat-box {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 6px 14px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        #fuelDisplay { color: #ff007f; }
+        #scoreDisplay { color: #00e5ff; }
+
+        /* Canvas Otimizado */
+        canvas {
+            display: block;
+            border-radius: 12px;
+            background: #1a1a24;
+            box-shadow: inset 0 0 40px rgba(0,0,0,0.9);
+            /* Otimização de renderização CSS para jogos mais leves */
+            image-rendering: -moz-crisp-edges;
+            image-rendering: -webkit-crisp-edges;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+        }
+
+        /* UI Overlays (Telas de Estado) */
+        .overlay {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(7, 10, 18, 0.95);
+            border-radius: 20px;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            backdrop-filter: blur(8px);
+        }
+
+        .overlay h2 {
+            font-size: 3rem;
+            margin-bottom: 5px;
+            letter-spacing: 3px;
+        }
+        
+        .overlay.game-over h2 {
+            color: #ff3366;
+            text-shadow: 0 0 20px rgba(2ff, 51, 102, 0.4);
+        }
+
+        .overlay p {
+            font-size: 1.2rem;
+            color: #a0aec0;
+            margin-bottom: 25px;
+        }
+
+        .btn-action {
+            padding: 14px 36px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #fff;
+            background: linear-gradient(90deg, #00f2fe, #4facfe);
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0, 242, 254, 0.3);
+            transition: all 0.2s ease;
+        }
+
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 25px rgba(0, 242, 254, 0.4);
+        }
+
+        .instructions {
+            margin-top: 15px;
+            text-align: center;
+            color: #64748b;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="game-wrapper">
+        <div class="overlay game-over" id="gameOverScreen">
+            <h2>FIM DE CORRIDA</h2>
+            <p>Sua pontuação total: <span id="finalScore" style="color:#fff; font-weight:bold;">0</span></p>
+            <button class="btn-action" onclick="reiniciarJogo()">Acelerar de Novo</button>
+        </div>
+
+        <div class="game-header">
+            <h1>Moto Rider Pro</h1>
+            <div class="stats">
+                <div class="stat-box">GAS: <span id="fuelDisplay">100</span>%</div>
+                <div class="stat-box">PTS: <span id="scoreDisplay">0</span></div>
+            </div>
+        </div>
+
+        <canvas id="gameCanvas" width="850" height="400"></canvas>
+        <p class="instructions">Use as setas para CIMA e BAIXO para pilotar. Colete galões de combustível rosa!</p>
+    </div>
+
+    <script>
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+        
+        // Elementos do DOM armazenados para ganho de performance
+        const gameOverScreen = document.getElementById("gameOverScreen");
+        const finalScoreText = document.getElementById("finalScore");
+        const fuelDisplay = document.getElementById("fuelDisplay");
+        const scoreDisplay = document.getElementById("scoreDisplay");
+
+        // Estado do Jogo
+        let jogoAtivo = true;
+        let pontuacao = 0;
+        let combustivel = 100;
+        let contagemQuadros = 0;
+        let velocidadeMundo = 6;
+
+        // Entidades
+        let moto = { x: 80, y: 180, largura: 70, altura: 26, velocidade: 7 };
+        let teclas = { ArrowUp: false, ArrowDown: false };
+        let itens = []; // Armazena obstáculos e colecionáveis
+
+        // Tipos de Itens Cadastrados (Mais variedade com renderizações leves)
+        const TIPOS_ITENS = {
+            BURACO:   { tipo: 'obstaculo', cor: '#111119', borda: '#333', largura: 50, altura: 20, pontos: 1, forma: 'elipse' },
+            CONE:     { tipo: 'obstaculo', cor: '#ff6600', borda: '#fff', largura: 25, altura: 35, pontos: 1, forma: 'triangulo' },
+            BARREIRA: { tipo: 'obstaculo', cor: '#dd2222', borda: '#fff', largura: 20, altura: 60, pontos: 2, forma: 'retangulo' },
+            GASOLINA: { tipo: 'coletavel', cor: '#ff007f', borda: '#fff', largura: 25, altura: 30, pontos: 0, forma: 'galao' }
+        };
+
+        // Eventos
+        window.addEventListener("keydown", e => { if (e.key in teclas) { teclas[e.key] = true; e.preventDefault(); } });
+        window.addEventListener("keyup", e => { if (e.key in teclas) teclas[e.key] = false; });
+
+        function spawnItem() {
+            contagemQuadros++;
+            // Frequência baseada na velocidade do jogo para balanceamento
+            if (contagemQuadros % Math.max(30, Math.floor(80 - velocidadeMundo * 2)) === 0) {
+                const chaves = Object.keys(TIPOS_ITENS);
+                // Chance maior para obstáculos do que gasolina
+                const configAleatoria = Math.random() > 0.3 ? chaves[Math.floor(Math.random() * 3)] : 'GASOLINA';
+                const modelo = TIPOS_ITENS[configAleatoria];
+                
+                const yAleatorio = 50 + Math.random() * (canvas.height - modelo.altura - 100);
+
+                itens.push({
+                    x: canvas.width,
+                    y: yAleatorio,
+                    ...modelo
+                });
+
+                // Aumenta velocidade do mundo progressivamente (Realismo de aceleração)
+                if (velocidadeMundo < 18) velocidadeMundo += 0.1;
+            }
+        }
+
+        function atualizar() {
+            if (!jogoAtivo) return;
+
+            // Consumo de combustível gradual baseado na velocidade
+            combustivel -= 0.04 + (velocidadeMundo * 0.002);
+            if (combustivel <= 0) {
+                combustivel = 0;
+                finalizarJogo();
+            }
+            fuelDisplay.innerText = Math.floor(combustivel);
+
+            // Movimento do Jogador (Preservando limites da pista cinza)
+            if (teclas.ArrowUp && moto.y > 60) moto.y -= moto.velocidade;
+            if (teclas.ArrowDown && moto.y < canvas.height - moto.altura - 60) moto.y += moto.velocidade;
+
+            // Loop Reverso de Itens (Melhor prática de performance para remoções no array)
+            for (let i = itens.length - 1; i >= 0; i--) {
+                let item = itens[i];
+                item.x -= velocidadeMundo;
+
+                // Colisão AABB Avançada
+                if (
+                    moto.x < item.x + item.largura &&
+                    moto.x + moto.largura > item.x &&
+                    moto.y < item.y + item.altura &&
+                    moto.y + moto.altura > item.y
+                ) {
+                    if (item.tipo === 'obstaculo') {
+                        finalizarJogo();
+                        return;
+                    } else if (item.tipo === 'coletavel') {
+                        combustivel = Math.min(100, combustivel + 25); // Recupera gás
+                        itens.splice(i, 1);
+                        continue;
+                    }
+                }
+
+                // Saiu da tela
+                if (item.x + item.largura < 0) {
+                    if (item.tipo === 'obstaculo') {
+                        pontuacao += item.pontos;
+                        scoreDisplay.innerText = pontuacao;
+                    }
+                    itens.splice(i, 1);
+                }
+            }
+
+            spawnItem();
+        }
+
+        function desenhar() {
+            // Desenhar fundo asfalto/cenário sem efeitos pesados de shadow do Canvas (que causam lag)
+            // Grama Superior/Inferior
+            ctx.fillStyle = "#141d26";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Pista em Perspectiva Dinâmica (Linhas de fuga para realismo)
+            ctx.fillStyle = "#222533";
+            ctx.beginPath();
+            ctx.moveTo(0, 50);
+            ctx.lineTo(canvas.width, 50);
+            ctx.lineTo(canvas.width, canvas.height - 50);
+            ctx.lineTo(0, canvas.height - 50);
+            ctx.fill();
+
+            // Faixas Brancas das Bordas
+            ctx.fillStyle = "#4a5568";
+            ctx.fillRect(0, 46, canvas.width, 4);
+            ctx.fillRect(0, canvas.height - 50, canvas.width, 4);
+
+            // Linha Central Pontilhada com Efeito de Movimento Realista
+            ctx.strokeStyle = "#eeddcc";
+            ctx.lineWidth = 3;
+            ctx.setLineDash([40, 40]);
+            // Deslocamento baseado na contagem de quadros finge movimento em alta velocidade
+            ctx.lineDashOffset = -contagemQuadros * velocidadeMundo;
+            ctx.beginPath();
+            ctx.moveTo(0, canvas.height / 2);
+            ctx.lineTo(canvas.width, canvas.height / 2);
+            ctx.stroke();
+            ctx.setLineDash([]); // Limpa o dash
+
+            // RENDERIZAÇÃO DOS ITENS
+            for (let item of itens) {
+                ctx.fillStyle = item.cor;
+                ctx.strokeStyle = item.borda;
+                ctx.lineWidth = 2;
+
+                if (item.forma === 'retangulo') {
+                    ctx.fillRect(item.x, item.y, item.largura, item.altura);
+                    ctx.strokeRect(item.x, item.y, item.largura, item.altura);
+                } 
+                else if (item.forma === 'triangulo') {
+                    ctx.beginPath();
+                    ctx.moveTo(item.x + item.largura/2, item.y);
+                    ctx.lineTo(item.x, item.y + item.altura);
+                    ctx.lineTo(item.x + item.largura, item.y + item.altura);
+                    ctx.closePath();
+                    ctx.fill();
+                    ctx.stroke();
+                } 
+                else if (item.forma === 'elipse') {
+                    ctx.beginPath();
+                    ctx.ellipse(item.x + item.largura/2, item.y + item.altura/2, item.largura/2, item.altura/2, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.stroke();
+                }
+                else if (item.forma === 'galao') {
+                    // Desenho vetorial simples e leve de um galão
+                    ctx.fillRect(item.x, item.y + 5, item.largura, item.altura - 5);
+                    ctx.fillStyle = "#fff";
+                    ctx.fillRect(item.x + 5, item.y, 8, 5); // Alça/Tampa
+                }
+            }
+
+            // RENDERIZAÇÃO DA MOTO (Mais detalhada e realista)
+            // Sombra da moto projetada na pista
+            ctx.fillStyle = "rgba(0, 0, 0, 0.4)";
+            ctx.fillRect(moto.x - 5, moto.y + moto.altura - 2, moto.largura + 5, 6);
+
+            // Chassi/Corpo
+            ctx.fillStyle = "#3b82f6"; // Azul Esportivo
+            ctx.fillRect(moto.x + 15, moto.y + 2, moto.largura - 30, moto.altura - 8);
+            
+            // Carenagem frontal aerodinâmica
+            ctx.fillStyle = "#1d4ed8";
+            ctx.beginPath();
+            ctx.moveTo(moto.x + moto.largura - 15, moto.y + 2);
+            ctx.lineTo(moto.x + moto.largura, moto.y + 12);
+            ctx.lineTo(moto.x + moto.largura - 20, moto.y + 20);
+            ctx.fill();
+
+            // Piloto (Capacete e jaqueta)
+            ctx.fillStyle = "#ffffff"; // Capacete
+            ctx.beginPath();
+            ctx.arc(moto.x + 35, moto.y + 2, 7, 0, Math.PI*2);
+            ctx.fill();
+            ctx.fillStyle = "#111"; // Viseira
+            ctx.fillRect(moto.x + 37, moto.y - 1, 5, 4);
+
+            // Rodas (Aros detalhados em cinza e pneus pretos)
+            ctx.fillStyle = "#090d16";
+            ctx.fillRect(moto.x, moto.y + moto.altura - 10, 16, 16); // Roda Traseira
+            ctx.fillRect(moto.x + moto.largura - 16, moto.y + moto.altura - 10, 16, 16); // Roda Dianteira
+            
+            ctx.fillStyle = "#00e5ff"; // Detalhe neon nas rodas
+            ctx.fillRect(moto.x + 4, moto.y + moto.altura - 6, 8, 8);
+            ctx.fillRect(moto.x + moto.largura - 12, moto.y + moto.altura - 6, 8, 8);
+        }
+
+        function finalizarJogo() {
+            jogoAtivo = false;
+            finalScoreText.innerText = pontuacao;
+            gameOverScreen.style.display = "flex";
+        }
+
+        function reiniciarJogo() {
+            moto.y = 180;
+            itens = [];
+            velocidadeMundo = 6;
+            contagemQuadros = 0;
+            pontuacao = 0;
+            combustivel = 100;
+            scoreDisplay.innerText = "0";
+            jogoAtivo = true;
+            gameOverScreen.style.display = "none";
+        }
+
+        function gameLoop() {
+            atualizar();
+            desenhar();
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Inicialização
+        gameLoop();
+    </script>
+</body>
+</html>
