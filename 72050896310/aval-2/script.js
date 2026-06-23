@@ -1,261 +1,162 @@
-const gameWindow = document.getElementById('gameWindow');
-const world = document.getElementById('world'); 
-const scoreDisplay = document.getElementById('score');
-const coinsDisplay = document.getElementById('coins');
-const velocityDisplay = document.getElementById('velocity-v'); 
-const victoryScreen = document.getElementById('victoryScreen'); 
-const flag = document.getElementById('flag');
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+const scoreVal = document.getElementById("score-val");
+const gameOverScreen = document.getElementById("game-over-screen");
+const finalScore = document.getElementById("final-score");
+const restartBtn = document.getElementById("restart-btn");
 
-const GRAVITY = 0.6;
+// Configuração das 3 pistas
+const LANES = [66, 200, 333]; 
+let currentLane = 1; 
+
+// Estados do jogo
+let gameActive = true;
 let score = 0;
-let coins = 0;
-let keys = {};
-let cameraX = 0;
-let gameOver = false;
+let gameSpeed = 6;
+let obstacles = [];
+let spawnTimer = 0;
 
-window.addEventListener('keydown', (e) => { 
-    if (!gameOver) keys[e.key.toLowerCase()] = true; 
-});
-window.addEventListener('keyup', (e) => { 
-    keys[e.key.toLowerCase()] = false; 
-});
+// O Jogador
+const player = {
+    x: LANES[currentLane],
+    y: 510,
+    radius: 18,
+    color: "#ffca28", 
+    targetX: LANES[currentLane] 
+};
 
-class Mario {
-    constructor() {
-        this.element = document.createElement('div');
-        this.element.className = 'mario';
-        world.appendChild(this.element);
-
-        this.width = 32;
-        this.height = 44;
-        this.x = 100;
-        this.y = 200;
-        this.vx = 0;
-        this.vy = 0;
-        this.speed = 5;
-        this.jumpForce = 13;
-        this.grounded = false;
-    }
-
-    update() {
-        if (gameOver) {
-            this.vx = 0;
-            velocityDisplay.innerText = "0";
-            return;
-        }
-
-        if (keys['arrowright'] || keys['d']) {
-            this.vx = this.speed;
-            this.element.classList.remove('facing-left');
-        } else if (keys['arrowleft'] || keys['a']) {
-            this.vx = -this.speed;
-            this.element.classList.add('facing-left');
-        } else {
-            this.vx = 0;
-        }
-
-        velocityDisplay.innerText = Math.abs(this.vx);
-
-        if ((keys['arrowup'] || keys['w'] || keys[' ']) && this.grounded) {
-            this.vy = -this.jumpForce;
-            this.grounded = false;
-        }
-
-        this.vy += GRAVITY;
-        this.x += this.vx;
-        this.y += this.vy;
-
-        if (this.x < 0) this.x = 0;
-
-        if (this.y > gameWindow.clientHeight) {
-            this.die();
-        }
-
-        if (this.x >= 2600 && !gameOver) {
-            triggerVictory();
-        }
-    }
-
-    die() {
-        alert("Você morreu! Reiniciando a fase...");
-        this.x = 100;
-        this.y = 200;
-        this.vx = 0;
-        this.vy = 0;
-        goombas.forEach(g => g.reset());
-    }
-
-    draw() {
-        this.element.style.left = this.x + 'px';
-        this.element.style.top = this.y + 'px';
-    }
-}
-
+// Molde dos Obstáculos
 class Obstacle {
-    constructor(x, y, width, height, type) {
-        this.element = document.createElement('div');
-        this.element.className = type;
-        if (type === 'block') this.element.innerText = '?';
-        this.element.style.width = width + 'px';
-        this.element.style.height = height + 'px';
-        this.element.style.left = x + 'px';
-        this.element.style.top = y + 'px';
-        world.appendChild(this.element);
-
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
-        this.type = type;
-        this.isHit = false;
-    }
-}
-
-class Goomba {
-    constructor(startX, startY) {
-        this.startX = startX;
-        this.startY = startY;
-        this.element = document.createElement('div');
-        this.element.className = 'goomba';
-        world.appendChild(this.element);
-        this.width = 30;
-        this.height = 30;
-        this.reset();
-    }
-
-    reset() {
-        this.x = this.startX;
-        this.y = this.startY;
-        this.vx = -1.5;
-        this.alive = true;
-        this.element.style.display = 'block';
+    constructor() {
+        this.lane = Math.floor(Math.random() * 3);
+        this.width = 54;
+        this.height = 75;
+        this.x = LANES[this.lane] - (this.width / 2); 
+        this.y = -this.height;
+        this.color = Math.random() > 0.5 ? "#f85149" : "#58a6ff"; 
     }
 
     update() {
-        if (!this.alive || gameOver) return;
-        this.x += this.vx;
-
-        obstacles.forEach(obs => {
-            if (this.x < obs.x + obs.width && this.x + this.width > obs.x &&
-                this.y < obs.y + obs.height && this.y + this.height > obs.y) {
-                this.vx *= -1;
-                this.x += this.vx;
-            }
-        });
+        this.y += gameSpeed;
     }
 
     draw() {
-        if (!this.alive) return;
-        this.element.style.left = this.x + 'px';
-        this.element.style.top = this.y + 'px';
+        ctx.fillStyle = this.color;
+        ctx.beginPath();
+        if (ctx.roundRect) {
+            ctx.roundRect(this.x, this.y, this.width, this.height, 8);
+        } else {
+            ctx.rect(this.x, this.y, this.width, this.height);
+        }
+        ctx.fill();
+        
+        // Detalhes (Janelas do trem)
+        ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
+        ctx.fillRect(this.x + 8, this.y + 12, 12, 15);
+        ctx.fillRect(this.x + 34, this.y + 12, 12, 15);
     }
 }
 
-const player = new Mario();
+// Escuta os comandos do teclado
+window.addEventListener("keydown", (e) => {
+    if (!gameActive) return;
 
-const obstacles = [
-    new Obstacle(0, 380, 700, 60, 'platform'),
-    new Obstacle(850, 380, 650, 60, 'platform'),
-    new Obstacle(1650, 380, 1500, 60, 'platform'),
-
-    new Obstacle(250, 240, 40, 40, 'block'),
-    new Obstacle(290, 240, 40, 40, 'block'),
-    new Obstacle(1000, 220, 40, 40, 'block'),
-    new Obstacle(1800, 240, 40, 40, 'block'),
-
-    new Obstacle(500, 310, 60, 70, 'pipe'),
-    new Obstacle(1150, 290, 60, 90, 'pipe'),
-    new Obstacle(2100, 310, 60, 70, 'pipe')
-];
-
-const goombas = [
-    new Goomba(400, 350),
-    new Goomba(1050, 350),
-    new Goomba(1350, 350),
-    new Goomba(1900, 350)
-];
-
-function handleCollisions() {
-    player.grounded = false;
-
-    obstacles.forEach(obj => {
-        if (player.x < obj.x + obj.width && player.x + player.width > obj.x &&
-            player.y < obj.y + obj.height && player.y + player.height > obj.y) {
-            
-            let overlapX = Math.min(player.x + player.width - obj.x, obj.x + obj.width - player.x);
-            let overlapY = Math.min(player.y + player.height - obj.y, obj.y + obj.height - player.y);
-
-            if (overlapX < overlapY) {
-                if (player.x + player.width / 2 > obj.x + obj.width / 2) player.x += overlapX;
-                else player.x -= overlapX;
-                player.vx = 0;
-            } else {
-                if (player.y + player.height / 2 > obj.y + obj.height / 2) {
-                    player.y += overlapY;
-                    player.vy = 0;
-
-                    if (obj.type === 'block' && !obj.isHit) {
-                        obj.isHit = true;
-                        obj.element.classList.add('hit');
-                        coins++;
-                        score += 200;
-                        coinsDisplay.innerText = `x${String(coins).padStart(2, '0')}`;
-                        scoreDisplay.innerText = String(score).padStart(6, '0');
-                    }
-                } else {
-                    player.y -= overlapY;
-                    player.vy = 0;
-                    player.grounded = true;
-                }
-            }
-        }
-    });
-
-    goombas.forEach(goomba => {
-        if (!goomba.alive || gameOver) return;
-
-        if (player.x < goomba.x + goomba.width && player.x + player.width > goomba.x &&
-            player.y < goomba.y + goomba.height && player.y + player.height > goomba.y) {
-            
-            let marioBottom = player.y + player.height;
-            if (player.vy > 0 && (marioBottom - player.vy) <= goomba.y + 12) {
-                goomba.alive = false;
-                goomba.element.style.display = 'none';
-                score += 100;
-                scoreDisplay.innerText = String(score).padStart(6, '0');
-                player.vy = -8;
-            } else {
-                player.die();
-            }
-        }
-    });
-}
-
-function triggerVictory() {
-    gameOver = true;
-    keys = {}; 
-    flag.style.top = '220px'; 
-    victoryScreen.style.display = 'block'; 
-}
-
-function gameLoop() {
-    player.update();
-    goombas.forEach(g => g.update());
-    handleCollisions();
-
-    if (player.x > 300) {
-        cameraX = player.x - 300;
-    } else {
-        cameraX = 0;
+    if ((e.key === "ArrowLeft" || e.key === "a" || e.key === "A") && currentLane > 0) {
+        currentLane--;
+    } else if ((e.key === "ArrowRight" || e.key === "d" || e.key === "D") && currentLane < 2) {
+        currentLane++;
     }
+    player.targetX = LANES[currentLane];
+});
+
+// Reinicia o sistema do jogo
+function init() {
+    obstacles = [];
+    score = 0;
+    gameSpeed = 6;
+    currentLane = 1;
+    player.targetX = LANES[currentLane];
+    player.x = LANES[currentLane];
+    scoreVal.innerText = score;
+    gameActive = true;
+    gameOverScreen.classList.add("hidden");
+    animate();
+}
+
+// Loop de quadros (Engine)
+function animate() {
+    if (!gameActive) return;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Desenha linhas de divisão (Trilhos)
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.15)";
+    ctx.lineWidth = 6;
+    for (let i = 1; i < 3; i++) {
+        ctx.beginPath();
+        ctx.moveTo(i * (canvas.width / 3), 0);
+        ctx.lineTo(i * (canvas.width / 3), canvas.height);
+        ctx.stroke();
+    }
+
+    // Movimento lateral suave (Interpolação)
+    player.x += (player.targetX - player.x) * 0.22;
+
+    // Desenha o boneco do jogador
+    ctx.fillStyle = player.color;
+    ctx.beginPath();
+    ctx.arc(player.x, player.y, player.radius, 0, Math.PI * 2);
+    ctx.fill();
     
-    if (cameraX > 2100) cameraX = 2100;
-    world.style.transform = `translateX(${-cameraX}px)`;
+    ctx.fillStyle = "#ff5500";
+    ctx.fillRect(player.x - 14, player.y - 24, 28, 8); // Boné
 
-    player.draw();
-    goombas.forEach(g => g.draw());
+    // Cronômetro para soltar novos trens
+    spawnTimer++;
+    let spawnInterval = Math.max(40, 70 - Math.floor(gameSpeed * 2));
+    if (spawnTimer >= spawnInterval) { 
+        obstacles.push(new Obstacle());
+        spawnTimer = 0;
+    }
 
-    requestAnimationFrame(gameLoop);
+    // Gerencia cada obstáculo na tela
+    for (let i = obstacles.length - 1; i >= 0; i--) {
+        let obs = obstacles[i];
+        obs.update();
+        obs.draw();
+
+        // Hitbox do jogador
+        let pLeft = player.x - player.radius + 3;
+        let pRight = player.x + player.radius - 3;
+        let pTop = player.y - player.radius + 3;
+        let pBottom = player.y + player.radius - 3;
+
+        // Detector de colisão física
+        if (obs.x < pRight &&
+            obs.x + obs.width > pLeft &&
+            obs.y < pBottom &&
+            obs.y + obs.height > pTop) {
+            
+            gameActive = false;
+            finalScore.innerText = score;
+            gameOverScreen.classList.remove("hidden");
+        }
+
+        // Ponto ganho ao esquivar do trem
+        if (obs.y > canvas.height) {
+            obstacles.splice(i, 1);
+            score += 10;
+            scoreVal.innerText = score;
+            
+            // Dificuldade progressiva
+            if (score % 70 === 0) {
+                gameSpeed += 0.4;
+            }
+        }
+    }
+
+    requestAnimationFrame(animate);
 }
 
-gameLoop();
+restartBtn.addEventListener("click", init);
+init();
