@@ -1,1 +1,1 @@
-https://www.python.org/?utm_source=chatgpt.com
+https://developer.mozilla.org/pt-BR/docs/Web/JavaScript?utm_source=chatgpt.com
