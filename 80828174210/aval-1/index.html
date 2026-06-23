@@ -1,0 +1,115 @@
+<!DOCTY
+PE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mini Jogo HTML</title>
+
+<style>
+    body {
+        text-align: center;
+        font-family: Arial, sans-serif;
+        background: #f0f0f0;
+    }
+
+    #game {
+        position: relative;
+        width: 600px;
+        height: 400px;
+        margin: 20px auto;
+        border: 3px solid #333;
+        background: white;
+        overflow: hidden;
+    }
+
+    #player {
+        position: absolute;
+        width: 30px;
+        height: 30px;
+        background: blue;
+        left: 50px;
+        top: 50px;
+    }
+
+    #target {
+        position: absolute;
+        width: 25px;
+        height: 25px;
+        background: red;
+    }
+
+    h2 {
+        margin-top: 10px;
+    }
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+<h1>Jogo de Captura</h1>
+<h2>Pontos: <span id="score">0</span></h2>
+
+<div id="game">
+    <div id="player"></div>
+    <div id="target"></div>
+</div>
+
+<script>
+const player = document.getElementById("player");
+const target = document.getElementById("target");
+const scoreText = document.getElementById("score");
+
+let x = 50;
+let y = 50;
+let score = 0;
+const speed = 10;
+
+function moveTarget() {
+    const game = document.getElementById("game");
+    const maxX = game.clientWidth - 25;
+    const maxY = game.clientHeight - 25;
+
+    target.style.left = Math.random() * maxX + "px";
+    target.style.top = Math.random() * maxY + "px";
+}
+
+moveTarget();
+
+document.addEventListener("keydown", (event) => {
+    if (event.key === "ArrowUp") y -= speed;
+    if (event.key === "ArrowDown") y += speed;
+    if (event.key === "ArrowLeft") x -= speed;
+    if (event.key === "ArrowRight") x += speed;
+
+    x = Math.max(0, Math.min(570, x));
+    y = Math.max(0, Math.min(370, y));
+
+    player.style.left = x + "px";
+    player.style.top = y + "px";
+
+    checkCollision();
+});
+
+function checkCollision() {
+    const p = player.getBoundingClientRect();
+    const t = target.getBoundingClientRect();
+
+    if (
+        p.left < t.right &&
+        p.right > t.left &&
+        p.top < t.bottom &&
+        p.bottom > t.top
+    ) {
+        score++;
+        scoreText.textContent = score;
+        moveTarget();
+    }
+}
+</script>
+
+<script src="script.js"></script></body>
+</html>
+
+
