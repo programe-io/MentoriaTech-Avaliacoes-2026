@@ -1,10 +1,13 @@
-// Mensagem de boas-vindas ao abrir a página
+// Exibe uma mensagem de boas-vindas quando a página carrega
 window.onload = function() {
-    alert("Bem-vindo ao meu site!");
+    document.getElementById("mensagem").innerHTML =
+        "Bem-vindo ao nosso site!";
 };
 
-// Função para mostrar uma mensagem
-function mostrarMensagem() {
-    document.getElementById("mensagem").innerHTML =
-        "Obrigado por visitar o site!";
+// Mostra a data e hora atuais
+function mostrarDataHora() {
+    const agora = new Date();
+
+    document.getElementById("dataHora").innerHTML =
+        "Data e hora atuais: " + agora.toLocaleString("pt-BR");
 }
