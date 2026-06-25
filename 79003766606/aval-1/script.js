@@ -1,0 +1,99 @@
+<header> 
+     <h1>Meu Site</h1>
+     <p>Meu Site Basico</p>
+</header>
+<nav>
+     <a href="index.html">Inicio</a>
+     <a href="">Pagina 2</a>
+     <a href="">Pagina 3</a>
+     <a href="">Pagina 4</a>  
+
+ 
+
+
+</nav>   
+
+<div class="row">
+...
+</div>
+<aside>
+   <h2>Sobre</h2>
+   <h5>Fortinha</h5>
+   <div class="fakeimg">Imagem</div>
+   <p>Minha Bio</p>
+   <h3>Minha Galeria</h3>
+   <p>Algum texto legal aqui</p>
+   <div class="fakeimg">Imagem</div>
+   <div class="fakeimg">Imagem</div>
+   <div class="fakeimg">Imagem</div> 
+  </aside>
+<main>
+   <article>
+    <h2>TITULO DA POSTAGEM</h2>
+    <h5>Jonathan, jun 22, 23</h5>
+    <div class="fakeimg">Imagem</div>
+    <p>Algum texto...</p>
+    <p>Descricao completa.</p>
+ </article>
+</main>
+<footer>
+    <h2>Footer</h2>
+</footer>
+* {
+  box-sizing:border-box;
+}
+
+body {
+     font-family:Arial,Helvetica,sans-serif;
+      margin: 0;
+}
+
+heard {
+     padding: 60px;
+     text-align:center;
+     background-color: #1abc9c;
+     color: #ffffff;
+}
+
+nav {
+  displey: flex;
+  background-color: #333333;
+}
+nav a {
+  color: #ffffff;
+  padding: 14px 20px;
+  text-decoration:nome;
+text-align:center;
+}
+nav a:hover {
+     background-color: #dddddd;
+      color: #000000;
+}
+.row {
+    display:flex;
+fler-wrap:wrap
+}
+aside {
+flex:30%;
+background-color:#f1f1f1;
+padding:20px;
+}
+
+main {
+fler:70%;
+background-color:white;
+padding:20px;
+}
+.fakeimg{
+background-color:#aaaaaa;
+width:
+
+
+
+
+
+
+
+
+
+
