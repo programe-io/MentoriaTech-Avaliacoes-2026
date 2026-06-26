@@ -1,0 +1,33 @@
+
+<script>
+
+let numeroSecreto =
+Math.floor(Math.random()*10)+1;
+
+function jogar(){
+
+let tentativa =
+Number(document.getElementById("numero").value);
+
+if(tentativa===numeroSecreto){
+document.getElementById("resultado").innerHTML=
+"🎉 Você acertou!";
+
+numeroSecreto =
+Math.floor(Math.random()*10)+1;
+
+}else{
+document.getElementById("resultado").innerHTML=
+"❌ Errou! Tente novamente.";
+}
+
+}
+
+</script>
+
+</body>
+</html>
+Muito legal! Você já criou um site com HTML, CSS e JavaScript 😄
+Vou transformar em um jogo de adivinhação:
+HTML
+🎮 Como funciona
