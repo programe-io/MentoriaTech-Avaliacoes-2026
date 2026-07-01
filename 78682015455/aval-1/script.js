@@ -1,27 +1,42 @@
-function checkGameOver(){
+function restartGame(){
 
-    let red = 0;
-    let black = 0;
+    gameOver = false;
+    currentPlayer = "red";
+    selected = null;
 
     for(let y=0;y<8;y++){
+        board[y]=[];
+
         for(let x=0;x<8;x++){
 
-            if(board[y][x]){
-                if(board[y][x].color === "red") red++;
-                if(board[y][x].color === "black") black++;
+            board[y][x]=null;
+
+            if((x+y)%2==1){
+
+                if(y<3){
+                    board[y][x]={
+                        color:"black",
+                        king:false
+                    };
+                }
+
+                if(y>4){
+                    board[y][x]={
+                        color:"red",
+                        king:false
+                    };
+                }
+
             }
 
         }
     }
 
-    if(red === 0 || black === 0){
-        gameOver = true;
+    document.getElementById("status").innerHTML =
+    "Vez: Vermelho";
 
-        document.getElementById("status").innerHTML =
-            red === 0 ? "🏆 Preto venceu!" : "🏆 Vermelho venceu!";
+    restartBtn.style.display="none";
 
-        setTimeout(() => {
-            restartGame();
-        }, 2000); // reinicia depois de 2 segundos
-    }
+    draw();
+
 }
