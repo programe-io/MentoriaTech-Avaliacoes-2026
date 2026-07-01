@@ -1,37 +1,31 @@
 const BOARD_SIZE = 8;
 let boardState = Array(BOARD_SIZE).fill(null).map(() => Array(BOARD_SIZE).fill(0));
 let score = 0;
-let bestScore = localStorage.getItem('blockBlastBestScore') || 0;
+let draggedPieceData = null;
 
-// Matrizes com os formatos das peças
+// Formatos das peças (0 = vazio, id_da_cor = bloco preenchido)
 const SHAPES = [
-    { matrix: [[1]], color: 1 }, 
-    { matrix: [[1, 1]], color: 2 }, 
-    { matrix: [[1, 1, 1]], color: 3 }, 
-    { matrix: [[1], [1]], color: 2 }, 
-    { matrix: [[1, 1], [1, 1]], color: 4 }, 
-    { matrix: [[1, 1, 1], [0, 1, 0]], color: 5 }, 
-    { matrix: [[1, 0], [1, 0], [1, 1]], color: 3 }, 
-    { matrix: [[1, 1, 1], [1, 1, 1], [1, 1, 1]], color: 4 } 
+    { shape: [[1]], color: 1 }, 
+    { shape: [[2, 2]], color: 2 }, 
+    { shape: [[3, 3, 3]], color: 3 }, 
+    { shape: [[4], [4]], color: 4 }, 
+    { shape: [[5, 5], [5, 5]], color: 5 }, 
+    { shape: [[1, 0], [1, 1]], color: 1 }, 
+    { shape: [[0, 2], [2, 2]], color: 2 }  
 ];
 
 const boardElement = document.getElementById('board');
-const piecesContainer = document.getElementById('pieces-container');
+const rackElement = document.getElementById('rack');
 const scoreElement = document.getElementById('score');
-const bestScoreElement = document.getElementById('best-score');
-const gameOverModal = document.getElementById('game-over-modal');
+const gameOverElement = document.getElementById('game-over');
 const finalScoreElement = document.getElementById('final-score');
 const restartBtn = document.getElementById('restart-btn');
 
-let draggedPieceData = null;
-
 function initGame() {
-    score = 0;
     boardState = Array(BOARD_SIZE).fill(null).map(() => Array(BOARD_SIZE).fill(0));
+    score = 0;
     scoreElement.textContent = score;
-    bestScoreElement.textContent = bestScore;
-    gameOverModal.classList.add('hidden');
-    
+    gameOverElement.classList.add('hidden');
     createBoard();
     generateNewPieces();
 }
@@ -53,197 +47,176 @@ function createBoard() {
     }
 }
 
-function updateBoardView() {
+function drawBoard() {
     const cells = boardElement.children;
     for (let r = 0; r < BOARD_SIZE; r++) {
         for (let c = 0; c < BOARD_SIZE; c++) {
             const index = r * BOARD_SIZE + c;
-            const cell = cells[index];
-            const val = boardState[r][c];
-            
-            cell.className = 'cell';
-            if (val > 0) {
-                cell.classList.add('block-filled', `color-${val}`);
+            const cellValue = boardState[r][c];
+            cells[index].className = 'cell';
+            if (cellValue > 0) {
+                cells[index].classList.add(`color-${cellValue}`);
             }
         }
     }
 }
 
 function generateNewPieces() {
-    piecesContainer.innerHTML = '';
+    rackElement.innerHTML = '';
     for (let i = 0; i < 3; i++) {
-        const randomShape = SHAPES[Math.floor(Math.random() * SHAPES.length)];
-        createPieceElement(randomShape);
+        const randomShapeObj = SHAPES[Math.floor(Math.random() * SHAPES.length)];
+        createRackPiece(randomShapeObj, i);
     }
     checkGameOver();
 }
 
-function createPieceElement(shapeData) {
-    const wrapper = document.createElement('div');
-    wrapper.classList.add('piece-wrapper');
-    wrapper.setAttribute('draggable', true);
-    wrapper.dataset.matrix = JSON.stringify(shapeData.matrix);
+function createRackPiece(shapeObj, index) {
+    const pieceContainer = document.createElement('div');
+    pieceContainer.classList.add('piece');
+    pieceContainer.draggable = true;
+    pieceContainer.id = `piece-${index}`;
+    
+    const rows = shapeObj.shape.length;
+    const cols = shapeObj.shape[0].length;
+    pieceContainer.style.gridTemplateRows = `repeat(${rows}, 25px)`;
+    pieceContainer.style.gridTemplateColumns = `repeat(${cols}, 25px)`;
 
-    const piece = document.createElement('div');
-    piece.classList.add('piece');
-    piece.style.gridTemplateRows = `repeat(${shapeData.matrix.length}, 28px)`;
-    piece.style.gridTemplateColumns = `repeat(${shapeData.matrix[0].length}, 28px)`;
-
-    shapeData.matrix.forEach((row) => {
-        row.forEach((val) => {
-            const block = document.createElement('div');
-            if (val === 1) {
-                block.classList.add('block-filled', `color-${shapeData.color}`);
+    shapeObj.shape.forEach((row) => {
+        row.forEach((value) => {
+            const cell = document.createElement('div');
+            cell.classList.add('piece-cell');
+            if (value > 0) {
+                cell.classList.add(`color-${shapeObj.color}`);
             } else {
-                block.style.opacity = 0;
+                cell.style.opacity = '0';
             }
-            piece.appendChild(block);
+            pieceContainer.appendChild(cell);
         });
     });
 
-    wrapper.appendChild(piece);
-    
-    wrapper.addEventListener('dragstart', () => {
-        draggedPieceData = { shapeData, element: wrapper };
+    pieceContainer.addEventListener('dragstart', () => {
+        draggedPieceData = { shapeObj: shapeObj, elementId: pieceContainer.id };
     });
 
-    piecesContainer.appendChild(wrapper);
+    rackElement.appendChild(pieceContainer);
 }
 
 function dropPiece(e) {
     e.preventDefault();
     if (!draggedPieceData) return;
 
-    const targetRow = parseInt(e.target.dataset.row);
-    const targetCol = parseInt(e.target.dataset.col);
+    const targetCell = e.target;
+    if (!targetCell.classList.contains('cell')) return;
 
-    if (isNaN(targetRow) || isNaN(targetCol)) return;
+    const startRow = parseInt(targetCell.dataset.row);
+    const startCol = parseInt(targetCell.dataset.col);
+    
+    const { shapeObj, elementId } = draggedPieceData;
+    const shape = shapeObj.shape;
 
-    const { matrix, color } = draggedPieceData.shapeData;
+    if (canPlacePiece(shape, startRow, startCol)) {
+        for (let r = 0; r < shape.length; r++) {
+            for (let c = 0; c < shape[r].length; c++) {
+                if (shape[r][c] > 0) {
+                    boardState[startRow + r][startCol + c] = shapeObj.color;
+                }
+            }
+        }
 
-    if (canPlacePiece(matrix, targetRow, targetCol)) {
-        placePiece(matrix, color, targetRow, targetCol);
-        draggedPieceData.element.remove();
-        
-        checkLineClears();
-        
-        if (piecesContainer.children.length === 0) {
+        document.getElementById(elementId).remove();
+        draggedPieceData = null;
+
+        drawBoard();
+        checkLines();
+
+        if (rackElement.children.length === 0) {
             generateNewPieces();
         } else {
             checkGameOver();
         }
     }
-    draggedPieceData = null;
 }
 
-function canPlacePiece(matrix, startRow, startCol) {
-    for (let r = 0; r < matrix.length; r++) {
-        for (let c = 0; c < matrix[r].length; c++) {
-            if (matrix[r][c] === 1) {
-                const boardRow = startRow + r;
-                const boardCol = startCol + c;
+function canPlacePiece(shape, startRow, startCol) {
+    for (let r = 0; r < shape.length; r++) {
+        for (let c = 0; c < shape[r].length; c++) {
+            if (shape[r][c] > 0) {
+                const targetRow = startRow + r;
+                const targetCol = startCol + c;
 
-                if (boardRow >= BOARD_SIZE || boardCol >= BOARD_SIZE || boardState[boardRow][boardCol] > 0) {
-                    return false;
-                }
+                if (targetRow >= BOARD_SIZE || targetCol >= BOARD_SIZE) return false;
+                if (boardState[targetRow][targetCol] > 0) return false;
             }
         }
     }
     return true;
 }
 
-function placePiece(matrix, color, startRow, startCol) {
-    let piecesPlaced = 0;
-    for (let r = 0; r < matrix.length; r++) {
-        for (let c = 0; c < matrix[r].length; c++) {
-            if (matrix[r][c] === 1) {
-                boardState[startRow + r][startCol + c] = color;
-                piecesPlaced++;
-            }
-        }
-    }
-    score += piecesPlaced * 10;
-    updateScoreDisplay();
-    updateBoardView();
-}
-
-function checkLineClears() {
-    let rowsToClear = [];
-    let colsToClear = [];
+function checkLines() {
+    let rowsToRemove = [];
+    let colsToRemove = [];
 
     for (let r = 0; r < BOARD_SIZE; r++) {
-        if (boardState[r].every(cell => cell > 0)) rowsToClear.push(r);
+        if (boardState[r].every(cell => cell > 0)) rowsToRemove.push(r);
     }
 
     for (let c = 0; c < BOARD_SIZE; c++) {
-        let colFilled = true;
+        let colFull = true;
         for (let r = 0; r < BOARD_SIZE; r++) {
-            if (boardState[r][c] === 0) colFilled = false;
+            if (boardState[r][c] === 0) { colFull = false; break; }
         }
-        if (colFilled) colsToClear.push(c);
+        if (colFull) colsToRemove.push(c);
     }
 
-    if (rowsToClear.length > 0 || colsToClear.length > 0) {
-        const totalClears = rowsToClear.length + colsToClear.length;
-        score += totalClears * 150;
+    rowsToRemove.forEach(r => {
+        boardState[r] = Array(BOARD_SIZE).fill(0);
+        score += 10;
+    });
 
-        const cells = boardElement.children;
-        
-        rowsToClear.forEach(r => {
-            for(let c=0; c<BOARD_SIZE; c++) cells[r * BOARD_SIZE + c].classList.add('blasting');
-            boardState[r].fill(0);
-        });
-        
-        colsToClear.forEach(c => {
-            for (let r = 0; r < BOARD_SIZE; r++) {
-                cells[r * BOARD_SIZE + c].classList.add('blasting');
-                boardState[r][c] = 0;
-            }
-        });
+    colsToRemove.forEach(c => {
+        for (let r = 0; r < BOARD_SIZE; r++) boardState[r][c] = 0;
+        score += 10;
+    });
 
-        setTimeout(() => {
-            updateBoardView();
-            updateScoreDisplay();
-        }, 250);
-    }
-}
-
-function updateScoreDisplay() {
-    scoreElement.textContent = score;
-    if (score > bestScore) {
-        bestScore = score;
-        bestScoreElement.textContent = bestScore;
-        localStorage.setItem('blockBlastBestScore', bestScore);
+    if (rowsToRemove.length > 0 || colsToRemove.length > 0) {
+        const combo = rowsToRemove.length + colsToRemove.length;
+        if (combo > 1) score += combo * 5; // Bônus por combo
+        scoreElement.textContent = score;
+        drawBoard();
     }
 }
 
 function checkGameOver() {
-    const remainingWrappers = Array.from(piecesContainer.children);
-    if (remainingWrappers.length === 0) return;
+    const rackPieces = rackElement.children;
+    if (rackPieces.length === 0) return;
 
-    let aPieceFits = false;
+    let anyPieceFits = false;
 
-    for (let wrapper of remainingWrappers) {
-        const matrix = JSON.parse(wrapper.dataset.matrix);
+    for (let piece of rackElement.children) {
+        const sampleCell = piece.querySelector('.piece-cell:not([style*="opacity: 0"])');
+        if (!sampleCell) continue;
+        
+        const colorClass = Array.from(sampleCell.classList).find(cls => cls.startsWith('color-'));
+        const colorId = parseInt(colorClass.split('-')[1]);
+        const matchedShape = SHAPES.find(s => s.color === colorId).shape;
 
         for (let r = 0; r < BOARD_SIZE; r++) {
             for (let c = 0; c < BOARD_SIZE; c++) {
-                if (canPlacePiece(matrix, r, c)) {
-                    aPieceFits = true;
+                if (canPlacePiece(matchedShape, r, c)) {
+                    anyPieceFits = true;
                     break;
                 }
             }
-            if (aPieceFits) break;
+            if (anyPieceFits) break;
         }
-        if (aPieceFits) break;
+        if (anyPieceFits) break;
     }
 
-    if (!aPieceFits) {
+    if (!anyPieceFits) {
+        gameOverElement.classList.remove('hidden');
         finalScoreElement.textContent = score;
-        gameOverModal.classList.remove('hidden');
     }
 }
 
 restartBtn.addEventListener('click', initGame);
-
 initGame();
