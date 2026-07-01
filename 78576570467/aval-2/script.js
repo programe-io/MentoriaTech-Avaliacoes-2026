@@ -1,252 +1,303 @@
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
-const gameOverScreen = document.getElementById('game-over-screen');
-const deathReasonText = document.getElementById('death-reason');
-const scoreDisplay = document.getElementById('score');
 
-// Configurações do Jogo
+const scoreElement = document.getElementById('score');
+const finalScoreElement = document.getElementById('final-score');
+const gameOverScreen = document.getElementById('game-over-screen');
+const restartBtn = document.getElementById('restart-btn');
+
 let gameSpeed = 6;
 let score = 0;
 let isGameOver = false;
 let gameFrame = 0;
 
-const GROUND_Y = canvas.height - 60; // Altura onde ficam os tetos dos prédios
-let buildings = [];
+const keys = {};
+window.addEventListener('keydown', (e) => keys[e.code] = true);
+window.addEventListener('keyup', (e) => keys[e.code] = false);
+
+class Player {
+    constructor() {
+        this.x = 100;
+        this.normalHeight = 60;
+        this.slideHeight = 30;
+        this.width = 30;
+        this.height = this.normalHeight;
+        this.y = 320 - this.height;
+        this.velocityY = 0;
+        this.gravity = 0.6;
+        this.jumpForce = -13;
+        this.isGrounded = false;
+        this.isSliding = false;
+    }
+
+    update(currentPlatform) {
+        if (keys['ArrowDown'] && this.isGrounded) {
+            if (!this.isSliding) {
+                this.isSliding = true;
+                this.height = this.slideHeight;
+                if (currentPlatform) this.y = currentPlatform.y - this.height;
+            }
+        } else {
+            if (this.isSliding) {
+                this.isSliding = false;
+                this.height = this.normalHeight;
+                if (currentPlatform) this.y = currentPlatform.y - this.height;
+            }
+        }
+
+        if ((keys['ArrowUp'] || keys['Space']) && this.isGrounded && !this.isSliding) {
+            this.velocityY = this.jumpForce;
+            this.isGrounded = false;
+        }
+
+        this.velocityY += this.gravity;
+        this.y += this.velocityY;
+
+        if (currentPlatform && 
+            this.x + this.width > currentPlatform.x && 
+            this.x < currentPlatform.x + currentPlatform.width) {
+            
+            if (this.y + this.height <= currentPlatform.y + this.velocityY && this.y + this.height + this.velocityY >= currentPlatform.y) {
+                this.velocityY = 0;
+                this.y = currentPlatform.y - this.height;
+                this.isGrounded = true;
+            }
+        } else {
+            this.isGrounded = false;
+        }
+
+        if (this.y > canvas.height) {
+            endGame();
+        }
+    }
+
+    draw() {
+        ctx.save();
+        
+        // Configuração de sombra/brilho global do personagem
+        ctx.shadowColor = '#ff6600';
+        ctx.shadowBlur = this.isSliding ? 15 : 8;
+
+        if (!this.isSliding) {
+            // --- JOGADOR EM PÉ / PANDO (FORMA CORPORAL DETALHADA) ---
+            
+            // 1. Pernas / Calça (Preto Carbono)
+            ctx.fillStyle = '#1a1a1a';
+            ctx.fillRect(this.x + 4, this.y + 36, 10, 24); // Perna Esquerda
+            ctx.fillRect(this.x + 16, this.y + 36, 10, 24); // Perna Direita
+            
+            // Detalhe das botas (Laranja Fogo)
+            ctx.fillStyle = '#ff6600';
+            ctx.fillRect(this.x + 3, this.y + 54, 11, 6);
+            ctx.fillRect(this.x + 16, this.y + 54, 11, 6);
+
+            // 2. Tronco / Jaqueta (Branco Alpino)
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(this.x + 2, this.y + 16, 26, 22); 
+            
+            // Detalhes da Jaqueta (Faixas Laranja e Zíper)
+            ctx.fillStyle = '#ff6600';
+            ctx.fillRect(this.x + 2, this.y + 20, 4, 12); // Listra manga esquerda
+            ctx.fillRect(this.x + 24, this.y + 20, 4, 12); // Listra manga direita
+            ctx.fillStyle = '#1a1a1a';
+            ctx.fillRect(this.x + 14, this.y + 16, 2, 22); // Linha central/Zíper
+
+            // 3. Cabeça / Capacete Futurista
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.arc(this.x + 15, this.y + 8, 8, 0, Math.PI * 2); // Cabeça arredondada
+            ctx.fill();
+
+            // Visor do Capacete (Ciano Neon Brilhante)
+            ctx.fillStyle = '#00ffff';
+            ctx.shadowColor = '#00ffff';
+            ctx.fillRect(this.x + 13, this.y + 4, 9, 5); 
+
+        } else {
+            // --- JOGADOR AGACHADO / SLIDE (FORMA AERODINÂMICA HORIZONTAL) ---
+            
+            // 1. Corpo/Jaqueta inclinado deslizando (Branco)
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(this.x, this.y + 5, 22, 20);
+
+            // Detalhe da Jaqueta no Slide
+            ctx.fillStyle = '#ff6600';
+            ctx.fillRect(this.x, this.y + 5, 22, 4);
+
+            // 2. Pernas esticadas para trás (Preto Carbono)
+            ctx.fillStyle = '#1a1a1a';
+            ctx.fillRect(this.x + 20, this.y + 12, 10, 12);
+            // Bota empurrando o chão
+            ctx.fillStyle = '#ff6600';
+            ctx.fillRect(this.x + 28, this.y + 10, 4, 14);
+
+            // 3. Cabeça abaixada projetada para a frente
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.arc(this.x + 6, this.y + 12, 7, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Visor olhando para frente no slide
+            ctx.fillStyle = '#00ffff';
+            ctx.shadowColor = '#00ffff';
+            ctx.fillRect(this.x + 1, this.y + 9, 5, 4);
+        }
+
+        ctx.restore();
+    }
+}
+
+class Platform {
+    constructor(x, width) {
+        this.x = x;
+        this.y = 320; 
+        this.width = width;
+        this.height = 80;
+    }
+
+    update() {
+        this.x -= gameSpeed;
+    }
+
+    draw() {
+        ctx.fillStyle = '#130f26';
+        ctx.fillRect(this.x, this.y, this.width, this.height);
+        
+        ctx.save();
+        ctx.fillStyle = '#9400d3'; 
+        ctx.shadowColor = '#9400d3';
+        ctx.shadowBlur = 10;
+        ctx.fillRect(this.x, this.y, this.width, 5); 
+        ctx.restore();
+    }
+}
+
+class Obstacle {
+    constructor(x, type, platformY) {
+        this.x = x;
+        this.type = type; 
+        this.width = 25;
+        
+        if (this.type === 'low') {
+            this.height = 35;
+            this.y = platformY - this.height; 
+        } else {
+            this.height = 110;
+            this.y = platformY - 150; 
+        }
+    }
+
+    update() {
+        this.x -= gameSpeed;
+    }
+
+    draw() {
+        ctx.save();
+        ctx.fillStyle = '#ff0055';
+        ctx.shadowColor = '#ff0055';
+        ctx.shadowBlur = 15;
+        ctx.fillRect(this.x, this.y, this.width, this.height);
+        
+        ctx.fillStyle = '#ffffff';
+        ctx.shadowBlur = 0;
+        ctx.fillRect(this.x + 8, this.y + 5, this.width - 16, this.height - 10);
+        ctx.restore();
+    }
+}
+
+let player;
+let platforms = [];
 let obstacles = [];
 
-// Propriedades do Jogador (Silhueta)
-const player = {
-    x: 150,
-    y: GROUND_Y - 60,
-    width: 25,
-    height: 60,
-    originalHeight: 60,
-    velocityY: 0,
-    gravity: 0.6,
-    jumpForce: -13,
-    isGrounded: false,
-    isSliding: false,
-    slideTimer: 0,
-    slideDuration: 35
-};
-
-// Captura de Teclado
-const keys = {};
-window.addEventListener('keydown', (e) => {
-    if (['ArrowUp', 'ArrowDown', 'Space'].includes(e.code)) {
-        e.preventDefault(); // Impede a página de rolar
-    }
-    keys[e.code] = true;
-    
-    if (isGameOver && e.code === 'Space') {
-        resetGame();
-    }
-});
-window.addEventListener('keyup', (e) => {
-    keys[e.code] = false;
-});
-
-// Inicializa a primeira sequência estável de prédios
-function initBuildings() {
-    buildings = [
-        { x: 0, width: 500 },
-        { x: 550, width: 400 }
-    ];
+function init() {
+    player = new Player();
+    platforms = [new Platform(0, 1000)]; 
     obstacles = [];
-}
-
-// Gerencia a geração dos Prédios (Plataformas) e os Abismos (Void)
-function handleTopology() {
-    // Adiciona novos prédios conforme a tela avança
-    if (buildings.length === 0 || buildings[buildings.length - 1].x + buildings[buildings.length - 1].width < canvas.width + 300) {
-        const lastBuilding = buildings[buildings.length - 1];
-        
-        // Define o tamanho do abismo (distância entre prédios)
-        const gap = Math.floor(Math.random() * 60) + 90; // Entre 90 e 150 pixels de vão
-        const nextWidth = Math.floor(Math.random() * 300) + 400; // Largura do próximo prédio
-        
-        const nextX = lastBuilding ? lastBuilding.x + lastBuilding.width + gap : 0;
-        
-        buildings.push({ x: nextX, width: nextWidth });
-
-        // Chance de gerar um obstáculo em cima deste novo prédio recém-criado
-        // Garante que o obstáculo surja longe da borda inicial do prédio
-        if (Math.random() > 0.35) {
-            const type = Math.random() > 0.5 ? 'high' : 'low';
-            let obsX = nextX + 200 + Math.random() * (nextWidth - 280);
-            
-            if (type === 'low') {
-                obstacles.push({
-                    type: 'low',
-                    x: obsX,
-                    y: GROUND_Y - 35,
-                    width: 35,
-                    height: 35
-                });
-            } else {
-                // Obstáculo ALTO: Começa do topo da tela e desce até bem próximo do chão.
-                // O teto impede o pulo completamente, forçando o slide (deslize).
-                obstacles.push({
-                    type: 'high',
-                    x: obsX,
-                    y: 0, // Vem lá de cima
-                    width: 40,
-                    height: GROUND_Y - 35 // Deixa apenas uma fresta de 35px no chão
-                });
-            }
-        }
-    }
-
-    // Atualiza e desenha os prédios
-    ctx.fillStyle = '#0f0f11';
-    for (let i = buildings.length - 1; i >= 0; i--) {
-        buildings[i].x -= gameSpeed;
-        
-        // Desenha a silhueta do edifício até o fundo do canvas
-        ctx.fillRect(buildings[i].x, GROUND_Y, buildings[i].width, canvas.height - GROUND_Y);
-
-        // Remove prédios antigos que já saíram completamente da tela
-        if (buildings[i].x + buildings[i].width < 0) {
-            buildings.splice(i, 1);
-            score++;
-            scoreDisplay.innerText = `Score: ${score}`;
-        }
-    }
-}
-
-function handlePlayer() {
-    player.y += player.velocityY;
-    player.velocityY += player.gravity;
-
-    // Verificar se o jogador está pisando em QUALQUER um dos prédios atuais
-    let platformUnderneath = null;
-    for (let b of buildings) {
-        if (player.x + player.width > b.x && player.x < b.x + b.width) {
-            // Checa se os pés do jogador estão no nível do teto do prédio
-            if (player.y + player.height >= GROUND_Y && player.y + player.height <= GROUND_Y + 15 && player.velocityY >= 0) {
-                platformUnderneath = b;
-                break;
-            }
-        }
-    }
-
-    if (platformUnderneath) {
-        player.y = GROUND_Y - player.height;
-        player.velocityY = 0;
-        player.isGrounded = true;
-    } else {
-        player.isGrounded = false;
-    }
-
-    // Se o player passar do limite inferior do cenário, caiu no Void
-    if (player.y > canvas.height) {
-        endGame("Você despencou no abismo dos prédios!");
-    }
-
-    // Comando: Pular
-    if (keys['ArrowUp'] && player.isGrounded && !player.isSliding) {
-        player.velocityY = player.jumpForce;
-        player.isGrounded = false;
-    }
-
-    // Comando: Deslizar (Slide)
-    if (keys['ArrowDown'] && player.isGrounded && !player.isSliding) {
-        player.isSliding = true;
-        player.height = player.originalHeight / 2;
-        player.y += player.originalHeight / 2;
-        player.slideTimer = player.slideDuration;
-    }
-
-    // Contador do Slide
-    if (player.isSliding) {
-        player.slideTimer--;
-        if (player.slideTimer <= 0) {
-            player.isSliding = false;
-            player.y -= player.originalHeight / 2;
-            player.height = player.originalHeight;
-        }
-    }
-}
-
-function handleObstacles() {
-    ctx.fillStyle = '#0f0f11';
-
-    for (let i = obstacles.length - 1; i >= 0; i--) {
-        obstacles[i].x -= gameSpeed;
-
-        // Desenha obstáculo
-        ctx.fillRect(obstacles[i].x, obstacles[i].y, obstacles[i].width, obstacles[i].height);
-
-        // Detecção de colisão por caixa (AABB)
-        if (
-            player.x < obstacles[i].x + obstacles[i].width &&
-            player.x + player.width > obstacles[i].x &&
-            player.y < obstacles[i].y + obstacles[i].height &&
-            player.y + player.height > obstacles[i].y
-        ) {
-            if (obstacles[i].type === 'high') {
-                endGame("Colisão superior! Você devia ter deslizado.");
-            } else {
-                endGame("Você tropeçou no obstáculo inferior!");
-            }
-        }
-
-        // Limpa obstáculos antigos
-        if (obstacles[i].x + obstacles[i].width < 0) {
-            obstacles.splice(i, 1);
-        }
-    }
-}
-
-function drawPlayer() {
-    ctx.fillStyle = '#000000'; // Silhueta do personagem principal
-    ctx.fillRect(player.x, player.y, player.width, player.height);
-
-    // Pequeno visor cibernético/neon característico de jogos minimalistas
-    ctx.fillStyle = '#00f0ff';
-    if (!player.isSliding) {
-        ctx.fillRect(player.x + player.width - 8, player.y + 10, 5, 4);
-    } else {
-        ctx.fillRect(player.x + player.width - 8, player.y + 8, 5, 4);
-    }
-}
-
-function endGame(reason) {
-    isGameOver = true;
-    deathReasonText.innerText = reason;
-    gameOverScreen.classList.remove('hidden');
-}
-
-function resetGame() {
-    isGameOver = false;
     score = 0;
     gameSpeed = 6;
-    player.y = GROUND_Y - player.originalHeight;
-    player.height = player.originalHeight;
-    player.velocityY = 0;
-    player.isSliding = false;
-    scoreDisplay.innerText = `Score: ${score}`;
+    isGameOver = false;
+    gameFrame = 0;
+    scoreElement.innerText = score;
     gameOverScreen.classList.add('hidden');
-    initBuildings();
     animate();
+}
+
+function generateEnvironment() {
+    let lastPlatform = platforms[platforms.length - 1];
+
+    if (lastPlatform.x + lastPlatform.width < canvas.width + 400) {
+        let minPlatformWidth = 450;
+        let maxPlatformWidth = 750;
+        let nextWidth = Math.floor(Math.random() * (maxPlatformWidth - minPlatformWidth)) + minPlatformWidth;
+        
+        let minGap = 80;
+        let maxGap = 130;
+        let nextGap = Math.floor(Math.random() * (maxGap - minGap)) + minGap;
+
+        let nextX = lastPlatform.x + lastPlatform.width + nextGap;
+        let newPlatform = new Platform(nextX, nextWidth);
+        platforms.push(newPlatform);
+
+        if (Math.random() < 0.75) {
+            let type = Math.random() > 0.5 ? 'low' : 'high';
+            let obstacleX = nextX + (nextWidth / 2) + (Math.random() * 60);
+            obstacles.push(new Obstacle(obstacleX, type, newPlatform.y));
+        }
+    }
+
+    if (platforms[0].x + platforms[0].width < 0) platforms.shift();
+    if (obstacles.length > 0 && obstacles[0].x + obstacles[0].width < 0) obstacles.shift();
+}
+
+// Detecção de colisão AABB
+function checkCollision(rect1, rect2) {
+    return rect1.x < rect2.x + rect2.width &&
+           rect1.x + rect1.width > rect2.x &&
+           rect1.y < rect2.y + rect2.height &&
+           rect1.y + rect1.height > rect2.y;
+}
+
+function endGame() {
+    isGameOver = true;
+    finalScoreElement.innerText = score;
+    gameOverScreen.classList.remove('hidden');
 }
 
 function animate() {
     if (isGameOver) return;
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-    handleTopology();  // Desenha os prédios estruturais e cria abismos
-    handlePlayer();    // Aplica física e comandos do usuário
-    handleObstacles(); // Movimenta perigos e analisa colisões
-    drawPlayer();      // Renderiza o corredor
+    gameFrame++;
 
-    // Aceleração gradativa com o tempo
-    gameSpeed += 0.001;
+    if (gameFrame % 10 === 0) {
+        score++;
+        scoreElement.innerText = score;
+        if (score % 250 === 0 && gameSpeed < 11) gameSpeed += 0.4; 
+    }
+
+    generateEnvironment();
+
+    let currentPlatform = platforms.find(p => player.x + player.width > p.x && player.x < p.x + p.width);
+
+    platforms.forEach(p => {
+        p.update();
+        p.draw();
+    });
+
+    player.update(currentPlatform);
+    player.draw();
+
+    obstacles.forEach(o => {
+        o.update();
+        o.draw();
+        
+        if (checkCollision(player, o)) {
+            endGame();
+        }
+    });
 
     requestAnimationFrame(animate);
 }
 
-// Início técnico do script
-initBuildings();
-animate();
+restartBtn.addEventListener('click', init);
+init();
