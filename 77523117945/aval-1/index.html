@@ -3,47 +3,473 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quem são os Anjos Serafins?</title>
+    <title>Crônicas de Brília: Labirintos de Macrubira</title>
+    <style>
+        /* ==========================================================================
+           PALETA DE CORES TIBIANA E AJUSTE DE ACESSIBILIDADE (LETRAS GRANDES)
+           ========================================================================== */
+        body {
+            margin: 0;
+            padding: 20px;
+            background-color: #0d0907;
+            color: #e2d4c9;
+            font-family: 'Georgia', 'Times New Roman', serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            overflow-y: auto;
+        }
+
+        /* Letras bem grandes para leitura ideal */
+        h1 {
+            font-size: 36px;
+            margin-bottom: 15px;
+            color: #ffcc00;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9);
+            text-align: center;
+            font-variant: small-caps;
+        }
+
+        #game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        #canvas-container {
+            position: relative;
+            border: 6px double #8c6142;
+            background-color: #000000;
+            border-radius: 6px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.8);
+        }
+
+        canvas {
+            display: block;
+        }
+
+        /* HUD com fontes aumentadas para estilo RPG clássico */
+        #hud {
+            background: linear-gradient(135deg, #1c120c 0%, #2e1f14 100%);
+            padding: 15px;
+            border-radius: 4px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            gap: 15px;
+            border: 3px solid #8c6142;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .stat { 
+            font-family: monospace;
+            font-weight: bold;
+            font-size: 20px; /* Letras Grandes */
+            text-shadow: 2px 2px 2px #000000;
+        }
+
+        .stat.hp { color: #ff3333; }
+        .stat.gold { color: #ffcc00; }
+        .stat.atk { color: #ddaa66; }
+        .stat.inv { color: #33ccff; width: 100%; text-align: center; margin-top: 5px; border-top: 1px dashed #5a3e2b; padding-top: 5px;}
+
+        /* Console de Mensagens Estilo Tibia (Log de Combate e Conversas) */
+        #tibia-log {
+            width: 100%;
+            height: 140px;
+            background-color: #0a0705;
+            border: 3px solid #5a3e2b;
+            border-radius: 4px;
+            padding: 10px;
+            box-sizing: border-box;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 18px; /* Letras Grandes para leitura de diálogos */
+            color: #ffffff;
+            line-height: 1.4;
+        }
+
+        .log-system { color: #ffffff; }
+        .log-damage { color: #ff5555; }
+        .log-loot { color: #00ff00; }
+        .log-npc { color: #00ffff; }
+        .log-start { color: #ffcc00; font-weight: bold; }
+
+        #instructions {
+            font-size: 18px; /* Letras Grandes */
+            color: #ddaa66;
+            text-align: center;
+            background: #1c120c;
+            padding: 15px;
+            border-radius: 4px;
+            border: 1px solid #5a3e2b;
+            line-height: 1.6;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+        b { color: #ffffff; background-color: #442c19; padding: 2px 6px; border-radius: 3px; }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="style.css" rel="stylesheet"></head>
 <body>
 
-    <header>
-        <h1>Anjos Serafins</h1>
-        <p>A Ordem Mais Alta da Hierarquia Celestial</p>
-    </header>
+    <h1>Crônicas de Brília: Labirintos de Macrubira</h1>
 
-    <main>
-        <section>
-            <h2>O que são os Serafins?</h2>
-            <p>Na teologia judaico-cristã, os <strong>Serafins</strong> são a ordem mais elevada de anjos na hierarquia celestial, posicionados diretamente diante do trono de Deus. Eles são conhecidos como os guardiões do trono divino e os seres de maior proximidade com o Criador.</p>
-            <p class="destaque">O termo "Serafim" vem do hebraico <em>seraph</em>, que significa literalmente "ardente", "incendiado" ou "aquele que queima".</p>
-        </section>
+    <div id="game-container">
+        <div id="canvas-container">
+            <canvas id="gameCanvas" width="640" height="400"></canvas>
+        </div>
 
-        <section>
-            <h2>Principais Características</h2>
-            <p>De acordo com os relatos bíblicos (especialmente no livro do profeta Isaías, capítulo 6), os Serafins possuem características uniques que os diferenciam de outras ordens angelicais:</p>
-            <ul>
-                <li><strong>As Seis Asas:</strong> Eles possuem três pares de asas (seis no total).
-                    <ul>
-                        <li><em>Dois pares</em> cobrem o rosto (em sinal de reverência e humildade diante de Deus).</li>
-                        <li><em>Dois pares</em> cobrem os pés (simbolizando modéstia).</li>
-                        <li><em>Dois pares</em> são usados para voar.</li>
-                    </ul>
-                </li>
-                <li><strong>Fogo Sagrado:</strong> São descritos como seres de puro fogo e luz radiante, consumidos pelo amor divino.</li>
-                <li><strong>Adoração Perpétua:</strong> Sua principal função é louvar a Deus continuamente, clamando a frase: <em>"Santo, Santo, Santo é o Senhor dos Exércitos; toda a terra está cheia da sua glória"</em>.</li>
-            </ul>
-        </section>
+        <div id="hud">
+            <div class="stat hp">HP: <span id="hp-val">100/100</span></div>
+            <div class="stat gold">MOEDAS: <span id="gold-val">10 gp</span></div>
+            <div class="stat atk">ATAQUE: <span id="atk-val">15</span></div>
+            <div class="stat inv">Artefatos: <span id="inv-val">Nenhum</span></div>
+        </div>
 
-        <section>
-            <h2>O Papel dos Serafins</h2>
-            <p>Além da adoração contínua, os Serafins atuam como agentes de <strong>purificação</strong>. Na Bíblia, um serafim usa uma brasa viva tirada do altar para tocar os lábios do profeta Isaías, purificando-o de seus pecados e preparando-o para sua missão.</p>
-        </section>
-    </main>
+        <div id="tibia-log">
+            <div class="log-start">Pressione a tecla [ ENTER ] para iniciar e entrar no jogo!</div>
+        </div>
 
-    <footer>
-        <p>Página Informativa sobre Angelologia | Criada com fins educativos.</p>
-    </footer>
+        <div id="instructions">
+            <b>Enter</b> Entrar no Jogo | <b>W</b> Avançar | <b>S</b> Recuar | <b>A</b> Olhar Esquerda | <b>D</b> Olhar Direita<br>
+            Interações: <b>Y</b> Conversar/Trocar | <b>T</b> Comprar Artefato (Custa 15 gp) <br>
+            Combate: <b>F</b> Ataque Leve | <b>M</b> Ataque Principal (Gasta 2 gp de mana da terra)
+        </div>
+    </div>
 
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const logBox = document.getElementById('tibia-log');
+
+        // Estado global de início
+        let gameStarted = false;
+
+        // 1. SISTEMA DE LOG ESTILO TIBIA
+        function addLog(text, type = 'system') {
+            const span = document.createElement('div');
+            span.className = `log-${type}`;
+            span.innerText = text;
+            logBox.appendChild(span);
+            logBox.scrollTop = logBox.scrollHeight;
+        }
+
+        // 2. CONFIGURAÇÕES DO JOGADOR
+        const player = {
+            x: 2.5, 
+            y: 2.5,
+            angle: 0,
+            fov: Math.PI / 3,
+            speed: 0.05,
+            rotSpeed: 0.04,
+            hp: 100,
+            maxHp: 100,
+            gold: 10,
+            baseAtk: 15,
+            hasArtifact: false
+        };
+
+        // 3. MAPA EXTENSO (20x20)
+        const map = [
+            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+            [1,0,0,0,0,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1],
+            [1,0,0,0,0,1,0,0,0,1,1,0,0,0,0,0,0,0,0,1],
+            [1,0,0,0,0,0,0,0,0,1,1,0,1,1,1,1,1,1,0,1],
+            [1,1,1,0,1,1,1,1,0,1,1,0,1,0,0,0,0,1,0,1],
+            [1,1,1,0,1,1,1,1,0,0,0,0,1,0,1,1,0,1,0,1],
+            [1,0,0,0,0,0,1,1,1,1,1,0,1,0,1,1,0,1,0,1],
+            [1,0,1,1,1,0,1,1,1,1,1,0,0,0,0,0,0,0,0,1],
+            [1,0,1,0,1,0,0,0,0,1,1,1,1,1,1,1,1,1,0,1],
+            [1,0,1,0,1,1,1,1,0,1,1,1,1,1,1,1,1,1,0,1],
+            [1,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,1],
+            [1,1,1,1,1,1,1,1,0,1,1,0,1,1,1,1,1,1,1,1],
+            [1,1,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1,1,1],
+            [1,0,0,0,0,0,0,0,0,1,1,0,1,1,1,1,1,1,1,1],
+            [1,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,1],
+            [1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1],
+            [1,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,1],
+            [1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,0,1],
+            [1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,1],
+            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+        ];
+        const mapSize = map.length;
+
+        // Entidades
+        const entities = [
+            { type: 'comerciante', name: 'Alodir, O Ferreiro', x: 2.5, y: 7.5, active: true },
+            { type: 'civil', name: 'Zezinho de Brília', x: 7.5, y: 2.5 },
+            { type: 'comerciante', name: 'Eldrin das Poções', x: 4.5, y: 1.5, active: true },
+            { type: 'monstro', name: 'Rotworm Faminto', x: 15.5, y: 4.5, hp: 40, maxHp: 40, goldReward: 8 },
+            { type: 'monstro', name: 'Dragão de Macrubira', x: 17.5, y: 15.5, hp: 120, maxHp: 120, goldReward: 25 },
+            { type: 'monstro', name: 'Orc Invasor', x: 13.5, y: 8.5, hp: 60, maxHp: 60, goldReward: 12 }
+        ];
+
+        // 4. MAPEAMENTO DE TECLAS (WASD)
+        const keys = { w: false, s: false, a: false, d: false };
+        
+        window.addEventListener('keydown', (e) => {
+            // Se pressionar Enter, inicia o jogo e previne ações padrão
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                if (!gameStarted) {
+                    gameStarted = true;
+                    addLog("Você entrou nos Labirintos de Macrubira. Use WASD para andar!", "system");
+                }
+                return;
+            }
+
+            // Bloqueia comandos se o jogo não tiver começado
+            if (!gameStarted) return;
+
+            const key = e.key.toLowerCase();
+            if (key in keys) keys[key] = true;
+            
+            if (key === 'y') handleConversation();
+            if (key === 't') handlePurchase();
+            if (key === 'f') handleAttack(false); 
+            if (key === 'm') handleAttack(true);  
+        });
+
+        window.addEventListener('keyup', (e) => {
+            if (!gameStarted) return;
+            const key = e.key.toLowerCase();
+            if (key in keys) keys[key] = false;
+        });
+
+        // 5. SISTEMA DE PROXIMIDADE
+        function getClosestEntity() {
+            let closest = null;
+            let minDist = 1.8; 
+            entities.forEach(ent => {
+                if (ent.type === 'monstro' && ent.hp <= 0) return;
+                let dx = ent.x - player.x;
+                let dy = ent.y - player.y;
+                let dist = Math.sqrt(dx*dx + dy*dy);
+                if (dist < minDist) {
+                    minDist = dist;
+                    closest = ent;
+                }
+            });
+            return closest;
+        }
+
+        function handleConversation() {
+            const ent = getClosestEntity();
+            if (!ent) {
+                addLog("Não há ninguém por perto para conversar.", "system");
+                return;
+            }
+            if (ent.type === 'comerciante') {
+                addLog(`${ent.name}: "Saudações, guerreiro! Deseja negociar? Pressione T para comprar meu Artefato de Combate por 15 moedas de ouro!"`, "npc");
+            } else if (ent.type === 'civil') {
+                addLog(`${ent.name}: "Cuidado ao cruzar os caminhos do leste... A floresta escura está cheia de monstros terríveis!"`, "npc");
+            } else if (ent.type === 'monstro') {
+                addLog(`O ${ent.name} ruge agressivamente para você! Use F ou M para atacar!`, "damage");
+            }
+        }
+
+        function handlePurchase() {
+            const ent = getClosestEntity();
+            if (!ent || ent.type !== 'comerciante') {
+                addLog("Você precisa estar perto de um comerciante para comprar algo.", "system");
+                return;
+            }
+            if (player.gold >= 15) {
+                if (player.hasArtifact) {
+                    addLog(`${ent.name}: "Você já possui o melhor Artefato que posso lhe oferecer!"`, "npc");
+                } else {
+                    player.gold -= 15;
+                    player.hasArtifact = true;
+                    addLog("Você comprou o Artefato Místico! Seu dano de ataque aumentou drasticamente!", "loot");
+                    updateHUD();
+                }
+            } else {
+                addLog(`${ent.name}: "Você não tem moedas de ouro suficientes (Preço: 15 gp)."`, "npc");
+            }
+        }
+
+        function handleAttack(isMainAttack) {
+            const ent = getClosestEntity();
+            if (!ent || ent.type !== 'monstro') {
+                addLog("Você golpeia o ar... Não há monstros ao alcance.", "system");
+                return;
+            }
+
+            let damage = player.baseAtk + (player.hasArtifact ? 25 : 0);
+            if (isMainAttack) {
+                if (player.gold >= 2) {
+                    player.gold -= 2;
+                    damage = Math.floor(damage * 1.8);
+                    addLog("Você descarrega um Ataque Principal Místico! (-2 gp de mana mística)", "system");
+                } else {
+                    addLog("Moedas insuficientes para canalizar a mana! Desferindo golpe leve.", "system");
+                }
+                       ctx.fillStyle = target.type === 'monstro' ? "#ff3333" : "#00ffff";
+                let statusText = target.type === 'monstro' ? `[MONSTRO] ${target.name} - HP: ${target.hp}/${target.maxHp}` : `[NPC] ${target.name} - Aperte Y para falar`;
+                ctx.fillText(statusText, 20, 40);
+            }
+        }
+
+        function gameLoop() {
+            updatePhysics();
+            renderRaycasting();
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Inicialização
+        updateHUD();
+        gameLoop();
+    </script>
 <script src="script.js"></script></body>
-</html>
+</html>         }
+
+            let finalDamage = Math.floor(damage * (0.8 + Math.random() * 0.4));
+            ent.hp -= finalDamage;
+            addLog(`Você atacou o ${ent.name} e causou ${finalDamage} de dano!`, "loot");
+
+            if (ent.hp <= 0) {
+                addLog(`Você derrotou o ${ent.name}! Encontrou ${ent.goldReward} gp no corpo.`, "loot");
+                player.gold += ent.goldReward;
+                updateHUD();
+                return;
+            }
+
+            setTimeout(() => {
+                if (ent.hp > 0) {
+                    let monsterDamage = Math.floor((10 + Math.random() * 15));
+                    player.hp -= monsterDamage;
+                    addLog(`O ${ent.name} te atacou de volta! Você perdeu ${monsterDamage} de HP.`, "damage");
+                    if (player.hp <= 0) {
+                        addLog("Você morreu! Ressurgindo na Vila de Brília...", "damage");
+                        player.hp = 100;
+                        player.x = 2.5;
+                        player.y = 2.5;
+                        player.gold = Math.max(0, player.gold - 5); 
+                    }
+                    updateHUD();
+                }
+            }, 400);
+
+            updateHUD();
+        }
+
+        function updateHUD() {
+            document.getElementById('hp-val').innerText = `${player.hp}/${player.maxHp}`;
+            document.getElementById('gold-val').innerText = `${player.gold} gp`;
+            document.getElementById('atk-val').innerText = player.baseAtk + (player.hasArtifact ? 25 : 0);
+            document.getElementById('inv-val').innerText = player.hasArtifact ? "Artefato de Brília (+25 Dano)" : "Nenhum";
+        }
+
+        // 6. FÍSICA E MOVIMENTAÇÃO
+        function updatePhysics() {
+            if (!gameStarted) return;
+
+            let moveX = 0;
+            let moveY = 0;
+
+            if (keys.w) {
+                moveX += Math.cos(player.angle) * player.speed;
+                moveY += Math.sin(player.angle) * player.speed;
+            }
+            if (keys.s) {
+                moveX -= Math.cos(player.angle) * player.speed;
+                moveY -= Math.sin(player.angle) * player.speed;
+            }
+            if (keys.a) {
+                player.angle -= player.rotSpeed;
+            }
+            if (keys.d) {
+                player.angle += player.rotSpeed;
+            }
+
+            let newX = player.x + moveX;
+            let newY = player.y + moveY;
+
+            if (map[Math.floor(player.y)][Math.floor(newX)] === 0) player.x = newX;
+            if (map[Math.floor(newY)][Math.floor(player.x)] === 0) player.y = newY;
+        }
+
+        // 7. RENDERIZADOR RAYCASTING CORRIGIDO
+        function renderRaycasting() {
+            const WIDTH = canvas.width;
+            const HEIGHT = canvas.height;
+            
+            // Teto e Chão da atmosfera medieval
+            ctx.fillStyle = "#1e140d"; 
+            ctx.fillRect(0, 0, WIDTH, HEIGHT / 2);
+            ctx.fillStyle = "#382517"; 
+            ctx.fillRect(0, HEIGHT / 2, WIDTH, HEIGHT / 2);
+
+            // Se o jogo não tiver começado, mostra tela de menu inicial
+            if (!gameStarted) {
+                ctx.fillStyle = "rgba(0, 0, 0, 0.85)";
+                ctx.fillRect(0, 0, WIDTH, HEIGHT);
+                
+                ctx.font = "bold 32px Georgia";
+                ctx.fillStyle = "#ffcc00";
+                ctx.textAlign = "center";
+                ctx.fillText("CRÔNICAS DE BRÍLIA", WIDTH / 2, HEIGHT / 2 - 30);
+                
+                ctx.font = "20px monospace";
+                ctx.fillStyle = "#ffffff";
+                ctx.fillText("Pressione [ ENTER ] para Iniciar", WIDTH / 2, HEIGHT / 2 + 30);
+                return;
+            }
+
+            // Projeção das colunas de raios
+            for (let i = 0; i < WIDTH; i++) {
+                let rayAngle = (player.angle - player.fov / 2) + (i / WIDTH) * player.fov;
+                let distance = 0;
+                let hitWall = false;
+
+                let cos = Math.cos(rayAngle);
+                let sin = Math.sin(rayAngle);
+
+                while (!hitWall && distance < 16) {
+                    distance += 0.04;
+                    let checkX = Math.floor(player.x + cos * distance);
+                    let checkY = Math.floor(player.y + sin * distance);
+
+                    if (checkX < 0 || checkX >= mapSize || checkY < 0 || checkY >= mapSize) {
+                        hitWall = true;
+                        distance = 16;
+                    } else if (map[checkY][checkX] > 0) {
+                        hitWall = true;
+                    }
+                }
+
+                let correctedDist = distance * Math.cos(rayAngle - player.angle);
+                let wallHeight = Math.min(HEIGHT, (HEIGHT / correctedDist));
+
+                // Iluminação dinâmica recalculada
+                let colorValue = Math.max(60, Math.min(235, 235 - (correctedDist * 11)));
+                
+                if (player.x > 10 || player.y > 10) {
+                    ctx.strokeStyle = `rgb(${colorValue * 0.3}, ${colorValue * 0.6}, ${colorValue * 0.4})`;
+                } else {
+                    ctx.strokeStyle = `rgb(${colorValue * 0.8}, ${colorValue * 0.55}, ${colorValue * 0.35})`;
+                }
+
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(i, (HEIGHT / 2) - (wallHeight / 2));
+                ctx.lineTo(i, (HEIGHT / 2) + (wallHeight / 2));
+                ctx.stroke();
+            }
+
+            // Interface Visual de Proximidade Direta na Tela
+            const target = getClosestEntity();
+            if (target) {
+                ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
+                ctx.fillRect(10, 10, WIDTH - 20, 45);
+                ctx.font = "bold 20px monospace";
+                ctx.textAlign = "left";
