@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Missão Peixonauta — Blog</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --space-deep:#0b1f3a;
+  --space-mid:#123c5e;
+  --ocean:#1ea7c4;
+  --fish-orange:#ff8a5b;
+  --star-yellow:#ffe66d;
+  --foam:#eafcff;
+  --ink:#f4fbff;
+}
+
+*{box-sizing:border-box;}
+
+body{
+  margin:0;
+  font-family:'Nunito',sans-serif;
+  background:linear-gradient(180deg, var(--space-deep) 0%, var(--space-mid) 35%, var(--ocean) 100%);
+  color:var(--ink);
+  min-height:100vh;
+  position:relative;
+  overflow-x:hidden;
+}
+
+/* campo de estrelas + bolhas ambientes */
+.sky{
+  position:fixed;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+}
+.star{
+  position:absolute;
+  width:3px;height:3px;
+  background:var(--star-yellow);
+  border-radius:50%;
+  opacity:.8;
+  animation:twinkle 2.4s ease-in-out infinite;
+}
+@keyframes twinkle{
+  0%,100%{opacity:.2;transform:scale(1);}
+  50%{opacity:1;transform:scale(1.6);}
+}
+.bubble{
+  position:absolute;
+  bottom:-40px;
+  border-radius:50%;
+  border:1.5px solid rgba(255,255,255,.35);
+  background:radial-gradient(circle at 30% 30%, rgba(255,255,255,.5), rgba(255,255,255,.05));
+  animation:rise linear infinite;
+}
+@keyframes rise{
+  0%{transform:translateY(0) translateX(0);opacity:0;}
+  10%{opacity:.7;}
+  100%{transform:translateY(-115vh) translateX(20px);opacity:0;}
+}
+@media (prefers-reduced-motion: reduce){
+  .star, .bubble{animation:none;}
+}
+
+.wrap{
+  max-width:960px;
+  margin:0 auto;
+  padding:0 20px 60px;
+  position:relative;
+  z-index:1;
+}
+
+/* HERO / vigia da nave */
+.hero{
+  padding:56px 20px 40px;
+  text-align:center;
+}
+
+.porthole{
+  width:220px;
+  height:220px;
+  margin:0 auto 22px;
+  border-radius:50%;
+  background:
+    radial-gradient(circle at 35% 30%, #7fe3ff, #1ea7c4 55%, #0b3d55 100%);
+  border:10px solid #d8f4ff;
+  box-shadow:
+    0 0 0 4px var(--space-mid),
+    0 0 40px rgba(255,230,109,.5),
+    inset 0 0 30px rgba(0,0,0,.35);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+}
+
+.fish-astro{
+  width:130px;
+  height:130px;
+  object-fit: contain;
+}
+
+.eyebrow{
+  font-family:'Baloo 2',sans-serif;
+  font-weight:700;
+  letter-spacing:3px;
+  font-size:13px;
+  color:var(--star-yellow);
+  text-transform:uppercase;
+}
+
+h1.title{
+  font-family:'Baloo 2',sans-serif;
+  font-size:52px;
+  font-weight:800;
+  margin:8px 0 6px;
+  color:#fff;
+  text-shadow:0 0 18px rgba(30,167,196,.8), 0 4px 0 rgba(0,0,0,.15);
+}
+
+.subtitle{
+  font-size:18px;
+  color:var(--foam);
+  opacity:.9;
+  max-width:520px;
+  margin:0 auto;
+}
+
+/* SEÇÕES */
+section{
+  margin-top:48px;
+}
+
+.section-head{
+  display:flex;
+  align-items:baseline;
+  gap:12px;
+  margin-bottom:22px;
+}
+.section-head .tag{
+  font-family:'Baloo 2',sans-serif;
+  background:var(--fish-orange);
+  color:var(--space-deep);
+  font-weight:700;
+  font-size:13px;
+  padding:4px 12px;
+  border-radius:999px;
+}
+.section-head h2{
+  font-family:'Baloo 2',sans-serif;
+  font-size:26px;
+  margin:0;
+  color:#fff;
+}
+
+/* CARDS DE MISSÃO */
+.missions{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:22px;
+}
+
+.mission-card{
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:22px;
+  padding:22px;
+  backdrop-filter:blur(6px);
+  position:relative;
+  transition:transform .25s ease, box-shadow .25s ease;
+}
+.mission-card:hover{
+  transform:translateY(-4px);
+  box-shadow:0 10px 30px rgba(0,0,0,.25);
+}
+.mission-num{
+  font-family:'Baloo 2',sans-serif;
+  font-size:13px;
+  font-weight:700;
+  color:var(--star-yellow);
+  letter-spacing:1px;
+}
+.mission-card h3{
+  font-family:'Baloo 2',sans-serif;
+  font-size:21px;
+  margin:6px 0 10px;
+  color:#fff;
+}
+.mission-card p{
+  font-size:15px;
+  line-height:1.5;
+  color:var(--foam);
+  opacity:.92;
+  margin:0;
+}
+.mission-icon{
+  width:46px;
+  height:46px;
+  margin-bottom:10px;
+  object-fit: contain;
+  display: block;
+}
+
+/* DIÁRIO DE BORBO / COMENTÁRIOS */
+.log{
+  background:rgba(11,31,58,.55);
+  border:1px solid rgba(255,255,255,.15);
+  border-radius:26px;
+  padding:30px;
+}
+
+.log p.helper{
+  margin-top:0;
+  color:var(--foam);
+  opacity:.85;
+  font-size:15px;
+}
+
+label{
+  font-family:'Baloo 2',sans-serif;
+  font-size:13px;
+  color:var(--star-yellow);
+  display:block;
+  margin:14px 0 6px;
+}
+
+input, textarea{
+  width:100%;
+  padding:12px 14px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.25);
+  background:rgba(255,255,255,.08);
+  color:#fff;
+  font-family:'Nunito',sans-serif;
+  font-size:15px;
+  resize:vertical;
+}
+input::placeholder, textarea::placeholder{
+  color:rgba(255,255,255,.5);
+}
+input:focus, textarea:focus{
+  outline:2px solid var(--star-yellow);
+  outline-offset:2px;
+}
+
+.send-btn{
+  margin-top:18px;
+  padding:13px 22px;
+  border:none;
+  border-radius:999px;
+  background:linear-gradient(135deg, var(--fish-orange), #ff5b8a);
+  color:#fff;
+  font-family:'Baloo 2',sans-serif;
+  font-weight:700;
+  font-size:15px;
+  cursor:pointer;
+  transition:transform .2s ease;
+}
+.send-btn:hover{transform:scale(1.04);}
+.send-btn:focus-visible{outline:3px solid var(--star-yellow); outline-offset:2px;}
+
+.entries{
+  margin-top:26px;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+
+.entry{
+  background:rgba(255,255,255,.07);
+  border-left:4px solid var(--ocean);
+  border-radius:14px;
+  padding:14px 18px;
+}
+.entry .who{
+  font-family:'Baloo 2',sans-serif;
+  color:var(--star-yellow);
+  font-weight:600;
+  font-size:14px;
+}
+.entry p{
+  margin:4px 0 0;
+  font-size:15px;
+  color:var(--foam);
+}
+
+.empty-state{
+  text-align:center;
+  padding:20px;
+  color:var(--foam);
+  opacity:.6;
+  font-size:14px;
+  font-style:italic;
+}
+
+footer{
+  text-align:center;
+  margin-top:50px;
+  font-size:13px;
+  color:var(--foam);
+  opacity:.6;
+}
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+<div class="sky" id="sky"></div>
+
+<div class="wrap">
+
+  <div class="hero">
+    <div class="eyebrow">CETI Nonato Valente · 2026</div>
+    <div class="porthole">
+      <img src="https://i.ibb.co/KpxgrJm6/PEIXONAUTA-removebg-preview.png" alt="Peixonauta Astronauta" class="fish-astro">
+    </div>
+    <h1 class="title">Missão Peixonauta</h1>
+    <p class="subtitle">Um blog sobre o peixinho que trocou o aquário pelo espaço — aventuras, curiosidades e recados da tripulação. 🚀🐟</p>
+  </div>
+
+  <section>
+    <div class="section-head">
+      <span class="tag">A bordo</span>
+      <h2>Quem viaja nessa nave</h2>
+    </div>
+    <div class="missions">
+
+      <div class="mission-card">
+        <img src="https://i.ibb.co/KpxgrJm6/PEIXONAUTA-removebg-preview.png" alt="Ícone Peixonauta" class="mission-icon">
+        <div class="mission-num">TRIPULANTE</div>
+        <h3>O Peixonauta</h3>
+        <p>Curioso e corajoso, é o piloto da nave e o primeiro a topar qualquer aventura fora d'água — literalmente.</p>
+      </div>
+
+      <div class="mission-card">
+        <img src="https://static.wikia.nocookie.net/dublagem/images/9/9d/Marina.png/revision/latest?cb=20220525001433&path-prefix=pt-br" alt="Ícone Menino Explorador" class="mission-icon">
+        <div class="mission-num">TRIPULANTE</div>
+        <h3>Marina</h3>
+        <p>Uma menina alegre. sorridente e divertida</p>
+      </div>
+
+      <div class="mission-card">
+        <img src="https://static.wikia.nocookie.net/dublagem/images/3/3d/Zico.png/revision/latest?cb=20220525001811&path-prefix=pt-br" alt="Ícone Amiga Cientista" class="mission-icon">
+        <div class="mission-num">TRIPULANTE</div>
+        <h3>Zico</h3>
+        <p>Um macaco brincalhão, extrovertido. (e abestado) </p>
+      </div>
+
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <span class="tag">Diário</span>
+      <h2>Últimas missões</h2>
+    </div>
+    <div class="missions">
+
+      <div class="mission-card">
+        <div class="mission-num">MISSÃO 01</div>
+        <h3>Por que os peixes não se afogam?</h3>
+        <p>Nesta missão a tripulação descobre como as brânquias funcionam e por que um peixe-astronauta precisa de um capacete cheio de água pra sobreviver no espaço!</p>
+      </div>
+
+      <div class="mission-card">
+        <div class="mission-num">MISSÃO 02</div>
+        <h3>Uma viagem até a Lua</h3>
+        <p>O que tem lá em cima? Crateras, poeira e nenhuma gota de água — só o bastante pra deixar qualquer peixe morrendo de saudade do mar.</p>
+      </div>
+
+      <div class="mission-card">
+        <div class="mission-num">MISSÃO 03</div>
+        <h3>O mistério do fundo do oceano</h3>
+        <p>Antes de ir pro espaço, a nave desce até as profundezas: tem mais mistério lá embaixo do que muita gente imagina.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <span class="tag">Sua vez</span>
+      <h2>Diário de bordo</h2>
+    </div>
+
+    <div class="log">
+      <p class="helper">Deixe um recado pra tripulação — conte qual foi sua parte favorita ou sugira a próxima missão!</p>
+
+      <label for="name">Seu nome</label>
+      <input id="name" placeholder="Como a tripulação vai te chamar?">
+
+      <label for="comment">Sua mensagem</label>
+      <textarea id="comment" rows="3" placeholder="Escreva aqui sua mensagem para a nave..."></textarea>
+
+      <button class="send-btn" onclick="postEntry()">Enviar recado 🚀</button>
+
+      <div class="entries" id="entries"></div>
+    </div>
+  </section>
+
+  <footer>
+    Feito com 💙 para o Projeto Meu Blog — CETI Nonato Valente, 2026
+  </footer>
+
+</div>
+
+<script>
+// campo de estrelas
+const sky = document.getElementById('sky');
+for(let i=0;i<50;i++){
+  const s = document.createElement('div');
+  s.className='star';
+  s.style.left = Math.random()*100+'%';
+  s.style.top = Math.random()*60+'%';
+  s.style.animationDelay = (Math.random()*2.4)+'s';
+  sky.appendChild(s);
+}
+// bolhas subindo
+for(let i=0;i<14;i++){
+  const b = document.createElement('div');
+  b.className='bubble';
+  const size = 8 + Math.random()*22;
+  b.style.width = size+'px';
+  b.style.height = size+'px';
+  b.style.left = Math.random()*100+'%';
+  b.style.animationDuration = (8 + Math.random()*10)+'s';
+  b.style.animationDelay = (Math.random()*10)+'s';
+  sky.appendChild(b);
+}
+
+// diário de bordo (guardado em memória enquanto a página estiver aberta)
+let entries = [];
+
+function renderEntries(){
+  const area = document.getElementById('entries');
+  area.innerHTML = '';
+  if(entries.length === 0){
+    area.innerHTML = '<div class="empty-state">Nenhum recado ainda — seja o primeiro a escrever pra tripulação!</div>';
+    return;
+  }
+  entries.forEach(e=>{
+    const div = document.createElement('div');
+    div.className = 'entry';
+    div.innerHTML = `<div class="who">${e.name}</div><p>${e.text}</p>`;
+    area.appendChild(div);
+  });
+}
+
+function escapeHTML(str){
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function postEntry(){
+  const nameInput = document.getElementById('name');
+  const commentInput = document.getElementById('comment');
+  const name = escapeHTML(nameInput.value.trim() || 'Tripulante anônimo');
+  const text = escapeHTML(commentInput.value.trim());
+  if(!text) return;
+  entries.unshift({name, text});
+  commentInput.value = '';
+  renderEntries();
+}
+
+renderEntries();
+</script>
+
+</body>
+</html>
