@@ -1,0 +1,240 @@
+// DADOS DO CARDÁPIO
+const produtos = [
+    {
+        id: 1,
+        nome: "PF Completo",
+        desc: "Arroz, feijão, bife acebolado, farofa, salada",
+        preco: 18.00,
+        categoria: "pf",
+        img: "https://spcuriosos.com.br/wp-content/uploads/2012/10/pratofeito.jpg?w=200"
+    },
+    {
+        id: 2,
+        nome: "Galinha Caipira",
+        desc: "Acompanha baião de dois e paçoca",
+        preco: 22.00,
+        categoria: "pf",
+        img: "https://areademulher.r7.com/wp-content/uploads/2023/02/3-11.jpg?w=200"
+    },
+    {
+        id: 3,
+        nome: "Pizza",
+        desc: "Tradicional, com arroz branco",
+        preco: 25.00,
+        categoria: "pf",
+        img: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=200"
+    },
+    {
+        id: 4,
+        nome: "Pepsi 1L",
+        desc: "Gelada",
+        preco: 8.00,
+        categoria: "bebidas",
+        img: "https://images.unsplash.com/photo-1629203851122-3726ecdf080e?w=200"
+    },
+    {
+        id: 5,
+        nome: "Suco de Caju 500ml",
+        desc: "Natural da fruta",
+        preco: 6.00,
+        categoria: "bebidas",
+        img: "https://espaconatelie.com.br/wp-content/uploads/2026/02/suco-de-caju-natural.webp?w=200"
+    },
+    {
+        id: 6,
+        nome: "Combo Almoço",
+        desc: "PF + Suco + Doce | Sai R$ 25",
+        preco: 25.00,
+        categoria: "promocao",
+        img: "https://assets.planne.com.br/apps/6IPXOTF1VEP/images/high/If1fWA1MU4CrofcKd1mFeebda8iun44Whyqd1oyi.jpg?w=200"
+    }
+];
+
+// CONFIGURAÇÕES
+const NUMERO_WHATSAPP = "5589999221649";
+const TAXA_ENTREGA = 3.00;
+let carrinho = [];
+let categoriaAtual = 'todos';
+
+// DOM ELEMENTS
+const listaProdutosEl = document.getElementById('lista-produtos');
+const buscaInputEl = document.getElementById('busca-input');
+const categoriasNavEl = document.getElementById('categorias-nav');
+const totalCarrinhoEl = document.getElementById('total-carrinho');
+const totalFinalEl = document.getElementById('total-final');
+const modalSubtotalEl = document.getElementById('modal-subtotal');
+const modalTotalEl = document.getElementById('modal-total');
+const carrinhoFixoEl = document.getElementById('carrinho-fixo');
+const itensCarrinhoEl = document.getElementById('itens-carrinho');
+const modalCarrinhoEl = document.getElementById('modal-carrinho');
+const taxaEntregaTxtEl = document.getElementById('taxa-entrega-txt');
+
+// INIT
+document.addEventListener('DOMContentLoaded', () => {
+    taxaEntregaTxtEl.innerText = `R$ ${TAXA_ENTREGA.toFixed(2).replace('.', ',')}`;
+    renderizarProdutos();
+    addEventListeners();
+});
+
+function addEventListeners() {
+    buscaInputEl.addEventListener('keyup', filtrarProdutos);
+    categoriasNavEl.addEventListener('click', (e) => {
+        if (e.target.classList.contains('categoria')) {
+            filtrarCategoria(e.target.dataset.cat, e.target);
+        }
+    });
+    document.getElementById('abrir-carrinho-btn').addEventListener('click', abrirCarrinho);
+    document.getElementById('fechar-carrinho-btn').addEventListener('click', fecharCarrinho);
+    document.getElementById('finalizar-btn-fixo').addEventListener('click', finalizarPedido);
+    document.getElementById('finalizar-btn-modal').addEventListener('click', finalizarPedido);
+    listaProdutosEl.addEventListener('click', (e) => {
+        if (e.target.classList.contains('add-btn')) {
+            adicionarCarrinho(parseInt(e.target.dataset.id), e.target);
+        }
+    });
+    itensCarrinhoEl.addEventListener('click', (e) => {
+        if (e.target.classList.contains('remove-btn')) {
+            removerCarrinho(parseInt(e.target.dataset.id));
+        }
+    });
+}
+
+// RENDERIZA PRODUTOS NA TELA
+function renderizarProdutos() {
+    const busca = buscaInputEl.value.toLowerCase();
+    
+    let produtosFiltrados = produtos.filter(p => {
+        const matchCategoria = categoriaAtual === 'todos' || p.categoria === categoriaAtual;
+        const matchBusca = p.nome.toLowerCase().includes(busca) || p.desc.toLowerCase().includes(busca);
+        return matchCategoria && matchBusca;
+    });
+
+    listaProdutosEl.innerHTML = '<h2 class="secao-titulo">Mais Pedidos</h2>';
+    
+    if (produtosFiltrados.length === 0) {
+        listaProdutosEl.innerHTML += `<p style="text-align:center; padding: 20px; color: white;">Nenhum item encontrado.</p>`;
+        return;
+    }
+
+    produtosFiltrados.forEach(produto => {
+        listaProdutosEl.innerHTML += `
+            <div class="card">
+                <img src="${produto.img}" alt="${produto.nome}" loading="lazy">
+                <div class="card-info">
+                    <div>
+                        <div class="card-titulo">${produto.nome}</div>
+                        <div class="card-desc">${produto.desc}</div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="preco">R$ ${produto.preco.toFixed(2).replace('.', ',')}</div>
+                        <button class="add-btn" data-id="${produto.id}">Adicionar</button>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+}
+
+// ADICIONAR AO CARRINHO
+function adicionarCarrinho(id, btn) {
+    const produto = produtos.find(p => p.id === id);
+    const itemExistente = carrinho.find(item => item.id === id);
+    
+    if (itemExistente) {
+        itemExistente.qtd++;
+    } else {
+        carrinho.push({...produto, qtd: 1});
+    }
+    
+    atualizarCarrinho();
+    
+    // Feedback visual
+    const originalText = btn.innerText;
+    const originalBg = btn.style.background;
+    btn.innerText = "Adicionado ✓";
+    btn.style.background = "#2E7D32";
+    btn.disabled = true;
+    setTimeout(() => {
+        btn.innerText = originalText;
+        btn.style.background = originalBg;
+        btn.disabled = false;
+    }, 800);
+}
+
+// REMOVER DO CARRINHO
+function removerCarrinho(id) {
+    const itemExistente = carrinho.find(item => item.id === id);
+    if (itemExistente) {
+        itemExistente.qtd--;
+        if (itemExistente.qtd === 0) {
+            carrinho = carrinho.filter(item => item.id !== id);
+        }
+    }
+    atualizarCarrinho();
+}
+
+// ATUALIZA OS VALORES DA INTERFACE
+function atualizarCarrinho() {
+    const totalProdutos = carrinho.reduce((sum, item) => sum + (item.preco * item.qtd), 0);
+    const totalComTaxa = totalProdutos + TAXA_ENTREGA;
+    
+    totalCarrinhoEl.innerText = totalProdutos.toFixed(2).replace('.', ',');
+    totalFinalEl.innerText = totalComTaxa.toFixed(2).replace('.', ',');
+    modalSubtotalEl.innerText = "R$ " + totalProdutos.toFixed(2).replace('.', ',');
+    modalTotalEl.innerText = "R$ " + totalComTaxa.toFixed(2).replace('.', ',');
+    
+    carrinhoFixoEl.classList.toggle('ativo', carrinho.length > 0);
+    
+    const itensHtml = carrinho.map(item => `
+        <div class="item-carrinho">
+            <span>${item.qtd}x ${item.nome}</span>
+            <div class="item-acoes">
+                <span>R$ ${(item.preco * item.qtd).toFixed(2).replace('.', ',')}</span>
+                <button class="remove-btn" data-id="${item.id}">❌</button>
+            </div>
+        </div>
+    `).join('');
+    
+    itensCarrinhoEl.innerHTML = itensHtml || '<p style="color:#666; text-align:center; padding: 20px 0;">Seu carrinho está vazio</p>';
+}
+
+// CONTROLE DE CATEGORIAS
+function filtrarCategoria(cat, btnAtivo) {
+    categoriaAtual = cat;
+    document.querySelectorAll('.categoria').forEach(btn => btn.classList.remove('ativa'));
+    btnAtivo.classList.add('ativa');
+    renderizarProdutos();
+}
+
+// FILTRAR POR DIGITAÇÃO
+function filtrarProdutos() {
+    renderizarProdutos();
+}
+
+// MODAL CONTROLE
+function abrirCarrinho() {
+    modalCarrinhoEl.style.display = 'block';
+}
+
+function fecharCarrinho() {
+    modalCarrinhoEl.style.display = 'none';
+}
+
+// WHATSAPP
+function finalizarPedido() {
+    if (carrinho.length === 0) return;
+    
+    let msg = "Olá! Quero fazer um pedido:\n\n";
+    carrinho.forEach(item => {
+        const subtotalItem = (item.preco * item.qtd).toFixed(2).replace('.', ',');
+        msg += `${item.qtd}x ${item.nome} - R$ ${subtotalItem}\n`;
+    });
+    
+    const totalGeral = carrinho.reduce((sum, item) => sum + (item.preco * item.qtd), 0) + TAXA_ENTREGA;
+    msg += `\nTaxa de entrega: R$ ${TAXA_ENTREGA.toFixed(2).replace('.', ',')}\n`;
+    msg += `*Total: R$ ${totalGeral.toFixed(2).replace('.', ',')}*\n\n`;
+    msg += "Endereço para entrega: ";
+    
+    const urlWhatsApp = `https://api.whatsapp.com/send?phone=${NUMERO_WHATSAPP}&text=${encodeURIComponent(msg)}`;
+    window.location.href = urlWhatsApp;
+}
