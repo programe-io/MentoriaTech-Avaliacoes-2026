@@ -1,0 +1,242 @@
+/* RESET E CONFIGURAÇÕES GERAIS */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    user-select: none;
+}
+
+body {
+    background: #06060c;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    overflow: hidden;
+}
+
+/* CONTAINER PRINCIPAL DO JOGO */
+#game-container {
+    position: relative;
+    width: 800px;
+    height: 450px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.9), 0 0 50px rgba(0, 150, 255, 0.1);
+    background: #000;
+    overflow: hidden;
+}
+
+/* SEÇÃO DE FUNDO (CENÁRIO) */
+#background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 160px;
+    background: linear-gradient(to bottom, #010105 0%, #080714 50%, #121026 100%);
+    z-index: 1;
+}
+
+#city-glow {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 60px;
+    background: linear-gradient(to top, rgba(0, 195, 255, 0.12), transparent);
+    filter: blur(8px);
+}
+
+/* CANVAS DO JOGO */
+canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+}
+
+/* TELAS SOBREPOSTAS (MENU E GAME OVER) */
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(8, 8, 16, 0.75);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+}
+
+/* ELEMENTOS DE TEXTO */
+h1 {
+    font-size: 42px;
+    font-weight: 900;
+    background: linear-gradient(135deg, #ffffff 0%, #8bc3ff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: 6px;
+    margin-bottom: 5px;
+}
+
+h3 {
+    font-size: 36px;
+    font-weight: 800;
+    background: linear-gradient(135deg, #ff3333 0%, #ff8585 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: 2px;
+    margin-bottom: 5px;
+}
+
+p {
+    font-size: 12px;
+    color: #718096;
+    margin-bottom: 30px;
+    letter-spacing: 2px;
+    font-weight: 600;
+}
+
+/* BOTÕES E LINKS DE SELEÇÃO */
+.button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+button, .menu-link {
+    display: block;
+    background: rgba(255, 255, 255, 0.03);
+    color: #edf2f7;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 15px 30px;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    font-family: inherit;
+    width: 320px;
+    border-radius: 14px;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(10px);
+}
+
+button:hover, .menu-link:hover {
+    background: #ffffff;
+    color: #000000;
+    border-color: #ffffff;
+    box-shadow: 0 10px 30px rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+}
+
+.btn-retry {
+    background: rgba(0, 255, 170, 0.08);
+    border: 1px solid rgba(0, 255, 170, 0.25);
+    color: #00ffcc;
+}
+
+.btn-retry:hover {
+    background: #00ffcc;
+    border-color: #00ffcc;
+    color: #000;
+    box-shadow: 0 10px 25px rgba(0, 255, 204, 0.35);
+}
+
+/* INTERFACE SUPERIOR (HEADER HUD) */
+#hud {
+    position: absolute;
+    top: 20px;
+    left: 25px;
+    right: 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 4;
+    pointer-events: none;
+}
+
+.hud-left {
+    display: flex;
+    gap: 12px;
+}
+
+.hud-box {
+    background: rgba(10, 10, 20, 0.4);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    padding: 10px 20px;
+    border-radius: 14px;
+    display: flex;
+    flex-direction: column;
+}
+
+.hud-label {
+    font-size: 9px;
+    color: #a0aec0;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+}
+
+.hud-value {
+    font-size: 16px;
+    color: #fff;
+    font-weight: 700;
+    margin-top: 2px;
+}
+
+#score { color: #00ffcc; }
+
+/* CENTRO DO HUD (BARRA DE PROGRESSO) */
+.hud-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(10, 10, 20, 0.4);
+    backdrop-filter: blur(12px);
+    padding: 10px 24px;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.progress-border {
+    width: 220px;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    margin-top: 6px;
+    overflow: hidden;
+}
+
+#progress-bar {
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(90deg, #0072ff, #00f6ff);
+    box-shadow: 0 0 12px rgba(0, 246, 255, 0.6);
+}
+
+/* LADO DIREITO DO HUD (VELOCÍMETRO) */
+.speed-box {
+    align-items: flex-end;
+    background: rgba(10, 10, 20, 0.5);
+    padding: 8px 22px;
+    border-radius: 14px;
+}
+
+.speed-num {
+    font-size: 28px;
+    color: #fff;
+    font-weight: 900;
+}
+
+.speed-unit {
+    font-size: 10px;
+    color: #a0aec0;
+    font-weight: 700;
+}
