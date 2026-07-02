@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memória Tech - Motores e Rodas</title>
+    <style>
+        /* Reset de estilos básicos */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f1f3f6;
+            color: #222;
+            line-height: 1.6;
+        }
+
+        /* Cabeçalho / Navbar */
+        header {
+            background-color: #111111;
+            color: #ffffff;
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 4px solid #ff4a11; /* Laranja esportivo */
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .logo h1 {
+            font-size: 24px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .logo span {
+            color: #ff4a11;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav ul li {
+            margin-left: 20px;
+        }
+
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: #ff4a11;
+        }
+
+        /* Banner Principal */
+        .banner {
+            background: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), url('https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=1200&q=80') no-repeat center center/cover;
+            height: 450px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: #fff;
+            padding: 0 20px;
+        }
+
+        .banner-content h2 {
+            font-size: 46px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .banner-content p {
+            font-size: 20px;
+            max-width: 700px;
+            margin: 0 auto;
+            color: #ddd;
+        }
+
+        /* Layout em Grid (Conteúdo e Lateral) */
+        .main-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            padding: 0 20px;
+        }
+
+        /* Seção dos Posts */
+        .posts-section {
+            display: flex;
+            flex-direction: column;
+            gap: 35px;
+        }
+
+        .post-card {
+            background-color: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .post-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+        }
+
+        .post-image-container {
+            position: relative;
+        }
+
+        .post-image {
+            width: 100%;
+            height: 320px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .category-tag {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background-color: #ff4a11;
+            color: white;
+            padding: 5px 12px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            border-radius: 4px;
+        }
+
+        .post-content {
+            padding: 25px;
+        }
+
+        .post-meta {
+            font-size: 13px;
+            color: #888;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .post-title {
+            font-size: 26px;
+            margin-bottom: 15px;
+            color: #111;
+            line-height: 1.3;
+        }
+
+        .post-text {
+            color: #555;
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+
+        .read-more-btn {
+            display: inline-block;
+            background-color: #111;
+            color: #fff;
+            padding: 10px 22px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: background 0.3s, color 0.3s;
+            border: 2px solid #111;
+        }
+
+        .read-more-btn:hover {
+            background-color: transparent;
+            color: #111;
+        }
+
+        /* Barra Lateral (Sidebar) */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .sidebar-widget {
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .widget-title {
+            font-size: 18px;
+            border-left: 4px solid #ff4a11;
+            padding-left: 12px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            color: #111;
+            letter-spacing: 0.5px;
+        }
+
+        .about-text {
+            color: #666;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .category-list {
+            list-style: none;
+        }
+
+        .category-list li {
+            border-bottom: 1px solid #eee;
+            padding: 12px 0;
+        }
+
+        .category-list li:last-child {
+            border-bottom: none;
+        }
+
+        .category-list li a {
+            color: #333;
+            text-decoration: none;
+            display: flex;
+            justify-content: space-between;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .category-list li a:hover {
+            color: #ff4a11;
+        }
+
+        .category-count {
+            background-color: #eee;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* Rodapé */
+        footer {
+            background-color: #111;
+            color: #bbb;
+            text-align: center;
+            padding: 30px 0;
+            margin-top: 50px;
+            font-size: 14px;
+            border-top: 4px solid #ff4a11;
+        }
+
+        footer strong {
+            color: #fff;
+        }
+
+        /* Responsividade (Telas menores/Celulares) */
+        @media (max-width: 900px) {
+            .main-container {
+                grid-template-columns: 1fr;
+            }
+            .header-container {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            nav ul li {
+                margin: 0 10px;
+            }
+            .banner-content h2 {
+                font-size: 32px;
+            }
+            .banner-content p {
+                font-size: 16px;
+            }
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <h1>Memória<span>Tech</span> Motors</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#">Início</a></li>
+                    <li><a href="#">Carros</a></li>
+                    <li><a href="#">Motos</a></li>
+                    <li><a href="#">Sobre</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="banner">
+        <div class="banner-content">
+            <h2>Paixão sobre Rodas</h2>
+            <p>As últimas novidades, testes, tecnologias e tendências do universo dos carros e das motos.</p>
+        </div>
+    </section>
+
+    <div class="main-container">
+        
+        <main class="posts-section">
+            
+            <article class="post-card">
+                <div class="post-image-container">
+                    <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=800&q=80" alt="Carro superesportivo em movimento" class="post-image">
+                    <span class="category-tag">Carros</span>
+                </div>
+                <div class="post-content">
+                    <div class="post-meta">Publicado em 2 de Julho, 2026 por Redação</div>
+                    <h3 class="post-title">O impacto da Inteligência Artificial nos novos hipercarros</h3>
+                    <p class="post-text">Fabricantes estão utilizando IA não apenas na segurança automotiva, mas para ajustar aerodinâmica, suspensão e entrega de torque em tempo real na pista.</p>
+                    <a href="#" class="read-more-btn">Ler Matéria</a>
+                </div>
+            </article>
+
+            <article class="post-card">
+                <div class="post-image-container">
+                    <img src="https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?auto=format&fit=crop&w=800&q=80" alt="Moto esportiva na estrada" class="post-image">
+                    <span class="category-tag">Motos</span>
+                </div>
+                <div class="post-content">
+                    <div class="post-meta">Publicado em 1 de Julho, 2026 por Lucas Silva</div>
+                    <h3 class="post-title">Motos Elétricas: A evolução das baterias e a autonomia nas estradas</h3>
+                    <p class="post-text">Testamos os novos modelos de alta cilindrada equivalentes que prometem mais de 300km de autonomia com uma única carga rápida. Vale a pena a mudança?</p>
+                    <a href="#" class="read-more-btn">Ler Matéria</a>
+                </div>
+            </article>
+
+        </main>
+
+        <aside class="sidebar">
+            
+            <div class="sidebar-widget">
+                <h4 class="widget-title">Avaliação Acadêmica</h4>
+                <p class="about-text">Este portal foi desenvolvido como critério de avaliação para a <strong>Memória Tech</strong>. O objetivo é demonstrar o domínio prático na estruturação HTML5 estruturada e estilização CSS moderna e responsiva.</p>
+            </div>
+
+            <div class="sidebar-widget">
+                <h4 class="widget-title">Categorias</h4>
+                <ul class="category-list">
+                    <li><a href="#">Hipercarros e Superesportivos <span class="category-count">14</span></a></li>
+                    <li><a href="#">Motos de Alta Cilindrada <span class="category-count">9</span></a></li>
+                    <li><a href="#">Mobilidade Elétrica <span class="category-count">22</span></a></li>
+                    <li><a href="#">Tecnologia Autônoma <span class="category-count">7</span></a></li>
+                </ul>
+            </div>
+
+        </aside>
+
+    </div>
+
+    <footer>
+        <p>&copy; 2026 <strong>Memória Tech Motors</strong>. Todos os direitos reservados.</p>
+        <p style="font-size: 12px; margin-top: 5px; color: #777;">Desenvolvido exclusivamente para fins avaliativos.</p>
+    </footer>
+
+</body>
+</html>
