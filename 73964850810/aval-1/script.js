@@ -1,506 +1,549 @@
-/* ========================= */
-/* BARATIER SYSTEM */
-/* SCRIPT.JS */
-/* ========================= */
+/* ==========================================
+   BARATIER SYSTEM PREMIUM
+      Desenvolvido por HERIC Antônio
+         e Wesley Queiroz
+         ========================================== */
 
 
-/* MENU MOBILE */
+         /* LOADER */
 
-const menuBtn = document.getElementById("menu-btn");
+         window.addEventListener("load", () => {
 
-const nav = document.getElementById("nav");
+         const loader = document.querySelector(".loader");
 
+         setTimeout(() => {
 
-menuBtn.addEventListener("click", () => {
+         loader.style.opacity = "0";
 
-    nav.classList.toggle("active");
+         loader.style.visibility = "hidden";
 
-    });
+         },1500);
 
+         });
 
-    /* FECHAR MENU AO CLICAR */
 
-    document.querySelectorAll("nav a")
+         /* CONTADORES ANIMADOS */
 
-    .forEach(link => {
+         const counters = document.querySelectorAll(".stat h2");
 
-        link.addEventListener("click", () => {
+         counters.forEach(counter => {
 
-                nav.classList.remove("active");
+         const target =
+         parseInt(counter.innerText);
 
-                    });
+         if(isNaN(target)) return;
 
-                    });
+         let count = 0;
 
+         const update = () => {
 
-                    /* BOTÃO HERO */
+         const increment = target / 120;
 
-                    function scrollReserva(){
+         count += increment;
 
-                        document.getElementById(
+         if(count < target){
 
-                                "cadastro"
+         counter.innerText =
+         Math.ceil(count);
 
-                                    ).scrollIntoView({
+         requestAnimationFrame(update);
 
-                                            behavior:"smooth"
+         }
 
-                                                });
+         else{
 
-                                                }
+         counter.innerText = target;
 
+         }
 
-                                                /* COMPRAR PRODUTO */
+         }
 
-                                                function comprar(prato){
+         update();
 
-                                                    alert(
+         });
 
-                                                            "✅ Você escolheu: " +
 
-                                                                    prato +
+         /* CADASTRO */
 
-                                                                            "\n\nPedido adicionado."
+         const form =
+         document.getElementById("formCadastro");
 
-                                                                                );
+         if(form){
 
-                                                                                }
+         form.addEventListener(
 
+         "submit",
 
-                                                                                /* CADASTRO */
+         (e)=>{
 
-                                                                                const form =
+         e.preventDefault();
 
-                                                                                document.getElementById(
+         mostrarToast(
 
-                                                                                "formCadastro"
+         "Cadastro realizado com sucesso!"
 
-                                                                                );
+         );
 
+         form.reset();
 
-                                                                                const senha =
+         }
 
-                                                                                document.getElementById(
+         );
 
-                                                                                "senha"
+         }
 
-                                                                                );
 
+         /* TOAST */
 
-                                                                                const confirmar =
+         function mostrarToast(msg){
 
-                                                                                document.getElementById(
+         const toast =
 
-                                                                                "confirmar"
+         document.createElement("div");
 
-                                                                                );
+         toast.innerHTML = msg;
 
+         toast.style.position = "fixed";
 
-                                                                                const mensagem =
+         toast.style.top = "30px";
 
-                                                                                document.getElementById(
+         toast.style.right = "30px";
 
-                                                                                "mensagem"
+         toast.style.padding =
+         "16px 25px";
 
-                                                                                );
+         toast.style.background =
+         "#38bdf8";
 
+         toast.style.color =
+         "white";
 
-                                                                                form.addEventListener(
+         toast.style.borderRadius =
+         "12px";
 
-                                                                                "submit",
+         toast.style.fontWeight =
+         "600";
 
-                                                                                function(event){
+         toast.style.zIndex =
+         "99999";
 
-                                                                                event.preventDefault();
+         toast.style.boxShadow =
+         "0 10px 30px rgba(0,0,0,.3)";
 
+         toast.style.animation =
+         "fade .4s";
 
-                                                                                if(
+         document.body.appendChild(
 
-                                                                                senha.value !==
+         toast
 
-                                                                                confirmar.value
+         );
 
-                                                                                ){
+         setTimeout(()=>{
 
-                                                                                mensagem.innerHTML =
+         toast.remove();
 
-                                                                                "As senhas não coincidem.";
+         },3000);
 
-                                                                                mensagem.style.color =
+         }
 
-                                                                                "red";
 
-                                                                                return;
+         /* BOTÕES */
 
-                                                                                }
+         const botoes =
 
+         document.querySelectorAll(
 
-                                                                                mensagem.innerHTML =
+         ".food-card button"
 
-                                                                                "Cadastro realizado com sucesso!";
+         );
 
-                                                                                mensagem.style.color =
+         botoes.forEach(btn=>{
 
-                                                                                "#16a34a";
+         btn.addEventListener(
 
+         "click",
 
-                                                                                form.reset();
+         ()=>{
 
-                                                                                }
+         mostrarToast(
 
-                                                                                );
+         "Item adicionado ao pedido"
 
+         );
 
-                                                                                /* CONTADOR DE ACESSOS */
+         }
 
-                                                                                let acessos =
+         );
 
-                                                                                localStorage.getItem(
+         });
 
-                                                                                "acessos"
 
-                                                                                );
+         /* MENU MOBILE */
 
+         const menuBtn =
 
-                                                                                if(
+         document.querySelector(
 
-                                                                                acessos == null
+         ".menu-mobile"
 
-                                                                                ){
+         );
 
-                                                                                acessos = 0;
+         const nav =
 
-                                                                                }
+         document.querySelector(
 
+         "nav"
 
-                                                                                acessos++;
+         );
 
-                                                                                localStorage.setItem(
+         if(menuBtn){
 
-                                                                                "acessos",
+         menuBtn.addEventListener(
 
-                                                                                acessos
+         "click",
 
-                                                                                );
+         ()=>{
 
+         nav.classList.toggle(
 
-                                                                                /* CAIXA FLUTUANTE */
+         "ativo"
 
-                                                                                const contador =
+         );
 
-                                                                                document.createElement(
+         });
 
-                                                                                "div"
+         }
 
-                                                                                );
 
+         /* ACESSOS */
 
-                                                                                contador.innerHTML =
+         let acessos =
 
-                                                                                "👁️ Acessos: " +
+         localStorage.getItem(
 
-                                                                                acessos;
+         "baratier"
 
+         );
 
-                                                                                contador.style.position =
+         if(acessos==null){
 
-                                                                                "fixed";
+         acessos = 0;
 
-                                                                                contador.style.right =
+         }
 
-                                                                                "20px";
+         acessos++;
 
-                                                                                contador.style.bottom =
+         localStorage.setItem(
 
-                                                                                "20px";
+         "baratier",
 
-                                                                                contador.style.background =
+         acessos
 
-                                                                                "#38bdf8";
+         );
 
-                                                                                contador.style.padding =
+         const contador =
 
-                                                                                "14px 22px";
+         document.createElement(
 
-                                                                                contador.style.borderRadius =
+         "div"
 
-                                                                                "12px";
+         );
 
-                                                                                contador.style.color =
+         contador.innerHTML =
 
-                                                                                "white";
+         "👁 " + acessos +
+         " acessos";
 
-                                                                                contador.style.fontWeight =
+         contador.style.position =
 
-                                                                                "bold";
+         "fixed";
 
-                                                                                contador.style.boxShadow =
+         contador.style.bottom =
 
-                                                                                "0 0 20px rgba(0,0,0,.3)";
+         "25px";
 
-                                                                                contador.style.zIndex =
+         contador.style.right =
 
-                                                                                "9999";
+         "25px";
 
+         contador.style.background =
 
-                                                                                document.body.appendChild(
+         "#38bdf8";
 
-                                                                                contador
+         contador.style.padding =
 
-                                                                                );
+         "12px 20px";
 
+         contador.style.borderRadius =
 
-                                                                                /* ANIMAÇÕES */
+         "15px";
 
-                                                                                const elementos =
+         contador.style.color =
 
-                                                                                document.querySelectorAll(
+         "white";
 
-                                                                                ".card, .sobre, .box, .grid img"
+         contador.style.fontWeight =
 
-                                                                                );
+         "700";
 
+         contador.style.boxShadow =
 
-                                                                                function revelar(){
+         "0 0 25px rgba(0,0,0,.3)";
 
-                                                                                const altura =
+         contador.style.zIndex =
 
-                                                                                window.innerHeight;
+         "9999";
 
+         document.body.appendChild(
 
-                                                                                elementos.forEach(
+         contador
 
-                                                                                item=>{
+         );
 
-                                                                                const topo =
 
-                                                                                item.getBoundingClientRect()
+         /* SCROLL REVEAL */
 
-                                                                                .top;
+         const reveal = () => {
 
+         const elementos =
 
-                                                                                if(
+         document.querySelectorAll(
 
-                                                                                topo <
+         ".food-card,.review,.mini-card,.stat"
 
-                                                                                altura - 120
+         );
 
-                                                                                ){
+         elementos.forEach(el=>{
 
-                                                                                item.style.opacity =
+         const top =
 
-                                                                                "1";
+         el.getBoundingClientRect()
 
-                                                                                item.style.transform =
+         .top;
 
-                                                                                "translateY(0)";
+         if(top <
 
-                                                                                }
+         window.innerHeight - 100){
 
-                                                                                }
+         el.classList.add(
 
-                                                                                );
+         "show"
 
-                                                                                }
+         );
 
+         }
 
-                                                                                elementos.forEach(
+         });
 
-                                                                                item=>{
+         };
 
-                                                                                item.style.opacity =
+         window.addEventListener(
 
-                                                                                "0";
+         "scroll",
 
-                                                                                item.style.transform =
+         reveal
 
-                                                                                "translateY(40px)";
+         );
 
-                                                                                item.style.transition =
+         reveal();
 
-                                                                                ".8s";
 
-                                                                                }
+         /* VOLTAR AO TOPO */
 
-                                                                                );
+         const topo =
 
+         document.createElement(
 
-                                                                                window.addEventListener(
+         "button"
 
-                                                                                "scroll",
+         );
 
-                                                                                revelar
+         topo.innerHTML = "↑";
 
-                                                                                );
+         topo.style.position =
 
+         "fixed";
 
-                                                                                revelar();
+         topo.style.bottom =
 
+         "90px";
 
-                                                                                /* HEADER DINÂMICO */
+         topo.style.right =
 
-                                                                                window.addEventListener(
+         "25px";
 
-                                                                                "scroll",
+         topo.style.width =
 
-                                                                                ()=>{
+         "50px";
 
-                                                                                const header =
+         topo.style.height =
 
-                                                                                document.querySelector(
+         "50px";
 
-                                                                                "header"
+         topo.style.border =
 
-                                                                                );
+         "none";
 
+         topo.style.borderRadius =
 
-                                                                                if(
+         "50%";
 
-                                                                                window.scrollY > 80
+         topo.style.background =
 
-                                                                                ){
+         "#0ea5e9";
 
-                                                                                header.style.background =
+         topo.style.color =
 
-                                                                                "rgba(2,6,23,.98)";
+         "white";
 
-                                                                                }
+         topo.style.fontSize =
 
-                                                                                else{
+         "22px";
 
-                                                                                header.style.background =
+         topo.style.cursor =
 
-                                                                                "rgba(15,23,42,.95)";
+         "pointer";
 
-                                                                                }
+         topo.style.zIndex =
 
-                                                                                }
+         "9999";
 
-                                                                                );
+         topo.style.display =
 
+         "none";
 
-                                                                                /* FORM CONTATO */
+         document.body.appendChild(
 
-                                                                                const contato =
+         topo
 
-                                                                                document.querySelector(
+         );
 
-                                                                                ".contato form"
+         window.addEventListener(
 
-                                                                                );
+         "scroll",
 
+         ()=>{
 
-                                                                                contato.addEventListener(
+         if(window.scrollY >
 
-                                                                                "submit",
+         500){
 
-                                                                                function(e){
+         topo.style.display =
 
-                                                                                e.preventDefault();
+         "block";
 
-                                                                                alert(
+         }
 
-                                                                                "Mensagem enviada com sucesso!"
+         else{
 
-                                                                                );
+         topo.style.display =
 
-                                                                                contato.reset();
+         "none";
 
-                                                                                }
+         }
 
-                                                                                );
+         }
 
+         );
 
-                                                                                /* TEMA ESCURO / CLARO */
+         topo.addEventListener(
 
-                                                                                let temaEscuro = true;
+         "click",
 
+         ()=>{
 
-                                                                                function alternarTema(){
+         window.scrollTo({
 
-                                                                                if(
+         top:0,
 
-                                                                                temaEscuro
+         behavior:"smooth"
 
-                                                                                ){
+         });
 
-                                                                                document.body.style.background =
+         }
 
-                                                                                "#ffffff";
+         );
 
-                                                                                document.body.style.color =
 
-                                                                                "#111827";
+         /* RESERVA */
 
-                                                                                temaEscuro = false;
+         const reservaBtn =
 
-                                                                                }
+         document.querySelector(
 
-                                                                                else{
+         ".btn-primary"
 
-                                                                                document.body.style.background =
+         );
 
-                                                                                "#0f172a";
+         if(reservaBtn){
 
-                                                                                document.body.style.color =
+         reservaBtn.addEventListener(
 
-                                                                                "#ffffff";
+         "click",
 
-                                                                                temaEscuro = true;
+         ()=>{
 
-                                                                                }
+         mostrarToast(
 
-                                                                                }
+         "Mesa reservada com sucesso!"
 
+         );
 
-                                                                                /* BOAS-VINDAS */
+         }
 
-                                                                                setTimeout(
+         );
 
-                                                                                ()=>{
+         }
 
-                                                                                console.log(
 
-                                                                                "BARATIER SYSTEM carregado."
+         /* CARDÁPIO */
 
-                                                                                );
+         const cardapioBtn =
 
-                                                                                },
+         document.querySelector(
 
-                                                                                1000
+         ".btn-secondary"
 
-                                                                                );
+         );
 
+         if(cardapioBtn){
 
-                                                                                /* RELÓGIO */
+         cardapioBtn.addEventListener(
 
-                                                                                function atualizarHora(){
+         "click",
 
-                                                                                const agora =
+         ()=>{
 
-                                                                                new Date();
+         document.querySelector(
 
+         "#menu"
 
-                                                                                const hora =
+         ).scrollIntoView({
 
-                                                                                agora.toLocaleTimeString();
+         behavior:"smooth"
 
+         });
 
-                                                                                console.log(
+         }
 
-                                                                                "Horário:",
+         );
 
-                                                                                hora
+         }
 
-                                                                                );
 
-                                                                                }
+         /* CONSOLE */
 
+         console.log(
 
-                                                                                setInterval(
+         "%cBARATIER SYSTEM PREMIUM",
 
-                                                                                atualizarHora,
+         "color:#38bdf8;font-size:22px;font-weight:bold"
 
-                                                                                1000
+         );
 
-                                                                                );
+         console.log(
+
+         "Desenvolvido por HERIC Antônio e Wesley Queiroz"
+
+         );
