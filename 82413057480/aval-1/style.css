@@ -1,0 +1,34 @@
+// Função para criar uma árvore
+function criarArvore(x, z) {
+    const arvore = new THREE.Group();
+
+    // Tronco
+    const tronco = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.15, 0.2, 1, 8),
+        new THREE.MeshStandardMaterial({ color: 0x8B4513 })
+    );
+    tronco.position.y = 0.5;
+    arvore.add(tronco);
+
+    // Copa
+    const copa = new THREE.Mesh(
+        new THREE.ConeGeometry(0.7, 1.5, 12),
+        new THREE.MeshStandardMaterial({ color: 0x228B22 })
+    );
+    copa.position.y = 1.7;
+    arvore.add(copa);
+
+    arvore.position.set(x, 0, z);
+    scene.add(arvore);
+}
+
+// Criar várias árvores aleatórias
+for (let i = 0; i < 80; i++) {
+    const x = (Math.random() - 0.5) * 45;
+    const z = (Math.random() - 0.5) * 45;
+
+    // Evita árvores muito perto do jogador
+    if (Math.abs(x) < 3 && Math.abs(z) < 3) continue;
+
+    criarArvore(x, z);
+}
