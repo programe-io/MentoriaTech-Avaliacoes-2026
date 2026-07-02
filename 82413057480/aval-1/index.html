@@ -2,96 +2,99 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Jogo 3D</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vogle</title>
+
 <style>
-body{
+*{
     margin:0;
-    overflow:hidden;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
 }
-canvas{
-    display:block;
+
+body{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+    background:#fff;
+}
+
+.container{
+    text-align:center;
+}
+
+.logo{
+    font-size:70px;
+    font-weight:bold;
+    margin-bottom:30px;
+}
+
+.logo span:nth-child(1){color:#4285F4;}
+.logo span:nth-child(2){color:#EA4335;}
+.logo span:nth-child(3){color:#FBBC05;}
+.logo span:nth-child(4){color:#4285F4;}
+.logo span:nth-child(5){color:#34A853;}
+
+.search-box{
+    width:600px;
+    max-width:90%;
+    padding:15px 20px;
+    border:1px solid #dcdcdc;
+    border-radius:30px;
+    font-size:18px;
+    outline:none;
+    transition:.3s;
+}
+
+.search-box:focus{
+    box-shadow:0 0 10px rgba(0,0,0,.15);
+}
+
+.buttons{
+    margin-top:30px;
+}
+
+button{
+    padding:12px 22px;
+    margin:5px;
+    border:none;
+    border-radius:5px;
+    background:#f8f9fa;
+    cursor:pointer;
+    font-size:15px;
+    transition:.3s;
+}
+
+button:hover{
+    background:#e8eaed;
 }
 </style>
-<link href="style.css" rel="stylesheet"></head>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
 <body>
 
-<script type="module">
-import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.166/build/three.module.js";
+<div class="container">
 
-// Cena
-const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x87CEEB);
+    <div class="logo">
+        <span>V</span>
+        <span>o</span>
+        <span>g</span>
+        <span>l</span>
+        <span>e</span>
+    </div>
 
-// Câmera
-const camera = new THREE.PerspectiveCamera(
-    75,
-    window.innerWidth/window.innerHeight,
-    0.1,
-    1000
-);
+    <input class="search-box" type="text" placeholder="Pesquisar no Vogle">
 
-camera.position.set(0,2,5);
+    <div class="buttons">
+        <button>Pesquisar</button>
+        <button>Estou com sorte</button>
+    </div>
 
-// Renderizador
-const renderer = new THREE.WebGLRenderer({antialias:true});
-renderer.setSize(window.innerWidth,window.innerHeight);
-document.body.appendChild(renderer.domElement);
+</div>
 
-// Luz
-const light = new THREE.DirectionalLight(0xffffff,2);
-light.position.set(5,10,5);
-scene.add(light);
-
-scene.add(new THREE.AmbientLight(0xffffff,0.5));
-
-// Chão
-const floor = new THREE.Mesh(
-    new THREE.PlaneGeometry(50,50),
-    new THREE.MeshStandardMaterial({color:0x44aa44})
-);
-floor.rotation.x = -Math.PI/2;
-scene.add(floor);
-
-// Jogador
-const player = new THREE.Mesh(
-    new THREE.BoxGeometry(),
-    new THREE.MeshStandardMaterial({color:0xff0000})
-);
-player.position.y = 0.5;
-scene.add(player);
-
-// Controles
-const keys = {};
-
-document.addEventListener("keydown",(e)=>keys[e.key]=true);
-document.addEventListener("keyup",(e)=>keys[e.key]=false);
-
-function update(){
-
-    if(keys["w"]) player.position.z -= 0.08;
-    if(keys["s"]) player.position.z += 0.08;
-    if(keys["a"]) player.position.x -= 0.08;
-    if(keys["d"]) player.position.x += 0.08;
-
-    camera.position.x = player.position.x;
-    camera.position.z = player.position.z + 5;
-    camera.lookAt(player.position);
-}
-
-function animate(){
-    requestAnimationFrame(animate);
-    update();
-    renderer.render(scene,camera);
-}
-
-animate();
-
-window.addEventListener("resize",()=>{
-    camera.aspect = window.innerWidth/window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth,window.innerHeight);
-});
-</script>
-
-<script src="script.js"></script></body>
+</body>
 </html>
