@@ -1,18 +1,32 @@
-const imagens = [
-    "https://picsum.photos/id/1015/600/350",
-    "https://picsum.photos/id/1025/600/350",
-    "https://picsum.photos/id/1043/600/350",
-    "https://picsum.photos/id/1069/600/350"
-];
+const botao = document.getElementById("modo");
 
-let indice = 0;
+botao.addEventListener("click", () => {
+    document.body.classList.toggle("claro");
 
-function trocarImagem() {
-    indice++;
-
-    if (indice >= imagens.length) {
-        indice = 0;
+    if(document.body.classList.contains("claro")){
+        botao.textContent="🌞";
+    }else{
+        botao.textContent="🌙";
     }
+});
 
-    document.getElementById("imagem").src = imagens[indice];
-}
+const pesquisa = document.getElementById("pesquisa");
+const cards = document.querySelectorAll(".card");
+
+pesquisa.addEventListener("keyup", () => {
+
+    let texto = pesquisa.value.toLowerCase();
+
+    cards.forEach(card => {
+
+        let titulo = card.querySelector("h2").textContent.toLowerCase();
+
+        if(titulo.indexOf(texto) > -1){
+            card.style.display="block";
+        }else{
+            card.style.display="none";
+        }
+
+    });
+
+});
