@@ -1,27 +1,110 @@
 const produtos = [
-        {
-                nome: "Tartare de Atum com Avocado",
-                        preco: 78,
-                                img: "https://images.unsplash.com/photo-1546039907-7fa05f864c02?w=500"
-                                    },
-                                        {
-                                                nome: "Filé Mignon ao Molho Trufado",
-                                                        preco: 145,
-                                                                img: "https://images.unsplash.com/photo-1546241072-48010ad2862c?w=500"
-                                                                    },
-                                                                        {
-                                                                                nome: "Risotto de Lagosta e Açafrão",
-                                                                                        preco: 189,
-                                                                                                img: "https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=500"
-                                                                                                    },
-                                                                                                        // ...continua exatamente igual ao seu código...
-                                                                                                        ];
+        { nome: "Tartare de Atum com Avocado", preco: 78, img: "https://images.unsplash.com/photo-1546039907-7fa05f864c02?w=500" },
+            { nome: "Filé Mignon ao Molho Trufado", preco: 145, img: "https://images.unsplash.com/photo-1546241072-48010ad2862c?w=500" },
+                { nome: "Risotto de Lagosta e Açafrão", preco: 189, img: "https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=500" },
+                    { nome: "Carré de Cordeiro Persillade", preco: 162, img: "https://images.unsplash.com/photo-1544025162-d76694265947?w=500" },
+                        { nome: "Vinho Tinto Grand Reserva", preco: 320, img: "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=500" },
+                            { nome: "Petit Gâteau de Pistache", preco: 54, img: "https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=500" },
+                                { nome: "Coquetel Signature Gold", preco: 45, img: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=500" },
+                                    { nome: "Água Gaseificada Gourmet", preco: 15, img: "https://images.unsplash.com/photo-1559839914-17aae19cea1e?w=500" }
+                                    ];
+
+                                    let userEmail = "";
+                                    let cart = [];
+
+                                    // Renderizar o menu
+                                    const menuGrid = document.getElementById("menuItems");
+
+                                    produtos.forEach(p => {
+                                        menuGrid.innerHTML += `
+                                                <div class="food-card">
+                                                            <img src="${p.img}" alt="${p.nome}">
+                                                                        <div class="food-content">
+                                                                                        <h4>${p.nome}</h4>
+                                                                                                        <p class="food-price">R$ ${p.preco.toFixed(2)}</p>
+                                                                                                                        <button class="btn-add" onclick="adicionarItem('${p.nome}', ${p.preco})">
+                                                                                                                                            ADICIONAR AO PEDIDO
+                                                                                                                                                            </button>
+                                                                                                                                                                        </div>
+                                                                                                                                                                                </div>
+                                                                                                                                                                                    `;
+                                                                                                                                                                                    });
+
+                                                                                                                                                                                    function irParaLogin() {
+                                                                                                                                                                                        userEmail = document.getElementById("cadEmail").value;
+
+                                                                                                                                                                                            if (!userEmail) {
+                                                                                                                                                                                                    alert("Por favor, identifique o colaborador.");
+                                                                                                                                                                                                            return;
+                                                                                                                                                                                                                }
+
+                                                                                                                                                                                                                    document.getElementById("sessaoCadastro").classList.add("hidden");
+                                                                                                                                                                                                                        document.getElementById("sessaoLogin").classList.remove("hidden");
+                                                                                                                                                                                                                        }
+
+                                                                                                                                                                                                                        function autenticar() {
+                                                                                                                                                                                                                            const email = document.getElementById("loginEmail").value;
+
+                                                                                                                                                                                                                                if (email === userEmail) {
+                                                                                                                                                                                                                                        document.getElementById("authArea").style.display = "none";
+                                                                                                                                                                                                                                                document.getElementById("sessaoPedido").classList.remove("hidden");
+                                                                                                                                                                                                                                                    } else {
+                                                                                                                                                                                                                                                            alert("E-mail não autorizado.");
+                                                                                                                                                                                                                                                                }
+                                                                                                                                                                                                                                                                }
+
+                                                                                                                                                                                                                                                                function adicionarItem(nome, preco) {
+                                                                                                                                                                                                                                                                    cart.push({ nome, preco });
+                                                                                                                                                                                                                                                                        document.getElementById("contagem").innerText = cart.length;
+                                                                                                                                                                                                                                                                        }
+
+                                                                                                                                                                                                                                                                        function irParaResumo() {
+                                                                                                                                                                                                                                                                            const cliente = document.getElementById("clienteNome").value;
+                                                                                                                                                                                                                                                                                const mesa = document.getElementById("mesa").value;
+
+                                                                                                                                                                                                                                                                                    if (!cliente || !mesa || cart.length === 0) {
+                                                                                                                                                                                                                                                                                            alert("Verifique Cliente, Mesa e Itens.");
+                                                                                                                                                                                                                                                                                                    return;
+                                                                                                                                                                                                                                                                                                        }
+
+                                                                                                                                                                                                                                                                                                            document.getElementById("sessaoPedido").classList.add("hidden");
+                                                                                                                                                                                                                                                                                                                document.getElementById("sessaoResumo").classList.remove("hidden");
+
+                                                                                                                                                                                                                                                                                                                    document.getElementById("resumoCabecalho").innerHTML =
+                                                                                                                                                                                                                                                                                                                            `<strong>CONVIDADO:</strong> ${cliente}<br><strong>MESA:</strong> ${mesa}`;
+
+                                                                                                                                                                                                                                                                                                                                const lista = document.getElementById("itensLista");
+                                                                                                                                                                                                                                                                                                                                    lista.innerHTML = "";
+
+                                                                                                                                                                                                                                                                                                                                        let total = 0;
+
+                                                                                                                                                                                                                                                                                                                                            cart.forEach(item => {
+                                                                                                                                                                                                                                                                                                                                                    lista.innerHTML += `
+                                                                                                                                                                                                                                                                                                                                                                <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
+                                                                                                                                                                                                                                                                                                                                                                                <span>${item.nome}</span>
+                                                                                                                                                                                                                                                                                                                                                                                                <span>R$ ${item.preco.toFixed(2)}</span>
+                                                                                                                                                                                                                                                                                                                                                                                                            </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                    `;
+                                                                                                                                                                                                                                                                                                                                                                                                                            total += item.preco;
+                                                                                                                                                                                                                                                                                                                                                                                                                                });
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                    document.getElementById("totalFinal").innerText =
+                                                                                                                                                                                                                                                                                                                                                                                                                                            `Total: R$ ${total.toFixed(2)}`;
+                                                                                                                                                                                                                                                                                                                                                                                                                                            }
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                            function voltar() {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                document.getElementById("sessaoResumo").classList.add("hidden");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                    document.getElementById("sessaoPedido").classList.remove("hidden");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                    }
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                    function finalizar() {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        alert("Pedido enviado para a alta cozinha. Bom atendimento!");
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                            cart = [];
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                document.getElementById("contagem").innerText = "0";
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                    document.getElementById("clienteNome").value = "";
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                        voltar();
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                        }
 ]
-function finalizar() {
-        alert("Pedido enviado para a alta cozinha. Bom atendimento!");
-            cart = [];
-                document.getElementById("contagem").innerText = "0";
-                    document.getElementById("clienteNome").value = "";
-                        voltar();
-                        }
-}
