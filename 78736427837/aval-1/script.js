@@ -1,63 +1,34 @@
-// Tema escuro
+// Mostrar ou esconder texto
+function mostrar(indice){
 
-const tema = document.getElementById("tema");
+const textos = document.querySelectorAll(".extra");
 
-tema.onclick = () => {
+if(textos[indice].style.display === "block"){
 
-document.body.classList.toggle("dark");
-
-tema.textContent =
-document.body.classList.contains("dark") ? "☀️" : "🌙";
-
-};
-
-// Pesquisa
-
-const busca = document.getElementById("buscar");
-
-busca.addEventListener("keyup", () => {
-
-const texto = busca.value.toLowerCase();
-
-const cards = document.querySelectorAll(".card");
-
-cards.forEach(card => {
-
-const titulo = card.querySelector("h2").textContent.toLowerCase();
-
-card.style.display = titulo.includes(texto)
-? "block"
-: "none";
-
-});
-
-});
-
-// Curtidas
-
-const botoes = document.querySelectorAll(".curtir");
-
-botoes.forEach(botao=>{
-
-let curtido=false;
-
-botao.onclick=()=>{
-
-curtido=!curtido;
-
-if(curtido){
-
-botao.innerHTML="💚 Curtido";
-
-botao.style.background="#16a085";
+textos[indice].style.display = "none";
 
 }else{
 
-botao.innerHTML="❤️ Curtir";
-
-botao.style.background="#27ae60";
+textos[indice].style.display = "block";
 
 }
+
+}
+
+// Modo escuro
+const botao = document.getElementById("modo");
+
+botao.addEventListener("click", ()=>{
+
+document.body.classList.toggle("dark");
+
+if(document.body.classList.contains("dark")){
+
+botao.innerHTML = "☀️";
+
+}else{
+
+botao.innerHTML = "🌙";
 
 }
 
