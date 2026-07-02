@@ -1,56 +1,68 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Snake</title>
-<style>
-body{
-    text-align:center;
-    background:#222;
-}
-canvas{
-    background:black;
-}
-</style>
-</head>
-<body>
+const botao = document.getElementById("explorar");
 
-<h1 style="color:white;">Snake</h1>
-<canvas id="game" width="400" height="400"></canvas>
+botao.addEventListener("click",()=>{
 
-<script>
-const canvas = document.getElementById("game");
-const ctx = canvas.getContext("2d");
+window.scrollTo({
 
-let x = 200;
-let y = 200;
-let dx = 20;
-let dy = 0;
+top:700,
 
-document.addEventListener("keydown", e=>{
-    if(e.key=="ArrowUp"){dx=0;dy=-20;}
-    if(e.key=="ArrowDown"){dx=0;dy=20;}
-    if(e.key=="ArrowLeft"){dx=-20;dy=0;}
-    if(e.key=="ArrowRight"){dx=20;dy=0;}
+behavior:"smooth"
+
 });
 
-function desenhar(){
-    ctx.clearRect(0,0,400,400);
+});
 
-    x += dx;
-    y += dy;
+let numero=0;
 
-    if(x<0)x=380;
-    if(x>380)x=0;
-    if(y<0)y=380;
-    if(y>380)y=0;
+const contador=document.getElementById("contador");
 
-    ctx.fillStyle="lime";
-    ctx.fillRect(x,y,20,20);
+setInterval(()=>{
+
+numero++;
+
+contador.innerHTML=numero.toLocaleString();
+
+},40);
+
+const cards=document.querySelectorAll(".card");
+
+cards.forEach(card=>{
+
+card.addEventListener("mouseenter",()=>{
+
+card.style.boxShadow="0 0 30px cyan";
+
+});
+
+card.addEventListener("mouseleave",()=>{
+
+card.style.boxShadow="none";
+
+});
+
+});
+
+const menu=document.querySelector(".menu-mobile");
+
+const nav=document.querySelector("nav");
+
+menu.addEventListener("click",()=>{
+
+if(nav.style.display=="flex"){
+
+nav.style.display="none";
+
+}else{
+
+nav.style.display="flex";
+nav.style.flexDirection="column";
+nav.style.position="absolute";
+nav.style.top="80px";
+nav.style.right="20px";
+nav.style.background="#1b1e28";
+nav.style.padding="20px";
+nav.style.borderRadius="10px";
+
 }
 
-setInterval(desenhar,100);
-</script>
-
-</body>
-</html>
+});
