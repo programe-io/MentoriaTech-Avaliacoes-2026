@@ -1,20 +1,17 @@
-// Função ativada quando o botão "Curtir" é clicado
-function curtirPost(botaoClicado) {
-    // Encontra o elemento de texto (span) que guarda o número de curtidas dentro do botão
-    let spanContador = botaoClicado.querySelector('.contador');
-
-    // Pega o número atual, transforma em número inteiro e soma 1
-    let curtidasAtuais = parseInt(spanContador.innerText);
-    let novasCurtidas = curtidasAtuais + 1;
-
-    // Atualiza o texto na tela com o novo número
-    spanContador.innerText = novasCurtidas;
-
-    // Efeito visual rápido para mostrar que o clique funcionou
-    botaoClicado.style.transform = 'scale(1.1)';
+function likePost(botao) {
+    // Pega o número atual
+    const contadorElemento = botao.querySelector('.contador');
+    let curtidas = parseInt(contadorElemento.innerText);
     
-    // Volta ao tamanho normal após 200 milissegundos
+    // Altera o coração para preenchido e atualiza o número
+    botao.innerHTML = `♥ <span class="contador">${curtidas + 1}</span>`;
+    
+    // Adiciona uma classe para manter a cor preta
+    botao.classList.add('curtido');
+    
+    // Animação sutil de clique (pisca rapidamente a opacidade)
+    botao.style.opacity = '0.5';
     setTimeout(() => {
-        botaoClicado.style.transform = 'scale(1)';
-    }, 200);
+        botao.style.opacity = '1';
+    }, 150);
 }
