@@ -1,32 +1,38 @@
-const html = document.querySelectorAll("textarea")[0];
-const css = document.querySelectorAll("textarea")[1];
-const js = document.querySelectorAll("textarea")[2];
-const preview = document.getElementById("preview");
+const jogos = [
+"Minecraft",
+"Valorant",
+"Elden Ring",
+"Cyberpunk 2077",
+"Terraria",
+"Hollow Knight"
+];
 
-function atualizar() {
+function jogoAleatorio(){
 
-    const codigo = `
-    <html>
-    <head>
-    <style>
-    ${css.value}
-    </style>
-    </head>
+let numero = Math.floor(Math.random()*jogos.length);
 
-    <body>
-    ${html.value}
+alert("🎮 Hoje você pode jogar: " + jogos[numero]);
 
-    <script>
-    ${js.value}
-    <\/script>
-
-    </body>
-    </html>
-    `;
-
-    preview.srcdoc = codigo;
 }
 
-html.addEventListener("input", atualizar);
-css.addEventListener("input", atualizar);
-js.addEventListener("input", atualizar);
+const pesquisa = document.getElementById("pesquisa");
+
+pesquisa.addEventListener("keyup",()=>{
+
+const texto = pesquisa.value.toLowerCase();
+
+const cards = document.querySelectorAll(".card");
+
+cards.forEach(card=>{
+
+const nome = card.innerText.toLowerCase();
+
+if(nome.includes(texto)){
+card.style.display="block";
+}else{
+card.style.display="none";
+}
+
+});
+
+});
