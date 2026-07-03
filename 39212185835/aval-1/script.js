@@ -1,37 +1,90 @@
+let carrinho = [];
 let total = 0;
 
-function adicionar(nome, preco){
+// Adiciona um produto ao carrinho
+function adicionar(nome, preco) {
 
-    const lista = document.getElementById("lista");
+    carrinho.push({
+        nome: nome,
+        preco: preco
+    });
 
-    const item = document.createElement("li");
-
-    item.textContent = `${nome} - R$ ${preco}`;
-
-    lista.appendChild(item);
-
-    total += preco;
-
-    document.getElementById("total").textContent = total.toFixed(2);
+    atualizarCarrinho();
 
 }
 
-function finalizar(){
+// Atualiza o carrinho na tela
+function atualizarCarrinho() {
 
-    if(total === 0){
+    const lista = document.getElementById("lista");
+    const totalElemento = document.getElementById("total");
+
+    lista.innerHTML = "";
+
+    total = 0;
+
+    carrinho.forEach((produto, indice) => {
+
+        total += produto.preco;
+
+        const item = document.createElement("li");
+
+        item.innerHTML = `
+            <span>${produto.nome}<br>R$ ${produto.preco.toFixed(2)}</span>
+            <button onclick="remover(${indice})">🗑️</button>
+        `;
+
+        lista.appendChild(item);
+
+    });
+
+    totalElemento.textContent = total.toFixed(2);
+
+}
+
+// Remove um produto
+function remover(indice) {
+
+    carrinho.splice(indice, 1);
+
+    atualizarCarrinho();
+
+}
+
+// Finaliza a compra
+function finalizar() {
+
+    if (carrinho.length === 0) {
 
         alert("Seu carrinho está vazio!");
 
-    }else{
-
-        alert(`Compra realizada com sucesso!\nTotal: R$ ${total.toFixed(2)}`);
-
-        document.getElementById("lista").innerHTML = "";
-
-        total = 0;
-
-        document.getElementById("total").textContent = "0.00";
+        return;
 
     }
+
+    let mensagem = "===== COMPRA REALIZADA =====\n\n";
+
+    carrinho.forEach(produto => {
+
+        mensagem += `${produto.nome} - R$ ${produto.preco.toFixed(2)}\n`;
+
+    });
+
+    mensagem += `\nTotal: R$ ${total.toFixed(2)}`;
+
+    alert(mensagem);
+
+    carrinho = [];
+
+    atualizarCarrinho();
+
+}
+
+// Limpar carrinho
+function limparCarrinho() {
+
+    carrinho = [];
+
+    atualizarCarrinho();
 
 }
