@@ -1,90 +1,27 @@
-let carrinho = [];
-let total = 0;
+function mostrarMensagem(){
 
-// Adiciona um produto ao carrinho
-function adicionar(nome, preco) {
-
-    carrinho.push({
-        nome: nome,
-        preco: preco
-    });
-
-    atualizarCarrinho();
+alert("🌍 Prepare as malas! Sua próxima aventura começa aqui.");
 
 }
 
-// Atualiza o carrinho na tela
-function atualizarCarrinho() {
+function enviar(){
 
-    const lista = document.getElementById("lista");
-    const totalElemento = document.getElementById("total");
+let nome=document.getElementById("nome").value;
 
-    lista.innerHTML = "";
+let email=document.getElementById("email").value;
 
-    total = 0;
+if(nome==="" || email===""){
 
-    carrinho.forEach((produto, indice) => {
+alert("Preencha todos os campos.");
 
-        total += produto.preco;
-
-        const item = document.createElement("li");
-
-        item.innerHTML = `
-            <span>${produto.nome}<br>R$ ${produto.preco.toFixed(2)}</span>
-            <button onclick="remover(${indice})">🗑️</button>
-        `;
-
-        lista.appendChild(item);
-
-    });
-
-    totalElemento.textContent = total.toFixed(2);
+return;
 
 }
 
-// Remove um produto
-function remover(indice) {
+alert("Obrigado, "+nome+"!\nRecebemos seu pedido de orçamento.\nEntraremos em contato pelo e-mail:\n"+email);
 
-    carrinho.splice(indice, 1);
+document.getElementById("nome").value="";
 
-    atualizarCarrinho();
-
-}
-
-// Finaliza a compra
-function finalizar() {
-
-    if (carrinho.length === 0) {
-
-        alert("Seu carrinho está vazio!");
-
-        return;
-
-    }
-
-    let mensagem = "===== COMPRA REALIZADA =====\n\n";
-
-    carrinho.forEach(produto => {
-
-        mensagem += `${produto.nome} - R$ ${produto.preco.toFixed(2)}\n`;
-
-    });
-
-    mensagem += `\nTotal: R$ ${total.toFixed(2)}`;
-
-    alert(mensagem);
-
-    carrinho = [];
-
-    atualizarCarrinho();
-
-}
-
-// Limpar carrinho
-function limparCarrinho() {
-
-    carrinho = [];
-
-    atualizarCarrinho();
+document.getElementById("email").value="";
 
 }
