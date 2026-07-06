@@ -1,54 +1,52 @@
-// BOTÃO DE TEMA
-const body = document.querySelector("body");
+// Botão de modo escuro
 
-const btnTema = document.createElement("button");
-btnTema.innerText = "🌗 Mudar Tema";
-btnTema.style.position = "fixed";
-btnTema.style.top = "10px";
-btnTema.style.right = "10px";
-btnTema.style.padding = "10px";
-btnTema.style.cursor = "pointer";
+const botaoTema = document.createElement("button");
+botaoTema.innerHTML = "🌙 Modo Escuro";
 
-document.body.appendChild(btnTema);
+document.querySelector("header").appendChild(botaoTema);
 
-btnTema.addEventListener("click", () => {
-  body.classList.toggle("light-mode");
+botaoTema.addEventListener("click", function(){
+
+    document.body.classList.toggle("dark");
+
+    if(document.body.classList.contains("dark")){
+        botaoTema.innerHTML = "☀️ Modo Claro";
+    }else{
+        botaoTema.innerHTML = "🌙 Modo Escuro";
+    }
+
 });
 
-// CURTIDAS
-const posts = document.querySelectorAll(".post");
+// Curtidas para cada artigo
 
-posts.forEach(post => {
-  const likeBtn = document.createElement("button");
-  likeBtn.innerText = "👍 Curtir";
-  likeBtn.style.marginTop = "10px";
+const artigos = document.querySelectorAll("article");
 
-  post.appendChild(likeBtn);
+artigos.forEach(function(artigo){
 
-  let likes = 0;
+    let curtidas = 0;
 
-  likeBtn.addEventListener("click", () => {
-    likes++;
-    likeBtn.innerText = `👍 Curtido (${likes})`;
-  });
+    const botao = document.createElement("button");
+    botao.innerHTML = "❤️ Curtir";
+
+    const texto = document.createElement("p");
+    texto.innerHTML = "Curtidas: 0";
+
+    artigo.appendChild(botao);
+    artigo.appendChild(texto);
+
+    botao.addEventListener("click", function(){
+
+        curtidas++;
+        texto.innerHTML = "Curtidas: " + curtidas;
+
+    });
+
 });
 
-// BUSCA
-const search = document.createElement("input");
-search.placeholder = "🔎 Buscar posts...";
-search.style.display = "block";
-search.style.margin = "20px auto";
-search.style.padding = "10px";
-search.style.width = "60%";
+// Mensagem de boas-vindas
 
-document.body.insertBefore(search, document.querySelector(".container"));
+window.onload = function(){
 
-search.addEventListener("keyup", () => {
-  const value = search.value.toLowerCase();
+    alert("Bem-vindo ao Blog da Copa do Mundo! 🏆⚽");
 
-  posts.forEach(post => {
-    post.style.display = post.innerText.toLowerCase().includes(value)
-      ? "block"
-      : "none";
-  });
-});
+};
