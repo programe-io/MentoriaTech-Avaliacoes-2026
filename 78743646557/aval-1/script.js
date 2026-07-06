@@ -1,20 +1,22 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-  <meta charset="UTF-8">
-  <title>Exemplo JS</title>
-</head>
-<body>
+const imagem = document.getElementById("foto");
+const botao = document.getElementById("trocarImagem");
+const mensagem = document.getElementById("mensagem");
 
-  <h1 id="titulo">Texto original</h1>
+const imagens = [
+    "https://picsum.photos/id/1015/700/400",
+    "https://picsum.photos/id/1025/700/400",
+    "https://picsum.photos/id/1035/700/400"
+];
 
-  <button onclick="mudarTexto()">Clique aqui</button>
+let indice = 0;
 
-  <script>
-    function mudarTexto() {
-      document.getElementById("titulo").innerText = "Texto alterado com JavaScript!";
+botao.addEventListener("click", () => {
+    indice++;
+
+    if (indice >= imagens.length) {
+        indice = 0;
     }
-  </script>
 
-</body>
-</html>
+    imagem.src = imagens[indice];
+    mensagem.textContent = "Imagem alterada com sucesso!";
+});
