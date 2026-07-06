@@ -1,50 +1,27 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Trocar Imagem</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      margin-top: 40px;
-    }
+// Informações do perfil
+const perfil = {
+    nome: "Gabriel Cardoso",
+    idade: 15,
+    corFavorita: "Vermelho"
+};
 
-    img {
-      width: 350px;
-      border-radius: 10px;
-      margin-bottom: 20px;
-    }
+// Mensagem no console
+console.log(`Olá! Meu nome é ${perfil.nome}.`);
+console.log(`Tenho ${perfil.idade} anos.`);
+console.log(`Minha cor favorita é ${perfil.corFavorita}.`);
 
-    button {
-      padding: 10px 20px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-  </style>
-</head>
-<body>
+// Mensagem de boas-vindas
+window.onload = function () {
+    alert(`Bem-vindo(a)! Eu sou ${perfil.nome}.`);
 
-  <h1>Trocar Imagem com JavaScript</h1>
+    // Muda a cor do título ao clicar
+    const titulo = document.querySelector("h1");
 
-  <img id="foto" src="https://picsum.photos/id/237/350/250" alt="Imagem">
-
-  <br>
-
-  <button onclick="trocarImagem()">Trocar Imagem</button>
-
-  <script>
-    function trocarImagem() {
-      const imagem = document.getElementById("foto");
-
-      if (imagem.src.includes("237")) {
-        imagem.src = "https://picsum.photos/id/1025/350/250";
-      } else {
-        imagem.src = "https://picsum.photos/id/237/350/250";
-      }
-    }
-  </script>
-
-</body>
-</html>
+    titulo.addEventListener("click", function () {
+        if (titulo.style.color === "blue") {
+            titulo.style.color = "red";
+        } else {
+            titulo.style.color = "blue";
+        }
+    });
+};
