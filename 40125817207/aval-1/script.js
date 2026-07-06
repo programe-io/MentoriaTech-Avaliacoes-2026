@@ -1,28 +1,30 @@
-const btnTema = document.getElementById("temaBtn");
+// Mensagem de boas-vindas
+window.onload = function () {
+    alert("💙 Bem-vindo(a) ao blog da Maria Rita!");
+};
 
-btnTema.addEventListener("click", () => {
+// Mostrar a data e hora
+function mostrarData() {
+    const agora = new Date();
 
-    document.body.classList.toggle("dark");
+    const opcoes = {
+        dateStyle: "full",
+        timeStyle: "short"
+    };
 
-    if(document.body.classList.contains("dark")){
-        btnTema.textContent = "☀️ Modo Claro";
-    }else{
-        btnTema.textContent = "🌙 Modo Escuro";
-    }
+    document.getElementById("data").innerHTML =
+        agora.toLocaleDateString("pt-BR", opcoes);
+}
 
-});
+mostrarData();
+setInterval(mostrarData, 1000);
 
-const botaoLerMais = document.querySelector(".lerMais");
-const textoExtra = document.querySelector(".textoExtra");
+// Botão para mudar a cor do tema
+function mudarTema() {
+    document.body.classList.toggle("escuro");
+}
 
-botaoLerMais.addEventListener("click", () => {
-
-    if(textoExtra.style.display === "block"){
-        textoExtra.style.display = "none";
-        botaoLerMais.textContent = "Ler mais";
-    }else{
-        textoExtra.style.display = "block";
-        botaoLerMais.textContent = "Mostrar menos";
-    }
-
-});
+// Mensagem sobre os hobbies
+function mensagemHobby(hobby) {
+    alert("💙 Meu hobby favorito é: " + hobby);
+}
