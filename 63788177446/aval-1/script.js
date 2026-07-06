@@ -1,14 +1,19 @@
-function responder() {
-    let pergunta = document.getElementById("pergunta").value.toLowerCase();
-    let resposta = document.getElementById("resposta");
+const botaoTema = document.getElementById("btnTema");
 
-    if (pergunta.includes("html")) {
-        resposta.innerHTML = "HTML é a linguagem usada para estruturar páginas web.";
-    } else if (pergunta.includes("css")) {
-        resposta.innerHTML = "CSS é utilizado para estilizar páginas web.";
-    } else if (pergunta.includes("javascript")) {
-        resposta.innerHTML = "JavaScript adiciona interatividade aos sites.";
-    } else {
-        resposta.innerHTML = "Desculpe, ainda não sei responder essa pergunta.";
+botaoTema.addEventListener("click", () => {
+    document.body.classList.toggle("dark");
+
+    if(document.body.classList.contains("dark")){
+        botaoTema.innerHTML = "☀️ Modo Claro";
+    }else{
+        botaoTema.innerHTML = "🌙 Modo Escuro";
     }
-}
+});
+
+const botoes = document.querySelectorAll(".lerMais");
+
+botoes.forEach(botao => {
+    botao.addEventListener("click", () => {
+        alert("Em breve a matéria completa estará disponível!");
+    });
+});
