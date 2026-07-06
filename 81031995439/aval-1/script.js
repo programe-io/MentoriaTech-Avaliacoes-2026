@@ -1,9 +1,9 @@
-const bloco = document.getElementById("grama");
+function mostrarInfo() {
+  const info = document.getElementById("info");
 
-bloco.addEventListener("click", () => {
-    bloco.style.transform = "scale(0.9)";
-
-    setTimeout(() => {
-        bloco.style.transform = "scale(1)";
-    }, 100);
-});
+  if (info.style.display === "none" || info.style.display === "") {
+    info.style.display = "block";
+  } else {
+    info.style.display = "none";
+  }
+}
