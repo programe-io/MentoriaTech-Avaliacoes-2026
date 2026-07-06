@@ -1,31 +1,29 @@
-const botao = document.getElementById("modo");
+const botaoTema = document.getElementById("tema");
 
-botao.addEventListener("click", () => {
-    document.body.classList.toggle("claro");
+botaoTema.onclick = () => {
 
-    if(document.body.classList.contains("claro")){
-        botao.textContent="🌞";
+    document.body.classList.toggle("dark");
+
+    if(document.body.classList.contains("dark")){
+        botaoTema.innerHTML = "☀️ Modo Claro";
     }else{
-        botao.textContent="🌙";
+        botaoTema.innerHTML = "🌙 Modo Escuro";
     }
-});
 
-const pesquisa = document.getElementById("pesquisa");
-const cards = document.querySelectorAll(".card");
+}
 
-pesquisa.addEventListener("keyup", () => {
+const botoes = document.querySelectorAll(".curtir");
 
-    let texto = pesquisa.value.toLowerCase();
+botoes.forEach((botao)=>{
 
-    cards.forEach(card => {
+    let curtidas = 0;
 
-        let titulo = card.querySelector("h2").textContent.toLowerCase();
+    botao.addEventListener("click",()=>{
 
-        if(titulo.indexOf(texto) > -1){
-            card.style.display="block";
-        }else{
-            card.style.display="none";
-        }
+        curtidas++;
+
+        botao.nextElementSibling.innerHTML =
+        "Curtidas: " + curtidas;
 
     });
 
