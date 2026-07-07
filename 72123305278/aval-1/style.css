@@ -1,138 +1,372 @@
-Aqui está um código CSS estruturado e detalhado para estilizar a página de *The Walking Dead*. O visual foi pensado para refletir o clima da série: um fundo escuro ("modo noturno"), tons de cinza e detalhes em vermelho para dar um toque pós-apocalíptico e dramático.
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Subway Runner</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background-color: #0a0b10;
+            color: white;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+        h1 {
+            font-size: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: #fff;
+            text-shadow: 0 0 10px #00f3ff;
+            margin-bottom: 10px;
+        }
+        #game-container {
+            position: relative;
+            width: 400px;
+            height: 600px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(0, 243, 255, 0.2);
+        }
+        canvas {
+            display: block;
+            background: #111424;
+        }
+        /* Interface Superior */
+        #ui {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            right: 15px;
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            font-size: 16px;
+            pointer-events: none;
+        }
+        .ui-box {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 1px solid rgba(0, 243, 255, 0.4);
+        }
+        #coin-box span { color: #ffcc00; }
+        #score-box span { color: #00f3ff; }
 
-Você pode salvar este código em um arquivo separado chamado `style.css` (na mesma pasta do arquivo HTML) e adicionar a tag `<link rel="stylesheet" href="style.css">` dentro do `<head>` do seu HTML, ou simplesmente colar o código abaixo dentro de uma tag `<style>` no topo do seu documento.
+        /* Tela de Fim de Jogo */
+        #game-over-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 11, 16, 0.9);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            display: none;
+            text-align: center;
+        }
+        #game-over-screen h2 {
+            font-size: 2.5rem;
+            color: #ff0055;
+            text-shadow: 0 0 10px #ff0055;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px 25px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #000;
+            background: #00f3ff;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            margin-top: 20px;
+            box-shadow: 0 0 15px #00f3ff;
+            transition: transform 0.1s;
+        }
+        button:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
 
-```css
-/* ==========================================================================
-   Estilos Gerais (Reset e Corpo da Página)
-   ========================================================================== */
+    <h1>Neon Runner</h1>
+    
+    <div id="game-container">
+        <div id="ui">
+            <div class="ui-box" id="coin-box">Moedas: <span id="coin-count">0</span></div>
+            <div class="ui-box" id="score-box">Metros: <span id="score-count">0</span></div>
+        </div>
+        
+        <div id="game-over-screen">
+            <h2>GAME OVER</h2>
+            <p id="final-score" style="color: #aaa;"></p>
+            <button onclick="resetGame()">Jogar Novamente</button>
+        </div>
+        
+        <canvas id="gameCanvas" width="400" height="600"></canvas>
+    </div>
 
-/* Reseta margens e define um modelo de caixa mais previsível */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+    <p style="margin-top: 15px; color: #555; font-size: 14px;">Use <kbd>←</kbd> <kbd>→</kbd> ou <kbd>A</kbd> <kbd>D</kbd> para mover.</p>
 
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #121212; /* Fundo grafite escuro */
-    color: #e0e0e0; /* Texto claro para leitura confortável */
-    line-height: 1.6;
-    padding: 20px;
-    max-width: 800px;
-    margin: 0 auto; /* Centraliza o conteúdo da página na tela */
-}
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const coinCountEl = document.getElementById('coin-count');
+        const scoreCountEl = document.getElementById('score-count');
+        const gameOverScreen = document.getElementById('game-over-screen');
+        const finalScoreEl = document.getElementById('final-score');
 
-/* ==========================================================================
-   Tipografia e Títulos
-   ========================================================================== */
+        // Configurações das 3 pistas
+        const lanes = [80, 200, 320]; 
+        let currentLane = 1;
 
-h1 {
-    font-size: 3rem;
-    color: #ff3333; /* Vermelho intenso para o título principal */
-    text-align: center;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    margin-bottom: 20px;
-    border-bottom: 3px solid #ff3333;
-    padding-bottom: 10px;
-}
+        // Estado do Jogo
+        let gameActive = true;
+        let score = 0;
+        let coins = 0;
+        let gameSpeed = 6;
+        let spawnTimer = 0;
+        let animFrame = 0; // Controla a animação de corrida das pernas
 
-h2 {
-    font-size: 1.8rem;
-    color: #ff6666; /* Vermelho mais suave para os subtítulos */
-    margin-top: 30px;
-    margin-bottom: 15px;
-}
+        // Jogador (Física de movimentação ultra suave)
+        const player = {
+            x: lanes[currentLane],       // Posição visual atual (desliza suavemente)
+            targetX: lanes[currentLane], // Posição alvo (pista real)
+            y: 520,                      // Posição vertical fixa
+            width: 30,
+            height: 50,
+            tilt: 0                      // Inclinação ao mudar de pista
+        };
 
-p {
-    margin-bottom: 15px;
-    text-align: justify;
-}
+        let obstacles = [];
+        let gameCoins = [];
 
-strong {
-    color: #ffffff; /* Destaca termos importantes em branco puro */
-}
+        // Captura de Teclas (Responsivo)
+        window.addEventListener('keydown', (e) => {
+            if (!gameActive) return;
+            
+            if ((e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') && currentLane > 0) {
+                currentLane--;
+                player.tilt = -0.2; // Inclina para a esquerda
+            }
+            if ((e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') && currentLane < 2) {
+                currentLane++;
+                player.tilt = 0.2; // Inclina para a direita
+            }
+            player.targetX = lanes[currentLane];
+        });
 
-em {
-    color: #ff9999; /* Destaca nomes de armas/veículos em tom sutil */
-}
+        // Gerador de Obstáculos e Moedas
+        function spawnElements() {
+            spawnTimer++;
+            let spawnInterval = Math.max(30, Math.floor(60 - gameSpeed)); // Fica mais frenético com o tempo
+            
+            if (spawnTimer % spawnInterval === 0) {
+                let lane = Math.floor(Math.random() * 3);
+                let isCoin = Math.random() > 0.4; // 60% de chance de ser moeda
 
-/* ==========================================================================
-   Listas (Personagens, Vilões e Spin-offs)
-   ========================================================================== */
+                if (isCoin) {
+                    gameCoins.push({ x: lanes[lane], y: -20, radius: 12 });
+                } else {
+                    obstacles.push({ x: lanes[lane] - 30, y: -40, width: 60, height: 25 });
+                }
+            }
+        }
 
-ul, ol {
-    margin-left: 20px;
-    margin-bottom: 25px;
-    background-color: #1e1e1e; /* Fundo levemente mais claro que o padrão */
-    padding: 15px 20px 15px 35px;
-    border-radius: 5px;
-    border-left: 4px solid #ff3333; /* Barra vertical vermelha estilosa */
-}
+        function update() {
+            if (!gameActive) return;
 
-li {
-    margin-bottom: 10px;
-}
+            // Suavização do movimento lateral (Interpolação/Lerp)
+            player.x += (player.targetX - player.x) * 0.2;
+            
+            // Corrige a inclinação do boneco de volta a zero aos poucos
+            player.tilt += (0 - player.tilt) * 0.1;
 
-/* ==========================================================================
-   Elementos Gráficos e Divisores
-   ========================================================================== */
+            // Avanço do jogo e pontuação
+            score += 0.2;
+            scoreCountEl.innerText = Math.floor(score);
+            gameSpeed += 0.0015; // Aceleração progressiva
+            animFrame += 0.2;    // Velocidade da animação das pernas
 
-hr {
-    border: 0;
-    height: 1px;
-    background: linear-gradient(to right, transparent, #444, transparent);
-    margin: 30px 0;
-}
+            // Movimentação e Colisão de Obstáculos
+            for (let i = obstacles.length - 1; i >= 0; i--) {
+                obstacles[i].y += gameSpeed;
 
-/* ==========================================================================
-   Tabela de Ficha Técnica
-   ========================================================================== */
+                // Colisão (Caixa AABB contra o corpo do boneco)
+                if (
+                    player.x + 15 > obstacles[i].x &&
+                    player.x - 15 < obstacles[i].x + obstacles[i].width &&
+                    player.y + 10 > obstacles[i].y &&
+                    player.y - 40 < obstacles[i].y + obstacles[i].height
+                ) {
+                    gameOver();
+                }
 
-table {
-    width: 100%;
-    border-collapse: collapse; /* Remove espaços duplos nas bordas */
-    margin-top: 20px;
-    margin-bottom: 30px;
-    background-color: #1e1e1e;
-}
+                if (obstacles[i].y > canvas.height) obstacles.splice(i, 1);
+            }
 
-th, td {
-    padding: 12px 15px;
-    text-align: left;
-    border: 1px solid #333333; /* Bordas discretas escuras */
-}
+            // Movimentação e Coleta de Moedas
+            for (let i = gameCoins.length - 1; i >= 0; i--) {
+                gameCoins[i].y += gameSpeed;
 
-th {
-    background-color: #ff3333;
-    color: #ffffff;
-    text-transform: uppercase;
-    font-size: 0.9rem;
-    letter-spacing: 1px;
-}
+                // Colisão Circular/Distância
+                let distX = player.x - gameCoins[i].x;
+                let distY = (player.y - 15) - gameCoins[i].y;
+                let distance = Math.sqrt(distX * distX + distY * distY);
 
-/* Efeito zebrado: deixa linhas alternadas com fundos diferentes */
-tr:nth-child(even) {
-    background-color: #252525;
-}
+                if (distance < 25) { // Se encostou no boneco
+                    coins++;
+                    coinCountEl.innerText = coins;
+                    gameCoins.splice(i, 1);
+                    continue;
+                }
 
-/* Efeito de passar o mouse por cima da linha da tabela */
-tr:hover {
-    background-color: #2a2a2a;
-}
+                if (gameCoins[i].y > canvas.height) gameCoins.splice(i, 1);
+            }
 
-/* ==========================================================================
-   Rodapé
-   ========================================================================== */
+            spawnElements();
+        }
 
-small {
-    display: block;
-    text-align: center;
-    color: #777777;
-    margin-top: 40px;
-    font-style: italic;
-}
+        function draw() {
+            // Limpa a tela
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-```
+            // 1. DESENHAR LINHAS DE PISTA (Fundo Futurista)
+            ctx.strokeStyle = '#2d325a';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(140, 0); ctx.lineTo(140, canvas.height);
+            ctx.moveTo(260, 0); ctx.lineTo(260, canvas.height);
+            ctx.stroke();
+
+            // Linhas horizontais passando (efeito de velocidade)
+            let lineY = (score * 15) % 80;
+            ctx.strokeStyle = 'rgba(45, 50, 90, 0.4)';
+            for (let y = lineY; y < canvas.height; y += 80) {
+                ctx.beginPath();
+                ctx.moveTo(0, y); ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+            }
+
+            // 2. DESENHAR MOEDAS (Círculos com brilho dourado)
+            gameCoins.forEach(coin => {
+                ctx.fillStyle = '#ffcc00';
+                ctx.shadowColor = '#ffcc00';
+                ctx.shadowBlur = 10;
+                ctx.beginPath();
+                ctx.arc(coin.x, coin.y, coin.radius, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Detalhe interno da moeda
+                ctx.fillStyle = '#fff';
+                ctx.beginPath();
+                ctx.arc(coin.x, coin.y, coin.radius * 0.4, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            ctx.shadowBlur = 0; // Desliga sombra para não pesar
+
+            // 3. DESENHAR OBSTÁCULOS (Barreiras Neon de Perigo)
+            obstacles.forEach(obs => {
+                ctx.fillStyle = '#ff0055';
+                ctx.shadowColor = '#ff0055';
+                ctx.shadowBlur = 8;
+                ctx.fillRect(obs.x, obs.y, obs.width, obs.height);
+                
+                // Faixa branca de aviso no obstáculo
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(obs.x + 5, obs.y + 5, obs.width - 10, 4);
+            });
+            ctx.shadowBlur = 0;
+
+            // 4. DESENHAR O BONECO 2D (Renderizado inteiramente via código no Canvas)
+            ctx.save();
+            ctx.translate(player.x, player.y);
+            ctx.rotate(player.tilt); // Aplica rotação de curva se estiver mudando de pista
+
+            // Sombra do boneco no chão
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+            ctx.beginPath();
+            ctx.ellipse(0, 12, 15, 6, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Pernas (Alternando tamanho baseado no frame para simular corrida)
+            ctx.fillStyle = '#00f3ff';
+            let legLeftY = Math.sin(animFrame) * 8;
+            let legRightY = Math.cos(animFrame) * 8;
+            
+            // Perna Esquerda
+            ctx.fillRect(-8, 0, 5, 10 + legLeftY);
+            // Perna Direita
+            ctx.fillRect(3, 0, 5, 10 + legRightY);
+
+            // Corpo / Jaqueta do boneco
+            ctx.fillStyle = '#1f2336';
+            ctx.strokeStyle = '#00f3ff';
+            ctx.lineWidth = 2;
+            ctx.fillRect(-12, -30, 24, 30);
+            ctx.strokeRect(-12, -30, 24, 30);
+
+            // Detalhe neon nas costas da jaqueta
+            ctx.fillStyle = '#ff0055';
+            ctx.fillRect(-4, -22, 8, 14);
+
+            // Cabeça / Capacete
+            ctx.fillStyle = '#00f3ff';
+            ctx.beginPath();
+            ctx.arc(0, -40, 10, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Visor do Capacete
+            ctx.fillStyle = '#ff0055';
+            ctx.fillRect(-6, -43, 12, 5);
+
+            ctx.restore();
+        }
+
+        function gameLoop() {
+            update();
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+
+        function gameOver() {
+            gameActive = false;
+            gameOverScreen.style.display = 'flex';
+            finalScoreEl.innerHTML = `Moedas: ${coins}<br>Distância: ${Math.floor(score)}m`;
+        }
+
+        function resetGame() {
+            obstacles = [];
+            gameCoins = [];
+            score = 0;
+            coins = 0;
+            gameSpeed = 6;
+            currentLane = 1;
+            player.x = lanes[currentLane];
+            player.targetX = lanes[currentLane];
+            player.tilt = 0;
+            coinCountEl.innerText = '0';
+            scoreCountEl.innerText = '0';
+            gameOverScreen.style.display = 'none';
+            gameActive = true;
+        }
+
+        // Iniciar loop automático
+        gameLoop();
+    </script>
+</body>
+</html>

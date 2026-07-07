@@ -1,83 +1,319 @@
-<<!DOCTYPE html>
+Aqui está um jogo completo no estilo "Subway Surfers" usando apenas **HTML, CSS e JavaScript (Canvas)**.
+
+O jogador controla um cubo que corre automaticamente. O objetivo é desviar dos obstáculos (vermelhos) e coletar as moedas (amarelas) mudando de pista.
+
+### Como Jogar:
+
+* **Seta para a Esquerda ($\leftarrow$) ou A:** Move para a pista da esquerda.
+* **Seta para a Direita ($\rightarrow$) ou D:** Move para a pista da direita.
+
+---
+
+### Código Completo (Copie e cole em um arquivo `.html`)
+
+```html
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>The Walking Dead - Tudo sobre a Série</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini Subway Surfers</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background-color: #222;
+            color: white;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+        #game-container {
+            position: relative;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+        canvas {
+            background: linear-gradient(to bottom, #87CEEB, #E0F6FF 60%, #555 60%);
+            display: block;
+            border-radius: 8px;
+        }
+        #ui {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 20px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+            pointer-events: none;
+        }
+        #game-over-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            display: none;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 18px;
+            font-weight: bold;
+            background-color: #ffcc00;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: transform 0.1s;
+        }
+        button:hover {
+            transform: scale(1.05);
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="style.css" rel="stylesheet"></head>
 <body>
 
-    <h1>The Walking Dead</h1>
-    <p><strong>The Walking Dead</strong> é uma das séries de drama pós-apocalíptico mais famosas da televisão. Baseada nas histórias em quadrinhos de Robert Kirkman, Tony Moore e Charlie Adlard, a trama acompanha a sobrevivência da humanidade após um surto global que transforma a maior parte da população em zumbis (chamados na série de "caminhantes").</p>
-
-    <hr>
-
-    <h2>A Premissa Principal</h2>
-    <p>A história começa com <strong>Rick Grimes</strong>, um vice-xerife que acorda de um coma em um hospital abandonado. Ele descobre que o mundo que conhecia desapareceu e precisa encontrar sua esposa, Lori, e seu filho, Carl. Ao longo de sua jornada, Rick se torna o líder de um grupo de sobreviventes, enfrentando não apenas os mortos-vivos, mas também a crueldade de outros seres humanos.</p>
-
-    <hr>
-
-    <h2>Personagens Icônicos</h2>
-    <p>Ao longo de suas 11 temporadas, a série apresentou diversos personagens marcantes. Aqui estão alguns dos mais importantes:</p>
+    <h1 style="margin-bottom: 10px;">Coin Runner</h1>
     
-    <ul>
-        <li><strong>Rick Grimes:</strong> O líder determinado e ex-policial que faz de tudo para proteger sua família e seu grupo.</li>
-        <li><strong>Daryl Dixon:</strong> O rastreador durão e mestre no uso da besta, que se tornou um dos guerreiros mais leais do grupo.</li>
-        <li><strong>Michonne:</strong> Uma sobrevivente solitária e habilidosa que usa uma katana como arma principal.</li>
-        <li><strong>Glenn Rhee:</strong> O jovem ágil e corajoso que começou como entregador de pizza e se tornou o coração do grupo.</li>
-        <li><strong>Carol Peletier:</strong> Uma mulher que evoluiu de uma vítima indefesa para uma das sobreviventes mais táticas e perigosas da série.</li>
-    </ul>
+    <div id="game-container">
+        <div id="ui">
+            Moedas: <span id="coin-count">0</span><br>
+            Pontos: <span id="score-count">0</span>
+        </div>
+        
+        <div id="game-over-screen">
+            <h2>Game Over!</h2>
+            <p id="final-score">Pontuação total: 0</p>
+            <button onclick="resetGame()">Jogar Novamente</button>
+        </div>
+        
+        <canvas id="gameCanvas" width="400" height="600"></canvas>
+    </div>
 
-    <hr>
+    <p style="margin-top: 15px; color: #aaa;">Use as setas <kbd>←</kbd> <kbd>→</kbd> ou <kbd>A</kbd> <kbd>D</kbd> para desviar.</p>
 
-    <h2>Os Maiores Vilões</h2>
-    <p>Em um mundo destruído, o maior perigo muitas vezes não são os zumbis, mas sim os outros vivos. Os sobreviventes enfrentaram ameaças terríveis, tais como:</p>
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const coinCountEl = document.getElementById('coin-count');
+        const scoreCountEl = document.getElementById('score-count');
+        const gameOverScreen = document.getElementById('game-over-screen');
+        const finalScoreEl = document.getElementById('final-score');
 
-    <ol>
-        <li><strong>O Governador:</strong> O líder carismático e cruel da comunidade de Woodbury.</li>
-        <li><strong>Negan:</strong> O líder sádico dos "Salvadores", famoso por usar seu bastão de beisebol com arame farpado chamado <em>Lucille</em>.</li>
-        <li><strong>Alfa e os Sussurradores:</strong> Um grupo que se veste com a pele dos mortos para andar entre eles e atacar de surpresa.</li>
-    </ol>
+        // Configurações das Pistas
+        const lanes = [75, 200, 325]; // Posições X do centro de cada pista
+        let currentLane = 1; // Começa na pista do meio (índice 1)
 
-    <hr>
+        // Estado do Jogo
+        let gameActive = true;
+        let score = 0;
+        let coins = 0;
+        let gameSpeed = 5;
+        let spawnTimer = 0;
 
-    <h2>O Universo Expandido (Spin-offs)</h2>
-    <p>O sucesso da série principal gerou um universo compartilhado com várias outras produções, incluindo:</p>
-    
-    <ul>
-        <li><em>Fear the Walking Dead</em></li>
-        <li><em>The Walking Dead: World Beyond</em></li>
-        <li><em>The Walking Dead: Dead City</em> (focado em Maggie e Negan)</li>
-        <li><em>The Walking Dead: Daryl Dixon</em></li>
-        <li><em>The Walking Dead: The Ones Who Live</em> (focado no destino de Rick e Michonne)</li>
-    </ul>
+        // Jogador
+        const player = {
+            x: lanes[currentLane],
+            y: 500,
+            radius: 20,
+            targetX: lanes[currentLane],
+            speed: 15 // Velocidade de transição lateral
+        };
 
-    <hr>
+        // Arrays de objetos
+        let obstacles = [];
+        let gameCoins = [];
 
-    <h2>Ficha Técnica</h2>
-    <table border="1">
-        <tr>
-            <th>Informação</th>
-            <th>Detalhes</th>
-        </tr>
-        <tr>
-            <td><strong>Ano de Lançamento</strong></td>
-            <td>2010</td>
-        </tr>
-        <tr>
-            <td><strong>Total de Temporadas</strong></td>
-            <td>11 temporadas (encerrada em 2022)</td>
-        </tr>
-        <tr>
-            <td><strong>Canal Original</strong></td>
-            <td>AMC</td>
-        </tr>
-        <tr>
-            <td><strong>Gênero</strong></td>
-            <td>Drama, Terror, Apocalipse Zumbi</td>
-        </tr>
-    </table>
+        // Captura de Teclado
+        window.addEventListener('keydown', (e) => {
+            if (!gameActive) return;
+            
+            if ((e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') && currentLane > 0) {
+                currentLane--;
+            }
+            if ((e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') && currentLane < 2) {
+                currentLane++;
+            }
+            player.targetX = lanes[currentLane];
+        });
 
-    <p><small>Página criada para fins informativos sobre o universo de The Walking Dead.</small></p>
+        function spawnElements() {
+            spawnTimer++;
+            if (spawnTimer % 60 === 0) { // A cada 1 segundo aproximadamente
+                let lane = Math.floor(Math.random() * 3);
+                let type = Math.random();
 
+                if (type < 0.4) {
+                    // Cria Obstáculo
+                    obstacles.push({
+                        x: lanes[lane] - 25,
+                        y: -50,
+                        width: 50,
+                        height: 30
+                    });
+                } else {
+                    // Cria Moeda
+                    gameCoins.push({
+                        x: lanes[lane],
+                        y: -20,
+                        radius: 12
+                    });
+                }
+            }
+        }
+
+        function update() {
+            if (!gameActive) return;
+
+            // Suavizar movimento lateral do jogador (Interpolação)
+            player.x += (player.targetX - player.x) * 0.3;
+
+            // Atualizar pontuação passiva
+            score++;
+            scoreCountEl.innerText = score;
+
+            // Aumentar velocidade gradualmente
+            gameSpeed += 0.001;
+
+            // Atualizar Obstáculos
+            for (let i = obstacles.length - 1; i >= 0; i--) {
+                obstacles[i].y += gameSpeed;
+
+                // Colisão com o jogador (Aproximação por caixa/círculo simples)
+                if (
+                    player.x + player.radius > obstacles[i].x &&
+                    player.x - player.radius < obstacles[i].x + obstacles[i].width &&
+                    player.y + player.radius > obstacles[i].y &&
+                    player.y - player.radius < obstacles[i].y + obstacles[i].height
+                ) {
+                    gameOver();
+                }
+
+                // Remover se sair da tela
+                if (obstacles[i].y > canvas.height) {
+                    obstacles.splice(i, 1);
+                }
+            }
+
+            // Atualizar Moedas
+            for (let i = gameCoins.length - 1; i >= 0; i--) {
+                gameCoins[i].y += gameSpeed;
+
+                // Colisão com a moeda (Distância entre dois pontos)
+                let distX = player.x - gameCoins[i].x;
+                let distY = player.y - gameCoins[i].y;
+                let distance = Math.sqrt(distX * distX + distY * distY);
+
+                if (distance < player.radius + gameCoins[i].radius) {
+                    coins++;
+                    score += 500; // Moedas dão bônus de pontuação
+                    coinCountEl.innerText = coins;
+                    gameCoins.splice(i, 1);
+                    continue;
+                }
+
+                if (gameCoins[i].y > canvas.height) {
+                    gameCoins.splice(i, 1);
+                }
+            }
+
+            spawnElements();
+        }
+
+        function draw() {
+            // Limpar canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Desenhar Linhas das Pistas (Efeito de perspectiva simples)
+            ctx.strokeStyle = "rgba(255,255,255,0.2)";
+            ctx.lineWidth = 5;
+            ctx.beginPath();
+            ctx.moveTo(133, 360); ctx.lineTo(133, 600);
+            ctx.moveTo(266, 360); ctx.lineTo(266, 600);
+            ctx.stroke();
+
+            // Desenhar Moedas
+            gameCoins.forEach(coin => {
+                ctx.fillStyle = '#ffcc00';
+                ctx.beginPath();
+                ctx.arc(coin.x, coin.y, coin.radius, 0, Math.PI * 2);
+                ctx.fill();
+                // Borda da moeda
+                ctx.strokeStyle = '#ff9900';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            });
+
+            // Desenhar Obstáculos
+            ctx.fillStyle = '#ff3333';
+            obstacles.forEach(obs => {
+                ctx.fillRect(obs.x, obs.y, obs.width, obs.height);
+            });
+
+            // Desenhar Jogador (Sombra e Corpo)
+            ctx.fillStyle = 'rgba(0,0,0,0.2)';
+            ctx.beginPath();
+            ctx.arc(player.x, player.y + 10, player.radius, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = '#00bcd4'; // Azul piscina
+            ctx.beginPath();
+            ctx.arc(player.x, player.y, player.radius, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        function gameLoop() {
+            update();
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+
+        function gameOver() {
+            gameActive = false;
+            gameOverScreen.style.display = 'flex';
+            finalScoreEl.innerText = `Moedas: ${coins} | Pontuação Total: ${score}`;
+        }
+
+        function resetGame() {
+            obstacles = [];
+            gameCoins = [];
+            score = 0;
+            coins = 0;
+            gameSpeed = 5;
+            currentLane = 1;
+            player.x = lanes[currentLane];
+            player.targetX = lanes[currentLane];
+            coinCountEl.innerText = '0';
+            scoreCountEl.innerText = '0';
+            gameOverScreen.style.display = 'none';
+            gameActive = true;
+        }
+
+        // Iniciar o jogo
+        gameLoop();
+    </script>
 <script src="script.js"></script></body>
 </html>
+
+```
+
+### O que este código faz:
+
+1. **Mecânica de 3 Pistas:** O cenário é dividido em 3 colunas (pistas). O jogador muda de pista instantaneamente no comando, mas o visual do cubo desliza suavemente até o destino (efeito de interpolação).
+2. **Geração Dinâmica:** O JavaScript decide aleatoriamente se vai criar um obstáculo ou uma moeda em uma das três pistas de tempos em tempos.
+3. **Dificuldade Progressiva:** Quanto mais tempo você sobrevive, mais rápido (`gameSpeed`) os objetos caem, imitando a aceleração do Subway Surfers original.
+4. **Sistema de Pontuação:** Correr aumenta seus pontos aos poucos, mas coletar moedas amarelas dá um bônus enorme de 500 pontos por moeda.
