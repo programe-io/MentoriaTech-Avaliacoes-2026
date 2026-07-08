@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet">
+</head>
+<body>
+  <div id="tela-start">
+    <div class="logo-container">
+        <h1>FUT<span>PRO</span></h1>
+        <p>A Experiência Definitiva de Futebol de Botão</p>
+    </div>
+    <div class="menu-buttons">
+        <button class="btn-start" id="btn-ir-selecao">Jogar</button>
+        <button class="btn-config-abrir" id="open-ajuda">Como Jogar 📖</button>
+        <button class="btn-config-abrir" id="open-config">Configurações ⚙️</button>
+    </div>
+</div>
+
+<div id="tela-selecao" class="escondido">
+    <h2>ESCOLHA SEU TIME</h2>
+    
+    <div class="fifa-container">
+        <div class="fifa-player-card t1-card">
+            <h3 style="color: #ff4d4d;">TIME 1</h3>
+            <div class="fifa-selector-group">
+                <p class="selector-label">LIGA</p>
+                <div class="fifa-selector">
+                    <button class="seta" onclick="mudarLiga(1, -1)">◄</button>
+                    <span id="j1-liga" class="texto-seletor">Brasileirão</span>
+                    <button class="seta" onclick="mudarLiga(1, 1)">►</button>
+                </div>
+            </div>
+            <div class="fifa-selector-group">
+                <p class="selector-label">TIME</p>
+                <div class="fifa-selector team-selector">
+                    <button class="seta" onclick="mudarTime(1, -1)">◄</button>
+                    <span id="j1-nome" class="texto-seletor">Flamengo</span>
+                    <button class="seta" onclick="mudarTime(1, 1)">►</button>
+                </div>
+            </div>
+            <div class="escudo-preview">
+                <img id="j1-escudo" src="" alt="Escudo J1">
+            </div>
+        </div>
+
+        <div class="vs-badge">VS</div>
+
+        <div class="fifa-player-card t2-card">
+            <h3 style="color: #00bcd4;">TIME 2</h3>
+            <div class="fifa-selector-group">
+                <p class="selector-label">LIGA</p>
+                <div class="fifa-selector">
+                    <button class="seta" onclick="mudarLiga(2, -1)">◄</button>
+                    <span id="j2-liga" class="texto-seletor">Brasileirão</span>
+                    <button class="seta" onclick="mudarLiga(2, 1)">►</button>
+                </div>
+            </div>
+            <div class="fifa-selector-group">
+                <p class="selector-label">TIME</p>
+                <div class="fifa-selector team-selector">
+                    <button class="seta" onclick="mudarTime(2, -1)">◄</button>
+                    <span id="j2-nome" class="texto-seletor">Palmeiras</span>
+                    <button class="seta" onclick="mudarTime(2, 1)">►</button>
+                </div>
+            </div>
+            <div class="escudo-preview">
+                <img id="j2-escudo" src="" alt="Escudo J2">
+            </div>
+        </div>
+    </div>
+
+    <div class="opcoes-partida">
+        <label class="toggle-poderes">
+            <input type="checkbox" id="check-poderes" checked> ✨ Ativar Poderes
+        </label>
+        
+        <div class="config-controles">
+            <div class="ctrl-box">
+                <h4>CONTROLE T1 (Esq)</h4>
+                <select id="t1-mode">
+                    <option value="solo">Solo (Humano + Bot) - Troca no Q</option>
+                    <option value="duo">Duo 2v2 (P1: W/S | P2: T/G)</option>
+                    <option value="cpu">CPU Total (Bots jogam)</option>
+                </select>
+            </div>
+            <div class="ctrl-box">
+                <h4>CONTROLE T2 (Dir)</h4>
+                <select id="t2-mode">
+                    <option value="solo">Solo (Humano + Bot) - Troca no L</option>
+                    <option value="duo">Duo 2v2 (P1: I/K | P2: Setas)</option>
+                    <option value="cpu">CPU Total (Bots jogam)</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div style="display: flex; gap: 15px; margin-top: 15px; align-items: center; justify-content: center; flex-wrap: wrap;">
+        <button class="btn-config-abrir" id="btn-voltar-inicio" style="margin: 0; padding: 15px 25px;">⬅️ Voltar</button>
+        <button class="btn-start" id="start-game" style="margin: 0;">JOGO NORMAL</button>
+        <button class="btn-start" id="start-penaltis" style="margin: 0; background: linear-gradient(45deg, #b000ff, #7a00b3);">SÓ PÊNALTIS ⚽</button>
+    </div>
+</div>
+
+<div id="menu-config" class="escondido modal-flutuante">
+    <h2>Configurações</h2>
+    <div class="config-item">
+        <label for="slider-volume">Volume Geral:</label>
+        <div class="row-config">
+            <input type="range" id="slider-volume" min="0" max="100" value="50">
+            <span id="valor-volume">50%</span>
+        </div>
+    </div>
+    <div class="config-item">
+        <label for="select-graficos">Qualidade Gráfica:</label>
+        <select id="select-graficos">
+            <option value="3d" selected>Ultra (Efeito 3D de Botão)</option>
+            <option value="alto">Alto (Plano com Sombras)</option>
+            <option value="baixo">Baixo (Foco em Desempenho)</option>
+        </select>
+    </div>
+    <button id="btn-config-voltar">Salvar e Voltar</button>
+</div>
+
+<div id="menu-ajuda" class="escondido modal-flutuante modal-grande">
+    <h2>Manual do Jogo 📖</h2>
+    <div class="ajuda-conteudo">
+        <div class="ajuda-sessao">
+            <h3>🎮 Controles Básicos</h3>
+            <p><strong>Time 1:</strong> <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> | <strong>Time 2:</strong> <kbd>I</kbd><kbd>J</kbd><kbd>K</kbd><kbd>L</kbd></p>
+            <p><strong>Trocar Peça:</strong> <kbd>Q</kbd> (T1) ou <kbd>L</kbd> (T2)</p>
+            <p><strong>Poderes:</strong> <kbd>E</kbd>/<kbd>R</kbd> (T1) | <kbd>U</kbd>/<kbd>O</kbd> (T2)</p>
+        </div>
+        <div class="ajuda-sessao">
+            <h3>⏱️ Tempo e Prorrogação</h3>
+            <p>Aos 45 min ocorre o <strong>Intervalo</strong> (Estamina reseta). Aos 90 min, se empatar, há <strong>Prorrogação</strong> (tempo passa mais lento). Se continuar empatado nos 120 min, você pode aumentar o tempo ou ir pros pênaltis!</p>
+        </div>
+        <div class="ajuda-sessao">
+            <h3>⚽ Pênaltis</h3>
+            <p>Pressione <kbd>ESPAÇO</kbd> para travar a Força. Depois, segure as teclas direcionais (WASD ou IJKL) para escolher o canto. Ex: W+A chuta/defende no Ângulo Esquerdo. A+S chuta rasteiro na esquerda. Apertar tudo ou nada chuta no meio!</p>
+        </div>
+    </div>
+    <button id="btn-ajuda-fechar">Entendi! Voltar</button>
+</div>
+
+<div class="painel-jogo">
+    <div class="info-time t1">
+        <span id="nome-t1" class="nome-time">T1</span>
+        <div class="multi-energia">
+            <div class="fundo-energia" title="Estamina Zagueiro"><div id="energia-t1-p0" class="barra-energia cor-t1"></div></div>
+            <div class="fundo-energia" title="Estamina Atacante"><div id="energia-t1-p1" class="barra-energia cor-t1"></div></div>
+        </div>
+        <div class="slots-container" id="slots-t1">
+            <div id="t1-slot0" class="slot-poder">-</div>
+            <div id="t1-slot1" class="slot-poder">-</div>
+        </div>
+    </div>
+
+    <div class="placar-central">
+        <div id="placar">0 - 0</div>
+        <div id="cronometro">00'</div>
+        <div id="indicador-fase">1º TEMPO</div>
+    </div>
+
+    <div class="info-time t2">
+        <span id="nome-t2" class="nome-time">T2</span>
+        <div class="multi-energia">
+            <div class="fundo-energia" title="Estamina Atacante"><div id="energia-t2-p0" class="barra-energia cor-t2"></div></div>
+            <div class="fundo-energia" title="Estamina Zagueiro"><div id="energia-t2-p1" class="barra-energia cor-t2"></div></div>
+        </div>
+        <div class="slots-container" id="slots-t2">
+            <div id="t2-slot0" class="slot-poder">-</div>
+            <div id="t2-slot1" class="slot-poder">-</div>
+        </div>
+    </div>
+</div>
+
+<div class="conteudo-jogo">
+    <canvas id="campo" width="1000" height="600"></canvas>
+    
+    <div id="ui-penaltis" class="escondido">
+        <div class="placar-penaltis">
+            <div class="p-t1"><span id="pt1-nome">T1</span>: <span id="pt1-score">0</span></div>
+            <div class="p-rodada">RODADA <span id="p-round">1</span></div>
+            <div class="p-t2"><span id="pt2-score">0</span> :<span id="pt2-nome">T2</span></div>
+        </div>
+        <div class="status-penalti" id="p-status">T1 VAI BATER!</div>
+        <div class="barra-forca-container">
+            <div id="barra-forca-fill"></div>
+            <div class="marcador-perfeito"></div>
+        </div>
+        <div class="instrucao-penalti">Aperte [ESPAÇO] para Força. Depois segure a direção!</div>
+    </div>
+
+    <div id="menu-pausa" class="escondido modal-flutuante">
+        <h2 id="titulo-menu">Jogo Pausado</h2>
+        <p id="mensagem-modal" style="font-size: 1.2rem; margin: 10px 0;"></p>
+        
+        <button id="btn-continuar" class="escondido">Continuar (P)</button>
+        <button id="btn-iniciar-2t" class="escondido" style="background:#39ff14; color:#111;">Ir para o 2º Tempo</button>
+        <button id="btn-iniciar-prorrog" class="escondido" style="background:#ff9f43; color:#111;">Iniciar Prorrogação</button>
+        <button id="btn-aumentar-tempo" class="escondido" style="background:#ff9f43; color:#111;">Aumentar Tempo (+)</button>
+        <button id="btn-iniciar-penaltis" class="escondido" style="background:#b000ff; color:#fff;">Ir para Pênaltis</button>
+        
+        <button id="btn-ajuda-pausa" style="background: #00bcd4; color: #111; margin-top:10px;">Como Jogar 📖</button>
+        <button id="btn-reiniciar-jogo">Reiniciar Partida</button>
+        <button id="btn-resetar">Menu Principal</button>
+    </div>
+</div>
+  <script src="script.js"></script>
+  
+</body>
+</html>
