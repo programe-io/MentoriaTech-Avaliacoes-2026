@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supermercado Simulator: Caixa Aleatório</title>
+    <link rel="stylesheet" href="style.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+    <h1>🛒 Supermercado Simulator: Caixa Surpresa</h1>
+
+    <div id="game-container">
+        <div id="tela-inicial">
+            <p style="margin-bottom: 20px; color: #666; font-size: 1.1rem;">
+                Arraste os produtos para o carrinho.<br>
+                O método de pagamento será <strong>sorteado pelo caixa</strong> (Maior chance de ser Dinheiro)!
+            </p>
+            <button class="principal" onclick="iniciarJogo()">Começar Desafio</button>
+        </div>
+
+        <div id="hud" class="hidden">
+            <div id="level-status">📋 Rodada: <span id="num-fase">1</span></div>
+            <div id="timer">⏱️ Tempo: <span id="tempo-restante">90</span>s</div>
+            <div id="money-status"><span id="hud-contexto">💰 Saldo: R$</span> <span id="dinheiro-valores">150.00</span></div>
+            <div id="score">⭐ Pontos: <span id="pontuacao">0</span></div>
+        </div>
+
+        <div id="cenario-compras" class="hidden">
+            <div class="painel-superior">
+                <div id="lista-compras">
+                    <h3>Sua Lista de Compras:</h3>
+                    <div id="itens-procurados" class="grid-lista"></div>
+                </div>
+                <div id="feedback-caixa">
+                    <span id="feedback-texto">Arraste os itens aqui para comprar!</span>
+                </div>
+            </div>
+
+            <div class="area-jogo">
+                <div id="prateleiras"></div>
+                <div id="carrinho-drop" ondragover="permitirDrop(event)" ondragleave="sairDrag(event)" ondrop="soltarItem(event)">
+                    <div id="carrinho-icone">🛒</div>
+                    <strong>CARRINHO</strong>
+                </div>
+            </div>
+        </div>
+
+        <div id="cenario-caixa" class="hidden">
+            <div id="aviso-metodo">🎲 Sorteando exigência do cliente...</div>
+
+            <div class="cupom-fiscal">
+                <div class="linha-caixa" style="border-bottom: 1px dashed #ccc; padding-bottom: 5px; font-weight: bold;">
+                    <span>VALOR DA COMPRA:</span>
+                    <span style="color: #d63031;">R$ <span id="valor-total-conta">0.00</span></span>
+                </div>
+                <div id="linha-entregue-dinheiro" class="linha-caixa" style="padding-top: 10px; font-weight: bold; color: #27ae60;">
+                    <span>VALOR INFORMADO/ENTREGUE:</span>
+                    <span>R$ <span id="valor-entregue-jogador">0.00</span></span>
+                </div>
+            </div>
+
+            <div id="area-pagamento-dinheiro" class="container-dinheiro">
+                <h4>Selecione as Cédulas:</h4>
+                <div class="secao-valores" style="margin-bottom: 10px;">
+                    <div class="cedula c2" onclick="entregarDinheiro(2.00)">R$ 2</div>
+                    <div class="cedula c5" onclick="entregarDinheiro(5.00)">R$ 5</div>
+                    <div class="cedula c10" onclick="entregarDinheiro(10.00)">R$ 10</div>
+                    <div class="cedula c20" onclick="entregarDinheiro(20.00)">R$ 20</div>
+                    <div class="cedula c50" onclick="entregarDinheiro(50.00)">R$ 50</div>
+                </div>
+                <h4>Selecione as Moedas:</h4>
+                <div class="secao-valores">
+                    <div class="moeda m100" onclick="entregarDinheiro(1.00)">R$ 1</div>
+                    <div class="moeda m50" onclick="entregarDinheiro(0.50)">50¢</div>
+                    <div class="moeda m25" onclick="entregarDinheiro(0.25)">25¢</div>
+                    <div class="moeda m10" onclick="entregarDinheiro(0.10)">10¢</div>
+                    <div class="moeda m05" onclick="entregarDinheiro(0.05)">5¢</div>
+                </div>
+                <button onclick="limparDinheiroEntregue()" style="background:#7f8c8d; margin-top: 15px; padding: 6px 12px; font-size: 0.85rem; border:none; color:white; border-radius:4px; cursor:pointer;">Limpar Notas</button>
+            </div>
+
+            <div id="area-pagamento-cartao" class="container-cartao hidden">
+                <div class="maquininha">
+                    <div class="tela-maquininha">
+                        <span style="font-size: 0.75rem; color: #555;">DIGITE O VALOR:</span>
+                        <span>R$ <span id="display-maquininha">0,00</span></span>
+                    </div>
+                    <div class="teclado-maquininha">
+                        <button class="btn-maq" onclick="digitarNumero('1')">1</button>
+                        <button class="btn-maq" onclick="digitarNumero('2')">2</button>
+                        <button class="btn-maq" onclick="digitarNumero('3')">3</button>
+                        <button class="btn-maq" onclick="digitarNumero('4')">4</button>
+                        <button class="btn-maq" onclick="digitarNumero('5')">5</button>
+                        <button class="btn-maq" onclick="digitarNumero('6')">6</button>
+                        <button class="btn-maq" onclick="digitarNumero('7')">7</button>
+                        <button class="btn-maq" onclick="digitarNumero('8')">8</button>
+                        <button class="btn-maq" onclick="digitarNumero('9')">9</button>
+                        <button class="btn-maq limpa" onclick="limparMaquininha()">C</button>
+                        <button class="btn-maq" onclick="digitarNumero('0')">0</button>
+                        <button class="btn-maq confirma" onclick="confirmarCartao()">✔</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tela-final" class="hidden">
+            <h2>Fim de Jogo! 🏁</h2>
+            <p style="margin: 20px 0; font-size: 1.3rem;">
+                Resultado: <span id="motivo-fim" style="font-weight: bold;">-</span><br>
+                Rodadas Concluídas: <span id="fases-finais" style="font-weight: bold; color: #fdcb6e;">0</span><br>
+                Pontuação Final: <span id="pontos-finais" style="font-weight: bold; color: #2ecc71;">0</span> pontos.
+            </p>
+            <button class="principal" onclick="iniciarJogo()">Jogar Novamente</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+<script src="script.js"></script></body>
+</html> <header> <nav> <a> <aside> <main> <article> <img> <footer>
