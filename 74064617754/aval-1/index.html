@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Estoque CRUD</title>
+    
+    <!-- DESIGN DO SISTEMA (CSS) -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f4f6f9;
+            color: #333;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #2c3e50;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+
+        .card h2 {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: #34495e;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 5px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            outline: none;
+        }
+
+        .form-group input:focus {
+            border-color: #3498db;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #2ecc71;
+            border: none;
+            color: white;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background-color: #27ae60;
+        }
+
+        button.btn-blue { background-color: #3498db; }
+        button.btn-blue:hover { background-color: #2980b9; }
+
+        button.btn-orange { background-color: #e67e22; }
+        button.btn-orange:hover { background-color: #d35400; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f8f9fa;
+            color: #2c3e50;
+        }
+
+        .msg {
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            display: none;
+        }
+        .success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; display: block; }
+        .error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; display: block; }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+    <div class="container">
+        <h1>📦 Controle de Estoque</h1>
+        
+        <div id="feedback" class="msg"></div>
+
+        <div class="grid">
+            <!-- COLUNA DE FORMULÁRIOS -->
+            <div>
+                <!-- Cadastro -->
+                <div class="card">
+                    <h2>Cadastrar Produto</h2>
+                    <div class="form-group">
+                        <label>Descrição</label>
+                        <input type="text" id="cad-descricao" placeholder="Ex: Mouse Gamer">
+                    </div>
+                    <div class="form-group">
+                        <label>Quantidade</label>
+                        <input type="number" id="cad-quantidade" placeholder="Ex: 10">
+                    </div>
+                    <div class="form-group">
+                        <label>Valor (R$)</label>
+                        <input type="number" step="0.01" id="cad-valor" placeholder="Ex: 49.90">
+                    </div>
+                    <button onclick="uiCadastrar()">Cadastrar</button>
+                </div>
+
+                <!-- Atualização -->
+                <div class="card">
+                    <h2>Atualizações Rápidas</h2>
+                    <div class="form-group">
+                        <label>Código do Produto</label>
+                        <input type="number" id="act-codigo" placeholder="Ex: 1">
+                    </div>
+                    <div class="form-group">
+                        <label>Novo Valor (Substitui)</label>
+                        <input type="number" step="0.01" id="act-valor" placeholder="Deixar vazio se não for mudar">
+                    </div>
+                    <button class="btn-blue" style="margin-bottom: 10px;" onclick="uiAtualizarValor()">Atualizar Preço</button>
+                    
+                    <div class="form-group">
+                        <label>Adicionar Quantidade (Soma)</label>
+                        <input type="number" id="act-quantidade" placeholder="Deixar vazio se não for mudar">
+                    </div>
+                    <button class="btn-orange" onclick="uiAtualizarQuantidade()">Somar ao Estoque</button>
+                </div>
+            </div>
+
+            <!-- COLUNA DA TABELA (LISTAGEM) -->
+            <div class="card" style="overflow-x: auto;">
+                <h2>Produtos em Estoque</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Descrição</th>
+                            <th>Qtd</th>
+                            <th>Valor</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabela-produtos">
+                        <!-- Inserido via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- LÓGICA DO SISTEMA (JAVASCRIPT) -->
+    <script>
+        let produtos = [];
+
+        function validarProduto(descricao, quantidade, valor) {
+            if (descricao.length < 5) throw new Error("Descrição deve ter, no mínimo, 5 caracteres.");
+            if (quantidade < 1) throw new Error("Quantidade deve ser maior que zero.");
+            if (valor < 0) throw new Error("Valor deve ser maior ou igual a zero.");
+        }
+
+        function mostrarMensagem(texto, tipo) {
+            const box = document.getElementById('feedback');
+            box.innerText = texto;
+            box.className = `msg ${tipo}`;
+            setTimeout(() => box.style.display = 'none', 4000);
+        }
+
+        function renderizarTabela() {
+            const tbody = document.getElementById('tabela-produtos');
+            tbody.innerHTML = '';
+            
+            if (produtos.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#999;">Nenhum produto em estoque.</td></tr>`;
+                return;
+            }
+
+            produtos.forEach(prod => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>#${prod.codigo}</strong></td>
+                        <td>${prod.descricao}</td>
+                        <td>${prod.quantidade}</td>
+                        <td>R$ ${prod.valor.toFixed(2)}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        function uiCadastrar() {
+            try {
+                const desc = document.getElementById('cad-descricao').value;
+                const qtd = parseInt(document.getElementById('cad-quantidade').value) || 0;
+                const val = parseFloat(document.getElementById('cad-valor').value) || 0;
+
+                validarProduto(desc, qtd, val);
+
+                produtos.push({ codigo: produtos.length + 1, descricao: desc, quantidade: qtd, valor: val });
+                
+                mostrarMensagem("Produto cadastrado com sucesso!", "success");
+                renderizarTabela();
+                
+                document.getElementById('cad-descricao').value = '';
+                document.getElementById('cad-quantidade').value = '';
+                document.getElementById('cad-valor').value = '';
+            } catch (err) {
+                mostrarMensagem(err.message, "error");
+            }
+        }
+
+        function uiAtualizarValor() {
+            try {
+                const codigo = parseInt(document.getElementById('act-codigo').value);
+                const novoValorStr = document.getElementById('act-valor').value;
+                if (!novoValorStr) throw new Error("Insira o novo valor.");
+                
+                const novoValor = parseFloat(novoValorStr);
+                if (novoValor < 0) throw new Error("O valor não pode ser negativo.");
+
+                const produto = produtos.find(p => p.codigo === codigo);
+                if (!produto) throw new Error("Produto não encontrado.");
+
+                produto.valor = novoValor;
+                mostrarMensagem("Preço atualizado com sucesso!", "success");
+                renderizarTabela();
+                document.getElementById('act-valor').value = '';
+            } catch (err) {
+                mostrarMensagem(err.message, "error");
+            }
+        }
+
+        function uiAtualizarQuantidade() {
+            try {
+                const codigo = parseInt(document.getElementById('act-codigo').value);
+                const novaQtdStr = document.getElementById('act-quantidade').value;
+                if (!novaQtdStr) throw new Error("Insira a quantidade a ser somada.");
+
+                const novaQtd = parseInt(novaQtdStr);
+                if (novaQtd < 1) throw new Error("A quantidade adicionada deve ser maior que zero.");
+
+                const produto = produtos.find(p => p.codigo === codigo);
+                if (!produto) throw new Error("Produto não encontrado.");
+
+                produto.quantidade += novaQtd;
+                mostrarMensagem("Estoque somado com sucesso!", "success");
+                renderizarTabela();
+                document.getElementById('act-quantidade').value = '';
+            } catch (err) {
+                mostrarMensagem(err.message, "error");
+            }
+        }
+
+        // Inicializa com a tabela vazia
+        renderizarTabela();
+    </script>
+</body>
+</html>
