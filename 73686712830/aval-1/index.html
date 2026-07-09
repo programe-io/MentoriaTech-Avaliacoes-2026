@@ -1,204 +1,275 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>GameZone</title>
-
-  <style>
-    *{
-      margin:0;
-      padding:0;
-      box-sizing:border-box;
-      font-family: Arial, Helvetica, sans-serif;
-    }
-
-    body{
-      background: #0f0f1a;
-      color: white;
-    }
-
-    header{
-      background: linear-gradient(90deg, #6a00ff, #00d4ff);
-      padding: 20px;
-      text-align: center;
-      box-shadow: 0 0 20px rgba(0,212,255,0.5);
-    }
-
-    header h1{
-      font-size: 3rem;
-      letter-spacing: 3px;
-    }
-
-    nav{
-      margin-top: 10px;
-    }
-
-    nav a{
-      color: white;
-      text-decoration: none;
-      margin: 0 15px;
-      font-weight: bold;
-      transition: 0.3s;
-    }
-
-    nav a:hover{
-      color: #000;
-      background: white;
-      padding: 5px 10px;
-      border-radius: 5px;
-    }
-
-    .hero{
-      height: 80vh;
-      background: url('https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1400') center/cover;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-    }
-
-    .hero-content{
-      background: rgba(0,0,0,0.7);
-      padding: 40px;
-      border-radius: 15px;
-    }
-
-    .hero h2{
-      font-size: 3rem;
-      margin-bottom: 15px;
-    }
-
-    .hero p{
-      font-size: 1.2rem;
-      margin-bottom: 20px;
-    }
-
-    .btn{
-      background: #00d4ff;
-      color: black;
-      padding: 12px 25px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 1rem;
-      font-weight: bold;
-      transition: 0.3s;
-    }
-
-    .btn:hover{
-      background: #6a00ff;
-      color: white;
-      transform: scale(1.05);
-    }
-
-    .games{
-      padding: 60px 20px;
-      text-align: center;
-    }
-
-    .games h2{
-      margin-bottom: 40px;
-      font-size: 2.5rem;
-    }
-
-    .cards{
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 20px;
-    }
-
-    .card{
-      background: #1b1b2f;
-      width: 280px;
-      border-radius: 15px;
-      overflow: hidden;
-      transition: 0.3s;
-      box-shadow: 0 0 15px rgba(0,0,0,0.5);
-    }
-
-    .card:hover{
-      transform: translateY(-10px);
-      box-shadow: 0 0 20px #00d4ff;
-    }
-
-    .card img{
-      width: 100%;
-      height: 180px;
-      object-fit: cover;
-    }
-
-    .card h3{
-      margin: 15px 0;
-    }
-
-    .card p{
-      padding: 0 15px 20px;
-      color: #ccc;
-    }
-
-    footer{
-      background: #111;
-      text-align: center;
-      padding: 20px;
-      margin-top: 40px;
-      border-top: 2px solid #00d4ff;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Estoque Simples</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        h1, h2 {
+            color: #444;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            flex: 1;
+            min-width: 280px;
+        }
+        .form-group {
+            margin-bottom: 12px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        button.alt-btn {
+            background-color: #007bff;
+        }
+        button.alt-btn:hover {
+            background-color: #0069d9;
+        }
+        #output, #estoqueLista {
+            background: #272822;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .erro {
+            color: #ff6b6b;
+            font-weight: bold;
+        }
+        .sucesso {
+            color: #69db7c;
+            font-weight: bold;
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
 
-  <header>
-    <h1>🎮 GameZone</h1>
+    <h1>Sistema de Controle de Estoque</h1>
+    <p>Utilize os formulários abaixo para interagir com o array de produtos em tempo real.</p>
+    <hr>
 
-    <nav>
-      <a href="#">Início</a>
-      <a href="#">Jogos</a>
-      <a href="#">Campeonatos</a>
-      <a href="#">Contato</a>
-    </nav>
-  </header>
+    <div class="container">
+        <div class="card">
+            <h2>1. Cadastrar Produto</h2>
+            <div class="form-group">
+                <label>Descrição (mín. 5 caract.):</label>
+                <input type="text" id="cadDescricao" placeholder="Ex: Cadeira Gamer">
+            </div>
+            <div class="form-group">
+                <label>Quantidade Inicial:</label>
+                <input type="number" id="cadQuantidade" placeholder="Ex: 10">
+            </div>
+            <div class="form-group">
+                <label>Valor Unitário (R$):</label>
+                <input type="number" id="cadValor" step="0.01" placeholder="Ex: 699.90">
+            </div>
+            <button onclick="interfaceCadastrar()">Cadastrar Produto</button>
+        </div>
 
-  <section class="hero">
-    <div class="hero-content">
-      <h2>Entre no Mundo Gamer</h2>
-      <p>Os melhores jogos, notícias e campeonatos em um só lugar.</p>
-      <button class="btn">Jogar Agora</button>
+        <div class="card">
+            <h2>2. Atualizar Dados</h2>
+            <div class="form-group">
+                <label>Código do Produto:</label>
+                <input type="number" id="altCodigo" placeholder="Ex: 1">
+            </div>
+            <div class="form-group">
+                <label>Novo Valor (Substitui o atual):</label>
+                <input type="number" id="altValor" step="0.01" placeholder="Deixe em branco se for atualizar apenas qtd">
+            </div>
+            <button class="alt-btn" onclick="interfaceAtualizarValor()" style="margin-bottom: 15px;">Atualizar Valor</button>
+            
+            <div class="form-group">
+                <label>Quantidade a Somar (Entrada):</label>
+                <input type="number" id="altQuantidade" placeholder="Deixe em branco se for atualizar apenas valor">
+            </div>
+            <button class="alt-btn" onclick="interfaceAtualizarQuantidade()">Somar Quantidade</button>
+        </div>
     </div>
-  </section>
 
-  <section class="games">
-    <h2>🔥 Jogos em Destaque</h2>
+    <br>
 
-    <div class="cards">
-
-      <div class="card">
-        <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=1200" alt="Jogo FPS">
-        <h3>Battle Strike</h3>
-        <p>Um jogo de tiro intenso com gráficos incríveis.</p>
-      </div>
-
-      <div class="card">
-        <img src="https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?q=80&w=1200" alt="Jogo corrida">
-        <h3>Speed Legends</h3>
-        <p>Corra em pistas futuristas e desafie seus amigos.</p>
-      </div>
-
-      <div class="card">
-        <img src="https://images.unsplash.com/photo-1545239351-1141bd82e8a6?q=80&w=1200" alt="Jogo aventura">
-        <h3>Fantasy Quest</h3>
-        <p>Explore mundos mágicos e enfrente criaturas épicas.</p>
-      </div>
-
+    <div class="container">
+        <div class="card" style="min-width: 100%;">
+            <h2>Console do Sistema (Logs)</h2>
+            <div id="output">Pronto para receber comandos...</div>
+        </div>
+        
+        <div class="card" style="min-width: 100%;">
+            <h2>Estoque Atual (JSON)</h2>
+            <div id="estoqueLista">[]</div>
+        </div>
     </div>
-  </section>
 
-  <footer>
-    <p>© 2026 GameZone - Todos os direitos reservados</p>
-  </footer>
+    <script>
+        // --- ESTADO GLOBAL ---
+        let produtos = [];
 
-</body>
+        // --- VALIDAÇÕES E BUSCAS (Melhorias sugeridas) ---
+        function validarDescricao(descricao) {
+            if (!descricao || descricao.trim().length < 5) {
+                throw new Error("Descrição deve ter, no mínimo, cinco caracteres.");
+            }
+        }
+
+        function validarQuantidade(quantidade) {
+            if (isNaN(quantidade) || quantidade < 1) {
+                throw new Error("Quantidade deve ser maior que zero.");
+            }
+        }
+
+        function validarValor(valor) {
+            if (isNaN(valor) || valor < 0) {
+                throw new Error("Valor deve ser maior ou igual a zero.");
+            }
+        }
+
+        function buscarProdutoPorCodigo(codigoProduto) {
+            return produtos.find((prod) => prod.codigo === codigoProduto);
+        }
+
+        // --- FUNÇÕES DE REGRAS DE NEGÓCIO ---
+        function cadastrarProduto(descricao, quantidade, valor) {
+            validarDescricao(descricao);
+            validarQuantidade(quantidade);
+            validarValor(valor);
+
+            let novoProduto = {
+                codigo: produtos.length + 1,
+                descricao: descricao,
+                quantidade: Number(quantidade),
+                valor: Number(valor)
+            };
+
+            produtos.push(novoProduto);
+            logImprimir(`Sucesso: Produto "${descricao}" cadastrado com código ${novoProduto.codigo}!`, "sucesso");
+        }
+
+        function atualizarValor(codigoProduto, novoValor) {
+            validarValor(novoValor);
+            const produto = buscarProdutoPorCodigo(codigoProduto);
+
+            if (produto) {
+                produto.valor = Number(novoValor);
+                logImprimir(`Sucesso: Valor do produto #${codigoProduto} alterado para R$ ${novoValor}.`, "sucesso");
+            } else {
+                throw new Error("Produto não encontrado.");
+            }
+        }
+
+        function atualizarQuantidade(codigoProduto, novaQuantidade) {
+            validarQuantidade(novaQuantidade);
+            const produto = buscarProdutoPorCodigo(codigoProduto);
+
+            if (produto) {
+                produto.quantidade += Number(novaQuantidade);
+                logImprimir(`Sucesso: Adicionadas ${novaQuantidade} unidades ao produto #${codigoProduto}. Total: ${produto.quantidade}.`, "sucesso");
+            } else {
+                throw new Error("Produto não encontrado.");
+            }
+        }
+
+        // --- FUNÇÕES DE INTERAÇÃO COM A TELA (HTML/DOM) ---
+        function logImprimir(mensagem, tipo = "") {
+            const output = document.getElementById("output");
+            if (tipo === "erro") {
+                output.innerHTML = `<span class="erro">[ERRO]: ${mensagem}</span>\n` + output.innerHTML;
+            } else if (tipo === "sucesso") {
+                output.innerHTML = `<span class="sucesso">${mensagem}</span>\n` + output.innerHTML;
+            } else {
+                output.innerHTML = mensagem + "\n" + output.innerHTML;
+            }
+            atualizarVisualizacaoEstoque();
+        }
+
+        function atualizarVisualizacaoEstoque() {
+            const estoqueLista = document.getElementById("estoqueLista");
+            estoqueLista.textContent = JSON.stringify(produtos, null, 4);
+        }
+
+        function interfaceCadastrar() {
+            const desc = document.getElementById("cadDescricao").value;
+            const qtd = parseInt(document.getElementById("cadQuantidade").value);
+            const val = parseFloat(document.getElementById("cadValor").value);
+
+            try {
+                cadastrarProduto(desc, qtd, val);
+                // Limpa campos após sucesso
+                document.getElementById("cadDescricao").value = "";
+                document.getElementById("cadQuantidade").value = "";
+                document.getElementById("cadValor").value = "";
+            } catch (erro) {
+                logImprimir(erro.message, "erro");
+            }
+        }
+
+        function interfaceAtualizarValor() {
+            const codigo = parseInt(document.getElementById("altCodigo").value);
+            const valor = parseFloat(document.getElementById("altValor").value);
+
+            try {
+                if (isNaN(codigo)) throw new Error("Informe o código do produto.");
+                atualizarValor(codigo, valor);
+                document.getElementById("altValor").value = "";
+            } catch (erro) {
+                logImprimir(erro.message, "erro");
+            }
+        }
+
+        function interfaceAtualizarQuantidade() {
+            const codigo = parseInt(document.getElementById("altCodigo").value);
+            const qtd = parseInt(document.getElementById("altQuantidade").value);
+
+            try {
+                if (isNaN(codigo)) throw new Error("Informe o código do produto.");
+                atualizarQuantidade(codigo, qtd);
+                document.getElementById("altQuantidade").value = "";
+            } catch (erro) {
+                logImprimir(erro.message, "erro");
+            }
+        }
+    </script>
+<script src="script.js"></script><script src="script.js"></script></body>
 </html>
