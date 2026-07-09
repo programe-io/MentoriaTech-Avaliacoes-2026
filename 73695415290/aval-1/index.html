@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Controle de Estoque</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h1, h2 {
+            color: #2c3e50;
+        }
+        .grid-forms {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .card-form {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #e9ecef;
+        }
+        .form-group {
+            margin-bottom: 12px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #2980b9;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:hover {
+            background-color: #3498db;
+        }
+        .btn-update-val { background-color: #27ae60; }
+        .btn-update-val:hover { background-color: #2ecc71; }
+        .btn-update-qtd { background-color: #d35400; }
+        .btn-update-qtd:hover { background-color: #e67e22; }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #34495e;
+            color: white;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container">
+    <h1>📦 Sistema de Estoque Simples</h1>
+    <hr>
+    
+    <div class="grid-forms">
+        <div class="card-form">
+            <h2>Cadastrar Produto</h2>
+            <div class="form-group">
+                <label>Descrição:</label>
+                <input type="text" id="cadDescricao" placeholder="Mínimo 5 caracteres">
+            </div>
+            <div class="form-group">
+                <label>Quantidade Inicial:</label>
+                <input type="number" id="cadQuantidade" min="1" placeholder="Ex: 10">
+            </div>
+            <div class="form-group">
+                <label>Valor Unitário (R$):</label>
+                <input type="number" id="cadValor" step="0.01" min="0" placeholder="Ex: 49.90">
+            </div>
+            <button onclick="webCadastrar()">Cadastrar</button>
+        </div>
+
+        <div class="card-form">
+            <h2>Atualizar Preço</h2>
+            <div class="form-group">
+                <label>Código do Produto:</label>
+                <input type="number" id="altValCodigo">
+            </div>
+            <div class="form-group">
+                <label>Novo Valor (R$):</label>
+                <input type="number" id="altValPreco" step="0.01" min="0">
+            </div>
+            <button class="btn-update-val" onclick="webAtualizarValor()">Substituir Preço</button>
+        </div>
+
+        <div class="card-form">
+            <h2>Entrada de Estoque</h2>
+            <div class="form-group">
+                <label>Código do Produto:</label>
+                <input type="number" id="altQtdCodigo">
+            </div>
+            <div class="form-group">
+                <label>Quantidade a Adicionar:</label>
+                <input type="number" id="altQtdNumero" min="1">
+            </div>
+            <button class="btn-update-qtd" onclick="webAtualizarQuantidade()">Somar Quantidade</button>
+        </div>
+    </div>
+
+    <h2>📋 Itens no Estoque</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Código</th>
+                <th>Descrição</th>
+                <th>Quantidade</th>
+                <th>Preço Unitário</th>
+            </tr>
+        </thead>
+        <tbody id="tabelaProdutos">
+            </tbody>
+    </table>
+</div>
+
+<script>
+    // ==========================================
+    // LÓGICA DO JAVASCRIPT (Baseada no Projeto)
+    // ==========================================
+    let produtos = [];
+
+    function validarDescricao(descricao) {
+        if (descricao.length < 5) throw new Error("Descrição deve ter, no mínimo, cinco caracteres");
+    }
+    function validarQuantidade(quantidade) {
+        if (quantidade < 1) throw new Error("Quantidade deve ser maior que zero");
+    }
+    function validarValor(valor) {
+        if (valor < 0) throw new Error("Valor deve ser maior ou igual a zero");
+    }
+
+    function validarProduto(descricao, quantidade, valor) {
+        validarDescricao(descricao);
+        validarQuantidade(quantidade);
+        validarValor(valor);
+    }
+
+    function buscarProdutoPorCodigo(codigoProduto) {
+        const produto = produtos.find((prod) => prod.codigo === codigoProduto);
+        if (!produto) throw new Error("Produto não encontrado");
+        return produto;
+    }
+
+    function cadastrarProduto(descricao, quantidade, valor) {
+        validarProduto(descricao, quantidade, valor);
+        let novoProduto = {
+            codigo: produtos.length + 1,
+            descricao: descricao,
+            quantidade: Number(quantidade),
+            valor: Number(valor)
+        };
+        produtos.push(novoProduto);
+    }
+
+    function atualizarValor(codigoProduto, novoValor) {
+        validarValor(novoValor);
+        let produto = buscarProdutoPorCodigo(codigoProduto);
+        produto.valor = Number(novoValor);
+    }
+
+    function atualizarQuantidade(codigoProduto, novaQuantidade) {
+        validarQuantidade(novaQuantidade);
+        let produto = buscarProdutoPorCodigo(codigoProduto);
+        produto.quantidade += Number(novaQuantidade);
+    }
+
+    // ==========================================
+    // INTEGRAÇÃO COM A INTERFACE GRÁFICA (DOM)
+    // ==========================================
+    
+    // Função para renderizar a tabela na tela
+    function atualizarTabelaInterface() {
+        const tbody = document.getElementById("tabelaProdutos");
+        tbody.innerHTML = ""; // Limpa a tabela
+
+        produtos.forEach(prod => {
+            const linha = document.createElement("tr");
+            linha.innerHTML = `
+                <td><strong>#${prod.codigo}</strong></td>
+                <td>${prod.descricao}</td>
+                <td>${prod.quantidade} un</td>
+                <td>R$ ${prod.valor.toFixed(2)}</td>
+            `;
+            tbody.appendChild(linha);
+        });
+    }
+
+    // Ações disparadas pelos botões
+    function webCadastrar() {
+        const desc = document.getElementById("cadDescricao").value;
+        const qtd = document.getElementById("cadQuantidade").value;
+        const val = document.getElementById("cadValor").value;
+
+        try {
+            cadastrarProduto(desc, qtd, val);
+            atualizarTabelaInterface();
+            // Limpa os campos
+            document.getElementById("cadDescricao").value = "";
+            document.getElementById("cadQuantidade").value = "";
+            document.getElementById("cadValor").value = "";
+        } catch (error) {
+            alert(error.message);
+        }
+    }
+
+    function webAtualizarValor() {
+        const codigo = Number(document.getElementById("altValCodigo").value);
+        const novoPreco = document.getElementById("altValPreco").value;
+
+        try {
+            atualizarValor(codigo, novoPreco);
+            atualizarTabelaInterface();
+            document.getElementById("altValCodigo").value = "";
+            document.getElementById("altValPreco").value = "";
+        } catch (error) {
+            alert(error.message);
+        }
+    }
+
+    function webAtualizarQuantidade() {
+        const codigo = Number(document.getElementById("altQtdCodigo").value);
+        const novaQtd = document.getElementById("altQtdNumero").value;
+
+        try {
+            atualizarQuantidade(codigo, novaQtd);
+            atualizarTabelaInterface();
+            document.getElementById("altQtdCodigo").value = "";
+            document.getElementById("altQtdNumero").value = "";
+        } catch (error) {
+            alert(error.message);
+        }
+    }
+
+    // Inicializa com alguns dados de teste
+    cadastrarProduto("Cadeira gamer", 12, 699);
+    cadastrarProduto("Mouse Logitech", 38, 99);
+    atualizarTabelaInterface();
+
+</script>
+<script src="script.js"></script></body>
+</html>
