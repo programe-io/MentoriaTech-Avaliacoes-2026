@@ -1,14 +1,7 @@
-const botao = document.getElementById("btn");
-const curiosidade = document.getElementById("curiosidade");
+function mostrarMensagem(){
 
-botao.addEventListener("click", () => {
+    document.getElementById("mensagem").innerHTML =
+    "💖 Obrigado por visitar meu blog! Aqui você conheceu um pouco sobre meus artistas favoritos, meus livros, minha rotina e meu amor pela cor rosa.";
 
-    if(curiosidade.style.display === "block"){
-        curiosidade.style.display = "none";
-        botao.textContent = "Mostrar Curiosidade";
-    } else {
-        curiosidade.style.display = "block";
-        botao.textContent = "Ocultar Curiosidade";
     }
-
-});
+}
