@@ -1,107 +1,138 @@
-// Curtidas
+const fases = [
 
-function curtir(botao){
+{
+texto:"Maria gosta de ler livros de aventura. Todos os dias ela lê antes de dormir. Seu livro favorito conta a história de um explorador em busca de tesouros.",
 
-let span = botao.querySelector("span");
+pergunta:"Qual é o tipo de livro preferido de Maria?",
 
-let numero = Number(span.innerHTML);
+opcoes:[
+"Romance",
+"Aventura",
+"Terror",
+"Comédia"
+],
 
-numero++;
+resposta:1
 
-span.innerHTML = numero;
+},
+
+{
+texto:"João plantou uma árvore. Todos os dias ele regava a planta e cuidava dela. Depois de alguns meses ela começou a dar frutos.",
+
+pergunta:"O que João fazia todos os dias?",
+
+opcoes:[
+"Jogava bola",
+"Regava a planta",
+"Vendia frutas",
+"Cortava a árvore"
+],
+
+resposta:1
+
+},
+
+{
+texto:"Ana visitou um zoológico. Ela viu vários animais. O que mais chamou sua atenção foi a girafa por causa do pescoço comprido.",
+
+pergunta:"Qual animal chamou mais atenção de Ana?",
+
+opcoes:[
+"Macaco",
+"Elefante",
+"Girafa",
+"Leão"
+],
+
+resposta:2
 
 }
 
-// Pesquisa
+];
 
-const pesquisa = document.getElementById("pesquisa");
+let fase = 0;
+let pontos = 0;
 
-pesquisa.addEventListener("keyup",function(){
+const texto = document.getElementById("texto");
+const pergunta = document.getElementById("pergunta");
+const opcoes = document.getElementById("opcoes");
+const resultado = document.getElementById("resultado");
+const pontuacao = document.getElementById("pontuacao");
 
-let texto = pesquisa.value.toLowerCase();
+function mostrarPergunta(){
 
-let cards = document.querySelectorAll(".card");
+resultado.innerHTML="";
 
-cards.forEach(card=>{
+let atual=fases[fase];
 
-let titulo = card.querySelector("h2").innerHTML.toLowerCase();
+texto.innerHTML=atual.texto;
 
-if(titulo.indexOf(texto)>-1){
+pergunta.innerHTML=atual.pergunta;
 
-card.style.display="block";
+opcoes.innerHTML="";
 
-}else{
+atual.opcoes.forEach((opcao,index)=>{
 
-card.style.display="none";
+let botao=document.createElement("button");
+
+botao.innerHTML=opcao;
+
+botao.onclick=function(){
+
+verificar(index);
 
 }
+
+opcoes.appendChild(botao);
 
 });
 
-});
+}
 
-// Tema escuro
+function verificar(escolha){
 
-const modo = document.getElementById("modo");
+if(escolha===fases[fase].resposta){
 
-modo.onclick=function(){
+resultado.innerHTML="✅ Você acertou!";
 
-document.body.classList.toggle("dark");
-
-if(document.body.classList.contains("dark")){
-
-modo.innerHTML="☀️ Modo Claro";
+pontos+=10;
 
 }else{
 
-modo.innerHTML="🌙 Modo Escuro";
+resultado.innerHTML="❌ Você errou!";
 
 }
 
-}
+pontuacao.innerHTML="Pontos: "+pontos;
 
-// Adicionar livro
+fase++;
 
-function adicionarLivro(){
+setTimeout(function(){
 
-let titulo=document.getElementById("titulo").value;
+if(fase<fases.length){
 
-let autor=document.getElementById("autor").value;
+mostrarPergunta();
 
-let descricao=document.getElementById("descricao").value;
+}else{
 
-if(titulo==""||autor==""||descricao==""){
-
-alert("Preencha todos os campos!");
-
-return;
+fim();
 
 }
 
-let card=document.createElement("div");
-
-card.className="card";
-
-card.innerHTML=`
-
-<h2>${titulo}</h2>
-
-<h4>${autor}</h4>
-
-<p>${descricao}</p>
-
-<button onclick="curtir(this)">❤️ Curtir <span>0</span></button>
-
-`;
-
-document.getElementById("lista").appendChild(card);
-
-document.getElementById("titulo").value="";
-
-document.getElementById("autor").value="";
-
-document.getElementById("descricao").value="";
-
-alert("Livro adicionado com sucesso!");
+},1200);
 
 }
+
+function fim(){
+
+texto.innerHTML="<h2>Parabéns!</h2>";
+
+pergunta.innerHTML="Você concluiu o jogo!";
+
+opcoes.innerHTML="";
+
+resultado.innerHTML="🏆 Sua pontuação final foi: "+pontos+" pontos.";
+
+}
+
+mostrarPergunta();
