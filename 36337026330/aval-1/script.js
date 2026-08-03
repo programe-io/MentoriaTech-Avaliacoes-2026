@@ -1,27 +1,23 @@
-const botao = document.getElementById("botao");
+const botao = document.getElementById("btn");
 
-const texto = document.getElementById("texto");
+botao.addEventListener("click", () => {
+    alert("Bem-vindo ao País das Maravilhas!");
+});
 
-const fatos = [
+const cards = document.querySelectorAll(".card");
 
-"Draco pertence à tradicional família Malfoy.",
+cards.forEach(card => {
 
-"Seu patrono nunca foi revelado oficialmente.",
+card.addEventListener("mouseenter",()=>{
 
-"Ele estudou em Hogwarts entre 1991 e 1998.",
+card.style.boxShadow="0 0 20px #ff1744";
 
-"Tom Felton interpretou Draco nos oito filmes.",
+});
 
-"Apesar da rivalidade, Draco não era totalmente mau.",
+card.addEventListener("mouseleave",()=>{
 
-"Seu uniforme verde representa a Sonserina."
+card.style.boxShadow="none";
 
-];
-
-botao.addEventListener("click",()=>{
-
-let numero = Math.floor(Math.random()*fatos.length);
-
-texto.innerHTML = fatos[numero];
+});
 
 });
