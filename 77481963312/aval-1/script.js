@@ -1,138 +1,107 @@
-const fases = [
+// Curtidas
 
-{
-texto:"Maria gosta de ler livros de aventura. Todos os dias ela lê antes de dormir. Seu livro favorito conta a história de um explorador em busca de tesouros.",
+function curtir(botao){
 
-pergunta:"Qual é o tipo de livro preferido de Maria?",
+let span = botao.querySelector("span");
 
-opcoes:[
-"Romance",
-"Aventura",
-"Terror",
-"Comédia"
-],
+let numero = Number(span.innerHTML);
 
-resposta:1
+numero++;
 
-},
-
-{
-texto:"João plantou uma árvore. Todos os dias ele regava a planta e cuidava dela. Depois de alguns meses ela começou a dar frutos.",
-
-pergunta:"O que João fazia todos os dias?",
-
-opcoes:[
-"Jogava bola",
-"Regava a planta",
-"Vendia frutas",
-"Cortava a árvore"
-],
-
-resposta:1
-
-},
-
-{
-texto:"Ana visitou um zoológico. Ela viu vários animais. O que mais chamou sua atenção foi a girafa por causa do pescoço comprido.",
-
-pergunta:"Qual animal chamou mais atenção de Ana?",
-
-opcoes:[
-"Macaco",
-"Elefante",
-"Girafa",
-"Leão"
-],
-
-resposta:2
+span.innerHTML = numero;
 
 }
 
-];
+// Pesquisa
 
-let fase = 0;
-let pontos = 0;
+const pesquisa = document.getElementById("pesquisa");
 
-const texto = document.getElementById("texto");
-const pergunta = document.getElementById("pergunta");
-const opcoes = document.getElementById("opcoes");
-const resultado = document.getElementById("resultado");
-const pontuacao = document.getElementById("pontuacao");
+pesquisa.addEventListener("keyup",function(){
 
-function mostrarPergunta(){
+let texto = pesquisa.value.toLowerCase();
 
-resultado.innerHTML="";
+let cards = document.querySelectorAll(".card");
 
-let atual=fases[fase];
+cards.forEach(card=>{
 
-texto.innerHTML=atual.texto;
+let titulo = card.querySelector("h2").innerHTML.toLowerCase();
 
-pergunta.innerHTML=atual.pergunta;
+if(titulo.indexOf(texto)>-1){
 
-opcoes.innerHTML="";
+card.style.display="block";
 
-atual.opcoes.forEach((opcao,index)=>{
+}else{
 
-let botao=document.createElement("button");
-
-botao.innerHTML=opcao;
-
-botao.onclick=function(){
-
-verificar(index);
+card.style.display="none";
 
 }
-
-opcoes.appendChild(botao);
 
 });
 
-}
+});
 
-function verificar(escolha){
+// Tema escuro
 
-if(escolha===fases[fase].resposta){
+const modo = document.getElementById("modo");
 
-resultado.innerHTML="✅ Você acertou!";
+modo.onclick=function(){
 
-pontos+=10;
+document.body.classList.toggle("dark");
 
-}else{
+if(document.body.classList.contains("dark")){
 
-resultado.innerHTML="❌ Você errou!";
-
-}
-
-pontuacao.innerHTML="Pontos: "+pontos;
-
-fase++;
-
-setTimeout(function(){
-
-if(fase<fases.length){
-
-mostrarPergunta();
+modo.innerHTML="☀️ Modo Claro";
 
 }else{
 
-fim();
+modo.innerHTML="🌙 Modo Escuro";
 
 }
 
-},1200);
+}
+
+// Adicionar livro
+
+function adicionarLivro(){
+
+let titulo=document.getElementById("titulo").value;
+
+let autor=document.getElementById("autor").value;
+
+let descricao=document.getElementById("descricao").value;
+
+if(titulo==""||autor==""||descricao==""){
+
+alert("Preencha todos os campos!");
+
+return;
 
 }
 
-function fim(){
+let card=document.createElement("div");
 
-texto.innerHTML="<h2>Parabéns!</h2>";
+card.className="card";
 
-pergunta.innerHTML="Você concluiu o jogo!";
+card.innerHTML=`
 
-opcoes.innerHTML="";
+<h2>${titulo}</h2>
 
-resultado.innerHTML="🏆 Sua pontuação final foi: "+pontos+" pontos.";
+<h4>${autor}</h4>
+
+<p>${descricao}</p>
+
+<button onclick="curtir(this)">❤️ Curtir <span>0</span></button>
+
+`;
+
+document.getElementById("lista").appendChild(card);
+
+document.getElementById("titulo").value="";
+
+document.getElementById("autor").value="";
+
+document.getElementById("descricao").value="";
+
+alert("Livro adicionado com sucesso!");
 
 }
-
-mostrarPergunta();
