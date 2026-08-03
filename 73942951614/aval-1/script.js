@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Blog Pessoal</title>
+    <style>
+        /* =========================================
+           CSS - ESTILIZAÇÃO
+           ========================================= */
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-radius: 12px;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        /* Header */
+        header {
+            background: var(--card-bg);
+            padding: 1.5rem 2rem;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 { font-size: 1.5rem; color: var(--primary-color); }
+        
+        nav a {
+            text-decoration: none;
+            color: var(--text-main);
+            margin-left: 1.5rem;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav a:hover { color: var(--primary-color); }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 4rem 1rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero h2 { font-size: 2.5rem; margin-bottom: 1rem; }
+        .hero p { color: var(--text-muted); font-size: 1.1rem; }
+
+        /* Grid de Posts */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .posts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+
+        /* Card do Post */
+        .post-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .post-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.15);
+        }
+
+        .post-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background-color: #e2e8f0;
+        }
+
+        .post-content { padding: 1.5rem; flex-grow: 1; }
+
+        .post-meta {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .post-tag {
+            background: #eff6ff;
+            color: var(--primary-color);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .post-title { font-size: 1.25rem; margin-bottom: 0.75rem; }
+
+        .post-excerpt {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .read-more {
+            display: inline-block;
+            color: var(--primary-color);
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 0.95rem;
+        }
+
+        .read-more:hover { text-decoration: underline; }
+
+        /* Modal / Overlay do Post Completo */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 1rem;
+        }
+
+        .modal-overlay.active { display: flex; }
+
+        .modal-content {
+            background: var(--card-bg);
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            border-radius: var(--border-radius);
+            padding: 2.5rem;
+            position: relative;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            font-size: 2rem;
+            cursor: pointer;
+            color: var(--text-muted);
+            background: none;
+            border: none;
+            line-height: 1;
+        }
+
+        .close-btn:hover { color: var(--text-main); }
+
+        .modal-body { margin-top: 1.5rem; line-height: 1.8; }
+        .modal-body p { margin-bottom: 1rem; }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+            margin-top: 3rem;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .hero h2 { font-size: 1.8rem; }
+            header { flex-direction: column; gap: 1rem; }
+            nav a { margin: 0 0.75rem; }
+            .modal-content { padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header>
+        <h1>📝 Meu Blog</h1>
+        <nav>
+            <a href="#">Início</a>
+            <a href="#">Tecnologia</a>
+            <a href="#">Lifestyle</a>
+            <a href="#">Sobre</a>
+        </nav>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero">
+        <h2>Ideias, Código & Criatividade</h2>
+        <p>Um espaço para compartilhar aprendizados sobre desenvolvimento web, produtividade e tecnologia.</p>
+    </section>
+
+    <!-- POSTS GRID -->
+    <main class="container">
+        <div id="posts-container" class="posts-grid">
+            <!-- Os posts serão injetados aqui via JavaScript -->
+        </div>
+    </main>
+
+    <!-- MODAL DE LEITURA -->
+    <div id="post-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="close-btn" id="close-modal">&times;</button>
+            <div id="modal-inner"></div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>&copy; 2026 Meu Blog Pessoal. Feito com HTML, CSS e JS puro.</p>
+    </footer>
+
+    <script>
+        /* =========================================
+           JAVASCRIPT - LÓGICA DO BLOG
+           ========================================= */
+
+        // 1. BASE DE DADOS DOS POSTS
+        const posts = [
+            {
+                id: 1,
+                title: "Como Começar com Desenvolvimento Web em 2026",
+                tag: "Tecnologia",
+                date: "01 Ago 2026",
+                image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=600&h=400&fit=crop",
+                excerpt: "O cenário de desenvolvimento web mudou muito. Descubra as tecnologias essenciais para começar sua jornada este ano.",
+                content: `
+                    <p>O desenvolvimento web continua sendo uma das carreiras mais promissoras em 2026. Com a evolução da IA e das ferramentas de low-code, muitos se perguntam se ainda vale a pena aprender os fundamentos.</p>
+                    <p>A resposta é sim! Entender HTML semântico, CSS moderno e JavaScript vanilla é o que diferencia um profissional que apenas usa ferramentas de alguém que realmente entende como a web funciona.</p>
+                    <p>Neste artigo, vamos explorar o roadmap atualizado, incluindo frameworks modernos, acessibilidade web e performance como pilares fundamentais.</p>
+                `
+            },
+            {
+                id: 2,
+                title: "Produtividade Minimalista para Devs",
+                tag: "Lifestyle",
+                date: "28 Jul 2026",
+                image: "https://images.unsplash.com/photo-1499750310159-5254f3615484?w=600&h=400&fit=crop",
+                excerpt: "Menos é mais. Aprenda a organizar seu ambiente de trabalho digital e físico para maximizar seu foco e criatividade.",
+                content: `
+                    <p>A sobrecarga de informações é o maior inimigo da produtividade moderna. Como desenvolvedores, somos bombardeados por notificações, novas libs e tutoriais infinitos.</p>
+                    <p>O minimalismo digital não é sobre ter menos coisas, é sobre dar espaço para o que realmente importa. Experimente a técnica Pomodoro adaptada para codificação e veja sua eficiência dobrar.</p>
+                    <p>Lembre-se: descansar também faz parte do processo de resolver bugs complexos.</p>
+                `
+            },
+            {
+                id: 3,
+                title: "CSS Grid vs Flexbox: Quando Usar Cada Um?",
+                tag: "Tutorial",
+                date: "25 Jul 2026",
+                image: "https://images.unsplash.com/photo-1507721999472-8ed4421c4af2?w=600&h=400&fit=crop",
+                excerpt: "Ainda tem dúvidas sobre layout? Veja exemplos práticos de quando usar Grid e quando usar Flexbox nos seus projetos.",
+                content: `
+                    <p>Essa é uma dúvida clássica que persiste mesmo em 2026. A regra geral é simples: Flexbox é unidimensional (linha OU coluna), enquanto Grid é bidimensional (linhas E colunas).</p>
+                    <p>Use Flexbox para componentes internos como barras de navegação, cards e alinhamento de itens. Use Grid para o layout macro da página e estruturas complexas.</p>
+                    <p>O segredo está em combinar ambos! Um layout Grid poderoso pode conter componentes Flexbox elegantes. Vamos ver códigos práticos...</p>
+                `
+            }
+        ];
+
+        // 2. RENDERIZAR POSTS NA TELA
+        const postsContainer = document.getElementById('posts-container');
+
+        function renderPosts() {
+            postsContainer.innerHTML = posts.map(post => `
+                <article class="post-card">
+                    <img 
+                        src="${post.image}" 
+                        alt="${post.title}" 
+                        class="post-image"
+                        loading="lazy"
+                    >
+                    <div class="post-content">
+                        <div class="post-meta">
+                            <span class="post-tag">${post.tag}</span>
+                            <time>${post.date}</time>
+                        </div>
+                        <h3 class="post-title">${post.title}</h3>
+                        <p class="post-excerpt">${post.excerpt}</p>
+                        <button class="read-more" onclick="openPost(${post.id})">
+                            Ler artigo completo →
+                        </button>
+                    </div>
+                </article>
+            `).join('');
+        }
+
+        // 3. ABRIR POST NO MODAL
+        const modal = document.getElementById('post-modal');
+        const modalInner = document.getElementById('modal-inner');
+        const closeModalBtn = document.getElementById('close-modal');
+
+        function openPost(id) {
+            const post = posts.find(p => p.id === id);
+            if (!post) return;
+
+            modalInner.innerHTML = `
+                <div class="post-meta">
+                    <span class="post-tag">${post.tag}</span>
+                    <time>${post.date}</time>
+                </div>
+                <h2 style="font-size:2rem; margin:1rem 0;">${post.title}</h2>
+                <img 
+                    src="${post.image}" 
+                    alt="${post.title}" 
+                    style="width:100%; border-radius:12px; margin-bottom:1.5rem;"
+                >
+                <div class="modal-body">${post.content}</div>
+            `;
+
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden'; // Previne scroll atrás do modal
+        }
+
+        function closeModal() {
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Event Listeners
+        closeModalBtn.addEventListener('click', closeModal);
+
+        // Fecha ao clicar fora do conteúdo
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+
+        // Fecha com tecla ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modal.classList.contains('active')) {
+                closeModal();
+            }
+        });
+
+        // Inicializar
+        renderPosts();
+    </script>
+</body>
+</html>
