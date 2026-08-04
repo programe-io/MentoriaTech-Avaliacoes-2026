@@ -1,113 +1,61 @@
-/* Configuração geral */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+document.addEventListener("DOMContentLoaded", function () {
 
-body {
-    font-family: 'Arial', sans-serif;
-    background: linear-gradient(135deg, #e3f2fd, #f8f9fa);
-    color: #333;
-    min-height: 100vh;
-    padding: 30px;
-}
+    // Seleciona todos os botões de envio
+    const botoes = document.querySelectorAll(".botao-enviar");
 
-/* Caixa principal */
-.container {
-    max-width: 750px;
-    margin: auto;
-    background: #ffffff;
-    padding: 35px;
-    border-radius: 15px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-}
+    botoes.forEach(function (botao) {
 
-/* Título */
-h1 {
-    text-align: center;
-    color: #0d47a1;
-    margin-bottom: 20px;
-    font-size: 32px;
-}
+        botao.addEventListener("click", function (evento) {
 
-/* Texto */
-p {
-    font-size: 17px;
-    line-height: 1.6;
-    margin-bottom: 15px;
-}
+            evento.preventDefault();
 
-/* Cartões das avaliações */
-.card {
-    background: #f5f9ff;
-    border-left: 6px solid #1976d2;
-    padding: 20px;
-    margin: 20px 0;
-    border-radius: 12px;
-    transition: 0.3s;
-}
+            // Confirmação antes de abrir o link
+            let confirmar = confirm(
+                "Deseja abrir o formulário para enviar esta avaliação?"
+            );
 
-.card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.12);
-}
+            if (confirmar) {
 
-/* Títulos das avaliações */
-.card h3 {
-    color: #1565c0;
-    margin-bottom: 10px;
-}
+                // Altera o status da avaliação
+                let card = botao.closest(".card");
+                let status = card.querySelector(".status");
 
-/* Status */
-.status {
-    color: #d32f2f;
-    font-weight: bold;
-}
+                status.textContent = "Enviamento em andamento...";
+                status.style.color = "#ff9800";
 
-/* Botões */
-.botao {
-    display: inline-block;
-    background: #1976d2;
-    color: white;
-    text-decoration: none;
-    padding: 12px 25px;
-    border-radius: 8px;
-    font-weight: bold;
-    transition: 0.3s;
-}
+                // Abre o link da avaliação
+                window.open(botao.href, "_blank");
 
-.botao:hover {
-    background: #0d47a1;
-    transform: scale(1.05);
-}
+                // Atualiza depois de alguns segundos
+                setTimeout(function () {
+                    status.textContent = "Avaliação enviada";
+                    status.style.color = "#2e7d32";
 
-/* Botão de vídeo */
-.video {
-    background: #2e7d32;
-}
+                    botao.textContent = "Enviado";
+                    botao.style.background = "#2e7d32";
 
-.video:hover {
-    background: #1b5e20;
-}
+                }, 3000);
 
-/* Responsividade para celular */
-@media (max-width: 600px) {
+            }
 
-    body {
-        padding: 15px;
+        });
+
+    });
+
+
+    // Mensagem do botão do vídeo
+    const video = document.querySelector(".video");
+
+    if (video) {
+
+        video.addEventListener("click", function () {
+
+            alert(
+                "Assista ao vídeo antes de realizar o envio das avaliações."
+            );
+
+        });
+
     }
 
-    .container {
-        padding: 20px;
-    }
-
-    h1 {
-        font-size: 24px;
-    }
-
-    .botao {
-        width: 100%;
-        text-align: center;
-    }
-}
+});

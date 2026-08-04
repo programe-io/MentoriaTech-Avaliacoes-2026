@@ -1,112 +1,74 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Envio das Avaliações Trimestrais</title>
-
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f6f8;
-            margin: 0;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 700px;
-            margin: auto;
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px #ccc;
-        }
-
-        h1 {
-            color: #1a73e8;
-            text-align: center;
-        }
-
-        p {
-            font-size: 16px;
-        }
-
-        .card {
-            background: #f9f9f9;
-            padding: 15px;
-            margin-top: 15px;
-            border-radius: 8px;
-            border-left: 5px solid #1a73e8;
-        }
-
-        .botao {
-            display: inline-block;
-            margin-top: 10px;
-            background: #1a73e8;
-            color: white;
-            padding: 10px 20px;
-            text-decoration: none;
-            border-radius: 5px;
-        }
-
-        .botao:hover {
-            background: #0c5dc0;
-        }
-
-        .status {
-            color: red;
-            font-weight: bold;
-        }
-    </style>
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="style.css" rel="stylesheet"></head>
-
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet">
+</head>
 <body>
+  document.addEventListener("DOMContentLoaded", function () {
 
-<div class="container">
+    // Seleciona todos os botões de envio
+    const botoes = document.querySelectorAll(".botao-enviar");
 
-    <h1>Envio das Avaliações Trimestrais</h1>
+    botoes.forEach(function (botao) {
 
-    <p>
-        Assista ao vídeo abaixo para entender como deve ser feito o envio das avaliações trimestrais.
-    </p>
+        botao.addEventListener("click", function (evento) {
 
-    <a class="botao" href="LINK_DO_VIDEO" target="_blank">
-        Como enviar uma avaliação: Assistir vídeo
-    </a>
+            evento.preventDefault();
+
+            // Confirmação antes de abrir o link
+            let confirmar = confirm(
+                "Deseja abrir o formulário para enviar esta avaliação?"
+            );
+
+            if (confirmar) {
+
+                // Altera o status da avaliação
+                let card = botao.closest(".card");
+                let status = card.querySelector(".status");
+
+                status.textContent = "Enviamento em andamento...";
+                status.style.color = "#ff9800";
+
+                // Abre o link da avaliação
+                window.open(botao.href, "_blank");
+
+                // Atualiza depois de alguns segundos
+                setTimeout(function () {
+                    status.textContent = "Avaliação enviada";
+                    status.style.color = "#2e7d32";
+
+                    botao.textContent = "Enviado";
+                    botao.style.background = "#2e7d32";
+
+                }, 3000);
+
+            }
+
+        });
+
+    });
 
 
-    <div class="card">
-        <h3>Link da Avaliação 1</h3>
-        <p class="status">Não foi enviado ainda</p>
+    // Mensagem do botão do vídeo
+    const video = document.querySelector(".video");
 
-        <a class="botao" href="LINK_AVALIACAO_1" target="_blank">
-            Enviar
-        </a>
-    </div>
+    if (video) {
 
+        video.addEventListener("click", function () {
 
-    <div class="card">
-        <h3>Link da Avaliação 2</h3>
-        <p class="status">Não foi enviado ainda</p>
+            alert(
+                "Assista ao vídeo antes de realizar o envio das avaliações."
+            );
 
-        <a class="botao" href="LINK_AVALIACAO_2" target="_blank">
-            Enviar
-        </a>
-    </div>
+        });
 
+    }
 
-    <div class="card">
-        <h3>Link da Avaliação 3</h3>
-        <p class="status">Não foi enviado ainda</p>
-
-        <a class="botao" href="LINK_AVALIACAO_3" target="_blank">
-            Enviar
-        </a>
-    </div>
-
-</div>
-
-<script src="script.js"></script></body>
+});
+  <script src="script.js"></script>
+  
+</body>
 </html>
