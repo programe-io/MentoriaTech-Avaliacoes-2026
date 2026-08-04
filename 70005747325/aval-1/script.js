@@ -1,0 +1,61 @@
+document.addEventListener("DOMContentLoaded", function () {
+
+    // Seleciona todos os botões de envio
+    const botoes = document.querySelectorAll(".botao-enviar");
+
+    botoes.forEach(function (botao) {
+
+        botao.addEventListener("click", function (evento) {
+
+            evento.preventDefault();
+
+            // Confirmação antes de abrir o link
+            let confirmar = confirm(
+                "Deseja abrir o formulário para enviar esta avaliação?"
+            );
+
+            if (confirmar) {
+
+                // Altera o status da avaliação
+                let card = botao.closest(".card");
+                let status = card.querySelector(".status");
+
+                status.textContent = "Enviamento em andamento...";
+                status.style.color = "#ff9800";
+
+                // Abre o link da avaliação
+                window.open(botao.href, "_blank");
+
+                // Atualiza depois de alguns segundos
+                setTimeout(function () {
+                    status.textContent = "Avaliação enviada";
+                    status.style.color = "#2e7d32";
+
+                    botao.textContent = "Enviado";
+                    botao.style.background = "#2e7d32";
+
+                }, 3000);
+
+            }
+
+        });
+
+    });
+
+
+    // Mensagem do botão do vídeo
+    const video = document.querySelector(".video");
+
+    if (video) {
+
+        video.addEventListener("click", function () {
+
+            alert(
+                "Assista ao vídeo antes de realizar o envio das avaliações."
+            );
+
+        });
+
+    }
+
+});
