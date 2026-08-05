@@ -1,22 +1,22 @@
-const botao = document.getElementById("btn");
+const botao = document.getElementById("tema");
 
 botao.addEventListener("click", () => {
-    alert("Bem-vindo ao País das Maravilhas!");
+    document.body.classList.toggle("claro");
 });
 
 const cards = document.querySelectorAll(".card");
 
 cards.forEach(card => {
 
-card.addEventListener("mouseenter",()=>{
+card.addEventListener("mouseenter", () => {
 
-card.style.boxShadow="0 0 20px #ff1744";
+card.style.transform = "translateY(-10px) scale(1.05)";
 
 });
 
-card.addEventListener("mouseleave",()=>{
+card.addEventListener("mouseleave", () => {
 
-card.style.boxShadow="none";
+card.style.transform = "translateY(0) scale(1)";
 
 });
 
