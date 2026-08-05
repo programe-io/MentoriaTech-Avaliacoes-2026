@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Gaming - O Portal Gamer Moderno</title>
+    <!-- Fonte Inter & FontAwesome para Ícones -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* ==========================================================================
+           1. VARIÁVEIS & RESET (Suporte Nativo a Temas Dark/Light)
+           ========================================================================== */
+        :root[data-theme="dark"] {
+            --bg-base: #0b0c10;
+            --bg-surface: #131720;
+            --bg-card: #1c2331;
+            --bg-input: #0f131d;
+            --text-primary: #ffffff;
+            --text-secondary: #94a3b8;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --accent: #00ff66;
+            --accent-hover: #00cc52;
+            --accent-glow: rgba(0, 255, 102, 0.25);
+            --shadow-color: rgba(0, 0, 0, 0.5);
+        }
+
+        :root[data-theme="light"] {
+            --bg-base: #f8fafc;
+            --bg-surface: #ffffff;
+            --bg-card: #ffffff;
+            --bg-input: #f1f5f9;
+            --text-primary: #0f172a;
+            --text-secondary: #64748b;
+            --border-color: rgba(0, 0, 0, 0.08);
+            --accent: #10b981;
+            --accent-hover: #059669;
+            --accent-glow: rgba(16, 185, 129, 0.2);
+            --shadow-color: rgba(0, 0, 0, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+        }
+
+        .container {
+            max-width: 1240px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* ==========================================================================
+           2. CABEÇALHO & NAVEGAÇÃO
+           ========================================================================== */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 72px;
+            background-color: rgba(11, 12, 16, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 1000;
+        }
+
+        :root[data-theme="light"] .header {
+            background-color: rgba(255, 255, 255, 0.85);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 100%;
+        }
+
+        .logo {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo i { color: var(--accent); }
+        .logo span { color: var(--accent); }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 24px;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            position: relative;
+            padding: 4px 0;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--text-primary);
+        }
+
+        .nav-links a.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--accent);
+            border-radius: 2px;
+        }
+
+        .theme-toggle, .menu-toggle {
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .menu-toggle { display: none; }
+
+        /* ==========================================================================
+           3. HERO BANNER
+           ========================================================================== */
+        .hero {
+            padding-top: 120px;
+            padding-bottom: 40px;
+        }
+
+        .hero-card {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            height: 420px;
+            display: flex;
+            align-items: flex-end;
+            padding: 40px;
+            box-shadow: 0 20px 40px var(--shadow-color);
+        }
+
+        .hero-bg {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 0;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(0deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 60%, rgba(0,0,0,0) 100%);
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 650px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: var(--accent);
+            color: #000;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .hero h1 {
+            font-size: 2.2rem;
+            line-height: 1.2;
+            margin-bottom: 8px;
+            color: #fff;
+        }
+
+        /* Adicionada estilização para a tag h2 dentro do Hero */
+        .hero h2 {
+            font-size: 1.1rem;
+            font-weight: 400;
+            color: #cbd5e1;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        /* ==========================================================================
+           4. BARRA DE CONTROLES E TÍTULOS DE SEÇÃO
+           ========================================================================== */
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .section-header h2 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            position: relative;
+        }
+
+        .section-header h2::after {
+            content: '';
+            display: block;
+            width: 40px;
+            height: 3px;
+            background: var(--accent);
+            border-radius: 2px;
+            margin-top: 4px;
+        }
+
+        .controls-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            position: relative;
+            flex: 1;
+            min-width: 280px;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 16px 12px 44px;
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            outline: none;
+        }
+
+        .search-box input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        .filter-tags {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+
+        .filter-btn {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--accent);
+            color: #000;
+            border-color: var(--accent);
+        }
+
+        /* ==========================================================================
+           5. LAYOUT DE CONTEÚDO (Grid + Sidebar)
+           ========================================================================== */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 32px;
+            margin-bottom: 60px;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+        }
+
+        .card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 12px var(--shadow-color);
+            position: relative;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent);
+        }
+
+        .card-img-wrapper {
+            position: relative;
+            height: 180px;
+            overflow: hidden;
+            background-color: var(--bg-input);
+        }
+
+        .card-img-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+            display: block;
+        }
+
+        .card:hover .card-img-wrapper img {
+            transform: scale(1.05);
+        }
+
+        .card-category {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            color: var(--accent);
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 6px;
+            z-index: 2;
+        }
+
+        .like-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            border: none;
+            color: #fff;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+        }
+
+        .like-btn.liked i {
+            color: #ef4444;
+            font-weight: 900;
+        }
+
+        .card-body {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        /* Atualizado o título do card para H2 */
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            line-height: 1.4;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .card-desc {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            margin-bottom: 16px;
+            flex: 1;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--border-color);
+            padding-top: 12px;
+        }
+
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 40px;
+            color: var(--text-secondary);
+        }
+
+        /* ==========================================================================
+           6. SIDEBAR & WIDGETS
+           ========================================================================== */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .widget {
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px;
+        }
+
+        /* Atualizado títulos dos widgets para H2 */
+        .widget-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-primary);
+        }
+
+        .widget-title i { color: var(--accent); }
+
+        .ranking-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .ranking-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.9rem;
+        }
+
+        .ranking-item span {
+            font-weight: 700;
+            color: var(--accent);
+            background: var(--accent-glow);
+            padding: 2px 8px;
+            border-radius: 6px;
+        }
+
+        .newsletter-box input {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-input);
+            color: var(--text-primary);
+            margin-bottom: 10px;
+            outline: none;
+        }
+
+        .btn-primary {
+            width: 100%;
+            background: var(--accent);
+            color: #000;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+        }
+
+        footer {
+            border-top: 1px solid var(--border-color);
+            padding: 30px 0;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 992px) {
+            .main-layout { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 768px) {
+            .menu-toggle { display: flex; }
+            .nav-links {
+                position: fixed;
+                top: 72px;
+                right: -100%;
+                width: 100%;
+                height: calc(100vh - 72px);
+                background-color: var(--bg-surface);
+                flex-direction: column;
+                align-items: center;
+                padding-top: 40px;
+                transition: right 0.3s ease;
+            }
+            .nav-links.open { right: 0; }
+            .hero-card { height: 350px; padding: 20px; }
+            .hero h1 { font-size: 1.5rem; }
+            .hero h2 { font-size: 0.95rem; }
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"><link href="style.css" rel="stylesheet"></head>
+<body>
+
+    <!-- CABEÇALHO -->
+    <header class="header">
+        <div class="container nav-container">
+            <a href="#" class="logo">
+                <i class="fa-solid fa-gamepad"></i>
+                NEXUS<span>GAMING</span>
+            </a>
+
+            <div class="nav-actions">
+                <nav>
+                    <ul class="nav-links" id="nav-links">
+                        <li><a href="#" class="nav-item active" data-section="todos">Início</a></li>
+                        <li><a href="#" class="nav-item" data-section="Notícias">Notícias</a></li>
+                        <li><a href="#" class="nav-item" data-section="Análises">Análises</a></li>
+                        <li><a href="#" class="nav-item" data-section="Hardware">Hardware</a></li>
+                    </ul>
+                </nav>
+
+                <button class="theme-toggle" id="theme-toggle" title="Alternar Tema">
+                    <i class="fa-solid fa-moon"></i>
+                </button>
+
+                <button class="menu-toggle" id="menu-toggle">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-card">
+                <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1200&q=80" 
+                     alt="Arena de Campeonato Mundial de eSports lotada" 
+                     class="hero-bg"
+                     loading="eager">
+                
+                <div class="hero-overlay"></div>
+                
+                <div class="hero-content">
+                    <span class="badge">Destaque</span>
+                    <h1>Finais do Campeonato Mundial de eSports quebram recorde histórico</h1>
+                    <!-- ADICIONADO H2 AQUI -->
+                    <h2>Acompanhe os melhores momentos, estatísticas da partida e a repercussão completa.</h2>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="container">
+        <!-- Título H2 para a Seção do Grid -->
+        <div class="section-header">
+            <h2>Últimas Publicações</h2>
+        </div>
+
+        <!-- Barra de Busca & Filtros -->
+        <div class="controls-bar">
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="search-input" placeholder="Pesquisar por título ou assunto...">
+            </div>
+            
+            <div class="filter-tags" id="filter-tags">
+                <button class="filter-btn active" data-category="todos">Todos</button>
+                <button class="filter-btn" data-category="Notícias">Notícias</button>
+                <button class="filter-btn" data-category="Análises">Análises</button>
+                <button class="filter-btn" data-category="Hardware">Hardware</button>
+                <button class="filter-btn" data-category="eSports">eSports</button>
+            </div>
+        </div>
+
+        <div class="main-layout">
+            <!-- Grid de Cards Renderizados via JS -->
+            <section class="cards-grid" id="cards-container">
+                <!-- Injetado dinamicamente via JavaScript -->
+            </section>
+
+            <!-- BARRA LATERAL -->
+            <aside class="sidebar">
+                <div class="widget newsletter-box">
+                    <!-- ADICIONADO H2 NO WIDGET DE NEWSLETTER -->
+                    <h2 class="widget-title"><i class="fa-solid fa-envelope"></i> Boletim Gamer</h2>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 12px;">Receba as novidades mais quentes do mundo dos games.</p>
+                    <form id="newsletter-form">
+                        <input type="email" placeholder="Seu e-mail..." required>
+                        <button type="submit" class="btn-primary">Inscrever-se</button>
+                    </form>
+                </div>
+
+                <div class="widget">
+                    <!-- ADICIONADO H2 NO WIDGET DE RANKING -->
+                    <h2 class="widget-title"><i class="fa-solid fa-fire"></i> Mais Jogados Hoje</h2>
+                    <ul class="ranking-list">
+                        <li class="ranking-item">Counter-Strike 2 <span>#1</span></li>
+                        <li class="ranking-item">Valorant <span>#2</span></li>
+                        <li class="ranking-item">League of Legends <span>#3</span></li>
+                        <li class="ranking-item">GTA V / RP <span>#4</span></li>
+                    </ul>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Nexus Gaming. Plataforma Gamer Interativa.</p>
+        </div>
+    </footer>
+
+    <!-- LÓGICA JAVASCRIPT -->
+    <script>
+        const FALLBACK_IMAGE = "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=600&q=80";
+
+        const articles = [
+            {
+                id: 1,
+                title: "O Futuro dos Jogos em Nuvem e Consoles de Próxima Geração",
+                category: "Notícias",
+                desc: "Descubra como os avanços tecnológicos estão moldando as novas experiências de gameplay sem necessidade de downloads.",
+                image: "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=600&q=80",
+                date: "Há 2 horas",
+                likes: 124
+            },
+            {
+                id: 2,
+                title: "Novo RPG de Ficção Científica Ganha Data de Lançamento",
+                category: "Notícias",
+                desc: "Com um mapa expansivo e gráficos impressionantes na Unreal Engine 5, o título chega no próximo mês.",
+                image: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=600&q=80",
+                date: "Há 5 horas",
+                likes: 89
+            },
+            {
+                id: 3,
+                title: "Review: Vale a pena investir no novo FPS Tático?",
+                category: "Análises",
+                desc: "Analisamos a fundo a jogabilidade, otimização de servidor, movimentação e o balanceamento das armas.",
+                image: "https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?auto=format&fit=crop&w=600&q=80",
+                date: "Ontem",
+                likes: 256
+            },
+            {
+                id: 4,
+                title: "Como escolher a Placa de Vídeo ideal para seu Setup",
+                category: "Hardware",
+                desc: "Guia completo comparando custo-benefício, consumo energético e tecnologias como DLSS e Ray Tracing.",
+                image: "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?auto=format&fit=crop&w=600&q=80",
+                date: "Há 2 dias",
+                likes: 310
+            },
+            {
+                id: 5,
+                title: "Teclados Mecânicos: Switches Lineares vs. Táteis",
+                category: "Hardware",
+                desc: "Entenda as diferenças estruturais entre os switches Red, Blue e Brown para digitação e jogos rápidos.",
+                image: "https://images.unsplash.com/photo-1595225476474-87563907a212?auto=format&fit=crop&w=600&q=80",
+                date: "Há 3 dias",
+                likes: 175
+            },
+            {
+                id: 6,
+                title: "Os 10 Melhores Jogos Independentes do Ano",
+                category: "eSports",
+                desc: "Criatividade sem limites: confira os games indies que superaram produções AAA em narrativa.",
+                image: "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=600&q=80",
+                date: "Há 4 dias",
+                likes: 420
+            }
+        ];
+
+        const userLikes = JSON.parse(localStorage.getItem('nexus_likes')) || [];
+
+        let currentFilter = 'todos';
+        let searchQuery = '';
+
+        const cardsContainer = document.getElementById('cards-container');
+        const searchInput = document.getElementById('search-input');
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const menuToggleBtn = document.getElementById('menu-toggle');
+        const navLinks = document.getElementById('nav-links');
+
+        function renderCards() {
+            cardsContainer.innerHTML = '';
+
+            const filtered = articles.filter(article => {
+                const matchesCategory = currentFilter === 'todos' || article.category.toLowerCase() === currentFilter.toLowerCase();
+                const matchesSearch = article.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                                      article.desc.toLowerCase().includes(searchQuery.toLowerCase());
+                return matchesCategory && matchesSearch;
+            });
+
+            if (filtered.length === 0) {
+                cardsContainer.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fa-solid fa-ghost fa-3x" style="margin-bottom: 10px;"></i>
+                        <p>Nenhum artigo encontrado com os termos pesquisados.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            filtered.forEach(article => {
+                const isLiked = userLikes.includes(article.id);
+                const card = document.createElement('article');
+                card.className = 'card';
+                
+                /*
+                   TAGS H2 APLICADAS NOS TÍTULOS DOS CARDS DE ARTIGOS
+                */
+                card.innerHTML = `
+                    <div class="card-img-wrapper">
+                        <img src="${article.image}" 
+                             alt="${article.title}" 
+                             loading="lazy" 
+                             onerror="this.onerror=null; this.src='${FALLBACK_IMAGE}';">
+                        <span class="card-category">${article.category}</span>
+                        <button class="like-btn ${isLiked ? 'liked' : ''}" onclick="toggleLike(${article.id})" aria-label="Curtir artigo">
+                            <i class="fa-${isLiked ? 'solid' : 'regular'} fa-heart"></i>
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <h2 class="card-title">${article.title}</h2>
+                        <p class="card-desc">${article.desc}</p>
+                        <div class="card-footer">
+                            <span><i class="fa-regular fa-clock"></i> ${article.date}</span>
+                            <span><i class="fa-solid fa-heart" style="color: #ef4444;"></i> ${article.likes + (isLiked ? 1 : 0)}</span>
+                        </div>
+                    </div>
+                `;
+                cardsContainer.appendChild(card);
+            });
+        }
+
+        window.toggleLike = function(id) {
+            const index = userLikes.indexOf(id);
+            if (index === -1) {
+                userLikes.push(id);
+            } else {
+                userLikes.splice(index, 1);
+            }
+            localStorage.setItem('nexus_likes', JSON.stringify(userLikes));
+            renderCards();
+        };
+
+        searchInput.addEventListener('input', (e) => {
+            searchQuery = e.target.value;
+            renderCards();
+        });
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelector('.filter-btn.active').classList.remove('active');
+                btn.classList.add('active');
+                currentFilter = btn.dataset.category;
+                renderCards();
+            });
+        });
+
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                document.querySelector('.nav-item.active').classList.remove('active');
+                item.classList.add('active');
+                
+                const category = item.dataset.section;
+                currentFilter = category;
+                
+                filterBtns.forEach(b => {
+                    b.classList.toggle('active', b.dataset.category === category);
+                });
+
+                renderCards();
+                navLinks.classList.remove('open');
+            });
+        });
+
+        const savedTheme = localStorage.getItem('nexus_theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        updateThemeIcon(savedTheme);
+
+        themeToggleBtn.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('nexus_theme', newTheme);
+            updateThemeIcon(newTheme);
+        });
+
+        function updateThemeIcon(theme) {
+            const icon = themeToggleBtn.querySelector('i');
+            icon.className = theme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+        }
+
+        menuToggleBtn.addEventListener('click', () => {
+            navLinks.classList.toggle('open');
+        });
+
+        document.getElementById('newsletter-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('Obrigado por se inscrever no Nexus Gaming!');
+            e.target.reset();
+        });
+
+        renderCards();
+    </script>
+<script src="script.js"></script></body>
+</html>
