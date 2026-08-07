@@ -1,15 +1,16 @@
 // script.js
 
-function mostrarMensagem() {
-    alert("Olá! Bem-vindo ao meu site.");
-}
+// Seleciona o botão e todas as respostas
+const botao = document.getElementById("mostrarRespostas");
+const respostas = document.querySelectorAll(".resposta-correta");
 
-function mudarCor() {
-    document.body.style.backgroundColor = "lightblue";
-}
+// Quando o botão for clicado
+botao.addEventListener("click", function () {
 
-function mostrarHora() {
-    const agora = new Date();
-    document.getElementById("hora").innerHTML =
-        "Hora atual: " + agora.toLocaleTimeString();
-}
+    respostas.forEach(function (resposta) {
+        resposta.style.display = "block";
+    });
+
+    botao.textContent = "Respostas Exibidas";
+    botao.disabled = true;
+});
