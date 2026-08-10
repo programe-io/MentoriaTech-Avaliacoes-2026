@@ -1,1053 +1,1661 @@
 ```html
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>SEDUC-PI | Controle de Notas e Faltas</title>
-
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, Helvetica, sans-serif;
-        }
-
-        body {
-            background: #f4f7fb;
-            color: #1f2937;
-        }
-
-        /* MENU LATERAL */
-
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 250px;
-            height: 100vh;
-            background: #075985;
-            color: white;
-            padding: 25px 15px;
-        }
-
-        .logo {
-            text-align: center;
-            margin-bottom: 35px;
-        }
-
-        .logo h1 {
-            font-size: 28px;
-        }
-
-        .logo p {
-            font-size: 13px;
-            margin-top: 5px;
-            opacity: .85;
-        }
-
-        .menu button {
-            width: 100%;
-            border: none;
-            background: transparent;
-            color: white;
-            padding: 15px;
-            margin-bottom: 8px;
-            text-align: left;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 15px;
-        }
-
-        .menu button:hover,
-        .menu .ativo {
-            background: #0369a1;
-        }
-
-        /* CONTEÚDO */
-
-        .main {
-            margin-left: 250px;
-            padding: 25px;
-        }
-
-        .topo {
-            background: white;
-            padding: 20px 25px;
-            border-radius: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 3px 12px rgba(0,0,0,.06);
-        }
-
-        .topo h2 {
-            color: #075985;
-        }
-
-        .usuario {
-            background: #e0f2fe;
-            color: #075985;
-            padding: 10px 15px;
-            border-radius: 20px;
-            font-weight: bold;
-        }
-
-        /* CARDS */
-
-        .cards {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 18px;
-            margin: 25px 0;
-        }
-
-        .card {
-            background: white;
-            padding: 22px;
-            border-radius: 12px;
-            box-shadow: 0 3px 12px rgba(0,0,0,.06);
-        }
-
-        .card h3 {
-            font-size: 14px;
-            color: #6b7280;
-        }
-
-        .card strong {
-            display: block;
-            font-size: 30px;
-            margin-top: 8px;
-            color: #075985;
-        }
-
-        /* ÁREA PRINCIPAL */
-
-        .painel {
-            background: white;
-            border-radius: 12px;
-            padding: 22px;
-            box-shadow: 0 3px 12px rgba(0,0,0,.06);
-        }
-
-        .painel-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            gap: 15px;
-        }
-
-        .painel-header h2 {
-            color: #111827;
-        }
-
-        .acoes {
-            display: flex;
-            gap: 10px;
-        }
-
-        input,
-        select {
-            padding: 11px;
-            border: 1px solid #d1d5db;
-            border-radius: 7px;
-            outline: none;
-        }
-
-        input:focus,
-        select:focus {
-            border-color: #0284c7;
-        }
-
-        button {
-            cursor: pointer;
-        }
-
-        .btn {
-            border: none;
-            padding: 11px 17px;
-            border-radius: 7px;
-            color: white;
-            font-weight: bold;
-        }
-
-        .btn-primary {
-            background: #075985;
-        }
-
-        .btn-success {
-            background: #16a34a;
-        }
-
-        .btn-danger {
-            background: #dc2626;
-        }
-
-        .btn-warning {
-            background: #ea580c;
-        }
-
-        /* TABELA */
-
-        .tabela-container {
-            overflow-x: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 950px;
-        }
-
-        th {
-            background: #075985;
-            color: white;
-            padding: 13px 10px;
-            font-size: 13px;
-        }
-
-        td {
-            padding: 13px 10px;
-            border-bottom: 1px solid #e5e7eb;
-            text-align: center;
-            font-size: 13px;
-        }
-
-        tr:hover {
-            background: #f0f9ff;
-        }
-
-        .aluno {
-            text-align: left;
-            font-weight: bold;
-        }
-
-        /* SITUAÇÃO */
-
-        .situacao {
-            padding: 6px 10px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: bold;
-        }
-
-        .aprovado {
-            background: #dcfce7;
-            color: #166534;
-        }
-
-        .recuperacao {
-            background: #ffedd5;
-            color: #9a3412;
-        }
-
-        .reprovado {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
-        /* MODAL */
-
-        .modal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,.55);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .modal-content {
-            background: white;
-            width: 500px;
-            max-width: 95%;
-            border-radius: 14px;
-            padding: 25px;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        .modal-content h2 {
-            color: #075985;
-            margin-bottom: 20px;
-        }
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-
-        .campo {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .campo label {
-            font-size: 13px;
-            font-weight: bold;
-        }
-
-        .campo input,
-        .campo select {
-            width: 100%;
-        }
-
-        .campo-completo {
-            grid-column: 1 / -1;
-        }
-
-        .modal-botoes {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            margin-top: 25px;
-        }
-
-        /* RESPONSIVO */
-
-        @media(max-width: 1000px) {
-
-            .sidebar {
-                width: 200px;
-            }
-
-            .main {
-                margin-left: 200px;
-            }
-
-            .cards {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        @media(max-width: 700px) {
-
-            .sidebar {
-                position: relative;
-                width: 100%;
-                height: auto;
-            }
-
-            .main {
-                margin-left: 0;
-            }
-
-            .cards {
-                grid-template-columns: 1fr;
-            }
-
-            .topo {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
-            }
-
-            .painel-header {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .acoes {
-                flex-direction: column;
-            }
-
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .campo-completo {
-                grid-column: auto;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>SEDUC-PI | Gestão Escolar</title>
+
+<style>
+
+/* ================================
+   CONFIGURAÇÕES GERAIS
+================================ */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:"Segoe UI",Arial,sans-serif;
+}
+
+body{
+    background:#f1f5f9;
+    color:#1e293b;
+}
+
+/* ================================
+   SIDEBAR
+================================ */
+
+.sidebar{
+    position:fixed;
+    left:0;
+    top:0;
+    width:255px;
+    height:100vh;
+    background:linear-gradient(180deg,#064e78,#075985);
+    color:white;
+    padding:25px 16px;
+    z-index:100;
+}
+
+.logo{
+    text-align:center;
+    padding:10px;
+    margin-bottom:30px;
+}
+
+.logo-icon{
+    width:65px;
+    height:65px;
+    margin:auto;
+    border-radius:18px;
+    background:white;
+    color:#075985;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:30px;
+    font-weight:bold;
+    box-shadow:0 8px 20px rgba(0,0,0,.15);
+}
+
+.logo h1{
+    margin-top:12px;
+    font-size:24px;
+}
+
+.logo p{
+    font-size:12px;
+    opacity:.8;
+    margin-top:4px;
+}
+
+.menu{
+    display:flex;
+    flex-direction:column;
+    gap:7px;
+}
+
+.menu button{
+    border:none;
+    background:transparent;
+    color:white;
+    padding:14px 16px;
+    border-radius:10px;
+    text-align:left;
+    font-size:14px;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.menu button:hover,
+.menu button.active{
+    background:rgba(255,255,255,.15);
+    transform:translateX(3px);
+}
+
+.menu button span{
+    margin-right:10px;
+}
+
+/* ================================
+   CONTEÚDO
+================================ */
+
+.main{
+    margin-left:255px;
+    min-height:100vh;
+    padding:25px 30px;
+}
+
+/* ================================
+   TOPO
+================================ */
+
+.topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background:white;
+    padding:18px 22px;
+    border-radius:16px;
+    box-shadow:0 5px 20px rgba(15,23,42,.06);
+}
+
+.top-title h2{
+    font-size:22px;
+    color:#0f172a;
+}
+
+.top-title p{
+    color:#64748b;
+    margin-top:4px;
+    font-size:13px;
+}
+
+.profile{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.profile-avatar{
+    width:42px;
+    height:42px;
+    border-radius:50%;
+    background:#e0f2fe;
+    color:#075985;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:20px;
+}
+
+.profile-info strong{
+    display:block;
+    font-size:14px;
+}
+
+.profile-info small{
+    color:#64748b;
+}
+
+/* ================================
+   TÍTULO
+================================ */
+
+.page-title{
+    margin:28px 0 18px;
+}
+
+.page-title h1{
+    font-size:26px;
+}
+
+.page-title p{
+    color:#64748b;
+    margin-top:5px;
+}
+
+/* ================================
+   CARDS
+================================ */
+
+.cards{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:18px;
+    margin-bottom:25px;
+}
+
+.card{
+    background:white;
+    border-radius:16px;
+    padding:20px;
+    box-shadow:0 5px 20px rgba(15,23,42,.06);
+    position:relative;
+    overflow:hidden;
+}
+
+.card::after{
+    content:"";
+    position:absolute;
+    right:-20px;
+    bottom:-30px;
+    width:100px;
+    height:100px;
+    border-radius:50%;
+    background:#e0f2fe;
+}
+
+.card-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.card-icon{
+    width:45px;
+    height:45px;
+    border-radius:12px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:22px;
+}
+
+.blue{
+    background:#e0f2fe;
+    color:#0369a1;
+}
+
+.green{
+    background:#dcfce7;
+    color:#15803d;
+}
+
+.orange{
+    background:#ffedd5;
+    color:#c2410c;
+}
+
+.red{
+    background:#fee2e2;
+    color:#b91c1c;
+}
+
+.card h3{
+    margin-top:15px;
+    color:#64748b;
+    font-size:13px;
+}
+
+.card strong{
+    display:block;
+    font-size:30px;
+    margin-top:5px;
+}
+
+/* ================================
+   PAINEL
+================================ */
+
+.panel{
+    background:white;
+    border-radius:16px;
+    box-shadow:0 5px 20px rgba(15,23,42,.06);
+    overflow:hidden;
+}
+
+.panel-header{
+    padding:20px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    border-bottom:1px solid #e2e8f0;
+}
+
+.panel-header h2{
+    font-size:18px;
+}
+
+.panel-header p{
+    color:#64748b;
+    font-size:13px;
+    margin-top:4px;
+}
+
+.actions{
+    display:flex;
+    gap:10px;
+}
+
+/* ================================
+   INPUT
+================================ */
+
+.search{
+    border:1px solid #cbd5e1;
+    border-radius:9px;
+    padding:11px 14px;
+    width:230px;
+    outline:none;
+}
+
+.search:focus{
+    border-color:#0284c7;
+    box-shadow:0 0 0 3px #e0f2fe;
+}
+
+/* ================================
+   BOTÕES
+================================ */
+
+.btn{
+    border:none;
+    border-radius:9px;
+    padding:11px 16px;
+    color:white;
+    font-weight:600;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.btn:hover{
+    transform:translateY(-1px);
+    filter:brightness(1.05);
+}
+
+.btn-primary{
+    background:#075985;
+}
+
+.btn-success{
+    background:#16a34a;
+}
+
+.btn-danger{
+    background:#dc2626;
+}
+
+.btn-warning{
+    background:#ea580c;
+}
+
+.btn-small{
+    padding:7px 10px;
+    font-size:11px;
+}
+
+/* ================================
+   TABELA
+================================ */
+
+.table-container{
+    overflow-x:auto;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    min-width:1050px;
+}
+
+thead{
+    background:#f8fafc;
+}
+
+th{
+    padding:14px 10px;
+    text-align:center;
+    color:#475569;
+    font-size:12px;
+    border-bottom:1px solid #e2e8f0;
+}
+
+td{
+    padding:15px 10px;
+    text-align:center;
+    border-bottom:1px solid #f1f5f9;
+    font-size:13px;
+}
+
+tbody tr:hover{
+    background:#f8fafc;
+}
+
+.student{
+    text-align:left;
+}
+
+.student strong{
+    display:block;
+    color:#0f172a;
+}
+
+.student small{
+    color:#94a3b8;
+}
+
+.average{
+    font-weight:bold;
+    color:#075985;
+}
+
+/* ================================
+   SITUAÇÃO
+================================ */
+
+.status{
+    display:inline-block;
+    padding:6px 10px;
+    border-radius:20px;
+    font-size:10px;
+    font-weight:bold;
+}
+
+.status.aprovado{
+    background:#dcfce7;
+    color:#166534;
+}
+
+.status.recuperacao{
+    background:#ffedd5;
+    color:#9a3412;
+}
+
+.status.reprovado{
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+/* ================================
+   MODAL
+================================ */
+
+.modal{
+    position:fixed;
+    inset:0;
+    background:rgba(15,23,42,.65);
+    display:none;
+    justify-content:center;
+    align-items:center;
+    z-index:999;
+    padding:20px;
+}
+
+.modal.show{
+    display:flex;
+}
+
+.modal-box{
+    background:white;
+    width:620px;
+    max-width:100%;
+    max-height:92vh;
+    overflow-y:auto;
+    border-radius:18px;
+    box-shadow:0 25px 60px rgba(0,0,0,.25);
+}
+
+.modal-header{
+    padding:22px;
+    border-bottom:1px solid #e2e8f0;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.modal-header h2{
+    color:#075985;
+}
+
+.close{
+    border:none;
+    background:#f1f5f9;
+    width:35px;
+    height:35px;
+    border-radius:50%;
+    cursor:pointer;
+    font-size:18px;
+}
+
+.form{
+    padding:22px;
+}
+
+.form-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
+}
+
+.form-group{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+}
+
+.form-group.full{
+    grid-column:1/-1;
+}
+
+.form-group label{
+    font-size:12px;
+    font-weight:bold;
+    color:#475569;
+}
+
+.form-group input,
+.form-group select{
+    padding:11px;
+    border:1px solid #cbd5e1;
+    border-radius:8px;
+    outline:none;
+}
+
+.form-group input:focus,
+.form-group select:focus{
+    border-color:#0284c7;
+    box-shadow:0 0 0 3px #e0f2fe;
+}
+
+.modal-footer{
+    padding:18px 22px;
+    border-top:1px solid #e2e8f0;
+    display:flex;
+    justify-content:flex-end;
+    gap:10px;
+}
+
+/* ================================
+   BOLETIM
+================================ */
+
+.boletim{
+    display:none;
+    padding:30px;
+}
+
+.boletim-header{
+    text-align:center;
+    border-bottom:2px solid #075985;
+    padding-bottom:20px;
+}
+
+.boletim-header h1{
+    color:#075985;
+}
+
+.boletim-info{
+    margin:20px 0;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+}
+
+.boletim-table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.boletim-table th,
+.boletim-table td{
+    border:1px solid #cbd5e1;
+}
+
+/* ================================
+   RESPONSIVO
+================================ */
+
+@media(max-width:1100px){
+
+    .cards{
+        grid-template-columns:repeat(2,1fr);
+    }
+}
+
+@media(max-width:800px){
+
+    .sidebar{
+        position:relative;
+        width:100%;
+        height:auto;
+    }
+
+    .main{
+        margin-left:0;
+        padding:15px;
+    }
+
+    .cards{
+        grid-template-columns:1fr;
+    }
+
+    .topbar{
+        gap:15px;
+    }
+
+    .panel-header{
+        flex-direction:column;
+        align-items:stretch;
+        gap:15px;
+    }
+
+    .actions{
+        flex-direction:column;
+    }
+
+    .search{
+        width:100%;
+    }
+
+    .form-grid{
+        grid-template-columns:1fr;
+    }
+
+    .form-group.full{
+        grid-column:auto;
+    }
+}
+
+</style>
+
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
 <body>
 
-    <!-- MENU -->
+<!-- ==========================================
+     MENU
+========================================== -->
 
-    <aside class="sidebar">
+<aside class="sidebar">
 
-        <div class="logo">
-            <h1>SEDUC-PI</h1>
-            <p>Gestão Escolar</p>
+    <div class="logo">
+
+        <div class="logo-icon">
+            🎓
         </div>
 
-        <div class="menu">
+        <h1>SEDUC-PI</h1>
 
-            <button class="ativo">
-                🏠 Dashboard
-            </button>
+        <p>Sistema de Gestão Escolar</p>
 
-            <button>
-                👨‍🎓 Alunos
-            </button>
+    </div>
 
-            <button>
-                📚 Turmas
-            </button>
+    <nav class="menu">
 
-            <button>
-                📝 Notas
-            </button>
+        <button class="active">
+            <span>🏠</span>
+            Dashboard
+        </button>
 
-            <button>
-                📅 Frequência
-            </button>
+        <button>
+            <span>👨‍🎓</span>
+            Alunos
+        </button>
 
-            <button>
-                📊 Relatórios
-            </button>
+        <button>
+            <span>📚</span>
+            Turmas
+        </button>
 
-            <button>
-                ⚙️ Configurações
-            </button>
+        <button>
+            <span>📝</span>
+            Notas
+        </button>
+
+        <button>
+            <span>📅</span>
+            Frequência
+        </button>
+
+        <button>
+            <span>📋</span>
+            Boletins
+        </button>
+
+        <button>
+            <span>📊</span>
+            Relatórios
+        </button>
+
+        <button>
+            <span>⚙️</span>
+            Configurações
+        </button>
+
+    </nav>
+
+</aside>
+
+
+<!-- ==========================================
+     CONTEÚDO
+========================================== -->
+
+<main class="main">
+
+    <!-- TOPO -->
+
+    <header class="topbar">
+
+        <div class="top-title">
+
+            <h2>Gestão Escolar</h2>
+
+            <p>
+                Controle acadêmico de alunos
+            </p>
 
         </div>
 
-    </aside>
+        <div class="profile">
 
-    <!-- CONTEÚDO -->
-
-    <main class="main">
-
-        <header class="topo">
-
-            <div>
-                <h2>Controle de Notas e Faltas</h2>
-                <p>Gestão acadêmica dos alunos</p>
+            <div class="profile-avatar">
+                👤
             </div>
 
-            <div class="usuario">
-                👤 Professor
+            <div class="profile-info">
+
+                <strong>Professor</strong>
+
+                <small>Administrador</small>
+
             </div>
 
-        </header>
+        </div>
 
-        <!-- CARDS -->
+    </header>
 
-        <section class="cards">
 
-            <div class="card">
-                <h3>Total de alunos</h3>
-                <strong id="totalAlunos">0</strong>
-            </div>
+    <!-- TÍTULO -->
 
-            <div class="card">
-                <h3>Aprovados</h3>
-                <strong id="totalAprovados">0</strong>
-            </div>
+    <div class="page-title">
 
-            <div class="card">
-                <h3>Recuperação</h3>
-                <strong id="totalRecuperacao">0</strong>
-            </div>
+        <h1>Dashboard</h1>
 
-            <div class="card">
-                <h3>Reprovados</h3>
-                <strong id="totalReprovados">0</strong>
-            </div>
+        <p>
+            Acompanhe o desempenho dos seus alunos.
+        </p>
 
-        </section>
+    </div>
 
-        <!-- TABELA -->
 
-        <section class="painel">
+    <!-- CARDS -->
 
-            <div class="painel-header">
+    <section class="cards">
 
-                <h2>Lista de alunos</h2>
+        <div class="card">
 
-                <div class="acoes">
+            <div class="card-top">
 
-                    <input
-                        type="text"
-                        id="pesquisa"
-                        placeholder="🔎 Pesquisar aluno..."
-                        onkeyup="filtrarAlunos()"
-                    >
-
-                    <button
-                        class="btn btn-success"
-                        onclick="abrirModal()">
-                        + Novo aluno
-                    </button>
-
+                <div class="card-icon blue">
+                    👨‍🎓
                 </div>
 
             </div>
 
-            <div class="tabela-container">
+            <h3>Total de alunos</h3>
 
-                <table>
+            <strong id="totalAlunos">
+                0
+            </strong>
 
-                    <thead>
+        </div>
 
-                        <tr>
-                            <th>Matrícula</th>
-                            <th>Aluno</th>
-                            <th>Turma</th>
-                            <th>1º Bim.</th>
-                            <th>2º Bim.</th>
-                            <th>3º Bim.</th>
-                            <th>4º Bim.</th>
-                            <th>Média</th>
-                            <th>Faltas</th>
-                            <th>Freq.</th>
-                            <th>Situação</th>
-                            <th>Ações</th>
-                        </tr>
 
-                    </thead>
+        <div class="card">
 
-                    <tbody id="tabelaAlunos"></tbody>
+            <div class="card-top">
 
-                </table>
+                <div class="card-icon green">
+                    ✓
+                </div>
 
             </div>
 
-        </section>
+            <h3>Aprovados</h3>
 
-    </main>
+            <strong id="totalAprovados">
+                0
+            </strong>
 
-    <!-- MODAL -->
+        </div>
 
-    <div class="modal" id="modal">
 
-        <div class="modal-content">
+        <div class="card">
 
-            <h2 id="tituloModal">Cadastrar aluno</h2>
+            <div class="card-top">
+
+                <div class="card-icon orange">
+                    !
+                </div>
+
+            </div>
+
+            <h3>Recuperação</h3>
+
+            <strong id="totalRecuperacao">
+                0
+            </strong>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="card-top">
+
+                <div class="card-icon red">
+                    ×
+                </div>
+
+            </div>
+
+            <h3>Reprovados</h3>
+
+            <strong id="totalReprovados">
+                0
+            </strong>
+
+        </div>
+
+    </section>
+
+
+    <!-- LISTA -->
+
+    <section class="panel">
+
+        <div class="panel-header">
+
+            <div>
+
+                <h2>Alunos cadastrados</h2>
+
+                <p>
+                    Consulte e gerencie notas e frequência.
+                </p>
+
+            </div>
+
+            <div class="actions">
+
+                <input
+                    class="search"
+                    id="pesquisa"
+                    type="text"
+                    placeholder="🔎 Pesquisar aluno..."
+                    onkeyup="pesquisar()"
+                >
+
+                <button
+                    class="btn btn-success"
+                    onclick="abrirModal()">
+
+                    + Novo aluno
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div class="table-container">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>MATRÍCULA</th>
+                        <th>ALUNO</th>
+                        <th>TURMA</th>
+
+                        <th>1º BIM.</th>
+                        <th>2º BIM.</th>
+                        <th>3º BIM.</th>
+                        <th>4º BIM.</th>
+
+                        <th>MÉDIA</th>
+                        <th>FALTAS</th>
+                        <th>FREQUÊNCIA</th>
+                        <th>SITUAÇÃO</th>
+                        <th>AÇÕES</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="tabela">
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<!-- ==========================================
+     MODAL
+========================================== -->
+
+<div class="modal" id="modal">
+
+    <div class="modal-box">
+
+        <div class="modal-header">
+
+            <h2 id="tituloModal">
+                Novo aluno
+            </h2>
+
+            <button
+                class="close"
+                onclick="fecharModal()">
+
+                ×
+
+            </button>
+
+        </div>
+
+
+        <div class="form">
 
             <div class="form-grid">
 
-                <div class="campo">
-                    <label>Matrícula</label>
-                    <input type="text" id="matricula">
+                <div class="form-group">
+
+                    <label>
+                        Matrícula
+                    </label>
+
+                    <input
+                        id="matricula"
+                        type="text"
+                        placeholder="Ex.: 2026001"
+                    >
+
                 </div>
 
-                <div class="campo">
-                    <label>Turma</label>
+
+                <div class="form-group">
+
+                    <label>
+                        Turma
+                    </label>
 
                     <select id="turma">
 
-                        <option value="6º Ano A">6º Ano A</option>
-                        <option value="7º Ano A">7º Ano A</option>
-                        <option value="8º Ano A">8º Ano A</option>
-                        <option value="9º Ano A">9º Ano A</option>
-                        <option value="9º Ano B">9º Ano B</option>
-                        <option value="1º Ano A">1º Ano A</option>
-                        <option value="2º Ano A">2º Ano A</option>
-                        <option value="3º Ano A">3º Ano A</option>
+                        <option>6º Ano A</option>
+                        <option>7º Ano A</option>
+                        <option>8º Ano A</option>
+                        <option>9º Ano A</option>
+                        <option>9º Ano B</option>
+                        <option>1º Ano A</option>
+                        <option>2º Ano A</option>
+                        <option>3º Ano A</option>
 
                     </select>
 
                 </div>
 
-                <div class="campo campo-completo">
-                    <label>Nome completo</label>
-                    <input type="text" id="nome">
+
+                <div class="form-group full">
+
+                    <label>
+                        Nome completo
+                    </label>
+
+                    <input
+                        id="nome"
+                        type="text"
+                        placeholder="Nome completo do aluno"
+                    >
+
                 </div>
 
-                <div class="campo">
-                    <label>Nota 1º Bimestre</label>
-                    <input type="number" id="nota1" min="0" max="10" step="0.1">
+
+                <div class="form-group">
+
+                    <label>
+                        Nota 1º Bimestre
+                    </label>
+
+                    <input
+                        id="n1"
+                        type="number"
+                        min="0"
+                        max="10"
+                        step="0.1"
+                        placeholder="0 a 10"
+                    >
+
                 </div>
 
-                <div class="campo">
-                    <label>Nota 2º Bimestre</label>
-                    <input type="number" id="nota2" min="0" max="10" step="0.1">
+
+                <div class="form-group">
+
+                    <label>
+                        Nota 2º Bimestre
+                    </label>
+
+                    <input
+                        id="n2"
+                        type="number"
+                        min="0"
+                        max="10"
+                        step="0.1"
+                        placeholder="0 a 10"
+                    >
+
                 </div>
 
-                <div class="campo">
-                    <label>Nota 3º Bimestre</label>
-                    <input type="number" id="nota3" min="0" max="10" step="0.1">
+
+                <div class="form-group">
+
+                    <label>
+                        Nota 3º Bimestre
+                    </label>
+
+                    <input
+                        id="n3"
+                        type="number"
+                        min="0"
+                        max="10"
+                        step="0.1"
+                        placeholder="0 a 10"
+                    >
+
                 </div>
 
-                <div class="campo">
-                    <label>Nota 4º Bimestre</label>
-                    <input type="number" id="nota4" min="0" max="10" step="0.1">
+
+                <div class="form-group">
+
+                    <label>
+                        Nota 4º Bimestre
+                    </label>
+
+                    <input
+                        id="n4"
+                        type="number"
+                        min="0"
+                        max="10"
+                        step="0.1"
+                        placeholder="0 a 10"
+                    >
+
                 </div>
 
-                <div class="campo">
-                    <label>Total de faltas</label>
-                    <input type="number" id="faltas" min="0">
+
+                <div class="form-group">
+
+                    <label>
+                        Total de faltas
+                    </label>
+
+                    <input
+                        id="faltas"
+                        type="number"
+                        min="0"
+                        placeholder="Quantidade"
+                    >
+
                 </div>
-
-            </div>
-
-            <div class="modal-botoes">
-
-                <button
-                    class="btn btn-danger"
-                    onclick="fecharModal()">
-                    Cancelar
-                </button>
-
-                <button
-                    class="btn btn-success"
-                    onclick="salvarAluno()">
-                    Salvar aluno
-                </button>
 
             </div>
 
         </div>
 
+
+        <div class="modal-footer">
+
+            <button
+                class="btn btn-danger"
+                onclick="fecharModal()">
+
+                Cancelar
+
+            </button>
+
+            <button
+                class="btn btn-success"
+                onclick="salvarAluno()">
+
+                Salvar aluno
+
+            </button>
+
+        </div>
+
     </div>
 
-    <script>
+</div>
 
-        let alunos = [
 
-            {
-                matricula: "2026001",
-                nome: "Ana Beatriz Silva",
-                turma: "9º Ano A",
-                n1: 8.5,
-                n2: 9.0,
-                n3: 8.0,
-                n4: 9.5,
-                faltas: 5
-            },
+<script>
 
-            {
-                matricula: "2026002",
-                nome: "João Pedro Santos",
-                turma: "9º Ano A",
-                n1: 6.0,
-                n2: 5.5,
-                n3: 7.0,
-                n4: 6.5,
-                faltas: 12
-            },
+/* ==========================================
+   DADOS
+========================================== */
 
-            {
-                matricula: "2026003",
-                nome: "Maria Vitória Oliveira",
-                turma: "9º Ano B",
-                n1: 4.0,
-                n2: 5.0,
-                n3: 4.5,
-                n4: 5.0,
-                faltas: 25
-            }
+let alunos = [
 
-        ];
+    {
+        matricula:"2026001",
+        nome:"Ana Beatriz Silva",
+        turma:"9º Ano A",
+        n1:8.5,
+        n2:9.0,
+        n3:8.0,
+        n4:9.5,
+        faltas:5
+    },
 
-        let alunoEditando = null;
+    {
+        matricula:"2026002",
+        nome:"João Pedro Santos",
+        turma:"9º Ano A",
+        n1:6.0,
+        n2:5.5,
+        n3:7.0,
+        n4:6.5,
+        faltas:12
+    },
 
-        const totalAulas = 200;
+    {
+        matricula:"2026003",
+        nome:"Maria Vitória Oliveira",
+        turma:"9º Ano B",
+        n1:4.0,
+        n2:5.0,
+        n3:4.5,
+        n4:5.0,
+        faltas:25
+    },
 
-        function calcularMedia(aluno) {
+    {
+        matricula:"2026004",
+        nome:"Carlos Eduardo Lima",
+        turma:"8º Ano A",
+        n1:9.0,
+        n2:8.5,
+        n3:9.5,
+        n4:9.0,
+        faltas:3
+    }
 
-            return (
-                aluno.n1 +
-                aluno.n2 +
-                aluno.n3 +
-                aluno.n4
-            ) / 4;
+];
 
-        }
+let editando = null;
 
-        function calcularFrequencia(aluno) {
 
-            let frequencia =
-                ((totalAulas - aluno.faltas) / totalAulas) * 100;
+/* ==========================================
+   CÁLCULOS
+========================================== */
 
-            return Math.max(0, frequencia);
+function media(aluno){
 
-        }
+    return (
+        aluno.n1 +
+        aluno.n2 +
+        aluno.n3 +
+        aluno.n4
+    ) / 4;
 
-        function calcularSituacao(aluno) {
+}
 
-            let media = calcularMedia(aluno);
 
-            let frequencia = calcularFrequencia(aluno);
+function frequencia(aluno){
 
-            if (frequencia < 75) {
+    const totalAulas = 200;
 
-                return "REPROVADO";
+    return Math.max(
+        0,
+        ((totalAulas - aluno.faltas) / totalAulas) * 100
+    );
 
-            }
+}
 
-            if (media >= 7) {
 
-                return "APROVADO";
+function situacao(aluno){
 
-            }
+    const m = media(aluno);
+    const f = frequencia(aluno);
 
-            if (media >= 5) {
+    if(f < 75)
+        return "REPROVADO";
 
-                return "RECUPERAÇÃO";
+    if(m >= 7)
+        return "APROVADO";
 
-            }
+    if(m >= 5)
+        return "RECUPERAÇÃO";
 
-            return "REPROVADO";
+    return "REPROVADO";
 
-        }
+}
 
-        function classeSituacao(situacao) {
 
-            if (situacao === "APROVADO")
-                return "aprovado";
+function classeStatus(status){
 
-            if (situacao === "RECUPERAÇÃO")
-                return "recuperacao";
+    if(status === "APROVADO")
+        return "aprovado";
 
-            return "reprovado";
+    if(status === "RECUPERAÇÃO")
+        return "recuperacao";
 
-        }
+    return "reprovado";
 
-        function atualizarTabela(lista = alunos) {
+}
 
-            const tabela =
-                document.getElementById("tabelaAlunos");
 
-            tabela.innerHTML = "";
+/* ==========================================
+   TABELA
+========================================== */
 
-            lista.forEach((aluno, index) => {
+function atualizarTabela(lista = alunos){
 
-                let media = calcularMedia(aluno);
+    const tabela =
+        document.getElementById("tabela");
 
-                let frequencia =
-                    calcularFrequencia(aluno);
+    tabela.innerHTML = "";
 
-                let situacao =
-                    calcularSituacao(aluno);
+    lista.forEach((aluno,index)=>{
 
-                let linha = document.createElement("tr");
+        const m = media(aluno);
+        const f = frequencia(aluno);
+        const s = situacao(aluno);
 
-                linha.innerHTML = `
+        const tr =
+            document.createElement("tr");
 
-                    <td>${aluno.matricula}</td>
+        tr.innerHTML = `
 
-                    <td class="aluno">
-                        ${aluno.nome}
-                    </td>
+            <td>
+                ${aluno.matricula}
+            </td>
 
-                    <td>${aluno.turma}</td>
+            <td class="student">
 
-                    <td>${aluno.n1.toFixed(1)}</td>
+                <strong>
+                    ${aluno.nome}
+                </strong>
 
-                    <td>${aluno.n2.toFixed(1)}</td>
+                <small>
+                    Aluno
+                </small>
 
-                    <td>${aluno.n3.toFixed(1)}</td>
+            </td>
 
-                    <td>${aluno.n4.toFixed(1)}</td>
+            <td>
+                ${aluno.turma}
+            </td>
 
-                    <td>
-                        <strong>
-                            ${media.toFixed(2)}
-                        </strong>
-                    </td>
+            <td>
+                ${aluno.n1.toFixed(1)}
+            </td>
 
-                    <td>${aluno.faltas}</td>
+            <td>
+                ${aluno.n2.toFixed(1)}
+            </td>
 
-                    <td>
-                        ${frequencia.toFixed(1)}%
-                    </td>
+            <td>
+                ${aluno.n3.toFixed(1)}
+            </td>
 
-                    <td>
-                        <span
-                            class="situacao ${classeSituacao(situacao)}">
-                            ${situacao}
-                        </span>
-                    </td>
+            <td>
+                ${aluno.n4.toFixed(1)}
+            </td>
 
-                    <td>
+            <td class="average">
+                ${m.toFixed(2)}
+            </td>
 
-                        <button
-                            class="btn btn-primary"
-                            onclick="editarAluno(${index})">
-                            Editar
-                        </button>
+            <td>
+                ${aluno.faltas}
+            </td>
 
-                        <button
-                            class="btn btn-danger"
-                            onclick="excluirAluno(${index})">
-                            Excluir
-                        </button>
+            <td>
+                ${f.toFixed(1)}%
+            </td>
 
-                    </td>
+            <td>
 
-                `;
+                <span class="status ${classeStatus(s)}">
+                    ${s}
+                </span>
 
-                tabela.appendChild(linha);
+            </td>
 
-            });
+            <td>
 
-            atualizarCards();
+                <button
+                    class="btn btn-primary btn-small"
+                    onclick="editar(${index})">
 
-        }
+                    ✏️
 
-        function atualizarCards() {
+                </button>
 
-            let aprovados = 0;
-            let recuperacao = 0;
-            let reprovados = 0;
+                <button
+                    class="btn btn-danger btn-small"
+                    onclick="excluir(${index})">
 
-            alunos.forEach(aluno => {
+                    🗑️
 
-                let situacao =
-                    calcularSituacao(aluno);
+                </button>
 
-                if (situacao === "APROVADO")
-                    aprovados++;
+            </td>
 
-                else if (situacao === "RECUPERAÇÃO")
-                    recuperacao++;
+        `;
 
-                else
-                    reprovados++;
+        tabela.appendChild(tr);
 
-            });
+    });
 
-            document.getElementById(
-                "totalAlunos"
-            ).textContent = alunos.length;
+    atualizarCards();
 
-            document.getElementById(
-                "totalAprovados"
-            ).textContent = aprovados;
+}
 
-            document.getElementById(
-                "totalRecuperacao"
-            ).textContent = recuperacao;
 
-            document.getElementById(
-                "totalReprovados"
-            ).textContent = reprovados;
+/* ==========================================
+   CARDS
+========================================== */
 
-        }
+function atualizarCards(){
 
-        function abrirModal() {
+    let aprovados = 0;
+    let recuperacao = 0;
+    let reprovados = 0;
 
-            alunoEditando = null;
+    alunos.forEach(aluno=>{
 
-            document.getElementById(
-                "tituloModal"
-            ).textContent = "Cadastrar aluno";
+        const s = situacao(aluno);
 
-            limparFormulario();
+        if(s === "APROVADO")
+            aprovados++;
 
-            document.getElementById(
-                "modal"
-            ).style.display = "flex";
+        else if(s === "RECUPERAÇÃO")
+            recuperacao++;
 
-        }
+        else
+            reprovados++;
 
-        function fecharModal() {
+    });
 
-            document.getElementById(
-                "modal"
-            ).style.display = "none";
+    document.getElementById(
+        "totalAlunos"
+    ).textContent = alunos.length;
 
-        }
+    document.getElementById(
+        "totalAprovados"
+    ).textContent = aprovados;
 
-        function limparFormulario() {
+    document.getElementById(
+        "totalRecuperacao"
+    ).textContent = recuperacao;
 
-            document.getElementById("matricula").value = "";
-            document.getElementById("nome").value = "";
-            document.getElementById("nota1").value = "";
-            document.getElementById("nota2").value = "";
-            document.getElementById("nota3").value = "";
-            document.getElementById("nota4").value = "";
-            document.getElementById("faltas").value = "";
+    document.getElementById(
+        "totalReprovados"
+    ).textContent = reprovados;
 
-        }
+}
 
-        function salvarAluno() {
 
-            const matricula =
-                document.getElementById("matricula").value.trim();
+/* ==========================================
+   MODAL
+========================================== */
 
-            const nome =
-                document.getElementById("nome").value.trim();
+function abrirModal(){
 
-            const turma =
-                document.getElementById("turma").value;
+    editando = null;
 
-            const n1 =
-                Number(document.getElementById("nota1").value);
+    document.getElementById(
+        "tituloModal"
+    ).textContent = "Novo aluno";
 
-            const n2 =
-                Number(document.getElementById("nota2").value);
+    limparFormulario();
 
-            const n3 =
-                Number(document.getElementById("nota3").value);
+    document.getElementById(
+        "modal"
+    ).classList.add("show");
 
-            const n4 =
-                Number(document.getElementById("nota4").value);
+}
 
-            const faltas =
-                Number(document.getElementById("faltas").value);
 
-            if (!matricula || !nome) {
+function fecharModal(){
 
-                alert("Preencha matrícula e nome.");
+    document.getElementById(
+        "modal"
+    ).classList.remove("show");
 
-                return;
+}
 
-            }
 
-            if (
-                n1 < 0 || n1 > 10 ||
-                n2 < 0 || n2 > 10 ||
-                n3 < 0 || n3 > 10 ||
-                n4 < 0 || n4 > 10
-            ) {
+function limparFormulario(){
 
-                alert("As notas devem estar entre 0 e 10.");
+    document.getElementById("matricula").value = "";
+    document.getElementById("nome").value = "";
+    document.getElementById("n1").value = "";
+    document.getElementById("n2").value = "";
+    document.getElementById("n3").value = "";
+    document.getElementById("n4").value = "";
+    document.getElementById("faltas").value = "";
 
-                return;
+}
 
-            }
 
-            if (faltas < 0) {
+/* ==========================================
+   SALVAR
+========================================== */
 
-                alert("Número de faltas inválido.");
+function salvarAluno(){
 
-                return;
+    const matricula =
+        document.getElementById("matricula").value.trim();
 
-            }
+    const nome =
+        document.getElementById("nome").value.trim();
 
-            const aluno = {
+    const turma =
+        document.getElementById("turma").value;
 
-                matricula,
-                nome,
-                turma,
-                n1,
-                n2,
-                n3,
-                n4,
-                faltas
+    const n1 =
+        Number(document.getElementById("n1").value);
 
-            };
+    const n2 =
+        Number(document.getElementById("n2").value);
 
-            if (alunoEditando === null) {
+    const n3 =
+        Number(document.getElementById("n3").value);
 
-                alunos.push(aluno);
+    const n4 =
+        Number(document.getElementById("n4").value);
 
-            } else {
+    const faltas =
+        Number(document.getElementById("faltas").value);
 
-                alunos[alunoEditando] = aluno;
 
-            }
+    if(!matricula || !nome){
 
-            atualizarTabela();
+        alert(
+            "Preencha a matrícula e o nome do aluno."
+        );
 
-            fecharModal();
+        return;
 
-        }
+    }
 
-        function editarAluno(index) {
 
-            let aluno = alunos[index];
+    if(
+        n1 < 0 || n1 > 10 ||
+        n2 < 0 || n2 > 10 ||
+        n3 < 0 || n3 > 10 ||
+        n4 < 0 || n4 > 10
+    ){
 
-            alunoEditando = index;
+        alert(
+            "As notas devem estar entre 0 e 10."
+        );
 
-            document.getElementById(
-                "tituloModal"
-            ).textContent = "Editar aluno";
+        return;
 
-            document.getElementById(
-                "matricula"
-            ).value = aluno.matricula;
+    }
 
-            document.getElementById(
-                "nome"
-            ).value = aluno.nome;
 
-            document.getElementById(
-                "turma"
-            ).value = aluno.turma;
+    if(faltas < 0){
 
-            document.getElementById(
-                "nota1"
-            ).value = aluno.n1;
+        alert(
+            "Informe uma quantidade válida de faltas."
+        );
 
-            document.getElementById(
-                "nota2"
-            ).value = aluno.n2;
+        return;
 
-            document.getElementById(
-                "nota3"
-            ).value = aluno.n3;
+    }
 
-            document.getElementById(
-                "nota4"
-            ).value = aluno.n4;
 
-            document.getElementById(
-                "faltas"
-            ).value = aluno.faltas;
+    const aluno = {
 
-            document.getElementById(
-                "modal"
-            ).style.display = "flex";
+        matricula,
+        nome,
+        turma,
+        n1,
+        n2,
+        n3,
+        n4,
+        faltas
 
-        }
+    };
 
-        function excluirAluno(index) {
 
-            let aluno = alunos[index];
+    if(editando === null){
 
-            let confirmar = confirm(
-                "Deseja excluir o aluno " +
-                aluno.nome +
-                "?"
-            );
+        alunos.push(aluno);
 
-            if (confirmar) {
+    }else{
 
-                alunos.splice(index, 1);
+        alunos[editando] = aluno;
 
-                atualizarTabela();
+    }
 
-            }
 
-        }
+    atualizarTabela();
 
-        function filtrarAlunos() {
+    fecharModal();
 
-            let texto =
-                document.getElementById(
-                    "pesquisa"
-                ).value.toLowerCase();
+}
 
-            let filtrados =
-                alunos.filter(aluno =>
 
-                    aluno.nome
-                        .toLowerCase()
-                        .includes(texto)
+/* ==========================================
+   EDITAR
+========================================== */
 
-                    ||
+function editar(index){
 
-                    aluno.matricula
-                        .toLowerCase()
-                        .includes(texto)
+    const aluno = alunos[index];
 
-                );
+    editando = index;
 
-            atualizarTabela(filtrados);
+    document.getElementById(
+        "tituloModal"
+    ).textContent = "Editar aluno";
 
-        }
 
-        // Inicialização
+    document.getElementById(
+        "matricula"
+    ).value = aluno.matricula;
+
+
+    document.getElementById(
+        "nome"
+    ).value = aluno.nome;
+
+
+    document.getElementById(
+        "turma"
+    ).value = aluno.turma;
+
+
+    document.getElementById(
+        "n1"
+    ).value = aluno.n1;
+
+
+    document.getElementById(
+        "n2"
+    ).value = aluno.n2;
+
+
+    document.getElementById(
+        "n3"
+    ).value = aluno.n3;
+
+
+    document.getElementById(
+        "n4"
+    ).value = aluno.n4;
+
+
+    document.getElementById(
+        "faltas"
+    ).value = aluno.faltas;
+
+
+    document.getElementById(
+        "modal"
+    ).classList.add("show");
+
+}
+
+
+/* ==========================================
+   EXCLUIR
+========================================== */
+
+function excluir(index){
+
+    const aluno = alunos[index];
+
+    if(
+        confirm(
+            "Deseja realmente excluir " +
+            aluno.nome +
+            "?"
+        )
+    ){
+
+        alunos.splice(index,1);
 
         atualizarTabela();
 
-    </script>
+    }
 
-<script src="script.js"></script></body>
+}
+
+
+/* ==========================================
+   PESQUISA
+========================================== */
+
+function pesquisar(){
+
+    const texto =
+        document
+        .getElementById("pesquisa")
+        .value
+        .toLowerCase();
+
+
+    const resultado =
+        alunos.filter(aluno =>
+
+            aluno.nome
+            .toLowerCase()
+            .includes(texto)
+
+            ||
+
+            aluno.matricula
+            .toLowerCase()
+            .includes(texto)
+
+            ||
+
+            aluno.turma
+            .toLowerCase()
+            .includes(texto)
+
+        );
+
+
+    atualizarTabela(resultado);
+
+}
+
+
+/* ==========================================
+   INICIALIZAÇÃO
+========================================== */
+
+atualizarTabela();
+
+</script>
+
+</body>
 </html>
 ```
