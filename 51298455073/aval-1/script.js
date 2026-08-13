@@ -1,16 +1,6 @@
-<!DOCTYPE html>
-<html>
-<body>
+<p id="mensagem">Clique no botão.</p>
 
-<h1 id="title">Hello</h1>
+<button onclick="mostrarMensagem()">Mostrar mensagem</button>
+<button onclick="mudarTexto()">Mudar texto</button>
 
-<button onclick="changeText()">Click me</button>
-
-<script>
-function changeText() {
-    document.getElementById("title").innerHTML = "Hello, JavaScript!";
-}
-</script>
-
-</body>
-</html>
+<script src="script.js"></script>
