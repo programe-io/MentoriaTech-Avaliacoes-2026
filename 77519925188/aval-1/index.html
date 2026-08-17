@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MF DOOM - SUPERVILLAIN GLITCH PROTOCOL</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- 
+        IMPORTAÇÃO DE FONTES: 
+        Rubik Bubbles (Graffiti Throw-up), Anton (Títulos Brutalistas), 
+        Bangers (Estética HQs), Permanent Marker (Anotações) e Space Mono (Dados Táticos).
+    -->
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Bangers&family=Permanent+Marker&family=Rubik+Bubbles&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* ==========================================================================
+           1. VARIÁVEIS DE AMBIENTE - PALETA TÁTICA E TEXTURAS
+           ========================================================================== */
+        :root {
+            --bg-dark: #1a1a1a;
+            --paper-dirty: #ece1e1;
+            --paper-dark: #c4bca7;
+            
+            /* Cores Nucleares do Efeito Glitch */
+            --doom-green: #4a533c;
+            --doom-light-green: #67885ed8; /* Verde Tático Neon (Intensificado para Glitch) */
+            --doom-purple: #9b5aafdb;      /* Roxo Profundo Neon (Intensificado para Glitch) */
+            --doom-pink: #cf6399c9;        /* Rosa Magenta Neon (Intensificado para Glitch) */
+            
+            /* Base do Throw-up */
+            --doom-bubble-pink: #b7b7b7; 
+            --doom-yellow: #f7c745;  
+            --doom-red: #bb310e;     
+            --mask-silver: #8b8e94;  
+            --ink-black: #050505;    
+            
+            --brutal-border: 4px solid var(--ink-black);
+            --thick-border: 8px solid var(--ink-black);
+            --brutal-shadow-green: 12px 12px 0px var(--doom-green);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--ink-black);
+            font-family: 'Space Mono', monospace;
+            overflow-x: hidden;
+            font-size: 16px;
+            line-height: 1.5;
+            background-image: 
+                linear-gradient(rgba(90, 115, 54, 0.2) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(90, 115, 54, 0.2) 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+
+        /* Camada de Ruído Estático Overlay */
+        body::before {
+            content: ""; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background-image: 
+                url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E"),
+                radial-gradient(var(--mask-silver) 10%, transparent 11%), 
+                radial-gradient(var(--mask-silver) 10%, transparent 11%);
+            background-size: 100px 100px, 8px 8px, 8px 8px;
+            background-position: 0 0, 0 0, 4px 4px; pointer-events: none; z-index: 999; mix-blend-mode: overlay;
+        }
+
+        h1, h2, h3, .bangers { font-family: 'Bangers', cursive; letter-spacing: 2px; }
+        .anton { font-family: 'Anton', sans-serif; text-transform: uppercase; }
+        .marker { font-family: 'Permanent Marker', cursive; }
+        
+        /* Fonte Exclusiva para o Graffiti Título */
+        .graffiti { font-family: 'Rubik Bubbles', cursive; }
+
+        /* Utilitários Visuais: Papel, Fitas, Marcações */
+        .torn-paper { background: var(--paper-dirty); clip-path: polygon(1% 0, 100% 2%, 98% 99%, 0 98%); border-radius: 2px; background-image: radial-gradient(rgba(0,0,0,0.05) 1px, transparent 1px); background-size: 4px 4px; }
+        .tape { position: absolute; background-color: rgba(230, 225, 205, 0.9); box-shadow: 0 1px 3px rgba(0,0,0,0.4); border: 1px solid rgba(0,0,0,0.1); z-index: 100; backdrop-filter: blur(2px); }
+        .tape-1 { width: 150px; height: 35px; top: -15px; left: 50%; transform: translateX(-50%) rotate(-4deg); }
+        .tape-2 { width: 100px; height: 30px; bottom: 20px; right: -20px; transform: rotate(45deg); }
+        .tape-green { background-color: rgba(58, 74, 34, 0.8); border: 1px solid var(--doom-green); width: 80px; height: 25px; top: 10px; left: -20px; transform: rotate(-35deg); }
+        .tape-purple { background-color: rgba(209, 59, 134, 0.795); border: 1px solid var(--doom-pink); width: 70px; height: 20px; top: -10px; right: 10px; transform: rotate(15deg); }
+        .paperclip { position: absolute; width: 15px; height: 50px; border: 3px solid var(--mask-silver); border-radius: 20px; top: -20px; left: 20px; transform: rotate(15deg); z-index: 105; box-shadow: 2px 2px 2px rgba(0,0,0,0.3); }
+
+        .redacted { background-color: var(--ink-black); color: var(--ink-black); display: inline-block; padding: 0 5px; transition: color 0.3s; }
+        .redacted:hover { color: var(--doom-pink); cursor: crosshair; }
+        .highlight { background: linear-gradient(104deg, rgba(232, 177, 28, 0) 0.9%, rgba(232, 177, 28, 1) 2.4%, rgba(232, 177, 28, 0.8) 5.8%, rgba(232, 177, 28, 0.6) 93%, rgba(232, 177, 28, 0) 96%); padding: 0 4px; }
+
+        .stamp { position: absolute; font-size: 4rem; border: 5px solid currentColor; padding: 5px 15px; transform: rotate(-15deg); opacity: 0.8; pointer-events: none; z-index: 50; }
+        .barcode { font-family: 'Space Mono', monospace; font-weight: 700; font-size: 1.5rem; letter-spacing: -2px; transform: scaleY(2.5); display: inline-block; margin-top: 1rem; opacity: 0.7; color: var(--doom-green); }
+
+        /* ==========================================================================
+           2. CABEÇALHO IMERSIVO
+           ========================================================================== */
+        header {
+            height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative;
+            background: radial-gradient(circle at 50% 50%, rgba(90, 115, 54, 0.3) 0%, var(--bg-dark) 85%), var(--bg-dark);
+            border-bottom: var(--thick-border); overflow: hidden;
+        }
+
+        /* Scanlines Overlay no Cabeçalho */
+        header::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(209, 59, 134, 0.05), rgba(0, 255, 0, 0.06));
+            background-size: 100% 4px, 3px 100%; z-index: 1; pointer-events: none;
+        }
+
+        header::after {
+            content: ''; position: absolute; bottom: -50px; left: -10%; width: 120%; height: 100px;
+            background: var(--paper-dirty); transform: rotate(-3deg); border-top: var(--thick-border); z-index: 20;
+        }
+
+        .hud-element { position: absolute; font-size: 0.9rem; color: var(--doom-light-green); z-index: 5; opacity: 0.8; font-weight: bold; text-shadow: 0 0 5px var(--doom-light-green); }
+        .hud-top-left { top: 30px; left: 30px; border-left: 3px solid var(--doom-light-green); padding-left: 10px; }
+        .hud-top-right { top: 30px; right: 30px; text-align: right; border-right: 3px solid var(--doom-light-green); padding-right: 10px; }
+        .hud-bottom-right { bottom: 15vh; right: 30px; text-align: right; }
+        .hud-target { position: absolute; width: 350px; height: 350px; border: 2px dashed rgba(92, 235, 52, 0.4); border-radius: 50%; top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none; z-index: 2; animation: rotate-target 20s linear infinite; }
+
+        @keyframes rotate-target { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
+
+        /* ==========================================================================
+           3. SISTEMA DE GLITCH EXTREMO - RUBIK BUBBLES
+           ========================================================================== */
+        .glitch-wrapper {
+            position: relative;
+            z-index: 10;
+            margin-bottom: 2rem;
+            transform: rotate(-3deg);
+            /* Necessário para permitir que os pseudos ultrapassem as bordas visíveis */
+            overflow: visible; 
+        }
+
+       /* 
+           O Tamanho foi aumentado drasticamente via clamp.
+           As letras foram unidas através de um letter-spacing altamente negativo.
+        */
+        .hero-graffiti { 
+            position: relative;
+            color: var(--doom-bubble-pink); 
+            font-size: clamp(8rem, 25vw, 20rem); /* AUMENTO SIGNIFICATIVO DO TAMANHO */
+            line-height: 0.8; 
+            letter-spacing: -0.12em; /* LETRAS EXTREMAMENTE PRÓXIMAS / SOBREPOSTAS */
+            white-space: nowrap;
+            
+            /* Estrutura 3D do Throw-up base */
+            -webkit-text-stroke: 5px var(--ink-black);
+            text-shadow: 
+                -4px -4px 0px #ffffff,
+                -2px -8px 0px #ffffff,
+                6px 6px 0px var(--ink-black),
+                14px 14px 0px var(--ink-black),
+                22px 22px 0px var(--ink-black);
+            
+            display: inline-block;
+            
+            animation: text-glitch-skew 12s infinite linear alternate-reverse;
+        }
+
+        /* 
+           CAMADAS DO GLITCH 
+           Utilizando clip-path inset para cortes precisos horizontais.
+        */
+        .hero-graffiti::before,
+        .hero-graffiti::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            color: transparent; 
+            -webkit-text-stroke: 0px; 
+            background: transparent;
+            opacity: 0.9;
+        }
+
+        /* Glitch Camada 1: Intersecção de VERDE TÁTICO e ROXO PROFUNDO */
+        .hero-graffiti::before {
+            text-shadow: 
+                -12px 0 var(--doom-light-green), 
+                12px 0 var(--doom-purple);
+            /* MUDOU AQUI: de 1s para 8s, o glitch passa arrastado */
+            animation: glitch-anim-1 6s infinite linear alternate-reverse;
+            z-index: 5; 
+        }
+
+        /* Glitch Camada 2: Intersecção de ROSA MAGENTA e VERDE TÁTICO */
+        .hero-graffiti::after {
+            text-shadow: 
+                -15px 0 var(--doom-pink), 
+                15px 0 var(--doom-light-green);
+            /* MUDOU AQUI: de 1.3s para 10s */
+            animation: glitch-anim-2 10s infinite linear alternate-reverse;
+            z-index: 6; 
+        }
+        /* 
+           Cortes violentos e rápidos de Clip-Path para as cores Verde/Roxo.
+           Inset: (Top Right Bottom Left)
+        */
+        @keyframes glitch-anim-1 {
+            0% { clip-path: inset(10% 0 70% 0); transform: translate(-10px, 5px); }
+            10% { clip-path: inset(45% 0 15% 0); transform: translate(15px, -5px); }
+            20% { clip-path: inset(80% 0 5% 0); transform: translate(-15px, 2px); }
+            30% { clip-path: inset(25% 0 55% 0); transform: translate(20px, 0px); }
+            40% { clip-path: inset(60% 0 30% 0); transform: translate(-10px, -5px); }
+            50% { clip-path: inset(15% 0 65% 0); transform: translate(10px, 5px); }
+            60% { clip-path: inset(5% 0 85% 0); transform: translate(-20px, 2px); }
+            70% { clip-path: inset(75% 0 15% 0); transform: translate(15px, -2px); }
+            80% { clip-path: inset(35% 0 45% 0); transform: translate(-10px, 5px); }
+            90% { clip-path: inset(55% 0 25% 0); transform: translate(10px, -5px); }
+            100% { clip-path: inset(20% 0 60% 0); transform: translate(-15px, 0px); }
+        }
+
+        /* 
+           Cortes violentos e rápidos de Clip-Path para as cores Rosa/Verde.
+           Sincronia invertida em relação a animação 1 para caos máximo.
+        */
+        @keyframes glitch-anim-2 {
+            0% { clip-path: inset(80% 0 5% 0); transform: translate(15px, -2px); }
+            10% { clip-path: inset(15% 0 65% 0); transform: translate(-10px, 5px); }
+            20% { clip-path: inset(60% 0 30% 0); transform: translate(20px, -5px); }
+            30% { clip-path: inset(5% 0 85% 0); transform: translate(-15px, 2px); }
+            40% { clip-path: inset(45% 0 15% 0); transform: translate(10px, 0px); }
+            50% { clip-path: inset(25% 0 55% 0); transform: translate(-20px, -2px); }
+            60% { clip-path: inset(75% 0 15% 0); transform: translate(15px, 5px); }
+            70% { clip-path: inset(35% 0 45% 0); transform: translate(-10px, -5px); }
+            80% { clip-path: inset(10% 0 70% 0); transform: translate(20px, 2px); }
+            90% { clip-path: inset(55% 0 25% 0); transform: translate(-15px, -2px); }
+            100% { clip-path: inset(85% 0 5% 0); transform: translate(10px, 5px); }
+        }
+
+        .all-caps-rule { position: absolute; bottom: 20vh; background: var(--doom-yellow); color: var(--doom-red); padding: 10px 20px; font-size: clamp(1.2rem, 3vw, 2.5rem); transform: rotate(-2deg); z-index: 15; border: 3px dashed var(--doom-green); box-shadow: 8px 8px 0px var(--doom-green); }
+
+        /* ==========================================================================
+           4. MARQUEE CAÓTICO 
+           ========================================================================== */
+        .marquee { background: var(--doom-green); color: var(--paper-dirty); border-bottom: var(--thick-border); padding: 10px 0; overflow: hidden; display: flex; white-space: nowrap; font-size: 2.5rem; box-shadow: inset 0px 5px 15px rgba(0,0,0,0.5); }
+        .marquee-inner { display: flex; animation: scroll 12s linear infinite; }
+        .marquee span { padding: 0 40px; }
+        @keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+        /* ==========================================================================
+           5. ESTRUTURA PRINCIPAL E DOSSIÊ
+           ========================================================================== */
+        main { padding: 5rem 2rem; max-width: 1300px; margin: 0 auto; display: grid; gap: 4rem; position: relative; z-index: 10; }
+        .dossier-grid { display: grid; grid-template-columns: 60% 40%; gap: 2rem; align-items: start; }
+        .dossier-text { padding: 3rem; border: var(--thick-border); box-shadow: var(--brutal-shadow-green); position: relative; z-index: 5; transform: rotate(-1deg); }
+        .dossier-text p { font-size: 1.2rem; margin-bottom: 1.5rem; font-weight: bold; }
+        .dossier-text h2 { font-size: 4rem; margin-bottom: 1rem; line-height: 1; border-bottom: 4px solid var(--doom-light-green); padding-bottom: 10px; }
+        .dossier-image { background: var(--paper-dark); height: 500px; border: var(--brutal-border); box-shadow: 15px 15px 0px var(--doom-green); display: flex; justify-content: center; align-items: center; position: relative; transform: rotate(3deg) translateY(40px) translateX(-40px); z-index: 4; padding: 2rem; text-align: center; overflow: hidden; }
+        .dossier-image::before { content: 'SUSPEITO #01'; position: absolute; top: 10px; left: 10px; font-family: 'Space Mono', monospace; background: var(--doom-green); color: var(--paper-dirty); padding: 2px 8px; font-weight: bold; z-index: 2; }
+        .dossier-image img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%) contrast(150%) brightness(0.8); transition: filter 0.3s; }
+        .dossier-image:hover img { filter: grayscale(0%) contrast(120%) brightness(1); }
+
+        /* ==========================================================================
+           5.5 FICHA CRIMINAL - ARQUIVO DO DEPARTAMENTO
+           ========================================================================== */
+        .criminal-record {
+            background: var(--paper-dirty); border: var(--thick-border); padding: 3rem; position: relative; box-shadow: -15px 15px 0px var(--doom-red); transform: rotate(1deg); z-index: 6; background-image: radial-gradient(rgba(0,0,0,0.05) 1px, transparent 1px); background-size: 4px 4px;
+        }
+        .criminal-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 4px solid var(--ink-black); padding-bottom: 1rem; margin-bottom: 2rem; }
+        .criminal-header h3 { font-size: 2.5rem; color: var(--doom-red); line-height: 1; }
+        .criminal-body { display: grid; grid-template-columns: 1fr 280px; gap: 3rem; align-items: center; }
+        .criminal-details p { font-size: 1.2rem; margin-bottom: 1rem; font-weight: bold; }
+        .criminal-details ul { margin-left: 1.5rem; margin-bottom: 1.5rem; font-size: 1.1rem; font-weight: bold; }
+        .criminal-details li { margin-bottom: 0.5rem; border-bottom: 1px dashed rgba(0,0,0,0.2); padding-bottom: 5px; }
+        .fingerprint-box { border: 4px dashed var(--ink-black); display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 2rem 1rem; text-align: center; background: rgba(168, 28, 28, 0.05); }
+        .fingerprint-icon { font-family: 'Space Mono', monospace; font-size: 8rem; line-height: 1; color: var(--doom-red); opacity: 0.7; margin-bottom: 1rem; animation: pulse 2s infinite; }
+
+        @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 0.9; } 100% { opacity: 0.5; } }
+
+        /* ==========================================================================
+           6. DISCOGRAFIA
+           ========================================================================== */
+        .section-title { font-size: 5rem; color: var(--paper-dirty); text-shadow: 6px 6px 0px var(--doom-green); transform: rotate(-2deg); margin-bottom: 2rem; display: inline-block; background: var(--ink-black); padding: 0 20px; border: 3px solid var(--doom-light-green); }
+        .discography-container { display: flex; flex-wrap: wrap; gap: 4rem; justify-content: center; margin-top: 2rem; }
+        .album { width: 320px; height: 320px; position: relative; perspective: 1200px; }
+        .vinyl { position: absolute; top: 5%; left: 5%; width: 90%; height: 90%; background: repeating-radial-gradient( #111 0px, #111 3px, #222 4px, #111 5px ); border-radius: 50%; border: 1px solid #000; box-shadow: 5px 5px 15px rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center; transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); z-index: 1; }
+        .vinyl::after { content: ''; width: 40%; height: 40%; background: var(--label-color, var(--doom-red)); border-radius: 50%; border: 3px solid var(--ink-black); }
+        .vinyl::before { content: ''; position: absolute; width: 4%; height: 4%; background: var(--paper-dirty); border-radius: 50%; z-index: 10; }
+        .cover { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #fff; border: var(--brutal-border); box-shadow: 8px 8px 0px var(--ink-black); z-index: 2; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: transform 0.4s ease; overflow: hidden; }
+        .cover img { width: 100%; height: 100%; object-fit: cover; }
+        .album-info { position: absolute; bottom: 10px; left: -10px; background: var(--doom-yellow); border: var(--brutal-border); padding: 5px 10px; font-family: 'Anton', sans-serif; transform: rotate(-3deg); font-size: 1.2rem; z-index: 3; }
+        .album:hover .vinyl { transform: translateX(180px) rotate(360deg); }
+        .album:hover .cover { transform: scale(1.05) rotate(2deg); box-shadow: 15px 15px 0px var(--doom-light-green); }
+
+        /* ==========================================================================
+           7. OS DOOMBOTS & ALTER EGOS 
+           ========================================================================== */
+        .egos-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-top: 3rem; }
+        .ego-card { background: var(--paper-dirty); border: var(--thick-border); padding: 2rem; position: relative; box-shadow: -10px 10px 0px var(--doom-purple); transition: 0.2s; }
+        .ego-card:nth-child(1) { box-shadow: -10px 10px 0px var(--doom-green); }
+        .ego-card:nth-child(2) { transform: translateY(30px); background: var(--doom-green); color: var(--paper-dirty); box-shadow: 10px 10px 0px var(--doom-yellow); }
+        .ego-card:nth-child(3) { transform: rotate(2deg); background: var(--doom-red); color: var(--paper-dirty); box-shadow: 10px -10px 0px var(--ink-black); }
+        .ego-card:hover { transform: translateY(-10px) scale(1.02); z-index: 10; }
+        .ego-card h3 { font-size: 3rem; margin-bottom: 1rem; line-height: 1; border-bottom: 3px dashed currentColor; padding-bottom: 5px; }
+
+        /* ==========================================================================
+           8. FOOTER GRAFITADO
+           ========================================================================== */
+        footer { background: var(--ink-black); color: var(--mask-silver); padding: 5rem 2rem; text-align: center; border-top: 15px solid var(--doom-green); position: relative; overflow: hidden; }
+        .footer-logo { font-family: 'Bangers', cursive; font-size: 8rem; color: var(--bg-dark); text-shadow: 2px 2px 0px var(--doom-green), -2px -2px 0px var(--doom-red); opacity: 0.3; }
+
+        @media (max-width: 1000px) {
+            .dossier-grid, .egos-grid { grid-template-columns: 1fr; }
+            .dossier-image { transform: none; margin-top: 2rem; height: 300px; }
+            .album:hover .vinyl { transform: translateY(-160px) rotate(360deg); } 
+            .criminal-body { grid-template-columns: 1fr; }
+            
+            /* Ajuste de responsividade para não quebrar o layout na tela pequena */
+            .hero-graffiti { 
+                font-size: clamp(5rem, 20vw, 10rem); 
+                -webkit-text-stroke: 3px var(--ink-black); 
+                text-shadow: -2px -2px 0px #fff, 4px 4px 0px var(--ink-black), 8px 8px 0px var(--ink-black); 
+            }
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+    <header>
+        <div class="hud-element hud-top-left">FILE_NO: 73-A<br>OP: DOOMSDAY<br>STATUS: <span style="color: var(--doom-pink);">SISTEMA COMPROMETIDO</span></div>
+        <div class="hud-element hud-top-right">REC 🔴<br>COORD: 40°42'46"N 74°00'21"W<br>SIGHTING: LONDRES / NY</div>
+        <div class="hud-element hud-bottom-right">AUTH_LEVEL: CLASSIFICADO<br>OPERAÇÃO METAL FACE</div>
+        <div class="hud-target"></div>
+        <div class="stamp bangers" style="color: var(--doom-red); z-index: 15; top: 15%; right: 10%;">PROCURADO</div>
+        
+        <!-- ==========================================================================
+             NÚCLEO DO GLITCH - Título "MF DOOM" Gigante em Rubik Bubbles
+             As letras são sobrepostas usando letter-spacing negativo pesado.
+             O data-text="MF DOOM" alimenta o sistema de camadas de pseudo-elementos
+             que disparam animações CSS puras criando as cores verde, roxo e rosa.
+             ========================================================================== -->
+        <div class="glitch-wrapper">
+            <h1 class="hero-graffiti graffiti" data-text="MF DOOM">MF  DOOM</h1>
+        </div>
+        
+        <div class="all-caps-rule marker">"JUST REMEMBER ALL CAPS WHEN YOU SPELL THE MAN NAME"</div>
+    </header>
+
+    <div class="marquee bangers">
+        <div class="marquee-inner">
+            <span>Zev Love X  /// King Geedorah ///  Viktor Vaughn  ///  JJ DOOM  ///  Metal Fingers  ///  Metal Face  ///  Madvillain  ///  MF DOOM  ///</span>
+            <span>Zev Love X  /// King Geedorah ///  Viktor Vaughn  ///  JJ DOOM  ///  Metal Fingers  ///  Metal Face  ///  Madvillain  ///  MF DOOM  ///</span>
+        </div>
+    </div>
+
+    <main>
+        <section class="dossier-grid">
+            <div class="dossier-text torn-paper">
+                <div class="paperclip"></div> 
+                <div class="tape tape-1"></div>
+                <div class="stamp bangers" style="top: -20px; right: -20px; font-size: 2rem; color: var(--doom-light-green); border-color: var(--doom-light-green);">CONFIDENCIAL</div>
+                
+                <h2 class="anton">ARQUIVO DE ORIGEM</h2>
+                <p>NOME VERDADEIRO: <span class="redacted">DANIEL DUMILE</span>.</p>
+                <p>A história do supervilão não começa no triunfo, começa na <span class="highlight">tragédia absoluta</span>. Após formar o grupo KMD como <strong>Zev Love X</strong>, Dumile estava prestes a lançar o álbum <em>Black Bastards</em> quando seu irmão, DJ Subroc, foi morto tragicamente em um acidente. Na mesma semana, a gravadora <span class="redacted">Elektra Records</span> os dispensou devido à controversa capa do álbum.</p>
+                <p>Seguiram-se anos de exílio. Dormindo em bancos de praça na <span class="highlight">Baixa Manhattan</span>, forjando um ódio cego contra a indústria comercial do rap. Ele não queria apenas fazer música; ele queria destruir a vaidade estética do hip-hop mainstream.</p>
+                <p>Ressurge no final dos anos 90 no Nuyorican Poets Café, com uma meia-calça feminina cobrindo o rosto. Mais tarde, forjou uma icônica máscara de metal a partir de um adereço do filme <em>Gladiador</em>. Ele escondeu o rosto para que o mundo fosse forçado a julgar <span class="marker" style="color: var(--doom-purple); font-size: 1.5rem; background: var(--doom-yellow); padding: 0 5px;">apenas as rimas</span>.</p>
+                
+                <div class="barcode">|| | ||| || | | |||| | ||</div> 
+            </div>
+
+            <div class="dossier-image torn-paper">
+                <div class="tape tape-green"></div> 
+                <div class="tape tape-2"></div>
+                <img src="https://tse2.mm.bing.net/th/id/OIP.VLwr8pKSHSJbLgx7QoF7gwHaKX?r=0&rs=1&pid=ImgDetMain&o=7&rm=3" alt="A Máscara de Metal"> 
+            </div>
+        </section>
+
+        <section class="criminal-record">
+            <div class="tape tape-1" style="width: 180px; left: 15%; transform: rotate(3deg); background-color: rgba(200, 190, 170, 0.9);"></div>
+            <div class="paperclip" style="right: 30px; left: auto; transform: rotate(-10deg);"></div>
+            <div class="stamp bangers" style="color: var(--doom-red); bottom: -20px; right: 20px; font-size: 3rem; border-color: var(--doom-red); transform: rotate(-5deg);">ARMADO E PERIGOSO</div>
+            
+            <div class="criminal-header">
+                <h3 class="anton"><br>RELATÓRIO DE AMEAÇA TÁTICA</h3>
+                <div class="barcode" style="color: var(--ink-black); margin-top: 0;">|| | ||| || | | ||</div>
+            </div>
+            
+            <div class="criminal-body">
+                <div class="criminal-details">
+                    <p>NOME DE CÓDIGO: <span class="highlight">DOOMSDAY</span></p>
+                    <p>PSEUDÔNIMOS REGISTRADOS: Viktor Vaughn, King Geedorah, Metal Face, Metal Fingers.</p>
+                    <p>ACUSAÇÕES EM ABERTO:</p>
+                    <ul style="list-style-type: square; color: var(--ink-black);">
+                        <li><strong>Sequestro de microfones</strong> em 1º grau (Microphone Assassination).</li>
+                        <li><strong>Contrabando internacional</strong> de samples obscuros de Jazz/Soul, extraídos diretamente de vinis empoeirados.</li>
+                        <li><strong>Falsidade ideológica</strong> (Uso contínuo de sósias autômatos, conhecidos como Doombots, em aparições públicas e shows ao vivo).</li>
+                        <li><strong>Terrorismo lírico</strong> e estruturação polissilábica altamente densa contra a integridade da indústria pop.</li>
+                    </ul>
+                    <p>NÍVEL DE AMEAÇA: <span class="redacted" style="color: var(--doom-red);">NÍVEL ÔMEGA</span></p>
+                    <p>SITUAÇÃO ATUAL: <span style="background: var(--doom-red); color: var(--paper-dirty); padding: 2px 8px; border: 2px solid var(--ink-black);">FORAGIDO MENTALMENTE NA QUARTA DIMENSÃO</span></p>
+                </div>
+                
+                <div class="fingerprint-box">
+                    <div class="fingerprint-icon">X_X</div>
+                    <p style="font-size: 0.9rem; font-weight: bold; color: var(--doom-red); font-family: 'Space Mono', monospace;">
+                        [ ERRO DE LEITURA CRÍTICO ]<br>
+                        IMPRESSÃO DIGITAL NÃO DETECTADA.<br>
+                        POSSÍVEL USO DE LUVAS METÁLICAS.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2 class="section-title anton">CATÁLOGO DE CRIMES SONOROS</h2>
+            
+            <div class="discography-container">
+                <div class="album">
+                    <div class="vinyl" style="--label-color: var(--doom-green);"></div>
+                    <div class="cover">
+                        <img src="https://i.scdn.co/image/ab67616d0000b2736ce90ec627a0198a8efd127f" alt="OPERATION: DOOMSDAY">
+                    </div>
+                    <div class="album-info">OP: DOOMSDAY '99</div>
+                </div>
+
+                <div class="album">
+                    <div class="vinyl" style="--label-color: var(--doom-yellow);"></div>
+                    <div class="cover">
+                        <img src="https://upload.wikimedia.org/wikipedia/pt/f/f7/Madvillain_-_Madvillainy.jpeg" alt="MADVILLAINY">
+                    </div>
+                    <div class="album-info" style="background: var(--mask-silver);">MADVILLAINY '04</div>
+                </div>
+
+                <div class="album">
+                    <div class="vinyl" style="--label-color: var(--doom-pink);"></div>
+                    <div class="cover">
+                        <img src="https://i.scdn.co/image/ab67616d0000b27352f194d02c39909d1b284799" alt="MM..FOOD">
+                    </div>
+                    <div class="album-info" style="background: var(--doom-purple); color: white;">MM..FOOD '04</div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2 class="section-title anton" style="background: var(--doom-green); color: var(--paper-dirty); border-color: var(--ink-black);">SÍNDROME DE MÚLTIPLAS FACES</h2>
+            
+            <div class="egos-grid">
+                <div class="ego-card torn-paper">
+                    <div class="tape tape-1" style="width: 60px; left: 20px;"></div>
+                    <h3 class="bangers">KING GEEDORAH</h3>
+                    <p>A manifestação de um monstro espacial reptiliano de três cabeças. Age primariamente como produtor orquestral. No álbum <em>Take Me to Your Leader</em>, ele recruta lacaios terrestres para rimar sobre suas batidas enquanto ele observa friamente a raça humana e corta samples colossais de filmes clássicos de Kaiju e Godzilla.</p>
+                </div>
+
+                <div class="ego-card torn-paper">
+                    <div class="tape tape-purple"></div>
+                    <h3 class="bangers">VIKTOR VAUGHN</h3>
+                    <p>O prodígio cientista do crime e rapper arruaceiro, vindo diretamente de um futuro distópico para roubar microfones e glória no passado. Um punk de rua nova-iorquino interdimensional que rima sobre batidas eletrônicas sujas, cruas e experimentais. A essência do grime nova-iorquino sem filtros.</p>
+                </div>
+
+                <div class="ego-card torn-paper">
+                    <div class="paperclip" style="right: 20px; left: auto; transform: rotate(-25deg);"></div>
+                    <h3 class="bangers">OS DOOMBOTS</h3>
+                    <p>Considerada a maior ofensa e a maior genialidade conceitual do supervilão. Enviar sósias fisicamente idênticos usando a máscara para fazer playback em shows ao vivo e evadir as autoridades financeiras da indústria da música. <span class="highlight" style="color: var(--ink-black);">"O vilão nunca é capturado."</span> Se a máscara de metal está lá, DOOM está presente. O conceito artístico elevado acima do homem físico mortal.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <div class="footer-logo">SUPERVILLAIN</div>
+        <p style="font-family: 'Space Mono', monospace; margin-top: 1rem; color: var(--doom-light-green); font-size: 1.2rem;">Transcrição Final. Arquivo encerrado. Em memória de DANIEL DUMILE (1971 - 2020)...</p>
+        <p class="marker" style="color: var(--doom-green); font-size: 3rem; margin-top: 1.5rem; transform: rotate(-3deg);">R.I.P. DOOM</p>
+    </footer>
+
+</body>
+</html>
