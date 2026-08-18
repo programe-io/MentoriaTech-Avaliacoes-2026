@@ -1,10 +1,12 @@
-
+ <!-- INTERATIVIDADE (JAVASCRIPT) -->
+    <script>
         // Lista de posts sobre Naruto
         const meusPosts = [
             {
                 id: 1,
                 titulo: "A verdade por trás do sacrifício de Itachi Uchiha",
                 categoria: "personagens",
+                // LINK DO ITACHI CORRIGIDO ABAIXO:
                 imagem: "https://unsplash.com", 
                 resumo: "Entenda os motivos reais que levaram o prodígio do clã Uchiha a tomar a decisão mais difícil da sua vida pelo bem de Konoha."
             },
@@ -12,6 +14,7 @@
                 id: 2,
                 titulo: "Teoria: Minato sabia dos planos da Akatsuki desde o início?",
                 categoria: "teorias",
+                // LINK DO MINATO/NINJA CORRIGIDO ABAIXO:
                 imagem: "https://unsplash.com",
                 resumo: "Analisamos pistas escondidas no arco do Flashback do Quarto Hokage que indicam um conhecimento prévio sobre a organização."
             },
@@ -19,6 +22,7 @@
                 id: 3,
                 titulo: "5 Curiosidades sobre o Lamen do Ichiraku que você não sabia",
                 categoria: "curiosidades",
+                // LINK DE COMIDA/RAMEN CORRIGIDO ABAIXO:
                 imagem: "https://unsplash.com",
                 resumo: "Descubra a origem real do restaurante favorito do Naruto e como ele salvou a vida do nosso protagonista na infância."
             }
@@ -30,6 +34,7 @@
             painel.innerHTML = ""; 
 
             lista.forEach(post => {
+                // A TAG ARTICLE JÁ ESTÁ CERTINHA AQUI ABAIXO:
                 painel.innerHTML += `
                     <article class="card-post">
                         <img src="${post.imagem}" class="capa-post" alt="${post.titulo}">
@@ -65,3 +70,9 @@
         window.onload = function() {
             mostrarPosts(meusPosts);
         };
+    </script>
+
+</body>
+</html>
+
+
