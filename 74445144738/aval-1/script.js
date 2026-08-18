@@ -1,64 +1,81 @@
-let produtos = [];
+let stock = [];
+let nextId = 1;
 
-function validarProduto(descricao, quantidade, valor) {
-    if (descricao.length < 5) {
-        throw new Error("Descricao deve ter no mínimo cinco caracteres");
-    }
+// Elementos do DOM
+const form = document.getElementById('stock-form');
+const productIdInput = document.getElementById('product-id');
+const productNameInput = document.getElementById('product-name');
+const productQtyInput = document.getElementById('product-qty');
+const productPriceInput = document.getElementById('product-price');
+const tableBody = document.getElementById('stock-table-body');
+const cancelBtn = document.getElementById('cancel-btn');
 
-    if (quantidade < 1) {
-        throw new Error("Quantidade deve ser maior que zero");
-    }
+// Renderiza a lista na tabela
+function renderTable() {
+  tableBody.innerHTML = '';
 
-    if (valor < 0) {
-        throw new Error("Valor deve maior igual a zero");
-    }
+  stock.forEach((item) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${item.id}</td>
+      <td>${item.name}</td>
+      <td>${item.qty}</td>
+      <td>R$ ${Number(item.price).toFixed(2)}</td>
+      <td>
+        <button class="btn-edit" onclick="editProduct(${item.id})">Editar</button>
+        <button class="btn-delete" onclick="deleteProduct(${item.id})">Excluir</button>
+      </td>
+    `;
+    tableBody.appendChild(tr);
+  });
 }
 
-function cadastrarProduto(descricao, quantidade, valor) {
-    validarProduto(descricao, quantidade, valor);
+// Criar ou Atualizar produto
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
 
-    let novoProduto = {
-        "codigo": produtos.length + 1,
-        "descricao": descricao,
-        "quantidade": quantidade,
-        "valor": valor
-    };
+  const id = productIdInput.value;
+  const name = productNameInput.value;
+  const qty = parseInt(productQtyInput.value);
+  const price = parseFloat(productPriceInput.value);
 
-    produtos.push(novoProduto);
-}
-function atualizarValor(codigoProduto, novoValor) {
-    if (novoValor < 0) {
-        throw new Error("Valor deve maior igual a zero");
-    }
+  if (id) {
+    // Atualizar
+    const index = stock.findIndex((p) => p.id == id);
+    stock[index] = { id: Number(id), name, qty, price };
+  } else {
+    // Criar
+    stock.push({ id: nextId++, name, qty, price });
+  }
 
-    const produto = produtos.find(prod => prod.codigo === codigoProduto);
+  resetForm();
+  renderTable();
+});
 
-    if (produto) {
-        produto.valor = novoValor;
-    } else {
-        throw new Error("Produto não encontrado");
-    }
-}
+// Editar produto
+function editProduct(id) {
+  const product = stock.find((p) => p.id === id);
+  if (product) {
+    productIdInput.value = product.id;
+    productNameInput.value = product.name;
+    productQtyInput.value = product.qty;
+    productPriceInput.value = product.price;
 
-function atualizarQuantidade(codigoProduto, novaQuantidade) {
-    if (novaQuantidade < 0) {
-        throw new Error("Quantidade deve maior igual a zero");
-    }
-
-    const produto = produtos.find(prod => prod.codigo === codigoProduto);
-
-    if (produto) {
-        produto.quantidade = novaQuantidade;
-    } else {
-        throw new Error("Produto não encontrado");
-    }
+    cancelBtn.classList.remove('hidden');
+  }
 }
 
-listarProdutos();
+// Deletar produto
+function deleteProduct(id) {
+  stock = stock.filter((p) => p.id !== id);
+  renderTable();
+}
 
-cadastrarProduto("Cadeira Gamer", 12, 699.00);
-cadastrarProduto("Mouse Logi", 38, 99.00);
+// Resetar formulário
+function resetForm() {
+  productIdInput.value = '';
+  form.reset();
+  cancelBtn.classList.add('hidden');
+}
 
-listarProdutos();
-atualizarQuantidade(1, 3);
-listarProdutos();
+cancelBtn.addEventListener('click', resetForm);
