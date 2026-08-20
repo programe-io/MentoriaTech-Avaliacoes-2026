@@ -1,0 +1,310 @@
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+const startScreen = document.getElementById('start-screen');
+const startBtn = document.getElementById('start-btn');
+const msgBox = document.getElementById('msg-box');
+
+const weaponImg = new Image();
+weaponImg.crossOrigin = "anonymous";
+weaponImg.src = 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/Assault_rifle_silhouette.svg/512px-Assault_rifle_silhouette.svg.png'; 
+
+const enemyImg = new Image();
+enemyImg.crossOrigin = "anonymous";
+enemyImg.src = 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/User_icon_2.svg/480px-User_icon_2.svg.png';
+
+let screenW = window.innerWidth;
+let screenH = window.innerHeight;
+canvas.width = screenW;
+canvas.height = screenH;
+
+window.addEventListener('resize', () => {
+    screenW = window.innerWidth;
+    screenH = window.innerHeight;
+    canvas.width = screenW;
+    canvas.height = screenH;
+    zBuffer = new Array(screenW).fill(0);
+});
+
+let gameActive = false;
+const keys = {};
+
+let player = { 
+    x: 2.5, y: 2.5, 
+    dirX: 1, dirY: 0, 
+    planeX: 0, planeY: 0.80, 
+    z: 0, vZ: 0, isJumping: false,
+    weaponOffset: 0, isShooting: false
+};
+
+const map = [
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+    [1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1],
+    [1,0,0,0,0,0,0,1,0,0,3,0,3,0,0,1],
+    [1,0,0,2,2,0,0,0,0,0,0,0,0,0,0,1],
+    [1,0,0,2,2,0,0,0,0,0,3,0,3,0,0,1],
+    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+    [1,1,1,0,0,0,2,2,2,0,0,0,0,0,0,1],
+    [1,0,0,0,0,0,0,0,0,0,0,0,2,0,0,1],
+    [1,0,0,0,0,0,0,0,0,0,0,0,2,0,0,1],
+    [1,0,0,2,0,0,3,0,0,0,0,0,2,0,0,1],
+    [1,0,0,2,0,0,0,0,0,2,2,2,2,0,0,1],
+    [1,0,0,2,0,0,3,0,0,0,0,0,0,0,0,1],
+    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+    [1,0,3,0,3,0,0,0,1,1,1,0,0,0,0,1],
+    [1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1],
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+];
+
+let enemies = [
+    { x: 8.5, y: 3.5, hp: 100 },
+    { x: 13.5, y: 13.5, hp: 100 },
+    { x: 4.5, y: 10.5, hp: 100 },
+    { x: 12.5, y: 6.5, hp: 100 }
+];
+
+let zBuffer = new Array(screenW).fill(0);
+
+document.addEventListener('keydown', e => keys[e.code] = true);
+document.addEventListener('keyup', e => keys[e.code] = false);
+
+document.addEventListener('keydown', e => {
+    if (e.code === 'ControlLeft' || e.code === 'ControlRight') {
+        if (!gameActive) canvas.requestPointerLock();
+        else document.exitPointerLock();
+    }
+});
+
+document.addEventListener('mousemove', e => {
+    if (!gameActive) return;
+    let rot = e.movementX * 0.0025; 
+    let oldDirX = player.dirX;
+    player.dirX = player.dirX * Math.cos(rot) - player.dirY * Math.sin(rot);
+    player.dirY = oldDirX * Math.sin(rot) + player.dirY * Math.cos(rot);
+    let oldPlaneX = player.planeX;
+    player.planeX = player.planeX * Math.cos(rot) - player.planeY * Math.sin(rot);
+    player.planeY = oldPlaneX * Math.sin(rot) + player.planeY * Math.cos(rot);
+});
+
+document.addEventListener('mousedown', e => {
+    if (!gameActive || player.isShooting) return;
+    player.isShooting = true;
+    player.weaponOffset = 40; 
+    
+    enemies.forEach(enemy => {
+        if(enemy.hp <= 0) return;
+        let dx = enemy.x - player.x;
+        let dy = enemy.y - player.y;
+        let dist = Math.sqrt(dx*dx + dy*dy);
+        let angleToEnemy = Math.atan2(dy, dx);
+        let anglePlayer = Math.atan2(player.dirY, player.dirX);
+        
+        let diff = Math.abs(angleToEnemy - anglePlayer);
+        if (diff > Math.PI) diff = Math.PI * 2 - diff; 
+        
+        if (diff < 0.15 && dist < 12) {
+            enemy.hp -= 34; 
+        }
+    });
+
+    setTimeout(() => { player.isShooting = false; }, 120);
+});
+
+startBtn.addEventListener('click', () => {
+    gameActive = true;
+    startScreen.style.display = 'none';
+    canvas.requestPointerLock();
+});
+
+document.addEventListener('pointerlockchange', () => {
+    if (document.pointerLockElement !== canvas) {
+        gameActive = false;
+        startScreen.style.display = 'flex';
+        startBtn.innerText = "RESUMIR JOGO";
+    }
+});
+
+function update() {
+    let speed = keys['ShiftLeft'] ? 0.09 : 0.05; 
+
+    if (keys['KeyW']) {
+        if (map[Math.floor(player.y)][Math.floor(player.x + player.dirX * speed)] === 0) player.x += player.dirX * speed;
+        if (map[Math.floor(player.y + player.dirY * speed)][Math.floor(player.x)] === 0) player.y += player.dirY * speed;
+    }
+    if (keys['KeyS']) {
+        if (map[Math.floor(player.y)][Math.floor(player.x - player.dirX * speed)] === 0) player.x -= player.dirX * speed;
+        if (map[Math.floor(player.y - player.dirY * speed)][Math.floor(player.x)] === 0) player.y -= player.dirY * speed;
+    }
+    if (keys['KeyA']) {
+        if (map[Math.floor(player.y)][Math.floor(player.x - player.planeX * speed)] === 0) player.x -= player.planeX * speed;
+        if (map[Math.floor(player.y - player.planeY * speed)][Math.floor(player.x)] === 0) player.y -= player.planeY * speed;
+    }
+    if (keys['KeyD']) {
+        if (map[Math.floor(player.y)][Math.floor(player.x + player.planeX * speed)] === 0) player.x += player.planeX * speed;
+        if (map[Math.floor(player.y + player.planeY * speed)][Math.floor(player.x)] === 0) player.y += player.planeY * speed;
+    }
+
+    if (keys['Space'] && !player.isJumping) {
+        player.vZ = 15; 
+        player.isJumping = true;
+    }
+    player.z += player.vZ;
+    if(player.isJumping) player.vZ -= 1.5; 
+    if (player.z <= 0) { player.z = 0; player.vZ = 0; player.isJumping = false; }
+
+    if (player.weaponOffset > 0) player.weaponOffset -= 4;
+
+    let vivos = enemies.filter(e => e.hp > 0).length;
+    msgBox.innerText = `Inimigos Vivos: ${vivos}`;
+}
+
+function draw() {
+    let pitch = player.z; 
+    
+    let sky = ctx.createLinearGradient(0, 0, 0, screenH/2 + pitch);
+    sky.addColorStop(0, '#111827'); 
+    sky.addColorStop(1, '#374151'); 
+    ctx.fillStyle = sky;
+    ctx.fillRect(0, 0, screenW, screenH/2 + pitch);
+    
+    let floor = ctx.createLinearGradient(0, screenH/2 + pitch, 0, screenH);
+    floor.addColorStop(0, '#1f2937'); 
+    floor.addColorStop(1, '#4b5563'); 
+    ctx.fillStyle = floor;
+    ctx.fillRect(0, screenH/2 + pitch, screenW, screenH - (screenH/2 + pitch));
+    
+    for (let x = 0; x < screenW; x++) {
+        let camX = 2 * x / screenW - 1;
+        let rayX = player.dirX + player.planeX * camX;
+        let rayY = player.dirY + player.planeY * camX;
+        let mapX = Math.floor(player.x), mapY = Math.floor(player.y);
+        let sideDistX, sideDistY, deltaX = Math.abs(1/rayX), deltaY = Math.abs(1/rayY);
+        let stepX = rayX < 0 ? -1 : 1, stepY = rayY < 0 ? -1 : 1;
+        
+        sideDistX = (rayX < 0 ? (player.x - mapX) : (mapX + 1 - player.x)) * deltaX;
+        sideDistY = (rayY < 0 ? (player.y - mapY) : (mapY + 1 - player.y)) * deltaY;
+        
+        let hit = 0, side, wallType = 0;
+        while(hit === 0) {
+            if (sideDistX < sideDistY) { sideDistX += deltaX; mapX += stepX; side = 0; }
+            else { sideDistY += deltaY; mapY += stepY; side = 1; }
+            if (map[mapY] && map[mapY][mapX] > 0) { hit = 1; wallType = map[mapY][mapX]; }
+        }
+        
+        let dist = side === 0 ? (mapX - player.x + (1-stepX)/2)/rayX : (mapY - player.y + (1-stepY)/2)/rayY;
+        zBuffer[x] = dist;
+
+        let h = Math.floor(screenH / dist);
+        let drawStart = -h/2 + screenH/2 + pitch;
+        
+        let color;
+        if (wallType === 1) color = side === 1 ? '#4b5563' : '#6b7280'; 
+        else if (wallType === 2) color = side === 1 ? '#b9770e' : '#d4ac0d'; 
+        else if (wallType === 3) color = side === 1 ? '#1d4ed8' : '#2563eb'; 
+        
+        ctx.fillStyle = color;
+        ctx.fillRect(x, drawStart, 1, h);
+        
+        let fogIntensity = Math.min(0.9, dist / 10); 
+        ctx.fillStyle = `rgba(0, 0, 0, ${fogIntensity})`;
+        ctx.fillRect(x, drawStart, 1, h);
+    }
+
+    enemies.sort((a, b) => {
+        let distA = Math.pow(player.x - a.x, 2) + Math.pow(player.y - a.y, 2);
+        let distB = Math.pow(player.x - b.x, 2) + Math.pow(player.y - b.y, 2);
+        return distB - distA;
+    });
+
+    enemies.forEach(enemy => {
+        if (enemy.hp <= 0) return; 
+
+        let spriteX = enemy.x - player.x;
+        let spriteY = enemy.y - player.y;
+
+        let invDet = 1.0 / (player.planeX * player.dirY - player.dirX * player.planeY);
+        let transformX = invDet * (player.dirY * spriteX - player.dirX * spriteY);
+        let transformY = invDet * (-player.planeY * spriteX + player.planeX * spriteY); 
+
+        let spriteScreenX = Math.floor((screenW / 2) * (1 + transformX / transformY));
+        let spriteHeight = Math.abs(Math.floor(screenH / transformY)); 
+        let spriteWidth = spriteHeight; 
+        
+        let drawStartY = -spriteHeight / 2 + screenH / 2 + pitch;
+        let drawStartX = -spriteWidth / 2 + spriteScreenX;
+        let drawEndX = spriteWidth / 2 + spriteScreenX;
+
+        if (transformY > 0) {
+            ctx.save();
+            ctx.beginPath();
+            let hasVisibleParts = false;
+            
+            for (let stripe = drawStartX; stripe < drawEndX; stripe++) {
+                let sx = Math.floor(stripe);
+                if (sx > 0 && sx < screenW && transformY < zBuffer[sx]) {
+                    ctx.rect(sx, drawStartY, 1, spriteHeight);
+                    hasVisibleParts = true;
+                }
+            }
+            
+            if (hasVisibleParts) {
+                ctx.clip();
+                if (enemyImg.complete && enemyImg.naturalWidth !== 0) {
+                    ctx.drawImage(enemyImg, drawStartX, drawStartY, spriteWidth, spriteHeight);
+                } else {
+                    ctx.fillStyle = "red";
+                    ctx.fillRect(drawStartX, drawStartY, spriteWidth, spriteHeight);
+                }
+                let fogIntensity = Math.min(0.9, transformY / 10);
+                ctx.fillStyle = `rgba(0, 0, 0, ${fogIntensity})`;
+                ctx.fillRect(drawStartX, drawStartY, spriteWidth, spriteHeight);
+            }
+            ctx.restore();
+        }
+    });
+
+    drawWeapon();
+}
+
+function drawWeapon() {
+    let isMoving = keys['KeyW'] || keys['KeyS'] || keys['KeyA'] || keys['KeyD'];
+    let bobY = isMoving && !player.isJumping ? Math.sin(Date.now() / 150) * 12 : 0;
+    let bobX = isMoving && !player.isJumping ? Math.cos(Date.now() / 150) * 8 : 0;
+    
+    let wpx = screenW/2 + 150 + bobX;
+    let wpy = screenH - 150 + bobY + player.weaponOffset;
+    
+    if (player.isShooting) {
+        let grad = ctx.createRadialGradient(wpx, wpy, 10, wpx, wpy, 100);
+        grad.addColorStop(0, "rgba(255, 200, 50, 0.9)");
+        grad.addColorStop(1, "rgba(255, 50, 0, 0)");
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(wpx, wpy, 100, 0, Math.PI*2);
+        ctx.fill();
+    }
+
+    if (weaponImg.complete && weaponImg.naturalWidth !== 0) {
+        let imgW = 450;
+        let imgH = 450;
+        let imgX = screenW - imgW + 50 + bobX;
+        let imgY = screenH - imgH + 80 + bobY + player.weaponOffset;
+        ctx.drawImage(weaponImg, imgX, imgY, imgW, imgH);
+    }
+
+    let cx = screenW/2;
+    let cy = screenH/2;
+    ctx.fillStyle = "rgba(230, 126, 34, 1)"; 
+    ctx.fillRect(cx - 2, cy - 2, 4, 4); 
+    ctx.fillRect(cx - 12, cy - 1, 6, 2); 
+    ctx.fillRect(cx + 6, cy - 1, 6, 2);  
+    ctx.fillRect(cx - 1, cy - 12, 2, 6); 
+    ctx.fillRect(cx - 1, cy + 6, 2, 6);  
+}
+
+function loop() {
+    if (gameActive) update();
+    draw();
+    requestAnimationFrame(loop);
+}
+
+loop();
