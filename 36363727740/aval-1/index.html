@@ -3,157 +3,179 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRUD - Estoque</title>
+    <title>Sistema de Estoque</title>
     <link rel="stylesheet" href="style.css">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="style.css" rel="stylesheet"></head>
 <body>
 
-    <header>
-        <h1>📦 Controle de Estoque</h1>
-        <p>Gerencie seus produtos</p>
-    </header>
+    <aside class="sidebar">
+        <h2>📦 Estoque</h2>
 
-    <main>
+        <nav>
+            <button onclick="mostrarPagina('dashboard')">🏠 Dashboard</button>
+            <button onclick="mostrarPagina('produtos')">📦 Produtos</button>
+            <button onclick="mostrarPagina('movimentacoes')">🔄 Movimentações</button>
+        </nav>
+    </aside>
 
-        <section class="form-container">
-            <h2 id="form-title">Cadastrar Produto</h2>
+    <main class="main">
 
-            <form id="produto-form">
+        <!-- DASHBOARD -->
+        <section id="dashboard" class="pagina">
+            <header>
+                <h1>Dashboard</h1>
+                <p>Visão geral do estoque</p>
+            </header>
 
-                <input type="hidden" id="produto-id">
-
-                <div class="form-group">
-                    <label for="nome">Nome do produto</label>
-                    <input
-                        type="text"
-                        id="nome"
-                        placeholder="Ex: Teclado Mecânico"
-                        required
-                    >
+            <div class="cards">
+                <div class="card">
+                    <span>📦 Produtos</span>
+                    <strong id="totalProdutos">0</strong>
                 </div>
 
-                <div class="form-group">
-                    <label for="categoria">Categoria</label>
-                    <input
-                        type="text"
-                        id="categoria"
-                        placeholder="Ex: Informática"
-                        required
-                    >
+                <div class="card">
+                    <span>📊 Itens em estoque</span>
+                    <strong id="totalEstoque">0</strong>
                 </div>
 
-                <div class="form-group">
-                    <label for="preco">Preço</label>
-                    <input
-                        type="number"
-                        id="preco"
-                        placeholder="0.00"
-                        step="0.01"
-                        min="0"
-                        required
-                    >
+                <div class="card">
+                    <span>⚠️ Estoque baixo</span>
+                    <strong id="estoqueBaixo">0</strong>
                 </div>
 
-                <div class="form-group">
-                    <label for="quantidade">Quantidade</label>
-                    <input
-                        type="number"
-                        id="quantidade"
-                        placeholder="0"
-                        min="0"
-                        required
-                    >
+                <div class="card">
+                    <span>💰 Valor em estoque</span>
+                    <strong id="valorEstoque">R$ 0,00</strong>
                 </div>
+            </div>
 
-                <div class="buttons">
-                    <button type="submit" class="btn-primary" id="btn-salvar">
-                        Cadastrar
-                    </button>
+            <div class="painel">
+                <h2>Produtos com estoque baixo</h2>
 
-                    <button
-                        type="button"
-                        class="btn-cancelar"
-                        id="btn-cancelar"
-                        onclick="cancelarEdicao()"
-                        hidden
-                    >
-                        Cancelar
-                    </button>
-                </div>
-
-            </form>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Produto</th>
+                            <th>Categoria</th>
+                            <th>Quantidade</th>
+                            <th>Mínimo</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaBaixoEstoque"></tbody>
+                </table>
+            </div>
         </section>
 
-        <section class="estoque">
-
-            <div class="topo-estoque">
+        <!-- PRODUTOS -->
+        <section id="produtos" class="pagina escondido">
+            <header class="topo">
                 <div>
-                    <h2>Produtos</h2>
-                    <p id="total-produtos">0 produtos cadastrados</p>
+                    <h1>Produtos</h1>
+                    <p>Gerencie seus produtos</p>
                 </div>
 
+                <button class="btn-principal" onclick="abrirModal()">
+                    + Novo Produto
+                </button>
+            </header>
+
+            <div class="barra-pesquisa">
                 <input
                     type="text"
                     id="pesquisa"
                     placeholder="🔎 Pesquisar produto..."
+                    oninput="listarProdutos()"
                 >
             </div>
 
-            <div class="cards">
-
-                <div class="card">
-                    <span>Total de produtos</span>
-                    <strong id="card-produtos">0</strong>
-                </div>
-
-                <div class="card">
-                    <span>Quantidade em estoque</span>
-                    <strong id="card-estoque">0</strong>
-                </div>
-
-                <div class="card">
-                    <span>Estoque baixo</span>
-                    <strong id="card-baixo">0</strong>
-                </div>
-
-                <div class="card">
-                    <span>Valor do estoque</span>
-                    <strong id="card-valor">R$ 0,00</strong>
-                </div>
-
-            </div>
-
-            <div class="table-container">
-
+            <div class="painel">
                 <table>
-
                     <thead>
                         <tr>
-                            <th>ID</th>
                             <th>Produto</th>
                             <th>Categoria</th>
                             <th>Preço</th>
                             <th>Quantidade</th>
+                            <th>Mínimo</th>
                             <th>Status</th>
                             <th>Ações</th>
                         </tr>
                     </thead>
 
-                    <tbody id="tabela-produtos">
-                    </tbody>
-
+                    <tbody id="tabelaProdutos"></tbody>
                 </table>
-
-                <div id="sem-produtos" class="sem-produtos">
-                    Nenhum produto cadastrado.
-                </div>
-
             </div>
+        </section>
 
+        <!-- MOVIMENTAÇÕES -->
+        <section id="movimentacoes" class="pagina escondido">
+            <header>
+                <h1>Movimentações</h1>
+                <p>Histórico de entradas e saídas</p>
+            </header>
+
+            <div class="painel">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Produto</th>
+                            <th>Tipo</th>
+                            <th>Quantidade</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="tabelaMovimentacoes"></tbody>
+                </table>
+            </div>
         </section>
 
     </main>
+
+    <!-- MODAL -->
+    <div id="modal" class="modal escondido">
+
+        <div class="modal-conteudo">
+
+            <div class="modal-topo">
+                <h2 id="tituloModal">Novo Produto</h2>
+                <button onclick="fecharModal()">×</button>
+            </div>
+
+            <form id="formProduto">
+
+                <input type="hidden" id="produtoId">
+
+                <label>Nome do produto</label>
+                <input type="text" id="nome" required>
+
+                <label>Categoria</label>
+                <input type="text" id="categoria" required>
+
+                <label>Preço</label>
+                <input type="number" id="preco" min="0" step="0.01" required>
+
+                <label>Quantidade</label>
+                <input type="number" id="quantidade" min="0" required>
+
+                <label>Estoque mínimo</label>
+                <input type="number" id="minimo" min="0" required>
+
+                <div class="modal-botoes">
+                    <button type="button" class="btn-cancelar" onclick="fecharModal()">
+                        Cancelar
+                    </button>
+
+                    <button type="submit" class="btn-principal">
+                        Salvar
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
 
     <script src="script.js"></script>
 <script src="script.js"></script></body>
