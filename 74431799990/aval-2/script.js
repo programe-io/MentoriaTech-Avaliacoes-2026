@@ -1,240 +1,415 @@
-let produtos = [];
-let produtoEditando = null;
-
-// Elementos HTML
-const form = document.getElementById("formProduto");
-const descricao = document.getElementById("descricao");
-const quantidade = document.getElementById("quantidade");
-const valor = document.getElementById("valor");
-
-const listaProdutos = document.getElementById("listaProdutos");
-const mensagemVazia = document.getElementById("mensagemVazia");
-const busca = document.getElementById("busca");
-
-const totalProdutos = document.getElementById("totalProdutos");
-const totalQuantidade = document.getElementById("totalQuantidade");
-const valorEstoque = document.getElementById("valorEstoque");
+// Array que armazena as tarefas
+let tarefas = [];
 
 
-// Cadastrar ou editar produto
+// Identifica qual filtro está selecionado
+let filtroAtual = "todas";
+
+
+// Elementos do HTML
+const form = document.getElementById("formTarefa");
+
+const campoTarefa =
+    document.getElementById("tarefa");
+
+const campoPrioridade =
+    document.getElementById("prioridade");
+
+const listaTarefas =
+    document.getElementById("listaTarefas");
+
+const mensagemVazia =
+    document.getElementById("mensagemVazia");
+
+
+// Elementos do resumo
+const totalTarefas =
+    document.getElementById("totalTarefas");
+
+const tarefasPendentes =
+    document.getElementById("tarefasPendentes");
+
+const tarefasConcluidas =
+    document.getElementById("tarefasConcluidas");
+
+
+// Botões de filtro
+const botoesFiltro =
+    document.querySelectorAll(".filtro");
+
+
+// =====================================
+// ADICIONAR TAREFA
+// =====================================
+
 form.addEventListener("submit", function(event) {
 
     event.preventDefault();
 
-    const nome = descricao.value.trim();
-    const qtd = Number(quantidade.value);
-    const preco = Number(valor.value);
+
+    const texto =
+        campoTarefa.value.trim();
+
+    const prioridade =
+        campoPrioridade.value;
+
 
     // Validação
-    if (nome.length < 5) {
-        alert("A descrição deve ter no mínimo 5 caracteres.");
-        return;
-    }
+    if (texto.length < 3) {
 
-    if (qtd < 0 || quantidade.value === "") {
-        alert("Informe uma quantidade válida.");
-        return;
-    }
-
-    if (preco < 0 || valor.value === "") {
-        alert("Informe um valor válido.");
-        return;
-    }
-
-
-    // Editar produto
-    if (produtoEditando !== null) {
-
-        const produto = produtos.find(
-            produto => produto.codigo === produtoEditando
+        alert(
+            "A tarefa deve ter pelo menos 3 caracteres."
         );
 
-        produto.descricao = nome;
-        produto.quantidade = qtd;
-        produto.valor = preco;
-
-        produtoEditando = null;
-
-        document.querySelector(".btn-primary").textContent =
-            "Cadastrar Produto";
-
-    } else {
-
-        // Criar novo produto
-        const novoProduto = {
-            codigo: produtos.length + 1,
-            descricao: nome,
-            quantidade: qtd,
-            valor: preco
-        };
-
-        produtos.push(novoProduto);
+        return;
     }
 
+
+    // Cria uma nova tarefa
+    const novaTarefa = {
+
+        id: Date.now(),
+
+        titulo: texto,
+
+        prioridade: prioridade,
+
+        concluida: false
+
+    };
+
+
+    // Adiciona ao array
+    tarefas.push(novaTarefa);
+
+
+    // Limpa o formulário
     form.reset();
 
-    mostrarProdutos();
+
+    // Volta a prioridade para média
+    campoPrioridade.value = "media";
+
+
+    // Atualiza a tela
+    mostrarTarefas();
 
 });
 
 
-// Mostrar produtos
-function mostrarProdutos() {
+// =====================================
+// MOSTRAR TAREFAS
+// =====================================
 
-    listaProdutos.innerHTML = "";
+function mostrarTarefas() {
 
-    const textoBusca = busca.value.toLowerCase();
-
-    const produtosFiltrados = produtos.filter(produto =>
-        produto.descricao.toLowerCase().includes(textoBusca)
-    );
+    listaTarefas.innerHTML = "";
 
 
-    if (produtosFiltrados.length === 0) {
+    // Filtra as tarefas
+    let tarefasFiltradas;
 
-        mensagemVazia.style.display = "block";
+
+    if (filtroAtual === "pendentes") {
+
+        tarefasFiltradas =
+            tarefas.filter(
+                tarefa => !tarefa.concluida
+            );
+
+    } else if (filtroAtual === "concluidas") {
+
+        tarefasFiltradas =
+            tarefas.filter(
+                tarefa => tarefa.concluida
+            );
 
     } else {
 
-        mensagemVazia.style.display = "none";
+        tarefasFiltradas = tarefas;
 
     }
 
 
-    produtosFiltrados.forEach(produto => {
+    // Verifica se existem tarefas
+    if (tarefasFiltradas.length === 0) {
 
-        const linha = document.createElement("tr");
+        mensagemVazia.style.display =
+            "block";
 
-        const total = produto.quantidade * produto.valor;
+    } else {
 
-        linha.innerHTML = `
-            <td>${produto.codigo}</td>
+        mensagemVazia.style.display =
+            "none";
+    }
 
-            <td>${produto.descricao}</td>
 
-            <td>${produto.quantidade}</td>
+    // Cria cada tarefa
+    tarefasFiltradas.forEach(function(tarefa) {
 
-            <td>${formatarMoeda(produto.valor)}</td>
+        const elemento =
+            document.createElement("div");
 
-            <td>${formatarMoeda(total)}</td>
 
-            <td>
-                <div class="acoes">
+        elemento.classList.add("tarefa");
 
-                    <button
-                        class="btn-editar"
-                        onclick="editarProduto(${produto.codigo})">
-                        Editar
-                    </button>
 
-                    <button
-                        class="btn-excluir"
-                        onclick="excluirProduto(${produto.codigo})">
-                        Excluir
-                    </button>
+        if (tarefa.concluida) {
+
+            elemento.classList.add("concluida");
+
+        }
+
+
+        elemento.innerHTML = `
+
+            <div class="info">
+
+                <input
+                    type="checkbox"
+                    class="checkbox"
+                    ${tarefa.concluida ? "checked" : ""}
+                    onchange="alternarTarefa(${tarefa.id})"
+                >
+
+                <div>
+
+                    <div class="titulo">
+                        ${tarefa.titulo}
+                    </div>
+
+                    <span
+                        class="prioridade ${tarefa.prioridade}">
+                        ${nomePrioridade(tarefa.prioridade)}
+                    </span>
 
                 </div>
-            </td>
+
+            </div>
+
+
+            <div class="acoes">
+
+                <button
+                    class="btn-editar"
+                    onclick="editarTarefa(${tarefa.id})">
+                    Editar
+                </button>
+
+                <button
+                    class="btn-excluir"
+                    onclick="excluirTarefa(${tarefa.id})">
+                    Excluir
+                </button>
+
+            </div>
+
         `;
 
-        listaProdutos.appendChild(linha);
+
+        listaTarefas.appendChild(elemento);
 
     });
+
 
     atualizarResumo();
 
 }
 
 
-// Editar produto
-function editarProduto(codigo) {
+// =====================================
+// CONCLUIR TAREFA
+// =====================================
 
-    const produto = produtos.find(
-        produto => produto.codigo === codigo
-    );
+function alternarTarefa(id) {
 
-    if (!produto) {
+    const tarefa =
+        tarefas.find(
+            tarefa => tarefa.id === id
+        );
+
+
+    if (!tarefa) {
         return;
     }
 
-    descricao.value = produto.descricao;
-    quantidade.value = produto.quantidade;
-    valor.value = produto.valor;
 
-    produtoEditando = codigo;
+    tarefa.concluida =
+        !tarefa.concluida;
 
-    document.querySelector(".btn-primary").textContent =
-        "Salvar Alterações";
 
-    window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-    });
+    mostrarTarefas();
 
 }
 
 
-// Excluir produto
-function excluirProduto(codigo) {
+// =====================================
+// EDITAR TAREFA
+// =====================================
 
-    const confirmar = confirm(
-        "Deseja realmente excluir este produto?"
-    );
+function editarTarefa(id) {
+
+    const tarefa =
+        tarefas.find(
+            tarefa => tarefa.id === id
+        );
+
+
+    if (!tarefa) {
+        return;
+    }
+
+
+    const novoTexto =
+        prompt(
+            "Digite o novo nome da tarefa:",
+            tarefa.titulo
+        );
+
+
+    if (novoTexto === null) {
+        return;
+    }
+
+
+    const texto =
+        novoTexto.trim();
+
+
+    if (texto.length < 3) {
+
+        alert(
+            "A tarefa deve ter pelo menos 3 caracteres."
+        );
+
+        return;
+    }
+
+
+    tarefa.titulo = texto;
+
+
+    mostrarTarefas();
+
+}
+
+
+// =====================================
+// EXCLUIR TAREFA
+// =====================================
+
+function excluirTarefa(id) {
+
+    const confirmar =
+        confirm(
+            "Deseja realmente excluir esta tarefa?"
+        );
+
 
     if (!confirmar) {
         return;
     }
 
-    produtos = produtos.filter(
-        produto => produto.codigo !== codigo
-    );
 
-    mostrarProdutos();
+    tarefas =
+        tarefas.filter(
+            tarefa => tarefa.id !== id
+        );
+
+
+    mostrarTarefas();
 
 }
 
 
-// Buscar produto
-busca.addEventListener("input", function() {
+// =====================================
+// FILTROS
+// =====================================
 
-    mostrarProdutos();
+botoesFiltro.forEach(function(botao) {
+
+    botao.addEventListener(
+        "click",
+        function() {
+
+            // Remove o ativo dos botões
+            botoesFiltro.forEach(
+                botao =>
+                    botao.classList.remove("ativo")
+            );
+
+
+            // Ativa o botão selecionado
+            botao.classList.add("ativo");
+
+
+            // Atualiza o filtro
+            filtroAtual =
+                botao.dataset.filtro;
+
+
+            mostrarTarefas();
+
+        }
+    );
 
 });
 
 
-// Atualizar resumo
+// =====================================
+// ATUALIZAR RESUMO
+// =====================================
+
 function atualizarResumo() {
 
-    let quantidadeTotal = 0;
-    let valorTotal = 0;
-
-    produtos.forEach(produto => {
-
-        quantidadeTotal += produto.quantidade;
-
-        valorTotal += produto.quantidade * produto.valor;
-
-    });
-
-    totalProdutos.textContent = produtos.length;
-
-    totalQuantidade.textContent = quantidadeTotal;
-
-    valorEstoque.textContent = formatarMoeda(valorTotal);
-
-}
+    const total =
+        tarefas.length;
 
 
-// Formatar moeda
-function formatarMoeda(valor) {
+    const concluidas =
+        tarefas.filter(
+            tarefa => tarefa.concluida
+        ).length;
 
-    return valor.toLocaleString("pt-BR", {
-        style: "currency",
-        currency: "BRL"
-    });
+
+    const pendentes =
+        total - concluidas;
+
+
+    totalTarefas.textContent =
+        total;
+
+
+    tarefasPendentes.textContent =
+        pendentes;
+
+
+    tarefasConcluidas.textContent =
+        concluidas;
 
 }
 
 
-// Inicializar
-mostrarProdutos();
+// =====================================
+// NOME DA PRIORIDADE
+// =====================================
+
+function nomePrioridade(prioridade) {
+
+    if (prioridade === "baixa") {
+        return "Baixa";
+    }
+
+    if (prioridade === "media") {
+        return "Média";
+    }
+
+    return "Alta";
+}
+
+
+// =====================================
+// INICIALIZAÇÃO
+// =====================================
+
+mostrarTarefas();
