@@ -1,1661 +1,1032 @@
-```html
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>SEDUC-PI | Gestão Escolar</title>
-
-<style>
-
-/* ================================
-   CONFIGURAÇÕES GERAIS
-================================ */
-
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:"Segoe UI",Arial,sans-serif;
-}
-
-body{
-    background:#f1f5f9;
-    color:#1e293b;
-}
-
-/* ================================
-   SIDEBAR
-================================ */
-
-.sidebar{
-    position:fixed;
-    left:0;
-    top:0;
-    width:255px;
-    height:100vh;
-    background:linear-gradient(180deg,#064e78,#075985);
-    color:white;
-    padding:25px 16px;
-    z-index:100;
-}
-
-.logo{
-    text-align:center;
-    padding:10px;
-    margin-bottom:30px;
-}
-
-.logo-icon{
-    width:65px;
-    height:65px;
-    margin:auto;
-    border-radius:18px;
-    background:white;
-    color:#075985;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:30px;
-    font-weight:bold;
-    box-shadow:0 8px 20px rgba(0,0,0,.15);
-}
-
-.logo h1{
-    margin-top:12px;
-    font-size:24px;
-}
-
-.logo p{
-    font-size:12px;
-    opacity:.8;
-    margin-top:4px;
-}
-
-.menu{
-    display:flex;
-    flex-direction:column;
-    gap:7px;
-}
-
-.menu button{
-    border:none;
-    background:transparent;
-    color:white;
-    padding:14px 16px;
-    border-radius:10px;
-    text-align:left;
-    font-size:14px;
-    cursor:pointer;
-    transition:.2s;
-}
-
-.menu button:hover,
-.menu button.active{
-    background:rgba(255,255,255,.15);
-    transform:translateX(3px);
-}
-
-.menu button span{
-    margin-right:10px;
-}
-
-/* ================================
-   CONTEÚDO
-================================ */
-
-.main{
-    margin-left:255px;
-    min-height:100vh;
-    padding:25px 30px;
-}
-
-/* ================================
-   TOPO
-================================ */
-
-.topbar{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    background:white;
-    padding:18px 22px;
-    border-radius:16px;
-    box-shadow:0 5px 20px rgba(15,23,42,.06);
-}
-
-.top-title h2{
-    font-size:22px;
-    color:#0f172a;
-}
-
-.top-title p{
-    color:#64748b;
-    margin-top:4px;
-    font-size:13px;
-}
-
-.profile{
-    display:flex;
-    align-items:center;
-    gap:12px;
-}
-
-.profile-avatar{
-    width:42px;
-    height:42px;
-    border-radius:50%;
-    background:#e0f2fe;
-    color:#075985;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    font-size:20px;
-}
-
-.profile-info strong{
-    display:block;
-    font-size:14px;
-}
-
-.profile-info small{
-    color:#64748b;
-}
-
-/* ================================
-   TÍTULO
-================================ */
-
-.page-title{
-    margin:28px 0 18px;
-}
-
-.page-title h1{
-    font-size:26px;
-}
-
-.page-title p{
-    color:#64748b;
-    margin-top:5px;
-}
-
-/* ================================
-   CARDS
-================================ */
-
-.cards{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:18px;
-    margin-bottom:25px;
-}
-
-.card{
-    background:white;
-    border-radius:16px;
-    padding:20px;
-    box-shadow:0 5px 20px rgba(15,23,42,.06);
-    position:relative;
-    overflow:hidden;
-}
-
-.card::after{
-    content:"";
-    position:absolute;
-    right:-20px;
-    bottom:-30px;
-    width:100px;
-    height:100px;
-    border-radius:50%;
-    background:#e0f2fe;
-}
-
-.card-top{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-}
-
-.card-icon{
-    width:45px;
-    height:45px;
-    border-radius:12px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:22px;
-}
-
-.blue{
-    background:#e0f2fe;
-    color:#0369a1;
-}
-
-.green{
-    background:#dcfce7;
-    color:#15803d;
-}
-
-.orange{
-    background:#ffedd5;
-    color:#c2410c;
-}
-
-.red{
-    background:#fee2e2;
-    color:#b91c1c;
-}
-
-.card h3{
-    margin-top:15px;
-    color:#64748b;
-    font-size:13px;
-}
-
-.card strong{
-    display:block;
-    font-size:30px;
-    margin-top:5px;
-}
-
-/* ================================
-   PAINEL
-================================ */
-
-.panel{
-    background:white;
-    border-radius:16px;
-    box-shadow:0 5px 20px rgba(15,23,42,.06);
-    overflow:hidden;
-}
-
-.panel-header{
-    padding:20px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    border-bottom:1px solid #e2e8f0;
-}
-
-.panel-header h2{
-    font-size:18px;
-}
-
-.panel-header p{
-    color:#64748b;
-    font-size:13px;
-    margin-top:4px;
-}
-
-.actions{
-    display:flex;
-    gap:10px;
-}
-
-/* ================================
-   INPUT
-================================ */
-
-.search{
-    border:1px solid #cbd5e1;
-    border-radius:9px;
-    padding:11px 14px;
-    width:230px;
-    outline:none;
-}
-
-.search:focus{
-    border-color:#0284c7;
-    box-shadow:0 0 0 3px #e0f2fe;
-}
-
-/* ================================
-   BOTÕES
-================================ */
-
-.btn{
-    border:none;
-    border-radius:9px;
-    padding:11px 16px;
-    color:white;
-    font-weight:600;
-    cursor:pointer;
-    transition:.2s;
-}
-
-.btn:hover{
-    transform:translateY(-1px);
-    filter:brightness(1.05);
-}
-
-.btn-primary{
-    background:#075985;
-}
-
-.btn-success{
-    background:#16a34a;
-}
-
-.btn-danger{
-    background:#dc2626;
-}
-
-.btn-warning{
-    background:#ea580c;
-}
-
-.btn-small{
-    padding:7px 10px;
-    font-size:11px;
-}
-
-/* ================================
-   TABELA
-================================ */
-
-.table-container{
-    overflow-x:auto;
-}
-
-table{
-    width:100%;
-    border-collapse:collapse;
-    min-width:1050px;
-}
-
-thead{
-    background:#f8fafc;
-}
-
-th{
-    padding:14px 10px;
-    text-align:center;
-    color:#475569;
-    font-size:12px;
-    border-bottom:1px solid #e2e8f0;
-}
-
-td{
-    padding:15px 10px;
-    text-align:center;
-    border-bottom:1px solid #f1f5f9;
-    font-size:13px;
-}
-
-tbody tr:hover{
-    background:#f8fafc;
-}
-
-.student{
-    text-align:left;
-}
-
-.student strong{
-    display:block;
-    color:#0f172a;
-}
-
-.student small{
-    color:#94a3b8;
-}
-
-.average{
-    font-weight:bold;
-    color:#075985;
-}
-
-/* ================================
-   SITUAÇÃO
-================================ */
-
-.status{
-    display:inline-block;
-    padding:6px 10px;
-    border-radius:20px;
-    font-size:10px;
-    font-weight:bold;
-}
-
-.status.aprovado{
-    background:#dcfce7;
-    color:#166534;
-}
-
-.status.recuperacao{
-    background:#ffedd5;
-    color:#9a3412;
-}
-
-.status.reprovado{
-    background:#fee2e2;
-    color:#991b1b;
-}
-
-/* ================================
-   MODAL
-================================ */
-
-.modal{
-    position:fixed;
-    inset:0;
-    background:rgba(15,23,42,.65);
-    display:none;
-    justify-content:center;
-    align-items:center;
-    z-index:999;
-    padding:20px;
-}
-
-.modal.show{
-    display:flex;
-}
-
-.modal-box{
-    background:white;
-    width:620px;
-    max-width:100%;
-    max-height:92vh;
-    overflow-y:auto;
-    border-radius:18px;
-    box-shadow:0 25px 60px rgba(0,0,0,.25);
-}
-
-.modal-header{
-    padding:22px;
-    border-bottom:1px solid #e2e8f0;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-}
-
-.modal-header h2{
-    color:#075985;
-}
-
-.close{
-    border:none;
-    background:#f1f5f9;
-    width:35px;
-    height:35px;
-    border-radius:50%;
-    cursor:pointer;
-    font-size:18px;
-}
-
-.form{
-    padding:22px;
-}
-
-.form-grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:16px;
-}
-
-.form-group{
-    display:flex;
-    flex-direction:column;
-    gap:6px;
-}
-
-.form-group.full{
-    grid-column:1/-1;
-}
-
-.form-group label{
-    font-size:12px;
-    font-weight:bold;
-    color:#475569;
-}
-
-.form-group input,
-.form-group select{
-    padding:11px;
-    border:1px solid #cbd5e1;
-    border-radius:8px;
-    outline:none;
-}
-
-.form-group input:focus,
-.form-group select:focus{
-    border-color:#0284c7;
-    box-shadow:0 0 0 3px #e0f2fe;
-}
-
-.modal-footer{
-    padding:18px 22px;
-    border-top:1px solid #e2e8f0;
-    display:flex;
-    justify-content:flex-end;
-    gap:10px;
-}
-
-/* ================================
-   BOLETIM
-================================ */
-
-.boletim{
-    display:none;
-    padding:30px;
-}
-
-.boletim-header{
-    text-align:center;
-    border-bottom:2px solid #075985;
-    padding-bottom:20px;
-}
-
-.boletim-header h1{
-    color:#075985;
-}
-
-.boletim-info{
-    margin:20px 0;
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:10px;
-}
-
-.boletim-table{
-    width:100%;
-    border-collapse:collapse;
-}
-
-.boletim-table th,
-.boletim-table td{
-    border:1px solid #cbd5e1;
-}
-
-/* ================================
-   RESPONSIVO
-================================ */
-
-@media(max-width:1100px){
-
-    .cards{
-        grid-template-columns:repeat(2,1fr);
-    }
-}
-
-@media(max-width:800px){
-
-    .sidebar{
-        position:relative;
-        width:100%;
-        height:auto;
-    }
-
-    .main{
-        margin-left:0;
-        padding:15px;
-    }
-
-    .cards{
-        grid-template-columns:1fr;
-    }
-
-    .topbar{
-        gap:15px;
-    }
-
-    .panel-header{
-        flex-direction:column;
-        align-items:stretch;
-        gap:15px;
-    }
-
-    .actions{
-        flex-direction:column;
-    }
-
-    .search{
-        width:100%;
-    }
-
-    .form-grid{
-        grid-template-columns:1fr;
-    }
-
-    .form-group.full{
-        grid-column:auto;
-    }
-}
-
-</style>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Projeto Integrador | 2º Ano - Desenvolvimento de Sistemas</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: #f4f7fb;
+            color: #1f2937;
+            line-height: 1.7;
+        }
+
+        /* MENU */
+        header {
+            background: #071a33;
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.2);
+        }
+
+        nav {
+            max-width: 1200px;
+            margin: auto;
+            padding: 18px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: bold;
+            color: #38bdf8;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: #38bdf8;
+        }
+
+        /* HERO */
+        .hero {
+            min-height: 600px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 80px 20px;
+            background: linear-gradient(135deg, #071a33, #0f3d68, #0369a1);
+            color: white;
+        }
+
+        .hero-content {
+            max-width: 900px;
+        }
+
+        .hero h1 {
+            font-size: 55px;
+            margin-bottom: 20px;
+        }
+
+        .hero h2 {
+            font-size: 28px;
+            color: #7dd3fc;
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            font-size: 20px;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 14px 28px;
+            background: #38bdf8;
+            color: #071a33;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            background: white;
+        }
+
+        /* SEÇÕES */
+        section {
+            max-width: 1150px;
+            margin: auto;
+            padding: 70px 25px;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 45px;
+        }
+
+        .section-title h2 {
+            font-size: 36px;
+            color: #0f3d68;
+        }
+
+        .section-title p {
+            color: #64748b;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+
+        .card h3 {
+            color: #0369a1;
+            margin-bottom: 15px;
+        }
+
+        /* GRID */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 25px;
+        }
+
+        .feature {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 18px rgba(0,0,0,0.08);
+            transition: 0.3s;
+        }
+
+        .feature:hover {
+            transform: translateY(-8px);
+        }
+
+        .feature .icon {
+            font-size: 45px;
+            margin-bottom: 15px;
+        }
+
+        .feature h3 {
+            color: #0f3d68;
+            margin-bottom: 10px;
+        }
+
+        /* LISTAS */
+        ul.lista {
+            padding-left: 25px;
+        }
+
+        ul.lista li {
+            margin-bottom: 8px;
+        }
+
+        /* TECNOLOGIAS */
+        .tech {
+            background: #071a33;
+            color: white;
+        }
+
+        .tech .section-title h2 {
+            color: #7dd3fc;
+        }
+
+        .tech-card {
+            background: #0f2947;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid #1e4d73;
+        }
+
+        .tech-card h3 {
+            color: #38bdf8;
+            margin-bottom: 10px;
+        }
+
+        /* CRONOGRAMA */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+
+        th {
+            background: #0f3d68;
+            color: white;
+            padding: 15px;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        tr:hover {
+            background: #f0f9ff;
+        }
+
+        /* FLUXO */
+        .fluxo {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        .etapa {
+            background: #0f3d68;
+            color: white;
+            padding: 18px;
+            border-radius: 10px;
+            text-align: center;
+            min-width: 140px;
+        }
+
+        .seta {
+            font-size: 28px;
+            color: #0369a1;
+        }
+
+        /* AVALIAÇÃO */
+        .avaliacao {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .nota {
+            background: white;
+            padding: 25px;
+            border-left: 5px solid #0369a1;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.07);
+        }
+
+        .nota strong {
+            font-size: 25px;
+            color: #0369a1;
+        }
+
+        /* FRASE */
+        .frase {
+            background: linear-gradient(135deg, #0369a1, #0f3d68);
+            color: white;
+            text-align: center;
+            padding: 60px 25px;
+        }
+
+        .frase blockquote {
+            font-size: 28px;
+            font-weight: bold;
+            max-width: 850px;
+            margin: auto;
+        }
+
+        /* RODAPÉ */
+        footer {
+            background: #050f1d;
+            color: white;
+            text-align: center;
+            padding: 35px 20px;
+        }
+
+        footer p {
+            margin: 5px;
+        }
+
+        /* RESPONSIVO */
+        @media (max-width: 768px) {
+
+            nav {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .hero h1 {
+                font-size: 38px;
+            }
+
+            .hero h2 {
+                font-size: 22px;
+            }
+
+            .hero p {
+                font-size: 17px;
+            }
+
+            .section-title h2 {
+                font-size: 28px;
+            }
+
+            table {
+                font-size: 13px;
+            }
+
+            .fluxo {
+                flex-direction: column;
+            }
+
+            .seta {
+                transform: rotate(90deg);
+            }
+        }
+    </style>
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
 <body>
 
-<!-- ==========================================
-     MENU
-========================================== -->
+<!-- MENU -->
 
-<aside class="sidebar">
+<header>
+    <nav>
 
-    <div class="logo">
-
-        <div class="logo-icon">
-            🎓
+        <div class="logo">
+            💻 PROJETO INTEGRADOR
         </div>
 
-        <h1>SEDUC-PI</h1>
+        <ul>
+            <li><a href="#inicio">Início</a></li>
+            <li><a href="#projeto">Projeto</a></li>
+            <li><a href="#objetivos">Objetivos</a></li>
+            <li><a href="#tecnologias">Tecnologias</a></li>
+            <li><a href="#cronograma">Cronograma</a></li>
+            <li><a href="#avaliacao">Avaliação</a></li>
+        </ul>
 
-        <p>Sistema de Gestão Escolar</p>
+    </nav>
+</header>
+
+
+<!-- HERO -->
+
+<section class="hero" id="inicio">
+
+    <div class="hero-content">
+
+        <h1>🚀 Sistema Escolar Inteligente</h1>
+
+        <h2>Tecnologia a Serviço da Educação</h2>
+
+        <p>
+            Projeto Integrador do 2º Ano do Ensino Médio
+            – Técnico em Desenvolvimento de Sistemas
+        </p>
+
+        <a href="#projeto" class="btn">
+            Conhecer o Projeto
+        </a>
 
     </div>
 
-    <nav class="menu">
-
-        <button class="active">
-            <span>🏠</span>
-            Dashboard
-        </button>
-
-        <button>
-            <span>👨‍🎓</span>
-            Alunos
-        </button>
-
-        <button>
-            <span>📚</span>
-            Turmas
-        </button>
-
-        <button>
-            <span>📝</span>
-            Notas
-        </button>
-
-        <button>
-            <span>📅</span>
-            Frequência
-        </button>
-
-        <button>
-            <span>📋</span>
-            Boletins
-        </button>
-
-        <button>
-            <span>📊</span>
-            Relatórios
-        </button>
-
-        <button>
-            <span>⚙️</span>
-            Configurações
-        </button>
-
-    </nav>
-
-</aside>
+</section>
 
 
-<!-- ==========================================
-     CONTEÚDO
-========================================== -->
+<!-- PROJETO -->
 
-<main class="main">
+<section id="projeto">
 
-    <!-- TOPO -->
+    <div class="section-title">
 
-    <header class="topbar">
-
-        <div class="top-title">
-
-            <h2>Gestão Escolar</h2>
-
-            <p>
-                Controle acadêmico de alunos
-            </p>
-
-        </div>
-
-        <div class="profile">
-
-            <div class="profile-avatar">
-                👤
-            </div>
-
-            <div class="profile-info">
-
-                <strong>Professor</strong>
-
-                <small>Administrador</small>
-
-            </div>
-
-        </div>
-
-    </header>
-
-
-    <!-- TÍTULO -->
-
-    <div class="page-title">
-
-        <h1>Dashboard</h1>
+        <h2>📚 Sobre o Projeto</h2>
 
         <p>
-            Acompanhe o desempenho dos seus alunos.
+            Desenvolvimento de uma solução tecnológica para o ambiente escolar.
         </p>
 
     </div>
 
+    <div class="card">
 
-    <!-- CARDS -->
+        <h3>Introdução</h3>
 
-    <section class="cards">
+        <p>
+            A tecnologia está cada vez mais presente na educação e pode
+            contribuir para melhorar a organização das informações escolares.
+            Pensando nisso, o projeto propõe o desenvolvimento de um sistema
+            web capaz de centralizar informações acadêmicas e facilitar a
+            comunicação entre estudantes, professores e gestão escolar.
+        </p>
 
-        <div class="card">
+    </div>
 
-            <div class="card-top">
+    <div class="card">
 
-                <div class="card-icon blue">
-                    👨‍🎓
-                </div>
+        <h3>❓ Problema</h3>
 
-            </div>
+        <p>
+            Como o desenvolvimento de um sistema informatizado pode contribuir
+            para melhorar a organização das informações e a comunicação dentro
+            da escola?
+        </p>
 
-            <h3>Total de alunos</h3>
+    </div>
 
-            <strong id="totalAlunos">
-                0
-            </strong>
+    <div class="card">
 
-        </div>
+        <h3>💡 Justificativa</h3>
 
+        <p>
+            Muitas informações escolares são divulgadas por diferentes meios.
+            Um sistema integrado poderá centralizar informações importantes,
+            facilitando o acesso dos usuários e proporcionando aos estudantes
+            uma experiência prática de desenvolvimento de software.
+        </p>
 
-        <div class="card">
+    </div>
 
-            <div class="card-top">
-
-                <div class="card-icon green">
-                    ✓
-                </div>
-
-            </div>
-
-            <h3>Aprovados</h3>
-
-            <strong id="totalAprovados">
-                0
-            </strong>
-
-        </div>
-
-
-        <div class="card">
-
-            <div class="card-top">
-
-                <div class="card-icon orange">
-                    !
-                </div>
-
-            </div>
-
-            <h3>Recuperação</h3>
-
-            <strong id="totalRecuperacao">
-                0
-            </strong>
-
-        </div>
+</section>
 
 
-        <div class="card">
+<!-- OBJETIVOS -->
 
-            <div class="card-top">
+<section id="objetivos">
 
-                <div class="card-icon red">
-                    ×
-                </div>
+    <div class="section-title">
 
-            </div>
+        <h2>🎯 Objetivos</h2>
 
-            <h3>Reprovados</h3>
+        <p>O que pretendemos alcançar com o projeto?</p>
 
-            <strong id="totalReprovados">
-                0
-            </strong>
+    </div>
+
+    <div class="grid">
+
+        <div class="feature">
+
+            <div class="icon">💻</div>
+
+            <h3>Desenvolver</h3>
+
+            <p>
+                Criar um protótipo funcional de um sistema escolar.
+            </p>
 
         </div>
 
-    </section>
+        <div class="feature">
 
+            <div class="icon">🧠</div>
 
-    <!-- LISTA -->
+            <h3>Aprender</h3>
 
-    <section class="panel">
-
-        <div class="panel-header">
-
-            <div>
-
-                <h2>Alunos cadastrados</h2>
-
-                <p>
-                    Consulte e gerencie notas e frequência.
-                </p>
-
-            </div>
-
-            <div class="actions">
-
-                <input
-                    class="search"
-                    id="pesquisa"
-                    type="text"
-                    placeholder="🔎 Pesquisar aluno..."
-                    onkeyup="pesquisar()"
-                >
-
-                <button
-                    class="btn btn-success"
-                    onclick="abrirModal()">
-
-                    + Novo aluno
-
-                </button>
-
-            </div>
+            <p>
+                Aplicar conhecimentos de programação e desenvolvimento web.
+            </p>
 
         </div>
 
+        <div class="feature">
 
-        <div class="table-container">
+            <div class="icon">🤝</div>
 
-            <table>
+            <h3>Trabalhar em Equipe</h3>
 
-                <thead>
-
-                    <tr>
-
-                        <th>MATRÍCULA</th>
-                        <th>ALUNO</th>
-                        <th>TURMA</th>
-
-                        <th>1º BIM.</th>
-                        <th>2º BIM.</th>
-                        <th>3º BIM.</th>
-                        <th>4º BIM.</th>
-
-                        <th>MÉDIA</th>
-                        <th>FALTAS</th>
-                        <th>FREQUÊNCIA</th>
-                        <th>SITUAÇÃO</th>
-                        <th>AÇÕES</th>
-
-                    </tr>
-
-                </thead>
-
-                <tbody id="tabela">
-
-                </tbody>
-
-            </table>
+            <p>
+                Desenvolver colaboração, comunicação e organização.
+            </p>
 
         </div>
 
-    </section>
+        <div class="feature">
 
-</main>
+            <div class="icon">🚀</div>
 
+            <h3>Inovar</h3>
 
-<!-- ==========================================
-     MODAL
-========================================== -->
-
-<div class="modal" id="modal">
-
-    <div class="modal-box">
-
-        <div class="modal-header">
-
-            <h2 id="tituloModal">
-                Novo aluno
-            </h2>
-
-            <button
-                class="close"
-                onclick="fecharModal()">
-
-                ×
-
-            </button>
-
-        </div>
-
-
-        <div class="form">
-
-            <div class="form-grid">
-
-                <div class="form-group">
-
-                    <label>
-                        Matrícula
-                    </label>
-
-                    <input
-                        id="matricula"
-                        type="text"
-                        placeholder="Ex.: 2026001"
-                    >
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label>
-                        Turma
-                    </label>
-
-                    <select id="turma">
-
-                        <option>6º Ano A</option>
-                        <option>7º Ano A</option>
-                        <option>8º Ano A</option>
-                        <option>9º Ano A</option>
-                        <option>9º Ano B</option>
-                        <option>1º Ano A</option>
-                        <option>2º Ano A</option>
-                        <option>3º Ano A</option>
-
-                    </select>
-
-                </div>
-
-
-                <div class="form-group full">
-
-                    <label>
-                        Nome completo
-                    </label>
-
-                    <input
-                        id="nome"
-                        type="text"
-                        placeholder="Nome completo do aluno"
-                    >
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label>
-                        Nota 1º Bimestre
-                    </label>
-
-                    <input
-                        id="n1"
-                        type="number"
-                        min="0"
-                        max="10"
-                        step="0.1"
-                        placeholder="0 a 10"
-                    >
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label>
-                        Nota 2º Bimestre
-                    </label>
-
-                    <input
-                        id="n2"
-                        type="number"
-                        min="0"
-                        max="10"
-                        step="0.1"
-                        placeholder="0 a 10"
-                    >
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label>
-                        Nota 3º Bimestre
-                    </label>
-
-                    <input
-                        id="n3"
-                        type="number"
-                        min="0"
-                        max="10"
-                        step="0.1"
-                        placeholder="0 a 10"
-                    >
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label>
-                        Nota 4º Bimestre
-                    </label>
-
-                    <input
-                        id="n4"
-                        type="number"
-                        min="0"
-                        max="10"
-                        step="0.1"
-                        placeholder="0 a 10"
-                    >
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label>
-                        Total de faltas
-                    </label>
-
-                    <input
-                        id="faltas"
-                        type="number"
-                        min="0"
-                        placeholder="Quantidade"
-                    >
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <div class="modal-footer">
-
-            <button
-                class="btn btn-danger"
-                onclick="fecharModal()">
-
-                Cancelar
-
-            </button>
-
-            <button
-                class="btn btn-success"
-                onclick="salvarAluno()">
-
-                Salvar aluno
-
-            </button>
+            <p>
+                Utilizar tecnologia para solucionar problemas reais.
+            </p>
 
         </div>
 
     </div>
 
-</div>
 
+    <div class="card">
 
-<script>
+        <h3>Objetivos Específicos</h3>
 
-/* ==========================================
-   DADOS
-========================================== */
+        <ul class="lista">
 
-let alunos = [
+            <li>Identificar problemas da escola;</li>
+            <li>Realizar levantamento de requisitos;</li>
+            <li>Criar protótipos das telas;</li>
+            <li>Desenvolver uma interface responsiva;</li>
+            <li>Implementar funcionalidades;</li>
+            <li>Criar um banco de dados;</li>
+            <li>Realizar testes;</li>
+            <li>Corrigir erros;</li>
+            <li>Documentar o projeto;</li>
+            <li>Apresentar o sistema.</li>
 
-    {
-        matricula:"2026001",
-        nome:"Ana Beatriz Silva",
-        turma:"9º Ano A",
-        n1:8.5,
-        n2:9.0,
-        n3:8.0,
-        n4:9.5,
-        faltas:5
-    },
+        </ul>
 
-    {
-        matricula:"2026002",
-        nome:"João Pedro Santos",
-        turma:"9º Ano A",
-        n1:6.0,
-        n2:5.5,
-        n3:7.0,
-        n4:6.5,
-        faltas:12
-    },
+    </div>
 
-    {
-        matricula:"2026003",
-        nome:"Maria Vitória Oliveira",
-        turma:"9º Ano B",
-        n1:4.0,
-        n2:5.0,
-        n3:4.5,
-        n4:5.0,
-        faltas:25
-    },
+</section>
 
-    {
-        matricula:"2026004",
-        nome:"Carlos Eduardo Lima",
-        turma:"8º Ano A",
-        n1:9.0,
-        n2:8.5,
-        n3:9.5,
-        n4:9.0,
-        faltas:3
-    }
 
-];
+<!-- FUNCIONALIDADES -->
 
-let editando = null;
+<section>
 
+    <div class="section-title">
 
-/* ==========================================
-   CÁLCULOS
-========================================== */
+        <h2>⚙️ Funcionalidades</h2>
 
-function media(aluno){
+        <p>Principais recursos planejados para o sistema.</p>
 
-    return (
-        aluno.n1 +
-        aluno.n2 +
-        aluno.n3 +
-        aluno.n4
-    ) / 4;
+    </div>
 
-}
+    <div class="grid">
 
+        <div class="feature">
 
-function frequencia(aluno){
+            <div class="icon">👨‍🎓</div>
 
-    const totalAulas = 200;
+            <h3>Área do Estudante</h3>
 
-    return Math.max(
-        0,
-        ((totalAulas - aluno.faltas) / totalAulas) * 100
-    );
+            <p>
+                Notas, frequência, atividades, avisos e calendário.
+            </p>
 
-}
+        </div>
 
+        <div class="feature">
 
-function situacao(aluno){
+            <div class="icon">👨‍🏫</div>
 
-    const m = media(aluno);
-    const f = frequencia(aluno);
+            <h3>Área do Professor</h3>
 
-    if(f < 75)
-        return "REPROVADO";
+            <p>
+                Cadastro de atividades, notas, frequência e avisos.
+            </p>
 
-    if(m >= 7)
-        return "APROVADO";
+        </div>
 
-    if(m >= 5)
-        return "RECUPERAÇÃO";
+        <div class="feature">
 
-    return "REPROVADO";
+            <div class="icon">🏫</div>
 
-}
+            <h3>Área Administrativa</h3>
 
+            <p>
+                Gerenciamento de estudantes, professores e turmas.
+            </p>
 
-function classeStatus(status){
+        </div>
 
-    if(status === "APROVADO")
-        return "aprovado";
+        <div class="feature">
 
-    if(status === "RECUPERAÇÃO")
-        return "recuperacao";
+            <div class="icon">📊</div>
 
-    return "reprovado";
+            <h3>Relatórios</h3>
 
-}
+            <p>
+                Consulta e organização dos dados acadêmicos.
+            </p>
 
+        </div>
 
-/* ==========================================
-   TABELA
-========================================== */
+    </div>
 
-function atualizarTabela(lista = alunos){
+</section>
 
-    const tabela =
-        document.getElementById("tabela");
 
-    tabela.innerHTML = "";
+<!-- METODOLOGIA -->
 
-    lista.forEach((aluno,index)=>{
+<section>
 
-        const m = media(aluno);
-        const f = frequencia(aluno);
-        const s = situacao(aluno);
+    <div class="section-title">
 
-        const tr =
-            document.createElement("tr");
+        <h2>🛠️ Metodologia</h2>
 
-        tr.innerHTML = `
+        <p>Etapas utilizadas no desenvolvimento do sistema.</p>
 
-            <td>
-                ${aluno.matricula}
-            </td>
+    </div>
 
-            <td class="student">
+    <div class="fluxo">
 
-                <strong>
-                    ${aluno.nome}
-                </strong>
+        <div class="etapa">🔎<br>Identificação</div>
 
-                <small>
-                    Aluno
-                </small>
+        <div class="seta">→</div>
 
-            </td>
+        <div class="etapa">📋<br>Requisitos</div>
 
-            <td>
-                ${aluno.turma}
-            </td>
+        <div class="seta">→</div>
 
-            <td>
-                ${aluno.n1.toFixed(1)}
-            </td>
+        <div class="etapa">🎨<br>Protótipo</div>
 
-            <td>
-                ${aluno.n2.toFixed(1)}
-            </td>
+        <div class="seta">→</div>
 
-            <td>
-                ${aluno.n3.toFixed(1)}
-            </td>
+        <div class="etapa">💻<br>Programação</div>
 
-            <td>
-                ${aluno.n4.toFixed(1)}
-            </td>
+        <div class="seta">→</div>
 
-            <td class="average">
-                ${m.toFixed(2)}
-            </td>
+        <div class="etapa">🧪<br>Testes</div>
 
-            <td>
-                ${aluno.faltas}
-            </td>
+        <div class="seta">→</div>
 
-            <td>
-                ${f.toFixed(1)}%
-            </td>
+        <div class="etapa">🚀<br>Apresentação</div>
 
-            <td>
+    </div>
 
-                <span class="status ${classeStatus(s)}">
-                    ${s}
-                </span>
+</section>
 
-            </td>
 
-            <td>
+<!-- TECNOLOGIAS -->
 
-                <button
-                    class="btn btn-primary btn-small"
-                    onclick="editar(${index})">
+<section class="tech" id="tecnologias">
 
-                    ✏️
+    <div class="section-title">
 
-                </button>
+        <h2>💻 Tecnologias</h2>
 
-                <button
-                    class="btn btn-danger btn-small"
-                    onclick="excluir(${index})">
+        <p>Ferramentas que poderão ser utilizadas no projeto.</p>
 
-                    🗑️
+    </div>
 
-                </button>
+    <div class="grid">
 
-            </td>
+        <div class="tech-card">
 
-        `;
+            <h3>HTML5</h3>
 
-        tabela.appendChild(tr);
+            <p>
+                Estrutura das páginas do sistema.
+            </p>
 
-    });
+        </div>
 
-    atualizarCards();
+        <div class="tech-card">
 
-}
+            <h3>CSS3</h3>
 
+            <p>
+                Estilização e responsividade.
+            </p>
 
-/* ==========================================
-   CARDS
-========================================== */
+        </div>
 
-function atualizarCards(){
+        <div class="tech-card">
 
-    let aprovados = 0;
-    let recuperacao = 0;
-    let reprovados = 0;
+            <h3>JavaScript</h3>
 
-    alunos.forEach(aluno=>{
+            <p>
+                Interatividade e funcionalidades.
+            </p>
 
-        const s = situacao(aluno);
+        </div>
 
-        if(s === "APROVADO")
-            aprovados++;
+        <div class="tech-card">
 
-        else if(s === "RECUPERAÇÃO")
-            recuperacao++;
+            <h3>Java</h3>
 
-        else
-            reprovados++;
+            <p>
+                Desenvolvimento do back-end.
+            </p>
 
-    });
+        </div>
 
-    document.getElementById(
-        "totalAlunos"
-    ).textContent = alunos.length;
+        <div class="tech-card">
 
-    document.getElementById(
-        "totalAprovados"
-    ).textContent = aprovados;
+            <h3>MySQL</h3>
 
-    document.getElementById(
-        "totalRecuperacao"
-    ).textContent = recuperacao;
+            <p>
+                Armazenamento dos dados.
+            </p>
 
-    document.getElementById(
-        "totalReprovados"
-    ).textContent = reprovados;
+        </div>
 
-}
+        <div class="tech-card">
 
+            <h3>GitHub</h3>
 
-/* ==========================================
-   MODAL
-========================================== */
+            <p>
+                Controle de versão e colaboração.
+            </p>
 
-function abrirModal(){
+        </div>
 
-    editando = null;
+    </div>
 
-    document.getElementById(
-        "tituloModal"
-    ).textContent = "Novo aluno";
+</section>
 
-    limparFormulario();
 
-    document.getElementById(
-        "modal"
-    ).classList.add("show");
+<!-- BANCO DE DADOS -->
 
-}
+<section>
 
+    <div class="section-title">
 
-function fecharModal(){
+        <h2>🗄️ Banco de Dados</h2>
 
-    document.getElementById(
-        "modal"
-    ).classList.remove("show");
+        <p>Estrutura inicial planejada.</p>
 
-}
+    </div>
 
+    <div class="grid">
 
-function limparFormulario(){
+        <div class="card">
 
-    document.getElementById("matricula").value = "";
-    document.getElementById("nome").value = "";
-    document.getElementById("n1").value = "";
-    document.getElementById("n2").value = "";
-    document.getElementById("n3").value = "";
-    document.getElementById("n4").value = "";
-    document.getElementById("faltas").value = "";
+            <h3>👨‍🎓 Estudantes</h3>
 
-}
+            <p>
+                ID, nome, matrícula, turma, e-mail e senha.
+            </p>
 
+        </div>
 
-/* ==========================================
-   SALVAR
-========================================== */
+        <div class="card">
 
-function salvarAluno(){
+            <h3>👨‍🏫 Professores</h3>
 
-    const matricula =
-        document.getElementById("matricula").value.trim();
+            <p>
+                ID, nome, matrícula, disciplina e e-mail.
+            </p>
 
-    const nome =
-        document.getElementById("nome").value.trim();
+        </div>
 
-    const turma =
-        document.getElementById("turma").value;
+        <div class="card">
 
-    const n1 =
-        Number(document.getElementById("n1").value);
+            <h3>📚 Disciplinas</h3>
 
-    const n2 =
-        Number(document.getElementById("n2").value);
+            <p>
+                ID, nome, professor e turma.
+            </p>
 
-    const n3 =
-        Number(document.getElementById("n3").value);
+        </div>
 
-    const n4 =
-        Number(document.getElementById("n4").value);
+        <div class="card">
 
-    const faltas =
-        Number(document.getElementById("faltas").value);
+            <h3>📊 Notas</h3>
 
+            <p>
+                Estudante, disciplina, nota e período.
+            </p>
 
-    if(!matricula || !nome){
+        </div>
 
-        alert(
-            "Preencha a matrícula e o nome do aluno."
-        );
+        <div class="card">
 
-        return;
+            <h3>📝 Frequência</h3>
 
-    }
+            <p>
+                Estudante, disciplina, data e presença.
+            </p>
 
+        </div>
 
-    if(
-        n1 < 0 || n1 > 10 ||
-        n2 < 0 || n2 > 10 ||
-        n3 < 0 || n3 > 10 ||
-        n4 < 0 || n4 > 10
-    ){
+        <div class="card">
 
-        alert(
-            "As notas devem estar entre 0 e 10."
-        );
+            <h3>📅 Atividades</h3>
 
-        return;
+            <p>
+                Título, descrição, disciplina e data de entrega.
+            </p>
 
-    }
+        </div>
 
+    </div>
 
-    if(faltas < 0){
+</section>
 
-        alert(
-            "Informe uma quantidade válida de faltas."
-        );
 
-        return;
+<!-- CRONOGRAMA -->
 
-    }
+<section id="cronograma">
 
+    <div class="section-title">
 
-    const aluno = {
+        <h2>📅 Cronograma</h2>
 
-        matricula,
-        nome,
-        turma,
-        n1,
-        n2,
-        n3,
-        n4,
-        faltas
+        <p>Planejamento das etapas do projeto.</p>
 
-    };
+    </div>
 
+    <table>
 
-    if(editando === null){
+        <thead>
 
-        alunos.push(aluno);
+            <tr>
+                <th>Semana</th>
+                <th>Atividade</th>
+            </tr>
 
-    }else{
+        </thead>
 
-        alunos[editando] = aluno;
+        <tbody>
 
-    }
+            <tr>
+                <td>1ª</td>
+                <td>Apresentação e formação das equipes</td>
+            </tr>
 
+            <tr>
+                <td>2ª</td>
+                <td>Pesquisa e identificação do problema</td>
+            </tr>
 
-    atualizarTabela();
+            <tr>
+                <td>3ª</td>
+                <td>Levantamento de requisitos</td>
+            </tr>
 
-    fecharModal();
+            <tr>
+                <td>4ª</td>
+                <td>Planejamento do sistema</td>
+            </tr>
 
-}
+            <tr>
+                <td>5ª</td>
+                <td>Criação dos protótipos</td>
+            </tr>
 
+            <tr>
+                <td>6ª</td>
+                <td>Desenvolvimento do Front-end</td>
+            </tr>
 
-/* ==========================================
-   EDITAR
-========================================== */
+            <tr>
+                <td>7ª</td>
+                <td>Desenvolvimento do Back-end</td>
+            </tr>
 
-function editar(index){
+            <tr>
+                <td>8ª</td>
+                <td>Banco de dados</td>
+            </tr>
 
-    const aluno = alunos[index];
+            <tr>
+                <td>9ª</td>
+                <td>Integração do sistema</td>
+            </tr>
 
-    editando = index;
+            <tr>
+                <td>10ª</td>
+                <td>Testes e correção de erros</td>
+            </tr>
 
-    document.getElementById(
-        "tituloModal"
-    ).textContent = "Editar aluno";
+            <tr>
+                <td>11ª</td>
+                <td>Documentação</td>
+            </tr>
 
+            <tr>
+                <td>12ª</td>
+                <td>Preparação da apresentação</td>
+            </tr>
 
-    document.getElementById(
-        "matricula"
-    ).value = aluno.matricula;
+            <tr>
+                <td>13ª</td>
+                <td>Apresentação final</td>
+            </tr>
 
+        </tbody>
 
-    document.getElementById(
-        "nome"
-    ).value = aluno.nome;
+    </table>
 
+</section>
 
-    document.getElementById(
-        "turma"
-    ).value = aluno.turma;
 
+<!-- AVALIAÇÃO -->
 
-    document.getElementById(
-        "n1"
-    ).value = aluno.n1;
+<section id="avaliacao">
 
+    <div class="section-title">
 
-    document.getElementById(
-        "n2"
-    ).value = aluno.n2;
+        <h2>📊 Avaliação</h2>
 
+        <p>Critérios utilizados para avaliar o projeto.</p>
 
-    document.getElementById(
-        "n3"
-    ).value = aluno.n3;
+    </div>
 
+    <div class="avaliacao">
 
-    document.getElementById(
-        "n4"
-    ).value = aluno.n4;
+        <div class="nota">
+            <strong>1,5</strong>
+            <p>Participação e trabalho em equipe</p>
+        </div>
 
+        <div class="nota">
+            <strong>1,0</strong>
+            <p>Análise e planejamento</p>
+        </div>
 
-    document.getElementById(
-        "faltas"
-    ).value = aluno.faltas;
+        <div class="nota">
+            <strong>1,0</strong>
+            <p>Protótipo e design</p>
+        </div>
 
+        <div class="nota">
+            <strong>2,0</strong>
+            <p>Programação</p>
+        </div>
 
-    document.getElementById(
-        "modal"
-    ).classList.add("show");
+        <div class="nota">
+            <strong>1,5</strong>
+            <p>Banco de dados</p>
+        </div>
 
-}
+        <div class="nota">
+            <strong>1,0</strong>
+            <p>Testes e funcionamento</p>
+        </div>
 
+        <div class="nota">
+            <strong>1,0</strong>
+            <p>Documentação</p>
+        </div>
 
-/* ==========================================
-   EXCLUIR
-========================================== */
+        <div class="nota">
+            <strong>1,0</strong>
+            <p>Apresentação</p>
+        </div>
 
-function excluir(index){
+    </div>
 
-    const aluno = alunos[index];
+</section>
 
-    if(
-        confirm(
-            "Deseja realmente excluir " +
-            aluno.nome +
-            "?"
-        )
-    ){
 
-        alunos.splice(index,1);
+<!-- RESULTADOS -->
 
-        atualizarTabela();
+<section>
 
-    }
+    <div class="section-title">
 
-}
+        <h2>🏆 Resultados Esperados</h2>
 
+    </div>
 
-/* ==========================================
-   PESQUISA
-========================================== */
+    <div class="card">
 
-function pesquisar(){
+        <p>
+            Ao finalizar o projeto, os estudantes deverão compreender as
+            principais etapas de desenvolvimento de um sistema, desde a
+            identificação do problema até a criação, testes e apresentação
+            da solução tecnológica.
+        </p>
 
-    const texto =
-        document
-        .getElementById("pesquisa")
-        .value
-        .toLowerCase();
+        <br>
 
+        <p>
+            O projeto também deverá estimular o pensamento computacional,
+            a criatividade, o trabalho em equipe, a comunicação e a capacidade
+            de resolver problemas reais utilizando tecnologia.
+        </p>
 
-    const resultado =
-        alunos.filter(aluno =>
+    </div>
 
-            aluno.nome
-            .toLowerCase()
-            .includes(texto)
+</section>
 
-            ||
 
-            aluno.matricula
-            .toLowerCase()
-            .includes(texto)
+<!-- FRASE -->
 
-            ||
+<section class="frase">
 
-            aluno.turma
-            .toLowerCase()
-            .includes(texto)
+    <blockquote>
+        “Programar é transformar problemas em soluções
+        e ideias em possibilidades.”
+    </blockquote>
 
-        );
+</section>
 
 
-    atualizarTabela(resultado);
+<!-- FOOTER -->
 
-}
+<footer>
 
+    <p><strong>💻 Projeto Integrador – 2º Ano</strong></p>
 
-/* ==========================================
-   INICIALIZAÇÃO
-========================================== */
+    <p>Técnico em Desenvolvimento de Sistemas</p>
 
-atualizarTabela();
+    <p>2026</p>
 
-</script>
+    <p>
+        Da ideia ao código, do código à solução. 🚀
+    </p>
+
+</footer>
+
 
 </body>
 </html>
-```
