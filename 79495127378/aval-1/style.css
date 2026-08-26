@@ -1,0 +1,172 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    background-color: #061526;
+    color: #ffffff;
+}
+
+/* NAVEGAÇÃO */
+nav {
+    background-color: #030a14;
+    text-align: center;
+    padding: 12px 0;
+}
+
+nav a {
+    color: #ffffff;
+    text-decoration: none;
+    margin: 0 15px;
+    font-size: 14px;
+    font-weight: bold;
+    transition: color 0.2s;
+}
+
+nav a:hover {
+    color: #3b82f6;
+}
+
+/* HEADER */
+header {
+    background-color: #2563eb;
+    text-align: center;
+    padding: 40px 20px;
+}
+
+header h1 {
+    font-size: 36px;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+header p {
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+/* CONTAINER E FLEX LAYOUT */
+.container {
+    max-width: 1100px;
+    margin: 30px auto;
+    padding: 0 20px;
+}
+
+.row {
+    display: flex;
+    gap: 25px;
+}
+
+/* ASIDE (BARRA LATERAL) */
+aside {
+    flex: 30%;
+    background-color: #0b2239;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+aside h2 {
+    font-size: 20px;
+    margin-bottom: 5px;
+}
+
+aside h5 {
+    font-size: 13px;
+    color: #94a3b8;
+    margin-bottom: 15px;
+}
+
+.avatar-container {
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 15px;
+}
+
+.avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: #030a14;
+    border: 2px solid #3b82f6;
+}
+
+aside p {
+    font-size: 13px;
+    line-height: 1.4;
+    color: #cbd5e1;
+    margin-bottom: 20px;
+}
+
+aside .subtitulo-galeria {
+    margin-top: -3px;
+    margin-bottom: 10px;
+}
+
+.fakeimg {
+    background-color: #204568;
+    color: #94a3b8;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    font-size: 13px;
+}
+
+/* MAIN (POSTS) */
+main {
+    flex: 70%;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.post-card {
+    background-color: #0b2239;
+    padding: 25px;
+    border-radius: 8px;
+}
+
+.post-card h2 {
+    font-size: 24px;
+    margin-bottom: 5px;
+}
+
+.post-card small {
+    display: block;
+    font-size: 12px;
+    color: #94a3b8;
+    margin-bottom: 15px;
+}
+
+.imagem-post img {
+    width: 100%;
+    max-height: 400px;
+    object-fit: cover;
+    border-radius: 6px;
+    margin-bottom: 15px;
+}
+
+.post-card p {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #e2e8f0;
+    margin-bottom: 12px;
+}
+
+.post-card p.destaque {
+    font-weight: bold;
+}
+
+/* RESPONSIVIDADE MOBILE */
+@media (max-width: 768px) {
+    .row {
+        flex-direction: column;
+    }
+
+    nav a {
+        display: inline-block;
+        margin: 5px 10px;
+    }
+}
