@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  
+</head>
+<body>
+  // Sistema de Gerenciamento de Tarefas
+
+class GerenciadorDeTarefas {
+  constructor() {
+    this.tarefas = [];
+    this.proximoCodigo = 1;
+  }
+
+  // 1. Cadastrar uma nova tarefa
+  cadastrar(titulo, prioridade) {
+    if (!titulo || titulo.trim().length < 5) {
+      console.error('Erro: O título deve ter no mínimo 5 caracteres.');
+      return false;
+    }
+
+    if (![1, 2, 3].includes(prioridade)) {
+      console.error('Erro: A prioridade deve ser 1 (alta), 2 (média) ou 3 (baixa).');
+      return false;
+    }
+
+    const novaTarefa = {
+      codigo: this.proximoCodigo++,
+      titulo: titulo.trim(),
+      prioridade: prioridade,
+      concluida: false
+    };
+
+    this.tarefas.push(novaTarefa);
+    console.log(`Tarefa "${novaTarefa.titulo}" cadastrada com sucesso! (Código: ${novaTarefa.codigo})`);
+    return novaTarefa;
+  }
+
+  // 2. Listar as tarefas cadastradas
+  listar() {
+    if (this.tarefas.length === 0) {
+      console.log('Nenhuma tarefa cadastrada.');
+      return;
+    }
+
+    const nomesPrioridade = { 1: 'Alta', 2: 'Média', 3: 'Baixa' };
+
+    console.log('\n--- LISTA DE TAREFAS ---');
+    this.tarefas.forEach(t => {
+      const status = t.concluida ? '[X] Concluída' : '[ ] Pendente';
+      const prioridadeTexto = nomesPrioridade[t.prioridade];
+      console.log(`ID: ${t.codigo} | ${status} | Prioridade: ${prioridadeTexto} (${t.prioridade}) | Título: ${t.titulo}`);
+    });
+    console.log('------------------------\n');
+  }
+
+  // 3. Marcar uma tarefa como concluída
+  concluir(codigo) {
+    const tarefa = this.tarefas.find(t => t.codigo === codigo);
+
+    if (!tarefa) {
+      console.error(`Erro: Tarefa com código ${codigo} não encontrada.`);
+      return false;
+    }
+
+    tarefa.concluida = true;
+    console.log(`Tarefa ID ${codigo} ("${tarefa.titulo}") marcada como concluída!`);
+    return true;
+  }
+
+  // 4. Alterar a prioridade de uma tarefa
+  alterarPrioridade(codigo, novaPrioridade) {
+    if (![1, 2, 3].includes(novaPrioridade)) {
+      console.error('Erro: A nova prioridade deve ser 1 (alta), 2 (média) ou 3 (baixa).');
+      return false;
+    }
+
+    const tarefa = this.tarefas.find(t => t.codigo === codigo);
+
+    if (!tarefa) {
+      console.error(`Erro: Tarefa com código ${codigo} não encontrada.`);
+      return false;
+    }
+
+    tarefa.prioridade = novaPrioridade;
+    console.log(`Prioridade da tarefa ID ${codigo} alterada para ${novaPrioridade}.`);
+    return true;
+  }
+}
+
+// ==========================================
+// EXEMPLO DE USO / TESTES
+// ==========================================
+
+const sistema = new GerenciadorDeTarefas();
+
+// Cadastros válidos
+sistema.cadastrar('Estudar JavaScript Avançado', 1);
+sistema.cadastrar('Fazer compras no mercado', 2);
+sistema.cadastrar('Limpar a mesa de trabalho', 3);
+
+// Testes de validação (retornam erro)
+sistema.cadastrar('Erro', 1);        // Título curto (< 5 caracteres)
+sistema.cadastrar('Título Válido', 5); // Prioridade inválida
+
+// Listar tarefas
+sistema.listar();
+
+// Marcar tarefa como concluída
+sistema.concluir(2);
+
+// Alterar prioridade de uma tarefa
+sistema.alterarPrioridade(3, 1);
+
+// Listar novamente para conferir as alterações
+sistema.listar();
+
+
+
+  
+  
+</body>
+</html>
