@@ -1,0 +1,218 @@
+using System;
+using System.Collections.Generic;
+
+namespace GerenciadorTarefas
+{
+    // Classe que representa a Tarefa
+    public class Tarefa
+    {
+        public int Codigo { get; set; }
+        public string Titulo { get; set; }
+        public int Prioridade { get; set; } // 1: Alta, 2: Média, 3: Baixa
+        public bool Concluida { get; set; }
+
+        public Tarefa(int codigo, string titulo, int prioridade)
+        {
+            Codigo = codigo;
+            Titulo = titulo;
+            Prioridade = prioridade;
+            Concluida = false;
+        }
+
+        public string ObterPrioridadeTexto()
+        {
+            return Prioridade switch
+            {
+                1 => "Alta",
+                2 => "Média",
+                3 => "Baixa",
+                _ => "Desconhecida"
+            };
+        }
+    }
+
+    class Program
+    {
+        static List<Tarefa> tarefas = new List<Tarefa>();
+        static int proximoCodigo = 1;
+
+        static void Main(string[] args)
+        {
+            int opcao = 0;
+
+            do
+            {
+                Console.Clear();
+                Console.WriteLine("========================================");
+                Console.WriteLine("      GERENCIADOR DE TAREFAS (C#)       ");
+                Console.WriteLine("========================================");
+                Console.WriteLine("1. Cadastrar nova tarefa");
+                Console.WriteLine("2. Listar tarefas");
+                Console.WriteLine("3. Marcar tarefa como concluída");
+                Console.WriteLine("4. Alterar prioridade de uma tarefa");
+                Console.WriteLine("0. Sair");
+                Console.WriteLine("========================================");
+                Console.Write("Escolha uma opção: ");
+
+                if (int.TryParse(Console.ReadLine(), out opcao))
+                {
+                    Console.WriteLine();
+                    switch (opcao)
+                    {
+                        case 1:
+                            CadastrarTarefa();
+                            break;
+                        case 2:
+                            ListarTarefas();
+                            break;
+                        case 3:
+                            MarcarConcluida();
+                            break;
+                        case 4:
+                            AlterarPrioridade();
+                            break;
+                        case 0:
+                            Console.WriteLine("Encerrando o programa... Até logo!");
+                            break;
+                        default:
+                            Console.WriteLine("❌ Opção inválida! Pressione qualquer tecla para continuar.");
+                            Console.ReadKey();
+                            break;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("❌ Digite um número válido! Pressione qualquer tecla.");
+                    Console.ReadKey();
+                }
+
+                if (opcao != 0)
+                {
+                    Console.WriteLine("\nPressione qualquer tecla para voltar ao menu...");
+                    Console.ReadKey();
+                }
+
+            } while (opcao != 0);
+        }
+
+        // 1. Cadastrar uma nova tarefa
+        static void CadastrarTarefa()
+        {
+            Console.WriteLine("--- CADASTRAR TAREFA ---");
+            Console.Write("Digite o título (Mínimo de 5 caracteres): ");
+            string titulo = Console.ReadLine()?.Trim();
+
+            // Validação do título
+            if (string.IsNullOrEmpty(titulo) || titulo.Length < 5)
+            {
+                Console.WriteLine("❌ Erro: O título deve ter no mínimo 5 caracteres.");
+                return;
+            }
+
+            Console.Write("Digite a prioridade (1-Alta, 2-Média, 3-Baixa): ");
+            if (int.TryParse(Console.ReadLine(), out int prioridade))
+            {
+                // Validação da prioridade
+                if (prioridade < 1 || prioridade > 3)
+                {
+                    Console.WriteLine("❌ Erro: A prioridade deve ser um valor entre 1 e 3.");
+                    return;
+                }
+
+                Tarefa novaTarefa = new Tarefa(proximoCodigo++, titulo, prioridade);
+                tarefas.Add(novaTarefa);
+                Console.WriteLine($"✅ Tarefa cadastrada com sucesso! (Código: {novaTarefa.Codigo})");
+            }
+            else
+            {
+                Console.WriteLine("❌ Erro: Valor de prioridade inválido.");
+            }
+        }
+
+        // 2. Listar as tarefas cadastradas
+        static void ListarTarefas()
+        {
+            Console.WriteLine("--- LISTA DE TAREFAS ---");
+            if (tarefas.Count == 0)
+            {
+                Console.WriteLine("Nenhuma tarefa cadastrada no momento.");
+                return;
+            }
+
+            foreach (var t in tarefas)
+            {
+                string status = t.Concluida ? "[X] Concluída" : "[ ] Pendente";
+                Console.WriteLine($"[Cód: {t.Codigo}] {t.Titulo} | Prioridade: {t.ObterPrioridadeTexto()} | Status: {status}");
+            }
+        }
+
+        // 3. Marcar uma tarefa como concluída
+        static void MarcarConcluida()
+        {
+            ListarTarefas();
+            if (tarefas.Count == 0) return;
+
+            Console.Write("\nDigite o código da tarefa que deseja marcar como concluída: ");
+            if (int.TryParse(Console.ReadLine(), out int codigo))
+            {
+                Tarefa tarefa = tarefas.Find(t => t.Codigo == codigo);
+
+                if (tarefa != null)
+                {
+                    tarefa.Concluida = true;
+                    Console.WriteLine($"🎉 Tarefa [{tarefa.Codigo}] marcada como concluída com sucesso!");
+                }
+                else
+                {
+                    Console.WriteLine("❌ Erro: Tarefa com este código não foi encontrada.");
+                }
+            }
+            else
+            {
+                Console.WriteLine("❌ Erro: Código inválido.");
+            }
+        }
+
+        // 4. Alterar a prioridade de uma tarefa
+        static void AlterarPrioridade()
+        {
+            ListarTarefas();
+            if (tarefas.Count == 0) return;
+
+            Console.Write("\nDigite o código da tarefa que deseja alterar a prioridade: ");
+            if (int.TryParse(Console.ReadLine(), out int codigo))
+            {
+                Tarefa tarefa = tarefas.Find(t => t.Codigo == codigo);
+
+                if (tarefa != null)
+                {
+                    Console.Write("Digite a nova prioridade (1-Alta, 2-Média, 3-Baixa): ");
+                    if (int.TryParse(Console.ReadLine(), out int novaPrioridade))
+                    {
+                        if (novaPrioridade >= 1 && novaPrioridade <= 3)
+                        {
+                            tarefa.Prioridade = novaPrioridade;
+                            Console.WriteLine($"🔄 Prioridade da tarefa [{tarefa.Codigo}] alterada para {tarefa.ObterPrioridadeTexto()}!");
+                        }
+                        else
+                        {
+                            Console.WriteLine("❌ Erro: A prioridade deve ser um valor entre 1 e 3.");
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("❌ Erro: Valor de prioridade inválido.");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("❌ Erro: Tarefa com este código não foi encontrada.");
+                }
+            }
+            else
+            {
+                Console.WriteLine("❌ Erro: Código inválido.");
+            }
+        }
+    }
+}

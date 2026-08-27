@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciador de Tarefas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h1, h2 {
+            color: #2c3e50;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"], select {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .task-list {
+            list-style: none;
+            padding: 0;
+        }
+        .task-item {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .task-item.concluida {
+            background: #e8f8f5;
+            text-decoration: line-through;
+            color: #7f8c8d;
+        }
+        .task-actions button {
+            background-color: #e74c3c;
+            font-size: 12px;
+            padding: 5px 8px;
+            margin-left: 5px;
+        }
+        .task-actions button.btn-concluir {
+            background-color: #2ecc71;
+        }
+        .task-actions button.btn-prioridade {
+            background-color: #f39c12;
+        }
+        .erro {
+            color: #c0392b;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+    <div class="container">
+        <h1>Gerenciador de Tarefas</h1>
+        
+        <!-- Formulário de Cadastro -->
+        <div class="form-group">
+            <label for="titulo">Título da Tarefa (Min. 5 caracteres):</label>
+            <input type="text" id="titulo" placeholder="Ex: Estudar JavaScript">
+        </div>
+        
+        <div class="form-group">
+            <label for="prioridade">Prioridade:</label>
+            <select id="prioridade">
+                <option value="1">1 - Alta</option>
+                <option value="2">2 - Média</option>
+                <option value="3">3 - Baixa</option>
+            </select>
+        </div>
+
+        <button onclick="cadastrarTarefa()">Cadastrar Tarefa</button>
+        <div id="mensagemErro" class="erro"></div>
+
+        <h2>Lista de Tarefas</h2>
+        <ul id="listaTarefas" class="task-list">
+            <!-- As tarefas aparecem aqui dinamicamente -->
+        </ul>
+    </div>
+
+    <script>
+        let tarefas = [];
+        let proximoCodigo = 1;
+
+        // 1. Cadastrar uma nova tarefa
+        function cadastrarTarefa() {
+            const inputTitulo = document.getElementById("titulo");
+            const selectPrioridade = document.getElementById("prioridade");
+            const divErro = document.getElementById("mensagemErro");
+
+            const titulo = inputTitulo.value.trim();
+            const prioridade = parseInt(selectPrioridade.value);
+
+            divErro.textContent = "";
+
+            // Validação do título (mínimo de 5 caracteres)
+            if (titulo.length < 5) {
+                divErro.textContent = "Erro: O título deve ter no mínimo 5 caracteres.";
+                return;
+            }
+
+            // Validação da prioridade (entre 1 e 3)
+            if (prioridade < 1 || prioridade > 3) {
+                divErro.textContent = "Erro: A prioridade deve ser entre 1 e 3.";
+                return;
+            }
+
+            const novaTarefa = {
+                codigo: proximoCodigo++,
+                titulo: titulo,
+                prioridade: prioridade,
+                concluida: false
+            };
+
+            tarefas.push(novaTarefa);
+            
+            // Limpar campos
+            inputTitulo.value = "";
+            selectPrioridade.value = "1";
+
+            renderizarTarefas();
+        }
+
+        // 2. Listar as tarefas cadastradas (Renderizar no HTML)
+        function renderizarTarefas() {
+            const ul = document.getElementById("listaTarefas");
+            ul.innerHTML = "";
+
+            if (tarefas.length === 0) {
+                ul.innerHTML = "<p>Nenhuma tarefa cadastrada.</p>";
+                return;
+            }
+
+            const prioridadesMap = { 1: "Alta", 2: "Média", 3: "Baixa" };
+
+            tarefas.forEach(t => {
+                const li = document.createElement("li");
+                li.className = `task-item ${t.concluida ? "concluida" : ""}`;
+                
+                li.innerHTML = `
+                    <div>
+                        <strong>[Cód: ${t.codigo}]</strong> ${t.titulo} 
+                        <br><small>Prioridade: ${prioridadesMap[t.prioridade]}</small>
+                    </div>
+                    <div class="task-actions">
+                        <button class="btn-concluir" onclick="marcarConcluida(${t.codigo})">
+                            ${t.concluida ? "Desfazer" : "Concluir"}
+                        </button>
+                        <button class="btn-prioridade" onclick="alterarPrioridade(${t.codigo})">Mudar Prioridade</button>
+                    </div>
+                `;
+                ul.appendChild(li);
+            });
+        }
+
+        // 3. Marcar uma tarefa como concluída
+        function marcarConcluida(codigo) {
+            const tarefa = tarefas.find(t => t.codigo === codigo);
+            if (tarefa) {
+                tarefa.concluida = !tarefa.concluida; // Alterna entre concluída e pendente
+                renderizarTarefas();
+            }
+        }
+
+        // 4. Alterar a prioridade de uma tarefa
+        function alterarPrioridade(codigo) {
+            const tarefa = tarefas.find(t => t.codigo === codigo);
+            if (!tarefa) return;
+
+            const novaPrioridadeStr = prompt(`Alterar prioridade da tarefa "${tarefa.titulo}"\nDigite o novo valor (1 - Alta, 2 - Média, 3 - Baixa):`, tarefa.prioridade);
+            
+            if (novaPrioridadeStr === null) return; // Cancelado pelo usuário
+
+            const novaPrioridade = parseInt(novaPrioridadeStr);
+
+            if (novaPrioridade >= 1 && novaPrioridade <= 3) {
+                tarefa.prioridade = novaPrioridade;
+                renderizarTarefas();
+            } else {
+                alert("Erro: Prioridade inválida! Deve ser um valor entre 1 e 3.");
+            }
+        }
+
+        // Renderização inicial vazia
+        renderizarTarefas();
+    </script>
+<script src="script.js"></script></body>
+</html>
