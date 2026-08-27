@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gerenciador de Tarefas</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f7f6;
+      color: #333;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    h1 {
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+      color: #2c3e50;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 8px;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    button:hover {
+      background-color: #2980b9;
+    }
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+    li {
+      background: #ecf0f1;
+      padding: 10px;
+      margin-bottom: 8px;
+      border-radius: 4px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    li.concluida {
+      text-decoration: line-through;
+      background: #d4edda;
+    }
+    .acoes button {
+      width: auto;
+      padding: 4px 8px;
+      font-size: 0.8rem;
+      margin-left: 5px;
+      background-color: #e74c3c;
+    }
+    .acoes button.concluir {
+      background-color: #2ecc71;
+    }
+    .erro {
+      color: #c0392b;
+      font-size: 0.9rem;
+      margin-top: 5px;
+    }
+  </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+  <div class="container">
+    <h1>Gerenciador de Tarefas</h1>
+    
+    <div class="form-group">
+      <label for="titulo">Título da Tarefa (min. 5 caracteres):</label>
+      <input type="text" id="titulo" placeholder="Ex: Estudar JavaScript">
+    </div>
+
+    <div class="form-group">
+      <label for="prioridade">Prioridade (1 - Alta, 2 - Média, 3 - Baixa):</label>
+      <select id="prioridade">
+        <option value="1">1 - Alta</option>
+        <option value="2" selected>2 - Média</option>
+        <option value="3">3 - Baixa</option>
+      </select>
+    </div>
+
+    <button onclick="cadastrar()">Cadastrar Tarefa</button>
+    <div id="mensagemErro" class="erro"></div>
+
+    <h2>Lista de Tarefas</h2>
+    <ul id="listaTarefas"></ul>
+  </div>
+
+  <script>
+    let tarefas = [];
+    let proximoCodigo = 1;
+
+    function cadastrar() {
+      const inputTitulo = document.getElementById('titulo');
+      const selectPrioridade = document.getElementById('prioridade');
+      const divErro = document.getElementById('mensagemErro');
+
+      const titulo = inputTitulo.value.trim();
+      const prioridade = parseInt(selectPrioridade.value);
+
+      divErro.textContent = "";
+
+      if (titulo.length < 5) {
+        divErro.textContent = "Erro: O título deve ter no mínimo 5 caracteres.";
+        return;
+      }
+
+      const novaTarefa = {
+        codigo: proximoCodigo++,
+        titulo: titulo,
+        prioridade: prioridade,
+        concluida: false
+      };
+
+      tarefas.push(novaTarefa);
+      inputTitulo.value = "";
+      renderizarTarefas();
+    }
+
+    function alterarStatus(codigo) {
+      const tarefa = tarefas.find(t => t.codigo === codigo);
+      if (tarefa) {
+        tarefa.concluida = !tarefa.concluida;
+        renderizarTarefas();
+      }
+    }
+
+    function alterarPrioridadePrompt(codigo) {
+      const tarefa = tarefas.find(t => t.codigo === codigo);
+      if (!tarefa) return;
+
+      const novaP = prompt("Digite a nova prioridade (1 - Alta, 2 - Média, 3 - Baixa):", tarefa.prioridade);
+      const prioridadeNum = parseInt(novaP);
+
+      if (prioridadeNum >= 1 && prioridadeNum <= 3) {
+        tarefa.prioridade = prioridadeNum;
+        renderizarTarefas();
+      } else {
+        alert("Prioridade inválida! Deve ser entre 1 e 3.");
+      }
+    }
+
+    function renderizarTarefas() {
+      const lista = document.getElementById('listaTarefas');
+      lista.innerHTML = "";
+
+      if (tarefas.length === 0) {
+        lista.innerHTML = "<li>Nenhuma tarefa cadastrada.</li>";
+        return;
+      }
+
+      tarefas.forEach(t => {
+        const li = document.createElement('li');
+        if (t.concluida) li.classList.add('concluida');
+
+        const texto = document.createElement('span');
+        texto.textContent = `[Cód: ${t.codigo}] ${t.titulo} (Prioridade: ${t.prioridade})`;
+
+        const divAcoes = document.createElement('div');
+        divAcoes.className = 'acoes';
+
+        const btnConcluir = document.createElement('button');
+        btnConcluir.className = 'concluir';
+        btnConcluir.textContent = t.concluida ? 'Desfazer' : 'Concluir';
+        btnConcluir.onclick = () => alterarStatus(t.codigo);
+
+        const btnPrioridade = document.createElement('button');
+        btnPrioridade.textContent = 'Editar Prioridade';
+        btnPrioridade.onclick = () => alterarPrioridadePrompt(t.codigo);
+
+        divAcoes.appendChild(btnConcluir);
+        divAcoes.appendChild(btnPrioridade);
+
+        li.appendChild(texto);
+        li.appendChild(divAcoes);
+        lista.appendChild(li);
+      });
+    }
+
+    renderizarTarefas();
+  </script>
+
+<script src="script.js"></script></body>
+</html>
