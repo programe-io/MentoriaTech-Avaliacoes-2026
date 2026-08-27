@@ -1,0 +1,115 @@
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Gerenciador de Tarefas</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #121212;
+            color: #fff;
+            padding: 20px;
+        }
+        input, button {
+            margin: 5px;
+            padding: 8px;
+        }
+        .tarefa {
+            border: 1px solid #444;
+            padding: 10px;
+            margin-top: 10px;
+        }
+    </style>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<h1>Gerenciador de Tarefas</h1>
+
+<h3>Cadastrar Tarefa</h3>
+<input type="number" id="codigo" placeholder="Código">
+<input type="text" id="titulo" placeholder="Título">
+<input type="number" id="prioridade" placeholder="Prioridade (1-3)">
+<button onclick="cadastrarTarefa()">Cadastrar</button>
+
+<h3>Lista de Tarefas</h3>
+<button onclick="listarTarefas()">Atualizar Lista</button>
+<div id="lista"></div>
+
+<script>
+let tarefas = [];
+
+function cadastrarTarefa() {
+    let codigo = document.getElementById("codigo").value;
+    let titulo = document.getElementById("titulo").value;
+    let prioridade = Number(document.getElementById("prioridade").value);
+
+    if (titulo.length < 5) {
+        alert("Título deve ter no mínimo 5 caracteres");
+        return;
+    }
+
+    if (prioridade < 1 || prioridade > 3) {
+        alert("Prioridade deve ser entre 1 (alta) e 3 (baixa)");
+        return;
+    }
+
+    tarefas.push({
+        codigo,
+        titulo,
+        prioridade,
+        concluida: false
+    });
+
+    alert("Tarefa cadastrada!");
+    listarTarefas();
+}
+
+function listarTarefas() {
+    let lista = document.getElementById("lista");
+    lista.innerHTML = "";
+
+    tarefas.forEach(t => {
+        lista.innerHTML += `
+            <div class="tarefa">
+                <strong>${t.titulo}</strong><br>
+                Código: ${t.codigo}<br>
+                Prioridade: ${t.prioridade}<br>
+                Status: ${t.concluida ? "Concluída" : "Pendente"}<br><br>
+                
+                <button onclick="concluirTarefa(${t.codigo})">Concluir</button>
+                <button onclick="alterarPrioridade(${t.codigo})">Alterar Prioridade</button>
+            </div>
+        `;
+    });
+}
+
+function concluirTarefa(codigo) {
+    let tarefa = tarefas.find(t => t.codigo == codigo);
+    if (tarefa) {
+        tarefa.concluida = true;
+        listarTarefas();
+    }
+}
+
+function alterarPrioridade(codigo) {
+    let nova = prompt("Nova prioridade (1-3):");
+    nova = Number(nova);
+
+    if (nova < 1 || nova > 3) {
+        alert("Valor inválido");
+        return;
+    }
+
+    let tarefa = tarefas.find(t => t.codigo == codigo);
+    if (tarefa) {
+        tarefa.prioridade = nova;
+        listarTarefas();
+    }
+}
+</script>
+
+</body>
+</html>
+```
