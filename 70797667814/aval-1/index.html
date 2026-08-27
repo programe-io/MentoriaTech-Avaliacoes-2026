@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciador de Tarefas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #4a90e2;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select, button {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+        button:hover {
+            background-color: #357abd;
+        }
+        .mensagem {
+            margin-top: 10px;
+            padding: 8px;
+            border-radius: 4px;
+            display: none;
+        }
+        .erro {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .sucesso {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            background: #f9f9f9;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-left: 5px solid #4a90e2;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        li.concluida {
+            border-left-color: #28a745;
+            text-decoration: line-through;
+            color: #888;
+        }
+        .acoes button {
+            width: auto;
+            padding: 5px 10px;
+            margin-left: 5px;
+            font-size: 12px;
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+<div class="container">
+    <h1>Gerenciador de Tarefas</h1>
+    
+    <div class="form-group">
+        <label for="titulo">Título da Tarefa (mín. 5 caracteres):</label>
+        <input type="text" id="titulo" placeholder="Ex: Estudar JavaScript">
+    </div>
+
+    <div class="form-group">
+        <label for="prioridade">Prioridade:</label>
+        <select id="prioridade">
+            <option value="1">1 - Alta</option>
+            <option value="2">2 - Média</option>
+            <option value="3">3 - Baixa</option>
+        </select>
+    </div>
+
+    <button onclick="cadastrarTarefa()">Cadastrar Tarefa</button>
+    <div id="mensagem" class="mensagem"></div>
+
+    <h2>Lista de Tarefas</h2>
+    <ul id="listaTarefas"></ul>
+</div>
+
+<script>
+    let tarefas = [];
+    let proximoCodigo = 1;
+
+    function exibirMensagem(texto, tipo) {
+        const msgDiv = document.getElementById("mensagem");
+        msgDiv.textContent = texto;
+        msgDiv.className = `mensagem ${tipo}`;
+        msgDiv.style.display = "block";
+        setTimeout(() => {
+            msgDiv.style.display = "none";
+        }, 3000);
+    }
+
+    function cadastrarTarefa() {
+        const tituloInput = document.getElementById("titulo");
+        const prioridadeInput = document.getElementById("prioridade");
+        
+        const titulo = tituloInput.value.trim();
+        const prioridade = parseInt(prioridadeInput.value);
+
+        if (titulo.length < 5) {
+            exibirMensagem("O título deve ter no mínimo 5 caracteres.", "erro");
+            return;
+        }
+
+        if (prioridade < 1 || prioridade > 3) {
+            exibirMensagem("A prioridade deve ser um valor entre 1 (alta) e 3 (baixa).", "erro");
+            return;
+        }
+
+        const novaTarefa = {
+            codigo: proximoCodigo++,
+            titulo: titulo,
+            prioridade: prioridade,
+            concluida: false
+        };
+
+        tarefas.push(novaTarefa);
+        tituloInput.value = "";
+        exibirMensagem("Tarefa cadastrada com sucesso!", "sucesso");
+        atualizarLista();
+    }
+
+    function marcarConcluida(codigo) {
+        const tarefa = tarefas.find(t => t.codigo === codigo);
+        if (tarefa) {
+            tarefa.concluida = !tarefa.concluida;
+            atualizarLista();
+        }
+    }
+
+    function alterarPrioridade(codigo) {
+        const novaPrioridade = prompt("Digite a nova prioridade (1 - Alta, 2 - Média, 3 - Baixa):");
+        if (novaPrioridade === null) return;
+
+        const prioridadeNum = parseInt(novaPrioridade);
+        if (prioridadeNum >= 1 && prioridadeNum <= 3) {
+            const tarefa = tarefas.find(t => t.codigo === codigo);
+            if (tarefa) {
+                tarefa.prioridade = prioridadeNum;
+                exibirMensagem(`Prioridade da tarefa ${codigo} alterada.`, "sucesso");
+                atualizarLista();
+            }
+        } else {
+            exibirMensagem("Valor inválido! A prioridade deve ser entre 1 e 3.", "erro");
+        }
+    }
+
+    function atualizarLista() {
+        const listaUl = document.getElementById("listaTarefas");
+        listaUl.innerHTML = "";
+
+        if (tarefas.length === 0) {
+            listaUl.innerHTML = "<li>Nenhuma tarefa cadastrada.</li>";
+            return;
+        }
+
+        tarefas.forEach(t => {
+            const li = document.createElement("li");
+            if (t.concluida) li.className = "concluida";
+
+            const textoInfo = document.createElement("span");
+            textoInfo.textContent = `[Cód: ${t.codigo}] ${t.titulo} (Prioridade: ${t.prioridade})`;
+            li.appendChild(textoInfo);
+
+            const divAcoes = document.createElement("div");
+            divAcoes.className = "acoes";
+
+            const btnConcluir = document.createElement("button");
+            btnConcluir.textContent = t.concluida ? "Desfazer" : "Concluir";
+            btnConcluir.onclick = () => marcarConcluida(t.codigo);
+            divAcoes.appendChild(btnConcluir);
+
+            const btnPrioridade = document.createElement("button");
+            btnPrioridade.textContent = "Mudar Prioridade";
+            btnPrioridade.onclick = () => alterarPrioridade(t.codigo);
+            divAcoes.appendChild(btnPrioridade);
+
+            li.appendChild(divAcoes);
+            listaUl.appendChild(li);
+        });
+    }
+
+    // Inicializa a lista vazia
+    atualizarLista();
+</script>
+
+<script src="script.js"></script></body>
+</html>
