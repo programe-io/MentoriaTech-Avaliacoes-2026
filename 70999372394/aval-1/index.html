@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Sistema de Gerenciamento de Tarefas</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        h2 {
+            margin-top: 20px;
+            margin-bottom: 10px;
+            color: #444;
+        }
+
+        input,
+        select,
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .tarefa {
+            background-color: #f8f9fa;
+            border-left: 5px solid #007bff;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 5px;
+        }
+
+        .tarefa p {
+            margin: 5px 0;
+        }
+
+        .concluida {
+            border-left-color: green;
+            opacity: 0.7;
+        }
+
+        .concluida .titulo {
+            text-decoration: line-through;
+        }
+
+        .btn-concluir {
+            background-color: green;
+            margin-top: 10px;
+        }
+
+        .btn-concluir:hover {
+            background-color: darkgreen;
+        }
+
+        #mensagem {
+            margin: 10px 0;
+            font-weight: bold;
+            text-align: center;
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>📋 Gerenciamento de Tarefas</h1>
+
+        <h2>Cadastrar Nova Tarefa</h2>
+
+        <input
+            type="number"
+            id="codigo"
+            placeholder="Digite o código da tarefa"
+        >
+
+        <input
+            type="text"
+            id="titulo"
+            placeholder="Digite o título da tarefa"
+        >
+
+        <select id="prioridade">
+            <option value="">Selecione a prioridade</option>
+            <option value="1">1 - Alta</option>
+            <option value="2">2 - Média</option>
+            <option value="3">3 - Baixa</option>
+        </select>
+
+        <button onclick="cadastrarTarefa()">
+            Cadastrar Tarefa
+        </button>
+
+
+        <h2>Alterar Prioridade</h2>
+
+        <input
+            type="number"
+            id="codigoAlterar"
+            placeholder="Digite o código da tarefa"
+        >
+
+        <select id="novaPrioridade">
+            <option value="">Nova prioridade</option>
+            <option value="1">1 - Alta</option>
+            <option value="2">2 - Média</option>
+            <option value="3">3 - Baixa</option>
+        </select>
+
+        <button onclick="alterarPrioridade()">
+            Alterar Prioridade
+        </button>
+
+
+        <div id="mensagem"></div>
+
+        <h2>Lista de Tarefas</h2>
+
+        <div id="listaTarefas">
+            <p>Nenhuma tarefa cadastrada.</p>
+        </div>
+
+    </div>
+
+
+    <script>
+
+        // Array que armazenará todas as tarefas
+        let tarefas = [];
+
+
+        // Função para cadastrar uma nova tarefa
+        function cadastrarTarefa() {
+
+            let codigo = document.getElementById("codigo").value;
+            let titulo = document.getElementById("titulo").value;
+            let prioridade = Number(
+                document.getElementById("prioridade").value
+            );
+
+
+            // Validação do código
+            if (codigo === "") {
+                mostrarMensagem("Digite um código para a tarefa.");
+                return;
+            }
+
+
+            // Verifica se já existe uma tarefa com o mesmo código
+            let codigoExiste = tarefas.find(
+                tarefa => tarefa.codigo == codigo
+            );
+
+            if (codigoExiste) {
+                mostrarMensagem("Já existe uma tarefa com esse código.");
+                return;
+            }
+
+
+            // Validação do título
+            if (titulo.length < 5) {
+                mostrarMensagem(
+                    "O título deve ter no mínimo 5 caracteres."
+                );
+                return;
+            }
+
+
+            // Validação da prioridade
+            if (prioridade < 1 || prioridade > 3) {
+                mostrarMensagem(
+                    "A prioridade deve ser entre 1 e 3."
+                );
+                return;
+            }
+
+
+            // Criação do objeto tarefa
+            let novaTarefa = {
+                codigo: codigo,
+                titulo: titulo,
+                prioridade: prioridade,
+                concluida: false
+            };
+
+
+            // Adiciona a tarefa ao array
+            tarefas.push(novaTarefa);
+
+            mostrarMensagem(
+                "Tarefa cadastrada com sucesso!"
+            );
+
+
+            // Limpa os campos
+            document.getElementById("codigo").value = "";
+            document.getElementById("titulo").value = "";
+            document.getElementById("prioridade").value = "";
+
+
+            // Atualiza a lista
+            listarTarefas();
+        }
+
+
+        // Função para listar as tarefas
+        function listarTarefas() {
+
+            let lista =
+                document.getElementById("listaTarefas");
+
+
+            // Limpa a lista antes de mostrar novamente
+            lista.innerHTML = "";
+
+
+            // Verifica se existem tarefas
+            if (tarefas.length === 0) {
+
+                lista.innerHTML =
+                    "<p>Nenhuma tarefa cadastrada.</p>";
+
+                return;
+            }
+
+
+            // Percorre todas as tarefas
+            for (let i = 0; i < tarefas.length; i++) {
+
+                let tarefa = tarefas[i];
+
+
+                // Define o texto da prioridade
+                let prioridadeTexto = "";
+
+                if (tarefa.prioridade == 1) {
+                    prioridadeTexto = "Alta";
+                }
+                else if (tarefa.prioridade == 2) {
+                    prioridadeTexto = "Média";
+                }
+                else {
+                    prioridadeTexto = "Baixa";
+                }
+
+
+                // Define o status
+                let status = "";
+
+                if (tarefa.concluida) {
+                    status = "Concluída";
+                }
+                else {
+                    status = "Pendente";
+                }
+
+
+                // Cria a tarefa na tela
+                lista.innerHTML += `
+
+                    <div class="tarefa ${tarefa.concluida ? "concluida" : ""}">
+
+                        <p>
+                            <strong>Código:</strong>
+                            ${tarefa.codigo}
+                        </p>
+
+                        <p class="titulo">
+                            <strong>Título:</strong>
+                            ${tarefa.titulo}
+                        </p>
+
+                        <p>
+                            <strong>Prioridade:</strong>
+                            ${prioridadeTexto}
+                        </p>
+
+                        <p>
+                            <strong>Status:</strong>
+                            ${status}
+                        </p>
+
+                        ${
+                            !tarefa.concluida
+                            ?
+                            `<button
+                                class="btn-concluir"
+                                onclick="concluirTarefa('${tarefa.codigo}')"
+                            >
+                                Marcar como Concluída
+                            </button>`
+                            :
+                            ""
+                        }
+
+                    </div>
+
+                `;
+            }
+        }
+
+
+        // Função para marcar uma tarefa como concluída
+        function concluirTarefa(codigo) {
+
+            let tarefa = tarefas.find(
+                tarefa => tarefa.codigo == codigo
+            );
+
+
+            if (tarefa) {
+
+                tarefa.concluida = true;
+
+                mostrarMensagem(
+                    "Tarefa marcada como concluída!"
+                );
+
+                listarTarefas();
+
+            }
+            else {
+
+                mostrarMensagem(
+                    "Tarefa não encontrada."
+                );
+
+            }
+        }
+
+
+        // Função para alterar a prioridade
+        function alterarPrioridade() {
+
+            let codigo =
+                document.getElementById("codigoAlterar").value;
+
+            let novaPrioridade = Number(
+                document.getElementById("novaPrioridade").value
+            );
+
+
+            // Validação da prioridade
+            if (
+                novaPrioridade < 1 ||
+                novaPrioridade > 3
+            ) {
+
+                mostrarMensagem(
+                    "A prioridade deve ser entre 1 e 3."
+                );
+
+                return;
+            }
+
+
+            // Procura a tarefa pelo código
+            let tarefa = tarefas.find(
+                tarefa => tarefa.codigo == codigo
+            );
+
+
+            if (tarefa) {
+
+                tarefa.prioridade = novaPrioridade;
+
+                mostrarMensagem(
+                    "Prioridade alterada com sucesso!"
+                );
+
+
+                // Limpa os campos
+                document.getElementById(
+                    "codigoAlterar"
+                ).value = "";
+
+                document.getElementById(
+                    "novaPrioridade"
+                ).value = "";
+
+
+                // Atualiza a lista
+                listarTarefas();
+
+            }
+            else {
+
+                mostrarMensagem(
+                    "Tarefa não encontrada."
+                );
+
+            }
+        }
+
+
+        // Função para mostrar mensagens na tela
+        function mostrarMensagem(texto) {
+
+            document.getElementById(
+                "mensagem"
+            ).innerText = texto;
+
+        }
+
+    </script>
+
+</body>
+</html>
