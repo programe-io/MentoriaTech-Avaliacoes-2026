@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Gerenciamento de Tarefas</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --success: #16a34a;
+            --danger: #dc2626;
+            --background: #f8fafc;
+            --card: #ffffff;
+            --text: #1e293b;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary);
+        }
+
+        .card {
+            background: var(--card);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+            font-size: 14px;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .error-msg {
+            color: var(--danger);
+            font-size: 13px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .task-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .task-item {
+            background: var(--card);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgb(0 0 0 / 0.05);
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 5px solid #cbd5e1;
+        }
+
+        .task-item.prio-1 { border-left-color: var(--danger); }
+        .task-item.prio-2 { border-left-color: #eab308; }
+        .task-item.prio-3 { border-left-color: #3b82f6; }
+
+        .task-item.completed {
+            background-color: #f1f5f9;
+            opacity: 0.6;
+        }
+        
+        .task-item.completed .task-title {
+            text-decoration: line-through;
+        }
+
+        .task-info {
+            flex-grow: 1;
+            margin-right: 15px;
+        }
+
+        .task-title {
+            font-weight: 600;
+            margin: 0 0 5px 0;
+        }
+
+        .task-meta {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-action {
+            width: auto;
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        .btn-done { background-color: var(--success); }
+        .btn-prio { background-color: #64748b; }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container">
+    <h1>Gerenciador de Tarefas</h1>
+
+    <!-- Formulário de Cadastro -->
+    <div class="card">
+        <h2>Cadastrar Nova Tarefa</h2>
+        <div class="form-group">
+            <label for="txtTitulo">Título da Tarefa</label>
+            <input type="text" id="txtTitulo" placeholder="Mínimo 5 caracteres">
+            <div id="errorTitulo" class="error-msg">O título deve ter no mínimo 5 caracteres.</div>
+        </div>
+        <div class="form-group">
+            <label for="selPrioridade">Prioridade</label>
+            <select id="selPrioridade">
+                <option value="1">1 (Alta)</option>
+                <option value="2">2 (Média)</option>
+                <option value="3">3 (Baixa)</option>
+            </select>
+        </div>
+        <button onclick="adicionarTarefa()">Adicionar Tarefa</button>
+    </div>
+
+    <!-- Lista de Tarefas -->
+    <h2>Lista de Tarefas</h2>
+    <ul id="listaTarefas" class="task-list">
+        <!-- Inseridas dinamicamente via JS -->
+    </ul>
+</div>
+
+<script>
+    // Estado da aplicação (Base de dados simulada)
+    let tarefas = [];
+    let proximoCodigo = 1;
+
+    // Regra 1: Cadastrar uma nova tarefa (com validações)
+    function adicionarTarefa() {
+        const inputTitulo = document.getElementById('txtTitulo');
+        const selectPrioridade = document.getElementById('selPrioridade');
+        const errorTitulo = document.getElementById('errorTitulo');
+        
+        const titulo = inputTitulo.value.trim();
+        const prioridade = parseInt(selectPrioridade.value);
+
+        // Validação do título (Mínimo 5 caracteres)
+        if (titulo.length < 5) {
+            errorTitulo.style.display = 'block';
+            return;
+        } else {
+            errorTitulo.style.display = 'none';
+        }
+
+        // Criando a estrutura do objeto de tarefa conforme regras do projeto
+        const novaTarefa = {
+            codigo: proximoCodigo++,
+            titulo: titulo,
+            prioridade: prioridade,
+            concluida: false
+        };
+
+        tarefas.push(novaTarefa);
+        
+        // Limpar o campo de texto
+        inputTitulo.value = '';
+        
+        // Atualizar visualização
+        renderizarTarefas();
+    }
+
+    // Regra 3: Marcar uma tarefa como concluída
+    function alternarConclusao(codigo) {
+        const tarefa = tarefas.find(t => t.codigo === codigo);
+        if (tarefa) {
+            tarefa.concluida = !tarefa.concluida; // Alterna entre True e False
+            renderizarTarefas();
+        }
+    }
+
+    // Regra 4: Alterar a prioridade de uma tarefa
+    function mudarPrioridade(codigo) {
+        const tarefa = tarefas.find(t => t.codigo === codigo);
+        if (tarefa) {
+            // Rotaciona a prioridade entre 1, 2 e 3
+            let novaPrioridade = tarefa.prioridade + 1;
+            if (novaPrioridade > 3) novaPrioridade = 1;
+            
+            tarefa.prioridade = novaPrioridade;
+            renderizarTarefas();
+        }
+    }
+
+    // Regra 2: Listar as tarefas cadastradas na tela dinamicamente
+    function renderizarTarefas() {
+        const listaHtml = document.getElementById('listaTarefas');
+        listaHtml.innerHTML = ''; // Limpa a lista atual
+
+        if (tarefas.length === 0) {
+            listaHtml.innerHTML = '<p style="color: #64748b; text-align: center;">Nenhuma tarefa cadastrada.</p>';
+            return;
+        }
+
+        tarefas.forEach(t => {
+            const item = document.createElement('li');
+            item.className = `task-item prio-${t.prioridade} ${t.concluida ? 'completed' : ''}`;
+
+            const labelPrio = t.prioridade === 1 ? 'Alta' : t.prioridade === 2 ? 'Média' : 'Baixa';
+            const textoBotaoConcluir = t.concluida ? 'Refazer' : 'Concluir';
+
+            item.innerHTML = `
+                <div class="task-info">
+                    <p class="task-title">${t.titulo}</p>
+                    <span class="task-meta">Cód: ${t.codigo} | Prioridade: ${t.prioridade} (${labelPrio})</span>
+                </div>
+                <div class="task-actions">
+                    <button class="btn-action btn-prio" onclick="mudarPrioridade(${t.codigo})">Alterar Prio</button>
+                    <button class="btn-action btn-done" onclick="alternarConclusao(${t.codigo})">${textoBotaoConcluir}</button>
+                </div>
+            `;
+
+            listaHtml.appendChild(item);
+        });
+    }
+</script>
+
+</body>
+</html>
