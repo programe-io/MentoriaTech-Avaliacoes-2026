@@ -1,0 +1,1 @@
+cadastrarProduto("Arroz", 10, 25);
