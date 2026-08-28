@@ -5,66 +5,2568 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Cadastro de Produtos</title>
+    <title>SweetStock 💜</title>
 
-    <!-- Ligação com o CSS -->
-    <link rel="stylesheet" href="style.css">
+    <style>
+
+        /* =====================================================
+           CONFIGURAÇÕES
+        ===================================================== */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --lilas: #9b6cff;
+            --lilas-escuro: #7650d8;
+            --lilas-claro: #eee7ff;
+            --lavanda: #f7f3ff;
+            --rosa: #f7a8d8;
+            --rosa-claro: #fff0f8;
+            --texto: #3d3154;
+            --cinza: #857b94;
+            --branco: #ffffff;
+            --verde: #55b987;
+            --vermelho: #e46d82;
+            --amarelo: #e9ae55;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            min-height: 100vh;
+
+            font-family:
+                "Segoe UI",
+                Arial,
+                sans-serif;
+
+            color: var(--texto);
+
+            background:
+                radial-gradient(
+                    circle at 10% 10%,
+                    rgba(155, 108, 255, 0.15),
+                    transparent 25%
+                ),
+
+                radial-gradient(
+                    circle at 90% 80%,
+                    rgba(247, 168, 216, 0.18),
+                    transparent 25%
+                ),
+
+                linear-gradient(
+                    135deg,
+                    #f8f5ff,
+                    #f0eaff,
+                    #fff8fc
+                );
+
+            overflow-x: hidden;
+        }
+
+
+        /* =====================================================
+           CORAÇÕES DECORATIVOS
+        ===================================================== */
+
+        .decoracao {
+            position: fixed;
+
+            font-size: 25px;
+
+            opacity: 0.25;
+
+            pointer-events: none;
+
+            z-index: -1;
+
+            animation:
+                flutuar 6s ease-in-out infinite;
+        }
+
+        .decoracao:nth-child(1) {
+            top: 12%;
+            left: 4%;
+        }
+
+        .decoracao:nth-child(2) {
+            top: 30%;
+            right: 5%;
+
+            animation-delay: 1s;
+        }
+
+        .decoracao:nth-child(3) {
+            bottom: 15%;
+            left: 7%;
+
+            animation-delay: 2s;
+        }
+
+        .decoracao:nth-child(4) {
+            bottom: 8%;
+            right: 10%;
+
+            animation-delay: 3s;
+        }
+
+        @keyframes flutuar {
+
+            0%,
+            100% {
+                transform:
+                    translateY(0)
+                    rotate(0deg);
+            }
+
+            50% {
+                transform:
+                    translateY(-20px)
+                    rotate(8deg);
+            }
+        }
+
+
+        /* =====================================================
+           LAYOUT
+        ===================================================== */
+
+        .app {
+            min-height: 100vh;
+
+            display: flex;
+        }
+
+
+        /* =====================================================
+           MENU LATERAL
+        ===================================================== */
+
+        .sidebar {
+            width: 250px;
+
+            min-height: 100vh;
+
+            position: fixed;
+
+            left: 0;
+            top: 0;
+
+            padding: 25px 18px;
+
+            background:
+                linear-gradient(
+                    180deg,
+                    #8060d9,
+                    #6947bd
+                );
+
+            color: white;
+
+            box-shadow:
+                8px 0 35px
+                rgba(108, 73, 189, 0.18);
+
+            z-index: 20;
+        }
+
+
+        /* =====================================================
+           LOGO
+        ===================================================== */
+
+        .logo {
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+
+            padding: 8px 8px 30px;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 15px;
+
+            background:
+                rgba(255, 255, 255, 0.18);
+
+            font-size: 23px;
+
+            box-shadow:
+                0 8px 20px
+                rgba(0, 0, 0, 0.12);
+
+            animation:
+                pulso 3s infinite;
+        }
+
+        @keyframes pulso {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.06);
+            }
+        }
+
+        .logo h2 {
+            font-size: 19px;
+        }
+
+        .logo p {
+            font-size: 9px;
+
+            margin-top: 3px;
+
+            opacity: 0.65;
+
+            letter-spacing: 1px;
+        }
+
+
+        /* =====================================================
+           MENU
+        ===================================================== */
+
+        .menu-titulo {
+            font-size: 9px;
+
+            letter-spacing: 1.5px;
+
+            opacity: 0.55;
+
+            margin:
+                5px 10px 10px;
+        }
+
+        .menu {
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 6px;
+        }
+
+        .menu button {
+            width: 100%;
+
+            padding: 13px 14px;
+
+            border: none;
+
+            border-radius: 12px;
+
+            background: transparent;
+
+            color:
+                rgba(255, 255, 255, 0.72);
+
+            text-align: left;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+
+            font-size: 13px;
+
+            transition:
+                0.25s;
+        }
+
+        .menu button:hover {
+            color: white;
+
+            background:
+                rgba(255, 255, 255, 0.1);
+
+            transform:
+                translateX(4px);
+        }
+
+        .menu button.ativo {
+            color: white;
+
+            background:
+                rgba(255, 255, 255, 0.17);
+
+            box-shadow:
+                inset 3px 0 0 white;
+        }
+
+        .menu-icon {
+            width: 20px;
+
+            text-align: center;
+
+            font-size: 17px;
+        }
+
+
+        /* =====================================================
+           STATUS
+        ===================================================== */
+
+        .status {
+            position: absolute;
+
+            bottom: 25px;
+
+            left: 18px;
+            right: 18px;
+
+            padding: 13px;
+
+            border-radius: 12px;
+
+            background:
+                rgba(255, 255, 255, 0.09);
+
+            font-size: 10px;
+
+            opacity: 0.8;
+        }
+
+        .status-dot {
+            display: inline-block;
+
+            width: 8px;
+            height: 8px;
+
+            margin-right: 7px;
+
+            border-radius: 50%;
+
+            background: #79e0a8;
+
+            box-shadow:
+                0 0 10px
+                #79e0a8;
+
+            animation:
+                piscar 2s infinite;
+        }
+
+        @keyframes piscar {
+
+            50% {
+                opacity: 0.4;
+            }
+        }
+
+
+        /* =====================================================
+           CONTEÚDO
+        ===================================================== */
+
+        .main {
+            width:
+                calc(100% - 250px);
+
+            margin-left: 250px;
+
+            padding:
+                35px 40px 60px;
+        }
+
+        .conteudo {
+            max-width: 1300px;
+
+            margin: auto;
+        }
+
+
+        /* =====================================================
+           TOPO
+        ===================================================== */
+
+        .topo {
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            margin-bottom: 25px;
+
+            animation:
+                entrada 0.7s ease;
+        }
+
+        .topo small {
+            color:
+                var(--lilas);
+
+            font-size: 10px;
+
+            font-weight: bold;
+
+            letter-spacing: 2px;
+        }
+
+        .topo h1 {
+            font-size: 31px;
+
+            margin-top: 5px;
+
+            color:
+                #42345a;
+        }
+
+        .topo p {
+            color:
+                var(--cinza);
+
+            font-size: 13px;
+
+            margin-top: 5px;
+        }
+
+
+        /* =====================================================
+           BOTÕES
+        ===================================================== */
+
+        .btn {
+            border: none;
+
+            padding:
+                12px 18px;
+
+            border-radius: 12px;
+
+            font-weight: bold;
+
+            transition:
+                0.25s;
+        }
+
+        .btn-lilas {
+            color: white;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #a77bff,
+                    #7650d8
+                );
+
+            box-shadow:
+                0 8px 20px
+                rgba(118, 80, 216, 0.22);
+        }
+
+        .btn-lilas:hover {
+            transform:
+                translateY(-3px);
+
+            box-shadow:
+                0 13px 25px
+                rgba(118, 80, 216, 0.3);
+        }
+
+        .btn-cinza {
+            background: white;
+
+            color:
+                var(--cinza);
+
+            border:
+                1px solid
+                #e5dff1;
+        }
+
+        .btn-cinza:hover {
+            background:
+                #faf7ff;
+        }
+
+
+        /* =====================================================
+           BANNER
+        ===================================================== */
+
+        .banner {
+            position: relative;
+
+            overflow: hidden;
+
+            padding:
+                27px 30px;
+
+            border-radius: 20px;
+
+            margin-bottom: 20px;
+
+            color: white;
+
+            background:
+                linear-gradient(
+                    110deg,
+                    #7650d8,
+                    #a477fa,
+                    #d095e8
+                );
+
+            box-shadow:
+                0 15px 35px
+                rgba(118, 80, 216, 0.18);
+
+            animation:
+                entrada 0.8s ease;
+        }
+
+        .banner::before {
+            content: "";
+
+            position: absolute;
+
+            width: 220px;
+            height: 220px;
+
+            right: 20px;
+            top: -120px;
+
+            border-radius: 50%;
+
+            background:
+                rgba(255, 255, 255, 0.1);
+        }
+
+        .banner h2 {
+            font-size: 21px;
+
+            position: relative;
+
+            z-index: 2;
+        }
+
+        .banner p {
+            margin-top: 6px;
+
+            font-size: 12px;
+
+            color:
+                #eee7ff;
+
+            position: relative;
+
+            z-index: 2;
+        }
+
+        .banner-emoji {
+            position: absolute;
+
+            right: 35px;
+            bottom: 10px;
+
+            font-size: 50px;
+
+            animation:
+                flutuar 4s infinite;
+        }
+
+
+        /* =====================================================
+           CARDS
+        ===================================================== */
+
+        .cards {
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, 1fr);
+
+            gap: 16px;
+
+            margin-bottom: 20px;
+        }
+
+        .card {
+            padding: 20px;
+
+            border-radius: 17px;
+
+            background:
+                rgba(255, 255, 255, 0.88);
+
+            border:
+                1px solid
+                #e9e0f5;
+
+            box-shadow:
+                0 12px 35px
+                rgba(102, 73, 145, 0.08);
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 14px;
+
+            transition:
+                0.3s;
+
+            animation:
+                subir 0.6s ease both;
+        }
+
+        .card:nth-child(2) {
+            animation-delay: .1s;
+        }
+
+        .card:nth-child(3) {
+            animation-delay: .2s;
+        }
+
+        .card:nth-child(4) {
+            animation-delay: .3s;
+        }
+
+        .card:hover {
+            transform:
+                translateY(-6px);
+
+            box-shadow:
+                0 20px 45px
+                rgba(102, 73, 145, 0.13);
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+
+            display: flex;
+
+            justify-content: center;
+            align-items: center;
+
+            border-radius: 14px;
+
+            background:
+                var(--lilas-claro);
+
+            font-size: 21px;
+        }
+
+        .card-info span {
+            display: block;
+
+            color:
+                var(--cinza);
+
+            font-size: 10px;
+
+            margin-bottom: 4px;
+        }
+
+        .card-info strong {
+            font-size: 20px;
+
+            color:
+                #42345a;
+        }
+
+
+        /* =====================================================
+           PAINEL
+        ===================================================== */
+
+        .painel {
+            background:
+                rgba(255, 255, 255, 0.9);
+
+            border:
+                1px solid
+                #e8def4;
+
+            border-radius: 18px;
+
+            box-shadow:
+                0 12px 35px
+                rgba(102, 73, 145, 0.08);
+
+            overflow: hidden;
+
+            animation:
+                subir .7s ease;
+        }
+
+        .painel-topo {
+            padding:
+                21px 23px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            border-bottom:
+                1px solid
+                #eee7f6;
+        }
+
+        .painel-topo h2 {
+            font-size: 17px;
+        }
+
+        .painel-topo p {
+            color:
+                var(--cinza);
+
+            font-size: 11px;
+
+            margin-top: 5px;
+        }
+
+
+        /* =====================================================
+           PESQUISA
+        ===================================================== */
+
+        .pesquisa {
+            display: flex;
+
+            align-items: center;
+
+            gap: 7px;
+
+            width: 250px;
+
+            padding:
+                0 11px;
+
+            border:
+                1px solid
+                #e4dcef;
+
+            border-radius: 10px;
+
+            background: white;
+
+            transition: .25s;
+        }
+
+        .pesquisa:focus-within {
+            border-color:
+                var(--lilas);
+
+            box-shadow:
+                0 0 0 4px
+                rgba(155, 108, 255, .1);
+        }
+
+        .pesquisa input {
+            width: 100%;
+
+            padding:
+                10px 2px;
+
+            border: none;
+
+            outline: none;
+
+            background: transparent;
+        }
+
+
+        /* =====================================================
+           TABELA
+        ===================================================== */
+
+        .tabela {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+
+            border-collapse: collapse;
+        }
+
+        th {
+            padding:
+                14px 20px;
+
+            text-align: left;
+
+            background:
+                #faf8ff;
+
+            color:
+                #9488a5;
+
+            font-size: 9px;
+
+            text-transform: uppercase;
+
+            letter-spacing: .7px;
+        }
+
+        td {
+            padding:
+                15px 20px;
+
+            border-top:
+                1px solid
+                #f0ebf6;
+
+            font-size: 12px;
+        }
+
+        tbody tr {
+            transition:
+                .2s;
+        }
+
+        tbody tr:hover {
+            background:
+                #fcfaff;
+        }
+
+        .codigo {
+            color:
+                var(--lilas);
+
+            font-weight: bold;
+        }
+
+        .produto {
+            font-weight: bold;
+        }
+
+        .valor {
+            font-weight: bold;
+        }
+
+
+        /* =====================================================
+           STATUS
+        ===================================================== */
+
+        .tag {
+            display: inline-flex;
+
+            padding:
+                5px 9px;
+
+            border-radius: 20px;
+
+            font-size: 9px;
+
+            font-weight: bold;
+        }
+
+        .tag-ok {
+            background:
+                #e8f8ef;
+
+            color:
+                var(--verde);
+        }
+
+        .tag-baixo {
+            background:
+                #fff4df;
+
+            color:
+                var(--amarelo);
+        }
+
+
+        /* =====================================================
+           AÇÕES
+        ===================================================== */
+
+        .acoes {
+            display: flex;
+
+            gap: 6px;
+        }
+
+        .acao {
+            border:
+                1px solid
+                #e5def0;
+
+            background: white;
+
+            padding:
+                7px 9px;
+
+            border-radius: 8px;
+
+            transition:
+                .2s;
+        }
+
+        .acao:hover {
+            transform:
+                translateY(-2px);
+        }
+
+        .editar {
+            color:
+                var(--lilas);
+        }
+
+        .excluir {
+            color:
+                var(--vermelho);
+        }
+
+
+        /* =====================================================
+           MODAL
+        ===================================================== */
+
+        .modal {
+            position: fixed;
+
+            inset: 0;
+
+            background:
+                rgba(54, 35, 83, .48);
+
+            backdrop-filter:
+                blur(7px);
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            padding: 20px;
+
+            z-index: 100;
+
+            animation:
+                aparecer .25s ease;
+        }
+
+        .modal.escondido {
+            display: none;
+        }
+
+        .modal-box {
+            width: 100%;
+
+            max-width: 480px;
+
+            background:
+                rgba(255, 255, 255, .97);
+
+            border-radius: 21px;
+
+            padding: 28px;
+
+            position: relative;
+
+            box-shadow:
+                0 30px 80px
+                rgba(60, 38, 95, .25);
+
+            animation:
+                modalEntrada .35s ease;
+        }
+
+        @keyframes modalEntrada {
+
+            from {
+                opacity: 0;
+
+                transform:
+                    scale(.92)
+                    translateY(15px);
+            }
+
+            to {
+                opacity: 1;
+
+                transform:
+                    scale(1)
+                    translateY(0);
+            }
+        }
+
+        .fechar {
+            position: absolute;
+
+            top: 12px;
+            right: 16px;
+
+            border: none;
+
+            background: transparent;
+
+            font-size: 25px;
+
+            color:
+                #998da8;
+
+            transition: .2s;
+        }
+
+        .fechar:hover {
+            color:
+                var(--vermelho);
+
+            transform:
+                rotate(90deg);
+        }
+
+        .modal-box h2 {
+            font-size: 21px;
+        }
+
+        .modal-box > p {
+            color:
+                var(--cinza);
+
+            font-size: 11px;
+
+            margin:
+                5px 0 22px;
+        }
+
+
+        /* =====================================================
+           FORMULÁRIO
+        ===================================================== */
+
+        .campo {
+            margin-bottom: 16px;
+        }
+
+        .campo label {
+            display: block;
+
+            margin-bottom: 7px;
+
+            color:
+                #5e516e;
+
+            font-size: 11px;
+
+            font-weight: bold;
+        }
+
+        .campo input {
+            width: 100%;
+
+            padding:
+                12px;
+
+            border:
+                1px solid
+                #e2d9ef;
+
+            border-radius: 10px;
+
+            outline: none;
+
+            background:
+                #fcfaff;
+
+            color:
+                var(--texto);
+
+            transition: .2s;
+        }
+
+        .campo input:focus {
+            background: white;
+
+            border-color:
+                var(--lilas);
+
+            box-shadow:
+                0 0 0 4px
+                rgba(155, 108, 255, .09);
+        }
+
+        .form-botoes {
+            display: flex;
+
+            justify-content: flex-end;
+
+            gap: 9px;
+
+            margin-top: 20px;
+        }
+
+
+        /* =====================================================
+           NOTIFICAÇÃO
+        ===================================================== */
+
+        .toast {
+            position: fixed;
+
+            right: 25px;
+            bottom: 25px;
+
+            padding:
+                13px 18px;
+
+            border-radius: 12px;
+
+            color: white;
+
+            background:
+                #6243a9;
+
+            box-shadow:
+                0 15px 35px
+                rgba(73, 45, 119, .25);
+
+            font-size: 11px;
+
+            opacity: 0;
+
+            transform:
+                translateY(20px);
+
+            pointer-events: none;
+
+            transition: .3s;
+
+            z-index: 200;
+        }
+
+        .toast.mostrar {
+            opacity: 1;
+
+            transform:
+                translateY(0);
+        }
+
+
+        /* =====================================================
+           ESTADO VAZIO
+        ===================================================== */
+
+        .vazio {
+            padding: 50px 20px;
+
+            text-align: center;
+
+            color:
+                var(--cinza);
+        }
+
+        .vazio-icon {
+            font-size: 38px;
+
+            margin-bottom: 10px;
+
+            animation:
+                flutuar 3s infinite;
+        }
+
+        .vazio strong {
+            display: block;
+
+            color:
+                var(--texto);
+
+            margin-bottom: 5px;
+        }
+
+
+        /* =====================================================
+           ANIMAÇÕES
+        ===================================================== */
+
+        @keyframes entrada {
+
+            from {
+                opacity: 0;
+
+                transform:
+                    translateY(-15px);
+            }
+
+            to {
+                opacity: 1;
+
+                transform:
+                    translateY(0);
+            }
+        }
+
+        @keyframes subir {
+
+            from {
+                opacity: 0;
+
+                transform:
+                    translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+
+                transform:
+                    translateY(0);
+            }
+        }
+
+        @keyframes aparecer {
+
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+
+        /* =====================================================
+           RESPONSIVIDADE
+        ===================================================== */
+
+        @media (max-width: 1050px) {
+
+            .cards {
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+        }
+
+
+        @media (max-width: 800px) {
+
+            .app {
+                display: block;
+            }
+
+            .sidebar {
+                position: static;
+
+                width: 100%;
+
+                min-height: auto;
+
+                padding: 15px;
+            }
+
+            .logo {
+                padding-bottom: 15px;
+            }
+
+            .menu {
+                flex-direction: row;
+
+                overflow-x: auto;
+            }
+
+            .menu button {
+                white-space: nowrap;
+            }
+
+            .status {
+                display: none;
+            }
+
+            .main {
+                width: 100%;
+
+                margin: 0;
+
+                padding: 25px 15px;
+            }
+        }
+
+
+        @media (max-width: 600px) {
+
+            .topo {
+                flex-direction: column;
+
+                align-items: flex-start;
+
+                gap: 15px;
+            }
+
+            .topo .btn {
+                width: 100%;
+            }
+
+            .cards {
+                grid-template-columns: 1fr;
+            }
+
+            .banner-icon {
+                display: none;
+            }
+
+            .painel-topo {
+                flex-direction: column;
+
+                align-items: flex-start;
+
+                gap: 15px;
+            }
+
+            .pesquisa {
+                width: 100%;
+            }
+
+            .form-botoes {
+                flex-direction: column;
+            }
+
+            .form-botoes button {
+                width: 100%;
+            }
+
+            .topo h1 {
+                font-size: 26px;
+            }
+        }
+
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="style.css" rel="stylesheet"></head>
 
+
 <body>
 
-    <div class="container">
+    <!-- DECORAÇÕES -->
 
-        <h1>📦 Cadastro de Produtos</h1>
+    <div class="decoracao">💜</div>
+    <div class="decoracao">🎀</div>
+    <div class="decoracao">✨</div>
+    <div class="decoracao">🌸</div>
 
-        <!-- Formulário -->
-        <div class="formulario">
 
-            <h2>Cadastrar Produto</h2>
+    <div class="app">
 
-            <input
-                type="text"
-                id="descricao"
-                placeholder="Descrição do produto"
+
+        <!-- =================================================
+             MENU
+        ================================================== -->
+
+        <aside class="sidebar">
+
+            <div class="logo">
+
+                <div class="logo-icon">
+                    📦
+                </div>
+
+                <div>
+
+                    <h2>
+                        SweetStock
+                    </h2>
+
+                    <p>
+                        GESTÃO DE ESTOQUE
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="menu-titulo">
+                MENU PRINCIPAL
+            </div>
+
+
+            <nav class="menu">
+
+                <button
+                    class="ativo"
+                    onclick="mostrarDashboard(this)"
+                >
+                    <span class="menu-icon">🏠</span>
+                    Início
+                </button>
+
+
+                <button
+                    onclick="abrirModal()"
+                >
+                    <span class="menu-icon">➕</span>
+                    Novo produto
+                </button>
+
+
+                <button
+                    onclick="focarPesquisa()"
+                >
+                    <span class="menu-icon">🔎</span>
+                    Pesquisar
+                </button>
+
+            </nav>
+
+
+            <div class="status">
+
+                <span class="status-dot"></span>
+
+                Sistema funcionando
+
+            </div>
+
+        </aside>
+
+
+
+        <!-- =================================================
+             CONTEÚDO
+        ================================================== -->
+
+        <main class="main">
+
+            <div class="conteudo">
+
+
+                <!-- TOPO -->
+
+                <header class="topo">
+
+                    <div>
+
+                        <small>
+                            PAINEL DE CONTROLE
+                        </small>
+
+                        <h1>
+                            Olá! Seja bem-vindo 💜
+                        </h1>
+
+                        <p>
+                            Organize seus produtos de maneira
+                            simples, bonita e inteligente.
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        class="btn btn-lilas"
+                        onclick="abrirModal()"
+                    >
+                        ＋ Novo produto
+                    </button>
+
+                </header>
+
+
+
+                <!-- BANNER -->
+
+                <section class="banner">
+
+                    <h2>
+                        Seu estoque, organizado com carinho ✨
+                    </h2>
+
+                    <p>
+                        Cadastre seus produtos e acompanhe
+                        tudo de pertinho.
+                    </p>
+
+                    <div class="banner-emoji">
+                        🎀
+                    </div>
+
+                </section>
+
+
+
+                <!-- CARDS -->
+
+                <section class="cards">
+
+
+                    <div class="card">
+
+                        <div class="card-icon">
+                            📦
+                        </div>
+
+                        <div class="card-info">
+
+                            <span>
+                                Total de produtos
+                            </span>
+
+                            <strong id="totalProdutos">
+                                0
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="card">
+
+                        <div class="card-icon">
+                            📊
+                        </div>
+
+                        <div class="card-info">
+
+                            <span>
+                                Itens em estoque
+                            </span>
+
+                            <strong id="totalEstoque">
+                                0
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="card">
+
+                        <div class="card-icon">
+                            💰
+                        </div>
+
+                        <div class="card-info">
+
+                            <span>
+                                Valor do estoque
+                            </span>
+
+                            <strong id="valorEstoque">
+                                R$ 0,00
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="card">
+
+                        <div class="card-icon">
+                            ⚠️
+                        </div>
+
+                        <div class="card-info">
+
+                            <span>
+                                Estoque baixo
+                            </span>
+
+                            <strong id="estoqueBaixo">
+                                0
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- =================================================
+                     PRODUTOS
+                ================================================== -->
+
+                <section class="painel">
+
+                    <div class="painel-topo">
+
+                        <div>
+
+                            <h2>
+                                Meus produtos 🌸
+                            </h2>
+
+                            <p>
+                                Veja e gerencie todos os produtos
+                                cadastrados.
+                            </p>
+
+                        </div>
+
+
+                        <div class="pesquisa">
+
+                            🔎
+
+                            <input
+                                type="text"
+                                id="pesquisa"
+                                placeholder="Pesquisar..."
+                                oninput="pesquisarProdutos()"
+                            >
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="tabela">
+
+                        <table>
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        Código
+                                    </th>
+
+                                    <th>
+                                        Produto
+                                    </th>
+
+                                    <th>
+                                        Quantidade
+                                    </th>
+
+                                    <th>
+                                        Valor
+                                    </th>
+
+                                    <th>
+                                        Status
+                                    </th>
+
+                                    <th>
+                                        Ações
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody id="tabelaProdutos">
+                            </tbody>
+
+                        </table>
+
+
+                        <div
+                            class="vazio"
+                            id="estadoVazio"
+                        >
+
+                            <div class="vazio-icon">
+                                📦
+                            </div>
+
+                            <strong>
+                                Nenhum produto ainda 💜
+                            </strong>
+
+                            <p>
+                                Clique em "Novo produto"
+                                para cadastrar o primeiro.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+            </div>
+
+        </main>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         MODAL
+    ====================================================== -->
+
+    <div
+        class="modal escondido"
+        id="modalProduto"
+    >
+
+        <div class="modal-box">
+
+
+            <button
+                class="fechar"
+                onclick="fecharModal()"
             >
-
-            <input
-                type="number"
-                id="quantidade"
-                placeholder="Quantidade"
-            >
-
-            <input
-                type="number"
-                id="valor"
-                placeholder="Valor do produto"
-                step="0.01"
-            >
-
-            <button onclick="cadastrarProduto()">
-                Cadastrar Produto
+                ×
             </button>
 
-        </div>
+
+            <h2>
+                Novo produto 🎀
+            </h2>
+
+            <p>
+                Preencha as informações do produto.
+            </p>
 
 
-        <!-- Lista de produtos -->
-        <div class="lista-produtos">
+            <form
+                id="formProduto"
+                onsubmit="salvarProduto(event)"
+            >
 
-            <h2>Produtos Cadastrados</h2>
 
-            <div id="lista">
-                <!-- Os produtos aparecerão aqui -->
-            </div>
+                <div class="campo">
+
+                    <label>
+                        Código
+                    </label>
+
+                    <input
+                        type="text"
+                        id="codigo"
+                        placeholder="Ex: PROD001"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label>
+                        Nome do produto
+                    </label>
+
+                    <input
+                        type="text"
+                        id="nome"
+                        placeholder="Ex: Caderno lilás"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label>
+                        Quantidade
+                    </label>
+
+                    <input
+                        type="number"
+                        id="quantidade"
+                        min="0"
+                        placeholder="Ex: 20"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label>
+                        Valor unitário
+                    </label>
+
+                    <input
+                        type="number"
+                        id="valor"
+                        min="0"
+                        step="0.01"
+                        placeholder="Ex: 29.90"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-botoes">
+
+                    <button
+                        type="button"
+                        class="btn btn-cinza"
+                        onclick="fecharModal()"
+                    >
+                        Cancelar
+                    </button>
+
+
+                    <button
+                        type="submit"
+                        class="btn btn-lilas"
+                    >
+                        Salvar produto 💜
+                    </button>
+
+                </div>
+
+            </form>
 
         </div>
 
     </div>
 
 
-    <!-- Ligação com o JavaScript -->
-    <script src="script.js"></script>
+
+    <!-- TOAST -->
+
+    <div
+        class="toast"
+        id="toast"
+    >
+        Produto cadastrado com sucesso! 💜
+    </div>
+
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+    ====================================================== -->
+
+    <script>
+
+        /* =====================================================
+           ARRAY DE PRODUTOS
+        ===================================================== */
+
+        let produtos = [];
+
+        let produtoEditando = null;
+
+
+        /* =====================================================
+           ELEMENTOS
+        ===================================================== */
+
+        const tabela =
+            document.getElementById("tabelaProdutos");
+
+        const estadoVazio =
+            document.getElementById("estadoVazio");
+
+        const modal =
+            document.getElementById("modalProduto");
+
+        const toast =
+            document.getElementById("toast");
+
+
+        /* =====================================================
+           ABRIR MODAL
+        ===================================================== */
+
+        function abrirModal() {
+
+            modal.classList.remove("escondido");
+
+            document.getElementById("codigo").focus();
+
+        }
+
+
+        /* =====================================================
+           FECHAR MODAL
+        ===================================================== */
+
+        function fecharModal() {
+
+            modal.classList.add("escondido");
+
+            document
+                .getElementById("formProduto")
+                .reset();
+
+            produtoEditando = null;
+        }
+
+
+        /* =====================================================
+           SALVAR PRODUTO
+        ===================================================== */
+
+        function salvarProduto(event) {
+
+            event.preventDefault();
+
+
+            const codigo =
+                document
+                    .getElementById("codigo")
+                    .value
+                    .trim();
+
+
+            const nome =
+                document
+                    .getElementById("nome")
+                    .value
+                    .trim();
+
+
+            const quantidade =
+                Number(
+                    document
+                        .getElementById("quantidade")
+                        .value
+                );
+
+
+            const valor =
+                Number(
+                    document
+                        .getElementById("valor")
+                        .value
+                );
+
+
+            if (
+                !codigo ||
+                !nome ||
+                quantidade < 0 ||
+                valor < 0
+            ) {
+
+                mostrarToast(
+                    "Preencha os dados corretamente! 💜"
+                );
+
+                return;
+            }
+
+
+            /* EDITAR */
+
+            if (produtoEditando !== null) {
+
+                produtos[produtoEditando] = {
+
+                    codigo,
+                    nome,
+                    quantidade,
+                    valor
+
+                };
+
+                mostrarToast(
+                    "Produto atualizado! ✨"
+                );
+
+            }
+
+
+            /* CADASTRAR */
+
+            else {
+
+                const codigoExiste =
+                    produtos.some(
+                        produto =>
+                            produto.codigo.toLowerCase()
+                            === codigo.toLowerCase()
+                    );
+
+
+                if (codigoExiste) {
+
+                    mostrarToast(
+                        "Esse código já existe! 💜"
+                    );
+
+                    return;
+                }
+
+
+                produtos.push({
+
+                    codigo,
+                    nome,
+                    quantidade,
+                    valor
+
+                });
+
+
+                mostrarToast(
+                    "Produto cadastrado! 🎀"
+                );
+
+            }
+
+
+            fecharModal();
+
+            atualizarTela();
+
+        }
+
+
+        /* =====================================================
+           ATUALIZAR TELA
+        ===================================================== */
+
+        function atualizarTela() {
+
+            tabela.innerHTML = "";
+
+
+            if (produtos.length === 0) {
+
+                estadoVazio.style.display =
+                    "block";
+
+            }
+
+            else {
+
+                estadoVazio.style.display =
+                    "none";
+
+
+                produtos.forEach(
+                    (produto, indice) => {
+
+                        adicionarLinha(
+                            produto,
+                            indice
+                        );
+
+                    }
+                );
+
+            }
+
+
+            atualizarCards();
+
+        }
+
+
+        /* =====================================================
+           ADICIONAR LINHA
+        ===================================================== */
+
+        function adicionarLinha(
+            produto,
+            indice
+        ) {
+
+            const tr =
+                document.createElement("tr");
+
+
+            const status =
+                produto.quantidade <= 5
+                    ? "baixo"
+                    : "ok";
+
+
+            const textoStatus =
+                status === "baixo"
+                    ? "Estoque baixo"
+                    : "Disponível";
+
+
+            tr.innerHTML = `
+
+                <td>
+                    <span class="codigo">
+                        ${produto.codigo}
+                    </span>
+                </td>
+
+                <td>
+                    <span class="produto">
+                        ${produto.nome}
+                    </span>
+                </td>
+
+                <td>
+                    <strong>
+                        ${produto.quantidade}
+                    </strong>
+                </td>
+
+                <td>
+                    <span class="valor">
+                        ${formatarMoeda(produto.valor)}
+                    </span>
+                </td>
+
+                <td>
+
+                    <span
+                        class="tag ${
+                            status === "baixo"
+                                ? "tag-baixo"
+                                : "tag-ok"
+                        }"
+                    >
+
+                        ${
+                            status === "baixo"
+                                ? "⚠️"
+                                : "✓"
+                        }
+
+                        ${textoStatus}
+
+                    </span>
+
+                </td>
+
+                <td>
+
+                    <div class="acoes">
+
+                        <button
+                            class="acao editar"
+                            onclick="editarProduto(${indice})"
+                            title="Editar"
+                        >
+                            ✏️
+                        </button>
+
+                        <button
+                            class="acao excluir"
+                            onclick="excluirProduto(${indice})"
+                            title="Excluir"
+                        >
+                            🗑️
+                        </button>
+
+                    </div>
+
+                </td>
+            `;
+
+
+            tabela.appendChild(tr);
+
+        }
+
+
+        /* =====================================================
+           EDITAR
+        ===================================================== */
+
+        function editarProduto(indice) {
+
+            const produto =
+                produtos[indice];
+
+
+            produtoEditando =
+                indice;
+
+
+            document
+                .getElementById("codigo")
+                .value =
+                produto.codigo;
+
+
+            document
+                .getElementById("nome")
+                .value =
+                produto.nome;
+
+
+            document
+                .getElementById("quantidade")
+                .value =
+                produto.quantidade;
+
+
+            document
+                .getElementById("valor")
+                .value =
+                produto.valor;
+
+
+            abrirModal();
+
+        }
+
+
+        /* =====================================================
+           EXCLUIR
+        ===================================================== */
+
+        function excluirProduto(indice) {
+
+            const produto =
+                produtos[indice];
+
+
+            const confirmar =
+                confirm(
+                    `Deseja realmente excluir "${produto.nome}"?`
+                );
+
+
+            if (!confirmar) {
+                return;
+            }
+
+
+            produtos.splice(
+                indice,
+                1
+            );
+
+
+            atualizarTela();
+
+
+            mostrarToast(
+                "Produto removido! 🗑️"
+            );
+
+        }
+
+
+        /* =====================================================
+           PESQUISAR
+        ===================================================== */
+
+        function pesquisarProdutos() {
+
+            const busca =
+                document
+                    .getElementById("pesquisa")
+                    .value
+                    .toLowerCase()
+                    .trim();
+
+
+            const linhas =
+                tabela.querySelectorAll("tr");
+
+
+            let encontrou = false;
+
+
+            linhas.forEach(
+                linha => {
+
+                    const texto =
+                        linha.innerText
+                            .toLowerCase();
+
+
+                    if (
+                        texto.includes(busca)
+                    ) {
+
+                        linha.style.display =
+                            "";
+
+                        encontrou = true;
+
+                    }
+
+                    else {
+
+                        linha.style.display =
+                            "none";
+
+                    }
+
+                }
+            );
+
+        }
+
+
+        /* =====================================================
+           FOCAR PESQUISA
+        ===================================================== */
+
+        function focarPesquisa() {
+
+            const pesquisa =
+                document.getElementById(
+                    "pesquisa"
+                );
+
+
+            pesquisa.focus();
+
+
+            pesquisa.scrollIntoView({
+                behavior: "smooth",
+                block: "center"
+            });
+
+        }
+
+
+        /* =====================================================
+           ATUALIZAR CARDS
+        ===================================================== */
+
+        function atualizarCards() {
+
+            const totalProdutos =
+                produtos.length;
+
+
+            const totalEstoque =
+                produtos.reduce(
+                    (
+                        total,
+                        produto
+                    ) =>
+                        total +
+                        produto.quantidade,
+                    0
+                );
+
+
+            const valorEstoque =
+                produtos.reduce(
+                    (
+                        total,
+                        produto
+                    ) =>
+                        total +
+                        (
+                            produto.quantidade *
+                            produto.valor
+                        ),
+                    0
+                );
+
+
+            const estoqueBaixo =
+                produtos.filter(
+                    produto =>
+                        produto.quantidade <= 5
+                ).length;
+
+
+            document
+                .getElementById("totalProdutos")
+                .textContent =
+                totalProdutos;
+
+
+            document
+                .getElementById("totalEstoque")
+                .textContent =
+                totalEstoque;
+
+
+            document
+                .getElementById("valorEstoque")
+                .textContent =
+                formatarMoeda(
+                    valorEstoque
+                );
+
+
+            document
+                .getElementById("estoqueBaixo")
+                .textContent =
+                estoqueBaixo;
+
+        }
+
+
+        /* =====================================================
+           MOEDA
+        ===================================================== */
+
+        function formatarMoeda(valor) {
+
+            return valor.toLocaleString(
+                "pt-BR",
+                {
+                    style: "currency",
+                    currency: "BRL"
+                }
+            );
+
+        }
+
+
+        /* =====================================================
+           TOAST
+        ===================================================== */
+
+        let toastTimeout;
+
+
+        function mostrarToast(mensagem) {
+
+            toast.textContent =
+                mensagem;
+
+
+            toast.classList.add(
+                "mostrar"
+            );
+
+
+            clearTimeout(
+                toastTimeout
+            );
+
+
+            toastTimeout =
+                setTimeout(
+                    () => {
+
+                        toast.classList.remove(
+                            "mostrar"
+                        );
+
+                    },
+                    2500
+                );
+
+        }
+
+
+        /* =====================================================
+           MENU
+        ===================================================== */
+
+        function mostrarDashboard(botao) {
+
+            document
+                .querySelectorAll(".menu button")
+                .forEach(
+                    item =>
+                        item.classList.remove(
+                            "ativo"
+                        )
+                );
+
+
+            botao.classList.add(
+                "ativo"
+            );
+
+        }
+
+
+        /* =====================================================
+           FECHAR MODAL CLICANDO FORA
+        ===================================================== */
+
+        modal.addEventListener(
+            "click",
+            function(event) {
+
+                if (
+                    event.target === modal
+                ) {
+
+                    fecharModal();
+
+                }
+
+            }
+        );
+
+
+        /* =====================================================
+           ESC PARA FECHAR
+        ===================================================== */
+
+        document.addEventListener(
+            "keydown",
+            function(event) {
+
+                if (
+                    event.key === "Escape"
+                ) {
+
+                    fecharModal();
+
+                }
+
+            }
+        );
+
+
+        /* =====================================================
+           PRODUTOS DE EXEMPLO
+           
+           Deixei alguns produtos para a tela
+           não começar completamente vazia.
+        ===================================================== */
+
+        produtos = [
+
+            {
+                codigo: "PROD001",
+                nome: "Caderno Lilás",
+                quantidade: 15,
+                valor: 24.90
+            },
+
+            {
+                codigo: "PROD002",
+                nome: "Caneta Rosa",
+                quantidade: 30,
+                valor: 6.50
+            },
+
+            {
+                codigo: "PROD003",
+                nome: "Estojo Fofo",
+                quantidade: 4,
+                valor: 32.90
+            }
+
+        ];
+
+
+        /* =====================================================
+           INICIALIZAÇÃO
+        ===================================================== */
+
+        atualizarTela();
+
+    </script>
 
 <script src="script.js"></script></body>
 
