@@ -2,69 +2,3387 @@
 <html lang="pt-BR">
 
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Cadastro de Produtos</title>
+    <title>BlueStock | Gestão de Estoque</title>
 
-    <!-- Ligação com o CSS -->
-    <link rel="stylesheet" href="style.css">
+
+    <style>
+
+        /* =====================================================
+           CONFIGURAÇÕES GERAIS
+        ===================================================== */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+
+        :root {
+
+            --azul: #2563eb;
+            --azul-escuro: #163b78;
+            --azul-claro: #eaf3ff;
+            --azul-fundo: #edf6ff;
+
+            --texto: #172b4d;
+            --texto-claro: #71829b;
+
+            --branco: #ffffff;
+
+            --verde: #16a36a;
+            --amarelo: #e99a18;
+            --vermelho: #dc3545;
+
+            --borda: #dce9f7;
+
+            --sombra:
+                0 15px 45px rgba(48, 92, 145, 0.10);
+
+        }
+
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+
+        body {
+
+            font-family:
+                Inter,
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            min-height: 100vh;
+
+            color: var(--texto);
+
+            background:
+
+                radial-gradient(
+                    circle at 10% 10%,
+                    rgba(73, 151, 255, 0.16),
+                    transparent 28%
+                ),
+
+                radial-gradient(
+                    circle at 90% 20%,
+                    rgba(73, 151, 255, 0.12),
+                    transparent 25%
+                ),
+
+                linear-gradient(
+                    135deg,
+                    #eef7ff,
+                    #e8f2fc 50%,
+                    #f4f9ff
+                );
+
+            overflow-x: hidden;
+
+        }
+
+
+        button,
+        input {
+
+            font-family: inherit;
+
+        }
+
+
+        button {
+
+            cursor: pointer;
+
+        }
+
+
+        /* =====================================================
+           BOLHAS DECORATIVAS
+        ===================================================== */
+
+        .bolha {
+
+            position: fixed;
+
+            border-radius: 50%;
+
+            pointer-events: none;
+
+            z-index: -1;
+
+            filter: blur(1px);
+
+            opacity: .45;
+
+            animation:
+                flutuar 8s ease-in-out infinite;
+
+        }
+
+
+        .bolha-1 {
+
+            width: 180px;
+            height: 180px;
+
+            background: rgba(37, 99, 235, .09);
+
+            top: 10%;
+            left: -70px;
+
+        }
+
+
+        .bolha-2 {
+
+            width: 250px;
+            height: 250px;
+
+            background: rgba(56, 189, 248, .08);
+
+            right: -100px;
+            bottom: 5%;
+
+            animation-delay: 2s;
+
+        }
+
+
+        @keyframes flutuar {
+
+            0%,
+            100% {
+
+                transform:
+                    translateY(0)
+                    scale(1);
+
+            }
+
+            50% {
+
+                transform:
+                    translateY(-25px)
+                    scale(1.04);
+
+            }
+
+        }
+
+
+        /* =====================================================
+           LAYOUT
+        ===================================================== */
+
+        .app {
+
+            min-height: 100vh;
+
+            display: flex;
+
+        }
+
+
+        /* =====================================================
+           SIDEBAR
+        ===================================================== */
+
+        .sidebar {
+
+            width: 265px;
+
+            min-height: 100vh;
+
+            position: fixed;
+
+            left: 0;
+            top: 0;
+
+            padding: 28px 18px;
+
+            color: white;
+
+            background:
+
+                linear-gradient(
+                    180deg,
+                    #102b55,
+                    #0d2345
+                );
+
+            box-shadow:
+                8px 0 35px
+                rgba(19, 59, 105, .16);
+
+            display: flex;
+
+            flex-direction: column;
+
+            z-index: 10;
+
+        }
+
+
+        /* LOGO */
+
+        .logo {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+
+            padding:
+                0 10px
+                28px;
+
+        }
+
+
+        .logo-icon {
+
+            width: 46px;
+            height: 46px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 14px;
+
+            font-size: 22px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #4f8cff,
+                    #1e55d7
+                );
+
+            box-shadow:
+                0 8px 20px
+                rgba(37, 99, 235, .3);
+
+            animation:
+                logoPulse 3s ease-in-out infinite;
+
+        }
+
+
+        @keyframes logoPulse {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-3px);
+            }
+
+        }
+
+
+        .logo h2 {
+
+            font-size: 19px;
+
+            letter-spacing: -.5px;
+
+        }
+
+
+        .logo p {
+
+            font-size: 10px;
+
+            color: #8fa8c9;
+
+            margin-top: 3px;
+
+        }
+
+
+        /* MENU */
+
+        .menu-title {
+
+            color: #6885aa;
+
+            font-size: 10px;
+
+            font-weight: bold;
+
+            letter-spacing: 1.5px;
+
+            padding:
+                0 12px
+                10px;
+
+        }
+
+
+        .menu {
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 7px;
+
+        }
+
+
+        .menu button {
+
+            width: 100%;
+
+            border: none;
+
+            background: transparent;
+
+            color: #a9bbd4;
+
+            padding: 13px 14px;
+
+            border-radius: 11px;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+
+            text-align: left;
+
+            transition: .25s;
+
+        }
+
+
+        .menu button:hover {
+
+            color: white;
+
+            background:
+                rgba(255,255,255,.07);
+
+            transform:
+                translateX(3px);
+
+        }
+
+
+        .menu button.ativo {
+
+            color: white;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    rgba(70, 132, 239, .32),
+                    rgba(70, 132, 239, .10)
+                );
+
+            box-shadow:
+                inset 3px 0 0 #5c96ff;
+
+        }
+
+
+        .menu-icon {
+
+            width: 22px;
+
+            text-align: center;
+
+            font-size: 17px;
+
+        }
+
+
+        /* STATUS */
+
+        .status {
+
+            margin-top: auto;
+
+            padding: 14px;
+
+            border:
+                1px solid
+                rgba(255,255,255,.07);
+
+            border-radius: 12px;
+
+            background:
+                rgba(255,255,255,.04);
+
+            font-size: 11px;
+
+            color: #8fa8c9;
+
+        }
+
+
+        .status-dot {
+
+            width: 8px;
+            height: 8px;
+
+            display: inline-block;
+
+            border-radius: 50%;
+
+            background: #34d399;
+
+            margin-right: 7px;
+
+            box-shadow:
+                0 0 10px
+                rgba(52,211,153,.8);
+
+            animation:
+                piscar 2s infinite;
+
+        }
+
+
+        @keyframes piscar {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: .45;
+            }
+
+        }
+
+
+        /* =====================================================
+           CONTEÚDO
+        ===================================================== */
+
+        .main {
+
+            width: calc(100% - 265px);
+
+            margin-left: 265px;
+
+            padding:
+                35px 42px 60px;
+
+        }
+
+
+        .conteudo {
+
+            max-width: 1300px;
+
+            margin: auto;
+
+        }
+
+
+        /* =====================================================
+           TOPO
+        ===================================================== */
+
+        .topo {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            margin-bottom: 30px;
+
+            animation:
+                aparecer .6s ease;
+
+        }
+
+
+        .topo-esquerda small {
+
+            color: var(--azul);
+
+            font-size: 10px;
+
+            font-weight: 800;
+
+            letter-spacing: 2px;
+
+        }
+
+
+        .topo-esquerda h1 {
+
+            font-size: 30px;
+
+            margin-top: 5px;
+
+            letter-spacing: -1px;
+
+        }
+
+
+        .topo-esquerda p {
+
+            color: var(--texto-claro);
+
+            font-size: 13px;
+
+            margin-top: 5px;
+
+        }
+
+
+        @keyframes aparecer {
+
+            from {
+
+                opacity: 0;
+
+                transform:
+                    translateY(-15px);
+
+            }
+
+            to {
+
+                opacity: 1;
+
+                transform:
+                    translateY(0);
+
+            }
+
+        }
+
+
+        /* =====================================================
+           BOTÕES
+        ===================================================== */
+
+        .btn {
+
+            border: none;
+
+            border-radius: 10px;
+
+            padding:
+                12px 18px;
+
+            font-weight: 700;
+
+            transition: .25s;
+
+        }
+
+
+        .btn-azul {
+
+            color: white;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #3475f5,
+                    #2054d6
+                );
+
+            box-shadow:
+                0 8px 20px
+                rgba(37,99,235,.22);
+
+        }
+
+
+        .btn-azul:hover {
+
+            transform:
+                translateY(-3px);
+
+            box-shadow:
+                0 12px 25px
+                rgba(37,99,235,.3);
+
+        }
+
+
+        .btn-cinza {
+
+            background: white;
+
+            color: #56657a;
+
+            border:
+                1px solid var(--borda);
+
+        }
+
+
+        .btn-cinza:hover {
+
+            background: #f5f9ff;
+
+        }
+
+
+        /* =====================================================
+           BANNER
+        ===================================================== */
+
+        .banner {
+
+            position: relative;
+
+            overflow: hidden;
+
+            padding: 27px 30px;
+
+            border-radius: 18px;
+
+            margin-bottom: 22px;
+
+            color: white;
+
+            background:
+
+                linear-gradient(
+                    110deg,
+                    #2157c8,
+                    #3679ed,
+                    #5596fa
+                );
+
+            box-shadow:
+                0 15px 35px
+                rgba(37,99,235,.18);
+
+            animation:
+                subir .7s ease;
+
+        }
+
+
+        .banner::after {
+
+            content: "";
+
+            position: absolute;
+
+            width: 190px;
+            height: 190px;
+
+            border-radius: 50%;
+
+            background:
+                rgba(255,255,255,.08);
+
+            right: 70px;
+
+            top: -80px;
+
+        }
+
+
+        .banner h2 {
+
+            font-size: 21px;
+
+            position: relative;
+
+            z-index: 1;
+
+        }
+
+
+        .banner p {
+
+            color: #dceaff;
+
+            font-size: 13px;
+
+            margin-top: 7px;
+
+            position: relative;
+
+            z-index: 1;
+
+        }
+
+
+        .banner-icon {
+
+            position: absolute;
+
+            right: 35px;
+
+            bottom: 15px;
+
+            font-size: 55px;
+
+            opacity: .85;
+
+            transform:
+                rotate(-8deg);
+
+            animation:
+                flutuar 5s infinite;
+
+        }
+
+
+        @keyframes subir {
+
+            from {
+
+                opacity: 0;
+
+                transform:
+                    translateY(20px);
+
+            }
+
+            to {
+
+                opacity: 1;
+
+                transform:
+                    translateY(0);
+
+            }
+
+        }
+
+
+        /* =====================================================
+           CARDS
+        ===================================================== */
+
+        .cards {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, 1fr);
+
+            gap: 17px;
+
+            margin-bottom: 22px;
+
+        }
+
+
+        .card {
+
+            background:
+                rgba(255,255,255,.82);
+
+            backdrop-filter:
+                blur(12px);
+
+            border:
+                1px solid
+                rgba(220,233,247,.9);
+
+            border-radius: 16px;
+
+            padding: 20px;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 15px;
+
+            box-shadow:
+                var(--sombra);
+
+            transition:
+                transform .3s,
+                box-shadow .3s;
+
+            animation:
+                cardEntrada .6s ease both;
+
+        }
+
+
+        .card:nth-child(2) {
+            animation-delay: .08s;
+        }
+
+        .card:nth-child(3) {
+            animation-delay: .16s;
+        }
+
+        .card:nth-child(4) {
+            animation-delay: .24s;
+        }
+
+
+        @keyframes cardEntrada {
+
+            from {
+
+                opacity: 0;
+
+                transform:
+                    translateY(20px);
+
+            }
+
+            to {
+
+                opacity: 1;
+
+                transform:
+                    translateY(0);
+
+            }
+
+        }
+
+
+        .card:hover {
+
+            transform:
+                translateY(-5px);
+
+            box-shadow:
+                0 20px 45px
+                rgba(48,92,145,.15);
+
+        }
+
+
+        .card-icon {
+
+            width: 48px;
+            height: 48px;
+
+            border-radius: 13px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            font-size: 21px;
+
+            background:
+                var(--azul-claro);
+
+        }
+
+
+        .card-info span {
+
+            display: block;
+
+            color: var(--texto-claro);
+
+            font-size: 11px;
+
+            margin-bottom: 5px;
+
+        }
+
+
+        .card-info strong {
+
+            font-size: 20px;
+
+        }
+
+
+        /* =====================================================
+           PAINEL
+        ===================================================== */
+
+        .painel {
+
+            background:
+                rgba(255,255,255,.88);
+
+            backdrop-filter:
+                blur(12px);
+
+            border:
+                1px solid
+                var(--borda);
+
+            border-radius: 17px;
+
+            box-shadow:
+                var(--sombra);
+
+            overflow: hidden;
+
+            margin-bottom: 22px;
+
+            animation:
+                subir .6s ease;
+
+        }
+
+
+        .painel-topo {
+
+            padding:
+                22px 24px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 15px;
+
+            border-bottom:
+                1px solid
+                #e9f0f8;
+
+        }
+
+
+        .painel-topo h2 {
+
+            font-size: 17px;
+
+        }
+
+
+        .painel-topo p {
+
+            color: var(--texto-claro);
+
+            font-size: 12px;
+
+            margin-top: 5px;
+
+        }
+
+
+        /* =====================================================
+           TABELA
+        ===================================================== */
+
+        .tabela {
+
+            overflow-x: auto;
+
+        }
+
+
+        table {
+
+            width: 100%;
+
+            border-collapse: collapse;
+
+        }
+
+
+        th {
+
+            background:
+                #f7faff;
+
+            color:
+                #8291a8;
+
+            text-align: left;
+
+            font-size: 10px;
+
+            text-transform: uppercase;
+
+            letter-spacing: .7px;
+
+            padding:
+                14px 21px;
+
+        }
+
+
+        td {
+
+            padding:
+                16px 21px;
+
+            border-top:
+                1px solid
+                #edf2f8;
+
+            font-size: 13px;
+
+        }
+
+
+        tbody tr {
+
+            transition:
+                background .2s,
+                transform .2s;
+
+        }
+
+
+        tbody tr:hover {
+
+            background:
+                #f7fbff;
+
+        }
+
+
+        .codigo {
+
+            color: var(--azul);
+
+            font-weight: 800;
+
+        }
+
+
+        .produto-nome {
+
+            font-weight: 700;
+
+        }
+
+
+        .produto-sub {
+
+            display: block;
+
+            color: #94a1b3;
+
+            font-size: 10px;
+
+            margin-top: 3px;
+
+        }
+
+
+        .quantidade {
+
+            font-weight: 800;
+
+        }
+
+
+        .baixo {
+
+            color: var(--amarelo);
+
+        }
+
+
+        .valor {
+
+            font-weight: 700;
+
+        }
+
+
+        .tag {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 5px;
+
+            padding:
+                5px 9px;
+
+            border-radius: 20px;
+
+            font-size: 10px;
+
+            font-weight: 700;
+
+        }
+
+
+        .tag-ok {
+
+            background: #e9faf3;
+
+            color: var(--verde);
+
+        }
+
+
+        .tag-baixo {
+
+            background: #fff6e7;
+
+            color: var(--amarelo);
+
+        }
+
+
+        /* =====================================================
+           AÇÕES
+        ===================================================== */
+
+        .acoes {
+
+            display: flex;
+
+            gap: 7px;
+
+        }
+
+
+        .btn-acao {
+
+            border:
+                1px solid
+                var(--borda);
+
+            background: white;
+
+            padding:
+                7px 10px;
+
+            border-radius: 8px;
+
+            font-size: 11px;
+
+            font-weight: 700;
+
+            transition: .2s;
+
+        }
+
+
+        .btn-editar {
+
+            color: var(--azul);
+
+        }
+
+
+        .btn-editar:hover {
+
+            background:
+                var(--azul-claro);
+
+            transform:
+                translateY(-2px);
+
+        }
+
+
+        .btn-excluir {
+
+            color: var(--vermelho);
+
+        }
+
+
+        .btn-excluir:hover {
+
+            background:
+                #fff0f1;
+
+            transform:
+                translateY(-2px);
+
+        }
+
+
+        /* =====================================================
+           CADASTRO
+        ===================================================== */
+
+        .formulario {
+
+            padding: 25px;
+
+        }
+
+
+        .form-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                1fr 2fr 1fr 1fr;
+
+            gap: 17px;
+
+        }
+
+
+        .campo {
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 8px;
+
+        }
+
+
+        .campo label {
+
+            color:
+                #52647c;
+
+            font-size: 11px;
+
+            font-weight: 800;
+
+        }
+
+
+        .campo input {
+
+            width: 100%;
+
+            border:
+                1px solid
+                #d9e6f3;
+
+            border-radius: 9px;
+
+            padding:
+                12px 13px;
+
+            outline: none;
+
+            color: var(--texto);
+
+            background:
+                #fbfdff;
+
+            transition: .2s;
+
+        }
+
+
+        .campo input:focus {
+
+            background: white;
+
+            border-color:
+                var(--azul);
+
+            box-shadow:
+                0 0 0 4px
+                rgba(37,99,235,.08);
+
+        }
+
+
+        .form-botoes {
+
+            display: flex;
+
+            justify-content: flex-end;
+
+            gap: 9px;
+
+            margin-top: 22px;
+
+        }
+
+
+        /* =====================================================
+           PESQUISA
+        ===================================================== */
+
+        .pesquisa {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 8px;
+
+            border:
+                1px solid
+                var(--borda);
+
+            border-radius: 9px;
+
+            padding:
+                0 11px;
+
+            background: white;
+
+            width: 260px;
+
+        }
+
+
+        .pesquisa span {
+
+            color: #9aa8ba;
+
+        }
+
+
+        .pesquisa input {
+
+            width: 100%;
+
+            border: none;
+
+            outline: none;
+
+            padding:
+                10px 2px;
+
+            color: var(--texto);
+
+        }
+
+
+        /* =====================================================
+           MODAL
+        ===================================================== */
+
+        .modal {
+
+            position: fixed;
+
+            inset: 0;
+
+            background:
+                rgba(12,35,67,.48);
+
+            backdrop-filter:
+                blur(6px);
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            padding: 20px;
+
+            z-index: 100;
+
+            animation:
+                aparecer .25s ease;
+
+        }
+
+
+        .modal.escondido {
+
+            display: none;
+
+        }
+
+
+        .modal-box {
+
+            width: 100%;
+
+            max-width: 480px;
+
+            background:
+                rgba(255,255,255,.97);
+
+            border:
+                1px solid
+                var(--borda);
+
+            border-radius: 19px;
+
+            padding: 28px;
+
+            position: relative;
+
+            box-shadow:
+                0 30px 80px
+                rgba(15,46,87,.25);
+
+            animation:
+                modalEntrada .35s ease;
+
+        }
+
+
+        @keyframes modalEntrada {
+
+            from {
+
+                opacity: 0;
+
+                transform:
+                    scale(.94)
+                    translateY(15px);
+
+            }
+
+            to {
+
+                opacity: 1;
+
+                transform:
+                    scale(1)
+                    translateY(0);
+
+            }
+
+        }
+
+
+        .fechar {
+
+            position: absolute;
+
+            right: 17px;
+
+            top: 13px;
+
+            border: none;
+
+            background: transparent;
+
+            color: #8291a6;
+
+            font-size: 26px;
+
+        }
+
+
+        .modal-box h2 {
+
+            font-size: 21px;
+
+            margin-bottom: 5px;
+
+        }
+
+
+        .modal-box > p {
+
+            color: var(--texto-claro);
+
+            font-size: 12px;
+
+            margin-bottom: 22px;
+
+        }
+
+
+        .modal .campo {
+
+            margin-bottom: 17px;
+
+        }
+
+
+        /* =====================================================
+           TOAST
+        ===================================================== */
+
+        .toast {
+
+            position: fixed;
+
+            right: 25px;
+
+            bottom: 25px;
+
+            padding:
+                13px 18px;
+
+            background:
+                #132d53;
+
+            color: white;
+
+            border-radius: 10px;
+
+            font-size: 12px;
+
+            box-shadow:
+                0 15px 35px
+                rgba(16,48,88,.25);
+
+            opacity: 0;
+
+            transform:
+                translateY(20px);
+
+            pointer-events: none;
+
+            transition: .3s;
+
+            z-index: 200;
+
+        }
+
+
+        .toast.mostrar {
+
+            opacity: 1;
+
+            transform:
+                translateY(0);
+
+        }
+
+
+        /* =====================================================
+           ESTADO VAZIO
+        ===================================================== */
+
+        .vazio {
+
+            text-align: center;
+
+            padding: 55px 20px;
+
+            color: var(--texto-claro);
+
+        }
+
+
+        .vazio-icon {
+
+            font-size: 40px;
+
+            margin-bottom: 10px;
+
+            animation:
+                flutuar 3s infinite;
+
+        }
+
+
+        .vazio strong {
+
+            display: block;
+
+            color: var(--texto);
+
+            margin-bottom: 5px;
+
+        }
+
+
+        /* =====================================================
+           RESPONSIVIDADE
+        ===================================================== */
+
+        @media (max-width: 1100px) {
+
+            .cards {
+
+                grid-template-columns:
+                    repeat(2, 1fr);
+
+            }
+
+
+            .form-grid {
+
+                grid-template-columns:
+                    1fr 1fr;
+
+            }
+
+        }
+
+
+        @media (max-width: 800px) {
+
+            .sidebar {
+
+                position: static;
+
+                width: 100%;
+
+                min-height: auto;
+
+                padding: 15px;
+
+            }
+
+
+            .app {
+
+                display: block;
+
+            }
+
+
+            .logo {
+
+                padding:
+                    0 5px 15px;
+
+            }
+
+
+            .menu {
+
+                flex-direction: row;
+
+                overflow-x: auto;
+
+            }
+
+
+            .menu button {
+
+                white-space: nowrap;
+
+            }
+
+
+            .status {
+
+                display: none;
+
+            }
+
+
+            .main {
+
+                width: 100%;
+
+                margin: 0;
+
+                padding:
+                    25px 15px 45px;
+
+            }
+
+        }
+
+
+        @media (max-width: 600px) {
+
+            .topo {
+
+                flex-direction: column;
+
+                align-items: flex-start;
+
+            }
+
+
+            .topo .btn {
+
+                width: 100%;
+
+            }
+
+
+            .cards {
+
+                grid-template-columns:
+                    1fr;
+
+            }
+
+
+            .banner {
+
+                padding: 23px;
+
+            }
+
+
+            .banner-icon {
+
+                display: none;
+
+            }
+
+
+            .form-grid {
+
+                grid-template-columns:
+                    1fr;
+
+            }
+
+
+            .painel-topo {
+
+                flex-direction: column;
+
+                align-items: flex-start;
+
+            }
+
+
+            .pesquisa {
+
+                width: 100%;
+
+            }
+
+
+            .form-botoes {
+
+                flex-direction: column;
+
+            }
+
+
+            .form-botoes button {
+
+                width: 100%;
+
+            }
+
+        }
+
+    </style>
+
+<script src="https://cdn.tailwindcss.com"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="style.css" rel="stylesheet"></head>
 
+
 <body>
 
-    <div class="container">
 
-        <h1>📦 Cadastro de Produtos</h1>
+    <!-- DECORAÇÃO -->
 
-        <!-- Formulário -->
-        <div class="formulario">
+    <div class="bolha bolha-1"></div>
 
-            <h2>Cadastrar Produto</h2>
+    <div class="bolha bolha-2"></div>
 
-            <input
-                type="text"
-                id="descricao"
-                placeholder="Descrição do produto"
+
+
+    <div class="app">
+
+
+        <!-- =================================================
+             MENU LATERAL
+        ================================================== -->
+
+        <aside class="sidebar">
+
+
+            <div class="logo">
+
+                <div class="logo-icon">
+                    📦
+                </div>
+
+                <div>
+
+                    <h2>
+                        BlueStock
+                    </h2>
+
+                    <p>
+                        GESTÃO INTELIGENTE
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="menu-title">
+                MENU PRINCIPAL
+            </div>
+
+
+            <nav class="menu">
+
+
+                <button
+                    class="ativo"
+                    onclick="mostrarDashboard()"
+                >
+
+                    <span class="menu-icon">
+                        ◈
+                    </span>
+
+                    Visão geral
+
+                </button>
+
+
+                <button
+                    onclick="abrirCadastro()"
+                >
+
+                    <span class="menu-icon">
+                        ＋
+                    </span>
+
+                    Novo produto
+
+                </button>
+
+
+                <button
+                    onclick="irProdutos()"
+                >
+
+                    <span class="menu-icon">
+                        ▤
+                    </span>
+
+                    Produtos
+
+                </button>
+
+
+            </nav>
+
+
+            <div class="status">
+
+                <span class="status-dot"></span>
+
+                Sistema funcionando normalmente
+
+            </div>
+
+
+        </aside>
+
+
+
+        <!-- =================================================
+             CONTEÚDO PRINCIPAL
+        ================================================== -->
+
+        <main class="main">
+
+
+            <div class="conteudo">
+
+
+                <!-- TOPO -->
+
+                <header class="topo">
+
+
+                    <div class="topo-esquerda">
+
+                        <small>
+                            PAINEL DE CONTROLE
+                        </small>
+
+                        <h1>
+                            Visão geral
+                        </h1>
+
+                        <p>
+                            Acompanhe e gerencie seu estoque em tempo real.
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        class="btn btn-azul"
+                        onclick="abrirCadastro()"
+                    >
+
+                        ＋ Novo produto
+
+                    </button>
+
+
+                </header>
+
+
+
+                <!-- BANNER -->
+
+                <section class="banner">
+
+                    <h2>
+                        Olá! 👋 Bem-vindo ao BlueStock
+                    </h2>
+
+                    <p>
+                        Organize seus produtos e mantenha seu estoque sempre sob controle.
+                    </p>
+
+                    <div class="banner-icon">
+                        📊
+                    </div>
+
+                </section>
+
+
+
+                <!-- =================================================
+                     ESTATÍSTICAS
+                ================================================== -->
+
+                <section class="cards">
+
+
+                    <div class="card">
+
+                        <div class="card-icon">
+                            📦
+                        </div>
+
+                        <div class="card-info">
+
+                            <span>
+                                TOTAL DE PRODUTOS
+                            </span>
+
+                            <strong id="totalProdutos">
+                                0
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="card">
+
+                        <div class="card-icon">
+                            🔢
+                        </div>
+
+                        <div class="card-info">
+
+                            <span>
+                                ITENS EM ESTOQUE
+                            </span>
+
+                            <strong id="totalQuantidade">
+                                0
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="card">
+
+                        <div class="card-icon">
+                            💰
+                        </div>
+
+                        <div class="card-info">
+
+                            <span>
+                                VALOR DO ESTOQUE
+                            </span>
+
+                            <strong id="valorEstoque">
+                                R$ 0,00
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="card">
+
+                        <div class="card-icon">
+                            ⚠️
+                        </div>
+
+                        <div class="card-info">
+
+                            <span>
+                                ESTOQUE BAIXO
+                            </span>
+
+                            <strong id="estoqueBaixo">
+                                0
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                </section>
+
+
+
+                <!-- =================================================
+                     CADASTRO
+                ================================================== -->
+
+                <section
+                    id="cadastro"
+                    class="painel"
+                    style="display:none;"
+                >
+
+
+                    <div class="painel-topo">
+
+                        <div>
+
+                            <h2>
+                                ＋ Cadastrar novo produto
+                            </h2>
+
+                            <p>
+                                Adicione um novo produto ao seu estoque.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <form
+                        id="formProduto"
+                        class="formulario"
+                    >
+
+
+                        <div class="form-grid">
+
+
+                            <div class="campo">
+
+                                <label>
+                                    CÓDIGO
+                                </label>
+
+                                <input
+                                    id="codigo"
+                                    type="number"
+                                    min="1"
+                                    placeholder="Ex: 1001"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div class="campo">
+
+                                <label>
+                                    DESCRIÇÃO
+                                </label>
+
+                                <input
+                                    id="descricao"
+                                    type="text"
+                                    placeholder="Ex: Teclado mecânico"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div class="campo">
+
+                                <label>
+                                    QUANTIDADE
+                                </label>
+
+                                <input
+                                    id="quantidade"
+                                    type="number"
+                                    min="0"
+                                    placeholder="Ex: 25"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div class="campo">
+
+                                <label>
+                                    VALOR UNITÁRIO
+                                </label>
+
+                                <input
+                                    id="valor"
+                                    type="number"
+                                    min="0"
+                                    step="0.01"
+                                    placeholder="Ex: 149.90"
+                                    required
+                                >
+
+                            </div>
+
+
+                        </div>
+
+
+                        <div class="form-botoes">
+
+                            <button
+                                type="button"
+                                class="btn btn-cinza"
+                                onclick="fecharCadastro()"
+                            >
+
+                                Cancelar
+
+                            </button>
+
+
+                            <button
+                                type="submit"
+                                class="btn btn-azul"
+                            >
+
+                                ✓ Cadastrar produto
+
+                            </button>
+
+                        </div>
+
+
+                    </form>
+
+
+                </section>
+
+
+
+                <!-- =================================================
+                     LISTA DE PRODUTOS
+                ================================================== -->
+
+                <section
+                    id="produtos"
+                    class="painel"
+                >
+
+
+                    <div class="painel-topo">
+
+
+                        <div>
+
+                            <h2>
+                                📋 Produtos cadastrados
+                            </h2>
+
+                            <p>
+                                Consulte e gerencie todos os produtos.
+                            </p>
+
+                        </div>
+
+
+                        <div class="pesquisa">
+
+                            <span>
+                                🔎
+                            </span>
+
+                            <input
+                                id="pesquisa"
+                                type="text"
+                                placeholder="Pesquisar produto..."
+                            >
+
+                        </div>
+
+
+                    </div>
+
+
+
+                    <div
+                        class="tabela"
+                        id="tabelaContainer"
+                    >
+
+                        <table>
+
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        Código
+                                    </th>
+
+                                    <th>
+                                        Produto
+                                    </th>
+
+                                    <th>
+                                        Quantidade
+                                    </th>
+
+                                    <th>
+                                        Valor
+                                    </th>
+
+                                    <th>
+                                        Total
+                                    </th>
+
+                                    <th>
+                                        Status
+                                    </th>
+
+                                    <th>
+                                        Ações
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody
+                                id="listaProdutos"
+                            >
+
+                            </tbody>
+
+
+                        </table>
+
+                    </div>
+
+
+                </section>
+
+
+            </div>
+
+        </main>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         MODAL DE EDIÇÃO
+    ====================================================== -->
+
+    <div
+        id="modal"
+        class="modal escondido"
+    >
+
+
+        <div class="modal-box">
+
+
+            <button
+                class="fechar"
+                onclick="fecharModal()"
             >
 
-            <input
-                type="number"
-                id="quantidade"
-                placeholder="Quantidade"
-            >
+                ×
 
-            <input
-                type="number"
-                id="valor"
-                placeholder="Valor do produto"
-                step="0.01"
-            >
-
-            <button onclick="cadastrarProduto()">
-                Cadastrar Produto
             </button>
 
-        </div>
+
+            <h2>
+                Editar produto
+            </h2>
 
 
-        <!-- Lista de produtos -->
-        <div class="lista-produtos">
+            <p id="produtoEditando">
+                Atualize as informações do produto.
+            </p>
 
-            <h2>Produtos Cadastrados</h2>
 
-            <div id="lista">
-                <!-- Os produtos aparecerão aqui -->
+            <div class="campo">
+
+                <label>
+                    NOVO VALOR
+                </label>
+
+                <input
+                    id="novoValor"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                >
+
             </div>
+
+
+            <div class="campo">
+
+                <label>
+                    NOVA QUANTIDADE
+                </label>
+
+                <input
+                    id="novaQuantidade"
+                    type="number"
+                    min="0"
+                >
+
+            </div>
+
+
+            <button
+                class="btn btn-azul"
+                style="width:100%;"
+                onclick="salvarEdicao()"
+            >
+
+                ✓ Salvar alterações
+
+            </button>
+
 
         </div>
 
     </div>
 
 
-    <!-- Ligação com o JavaScript -->
-    <script src="script.js"></script>
+
+    <!-- =====================================================
+         TOAST
+    ====================================================== -->
+
+    <div
+        id="toast"
+        class="toast"
+    >
+
+    </div>
+
+
+
+    <script>
+
+
+        /* =====================================================
+           BANCO DE DADOS TEMPORÁRIO
+        ===================================================== */
+
+
+        let produtos = [];
+
+
+        let codigoEditando = null;
+
+
+
+        /* =====================================================
+           ELEMENTOS
+        ===================================================== */
+
+
+        const formProduto =
+            document.getElementById("formProduto");
+
+
+        const listaProdutos =
+            document.getElementById("listaProdutos");
+
+
+        const pesquisa =
+            document.getElementById("pesquisa");
+
+
+        const cadastro =
+            document.getElementById("cadastro");
+
+
+        const produtosPainel =
+            document.getElementById("produtos");
+
+
+        const modal =
+            document.getElementById("modal");
+
+
+        const toast =
+            document.getElementById("toast");
+
+
+
+        /* =====================================================
+           NAVEGAÇÃO
+        ===================================================== */
+
+
+        function atualizarMenu(indice) {
+
+            const botoes =
+                document.querySelectorAll(".menu button");
+
+            botoes.forEach(
+                botao =>
+                    botao.classList.remove("ativo")
+            );
+
+            if (botoes[indice]) {
+
+                botoes[indice]
+                    .classList.add("ativo");
+
+            }
+
+        }
+
+
+
+        function mostrarDashboard() {
+
+            fecharCadastro();
+
+            produtosPainel.scrollIntoView({
+                behavior: "smooth"
+            });
+
+            atualizarMenu(0);
+
+        }
+
+
+
+        function abrirCadastro() {
+
+            cadastro.style.display =
+                "block";
+
+            cadastro.scrollIntoView({
+                behavior: "smooth"
+            });
+
+            atualizarMenu(1);
+
+            setTimeout(
+                () => {
+                    document
+                        .getElementById("codigo")
+                        .focus();
+                },
+                400
+            );
+
+        }
+
+
+
+        function fecharCadastro() {
+
+            cadastro.style.display =
+                "none";
+
+            formProduto.reset();
+
+            atualizarMenu(0);
+
+        }
+
+
+
+        function irProdutos() {
+
+            fecharCadastro();
+
+            produtosPainel.scrollIntoView({
+                behavior: "smooth"
+            });
+
+            atualizarMenu(2);
+
+        }
+
+
+
+        /* =====================================================
+           CADASTRO
+        ===================================================== */
+
+
+        formProduto.addEventListener(
+            "submit",
+            function(event) {
+
+                event.preventDefault();
+
+
+                const codigo =
+                    Number(
+                        document.getElementById("codigo").value
+                    );
+
+
+                const descricao =
+                    document
+                        .getElementById("descricao")
+                        .value
+                        .trim();
+
+
+                const quantidade =
+                    Number(
+                        document.getElementById("quantidade").value
+                    );
+
+
+                const valor =
+                    Number(
+                        document.getElementById("valor").value
+                    );
+
+
+
+                /* VALIDAÇÕES */
+
+
+                if (
+                    !Number.isInteger(codigo) ||
+                    codigo <= 0
+                ) {
+
+                    mostrarMensagem(
+                        "❌ Digite um código válido."
+                    );
+
+                    return;
+
+                }
+
+
+
+                if (
+                    descricao.length < 3
+                ) {
+
+                    mostrarMensagem(
+                        "❌ A descrição deve ter pelo menos 3 caracteres."
+                    );
+
+                    return;
+
+                }
+
+
+
+                if (
+                    !Number.isInteger(quantidade) ||
+                    quantidade < 0
+                ) {
+
+                    mostrarMensagem(
+                        "❌ Digite uma quantidade válida."
+                    );
+
+                    return;
+
+                }
+
+
+
+                if (
+                    !Number.isFinite(valor) ||
+                    valor < 0
+                ) {
+
+                    mostrarMensagem(
+                        "❌ Digite um valor válido."
+                    );
+
+                    return;
+
+                }
+
+
+
+                /* CÓDIGO DUPLICADO */
+
+
+                const existe =
+                    produtos.some(
+                        produto =>
+                            produto.codigo === codigo
+                    );
+
+
+                if (existe) {
+
+                    mostrarMensagem(
+                        "⚠️ Já existe um produto com esse código."
+                    );
+
+                    return;
+
+                }
+
+
+
+                /* CRIAR PRODUTO */
+
+
+                produtos.push({
+
+                    codigo:
+                        codigo,
+
+                    descricao:
+                        descricao,
+
+                    quantidade:
+                        quantidade,
+
+                    valor:
+                        valor
+
+                });
+
+
+
+                atualizarTela();
+
+                formProduto.reset();
+
+                fecharCadastro();
+
+
+                mostrarMensagem(
+                    "✨ Produto cadastrado com sucesso!"
+                );
+
+            }
+        );
+
+
+
+        /* =====================================================
+           LISTAR PRODUTOS
+        ===================================================== */
+
+
+        function listarProdutos(
+            lista = produtos
+        ) {
+
+
+            listaProdutos.innerHTML = "";
+
+
+            if (
+                lista.length === 0
+            ) {
+
+                listaProdutos.innerHTML = `
+
+                    <tr>
+
+                        <td
+                            colspan="7"
+                            style="padding:0;"
+                        >
+
+                            <div class="vazio">
+
+                                <div class="vazio-icon">
+                                    📦
+                                </div>
+
+                                <strong>
+                                    Nenhum produto cadastrado
+                                </strong>
+
+                                <p>
+                                    Adicione seu primeiro produto para começar.
+                                </p>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                `;
+
+                return;
+
+            }
+
+
+
+            lista.forEach(
+                produto => {
+
+
+                    const linha =
+                        document.createElement("tr");
+
+
+                    const total =
+                        produto.quantidade *
+                        produto.valor;
+
+
+                    const estoqueBaixo =
+                        produto.quantidade <= 5;
+
+
+
+                    linha.innerHTML = `
+
+                        <td>
+
+                            <span class="codigo">
+
+                                #${produto.codigo}
+
+                            </span>
+
+                        </td>
+
+
+                        <td>
+
+                            <span class="produto-nome">
+
+                                ${escaparHTML(
+                                    produto.descricao
+                                )}
+
+                            </span>
+
+                            <span class="produto-sub">
+
+                                Produto cadastrado
+
+                            </span>
+
+                        </td>
+
+
+                        <td>
+
+                            <span
+                                class="
+                                    quantidade
+                                    ${
+                                        estoqueBaixo
+                                            ? "baixo"
+                                            : ""
+                                    }
+                                "
+                            >
+
+                                ${produto.quantidade}
+
+                            </span>
+
+                        </td>
+
+
+                        <td>
+
+                            <span class="valor">
+
+                                ${formatarMoeda(
+                                    produto.valor
+                                )}
+
+                            </span>
+
+                        </td>
+
+
+                        <td>
+
+                            <span class="valor">
+
+                                ${formatarMoeda(
+                                    total
+                                )}
+
+                            </span>
+
+                        </td>
+
+
+                        <td>
+
+                            ${
+                                estoqueBaixo
+
+                                ?
+
+                                `
+                                    <span class="tag tag-baixo">
+
+                                        ● Estoque baixo
+
+                                    </span>
+                                `
+
+                                :
+
+                                `
+                                    <span class="tag tag-ok">
+
+                                        ● Disponível
+
+                                    </span>
+                                `
+                            }
+
+                        </td>
+
+
+                        <td>
+
+                            <div class="acoes">
+
+
+                                <button
+                                    class="
+                                        btn-acao
+                                        btn-editar
+                                    "
+                                    onclick="
+                                        editarProduto(
+                                            ${produto.codigo}
+                                        )
+                                    "
+                                >
+
+                                    ✏️ Editar
+
+                                </button>
+
+
+                                <button
+                                    class="
+                                        btn-acao
+                                        btn-excluir
+                                    "
+                                    onclick="
+                                        excluirProduto(
+                                            ${produto.codigo}
+                                        )
+                                    "
+                                >
+
+                                    🗑️
+
+                                </button>
+
+
+                            </div>
+
+                        </td>
+
+                    `;
+
+
+                    listaProdutos
+                        .appendChild(linha);
+
+                }
+            );
+
+        }
+
+
+
+        /* =====================================================
+           EDITAR
+        ===================================================== */
+
+
+        function editarProduto(codigo) {
+
+
+            const produto =
+                produtos.find(
+                    produto =>
+                        produto.codigo === codigo
+                );
+
+
+            if (!produto) {
+
+                mostrarMensagem(
+                    "❌ Produto não encontrado."
+                );
+
+                return;
+
+            }
+
+
+            codigoEditando =
+                codigo;
+
+
+            document
+                .getElementById("produtoEditando")
+                .textContent =
+                    "Editando: " +
+                    produto.descricao;
+
+
+            document
+                .getElementById("novoValor")
+                .value =
+                    produto.valor;
+
+
+            document
+                .getElementById("novaQuantidade")
+                .value =
+                    produto.quantidade;
+
+
+            modal
+                .classList
+                .remove("escondido");
+
+
+            document
+                .getElementById("novoValor")
+                .focus();
+
+        }
+
+
+
+        function salvarEdicao() {
+
+
+            const produto =
+                produtos.find(
+                    produto =>
+                        produto.codigo === codigoEditando
+                );
+
+
+            if (!produto) {
+
+                mostrarMensagem(
+                    "❌ Produto não encontrado."
+                );
+
+                return;
+
+            }
+
+
+
+            const novoValor =
+                Number(
+                    document
+                        .getElementById("novoValor")
+                        .value
+                );
+
+
+            const novaQuantidade =
+                Number(
+                    document
+                        .getElementById("novaQuantidade")
+                        .value
+                );
+
+
+
+            if (
+                !Number.isFinite(novoValor) ||
+                novoValor < 0
+            ) {
+
+                mostrarMensagem(
+                    "❌ Digite um valor válido."
+                );
+
+                return;
+
+            }
+
+
+
+            if (
+                !Number.isInteger(novaQuantidade) ||
+                novaQuantidade < 0
+            ) {
+
+                mostrarMensagem(
+                    "❌ Digite uma quantidade válida."
+                );
+
+                return;
+
+            }
+
+
+
+            produto.valor =
+                novoValor;
+
+
+            produto.quantidade =
+                novaQuantidade;
+
+
+            atualizarTela();
+
+            fecharModal();
+
+
+            mostrarMensagem(
+                "✨ Produto atualizado com sucesso!"
+            );
+
+        }
+
+
+
+        function fecharModal() {
+
+            modal
+                .classList
+                .add("escondido");
+
+            codigoEditando = null;
+
+        }
+
+
+
+        /* =====================================================
+           EXCLUIR
+        ===================================================== */
+
+
+        function excluirProduto(codigo) {
+
+
+            const produto =
+                produtos.find(
+                    produto =>
+                        produto.codigo === codigo
+                );
+
+
+            if (!produto) {
+
+                return;
+
+            }
+
+
+            const confirmar =
+                confirm(
+                    `Deseja excluir "${produto.descricao}"?`
+                );
+
+
+            if (!confirmar) {
+
+                return;
+
+            }
+
+
+            produtos =
+                produtos.filter(
+                    produto =>
+                        produto.codigo !== codigo
+                );
+
+
+            atualizarTela();
+
+
+            mostrarMensagem(
+                "🗑️ Produto excluído com sucesso!"
+            );
+
+        }
+
+
+
+        /* =====================================================
+           PESQUISA
+        ===================================================== */
+
+
+        pesquisa.addEventListener(
+            "input",
+            function() {
+
+
+                const texto =
+                    pesquisa.value
+                        .toLowerCase()
+                        .trim();
+
+
+                const resultados =
+                    produtos.filter(
+                        produto =>
+
+                            produto.descricao
+                                .toLowerCase()
+                                .includes(texto)
+
+                            ||
+
+                            String(
+                                produto.codigo
+                            )
+                            .includes(texto)
+                    );
+
+
+                listarProdutos(
+                    resultados
+                );
+
+            }
+        );
+
+
+
+        /* =====================================================
+           ESTATÍSTICAS
+        ===================================================== */
+
+
+        function atualizarEstatisticas() {
+
+
+            document
+                .getElementById("totalProdutos")
+                .textContent =
+                    produtos.length;
+
+
+
+            const quantidade =
+                produtos.reduce(
+                    (
+                        total,
+                        produto
+                    ) =>
+
+                        total +
+                        produto.quantidade,
+
+                    0
+                );
+
+
+            document
+                .getElementById("totalQuantidade")
+                .textContent =
+                    quantidade;
+
+
+
+            const valor =
+                produtos.reduce(
+                    (
+                        total,
+                        produto
+                    ) =>
+
+                        total +
+                        (
+                            produto.quantidade *
+                            produto.valor
+                        ),
+
+                    0
+                );
+
+
+            document
+                .getElementById("valorEstoque")
+                .textContent =
+                    formatarMoeda(valor);
+
+
+
+            const baixo =
+                produtos.filter(
+                    produto =>
+                        produto.quantidade <= 5
+                ).length;
+
+
+            document
+                .getElementById("estoqueBaixo")
+                .textContent =
+                    baixo;
+
+        }
+
+
+
+        /* =====================================================
+           FORMATAR DINHEIRO
+        ===================================================== */
+
+
+        function formatarMoeda(valor) {
+
+            return Number(valor)
+                .toLocaleString(
+                    "pt-BR",
+                    {
+                        style:
+                            "currency",
+
+                        currency:
+                            "BRL"
+                    }
+                );
+
+        }
+
+
+
+        /* =====================================================
+           SEGURANÇA PARA TEXTO
+        ===================================================== */
+
+
+        function escaparHTML(texto) {
+
+            const div =
+                document.createElement("div");
+
+            div.textContent =
+                texto;
+
+            return div.innerHTML;
+
+        }
+
+
+
+        /* =====================================================
+           ATUALIZAR TELA
+        ===================================================== */
+
+
+        function atualizarTela() {
+
+            listarProdutos();
+
+            atualizarEstatisticas();
+
+        }
+
+
+
+        /* =====================================================
+           MENSAGEM
+        ===================================================== */
+
+
+        let timerToast;
+
+
+        function mostrarMensagem(texto) {
+
+
+            toast.textContent =
+                texto;
+
+
+            toast.classList.add(
+                "mostrar"
+            );
+
+
+            clearTimeout(
+                timerToast
+            );
+
+
+            timerToast =
+                setTimeout(
+                    () => {
+
+                        toast.classList.remove(
+                            "mostrar"
+                        );
+
+                    },
+                    3000
+                );
+
+        }
+
+
+
+        /* =====================================================
+           FECHAR MODAL CLICANDO FORA
+        ===================================================== */
+
+
+        modal.addEventListener(
+            "click",
+            function(event) {
+
+                if (
+                    event.target === modal
+                ) {
+
+                    fecharModal();
+
+                }
+
+            }
+        );
+
+
+
+        /* =====================================================
+           INICIALIZAÇÃO
+        ===================================================== */
+
+
+        atualizarTela();
+
+
+    </script>
+
 
 <script src="script.js"></script></body>
 
