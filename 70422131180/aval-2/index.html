@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>BarberStock - Sistema de Estoque</title>
+
+    <link rel="stylesheet" href="style.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+    <div class="app">
+
+        <!-- MENU LATERAL -->
+        <aside class="sidebar">
+
+            <div class="logo">
+                <div class="logo-icon">✂</div>
+
+                <div>
+                    <h2>BarberStock</h2>
+                    <span>Gestão de Estoque</span>
+                </div>
+            </div>
+
+            <nav>
+                <button class="menu active">
+                    <span>📦</span>
+                    Estoque
+                </button>
+
+                <button class="menu" onclick="abrirCadastro()">
+                    <span>➕</span>
+                    Novo Produto
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                Sistema de estoque<br>
+                <small>Versão 1.0</small>
+            </div>
+
+        </aside>
+
+
+        <!-- CONTEÚDO PRINCIPAL -->
+        <main class="main">
+
+            <!-- TOPO -->
+            <header class="topbar">
+
+                <div>
+                    <h1>Estoque</h1>
+                    <p>Controle seus produtos de cabelo masculino</p>
+                </div>
+
+                <button class="btn-primary" onclick="abrirCadastro()">
+                    + Novo Produto
+                </button>
+
+            </header>
+
+
+            <!-- CARDS -->
+            <section class="cards">
+
+                <div class="card">
+                    <div class="card-icon blue">📦</div>
+
+                    <div>
+                        <span>Total de produtos</span>
+                        <strong id="totalProdutos">0</strong>
+                    </div>
+                </div>
+
+
+                <div class="card">
+                    <div class="card-icon green">💰</div>
+
+                    <div>
+                        <span>Valor em estoque</span>
+                        <strong id="valorEstoque">R$ 0,00</strong>
+                    </div>
+                </div>
+
+
+                <div class="card">
+                    <div class="card-icon orange">⚠️</div>
+
+                    <div>
+                        <span>Estoque baixo</span>
+                        <strong id="estoqueBaixo">0</strong>
+                    </div>
+                </div>
+
+            </section>
+
+
+            <!-- ÁREA DA TABELA -->
+            <section class="content-box">
+
+                <div class="table-header">
+
+                    <div>
+                        <h2>Produtos cadastrados</h2>
+                        <p>Gerencie os produtos disponíveis no estoque.</p>
+                    </div>
+
+                    <div class="search">
+                        🔎
+                        <input
+                            type="text"
+                            id="pesquisa"
+                            placeholder="Pesquisar produto..."
+                            oninput="listarProdutos()"
+                        >
+                    </div>
+
+                </div>
+
+
+                <div class="table-container">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+                                <th>CÓDIGO</th>
+                                <th>PRODUTO</th>
+                                <th>QUANTIDADE</th>
+                                <th>VALOR</th>
+                                <th>STATUS</th>
+                                <th>AÇÕES</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="listaProdutos"></tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+    <!-- MODAL CADASTRO -->
+    <div class="modal" id="modalCadastro">
+
+        <div class="modal-box">
+
+            <div class="modal-header">
+
+                <div>
+                    <h2>Novo produto</h2>
+                    <p>Cadastre um produto no estoque.</p>
+                </div>
+
+                <button class="close" onclick="fecharCadastro()">×</button>
+
+            </div>
+
+
+            <div class="form">
+
+                <label>Código</label>
+
+                <input
+                    type="text"
+                    id="codigo"
+                    placeholder="Ex: PROD-001"
+                >
+
+
+                <label>Nome do produto</label>
+
+                <input
+                    type="text"
+                    id="descricao"
+                    placeholder="Ex: Pomada Modeladora"
+                >
+
+
+                <div class="form-row">
+
+                    <div>
+                        <label>Quantidade</label>
+
+                        <input
+                            type="number"
+                            id="quantidade"
+                            min="0"
+                            placeholder="0"
+                        >
+                    </div>
+
+
+                    <div>
+                        <label>Valor (R$)</label>
+
+                        <input
+                            type="number"
+                            id="valor"
+                            min="0"
+                            step="0.01"
+                            placeholder="0,00"
+                        >
+                    </div>
+
+                </div>
+
+
+                <div class="modal-actions">
+
+                    <button
+                        class="btn-secondary"
+                        onclick="fecharCadastro()">
+                        Cancelar
+                    </button>
+
+                    <button
+                        class="btn-primary"
+                        onclick="cadastrarProduto()">
+                        Cadastrar produto
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- MODAL ALTERAÇÃO -->
+    <div class="modal" id="modalEditar">
+
+        <div class="modal-box">
+
+            <div class="modal-header">
+
+                <div>
+                    <h2 id="tituloEdicao">Editar produto</h2>
+                    <p>Altere os dados do produto.</p>
+                </div>
+
+                <button class="close" onclick="fecharEdicao()">×</button>
+
+            </div>
+
+
+            <div class="form">
+
+                <input type="hidden" id="indiceEdicao">
+
+
+                <label>Produto</label>
+
+                <input
+                    type="text"
+                    id="produtoEdicao"
+                    disabled
+                >
+
+
+                <label>Quantidade</label>
+
+                <input
+                    type="number"
+                    id="quantidadeEdicao"
+                    min="0"
+                >
+
+
+                <label>Valor (R$)</label>
+
+                <input
+                    type="number"
+                    id="valorEdicao"
+                    min="0"
+                    step="0.01"
+                >
+
+
+                <div class="modal-actions">
+
+                    <button
+                        class="btn-secondary"
+                        onclick="fecharEdicao()">
+                        Cancelar
+                    </button>
+
+                    <button
+                        class="btn-primary"
+                        onclick="salvarEdicao()">
+                        Salvar alterações
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <script src="script.js"></script>
+
+<script src="script.js"></script></body>
+</html>
