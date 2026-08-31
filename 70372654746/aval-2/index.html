@@ -1,0 +1,350 @@
+Sistema de Estoque — Linha de Perfumes
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estoque - Loja de Perfumes</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #fceef5;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #a83f6f;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .formulario {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        input {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        button {
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            background-color: #a83f6f;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #842d55;
+        }
+
+        .botoes {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #a83f6f;
+            color: white;
+        }
+
+        .mensagem {
+            text-align: center;
+            color: #a83f6f;
+            font-weight: bold;
+            margin: 10px;
+        }
+
+        @media (max-width: 600px) {
+            .formulario {
+                grid-template-columns: 1fr;
+            }
+
+            .botoes {
+                flex-direction: column;
+            }
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+    <div class="container">
+
+        <h1>🌸 Sistema de Estoque - Loja de Perfumes</h1>
+
+        <h2>Cadastrar Novo Produto</h2>
+
+        <div class="formulario">
+
+            <input type="number" id="codigo" placeholder="Código">
+
+            <input type="text" id="descricao" placeholder="Descrição do produto">
+
+            <input type="number" id="quantidade" placeholder="Quantidade">
+
+            <input type="number" id="valor" placeholder="Valor" step="0.01">
+
+        </div>
+
+        <div class="botoes">
+            <button onclick="cadastrarProduto()">
+                Cadastrar Produto
+            </button>
+
+            <button onclick="listarProdutos()">
+                Listar Produtos
+            </button>
+
+            <button onclick="alterarValor()">
+                Alterar Valor
+            </button>
+
+            <button onclick="alterarQuantidade()">
+                Alterar Quantidade
+            </button>
+        </div>
+
+        <div id="mensagem" class="mensagem"></div>
+
+        <h2>Produtos em Estoque</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Produto</th>
+                    <th>Quantidade</th>
+                    <th>Valor</th>
+                </tr>
+            </thead>
+
+            <tbody id="tabelaProdutos"></tbody>
+        </table>
+
+    </div>
+
+
+    <script>
+
+        // Produtos antigos da loja
+        let produtos = [
+            {
+                codigo: 1,
+                descricao: "Perfume Floral",
+                quantidade: 10,
+                valor: 89.90
+            },
+
+            {
+                codigo: 2,
+                descricao: "Hidratante Corporal",
+                quantidade: 15,
+                valor: 49.90
+            },
+
+            {
+                codigo: 3,
+                descricao: "Body Splash",
+                quantidade: 20,
+                valor: 59.90
+            }
+        ];
+
+
+        // Cadastrar novo produto
+        function cadastrarProduto() {
+
+            let codigo = Number(document.getElementById("codigo").value);
+            let descricao = document.getElementById("descricao").value;
+            let quantidade = Number(document.getElementById("quantidade").value);
+            let valor = Number(document.getElementById("valor").value);
+
+            if (!codigo || !descricao || !quantidade || !valor) {
+                mostrarMensagem("Preencha todos os campos!");
+                return;
+            }
+
+            let produtoExistente = produtos.find(
+                produto => produto.codigo === codigo
+            );
+
+            if (produtoExistente) {
+                mostrarMensagem("Esse código já está cadastrado!");
+                return;
+            }
+
+            produtos.push({
+                codigo: codigo,
+                descricao: descricao,
+                quantidade: quantidade,
+                valor: valor
+            });
+
+            mostrarMensagem("Produto cadastrado com sucesso!");
+
+            limparCampos();
+
+            listarProdutos();
+        }
+
+
+        // Listar produtos
+        function listarProdutos() {
+
+            let tabela = document.getElementById("tabelaProdutos");
+
+            tabela.innerHTML = "";
+
+            produtos.forEach(produto => {
+
+                let linha = document.createElement("tr");
+
+                linha.innerHTML = `
+                    <td>${produto.codigo}</td>
+                    <td>${produto.descricao}</td>
+                    <td>${produto.quantidade}</td>
+                    <td>R$ ${produto.valor.toFixed(2)}</td>
+                `;
+
+                tabela.appendChild(linha);
+            });
+        }
+
+
+        // Alterar valor
+        function alterarValor() {
+
+            let codigo = Number(
+                prompt("Digite o código do produto:")
+            );
+
+            let novoValor = Number(
+                prompt("Digite o novo valor:")
+            );
+
+            let produto = produtos.find(
+                produto => produto.codigo === codigo
+            );
+
+            if (produto) {
+
+                produto.valor = novoValor;
+
+                mostrarMensagem(
+                    "Valor do produto alterado com sucesso!"
+                );
+
+                listarProdutos();
+
+            } else {
+
+                mostrarMensagem("Produto não encontrado!");
+            }
+        }
+
+
+        // Alterar quantidade
+        function alterarQuantidade() {
+
+            let codigo = Number(
+                prompt("Digite o código do produto:")
+            );
+
+            let novaQuantidade = Number(
+                prompt("Digite a nova quantidade:")
+            );
+
+            let produto = produtos.find(
+                produto => produto.codigo === codigo
+            );
+
+            if (produto) {
+
+                produto.quantidade = novaQuantidade;
+
+                mostrarMensagem(
+                    "Quantidade alterada com sucesso!"
+                );
+
+                listarProdutos();
+
+            } else {
+
+                mostrarMensagem("Produto não encontrado!");
+            }
+        }
+
+
+        // Mostrar mensagem na tela
+        function mostrarMensagem(texto) {
+
+            document.getElementById("mensagem").innerText = texto;
+        }
+
+
+        // Limpar campos
+        function limparCampos() {
+
+            document.getElementById("codigo").value = "";
+            document.getElementById("descricao").value = "";
+            document.getElementById("quantidade").value = "";
+            document.getElementById("valor").value = "";
+        }
+
+
+        // Mostrar os produtos antigos assim que abrir a página
+        listarProdutos();
+
+    </script>
+
+<script src="script.js"></script></body>
+</html>
+
+Como funciona
+
+Ao abrir a página, os produtos antigos da loja já aparecem na tabela:
+
+Código	Produto	Quantidade	Valor
+1	Perfume Floral	10	R$ 89,90
+2	Hidratante Corporal	15	R$ 49,90
+3	Body Splash	20	R$ 59,90
+
+Depois, você pode cadastrar os novos lançamentos, por exemplo:
+
+Código: 4 — Perfume Hidratante — 12 unidades — R$ 99,90
+Código: 5 — Body Splash — 18 unidades — R$ 69,90
+
+Os botões Alterar Valor e Alterar Quantidade pedem o código do produto e permitem atualizar o estoque.
