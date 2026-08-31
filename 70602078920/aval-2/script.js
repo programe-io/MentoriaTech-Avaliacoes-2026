@@ -1,326 +1,172 @@
-// ==========================================
-// SISTEMA DE GERENCIAMENTO DE TAREFAS
-// ==========================================
-
-// Array que armazenará as tarefas
-let tarefas = [];
-
-// Código da próxima tarefa
-let proximoCodigo = 1;
+```javascript
+// Lista de produtos
+let produtos = [];
 
 
-// ==========================================
-// CADASTRAR UMA NOVA TAREFA
-// ==========================================
+// CADASTRAR PRODUTO
+function cadastrarProduto() {
 
-function cadastrarTarefa() {
+    let codigo = document.getElementById("codigo").value;
+    let descricao = document.getElementById("descricao").value;
+    let quantidade = document.getElementById("quantidade").value;
+    let valor = document.getElementById("valor").value;
 
-    // Pega os valores do HTML
-    const titulo = document.getElementById("titulo").value.trim();
-
-    const prioridade = Number(
-        document.getElementById("prioridade").value
-    );
-
-
-    // ======================================
-    // VALIDAÇÃO DO TÍTULO
-    // ======================================
-
-    if (titulo.length < 5) {
-
-        mostrarMensagem(
-            "Erro: o título deve ter no mínimo 5 caracteres."
-        );
-
+    // Verificar se todos os campos foram preenchidos
+    if (
+        codigo == "" ||
+        descricao == "" ||
+        quantidade == "" ||
+        valor == ""
+    ) {
+        alert("💄 Preencha todos os campos!");
         return;
     }
 
+    quantidade = Number(quantidade);
+    valor = Number(valor);
 
-    // ======================================
-    // VALIDAÇÃO DA PRIORIDADE
-    // ======================================
-
-    if (prioridade < 1 || prioridade > 3) {
-
-        mostrarMensagem(
-            "Erro: a prioridade deve estar entre 1 e 3."
-        );
-
+    // Verificar números
+    if (quantidade < 0) {
+        alert("A quantidade não pode ser negativa!");
         return;
     }
 
+    if (valor < 0) {
+        alert("O valor não pode ser negativo!");
+        return;
+    }
 
-    // ======================================
-    // CRIAÇÃO DA TAREFA
-    // ======================================
+    // Verificar código repetido
+    for (let i = 0; i < produtos.length; i++) {
 
-    const tarefa = {
+        if (produtos[i].codigo == codigo) {
+            alert("Esse código já está cadastrado!");
+            return;
+        }
+    }
 
-        codigo: proximoCodigo,
-
-        titulo: titulo,
-
-        prioridade: prioridade,
-
-        concluida: false
-
+    // Criar produto
+    let produto = {
+        codigo: codigo,
+        descricao: descricao,
+        quantidade: quantidade,
+        valor: valor
     };
 
+    // Adicionar produto na lista
+    produtos.push(produto);
 
-    // Adiciona a tarefa ao array
-    tarefas.push(tarefa);
+    alert("💗 Produto cadastrado com sucesso!");
 
-    // Incrementa o código
-    proximoCodigo++;
+    // Limpar campos
+    document.getElementById("codigo").value = "";
+    document.getElementById("descricao").value = "";
+    document.getElementById("quantidade").value = "";
+    document.getElementById("valor").value = "";
 
-
-    // Limpa o campo de título
-    document.getElementById("titulo").value = "";
-
-
-    mostrarMensagem(
-        "Tarefa cadastrada com sucesso!"
-    );
-
-
-    // Atualiza a lista
-    listarTarefas();
+    // Atualizar a lista
+    mostrarProdutos();
 }
 
 
-// ==========================================
-// LISTAR AS TAREFAS
-// ==========================================
+// MOSTRAR PRODUTOS
+function mostrarProdutos() {
 
-function listarTarefas() {
+    let lista = document.getElementById("listaProdutos");
 
-    const lista = document.getElementById("listaTarefas");
-
-    // Limpa a lista antes de atualizar
     lista.innerHTML = "";
 
-
-    // Verifica se existem tarefas
-    if (tarefas.length === 0) {
+    if (produtos.length == 0) {
 
         lista.innerHTML =
-            "<p>Nenhuma tarefa cadastrada.</p>";
+            "<p>💄 Nenhum produto cadastrado.</p>";
 
         return;
     }
 
+    for (let i = 0; i < produtos.length; i++) {
 
-    // Percorre todas as tarefas
-    tarefas.forEach(function(tarefa) {
+        lista.innerHTML +=
 
-        let prioridadeTexto;
+            "<div class='produto'>" +
 
+            "<p><strong>💎 Código:</strong> " +
+            produtos[i].codigo +
+            "</p>" +
 
-        // Define o texto da prioridade
-        if (tarefa.prioridade === 1) {
+            "<p><strong>💄 Produto:</strong> " +
+            produtos[i].descricao +
+            "</p>" +
 
-            prioridadeTexto = "Alta";
+            "<p><strong>📦 Quantidade:</strong> " +
+            produtos[i].quantidade +
+            "</p>" +
 
-        } else if (tarefa.prioridade === 2) {
+            "<p><strong>💰 Valor:</strong> R$ " +
+            produtos[i].valor.toFixed(2) +
+            "</p>" +
 
-            prioridadeTexto = "Média";
+            "<button onclick='alterarValor(" + i + ")'>" +
+            "💰 Alterar Valor" +
+            "</button>" +
 
-        } else {
+            "<button onclick='alterarQuantidade(" + i + ")'>" +
+            "📦 Alterar Quantidade" +
+            "</button>" +
 
-            prioridadeTexto = "Baixa";
-        }
-
-
-        // Define o status
-        const status = tarefa.concluida
-            ? "Concluída"
-            : "Pendente";
-
-
-        // Cria o elemento HTML
-        const div = document.createElement("div");
-
-        div.className = "tarefa";
-
-
-        // Se estiver concluída, adiciona a classe
-        if (tarefa.concluida) {
-
-            div.classList.add("concluida");
-        }
-
-
-        // Conteúdo da tarefa
-        div.innerHTML = `
-
-            <strong>Código:</strong>
-            ${tarefa.codigo}
-
-            <br>
-
-            <strong>Título:</strong>
-            ${tarefa.titulo}
-
-            <br>
-
-            <strong>Prioridade:</strong>
-            ${tarefa.prioridade} - ${prioridadeTexto}
-
-            <br>
-
-            <strong>Status:</strong>
-            ${status}
-
-            <div class="botoes">
-
-                <button
-                    onclick="concluirTarefa(${tarefa.codigo})">
-                    Concluir
-                </button>
-
-                <button
-                    onclick="alterarPrioridade(${tarefa.codigo})">
-                    Alterar Prioridade
-                </button>
-
-            </div>
-        `;
-
-
-        // Adiciona a tarefa na página
-        lista.appendChild(div);
-
-    });
+            "</div>";
+    }
 }
 
 
-// ==========================================
-// MARCAR TAREFA COMO CONCLUÍDA
-// ==========================================
+// ALTERAR VALOR
+function alterarValor(numero) {
 
-function concluirTarefa(codigo) {
-
-    // Procura a tarefa pelo código
-    const tarefa = tarefas.find(function(tarefa) {
-
-        return tarefa.codigo === codigo;
-
-    });
-
-
-    // Caso a tarefa não exista
-    if (!tarefa) {
-
-        mostrarMensagem(
-            "Erro: tarefa não encontrada."
-        );
-
-        return;
-    }
-
-
-    // Marca como concluída
-    tarefa.concluida = true;
-
-
-    mostrarMensagem(
-        "Tarefa marcada como concluída!"
+    let novoValor = prompt(
+        "💰 Digite o novo valor do produto:"
     );
 
-
-    // Atualiza a lista
-    listarTarefas();
-}
-
-
-// ==========================================
-// ALTERAR PRIORIDADE
-// ==========================================
-
-function alterarPrioridade(codigo) {
-
-    // Procura a tarefa
-    const tarefa = tarefas.find(function(tarefa) {
-
-        return tarefa.codigo === codigo;
-
-    });
-
-
-    if (!tarefa) {
-
-        mostrarMensagem(
-            "Erro: tarefa não encontrada."
-        );
-
+    if (novoValor == null || novoValor == "") {
         return;
     }
 
+    novoValor = Number(novoValor);
 
-    // Solicita a nova prioridade
-    const novaPrioridade = Number(
-        prompt(
-            "Digite a nova prioridade:\n\n" +
-            "1 - Alta\n" +
-            "2 - Média\n" +
-            "3 - Baixa"
-        )
-    );
-
-
-    // Validação
-    if (
-        isNaN(novaPrioridade) ||
-        novaPrioridade < 1 ||
-        novaPrioridade > 3
-    ) {
-
-        mostrarMensagem(
-            "Erro: prioridade inválida. Digite 1, 2 ou 3."
-        );
-
+    if (novoValor < 0 || isNaN(novoValor)) {
+        alert("Digite um valor válido!");
         return;
     }
 
+    produtos[numero].valor = novoValor;
 
-    // Altera a prioridade
-    tarefa.prioridade = novaPrioridade;
+    alert("✨ Valor alterado com sucesso!");
+
+    mostrarProdutos();
+}
 
 
-    mostrarMensagem(
-        "Prioridade alterada com sucesso!"
+// ALTERAR QUANTIDADE
+function alterarQuantidade(numero) {
+
+    let novaQuantidade = prompt(
+        "📦 Digite a nova quantidade:"
     );
 
+    if (novaQuantidade == null || novaQuantidade == "") {
+        return;
+    }
 
-    // Atualiza a lista
-    listarTarefas();
+    novaQuantidade = Number(novaQuantidade);
+
+    if (novaQuantidade < 0 || isNaN(novaQuantidade)) {
+        alert("Digite uma quantidade válida!");
+        return;
+    }
+
+    produtos[numero].quantidade = novaQuantidade;
+
+    alert("✨ Quantidade alterada com sucesso!");
+
+    mostrarProdutos();
 }
-
-
-// ==========================================
-// MOSTRAR MENSAGEM
-// ==========================================
-
-function mostrarMensagem(texto) {
-
-    const mensagem = document.getElementById("mensagem");
-
-    mensagem.textContent = texto;
-
-
-    // Remove a mensagem depois de 3 segundos
-    setTimeout(function() {
-
-        mensagem.textContent = "";
-
-    }, 3000);
-}
-
-
-// ==========================================
-// INICIAR O SISTEMA
-// ==========================================
-
-// Mostra a lista quando a página é aberta
-listarTarefas();
+```
