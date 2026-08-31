@@ -1,102 +1,78 @@
-let tarefas = [];
-let proximoCodigo = 1;
+// ===== SISTEMA DE COMPRAS =====
 
-// Cadastrar tarefa
-function cadastrarTarefa() {
-    let titulo = document.getElementById("titulo").value;
-    let prioridade = Number(document.getElementById("prioridade").value);
+// Seleciona todos os botões "Comprar"
+const botoesComprar = document.querySelectorAll(".produto button");
 
-    if (titulo.length < 5) {
-        alert("O título deve ter no mínimo 5 caracteres.");
-        return;
-    }
+// Adiciona uma função para cada botão
+botoesComprar.forEach(function(botao) {
 
-    if (prioridade < 1 || prioridade > 3) {
-        alert("A prioridade deve ser entre 1 e 3.");
-        return;
-    }
+```
+botao.addEventListener("click", function() {
 
-    let tarefa = {
-        codigo: proximoCodigo,
-        titulo: titulo,
-        prioridade: prioridade,
-        concluida: false
-    };
+    // Pega o nome do produto
+    const produto = botao.parentElement.querySelector("h3").textContent;
 
-    tarefas.push(tarefa);
-    proximoCodigo++;
+    // Pega o preço do produto
+    const preco = botao.parentElement.querySelector("span").textContent;
 
-    alert("Tarefa cadastrada com sucesso!");
-
-    document.getElementById("titulo").value = "";
-
-    listarTarefas();
-}
-
-// Listar tarefas
-function listarTarefas() {
-    let lista = document.getElementById("listaTarefas");
-
-    lista.innerHTML = "";
-
-    if (tarefas.length === 0) {
-        lista.innerHTML = "<p>Nenhuma tarefa cadastrada.</p>";
-        return;
-    }
-
-    tarefas.forEach(function(tarefa) {
-        let div = document.createElement("div");
-
-        div.innerHTML = `
-            <h3>${tarefa.titulo}</h3>
-            <p>Código: ${tarefa.codigo}</p>
-            <p>Prioridade: ${tarefa.prioridade}</p>
-            <p>Status: ${tarefa.concluida ? "Concluída" : "Pendente"}</p>
-
-            <button onclick="concluirTarefa(${tarefa.codigo})">
-                Concluir
-            </button>
-
-            <button onclick="alterarPrioridade(${tarefa.codigo})">
-                Alterar prioridade
-            </button>
-
-            <hr>
-        `;
-
-        lista.appendChild(div);
-    });
-}
-
-// Marcar tarefa como concluída
-function concluirTarefa(codigo) {
-    let tarefa = tarefas.find(function(tarefa) {
-        return tarefa.codigo === codigo;
-    });
-
-    if (tarefa) {
-        tarefa.concluida = true;
-        listarTarefas();
-    }
-}
-
-// Alterar prioridade
-function alterarPrioridade(codigo) {
-    let novaPrioridade = Number(
-        prompt("Digite a nova prioridade:\n1 - Alta\n2 - Média\n3 - Baixa")
+    // Mostra a mensagem
+    alert(
+        "✨ Produto adicionado ao carrinho!\n\n" +
+        "Produto: " + produto + "\n" +
+        "Preço: " + preco
     );
 
-    if (novaPrioridade < 1 || novaPrioridade > 3) {
-        alert("Digite uma prioridade entre 1 e 3.");
-        return;
-    }
+});
+```
 
-    let tarefa = tarefas.find(function(tarefa) {
-        return tarefa.codigo === codigo;
-    });
+});
 
-    if (tarefa) {
-        tarefa.prioridade = novaPrioridade;
-        listarTarefas();
-    }
+// ===== FORMULÁRIO DE CONTATO =====
+
+const formulario = document.querySelector("form");
+
+formulario.addEventListener("submit", function(event) {
+
+```
+// Impede o formulário de recarregar a página
+event.preventDefault();
+
+// Pega o nome digitado
+const nome = formulario.querySelector("input[type='text']").value;
+
+// Verifica se o nome foi preenchido
+if (nome.trim() === "") {
+    alert("Por favor, digite seu nome.");
+    return;
 }
+
+// Mensagem de sucesso
+alert(
+    "💖 Obrigado, " + nome + "!\n\n" +
+    "Sua mensagem foi enviada com sucesso.\n" +
+    "A Elegance Cosméticos agradece seu contato! ✨"
+);
+
+// Limpa os campos
+formulario.reset();
+```
+
+});
+
+// ===== EFEITO NOS PRODUTOS =====
+
+const produtos = document.querySelectorAll(".produto");
+
+produtos.forEach(function(produto) {
+
+```
+produto.addEventListener("mouseenter", function() {
+    produto.style.cursor = "pointer";
+});
+```
+
+});
+
+// ===== MENSAGEM NO CONSOLE =====
+
+console.log("✨ Elegance Cosméticos & Perfumaria carregada com sucesso!");
