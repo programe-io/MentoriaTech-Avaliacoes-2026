@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Painel do Vendedor - Gestão de Estoque</title>
+
+    <style>
+
+        :root {
+
+            --primary: #d63384;
+
+            --primary-hover: #b8256f;
+
+            --bg-body: #f4f6f9;
+
+            --card-bg: #ffffff;
+
+            --text-dark: #2c3e50;
+
+            --border-color: #e9ecef;
+
+        }
+
+
+
+        * {
+
+            box-sizing: border-box;
+
+            margin: 0;
+
+            padding: 0;
+
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+        }
+
+
+
+        body {
+
+            background-color: var(--bg-body);
+
+            color: var(--text-dark);
+
+            padding: 20px;
+
+        }
+
+
+
+        .dashboard-header {
+
+            background: white;
+
+            padding: 20px 30px;
+
+            border-radius: 12px;
+
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            margin-bottom: 25px;
+
+        }
+
+
+
+        .stats-summary {
+
+            display: flex;
+
+            gap: 20px;
+
+        }
+
+
+
+        .stat-badge {
+
+            background: #fff0f5;
+
+            padding: 10px 15px;
+
+            border-radius: 8px;
+
+            border: 1px solid #ffdeeb;
+
+            text-align: right;
+
+        }
+
+
+
+        .stat-badge span {
+
+            display: block;
+
+            font-size: 0.8rem;
+
+            color: #666;
+
+        }
+
+
+
+        .stat-badge strong {
+
+            font-size: 1.1rem;
+
+            color: var(--primary);
+
+        }
+
+
+
+        .main-layout {
+
+            display: grid;
+
+            grid-template-columns: 320px 1fr;
+
+            gap: 25px;
+
+        }
+
+
+
+        .panel-card {
+
+            background: var(--card-bg);
+
+            border-radius: 12px;
+
+            padding: 20px;
+
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+
+        }
+
+
+
+        .panel-card h2 {
+
+            font-size: 1.1rem;
+
+            margin-bottom: 15px;
+
+            color: var(--primary);
+
+            border-bottom: 2px solid var(--border-color);
+
+            padding-bottom: 8px;
+
+        }
+
+
+
+        .form-group {
+
+            margin-bottom: 12px;
+
+        }
+
+
+
+        .form-group label {
+
+            display: block;
+
+            font-size: 0.85rem;
+
+            margin-bottom: 5px;
+
+            font-weight: 600;
+
+        }
+
+
+
+        .form-group input, .form-group textarea {
+
+            width: 100%;
+
+            padding: 10px;
+
+            border: 1px solid var(--border-color);
+
+            border-radius: 6px;
+
+            font-size: 0.9rem;
+
+        }
+
+
+
+        .btn-submit {
+
+            width: 100%;
+
+            padding: 12px;
+
+            background: var(--primary);
+
+            color: white;
+
+            border: none;
+
+            border-radius: 6px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            transition: background 0.2s;
+
+        }
+
+
+
+        .btn-submit:hover {
+
+            background: var(--primary-hover);
+
+        }
+
+
+
+        .inventory-table-wrapper {
+
+            overflow-x: auto;
+
+        }
+
+
+
+        table {
+
+            width: 100%;
+
+            border-collapse: collapse;
+
+            text-align: left;
+
+        }
+
+
+
+        th, td {
+
+            padding: 12px 15px;
+
+            border-bottom: 1px solid var(--border-color);
+
+            font-size: 0.9rem;
+
+            vertical-align: middle;
+
+        }
+
+
+
+        th {
+
+            background-color: #fafafa;
+
+            color: #555;
+
+            font-weight: 600;
+
+        }
+
+
+
+        .product-img {
+
+            width: 45px;
+
+            height: 45px;
+
+            object-fit: cover;
+
+            border-radius: 6px;
+
+            border: 1px solid var(--border-color);
+
+        }
+
+
+
+        .stock-control {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 8px;
+
+        }
+
+
+
+        .btn-qty {
+
+            width: 28px;
+
+            height: 28px;
+
+            border: 1px solid var(--border-color);
+
+            background: #f8f9fa;
+
+            border-radius: 4px;
+
+            cursor: pointer;
+
+            font-weight: bold;
+
+        }
+
+
+
+        .btn-qty:hover {
+
+            background: #e9ecef;
+
+        }
+
+
+
+        .qty-value {
+
+            width: 30px;
+
+            text-align: center;
+
+            font-weight: bold;
+
+        }
+
+
+
+        @media (max-width: 900px) {
+
+            .main-layout {
+
+                grid-template-columns: 1fr;
+
+            }
+
+            .dashboard-header {
+
+                flex-direction: column;
+
+                align-items: flex-start;
+
+                gap: 15px;
+
+            }
+
+        }
+
+    </style>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+
+
+    <header class="dashboard-header">
+
+        <div>
+
+            <h1>Gestão de Estoque</h1>
+
+            <p>Painel de Controle de Produtos Cosméticos</p>
+
+        </div>
+
+        <div class="stats-summary">
+
+            <div class="stat-badge">
+
+                <span>Total de Itens</span>
+
+                <strong id="stat-total-items">0</strong>
+
+            </div>
+
+            <div class="stat-badge">
+
+                <span>Valor em Estoque</span>
+
+                <strong id="stat-total-value">R$ 0,00</strong>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+
+    <main class="main-layout">
+
+       
+
+        <!-- Formulário de Cadastro -->
+
+        <section class="panel-card">
+
+            <h2>Cadastrar Novo Produto</h2>
+
+            <form id="product-form">
+
+                <div class="form-group">
+
+                    <label for="p-img">URL da Imagem</label>
+
+                    <input type="url" id="p-img" placeholder="https://exemplo.com/imagem.jpg">
+
+                </div>
+
+                <div class="form-group">
+
+                    <label for="p-name">Nome do Produto</label>
+
+                    <input type="text" id="p-name" placeholder="Ex: Sérum Vitamina C" required>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label for="p-desc">Descrição</label>
+
+                    <textarea id="p-desc" rows="2" placeholder="Breve descrição dos benefícios" required></textarea>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label for="p-price">Preço Unitário (R$)</label>
+
+                    <input type="number" id="p-price" step="0.01" min="0" placeholder="0.00" required>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label for="p-qty">Quantidade Inicial</label>
+
+                    <input type="number" id="p-qty" min="0" value="1" required>
+
+                </div>
+
+                <button type="submit" class="btn-submit">Adicionar ao Estoque</button>
+
+            </form>
+
+        </section>
+
+
+
+        <!-- Lista de Produtos -->
+
+        <section class="panel-card">
+
+            <h2>Produtos Cadastrados</h2>
+
+            <div class="inventory-table-wrapper">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Foto</th>
+
+                            <th>Produto</th>
+
+                            <th>Descrição</th>
+
+                            <th>Preço</th>
+
+                            <th>Estoque</th>
+
+                            <th>Ações</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="inventory-list">
+
+                        <!-- Linhas geradas dinamicamente via JS -->
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+
+    </main>
+
+
+
+    <script>
+
+        const placeholderImg = 'https://via.placeholder.com/45?text=Foto';
+
+
+
+        let products = [
+
+            {
+
+                id: 1,
+
+                img: 'https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=150&q=80',
+
+                name: 'Esfoliante Facial Exfoliating Scrub',
+
+                desc: 'Renova a textura da pele com microesferas.',
+
+                price: 39.90,
+
+                qty: 15
+
+            },
+
+            {
+
+                id: 2,
+
+                img: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=150&q=80',
+
+                name: 'Gel Facial Hidratante Matte',
+
+                desc: 'Fórmula leve de rápida absorção para pele oleosa.',
+
+                price: 45.00,
+
+                qty: 22
+
+            },
+
+            {
+
+                id: 3,
+
+                img: 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=150&q=80',
+
+                name: 'Ampola de Crescimento Capilar',
+
+                desc: 'Fortalecimento e estímulo intensivo dos fios.',
+
+                price: 25.00,
+
+                qty: 40
+
+            },
+
+            {
+
+                id: 4,
+
+                img: 'https://images.unsplash.com/photo-1601049541289-9b1b7bbbfe19?auto=format&fit=crop&w=150&q=80',
+
+                name: 'Sérum Anti-idade Ácido Hialurônico',
+
+                desc: 'Reduz linhas de expressão e hidrata profundamente.',
+
+                price: 89.90,
+
+                qty: 8
+
+            },
+
+            {
+
+                id: 5,
+
+                img: 'https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?auto=format&fit=crop&w=150&q=80',
+
+                name: 'Protetor Solar Facial FPS 50',
+
+                desc: 'Toque seco com alta proteção UVA/UVB.',
+
+                price: 59.90,
+
+                qty: 18
+
+            }
+
+        ];
+
+
+
+        function renderTable() {
+
+            const list = document.getElementById('inventory-list');
+
+            list.innerHTML = '';
+
+
+
+            products.forEach(product => {
+
+                const tr = document.createElement('tr');
+
+                tr.innerHTML = `
+
+                    <td><img src="${product.img}" alt="${product.name}" class="product-img" onerror="this.src='${placeholderImg}'"></td>
+
+                    <td><strong>${product.name}</strong></td>
+
+                    <td>${product.desc}</td>
+
+                    <td>R$ ${product.price.toFixed(2)}</td>
+
+                    <td>
+
+                        <div class="stock-control">
+
+                            <button class="btn-qty" onclick="updateQty(${product.id}, -1)">-</button>
+
+                            <span class="qty-value">${product.qty}</span>
+
+                            <button class="btn-qty" onclick="updateQty(${product.id}, 1)">+</button>
+
+                        </div>
+
+                    </td>
+
+                    <td>
+
+                        <button onclick="removeProduct(${product.id})" style="color: #dc3545; background: none; border: none; cursor: pointer;">Remover</button>
+
+                    </td>
+
+                `;
+
+                list.appendChild(tr);
+
+            });
+
+
+
+            updateTotals();
+
+        }
+
+
+
+        function updateQty(id, change) {
+
+            const product = products.find(p => p.id === id);
+
+            if (product) {
+
+                if (product.qty + change >= 0) {
+
+                    product.qty += change;
+
+                    renderTable();
+
+                }
+
+            }
+
+        }
+
+
+
+        function removeProduct(id) {
+
+            products = products.filter(p => p.id !== id);
+
+            renderTable();
+
+        }
+
+
+
+        function updateTotals() {
+
+            const totalItems = products.reduce((acc, p) => acc + p.qty, 0);
+
+            const totalValue = products.reduce((acc, p) => acc + (p.price * p.qty), 0);
+
+
+
+            document.getElementById('stat-total-items').textContent = totalItems;
+
+            document.getElementById('stat-total-value').textContent = `R$ ${totalValue.toFixed(2)}`;
+
+        }
+
+
+
+        const productForm = document.getElementById('product-form');
+
+        productForm.addEventListener('submit', function(e) {
+
+            e.preventDefault();
+
+
+
+            const imgInput = document.getElementById('p-img').value.trim();
+
+
+
+            const newProduct = {
+
+                id: Date.now(),
+
+                img: imgInput !== '' ? imgInput : placeholderImg,
+
+                name: document.getElementById('p-name').value,
+
+                desc: document.getElementById('p-desc').value,
+
+                price: parseFloat(document.getElementById('p-price').value),
+
+                qty: parseInt(document.getElementById('p-qty').value)
+
+            };
+
+
+
+            products.push(newProduct);
+
+            renderTable();
+
+            productForm.reset();
+
+        });
+
+
+
+        renderTable();
+
+    </script>
+
+<script src="script.js"></script></body>
+
+</html>
