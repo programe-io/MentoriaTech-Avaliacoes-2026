@@ -1,141 +1,114 @@
-```javascript
-let tarefas = [];
-let proximoCodigo = 1;
+let produtos = [];
 
-// CADASTRAR TAREFA
-function cadastrarTarefa() {
-    let titulo = document.getElementById("titulo").value.trim();
-    let prioridade = Number(document.getElementById("prioridade").value);
+// Cadastrar produto
+function cadastrarProduto() {
 
-    // Validação do título
-    if (titulo.length < 5) {
-        alert("O título deve ter no mínimo 5 caracteres!");
+    const codigo = Number(document.getElementById("codigo").value);
+    const descricao = document.getElementById("descricao").value;
+    const quantidade = Number(document.getElementById("quantidade").value);
+    const valor = Number(document.getElementById("valor").value);
+
+    if (!codigo || !descricao || quantidade < 0 || valor < 0) {
+        alert("Preencha todos os campos corretamente!");
         return;
     }
 
-    // Validação da prioridade
-    if (prioridade < 1 || prioridade > 3) {
-        alert("A prioridade deve ser entre 1 e 3!");
-        return;
-    }
-
-    // Criar tarefa
-    let tarefa = {
-        codigo: proximoCodigo,
-        titulo: titulo,
-        prioridade: prioridade,
-        concluida: false
+    const produto = {
+        codigo: codigo,
+        descricao: descricao,
+        quantidade: quantidade,
+        valor: valor
     };
 
-    tarefas.push(tarefa);
-    proximoCodigo++;
+    produtos.push(produto);
 
-    document.getElementById("titulo").value = "";
+    alert("Celular cadastrado com sucesso!");
 
-    listarTarefas();
+    limparCampos();
+    listarProdutos();
 }
 
+// Listar produtos
+function listarProdutos() {
 
-// LISTAR TAREFAS
-function listarTarefas() {
-    let lista = document.getElementById("listaTarefas");
+    const lista = document.getElementById("listaProdutos");
 
     lista.innerHTML = "";
 
-    if (tarefas.length === 0) {
-        lista.innerHTML = "<p>Nenhuma tarefa cadastrada.</p>";
+    if (produtos.length === 0) {
+        lista.innerHTML = "<p>Nenhum celular cadastrado.</p>";
         return;
     }
 
-    tarefas.forEach(function(tarefa) {
+    produtos.forEach(function(produto, index) {
 
-        let div = document.createElement("div");
+        lista.innerHTML += `
+            <div class="card">
+                <h3>📱 ${produto.descricao}</h3>
 
-        let prioridadeTexto;
+                <p><strong>Código:</strong> ${produto.codigo}</p>
 
-        if (tarefa.prioridade === 1) {
-            prioridadeTexto = "Alta";
-        } else if (tarefa.prioridade === 2) {
-            prioridadeTexto = "Média";
-        } else {
-            prioridadeTexto = "Baixa";
-        }
+                <p>
+                    <strong>Quantidade:</strong>
+                    ${produto.quantidade}
+                </p>
 
-        div.innerHTML = `
-            <h3>${tarefa.titulo}</h3>
+                <p>
+                    <strong>Valor:</strong>
+                    R$ ${produto.valor.toFixed(2)}
+                </p>
 
-            <p><strong>Código:</strong> ${tarefa.codigo}</p>
+                <div class="botoes">
+                    <button class="editar" onclick="alterarValor(${index})">
+                        Alterar valor
+                    </button>
 
-            <p><strong>Prioridade:</strong> ${prioridadeTexto}</p>
-
-            <p><strong>Status:</strong> 
-                ${tarefa.concluida ? "Concluída" : "Pendente"}
-            </p>
-
-            <button onclick="concluirTarefa(${tarefa.codigo})">
-                Concluir
-            </button>
-
-            <button onclick="alterarPrioridade(${tarefa.codigo})">
-                Alterar prioridade
-            </button>
+                    <button class="editar" onclick="alterarQuantidade(${index})">
+                        Alterar quantidade
+                    </button>
+                </div>
+            </div>
         `;
-
-        lista.appendChild(div);
     });
 }
 
+// Alterar valor
+function alterarValor(index) {
 
-// MARCAR COMO CONCLUÍDA
-function concluirTarefa(codigo) {
-
-    let tarefa = tarefas.find(function(tarefa) {
-        return tarefa.codigo === codigo;
-    });
-
-    if (!tarefa) {
-        alert("Tarefa não encontrada!");
-        return;
-    }
-
-    tarefa.concluida = true;
-
-    listarTarefas();
-}
-
-
-// ALTERAR PRIORIDADE
-function alterarPrioridade(codigo) {
-
-    let novaPrioridade = Number(
-        prompt(
-            "Digite a nova prioridade:\n\n" +
-            "1 - Alta\n" +
-            "2 - Média\n" +
-            "3 - Baixa"
-        )
+    const novoValor = Number(
+        prompt("Digite o novo valor do celular:")
     );
 
-    if (novaPrioridade < 1 || novaPrioridade > 3) {
-        alert("Digite uma prioridade válida: 1, 2 ou 3.");
-        return;
+    if (novoValor >= 0) {
+        produtos[index].valor = novoValor;
+        listarProdutos();
+    } else {
+        alert("Valor inválido!");
     }
-
-    let tarefa = tarefas.find(function(tarefa) {
-        return tarefa.codigo === codigo;
-    });
-
-    if (!tarefa) {
-        alert("Tarefa não encontrada!");
-        return;
-    }
-
-    tarefa.prioridade = novaPrioridade;
-
-    listarTarefas();
 }
 
+// Alterar quantidade
+function alterarQuantidade(index) {
 
-// MOSTRAR TAREFAS AO ABRIR A PÁGINA
-listarTarefas();
-```
+    const novaQuantidade = Number(
+        prompt("Digite a nova quantidade:")
+    );
+
+    if (novaQuantidade >= 0) {
+        produtos[index].quantidade = novaQuantidade;
+        listarProdutos();
+    } else {
+        alert("Quantidade inválida!");
+    }
+}
+
+// Limpar campos
+function limparCampos() {
+    document.getElementById("codigo").value = "";
+    document.getElementById("descricao").value = "";
+    document.getElementById("quantidade").value = "";
+    document.getElementById("valor").value = "";
+}
+
+// Mostrar lista inicialmente
+listarProdutos();
