@@ -1,64 +1,74 @@
-let produtos = [];
+let tarefas = [];
+let geradorCodigo = 0;
 
-function validarProduto(descricao, quantidade, valor) {
-    if (descricao.length < 5) {
-        throw new Error("Descrição deve ter no mínimo cinco caracteres.");
+function validarDadosTarefa(titulo, prioridade) {
+    if (titulo.length < 5) {
+        throw new Error('O título deve ter no mínimo 5 caracteres');
     }
 
-    if (quantidade < 1) {
-        throw new Error("Quantidade deve ser maior que zero.");
-    }
-
-    if (valor < 0) {
-        throw new Error("Valor deve ser maior ou igual a zero.");
+    if (prioridade < 1 || prioridade > 3) {
+        throw new Error('Informe uma prioridade entre 1 e 3');
     }
 }
 
-function cadastrarProduto(descricao, quantidade, valor) {
-    validarProduto(descricao, quantidade, valor);
+function buscarTarefa(codigoTarefa) {
+    const tarefaBuscada = tarefas.find(t => t.codigo === codigoTarefa);
 
-    let novoProduto = {
-        codigo: produtos.length + 1,
-        descricao: descricao,
-        quantidade: quantidade,
-        valor: valor
+    if (!tarefaBuscada) {
+        throw new Error('Código de tarefa não encontrado');
+    }
+
+    return tarefaBuscada;
+}
+
+function cadastrarTarefa(titulo, prioridade) {
+    validarDadosTarefa(titulo, prioridade);
+
+    let tarefa = {
+        'codigo': ++geradorCodigo,
+        'titulo': titulo,
+        'prioridade': prioridade,
+        'status': true
     };
 
-    produtos.push(novoProduto);
+    tarefas.push(tarefa);
 }
 
-function listarProdutos() {
-    console.log(produtos);
+function listarTarefas() {
+    return tarefas;
 }
 
-function atualizarValor(codigoProduto, novoValor) {
-    if (novoValor < 0) {
-        throw new Error("Valor deve ser maior ou igual a 0");
+function concluirTarefa(codigo) {
+    let tarefa = buscarTarefa(codigo);
+
+    if (tarefa.status === false) {
+        throw new Error('Tarefa já estava como concluída');
     }
 
-    const produto = produtos.find(
-        produto => produto.codigo === codigoProduto
-    );
-
-    if (produto) {
-        produto.valor = novoValor;
-    } else {
-        throw new Error("Produto não encontrado");
-    }
+    tarefa.status = false;
 }
 
-function atualizarQuantidade(codigoProduto, novaQuantidade) {
-    if (novaQuantidade < 1) {
-        throw new Error("Quantidade deve ser maior que 0");
-    }
+function alterarPrioridade(codigo, novaPrioridade) {
+    let tarefa = buscarTarefa(codigo);
 
-    const produto = produtos.find(
-        produto => produto.codigo === codigoProduto
-    );
+    validarDadosTarefa(tarefa.titulo, novaPrioridade);
 
-    if (produto) {
-        produto.quantidade += novaQuantidade;
-    } else {
-        throw new Error("Produto não encontrado");
-    }
+    tarefa.prioridade = novaPrioridade;
+}
+
+
+// Exemplos de uso
+cadastrarTarefa('Cadastrar Clientes', 1);
+cadastrarTarefa('Limpar banco de dados', 3);
+
+console.log(listarTarefas());
+
+concluirTarefa(2);
+
+console.log(listarTarefas());
+
+try {
+    concluirTarefa(2);
+} catch (erro) {
+    console.log(erro.message);
 }
