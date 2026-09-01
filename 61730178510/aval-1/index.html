@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  
+</head>
+<body>
+  const readline = require('readline');
+
+// Interface para leitura via terminal
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
+
+// Vetor para armazenar os produtos do estoque
+const estoque = [];
+
+function exibirMenu() {
+  console.log('\n=== SISTEMA DE CONTROLE DE ESTOQUE ===');
+  console.log('1. Cadastrar novo produto');
+  console.log('2. Listar produtos cadastrados');
+  console.log('3. Alterar valor de um produto');
+  console.log('4. Alterar quantidade de um produto');
+  console.log('0. Sair');
+  
+  rl.question('\nEscolha uma opção: ', (opcao) => {
+    switch (opcao.trim()) {
+      case '1':
+        cadastrarProduto();
+        break;
+      case '2':
+        listarProdutos();
+        exibirMenu();
+        break;
+      case '3':
+        alterarValor();
+        break;
+      case '4':
+        alterarQuantidade();
+        break;
+      case '0':
+        console.log('Saindo do sistema...');
+        rl.close();
+        break;
+      default:
+        console.log('Opção inválida! Tente novamente.');
+        exibirMenu();
+        break;
+    }
+  });
+}
+
+// 1. Cadastrar novo produto
+function cadastrarProduto() {
+  console.log('\n--- CADASTRAR PRODUTO ---');
+  rl.question('Código do produto: ', (codigo) => {
+    const produtoExistente = estoque.find(p => p.codigo === codigo.trim());
+    if (produtoExistente) {
+      console.log('Erro: Já existe um produto cadastrado com este código!');
+      return exibirMenu();
+    }
+
+    rl.question('Descrição do produto: ', (descricao) => {
+      rl.question('Quantidade em estoque: ', (quantidade) => {
+        rl.question('Valor unitário (R$): ', (valor) => {
+          const qtdNum = parseInt(quantidade);
+          const valorNum = parseFloat(valor);
+
+          if (isNaN(qtdNum) || isNaN(valorNum) || qtdNum < 0 || valorNum < 0) {
+            console.log('Erro: Quantidade e valor devem ser números válidos e positivos.');
+          } else {
+            estoque.push({
+              codigo: codigo.trim(),
+              descricao: descricao.trim(),
+              quantidade: qtdNum,
+              valor: valorNum
+            });
+            console.log('Produto cadastrado com sucesso!');
+          }
+          exibirMenu();
+        });
+      });
+    });
+  });
+}
+
+// 2. Listar produtos cadastrados
+function listarProdutos() {
+  console.log('\n--- LISTA DE PRODUTOS ---');
+  if (estoque.length === 0) {
+    console.log('Nenhum produto cadastrado no estoque.');
+    return;
+  }
+
+  console.log('Código | Descrição           | Qtd | Valor Unit. (R$)');
+  console.log('----------------------------------------------------');
+  estoque.forEach((p) => {
+    console.log(`${p.codigo.padEnd(6)} | ${p.descricao.padEnd(19)} | ${String(p.quantidade).padEnd(3)} | R$ ${p.valor.toFixed(2)}`);
+  });
+}
+
+// 3. Alterar valor de um produto
+function alterarValor() {
+  console.log('\n--- ALTERAR VALOR DO PRODUTO ---');
+  rl.question('Digite o código do produto: ', (codigo) => {
+    const produto = estoque.find(p => p.codigo === codigo.trim());
+
+    if (!produto) {
+      console.log('Produto não encontrado!');
+      return exibirMenu();
+    }
+
+    console.log(`Produto encontrado: ${produto.descricao} | Valor atual: R$ ${produto.valor.toFixed(2)}`);
+    rl.question('Digite o novo valor (R$): ', (novoValor) => {
+      const valorNum = parseFloat(novoValor);
+      if (isNaN(valorNum) || valorNum < 0) {
+        console.log('Erro: Insira um valor numérico válido.');
+      } else {
+        produto.valor = valorNum;
+        console.log('Valor alterado com sucesso!');
+      }
+      exibirMenu();
+    });
+  });
+}
+
+// 4. Alterar quantidade de um produto
+function alterarQuantidade() {
+  console.log('\n--- ALTERAR QUANTIDADE DO PRODUTO ---');
+  rl.question('Digite o código do produto: ', (codigo) => {
+    const produto = estoque.find(p => p.codigo === codigo.trim());
+
+    if (!produto) {
+      console.log('Produto não encontrado!');
+      return exibirMenu();
+    }
+
+    console.log(`Produto encontrado: ${produto.descricao} | Quantidade atual: ${produto.quantidade}`);
+    rl.question('Digite a nova quantidade: ', (novaQtd) => {
+      const qtdNum = parseInt(novaQtd);
+      if (isNaN(qtdNum) || qtdNum < 0) {
+        console.log('Erro: Insira uma quantidade válida.');
+      } else {
+        produto.quantidade = qtdNum;
+        console.log('Quantidade alterada com sucesso!');
+      }
+      exibirMenu();
+    });
+  });
+}
+
+// Inicializa a aplicação
+exibirMenu();
+  
+  
+</body>
+</html>
