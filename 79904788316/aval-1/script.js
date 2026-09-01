@@ -1,71 +1,193 @@
-// Mensagem ao carregar a página
-console.log("🎮 Game News carregado com sucesso!");
+```javascript
+/* =========================================
+   MICHAEL JACKSON FAN FEED
+   JAVASCRIPT
+========================================= */
 
-// Botões "Ler mais"
-const botoes = document.querySelectorAll(".botao");
 
-botoes.forEach(function(botao) {
+/* =========================================
+   BOTÕES DE CURTIR
+========================================= */
 
-    botao.addEventListener("click", function(event) {
+const botoesCurtir = document.querySelectorAll(".acoes button:first-child");
 
-        event.preventDefault();
+botoesCurtir.forEach(function(botao) {
 
-        alert("🎮 Em breve você poderá conferir a notícia completa!");
+    let curtido = false;
+    let contador = 0;
+
+    botao.addEventListener("click", function() {
+
+        if (curtido === false) {
+
+            curtido = true;
+            contador++;
+
+            botao.innerHTML = "❤️ Curtido " + contador;
+
+            botao.style.background = "#d00000";
+
+        } else {
+
+            curtido = false;
+            contador--;
+
+            botao.innerHTML = "🤍 Curtir";
+
+            botao.style.background = "#151515";
+        }
 
     });
 
 });
 
 
-// Efeito no título ao passar o mouse
-const titulo = document.querySelector("header h1");
+/* =========================================
+   BOTÃO DE COMENTAR
+========================================= */
 
-titulo.addEventListener("mouseover", function() {
-    titulo.style.transform = "scale(1.1)";
-});
+const botoesComentario =
+    document.querySelectorAll(".acoes button:nth-child(2)");
 
-titulo.addEventListener("mouseout", function() {
-    titulo.style.transform = "scale(1)";
-});
+botoesComentario.forEach(function(botao) {
 
+    botao.addEventListener("click", function() {
 
-// Mostrar uma mensagem sobre GTA 6
-const gta = document.querySelector(".gta");
+        const comentario = prompt(
+            "Digite seu comentário sobre Michael Jackson:"
+        );
 
-gta.addEventListener("click", function() {
+        if (comentario !== null && comentario.trim() !== "") {
 
-    alert(
-        "🚗 GTA 6 é um dos jogos mais aguardados pelos fãs. " +
-        "Fique ligado no Game News para novidades!"
-    );
+            alert(
+                "💬 Seu comentário foi adicionado!\n\n" +
+                comentario
+            );
 
-});
+        }
 
-
-// Botão para voltar ao topo
-const botaoTopo = document.createElement("button");
-
-botaoTopo.innerText = "⬆ Voltar ao topo";
-
-botaoTopo.style.position = "fixed";
-botaoTopo.style.bottom = "20px";
-botaoTopo.style.right = "20px";
-botaoTopo.style.padding = "10px 15px";
-botaoTopo.style.border = "none";
-botaoTopo.style.borderRadius = "5px";
-botaoTopo.style.backgroundColor = "#00ff88";
-botaoTopo.style.cursor = "pointer";
-botaoTopo.style.fontWeight = "bold";
-
-document.body.appendChild(botaoTopo);
-
-
-// Função do botão
-botaoTopo.addEventListener("click", function() {
-
-    window.scrollTo({
-        top: 0,
-        behavior: "smooth"
     });
 
 });
+
+
+/* =========================================
+   BOTÃO EXPLORAR
+========================================= */
+
+const botaoExplorar =
+    document.querySelector(".hero-text button");
+
+if (botaoExplorar) {
+
+    botaoExplorar.addEventListener("click", function() {
+
+        const feed = document.querySelector(".feed");
+
+        feed.scrollIntoView({
+            behavior: "smooth"
+        });
+
+    });
+
+}
+
+
+/* =========================================
+   EFEITO NAS FOTOS
+========================================= */
+
+const imagens = document.querySelectorAll(
+    ".post img, .fotos img"
+);
+
+imagens.forEach(function(imagem) {
+
+    imagem.addEventListener("click", function() {
+
+        imagem.classList.toggle("imagem-grande");
+
+    });
+
+});
+
+
+/* =========================================
+   MENU DE NAVEGAÇÃO
+========================================= */
+
+const links = document.querySelectorAll("nav a");
+
+links.forEach(function(link) {
+
+    link.addEventListener("click", function(event) {
+
+        const destino = link.getAttribute("href");
+
+        if (destino.startsWith("#")) {
+
+            event.preventDefault();
+
+            const elemento =
+                document.querySelector(destino);
+
+            if (elemento) {
+
+                elemento.scrollIntoView({
+                    behavior: "smooth"
+                });
+
+            }
+
+        }
+
+    });
+
+});
+
+
+/* =========================================
+   ANIMAÇÃO DOS POSTS
+========================================= */
+
+const posts = document.querySelectorAll(".post");
+
+const observador = new IntersectionObserver(
+    function(entradas) {
+
+        entradas.forEach(function(entrada) {
+
+            if (entrada.isIntersecting) {
+
+                entrada.target.classList.add("mostrar");
+
+            }
+
+        });
+
+    },
+    {
+        threshold: 0.15
+    }
+);
+
+
+posts.forEach(function(post) {
+
+    observador.observe(post);
+
+});
+
+
+/* =========================================
+   MENSAGEM NO CONSOLE
+========================================= */
+
+console.log(
+    "⭐ Michael Jackson Fan Feed carregado com sucesso!"
+);
+
+console.log(
+    "🎤 Music • Dance • Legacy"
+);
+```
