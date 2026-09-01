@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  
+</head>
+<body>
+  const readline = require('readline');
+
+// Interface para leitura das entradas do usuário no terminal
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
+
+// Array que servirá como banco de dados do estoque
+const estoque = [];
+
+// Função auxiliar para fazer perguntas via Promise (assíncrono)
+const perguntar = (pergunta) => {
+  return new Promise((resolve) => rl.question(pergunta, resolve));
+};
+
+// 1. Cadastrar um novo produto
+async function cadastrarProduto() {
+  console.log('\n--- CADASTRO DE PRODUTO ---');
+  
+  const codigo = await perguntar('Código do produto: ');
+  
+  // Verifica se o código já existe para evitar duplicatas
+  const existe = estoque.find(p => p.codigo === codigo);
+  if (existe) {
+    console.log('Erro: Já existe um produto cadastrado com este código!');
+    return;
+  }
+
+  const descricao = await perguntar('Descrição/Nome: ');
+  const quantidade = parseInt(await perguntar('Quantidade inicial: '));
+  const valor = parseFloat(await perguntar('Valor unitário (R$): '));
+
+  if (isNaN(quantidade) || isNaN(valor)) {
+    console.log('Erro: Quantidade e valor devem ser números válidos.');
+    return;
+  }
+
+  // Adiciona o produto ao array
+  estoque.push({
+    codigo,
+    descricao,
+    quantidade,
+    valor
+  });
+
+  console.log(`\nProduto "${descricao}" cadastrado com sucesso!`);
+}
+
+// 2. Listar todos os produtos cadastrados
+function listarProdutos() {
+  console.log('\n--- LISTA DE PRODUTOS NO ESTOQUE ---');
+  
+  if (estoque.length === 0) {
+    console.log('Nenhum produto cadastrado até o momento.');
+    return;
+  }
+
+  console.table(estoque.map(p => ({
+    Código: p.codigo,
+    Descrição: p.descricao,
+    Quantidade: p.quantidade,
+    'Valor (R$)': p.valor.toFixed(2)
+  })));
+}
+
+// 3. Alterar o valor de um produto
+async function alterarValor() {
+  console.log('\n--- ALTERAR VALOR DO PRODUTO ---');
+  const codigo = await perguntar('Informe o código do produto: ');
+
+  const produto = estoque.find(p => p.codigo === codigo);
+
+  if (!produto) {
+    console.log('Produto não encontrado!');
+    return;
+  }
+
+  console.log(`Produto: ${produto.descricao} | Valor atual: R$ ${produto.valor.toFixed(2)}`);
+  const novoValor = parseFloat(await perguntar('Informe o novo valor (R$): '));
+
+  if (isNaN(novoValor) || novoValor < 0) {
+    console.log('Erro: Valor inválido.');
+    return;
+  }
+
+  produto.valor = novoValor;
+  console.log('Valor atualizado com sucesso!');
+}
+
+// 4. Alterar a quantidade de um produto
+async function alterarQuantidade() {
+  console.log('\n--- ALTERAR QUANTIDADE DO PRODUTO ---');
+  const codigo = await perguntar('Informe o código do produto: ');
+
+  const produto = estoque.find(p => p.codigo === codigo);
+
+  if (!produto) {
+    console.log('Produto não encontrado!');
+    return;
+  }
+
+  console.log(`Produto: ${produto.descricao} | Quantidade atual: ${produto.quantidade}`);
+  const novaQuantidade = parseInt(await perguntar('Informe a nova quantidade: '));
+
+  if (isNaN(novaQuantidade) || novaQuantidade < 0) {
+    console.log('Erro: Quantidade inválida.');
+    return;
+  }
+
+  produto.quantidade = novaQuantidade;
+  console.log('Quantidade atualizada com sucesso!');
+}
+
+// Menu principal com loop interativo
+async function menuPrincipal() {
+  let rodando = true;
+
+  while (rodando) {
+    console.log('\n==============================');
+    console.log('     SISTEMA DE ESTOQUE');
+    console.log('==============================');
+    console.log('1. Cadastrar produto');
+    console.log('2. Listar produtos');
+    console.log('3. Alterar valor de um produto');
+    console.log('4. Alterar quantidade de um produto');
+    console.log('0. Sair');
+    
+    const opcao = await perguntar('\nEscolha uma opção: ');
+
+    switch (opcao) {
+      case '1':
+        await cadastrarProduto();
+        break;
+      case '2':
+        listarProdutos();
+        break;
+      case '3':
+        await alterarValor();
+        break;
+      case '4':
+        await alterarQuantidade();
+        break;
+      case '0':
+        console.log('\nSaindo do sistema...');
+        rodando = false;
+        rl.close();
+        break;
+      default:
+        console.log('\nOpção inválida! Tente novamente.');
+    }
+  }
+}
+
+// Inicia a aplicação
+menuPrincipal();
+  
+  
+</body>
+</html>
