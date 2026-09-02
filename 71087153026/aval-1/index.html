@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Sistema de Estoque</title>
+  <style>
+    /* Estilização com CSS */
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #f4f4f9;
+    }
+
+    h1, h2 {
+      color: #333;
+    }
+
+    .card {
+      background: #fff;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .form-group {
+      margin-bottom: 10px;
+    }
+
+    label {
+      display: inline-block;
+      width: 120px;
+      font-weight: bold;
+    }
+
+    input {
+      padding: 6px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    button {
+      padding: 8px 12px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #218838;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #007bff;
+      color: white;
+    }
+
+    .mensagem {
+      margin-top: 10px;
+      font-weight: bold;
+      color: #d9534f;
+    }
+  </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+  <h1>Gerenciamento de Estoque</h1>
+
+  <!-- Formulário de Cadastro -->
+  <div class="card">
+    <h2>Cadastrar Produto</h2>
+    <div class="form-group">
+      <label>Descrição:</label>
+      <input type="text" id="desc" placeholder="Ex: Cadeira gamer">
+    </div>
+    <div class="form-group">
+      <label>Quantidade:</label>
+      <input type="number" id="qtd" placeholder="Ex: 10">
+    </div>
+    <div class="form-group">
+      <label>Valor (R$):</label>
+      <input type="number" step="0.01" id="valor" placeholder="Ex: 599.90">
+    </div>
+    <button onclick="cadastrarProduto()">Cadastrar</button>
+  </div>
+
+  <!-- Alterar Valor / Quantidade -->
+  <div class="card">
+    <h2>Alterar Produto</h2>
+    <div class="form-group">
+      <label>Código:</label>
+      <input type="number" id="codigoAlt" placeholder="Código do produto">
+    </div>
+    <div class="form-group">
+      <label>Novo Valor:</label>
+      <input type="number" step="0.01" id="novoValor" placeholder="Ex: 499.90">
+      <button onclick="alterarValor()">Atualizar Valor</button>
+    </div>
+    <div class="form-group">
+      <label>Qtd. Adicional:</label>
+      <input type="number" id="novaQtd" placeholder="Ex: 5">
+      <button onclick="alterarQuantidade()">Adicionar Estoque</button>
+    </div>
+  </div>
+
+  <p id="msg" class="mensagem"></p>
+
+  <!-- Tabela de Produtos -->
+  <div class="card">
+    <h2>Produtos no Estoque</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Código</th>
+          <th>Descrição</th>
+          <th>Quantidade</th>
+          <th>Valor (R$)</th>
+        </tr>
+      </thead>
+      <tbody id="tabelaEstoque">
+        <!-- Linhas geradas via JavaScript -->
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    // Lógica em JavaScript
+    let produtos = [];
+    let proximoCodigo = 1;
+
+    function mostrarMensagem(texto, erro = true) {
+      const msgEl = document.getElementById("msg");
+      msgEl.style.color = erro ? "#d9534f" : "#28a745";
+      msgEl.innerText = texto;
+    }
+
+    function cadastrarProduto() {
+      const desc = document.getElementById("desc").value.trim();
+      const qtd = parseInt(document.getElementById("qtd").value);
+      const valor = parseFloat(document.getElementById("valor").value);
+
+      if (desc.length < 5) {
+        mostrarMensagem("A descrição deve ter no mínimo 5 caracteres.");
+        return;
+      }
+      if (isNaN(qtd) || qtd < 1) {
+        mostrarMensagem("A quantidade deve ser maior que zero.");
+        return;
+      }
+      if (isNaN(valor) || valor < 0) {
+        mostrarMensagem("O valor deve ser maior ou igual a zero.");
+        return;
+      }
+
+      const produto = {
+        codigo: proximoCodigo++,
+        descricao: desc,
+        quantidade: qtd,
+        valor: valor
+      };
+
+      produtos.push(produto);
+      mostrarMensagem(`Produto "${desc}" cadastrado com sucesso!`, false);
+      
+      // Limpa os campos do formulário
+      document.getElementById("desc").value = "";
+      document.getElementById("qtd").value = "";
+      document.getElementById("valor").value = "";
+
+      listarProdutos();
+    }
+
+    function listarProdutos() {
+      const tabela = document.getElementById("tabelaEstoque");
+      tabela.innerHTML = "";
+
+      produtos.forEach(p => {
+        const linha = `
+          <tr>
+            <td>${p.codigo}</td>
+            <td>${p.descricao}</td>
+            <td>${p.quantidade}</td>
+            <td>R$ ${p.valor.toFixed(2)}</td>
+          </tr>
+        `;
+        tabela.innerHTML += linha;
+      });
+    }
+
+    function alterarValor() {
+      const codigo = parseInt(document.getElementById("codigoAlt").value);
+      const novoValor = parseFloat(document.getElementById("novoValor").value);
+
+      const produto = produtos.find(p => p.codigo === codigo);
+      if (!produto) {
+        mostrarMensagem("Produto não encontrado.");
+        return;
+      }
+      if (isNaN(novoValor) || novoValor < 0) {
+        mostrarMensagem("Informe um valor válido.");
+        return;
+      }
+
+      produto.valor = novoValor;
+      mostrarMensagem(`Valor do produto ${codigo} alterado para R$ ${novoValor.toFixed(2)}!`, false);
+      listarProdutos();
+    }
+
+    function alterarQuantidade() {
+      const codigo = parseInt(document.getElementById("codigoAlt").value);
+      const qtdAdicional = parseInt(document.getElementById("novaQtd").value);
+
+      const produto = produtos.find(p => p.codigo === codigo);
+      if (!produto) {
+        mostrarMensagem("Produto não encontrado.");
+        return;
+      }
+      if (isNaN(qtdAdicional) || qtdAdicional < 1) {
+        mostrarMensagem("Informe uma quantidade válida a adicionar.");
+        return;
+      }
+
+      produto.quantidade += qtdAdicional;
+      mostrarMensagem(`Adicionadas ${qtdAdicional} unidades ao produto ${codigo}!`, false);
+      listarProdutos();
+    }
+  </script>
+<script src="script.js"></script></body>
+</html>
