@@ -1,0 +1,341 @@
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MiniFeed - Rapunzel</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f3e8ff;
+            color: #333;
+        }
+
+        header {
+            background: #7b2cbf;
+            color: white;
+            padding: 18px;
+            text-align: center;
+            font-size: 25px;
+            font-weight: bold;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 600px;
+            margin: 25px auto;
+        }
+
+        .perfil {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 3px 10px #bbb;
+            margin-bottom: 20px;
+        }
+
+        .foto-perfil {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #c77dff;
+        }
+
+        .perfil h2 {
+            margin-top: 10px;
+            color: #7b2cbf;
+        }
+
+        .perfil p {
+            margin-top: 5px;
+            color: #666;
+        }
+
+        .post {
+            background: white;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            padding: 18px;
+            box-shadow: 0 3px 10px #bbb;
+        }
+
+        .usuario {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .usuario img {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .usuario strong {
+            color: #7b2cbf;
+        }
+
+        .post p {
+            margin: 10px 0;
+            line-height: 1.5;
+        }
+
+        .post-img {
+            width: 100%;
+            border-radius: 12px;
+            margin-top: 10px;
+        }
+
+        .botoes {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        button {
+            border: none;
+            padding: 10px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            background: #eee;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #d8b4fe;
+        }
+
+        .curtido {
+            background: #ff69b4;
+            color: white;
+        }
+
+        .comentarios {
+            margin-top: 15px;
+        }
+
+        input {
+            width: 75%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            outline: none;
+        }
+
+        .comentarios button {
+            background: #7b2cbf;
+            color: white;
+        }
+
+        .lista-comentarios {
+            margin-top: 10px;
+        }
+
+        .comentario {
+            background: #f3e8ff;
+            padding: 8px;
+            border-radius: 10px;
+            margin-top: 5px;
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+<header>
+    🌸 MiniFeed da Rapunzel 🌸
+</header>
+
+<div class="container">
+
+    <div class="perfil">
+        <img class="foto-perfil"
+             src="https://upload.wikimedia.org/wikipedia/en/5/51/Rapunzel_disney.png"
+             alt="Rapunzel">
+
+        <h2>Rapunzel</h2>
+        <p>👑 Princesa | 🌸 Aventureira | 🏰 Torre</p>
+    </div>
+
+    <!-- POST 1 -->
+    <div class="post">
+
+        <div class="usuario">
+            <img src="https://upload.wikimedia.org/wikipedia/en/5/51/Rapunzel_disney.png"
+                 alt="Rapunzel">
+
+            <div>
+                <strong>Rapunzel</strong>
+                <br>
+                <small>Há 10 minutos</small>
+            </div>
+        </div>
+
+        <p>
+            Hoje decidi sair da torre e conhecer o mundo!
+            🌞✨ Estou muito feliz com essa nova aventura!
+        </p>
+
+        <img class="post-img"
+             src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80"
+             alt="Castelo">
+
+        <div class="botoes">
+            <button onclick="curtir(this)">
+                ❤️ Curtir <span>0</span>
+            </button>
+
+            <button onclick="mostrarComentario(this)">
+                💬 Comentar
+            </button>
+
+            <button onclick="compartilhar()">
+                🔄 Compartilhar
+            </button>
+        </div>
+
+        <div class="comentarios" style="display:none;">
+            <input type="text" placeholder="Escreva um comentário...">
+            <button onclick="comentar(this)">Enviar</button>
+
+            <div class="lista-comentarios"></div>
+        </div>
+
+    </div>
+
+    <!-- POST 2 -->
+    <div class="post">
+
+        <div class="usuario">
+            <img src="https://upload.wikimedia.org/wikipedia/en/5/51/Rapunzel_disney.png"
+                 alt="Rapunzel">
+
+            <div>
+                <strong>Rapunzel</strong>
+                <br>
+                <small>Há 1 hora</small>
+            </div>
+        </div>
+
+        <p>
+            Meu cabelo é mágico, mas minha maior força está
+            em nunca desistir dos meus sonhos! 💜🌸
+        </p>
+
+        <div class="botoes">
+            <button onclick="curtir(this)">
+                ❤️ Curtir <span>0</span>
+            </button>
+
+            <button onclick="mostrarComentario(this)">
+                💬 Comentar
+            </button>
+
+            <button onclick="compartilhar()">
+                🔄 Compartilhar
+            </button>
+        </div>
+
+        <div class="comentarios" style="display:none;">
+            <input type="text" placeholder="Escreva um comentário...">
+            <button onclick="comentar(this)">Enviar</button>
+
+            <div class="lista-comentarios"></div>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+    // Curtir publicação
+    function curtir(botao) {
+
+        let numero = botao.querySelector("span");
+        let curtidas = Number(numero.textContent);
+
+        if (botao.classList.contains("curtido")) {
+            curtidas--;
+            botao.classList.remove("curtido");
+        } else {
+            curtidas++;
+            botao.classList.add("curtido");
+        }
+
+        numero.textContent = curtidas;
+    }
+
+    // Mostrar área de comentários
+    function mostrarComentario(botao) {
+
+        let post = botao.closest(".post");
+        let comentarios = post.querySelector(".comentarios");
+
+        if (comentarios.style.display === "none") {
+            comentarios.style.display = "block";
+        } else {
+            comentarios.style.display = "none";
+        }
+    }
+
+    // Adicionar comentário
+    function comentar(botao) {
+
+        let area = botao.parentElement;
+        let input = area.querySelector("input");
+        let lista = area.querySelector(".lista-comentarios");
+
+        let texto = input.value.trim();
+
+        if (texto === "") {
+            alert("Digite um comentário!");
+            return;
+        }
+
+        let novoComentario = document.createElement("div");
+
+        novoComentario.className = "comentario";
+        novoComentario.textContent = "💜 " + texto;
+
+        lista.appendChild(novoComentario);
+
+        input.value = "";
+    }
+
+    // Compartilhar
+    function compartilhar() {
+
+        if (navigator.share) {
+
+            navigator.share({
+                title: "MiniFeed da Rapunzel",
+                text: "Confira esse post da Rapunzel!"
+            });
+
+        } else {
+
+            alert("Post compartilhado! 🌸");
+
+        }
+    }
+
+</script>
+
+<script src="script.js"></script></body>
+</html>
+```
