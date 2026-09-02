@@ -65,5 +65,5 @@ listarProdutos();
 atualizarValor(2, 97.00);
 listarProdutos();
 
-atualizarValor(1, 3);
+atualizarValor(4, 3);
 listarProdutos();
