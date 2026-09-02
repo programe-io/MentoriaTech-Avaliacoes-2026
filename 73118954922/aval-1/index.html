@@ -1,81 +1,191 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <link href="style.css" rel="stylesheet">
-</head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciador de Produtos</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f9; color: #333; }
+        h1, h2 { color: #444; }
+        form { background: white; padding: 15px; margin-bottom: 20px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); max-width: 400px; }
+        .form-group { margin-bottom: 10px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group input { width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
+        button { background: #28a745; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #218838; }
+        .btn-update { background: #007bff; }
+        .btn-update:hover { background: #0069d9; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
 <body>
-  // Lista (Array) de Produtos
-let produtos = [];
 
-function validarProduto(descricao, quantidade, valor){
-   if(descricao.length < 5){
-       throw new Error("Descricao deve ter no mínimo cinco caracteres");
-    }
-   if(quantidade < 1){
-       throw new Error("Quantidade deve ser maior que zero");
-    }
-  if(valor < 0){
-      throw new Error("Valor deve maior igual a zero");
-    }    
-}
+    <h1>Gerenciador de Produtos</h1>
 
-    function cadastrarProduto(descricao, quantidade, valor){
-    validarProduto(descricao, quantidade, valor);
-    let novoProduto = {
-        "codigo": produtos.length + 1,
-        "descricao": descricao,
-        "quantidade": quantidade,
-        "valor": valor
-    }
-    produtos.push(novoProduto);
-}
+    <!-- Formulário de Cadastro -->
+    <h2>Cadastrar Produto</h2>
+    <form id="formCadastro">
+        <div class="form-group">
+            <label for="descricao">Descrição:</label>
+            <input type="text" id="descricao" required>
+        </div>
+        <div class="form-group">
+            <label for="quantidade">Quantidade:</label>
+            <input type="number" id="quantidade" required>
+        </div>
+        <div class="form-group">
+            <label for="valor">Valor (R$):</label>
+            <input type="number" step="0.01" id="valor" required>
+        </div>
+        <button type="submit">Cadastrar</button>
+    </form>
 
-function listarProdutos(){
-    console.log(produtos);
-}    
+    <!-- Formulário de Atualização -->
+    <h2>Atualizar Produto</h2>
+    <form id="formAtualizar">
+        <div class="form-group">
+            <label for="codigoAlt">Código do Produto:</label>
+            <input type="number" id="codigoAlt" required>
+        </div>
+        <div class="form-group">
+            <label for="novaQtde">Nova Quantidade (Adicionar):</label>
+            <input type="number" id="novaQtde" value="0">
+        </div>
+        <div class="form-group">
+            <label for="novoVal">Novo Valor (R$):</label>
+            <input type="number" step="0.01" id="novoVal" value="0">
+        </div>
+        <button type="submit" class="btn-update">Atualizar</button>
+    </form>
 
-function atualizarValor(codigoProduto, novoValor){
-    if(novoValor < 0){
-        throw new Error("Valor deve maior igual a zero");
-    }
-    const produtos = produtos.find(prod => prod.codigo === codigoProduto);
-    if(produto){
-        produto.valor = novoValor;
-    }
-    else{    
-        throw new Error("produto não encontrado");
-    }    
-}
-  
-function atualizarQuantidade(codigoProduto, novaQuantidade){
-    if(novoValor < 1){
-        throw new Error("Valor deve maior igual a zero");
-    }
-    const produtos = produtos.find(prod => prod.codigo === codigoProduto);
-    if(produto){
-        produto.quantidade += novaQuantidade;
-    }
-     else{    
-        throw new Error("produto não encontrado");
-    }    
-}
+    <!-- Tabela de Produtos -->
+    <h2>Lista de Produtos</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Código</th>
+                <th>Descrição</th>
+                <th>Quantidade</th>
+                <th>Valor</th>
+            </tr>
+        </thead>
+        <tbody id="tabelaProdutos">
+            <!-- Os produtos cadastrados vão aparecer aqui -->
+        </tbody>
+    </table>
 
+    <script>
+        // Lógica do JavaScript (Baseada no seu código original corrigido)
+        let produtos = [];
 
+        function validarProduto(descricao, quantidade, valor){
+            if(descricao.length < 5){
+                throw new Error("Descrição deve ter no mínimo cinco caracteres");
+            }
+            if(quantidade < 1){
+                throw new Error("Quantidade deve ser maior que zero");
+            }
+            if(valor < 0){
+                throw new Error("Valor deve ser maior ou igual a zero");
+            }    
+        }
 
+        function cadastrarProduto(descricao, quantidade, valor){
+            validarProduto(descricao, quantidade, valor);
+            let novoProduto = {
+                "codigo": produtos.length + 1,
+                "descricao": descricao,
+                "quantidade": quantidade,
+                "valor": valor
+            }
+            produtos.push(novoProduto);
+            listarProdutos(); // Atualiza a tabela na tela
+        }
 
-//----------------------------------
-listarProdutos();
-cadastrarProduto("Cadeira Gamer", 12, 699.00);
-cadastrarProduto("Mouse Logi", 38, 99.00);
-listarProdutos();
-atualizarValor(2, 97.00);
-listarProdutos();
+        function listarProdutos(){
+            console.log(produtos); // Mantém o log no console
+            
+            // Atualiza a tabela no HTML
+            const tbody = document.getElementById("tabelaProdutos");
+            tbody.innerHTML = ""; // Limpa a tabela antes de redesenhar
 
-atualizarQuantidade(1, 3);
-listarProdutos();
-  <script src="script.js"></script>
-  
-</body>
+            produtos.forEach(prod => {
+                const linha = `<tr>
+                    <td>${prod.codigo}</td>
+                    <td>${prod.descricao}</td>
+                    <td>${prod.quantidade}</td>
+                    <td>R$ ${prod.valor.toFixed(2)}</td>
+                </tr>`;
+                tbody.innerHTML += linha;
+            });
+        }    
+
+        function atualizarValor(codigoProduto, novoValor){
+            if(novoValor < 0){
+                throw new Error("Valor deve maior igual a zero");
+            }
+            const produto = produtos.find(prod => prod.codigo === codigoProduto);
+            if(produto){
+                produto.valor = novoValor;
+                listarProdutos();
+            } else {    
+                throw new Error("Produto não encontrado");
+            }    
+        }
+          
+        function atualizarQuantidade(codigoProduto, novaQuantidade){
+            if(novaQuantidade < 1){
+                throw new Error("Quantidade deve ser maior que zero");
+            }
+            const produto = produtos.find(prod => prod.codigo === codigoProduto);
+            if(produto){
+                produto.quantidade += novaQuantidade;
+                listarProdutos();
+            } else {    
+                throw new Error("Produto não encontrado");
+            }    
+        }
+
+        // --- Interceptação dos Formulários HTML ---
+
+        // Evento de Cadastro
+        document.getElementById("formCadastro").addEventListener("submit", function(e) {
+            e.preventDefault();
+            const desc = document.getElementById("descricao").value;
+            const qtde = parseInt(document.getElementById("quantidade").value);
+            const val = parseFloat(document.getElementById("valor").value);
+
+            try {
+                cadastrarProduto(desc, qtde, val);
+                this.reset(); // Limpa o formulário
+            } catch (erro) {
+                alert(erro.message);
+            }
+        });
+
+        // Evento de Atualização
+        document.getElementById("formAtualizar").addEventListener("submit", function(e) {
+            e.preventDefault();
+            const cod = parseInt(document.getElementById("codigoAlt").value);
+            const qtde = parseInt(document.getElementById("novaQtde").value);
+            const val = parseFloat(document.getElementById("novoVal").value);
+
+            try {
+                if (val > 0) atualizarValor(cod, val);
+                if (qtde > 0) atualizarQuantidade(cod, qtde);
+                this.reset();
+            } catch (erro) {
+                alert(erro.message);
+            }
+        });
+
+        // Carga inicial de testes (Executa automaticamente ao abrir a página)
+        cadastrarProduto("Cadeira Gamer", 12, 699.00);
+        cadastrarProduto("Mouse Logi", 38, 99.00);
+    </script>
+<script src="script.js"></script></body>
 </html>

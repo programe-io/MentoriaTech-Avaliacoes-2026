@@ -3,7 +3,7 @@ let produtos = [];
 
 function validarProduto(descricao, quantidade, valor){
    if(descricao.length < 5){
-       throw new Error("Descricao deve ter no mínimo cinco caracteres");
+       throw new Error("Descricao deve ter no mínimo comics caracteres");
     }
    if(quantidade < 1){
        throw new Error("Quantidade deve ser maior que zero");
@@ -13,7 +13,7 @@ function validarProduto(descricao, quantidade, valor){
     }    
 }
 
-    function cadastrarProduto(descricao, quantidade, valor){
+function cadastrarProduto(descricao, quantidade, valor){
     validarProduto(descricao, quantidade, valor);
     let novoProduto = {
         "codigo": produtos.length + 1,
@@ -32,7 +32,8 @@ function atualizarValor(codigoProduto, novoValor){
     if(novoValor < 0){
         throw new Error("Valor deve maior igual a zero");
     }
-    const produtos = produtos.find(prod => prod.codigo === codigoProduto);
+    // CORREÇÃO: Alterado o nome da constante para 'produto' no singular
+    const produto = produtos.find(prod => prod.codigo === codigoProduto);
     if(produto){
         produto.valor = novoValor;
     }
@@ -42,10 +43,12 @@ function atualizarValor(codigoProduto, novoValor){
 }
   
 function atualizarQuantidade(codigoProduto, novaQuantidade){
-    if(novoValor < 1){
-        throw new Error("Valor deve maior igual a zero");
+    // CORREÇÃO: Alterado de 'novoValor' para 'novaQuantidade'
+    if(novaQuantidade < 1){
+        throw new Error("Quantidade deve ser maior que zero");
     }
-    const produtos = produtos.find(prod => prod.codigo === codigoProduto);
+    // CORREÇÃO: Alterado o nome da constante para 'produto' no singular
+    const produto = produtos.find(prod => prod.codigo === codigoProduto);
     if(produto){
         produto.quantidade += novaQuantidade;
     }
@@ -53,9 +56,6 @@ function atualizarQuantidade(codigoProduto, novaQuantidade){
         throw new Error("produto não encontrado");
     }    
 }
-
-
-
 
 //----------------------------------
 listarProdutos();

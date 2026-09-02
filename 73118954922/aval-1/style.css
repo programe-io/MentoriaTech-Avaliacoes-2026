@@ -1,69 +1,193 @@
-// Lista (Array) de Produtos
-let produtos = [];
-
-function validarProduto(descricao, quantidade, valor){
-   if(descricao.length < 5){
-       throw new Error("Descricao deve ter no mínimo cinco caracteres");
-    }
-   if(quantidade < 1){
-       throw new Error("Quantidade deve ser maior que zero");
-    }
-  if(valor < 0){
-      throw new Error("Valor deve maior igual a zero");
-    }    
+/* ==========================================================================
+   RESET E CONFIGURAÇÕES GERAIS
+   ========================================================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-    function cadastrarProduto(descricao, quantidade, valor){
-    validarProduto(descricao, quantidade, valor);
-    let novoProduto = {
-        "codigo": produtos.length + 1,
-        "descricao": descricao,
-        "quantidade": quantidade,
-        "valor": valor
-    }
-    produtos.push(novoProduto);
+body {
+    background-color: #f8fafc;
+    color: #1e293b;
+    padding: 40px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-function listarProdutos(){
-    console.log(produtos);
-}    
-
-function atualizarValor(codigoProduto, novoValor){
-    if(novoValor < 0){
-        throw new Error("Valor deve maior igual a zero");
-    }
-    const produtos = produtos.find(prod => prod.codigo === codigoProduto);
-    if(produto){
-        produto.valor = novoValor;
-    }
-    else{    
-        throw new Error("produto não encontrado");
-    }    
-}
-  
-function atualizarQuantidade(codigoProduto, novaQuantidade){
-    if(novoValor < 1){
-        throw new Error("Valor deve maior igual a zero");
-    }
-    const produtos = produtos.find(prod => prod.codigo === codigoProduto);
-    if(produto){
-        produto.quantidade += novaQuantidade;
-    }
-     else{    
-        throw new Error("produto não encontrado");
-    }    
+h1 {
+    font-size: 2.2rem;
+    color: #0f172a;
+    margin-bottom: 30px;
+    text-align: center;
+    font-weight: 700;
+    border-bottom: 3px solid #3b82f6;
+    padding-bottom: 10px;
+    width: 100%;
+    max-width: 1100px;
 }
 
+h2 {
+    font-size: 1.25rem;
+    color: #334155;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
 
+/* ==========================================================================
+   LAYOUT EM GRID (PAINEL LATERAIS + TABELA)
+   ========================================================================== */
+.container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 30px;
+    width: 100%;
+    max-width: 1100px;
+}
 
+@media (min-width: 768px) {
+    .container {
+        grid-template-columns: 350px 1fr;
+    }
+    
+    .sidebar {
+        grid-column: 1;
+    }
+    
+    .content {
+        grid-column: 2;
+    }
+}
 
-//----------------------------------
-listarProdutos();
-cadastrarProduto("Cadeira Gamer", 12, 699.00);
-cadastrarProduto("Mouse Logi", 38, 99.00);
-listarProdutos();
-atualizarValor(2, 97.00);
-listarProdutos();
+/* ==========================================================================
+   FORMULÁRIOS & SIDEBAR
+   ========================================================================== */
+form {
+    background: #ffffff;
+    padding: 24px;
+    margin-bottom: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    border: 1px solid #e2e8f0;
+}
 
-atualizarQuantidade(1, 3);
-listarProdutos();
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: #475569;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    color: #1e293b;
+    transition: all 0.2s ease;
+    background-color: #f8fafc;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+/* ==========================================================================
+   BOTÕES
+   ========================================================================== */
+button {
+    width: 100%;
+    padding: 12px;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+button[type="submit"] {
+    background-color: #10b981; /* Verde moderno */
+}
+
+button[type="submit"]:hover {
+    background-color: #059669;
+}
+
+button[type="submit"]:active {
+    transform: scale(0.98);
+}
+
+.btn-update {
+    background-color: #3b82f6; /* Azul moderno */
+}
+
+.btn-update:hover {
+    background-color: #2563eb;
+}
+
+/* ==========================================================================
+   TABELA DE PRODUTOS
+   ========================================================================== */
+.table-container {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    border: 1px solid #e2e8f0;
+    overflow: hidden;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+th {
+    background-color: #f1f5f9;
+    color: #475569;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 16px;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+td {
+    padding: 16px;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 0.95rem;
+    color: #334155;
+}
+
+tr:last-child td {
+    border-bottom: none;
+}
+
+tr:hover td {
+    background-color: #f8fafc; /* Efeito de destaque ao passar o mouse */
+}
+
+/* Estilo para a coluna de valores e códigos */
+td:nth-child(1) {
+    font-weight: 600;
+    color: #64748b;
+}
+
+td:nth-child(4) {
+    font-weight: 600;
+    color: #0f172a;
+}
