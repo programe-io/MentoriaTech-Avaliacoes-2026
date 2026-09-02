@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Futebol Arena</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            background: #f1f5f2;
+            color: #17251b;
+            transition: 0.3s;
+        }
+
+        body.dark {
+            background: #101512;
+            color: #f1f1f1;
+        }
+
+        header {
+            background: linear-gradient(135deg, #087f23, #0bbf3f);
+            color: white;
+            padding: 20px 7%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.2);
+        }
+
+        header h1 {
+            font-size: 28px;
+        }
+
+        header span {
+            color: #d7ffdf;
+        }
+
+        .theme-btn {
+            border: none;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        nav {
+            background: #075c1b;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            padding: 14px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        nav a:hover {
+            color: #72ff91;
+        }
+
+        main {
+            width: 90%;
+            max-width: 1200px;
+            margin: 30px auto;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #064e18, #0b9e31);
+            color: white;
+            padding: 35px;
+            border-radius: 18px;
+            margin-bottom: 25px;
+        }
+
+        .hero h2 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .hero p {
+            opacity: 0.9;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 25px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 22px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            margin-bottom: 25px;
+        }
+
+        body.dark .card {
+            background: #1b241e;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .card h2 {
+            margin-bottom: 20px;
+            color: #087f23;
+        }
+
+        body.dark .card h2 {
+            color: #50df70;
+        }
+
+        .match {
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 15px;
+        }
+
+        body.dark .match {
+            border-color: #39453c;
+        }
+
+        .match-header {
+            display: flex;
+            justify-content: space-between;
+            color: #777;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .teams {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            text-align: center;
+        }
+
+        .team {
+            width: 35%;
+            font-weight: bold;
+        }
+
+        .shield {
+            width: 55px;
+            height: 55px;
+            background: #087f23;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 8px;
+            font-size: 25px;
+        }
+
+        .score {
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .status {
+            background: #e9f8ed;
+            color: #087f23;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+        }
+
+        body.dark .status {
+            background: #153c20;
+            color: #6cf28a;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px 8px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+        body.dark th,
+        body.dark td {
+            border-color: #39453c;
+        }
+
+        th {
+            color: #087f23;
+        }
+
+        body.dark th {
+            color: #61e97b;
+        }
+
+        td:nth-child(2) {
+            text-align: left;
+            font-weight: bold;
+        }
+
+        .position {
+            width: 25px;
+            height: 25px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: #087f23;
+            color: white;
+            font-size: 12px;
+        }
+
+        .timer {
+            text-align: center;
+            background: linear-gradient(135deg, #101c13, #193c20);
+            color: white;
+            border-radius: 15px;
+            padding: 25px;
+        }
+
+        #clock {
+            font-size: 55px;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+
+        button {
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 3px;
+        }
+
+        .start {
+            background: #18a83c;
+            color: white;
+        }
+
+        .pause {
+            background: #e8a900;
+            color: white;
+        }
+
+        .reset {
+            background: #d93636;
+            color: white;
+        }
+
+        .goal {
+            background: #087f23;
+            color: white;
+        }
+
+        .card-red {
+            background: #d93636;
+            color: white;
+        }
+
+        .events {
+            margin-top: 20px;
+            text-align: left;
+            max-height: 180px;
+            overflow-y: auto;
+        }
+
+        .event {
+            padding: 8px;
+            border-bottom: 1px solid rgba(255,255,255,0.15);
+        }
+
+        footer {
+            background: #075c1b;
+            color: white;
+            text-align: center;
+            padding: 25px;
+            margin-top: 40px;
+        }
+
+        @media (max-width: 800px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            header {
+                padding: 18px 5%;
+            }
+
+            nav {
+                gap: 15px;
+                font-size: 14px;
+            }
+
+            .hero h2 {
+                font-size: 25px;
+            }
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+<header>
+    <h1>⚽ Futebol <span>Arena</span></h1>
+    <button class="theme-btn" onclick="toggleTheme()">🌙</button>
+</header>
+
+<nav>
+    <a href="#jogos">Jogos</a>
+    <a href="#tabela">Tabela</a>
+    <a href="#ao-vivo">Ao Vivo</a>
+</nav>
+
+<main>
+
+    <section class="hero">
+        <h2>Bem-vindo ao Futebol Arena!</h2>
+        <p>Acompanhe partidas, classificação e um jogo ao vivo simulado.</p>
+    </section>
+
+    <div class="grid">
+
+        <section id="jogos">
+
+            <div class="card">
+                <h2>🔥 Jogos de Hoje</h2>
+
+                <div class="match">
+                    <div class="match-header">
+                        <span>Campeonato Nacional</span>
+                        <span class="status">19:00</span>
+                    </div>
+
+                    <div class="teams">
+                        <div class="team">
+                            <div class="shield">🟢</div>
+                            Palmeiras
+                        </div>
+
+                        <div>
+                            <div class="score">2 × 1</div>
+                            <small>Finalizado</small>
+                        </div>
+
+                        <div class="team">
+                            <div class="shield">🔵</div>
+                            Santos
+                        </div>
+                    </div>
+                </div>
+
+                <div class="match">
+                    <div class="match-header">
+                        <span>Campeonato Nacional</span>
+                        <span class="status">21:30</span>
+                    </div>
+
+                    <div class="teams">
+                        <div class="team">
+                            <div class="shield">🔴</div>
+                            Flamengo
+                        </div>
+
+                        <div>
+                            <div class="score">- × -</div>
+                            <small>Em breve</small>
+                        </div>
+
+                        <div class="team">
+                            <div class="shield">⚫</div>
+                            Botafogo
+                        </div>
+                    </div>
+                </div>
+
+                <button class="start" onclick="atualizarJogos()">
+                    🔄 Atualizar jogos
+                </button>
+
+            </div>
+
+            <div class="card" id="tabela">
+                <h2>🏆 Classificação</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Time</th>
+                            <th>PTS</th>
+                            <th>J</th>
+                            <th>V</th>
+                            <th>SG</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr>
+                            <td><span class="position">1</span></td>
+                            <td>Palmeiras</td>
+                            <td>42</td>
+                            <td>20</td>
+                            <td>13</td>
+                            <td>18</td>
+                        </tr>
+
+                        <tr>
+                            <td><span class="position">2</span></td>
+                            <td>Flamengo</td>
+                            <td>39</td>
+                            <td>20</td>
+                            <td>12</td>
+                            <td>15</td>
+                        </tr>
+
+                        <tr>
+                            <td><span class="position">3</span></td>
+                            <td>Botafogo</td>
+                            <td>36</td>
+                            <td>20</td>
+                            <td>11</td>
+                            <td>12</td>
+                        </tr>
+
+                        <tr>
+                            <td><span class="position">4</span></td>
+                            <td>Atlético-MG</td>
+                            <td>34</td>
+                            <td>20</td>
+                            <td>10</td>
+                            <td>10</td>
+                        </tr>
+
+                        <tr>
+                            <td><span class="position">5</span></td>
+                            <td>São Paulo</td>
+                            <td>31</td>
+                            <td>20</td>
+                            <td>9</td>
+                            <td>7</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </section>
+
+        <aside id="ao-vivo">
+
+            <div class="card">
+                <h2>🔴 Ao Vivo</h2>
+
+                <div class="timer">
+
+                    <p>PALMEIRAS x SANTOS</p>
+
+                    <div id="clock">00:00</div>
+
+                    <button class="start" onclick="startGame()">
+                        ▶ Iniciar
+                    </button>
+
+                    <button class="pause" onclick="pauseGame()">
+                        ⏸ Pausar
+                    </button>
+
+                    <button class="reset" onclick="resetGame()">
+                        ↻ Resetar
+                    </button>
+
+                    <br><br>
+
+                    <button class="goal" onclick="addEvent('⚽ Gol do Palmeiras!')">
+                        ⚽ Gol
+                    </button>
+
+                    <button class="card-red" onclick="addEvent('🟥 Cartão vermelho!')">
+                        🟥 Cartão
+                    </button>
+
+                    <div class="events" id="events">
+                        <div class="event">
+                            Nenhum evento registrado.
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>📊 Estatísticas</h2>
+
+                <p>Posse de bola</p>
+                <strong>58% — 42%</strong>
+
+                <br><br>
+
+                <p>Finalizações</p>
+                <strong>14 — 8</strong>
+
+                <br><br>
+
+                <p>Escanteios</p>
+                <strong>7 — 3</strong>
+            </div>
+
+        </aside>
+
+    </div>
+
+</main>
+
+<footer>
+    <p>⚽ Futebol Arena — Seu portal de futebol</p>
+    <p>Feito com HTML, CSS e JavaScript</p>
+</footer>
+
+<script>
+
+    // -----------------------------
+    // MODO ESCURO
+    // -----------------------------
+
+    function toggleTheme() {
+        document.body.classList.toggle("dark");
+
+        const button = document.querySelector(".theme-btn");
+
+        if (document.body.classList.contains("dark")) {
+            button.innerHTML = "☀️";
+        } else {
+            button.innerHTML = "🌙";
+        }
+    }
+
+
+    // -----------------------------
+    // CRONÔMETRO
+    // -----------------------------
+
+    let seconds = 0;
+    let timer = null;
+
+    function updateClock() {
+
+        let minutes = Math.floor(seconds / 60);
+        let secs = seconds % 60;
+
+        minutes = String(minutes).padStart(2, "0");
+        secs = String(secs).padStart(2, "0");
+
+        document.getElementById("clock").innerText =
+            `${minutes}:${secs}`;
+    }
+
+    function startGame() {
+
+        if (timer !== null) return;
+
+        timer = setInterval(() => {
+            seconds++;
+            updateClock();
+        }, 1000);
+    }
+
+    function pauseGame() {
+
+        clearInterval(timer);
+        timer = null;
+    }
+
+    function resetGame() {
+
+        clearInterval(timer);
+
+        timer = null;
+        seconds = 0;
+
+        updateClock();
+
+        document.getElementById("events").innerHTML =
+            `<div class="event">
+                Nenhum evento registrado.
+            </div>`;
+    }
+
+
+    // -----------------------------
+    // EVENTOS DA PARTIDA
+    // -----------------------------
+
+    function addEvent(text) {
+
+        const events = document.getElementById("events");
+
+        if (
+            events.innerText.includes(
+                "Nenhum evento registrado"
+            )
+        ) {
+            events.innerHTML = "";
+        }
+
+        let minutes = Math.floor(seconds / 60);
+        let secs = seconds % 60;
+
+        minutes = String(minutes).padStart(2, "0");
+        secs = String(secs).padStart(2, "0");
+
+        const event = document.createElement("div");
+
+        event.className = "event";
+
+        event.innerHTML =
+            `<strong>${minutes}:${secs}</strong> — ${text}`;
+
+        events.prepend(event);
+    }
+
+
+    // -----------------------------
+    // ATUALIZAÇÃO DOS JOGOS
+    // -----------------------------
+
+    function atualizarJogos() {
+
+        const button = event.target;
+
+        button.innerText = "✅ Jogos atualizados!";
+
+        setTimeout(() => {
+            button.innerText = "🔄 Atualizar jogos";
+        }, 2000);
+    }
+
+</script>
+
+<script src="script.js"></script></body>
+</html>
