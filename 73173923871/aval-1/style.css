@@ -1,70 +1,188 @@
-let produtos = [];
-
-function validarProduto(descricao, quantidade, valor){ 
-    if (descricao.length < 5){ 
-        throw new Error("Descrição deve ter no mínimo cinco caracteres"); 
-    } 
-    if(quantidade < 1){ 
-        throw new Error("Quantidade deve ser maior que zero"); 
-    } 
-    if(valor < 0){ 
-        throw new Error("Valor deve ser maior igual a zero"); 
-    } 
+:root {
+  --bg-primary: #f8fafc;
+  --bg-card: #ffffff;
+  --text-main: #1e293b;
+  --text-muted: #64748b;
+  --accent-color: #2563eb;
+  --accent-hover: #1d4ed8;
+  --border-color: #e2e8f0;
+  --success-color: #16a34a;
+  --danger-color: #dc2626;
+  --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --radius: 8px;
 }
 
-function cadastrarProduto(descricao, quantidade, valor){ 
-    validarProduto(descricao, quantidade, valor); 
-    let novoProduto = { 
-        "codigo": produtos.length + 1, 
-        "descricao": descricao, 
-        "quantidade": quantidade, 
-        "valor": valor, 
-    }; 
-    produtos.push(novoProduto); 
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-function listarProdutos(){ 
-    console.log(produtos); 
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-main);
+  padding: 2rem;
+  line-height: 1.5;
 }
 
-function atualizarValor(codigoProduto, novoValor){ 
-    if(novoValor < 0){ 
-        throw new Error("Valor deve ser maior igual a zero"); 
-    } 
-    const produto = produtos.find(prod => prod.codigo === codigoProduto); 
-    if(produto){ 
-        produto.valor = novoValor; 
-    } else { 
-        throw new Error("Produto não encontrado"); 
-    } 
+/* ==========================================================================
+   2. LAYOUT DO DASHBOARD
+   ========================================================================== */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-function atualizarQuantidade(codigoProduto, novaQuantidade){ 
-    if(novaQuantidade < 1){ 
-        throw new Error("Quantidade deve ser maior que zero"); 
-    } 
-    const produto = produtos.find(prod => prod.codigo === codigoProduto); 
-    if(produto){ 
-        
-        produto.quantidade = novaQuantidade; 
-    } else { 
-        throw new Error("Produto não encontrado"); 
-    } 
+header {
+  margin-bottom: 2rem;
 }
 
+header h1 {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
 
-listarProdutos(); 
+header p {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
 
-cadastrarProduto("Ferrari 250 GTO (1962)", 36, 250000000.00); 
-cadastrarProduto("McLaren F1 LM (1995)", 5, 100000000.00); 
-cadastrarProduto("Bugatti La Voiture Noire (2019)", 40, 55000000.00); 
-cadastrarProduto("Aston Martin DBR1 (1956)", 5, 1100000000.00); 
-cadastrarProduto("Porsche 911 GT3 RS", 40, 360000000.00); 
+/* Card principal que envelopa a tabela */
+.inventory-card {
+  background-color: var(--bg-card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border-color);
+  overflow: hidden; /* Garante que as bordas da tabela respeitem o raio do card */
+}
 
-listarProdutos(); 
+/* ==========================================================================
+   3. ESTILIZAÇÃO DA TABELA DE PRODUTOS
+   ========================================================================== */
+.product-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
 
-atualizarValor(2, 97.00); 
-listarProdutos(); 
+.product-table th {
+  background-color: #f1f5f9;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 1rem 1.5rem;
+  font-weight: 600;
+  border-bottom: 1px solid var(--border-color);
+}
 
-atualizarQuantidade(1, 3); 
-listarProdutos();
+.product-table td {
+  padding: 1rem 1.5rem;
+  font-size: 0.875rem;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-main);
+}
+
+/* Alternância de cores nas linhas (Zebra) */
+.product-table tbody tr:nth-child(even) {
+  background-color: #f8fafc;
+}
+
+/* Efeito Hover nas linhas */
+.product-table tbody tr:hover {
+  background-color: #f1f5f9;
+  transition: background-color 0.2s ease;
+}
+
+/* Alinhamento de números à direita (Melhor legibilidade financeira) */
+.col-id { width: 80px; }
+.col-qty { text-align: right; width: 120px; }
+.col-price { text-align: right; width: 180px; }
+
+/* Destaque para ID e Preço */
+.product-id {
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.product-price {
+  font-family: monospace;
+  font-weight: 600;
+  color: var(--success-color);
+}
+
+/* Badge para controle de estoque baixo */
+.badge-stock {
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+.badge-stock.low {
+  background-color: #fee2e2;
+  color: var(--danger-color);
+}
+
+/* ==========================================================================
+   4. INTERFACES DE AÇÃO (FORMULÁRIOS / BOTÕES)
+   ========================================================================== */
+.actions-panel {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1-fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.form-group {
+  background: var(--bg-card);
+  padding: 1.5rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow);
+}
+
+.form-group h3 {
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  color: var(--text-main);
+}
+
+.input-field {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  margin-bottom: 0.75rem;
+  font-size: 0.875rem;
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.btn {
+  width: 100%;
+  padding: 0.5rem 1rem;
+  background-color: var(--accent-color);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn:hover {
+  background-color: var(--accent-hover);
+}
+
+/* RESPONSIVIDADE */
+@media (max-width: 768px) {
+  body { padding: 1rem; }
+  .inventory-card { overflow-x: auto; } /* Ativa rolagem horizontal se a tabela não couber */
+}

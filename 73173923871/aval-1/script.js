@@ -45,18 +45,19 @@ function atualizarQuantidade(codigoProduto, novaQuantidade){
     } 
     const produto = produtos.find(prod => prod.codigo === codigoProduto); 
     if(produto){ 
-        
+        // Corrigido: '=' substitui o valor antigo. '+=' somaria à quantidade existente.
         produto.quantidade = novaQuantidade; 
     } else { 
         throw new Error("Produto não encontrado"); 
     } 
 }
 
-
+// Execução dos testes 
 listarProdutos(); 
 
 cadastrarProduto("Ferrari 250 GTO (1962)", 36, 250000000.00); 
 cadastrarProduto("McLaren F1 LM (1995)", 5, 100000000.00); 
+// Corrigido: digitado 'cadastrarProduto' por extenso
 cadastrarProduto("Bugatti La Voiture Noire (2019)", 40, 55000000.00); 
 cadastrarProduto("Aston Martin DBR1 (1956)", 5, 1100000000.00); 
 cadastrarProduto("Porsche 911 GT3 RS", 40, 360000000.00); 
@@ -68,4 +69,3 @@ listarProdutos();
 
 atualizarQuantidade(1, 3); 
 listarProdutos();
-      

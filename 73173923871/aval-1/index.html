@@ -1,82 +1,283 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <link href="style.css" rel="stylesheet">
-</head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciador de Inventário de Supercarros</title>
+    <style>
+        :root {
+            --primary: #e63946;
+            --dark: #1d3557;
+            --light: #f8f9fa;
+            --border: #dee2e6;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f1f3f5;
+            color: #333;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h1, h2 {
+            color: var(--dark);
+            margin-top: 0;
+        }
+        form {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr auto;
+            gap: 15px;
+            margin-bottom: 30px;
+            background: var(--light);
+            padding: 20px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        input {
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background-color: #c92a3a;
+        }
+        .btn-action {
+            padding: 4px 8px;
+            font-size: 0.8rem;
+            background-color: var(--dark);
+            margin-left: 4px;
+        }
+        .btn-action:hover {
+            background-color: #112237;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        th {
+            background-color: var(--dark);
+            color: white;
+        }
+        tr:hover {
+            background-color: rgba(0,0,0,0.02);
+        }
+        .text-right {
+            text-align: right;
+        }
+        .empty-message {
+            text-align: center;
+            color: #777;
+            padding: 20px;
+            font-style: italic;
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
 <body>
-  let produtos = [];
 
-function validarProduto(descricao, quantidade, valor){ 
-    if (descricao.length < 5){ 
-        throw new Error("Descrição deve ter no mínimo cinco caracteres"); 
-    } 
-    if(quantidade < 1){ 
-        throw new Error("Quantidade deve ser maior que zero"); 
-    } 
-    if(valor < 0){ 
-        throw new Error("Valor deve ser maior igual a zero"); 
-    } 
-}
+<div class="container">
+    <h1>🏎️ Gerenciador de Inventário</h1>
+    
+    <!-- Formulário de Cadastro -->
+    <h2>Cadastrar Novo Veículo</h2>
+    <form id="formProduto">
+        <div class="form-group">
+            <label for="descricao">Descrição / Modelo</label>
+            <input type="text" id="descricao" required placeholder="Ex: LaFerrari">
+        </div>
+        <div class="form-group">
+            <label for="quantidade">Quantidade</label>
+            <input type="number" id="quantidade" min="1" required placeholder="0">
+        </div>
+        <div class="form-group">
+            <label for="valor">Valor Unitário ($)</label>
+            <input type="number" id="valor" min="0" step="0.01" required placeholder="0.00">
+        </div>
+        <div class="form-group" style="justify-content: flex-end;">
+            <button type="submit">Cadastrar</button>
+        </div>
+    </form>
 
-function cadastrarProduto(descricao, quantidade, valor){ 
-    validarProduto(descricao, quantidade, valor); 
-    let novoProduto = { 
-        "codigo": produtos.length + 1, 
-        "descricao": descricao, 
-        "quantidade": quantidade, 
-        "valor": valor, 
-    }; 
-    produtos.push(novoProduto); 
-}
+    <!-- Tabela de Produtos -->
+    <h2>Estoque Atual</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Código</th>
+                <th>Descrição</th>
+                <th class="text-right">Quantidade</th>
+                <th class="text-right">Valor Unitário</th>
+                <th style="width: 180px;">Ações</th>
+            </tr>
+        </thead>
+        <tbody id="tabelaCorpo">
+            <!-- Os dados serão injetados aqui via JS -->
+        </tbody>
+    </table>
+    <div id="mensagemVazia" class="empty-message" style="display: none;">Nenhum carro no inventário.</div>
+</div>
 
-function listarProdutos(){ 
-    console.log(produtos); 
-}
+<script>
+    // Lógica de negócios do Inventário (Encapsulada)
+    const Inventario = (() => {
+        const produtos = [];
+        let proximoCodigo = 1;
 
-function atualizarValor(codigoProduto, novoValor){ 
-    if(novoValor < 0){ 
-        throw new Error("Valor deve ser maior igual a zero"); 
-    } 
-    const produto = produtos.find(prod => prod.codigo === codigoProduto); 
-    if(produto){ 
-        produto.valor = novoValor; 
-    } else { 
-        throw new Error("Produto não encontrado"); 
-    } 
-}
+        function validarProduto(descricao, quantidade, valor) {
+            if (!descricao || descricao.trim().length < 5) {
+                throw new Error("A descrição deve ter no mínimo 5 caracteres.");
+            }
+            if (quantidade < 1) {
+                throw new Error("A quantidade deve ser maior que zero.");
+            }
+            if (valor < 0) {
+                throw new Error("O valor não pode ser negativo.");
+            }
+        }
 
-function atualizarQuantidade(codigoProduto, novaQuantidade){ 
-    if(novaQuantidade < 1){ 
-        throw new Error("Quantidade deve ser maior que zero"); 
-    } 
-    const produto = produtos.find(prod => prod.codigo === codigoProduto); 
-    if(produto){ 
-        
-        produto.quantidade = novaQuantidade; 
-    } else { 
-        throw new Error("Produto não encontrado"); 
-    } 
-}
+        return {
+            cadastrar(descricao, quantidade, valor) {
+                validarProduto(descricao, quantidade, valor);
+                produtos.push({
+                    codigo: proximoCodigo++,
+                    descricao: descricao.trim(),
+                    quantidade: Math.floor(quantidade),
+                    valor: parseFloat(valor)
+                });
+            },
+            atualizarValor(codigo, novoValor) {
+                if (novoValor < 0) throw new Error("Valor inválido.");
+                const prod = produtos.find(p => p.codigo === codigo);
+                if (prod) prod.valor = parseFloat(novoValor);
+            },
+            atualizarQuantidade(codigo, novaQuantidade) {
+                if (novaQuantidade < 1) throw new Error("Quantidade inválida.");
+                const prod = produtos.find(p => p.codigo === codigo);
+                if (prod) prod.quantidade = Math.floor(novaQuantidade);
+            },
+            obterTodos() {
+                return [...produtos]; // Retorna cópia para proteção de dados
+            }
+        };
+    })();
 
+    // Manipulação da Interface Gráfica (DOM)
+    const form = document.getElementById('formProduto');
+    const tabelaCorpo = document.getElementById('tabelaCorpo');
+    const mensagemVazia = document.getElementById('mensagemVazia');
 
-listarProdutos(); 
+    function renderizarTabela() {
+        const lista = Inventario.obterTodos();
+        tabelaCorpo.innerHTML = '';
 
-cadastrarProduto("Ferrari 250 GTO (1962)", 36, 250000000.00); 
-cadastrarProduto("McLaren F1 LM (1995)", 5, 100000000.00); 
-cadastrarProduto("Bugatti La Voiture Noire (2019)", 40, 55000000.00); 
-cadastrarProduto("Aston Martin DBR1 (1956)", 5, 1100000000.00); 
-cadastrarProduto("Porsche 911 GT3 RS", 40, 360000000.00); 
+        if (lista.length === 0) {
+            mensagemVazia.style.display = 'block';
+            return;
+        }
+        mensagemVazia.style.display = 'none';
 
-listarProdutos(); 
+        lista.forEach(prod => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>#${prod.codigo}</td>
+                <td><strong>${prod.descricao}</strong></td>
+                <td class="text-right">${prod.quantidade}</td>
+                <td class="text-right">$ ${prod.valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                <td>
+                    <button class="btn-action" onclick="alterarQuantidade(${prod.codigo})">Qtd</button>
+                    <button class="btn-action" onclick="alterarPreco(${prod.codigo})">Preço</button>
+                </td>
+            `;
+            tabelaCorpo.appendChild(tr);
+        });
+    }
 
-atualizarValor(2, 97.00); 
-listarProdutos(); 
+    // Ações disparadas pelos botões da tabela
+    window.alterarQuantidade = (codigo) => {
+        const novaQtd = prompt("Digite a nova quantidade:");
+        if (novaQtd !== null) {
+            try {
+                Inventario.atualizarQuantidade(codigo, Number(novaQtd));
+                renderizarTabela();
+            } catch (err) {
+                alert(err.message);
+            }
+        }
+    };
 
-atualizarQuantidade(1, 3); 
-listarProdutos();
-  <script src="script.js"></script>
-  
-</body>
+    window.alterarPreco = (codigo) => {
+        const novoPreco = prompt("Digite o novo valor unitário:");
+        if (novoPreco !== null) {
+            try {
+                Inventario.atualizarValor(codigo, Number(novoPreco));
+                renderizarTabela();
+            } catch (err) {
+                alert(err.message);
+            }
+        }
+    };
+
+    // Escuta do formulário de cadastro
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const desc = document.getElementById('descricao').value;
+        const qtd = Number(document.getElementById('quantidade').value);
+        const val = Number(document.getElementById('valor').value);
+
+        try {
+            Inventario.cadastrar(desc, qtd, val);
+            form.reset();
+            renderizarTabela();
+        } catch (err) {
+            alert(err.message);
+        }
+    });
+
+    // Carga inicial com a massa de testes fornecida por você
+    Inventario.cadastrar("Ferrari 250 GTO (1962)", 36, 250000000.00);
+    Inventario.cadastrar("McLaren F1 LM (1995)", 5, 100000000.00);
+    Inventario.cadastrar("Bugatti La Voiture Noire (2019)", 40, 55000000.00);
+    Inventario.cadastrar("Aston Martin DBR1 (1956)", 5, 1100000000.00);
+    Inventario.cadastrar("Porsche 911 GT3 RS", 40, 360000000.00);
+
+    // Exibe os dados iniciais na tela
+    renderizarTabela();
+</script>
+
+<script src="script.js"></script></body>
 </html>
