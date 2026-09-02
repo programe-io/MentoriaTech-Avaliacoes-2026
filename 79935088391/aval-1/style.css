@@ -1,0 +1,1181 @@
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Spider Feed 🕷️</title>
+
+  <style>
+    /* ================================
+       RESET
+    ================================= */
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      color: #fff;
+      min-height: 100vh;
+      overflow-x: hidden;
+
+      /* Fundo azul/vermelho */
+      background:
+        radial-gradient(circle at 50% 20%, rgba(220, 0, 0, 0.25), transparent 35%),
+        linear-gradient(
+          135deg,
+          #020617 0%,
+          #071a3d 35%,
+          #001b44 60%,
+          #070707 100%
+        );
+    }
+
+
+    /* ================================
+       TEIAS DE FUNDO
+    ================================= */
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      width: 500px;
+      height: 500px;
+      pointer-events: none;
+      opacity: 0.18;
+      z-index: -1;
+
+      background-image:
+        radial-gradient(
+          circle,
+          transparent 55%,
+          rgba(255,255,255,0.7) 56%,
+          transparent 57%
+        ),
+        linear-gradient(
+          45deg,
+          transparent 49%,
+          rgba(255,255,255,0.5) 50%,
+          transparent 51%
+        ),
+        linear-gradient(
+          -45deg,
+          transparent 49%,
+          rgba(255,255,255,0.5) 50%,
+          transparent 51%
+        );
+
+      background-size: 100px 100px;
+    }
+
+    body::before {
+      top: -150px;
+      left: -150px;
+      transform: rotate(15deg);
+    }
+
+    body::after {
+      right: -150px;
+      bottom: -150px;
+      transform: rotate(-15deg);
+    }
+
+
+    /* ================================
+       HEADER
+    ================================= */
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+
+      height: 75px;
+
+      background:
+        linear-gradient(
+          135deg,
+          #850000,
+          #e10600 45%,
+          #a00000
+        );
+
+      border-bottom: 4px solid #050505;
+
+      box-shadow:
+        0 5px 20px rgba(0,0,0,0.7),
+        inset 0 -2px 0 rgba(255,255,255,0.15);
+    }
+
+    .header-content {
+      max-width: 900px;
+      height: 100%;
+      margin: auto;
+
+      padding: 0 20px;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+
+    /* LOGO */
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      font-size: 27px;
+      font-weight: 900;
+
+      letter-spacing: 2px;
+
+      color: white;
+
+      text-shadow:
+        3px 3px 0 #000,
+        -1px -1px 0 #000;
+    }
+
+    .logo-spider {
+      font-size: 38px;
+
+      filter:
+        drop-shadow(3px 3px 0 #000);
+
+      animation: spiderFloat 2s infinite ease-in-out;
+    }
+
+    @keyframes spiderFloat {
+
+      0%, 100% {
+        transform: translateY(0) rotate(-5deg);
+      }
+
+      50% {
+        transform: translateY(-7px) rotate(5deg);
+      }
+    }
+
+
+    /* ================================
+       CONTAINER
+    ================================= */
+
+    .feed {
+      width: 94%;
+      max-width: 700px;
+
+      margin: 35px auto;
+    }
+
+
+    /* ================================
+       TITULO
+    ================================= */
+
+    .page-title {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .page-title h1 {
+      font-size: 34px;
+      text-transform: uppercase;
+
+      color: #fff;
+
+      text-shadow:
+        4px 4px 0 #e10600,
+        7px 7px 0 #000;
+    }
+
+    .page-title p {
+      margin-top: 10px;
+
+      color: #a9c7ff;
+      font-size: 14px;
+    }
+
+
+    /* ================================
+       CRIAR POST
+    ================================= */
+
+    .create-post {
+      position: relative;
+
+      background:
+        linear-gradient(
+          145deg,
+          #101c35,
+          #071126
+        );
+
+      border: 2px solid #1769ff;
+
+      border-radius: 16px;
+
+      padding: 22px;
+
+      margin-bottom: 25px;
+
+      box-shadow:
+        0 10px 35px rgba(0,0,0,0.6),
+        0 0 15px rgba(23,105,255,0.15);
+
+      overflow: hidden;
+    }
+
+    /* Detalhe vermelho */
+    .create-post::before {
+      content: "";
+
+      position: absolute;
+
+      top: 0;
+      left: 0;
+
+      width: 100%;
+      height: 5px;
+
+      background: #e10600;
+    }
+
+    .create-post h2 {
+      margin-bottom: 15px;
+
+      color: #fff;
+
+      font-size: 20px;
+
+      text-shadow: 2px 2px #e10600;
+    }
+
+
+    /* TEXTAREA */
+
+    textarea {
+      width: 100%;
+      height: 100px;
+
+      resize: vertical;
+
+      padding: 14px;
+
+      border-radius: 10px;
+
+      border: 2px solid #263b63;
+
+      background: #020817;
+
+      color: white;
+
+      font-size: 15px;
+
+      outline: none;
+
+      transition: 0.25s;
+    }
+
+    textarea::placeholder {
+      color: #7890b8;
+    }
+
+    textarea:focus {
+      border-color: #e10600;
+
+      box-shadow:
+        0 0 12px rgba(225,6,0,0.3);
+    }
+
+
+    /* BOTÃO */
+
+    .publish {
+      width: 100%;
+
+      margin-top: 12px;
+
+      padding: 13px;
+
+      border: 2px solid #ff3838;
+
+      border-radius: 9px;
+
+      background:
+        linear-gradient(
+          135deg,
+          #e10600,
+          #a80000
+        );
+
+      color: white;
+
+      font-size: 16px;
+
+      font-weight: 900;
+
+      text-transform: uppercase;
+
+      cursor: pointer;
+
+      box-shadow:
+        0 5px 0 #5d0000;
+
+      transition: 0.15s;
+    }
+
+    .publish:hover {
+      background:
+        linear-gradient(
+          135deg,
+          #ff1717,
+          #c00000
+        );
+
+      transform: translateY(-2px);
+    }
+
+    .publish:active {
+      transform: translateY(3px);
+
+      box-shadow:
+        0 2px 0 #5d0000;
+    }
+
+
+    /* ================================
+       POST
+    ================================= */
+
+    .post {
+      position: relative;
+
+      background:
+        linear-gradient(
+          145deg,
+          rgba(15,29,55,0.98),
+          rgba(4,12,27,0.98)
+        );
+
+      border: 2px solid #173a70;
+
+      border-radius: 16px;
+
+      padding: 20px;
+
+      margin-bottom: 22px;
+
+      box-shadow:
+        0 10px 35px rgba(0,0,0,0.55);
+
+      overflow: hidden;
+
+      transition:
+        transform 0.25s,
+        border-color 0.25s;
+    }
+
+    .post:hover {
+      transform: translateY(-3px);
+
+      border-color: #e10600;
+
+      box-shadow:
+        0 15px 40px rgba(0,0,0,0.7),
+        0 0 15px rgba(225,6,0,0.15);
+    }
+
+
+    /* Faixa vermelha lateral */
+
+    .post::before {
+      content: "";
+
+      position: absolute;
+
+      left: 0;
+      top: 0;
+
+      width: 5px;
+      height: 100%;
+
+      background:
+        linear-gradient(
+          #e10600,
+          #1769ff,
+          #e10600
+        );
+    }
+
+
+    /* ================================
+       USUÁRIO
+    ================================= */
+
+    .user {
+      display: flex;
+      align-items: center;
+
+      gap: 13px;
+
+      margin-bottom: 15px;
+    }
+
+    .avatar {
+      width: 52px;
+      height: 52px;
+
+      flex-shrink: 0;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      border-radius: 50%;
+
+      background:
+        radial-gradient(
+          circle,
+          #e10600,
+          #800000
+        );
+
+      border: 3px solid #1769ff;
+
+      font-size: 27px;
+
+      box-shadow:
+        0 0 12px rgba(225,6,0,0.35);
+    }
+
+    .user-info strong {
+      display: block;
+
+      font-size: 16px;
+
+      color: white;
+    }
+
+    .user-info span {
+      display: block;
+
+      margin-top: 3px;
+
+      font-size: 12px;
+
+      color: #7893c2;
+    }
+
+
+    /* ================================
+       TEXTO DO POST
+    ================================= */
+
+    .post-text {
+      line-height: 1.65;
+
+      font-size: 15px;
+
+      color: #e8efff;
+
+      margin-bottom: 16px;
+    }
+
+
+    /* ================================
+       IMAGEM
+    ================================= */
+
+    .post-image {
+      width: 100%;
+      height: 310px;
+
+      display: block;
+
+      object-fit: cover;
+
+      border-radius: 12px;
+
+      border: 2px solid #263b63;
+
+      margin-bottom: 15px;
+
+      filter:
+        saturate(1.15)
+        contrast(1.05);
+
+      transition: 0.3s;
+    }
+
+    .post-image:hover {
+      transform: scale(1.01);
+
+      border-color: #e10600;
+
+      filter:
+        saturate(1.3)
+        contrast(1.1);
+    }
+
+
+    /* ================================
+       BOTÕES
+    ================================= */
+
+    .actions {
+      display: flex;
+
+      gap: 10px;
+
+      padding-top: 13px;
+
+      border-top: 1px solid #1d3154;
+    }
+
+    .action-btn {
+      flex: 1;
+
+      padding: 11px;
+
+      border: 1px solid #28456f;
+
+      border-radius: 8px;
+
+      background: #0a1730;
+
+      color: #cbd8ef;
+
+      font-weight: bold;
+
+      cursor: pointer;
+
+      transition: 0.2s;
+    }
+
+    .action-btn:hover {
+      background: #12274b;
+
+      border-color: #e10600;
+
+      color: white;
+    }
+
+    .action-btn.liked {
+      background:
+        linear-gradient(
+          135deg,
+          #e10600,
+          #a00000
+        );
+
+      border-color: #ff4a4a;
+
+      color: white;
+
+      box-shadow:
+        0 0 12px rgba(225,6,0,0.25);
+    }
+
+
+    /* ================================
+       COMENTÁRIOS
+    ================================= */
+
+    .comments {
+      display: none;
+
+      margin-top: 15px;
+
+      padding-top: 12px;
+
+      border-top: 1px solid #1d3154;
+    }
+
+    .comments input {
+      width: 100%;
+
+      padding: 11px;
+
+      border-radius: 8px;
+
+      border: 1px solid #29466f;
+
+      background: #020817;
+
+      color: white;
+
+      outline: none;
+    }
+
+    .comments input:focus {
+      border-color: #1769ff;
+
+      box-shadow:
+        0 0 10px rgba(23,105,255,0.2);
+    }
+
+    .comment {
+      margin-top: 9px;
+
+      padding: 10px 12px;
+
+      background: #0b1933;
+
+      border-left: 3px solid #e10600;
+
+      border-radius: 6px;
+
+      color: #dbe6fa;
+
+      font-size: 14px;
+    }
+
+
+    /* ================================
+       RODAPÉ
+    ================================= */
+
+    footer {
+      text-align: center;
+
+      padding: 25px 15px 40px;
+
+      color: #6680aa;
+
+      font-size: 12px;
+    }
+
+    footer span {
+      color: #e10600;
+      font-weight: bold;
+    }
+
+
+    /* ================================
+       ANIMAÇÃO DE ENTRADA
+    ================================= */
+
+    .post,
+    .create-post {
+      animation: appear 0.5s ease;
+    }
+
+    @keyframes appear {
+
+      from {
+        opacity: 0;
+        transform: translateY(15px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+    }
+
+
+    /* ================================
+       RESPONSIVO
+    ================================= */
+
+    @media (max-width: 600px) {
+
+      header {
+        height: 65px;
+      }
+
+      .logo {
+        font-size: 19px;
+        letter-spacing: 1px;
+      }
+
+      .logo-spider {
+        font-size: 30px;
+      }
+
+      .feed {
+        width: 92%;
+        margin-top: 25px;
+      }
+
+      .page-title h1 {
+        font-size: 27px;
+      }
+
+      .post {
+        padding: 16px;
+      }
+
+      .post-image {
+        height: 230px;
+      }
+
+      .actions {
+        flex-direction: column;
+      }
+
+      .action-btn {
+        width: 100%;
+      }
+
+    }
+  </style>
+</head>
+
+
+<body>
+
+  <!-- ================================
+       HEADER
+  ================================= -->
+
+  <header>
+
+    <div class="header-content">
+
+      <div class="logo">
+        <span class="logo-spider">🕷️</span>
+        SPIDER FEED
+      </div>
+
+      <div>🕸️</div>
+
+    </div>
+
+  </header>
+
+
+  <!-- ================================
+       FEED
+  ================================= -->
+
+  <main class="feed">
+
+    <div class="page-title">
+
+      <h1>Seu Feed 🕷️</h1>
+
+      <p>
+        Com grandes poderes vêm grandes responsabilidades.
+      </p>
+
+    </div>
+
+
+    <!-- CRIAR POST -->
+
+    <section class="create-post">
+
+      <h2>🕸️ O que está acontecendo?</h2>
+
+      <textarea
+        id="postInput"
+        placeholder="Digite sua mensagem, herói..."
+      ></textarea>
+
+      <button
+        class="publish"
+        onclick="createPost()"
+      >
+        🕷️ Publicar
+      </button>
+
+    </section>
+
+
+    <!-- FEED -->
+
+    <section id="feed">
+
+
+      <!-- POST 1 -->
+
+      <article class="post">
+
+        <div class="user">
+
+          <div class="avatar">
+            🕷️
+          </div>
+
+          <div class="user-info">
+
+            <strong>Homem-Aranha</strong>
+
+            <span>
+              @spiderman · agora
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <p class="post-text">
+
+          Mais um dia protegendo a cidade! 🕸️
+
+          <br><br>
+
+          Lembre-se:
+          <strong>grandes poderes trazem grandes responsabilidades.</strong>
+
+        </p>
+
+
+        <img
+          class="post-image"
+          src="https://images.unsplash.com/photo-1531259683007-016a7b628fc3?auto=format&fit=crop&w=1000&q=85"
+          alt="Cidade à noite"
+        >
+
+
+        <div class="actions">
+
+          <button
+            class="action-btn"
+            onclick="likePost(this)"
+          >
+            ❤️ Curtir <span>12</span>
+          </button>
+
+          <button
+            class="action-btn"
+            onclick="toggleComments(this)"
+          >
+            💬 Comentários
+          </button>
+
+        </div>
+
+
+        <div class="comments">
+
+          <input
+            type="text"
+            placeholder="Escreva um comentário e pressione Enter..."
+            onkeydown="addComment(event, this)"
+          >
+
+          <div class="comment-list"></div>
+
+        </div>
+
+      </article>
+
+
+
+      <!-- POST 2 -->
+
+      <article class="post">
+
+        <div class="user">
+
+          <div class="avatar">
+            🕸️
+          </div>
+
+          <div class="user-info">
+
+            <strong>Peter Parker</strong>
+
+            <span>
+              @peterparker · 15 min
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <p class="post-text">
+
+          Café, fotos para o Clarim e depois...
+
+          <br>
+
+          provavelmente salvar a cidade.
+
+          ☕ 📸 🕷️
+
+        </p>
+
+
+        <div class="actions">
+
+          <button
+            class="action-btn"
+            onclick="likePost(this)"
+          >
+            ❤️ Curtir <span>7</span>
+          </button>
+
+          <button
+            class="action-btn"
+            onclick="toggleComments(this)"
+          >
+            💬 Comentários
+          </button>
+
+        </div>
+
+
+        <div class="comments">
+
+          <input
+            type="text"
+            placeholder="Escreva um comentário e pressione Enter..."
+            onkeydown="addComment(event, this)"
+          >
+
+          <div class="comment-list"></div>
+
+        </div>
+
+      </article>
+
+    </section>
+
+  </main>
+
+
+  <footer>
+
+    <span>🕷️ SPIDER FEED</span>
+
+    <br>
+
+    Desenvolvido para os heróis da vizinhança.
+
+  </footer>
+
+
+
+  <!-- ================================
+       JAVASCRIPT
+  ================================= -->
+
+  <script>
+
+    /* CURTIR POST */
+
+    function likePost(button) {
+
+      const number =
+        button.querySelector("span");
+
+      let likes =
+        parseInt(number.textContent);
+
+      if (
+        button.classList.contains("liked")
+      ) {
+
+        likes--;
+
+        button.classList.remove("liked");
+
+      } else {
+
+        likes++;
+
+        button.classList.add("liked");
+
+      }
+
+      number.textContent = likes;
+    }
+
+
+
+    /* MOSTRAR COMENTÁRIOS */
+
+    function toggleComments(button) {
+
+      const post =
+        button.closest(".post");
+
+      const comments =
+        post.querySelector(".comments");
+
+      if (
+        comments.style.display === "block"
+      ) {
+
+        comments.style.display = "none";
+
+      } else {
+
+        comments.style.display = "block";
+
+      }
+
+    }
+
+
+
+    /* ADICIONAR COMENTÁRIO */
+
+    function addComment(event, input) {
+
+      if (event.key !== "Enter") {
+        return;
+      }
+
+      const text =
+        input.value.trim();
+
+      if (text === "") {
+        return;
+      }
+
+      const list =
+        input
+          .closest(".comments")
+          .querySelector(".comment-list");
+
+      const comment =
+        document.createElement("div");
+
+      comment.className = "comment";
+
+      comment.innerHTML =
+        "<strong>Você:</strong> " +
+        escapeHTML(text);
+
+      list.appendChild(comment);
+
+      input.value = "";
+
+    }
+
+
+
+    /* CRIAR POST */
+
+    function createPost() {
+
+      const input =
+        document.getElementById("postInput");
+
+      const text =
+        input.value.trim();
+
+      if (text === "") {
+
+        alert(
+          "Digite alguma coisa antes de publicar! 🕷️"
+        );
+
+        return;
+
+      }
+
+
+      const post =
+        document.createElement("article");
+
+      post.className = "post";
+
+
+      post.innerHTML = `
+
+        <div class="user">
+
+          <div class="avatar">
+            🕷️
+          </div>
+
+          <div class="user-info">
+
+            <strong>Você</strong>
+
+            <span>
+              @spideruser · agora
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <p class="post-text">
+          ${escapeHTML(text)}
+        </p>
+
+
+        <div class="actions">
+
+          <button
+            class="action-btn"
+            onclick="likePost(this)"
+          >
+            ❤️ Curtir <span>0</span>
+          </button>
+
+
+          <button
+            class="action-btn"
+            onclick="toggleComments(this)"
+          >
+            💬 Comentários
+          </button>
+
+        </div>
+
+
+        <div class="comments">
+
+          <input
+            type="text"
+            placeholder="Escreva um comentário e pressione Enter..."
+            onkeydown="addComment(event, this)"
+          >
+
+          <div class="comment-list"></div>
+
+        </div>
+
+      `;
+
+
+      document
+        .getElementById("feed")
+        .prepend(post);
+
+
+      input.value = "";
+
+    }
+
+
+
+    /* PROTEÇÃO CONTRA HTML INJETADO */
+
+    function escapeHTML(text) {
+
+      const div =
+        document.createElement("div");
+
+      div.textContent = text;
+
+      return div.innerHTML;
+
+    }
+
+  </script>
+
+</body>
+</html>
+```
