@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Estoque</title>
+    <!-- O CSS será inserido externamente ou na tag style depois -->
+    <link rel="stylesheet" href="style.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+    <div class="app-container">
+        <!-- Menu Lateral (Substitui as opções do Menu Principal) -->
+        <aside class="sidebar">
+            <h2>📦 Sistema de Estoque</h2>
+            <nav class="menu-nav">
+                <button class="menu-btn active" onclick="mudarAba('listar')">1. Listar Produtos</button>
+                <button class="menu-btn" onclick="mudarAba('cadastrar')">2. Cadastrar Produto</button>
+                <button class="menu-btn" onclick="mudarAba('alterar-valor')">3. Alterar Valor</button>
+                <button class="menu-btn" onclick="mudarAba('alterar-qtd')">4. Alterar Quantidade</button>
+            </nav>
+        </aside>
+
+        <!-- Área de Conteúdo Dinâmico -->
+        <main class="content-area">
+            
+            <!-- ABA 1: LISTAR PRODUTOS (Opção 2 do Menu) -->
+            <section id="aba-listar" class="tab-content active">
+                <h3>Produtos em Estoque</h3>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Cód</th>
+                                <th>Descrição</th>
+                                <th>Quantidade</th>
+                                <th>Valor</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-produtos">
+                            <!-- Inserido dinamicamente via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- ABA 2: CADASTRAR PRODUTO (Opção 1 do Menu) -->
+            <section id="aba-cadastrar" class="tab-content">
+                <h3>Cadastrar Novo Produto</h3>
+                <form id="form-cadastro" onsubmit="executarCadastro(event)">
+                    <div class="form-group">
+                        <label for="cad-codigo">Código do Produto:</label>
+                        <input type="number" id="cad-codigo" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="cad-descricao">Descrição:</label>
+                        <input type="text" id="cad-descricao" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="cad-qtd">Quantidade:</label>
+                        <input type="number" id="cad-qtd" required min="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="cad-valor">Valor (R$):</label>
+                        <input type="number" step="0.01" id="cad-valor" required min="0">
+                    </div>
+                    <button type="submit" class="btn-primary">Salvar Produto</button>
+                </form>
+            </section>
+
+            <!-- ABA 3: ALTERAR VALOR (Opção 3 do Menu) -->
+            <section id="aba-alterar-valor" class="tab-content">
+                <h3>Alterar Valor do Produto</h3>
+                <form id="form-valor" onsubmit="executarAlterarValor(event)">
+                    <div class="form-group">
+                        <label for="val-codigo">Código do Produto:</label>
+                        <input type="number" id="val-codigo" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="val-novo">Novo Valor (R$):</label>
+                        <input type="number" step="0.01" id="val-novo" required min="0">
+                    </div>
+                    <button type="submit" class="btn-primary">Atualizar Valor</button>
+                </form>
+            </section>
+
+            <!-- ABA 4: ALTERAR QUANTIDADE (Opção 4 do Menu) -->
+            <section id="aba-alterar-qtd" class="tab-content">
+                <h3>Alterar Quantidade em Estoque</h3>
+                <form id="form-qtd" onsubmit="executarAlterarQuantidade(event)">
+                    <div class="form-group">
+                        <label for="qtd-codigo">Código do Produto:</label>
+                        <input type="number" id="qtd-codigo" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="qtd-nova">Nova Quantidade:</label>
+                        <input type="number" id="qtd-nova" required min="0">
+                    </div>
+                    <button type="submit" class="btn-primary">Atualizar Quantidade</button>
+                </form>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Script de Lógica do Sistema -->
+    <script>
+        // Array inicial de produtos (idêntico ao seu escopo original)
+        let produtos = [
+            { codigo: 1, descricao: "Arroz", quantidade: 20, valor: 25.90 },
+            { codigo: 2, descricao: "Feijão", quantidade: 15, valor: 8.50 },
+            { codigo: 3, descricao: "Macarrão", quantidade: 30, valor: 5.99 }
+        ];
+
+        // Renderiza a lista de produtos na tabela HTML
+        function atualizarTabela() {
+            const tbody = document.getElementById('tabela-produtos');
+            tbody.innerHTML = '';
+
+            produtos.forEach(p => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${p.codigo}</td>
+                    <td>${p.descricao}</td>
+                    <td>${p.quantidade}</td>
+                    <td>R$ ${p.valor.toFixed(2)}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Alterna a exibição das seções (Abas do Menu)
+        function mudarAba(idAba) {
+            // Remove a classe active de todas as abas e botões
+            document.querySelectorAll('.tab-content').forEach(aba => aba.classList.remove('active'));
+            document.querySelectorAll('.menu-btn').forEach(btn => btn.classList.remove('active'));
+
+            // Adiciona active na aba e botão selecionados
+            document.getElementById(`aba-${idAba}`).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        // AÇÃO 1: Cadastrar Produto
+        function ejecutarCadastro(event) {
+            event.preventDefault();
+            
+            const codigo = Number(document.getElementById('cad-codigo').value);
+            const descricao = document.getElementById('cad-descricao').value;
+            const quantidade = Number(document.getElementById('cad-qtd').value);
+            const valor = Number(document.getElementById('cad-valor').value);
+
+            // Validação simples de código duplicado
+            if (produtos.some(p => p.codigo === codigo)) {
+                alert("Erro: Já existe um produto com este código!");
+                return;
+            }
+
+            let novo = { codigo, descricao, quantidade, valor };
+            produtos.push(novo);
+            
+            alert("Produto cadastrado com sucesso!");
+            document.getElementById('form-cadastro').reset();
+            atualizarTabela();
+            mudarAba('listar'); // Redireciona para ver o estoque atualizado
+        }
+
+        // AÇÃO 3: Alterar Valor
+        function executarAlterarValor(event) {
+            event.preventDefault();
+            const codigo = Number(document.getElementById('val-codigo').value);
+            const novoValor = Number(document.getElementById('val-novo').value);
+
+            let produto = produtos.find(p => p.codigo === codigo);
+
+            if (produto) {
+                produto.valor = novoValor;
+                alert(`Valor do produto "${produto.descricao}" atualizado com sucesso!`);
+                document.getElementById('form-valor').reset();
+                atualizarTabela();
+                mudarAba('listar');
+            } else {
+                alert("Erro: Produto não encontrado!");
+            }
+        }
+
+        // AÇÃO 4: Alterar Quantidade
+        function executarAlterarQuantidade(event) {
+            event.preventDefault();
+            const codigo = Number(document.getElementById('qtd-codigo').value);
+            const novaQtd = Number(document.getElementById('qtd-nova').value);
+
+            let produto = produtos.find(p => p.codigo === codigo);
+
+            if (produto) {
+                produto.quantidade = novaQtd;
+                alert(`Quantidade do produto "${produto.descricao}" atualizada com sucesso!`);
+                document.getElementById('form-qtd').reset();
+                atualizarTabela();
+                mudarAba('listar');
+            } else {
+                alert("Erro: Produto não encontrado!");
+            }
+        }
+
+        // Inicializa a tabela assim que o arquivo carrega
+        window.onload = atualizarTabela;
+    </script>
+<script src="script.js"></script></body>
+</html>
