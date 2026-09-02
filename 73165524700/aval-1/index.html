@@ -1,2 +1,537 @@
-<html><head></head>
-<body><script src="script.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Cadastro de Produtos</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            padding: 30px;
+            background: #f4f4f4;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .formulario {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        input,
+        button {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        /* REMOVE AS SETINHAS DOS CAMPOS NUMBER */
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input[type="number"] {
+            -moz-appearance: textfield;
+            appearance: textfield;
+        }
+
+        button {
+            border: none;
+            background: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background: #007bff;
+            color: white;
+        }
+
+        .mensagem {
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .erro {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .sucesso {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        @media (max-width: 700px) {
+            .formulario {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>Cadastro de Produtos</h1>
+
+        <div id="mensagem" class="mensagem"></div>
+
+        <h2>Cadastrar Produto</h2>
+
+        <div class="formulario">
+
+            <input
+                type="text"
+                id="descricao"
+                placeholder="Descrição"
+            >
+
+            <input
+                type="number"
+                id="quantidade"
+                placeholder="Quantidade"
+                min="1"
+            >
+
+            <input
+                type="number"
+                id="valor"
+                placeholder="Valor"
+                min="0"
+                step="0.01"
+            >
+
+            <button onclick="cadastrarProdutoTela()">
+                Cadastrar Produto
+            </button>
+
+        </div>
+
+
+        <h2>Atualizar Produto</h2>
+
+        <div class="formulario">
+
+            <input
+                type="number"
+                id="codigoAtualizar"
+                placeholder="Código do produto"
+                min="1"
+            >
+
+            <input
+                type="number"
+                id="novoValor"
+                placeholder="Novo valor"
+                min="0"
+                step="0.01"
+            >
+
+            <button onclick="atualizarValorTela()">
+                Atualizar Valor
+            </button>
+
+            <input
+                type="number"
+                id="codigoQuantidade"
+                placeholder="Código do produto"
+                min="1"
+            >
+
+            <input
+                type="number"
+                id="novaQuantidade"
+                placeholder="Quantidade a adicionar"
+                min="1"
+            >
+
+            <button onclick="atualizarQuantidadeTela()">
+                Adicionar Quantidade
+            </button>
+
+        </div>
+
+
+        <h2>Produtos</h2>
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Descrição</th>
+                    <th>Quantidade</th>
+                    <th>Valor</th>
+                </tr>
+            </thead>
+
+            <tbody id="listaProdutos">
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+    <script>
+
+        let produtos = [];
+
+
+        function mostrarMensagem(texto, tipo) {
+
+            const mensagem = document.getElementById("mensagem");
+
+            mensagem.textContent = texto;
+
+            mensagem.className = "mensagem " + tipo;
+
+            mensagem.style.display = "block";
+
+            setTimeout(() => {
+                mensagem.style.display = "none";
+            }, 3000);
+        }
+
+
+        function validarProduto(descricao, quantidade, valor) {
+
+            if (descricao.length < 5) {
+                throw new Error(
+                    "Descrição deve ter no mínimo cinco caracteres"
+                );
+            }
+
+            if (quantidade < 1) {
+                throw new Error(
+                    "Quantidade deve ser maior que zero"
+                );
+            }
+
+            if (valor < 0) {
+                throw new Error(
+                    "Valor deve ser maior ou igual a zero"
+                );
+            }
+        }
+
+
+        function cadastrarProduto(descricao, quantidade, valor) {
+
+            validarProduto(
+                descricao,
+                quantidade,
+                valor
+            );
+
+            let novoProduto = {
+
+                codigo: produtos.length + 1,
+
+                descricao: descricao,
+
+                quantidade: quantidade,
+
+                valor: valor
+
+            };
+
+            produtos.push(novoProduto);
+
+            listarProdutos();
+        }
+
+
+        function listarProdutos() {
+
+            const tabela =
+                document.getElementById("listaProdutos");
+
+            tabela.innerHTML = "";
+
+            produtos.forEach(produto => {
+
+                const linha =
+                    document.createElement("tr");
+
+                linha.innerHTML = `
+                    <td>${produto.codigo}</td>
+
+                    <td>${produto.descricao}</td>
+
+                    <td>${produto.quantidade}</td>
+
+                    <td>R$ ${produto.valor.toFixed(2)}</td>
+                `;
+
+                tabela.appendChild(linha);
+            });
+        }
+
+
+        function atualizarValor(codigoProduto, novoValor) {
+
+            if (novoValor < 0) {
+
+                throw new Error(
+                    "Valor deve ser maior ou igual a zero"
+                );
+
+            }
+
+            const produto = produtos.find(
+                prod => prod.codigo === codigoProduto
+            );
+
+            if (produto) {
+
+                produto.valor = novoValor;
+
+                listarProdutos();
+
+            } else {
+
+                throw new Error(
+                    "Produto não encontrado"
+                );
+            }
+        }
+
+
+        function atualizarQuantidade(
+            codigoProduto,
+            novaQuantidade
+        ) {
+
+            if (novaQuantidade < 1) {
+
+                throw new Error(
+                    "Quantidade deve ser maior que zero"
+                );
+
+            }
+
+            const produto = produtos.find(
+                prod => prod.codigo === codigoProduto
+            );
+
+            if (produto) {
+
+                produto.quantidade += novaQuantidade;
+
+                listarProdutos();
+
+            } else {
+
+                throw new Error(
+                    "Produto não encontrado"
+                );
+            }
+        }
+
+
+        function cadastrarProdutoTela() {
+
+            try {
+
+                const descricao =
+                    document.getElementById("descricao").value;
+
+                const quantidade =
+                    Number(
+                        document.getElementById("quantidade").value
+                    );
+
+                const valor =
+                    Number(
+                        document.getElementById("valor").value
+                    );
+
+
+                cadastrarProduto(
+                    descricao,
+                    quantidade,
+                    valor
+                );
+
+
+                mostrarMensagem(
+                    "Produto cadastrado com sucesso!",
+                    "sucesso"
+                );
+
+
+                document.getElementById("descricao").value = "";
+
+                document.getElementById("quantidade").value = "";
+
+                document.getElementById("valor").value = "";
+
+            } catch (erro) {
+
+                mostrarMensagem(
+                    erro.message,
+                    "erro"
+                );
+            }
+        }
+
+
+        function atualizarValorTela() {
+
+            try {
+
+                const codigo =
+                    Number(
+                        document.getElementById(
+                            "codigoAtualizar"
+                        ).value
+                    );
+
+                const novoValor =
+                    Number(
+                        document.getElementById(
+                            "novoValor"
+                        ).value
+                    );
+
+
+                atualizarValor(
+                    codigo,
+                    novoValor
+                );
+
+
+                mostrarMensagem(
+                    "Valor atualizado com sucesso!",
+                    "sucesso"
+                );
+
+            } catch (erro) {
+
+                mostrarMensagem(
+                    erro.message,
+                    "erro"
+                );
+            }
+        }
+
+
+        function atualizarQuantidadeTela() {
+
+            try {
+
+                const codigo =
+                    Number(
+                        document.getElementById(
+                            "codigoQuantidade"
+                        ).value
+                    );
+
+                const quantidade =
+                    Number(
+                        document.getElementById(
+                            "novaQuantidade"
+                        ).value
+                    );
+
+
+                atualizarQuantidade(
+                    codigo,
+                    quantidade
+                );
+
+
+                mostrarMensagem(
+                    "Quantidade atualizada com sucesso!",
+                    "sucesso"
+                );
+
+            } catch (erro) {
+
+                mostrarMensagem(
+                    erro.message,
+                    "erro"
+                );
+            }
+        }
+
+
+        // Produtos iniciais
+
+        cadastrarProduto(
+            "Cadeira Gamer",
+            12,
+            699.00
+        );
+
+        cadastrarProduto(
+            "Mouse Logi",
+            38,
+            99.00
+        );
+
+        atualizarValor(
+            2,
+            97.00
+        );
+
+        atualizarQuantidade(
+            1,
+            3
+        );
+
+        listarProdutos();
+
+    </script>
+
+</body>
+
+</html>
