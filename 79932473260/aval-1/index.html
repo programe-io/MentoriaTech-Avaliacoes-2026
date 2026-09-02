@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Homem-Aranha | Web Hero</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: Arial, Helvetica, sans-serif;
+      color: white;
+      overflow-x: hidden;
+      background:
+        radial-gradient(circle at 50% 20%, #293b73 0%, #101936 35%, #050814 75%);
+    }
+
+    /* Teia de fundo */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.18;
+      background-image:
+        linear-gradient(30deg, transparent 48%, white 49%, transparent 50%),
+        linear-gradient(150deg, transparent 48%, white 49%, transparent 50%);
+      background-size: 100px 100px;
+      mask-image: radial-gradient(circle, black, transparent 75%);
+    }
+
+    header {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 22px 7%;
+      background: rgba(0, 0, 0, 0.35);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255,255,255,.1);
+    }
+
+    .logo {
+      font-size: 1.7rem;
+      font-weight: 900;
+      letter-spacing: 2px;
+      color: #e3262e;
+      text-shadow: 0 0 15px rgba(227,38,46,.5);
+    }
+
+    nav {
+      display: flex;
+      gap: 25px;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      transition: .3s;
+    }
+
+    nav a:hover {
+      color: #e3262e;
+    }
+
+    .hero {
+      min-height: 80vh;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 40px;
+      padding: 70px 8%;
+      position: relative;
+      z-index: 2;
+    }
+
+    .content {
+      max-width: 600px;
+      animation: entrada 1s ease;
+    }
+
+    .tag {
+      color: #ef3038;
+      font-weight: bold;
+      letter-spacing: 4px;
+      margin-bottom: 15px;
+    }
+
+    h1 {
+      font-size: clamp(3rem, 8vw, 7rem);
+      line-height: .85;
+      text-transform: uppercase;
+      font-weight: 1000;
+      text-shadow:
+        4px 4px 0 #e3262e,
+        8px 8px 20px rgba(0,0,0,.5);
+    }
+
+    h1 span {
+      color: #fff;
+    }
+
+    .description {
+      margin-top: 30px;
+      font-size: 1.15rem;
+      line-height: 1.7;
+      color: #d9def0;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 15px;
+      margin-top: 30px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: none;
+      padding: 15px 25px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: bold;
+      transition: .25s;
+    }
+
+    .primary {
+      background: #e3262e;
+      color: white;
+      box-shadow: 0 8px 25px rgba(227,38,46,.35);
+    }
+
+    .primary:hover {
+      transform: translateY(-4px) scale(1.03);
+      background: #ff333b;
+    }
+
+    .secondary {
+      background: transparent;
+      color: white;
+      border: 1px solid #66708f;
+    }
+
+    .secondary:hover {
+      border-color: white;
+      background: rgba(255,255,255,.08);
+    }
+
+    /* Máscara estilizada */
+    .hero-art {
+      width: min(390px, 75vw);
+      aspect-ratio: 1;
+      position: relative;
+      display: grid;
+      place-items: center;
+      animation: flutuar 4s ease-in-out infinite;
+    }
+
+    .mask {
+      width: 70%;
+      height: 78%;
+      border-radius: 48% 48% 45% 45%;
+      background:
+        repeating-radial-gradient(
+          ellipse at center,
+          transparent 0 22px,
+          rgba(255,255,255,.13) 23px 24px
+        ),
+        linear-gradient(145deg, #ed3038, #8e0711);
+      border: 7px solid #050505;
+      box-shadow:
+        inset 0 0 50px rgba(0,0,0,.6),
+        0 0 60px rgba(227,38,46,.35);
+      position: relative;
+      transform: rotate(-3deg);
+    }
+
+    .mask::before,
+    .mask::after {
+      content: "";
+      position: absolute;
+      top: 25%;
+      width: 33%;
+      height: 19%;
+      background: white;
+      border: 7px solid #050505;
+      transform: skewY(-18deg);
+      box-shadow: inset 0 0 15px #aaa;
+    }
+
+    .mask::before {
+      left: 8%;
+      border-radius: 80% 10% 70% 30%;
+    }
+
+    .mask::after {
+      right: 8%;
+      transform: scaleX(-1) skewY(-18deg);
+      border-radius: 80% 10% 70% 30%;
+    }
+
+    .spider {
+      position: absolute;
+      left: 50%;
+      top: 52%;
+      transform: translate(-50%, -50%);
+      width: 65px;
+      height: 90px;
+    }
+
+    .spider::before {
+      content: "🕷";
+      font-size: 65px;
+      filter: grayscale(1) brightness(0);
+      position: absolute;
+    }
+
+    /* Cards */
+    .powers {
+      position: relative;
+      z-index: 3;
+      padding: 40px 8% 80px;
+    }
+
+    .powers h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 2rem;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .card {
+      padding: 30px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 15px;
+      backdrop-filter: blur(10px);
+      transition: .3s;
+    }
+
+    .card:hover {
+      transform: translateY(-8px);
+      border-color: #e3262e;
+      box-shadow: 0 15px 35px rgba(0,0,0,.3);
+    }
+
+    .card .icon {
+      font-size: 2.5rem;
+      margin-bottom: 15px;
+    }
+
+    .card h3 {
+      margin-bottom: 10px;
+      color: #ff4b51;
+    }
+
+    .card p {
+      color: #c6ccdf;
+      line-height: 1.6;
+    }
+
+    footer {
+      text-align: center;
+      padding: 25px;
+      color: #8992ad;
+      border-top: 1px solid rgba(255,255,255,.08);
+    }
+
+    /* Teia lançada */
+    .web {
+      position: fixed;
+      z-index: 100;
+      width: 4px;
+      height: 0;
+      background: white;
+      box-shadow: 0 0 8px white;
+      transform-origin: top;
+      pointer-events: none;
+    }
+
+    .web.active {
+      animation: teia 0.7s ease-out forwards;
+    }
+
+    @keyframes teia {
+      0% {
+        height: 0;
+        opacity: 1;
+      }
+      100% {
+        height: 100vh;
+        opacity: 0;
+      }
+    }
+
+    @keyframes entrada {
+      from {
+        opacity: 0;
+        transform: translateX(-40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes flutuar {
+      0%, 100% {
+        transform: translateY(0) rotate(0deg);
+      }
+      50% {
+        transform: translateY(-15px) rotate(2deg);
+      }
+    }
+
+    @media (max-width: 800px) {
+      header {
+        padding: 18px 5%;
+      }
+
+      nav {
+        display: none;
+      }
+
+      .hero {
+        flex-direction: column;
+        text-align: center;
+        padding: 60px 5%;
+      }
+
+      .buttons {
+        justify-content: center;
+      }
+
+      .cards {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-art {
+        order: -1;
+      }
+    }
+  </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+  <header>
+    <div class="logo">🕷 WEB HERO</div>
+
+    <nav>
+      <a href="#inicio">Início</a>
+      <a href="#poderes">Poderes</a>
+      <a href="#sobre">Sobre</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" id="inicio">
+
+      <div class="content">
+        <div class="tag">SEMPRE EM AÇÃO</div>
+
+        <h1>
+          Spider<br>
+          <span>Hero</span>
+        </h1>
+
+        <p class="description">
+          Com grandes poderes vêm grandes responsabilidades.
+          Entre prédios, perigos e vilões, um herói está sempre
+          pronto para proteger a cidade.
+        </p>
+
+        <div class="buttons">
+          <button class="primary" onclick="lancarTeia()">
+            🕸 Lançar Teia
+          </button>
+
+          <button class="secondary" onclick="mostrarMensagem()">
+            Conhecer o Herói
+          </button>
+        </div>
+      </div>
+
+      <div class="hero-art">
+        <div class="mask">
+          <div class="spider"></div>
+        </div>
+      </div>
+
+    </section>
+
+    <section class="powers" id="poderes">
+      <h2>🕷 Habilidades</h2>
+
+      <div class="cards">
+
+        <div class="card">
+          <div class="icon">🕸️</div>
+          <h3>Lançador de Teia</h3>
+          <p>
+            Dispare teias e atravesse a cidade de um prédio
+            para outro em alta velocidade.
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="icon">⚡</div>
+          <h3>Sentido Aranha</h3>
+          <p>
+            Detecte perigos antes que eles aconteçam e
+            reaja rapidamente a qualquer ameaça.
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="icon">🧗</div>
+          <h3>Escalada</h3>
+          <p>
+            Suba paredes e superfícies verticais usando
+            habilidades especiais de aderência.
+          </p>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <footer id="sobre">
+    Feito com HTML, CSS e JavaScript 🕷️
+  </footer>
+
+  <script>
+    function lancarTeia() {
+      const web = document.createElement("div");
+      web.classList.add("web");
+
+      // Posição inicial próxima ao centro da tela
+      web.style.left = "50%";
+      web.style.top = "45%";
+
+      document.body.appendChild(web);
+
+      requestAnimationFrame(() => {
+        web.classList.add("active");
+      });
+
+      setTimeout(() => {
+        web.remove();
+      }, 800);
+    }
+
+    function mostrarMensagem() {
+      alert(
+        "🕷️ Eu sou o Spider Hero!\\n\\n" +
+        "Proteger a cidade é minha missão. " +
+        "E nunca se esqueça: grandes poderes trazem grandes responsabilidades!"
+      );
+    }
+  </script>
+
+<script src="script.js"></script></body>
+</html>
