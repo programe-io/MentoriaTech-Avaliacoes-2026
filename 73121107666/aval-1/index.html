@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de Controle de Estoque</title>
+    <style>
+        /* --- ESTILIZAÇÃO CSS --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            background-color: #f4f6f9;
+            color: #333;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        h1 {
+            font-size: 24px;
+            color: #1e293b;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tabela-container {
+            overflow-x: auto;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th, td {
+            padding: 14px 18px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        th {
+            background-color: #f8fafc;
+            color: #64748b;
+            font-size: 13px;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover {
+            background-color: #f8fafc;
+        }
+
+        /* Classes utilitárias do CSS */
+        .col-codigo { width: 10%; color: #94a3b8; font-weight: bold; }
+        .col-descricao { width: 50%; font-weight: 500; color: #334155; }
+        .col-qtd { width: 15%; }
+        .col-valor { width: 25%; font-weight: 600; color: #0f172a; text-align: right; }
+
+        .badge-qtd {
+            background-color: #e2e8f0;
+            color: #1e293b;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+    <div class="container">
+        <h1>📦 Painel de Estoque</h1>
+        
+        <div class="tabela-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th class="col-codigo">Código</th>
+                        <th class="col-descricao">Descrição do Produto</th>
+                        <th class="col-qtd">Qtd</th>
+                        <th class="col-valor">Valor Unitário</th>
+                    </tr>
+                </thead>
+                <tbody id="tabela-corpo">
+                    <!-- O JavaScript vai renderizar as linhas aqui -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // --- SEU CÓDIGO JAVASCRIPT COM ADAPTAÇÃO VISUAL ---
+        let produtos = [];
+
+        function validarProduto(descricao, quantidade, valor){
+            if (descricao.length < 5){
+                throw new Error("Descrição deve ter no mínimo cinco caracteres");
+            }
+            if(quantidade < 1){
+                throw new Error("Quantidade deve ser maior que zero");
+            }
+            if(valor < 0){
+                throw new Error("Valor deve ser maior igual a zero");
+            }
+        }
+
+        function cadastrarProduto(descricao, quantidade, valor){
+            validarProduto(descricao, quantidade, valor);
+            let novoProduto = {
+                "codigo": produtos.length + 1,
+                "descricao": descricao,
+                "quantidade": quantidade,
+                "valor": valor,
+            };
+            produtos.push(novoProduto);
+        }
+
+        // Modificado para atualizar a tabela na tela
+        function listarProdutos(){
+            console.log(produtos); // Mantém o log original no console
+            
+            const corpoTabela = document.getElementById("tabela-corpo");
+            if (!corpoTabela) return;
+
+            corpoTabela.innerHTML = ""; // Limpa a tela antes de redesenhar
+            
+            produtos.forEach(prod => {
+                corpoTabela.innerHTML += `
+                    <tr>
+                        <td class="col-codigo">#${prod.codigo}</td>
+                        <td class="col-descricao">${prod.descricao}</td>
+                        <td class="col-qtd"><span class="badge-qtd">${prod.quantidade}</span></td>
+                        <td class="col-valor">R$ ${prod.valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        function atualizarValor(codigoProduto, novoValor){
+            if(novoValor < 0){
+                throw new Error("Valor deve ser maior igual a zero");
+            }
+            const produto = produtos.find(prod => prod.codigo === codigoProduto);
+            if(produto){
+                produto.valor = novoValor;
+            } else {
+                throw new Error("Produto não encontrado");
+            }
+        }
+
+        function atualizarQuantidade(codigoProduto, novaQuantidade){
+            if(novaQuantidade < 1){
+                throw new Error("Quantidade deve ser maior que zero");
+            }
+            const produto = produtos.find(prod => prod.codigo === codigoProduto);
+            if(produto){
+                produto.quantidade = novaQuantidade;
+            } else {
+                throw new Error("Produto não encontrado");
+            }
+        }
+
+        // Execução dos testes
+        listarProdutos();
+
+        cadastrarProduto("iPhone 15 Pro Max 256GB", 15, 7999.00);
+        cadastrarProduto("PlayStation 5 Slim", 8, 3800.00);
+        cadastrarProduto("MacBook Air M3 16GB", 5, 11500.00);
+        cadastrarProduto("Monitor Gamer 27' Quad HD", 12, 1850.00);
+        cadastrarProduto("Fone Bluetooth Noise Cancelling", 25, 650.00);
+
+        listarProdutos();
+
+        atualizarValor(2, 3499.90);
+        listarProdutos();
+
+        atualizarQuantidade(4, 9);
+        listarProdutos();
+    </script>
+<script src="script.js"></script></body>
+</html>
