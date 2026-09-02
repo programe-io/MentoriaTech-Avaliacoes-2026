@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Estoque Shopee</title>
+
+    <link rel="stylesheet" href="style.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+    <!-- CABEÇALHO -->
+    <header>
+
+        <div class="logo">
+            🛍️ <span>Shopee</span>
+        </div>
+
+        <h1>Sistema de Estoque</h1>
+
+        <p>Gerenciamento de produtos da loja</p>
+
+    </header>
+
+
+    <main>
+
+        <!-- PAINEL -->
+        <section class="painel">
+
+            <div class="indicador">
+                <span>📦</span>
+
+                <div>
+                    <p>Total de produtos</p>
+                    <h2 id="totalProdutos">0</h2>
+                </div>
+            </div>
+
+
+            <div class="indicador">
+                <span>📊</span>
+
+                <div>
+                    <p>Itens em estoque</p>
+                    <h2 id="totalItens">0</h2>
+                </div>
+            </div>
+
+
+            <div class="indicador">
+                <span>💰</span>
+
+                <div>
+                    <p>Valor do estoque</p>
+                    <h2 id="valorEstoque">R$ 0,00</h2>
+                </div>
+            </div>
+
+
+            <div class="indicador alerta">
+
+                <span>⚠️</span>
+
+                <div>
+                    <p>Estoque baixo</p>
+                    <h2 id="estoqueBaixo">0</h2>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- CADASTRO -->
+        <section class="card">
+
+            <h2>➕ Cadastrar Novo Produto</h2>
+
+            <form id="formProduto">
+
+                <div class="linha">
+
+                    <div class="campo">
+
+                        <label for="codigo">
+                            Código
+                        </label>
+
+                        <input
+                            type="number"
+                            id="codigo"
+                            placeholder="Ex: 1001"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="campo grande">
+
+                        <label for="descricao">
+                            Descrição
+                        </label>
+
+                        <input
+                            type="text"
+                            id="descricao"
+                            placeholder="Nome do produto"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <div class="linha">
+
+                    <div class="campo">
+
+                        <label for="categoria">
+                            Categoria
+                        </label>
+
+                        <select id="categoria" required>
+
+                            <option value="">
+                                Selecione
+                            </option>
+
+                            <option value="Eletrônicos">
+                                Eletrônicos
+                            </option>
+
+                            <option value="Roupas">
+                                Roupas
+                            </option>
+
+                            <option value="Calçados">
+                                Calçados
+                            </option>
+
+                            <option value="Casa">
+                                Casa
+                            </option>
+
+                            <option value="Beleza">
+                                Beleza
+                            </option>
+
+                            <option value="Acessórios">
+                                Acessórios
+                            </option>
+
+                            <option value="Informática">
+                                Informática
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="campo">
+
+                        <label for="quantidade">
+                            Quantidade
+                        </label>
+
+                        <input
+                            type="number"
+                            id="quantidade"
+                            min="0"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="campo">
+
+                        <label for="valor">
+                            Valor
+                        </label>
+
+                        <input
+                            type="number"
+                            id="valor"
+                            min="0"
+                            step="0.01"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    class="btn-principal"
+                    type="submit">
+
+                    Cadastrar Produto
+
+                </button>
+
+            </form>
+
+        </section>
+
+
+        <!-- ALTERAÇÕES -->
+        <section class="card">
+
+            <h2>✏️ Alterar Produto</h2>
+
+            <div class="alteracao">
+
+                <div class="campo">
+
+                    <label for="codigoAlterar">
+                        Código do produto
+                    </label>
+
+                    <input
+                        type="number"
+                        id="codigoAlterar"
+                        placeholder="Digite o código"
+                    >
+
+                </div>
+
+
+                <button onclick="alterarValor()">
+                    💰 Alterar Valor
+                </button>
+
+
+                <button onclick="alterarQuantidade()">
+                    📦 Alterar Quantidade
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- BUSCA -->
+        <section class="card">
+
+            <h2>🔎 Pesquisar Estoque</h2>
+
+            <div class="filtros">
+
+                <input
+                    type="text"
+                    id="pesquisa"
+                    placeholder="Pesquisar produto..."
+                    oninput="listarProdutos()"
+                >
+
+
+                <select
+                    id="filtroCategoria"
+                    onchange="listarProdutos()">
+
+                    <option value="Todas">
+                        Todas as categorias
+                    </option>
+
+                    <option value="Eletrônicos">
+                        Eletrônicos
+                    </option>
+
+                    <option value="Roupas">
+                        Roupas
+                    </option>
+
+                    <option value="Calçados">
+                        Calçados
+                    </option>
+
+                    <option value="Casa">
+                        Casa
+                    </option>
+
+                    <option value="Beleza">
+                        Beleza
+                    </option>
+
+                    <option value="Acessórios">
+                        Acessórios
+                    </option>
+
+                    <option value="Informática">
+                        Informática
+                    </option>
+
+                </select>
+
+            </div>
+
+        </section>
+
+
+        <!-- LISTA -->
+        <section class="card">
+
+            <div class="titulo-lista">
+
+                <h2>📦 Produtos em Estoque</h2>
+
+                <span id="contador">
+                    0 produtos
+                </span>
+
+            </div>
+
+
+            <div id="listaProdutos">
+
+                <p class="vazio">
+                    Nenhum produto encontrado.
+                </p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <footer>
+
+        <p>
+            🛍️ Shopee Store - Sistema de Controle de Estoque
+        </p>
+
+    </footer>
+
+
+    <script src="script.js"></script>
+
+<script src="script.js"></script></body>
+
+</html>
