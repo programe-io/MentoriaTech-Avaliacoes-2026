@@ -1,0 +1,618 @@
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Cacheia - MiniFeed</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f7f1ec;
+            color: #3d2920;
+        }
+
+        /* CABEÇALHO */
+        header {
+            background: #6b3e26;
+            color: white;
+            padding: 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        header h1 {
+            font-size: 25px;
+        }
+
+        header span {
+            font-size: 14px;
+        }
+
+        /* MENU */
+        nav {
+            background: white;
+            padding: 12px;
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            box-shadow: 0 2px 5px #ccc;
+        }
+
+        nav button {
+            border: none;
+            background: none;
+            color: #6b3e26;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        nav button:hover {
+            color: #b66a3c;
+        }
+
+        /* CONTEÚDO */
+        main {
+            width: 90%;
+            max-width: 800px;
+            margin: 25px auto;
+        }
+
+        /* PESQUISA */
+        .pesquisa {
+            display: flex;
+            margin-bottom: 20px;
+        }
+
+        .pesquisa input {
+            flex: 1;
+            padding: 13px;
+            border: 1px solid #ddd;
+            border-radius: 8px 0 0 8px;
+            outline: none;
+        }
+
+        .pesquisa button {
+            padding: 13px 18px;
+            border: none;
+            background: #6b3e26;
+            color: white;
+            border-radius: 0 8px 8px 0;
+            cursor: pointer;
+        }
+
+        /* CRIAR POST */
+        .criar-post {
+            background: white;
+            padding: 18px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 7px #ddd;
+        }
+
+        .criar-post textarea {
+            width: 100%;
+            height: 70px;
+            resize: none;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            outline: none;
+        }
+
+        .criar-post button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 7px;
+            background: #6b3e26;
+            color: white;
+            cursor: pointer;
+        }
+
+        /* PUBLICAÇÃO */
+        .post {
+            background: white;
+            padding: 18px;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 7px #ddd;
+        }
+
+        .usuario {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .post p {
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+
+        .post img {
+            width: 100%;
+            border-radius: 10px;
+            margin-bottom: 12px;
+        }
+
+        .acoes {
+            display: flex;
+            gap: 10px;
+        }
+
+        .acoes button {
+            border: none;
+            background: #f1e5dd;
+            padding: 9px 15px;
+            border-radius: 7px;
+            cursor: pointer;
+        }
+
+        .acoes button:hover {
+            background: #e3c8b7;
+        }
+
+        /* PRODUTOS */
+        #produtos {
+            margin-top: 30px;
+        }
+
+        .produto {
+            background: white;
+            padding: 15px;
+            margin-bottom: 12px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px #ddd;
+        }
+
+        .produto button {
+            background: #6b3e26;
+            color: white;
+            border: none;
+            padding: 9px 14px;
+            border-radius: 7px;
+            cursor: pointer;
+        }
+
+        /* DICAS */
+        .dicas {
+            background: #ead8ca;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 25px;
+        }
+
+        .dicas h2 {
+            margin-bottom: 12px;
+        }
+
+        .dicas li {
+            margin: 8px 0;
+        }
+
+        footer {
+            text-align: center;
+            padding: 25px;
+            margin-top: 30px;
+            background: #6b3e26;
+            color: white;
+        }
+
+        /* RESPONSIVO */
+        @media (max-width: 600px) {
+
+            nav {
+                gap: 10px;
+                flex-wrap: wrap;
+            }
+
+            nav button {
+                font-size: 13px;
+            }
+
+            main {
+                width: 94%;
+            }
+
+            .produto {
+                flex-direction: column;
+                gap: 10px;
+                align-items: flex-start;
+            }
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"><link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+<header>
+    <div>
+        <h1>🌀 Cacheia</h1>
+        <span>Seu espaço para cuidar dos cachos</span>
+    </div>
+</header>
+
+<nav>
+    <button onclick="mostrarInicio()">🏠 Início</button>
+    <button onclick="mostrarProdutos()">🛍️ Produtos</button>
+    <button onclick="mostrarDicas()">✨ Dicas</button>
+</nav>
+
+<main>
+
+    <!-- PESQUISA -->
+    <div class="pesquisa">
+        <input
+            type="text"
+            id="busca"
+            placeholder="Pesquise sobre cachos, produtos..."
+            onkeyup="pesquisar()">
+
+        <button onclick="pesquisar()">🔍 Buscar</button>
+    </div>
+
+    <!-- CRIAR PUBLICAÇÃO -->
+    <div class="criar-post">
+
+        <h3>Compartilhe sua dica 💬</h3>
+
+        <br>
+
+        <textarea
+            id="textoPost"
+            placeholder="Conte sua experiência com seu cabelo...">
+        </textarea>
+
+        <button onclick="criarPost()">Publicar</button>
+
+    </div>
+
+    <!-- FEED -->
+    <section id="feed">
+
+        <article class="post">
+
+            <div class="usuario">
+                👩 Ana Cacheada
+            </div>
+
+            <p>
+                Hoje finalizei meu cabelo usando fitagem e amei o resultado! 🌀✨
+            </p>
+
+            <div class="acoes">
+
+                <button onclick="curtir(this)">
+                    ❤️ Curtir <span>0</span>
+                </button>
+
+                <button onclick="comentar()">
+                    💬 Comentar
+                </button>
+
+            </div>
+
+        </article>
+
+
+        <article class="post">
+
+            <div class="usuario">
+                👩‍🦱 Júlia dos Cachos
+            </div>
+
+            <p>
+                Uma dica importante: evite pentear os cachos secos para diminuir
+                o frizz. Experimente desembaraçar durante o banho! 💧
+            </p>
+
+            <div class="acoes">
+
+                <button onclick="curtir(this)">
+                    ❤️ Curtir <span>0</span>
+                </button>
+
+                <button onclick="comentar()">
+                    💬 Comentar
+                </button>
+
+            </div>
+
+        </article>
+
+
+        <article class="post">
+
+            <div class="usuario">
+                👩‍🦱 Maria Cacheada
+            </div>
+
+            <p>
+                Meu cronograma capilar está ajudando muito na definição dos meus
+                cachos. 🧴❤️
+            </p>
+
+            <div class="acoes">
+
+                <button onclick="curtir(this)">
+                    ❤️ Curtir <span>0</span>
+                </button>
+
+                <button onclick="comentar()">
+                    💬 Comentar
+                </button>
+
+            </div>
+
+        </article>
+
+    </section>
+
+
+    <!-- PRODUTOS -->
+    <section id="produtos">
+
+        <h2>🛍️ Produtos para Cachos</h2>
+
+        <br>
+
+        <div class="produto">
+
+            <div>
+                <strong>🧴 Creme de Pentear</strong>
+                <p>Ajuda na definição e hidratação.</p>
+            </div>
+
+            <button onclick="comprar('Creme de Pentear')">
+                Comprar
+            </button>
+
+        </div>
+
+
+        <div class="produto">
+
+            <div>
+                <strong>🫧 Shampoo Hidratante</strong>
+                <p>Limpeza suave para cabelos cacheados.</p>
+            </div>
+
+            <button onclick="comprar('Shampoo Hidratante')">
+                Comprar
+            </button>
+
+        </div>
+
+
+        <div class="produto">
+
+            <div>
+                <strong>✨ Gelatina para Cachos</strong>
+                <p>Mais definição e fixação.</p>
+            </div>
+
+            <button onclick="comprar('Gelatina para Cachos')">
+                Comprar
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- DICAS -->
+    <section class="dicas" id="dicas">
+
+        <h2>✨ Dicas para cuidar dos cachos</h2>
+
+        <ul>
+
+            <li>💧 Mantenha o cabelo hidratado.</li>
+
+            <li>🪮 Use pente de dentes largos.</li>
+
+            <li>🌙 Use fronha ou touca de cetim.</li>
+
+            <li>🧴 Faça hidratação regularmente.</li>
+
+            <li>🌀 Finalize o cabelo com produtos adequados.</li>
+
+            <li>✂️ Corte as pontas quando necessário.</li>
+
+        </ul>
+
+    </section>
+
+</main>
+
+
+<footer>
+    <p>🌀 Cacheia © 2026</p>
+    <p>Feito para quem ama cabelos cacheados ❤️</p>
+</footer>
+
+
+<script>
+
+    /* CURTIR */
+    function curtir(botao) {
+
+        let numero = botao.querySelector("span");
+
+        let quantidade = Number(numero.innerText);
+
+        quantidade++;
+
+        numero.innerText = quantidade;
+
+    }
+
+
+    /* COMENTAR */
+    function comentar() {
+
+        let comentario = prompt(
+            "Digite seu comentário:"
+        );
+
+        if (comentario) {
+
+            alert(
+                "Comentário publicado: " + comentario
+            );
+
+        }
+
+    }
+
+
+    /* CRIAR POST */
+    function criarPost() {
+
+        let texto =
+            document.getElementById("textoPost").value;
+
+        if (texto.trim() === "") {
+
+            alert("Digite alguma coisa antes de publicar!");
+
+            return;
+        }
+
+        let feed =
+            document.getElementById("feed");
+
+        let novoPost =
+            document.createElement("article");
+
+        novoPost.className = "post";
+
+        novoPost.innerHTML = `
+
+            <div class="usuario">
+                👤 Você
+            </div>
+
+            <p>
+                ${texto}
+            </p>
+
+            <div class="acoes">
+
+                <button onclick="curtir(this)">
+                    ❤️ Curtir <span>0</span>
+                </button>
+
+                <button onclick="comentar()">
+                    💬 Comentar
+                </button>
+
+            </div>
+
+        `;
+
+        feed.prepend(novoPost);
+
+        document.getElementById("textoPost").value = "";
+
+        alert("Publicação criada com sucesso! 🎉");
+
+    }
+
+
+    /* COMPRAR PRODUTO */
+    function comprar(produto) {
+
+        alert(
+            "Você selecionou: " +
+            produto +
+            "\n\nEm uma versão completa, aqui poderia abrir o carrinho."
+        );
+
+    }
+
+
+    /* PESQUISA */
+    function pesquisar() {
+
+        let termo =
+            document.getElementById("busca")
+            .value
+            .toLowerCase();
+
+        let posts =
+            document.querySelectorAll(".post");
+
+        posts.forEach(function(post) {
+
+            let texto =
+                post.innerText.toLowerCase();
+
+            if (texto.includes(termo)) {
+
+                post.style.display = "block";
+
+            } else {
+
+                post.style.display = "none";
+
+            }
+
+        });
+
+    }
+
+
+    /* MENU */
+    function mostrarInicio() {
+
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+
+    }
+
+
+    function mostrarProdutos() {
+
+        document.getElementById("produtos")
+            .scrollIntoView({
+                behavior: "smooth"
+            });
+
+    }
+
+
+    function mostrarDicas() {
+
+        document.getElementById("dicas")
+            .scrollIntoView({
+                behavior: "smooth"
+            });
+
+    }
+
+</script>
+
+<script src="script.js"></script></body>
+</html>
+```
