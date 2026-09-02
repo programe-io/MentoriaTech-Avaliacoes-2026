@@ -1,193 +1,155 @@
 ```javascript
-/* =========================================
-   MICHAEL JACKSON FAN FEED
-   JAVASCRIPT
-========================================= */
+// ===============================
+// GALERIA DE FOTOS DO MICHAEL JACKSON
+// ===============================
+
+const fotosMJ = [
+    "https://upload.wikimedia.org/wikipedia/commons/3/31/Michael_Jackson_in_1988.jpg",
+
+    "https://upload.wikimedia.org/wikipedia/commons/4/40/Michael_Jackson_Dangerous_World_Tour_1993.jpg",
+
+    "https://upload.wikimedia.org/wikipedia/commons/8/8c/Michael_Jackson_Cannes.jpg"
+];
+
+let fotoAtual = 0;
 
 
-/* =========================================
-   BOTÕES DE CURTIR
-========================================= */
+// Cria a galeria
+function criarGaleria() {
 
-const botoesCurtir = document.querySelectorAll(".acoes button:first-child");
+    const galeria = document.createElement("section");
 
-botoesCurtir.forEach(function(botao) {
+    galeria.className = "galeria";
 
-    let curtido = false;
-    let contador = 0;
+    galeria.innerHTML = `
+        <h2>📸 Fotos do Michael Jackson</h2>
 
-    botao.addEventListener("click", function() {
+        <div class="foto-container">
+            <button id="anterior">❮</button>
 
-        if (curtido === false) {
+            <img id="fotoMJ" src="${fotosMJ[0]}" alt="Michael Jackson">
 
-            curtido = true;
-            contador++;
+            <button id="proxima">❯</button>
+        </div>
 
-            botao.innerHTML = "❤️ Curtido " + contador;
+        <p id="contador">Foto 1 de ${fotosMJ.length}</p>
+    `;
 
-            botao.style.background = "#d00000";
+    document.querySelector("main").prepend(galeria);
 
-        } else {
+    document
+        .querySelector("#anterior")
+        .addEventListener("click", fotoAnterior);
 
-            curtido = false;
-            contador--;
+    document
+        .querySelector("#proxima")
+        .addEventListener("click", proximaFoto);
 
-            botao.innerHTML = "🤍 Curtir";
-
-            botao.style.background = "#151515";
-        }
-
-    });
-
-});
-
-
-/* =========================================
-   BOTÃO DE COMENTAR
-========================================= */
-
-const botoesComentario =
-    document.querySelectorAll(".acoes button:nth-child(2)");
-
-botoesComentario.forEach(function(botao) {
-
-    botao.addEventListener("click", function() {
-
-        const comentario = prompt(
-            "Digite seu comentário sobre Michael Jackson:"
-        );
-
-        if (comentario !== null && comentario.trim() !== "") {
-
-            alert(
-                "💬 Seu comentário foi adicionado!\n\n" +
-                comentario
-            );
-
-        }
-
-    });
-
-});
-
-
-/* =========================================
-   BOTÃO EXPLORAR
-========================================= */
-
-const botaoExplorar =
-    document.querySelector(".hero-text button");
-
-if (botaoExplorar) {
-
-    botaoExplorar.addEventListener("click", function() {
-
-        const feed = document.querySelector(".feed");
-
-        feed.scrollIntoView({
-            behavior: "smooth"
-        });
-
-    });
-
+    document
+        .querySelector("#fotoMJ")
+        .addEventListener("click", abrirFoto);
 }
 
 
-/* =========================================
-   EFEITO NAS FOTOS
-========================================= */
+// Mostra a próxima foto
+function proximaFoto() {
 
-const imagens = document.querySelectorAll(
-    ".post img, .fotos img"
-);
+    fotoAtual++;
 
-imagens.forEach(function(imagem) {
+    if (fotoAtual >= fotosMJ.length) {
+        fotoAtual = 0;
+    }
 
-    imagem.addEventListener("click", function() {
-
-        imagem.classList.toggle("imagem-grande");
-
-    });
-
-});
+    atualizarFoto();
+}
 
 
-/* =========================================
-   MENU DE NAVEGAÇÃO
-========================================= */
+// Mostra a foto anterior
+function fotoAnterior() {
 
-const links = document.querySelectorAll("nav a");
+    fotoAtual--;
 
-links.forEach(function(link) {
+    if (fotoAtual < 0) {
+        fotoAtual = fotosMJ.length - 1;
+    }
 
-    link.addEventListener("click", function(event) {
+    atualizarFoto();
+}
 
-        const destino = link.getAttribute("href");
 
-        if (destino.startsWith("#")) {
+// Atualiza a imagem
+function atualizarFoto() {
 
-            event.preventDefault();
+    const imagem = document.querySelector("#fotoMJ");
 
-            const elemento =
-                document.querySelector(destino);
+    imagem.src = fotosMJ[fotoAtual];
 
-            if (elemento) {
+    document.querySelector("#contador").textContent =
+        `Foto ${fotoAtual + 1} de ${fotosMJ.length}`;
+}
 
-                elemento.scrollIntoView({
-                    behavior: "smooth"
-                });
 
-            }
+// Abre a foto maior
+function abrirFoto() {
 
+    const tela = document.createElement("div");
+
+    tela.className = "foto-grande";
+
+    tela.innerHTML = `
+        <span id="fechar">×</span>
+
+        <img src="${fotosMJ[fotoAtual]}" alt="Michael Jackson">
+    `;
+
+    document.body.appendChild(tela);
+
+    document
+        .querySelector("#fechar")
+        .addEventListener("click", () => {
+            tela.remove();
+        });
+
+    tela.addEventListener("click", (event) => {
+
+        if (event.target === tela) {
+            tela.remove();
         }
 
     });
+}
 
-});
 
+// ===============================
+// BOTÃO DE CURTIR
+// ===============================
 
-/* =========================================
-   ANIMAÇÃO DOS POSTS
-========================================= */
+function curtir(botao) {
 
-const posts = document.querySelectorAll(".post");
+    let numero = botao.querySelector("span");
 
-const observador = new IntersectionObserver(
-    function(entradas) {
+    let curtidas = Number(numero.textContent);
 
-        entradas.forEach(function(entrada) {
+    if (botao.classList.contains("curtido")) {
 
-            if (entrada.isIntersecting) {
+        curtidas--;
 
-                entrada.target.classList.add("mostrar");
+        botao.classList.remove("curtido");
 
-            }
+        botao.innerHTML = `🤍 Curtir <span>${curtidas}</span>`;
 
-        });
+    } else {
 
-    },
-    {
-        threshold: 0.15
+        curtidas++;
+
+        botao.classList.add("curtido");
+
+        botao.innerHTML = `❤️ Curtido <span>${curtidas}</span>`;
+
     }
-);
+}
 
 
-posts.forEach(function(post) {
-
-    observador.observe(post);
-
-});
-
-
-/* =========================================
-   MENSAGEM NO CONSOLE
-========================================= */
-
-console.log(
-    "⭐ Michael Jackson Fan Feed carregado com sucesso!"
-);
-
-console.log(
-    "🎤 Music • Dance • Legacy"
-);
+// Inicia a galeria quando a página carregar
+document.addEventListener("DOMContentLoaded", criarGaleria);
 ```
