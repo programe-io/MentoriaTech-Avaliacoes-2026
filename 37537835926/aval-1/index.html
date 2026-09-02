@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Amazon.com.br : Motos Chopper Customizadas</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"><link href="style.css" rel="stylesheet"></head>
+<body>
+
+  <!-- BARRA DE NAVEGAÇÃO -->
+  <header class="navbar">
+    <div class="nav-logo">
+      <span class="logo-text">amazon<span class="logo-domain">.com.br</span></span>
+      <span class="prime-tag">choppers</span>
+    </div>
+
+    <div class="nav-address">
+      <i class="fa-solid fa-location-dot"></i>
+      <div>
+        <span class="nav-line-1">Enviar para</span>
+        <span class="nav-line-2">Sua Garagem</span>
+      </div>
+    </div>
+
+    <div class="nav-search">
+      <select class="search-select">
+        <option>Todas as Choppers</option>
+        <option>Custom V-Twin</option>
+        <option>Bobbers</option>
+      </select>
+      <input type="text" id="input-busca" placeholder="Buscar modelos de Choppers, V-Twin..." onkeyup="filtrarProdutos()">
+      <button class="search-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
+    </div>
+
+    <!-- BOTÃO CLICÁVEL DO CARRINHO 🛒 -->
+    <div class="nav-cart" onclick="abrirCarrinho()">
+      <i class="fa-solid fa-cart-shopping"></i>
+      <span class="cart-count" id="carrinho-qtd">0</span>
+      <span class="cart-text">Carrinho</span>
+    </div>
+  </header>
+
+  <!-- SUBHEADER / MENU -->
+  <div class="subnav">
+    <a href="#"><i class="fa-solid fa-bars"></i> Todos os Modelos</a>
+    <a href="#catalogo">Catálogo Choppers</a>
+    <a href="#admin-section">Painel de Estoque</a>
+    <a href="#">Ofertas do Dia</a>
+  </div>
+
+  <main class="main-container">
+
+    <!-- BANNER PROMOCIONAL -->
+    <div class="hero-banner">
+      <div class="banner-content">
+        <h1>Semana Especial Chopper Customs</h1>
+        <p>Frete Grátis com Amazon Prime para entregas em todo o Brasil. Até 12x sem juros.</p>
+      </div>
+    </div>
+
+    <!-- CATÁLOGO DE PRODUTOS -->
+    <section id="catalogo" class="section-title">
+      <h2>Motos Choppers em Destaque</h2>
+    </section>
+
+    <div class="products-grid" id="grid-produtos"></div>
+
+    <!-- GERENCIADOR DE ESTOQUE -->
+    <section id="admin-section" class="admin-container">
+      <div class="admin-header">
+        <h2><i class="fa-solid fa-boxes-stacked"></i> Gerenciador de Estoque do Vendedor</h2>
+        <p>Cadastre novos veículos, altere preços e atualize a quantidade disponível.</p>
+      </div>
+
+      <!-- FORMULÁRIO DE CADASTRO -->
+      <form id="form-produto" class="admin-form">
+        <h3>Cadastrar Nova Chopper no Catálogo</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="codigo">Código ID</label>
+            <input type="number" id="codigo" placeholder="Ex: 105" required>
+          </div>
+          <div class="form-group">
+            <label for="descricao">Modelo / Nome da Chopper</label>
+            <input type="text" id="descricao" placeholder="Ex: Custom Bobber Black Edition" required>
+          </div>
+          <div class="form-group">
+            <label for="quantidade">Qtd. em Estoque</label>
+            <input type="number" id="quantidade" placeholder="Ex: 3" min="0" required>
+          </div>
+          <div class="form-group">
+            <label for="valor">Preço (R$)</label>
+            <input type="number" id="valor" placeholder="Ex: 75000.00" step="0.01" min="0" required>
+          </div>
+          <div class="form-group">
+            <label for="imagem">URL da Imagem</label>
+            <input type="url" id="imagem" placeholder="https://..." required>
+          </div>
+        </div>
+        <button type="submit" class="btn-amazon-primary">Cadastrar Produto</button>
+      </form>
+
+      <!-- TABELA DE GESTÃO -->
+      <div class="table-container" style="margin-top: 25px;">
+        <h3>Lista de Inventário</h3>
+        <table class="amazon-table">
+          <thead>
+            <tr>
+              <th>Cód</th>
+              <th>Imagem</th>
+              <th>Modelo da Chopper</th>
+              <th>Qtd.</th>
+              <th>Preço Unitário</th>
+              <th>Ações de Gerenciamento</th>
+            </tr>
+          </thead>
+          <tbody id="tabela-estoque"></tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- JANELA MODAL DO CARRINHO 🛒 -->
+  <div class="modal-overlay" id="modal-carrinho">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2><i class="fa-solid fa-cart-shopping"></i> Seu Carrinho de Compras</h2>
+        <span class="close-btn" onclick="fecharCarrinho()">&times;</span>
+      </div>
+
+      <div id="itens-carrinho"></div>
+
+      <div class="cart-footer">
+        <button class="btn-action" onclick="limparCarrinho()">Esvaziar Carrinho</button>
+        <div class="cart-total">Total: <span id="cart-total-valor">R$ 0,00</span></div>
+        <button class="btn-amazon-primary" onclick="finalizarCompra()">Finalizar Compra</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="amazon-footer">
+    <div class="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">Voltar ao início</div>
+    <div class="footer-links">
+      <p>&copy; 1996-2026, Amazon.com, Inc. ou suas afiliadas - Chopper Store</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+<script src="script.js"></script></body>
+</html>
