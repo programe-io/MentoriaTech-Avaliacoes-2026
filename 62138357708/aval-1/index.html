@@ -1,18 +1,23 @@
+O ChatGPT disse:
+Claro. Vou mandar um por vez, com o HTML completo, para você copiar diretamente.
+
+Estoque 10
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Estoque 13 - 2A TDS</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Estoque 10 - 2A TDS</title>
 
 <style>
-*{box-sizing:border-box}
+*{
+    box-sizing:border-box;
+}
 
 body{
-    margin:0;
-    padding:20px;
     font-family:Arial,sans-serif;
-    background:#fff0f0;
+    background:#e8f5e9;
+    padding:20px;
 }
 
 .container{
@@ -20,16 +25,17 @@ body{
     margin:30px auto;
     background:white;
     padding:25px;
-    border-radius:10px;
-    border-top:6px solid #c0392b;
-    box-shadow:0 5px 18px #dfc2c2;
+    border-radius:14px;
+    box-shadow:0 4px 15px #b7ccb9;
 }
 
 h1,h3{
-    color:#a52828;
+    color:#176b3a;
 }
 
-h1{text-align:center}
+h1{
+    text-align:center;
+}
 
 .form{
     display:grid;
@@ -39,32 +45,32 @@ h1{text-align:center}
 
 input{
     padding:12px;
-    border:1px solid #e2c5c5;
-    border-radius:5px;
+    border:1px solid #b7cdbb;
+    border-radius:7px;
 }
 
 button{
     padding:9px 12px;
+    margin:2px;
     border:0;
-    border-radius:5px;
+    border-radius:6px;
     color:white;
     cursor:pointer;
-    margin:2px;
 }
 
 .add{
     width:100%;
     margin-top:10px;
-    background:#c0392b;
+    background:#219653;
     font-weight:bold;
 }
 
 .edit{
-    background:#d68910;
+    background:#e09f3e;
 }
 
 .del{
-    background:#922b21;
+    background:#d64545;
 }
 
 table{
@@ -74,22 +80,24 @@ table{
 }
 
 th,td{
-    padding:10px;
+    padding:11px;
     border:1px solid #ddd;
     text-align:center;
 }
 
 th{
-    background:#c0392b;
+    background:#219653;
     color:white;
 }
 
-tr:hover{
-    background:#fff5f5;
-}
-
 @media(max-width:700px){
-    .form{grid-template-columns:1fr}
+    .form{
+        grid-template-columns:1fr;
+    }
+
+    table{
+        font-size:13px;
+    }
 }
 </style>
 <script src="https://cdn.tailwindcss.com"></script>
@@ -100,21 +108,35 @@ tr:hover{
 
 <div class="container">
 
-<h1>🔴 Controle de Estoque - 2A TDS</h1>
+<h1>📋 Controle de Estoque - 2A TDS</h1>
 
 <h3>Novo Produto</h3>
 
 <div class="form">
 
 <input id="codigo" placeholder="Código">
+
 <input id="descricao" placeholder="Descrição">
-<input id="quantidade" type="number" min="0" placeholder="Quantidade">
-<input id="valor" type="number" min="0" step=".01" placeholder="Valor">
+
+<input 
+    id="quantidade" 
+    type="number" 
+    min="0" 
+    placeholder="Quantidade"
+>
+
+<input 
+    id="valor" 
+    type="number" 
+    min="0" 
+    step="0.01" 
+    placeholder="Valor"
+>
 
 </div>
 
 <button class="add" onclick="add()">
-➕ Cadastrar Produto
+    ➕ Adicionar Produto
 </button>
 
 <h3>Produtos em Estoque</h3>
@@ -123,11 +145,11 @@ tr:hover{
 
 <thead>
 <tr>
-<th>Código</th>
-<th>Descrição</th>
-<th>Quantidade</th>
-<th>Valor</th>
-<th>Ações</th>
+    <th>Código</th>
+    <th>Descrição</th>
+    <th>Quantidade</th>
+    <th>Valor</th>
+    <th>Ações</th>
 </tr>
 </thead>
 
@@ -139,11 +161,25 @@ tr:hover{
 
 <script>
 
-const ID_ESTOQUE = "ESTOQUE_13";
+// ========================================
+// IDENTIFICAÇÃO DESTE ESTOQUE
+// ========================================
+
+const ID_ESTOQUE = "ESTOQUE_10";
+
+
+// ========================================
+// CARREGAR PRODUTOS
+// ========================================
 
 let produtos = JSON.parse(
     localStorage.getItem(ID_ESTOQUE) || "[]"
 );
+
+
+// ========================================
+// SALVAR PRODUTOS
+// ========================================
 
 function salvar(){
 
@@ -151,30 +187,56 @@ function salvar(){
         ID_ESTOQUE,
         JSON.stringify(produtos)
     );
+
 }
+
+
+// ========================================
+// ADICIONAR PRODUTO
+// ========================================
 
 function add(){
 
-    const c = codigo.value.trim();
-    const d = descricao.value.trim();
-    const q = Number(quantidade.value);
-    const v = Number(valor.value);
+    let c = codigo.value.trim();
+    let d = descricao.value.trim();
+    let q = Number(quantidade.value);
+    let v = Number(valor.value);
 
-    if(!c || !d ||
-       quantidade.value === "" ||
-       valor.value === "" ||
-       q < 0 || v < 0){
+    if(
+        !c ||
+        !d ||
+        quantidade.value === "" ||
+        valor.value === "" ||
+        q < 0 ||
+        v < 0
+    ){
 
         alert("Preencha todos os campos corretamente!");
+
         return;
     }
 
-    produtos.push({c,d,q,v});
+    produtos.push({
+
+        c:c,
+        d:d,
+        q:q,
+        v:v
+
+    });
 
     salvar();
+
     limpar();
+
     listar();
+
 }
+
+
+// ========================================
+// LISTAR PRODUTOS
+// ========================================
 
 function listar(){
 
@@ -191,88 +253,145 @@ function listar(){
     produtos.forEach((p,i)=>{
 
         lista.innerHTML += `
+
         <tr>
 
-        <td>${p.c}</td>
-        <td>${p.d}</td>
-        <td>${p.q}</td>
-        <td>R$ ${p.v.toFixed(2).replace(".",",")}</td>
+            <td>${p.c}</td>
 
-        <td>
+            <td>${p.d}</td>
 
-        <button class="edit"
-        onclick="alterarValor(${i})">
-        💰 Valor
-        </button>
+            <td>${p.q}</td>
 
-        <button class="edit"
-        onclick="alterarQuantidade(${i})">
-        📦 Quantidade
-        </button>
+            <td>
+                R$ ${p.v.toFixed(2).replace(".",",")}
+            </td>
 
-        <button class="del"
-        onclick="excluir(${i})">
-        🗑️ Excluir
-        </button>
+            <td>
 
-        </td>
+                <button 
+                    class="edit"
+                    onclick="valor(${i})">
+                    💰 Valor
+                </button>
 
-        </tr>`;
+                <button 
+                    class="edit"
+                    onclick="quant(${i})">
+                    📦 Quantidade
+                </button>
+
+                <button 
+                    class="del"
+                    onclick="del(${i})">
+                    🗑️ Excluir
+                </button>
+
+            </td>
+
+        </tr>
+
+        `;
+
     });
+
 }
 
-function alterarValor(i){
+
+// ========================================
+// ALTERAR VALOR
+// ========================================
+
+function valor(i){
 
     let v = prompt("Novo valor:");
 
-    if(v === null)return;
+    if(
+        v !== null &&
+        v.trim() !== "" &&
+        !isNaN(v) &&
+        Number(v.replace(",", ".")) >= 0
+    ){
 
-    v = Number(v.replace(",","."));
-
-    if(!isNaN(v) && v >= 0){
-
-        produtos[i].v = v;
+        produtos[i].v = Number(
+            v.replace(",", ".")
+        );
 
         salvar();
+
         listar();
+
     }
+
 }
 
-function alterarQuantidade(i){
+
+// ========================================
+// ALTERAR QUANTIDADE
+// ========================================
+
+function quant(i){
 
     let q = prompt("Nova quantidade:");
 
-    if(q === null)return;
+    if(
+        q !== null &&
+        q.trim() !== "" &&
+        !isNaN(q) &&
+        Number(q) >= 0
+    ){
 
-    q = Number(q);
-
-    if(!isNaN(q) && q >= 0){
-
-        produtos[i].q = q;
+        produtos[i].q = Number(q);
 
         salvar();
+
         listar();
+
     }
+
 }
 
-function excluir(i){
 
-    if(confirm("Deseja excluir este produto?")){
+// ========================================
+// EXCLUIR PRODUTO
+// ========================================
+
+function del(i){
+
+    if(
+        confirm("Deseja remover este produto?")
+    ){
 
         produtos.splice(i,1);
 
         salvar();
+
         listar();
+
     }
+
 }
+
+
+// ========================================
+// LIMPAR CAMPOS
+// ========================================
 
 function limpar(){
 
-    codigo.value="";
-    descricao.value="";
-    quantidade.value="";
-    valor.value="";
+    codigo.value = "";
+
+    descricao.value = "";
+
+    quantidade.value = "";
+
+    valor.value = "";
+
 }
+
+
+// ========================================
+// INICIAR
+// ========================================
 
 listar();
 
