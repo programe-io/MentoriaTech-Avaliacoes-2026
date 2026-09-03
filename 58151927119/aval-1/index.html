@@ -1,86 +1,123 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Estoque - 2A TDS</title>
 
-    <title>Controle de Estoque - 2A TDS</title>
-
-    <link rel="stylesheet" href="style.css">
+<style>
+*{box-sizing:border-box}
+body{font-family:Arial;background:#eef4f3;margin:0;padding:20px}
+.container{max-width:1000px;margin:30px auto;background:white;padding:25px;border-radius:12px;box-shadow:0 3px 12px #c8d5d3}
+h1,h3{color:#145a52}h1{text-align:center}
+.form{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+input{padding:11px;border:1px solid #ccc;border-radius:5px}
+button{padding:8px 10px;margin:2px;border:0;border-radius:5px;color:white;cursor:pointer}
+.add{width:100%;margin-top:10px;background:#16817a;font-weight:bold}
+.edit{background:#e09f3e}.del{background:#c44536}
+table{width:100%;margin-top:20px;border-collapse:collapse}
+th,td{padding:10px;border:1px solid #ddd;text-align:center}
+th{background:#16817a;color:white}
+@media(max-width:700px){.form{grid-template-columns:1fr}.container{margin:10px auto;padding:15px}}
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="style.css" rel="stylesheet"></head>
+</head>
 
 <body>
+<div class="container">
 
-    <div class="container">
+<h1>📋 Controle de Estoque - 2A TDS</h1>
 
-        <h1>📋 Controle de Estoque - 2A TDS</h1>
+<h3>Novo Produto</h3>
 
-        <h3>Novo Produto</h3>
+<div class="form">
+<input id="codigo" placeholder="Código">
+<input id="descricao" placeholder="Descrição">
+<input id="quantidade" type="number" min="0" placeholder="Quantidade">
+<input id="valor" type="number" min="0" step=".01" placeholder="Valor">
+</div>
 
-        <div class="formulario">
+<button class="add" onclick="add()">➕ Adicionar Produto</button>
 
-            <input
-                type="text"
-                id="codigo"
-                placeholder="Código"
-            >
+<h3>Produtos em Estoque</h3>
 
-            <input
-                type="text"
-                id="descricao"
-                placeholder="Descrição"
-            >
+<table>
+<thead>
+<tr>
+<th>Código</th><th>Descrição</th><th>Quantidade</th><th>Valor</th><th>Ações</th>
+</tr>
+</thead>
+<tbody id="lista"></tbody>
+</table>
 
-            <input
-                type="number"
-                id="quantidade"
-                placeholder="Quantidade"
-                min="0"
-            >
+</div>
 
-            <input
-                type="number"
-                id="valor"
-                placeholder="Valor"
-                min="0"
-                step="0.01"
-            >
+<script>
+let produtos=JSON.parse(localStorage.produtosEstoque||"[]");
 
-        </div>
+function salvar(){
+localStorage.produtosEstoque=JSON.stringify(produtos);
+}
 
-        <button
-            class="btn-adicionar"
-            id="btnAdicionar"
-        >
-            ➕ Adicionar Produto
-        </button>
+function add(){
+let c=codigo.value.trim(),d=descricao.value.trim(),
+q=Number(quantidade.value),v=Number(valor.value);
 
-        <h3>Produtos em Estoque</h3>
+if(!c||!d||q<0||v<0||quantidade.value===""||valor.value==="")
+return alert("Preencha todos os campos corretamente!");
 
-        <div class="tabela-container">
+produtos.push({c,d,q,v});
+salvar();limpar();listar();
+}
 
-            <table>
+function listar(){
+lista.innerHTML=produtos.length?produtos.map((p,i)=>`
+<tr>
+<td>${p.c}</td>
+<td>${p.d}</td>
+<td>${p.q}</td>
+<td>R$ ${p.v.toFixed(2).replace(".",",")}</td>
+<td>
+<button class="edit" onclick="valor(${i})">💰 Valor</button>
+<button class="edit" onclick="quant(${i})">📦 Quantidade</button>
+<button class="del" onclick="del(${i})">🗑️ Excluir</button>
+</td>
+</tr>`).join(""):`<tr><td colspan="5">Nenhum produto cadastrado.</td></tr>`;
+}
 
-                <thead>
-                    <tr>
-                        <th>Código</th>
-                        <th>Descrição</th>
-                        <th>Quantidade</th>
-                        <th>Valor</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
+function valor(i){
+let v=prompt("Novo valor:");
+if(v!==null&&v.trim()!==""&&!isNaN(v)&&Number(v)>=0){
+produtos[i].v=Number(v.replace(",","."));
+salvar();listar();
+}
+}
 
-                <tbody id="listaProdutos"></tbody>
+function quant(i){
+let q=prompt("Nova quantidade:");
+if(q!==null&&q.trim()!==""&&!isNaN(q)&&Number(q)>=0){
+produtos[i].q=Number(q);
+salvar();listar();
+}
+}
 
-            </table>
+function del(i){
+if(confirm("Deseja remover este produto?")){
+produtos.splice(i,1);
+salvar();listar();
+}
+}
 
-        </div>
+function limpar(){
+codigo.value="";
+descricao.value="";
+quantidade.value="";
+valor.value="";
+}
 
-    </div>
+listar();
+</script>
 
-    <script src="script.js"></script>
-
-<script src="script.js"></script></body>
+</body>
 </html>
