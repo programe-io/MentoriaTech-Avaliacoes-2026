@@ -1,401 +1,427 @@
-O ChatGPT disse:
-Claro. Vou mandar um por vez, com o HTML completo, para você copiar diretamente.
-
-Estoque 10
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Estoque 10 - 2A TDS</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<style>
-*{
-    box-sizing:border-box;
-}
+    <title>Estoque - 2A TDS</title>
 
-body{
-    font-family:Arial,sans-serif;
-    background:#e8f5e9;
-    padding:20px;
-}
+    <style>
+        * {
+            box-sizing: border-box;
+        }
 
-.container{
-    max-width:1000px;
-    margin:30px auto;
-    background:white;
-    padding:25px;
-    border-radius:14px;
-    box-shadow:0 4px 15px #b7ccb9;
-}
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #eef4f3;
+        }
 
-h1,h3{
-    color:#176b3a;
-}
+        .container {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 25px;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px #c8d5d3;
+        }
 
-h1{
-    text-align:center;
-}
+        h1,
+        h3 {
+            color: #145a52;
+        }
 
-.form{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:10px;
-}
+        h1 {
+            text-align: center;
+            margin-top: 0;
+        }
 
-input{
-    padding:12px;
-    border:1px solid #b7cdbb;
-    border-radius:7px;
-}
+        .form {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
 
-button{
-    padding:9px 12px;
-    margin:2px;
-    border:0;
-    border-radius:6px;
-    color:white;
-    cursor:pointer;
-}
+        input {
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
 
-.add{
-    width:100%;
-    margin-top:10px;
-    background:#219653;
-    font-weight:bold;
-}
+        button {
+            padding: 8px 10px;
+            margin: 2px;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+        }
 
-.edit{
-    background:#e09f3e;
-}
+        button:hover {
+            opacity: 0.9;
+        }
 
-.del{
-    background:#d64545;
-}
+        .add {
+            width: 100%;
+            margin-top: 10px;
+            background: #16817a;
+            font-weight: bold;
+        }
 
-table{
-    width:100%;
-    margin-top:20px;
-    border-collapse:collapse;
-}
+        .edit {
+            background: #e09f3e;
+        }
 
-th,td{
-    padding:11px;
-    border:1px solid #ddd;
-    text-align:center;
-}
+        .del {
+            background: #c44536;
+        }
 
-th{
-    background:#219653;
-    color:white;
-}
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
 
-@media(max-width:700px){
-    .form{
-        grid-template-columns:1fr;
-    }
+        th,
+        td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
 
-    table{
-        font-size:13px;
-    }
-}
-</style>
+        th {
+            background: #16817a;
+            color: white;
+        }
+
+        @media (max-width: 700px) {
+            .form {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                margin: 10px auto;
+                padding: 20px;
+            }
+
+            table {
+                font-size: 13px;
+            }
+
+            th,
+            td {
+                padding: 8px 5px;
+            }
+        }
+    </style>
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
 <body>
 
-<div class="container">
-
-<h1>📋 Controle de Estoque - 2A TDS</h1>
-
-<h3>Novo Produto</h3>
-
-<div class="form">
-
-<input id="codigo" placeholder="Código">
-
-<input id="descricao" placeholder="Descrição">
-
-<input 
-    id="quantidade" 
-    type="number" 
-    min="0" 
-    placeholder="Quantidade"
->
-
-<input 
-    id="valor" 
-    type="number" 
-    min="0" 
-    step="0.01" 
-    placeholder="Valor"
->
-
-</div>
-
-<button class="add" onclick="add()">
-    ➕ Adicionar Produto
-</button>
-
-<h3>Produtos em Estoque</h3>
-
-<table>
-
-<thead>
-<tr>
-    <th>Código</th>
-    <th>Descrição</th>
-    <th>Quantidade</th>
-    <th>Valor</th>
-    <th>Ações</th>
-</tr>
-</thead>
-
-<tbody id="lista"></tbody>
-
-</table>
-
-</div>
-
-<script>
-
-// ========================================
-// IDENTIFICAÇÃO DESTE ESTOQUE
-// ========================================
-
-const ID_ESTOQUE = "ESTOQUE_10";
-
-
-// ========================================
-// CARREGAR PRODUTOS
-// ========================================
-
-let produtos = JSON.parse(
-    localStorage.getItem(ID_ESTOQUE) || "[]"
-);
-
-
-// ========================================
-// SALVAR PRODUTOS
-// ========================================
-
-function salvar(){
-
-    localStorage.setItem(
-        ID_ESTOQUE,
-        JSON.stringify(produtos)
-    );
-
-}
-
-
-// ========================================
-// ADICIONAR PRODUTO
-// ========================================
-
-function add(){
-
-    let c = codigo.value.trim();
-    let d = descricao.value.trim();
-    let q = Number(quantidade.value);
-    let v = Number(valor.value);
-
-    if(
-        !c ||
-        !d ||
-        quantidade.value === "" ||
-        valor.value === "" ||
-        q < 0 ||
-        v < 0
-    ){
-
-        alert("Preencha todos os campos corretamente!");
-
-        return;
-    }
-
-    produtos.push({
-
-        c:c,
-        d:d,
-        q:q,
-        v:v
-
-    });
-
-    salvar();
-
-    limpar();
-
-    listar();
-
-}
-
-
-// ========================================
-// LISTAR PRODUTOS
-// ========================================
-
-function listar(){
-
-    lista.innerHTML = "";
-
-    if(produtos.length === 0){
-
-        lista.innerHTML =
-        '<tr><td colspan="5">Nenhum produto cadastrado.</td></tr>';
-
-        return;
-    }
-
-    produtos.forEach((p,i)=>{
-
-        lista.innerHTML += `
-
-        <tr>
-
-            <td>${p.c}</td>
-
-            <td>${p.d}</td>
-
-            <td>${p.q}</td>
-
-            <td>
-                R$ ${p.v.toFixed(2).replace(".",",")}
-            </td>
-
-            <td>
-
-                <button 
-                    class="edit"
-                    onclick="valor(${i})">
-                    💰 Valor
-                </button>
-
-                <button 
-                    class="edit"
-                    onclick="quant(${i})">
-                    📦 Quantidade
-                </button>
-
-                <button 
-                    class="del"
-                    onclick="del(${i})">
-                    🗑️ Excluir
-                </button>
-
-            </td>
-
-        </tr>
-
-        `;
-
-    });
-
-}
-
-
-// ========================================
-// ALTERAR VALOR
-// ========================================
-
-function valor(i){
-
-    let v = prompt("Novo valor:");
-
-    if(
-        v !== null &&
-        v.trim() !== "" &&
-        !isNaN(v) &&
-        Number(v.replace(",", ".")) >= 0
-    ){
-
-        produtos[i].v = Number(
-            v.replace(",", ".")
+    <div class="container">
+
+        <h1>📋 Controle de Estoque - 2A TDS</h1>
+
+        <h3>Novo Produto</h3>
+
+        <div class="form">
+            <input
+                id="codigo"
+                type="text"
+                placeholder="Código"
+            >
+
+            <input
+                id="descricao"
+                type="text"
+                placeholder="Descrição"
+            >
+
+            <input
+                id="quantidade"
+                type="number"
+                min="0"
+                placeholder="Quantidade"
+            >
+
+            <input
+                id="valor"
+                type="number"
+                min="0"
+                step="0.01"
+                placeholder="Valor"
+            >
+        </div>
+
+        <button class="add" onclick="add()">
+            ➕ Adicionar Produto
+        </button>
+
+        <h3>Produtos em Estoque</h3>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Descrição</th>
+                    <th>Quantidade</th>
+                    <th>Valor</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+
+            <tbody id="lista"></tbody>
+        </table>
+
+    </div>
+
+    <script>
+
+        // ========================================
+        // MUDE SOMENTE ESTA LINHA EM CADA CÓPIA
+        // ========================================
+
+        const ID_ESTOQUE = "ESTOQUE_01";
+
+
+        // ========================================
+        // CARREGAR PRODUTOS
+        // ========================================
+
+        let produtos = JSON.parse(
+            localStorage.getItem(ID_ESTOQUE) || "[]"
         );
 
-        salvar();
+
+        // ========================================
+        // SALVAR PRODUTOS
+        // ========================================
+
+        function salvar() {
+            localStorage.setItem(
+                ID_ESTOQUE,
+                JSON.stringify(produtos)
+            );
+        }
+
+
+        // ========================================
+        // ADICIONAR PRODUTO
+        // ========================================
+
+        function add() {
+
+            const c = codigo.value.trim();
+            const d = descricao.value.trim();
+            const q = Number(quantidade.value);
+            const v = Number(
+                valor.value.replace(",", ".")
+            );
+
+            if (
+                !c ||
+                !d ||
+                quantidade.value === "" ||
+                valor.value === "" ||
+                q < 0 ||
+                v < 0 ||
+                !Number.isFinite(q) ||
+                !Number.isFinite(v)
+            ) {
+                alert("Preencha todos os campos corretamente!");
+                return;
+            }
+
+            produtos.push({
+                c: c,
+                d: d,
+                q: q,
+                v: v
+            });
+
+            salvar();
+            limpar();
+            listar();
+        }
+
+
+        // ========================================
+        // LISTAR PRODUTOS
+        // ========================================
+
+        function listar() {
+
+            lista.innerHTML = "";
+
+            if (produtos.length === 0) {
+
+                lista.innerHTML =
+                    '<tr>' +
+                        '<td colspan="5">' +
+                            'Nenhum produto cadastrado.' +
+                        '</td>' +
+                    '</tr>';
+
+                return;
+            }
+
+            produtos.forEach((p, i) => {
+
+                lista.innerHTML += `
+                    <tr>
+                        <td>${p.c}</td>
+
+                        <td>${p.d}</td>
+
+                        <td>${p.q}</td>
+
+                        <td>
+                            R$ ${p.v.toFixed(2).replace(".", ",")}
+                        </td>
+
+                        <td>
+                            <button
+                                class="edit"
+                                onclick="valor(${i})"
+                            >
+                                💰 Valor
+                            </button>
+
+                            <button
+                                class="edit"
+                                onclick="quant(${i})"
+                            >
+                                📦 Quantidade
+                            </button>
+
+                            <button
+                                class="del"
+                                onclick="del(${i})"
+                            >
+                                🗑️ Excluir
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+
+        // ========================================
+        // ALTERAR VALOR
+        // ========================================
+
+        function valor(i) {
+
+            const entrada = prompt(
+                "Novo valor:",
+                produtos[i].v.toFixed(2).replace(".", ",")
+            );
+
+            if (entrada === null) {
+                return;
+            }
+
+            const v = Number(
+                entrada.replace(",", ".")
+            );
+
+            if (
+                entrada.trim() !== "" &&
+                Number.isFinite(v) &&
+                v >= 0
+            ) {
+
+                produtos[i].v = v;
+
+                salvar();
+                listar();
+
+            } else {
+
+                alert("Digite um valor válido.");
+            }
+        }
+
+
+        // ========================================
+        // ALTERAR QUANTIDADE
+        // ========================================
+
+        function quant(i) {
+
+            const entrada = prompt(
+                "Nova quantidade:",
+                produtos[i].q
+            );
+
+            if (entrada === null) {
+                return;
+            }
+
+            const q = Number(entrada);
+
+            if (
+                entrada.trim() !== "" &&
+                Number.isInteger(q) &&
+                q >= 0
+            ) {
+
+                produtos[i].q = q;
+
+                salvar();
+                listar();
+
+            } else {
+
+                alert("Digite uma quantidade válida.");
+            }
+        }
+
+
+        // ========================================
+        // EXCLUIR PRODUTO
+        // ========================================
+
+        function del(i) {
+
+            if (
+                confirm("Deseja remover este produto?")
+            ) {
+
+                produtos.splice(i, 1);
+
+                salvar();
+                listar();
+            }
+        }
+
+
+        // ========================================
+        // LIMPAR CAMPOS
+        // ========================================
+
+        function limpar() {
+
+            codigo.value = "";
+            descricao.value = "";
+            quantidade.value = "";
+            valor.value = "";
+        }
+
+
+        // ========================================
+        // INICIAR
+        // ========================================
 
         listar();
 
-    }
-
-}
-
-
-// ========================================
-// ALTERAR QUANTIDADE
-// ========================================
-
-function quant(i){
-
-    let q = prompt("Nova quantidade:");
-
-    if(
-        q !== null &&
-        q.trim() !== "" &&
-        !isNaN(q) &&
-        Number(q) >= 0
-    ){
-
-        produtos[i].q = Number(q);
-
-        salvar();
-
-        listar();
-
-    }
-
-}
-
-
-// ========================================
-// EXCLUIR PRODUTO
-// ========================================
-
-function del(i){
-
-    if(
-        confirm("Deseja remover este produto?")
-    ){
-
-        produtos.splice(i,1);
-
-        salvar();
-
-        listar();
-
-    }
-
-}
-
-
-// ========================================
-// LIMPAR CAMPOS
-// ========================================
-
-function limpar(){
-
-    codigo.value = "";
-
-    descricao.value = "";
-
-    quantidade.value = "";
-
-    valor.value = "";
-
-}
-
-
-// ========================================
-// INICIAR
-// ========================================
-
-listar();
-
-</script>
+    </script>
 
 </body>
 </html>
