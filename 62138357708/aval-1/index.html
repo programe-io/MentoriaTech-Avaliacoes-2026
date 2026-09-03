@@ -3,28 +3,32 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Estoque 11 - 2A TDS</title>
+<title>Estoque 13 - 2A TDS</title>
 
 <style>
 *{box-sizing:border-box}
 
 body{
-    font-family:Arial,sans-serif;
-    background:#eaf3ff;
-    padding:20px;
     margin:0;
+    padding:20px;
+    font-family:Arial,sans-serif;
+    background:#fff0f0;
 }
 
 .container{
     max-width:1000px;
     margin:30px auto;
     background:white;
-    padding:28px;
+    padding:25px;
     border-radius:10px;
-    box-shadow:0 4px 18px #b7c9df;
+    border-top:6px solid #c0392b;
+    box-shadow:0 5px 18px #dfc2c2;
 }
 
-h1,h3{color:#1557a6}
+h1,h3{
+    color:#a52828;
+}
+
 h1{text-align:center}
 
 .form{
@@ -35,28 +39,33 @@ h1{text-align:center}
 
 input{
     padding:12px;
-    border:1px solid #b9cce3;
+    border:1px solid #e2c5c5;
     border-radius:5px;
 }
 
 button{
     padding:9px 12px;
-    margin:2px;
     border:0;
     border-radius:5px;
     color:white;
     cursor:pointer;
+    margin:2px;
 }
 
 .add{
     width:100%;
     margin-top:10px;
-    background:#1769aa;
+    background:#c0392b;
     font-weight:bold;
 }
 
-.edit{background:#e0a43e}
-.del{background:#d43f3f}
+.edit{
+    background:#d68910;
+}
+
+.del{
+    background:#922b21;
+}
 
 table{
     width:100%;
@@ -66,13 +75,17 @@ table{
 
 th,td{
     padding:10px;
-    border:1px solid #d5dce5;
+    border:1px solid #ddd;
     text-align:center;
 }
 
 th{
-    background:#1769aa;
+    background:#c0392b;
     color:white;
+}
+
+tr:hover{
+    background:#fff5f5;
 }
 
 @media(max-width:700px){
@@ -87,22 +100,27 @@ th{
 
 <div class="container">
 
-<h1>📦 Controle de Estoque - 2A TDS</h1>
+<h1>🔴 Controle de Estoque - 2A TDS</h1>
 
-<h3>➕ Novo Produto</h3>
+<h3>Novo Produto</h3>
 
 <div class="form">
-<input id="codigo" placeholder="Código do produto">
+
+<input id="codigo" placeholder="Código">
 <input id="descricao" placeholder="Descrição">
 <input id="quantidade" type="number" min="0" placeholder="Quantidade">
 <input id="valor" type="number" min="0" step=".01" placeholder="Valor">
+
 </div>
 
-<button class="add" onclick="add()">Adicionar Produto</button>
+<button class="add" onclick="add()">
+➕ Cadastrar Produto
+</button>
 
-<h3>📋 Produtos em Estoque</h3>
+<h3>Produtos em Estoque</h3>
 
 <table>
+
 <thead>
 <tr>
 <th>Código</th>
@@ -114,31 +132,38 @@ th{
 </thead>
 
 <tbody id="lista"></tbody>
+
 </table>
 
 </div>
 
 <script>
 
-const ID_ESTOQUE = "ESTOQUE_11";
+const ID_ESTOQUE = "ESTOQUE_13";
 
 let produtos = JSON.parse(
     localStorage.getItem(ID_ESTOQUE) || "[]"
 );
 
 function salvar(){
-    localStorage.setItem(ID_ESTOQUE,JSON.stringify(produtos));
+
+    localStorage.setItem(
+        ID_ESTOQUE,
+        JSON.stringify(produtos)
+    );
 }
 
 function add(){
 
-    let c = codigo.value.trim();
-    let d = descricao.value.trim();
-    let q = Number(quantidade.value);
-    let v = Number(valor.value);
+    const c = codigo.value.trim();
+    const d = descricao.value.trim();
+    const q = Number(quantidade.value);
+    const v = Number(valor.value);
 
-    if(!c || !d || quantidade.value === "" ||
-       valor.value === "" || q < 0 || v < 0){
+    if(!c || !d ||
+       quantidade.value === "" ||
+       valor.value === "" ||
+       q < 0 || v < 0){
 
         alert("Preencha todos os campos corretamente!");
         return;
@@ -167,59 +192,66 @@ function listar(){
 
         lista.innerHTML += `
         <tr>
-            <td>${p.c}</td>
-            <td>${p.d}</td>
-            <td>${p.q}</td>
-            <td>R$ ${p.v.toFixed(2).replace(".",",")}</td>
-            <td>
-                <button class="edit"
-                onclick="alterarValor(${i})">
-                💰 Valor
-                </button>
 
-                <button class="edit"
-                onclick="alterarQuantidade(${i})">
-                📦 Quantidade
-                </button>
+        <td>${p.c}</td>
+        <td>${p.d}</td>
+        <td>${p.q}</td>
+        <td>R$ ${p.v.toFixed(2).replace(".",",")}</td>
 
-                <button class="del"
-                onclick="excluir(${i})">
-                🗑️ Excluir
-                </button>
-            </td>
+        <td>
+
+        <button class="edit"
+        onclick="alterarValor(${i})">
+        💰 Valor
+        </button>
+
+        <button class="edit"
+        onclick="alterarQuantidade(${i})">
+        📦 Quantidade
+        </button>
+
+        <button class="del"
+        onclick="excluir(${i})">
+        🗑️ Excluir
+        </button>
+
+        </td>
+
         </tr>`;
     });
 }
 
 function alterarValor(i){
 
-    let v = prompt("Digite o novo valor:");
+    let v = prompt("Novo valor:");
 
-    if(v !== null && v.trim() !== "" && !isNaN(v)){
+    if(v === null)return;
 
-        v = Number(v.replace(",","."));
+    v = Number(v.replace(",","."));
 
-        if(v >= 0){
-            produtos[i].v = v;
-            salvar();
-            listar();
-        }
+    if(!isNaN(v) && v >= 0){
+
+        produtos[i].v = v;
+
+        salvar();
+        listar();
     }
 }
 
 function alterarQuantidade(i){
 
-    let q = prompt("Digite a nova quantidade:");
+    let q = prompt("Nova quantidade:");
 
-    if(q !== null && q.trim() !== "" && !isNaN(q)){
+    if(q === null)return;
 
-        q = Number(q);
+    q = Number(q);
 
-        if(q >= 0){
-            produtos[i].q = q;
-            salvar();
-            listar();
-        }
+    if(!isNaN(q) && q >= 0){
+
+        produtos[i].q = q;
+
+        salvar();
+        listar();
     }
 }
 
@@ -236,10 +268,10 @@ function excluir(i){
 
 function limpar(){
 
-    codigo.value = "";
-    descricao.value = "";
-    quantidade.value = "";
-    valor.value = "";
+    codigo.value="";
+    descricao.value="";
+    quantidade.value="";
+    valor.value="";
 }
 
 listar();
