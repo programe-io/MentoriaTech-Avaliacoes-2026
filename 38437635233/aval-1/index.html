@@ -7,7 +7,7 @@
 
 <style>
 *{box-sizing:border-box}
-body{font-family:Arial;background:#eef4f3;margin:0;padding:20px}
+body{font-family:Arial;background:#eef4f3;padding:20px}
 .container{max-width:1000px;margin:30px auto;background:white;padding:25px;border-radius:12px;box-shadow:0 3px 12px #c8d5d3}
 h1,h3{color:#145a52}h1{text-align:center}
 .form{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
@@ -18,13 +18,14 @@ button{padding:8px 10px;margin:2px;border:0;border-radius:5px;color:white;cursor
 table{width:100%;margin-top:20px;border-collapse:collapse}
 th,td{padding:10px;border:1px solid #ddd;text-align:center}
 th{background:#16817a;color:white}
-@media(max-width:700px){.form{grid-template-columns:1fr}.container{margin:10px auto;padding:15px}}
+@media(max-width:700px){.form{grid-template-columns:1fr}}
 </style>
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
 <body>
+
 <div class="container">
 
 <h1>📋 Controle de Estoque - 2A TDS</h1>
@@ -45,7 +46,11 @@ th{background:#16817a;color:white}
 <table>
 <thead>
 <tr>
-<th>Código</th><th>Descrição</th><th>Quantidade</th><th>Valor</th><th>Ações</th>
+<th>Código</th>
+<th>Descrição</th>
+<th>Quantidade</th>
+<th>Valor</th>
+<th>Ações</th>
 </tr>
 </thead>
 <tbody id="lista"></tbody>
@@ -54,69 +59,163 @@ th{background:#16817a;color:white}
 </div>
 
 <script>
-let produtos=JSON.parse(localStorage.produtosEstoque||"[]");
 
+// ========================================
+// MUDE SOMENTE ESTA LINHA EM CADA CÓPIA
+// ========================================
+
+const ID_ESTOQUE = "ESTOQUE_06";
+
+
+// Carregar produtos
+let produtos = JSON.parse(
+    localStorage.getItem(ID_ESTOQUE) || "[]"
+);
+
+
+// Salvar produtos
 function salvar(){
-localStorage.produtosEstoque=JSON.stringify(produtos);
+    localStorage.setItem(
+        ID_ESTOQUE,
+        JSON.stringify(produtos)
+    );
 }
 
+
+// Adicionar produto
 function add(){
-let c=codigo.value.trim(),d=descricao.value.trim(),
-q=Number(quantidade.value),v=Number(valor.value);
 
-if(!c||!d||q<0||v<0||quantidade.value===""||valor.value==="")
-return alert("Preencha todos os campos corretamente!");
+    let c=codigo.value.trim();
+    let d=descricao.value.trim();
+    let q=Number(quantidade.value);
+    let v=Number(valor.value);
 
-produtos.push({c,d,q,v});
-salvar();limpar();listar();
+    if(!c || !d || quantidade.value==="" ||
+       valor.value==="" || q<0 || v<0){
+
+        alert("Preencha todos os campos corretamente!");
+        return;
+    }
+
+    produtos.push({
+        c:c,
+        d:d,
+        q:q,
+        v:v
+    });
+
+    salvar();
+    limpar();
+    listar();
 }
 
+
+// Listar produtos
 function listar(){
-lista.innerHTML=produtos.length?produtos.map((p,i)=>`
-<tr>
-<td>${p.c}</td>
-<td>${p.d}</td>
-<td>${p.q}</td>
-<td>R$ ${p.v.toFixed(2).replace(".",",")}</td>
-<td>
-<button class="edit" onclick="valor(${i})">💰 Valor</button>
-<button class="edit" onclick="quant(${i})">📦 Quantidade</button>
-<button class="del" onclick="del(${i})">🗑️ Excluir</button>
-</td>
-</tr>`).join(""):`<tr><td colspan="5">Nenhum produto cadastrado.</td></tr>`;
+
+    lista.innerHTML="";
+
+    if(produtos.length===0){
+
+        lista.innerHTML=
+        '<tr><td colspan="5">Nenhum produto cadastrado.</td></tr>';
+
+        return;
+    }
+
+    produtos.forEach((p,i)=>{
+
+        lista.innerHTML+=`
+        <tr>
+            <td>${p.c}</td>
+            <td>${p.d}</td>
+            <td>${p.q}</td>
+            <td>R$ ${p.v.toFixed(2).replace(".",",")}</td>
+            <td>
+                <button class="edit"
+                onclick="valor(${i})">
+                💰 Valor
+                </button>
+
+                <button class="edit"
+                onclick="quant(${i})">
+                📦 Quantidade
+                </button>
+
+                <button class="del"
+                onclick="del(${i})">
+                🗑️ Excluir
+                </button>
+            </td>
+        </tr>`;
+    });
 }
 
+
+// Alterar valor
 function valor(i){
-let v=prompt("Novo valor:");
-if(v!==null&&v.trim()!==""&&!isNaN(v)&&Number(v)>=0){
-produtos[i].v=Number(v.replace(",","."));
-salvar();listar();
-}
+
+    let v=prompt("Novo valor:");
+
+    if(v!==null &&
+       v.trim()!=="" &&
+       !isNaN(v) &&
+       Number(v)>=0){
+
+        produtos[i].v=Number(
+            v.replace(",",".")
+        );
+
+        salvar();
+        listar();
+    }
 }
 
+
+// Alterar quantidade
 function quant(i){
-let q=prompt("Nova quantidade:");
-if(q!==null&&q.trim()!==""&&!isNaN(q)&&Number(q)>=0){
-produtos[i].q=Number(q);
-salvar();listar();
-}
+
+    let q=prompt("Nova quantidade:");
+
+    if(q!==null &&
+       q.trim()!=="" &&
+       !isNaN(q) &&
+       Number(q)>=0){
+
+        produtos[i].q=Number(q);
+
+        salvar();
+        listar();
+    }
 }
 
+
+// Excluir
 function del(i){
-if(confirm("Deseja remover este produto?")){
-produtos.splice(i,1);
-salvar();listar();
-}
+
+    if(confirm("Deseja remover este produto?")){
+
+        produtos.splice(i,1);
+
+        salvar();
+        listar();
+    }
 }
 
+
+// Limpar campos
 function limpar(){
-codigo.value="";
-descricao.value="";
-quantidade.value="";
-valor.value="";
+
+    codigo.value="";
+    descricao.value="";
+    quantidade.value="";
+    valor.value="";
 }
 
+
+// Iniciar
 listar();
+
 </script>
 
 </body>
