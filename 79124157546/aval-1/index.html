@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Desafio do Saber</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #141e30, #243b55);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+}
+
+.game {
+    width: 95%;
+    max-width: 800px;
+    background: rgba(0,0,0,0.45);
+    padding: 30px;
+    border-radius: 25px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 38px;
+}
+
+.start {
+    text-align: center;
+}
+
+.start p {
+    margin: 15px 0;
+    font-size: 18px;
+}
+
+input {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 10px;
+    margin: 10px 0;
+    font-size: 16px;
+}
+
+button {
+    border: none;
+    padding: 14px 22px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+button:hover {
+    transform: scale(1.05);
+}
+
+.start button {
+    background: #00d4ff;
+    color: #001018;
+    margin-top: 10px;
+}
+
+#gameScreen,
+#resultScreen {
+    display: none;
+}
+
+.info {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.info div {
+    background: rgba(255,255,255,0.12);
+    padding: 10px 15px;
+    border-radius: 10px;
+}
+
+.question {
+    background: rgba(255,255,255,0.1);
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 20px;
+}
+
+.question h2 {
+    font-size: 23px;
+    line-height: 1.4;
+}
+
+.answers {
+    display: grid;
+    gap: 12px;
+}
+
+.answer {
+    width: 100%;
+    text-align: left;
+    background: white;
+    color: #222;
+}
+
+.answer:hover {
+    background: #ddd;
+}
+
+.correct {
+    background: #2ecc71 !important;
+    color: white !important;
+}
+
+.wrong {
+    background: #e74c3c !important;
+    color: white !important;
+}
+
+#next {
+    display: none;
+    margin-top: 20px;
+    background: #f1c40f;
+    color: #222;
+}
+
+.timer {
+    height: 10px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+#timeBar {
+    height: 100%;
+    width: 100%;
+    background: #00d4ff;
+    transition: width 1s linear;
+}
+
+.result {
+    text-align: center;
+}
+
+.result h2 {
+    font-size: 30px;
+    margin: 20px;
+}
+
+.result p {
+    font-size: 20px;
+    margin: 12px;
+}
+
+#restart {
+    background: #00d4ff;
+    margin-top: 20px;
+}
+</style>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+<div class="game">
+
+```
+<!-- TELA INICIAL -->
+<div class="start" id="startScreen">
+
+    <h1>🎮 DESAFIO DO SABER</h1>
+
+    <p>Teste seus conhecimentos!</p>
+
+    <input 
+        type="text" 
+        id="playerName" 
+        placeholder="Digite seu nome"
+    >
+
+    <button onclick="startGame()">
+        🚀 COMEÇAR JOGO
+    </button>
+
+</div>
+
+
+<!-- TELA DO JOGO -->
+<div id="gameScreen">
+
+    <div class="info">
+        <div>👤 <span id="nameDisplay"></span></div>
+        <div>🏆 <span id="score">0</span> pontos</div>
+        <div>❤️ <span id="lives">3</span></div>
+        <div>❓ <span id="questionNumber">1</span>/10</div>
+    </div>
+
+    <div class="timer">
+        <div id="timeBar"></div>
+    </div>
+
+    <div class="question">
+        <h2 id="questionText"></h2>
+    </div>
+
+    <div class="answers" id="answers"></div>
+
+    <button id="next" onclick="nextQuestion()">
+        ➡️ PRÓXIMA
+    </button>
+
+</div>
+
+
+<!-- RESULTADO -->
+<div id="resultScreen" class="result">
+
+    <h1>🏆 FIM DE JOGO!</h1>
+
+    <h2 id="finalMessage"></h2>
+
+    <p>👤 Jogador: <span id="finalName"></span></p>
+
+    <p>⭐ Pontuação: <span id="finalScore"></span></p>
+
+    <p>✅ Acertos: <span id="correctAnswers"></span></p>
+
+    <p>❌ Erros: <span id="wrongAnswers"></span></p>
+
+    <button id="restart" onclick="location.reload()">
+        🔄 JOGAR NOVAMENTE
+    </button>
+
+</div>
+```
+
+</div>
+
+<script>
+
+const questions = [
+
+{
+    question: "🌎 Qual é o maior continente do planeta?",
+    answers: [
+        "África",
+        "Ásia",
+        "Europa",
+        "Oceania"
+    ],
+    correct: 1
+},
+
+{
+    question: "🇧🇷 Qual é a capital do Brasil?",
+    answers: [
+        "São Paulo",
+        "Rio de Janeiro",
+        "Brasília",
+        "Salvador"
+    ],
+    correct: 2
+},
+
+{
+    question: "🌊 Qual é o maior oceano da Terra?",
+    answers: [
+        "Atlântico",
+        "Índico",
+        "Pacífico",
+        "Ártico"
+    ],
+    correct: 2
+},
+
+{
+    question: "🧬 Qual é a unidade básica dos seres vivos?",
+    answers: [
+        "Átomo",
+        "Célula",
+        "Tecido",
+        "Órgão"
+    ],
+    correct: 1
+},
+
+{
+    question: "📚 Quem escreveu 'Dom Casmurro'?",
+    answers: [
+        "Machado de Assis",
+        "Carlos Drummond",
+        "José de Alencar",
+        "Clarice Lispector"
+    ],
+    correct: 0
+},
+
+{
+    question: "⚡ Qual é a unidade de medida da corrente elétrica?",
+    answers: [
+        "Volt",
+        "Watt",
+        "Ampere",
+        "Ohm"
+    ],
+    correct: 2
+},
+
+{
+    question: "➗ Quanto é 15 × 4?",
+    answers: [
+        "45",
+        "50",
+        "60",
+        "75"
+    ],
+    correct: 2
+},
+
+{
+    question: "🏛️ Qual civilização construiu as pirâmides de Gizé?",
+    answers: [
+        "Romanos",
+        "Egípcios",
+        "Gregos",
+        "Maias"
+    ],
+    correct: 1
+},
+
+{
+    question: "🌱 Qual gás as plantas absorvem principalmente durante a fotossíntese?",
+    answers: [
+        "Oxigênio",
+        "Nitrogênio",
+        "Gás carbônico",
+        "Hidrogênio"
+    ],
+    correct: 2
+},
+
+{
+    question: "🗺️ Qual linha imaginária divide a Terra em Hemisfério Norte e Sul?",
+    answers: [
+        "Trópico de Capricórnio",
+        "Meridiano de Greenwich",
+        "Linha do Equador",
+        "Trópico de Câncer"
+    ],
+    correct: 2
+}
+
+];
+
+let currentQuestion = 0;
+let score = 0;
+let lives = 3;
+let correctCount = 0;
+let wrongCount = 0;
+let player = "";
+let timer;
+let time = 20;
+
+
+function startGame() {
+
+    player = document.getElementById("playerName").value.trim();
+
+    if (player === "") {
+        alert("Digite seu nome para começar!");
+        return;
+    }
+
+    document.getElementById("startScreen").style.display = "none";
+    document.getElementById("gameScreen").style.display = "block";
+
+    document.getElementById("nameDisplay").textContent = player;
+
+    showQuestion();
+}
+
+
+function showQuestion() {
+
+    clearInterval(timer);
+
+    time = 20;
+
+    document.getElementById("timeBar").style.width = "100%";
+
+    const q = questions[currentQuestion];
+
+    document.getElementById("questionText").textContent = q.question;
+
+    document.getElementById("questionNumber").textContent =
+        currentQuestion + 1;
+
+    const answersDiv = document.getElementById("answers");
+
+    answersDiv.innerHTML = "";
+
+    q.answers.forEach((answer, index) => {
+
+        const button = document.createElement("button");
+
+        button.className = "answer";
+
+        button.textContent = answer;
+
+        button.onclick = () => checkAnswer(index, button);
+
+        answersDiv.appendChild(button);
+
+    });
+
+    startTimer();
+}
+
+
+function startTimer() {
+
+    timer = setInterval(() => {
+
+        time--;
+
+        document.getElementById("timeBar").style.width =
+            (time / 20 * 100) + "%";
+
+        if (time <= 0) {
+
+            clearInterval(timer);
+
+            wrongCount++;
+
+            lives--;
+
+            document.getElementById("lives").textContent = lives;
+
+            disableAnswers();
+
+            document.getElementById("next").style.display = "inline-block";
+
+            if (lives <= 0) {
+                setTimeout(endGame, 800);
+            }
+
+        }
+
+    }, 1000);
+
+}
+
+
+function checkAnswer(index, button) {
+
+    clearInterval(timer);
+
+    disableAnswers();
+
+    const correct = questions[currentQuestion].correct;
+
+    if (index === correct) {
+
+        button.classList.add("correct");
+
+        score += 100;
+
+        correctCount++;
+
+        document.getElementById("score").textContent = score;
+
+    } else {
+
+        button.classList.add("wrong");
+
+        lives--;
+
+        wrongCount++;
+
+        document.getElementById("lives").textContent = lives;
+
+        document
+            .querySelectorAll(".answer")[correct]
+            .classList.add("correct");
+
+    }
+
+    document.getElementById("next").style.display = "inline-block";
+
+    if (lives <= 0) {
+
+        setTimeout(endGame, 800);
+
+    }
+
+}
+
+
+function disableAnswers() {
+
+    document
+        .querySelectorAll(".answer")
+        .forEach(button => {
+
+            button.disabled = true;
+
+        });
+
+}
+
+
+function nextQuestion() {
+
+    currentQuestion++;
+
+    document.getElementById("next").style.display = "none";
+
+    if (currentQuestion >= questions.length) {
+
+        endGame();
+
+    } else {
+
+        showQuestion();
+
+    }
+
+}
+
+
+function endGame() {
+
+    clearInterval(timer);
+
+    document.getElementById("gameScreen").style.display = "none";
+
+    document.getElementById("resultScreen").style.display = "block";
+
+    document.getElementById("finalName").textContent = player;
+
+    document.getElementById("finalScore").textContent = score;
+
+    document.getElementById("correctAnswers").textContent = correctCount;
+
+    document.getElementById("wrongAnswers").textContent = wrongCount;
+
+    let message = "";
+
+    if (score >= 900) {
+        message = "🔥 INCRÍVEL! Você foi muito bem!";
+    } 
+    else if (score >= 600) {
+        message = "👏 PARABÉNS! Excelente resultado!";
+    } 
+    else if (score >= 300) {
+        message = "👍 BOM TRABALHO! Continue estudando!";
+    } 
+    else {
+        message = "📚 Continue praticando. Você consegue!";
+    }
+
+    document.getElementById("finalMessage").textContent = message;
+
+}
+
+</script>
+
+<script src="script.js"></script></body>
+</html>
