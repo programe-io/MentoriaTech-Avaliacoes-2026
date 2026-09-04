@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Estoque - 2B TDS</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+    font-family:Arial;
+    background:#eef4f3;
+    padding:20px;
+}
+
+.container{
+    max-width:1000px;
+    margin:auto;
+    background:white;
+    padding:25px;
+    border-radius:15px;
+    box-shadow:0 4px 15px #cbd8d6;
+}
+
+h1,h3{color:#145a52}
+h1{text-align:center}
+
+.form{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+}
+
+input{
+    padding:11px;
+    border:1px solid #ccc;
+    border-radius:6px;
+}
+
+button{
+    padding:9px 12px;
+    border:0;
+    border-radius:6px;
+    color:white;
+    cursor:pointer;
+}
+
+.add{background:#16817a;width:100%;margin-top:10px}
+.edit{background:#e09f3e}
+.del{background:#c44536}
+
+.info{
+    display:flex;
+    gap:10px;
+    margin-top:15px;
+}
+
+.info div{
+    flex:1;
+    padding:12px;
+    background:#e7f3f1;
+    border-radius:8px;
+    text-align:center;
+}
+
+#busca{
+    width:100%;
+    margin-top:10px;
+}
+
+table{
+    width:100%;
+    margin-top:15px;
+    border-collapse:collapse;
+}
+
+th,td{
+    padding:10px;
+    border:1px solid #ddd;
+    text-align:center;
+}
+
+th{
+    background:#16817a;
+    color:white;
+}
+
+@media(max-width:700px){
+    .form{grid-template-columns:1fr}
+    .info{flex-direction:column}
+    table{font-size:13px}
+}
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>📦 Controle de Estoque - 2B TDS</h1>
+
+<h3>Novo Produto</h3>
+
+<div class="form">
+    <input id="codigo" placeholder="Código">
+    <input id="descricao" placeholder="Descrição">
+    <input id="quantidade" type="number" min="0" placeholder="Quantidade">
+    <input id="valor" type="number" min="0" step="0.01" placeholder="Valor">
+</div>
+
+<button class="add" onclick="adicionar()">➕ Adicionar Produto</button>
+
+<div class="info">
+    <div>Produtos: <b id="total">0</b></div>
+    <div>Quantidade: <b id="qtdTotal">0</b></div>
+</div>
+
+<input id="busca" placeholder="🔎 Pesquisar produto..." oninput="listar()">
+
+<h3>Produtos em Estoque</h3>
+
+<table>
+<thead>
+<tr>
+    <th>Código</th>
+    <th>Descrição</th>
+    <th>Quantidade</th>
+    <th>Valor</th>
+    <th>Ações</th>
+</tr>
+</thead>
+
+<tbody id="lista"></tbody>
+</table>
+
+</div>
+
+<script>
+
+const ID_ESTOQUE = "ESTOQUE_2B_TDS_20";
+
+let produtos = JSON.parse(
+    localStorage.getItem(ID_ESTOQUE) || "[]"
+);
+
+function salvar(){
+    localStorage.setItem(ID_ESTOQUE, JSON.stringify(produtos));
+}
+
+function adicionar(){
+
+    let c = codigo.value.trim();
+    let d = descricao.value.trim();
+    let q = Number(quantidade.value);
+    let v = Number(valor.value);
+
+    if(!c || !d || quantidade.value === "" ||
+       valor.value === "" || q < 0 || v < 0){
+
+        alert("Preencha todos os campos corretamente!");
+        return;
+    }
+
+    produtos.push({c,d,q,v});
+
+    salvar();
+    limpar();
+    listar();
+}
+
+function listar(){
+
+    let busca = document.getElementById("busca").value.toLowerCase();
+
+    let dados = produtos.filter(p =>
+        p.c.toLowerCase().includes(busca) ||
+        p.d.toLowerCase().includes(busca)
+    );
+
+    lista.innerHTML = "";
+
+    if(dados.length === 0){
+        lista.innerHTML =
+        '<tr><td colspan="5">Nenhum produto encontrado.</td></tr>';
+    }
+
+    dados.forEach(p => {
+
+        let i = produtos.indexOf(p);
+
+        lista.innerHTML += `
+        <tr>
+            <td>${p.c}</td>
+            <td>${p.d}</td>
+            <td>${p.q}</td>
+            <td>R$ ${p.v.toFixed(2).replace(".",",")}</td>
+            <td>
+                <button class="edit" onclick="editar(${i})">✏️ Editar</button>
+                <button class="del" onclick="excluir(${i})">🗑️</button>
+            </td>
+        </tr>`;
+    });
+
+    total.textContent = produtos.length;
+
+    qtdTotal.textContent =
+        produtos.reduce((soma,p) => soma + p.q, 0);
+}
+
+function editar(i){
+
+    let p = produtos[i];
+
+    let d = prompt("Descrição:", p.d);
+    let q = prompt("Quantidade:", p.q);
+    let v = prompt("Valor:", p.v);
+
+    if(d !== null && q !== null && v !== null &&
+       d.trim() !== "" && Number(q) >= 0 && Number(v) >= 0){
+
+        p.d = d;
+        p.q = Number(q);
+        p.v = Number(v);
+
+        salvar();
+        listar();
+    }
+}
+
+function excluir(i){
+
+    if(confirm("Deseja excluir este produto?")){
+
+        produtos.splice(i,1);
+
+        salvar();
+        listar();
+    }
+}
+
+function limpar(){
+
+    codigo.value = "";
+    descricao.value = "";
+    quantidade.value = "";
+    valor.value = "";
+}
+
+listar();
+
+</script>
+
+</body>
+</html>
