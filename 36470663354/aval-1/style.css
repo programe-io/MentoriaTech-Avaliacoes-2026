@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Produto - Calça Jeans Slim</title>
+  <style>
+    /* Reset básico */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: #f0f2f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    /* Container do Produto */
+    .product-card {
+      background: #ffffff;
+      width: 320px;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .product-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Imagem da Calça */
+    .product-image {
+      position: relative;
+      width: 100%;
+      height: 380px;
+      background-color: #e9ecef;
+      overflow: hidden;
+    }
+
+    .product-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: scale 0.5s ease;
+    }
+
+    .product-card:hover .product-image img {
+      scale: 1.05;
+    }
+
+    .badge {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      background-color: #2b6cb0;
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+
+    /* Informações do Produto */
+    .product-info {
+      padding: 20px;
+    }
+
+    .category {
+      color: #718096;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .title {
+      font-size: 1.25rem;
+      color: #1a202c;
+      margin: 6px 0 10px;
+      font-weight: 600;
+    }
+
+    .price-container {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .price {
+      font-size: 1.4rem;
+      font-weight: bold;
+      color: #2d3748;
+    }
+
+    .old-price {
+      font-size: 0.9rem;
+      color: #a0aec0;
+      text-decoration: line-through;
+    }
+
+    /* Seleção de Tamanhos */
+    .sizes {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .size-btn {
+      border: 1px solid #e2e8f0;
+      background: #f7fafc;
+      color: #4a5568;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .size-btn:hover,
+    .size-btn.active {
+      background-color: #2b6cb0;
+      color: #ffffff;
+      border-color: #2b6cb0;
+    }
+
+    /* Botão de Compra */
+    .buy-btn {
+      width: 100%;
+      padding: 12px;
+      background-color: #1a202c;
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    .buy-btn:hover {
+      background-color: #2b6cb0;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="product-card">
+    <div class="product-image">
+      <span class="badge">Novo</span>
+      <img src="https://images.unsplash.com/photo-1541099649105-f69ad21f3246?q=80&w=600&auto=format&fit=crop" alt="Calça Jeans Slim Fit">
+    </div>
+    
+    <div class="product-info">
+      <span class="category">Masculino</span>
+      <h2 class="title">Calça Jeans Slim Fit</h2>
+      
+      <div class="price-container">
+        <span class="price">R$ 189,90</span>
+        <span class="old-price">R$ 229,90</span>
+      </div>
+
+      <div class="sizes">
+        <button class="size-btn">38</button>
+        <button class="size-btn active">40</button>
+        <button class="size-btn">42</button>
+        <button class="size-btn">44</button>
+      </div>
+
+      <button class="buy-btn">Adicionar ao Carrinho</button>
+    </div>
+  </div>
+
+</body>
+</html>
