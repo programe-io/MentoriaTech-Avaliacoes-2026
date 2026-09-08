@@ -1,160 +1,193 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
+*{
+      margin: 0;
+        padding: 0;
+          box-sizing: border-box;
 
-<head>
+            font-family: Arial, Helvetica, sans-serif;
+            }
 
-  <meta charset="UTF-8">
+            body{
+              background: #000;
+                color: white;
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                  padding: 20px;
+                  }
 
-      <title>Mentoria Tech</title>
+                  /* HEADER */
 
-        <link rel="stylesheet" href="style.css">
+                  header{
+                    text-align: center;
 
-        </head>
+                      margin-bottom: 20px;
+                      }
 
-        <body>
+                      header h1{
+                        font-size: 40px;
 
-          <!-- HEADER -->
-            <header>
+                          margin-bottom: 10px;
+                          }
 
-                <h1>MENTORIA TECH - 2 SÉRIE</h1>
+                          header h3{
+                            color: #10b981;
 
-                    <h3>Curso de Fundamentos Lógicos com JavaScript</h3>
+                              font-size: 24px;
 
-                        <p>
-                              Plataforma de estudos de lógica de programação e JavaScript.
-                                  </p>
+                                margin-bottom: 10px;
+                                }
 
-                                    </header>
+                                header p{
+                                  color: #ccc;
 
-                                      <!-- NAV -->
-                                        <nav>
+                                    font-size: 18px;
+                                    }
 
-                                            <ul>
+                                    /* NAV */
 
-                                                  <li>
-                                                          <a href="#">Início</a>
-                                                                </li>
+                                    nav{
+                                      background: #111;
 
-                                                                      <li>
-                                                                              <a href="#">Aulas</a>
-                                                                                    </li>
+                                        padding: 15px;
 
-                                                                                          <li>
-                                                                                                  <a href="#">Materiais</a>
-                                                                                                        </li>
+                                          border-radius: 12px;
 
-                                                                                                              <li>
-                                                                                                                      <a href="#">Avaliações</a>
-                                                                                                                            </li>
+                                            margin-bottom: 20px;
+                                            }
 
-                                                                                                                                </ul>
+                                            nav ul{
+                                              display: flex;
 
-                                                                                                                                  </nav>
+                                                justify-content: center;
 
-                                                                                                                                    <!-- MAIN -->
-                                                                                                                                      <main>
+                                                  gap: 30px;
 
-                                                                                                                                          <!-- SECTION -->
-                                                                                                                                              <section class="video-area">
+                                                    list-style: none;
+                                                    }
 
-                                                                                                                                                    <img
-                                                                                                                                                            src="https://via.placeholder.com/800x400"
-                                                                                                                                                                    alt="Vídeo Aula"
-                                                                                                                                                                          >
+                                                    nav a{
+                                                      color: #10b981;
 
-                                                                                                                                                                              </section>
+                                                        text-decoration: none;
 
-                                                                                                                                                                                  <!-- ASIDE -->
-                                                                                                                                                                                      <aside class="avaliacao">
+                                                          font-size: 18px;
+                                                          }
 
-                                                                                                                                                                                            <h2>
+                                                          /* VIDEO */
 
-                                                                                                                                                                                                    Assistindo:
+                                                          .video-area img{
+                                                            width: 100%;
 
-                                                                                                                                                                                                            <strong>
-                                                                                                                                                                                                                      1.01 - Introdução a Lógica de Programação e Javascript
-                                                                                                                                                                                                                              </strong>
+                                                              border-radius: 15px;
+                                                              }
 
-                                                                                                                                                                                                                                    </h2>
+                                                              /* ASIDE */
 
-                                                                                                                                                                                                                                          <button id="btnAvaliacao">
-                                                                                                                                                                                                                                                  Enviar avaliações
-                                                                                                                                                                                                                                                        </button>
+                                                              .avaliacao{
+                                                                background: #1e1e1e;
 
-                                                                                                                                                                                                                                                            </aside>
+                                                                  margin-top: 20px;
 
-                                                                                                                                                                                                                                                                <!-- ARTICLE -->
-                                                                                                                                                                                                                                                                    <article class="materiais">
+                                                                    padding: 20px;
 
-                                                                                                                                                                                                                                                                          <h2>Materiais complementares</h2>
+                                                                      border-radius: 15px;
 
-                                                                                                                                                                                                                                                                                <p>
+                                                                        display: flex;
 
-                                                                                                                                                                                                                                                                                        <strong>Download:</strong>
+                                                                          justify-content: space-between;
 
-                                                                                                                                                                                                                                                                                                Slide da Aula 1.01
+                                                                            align-items: center;
+                                                                            }
 
-                                                                                                                                                                                                                                                                                                      </p>
+                                                                            .avaliacao button{
+                                                                              background: #10b981;
 
-                                                                                                                                                                                                                                                                                                            <a href="#">
-                                                                                                                                                                                                                                                                                                                    Baixar material
-                                                                                                                                                                                                                                                                                                                          </a>
+                                                                                border: none;
 
-                                                                                                                                                                                                                                                                                                                              </article>
+                                                                                  color: white;
 
-                                                                                                                                                                                                                                                                                                                                  <!-- SECTION -->
-                                                                                                                                                                                                                                                                                                                                      <section class="aulas">
+                                                                                    padding: 15px 20px;
 
-                                                                                                                                                                                                                                                                                                                                            <div class="aula assistido">
+                                                                                      border-radius: 10px;
 
-                                                                                                                                                                                                                                                                                                                                                    <img
-                                                                                                                                                                                                                                                                                                                                                              src="https://via.placeholder.com/120x70"
-                                                                                                                                                                                                                                                                                                                                                                        alt=""
-                                                                                                                                                                                                                                                                                                                                                                                >
+                                                                                        cursor: pointer;
+                                                                                        }
 
-                                                                                                                                                                                                                                                                                                                                                                                        <p>
+                                                                                        /* ARTICLE */
 
-                                                                                                                                                                                                                                                                                                                                                                                                  <strong>1.01</strong>
+                                                                                        .materiais{
+                                                                                          background: #1e1e1e;
 
-                                                                                                                                                                                                                                                                                                                                                                                                            - Introdução a Lógica de Programação e Javascript
+                                                                                            margin-top: 20px;
 
-                                                                                                                                                                                                                                                                                                                                                                                                                    </p>
+                                                                                              padding: 20px;
 
-                                                                                                                                                                                                                                                                                                                                                                                                                          </div>
+                                                                                                border-radius: 15px;
+                                                                                                }
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                <div class="aula">
+                                                                                                .materiais h2{
+                                                                                                  margin-bottom: 10px;
+                                                                                                  }
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                        <img
-                                                                                                                                                                                                                                                                                                                                                                                                                                                  src="https://via.placeholder.com/120x70"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                            alt=""
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                    >
+                                                                                                  .materiais p{
+                                                                                                    margin-bottom: 10px;
+                                                                                                    }
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <p>
+                                                                                                    .materiais a{
+                                                                                                      color: #10b981;
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      <strong>1.02</strong>
+                                                                                                        text-decoration: none;
+                                                                                                        }
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                - Variáveis e Tipos de Dados
+                                                                                                        /* AULAS */
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        </p>
+                                                                                                        .aulas{
+                                                                                                          margin-top: 20px;
+                                                                                                          }
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              </div>
+                                                                                                          .aula{
+                                                                                                            background: #111;
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  </section>
+                                                                                                              display: flex;
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </main>
+                                                                                                                align-items: center;
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      <!-- FOOTER -->
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <footer>
+                                                                                                                  gap: 15px;
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <p>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  © 2026 Mentoria Tech - Todos os direitos reservados.
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      </p>
+                                                                                                                    padding: 10px;
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        </footer>
+                                                                                                                      border-radius: 12px;
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          <script src="script.js"></script>
+                                                                                                                        margin-bottom: 15px;
+                                                                                                                        }
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          </body>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          </html>
+                                                                                                                        .aulconst botao = document.getElementById("btnAvaliacao");
+                                                                                                                        
+                                                                                                                        botao.addEventListener("click", () => {
+                                                                                                                        
+                                                                                                                          alert("Avaliações enviadas com sucesso!");
+                                                                                                                          
+                                                                                                                          });a img{
+                                                                                                                          width: 120px;
+
+                                                                                                                            border-radius: 10px;
+                                                                                                                            }
+
+                                                                                                                            .assistido{
+                                                                                                                              background: #10b981;
+                                                                                                                              }
+
+                                                                                                                              /* FOOTER */
+
+                                                                                                                              footer{
+                                                                                                                                background: #111;
+
+                                                                                                                                  margin-top: 30px;
+
+                                                                                                                                    padding: 20px;
+
+                                                                                                                                      border-radius: 12px;
+
+                                                                                                                                        text-align: center;
+
+                                                                                                                                          color: #10b981;
+                                                                                                                                          }
+}
