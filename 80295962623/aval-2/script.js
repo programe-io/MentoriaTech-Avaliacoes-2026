@@ -1,27 +1,28 @@
-function mostrarPersonagem(personagem) {
+function mostrar(personagem) {
 
         const info = document.getElementById("info");
 
-            const personagens = {
+            const dados = {
 
                     Hinata:
-                                "🧡 Hinata Shoyo — Pequeno Gigante, extremamente determinado e apaixonado por vôlei.",
+                                "🧡 Hinata Shoyo — Um jogador determinado que nunca desiste de alcançar seus objetivos.",
 
                                         Kageyama:
-                                                    "💙 Kageyama Tobio — Um levantador talentoso conhecido por sua precisão e dedicação.",
+                                                    "💙 Kageyama Tobio — Um levantador extremamente habilidoso e preciso.",
 
                                                             Oikawa:
-                                                                        "💚 Oikawa Tooru — Um levantador habilidoso que acredita que talento pode ser desenvolvido com esforço.",
+                                                                        "💚 Oikawa Tooru — Um levantador talentoso que acredita no esforço e na evolução.",
 
                                                                                 Kenma:
-                                                                                            "💛 Kenma Kozume — O estrategista do Nekoma, conhecido por sua inteligência e observação."
+                                                                                            "💛 Kenma Kozume — O estrategista do Nekoma, conhecido por sua inteligência."
+
                                                                                                 };
 
                                                                                                     info.style.opacity = "0";
 
-                                                                                                        setTimeout(() => {
+                                                                                                        setTimeout(function() {
 
-                                                                                                                info.textContent = personagens[personagem];
+                                                                                                                info.innerHTML = dados[personagem];
 
                                                                                                                         info.style.opacity = "1";
 
