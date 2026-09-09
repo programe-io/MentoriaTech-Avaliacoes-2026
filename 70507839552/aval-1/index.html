@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Validação de Formulário</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 40px; background: #f4f4f9; }
+        .form-group { margin-bottom: 15px; }
+        input { padding: 10px; width: 100%; max-width: 300px; border: 1px solid #ccc; border-radius: 4px; display: block; margin-top: 5px; }
+        button { padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        #erro-msg { font-size: 0.9rem; margin-top: 5px; display: block; }
+    </style>
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+    <form id="meu-formulario">
+        <div class="form-group">
+            <label for="email">E-mail:</label>
+            <input type="text" id="email" placeholder="seu@email.com">
+            <span id="erro-msg"></span>
+        </div>
+        <button type="submit">Enviar</button>
+    </form>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const formulario = document.getElementById("meu-formulario");
+            const campoEmail = document.getElementById("email");
+            const mensagemErro = document.getElementById("erro-msg");
+
+            formulario.addEventListener("submit", function(evento) {
+                evento.preventDefault();
+                const valorEmail = campoEmail.value.trim();
+                const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+                if (!regexEmail.test(valorEmail)) {
+                    mensagemErro.textContent = "Por favor, insira um endereço de e-mail válido.";
+                    mensagemErro.style.color = "#ff4d4d";
+                    campoEmail.style.borderColor = "#ff4d4d";
+                } else {
+                    mensagemErro.textContent = "Sucesso! Formulário enviado.";
+                    mensagemErro.style.color = "#28a745";
+                    campoEmail.style.borderColor = "#28a745";
+                }
+            });
+        });
+    </script>
+<script src="script.js"></script></body>
+</html>
