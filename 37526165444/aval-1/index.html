@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Estoque</title>
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+<h1>Estoque</h1>
+
+<input id="codigo" placeholder="Código">
+<input id="descricao" placeholder="Descrição">
+<input id="quantidade" placeholder="Quantidade">
+<input id="valor" placeholder="Valor">
+
+<button onclick="cadastrar()">Cadastrar</button>
+<button onclick="listar()">Listar</button>
+
+<br><br>
+
+<input id="codigoAlterar" placeholder="Código">
+<input id="novoValor" placeholder="Novo valor">
+<button onclick="alterarValor()">Alterar valor</button>
+
+<br>
+
+<input id="novaQuantidade" placeholder="Nova quantidade">
+<button onclick="alterarQuantidade()">Alterar quantidade</button>
+
+<p id="lista"></p>
+
+<script>
+let produtos = [];
+
+function cadastrar() {
+    produtos.push({
+        codigo: document.getElementById("codigo").value,
+        descricao: document.getElementById("descricao").value,
+        quantidade: document.getElementById("quantidade").value,
+        valor: document.getElementById("valor").value
+    });
+
+    listar();
+}
+
+function listar() {
+    document.getElementById("lista").innerHTML =
+        produtos.map(p =>
+            `Código: ${p.codigo} | ${p.descricao} | Qtd: ${p.quantidade} | R$ ${p.valor}`
+        ).join("<br>");
+}
+
+function alterarValor() {
+    let p = produtos.find(p => p.codigo == document.getElementById("codigoAlterar").value);
+    if (p) p.valor = document.getElementById("novoValor").value;
+    listar();
+}
+
+function alterarQuantidade() {
+    let p = produtos.find(p => p.codigo == document.getElementById("codigoAlterar").value);
+    if (p) p.quantidade = document.getElementById("novaQuantidade").value;
+    listar();
+}
+</script>
+
+</body>
+</html>
