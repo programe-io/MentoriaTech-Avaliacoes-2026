@@ -1,0 +1,45 @@
+body{
+      background-color: #111;
+        display: flex;
+          justify-content: center;
+            align-items: center;
+              height: 100vh;
+                font-family: Arial;
+                }
+
+                .card{
+                  background: white;
+                    width: 300px;
+                      padding: 20px;
+                        border-radius: 20px;
+                          text-align: center;
+                            box-shadow: 0 0 15px #000;
+                            }
+
+                            img{
+                              width: 120px;
+                                border-radius: 50%;
+                                }
+
+                                h1{
+                                  color: #333;
+                                  }
+
+                                  p{
+                                    color: #666;
+                                    }
+
+                                    button{
+                                      background: #4CAF50;
+                                        color: white;
+                                          border: none;
+                                            padding: 10px 20px;
+                                              border-radius: 10px;
+                                                cursor: pointer;
+                                                  margin-top: 10px;
+                                                  }
+
+                                                  button:hover{
+                                                    background: #45a049;
+                                                    }
+}
