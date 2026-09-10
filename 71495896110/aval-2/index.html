@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Lista de Tarefas</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #222;
+        }
+
+        h2 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .formulario {
+            margin-bottom: 25px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #aaa;
+            border-radius: 6px;
+            font-size: 15px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 12px;
+            border: none;
+            border-radius: 6px;
+            background-color: #222;
+            color: white;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #444;
+        }
+
+        .tarefa {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #f5f5f5;
+            border-left: 5px solid #222;
+            border-radius: 7px;
+        }
+
+        .tarefa p {
+            margin: 6px 0;
+        }
+
+        .concluida {
+            opacity: 0.6;
+            border-left-color: green;
+        }
+
+        .mensagem {
+            margin-top: 15px;
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+    <div class="container">
+
+        <h1>Lista de Tarefas</h1>
+
+        <!-- CADASTRAR TAREFA -->
+        <div class="formulario">
+
+            <h2>Cadastrar Tarefa</h2>
+
+            <label for="titulo">
+                Título:
+            </label>
+
+            <input
+                type="text"
+                id="titulo"
+                placeholder="Digite o título da tarefa"
+            >
+
+            <label for="prioridade">
+                Prioridade:
+            </label>
+
+            <select id="prioridade">
+                <option value="1">1 - Baixa</option>
+                <option value="2">2 - Média</option>
+                <option value="3">3 - Alta</option>
+            </select>
+
+            <button onclick="cadastrarPelaTela()">
+                Cadastrar Tarefa
+            </button>
+
+        </div>
+
+
+        <!-- CONCLUIR TAREFA -->
+        <div class="formulario">
+
+            <h2>Concluir Tarefa</h2>
+
+            <label for="codigoConcluir">
+                Código da tarefa:
+            </label>
+
+            <input
+                type="number"
+                id="codigoConcluir"
+                placeholder="Digite o código"
+            >
+
+            <button onclick="concluirPelaTela()">
+                Concluir Tarefa
+            </button>
+
+        </div>
+
+
+        <!-- ALTERAR PRIORIDADE -->
+        <div class="formulario">
+
+            <h2>Alterar Prioridade</h2>
+
+            <label for="codigoPrioridade">
+                Código da tarefa:
+            </label>
+
+            <input
+                type="number"
+                id="codigoPrioridade"
+                placeholder="Digite o código"
+            >
+
+            <label for="novaPrioridade">
+                Nova prioridade:
+            </label>
+
+            <select id="novaPrioridade">
+                <option value="1">1 - Baixa</option>
+                <option value="2">2 - Média</option>
+                <option value="3">3 - Alta</option>
+            </select>
+
+            <button onclick="alterarPrioridadePelaTela()">
+                Alterar Prioridade
+            </button>
+
+        </div>
+
+
+        <!-- LISTAR TAREFAS -->
+        <div class="formulario">
+
+            <h2>Tarefas</h2>
+
+            <button onclick="mostrarTarefas()">
+                Listar Tarefas
+            </button>
+
+            <div id="listaTarefas"></div>
+
+        </div>
+
+    </div>
+
+
+    <script>
+
+        // =====================================
+        // ARRAY DE TAREFAS
+        // =====================================
+
+        let tarefas = [];
+
+
+        // =====================================
+        // VALIDAR TAREFA
+        // =====================================
+
+        function validarDadosTarefa(titulo, prioridade) {
+
+            if (titulo.length < 5) {
+                throw new Error(
+                    'O título deve ter no mínimo 5 caracteres'
+                );
+            }
+
+            if (prioridade < 1 || prioridade > 3) {
+                throw new Error(
+                    'Informe uma prioridade entre 1 e 3'
+                );
+            }
+        }
+
+
+        // =====================================
+        // GERAR CÓDIGO
+        // =====================================
+
+        function gerarCodigo() {
+
+            return tarefas.length + 1;
+        }
+
+
+        // =====================================
+        // CADASTRAR TAREFA
+        // =====================================
+
+        function cadastrarTarefa(titulo, prioridade) {
+
+            validarDadosTarefa(titulo, prioridade);
+
+            let tarefa = {
+
+                codigo: gerarCodigo(),
+
+                titulo: titulo,
+
+                prioridade: prioridade,
+
+                status: true
+            };
+
+            tarefas.push(tarefa);
+        }
+
+
+        // =====================================
+        // LISTAR TAREFAS
+        // =====================================
+
+        function listarTarefas() {
+
+            return tarefas;
+        }
+
+
+        // =====================================
+        // BUSCAR TAREFA
+        // =====================================
+
+        function buscarTarefa(codigo) {
+
+            let tarefa = tarefas.find(
+                tarefa => tarefa.codigo === codigo
+            );
+
+            if (!tarefa) {
+
+                throw new Error(
+                    'Tarefa não encontrada'
+                );
+            }
+
+            return tarefa;
+        }
+
+
+        // =====================================
+        // CONCLUIR TAREFA
+        // =====================================
+
+        function concluirTarefa(codigo) {
+
+            let tarefa = buscarTarefa(codigo);
+
+            if (tarefa.status === false) {
+
+                throw new Error(
+                    'A tarefa já estava concluída'
+                );
+            }
+
+            tarefa.status = false;
+        }
+
+
+        // =====================================
+        // ALTERAR PRIORIDADE
+        // =====================================
+
+        function alterarPrioridade(codigo, novaPrioridade) {
+
+            let tarefa = buscarTarefa(codigo);
+
+            validarDadosTarefa(
+                tarefa.titulo,
+                novaPrioridade
+            );
+
+            tarefa.prioridade = novaPrioridade;
+        }
+
+
+        // =====================================
+        // CADASTRAR PELA TELA
+        // =====================================
+
+        function cadastrarPelaTela() {
+
+            try {
+
+                let titulo =
+                    document.getElementById("titulo").value.trim();
+
+                let prioridade =
+                    Number(
+                        document.getElementById("prioridade").value
+                    );
+
+                cadastrarTarefa(titulo, prioridade);
+
+                alert("Tarefa cadastrada com sucesso!");
+
+                document.getElementById("titulo").value = "";
+
+                mostrarTarefas();
+
+            } catch (erro) {
+
+                alert(erro.message);
+            }
+        }
+
+
+        // =====================================
+        // CONCLUIR PELA TELA
+        // =====================================
+
+        function concluirPelaTela() {
+
+            try {
+
+                let codigo =
+                    Number(
+                        document.getElementById("codigoConcluir").value
+                    );
+
+                concluirTarefa(codigo);
+
+                alert("Tarefa concluída com sucesso!");
+
+                document.getElementById("codigoConcluir").value = "";
+
+                mostrarTarefas();
+
+            } catch (erro) {
+
+                alert(erro.message);
+            }
+        }
+
+
+        // =====================================
+        // ALTERAR PRIORIDADE PELA TELA
+        // =====================================
+
+        function alterarPrioridadePelaTela() {
+
+            try {
+
+                let codigo =
+                    Number(
+                        document.getElementById("codigoPrioridade").value
+                    );
+
+                let novaPrioridade =
+                    Number(
+                        document.getElementById("novaPrioridade").value
+                    );
+
+                alterarPrioridade(
+                    codigo,
+                    novaPrioridade
+                );
+
+                alert(
+                    "Prioridade alterada com sucesso!"
+                );
+
+                document.getElementById(
+                    "codigoPrioridade"
+                ).value = "";
+
+                mostrarTarefas();
+
+            } catch (erro) {
+
+                alert(erro.message);
+            }
+        }
+
+
+        // =====================================
+        // MOSTRAR TAREFAS NA TELA
+        // =====================================
+
+        function mostrarTarefas() {
+
+            let lista =
+                document.getElementById("listaTarefas");
+
+            lista.innerHTML = "";
+
+
+            if (tarefas.length === 0) {
+
+                lista.innerHTML =
+                    "<p>Nenhuma tarefa cadastrada.</p>";
+
+                return;
+            }
+
+
+            tarefas.forEach(function(tarefa) {
+
+                let status =
+                    tarefa.status
+                        ? "Pendente"
+                        : "Concluída";
+
+                let classe =
+                    tarefa.status
+                        ? ""
+                        : "concluida";
+
+
+                lista.innerHTML += `
+
+                    <div class="tarefa ${classe}">
+
+                        <p>
+                            <strong>Código:</strong>
+                            ${tarefa.codigo}
+                        </p>
+
+                        <p>
+                            <strong>Título:</strong>
+                            ${tarefa.titulo}
+                        </p>
+
+                        <p>
+                            <strong>Prioridade:</strong>
+                            ${tarefa.prioridade}
+                        </p>
+
+                        <p>
+                            <strong>Status:</strong>
+                            ${status}
+                        </p>
+
+                    </div>
+
+                `;
+            });
+        }
+
+    </script>
+
+<script src="script.js"></script></body>
+</html>
