@@ -1,0 +1,219 @@
+p>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- CONTATO -->
+        <section id="contato" class="section contact-section">
+
+            <div class="container contact">
+
+                <div class="contact-text">
+
+                    <span>Contato</span>
+
+                    <h2>
+                        Vamos trabalhar
+                        juntos?
+                    </h2>
+
+                    <p>
+                        Entre em contato para conversar sobre
+                        seu próximo projeto.
+                    </p>
+
+                    <div class="contact-info">
+
+                        <div>
+                            <i class="fa-solid fa-envelope"></i>
+                            <span>contato@email.com</span>
+                        </div>
+
+                        <div>
+                            <i class="fa-solid fa-phone"></i>
+                            <span>(00) 00000-0000</span>
+                        </div>
+
+                        <div>
+                            <i class="fa-solid fa-location-dot"></i>
+                            <span>Brasil</span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <form class="contact-form">
+
+                    <input
+                        type="text"
+                        placeholder="Seu nome"
+                        required
+                    >
+
+                    <input
+                        type="email"
+                        placeholder="Seu e-mail"
+                        required
+                    >
+
+                    <input
+                        type="text"
+                        placeholder="Assunto"
+                    >
+
+                    <textarea
+                        placeholder="Sua mensagem"
+                        rows="6"
+                    ></textarea>
+
+                    <button type="submit" class="btn btn-primary">
+                        Enviar mensagem
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+
+                </form>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- FOOTER -->
+    <footer class="footer">
+
+        <div class="container footer-content">
+
+            <div>
+                <a href="#" class="logo">
+                    <i class="fa-solid fa-code"></i>
+                    MeuSite
+                </a>
+
+                <p>
+                    Criando experiências digitais.
+                </p>
+            </div>
+
+
+            <div class="social">
+
+                <a href="#">
+                    <i class="fa-brands fa-instagram"></i>
+                </a>
+
+                <a href="#">
+                    <i class="fa-brands fa-facebook"></i>
+                </a>
+
+                <a href="#">
+                    <i class="fa-brands fa-github"></i>
+                </a>
+
+                <a href="#">
+                    <i class="fa-brands fa-linkedin"></i>
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <div class="copyright">
+            © 2026 MeuSite. Todos os direitos reservados.
+        </div>
+
+    </footer>
+
+</body>
+</html>
+style.css
+/* =========================================
+   RESET
+========================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: "Poppins", sans-serif;
+    background: #ffffff;
+    color: #171717;
+    line-height: 1.6;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+button,
+input,
+textarea {
+    font-family: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+img {
+    max-width: 100%;
+    display: block;
+}
+
+
+/* =========================================
+   VARIÁVEIS
+========================================= */
+
+:root {
+    --primary: #6c5ce7;
+    --primary-dark: #5848d6;
+    --secondary: #00cec9;
+
+    --dark: #11111b;
+    --dark-2: #181824;
+    --dark-3: #222234;
+
+    --text: #222222;
+    --muted: #777777;
+    --white: #ffffff;
+
+    --light: #f7f7fb;
+    --border: #e8e8ef;
+
+    --radius: 16px;
+
+    --shadow:
+        0 20px 50px rgba(0, 0, 0, 0.08);
+
+    --transition:
+        all 0.3s ease;
+}
+
+
+/* =========================================
+   CONTAINER
+========================================= */
+
+.container {
+    width: min(1150px, 90%);
+    margin: auto;
+}
