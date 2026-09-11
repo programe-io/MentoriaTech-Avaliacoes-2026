@@ -1,87 +1,62 @@
-// Banco de dados de "códigos de treino"
-const codigosDeTreino = [
-    "atleta.fazerFlexao(10);",
-        "atleta.levantarPeso('20kg');",
-            "atleta.correrNaEsteira();",
-                "atleta.tomarWheyProtein();",
-                    "atleta.agachamentoSubir();",
-                        "atleta.descansarMusculo();"
-                        ];
+/* ==========================================
+   JAVASCRIPT (A LÓGICA) - TEMA: FORTALECIMENTO
+      ========================================== */
 
-                        // Evolução do Personagem
-                        const patamaresEvolucao = [
-                            { nivel: 1, nome: "👶 Iniciante", cor: "#00ff88" },
-                                { nivel: 2, nome: "🏃‍♂️ focado", cor: "#00b37e" },
-                                    { nivel: 3, nome: "💪 Monstro", cor: "#ffb800" },
-                                        { nivel: 4, nome: "🔱 Hulk Dev", cor: "#ff79c6" }
-                                        ];
+      // 1. Variáveis de controle de status (Banco de dados interno do jogo)
+      let poderForca = 0;
+      let nivelAtleta = 1;
+      const metaEvolucao = 100; // Pontos de XP necessários para subir de nível
 
-                                        let forcaAtual = 0;
-                                        let nivelAtual = 1;
-                                        let codigoAlvoAtual = "";
+      // 2. Banco de frases motivacionais exibidas aleatoriamente ao treinar
+      const feedbacksDeTreino = [
+          "Mais uma repetição concluída! 💪",
+              "A dor é temporária, o orgulho é eterno! 🔥",
+                  "Você sente suas fibras se fortalecendo! ⚡",
+                      "Consistência supera o talento! 🎯",
+                          "Nenhum peso é grande demais para sua mente! 🚀"
+                          ];
 
-                                        // Elementos HTML
-                                        const elCodigoAlvo = document.getElementById('codigo-alvo');
-                                        const elInputCodigo = document.getElementById('input-codigo');
-                                        const elForca = document.getElementById('forca');
-                                        const elNivel = document.getElementById('nivel');
-                                        const elProgresso = document.getElementById('progresso');
-                                        const elFeedback = document.getElementById('feedback');
-                                        const elAvatar = document.getElementById('avatar');
+                          // 3. Função principal ativada pelo clique do botão de treino
+                          function executarTreino() {
+                              // Sorteia um ganho de força aleatório entre 15 e 25 XP por clique
+                                  const ganhoDoTurno = Math.floor(Math.random() * 11) + 15;
+                                      poderForca += ganhoDoTurno;
 
-                                        // Função para sortear um novo comando de treino
-                                        function gerarNovoComando() {
-                                            const indice = Math.floor(Math.random() * codigosDeTreino.length);
-                                                codigoAlvoAtual = codigosDeTreino[indice];
-                                                    elCodigoAlvo.textContent = codigoAlvoAtual;
-                                                        elInputCodigo.value = ""; // Limpa o campo
-                                                        }
+                                          // Captura os elementos HTML da tela para atualização imediata
+                                              const txtNivel = document.getElementById('nivel');
+                                                  const txtForca = document.getElementById('forca');
+                                                      const txtMensagem = document.getElementById('mensagem');
+                                                          const barra = document.getElementById('progresso');
 
-                                                        // Verifica o que o jogador está digitando
-                                                        elInputCodigo.addEventListener('keydown', (evento) => {
-                                                            // Só roda a validação se o jogador apertar "Enter"
-                                                                if (evento.key === 'Enter') {
-                                                                        const textoDigitado = elInputCodigo.value;
+                                                              // 4. Regra de Negócio: Verifica se o atleta mudou de nível
+                                                                  if (poderForca >= metaEvolucao) {
+                                                                          nivelAtleta++;
+                                                                                  poderForca = poderForca - metaEvolucao; // Deduz os 100 XP e mantém a sobra
+                                                                                          
+                                                                                                  // Atualiza a tela com o novo nível e mensagem especial dourada
+                                                                                                          if (txtNivel) txtNivel.textContent = nivelAtleta;
+                                                                                                                  if (txtMensagem) {
+                                                                                                                              txtMensagem.textContent = "🏆 INCRÍVEL! Você superou seus limites e subiu de nível!";
+                                                                                                                                          txtMensagem.style.color = "#ffb800"; 
+                                                                                                                                                  }
+                                                                                                                                                      } else {
+                                                                                                                                                              // Se não subiu de nível, escolhe uma frase motivacional aleatória
+                                                                                                                                                                      const indiceAleatorio = Math.floor(Math.random() * feedbacksDeTreino.length);
+                                                                                                                                                                              const mensagemAleatoria = feedbacksDeTreino[indiceAleatorio];
+                                                                                                                                                                                      
+                                                                                                                                                                                              if (txtMensagem) {
+                                                                                                                                                                                                          txtMensagem.textContent = messageAleatoria;
+                                                                                                                                                                                                                      txtMensagem.style.color = "#00ff88"; // Retorna para o verde neon padrão
+                                                                                                                                                                                                                              }
+                                                                                                                                                                                                                                  }
 
-                                                                                if (textoDigitado === codigoAlvoAtual) {
-                                                                                            // Ganha pontos de força
-                                                                                                        forcaAtual += 25; 
-                                                                                                                    elFeedback.textContent = "✅ Repetição perfeita! +25 XP de Força!";
-                                                                                                                                elFeedback.style.color = "#00ff88";
-
-                                                                                                                                            // Verifica se subiu de nível (limite 100)
-                                                                                                                                                        if (forcaAtual >= 100) {
-                                                                                                                                                                        nivelAtual++;
-                                                                                                                                                                                        forcaAtual = 0;
-                                                                                                                                                                                                        elNivel.textContent = nivelAtual;
-                                                                                                                                                                                                                        atualizarAvatar();
-                                                                                                                                                                                                                                        elFeedback.textContent = "🔥 INCRÍVEL! Você codificou duro e subiu de nível!";
-                                                                                                                                                                                                                                                        elFeedback.style.color = "#ffb800";
-                                                                                                                                                                                                                                                                    }
-
-                                                                                                                                                                                                                                                                                // Atualiza a tela
-                                                                                                                                                                                                                                                                                            elForca.textContent = `${forcaAtual}`;
-                                                                                                                                                                                                                                                                                                        elProgresso.style.width = `${forcaAtual}%`;
-                                                                                                                                                                                                                                                                                                                    
-                                                                                                                                                                                                                                                                                                                                // Próximo desafio
-                                                                                                                                                                                                                                                                                                                                            gerarNovoComando();
-                                                                                                                                                                                                                                                                                                                                                    } else {
-                                                                                                                                                                                                                                                                                                                                                                // Errou o código
-                                                                                                                                                                                                                                                                                                                                                                            elFeedback.textContent = "❌ Erro de sintaxe! O músculo falhou. Tente novamente.";
-                                                                                                                                                                                                                                                                                                                                                                                        elFeedback.style.color = "#ff5555";
-                                                                                                                                                                                                                                                                                                                                                                                                    elInputCodigo.select(); // Seleciona o texto para facilitar a correção
-                                                                                                                                                                                                                                                                                                                                                                                                            }
-                                                                                                                                                                                                                                                                                                                                                                                                                }
-                                                                                                                                                                                                                                                                                                                                                                                                                });
-
-                                                                                                                                                                                                                                                                                                                                                                                                                // Atualiza o visual do boneco baseado no nível
-                                                                                                                                                                                                                                                                                                                                                                                                                function atualizarAvatar() {
-                                                                                                                                                                                                                                                                                                                                                                                                                    const estagio = patamaresEvolucao.find(p => p.nivel === nivelAtual) || patamaresEvolucao[patamaresEvolucao.length - 1];
-                                                                                                                                                                                                                                                                                                                                                                                                                        elAvatar.textContent = estagio.nome;
-                                                                                                                                                                                                                                                                                                                                                                                                                            elAvatar.style.borderColor = estagio.cor;
-                                                                                                                                                                                                                                                                                                                                                                                                                                elAvatar.style.color = estagio.cor;
-                                                                                                                                                                                                                                                                                                                                                                                                                                }
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                // Inicializa o primeiro comando ao abrir o jogo
-                                                                                                                                                                                                                                                                                                                                                                                                                                gerarNovoComando();
-                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                                                                                                                                                                                                                      // 5. Atualização visual dos dados e da Barra de Progresso (CSS)
+                                                                                                                                                                                                                                          if (txtForca) txtForca.textContent = poderForca + " XP";
+                                                                                                                                                                                                                                              
+                                                                                                                                                                                                                                                  if (barra) {
+                                                                                                                                                                                                                                                          // Calcula a porcentagem exata que a barra deve preencher (de 0% a 100%)
+                                                                                                                                                                                                                                                                  const porcentagemBarra = (poderForca / metaEvolucao) * 100;
+                                                                                                                                                                                                                                                                          barra.style.width = porcentagemBarra + "%";
+                                                                                                                                                                                                                                                                              }
+                                                                                                                                                                                                                                                                              }
+                                                                                                                                                                                                                                                                              
