@@ -1,258 +1,510 @@
-let produtos = [];
+// ==========================================
+// ARRAY DE TAREFAS
+// ==========================================
 
-// ==============================
-// VALIDAÇÃO
-// ==============================
+let tarefas = [];
 
-function validarProduto(descricao, quantidade, valor) {
-    if (descricao.length < 5) {
+
+// ==========================================
+// GERADOR DE CÓDIGO
+// ==========================================
+
+let proximoCodigo = 0;
+
+
+// ==========================================
+// VALIDAR DADOS DA TAREFA
+// ==========================================
+
+function validarDadosDaTarefa(titulo, prioridade) {
+
+    if (titulo.length < 5) {
+
         throw new Error(
-            "Descrição deve ter, no mínimo, cinco caracteres."
+            "O título deve possuir no mínimo 5 caracteres."
         );
     }
 
-    if (quantidade < 1) {
-        throw new Error(
-            "Quantidade deve ser maior que zero."
-        );
-    }
 
-    if (valor < 0) {
+    if (prioridade < 1 || prioridade > 3) {
+
         throw new Error(
-            "Valor deve ser maior ou igual a zero."
+            "A prioridade deve estar entre 1 e 3."
         );
     }
 }
 
 
-// ==============================
-// CADASTRAR PRODUTO
-// ==============================
+// ==========================================
+// CADASTRAR TAREFA
+// ==========================================
 
-function cadastrarProduto(descricao, quantidade, valor) {
-    validarProduto(descricao, quantidade, valor);
+function cadastrarTarefa(titulo, prioridade) {
 
-    let novoProduto = {
-        codigo: produtos.length + 1,
-        descricao: descricao,
-        quantidade: quantidade,
-        valor: valor
+    validarDadosDaTarefa(titulo, prioridade);
+
+
+    proximoCodigo++;
+
+
+    const novaTarefa = {
+
+        codigo: proximoCodigo,
+
+        titulo: titulo,
+
+        prioridade: prioridade,
+
+        status: true
     };
 
-    produtos.push(novoProduto);
+
+    tarefas.push(novaTarefa);
 }
 
 
-// ==============================
-// LISTAR PRODUTOS
-// ==============================
+// ==========================================
+// LISTAR TAREFAS
+// ==========================================
 
-function listarProdutos() {
-    const listaProdutos = document.getElementById("listaProdutos");
+function listarTarefas() {
 
-    listaProdutos.innerHTML = "";
+    return tarefas;
+}
 
-    if (produtos.length === 0) {
-        listaProdutos.innerHTML = `
+
+// ==========================================
+// BUSCAR TAREFA
+// ==========================================
+
+function buscarTarefa(codigo) {
+
+    const tarefa = tarefas.find(function(tarefa) {
+
+        return tarefa.codigo === codigo;
+
+    });
+
+
+    if (!tarefa) {
+
+        throw new Error(
+            "Tarefa não encontrada."
+        );
+    }
+
+
+    return tarefa;
+}
+
+
+// ==========================================
+// CONCLUIR TAREFA
+// ==========================================
+
+function concluirTarefa(codigo) {
+
+    const tarefa = buscarTarefa(codigo);
+
+
+    if (!tarefa.status) {
+
+        throw new Error(
+            "Essa tarefa já está concluída."
+        );
+    }
+
+
+    tarefa.status = false;
+}
+
+
+// ==========================================
+// ALTERAR PRIORIDADE
+// ==========================================
+
+function alterarPrioridade(codigo, novaPrioridade) {
+
+    const tarefa = buscarTarefa(codigo);
+
+
+    validarDadosDaTarefa(
+        tarefa.titulo,
+        novaPrioridade
+    );
+
+
+    tarefa.prioridade = novaPrioridade;
+}
+
+
+// ==========================================
+// ELEMENTOS DO HTML
+// ==========================================
+
+const formTarefa =
+    document.getElementById("formTarefa");
+
+const formPrioridade =
+    document.getElementById("formPrioridade");
+
+const listaTarefas =
+    document.getElementById("listaTarefas");
+
+const mensagem =
+    document.getElementById("mensagem");
+
+const contador =
+    document.getElementById("contador");
+
+
+// ==========================================
+// EXIBIR MENSAGEM
+// ==========================================
+
+function exibirMensagem(texto, tipo) {
+
+    mensagem.textContent = texto;
+
+    mensagem.className = tipo;
+}
+
+
+// ==========================================
+// DEFINIR TEXTO DA PRIORIDADE
+// ==========================================
+
+function textoPrioridade(prioridade) {
+
+    if (prioridade === 1) {
+        return "Alta";
+    }
+
+    if (prioridade === 2) {
+        return "Média";
+    }
+
+    return "Baixa";
+}
+
+
+// ==========================================
+// DEFINIR CLASSE DA PRIORIDADE
+// ==========================================
+
+function classePrioridade(prioridade) {
+
+    if (prioridade === 1) {
+        return "prioridade-alta";
+    }
+
+    if (prioridade === 2) {
+        return "prioridade-media";
+    }
+
+    return "prioridade-baixa";
+}
+
+
+// ==========================================
+// ATUALIZAR CONTADOR
+// ==========================================
+
+function atualizarContador() {
+
+    const quantidade = tarefas.length;
+
+
+    if (quantidade === 1) {
+
+        contador.textContent =
+            "1 tarefa";
+
+    } else {
+
+        contador.textContent =
+            `${quantidade} tarefas`;
+    }
+}
+
+
+// ==========================================
+// EXIBIR TAREFAS NA TABELA
+// ==========================================
+
+function atualizarLista() {
+
+    listaTarefas.innerHTML = "";
+
+
+    const tarefasCadastradas =
+        listarTarefas();
+
+
+    if (tarefasCadastradas.length === 0) {
+
+        listaTarefas.innerHTML = `
             <tr>
-                <td colspan="4">
-                    Nenhum produto cadastrado.
+                <td colspan="5">
+                    Nenhuma tarefa cadastrada.
                 </td>
             </tr>
         `;
 
+        atualizarContador();
+
         return;
     }
 
-    produtos.forEach(function(produto) {
-        const linha = document.createElement("tr");
+
+    tarefasCadastradas.forEach(function(tarefa) {
+
+        const linha =
+            document.createElement("tr");
+
+
+        if (!tarefa.status) {
+
+            linha.classList.add(
+                "tarefa-concluida"
+            );
+        }
+
+
+        const statusTexto =
+            tarefa.status
+                ? "Pendente"
+                : "Concluída";
+
+
+        const statusClasse =
+            tarefa.status
+                ? "status-pendente"
+                : "status-concluida";
+
+
+        const botaoTexto =
+            tarefa.status
+                ? "Concluir"
+                : "Concluída";
+
+
+        const botaoClasse =
+            tarefa.status
+                ? "btn-concluir"
+                : "btn-concluir btn-desabilitado";
+
+
+        const botaoDesabilitado =
+            tarefa.status
+                ? ""
+                : "disabled";
+
 
         linha.innerHTML = `
-            <td>${produto.codigo}</td>
-            <td>${produto.descricao}</td>
-            <td>${produto.quantidade}</td>
-            <td>R$ ${produto.valor.toFixed(2)}</td>
+
+            <td>
+                ${tarefa.codigo}
+            </td>
+
+            <td>
+                ${tarefa.titulo}
+            </td>
+
+            <td>
+
+                <span class="prioridade ${classePrioridade(tarefa.prioridade)}">
+
+                    ${tarefa.prioridade} -
+                    ${textoPrioridade(tarefa.prioridade)}
+
+                </span>
+
+            </td>
+
+            <td>
+
+                <span class="status ${statusClasse}">
+
+                    ${statusTexto}
+
+                </span>
+
+            </td>
+
+            <td>
+
+                <button
+                    class="${botaoClasse}"
+                    onclick="finalizarTarefa(${tarefa.codigo})"
+                    ${botaoDesabilitado}
+                >
+
+                    ${botaoTexto}
+
+                </button>
+
+            </td>
         `;
 
-        listaProdutos.appendChild(linha);
+
+        listaTarefas.appendChild(linha);
+
     });
+
+
+    atualizarContador();
 }
 
 
-// ==============================
-// BUSCAR PRODUTO
-// ==============================
+// ==========================================
+// FINALIZAR TAREFA PELA INTERFACE
+// ==========================================
 
-function buscarProdutoPorCodigo(codigoProduto) {
-    return produtos.find(function(produto) {
-        return produto.codigo === codigoProduto;
-    });
-}
-
-
-// ==============================
-// ATUALIZAR VALOR
-// ==============================
-
-function atualizarValor(codigoProduto, novoValor) {
-
-    if (novoValor < 0) {
-        throw new Error(
-            "Valor deve ser maior ou igual a zero."
-        );
-    }
-
-    const produto = buscarProdutoPorCodigo(codigoProduto);
-
-    if (produto) {
-        produto.valor = novoValor;
-    } else {
-        throw new Error(
-            "Produto não encontrado."
-        );
-    }
-}
-
-
-// ==============================
-// ATUALIZAR QUANTIDADE
-// ==============================
-
-function atualizarQuantidade(codigoProduto, novaQuantidade) {
-
-    if (novaQuantidade < 1) {
-        throw new Error(
-            "Quantidade deve ser maior que zero."
-        );
-    }
-
-    const produto = buscarProdutoPorCodigo(codigoProduto);
-
-    if (produto) {
-        produto.quantidade =
-            produto.quantidade + novaQuantidade;
-    } else {
-        throw new Error(
-            "Produto não encontrado."
-        );
-    }
-}
-
-
-// ==============================
-// CADASTRO PELO FORMULÁRIO
-// ==============================
-
-const formProduto = document.getElementById("formProduto");
-
-formProduto.addEventListener("submit", function(event) {
-
-    event.preventDefault();
+function finalizarTarefa(codigo) {
 
     try {
-        const descricao =
-            document.getElementById("descricao").value.trim();
 
-        const quantidade =
-            Number(document.getElementById("quantidade").value);
+        concluirTarefa(codigo);
 
-        const valor =
-            Number(document.getElementById("valor").value);
 
-        cadastrarProduto(descricao, quantidade, valor);
+        exibirMensagem(
+            "Tarefa concluída com sucesso!",
+            "mensagem-sucesso"
+        );
 
-        document.getElementById("mensagem").textContent =
-            "Produto cadastrado com sucesso!";
 
-        document.getElementById("mensagem").style.color =
-            "green";
-
-        formProduto.reset();
-
-        listarProdutos();
+        atualizarLista();
 
     } catch (erro) {
 
-        document.getElementById("mensagem").textContent =
-            erro.message;
-
-        document.getElementById("mensagem").style.color =
-            "red";
+        exibirMensagem(
+            erro.message,
+            "mensagem-erro"
+        );
     }
-});
+}
 
 
-// ==============================
-// ATUALIZAÇÃO DO VALOR
-// ==============================
+// ==========================================
+// FORMULÁRIO DE CADASTRO
+// ==========================================
 
-const formValor = document.getElementById("formValor");
+formTarefa.addEventListener(
+    "submit",
+    function(event) {
 
-formValor.addEventListener("submit", function(event) {
-
-    event.preventDefault();
-
-    try {
-        const codigo =
-            Number(document.getElementById("codigoValor").value);
-
-        const novoValor =
-            Number(document.getElementById("novoValor").value);
-
-        atualizarValor(codigo, novoValor);
-
-        alert("Valor atualizado com sucesso!");
-
-        formValor.reset();
-
-        listarProdutos();
-
-    } catch (erro) {
-
-        alert(erro.message);
-    }
-});
+        event.preventDefault();
 
 
-// ==============================
-// ATUALIZAÇÃO DA QUANTIDADE
-// ==============================
+        try {
 
-const formQuantidade =
-    document.getElementById("formQuantidade");
+            const titulo =
+                document
+                    .getElementById("titulo")
+                    .value
+                    .trim();
 
-formQuantidade.addEventListener("submit", function(event) {
 
-    event.preventDefault();
+            const prioridade =
+                Number(
+                    document
+                        .getElementById("prioridade")
+                        .value
+                );
 
-    try {
-        const codigo =
-            Number(
-                document.getElementById("codigoQuantidade").value
+
+            cadastrarTarefa(
+                titulo,
+                prioridade
             );
 
-        const novaQuantidade =
-            Number(
-                document.getElementById("novaQuantidade").value
+
+            exibirMensagem(
+                "Tarefa cadastrada com sucesso!",
+                "mensagem-sucesso"
             );
 
-        atualizarQuantidade(codigo, novaQuantidade);
 
-        alert("Quantidade atualizada com sucesso!");
+            formTarefa.reset();
 
-        formQuantidade.reset();
 
-        listarProdutos();
+            atualizarLista();
 
-    } catch (erro) {
 
-        alert(erro.message);
+        } catch (erro) {
+
+            exibirMensagem(
+                erro.message,
+                "mensagem-erro"
+            );
+        }
+
     }
-});
+);
 
 
-// ==============================
-// INICIAR LISTAGEM
-// ==============================
+// ==========================================
+// FORMULÁRIO DE ALTERAÇÃO DE PRIORIDADE
+// ==========================================
 
-listarProdutos();
+formPrioridade.addEventListener(
+    "submit",
+    function(event) {
+
+        event.preventDefault();
+
+
+        try {
+
+            const codigo =
+                Number(
+                    document
+                        .getElementById("codigoPrioridade")
+                        .value
+                );
+
+
+            const novaPrioridade =
+                Number(
+                    document
+                        .getElementById("novaPrioridade")
+                        .value
+                );
+
+
+            alterarPrioridade(
+                codigo,
+                novaPrioridade
+            );
+
+
+            exibirMensagem(
+                "Prioridade alterada com sucesso!",
+                "mensagem-sucesso"
+            );
+
+
+            formPrioridade.reset();
+
+
+            atualizarLista();
+
+
+        } catch (erro) {
+
+            exibirMensagem(
+                erro.message,
+                "mensagem-erro"
+            );
+        }
+
+    }
+);
+
+
+// ==========================================
+// INICIALIZAÇÃO
+// ==========================================
+
+atualizarLista();
