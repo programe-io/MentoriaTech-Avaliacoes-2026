@@ -2,206 +2,4182 @@
 <html lang="pt-BR">
 
 <head>
+
+    <!-- =========================
+         CONFIGURAÇÕES DO DOCUMENTO
+    ========================== -->
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro de Alunos</title>
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Sistema profissional de gestão escolar"
+    >
+
+    <meta
+        name="author"
+        content="Sistema Escolar"
+    >
+
+    <meta
+        name="theme-color"
+        content="#2563eb"
+    >
+
+    <title>EduManager • Gestão Escolar</title>
+
+
+    <!-- =========================
+         CSS
+    ========================== -->
 
     <style>
+
+        /* =====================================================
+           RESET
+        ===================================================== */
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', sans-serif;
+        }
+
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --primary-light: #eff6ff;
+
+            --sidebar: #0f172a;
+            --sidebar-2: #172554;
+
+            --background: #f5f7fb;
+            --surface: #ffffff;
+
+            --text: #0f172a;
+            --text-light: #64748b;
+
+            --border: #e2e8f0;
+
+            --success: #16a34a;
+            --danger: #dc2626;
+            --warning: #d97706;
+
+            --shadow:
+                0 10px 30px rgba(15, 23, 42, .07);
+
+            --radius: 18px;
+        }
+
+        body.dark {
+            --background: #020617;
+            --surface: #0f172a;
+            --text: #f8fafc;
+            --text-light: #94a3b8;
+            --border: #1e293b;
+        }
+
+
+        /* =====================================================
+           BODY
+        ===================================================== */
+
+        html {
+            scroll-behavior: smooth;
         }
 
         body {
-            height: 100vh;
-            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            min-height: 100vh;
+
+            font-family:
+                Inter,
+                "Segoe UI",
+                Arial,
+                sans-serif;
+
+            background: var(--background);
+
+            color: var(--text);
+
+            transition:
+                background .3s,
+                color .3s;
         }
 
-        main {
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(15px);
-            padding: 30px;
-            border-radius: 20px;
-            width: 350px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-            color: white;
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        header h1 {
-            font-size: 24px;
-        }
-
-        header p {
-            font-size: 14px;
-            color: #ccc;
-        }
-
-        section {
-            margin-top: 15px;
-        }
-
-        label {
-            font-size: 14px;
-            font-weight: bold;
-        }
-
-        input {
-            width: 100%;
-            padding: 12px;
-            margin-top: 5px;
-            border-radius: 12px;
-            border: none;
-            outline: none;
-            background: rgba(255,255,255,0.9);
-            color: #333;
-        }
-
-        .buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
+        button,
+        input,
+        select,
+        textarea {
+            font: inherit;
         }
 
         button {
-            flex: 1;
-            padding: 12px;
-            border-radius: 12px;
-            border: none;
             cursor: pointer;
-            font-weight: bold;
-            transition: 0.3s;
         }
 
-        .btn-cadastrar {
-            background: linear-gradient(135deg, #00c6ff, #0072ff);
+
+        /* =====================================================
+           SIDEBAR
+        ===================================================== */
+
+        .sidebar {
+            position: fixed;
+
+            left: 0;
+            top: 0;
+
+            width: 270px;
+            height: 100vh;
+
+            padding: 25px 16px;
+
+            background:
+                linear-gradient(
+                    180deg,
+                    #0f172a 0%,
+                    #172554 100%
+                );
+
             color: white;
+
+            z-index: 1000;
+
+            overflow-y: auto;
+
+            box-shadow:
+                8px 0 30px rgba(0,0,0,.12);
         }
 
-        .btn-limpar {
-            background: #888;
-            color: white;
+
+        /* LOGO */
+
+        .brand {
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+
+            padding: 5px 10px 30px;
         }
 
-        button:hover {
-            opacity: 0.8;
+        .brand-icon {
+            width: 45px;
+            height: 45px;
+
+            border-radius: 13px;
+
+            display: grid;
+            place-items: center;
+
+            font-size: 22px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #3b82f6,
+                    #6366f1
+                );
+
+            box-shadow:
+                0 8px 20px rgba(59,130,246,.35);
         }
 
-        .contador {
-            margin-top: 15px;
-            text-align: center;
-            font-size: 16px;
+        .brand h1 {
+            font-size: 19px;
         }
 
-        .obs {
-            margin-top: 20px;
-            padding: 15px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 12px;
+        .brand small {
+            display: block;
+
+            margin-top: 2px;
+
+            color: #94a3b8;
+
+            font-size: 11px;
+        }
+
+
+        /* MENU */
+
+        .menu-section {
+            margin-bottom: 25px;
+        }
+
+        .menu-label {
+            padding: 0 12px 9px;
+
+            color: #64748b;
+
+            font-size: 10px;
+
+            font-weight: 700;
+
+            text-transform: uppercase;
+
+            letter-spacing: 1.2px;
+        }
+
+        .nav-button {
+            width: 100%;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+
+            padding: 13px 14px;
+
+            margin: 4px 0;
+
+            border: 0;
+
+            border-radius: 11px;
+
+            background: transparent;
+
+            color: #cbd5e1;
+
+            text-align: left;
+
             font-size: 14px;
-            text-align: center;
+
+            transition: .2s;
         }
 
-        footer {
-            text-align: center;
-            margin-top: 10px;
-            font-size: 12px;
-            color: #aaa;
+        .nav-button:hover {
+            background: rgba(255,255,255,.08);
+
+            color: white;
+
+            transform: translateX(3px);
         }
+
+        .nav-button.active {
+            background:
+                linear-gradient(
+                    90deg,
+                    #2563eb,
+                    #3b82f6
+                );
+
+            color: white;
+
+            box-shadow:
+                0 7px 18px rgba(37,99,235,.28);
+        }
+
+        .nav-icon {
+            width: 25px;
+
+            text-align: center;
+
+            font-size: 17px;
+        }
+
+
+        /* =====================================================
+           MAIN
+        ===================================================== */
+
+        .main {
+            margin-left: 270px;
+
+            min-height: 100vh;
+
+            padding: 28px;
+        }
+
+
+        /* =====================================================
+           HEADER
+        ===================================================== */
+
+        .topbar {
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 20px;
+
+            margin-bottom: 28px;
+        }
+
+        .page-title h2 {
+            font-size: 28px;
+
+            letter-spacing: -.6px;
+        }
+
+        .page-title p {
+            margin-top: 5px;
+
+            color: var(--text-light);
+
+            font-size: 14px;
+        }
+
+        .top-actions {
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+        }
+
+
+        /* =====================================================
+           BOTÕES
+        ===================================================== */
+
+        .btn {
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 8px;
+
+            min-height: 42px;
+
+            padding: 0 16px;
+
+            border: 0;
+
+            border-radius: 10px;
+
+            font-size: 13px;
+
+            font-weight: 700;
+
+            transition: .2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-primary {
+            color: white;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #2563eb,
+                    #3b82f6
+                );
+
+            box-shadow:
+                0 7px 18px rgba(37,99,235,.22);
+        }
+
+        .btn-primary:hover {
+            box-shadow:
+                0 10px 25px rgba(37,99,235,.3);
+        }
+
+        .btn-secondary {
+            color: var(--text);
+
+            background: var(--surface);
+
+            border: 1px solid var(--border);
+        }
+
+        .btn-danger {
+            color: white;
+
+            background: var(--danger);
+        }
+
+        .btn-success {
+            color: white;
+
+            background: var(--success);
+        }
+
+
+        /* =====================================================
+           CARDS
+        ===================================================== */
+
+        .stats {
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, minmax(0, 1fr));
+
+            gap: 18px;
+
+            margin-bottom: 22px;
+        }
+
+        .stat-card {
+            position: relative;
+
+            overflow: hidden;
+
+            background: var(--surface);
+
+            border:
+                1px solid var(--border);
+
+            border-radius: var(--radius);
+
+            padding: 21px;
+
+            box-shadow: var(--shadow);
+
+            transition: .25s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+
+            box-shadow:
+                0 15px 35px rgba(15,23,42,.1);
+        }
+
+        .stat-card::after {
+            content: "";
+
+            position: absolute;
+
+            width: 100px;
+            height: 100px;
+
+            right: -40px;
+            bottom: -50px;
+
+            border-radius: 50%;
+
+            background: var(--primary-light);
+        }
+
+        .stat-top {
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+        }
+
+        .stat-icon {
+            width: 45px;
+            height: 45px;
+
+            display: grid;
+            place-items: center;
+
+            border-radius: 13px;
+
+            background: var(--primary-light);
+
+            font-size: 21px;
+        }
+
+        .stat-card strong {
+            display: block;
+
+            margin-top: 15px;
+
+            font-size: 28px;
+        }
+
+        .stat-card span {
+            color: var(--text-light);
+
+            font-size: 12px;
+        }
+
+
+        /* =====================================================
+           PÁGINAS
+        ===================================================== */
+
+        .page {
+            display: none;
+
+            animation: pageIn .3s ease;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes pageIn {
+
+            from {
+                opacity: 0;
+
+                transform:
+                    translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+
+                transform:
+                    translateY(0);
+            }
+        }
+
+
+        /* =====================================================
+           PAINEL
+        ===================================================== */
+
+        .panel {
+            background: var(--surface);
+
+            border:
+                1px solid var(--border);
+
+            border-radius: var(--radius);
+
+            padding: 23px;
+
+            box-shadow: var(--shadow);
+
+            margin-bottom: 20px;
+        }
+
+        .panel-header {
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            gap: 15px;
+
+            margin-bottom: 20px;
+        }
+
+        .panel-header h3 {
+            font-size: 18px;
+        }
+
+        .panel-header p {
+            color: var(--text-light);
+
+            font-size: 12px;
+
+            margin-top: 4px;
+        }
+
+
+        /* =====================================================
+           PESQUISA
+        ===================================================== */
+
+        .toolbar {
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 12px;
+
+            margin-bottom: 20px;
+        }
+
+        .search-box {
+            position: relative;
+
+            flex: 1;
+
+            max-width: 400px;
+        }
+
+        .search-box input {
+            width: 100%;
+
+            height: 44px;
+
+            padding: 0 15px 0 42px;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 10px;
+
+            outline: none;
+
+            background: var(--surface);
+
+            color: var(--text);
+        }
+
+        .search-box span {
+            position: absolute;
+
+            left: 14px;
+
+            top: 50%;
+
+            transform:
+                translateY(-50%);
+        }
+
+
+        /* =====================================================
+           TABELAS
+        ===================================================== */
+
+        .table-wrapper {
+            width: 100%;
+
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+
+            min-width: 750px;
+
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: var(--background);
+        }
+
+        th {
+            padding: 13px;
+
+            color: var(--text-light);
+
+            text-align: left;
+
+            font-size: 11px;
+
+            text-transform: uppercase;
+
+            letter-spacing: .5px;
+        }
+
+        td {
+            padding: 14px 13px;
+
+            border-top:
+                1px solid var(--border);
+
+            color: var(--text);
+
+            font-size: 13px;
+        }
+
+        tbody tr {
+            transition: .2s;
+        }
+
+        tbody tr:hover {
+            background: var(--primary-light);
+        }
+
+
+        /* =====================================================
+           ALUNO
+        ===================================================== */
+
+        .person {
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+        }
+
+        .person-avatar {
+            width: 38px;
+            height: 38px;
+
+            flex-shrink: 0;
+
+            display: grid;
+
+            place-items: center;
+
+            border-radius: 11px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #dbeafe,
+                    #e0e7ff
+                );
+
+            color: #3730a3;
+
+            font-weight: 800;
+
+            font-size: 12px;
+        }
+
+        .person strong {
+            display: block;
+
+            font-size: 13px;
+        }
+
+        .person small {
+            color: var(--text-light);
+
+            font-size: 11px;
+        }
+
+
+        /* =====================================================
+           STATUS
+        ===================================================== */
+
+        .badge {
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 5px;
+
+            padding: 5px 10px;
+
+            border-radius: 20px;
+
+            font-size: 10px;
+
+            font-weight: 800;
+        }
+
+        .badge.active {
+            background: #dcfce7;
+
+            color: #15803d;
+        }
+
+        .badge.inactive {
+            background: #fee2e2;
+
+            color: #b91c1c;
+        }
+
+        .badge.warning {
+            background: #fef3c7;
+
+            color: #92400e;
+        }
+
+
+        /* =====================================================
+           AÇÕES
+        ===================================================== */
+
+        .actions {
+            display: flex;
+
+            gap: 6px;
+        }
+
+        .icon-btn {
+            width: 34px;
+            height: 34px;
+
+            display: grid;
+
+            place-items: center;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 8px;
+
+            background: var(--surface);
+
+            transition: .2s;
+        }
+
+        .icon-btn:hover {
+            transform: scale(1.08);
+        }
+
+        .icon-btn.edit {
+            color: var(--primary);
+        }
+
+        .icon-btn.delete {
+            color: var(--danger);
+        }
+
+
+        /* =====================================================
+           FORMULÁRIO
+        ===================================================== */
+
+        .form-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+
+            gap: 18px;
+        }
+
+        .form-group {
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 7px;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            color: var(--text);
+
+            font-size: 12px;
+
+            font-weight: 700;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+
+            min-height: 43px;
+
+            padding: 10px 12px;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 9px;
+
+            outline: none;
+
+            background: var(--surface);
+
+            color: var(--text);
+
+            transition: .2s;
+        }
+
+        textarea {
+            min-height: 100px;
+
+            resize: vertical;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: var(--primary);
+
+            box-shadow:
+                0 0 0 3px
+                rgba(37,99,235,.1);
+        }
+
+        .form-footer {
+            display: flex;
+
+            justify-content: flex-end;
+
+            gap: 10px;
+
+            margin-top: 25px;
+
+            padding-top: 20px;
+
+            border-top:
+                1px solid var(--border);
+        }
+
+
+        /* =====================================================
+           GRID DE TURMAS / PROFESSORES
+        ===================================================== */
+
+        .cards-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, minmax(0, 1fr));
+
+            gap: 18px;
+        }
+
+        .info-card {
+            background: var(--surface);
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 16px;
+
+            padding: 20px;
+
+            box-shadow: var(--shadow);
+
+            transition: .2s;
+        }
+
+        .info-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .info-card .big-icon {
+            width: 48px;
+            height: 48px;
+
+            display: grid;
+
+            place-items: center;
+
+            border-radius: 13px;
+
+            background: var(--primary-light);
+
+            font-size: 22px;
+
+            margin-bottom: 15px;
+        }
+
+        .info-card h3 {
+            font-size: 16px;
+
+            margin-bottom: 7px;
+        }
+
+        .info-card p {
+            color: var(--text-light);
+
+            font-size: 12px;
+
+            line-height: 1.6;
+        }
+
+
+        /* =====================================================
+           RELATÓRIOS
+        ===================================================== */
+
+        .report-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+
+            gap: 20px;
+        }
+
+        .report-card {
+            padding: 22px;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 16px;
+
+            background: var(--surface);
+
+            box-shadow: var(--shadow);
+        }
+
+        .progress {
+            height: 9px;
+
+            margin-top: 13px;
+
+            overflow: hidden;
+
+            border-radius: 20px;
+
+            background: #e2e8f0;
+        }
+
+        .progress span {
+            display: block;
+
+            height: 100%;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #2563eb,
+                    #6366f1
+                );
+
+            border-radius: inherit;
+        }
+
+
+        /* =====================================================
+           CONFIGURAÇÕES
+        ===================================================== */
+
+        .setting {
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            gap: 20px;
+
+            padding: 18px 0;
+
+            border-bottom:
+                1px solid var(--border);
+        }
+
+        .setting:last-child {
+            border-bottom: 0;
+        }
+
+        .setting h4 {
+            font-size: 14px;
+        }
+
+        .setting p {
+            margin-top: 4px;
+
+            color: var(--text-light);
+
+            font-size: 12px;
+        }
+
+        .switch {
+            position: relative;
+
+            width: 48px;
+            height: 26px;
+        }
+
+        .switch input {
+            display: none;
+        }
+
+        .slider {
+            position: absolute;
+
+            inset: 0;
+
+            cursor: pointer;
+
+            background: #cbd5e1;
+
+            border-radius: 30px;
+
+            transition: .2s;
+        }
+
+        .slider::before {
+            content: "";
+
+            position: absolute;
+
+            width: 20px;
+            height: 20px;
+
+            left: 3px;
+            top: 3px;
+
+            background: white;
+
+            border-radius: 50%;
+
+            transition: .2s;
+        }
+
+        .switch input:checked + .slider {
+            background: var(--primary);
+        }
+
+        .switch input:checked + .slider::before {
+            transform:
+                translateX(22px);
+        }
+
+
+        /* =====================================================
+           AJUDA
+        ===================================================== */
+
+        details {
+            padding: 16px 0;
+
+            border-bottom:
+                1px solid var(--border);
+        }
+
+        summary {
+            cursor: pointer;
+
+            font-weight: 700;
+
+            font-size: 14px;
+        }
+
+        details p {
+            margin-top: 10px;
+
+            color: var(--text-light);
+
+            font-size: 13px;
+
+            line-height: 1.7;
+        }
+
+
+        /* =====================================================
+           MODAL
+        ===================================================== */
+
+        .modal {
+            position: fixed;
+
+            inset: 0;
+
+            z-index: 2000;
+
+            display: none;
+
+            align-items: center;
+
+            justify-content: center;
+
+            padding: 20px;
+
+            background:
+                rgba(2,6,23,.65);
+
+            backdrop-filter:
+                blur(5px);
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-box {
+            width: 720px;
+
+            max-width: 100%;
+
+            max-height: 90vh;
+
+            overflow-y: auto;
+
+            padding: 28px;
+
+            border-radius: 20px;
+
+            background: var(--surface);
+
+            box-shadow:
+                0 30px 80px rgba(0,0,0,.25);
+
+            animation:
+                modalIn .25s ease;
+        }
+
+        @keyframes modalIn {
+
+            from {
+                opacity: 0;
+
+                transform:
+                    scale(.96)
+                    translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+
+                transform:
+                    scale(1)
+                    translateY(0);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            margin-bottom: 25px;
+        }
+
+        .modal-header h2 {
+            font-size: 20px;
+        }
+
+        .close {
+            width: 36px;
+            height: 36px;
+
+            border: 0;
+
+            border-radius: 50%;
+
+            background: var(--background);
+
+            color: var(--text);
+
+            font-size: 20px;
+        }
+
+
+        /* =====================================================
+           NOTIFICAÇÃO
+        ===================================================== */
+
+        .toast {
+            position: fixed;
+
+            right: 25px;
+            bottom: 25px;
+
+            z-index: 3000;
+
+            min-width: 280px;
+
+            padding: 15px 18px;
+
+            border-radius: 12px;
+
+            background: #0f172a;
+
+            color: white;
+
+            box-shadow:
+                0 15px 40px rgba(0,0,0,.2);
+
+            transform:
+                translateY(100px);
+
+            opacity: 0;
+
+            transition: .3s;
+        }
+
+        .toast.show {
+            transform:
+                translateY(0);
+
+            opacity: 1;
+        }
+
+
+        /* =====================================================
+           RESPONSIVO
+        ===================================================== */
+
+        @media(max-width: 1150px) {
+
+            .stats {
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+            .cards-grid {
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+        }
+
+        @media(max-width: 850px) {
+
+            .sidebar {
+                width: 220px;
+            }
+
+            .main {
+                margin-left: 220px;
+
+                padding: 20px;
+            }
+
+            .report-grid {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+        @media(max-width: 650px) {
+
+            .sidebar {
+                position: relative;
+
+                width: 100%;
+
+                height: auto;
+            }
+
+            .main {
+                margin-left: 0;
+
+                padding: 15px;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full {
+                grid-column: auto;
+            }
+
+            .topbar {
+                flex-direction: column;
+
+                align-items: flex-start;
+            }
+
+            .toolbar {
+                flex-direction: column;
+
+                align-items: stretch;
+            }
+
+            .search-box {
+                max-width: none;
+            }
+
+        }
+
     </style>
+
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="style.css" rel="stylesheet"></head>
 
+
 <body>
 
-<main>
 
-    <header>
-        <h1>🎓 Cadastro de Alunos</h1>
-        <p>Sistema simples e funcional</p>
+<!-- =========================================================
+     MENU LATERAL
+========================================================== -->
+
+<aside class="sidebar">
+
+    <header class="brand">
+
+        <div class="brand-icon">
+            🎓
+        </div>
+
+        <div>
+            <h1>EduManager</h1>
+
+            <small>
+                Gestão Escolar
+            </small>
+        </div>
+
     </header>
 
-    <form id="formAluno">
 
-        <section>
-            <label>👤 Nome</label>
-            <input type="text" id="nome" required>
+    <nav aria-label="Navegação principal">
+
+
+        <section class="menu-section">
+
+            <div class="menu-label">
+                Principal
+            </div>
+
+
+            <button
+                class="nav-button active"
+                data-page="alunos"
+                onclick="abrirPagina('alunos', this)"
+            >
+
+                <span class="nav-icon">👨‍🎓</span>
+
+                Alunos
+
+            </button>
+
+
+            <button
+                class="nav-button"
+                data-page="novo"
+                onclick="abrirPagina('novo', this)"
+            >
+
+                <span class="nav-icon">➕</span>
+
+                Novo cadastro
+
+            </button>
+
+
+            <button
+                class="nav-button"
+                data-page="turmas"
+                onclick="abrirPagina('turmas', this)"
+            >
+
+                <span class="nav-icon">🏫</span>
+
+                Turmas
+
+            </button>
+
+
+            <button
+                class="nav-button"
+                data-page="professores"
+                onclick="abrirPagina('professores', this)"
+            >
+
+                <span class="nav-icon">👨‍🏫</span>
+
+                Professores
+
+            </button>
+
+
+            <button
+                class="nav-button"
+                data-page="relatorios"
+                onclick="abrirPagina('relatorios', this)"
+            >
+
+                <span class="nav-icon">📊</span>
+
+                Relatórios
+
+            </button>
+
         </section>
 
-        <section>
-            <label>🎂 Idade</label>
-            <input type="number" id="idade" required>
+
+        <section class="menu-section">
+
+            <div class="menu-label">
+                Sistema
+            </div>
+
+
+            <button
+                class="nav-button"
+                data-page="configuracoes"
+                onclick="abrirPagina('configuracoes', this)"
+            >
+
+                <span class="nav-icon">⚙️</span>
+
+                Configurações
+
+            </button>
+
+
+            <button
+                class="nav-button"
+                data-page="ajuda"
+                onclick="abrirPagina('ajuda', this)"
+            >
+
+                <span class="nav-icon">❓</span>
+
+                Ajuda
+
+            </button>
+
         </section>
 
-        <section class="buttons">
-            <button type="submit" class="btn-cadastrar">✅ Cadastrar</button>
-            <button type="reset" class="btn-limpar">🧹 Limpar</button>
-        </section>
+    </nav>
 
-    </form>
+</aside>
 
-    <div class="contador">
-        Total de alunos cadastrados: <strong id="total">0</strong>
-    </div>
 
-    <div class="obs">
-        ⚠️ <strong>Observação importante:</strong><br>
-        Os alunos cadastrados ficam salvos neste navegador.  
-        Não apague os dados do navegador para não perder os registros.
-    </div>
+<!-- =========================================================
+     CONTEÚDO
+========================================================== -->
 
-    <footer>
-        Projeto Escolar
-    </footer>
+<main class="main">
+
+
+    <!-- HEADER -->
+
+    <header class="topbar">
+
+        <div class="page-title">
+
+            <h2 id="tituloPagina">
+                Alunos
+            </h2>
+
+            <p id="subtituloPagina">
+                Gerencie os alunos cadastrados na instituição.
+            </p>
+
+        </div>
+
+
+        <div class="top-actions">
+
+            <button
+                class="btn btn-secondary"
+                onclick="alternarTema()"
+                title="Alterar tema"
+            >
+                🌙
+            </button>
+
+
+            <button
+                class="btn btn-primary"
+                onclick="abrirCadastro()"
+            >
+
+                ＋ Novo aluno
+
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <!-- =====================================================
+         PÁGINA ALUNOS
+    ====================================================== -->
+
+    <section
+        id="page-alunos"
+        class="page active"
+    >
+
+
+        <!-- ESTATÍSTICAS -->
+
+        <div class="stats">
+
+            <article class="stat-card">
+
+                <div class="stat-top">
+
+                    <span>
+                        Total de alunos
+                    </span>
+
+                    <div class="stat-icon">
+                        👨‍🎓
+                    </div>
+
+                </div>
+
+                <strong id="totalAlunos">
+                    0
+                </strong>
+
+                <span>
+                    Cadastros registrados
+                </span>
+
+            </article>
+
+
+            <article class="stat-card">
+
+                <div class="stat-top">
+
+                    <span>
+                        Alunos ativos
+                    </span>
+
+                    <div class="stat-icon">
+                        ✅
+                    </div>
+
+                </div>
+
+                <strong id="alunosAtivos">
+                    0
+                </strong>
+
+                <span>
+                    Matriculados atualmente
+                </span>
+
+            </article>
+
+
+            <article class="stat-card">
+
+                <div class="stat-top">
+
+                    <span>
+                        Alunos inativos
+                    </span>
+
+                    <div class="stat-icon">
+                        ⏸️
+                    </div>
+
+                </div>
+
+                <strong id="alunosInativos">
+                    0
+                </strong>
+
+                <span>
+                    Cadastros inativos
+                </span>
+
+            </article>
+
+
+            <article class="stat-card">
+
+                <div class="stat-top">
+
+                    <span>
+                        Turmas
+                    </span>
+
+                    <div class="stat-icon">
+                        🏫
+                    </div>
+
+                </div>
+
+                <strong id="totalTurmas">
+                    0
+                </strong>
+
+                <span>
+                    Turmas cadastradas
+                </span>
+
+            </article>
+
+        </div>
+
+
+        <!-- TABELA -->
+
+        <article class="panel">
+
+            <header class="panel-header">
+
+                <div>
+
+                    <h3>
+                        Lista de alunos
+                    </h3>
+
+                    <p>
+                        Consulte e gerencie todos os alunos.
+                    </p>
+
+                </div>
+
+                <button
+                    class="btn btn-primary"
+                    onclick="abrirCadastro()"
+                >
+                    + Cadastrar aluno
+                </button>
+
+            </header>
+
+
+            <div class="toolbar">
+
+                <div class="search-box">
+
+                    <span>🔎</span>
+
+                    <input
+                        type="search"
+                        id="pesquisa"
+                        placeholder="Pesquisar por nome, CPF ou turma..."
+                        oninput="pesquisar()"
+                    >
+
+                </div>
+
+
+                <button
+                    class="btn btn-secondary"
+                    onclick="exportarCSV()"
+                >
+                    📥 Exportar CSV
+                </button>
+
+            </div>
+
+
+            <div class="table-wrapper">
+
+                <table>
+
+                    <caption
+                        style="display:none"
+                    >
+                        Lista de alunos
+                    </caption>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Aluno
+                            </th>
+
+                            <th>
+                                CPF
+                            </th>
+
+                            <th>
+                                Telefone
+                            </th>
+
+                            <th>
+                                Turma
+                            </th>
+
+                            <th>
+                                Nascimento
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th>
+                                Ações
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="tabelaAlunos">
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </article>
+
+    </section>
+
+
+    <!-- =====================================================
+         PÁGINA NOVO CADASTRO
+    ====================================================== -->
+
+    <section
+        id="page-novo"
+        class="page"
+    >
+
+        <article class="panel">
+
+            <header class="panel-header">
+
+                <div>
+
+                    <h3>
+                        Cadastro de novo aluno
+                    </h3>
+
+                    <p>
+                        Preencha os dados abaixo para registrar um aluno.
+                    </p>
+
+                </div>
+
+            </header>
+
+
+            <form
+                id="formAlunoPagina"
+                onsubmit="salvarAlunoPagina(event)"
+            >
+
+                <div class="form-grid">
+
+
+                    <div class="form-group full">
+
+                        <label for="nomePagina">
+                            Nome completo *
+                        </label>
+
+                        <input
+                            id="nomePagina"
+                            type="text"
+                            placeholder="Digite o nome completo"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="cpfPagina">
+                            CPF *
+                        </label>
+
+                        <input
+                            id="cpfPagina"
+                            type="text"
+                            placeholder="000.000.000-00"
+                            maxlength="14"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="nascimentoPagina">
+                            Data de nascimento *
+                        </label>
+
+                        <input
+                            id="nascimentoPagina"
+                            type="date"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="emailPagina">
+                            E-mail
+                        </label>
+
+                        <input
+                            id="emailPagina"
+                            type="email"
+                            placeholder="aluno@email.com"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="telefonePagina">
+                            Telefone
+                        </label>
+
+                        <input
+                            id="telefonePagina"
+                            type="tel"
+                            placeholder="(00) 00000-0000"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="turmaPagina">
+                            Turma
+                        </label>
+
+                        <select id="turmaPagina">
+
+                            <option value="">
+                                Selecione uma turma
+                            </option>
+
+                            <option>
+                                1º Ano A
+                            </option>
+
+                            <option>
+                                1º Ano B
+                            </option>
+
+                            <option>
+                                2º Ano A
+                            </option>
+
+                            <option>
+                                2º Ano B
+                            </option>
+
+                            <option>
+                                3º Ano A
+                            </option>
+
+                            <option>
+                                3º Ano B
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="statusPagina">
+                            Status
+                        </label>
+
+                        <select id="statusPagina">
+
+                            <option value="Ativo">
+                                Ativo
+                            </option>
+
+                            <option value="Inativo">
+                                Inativo
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group full">
+
+                        <label for="enderecoPagina">
+                            Endereço
+                        </label>
+
+                        <textarea
+                            id="enderecoPagina"
+                            placeholder="Rua, número, bairro, cidade..."
+                        ></textarea>
+
+                    </div>
+
+
+                </div>
+
+
+                <footer class="form-footer">
+
+                    <button
+                        type="reset"
+                        class="btn btn-secondary"
+                    >
+                        Limpar
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                    >
+                        💾 Salvar aluno
+                    </button>
+
+                </footer>
+
+            </form>
+
+        </article>
+
+    </section>
+
+
+    <!-- =====================================================
+         PÁGINA TURMAS
+    ====================================================== -->
+
+    <section
+        id="page-turmas"
+        class="page"
+    >
+
+        <div class="panel">
+
+            <header class="panel-header">
+
+                <div>
+
+                    <h3>
+                        Turmas
+                    </h3>
+
+                    <p>
+                        Visualize as turmas da instituição.
+                    </p>
+
+                </div>
+
+                <button
+                    class="btn btn-primary"
+                    onclick="novaTurma()"
+                >
+                    + Nova turma
+                </button>
+
+            </header>
+
+
+            <div class="cards-grid">
+
+                <article class="info-card">
+
+                    <div class="big-icon">
+                        📚
+                    </div>
+
+                    <h3>
+                        1º Ano A
+                    </h3>
+
+                    <p>
+                        Ensino Fundamental<br>
+                        Alunos: <strong id="turma1">0</strong>
+                    </p>
+
+                </article>
+
+
+                <article class="info-card">
+
+                    <div class="big-icon">
+                        📘
+                    </div>
+
+                    <h3>
+                        1º Ano B
+                    </h3>
+
+                    <p>
+                        Ensino Fundamental<br>
+                        Alunos: <strong id="turma2">0</strong>
+                    </p>
+
+                </article>
+
+
+                <article class="info-card">
+
+                    <div class="big-icon">
+                        📕
+                    </div>
+
+                    <h3>
+                        2º Ano A
+                    </h3>
+
+                    <p>
+                        Ensino Fundamental<br>
+                        Alunos: <strong id="turma3">0</strong>
+                    </p>
+
+                </article>
+
+
+                <article class="info-card">
+
+                    <div class="big-icon">
+                        📗
+                    </div>
+
+                    <h3>
+                        2º Ano B
+                    </h3>
+
+                    <p>
+                        Ensino Fundamental<br>
+                        Alunos: <strong id="turma4">0</strong>
+                    </p>
+
+                </article>
+
+
+                <article class="info-card">
+
+                    <div class="big-icon">
+                        📙
+                    </div>
+
+                    <h3>
+                        3º Ano A
+                    </h3>
+
+                    <p>
+                        Ensino Médio<br>
+                        Alunos: <strong id="turma5">0</strong>
+                    </p>
+
+                </article>
+
+
+                <article class="info-card">
+
+                    <div class="big-icon">
+                        📓
+                    </div>
+
+                    <h3>
+                        3º Ano B
+                    </h3>
+
+                    <p>
+                        Ensino Médio<br>
+                        Alunos: <strong id="turma6">0</strong>
+                    </p>
+
+                </article>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         PÁGINA PROFESSORES
+    ====================================================== -->
+
+    <section
+        id="page-professores"
+        class="page"
+    >
+
+        <article class="panel">
+
+            <header class="panel-header">
+
+                <div>
+
+                    <h3>
+                        Professores
+                    </h3>
+
+                    <p>
+                        Equipe docente da instituição.
+                    </p>
+
+                </div>
+
+                <button
+                    class="btn btn-primary"
+                    onclick="novoProfessor()"
+                >
+                    + Novo professor
+                </button>
+
+            </header>
+
+
+            <div class="cards-grid">
+
+                <article class="info-card">
+
+                    <div class="big-icon">
+                        👨‍🏫
+                    </div>
+
+                    <h3>
+                        Professor de Matemática
+                    </h3>
+
+                    <p>
+                        Responsável pelas disciplinas de Matemática.
+                    </p>
+
+                    <br>
+
+                    <span class="badge active">
+                        ● Ativo
+                    </span>
+
+                </article>
+
+
+                <article class="info-card">
+
+                    <div class="big-icon">
+                        👩‍🏫
+                    </div>
+
+                    <h3>
+                        Professora de Português
+                    </h3>
+
+                    <p>
+                        Responsável pelas disciplinas de Língua Portuguesa.
+                    </p>
+
+                    <br>
+
+                    <span class="badge active">
+                        ● Ativo
+                    </span>
+
+                </article>
+
+
+                <article class="info-card">
+
+                    <div class="big-icon">
+                        👨‍🏫
+                    </div>
+
+                    <h3>
+                        Professor de História
+                    </h3>
+
+                    <p>
+                        Responsável pelas disciplinas de História.
+                    </p>
+
+                    <br>
+
+                    <span class="badge active">
+                        ● Ativo
+                    </span>
+
+                </article>
+
+            </div>
+
+        </article>
+
+    </section>
+
+
+    <!-- =====================================================
+         PÁGINA RELATÓRIOS
+    ====================================================== -->
+
+    <section
+        id="page-relatorios"
+        class="page"
+    >
+
+        <div class="report-grid">
+
+
+            <article class="report-card">
+
+                <h3>
+                    👨‍🎓 Total de alunos
+                </h3>
+
+                <p style="margin-top:10px;color:var(--text-light)">
+                    Quantidade atual de alunos cadastrados.
+                </p>
+
+                <strong
+                    id="relTotal"
+                    style="display:block;font-size:35px;margin-top:15px"
+                >
+                    0
+                </strong>
+
+            </article>
+
+
+            <article class="report-card">
+
+                <h3>
+                    📈 Taxa de alunos ativos
+                </h3>
+
+                <p
+                    id="porcentagemAtivos"
+                    style="margin-top:10px;color:var(--text-light)"
+                >
+                    0%
+                </p>
+
+                <div class="progress">
+
+                    <span
+                        id="barraAtivos"
+                        style="width:0%"
+                    ></span>
+
+                </div>
+
+            </article>
+
+
+            <article class="report-card">
+
+                <h3>
+                    🏫 Distribuição por turma
+                </h3>
+
+                <br>
+
+                <div id="relTurmas">
+                    Nenhum aluno cadastrado.
+                </div>
+
+            </article>
+
+
+            <article class="report-card">
+
+                <h3>
+                    📋 Status dos cadastros
+                </h3>
+
+                <br>
+
+                <p>
+                    Ativos:
+                    <strong id="relAtivos">
+                        0
+                    </strong>
+                </p>
+
+                <br>
+
+                <p>
+                    Inativos:
+                    <strong id="relInativos">
+                        0
+                    </strong>
+                </p>
+
+            </article>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         PÁGINA CONFIGURAÇÕES
+    ====================================================== -->
+
+    <section
+        id="page-configuracoes"
+        class="page"
+    >
+
+        <article class="panel">
+
+            <header class="panel-header">
+
+                <div>
+
+                    <h3>
+                        Configurações
+                    </h3>
+
+                    <p>
+                        Personalize o sistema.
+                    </p>
+
+                </div>
+
+            </header>
+
+
+            <div class="setting">
+
+                <div>
+
+                    <h4>
+                        🌙 Tema escuro
+                    </h4>
+
+                    <p>
+                        Ative o modo escuro da interface.
+                    </p>
+
+                </div>
+
+
+                <label class="switch">
+
+                    <input
+                        id="darkSwitch"
+                        type="checkbox"
+                        onchange="alternarTema(true)"
+                    >
+
+                    <span class="slider"></span>
+
+                </label>
+
+            </div>
+
+
+            <div class="setting">
+
+                <div>
+
+                    <h4>
+                        🔔 Notificações
+                    </h4>
+
+                    <p>
+                        Mostrar notificações do sistema.
+                    </p>
+
+                </div>
+
+
+                <label class="switch">
+
+                    <input
+                        id="notificationSwitch"
+                        type="checkbox"
+                        checked
+                    >
+
+                    <span class="slider"></span>
+
+                </label>
+
+            </div>
+
+
+            <div class="setting">
+
+                <div>
+
+                    <h4>
+                        💾 Armazenamento local
+                    </h4>
+
+                    <p>
+                        Os alunos são armazenados neste navegador.
+                    </p>
+
+                </div>
+
+
+                <button
+                    class="btn btn-danger"
+                    onclick="limparDados()"
+                >
+                    Limpar dados
+                </button>
+
+            </div>
+
+        </article>
+
+    </section>
+
+
+    <!-- =====================================================
+         PÁGINA AJUDA
+    ====================================================== -->
+
+    <section
+        id="page-ajuda"
+        class="page"
+    >
+
+        <article class="panel">
+
+            <header class="panel-header">
+
+                <div>
+
+                    <h3>
+                        Central de ajuda
+                    </h3>
+
+                    <p>
+                        Tire suas dúvidas sobre o sistema.
+                    </p>
+
+                </div>
+
+            </header>
+
+
+            <details open>
+
+                <summary>
+                    Como cadastrar um aluno?
+                </summary>
+
+                <p>
+                    Clique em "Novo cadastro" no menu lateral,
+                    preencha os dados do aluno e clique em
+                    "Salvar aluno".
+                </p>
+
+            </details>
+
+
+            <details>
+
+                <summary>
+                    Onde os alunos são armazenados?
+                </summary>
+
+                <p>
+                    Os dados são armazenados no localStorage
+                    do navegador. Isso permite que os dados
+                    permaneçam disponíveis mesmo depois de
+                    fechar a página.
+                </p>
+
+            </details>
+
+
+            <details>
+
+                <summary>
+                    Como editar um aluno?
+                </summary>
+
+                <p>
+                    Na página de alunos, clique no botão
+                    ✏️ correspondente ao aluno que deseja editar.
+                </p>
+
+            </details>
+
+
+            <details>
+
+                <summary>
+                    Como excluir um aluno?
+                </summary>
+
+                <p>
+                    Clique no botão 🗑️ ao lado do aluno.
+                    O sistema pedirá confirmação antes de
+                    excluir o cadastro.
+                </p>
+
+            </details>
+
+
+            <details>
+
+                <summary>
+                    Posso exportar os dados?
+                </summary>
+
+                <p>
+                    Sim. Na página de alunos existe o botão
+                    "Exportar CSV", que gera uma planilha
+                    com os alunos cadastrados.
+                </p>
+
+            </details>
+
+        </article>
+
+    </section>
 
 </main>
 
+
+<!-- =========================================================
+     MODAL
+========================================================== -->
+
+<dialog
+    id="modalAluno"
+    class="modal"
+>
+
+    <div class="modal-box">
+
+        <header class="modal-header">
+
+            <h2 id="modalTitulo">
+                Cadastrar aluno
+            </h2>
+
+            <button
+                class="close"
+                onclick="fecharModal()"
+                type="button"
+            >
+                ×
+            </button>
+
+        </header>
+
+
+        <form
+            id="formModal"
+            onsubmit="salvarAlunoModal(event)"
+        >
+
+            <div class="form-grid">
+
+
+                <div class="form-group full">
+
+                    <label>
+                        Nome completo
+                    </label>
+
+                    <input
+                        id="modalNome"
+                        type="text"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        CPF
+                    </label>
+
+                    <input
+                        id="modalCPF"
+                        type="text"
+                        maxlength="14"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Data de nascimento
+                    </label>
+
+                    <input
+                        id="modalNascimento"
+                        type="date"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        E-mail
+                    </label>
+
+                    <input
+                        id="modalEmail"
+                        type="email"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Telefone
+                    </label>
+
+                    <input
+                        id="modalTelefone"
+                        type="tel"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Turma
+                    </label>
+
+                    <select id="modalTurma">
+
+                        <option value="">
+                            Selecione
+                        </option>
+
+                        <option>1º Ano A</option>
+                        <option>1º Ano B</option>
+                        <option>2º Ano A</option>
+                        <option>2º Ano B</option>
+                        <option>3º Ano A</option>
+                        <option>3º Ano B</option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Status
+                    </label>
+
+                    <select id="modalStatus">
+
+                        <option>
+                            Ativo
+                        </option>
+
+                        <option>
+                            Inativo
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group full">
+
+                    <label>
+                        Endereço
+                    </label>
+
+                    <textarea
+                        id="modalEndereco"
+                    ></textarea>
+
+                </div>
+
+            </div>
+
+
+            <footer class="form-footer">
+
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    onclick="fecharModal()"
+                >
+                    Cancelar
+                </button>
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    💾 Salvar
+                </button>
+
+            </footer>
+
+        </form>
+
+    </div>
+
+</dialog>
+
+
+<!-- =========================================================
+     TOAST
+========================================================== -->
+
+<output
+    id="toast"
+    class="toast"
+    aria-live="polite"
+></output>
+
+
+<!-- =========================================================
+     JAVASCRIPT
+========================================================== -->
+
 <script>
-    const form = document.getElementById("formAluno");
-    const total = document.getElementById("total");
 
-    let alunos = JSON.parse(localStorage.getItem("alunos")) || [];
+    /* =====================================================
+       BANCO DE DADOS LOCAL
+    ====================================================== */
 
-    function atualizarTotal() {
-        total.textContent = alunos.length;
+    let alunos =
+        JSON.parse(
+            localStorage.getItem("eduAlunos")
+        ) || [];
+
+    let alunoEditando = null;
+
+
+    /* =====================================================
+       ELEMENTOS
+    ====================================================== */
+
+    const modal =
+        document.getElementById("modalAluno");
+
+
+    /* =====================================================
+       NAVEGAÇÃO
+    ====================================================== */
+
+    function abrirPagina(pagina, botao) {
+
+        document
+            .querySelectorAll(".page")
+            .forEach(page => {
+
+                page.classList.remove("active");
+
+            });
+
+
+        const destino =
+            document.getElementById(
+                "page-" + pagina
+            );
+
+        if (destino) {
+
+            destino.classList.add("active");
+
+        }
+
+
+        document
+            .querySelectorAll(".nav-button")
+            .forEach(btn => {
+
+                btn.classList.remove("active");
+
+            });
+
+
+        if (botao) {
+
+            botao.classList.add("active");
+
+        } else {
+
+            const menu =
+                document.querySelector(
+                    `[data-page="${pagina}"]`
+                );
+
+            if (menu) {
+
+                menu.classList.add("active");
+
+            }
+
+        }
+
+
+        const titulos = {
+
+            alunos: [
+                "Alunos",
+                "Gerencie os alunos cadastrados na instituição."
+            ],
+
+            novo: [
+                "Novo cadastro",
+                "Cadastre um novo aluno."
+            ],
+
+            turmas: [
+                "Turmas",
+                "Gerencie as turmas da instituição."
+            ],
+
+            professores: [
+                "Professores",
+                "Equipe docente da instituição."
+            ],
+
+            relatorios: [
+                "Relatórios",
+                "Acompanhe os indicadores do sistema."
+            ],
+
+            configuracoes: [
+                "Configurações",
+                "Personalize o sistema."
+            ],
+
+            ajuda: [
+                "Ajuda",
+                "Central de ajuda do sistema."
+            ]
+
+        };
+
+
+        if (titulos[pagina]) {
+
+            document.getElementById(
+                "tituloPagina"
+            ).textContent =
+                titulos[pagina][0];
+
+
+            document.getElementById(
+                "subtituloPagina"
+            ).textContent =
+                titulos[pagina][1];
+
+        }
+
+
+        if (pagina === "relatorios") {
+
+            atualizarRelatorios();
+
+        }
+
+
+        if (pagina === "turmas") {
+
+            atualizarTurmas();
+
+        }
+
+
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+
     }
 
-    atualizarTotal();
 
-    form.addEventListener("submit", function(e) {
-        e.preventDefault();
+    /* =====================================================
+       MODAL
+    ====================================================== */
 
-        const nome = document.getElementById("nome").value;
-        const idade = document.getElementById("idade").value;
+    function abrirCadastro(index = null) {
+
+        alunoEditando = index;
+
+
+        document.getElementById(
+            "modalTitulo"
+        ).textContent =
+            index === null
+                ? "Cadastrar novo aluno"
+                : "Editar aluno";
+
+
+        if (index !== null) {
+
+            const aluno =
+                alunos[index];
+
+
+            document.getElementById(
+                "modalNome"
+            ).value =
+                aluno.nome;
+
+            document.getElementById(
+                "modalCPF"
+            ).value =
+                aluno.cpf;
+
+            document.getElementById(
+                "modalNascimento"
+            ).value =
+                aluno.nascimento;
+
+            document.getElementById(
+                "modalEmail"
+            ).value =
+                aluno.email || "";
+
+            document.getElementById(
+                "modalTelefone"
+            ).value =
+                aluno.telefone || "";
+
+            document.getElementById(
+                "modalTurma"
+            ).value =
+                aluno.turma || "";
+
+            document.getElementById(
+                "modalStatus"
+            ).value =
+                aluno.status;
+
+            document.getElementById(
+                "modalEndereco"
+            ).value =
+                aluno.endereco || "";
+
+        } else {
+
+            document
+                .getElementById("formModal")
+                .reset();
+
+        }
+
+
+        modal.showModal();
+
+        modal.classList.add("show");
+
+    }
+
+
+    function fecharModal() {
+
+        modal.close();
+
+        modal.classList.remove("show");
+
+        alunoEditando = null;
+
+    }
+
+
+    /* =====================================================
+       SALVAR PELO MODAL
+    ====================================================== */
+
+    function salvarAlunoModal(event) {
+
+        event.preventDefault();
+
 
         const aluno = {
-            nome,
-            idade
+
+            nome:
+                document.getElementById(
+                    "modalNome"
+                ).value.trim(),
+
+            cpf:
+                document.getElementById(
+                    "modalCPF"
+                ).value.trim(),
+
+            nascimento:
+                document.getElementById(
+                    "modalNascimento"
+                ).value,
+
+            email:
+                document.getElementById(
+                    "modalEmail"
+                ).value.trim(),
+
+            telefone:
+                document.getElementById(
+                    "modalTelefone"
+                ).value.trim(),
+
+            turma:
+                document.getElementById(
+                    "modalTurma"
+                ).value,
+
+            status:
+                document.getElementById(
+                    "modalStatus"
+                ).value,
+
+            endereco:
+                document.getElementById(
+                    "modalEndereco"
+                ).value.trim()
+
         };
+
+
+        if (alunoEditando === null) {
+
+            alunos.push(aluno);
+
+            mostrarToast(
+                "Aluno cadastrado com sucesso! ✅"
+            );
+
+        } else {
+
+            alunos[alunoEditando] =
+                aluno;
+
+            mostrarToast(
+                "Aluno atualizado com sucesso! ✨"
+            );
+
+        }
+
+
+        salvarDados();
+
+        fecharModal();
+
+        atualizarTudo();
+
+    }
+
+
+    /* =====================================================
+       CADASTRO PELA PÁGINA
+    ====================================================== */
+
+    function salvarAlunoPagina(event) {
+
+        event.preventDefault();
+
+
+        const aluno = {
+
+            nome:
+                document.getElementById(
+                    "nomePagina"
+                ).value.trim(),
+
+            cpf:
+                document.getElementById(
+                    "cpfPagina"
+                ).value.trim(),
+
+            nascimento:
+                document.getElementById(
+                    "nascimentoPagina"
+                ).value,
+
+            email:
+                document.getElementById(
+                    "emailPagina"
+                ).value.trim(),
+
+            telefone:
+                document.getElementById(
+                    "telefonePagina"
+                ).value.trim(),
+
+            turma:
+                document.getElementById(
+                    "turmaPagina"
+                ).value,
+
+            status:
+                document.getElementById(
+                    "statusPagina"
+                ).value,
+
+            endereco:
+                document.getElementById(
+                    "enderecoPagina"
+                ).value.trim()
+
+        };
+
 
         alunos.push(aluno);
 
-        localStorage.setItem("alunos", JSON.stringify(alunos));
+        salvarDados();
 
-        atualizarTotal();
+        event.target.reset();
 
-        alert("Aluno cadastrado com sucesso!");
+        atualizarTudo();
 
-        form.reset();
-    });
+
+        mostrarToast(
+            "Aluno cadastrado com sucesso! 🎓"
+        );
+
+
+        abrirPagina(
+            "alunos"
+        );
+
+    }
+
+
+    /* =====================================================
+       SALVAR LOCALSTORAGE
+    ====================================================== */
+
+    function salvarDados() {
+
+        localStorage.setItem(
+            "eduAlunos",
+            JSON.stringify(alunos)
+        );
+
+    }
+
+
+    /* =====================================================
+       TABELA
+    ====================================================== */
+
+    function atualizarTabela(lista = alunos) {
+
+        const tabela =
+            document.getElementById(
+                "tabelaAlunos"
+            );
+
+
+        tabela.innerHTML = "";
+
+
+        if (lista.length === 0) {
+
+            tabela.innerHTML = `
+
+                <tr>
+
+                    <td
+                        colspan="7"
+                        style="
+                            text-align:center;
+                            padding:45px;
+                            color:var(--text-light)
+                        "
+                    >
+
+                        👨‍🎓
+
+                        <br><br>
+
+                        Nenhum aluno encontrado.
+
+                    </td>
+
+                </tr>
+
+            `;
+
+            return;
+
+        }
+
+
+        lista.forEach(
+            (aluno) => {
+
+                const index =
+                    alunos.indexOf(aluno);
+
+
+                const iniciais =
+                    aluno.nome
+                    .split(" ")
+                    .filter(Boolean)
+                    .slice(0, 2)
+                    .map(
+                        nome =>
+                            nome[0]
+                    )
+                    .join("")
+                    .toUpperCase();
+
+
+                const status =
+                    aluno.status === "Ativo"
+                        ? "active"
+                        : "inactive";
+
+
+                const linha =
+                    document.createElement("tr");
+
+
+                linha.innerHTML = `
+
+                    <td>
+
+                        <div class="person">
+
+                            <div class="person-avatar">
+                                ${iniciais}
+                            </div>
+
+                            <div>
+
+                                <strong>
+                                    ${escapar(
+                                        aluno.nome
+                                    )}
+                                </strong>
+
+                                <small>
+                                    ${escapar(
+                                        aluno.email ||
+                                        "Sem e-mail"
+                                    )}
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                    </td>
+
+
+                    <td>
+                        ${escapar(aluno.cpf)}
+                    </td>
+
+
+                    <td>
+                        ${escapar(
+                            aluno.telefone || "-"
+                        )}
+                    </td>
+
+
+                    <td>
+                        ${escapar(
+                            aluno.turma || "-"
+                        )}
+                    </td>
+
+
+                    <td>
+                        ${formatarData(
+                            aluno.nascimento
+                        )}
+                    </td>
+
+
+                    <td>
+
+                        <span class="badge ${status}">
+
+                            ●
+                            ${escapar(
+                                aluno.status
+                            )}
+
+                        </span>
+
+                    </td>
+
+
+                    <td>
+
+                        <div class="actions">
+
+                            <button
+                                class="icon-btn edit"
+                                title="Editar aluno"
+                                onclick="abrirCadastro(${index})"
+                            >
+                                ✏️
+                            </button>
+
+
+                            <button
+                                class="icon-btn delete"
+                                title="Excluir aluno"
+                                onclick="excluirAluno(${index})"
+                            >
+                                🗑️
+                            </button>
+
+                        </div>
+
+                    </td>
+
+                `;
+
+
+                tabela.appendChild(
+                    linha
+                );
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       PESQUISA
+    ====================================================== */
+
+    function pesquisar() {
+
+        const termo =
+            document
+            .getElementById(
+                "pesquisa"
+            )
+            .value
+            .toLowerCase()
+            .trim();
+
+
+        const resultado =
+            alunos.filter(
+                aluno =>
+
+                    aluno.nome
+                        .toLowerCase()
+                        .includes(termo)
+
+                    ||
+
+                    aluno.cpf
+                        .toLowerCase()
+                        .includes(termo)
+
+                    ||
+
+                    (aluno.turma || "")
+                        .toLowerCase()
+                        .includes(termo)
+
+            );
+
+
+        atualizarTabela(
+            resultado
+        );
+
+    }
+
+
+    /* =====================================================
+       EXCLUIR
+    ====================================================== */
+
+    function excluirAluno(index) {
+
+        const aluno =
+            alunos[index];
+
+
+        const confirmar =
+            confirm(
+                `Deseja excluir o aluno "${aluno.nome}"?`
+            );
+
+
+        if (!confirmar)
+            return;
+
+
+        alunos.splice(
+            index,
+            1
+        );
+
+
+        salvarDados();
+
+        atualizarTudo();
+
+
+        mostrarToast(
+            "Aluno excluído com sucesso! 🗑️"
+        );
+
+    }
+
+
+    /* =====================================================
+       ESTATÍSTICAS
+    ====================================================== */
+
+    function atualizarEstatisticas() {
+
+        const total =
+            alunos.length;
+
+
+        const ativos =
+            alunos.filter(
+                aluno =>
+                    aluno.status === "Ativo"
+            ).length;
+
+
+        const inativos =
+            alunos.filter(
+                aluno =>
+                    aluno.status === "Inativo"
+            ).length;
+
+
+        const turmas =
+            new Set(
+                alunos
+                    .map(
+                        aluno =>
+                            aluno.turma
+                    )
+                    .filter(Boolean)
+            ).size;
+
+
+        document.getElementById(
+            "totalAlunos"
+        ).textContent =
+            total;
+
+
+        document.getElementById(
+            "alunosAtivos"
+        ).textContent =
+            ativos;
+
+
+        document.getElementById(
+            "alunosInativos"
+        ).textContent =
+            inativos;
+
+
+        document.getElementById(
+            "totalTurmas"
+        ).textContent =
+            turmas;
+
+    }
+
+
+    /* =====================================================
+       TURMAS
+    ====================================================== */
+
+    function atualizarTurmas() {
+
+        const nomes = [
+
+            "1º Ano A",
+            "1º Ano B",
+            "2º Ano A",
+            "2º Ano B",
+            "3º Ano A",
+            "3º Ano B"
+
+        ];
+
+
+        nomes.forEach(
+            (nome, index) => {
+
+                const quantidade =
+                    alunos.filter(
+                        aluno =>
+                            aluno.turma === nome
+                    ).length;
+
+
+                const elemento =
+                    document.getElementById(
+                        "turma" +
+                        (index + 1)
+                    );
+
+
+                if (elemento) {
+
+                    elemento.textContent =
+                        quantidade;
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       RELATÓRIOS
+    ====================================================== */
+
+    function atualizarRelatorios() {
+
+        const total =
+            alunos.length;
+
+
+        const ativos =
+            alunos.filter(
+                a =>
+                    a.status === "Ativo"
+            ).length;
+
+
+        const inativos =
+            alunos.filter(
+                a =>
+                    a.status === "Inativo"
+            ).length;
+
+
+        const porcentagem =
+            total === 0
+                ? 0
+                : Math.round(
+                    ativos / total * 100
+                );
+
+
+        document.getElementById(
+            "relTotal"
+        ).textContent =
+            total;
+
+
+        document.getElementById(
+            "relAtivos"
+        ).textContent =
+            ativos;
+
+
+        document.getElementById(
+            "relInativos"
+        ).textContent =
+            inativos;
+
+
+        document.getElementById(
+            "porcentagemAtivos"
+        ).textContent =
+            porcentagem + "%";
+
+
+        document.getElementById(
+            "barraAtivos"
+        ).style.width =
+            porcentagem + "%";
+
+
+        const turmas = {};
+
+
+        alunos.forEach(
+            aluno => {
+
+                if (!aluno.turma)
+                    return;
+
+
+                turmas[aluno.turma] =
+                    (turmas[aluno.turma] || 0)
+                    + 1;
+
+            }
+        );
+
+
+        const container =
+            document.getElementById(
+                "relTurmas"
+            );
+
+
+        if (
+            Object.keys(turmas).length === 0
+        ) {
+
+            container.textContent =
+                "Nenhum aluno cadastrado.";
+
+            return;
+
+        }
+
+
+        container.innerHTML =
+            Object.entries(turmas)
+            .map(
+                ([turma, quantidade]) => `
+
+                    <p style="
+                        display:flex;
+                        justify-content:space-between;
+                        padding:8px 0;
+                        border-bottom:1px solid var(--border)
+                    ">
+
+                        <span>
+                            ${escapar(turma)}
+                        </span>
+
+                        <strong>
+                            ${quantidade}
+                        </strong>
+
+                    </p>
+
+                `
+            )
+            .join("");
+
+    }
+
+
+    /* =====================================================
+       EXPORTAR CSV
+    ====================================================== */
+
+    function exportarCSV() {
+
+        if (alunos.length === 0) {
+
+            mostrarToast(
+                "Não existem alunos para exportar."
+            );
+
+            return;
+
+        }
+
+
+        let csv =
+            "Nome,CPF,Nascimento,Email,Telefone,Turma,Status,Endereco\n";
+
+
+        alunos.forEach(
+            aluno => {
+
+                csv += [
+
+                    aluno.nome,
+                    aluno.cpf,
+                    aluno.nascimento,
+                    aluno.email,
+                    aluno.telefone,
+                    aluno.turma,
+                    aluno.status,
+                    aluno.endereco
+
+                ]
+                .map(
+                    valor =>
+                        `"${String(
+                            valor || ""
+                        ).replace(
+                            /"/g,
+                            '""'
+                        )}"`
+                )
+                .join(",")
+                + "\n";
+
+            }
+        );
+
+
+        const blob =
+            new Blob(
+                ["\ufeff" + csv],
+                {
+                    type:
+                        "text/csv;charset=utf-8;"
+                }
+            );
+
+
+        const url =
+            URL.createObjectURL(
+                blob
+            );
+
+
+        const link =
+            document.createElement("a");
+
+
+        link.href = url;
+
+        link.download =
+            "alunos.csv";
+
+
+        link.click();
+
+
+        URL.revokeObjectURL(
+            url
+        );
+
+
+        mostrarToast(
+            "Arquivo CSV exportado! 📥"
+        );
+
+    }
+
+
+    /* =====================================================
+       TEMA
+    ====================================================== */
+
+    function alternarTema(configuracao = false) {
+
+        document.body.classList.toggle(
+            "dark"
+        );
+
+
+        const escuro =
+            document.body.classList.contains(
+                "dark"
+            );
+
+
+        localStorage.setItem(
+            "temaEscuro",
+            escuro
+        );
+
+
+        const switchTema =
+            document.getElementById(
+                "darkSwitch"
+            );
+
+
+        if (switchTema) {
+
+            switchTema.checked =
+                escuro;
+
+        }
+
+
+        if (configuracao) {
+
+            mostrarToast(
+                escuro
+                    ? "Modo escuro ativado 🌙"
+                    : "Modo claro ativado ☀️"
+            );
+
+        }
+
+    }
+
+
+    /* =====================================================
+       NOVA TURMA
+    ====================================================== */
+
+    function novaTurma() {
+
+        mostrarToast(
+            "Área de novas turmas pronta para integração. 🏫"
+        );
+
+    }
+
+
+    /* =====================================================
+       NOVO PROFESSOR
+    ====================================================== */
+
+    function novoProfessor() {
+
+        mostrarToast(
+            "Cadastro de professores pronto para integração. 👨‍🏫"
+        );
+
+    }
+
+
+    /* =====================================================
+       LIMPAR DADOS
+    ====================================================== */
+
+    function limparDados() {
+
+        const confirmar =
+            confirm(
+                "ATENÇÃO!\n\nIsso excluirá todos os alunos cadastrados neste navegador.\n\nDeseja continuar?"
+            );
+
+
+        if (!confirmar)
+            return;
+
+
+        alunos = [];
+
+
+        salvarDados();
+
+        atualizarTudo();
+
+
+        mostrarToast(
+            "Todos os dados foram apagados."
+        );
+
+    }
+
+
+    /* =====================================================
+       TOAST
+    ====================================================== */
+
+    let toastTimer;
+
+
+    function mostrarToast(mensagem) {
+
+        const toast =
+            document.getElementById(
+                "toast"
+            );
+
+
+        toast.textContent =
+            mensagem;
+
+
+        toast.classList.add(
+            "show"
+        );
+
+
+        clearTimeout(
+            toastTimer
+        );
+
+
+        toastTimer =
+            setTimeout(
+                () => {
+
+                    toast.classList.remove(
+                        "show"
+                    );
+
+                },
+                3000
+            );
+
+    }
+
+
+    /* =====================================================
+       FORMATAR DATA
+    ====================================================== */
+
+    function formatarData(data) {
+
+        if (!data)
+            return "-";
+
+
+        const partes =
+            data.split("-");
+
+
+        if (partes.length !== 3)
+            return data;
+
+
+        return (
+            partes[2]
+            + "/"
+            + partes[1]
+            + "/"
+            + partes[0]
+        );
+
+    }
+
+
+    /* =====================================================
+       ESCAPAR HTML
+    ====================================================== */
+
+    function escapar(texto) {
+
+        return String(
+            texto || ""
+        )
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+    }
+
+
+    /* =====================================================
+       ATUALIZAR SISTEMA
+    ====================================================== */
+
+    function atualizarTudo() {
+
+        atualizarTabela();
+
+        atualizarEstatisticas();
+
+        atualizarTurmas();
+
+        atualizarRelatorios();
+
+    }
+
+
+    /* =====================================================
+       CARREGAR TEMA
+    ====================================================== */
+
+    if (
+        localStorage.getItem(
+            "temaEscuro"
+        ) === "true"
+    ) {
+
+        document.body.classList.add(
+            "dark"
+        );
+
+        document.getElementById(
+            "darkSwitch"
+        ).checked = true;
+
+    }
+
+
+    /* =====================================================
+       MÁSCARA CPF
+    ====================================================== */
+
+    document.addEventListener(
+        "input",
+        function(event) {
+
+            if (
+                event.target.id ===
+                    "modalCPF"
+                ||
+                event.target.id ===
+                    "cpfPagina"
+            ) {
+
+                let valor =
+                    event.target.value
+                    .replace(
+                        /\D/g,
+                        ""
+                    );
+
+
+                valor =
+                    valor.substring(
+                        0,
+                        11
+                    );
+
+
+                valor =
+                    valor.replace(
+                        /(\d{3})(\d)/,
+                        "$1.$2"
+                    );
+
+
+                valor =
+                    valor.replace(
+                        /(\d{3})(\d)/,
+                        "$1.$2"
+                    );
+
+
+                valor =
+                    valor.replace(
+                        /(\d{3})(\d{1,2})$/,
+                        "$1-$2"
+                    );
+
+
+                event.target.value =
+                    valor;
+
+            }
+
+        }
+    );
+
+
+    /* =====================================================
+       FECHAR MODAL CLICANDO FORA
+    ====================================================== */
+
+    modal.addEventListener(
+        "click",
+        function(event) {
+
+            if (
+                event.target === modal
+            ) {
+
+                fecharModal();
+
+            }
+
+        }
+    );
+
+
+    /* =====================================================
+       INICIALIZAÇÃO
+    ====================================================== */
+
+    atualizarTudo();
+
 </script>
 
-<script src="script.js"></script></body>
+
+</body>
+
 </html>
-<form id="formAluno">
-    <strong id="total">0</strong>
