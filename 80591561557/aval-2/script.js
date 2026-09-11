@@ -1,21 +1,17 @@
 ```javascript
-// Botão Leia Mais
-function lerMais(titulo) {
-    alert("Você escolheu ler: " + titulo);
-}
-
-// Botão Curtir
-function curtir(botao) {
-    let curtidas = Number(botao.dataset.curtidas);
-
-    curtidas++;
-
-    botao.dataset.curtidas = curtidas;
-    botao.textContent = "❤️ Curtir (" + curtidas + ")";
+function mostrarMensagem() {
+    alert("Olá, Ananda! Obrigado por visitar o meu blog 💜");
 }
 
 // Mensagem no console
-window.addEventListener("load", function () {
-    console.log("Blog carregado com sucesso!");
+console.log("Blog da Ananda carregado com sucesso!");
+
+// Efeito simples ao clicar nos links do menu
+const links = document.querySelectorAll("nav a");
+
+links.forEach(link => {
+    link.addEventListener("click", function() {
+        console.log("Você clicou em: " + this.textContent);
+    });
 });
 ```
