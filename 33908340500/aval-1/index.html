@@ -3,74 +3,198 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Controle de Estoque</title>
+    <title>StockFlow - Sistema de Estoque</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="style.css">
-<script src="https://cdn.tailwindcss.com"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="style.css" rel="stylesheet"></head>
+
 <body>
 
-    <div class="container">
-        <header>
-            <h1>📦 Controle de Estoque</h1>
-            <p>Gerencie seus produtos de forma simples e rápida.</p>
-        </header>
-
-        <div class="grid-layout">
-            <!-- Formulário de Cadastro -->
-            <section class="card">
-                <h2>Cadastrar Produto</h2>
-                <form id="form-cadastro">
-                    <div class="form-group">
-                        <label for="codigo">Código:</label>
-                        <input type="text" id="codigo" required placeholder="Ex: P001">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="descricao">Descrição:</label>
-                        <input type="text" id="descricao" required placeholder="Ex: Camiseta Básica">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="quantidade">Quantidade:</label>
-                        <input type="number" id="quantidade" min="0" required placeholder="Ex: 10">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="valor">Valor (R\$):</label>
-                        <input type="number" id="valor" min="0.01" step="0.01" required placeholder="Ex: 49.90">
-                    </div>
-
-                    <button type="submit" class="btn btn-primary">Cadastrar Produto</button>
-                </form>
-            </section>
-
-            <!-- Lista de Produtos -->
-            <section class="card">
-                <h2>Produtos no Estoque</h2>
-                <div class="table-responsive">
-                    <table id="tabela-estoque">
-                        <thead>
-                            <tr>
-                                <th>Cód</th>
-                                <th>Descrição</th>
-                                <th>Qtd</th>
-                                <th>Valor (R\$)</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Os produtos serão inseridos aqui via JavaScript -->
-                            <tr id="linha-vazia">
-                                <td colspan="5" style="text-align: center; color: #777;">Nenhum produto cadastrado.</td>
-                            </tr>
-                        </tbody>
-                    </table>
+    <header class="header">
+        <div class="container header-content">
+            <div class="logo">
+                <div class="logo-icon">📦</div>
+                <div>
+                    <h1>Stock<span>Flow</span></h1>
+                    <p>Gestão de Estoque</p>
                 </div>
-            </section>
+            </div>
         </div>
-    </div>
+    </header>
+
+    <main class="container">
+
+        <section class="hero">
+            <div>
+                <span class="badge">SISTEMA DE ESTOQUE</span>
+                <h2>Controle seus produtos<br><span>de forma simples.</span></h2>
+                <p>
+                    Cadastre, consulte e atualize seus produtos
+                    de maneira rápida e organizada.
+                </p>
+            </div>
+        </section>
+
+        <section class="dashboard">
+
+            <div class="stats">
+
+                <div class="stat-card">
+                    <div class="stat-icon blue">📦</div>
+                    <div>
+                        <span>Total de produtos</span>
+                        <strong id="totalProdutos">0</strong>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon green">📊</div>
+                    <div>
+                        <span>Itens em estoque</span>
+                        <strong id="totalItens">0</strong>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon purple">💰</div>
+                    <div>
+                        <span>Valor do estoque</span>
+                        <strong id="valorEstoque">R\$ 0,00</strong>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="content-grid">
+
+                <!-- CADASTRO -->
+                <section class="card form-card">
+                    <div class="card-title">
+                        <div>
+                            <h3>📋 Cadastrar produto</h3>
+                            <p>Adicione um novo produto ao estoque.</p>
+                        </div>
+                    </div>
+
+                    <form id="produtoForm">
+
+                        <div class="input-group">
+                            <label for="codigo">Código</label>
+                            <input
+                                type="text"
+                                id="codigo"
+                                placeholder="Ex: P001"
+                                required
+                            >
+                        </div>
+
+                        <div class="input-group">
+                            <label for="descricao">Descrição</label>
+                            <input
+                                type="text"
+                                id="descricao"
+                                placeholder="Nome do produto"
+                                required
+                            >
+                        </div>
+
+                        <div class="form-row">
+
+                            <div class="input-group">
+                                <label for="quantidade">Quantidade</label>
+                                <input
+                                    type="number"
+                                    id="quantidade"
+                                    min="0"
+                                    placeholder="0"
+                                    required
+                                >
+                            </div>
+
+                            <div class="input-group">
+                                <label for="valor">Valor (R\$)</label>
+                                <input
+                                    type="number"
+                                    id="valor"
+                                    min="0"
+                                    step="0.01"
+                                    placeholder="0,00"
+                                    required
+                                >
+                            </div>
+
+                        </div>
+
+                        <button type="submit" class="btn-primary">
+                            <span>＋</span> Cadastrar produto
+                        </button>
+
+                    </form>
+                </section>
+
+                <!-- LISTAGEM -->
+                <section class="card products-card">
+
+                    <div class="card-title products-header">
+                        <div>
+                            <h3>📦 Produtos cadastrados</h3>
+                            <p>Visualize e gerencie seu estoque.</p>
+                        </div>
+
+                        <span class="product-count" id="contadorProdutos">
+                            0 produtos
+                        </span>
+                    </div>
+
+                    <div class="table-container">
+
+                        <table>
+
+                            <thead>
+                                <tr>
+                                    <th>Código</th>
+                                    <th>Descrição</th>
+                                    <th>Quantidade</th>
+                                    <th>Valor</th>
+                                    <th>Total</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="listaProdutos">
+                                <!-- Produtos inseridos pelo JavaScript -->
+                            </tbody>
+
+                        </table>
+
+                        <div id="estadoVazio" class="empty-state">
+                            <div>📦</div>
+                            <h4>Nenhum produto cadastrado</h4>
+                            <p>Cadastre seu primeiro produto usando o formulário.</p>
+                        </div>
+
+                    </div>
+
+                </section>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <div id="toast" class="toast"></div>
+
+    <footer>
+        <p>StockFlow © 2026 — Sistema de Controle de Estoque</p>
+    </footer>
 
     <script src="script.js"></script>
+
 <script src="script.js"></script></body>
 </html>$0
