@@ -1,1 +1,3 @@
-https://javascriptacademy.dev
+function mostrarMensagem() {
+    alert("Olá! JavaScript funcionando!");
+}
