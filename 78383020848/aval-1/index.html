@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link href="style.css" rel="stylesheet">
+</head>
+<body>
+  const audio = document.getElementById("audio");
+const play = document.getElementById("play");
+const prev = document.getElementById("prev");
+const next = document.getElementById("next");
+
+const title = document.getElementById("title");
+const artist = document.getElementById("artist");
+
+const progress = document.getElementById("progress");
+const current = document.getElementById("current");
+const duration = document.getElementById("duration");
+const volume = document.getElementById("volume");
+
+const album = document.querySelector(".album");
+
+const songs = [
+  {
+      title: "Minha Música",
+          artist: "Artista 1",
+              file: "musica1.mp3"
+                },
+                  {
+                      title: "Noite",
+                          artist: "Artista 2",
+                              file: "musica2.mp3"
+                                },
+                                  {
+                                      title: "Melodia",
+                                          artist: "Artista 3",
+                                              file: "musica3.mp3"
+                                                }
+                                                ];
+
+                                                let songIndex = 0;
+
+                                                function carregarMusica() {
+                                                  const song = songs[songIndex];
+
+                                                    title.textContent = song.title;
+                                                      artist.textContent = song.artist;
+                                                        audio.src = song.file;
+
+                                                          progress.value = 0;
+                                                          }
+
+                                                          function tocarMusica() {
+                                                            audio.play();
+                                                              play.textContent = "⏸";
+                                                                album.style.animationPlayState = "running";
+                                                                }
+
+                                                                function pausarMusica() {
+                                                                  audio.pause();
+                                                                    play.textContent = "▶";
+                                                                      album.style.animationPlayState = "paused";
+                                                                      }
+
+                                                                      play.addEventListener("click", () => {
+                                                                        if (audio.paused) {
+                                                                            tocarMusica();
+                                                                              } else {
+                                                                                  pausarMusica();
+                                                                                    }
+                                                                                    });
+
+                                                                                    next.addEventListener("click", () => {
+                                                                                      songIndex++;
+
+                                                                                        if (songIndex >= songs.length) {
+                                                                                            songIndex = 0;
+                                                                                              }
+
+                                                                                                carregarMusica();
+                                                                                                  tocarMusica();
+                                                                                                  });
+
+                                                                                                  prev.addEventListener("click", () => {
+                                                                                                    songIndex--;
+
+                                                                                                      if (songIndex < 0) {
+                                                                                                          songIndex = songs.length - 1;
+                                                                                                            }
+
+                                                                                                              carregarMusica();
+                                                                                                                tocarMusica();
+                                                                                                                });
+
+                                                                                                                audio.addEventListener("loadedmetadata", () => {
+                                                                                                                  progress.max = audio.duration;
+                                                                                                                    duration.textContent = formatarTempo(audio.duration);
+                                                                                                                    });
+
+                                                                                                                    audio.addEventListener("timeupdate", () => {
+                                                                                                                      progress.value = audio.currentTime;
+                                                                                                                        current.textContent = formatarTempo(audio.currentTime);
+                                                                                                                        });
+
+                                                                                                                        progress.addEventListener("input", () => {
+                                                                                                                          audio.currentTime = progress.value;
+                                                                                                                          });
+
+                                                                                                                          volume.addEventListener("input", () => {
+                                                                                                                            audio.volume = volume.value;
+                                                                                                                            });
+
+                                                                                                                            audio.addEventListener("ended", () => {
+                                                                                                                              next.click();
+                                                                                                                              });
+
+                                                                                                                              function formatarTempo(segundos) {
+                                                                                                                                const minutos = Math.floor(segundos / 60);
+                                                                                                                                  const segundosRestantes = Math.floor(segundos % 60);
+
+                                                                                                                                    return `${minutos}:${segundosRestantes
+                                                                                                                                        .toString()
+                                                                                                                                            .padStart(2, "0")}`;
+                                                                                                                                            }
+
+                                                                                                                                            carregarMusica();
+  <script src="script.js"></script>
+  
+</body>
+</html>
