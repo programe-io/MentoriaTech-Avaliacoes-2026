@@ -1,19 +1,10 @@
 ```javascript
-function curtir(botao) {
-    botao.classList.toggle("curtido");
+let curtidas = 0;
 
-    if (botao.classList.contains("curtido")) {
-        botao.innerHTML = "❤️ Curtido";
-    } else {
-        botao.innerHTML = "🤍 Curtir";
-    }
-}
+function curtir() {
+    curtidas++;
 
-function comentar() {
-    const comentario = prompt("Digite seu comentário:");
-
-    if (comentario) {
-        alert("Comentário enviado! 💕");
-    }
+    document.getElementById("curtidas").textContent =
+        curtidas + (curtidas === 1 ? " curtida" : " curtidas");
 }
 ```
