@@ -2,256 +2,4939 @@
 <html lang="pt-BR">
 
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Frequência Escolar</title>
 
-<style>
-* {
-    margin: 0;
-        padding: 0;
+    <!-- =====================================================
+         CONFIGURAÇÕES DO DOCUMENTO
+    ====================================================== -->
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Sistema profissional de controle de frequência escolar"
+    >
+
+    <meta
+        name="author"
+        content="EduControl"
+    >
+
+    <meta
+        name="keywords"
+        content="frequência escolar, alunos, presença, escola, educação"
+    >
+
+    <title>EduControl | Frequência Escolar</title>
+
+
+    <!-- =====================================================
+         CSS
+    ====================================================== -->
+
+    <style>
+
+        /* =================================================
+           RESET
+        ================================================= */
+
+        * {
+            margin: 0;
+            padding: 0;
             box-sizing: border-box;
-                font-family: Arial, sans-serif;
-                }
+        }
 
-                body {
-                    height: 100vh;
-                        display: flex;
-                            flex-direction: column;
-                                justify-content: center;
-                                    align-items: center;
-                                        background: linear-gradient(135deg, #0f172a, #1e293b);
-                                        }
+        html {
+            scroll-behavior: smooth;
+        }
 
-                                        .titulo-principal {
-                                            color: white;
-                                                font-weight: bold;
-                                                    font-size: 40px;
-                                                        margin-bottom: 10px;
-                                                            text-align: center;
-                                                            }
+        body {
+            font-family:
+                Inter,
+                Arial,
+                Helvetica,
+                sans-serif;
 
-                                                            nav {
-                                                                margin-bottom: 10px;
-                                                                }
+            background: #f4f7fb;
+            color: #172033;
+            min-height: 100vh;
+        }
 
-                                                                nav ul {
-                                                                    list-style: none;
-                                                                        display: flex;
-                                                                            gap: 15px;
-                                                                            }
+        button,
+        input,
+        select,
+        textarea {
+            font: inherit;
+        }
 
-                                                                            nav a {
-                                                                                color: white;
-                                                                                    text-decoration: none;
-                                                                                        font-weight: bold;
-                                                                                        }
+        button {
+            cursor: pointer;
+        }
 
-                                                                                        h1, p, label {
-                                                                                            color: white;
-                                                                                                font-weight: bold;
-                                                                                                }
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
 
-                                                                                                .container {
-                                                                                                    background: rgba(255,255,255,0.05);
-                                                                                                        padding: 25px;
-                                                                                                            border-radius: 20px;
-                                                                                                                width: 360px;
-                                                                                                                    box-shadow: 0 0 25px rgba(0,0,0,0.5);
-                                                                                                                    }
+        /* =================================================
+           VARIÁVEIS
+        ================================================= */
 
-                                                                                                                    .subtitulo {
-                                                                                                                        text-align: center;
-                                                                                                                            font-size: 14px;
-                                                                                                                                margin-bottom: 20px;
-                                                                                                                                }
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #7c3aed;
+            --success: #16a34a;
+            --warning: #f59e0b;
+            --danger: #dc2626;
 
-                                                                                                                                label {
-                                                                                                                                    display: block;
-                                                                                                                                        margin-top: 10px;
-                                                                                                                                        }
+            --dark: #172033;
+            --gray: #64748b;
+            --light: #f4f7fb;
+            --white: #ffffff;
 
-                                                                                                                                        input {
-                                                                                                                                            width: 100%;
-                                                                                                                                                padding: 12px;
-                                                                                                                                                    border-radius: 12px;
-                                                                                                                                                        border: none;
-                                                                                                                                                            margin-top: 5px;
-                                                                                                                                                            }
+            --border: #e2e8f0;
 
-                                                                                                                                                            .buttons {
-                                                                                                                                                                display: flex;
-                                                                                                                                                                    gap: 10px;
-                                                                                                                                                                        margin-top: 15px;
-                                                                                                                                                                        }
+            --shadow:
+                0 10px 30px rgba(15, 23, 42, .08);
 
-                                                                                                                                                                        button {
-                                                                                                                                                                            flex: 1;
-                                                                                                                                                                                padding: 12px;
-                                                                                                                                                                                    border-radius: 12px;
-                                                                                                                                                                                        border: none;
-                                                                                                                                                                                            cursor: pointer;
-                                                                                                                                                                                                font-weight: bold;
-                                                                                                                                                                                                }
+            --radius: 18px;
+        }
 
-                                                                                                                                                                                                .verificar {
-                                                                                                                                                                                                    background: #2563eb;
-                                                                                                                                                                                                        color: white;
-                                                                                                                                                                                                        }
 
-                                                                                                                                                                                                        .limpar {
-                                                                                                                                                                                                            background: #4b5563;
-                                                                                                                                                                                                                color: white;
-                                                                                                                                                                                                                }
+        /* =================================================
+           SIDEBAR
+        ================================================= */
 
-                                                                                                                                                                                                                .info {
-                                                                                                                                                                                                                    display: flex;
-                                                                                                                                                                                                                        justify-content: space-between;
-                                                                                                                                                                                                                            margin-top: 15px;
-                                                                                                                                                                                                                            }
+        .sidebar {
 
-                                                                                                                                                                                                                            .box {
-                                                                                                                                                                                                                                background: rgba(255,255,255,0.1);
-                                                                                                                                                                                                                                    padding: 10px;
-                                                                                                                                                                                                                                        border-radius: 12px;
-                                                                                                                                                                                                                                            width: 48%;
-                                                                                                                                                                                                                                                text-align: center;
-                                                                                                                                                                                                                                                }
+            width: 270px;
 
-                                                                                                                                                                                                                                                .resultado {
-                                                                                                                                                                                                                                                    margin-top: 15px;
-                                                                                                                                                                                                                                                        background: rgba(255,255,255,0.1);
-                                                                                                                                                                                                                                                            padding: 10px;
-                                                                                                                                                                                                                                                                border-radius: 12px;
-                                                                                                                                                                                                                                                                    text-align: center;
-                                                                                                                                                                                                                                                                    }
-                                                                                                                                                                                                                                                                    </style>
+            position: fixed;
 
-                                                                                                                                                                                                                                                                    <script src="https://cdn.tailwindcss.com"></script>
+            left: 0;
+            top: 0;
+            bottom: 0;
+
+            background:
+                linear-gradient(
+                    180deg,
+                    #111827,
+                    #1e293b
+                );
+
+            color: white;
+
+            z-index: 1000;
+
+            display: flex;
+
+            flex-direction: column;
+
+            transition: .3s;
+        }
+
+
+        .logo {
+
+            height: 90px;
+
+            padding: 20px;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+
+            border-bottom:
+                1px solid
+                rgba(255,255,255,.08);
+        }
+
+
+        .logo-icon {
+
+            width: 46px;
+            height: 46px;
+
+            border-radius: 14px;
+
+            display: grid;
+
+            place-items: center;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #2563eb,
+                    #7c3aed
+                );
+
+            font-size: 23px;
+        }
+
+
+        .logo h1 {
+            font-size: 18px;
+        }
+
+
+        .logo small {
+            color: #94a3b8;
+        }
+
+
+        .menu {
+
+            padding: 25px 15px;
+
+            flex: 1;
+        }
+
+
+        .menu-title {
+
+            color: #64748b;
+
+            font-size: 11px;
+
+            font-weight: bold;
+
+            text-transform: uppercase;
+
+            letter-spacing: 1px;
+
+            padding:
+                0 15px 12px;
+        }
+
+
+        .menu-button {
+
+            width: 100%;
+
+            border: 0;
+
+            background: transparent;
+
+            color: #cbd5e1;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 13px;
+
+            padding: 13px 15px;
+
+            margin-bottom: 6px;
+
+            border-radius: 12px;
+
+            text-align: left;
+
+            transition: .2s;
+        }
+
+
+        .menu-button:hover,
+        .menu-button.active {
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #2563eb,
+                    #4f46e5
+                );
+
+            color: white;
+
+            transform:
+                translateX(3px);
+        }
+
+
+        .menu-icon {
+
+            width: 24px;
+
+            text-align: center;
+
+            font-size: 18px;
+        }
+
+
+        .sidebar-footer {
+
+            padding: 18px;
+
+            border-top:
+                1px solid
+                rgba(255,255,255,.08);
+
+            color: #94a3b8;
+
+            font-size: 12px;
+        }
+
+
+        /* =================================================
+           ÁREA PRINCIPAL
+        ================================================= */
+
+        .main {
+
+            margin-left: 270px;
+
+            width:
+                calc(100% - 270px);
+
+            min-height: 100vh;
+        }
+
+
+        /* =================================================
+           HEADER
+        ================================================= */
+
+        .header {
+
+            height: 90px;
+
+            background: white;
+
+            border-bottom:
+                1px solid
+                var(--border);
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            padding:
+                0 35px;
+
+            position: sticky;
+
+            top: 0;
+
+            z-index: 900;
+        }
+
+
+        .header-left {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 15px;
+        }
+
+
+        .mobile-menu {
+
+            display: none;
+
+            border: 0;
+
+            background: #eff6ff;
+
+            color: var(--primary);
+
+            width: 42px;
+
+            height: 42px;
+
+            border-radius: 10px;
+
+            font-size: 20px;
+        }
+
+
+        .header h2 {
+            font-size: 21px;
+        }
+
+
+        .header p {
+
+            color: var(--gray);
+
+            font-size: 13px;
+
+            margin-top: 4px;
+        }
+
+
+        .header-right {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 20px;
+        }
+
+
+        .notification {
+
+            position: relative;
+
+            font-size: 21px;
+
+            cursor: pointer;
+        }
+
+
+        .notification-count {
+
+            position: absolute;
+
+            top: -6px;
+            right: -7px;
+
+            width: 17px;
+            height: 17px;
+
+            border-radius: 50%;
+
+            background:
+                var(--danger);
+
+            color: white;
+
+            font-size: 10px;
+
+            display: grid;
+
+            place-items: center;
+        }
+
+
+        .profile {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+        }
+
+
+        .avatar {
+
+            width: 42px;
+            height: 42px;
+
+            border-radius: 50%;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #2563eb,
+                    #7c3aed
+                );
+
+            color: white;
+
+            display: grid;
+
+            place-items: center;
+
+            font-weight: bold;
+        }
+
+
+        .profile strong {
+            display: block;
+            font-size: 13px;
+        }
+
+
+        .profile small {
+            color: var(--gray);
+        }
+
+
+        /* =================================================
+           CONTAINER
+        ================================================= */
+
+        .container {
+
+            padding: 32px;
+
+            max-width: 1700px;
+
+            margin: auto;
+        }
+
+
+        .page {
+
+            display: none;
+
+            animation:
+                fade .3s ease;
+        }
+
+
+        .page.active {
+            display: block;
+        }
+
+
+        @keyframes fade {
+
+            from {
+
+                opacity: 0;
+
+                transform:
+                    translateY(8px);
+            }
+
+            to {
+
+                opacity: 1;
+
+                transform:
+                    translateY(0);
+            }
+        }
+
+
+        /* =================================================
+           TÍTULOS
+        ================================================= */
+
+        .section-title {
+            margin-bottom: 25px;
+        }
+
+
+        .section-title h2 {
+            font-size: 25px;
+        }
+
+
+        .section-title p {
+
+            color: var(--gray);
+
+            margin-top: 5px;
+        }
+
+
+        /* =================================================
+           CARDS
+        ================================================= */
+
+        .stats {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, 1fr);
+
+            gap: 20px;
+
+            margin-bottom: 25px;
+        }
+
+
+        .stat-card {
+
+            background: white;
+
+            border:
+                1px solid
+                var(--border);
+
+            border-radius:
+                var(--radius);
+
+            padding: 22px;
+
+            box-shadow:
+                var(--shadow);
+
+            display: flex;
+
+            justify-content:
+                space-between;
+
+            align-items: center;
+        }
+
+
+        .stat-info span {
+
+            color: var(--gray);
+
+            font-size: 13px;
+        }
+
+
+        .stat-info strong {
+
+            display: block;
+
+            font-size: 30px;
+
+            margin:
+                7px 0;
+        }
+
+
+        .stat-info small {
+            color: var(--success);
+        }
+
+
+        .stat-icon {
+
+            width: 58px;
+            height: 58px;
+
+            border-radius: 16px;
+
+            display: grid;
+
+            place-items: center;
+
+            font-size: 25px;
+        }
+
+
+        .blue {
+            background: #eff6ff;
+            color: #2563eb;
+        }
+
+
+        .green {
+            background: #f0fdf4;
+            color: #16a34a;
+        }
+
+
+        .orange {
+            background: #fff7ed;
+            color: #ea580c;
+        }
+
+
+        .purple {
+            background: #faf5ff;
+            color: #7c3aed;
+        }
+
+
+        /* =================================================
+           GRID
+        ================================================= */
+
+        .grid-2 {
+
+            display: grid;
+
+            grid-template-columns:
+                1.4fr 1fr;
+
+            gap: 22px;
+
+            margin-bottom: 25px;
+        }
+
+
+        .card {
+
+            background: white;
+
+            border:
+                1px solid
+                var(--border);
+
+            border-radius:
+                var(--radius);
+
+            box-shadow:
+                var(--shadow);
+
+            overflow: hidden;
+        }
+
+
+        .card-header {
+
+            padding:
+                20px 22px;
+
+            border-bottom:
+                1px solid
+                var(--border);
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content:
+                space-between;
+        }
+
+
+        .card-header h3 {
+            font-size: 17px;
+        }
+
+
+        .card-header p {
+
+            color: var(--gray);
+
+            font-size: 12px;
+
+            margin-top: 4px;
+        }
+
+
+        .card-body {
+            padding: 22px;
+        }
+
+
+        /* =================================================
+           BOTÕES
+        ================================================= */
+
+        .btn {
+
+            border: 0;
+
+            border-radius: 10px;
+
+            padding:
+                11px 17px;
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 8px;
+
+            font-weight: 600;
+
+            transition: .2s;
+        }
+
+
+        .btn:hover {
+
+            transform:
+                translateY(-1px);
+        }
+
+
+        .btn-primary {
+
+            background:
+                var(--primary);
+
+            color: white;
+        }
+
+
+        .btn-primary:hover {
+            background:
+                var(--primary-dark);
+        }
+
+
+        .btn-success {
+
+            background:
+                var(--success);
+
+            color: white;
+        }
+
+
+        .btn-danger {
+
+            background:
+                var(--danger);
+
+            color: white;
+        }
+
+
+        .btn-light {
+
+            background:
+                #f1f5f9;
+
+            color:
+                #334155;
+        }
+
+
+        /* =================================================
+           GRÁFICO
+        ================================================= */
+
+        .chart {
+
+            height: 260px;
+
+            display: flex;
+
+            align-items: flex-end;
+
+            justify-content:
+                space-around;
+
+            gap: 12px;
+
+            padding:
+                20px 5px 0;
+        }
+
+
+        .bar-column {
+
+            flex: 1;
+
+            height: 100%;
+
+            display: flex;
+
+            flex-direction: column;
+
+            justify-content:
+                flex-end;
+
+            align-items: center;
+
+            gap: 8px;
+        }
+
+
+        .bar {
+
+            width:
+                min(45px, 70%);
+
+            background:
+                linear-gradient(
+                    180deg,
+                    #2563eb,
+                    #7c3aed
+                );
+
+            border-radius:
+                8px 8px 3px 3px;
+        }
+
+
+        .bar-column small {
+            color: var(--gray);
+        }
+
+
+        /* =================================================
+           PROGRESSO
+        ================================================= */
+
+        .progress-item {
+            margin-bottom: 20px;
+        }
+
+
+        .progress-top {
+
+            display: flex;
+
+            justify-content:
+                space-between;
+
+            font-size: 13px;
+
+            margin-bottom: 8px;
+        }
+
+
+        .progress-bar {
+
+            height: 9px;
+
+            background:
+                #eef2f7;
+
+            border-radius: 20px;
+
+            overflow: hidden;
+        }
+
+
+        .progress-fill {
+
+            height: 100%;
+
+            border-radius: 20px;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #2563eb,
+                    #7c3aed
+                );
+        }
+
+
+        /* =================================================
+           FORMULÁRIOS
+        ================================================= */
+
+        .form-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 18px;
+        }
+
+
+        .form-group {
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 7px;
+        }
+
+
+        .full {
+            grid-column: 1 / -1;
+        }
+
+
+        label {
+
+            font-size: 13px;
+
+            font-weight: 600;
+
+            color: #334155;
+        }
+
+
+        input,
+        select,
+        textarea {
+
+            width: 100%;
+
+            border:
+                1px solid
+                var(--border);
+
+            background:
+                #f8fafc;
+
+            border-radius: 10px;
+
+            padding:
+                12px 13px;
+
+            outline: none;
+
+            color: var(--dark);
+
+            transition: .2s;
+        }
+
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+
+            background: white;
+
+            border-color:
+                var(--primary);
+
+            box-shadow:
+                0 0 0 3px
+                rgba(37,99,235,.1);
+        }
+
+
+        textarea {
+
+            min-height: 100px;
+
+            resize: vertical;
+        }
+
+
+        .form-actions {
+
+            margin-top: 22px;
+
+            display: flex;
+
+            gap: 10px;
+
+            justify-content:
+                flex-end;
+        }
+
+
+        /* =================================================
+           FILTROS
+        ================================================= */
+
+        .filters {
+
+            display: grid;
+
+            grid-template-columns:
+                2fr 1fr 1fr auto;
+
+            gap: 12px;
+
+            margin-bottom: 20px;
+        }
+
+
+        /* =================================================
+           TABELA
+        ================================================= */
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+
+        table {
+
+            width: 100%;
+
+            border-collapse:
+                collapse;
+
+            min-width: 850px;
+        }
+
+
+        th {
+
+            background:
+                #f8fafc;
+
+            color:
+                #64748b;
+
+            font-size: 11px;
+
+            text-transform:
+                uppercase;
+
+            letter-spacing:
+                .5px;
+
+            padding: 15px;
+
+            text-align: left;
+        }
+
+
+        td {
+
+            padding: 15px;
+
+            border-top:
+                1px solid
+                var(--border);
+
+            font-size: 13px;
+        }
+
+
+        tr:hover td {
+            background:
+                #fafcff;
+        }
+
+
+        .student {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+        }
+
+
+        .student-avatar {
+
+            width: 36px;
+            height: 36px;
+
+            border-radius: 10px;
+
+            background:
+                #eff6ff;
+
+            color:
+                #2563eb;
+
+            display: grid;
+
+            place-items: center;
+
+            font-weight: bold;
+        }
+
+
+        .student strong {
+            display: block;
+        }
+
+
+        .student small {
+            color: var(--gray);
+        }
+
+
+        .badge {
+
+            display: inline-flex;
+
+            padding:
+                5px 9px;
+
+            border-radius: 20px;
+
+            font-size: 11px;
+
+            font-weight: 700;
+        }
+
+
+        .badge-success {
+
+            background:
+                #dcfce7;
+
+            color:
+                #15803d;
+        }
+
+
+        .badge-danger {
+
+            background:
+                #fee2e2;
+
+            color:
+                #b91c1c;
+        }
+
+
+        .badge-warning {
+
+            background:
+                #fef3c7;
+
+            color:
+                #b45309;
+        }
+
+
+        .actions {
+
+            display: flex;
+
+            gap: 7px;
+        }
+
+
+        .action-btn {
+
+            border: 0;
+
+            width: 34px;
+            height: 34px;
+
+            border-radius: 8px;
+
+            display: grid;
+
+            place-items: center;
+        }
+
+
+        .edit {
+
+            background:
+                #eff6ff;
+
+            color:
+                #2563eb;
+        }
+
+
+        .delete {
+
+            background:
+                #fef2f2;
+
+            color:
+                #dc2626;
+        }
+
+
+        /* =================================================
+           MODAIS
+        ================================================= */
+
+        .modal {
+
+            display: none;
+
+            position: fixed;
+
+            inset: 0;
+
+            background:
+                rgba(15,23,42,.62);
+
+            z-index: 3000;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            padding: 20px;
+
+            backdrop-filter:
+                blur(6px);
+        }
+
+
+        .modal.show {
+            display: flex;
+        }
+
+
+        .modal-content {
+
+            width:
+                min(650px, 100%);
+
+            max-height:
+                90vh;
+
+            overflow-y: auto;
+
+            background:
+                white;
+
+            border-radius:
+                20px;
+
+            box-shadow:
+                0 30px 80px
+                rgba(0,0,0,.25);
+
+            animation:
+                modalAnimation .25s ease;
+        }
+
+
+        @keyframes modalAnimation {
+
+            from {
+
+                opacity: 0;
+
+                transform:
+                    scale(.94)
+                    translateY(15px);
+            }
+
+            to {
+
+                opacity: 1;
+
+                transform:
+                    scale(1)
+                    translateY(0);
+            }
+        }
+
+
+        .modal-header {
+
+            padding: 22px;
+
+            display: flex;
+
+            align-items:
+                flex-start;
+
+            justify-content:
+                space-between;
+
+            border-bottom:
+                1px solid
+                var(--border);
+        }
+
+
+        .modal-header h3 {
+            font-size: 19px;
+        }
+
+
+        .modal-header p {
+
+            color:
+                var(--gray);
+
+            font-size: 13px;
+
+            margin-top: 5px;
+        }
+
+
+        .close {
+
+            border: 0;
+
+            background:
+                #f1f5f9;
+
+            width: 36px;
+            height: 36px;
+
+            border-radius: 9px;
+
+            font-size: 20px;
+
+            transition: .2s;
+        }
+
+
+        .close:hover {
+
+            background:
+                #fee2e2;
+
+            color:
+                var(--danger);
+        }
+
+
+        .modal-body {
+            padding: 22px;
+        }
+
+
+        /* =================================================
+           CONFIGURAÇÕES
+        ================================================= */
+
+        .settings-section {
+
+            border:
+                1px solid
+                var(--border);
+
+            border-radius:
+                14px;
+
+            margin-bottom:
+                15px;
+
+            overflow: hidden;
+        }
+
+
+        .settings-title {
+
+            padding:
+                15px 17px;
+
+            background:
+                #f8fafc;
+
+            border-bottom:
+                1px solid
+                var(--border);
+
+            font-weight:
+                700;
+        }
+
+
+        .setting-row {
+
+            padding:
+                16px;
+
+            display: flex;
+
+            justify-content:
+                space-between;
+
+            align-items:
+                center;
+
+            gap: 20px;
+
+            border-bottom:
+                1px solid
+                #f1f5f9;
+        }
+
+
+        .setting-row:last-child {
+            border-bottom: 0;
+        }
+
+
+        .setting-info strong {
+
+            display: block;
+
+            font-size: 14px;
+        }
+
+
+        .setting-info small {
+
+            display: block;
+
+            color:
+                var(--gray);
+
+            margin-top: 4px;
+        }
+
+
+        /* =================================================
+           SWITCH
+        ================================================= */
+
+        .switch {
+
+            position: relative;
+
+            width: 48px;
+            height: 26px;
+
+            flex-shrink: 0;
+        }
+
+
+        .switch input {
+            display: none;
+        }
+
+
+        .slider {
+
+            position: absolute;
+
+            inset: 0;
+
+            background:
+                #cbd5e1;
+
+            border-radius: 30px;
+
+            transition: .25s;
+        }
+
+
+        .slider::before {
+
+            content: "";
+
+            position: absolute;
+
+            width: 20px;
+            height: 20px;
+
+            left: 3px;
+            top: 3px;
+
+            background: white;
+
+            border-radius: 50%;
+
+            transition: .25s;
+
+            box-shadow:
+                0 2px 5px
+                rgba(0,0,0,.2);
+        }
+
+
+        .switch input:checked + .slider {
+
+            background:
+                var(--primary);
+        }
+
+
+        .switch input:checked + .slider::before {
+
+            transform:
+                translateX(22px);
+        }
+
+
+        /* =================================================
+           AJUDA
+        ================================================= */
+
+        .help-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(2, 1fr);
+
+            gap: 15px;
+        }
+
+
+        .help-card {
+
+            padding: 20px;
+
+            border:
+                1px solid
+                var(--border);
+
+            border-radius:
+                15px;
+
+            transition: .2s;
+
+            cursor: pointer;
+        }
+
+
+        .help-card:hover {
+
+            border-color:
+                var(--primary);
+
+            transform:
+                translateY(-3px);
+
+            box-shadow:
+                var(--shadow);
+        }
+
+
+        .help-icon {
+
+            width: 45px;
+            height: 45px;
+
+            border-radius: 12px;
+
+            background:
+                #eff6ff;
+
+            color:
+                var(--primary);
+
+            display: grid;
+
+            place-items: center;
+
+            font-size: 21px;
+
+            margin-bottom: 12px;
+        }
+
+
+        .help-card h4 {
+            margin-bottom: 6px;
+        }
+
+
+        .help-card p {
+
+            color:
+                var(--gray);
+
+            font-size: 13px;
+
+            line-height:
+                1.5;
+        }
+
+
+        .faq {
+
+            margin-top:
+                20px;
+        }
+
+
+        .faq details {
+
+            border:
+                1px solid
+                var(--border);
+
+            border-radius:
+                10px;
+
+            margin-bottom:
+                10px;
+
+            padding:
+                14px 16px;
+        }
+
+
+        .faq summary {
+
+            cursor: pointer;
+
+            font-weight:
+                600;
+        }
+
+
+        .faq p {
+
+            color:
+                var(--gray);
+
+            font-size:
+                13px;
+
+            line-height:
+                1.6;
+
+            margin-top:
+                10px;
+        }
+
+
+        /* =================================================
+           TOAST
+        ================================================= */
+
+        .toast {
+
+            position: fixed;
+
+            right: 25px;
+
+            bottom: 25px;
+
+            background:
+                #172033;
+
+            color: white;
+
+            padding:
+                15px 19px;
+
+            border-radius:
+                12px;
+
+            box-shadow:
+                0 15px 40px
+                rgba(0,0,0,.2);
+
+            display: none;
+
+            z-index: 5000;
+
+            max-width: 350px;
+        }
+
+
+        .toast.show {
+
+            display: block;
+
+            animation:
+                toastAnimation .3s ease;
+        }
+
+
+        @keyframes toastAnimation {
+
+            from {
+
+                opacity: 0;
+
+                transform:
+                    translateY(20px);
+            }
+
+            to {
+
+                opacity: 1;
+
+                transform:
+                    translateY(0);
+            }
+        }
+
+
+        /* =================================================
+           RESPONSIVIDADE
+        ================================================= */
+
+        @media (max-width: 1100px) {
+
+            .stats {
+
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+            .grid-2 {
+
+                grid-template-columns:
+                    1fr;
+            }
+
+            .form-grid {
+
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+        }
+
+
+        @media (max-width: 800px) {
+
+            .sidebar {
+
+                transform:
+                    translateX(-100%);
+            }
+
+            .sidebar.open {
+
+                transform:
+                    translateX(0);
+            }
+
+            .main {
+
+                margin-left: 0;
+
+                width: 100%;
+            }
+
+            .mobile-menu {
+
+                display: block;
+            }
+
+            .header {
+
+                padding:
+                    0 18px;
+            }
+
+            .profile-info {
+
+                display: none;
+            }
+
+            .container {
+
+                padding:
+                    20px;
+            }
+
+            .filters {
+
+                grid-template-columns:
+                    1fr;
+            }
+        }
+
+
+        @media (max-width: 600px) {
+
+            .stats {
+
+                grid-template-columns:
+                    1fr;
+            }
+
+            .form-grid {
+
+                grid-template-columns:
+                    1fr;
+            }
+
+            .help-grid {
+
+                grid-template-columns:
+                    1fr;
+            }
+
+            .header h2 {
+
+                font-size: 17px;
+            }
+
+            .header p {
+
+                display: none;
+            }
+        }
+
+
+        /* =================================================
+           MODO ESCURO
+        ================================================= */
+
+        body.dark {
+
+            --light: #0f172a;
+
+            background:
+                #0f172a;
+
+            color:
+                #e2e8f0;
+        }
+
+
+        body.dark .header,
+        body.dark .card,
+        body.dark .stat-card,
+        body.dark .modal-content {
+
+            background:
+                #1e293b;
+
+            border-color:
+                #334155;
+
+            color:
+                #e2e8f0;
+        }
+
+
+        body.dark .header {
+
+            border-bottom-color:
+                #334155;
+        }
+
+
+        body.dark input,
+        body.dark select,
+        body.dark textarea {
+
+            background:
+                #0f172a;
+
+            color:
+                white;
+
+            border-color:
+                #334155;
+        }
+
+
+        body.dark .card-header,
+        body.dark .modal-header {
+
+            border-color:
+                #334155;
+        }
+
+
+        body.dark th {
+
+            background:
+                #0f172a;
+        }
+
+
+        body.dark td {
+
+            border-color:
+                #334155;
+        }
+
+
+        body.dark .setting-row {
+
+            border-color:
+                #334155;
+        }
+
+
+        body.dark .settings-title {
+
+            background:
+                #0f172a;
+
+            border-color:
+                #334155;
+        }
+
+
+        body.dark .help-card,
+        body.dark .faq details {
+
+            border-color:
+                #334155;
+        }
+
+    </style>
+
+<script src="https://cdn.tailwindcss.com"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="style.css" rel="stylesheet"></head>
 
-                                                                                                                                                                                                                                                                    <body>
 
-                                                                                                                                                                                                                                                                    <!-- HEADER -->
-                                                                                                                                                                                                                                                                    <header>
-                                                                                                                                                                                                                                                                        <div class="titulo-principal">FREQUÊNCIA ESCOLAR</div>
+<body>
 
-                                                                                                                                                                                                                                                                            <!-- NAV -->
-                                                                                                                                                                                                                                                                                <nav>
-                                                                                                                                                                                                                                                                                        <ul>
-                                                                                                                                                                                                                                                                                                    <li><a href="#">Início</a></li>
-                                                                                                                                                                                                                                                                                                                <li><a href="#">Alunos</a></li>
-                                                                                                                                                                                                                                                                                                                            <li><a href="#">Relatórios</a></li>
-                                                                                                                                                                                                                                                                                                                                    </ul>
-                                                                                                                                                                                                                                                                                                                                        </nav>
-                                                                                                                                                                                                                                                                                                                                        </header>
+    <!-- =====================================================
+         APLICAÇÃO
+    ====================================================== -->
 
-                                                                                                                                                                                                                                                                                                                                        <!-- MAIN -->
-                                                                                                                                                                                                                                                                                                                                        <main>
+    <div class="app">
 
-                                                                                                                                                                                                                                                                                                                                            <section class="container">
 
-                                                                                                                                                                                                                                                                                                                                                    <h1>📊 FREQUÊNCIA ESCOLAR</h1>
-                                                                                                                                                                                                                                                                                                                                                            <p class="subtitulo">CONTROLE MODERNO DE PRESENÇA</p>
+        <!-- =================================================
+             SIDEBAR
+        ================================================== -->
 
-                                                                                                                                                                                                                                                                                                                                                                    <form>
+        <aside
+            class="sidebar"
+            id="sidebar"
+        >
 
-                                                                                                                                                                                                                                                                                                                                                                                <label>QUANTIDADE DE ALUNOS</label>
-                                                                                                                                                                                                                                                                                                                                                                                            <input type="number" id="alunos">
+            <div class="logo">
 
-                                                                                                                                                                                                                                                                                                                                                                                                        <label>QUANTIDADE DE PRESENTES</label>
-                                                                                                                                                                                                                                                                                                                                                                                                                    <input type="number" id="presentes">
+                <div class="logo-icon">
+                    🎓
+                </div>
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                <label>QUANTIDADE DE FALTANTES</label>
-                                                                                                                                                                                                                                                                                                                                                                                                                                            <input type="number" id="faltantes">
+                <div>
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                        <div class="buttons">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <button type="button" class="verificar" onclick="verificar()">✔ Verificar</button>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <button type="button" class="limpar" onclick="limpar()">🧹 Limpar</button>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </div>
+                    <h1>
+                        EduControl
+                    </h1>
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            </form>
+                    <small>
+                        Gestão Escolar
+                    </small>
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <section class="info">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <div class="box">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <p>TOTAL</p>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <h2 id="total">0</h2>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            </div>
+                </div>
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <div class="box">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <p>FREQUÊNCIA</p>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <h2 id="freq">0%</h2>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            </section>
+            </div>
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <section class="resultado">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <p id="mensagem">PREENCHA OS CAMPOS E CLIQUE EM VERIFICAR.</p>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        </section>
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            </section>
+            <nav
+                class="menu"
+                aria-label="Menu principal"
+            >
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            </main>
+                <div class="menu-title">
+                    Principal
+                </div>
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <!-- FOOTER -->
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <footer>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <p>&copy; 2026 - Sistema Escolar</p>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </footer>
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <script>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                function verificar(){
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    let alunos = Number(document.getElementById("alunos").value);
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        let presentes = Number(document.getElementById("presentes").value);
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            let faltantes = Number(document.getElementById("faltantes").value);
+                <button
+                    class="menu-button active"
+                    data-page="dashboard"
+                >
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                let total = presentes + faltantes;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    document.getElementById("total").innerText = total;
+                    <span class="menu-icon">
+                        📊
+                    </span>
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        if(total !== alunos){
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                document.getElementById("mensagem").innerText = "⚠ OS VALORES NÃO BATEM!";
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        return;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            }
+                    Dashboard
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                let freq = (presentes / alunos) * 100;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    document.getElementById("freq").innerText = freq.toFixed(1) + "%";
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        document.getElementById("mensagem").innerText = "✔ CÁLCULO REALIZADO COM SUCESSO!";
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        }
+                </button>
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        function limpar(){
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            document.getElementById("alunos").value = "";
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                document.getElementById("presentes").value = "";
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    document.getElementById("faltantes").value = "";
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        document.getElementById("total").innerText = "0";
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            document.getElementById("freq").innerText = "0%";
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                document.getElementById("mensagem").innerText = "CAMPOS LIMPOS.";
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </script>
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </body>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </html>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <aside>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <h3 style="color: white; font-weight: bold; text-align:center; margin-top:20px;">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                INFORMAÇÕES
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </h3>
+                <button
+                    class="menu-button"
+                    data-page="frequencia"
+                >
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <p style="color: white; font-weight: bold; text-align:center;">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                Este sistema calcula a frequência escolar dos alunos de forma simples e rápida.
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </p>
+                    <span class="menu-icon">
+                        ✅
+                    </span>
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <ul style="color: white; font-weight: bold; text-align:center; list-style:none;">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <li>✔ Preencha todos os campos</li>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <li>✔ Clique em verificar</li>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <li>✔ Confira o resultado</li>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </ul>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <article>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <h3 style="color: white; font-weight: bold; text-align:center; margin-top:20px;">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    RELATÓRIO DE FREQUÊNCIA
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        </h3>
+                    Frequência
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <p style="color: white; font-weight: bold; text-align:center;">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    Aqui você pode visualizar um resumo da presença dos alunos.
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        </p>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <img src="" alt="Imagem">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        </article>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </aside>
+                </button>
+
+
+                <button
+                    class="menu-button"
+                    data-page="alunos"
+                >
+
+                    <span class="menu-icon">
+                        👨‍🎓
+                    </span>
+
+                    Alunos
+
+                </button>
+
+
+                <button
+                    class="menu-button"
+                    data-page="turmas"
+                >
+
+                    <span class="menu-icon">
+                        🏫
+                    </span>
+
+                    Turmas
+
+                </button>
+
+
+                <button
+                    class="menu-button"
+                    data-page="relatorios"
+                >
+
+                    <span class="menu-icon">
+                        📈
+                    </span>
+
+                    Relatórios
+
+                </button>
+
+
+                <br>
+
+
+                <div class="menu-title">
+                    Sistema
+                </div>
+
+
+                <!-- BOTÃO CONFIGURAÇÕES FUNCIONAL -->
+
+                <button
+                    class="menu-button"
+                    id="settingsButton"
+                >
+
+                    <span class="menu-icon">
+                        ⚙️
+                    </span>
+
+                    Configurações
+
+                </button>
+
+
+                <!-- BOTÃO AJUDA FUNCIONAL -->
+
+                <button
+                    class="menu-button"
+                    id="helpButton"
+                >
+
+                    <span class="menu-icon">
+                        ❓
+                    </span>
+
+                    Ajuda
+
+                </button>
+
+            </nav>
+
+
+            <footer class="sidebar-footer">
+
+                <strong>
+                    EduControl v2.0
+                </strong>
+
+                <br>
+
+                Sistema de Frequência Escolar
+
+            </footer>
+
+        </aside>
+
+
+
+        <!-- =================================================
+             MAIN
+        ================================================== -->
+
+        <main class="main">
+
+
+            <!-- HEADER -->
+
+            <header class="header">
+
+                <div class="header-left">
+
+                    <button
+                        class="mobile-menu"
+                        id="mobileMenu"
+                    >
+                        ☰
+                    </button>
+
+
+                    <div>
+
+                        <h2 id="pageTitle">
+                            Dashboard
+                        </h2>
+
+                        <p id="currentDate"></p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="header-right">
+
+
+                    <div
+                        class="notification"
+                        id="notificationButton"
+                        title="Notificações"
+                    >
+
+                        🔔
+
+                        <span
+                            class="notification-count"
+                            id="notificationCount"
+                        >
+                            3
+                        </span>
+
+                    </div>
+
+
+                    <div class="profile">
+
+                        <div class="avatar">
+                            AD
+                        </div>
+
+                        <div class="profile-info">
+
+                            <strong>
+                                Administrador
+                            </strong>
+
+                            <small>
+                                Gestor Escolar
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </header>
+
+
+
+            <!-- =================================================
+                 CONTEÚDO
+            ================================================== -->
+
+            <div class="container">
+
+
+                <!-- =================================================
+                     DASHBOARD
+                ================================================== -->
+
+                <section
+                    class="page active"
+                    id="dashboard"
+                >
+
+                    <div class="section-title">
+
+                        <h2>
+                            Visão geral
+                        </h2>
+
+                        <p>
+                            Acompanhe os principais indicadores de frequência escolar.
+                        </p>
+
+                    </div>
+
+
+                    <div class="stats">
+
+
+                        <article class="stat-card">
+
+                            <div class="stat-info">
+
+                                <span>
+                                    Total de alunos
+                                </span>
+
+                                <strong>
+                                    248
+                                </strong>
+
+                                <small>
+                                    ↑ 8% este mês
+                                </small>
+
+                            </div>
+
+                            <div class="stat-icon blue">
+                                👨‍🎓
+                            </div>
+
+                        </article>
+
+
+                        <article class="stat-card">
+
+                            <div class="stat-info">
+
+                                <span>
+                                    Presença hoje
+                                </span>
+
+                                <strong>
+                                    92%
+                                </strong>
+
+                                <small>
+                                    ↑ 3,2% comparado a ontem
+                                </small>
+
+                            </div>
+
+                            <div class="stat-icon green">
+                                ✓
+                            </div>
+
+                        </article>
+
+
+                        <article class="stat-card">
+
+                            <div class="stat-info">
+
+                                <span>
+                                    Faltas hoje
+                                </span>
+
+                                <strong>
+                                    19
+                                </strong>
+
+                                <small
+                                    style="color:#dc2626"
+                                >
+                                    ↓ 4 alunos
+                                </small>
+
+                            </div>
+
+                            <div class="stat-icon orange">
+                                ⚠
+                            </div>
+
+                        </article>
+
+
+                        <article class="stat-card">
+
+                            <div class="stat-info">
+
+                                <span>
+                                    Frequência média
+                                </span>
+
+                                <strong>
+                                    94,7%
+                                </strong>
+
+                                <small>
+                                    Excelente desempenho
+                                </small>
+
+                            </div>
+
+                            <div class="stat-icon purple">
+                                📈
+                            </div>
+
+                        </article>
+
+                    </div>
+
+
+
+                    <!-- GRÁFICOS -->
+
+                    <div class="grid-2">
+
+
+                        <article class="card">
+
+                            <header class="card-header">
+
+                                <div>
+
+                                    <h3>
+                                        Frequência semanal
+                                    </h3>
+
+                                    <p>
+                                        Percentual de presença
+                                    </p>
+
+                                </div>
+
+                                <button
+                                    class="btn btn-light"
+                                    onclick="mostrarToast('Dados atualizados com sucesso!')"
+                                >
+                                    ↻ Atualizar
+                                </button>
+
+                            </header>
+
+
+                            <div class="card-body">
+
+                                <div class="chart">
+
+                                    <div class="bar-column">
+                                        <div
+                                            class="bar"
+                                            style="height:78%"
+                                        ></div>
+                                        <small>Seg</small>
+                                    </div>
+
+                                    <div class="bar-column">
+                                        <div
+                                            class="bar"
+                                            style="height:85%"
+                                        ></div>
+                                        <small>Ter</small>
+                                    </div>
+
+                                    <div class="bar-column">
+                                        <div
+                                            class="bar"
+                                            style="height:91%"
+                                        ></div>
+                                        <small>Qua</small>
+                                    </div>
+
+                                    <div class="bar-column">
+                                        <div
+                                            class="bar"
+                                            style="height:88%"
+                                        ></div>
+                                        <small>Qui</small>
+                                    </div>
+
+                                    <div class="bar-column">
+                                        <div
+                                            class="bar"
+                                            style="height:94%"
+                                        ></div>
+                                        <small>Sex</small>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </article>
+
+
+
+                        <article class="card">
+
+                            <header class="card-header">
+
+                                <div>
+
+                                    <h3>
+                                        Frequência por turma
+                                    </h3>
+
+                                    <p>
+                                        Desempenho das turmas
+                                    </p>
+
+                                </div>
+
+                            </header>
+
+
+                            <div class="card-body">
+
+
+                                <div class="progress-item">
+
+                                    <div class="progress-top">
+
+                                        <strong>
+                                            9º Ano A
+                                        </strong>
+
+                                        <span>
+                                            97%
+                                        </span>
+
+                                    </div>
+
+                                    <div class="progress-bar">
+
+                                        <div
+                                            class="progress-fill"
+                                            style="width:97%"
+                                        ></div>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="progress-item">
+
+                                    <div class="progress-top">
+
+                                        <strong>
+                                            8º Ano B
+                                        </strong>
+
+                                        <span>
+                                            94%
+                                        </span>
+
+                                    </div>
+
+                                    <div class="progress-bar">
+
+                                        <div
+                                            class="progress-fill"
+                                            style="width:94%"
+                                        ></div>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="progress-item">
+
+                                    <div class="progress-top">
+
+                                        <strong>
+                                            7º Ano A
+                                        </strong>
+
+                                        <span>
+                                            91%
+                                        </span>
+
+                                    </div>
+
+                                    <div class="progress-bar">
+
+                                        <div
+                                            class="progress-fill"
+                                            style="width:91%"
+                                        ></div>
+
+                                    </div>
+
+                                </div>
+
+
+                            </div>
+
+                        </article>
+
+                    </div>
+
+
+
+                    <!-- ÚLTIMOS REGISTROS -->
+
+                    <article class="card">
+
+                        <header class="card-header">
+
+                            <div>
+
+                                <h3>
+                                    Últimos registros
+                                </h3>
+
+                                <p>
+                                    Frequências registradas recentemente
+                                </p>
+
+                            </div>
+
+                        </header>
+
+
+                        <div class="table-wrapper">
+
+                            <table>
+
+                                <thead>
+
+                                    <tr>
+
+                                        <th>
+                                            Aluno
+                                        </th>
+
+                                        <th>
+                                            Turma
+                                        </th>
+
+                                        <th>
+                                            Data
+                                        </th>
+
+                                        <th>
+                                            Status
+                                        </th>
+
+                                        <th>
+                                            Horário
+                                        </th>
+
+                                    </tr>
+
+                                </thead>
+
+
+                                <tbody>
+
+                                    <tr>
+
+                                        <td>
+
+                                            <div class="student">
+
+                                                <div class="student-avatar">
+                                                    AS
+                                                </div>
+
+                                                <div>
+
+                                                    <strong>
+                                                        Ana Silva
+                                                    </strong>
+
+                                                    <small>
+                                                        RA00124
+                                                    </small>
+
+                                                </div>
+
+                                            </div>
+
+                                        </td>
+
+                                        <td>
+                                            9º Ano A
+                                        </td>
+
+                                        <td>
+                                            11/09/2026
+                                        </td>
+
+                                        <td>
+
+                                            <span class="badge badge-success">
+                                                Presente
+                                            </span>
+
+                                        </td>
+
+                                        <td>
+                                            07:15
+                                        </td>
+
+                                    </tr>
+
+
+                                    <tr>
+
+                                        <td>
+
+                                            <div class="student">
+
+                                                <div class="student-avatar">
+                                                    JO
+                                                </div>
+
+                                                <div>
+
+                                                    <strong>
+                                                        João Oliveira
+                                                    </strong>
+
+                                                    <small>
+                                                        RA00125
+                                                    </small>
+
+                                                </div>
+
+                                            </div>
+
+                                        </td>
+
+                                        <td>
+                                            9º Ano A
+                                        </td>
+
+                                        <td>
+                                            11/09/2026
+                                        </td>
+
+                                        <td>
+
+                                            <span class="badge badge-danger">
+                                                Ausente
+                                            </span>
+
+                                        </td>
+
+                                        <td>
+                                            —
+                                        </td>
+
+                                    </tr>
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    </article>
+
+                </section>
+
+
+
+                <!-- =================================================
+                     FREQUÊNCIA
+                ================================================== -->
+
+                <section
+                    class="page"
+                    id="frequencia"
+                >
+
+                    <div class="section-title">
+
+                        <h2>
+                            Controle de frequência
+                        </h2>
+
+                        <p>
+                            Registre e acompanhe a presença dos alunos.
+                        </p>
+
+                    </div>
+
+
+                    <article class="card">
+
+                        <header class="card-header">
+
+                            <div>
+
+                                <h3>
+                                    Registro diário
+                                </h3>
+
+                                <p>
+                                    Controle de presença dos estudantes.
+                                </p>
+
+                            </div>
+
+                            <button
+                                class="btn btn-primary"
+                                onclick="abrirFrequencia()"
+                            >
+                                + Registrar frequência
+                            </button>
+
+                        </header>
+
+
+                        <div class="card-body">
+
+                            <div class="filters">
+
+                                <input
+                                    type="search"
+                                    id="searchFrequency"
+                                    placeholder="🔍 Pesquisar aluno..."
+                                >
+
+                                <select>
+                                    <option>
+                                        Todas as turmas
+                                    </option>
+
+                                    <option>
+                                        9º Ano A
+                                    </option>
+
+                                    <option>
+                                        8º Ano B
+                                    </option>
+
+                                </select>
+
+                                <input
+                                    type="date"
+                                    value="2026-09-11"
+                                >
+
+                                <button
+                                    class="btn btn-light"
+                                    onclick="limparBusca()"
+                                >
+                                    Limpar
+                                </button>
+
+                            </div>
+
+
+                            <div class="table-wrapper">
+
+                                <table
+                                    id="frequencyTable"
+                                >
+
+                                    <thead>
+
+                                        <tr>
+
+                                            <th>
+                                                Aluno
+                                            </th>
+
+                                            <th>
+                                                Turma
+                                            </th>
+
+                                            <th>
+                                                Data
+                                            </th>
+
+                                            <th>
+                                                Entrada
+                                            </th>
+
+                                            <th>
+                                                Status
+                                            </th>
+
+                                            <th>
+                                                Observação
+                                            </th>
+
+                                        </tr>
+
+                                    </thead>
+
+
+                                    <tbody>
+
+                                        <tr>
+
+                                            <td>
+                                                Ana Silva
+                                            </td>
+
+                                            <td>
+                                                9º Ano A
+                                            </td>
+
+                                            <td>
+                                                11/09/2026
+                                            </td>
+
+                                            <td>
+                                                07:15
+                                            </td>
+
+                                            <td>
+                                                <span class="badge badge-success">
+                                                    Presente
+                                                </span>
+                                            </td>
+
+                                            <td>
+                                                —
+                                            </td>
+
+                                        </tr>
+
+
+                                        <tr>
+
+                                            <td>
+                                                João Costa
+                                            </td>
+
+                                            <td>
+                                                9º Ano A
+                                            </td>
+
+                                            <td>
+                                                11/09/2026
+                                            </td>
+
+                                            <td>
+                                                07:42
+                                            </td>
+
+                                            <td>
+                                                <span class="badge badge-warning">
+                                                    Atrasado
+                                                </span>
+                                            </td>
+
+                                            <td>
+                                                Trânsito
+                                            </td>
+
+                                        </tr>
+
+
+                                        <tr>
+
+                                            <td>
+                                                Maria Clara
+                                            </td>
+
+                                            <td>
+                                                8º Ano B
+                                            </td>
+
+                                            <td>
+                                                11/09/2026
+                                            </td>
+
+                                            <td>
+                                                —
+                                            </td>
+
+                                            <td>
+                                                <span class="badge badge-danger">
+                                                    Ausente
+                                                </span>
+                                            </td>
+
+                                            <td>
+                                                Atestado
+                                            </td>
+
+                                        </tr>
+
+                                    </tbody>
+
+                                </table>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+                </section>
+
+
+
+                <!-- =================================================
+                     ALUNOS
+                ================================================== -->
+
+                <section
+                    class="page"
+                    id="alunos"
+                >
+
+                    <div class="section-title">
+
+                        <h2>
+                            Cadastro de alunos
+                        </h2>
+
+                        <p>
+                            Gerencie os estudantes cadastrados.
+                        </p>
+
+                    </div>
+
+
+                    <article class="card">
+
+                        <header class="card-header">
+
+                            <div>
+
+                                <h3>
+                                    Alunos cadastrados
+                                </h3>
+
+                            </div>
+
+                            <button
+                                class="btn btn-primary"
+                                onclick="abrirAluno()"
+                            >
+                                + Cadastrar aluno
+                            </button>
+
+                        </header>
+
+
+                        <div class="card-body">
+
+                            <div class="table-wrapper">
+
+                                <table
+                                    id="studentTable"
+                                >
+
+                                    <thead>
+
+                                        <tr>
+
+                                            <th>
+                                                Aluno
+                                            </th>
+
+                                            <th>
+                                                Matrícula
+                                            </th>
+
+                                            <th>
+                                                Turma
+                                            </th>
+
+                                            <th>
+                                                Frequência
+                                            </th>
+
+                                            <th>
+                                                Status
+                                            </th>
+
+                                            <th>
+                                                Ações
+                                            </th>
+
+                                        </tr>
+
+                                    </thead>
+
+
+                                    <tbody>
+
+                                        <tr>
+
+                                            <td>
+                                                Ana Silva
+                                            </td>
+
+                                            <td>
+                                                202600124
+                                            </td>
+
+                                            <td>
+                                                9º Ano A
+                                            </td>
+
+                                            <td>
+                                                97%
+                                            </td>
+
+                                            <td>
+                                                <span class="badge badge-success">
+                                                    Ativo
+                                                </span>
+                                            </td>
+
+                                            <td>
+
+                                                <div class="actions">
+
+                                                    <button
+                                                        class="action-btn edit"
+                                                        onclick="mostrarToast('Aluno selecionado para edição.')"
+                                                    >
+                                                        ✏️
+                                                    </button>
+
+                                                    <button
+                                                        class="action-btn delete"
+                                                        onclick="excluirLinha(this)"
+                                                    >
+                                                        🗑️
+                                                    </button>
+
+                                                </div>
+
+                                            </td>
+
+                                        </tr>
+
+                                    </tbody>
+
+                                </table>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+                </section>
+
+
+
+                <!-- =================================================
+                     TURMAS
+                ================================================== -->
+
+                <section
+                    class="page"
+                    id="turmas"
+                >
+
+                    <div class="section-title">
+
+                        <h2>
+                            Turmas
+                        </h2>
+
+                        <p>
+                            Gerenciamento das turmas escolares.
+                        </p>
+
+                    </div>
+
+
+                    <div class="stats">
+
+                        <article class="stat-card">
+
+                            <div class="stat-info">
+
+                                <span>
+                                    Total de turmas
+                                </span>
+
+                                <strong>
+                                    12
+                                </strong>
+
+                            </div>
+
+                            <div class="stat-icon blue">
+                                🏫
+                            </div>
+
+                        </article>
+
+
+                        <article class="stat-card">
+
+                            <div class="stat-info">
+
+                                <span>
+                                    Alunos
+                                </span>
+
+                                <strong>
+                                    248
+                                </strong>
+
+                            </div>
+
+                            <div class="stat-icon green">
+                                👨‍🎓
+                            </div>
+
+                        </article>
+
+
+                        <article class="stat-card">
+
+                            <div class="stat-info">
+
+                                <span>
+                                    Professores
+                                </span>
+
+                                <strong>
+                                    28
+                                </strong>
+
+                            </div>
+
+                            <div class="stat-icon purple">
+                                👨‍🏫
+                            </div>
+
+                        </article>
+
+
+                        <article class="stat-card">
+
+                            <div class="stat-info">
+
+                                <span>
+                                    Frequência
+                                </span>
+
+                                <strong>
+                                    94,7%
+                                </strong>
+
+                            </div>
+
+                            <div class="stat-icon orange">
+                                📊
+                            </div>
+
+                        </article>
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- =================================================
+                     RELATÓRIOS
+                ================================================== -->
+
+                <section
+                    class="page"
+                    id="relatorios"
+                >
+
+                    <div class="section-title">
+
+                        <h2>
+                            Relatórios
+                        </h2>
+
+                        <p>
+                            Gere relatórios de frequência escolar.
+                        </p>
+
+                    </div>
+
+
+                    <article class="card">
+
+                        <header class="card-header">
+
+                            <div>
+
+                                <h3>
+                                    Gerar relatório
+                                </h3>
+
+                                <p>
+                                    Escolha o período desejado.
+                                </p>
+
+                            </div>
+
+                        </header>
+
+
+                        <div class="card-body">
+
+                            <form
+                                id="reportForm"
+                            >
+
+                                <div class="form-grid">
+
+                                    <div class="form-group">
+
+                                        <label>
+                                            Turma
+                                        </label>
+
+                                        <select>
+
+                                            <option>
+                                                Todas
+                                            </option>
+
+                                            <option>
+                                                9º Ano A
+                                            </option>
+
+                                            <option>
+                                                8º Ano B
+                                            </option>
+
+                                        </select>
+
+                                    </div>
+
+
+                                    <div class="form-group">
+
+                                        <label>
+                                            Data inicial
+                                        </label>
+
+                                        <input
+                                            type="date"
+                                            required
+                                        >
+
+                                    </div>
+
+
+                                    <div class="form-group">
+
+                                        <label>
+                                            Data final
+                                        </label>
+
+                                        <input
+                                            type="date"
+                                            required
+                                        >
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="form-actions">
+
+                                    <button
+                                        type="button"
+                                        class="btn btn-light"
+                                        onclick="window.print()"
+                                    >
+                                        🖨️ Imprimir
+                                    </button>
+
+
+                                    <button
+                                        type="submit"
+                                        class="btn btn-primary"
+                                    >
+                                        📊 Gerar relatório
+                                    </button>
+
+                                </div>
+
+                            </form>
+
+                        </div>
+
+                    </article>
+
+                </section>
+
+            </div>
+
+        </main>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         MODAL CONFIGURAÇÕES
+    ====================================================== -->
+
+    <div
+        class="modal"
+        id="settingsModal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="settingsTitle"
+    >
+
+        <div class="modal-content">
+
+            <header class="modal-header">
+
+                <div>
+
+                    <h3 id="settingsTitle">
+                        ⚙️ Configurações
+                    </h3>
+
+                    <p>
+                        Personalize o funcionamento do sistema.
+                    </p>
+
+                </div>
+
+
+                <button
+                    class="close"
+                    id="closeSettings"
+                    aria-label="Fechar configurações"
+                >
+                    ×
+                </button>
+
+            </header>
+
+
+            <div class="modal-body">
+
+
+                <!-- GERAL -->
+
+                <section class="settings-section">
+
+                    <div class="settings-title">
+                        ⚙️ Geral
+                    </div>
+
+
+                    <div class="setting-row">
+
+                        <div class="setting-info">
+
+                            <strong>
+                                Notificações
+                            </strong>
+
+                            <small>
+                                Receber alertas sobre faltas e atrasos.
+                            </small>
+
+                        </div>
+
+
+                        <label class="switch">
+
+                            <input
+                                type="checkbox"
+                                id="notificationsToggle"
+                                checked
+                            >
+
+                            <span class="slider"></span>
+
+                        </label>
+
+                    </div>
+
+
+                    <div class="setting-row">
+
+                        <div class="setting-info">
+
+                            <strong>
+                                Modo escuro
+                            </strong>
+
+                            <small>
+                                Alterar a aparência do sistema.
+                            </small>
+
+                        </div>
+
+
+                        <label class="switch">
+
+                            <input
+                                type="checkbox"
+                                id="darkModeToggle"
+                            >
+
+                            <span class="slider"></span>
+
+                        </label>
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- FREQUÊNCIA -->
+
+                <section class="settings-section">
+
+                    <div class="settings-title">
+                        📋 Frequência
+                    </div>
+
+
+                    <div class="setting-row">
+
+                        <div class="setting-info">
+
+                            <strong>
+                                Registrar horário automaticamente
+                            </strong>
+
+                            <small>
+                                Utiliza o horário atual ao registrar presença.
+                            </small>
+
+                        </div>
+
+
+                        <label class="switch">
+
+                            <input
+                                type="checkbox"
+                                id="autoTimeToggle"
+                                checked
+                            >
+
+                            <span class="slider"></span>
+
+                        </label>
+
+                    </div>
+
+
+                    <div class="setting-row">
+
+                        <div class="setting-info">
+
+                            <strong>
+                                Permitir edição de registros
+                            </strong>
+
+                            <small>
+                                Permite alterar registros já cadastrados.
+                            </small>
+
+                        </div>
+
+
+                        <label class="switch">
+
+                            <input
+                                type="checkbox"
+                                id="editToggle"
+                                checked
+                            >
+
+                            <span class="slider"></span>
+
+                        </label>
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- ESCOLA -->
+
+                <section class="settings-section">
+
+                    <div class="settings-title">
+                        🏫 Dados da escola
+                    </div>
+
+
+                    <div class="form-grid">
+
+                        <div class="form-group full">
+
+                            <label>
+                                Nome da escola
+                            </label>
+
+                            <input
+                                type="text"
+                                id="schoolName"
+                                value="Escola EduControl"
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label>
+                                Ano letivo
+                            </label>
+
+                            <input
+                                type="number"
+                                id="schoolYear"
+                                value="2026"
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label>
+                                Turno principal
+                            </label>
+
+                            <select id="schoolShift">
+
+                                <option>
+                                    Manhã
+                                </option>
+
+                                <option>
+                                    Tarde
+                                </option>
+
+                                <option>
+                                    Noite
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <div class="form-actions">
+
+                    <button
+                        class="btn btn-light"
+                        id="cancelSettings"
+                    >
+                        Cancelar
+                    </button>
+
+
+                    <button
+                        class="btn btn-primary"
+                        id="saveSettings"
+                    >
+                        💾 Salvar configurações
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         MODAL AJUDA
+    ====================================================== -->
+
+    <div
+        class="modal"
+        id="helpModal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="helpTitle"
+    >
+
+        <div class="modal-content">
+
+            <header class="modal-header">
+
+                <div>
+
+                    <h3 id="helpTitle">
+                        ❓ Central de Ajuda
+                    </h3>
+
+                    <p>
+                        Encontre informações para utilizar o EduControl.
+                    </p>
+
+                </div>
+
+
+                <button
+                    class="close"
+                    id="closeHelp"
+                    aria-label="Fechar ajuda"
+                >
+                    ×
+                </button>
+
+            </header>
+
+
+            <div class="modal-body">
+
+
+                <div class="help-grid">
+
+
+                    <article
+                        class="help-card"
+                        onclick="mostrarToast('Abra Frequência para registrar a presença dos alunos.')"
+                    >
+
+                        <div class="help-icon">
+                            ✅
+                        </div>
+
+                        <h4>
+                            Como registrar frequência?
+                        </h4>
+
+                        <p>
+                            Acesse o menu Frequência e clique em
+                            "Registrar frequência".
+                        </p>
+
+                    </article>
+
+
+                    <article
+                        class="help-card"
+                        onclick="mostrarToast('Na área Alunos você pode cadastrar e gerenciar estudantes.')"
+                    >
+
+                        <div class="help-icon">
+                            👨‍🎓
+                        </div>
+
+                        <h4>
+                            Cadastro de alunos
+                        </h4>
+
+                        <p>
+                            Utilize a área Alunos para visualizar
+                            e administrar os estudantes.
+                        </p>
+
+                    </article>
+
+
+                    <article
+                        class="help-card"
+                        onclick="mostrarToast('Use Relatórios para consultar e imprimir informações.')"
+                    >
+
+                        <div class="help-icon">
+                            📊
+                        </div>
+
+                        <h4>
+                            Relatórios
+                        </h4>
+
+                        <p>
+                            Gere relatórios utilizando filtros
+                            de turma e período.
+                        </p>
+
+                    </article>
+
+
+                    <article
+                        class="help-card"
+                        onclick="abrirConfiguracoes()"
+                    >
+
+                        <div class="help-icon">
+                            ⚙️
+                        </div>
+
+                        <h4>
+                            Configurações
+                        </h4>
+
+                        <p>
+                            Personalize notificações, aparência
+                            e dados da escola.
+                        </p>
+
+                    </article>
+
+                </div>
+
+
+
+                <!-- FAQ -->
+
+                <section class="faq">
+
+                    <h3 style="margin-bottom:15px;">
+                        Perguntas frequentes
+                    </h3>
+
+
+                    <details>
+
+                        <summary>
+                            Como registrar um aluno presente?
+                        </summary>
+
+                        <p>
+                            Entre na área "Frequência", clique em
+                            "Registrar frequência", selecione o aluno,
+                            escolha "Presente" e clique em salvar.
+                        </p>
+
+                    </details>
+
+
+                    <details>
+
+                        <summary>
+                            Como registrar uma falta?
+                        </summary>
+
+                        <p>
+                            No formulário de frequência, selecione
+                            o aluno e altere o status para "Ausente".
+                        </p>
+
+                    </details>
+
+
+                    <details>
+
+                        <summary>
+                            Posso ativar o modo escuro?
+                        </summary>
+
+                        <p>
+                            Sim. Abra Configurações e ative a opção
+                            "Modo escuro".
+                        </p>
+
+                    </details>
+
+
+                    <details>
+
+                        <summary>
+                            Como imprimir um relatório?
+                        </summary>
+
+                        <p>
+                            Vá até Relatórios, configure o período
+                            e clique em "Imprimir".
+                        </p>
+
+                    </details>
+
+                </section>
+
+
+                <div class="form-actions">
+
+                    <button
+                        class="btn btn-primary"
+                        onclick="fecharAjuda()"
+                    >
+                        Entendi
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         MODAL FREQUÊNCIA
+    ====================================================== -->
+
+    <div
+        class="modal"
+        id="frequencyModal"
+    >
+
+        <div class="modal-content">
+
+            <header class="modal-header">
+
+                <div>
+
+                    <h3>
+                        ✅ Registrar frequência
+                    </h3>
+
+                    <p>
+                        Registre a presença do aluno.
+                    </p>
+
+                </div>
+
+                <button
+                    class="close"
+                    onclick="fecharFrequencia()"
+                >
+                    ×
+                </button>
+
+            </header>
+
+
+            <div class="modal-body">
+
+                <form id="frequencyForm">
+
+                    <div class="form-grid">
+
+                        <div class="form-group full">
+
+                            <label>
+                                Aluno
+                            </label>
+
+                            <select required>
+
+                                <option value="">
+                                    Selecione o aluno
+                                </option>
+
+                                <option>
+                                    Ana Silva
+                                </option>
+
+                                <option>
+                                    João Oliveira
+                                </option>
+
+                                <option>
+                                    Maria Clara
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label>
+                                Data
+                            </label>
+
+                            <input
+                                type="date"
+                                id="frequencyDate"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label>
+                                Horário
+                            </label>
+
+                            <input
+                                type="time"
+                                id="frequencyTime"
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label>
+                                Status
+                            </label>
+
+                            <select required>
+
+                                <option value="">
+                                    Selecione
+                                </option>
+
+                                <option>
+                                    Presente
+                                </option>
+
+                                <option>
+                                    Ausente
+                                </option>
+
+                                <option>
+                                    Atrasado
+                                </option>
+
+                                <option>
+                                    Justificado
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="form-group full">
+
+                            <label>
+                                Observação
+                            </label>
+
+                            <textarea
+                                placeholder="Digite uma observação..."
+                            ></textarea>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-actions">
+
+                        <button
+                            type="button"
+                            class="btn btn-light"
+                            onclick="fecharFrequencia()"
+                        >
+                            Cancelar
+                        </button>
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary"
+                        >
+                            💾 Salvar frequência
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         MODAL ALUNO
+    ====================================================== -->
+
+    <div
+        class="modal"
+        id="studentModal"
+    >
+
+        <div class="modal-content">
+
+            <header class="modal-header">
+
+                <div>
+
+                    <h3>
+                        👨‍🎓 Novo aluno
+                    </h3>
+
+                    <p>
+                        Cadastre um novo estudante.
+                    </p>
+
+                </div>
+
+                <button
+                    class="close"
+                    onclick="fecharAluno()"
+                >
+                    ×
+                </button>
+
+            </header>
+
+
+            <div class="modal-body">
+
+                <form id="studentForm">
+
+                    <div class="form-grid">
+
+                        <div class="form-group full">
+
+                            <label>
+                                Nome completo
+                            </label>
+
+                            <input
+                                type="text"
+                                placeholder="Digite o nome completo"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label>
+                                Matrícula
+                            </label>
+
+                            <input
+                                type="text"
+                                placeholder="202600000"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label>
+                                Turma
+                            </label>
+
+                            <select required>
+
+                                <option value="">
+                                    Selecione
+                                </option>
+
+                                <option>
+                                    9º Ano A
+                                </option>
+
+                                <option>
+                                    8º Ano B
+                                </option>
+
+                                <option>
+                                    7º Ano A
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label>
+                                E-mail
+                            </label>
+
+                            <input
+                                type="email"
+                                placeholder="aluno@email.com"
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-actions">
+
+                        <button
+                            type="button"
+                            class="btn btn-light"
+                            onclick="fecharAluno()"
+                        >
+                            Cancelar
+                        </button>
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary"
+                        >
+                            💾 Cadastrar aluno
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         TOAST
+    ====================================================== -->
+
+    <div
+        class="toast"
+        id="toast"
+        role="alert"
+    >
+        Operação realizada com sucesso!
+    </div>
+
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+    ====================================================== -->
+
+    <script>
+
+        /* =================================================
+           DATA
+        ================================================= */
+
+        const dataAtual = new Date();
+
+        document.getElementById(
+            "currentDate"
+        ).textContent =
+            dataAtual.toLocaleDateString(
+                "pt-BR",
+                {
+                    weekday: "long",
+                    day: "2-digit",
+                    month: "long",
+                    year: "numeric"
+                }
+            );
+
+
+        /* =================================================
+           NAVEGAÇÃO
+        ================================================= */
+
+        const menuButtons =
+            document.querySelectorAll(
+                ".menu-button[data-page]"
+            );
+
+        const pages =
+            document.querySelectorAll(
+                ".page"
+            );
+
+
+        const titles = {
+
+            dashboard:
+                "Dashboard",
+
+            frequencia:
+                "Controle de frequência",
+
+            alunos:
+                "Cadastro de alunos",
+
+            turmas:
+                "Turmas",
+
+            relatorios:
+                "Relatórios"
+
+        };
+
+
+        menuButtons.forEach(
+            button => {
+
+                button.addEventListener(
+                    "click",
+                    function() {
+
+                        const page =
+                            this.dataset.page;
+
+
+                        menuButtons.forEach(
+                            item =>
+                                item.classList
+                                    .remove("active")
+                        );
+
+
+                        this.classList.add(
+                            "active"
+                        );
+
+
+                        pages.forEach(
+                            pageItem =>
+                                pageItem.classList
+                                    .remove("active")
+                        );
+
+
+                        document
+                            .getElementById(page)
+                            .classList
+                            .add("active");
+
+
+                        document
+                            .getElementById("pageTitle")
+                            .textContent =
+                                titles[page];
+
+
+                        document
+                            .getElementById("sidebar")
+                            .classList
+                            .remove("open");
+
+                    }
+                );
+
+            }
+        );
+
+
+        /* =================================================
+           MENU MOBILE
+        ================================================= */
+
+        document
+            .getElementById("mobileMenu")
+            .addEventListener(
+                "click",
+                function() {
+
+                    document
+                        .getElementById("sidebar")
+                        .classList
+                        .toggle("open");
+
+                }
+            );
+
+
+        /* =================================================
+           CONFIGURAÇÕES
+        ================================================= */
+
+        const settingsModal =
+            document.getElementById(
+                "settingsModal"
+            );
+
+
+        function abrirConfiguracoes() {
+
+            settingsModal
+                .classList
+                .add("show");
+
+        }
+
+
+        function fecharConfiguracoes() {
+
+            settingsModal
+                .classList
+                .remove("show");
+
+        }
+
+
+        document
+            .getElementById("settingsButton")
+            .addEventListener(
+                "click",
+                abrirConfiguracoes
+            );
+
+
+        document
+            .getElementById("closeSettings")
+            .addEventListener(
+                "click",
+                fecharConfiguracoes
+            );
+
+
+        document
+            .getElementById("cancelSettings")
+            .addEventListener(
+                "click",
+                fecharConfiguracoes
+            );
+
+
+        /* =================================================
+           MODO ESCURO
+        ================================================= */
+
+        const darkToggle =
+            document.getElementById(
+                "darkModeToggle"
+            );
+
+
+        darkToggle.addEventListener(
+            "change",
+            function() {
+
+                document.body
+                    .classList
+                    .toggle(
+                        "dark",
+                        this.checked
+                    );
+
+            }
+        );
+
+
+        /* =================================================
+           SALVAR CONFIGURAÇÕES
+        ================================================= */
+
+        document
+            .getElementById("saveSettings")
+            .addEventListener(
+                "click",
+                function() {
+
+                    localStorage.setItem(
+                        "darkMode",
+                        darkToggle.checked
+                    );
+
+
+                    localStorage.setItem(
+                        "schoolName",
+                        document
+                            .getElementById(
+                                "schoolName"
+                            )
+                            .value
+                    );
+
+
+                    localStorage.setItem(
+                        "schoolYear",
+                        document
+                            .getElementById(
+                                "schoolYear"
+                            )
+                            .value
+                    );
+
+
+                    localStorage.setItem(
+                        "schoolShift",
+                        document
+                            .getElementById(
+                                "schoolShift"
+                            )
+                            .value
+                    );
+
+
+                    fecharConfiguracoes();
+
+
+                    mostrarToast(
+                        "⚙️ Configurações salvas com sucesso!"
+                    );
+
+                }
+            );
+
+
+        /* =================================================
+           CARREGAR CONFIGURAÇÕES
+        ================================================= */
+
+        function carregarConfiguracoes() {
+
+            const dark =
+                localStorage.getItem(
+                    "darkMode"
+                ) === "true";
+
+
+            darkToggle.checked =
+                dark;
+
+
+            document.body
+                .classList
+                .toggle(
+                    "dark",
+                    dark
+                );
+
+
+            const schoolName =
+                localStorage.getItem(
+                    "schoolName"
+                );
+
+
+            const schoolYear =
+                localStorage.getItem(
+                    "schoolYear"
+                );
+
+
+            const schoolShift =
+                localStorage.getItem(
+                    "schoolShift"
+                );
+
+
+            if (schoolName) {
+
+                document
+                    .getElementById(
+                        "schoolName"
+                    )
+                    .value =
+                        schoolName;
+
+            }
+
+
+            if (schoolYear) {
+
+                document
+                    .getElementById(
+                        "schoolYear"
+                    )
+                    .value =
+                        schoolYear;
+
+            }
+
+
+            if (schoolShift) {
+
+                document
+                    .getElementById(
+                        "schoolShift"
+                    )
+                    .value =
+                        schoolShift;
+
+            }
+
+        }
+
+
+        carregarConfiguracoes();
+
+
+        /* =================================================
+           AJUDA
+        ================================================= */
+
+        const helpModal =
+            document.getElementById(
+                "helpModal"
+            );
+
+
+        function abrirAjuda() {
+
+            helpModal
+                .classList
+                .add("show");
+
+        }
+
+
+        function fecharAjuda() {
+
+            helpModal
+                .classList
+                .remove("show");
+
+        }
+
+
+        document
+            .getElementById("helpButton")
+            .addEventListener(
+                "click",
+                abrirAjuda
+            );
+
+
+        document
+            .getElementById("closeHelp")
+            .addEventListener(
+                "click",
+                fecharAjuda
+            );
+
+
+        /* =================================================
+           FREQUÊNCIA
+        ================================================= */
+
+        const frequencyModal =
+            document.getElementById(
+                "frequencyModal"
+            );
+
+
+        function abrirFrequencia() {
+
+            frequencyModal
+                .classList
+                .add("show");
+
+
+            document
+                .getElementById(
+                    "frequencyDate"
+                )
+                .value =
+                    new Date()
+                        .toISOString()
+                        .split("T")[0];
+
+
+            document
+                .getElementById(
+                    "frequencyTime"
+                )
+                .value =
+                    new Date()
+                        .toTimeString()
+                        .slice(0,5);
+
+        }
+
+
+        function fecharFrequencia() {
+
+            frequencyModal
+                .classList
+                .remove("show");
+
+        }
+
+
+        document
+            .getElementById(
+                "frequencyForm"
+            )
+            .addEventListener(
+                "submit",
+                function(event) {
+
+                    event.preventDefault();
+
+                    fecharFrequencia();
+
+                    this.reset();
+
+                    mostrarToast(
+                        "✅ Frequência registrada com sucesso!"
+                    );
+
+                }
+            );
+
+
+        /* =================================================
+           ALUNO
+        ================================================= */
+
+        const studentModal =
+            document.getElementById(
+                "studentModal"
+            );
+
+
+        function abrirAluno() {
+
+            studentModal
+                .classList
+                .add("show");
+
+        }
+
+
+        function fecharAluno() {
+
+            studentModal
+                .classList
+                .remove("show");
+
+        }
+
+
+        document
+            .getElementById(
+                "studentForm"
+            )
+            .addEventListener(
+                "submit",
+                function(event) {
+
+                    event.preventDefault();
+
+                    fecharAluno();
+
+                    this.reset();
+
+                    mostrarToast(
+                        "👨‍🎓 Aluno cadastrado com sucesso!"
+                    );
+
+                }
+            );
+
+
+        /* =================================================
+           PESQUISA
+        ================================================= */
+
+        document
+            .getElementById(
+                "searchFrequency"
+            )
+            .addEventListener(
+                "input",
+                function() {
+
+                    const search =
+                        this.value
+                            .toLowerCase();
+
+
+                    const rows =
+                        document
+                            .querySelectorAll(
+                                "#frequencyTable tbody tr"
+                            );
+
+
+                    rows.forEach(
+                        row => {
+
+                            row.style.display =
+                                row.textContent
+                                    .toLowerCase()
+                                    .includes(search)
+                                    ? ""
+                                    : "none";
+
+                        }
+                    );
+
+                }
+            );
+
+
+        function limparBusca() {
+
+            document
+                .getElementById(
+                    "searchFrequency"
+                )
+                .value = "";
+
+
+            document
+                .querySelectorAll(
+                    "#frequencyTable tbody tr"
+                )
+                .forEach(
+                    row =>
+                        row.style.display = ""
+                );
+
+
+            mostrarToast(
+                "🔎 Filtros limpos."
+            );
+
+        }
+
+
+        /* =================================================
+           EXCLUIR
+        ================================================= */
+
+        function excluirLinha(button) {
+
+            const row =
+                button.closest("tr");
+
+
+            if (
+                confirm(
+                    "Deseja realmente excluir este aluno?"
+                )
+            ) {
+
+                row.remove();
+
+                mostrarToast(
+                    "🗑️ Aluno removido com sucesso."
+                );
+
+            }
+
+        }
+
+
+        /* =================================================
+           NOTIFICAÇÕES
+        ================================================= */
+
+        document
+            .getElementById(
+                "notificationButton"
+            )
+            .addEventListener(
+                "click",
+                function() {
+
+                    document
+                        .getElementById(
+                            "notificationCount"
+                        )
+                        .textContent = "0";
+
+
+                    mostrarToast(
+                        "🔔 Você visualizou todas as notificações."
+                    );
+
+                }
+            );
+
+
+        /* =================================================
+           RELATÓRIO
+        ================================================= */
+
+        document
+            .getElementById(
+                "reportForm"
+            )
+            .addEventListener(
+                "submit",
+                function(event) {
+
+                    event.preventDefault();
+
+                    mostrarToast(
+                        "📊 Relatório gerado com sucesso!"
+                    );
+
+                }
+            );
+
+
+        /* =================================================
+           TOAST
+        ================================================= */
+
+        let toastTimer;
+
+
+        function mostrarToast(
+            mensagem
+        ) {
+
+            const toast =
+                document.getElementById(
+                    "toast"
+                );
+
+
+            toast.textContent =
+                mensagem;
+
+
+            toast.classList
+                .add("show");
+
+
+            clearTimeout(
+                toastTimer
+            );
+
+
+            toastTimer =
+                setTimeout(
+                    function() {
+
+                        toast.classList
+                            .remove("show");
+
+                    },
+                    3000
+                );
+
+        }
+
+
+        /* =================================================
+           FECHAR MODAIS CLICANDO FORA
+        ================================================= */
+
+        window.addEventListener(
+            "click",
+            function(event) {
+
+                if (
+                    event.target ===
+                    settingsModal
+                ) {
+
+                    fecharConfiguracoes();
+
+                }
+
+
+                if (
+                    event.target ===
+                    helpModal
+                ) {
+
+                    fecharAjuda();
+
+                }
+
+
+                if (
+                    event.target ===
+                    frequencyModal
+                ) {
+
+                    fecharFrequencia();
+
+                }
+
+
+                if (
+                    event.target ===
+                    studentModal
+                ) {
+
+                    fecharAluno();
+
+                }
+
+            }
+        );
+
+
+        /* =================================================
+           TECLA ESC
+        ================================================= */
+
+        document.addEventListener(
+            "keydown",
+            function(event) {
+
+                if (
+                    event.key ===
+                    "Escape"
+                ) {
+
+                    fecharConfiguracoes();
+
+                    fecharAjuda();
+
+                    fecharFrequencia();
+
+                    fecharAluno();
+
+                }
+
+            }
+        );
+
+    </script>
+
+</body>
+
+</html>
