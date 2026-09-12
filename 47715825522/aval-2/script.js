@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Link com HTML, CSS e JavaScript</title>
+    <style>
+        /* Estilo do link */
+        .meu-link {
+            display: inline-block;
+            padding: 12px 30px;
+            font-size: 18px;
+            font-family: Arial, sans-serif;
+            color: #fff;
+            background-color: #2563eb;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        /* Efeito ao passar o mouse */
+        .meu-link:hover {
+            background-color: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+        }
+
+        /* Efeito ao clicar */
+        .meu-link:active {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Link com evento JavaScript -->
+    <a href="#" class="meu-link" id="linkExemplo">Clique em Mim!</a>
+
+    <script>
+        // Pegar o elemento pelo ID
+        const link = document.getElementById('linkExemplo');
+
+        // Ação ao clicar
+        link.addEventListener('click', function(event) {
+            event.preventDefault(); // Evita o comportamento padrão do link
+            
+            // Exibir mensagem e mudar texto
+            alert('🎉 Você clicou no link!');
+            this.textContent = 'Clicado! ✅';
+            this.style.backgroundColor = '#16a34a';
+        });
+    </script>
+
+</body>
+</html>
