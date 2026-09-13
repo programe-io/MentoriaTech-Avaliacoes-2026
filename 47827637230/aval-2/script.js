@@ -1,0 +1,1 @@
+<footer>C 2026 - Blog do Murylo</footr>
