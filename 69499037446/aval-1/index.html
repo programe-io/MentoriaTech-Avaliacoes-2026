@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  
+</head>
+<body>
+  const readline = require('readline');
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
+
+// Helper para ler entrada do terminal usando Promise
+const pergunta = (texto) => new Promise((resolve) => rl.question(texto, resolve));
+
+// Função para tratar valores numéricos (aceita vírgula ou ponto)
+function parseNumero(valor) {
+  if (!valor) return 0;
+  const limpo = String(valor).replace(',', '.').trim();
+  const num = parseFloat(limpo);
+  return isNaN(num) ? 0 : num;
+}
+
+class SistemaEstoque {
+  constructor() {
+    this.produtos = [];
+  }
+
+  // 1. Cadastrar produto
+  cadastrar(codigo, descricao, quantidade, valor) {
+    codigo = codigo.trim();
+    descricao = descricao.trim();
+
+    if (!codigo || !descricao) {
+      console.log('\n❌ Código e descrição são obrigatórios!');
+      return;
+    }
+
+    const existe = this.produtos.some(p => p.codigo.toLowerCase() === codigo.toLowerCase());
+    if (existe) {
+      console.log(`\n❌ Erro: O código "${codigo}" já está cadastrado.`);
+      return;
+    }
+
+    const qtdNum = Math.floor(parseNumero(quantidade));
+    const valorNum = parseNumero(valor);
+
+    this.produtos.push({
+      codigo,
+      descricao,
+      quantidade: qtdNum < 0 ? 0 : qtdNum,
+      valor: valorNum < 0 ? 0 : valorNum
+    });
+
+    console.log(`\n✅ Produto "${descricao}" cadastrado com sucesso!`);
+  }
+
+  // 2. Listar produtos
+  listar() {
+    if (this.produtos.length === 0) {
+      console.log('\n⚠️ Nenhum produto cadastrado no estoque.');
+      return;
+    }
+
+    console.log('\n======================== ESTOQUE ATUAL ========================');
+    this.produtos.forEach((prod, index) => {
+      const valorFmt = prod.valor.toFixed(2);
+      console.log(
+        `${index + 1}. [Código: ${prod.codigo}] | ${prod.descricao} | Qtd: ${prod.quantidade} | R$ ${valorFmt}`
+      );
+    });
+    console.log('===============================================================\n');
+  }
+
+  // 3. Alterar valor
+  alterarValor(codigo, novoValor) {
+    codigo = codigo.trim();
+    const produto = this.produtos.find(p => p.codigo.toLowerCase() === codigo.toLowerCase());
+
+    if (!produto) {
+      console.log(`\n❌ Erro: Produto com código "${codigo}" não foi encontrado.`);
+      return;
+    }
+
+    produto.valor = parseNumero(novoValor);
+    console.log(`\n✅ Valor de "${produto.descricao}" atualizado para R$ ${produto.valor.toFixed(2)}.`);
+  }
+
+  // 4. Alterar quantidade
+  alterarQuantidade(codigo, novaQuantidade) {
+    codigo = codigo.trim();
+    const produto = this.produtos.find(p => p.codigo.toLowerCase() === codigo.toLowerCase());
+
+    if (!produto) {
+      console.log(`\n❌ Erro: Produto com código "${codigo}" não foi encontrado.`);
+      return;
+    }
+
+    const qtdNum = Math.floor(parseNumero(novaQuantidade));
+    produto.quantidade = qtdNum < 0 ? 0 : qtdNum;
+    console.log(`\n✅ Quantidade de "${produto.descricao}" atualizada para ${produto.quantidade} un.`);
+  }
+}
+
+// Loop Principal do Sistema
+async function executarSistema() {
+  const estoque = new SistemaEstoque();
+  let executando = true;
+
+  while (executando) {
+    console.log(`
+--- GERENCIADOR DE ESTOQUE ---
+1. Cadastrar produto
+2. Listar produtos
+3. Alterar valor de um produto
+4. Alterar quantidade de um produto
+5. Sair
+------------------------------`);
+
+    const opcao = await pergunta('Escolha uma opção (1-5): ');
+
+    switch (opcao.trim()) {
+      case '1': {
+        const codigo = await pergunta('Código do produto: ');
+        const descricao = await pergunta('Descrição do produto: ');
+        const quantidade = await pergunta('Quantidade inicial: ');
+        const valor = await pergunta('Valor unitário (ex: 12.50 ou 12,50): ');
+        estoque.cadastrar(codigo, descricao, quantidade, valor);
+        break;
+      }
+      case '2': {
+        estoque.listar();
+        break;
+      }
+      case '3': {
+        const codigo = await pergunta('Código do produto a alterar: ');
+        const novoValor = await pergunta('Novo valor (R$): ');
+        estoque.alterarValor(codigo, novoValor);
+        break;
+      }
+      case '4': {
+        const codigo = await pergunta('Código do produto a alterar: ');
+        const novaQuantidade = await pergunta('Nova quantidade: ');
+        estoque.alterarQuantidade(codigo, novaQuantidade);
+        break;
+      }
+      case '5': {
+        console.log('\nEncerrando o sistema. Até logo!');
+        executando = false;
+        rl.close();
+        break;
+      }
+      default: {
+        console.log('\n❌ Opção inválida! Escolha um número de 1 a 5.');
+        break;
+      }
+    }
+  }
+}
+
+// Inicializa a aplicação
+executarSistema();
+  
+  
+</body>
+</html>
