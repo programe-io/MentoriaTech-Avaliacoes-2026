@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Estoque (Apenas CSS)</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f0f2f5;
+            color: #1c1e21;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #1877f2;
+        }
+
+        /* --- CONTROLES DE ESTADO EM CSS (Checkbox Hack) --- */
+        .state-toggle {
+            display: none;
+        }
+
+        /* --- CARDS INFORMATIVOS --- */
+        .cards {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            flex: 1;
+            background: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .card h3 {
+            font-size: 13px;
+            color: #65676b;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .card p {
+            font-size: 22px;
+            font-weight: bold;
+            color: #1877f2;
+        }
+
+        /* --- FORMULÁRIO INTERATIVO (CSS) --- */
+        .form-card {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        input {
+            padding: 10px;
+            border: 1px solid #ccd0d5;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .btn-add {
+            display: inline-block;
+            background-color: #42b72a;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: bold;
+            text-align: center;
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.2s;
+        }
+
+        .btn-add:hover {
+            background-color: #36a420;
+        }
+
+        /* --- TABELA DE ESTOQUE --- */
+        .table-card {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e4e6eb;
+        }
+
+        th {
+            background-color: #f7f8fa;
+            color: #4b4f56;
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .in-stock { background-color: #e7f3ff; color: #1877f2; }
+        .low-stock { background-color: #ffebe9; color: #e41e3f; }
+
+        .btn-remove {
+            background-color: #fa3e3e;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            user-select: none;
+        }
+
+        /* --- MÁGICA DO CSS PARA MOSTRAR/OCULTAR ELEMENTOS --- */
+
+        /* Item 3 escondido por padrão */
+        .item-3-row {
+            display: none;
+        }
+
+        /* Quando o botão "Cadastrar" for clicado (Checkbox checado), exibe o Item 3 */
+        #toggle-add:checked ~ .container .item-3-row {
+            display: table-row;
+        }
+
+        /* Atualiza a contagem do card quando o item for adicionado */
+        #toggle-add:checked ~ .container .card-count::after {
+            content: "3";
+        }
+        .card-count::after {
+            content: "2";
+        }
+
+        /* Exclusão simulada (Checkbox das linhas) */
+        #del-1:checked ~ tr,
+        #del-2:checked ~ tr,
+        #del-3:checked ~ tr {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Checkbox Invisível para Controlar o Cadastro via CSS -->
+    <input type="checkbox" id="toggle-add" class="state-toggle">
+
+    <div class="container">
+        <h1>📦 Controle de Estoque (CSS Pure)</h1>
+
+        <!-- Cards com Contadores Simulados em CSS -->
+        <div class="cards">
+            <div class="card">
+                <h3>Itens em Estoque</h3>
+                <p class="card-count"></p>
+            </div>
+            <div class="card">
+                <h3>Status do Sistema</h3>
+                <p style="color: #42b72a;">Ativo</p>
+            </div>
+        </div>
+
+        <!-- Formulário de Cadastro -->
+        <div class="form-card">
+            <h2>Simular Cadastro de Produto</h2>
+            <br>
+            <div class="form-grid">
+                <input type="text" placeholder="Teclado Mecânico" value="Teclado Mecânico">
+                <input type="text" placeholder="Periféricos" value="Periféricos">
+                <input type="number" placeholder="Quantidade" value="15">
+                <input type="text" placeholder="Preço" value="R$ 250,00">
+            </div>
+            <!-- O label aciona o Checkbox invisível -->
+            <label for="toggle-add" class="btn-add">+ Simular Adicionar Item</label>
+        </div>
+
+        <!-- Tabela -->
+        <div class="table-card">
+            <h2>Produtos Cadastrados</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Produto</th>
+                        <th>Categoria</th>
+                        <th>Qtd.</th>
+                        <th>Status</th>
+                        <th>Ação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Linha 1 -->
+                    <input type="checkbox" id="del-1" class="state-toggle">
+                    <tr>
+                        <td>Notebook Dell</td>
+                        <td>Eletrônicos</td>
+                        <td>5</td>
+                        <td><span class="status-badge low-stock">Estoque Baixo</span></td>
+                        <td><label for="del-1" class="btn-remove">Remover</label></td>
+                    </tr>
+
+                    <!-- Linha 2 -->
+                    <input type="checkbox" id="del-2" class="state-toggle">
+                    <tr>
+                        <td>Monitor 24"</td>
+                        <td>Eletrônicos</td>
+                        <td>42</td>
+                        <td><span class="status-badge in-stock">Em Dia</span></td>
+                        <td><label for="del-2" class="btn-remove">Remover</label></td>
+                    </tr>
+
+                    <!-- Linha 3 (Aparece via CSS ao clicar no botão verde) -->
+                    <input type="checkbox" id="del-3" class="state-toggle">
+                    <tr class="item-3-row">
+                        <td>Teclado Mecânico</td>
+                        <td>Periféricos</td>
+                        <td>15</td>
+                        <td><span class="status-badge in-stock">Em Dia</span></td>
+                        <td><label for="del-3" class="btn-remove">Remover</label></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</body>
+</html>
