@@ -1,0 +1,2 @@
+Abrir o jogo JavaScript
+semm putasfgaxzxxzcazxazczzxzzczzczzzcria źź034q
