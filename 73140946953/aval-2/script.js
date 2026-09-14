@@ -1,0 +1,102 @@
+class GerenciadorDeTarefas {
+  constructor() {
+    this.tarefas = [];
+    this.proximoCodigo = 1;
+  }
+
+  // 1. Cadastrar uma nova tarefa
+  cadastrarTarefa(titulo, prioridade) {
+    if (typeof titulo !== 'string' || titulo.trim().length < 5) {
+      console.log('Erro: O título deve ter no mínimo 5 caracteres.');
+      return null;
+    }
+
+    if (![1, 2, 3].includes(prioridade)) {
+      console.log('Erro: A prioridade deve ser 1 (alta), 2 (média) ou 3 (baixa).');
+      return null;
+    }
+
+    const novaTarefa = {
+      codigo: this.proximoCodigo++,
+      titulo: titulo.trim(),
+      prioridade: prioridade,
+      concluida: false
+    };
+
+    this.tarefas.push(novaTarefa);
+    console.log(`Tarefa "${novaTarefa.titulo}" cadastrada com sucesso! (Código: ${novaTarefa.codigo})`);
+    return novaTarefa;
+  }
+
+  // 2. Listar as tarefas cadastradas
+  listarTarefas() {
+    if (this.tarefas.length === 0) {
+      console.log('Nenhuma tarefa cadastrada.');
+      return;
+    }
+
+    console.log('\n--- LISTA DE TAREFAS ---');
+    this.tarefas.forEach(tarefa => {
+      const status = tarefa.concluida ? '[X] Concluída' : '[ ] Pendente';
+      console.log(
+        `Código: ${tarefa.codigo} | Título: "${tarefa.titulo}" | Prioridade: ${tarefa.prioridade} | Status: ${status}`
+      );
+    });
+    console.log('------------------------\n');
+  }
+
+  // 3. Marcar uma tarefa como concluída
+  marcarComoConcluida(codigo) {
+    const tarefa = this.tarefas.find(t => t.codigo === codigo);
+
+    if (!tarefa) {
+      console.log(`Erro: Tarefa com código ${codigo} não encontrada.`);
+      return false;
+    }
+
+    tarefa.concluida = true;
+    console.log(`Tarefa ${codigo} marcada como concluída!`);
+    return true;
+  }
+
+  // 4. Alterar a prioridade de uma tarefa
+  alterarPrioridade(codigo, novaPrioridade) {
+    if (![1, 2, 3].includes(novaPrioridade)) {
+      console.log('Erro: A prioridade deve ser 1 (alta), 2 (média) ou 3 (baixa).');
+      return false;
+    }
+
+    const tarefa = this.tarefas.find(t => t.codigo === codigo);
+
+    if (!tarefa) {
+      console.log(`Erro: Tarefa com código ${codigo} não encontrada.`);
+      return false;
+    }
+
+    tarefa.prioridade = novaPrioridade;
+    console.log(`Prioridade da tarefa ${codigo} alterada para ${novaPrioridade}.`);
+    return true;
+  }
+}
+
+// Exemplo de uso:
+const sistema = new GerenciadorDeTarefas();
+
+// Cadastros válidos
+sistema.cadastrarTarefa('Estudar JavaScript', 1);
+sistema.cadastrarTarefa('Fazer exercícios físicos', 2);
+sistema.cadastrarTarefa('Comprar mantimentos', 3);
+
+// Teste de validação
+sistema.cadastrarTarefa('Ler', 1); // Erro: menos de 5 caracteres
+sistema.cadastrarTarefa('Organizar mesa', 5); // Erro: prioridade inválida
+
+// Listar tarefas
+sistema.listarTarefas();
+
+// Alterar prioridade e marcar como concluída
+sistema.alterarPrioridade(2, 1);
+sistema.marcarComoConcluida(1);
+
+// Listar novamente para ver as alterações
+sistema.listarTarefas();
