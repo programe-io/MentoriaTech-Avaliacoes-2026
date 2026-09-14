@@ -1,0 +1,149 @@
+// Banco de dados em memória para armazenar os produtos
+const estoque = [];
+let proximoCodigo = 101; // Inicia os códigos a partir do 101
+
+/**
+ * Formata valores numéricos para a moeda Real (BRL)
+ */
+function formatarMoeda(valor) {
+  return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+}
+
+/**
+ * 1. Cadastrar um novo produto
+ * @param {string} descricao - Nome ou descrição do produto (mínimo 3 caracteres)
+ * @param {number} quantidade - Quantidade inicial (mínimo 0)
+ * @param {number} valor - Preço unitário (maior que 0)
+ */
+function cadastrarProduto(descricao, quantidade, valor) {
+  // Validações de entrada
+  if (!descricao || descricao.trim().length < 3) {
+    console.error("Erro: A descrição deve ter no mínimo 3 caracteres.");
+    return;
+  }
+
+  if (!Number.isInteger(quantidade) || quantidade < 0) {
+    console.error("Erro: A quantidade deve ser um número inteiro maior ou igual a zero.");
+    return;
+  }
+
+  if (typeof valor !== "number" || valor <= 0 || isNaN(valor)) {
+    console.error("Erro: O valor deve ser um número maior que zero.");
+    return;
+  }
+
+  // Objeto do produto
+  const novoProduto = {
+    codigo: proximoCodigo++,
+    descricao: descricao.trim(),
+    quantidade: quantidade,
+    valor: valor
+  };
+
+  estoque.push(novoProduto);
+  console.log(`Sucesso: Produto "${novoProduto.descricao}" cadastrado com o código #${novoProduto.codigo}.`);
+}
+
+/**
+ * 2. Listar todos os produtos cadastrados e calcular o valor total do estoque
+ */
+function listarProdutos() {
+  if (estoque.length === 0) {
+    console.log("\nNenhum produto cadastrado no estoque.");
+    return;
+  }
+
+  let valorTotalEstoque = 0;
+
+  console.log("\n======================== RELATÓRIO DE ESTOQUE ========================");
+  estoque.forEach(p => {
+    const subtotal = p.quantidade * p.valor;
+    valorTotalEstoque += subtotal;
+
+    console.log(
+      `Código: #${p.codigo} | ` +
+      `Descrição: ${p.descricao.padEnd(20, ' ')} | ` +
+      `Qtd: ${String(p.quantidade).padStart(3, ' ')} un | ` +
+      `Valor Unit.: ${formatarMoeda(p.valor).padStart(10, ' ')} | ` +
+      `Subtotal: ${formatarMoeda(subtotal)}`
+    );
+  });
+  console.log("----------------------------------------------------------------------");
+  console.log(`VALOR TOTAL EM ESTOQUE: ${formatarMoeda(valorTotalEstoque)}`);
+  console.log("======================================================================\n");
+}
+
+/**
+ * 3. Alterar o valor (preço) de um produto
+ * @param {number} codigo - Código ID do produto
+ * @param {number} novoValor - Novo preço (deve ser maior que zero)
+ */
+function alterarValor(codigo, novoValor) {
+  if (typeof novoValor !== "number" || novoValor <= 0 || isNaN(novoValor)) {
+    console.error("Erro: O novo valor deve ser maior que zero.");
+    return;
+  }
+
+  const produto = estoque.find(p => p.codigo === codigo);
+
+  if (!produto) {
+    console.error(`Erro: Produto com código #${codigo} não encontrado.`);
+    return;
+  }
+
+  const valorAntigo = produto.valor;
+  produto.valor = novoValor;
+  console.log(`Sucesso: Valor do produto #${codigo} ("${produto.descricao}") alterado de ${formatarMoeda(valorAntigo)} para ${formatarMoeda(novoValor)}.`);
+}
+
+/**
+ * 4. Alterar a quantidade de um produto em estoque
+ * @param {number} codigo - Código ID do produto
+ * @param {number} novaQuantidade - Nova quantidade em estoque (mínimo 0)
+ */
+function alterarQuantidade(codigo, novaQuantidade) {
+  if (!Number.isInteger(novaQuantidade) || novaQuantidade < 0) {
+    console.error("Erro: A quantidade deve ser um número inteiro positivo ou zero.");
+    return;
+  }
+
+  const produto = estoque.find(p => p.codigo === codigo);
+
+  if (!produto) {
+    console.error(`Erro: Produto com código #${codigo} não encontrado.`);
+    return;
+  }
+
+  const quantidadeAntiga = produto.quantidade;
+  produto.quantidade = novaQuantidade;
+  console.log(`Sucesso: Quantidade do produto #${codigo} ("${produto.descricao}") alterada de ${quantidadeAntiga} para ${novaQuantidade} unidades.`);
+}
+
+// ==========================================
+// Exemplo prático de uso / Testes do sistema
+// ==========================================
+
+// Cadastrando produtos válidos
+cadastrarProduto("Notebook Gamer", 5, 4500.00);
+cadastrarProduto("Mouse Sem Fio", 15, 89.90);
+cadastrarProduto("Teclado Mecânico", 8, 250.00);
+
+// Testando validações do cadastro (devem falhar)
+cadastrarProduto("AB", 10, 50);          // Falha: menos de 3 caracteres
+cadastrarProduto("Monitor 24", -2, 800);  // Falha: quantidade negativa
+cadastrarProduto("Cabo HDMI", 10, 0);     // Falha: valor igual a 0
+
+// Listando o estoque inicial
+listarProdutos();
+
+// Alterando o preço de um produto
+alterarValor(102, 79.90);
+
+// Alterando a quantidade de um produto
+alterarQuantidade(101, 3);
+
+// Testando alteração inválida (deve falhar)
+alterarQuantidade(103, -5);
+
+// Listando o estoque final para conferir atualizações
+listarProdutos();
