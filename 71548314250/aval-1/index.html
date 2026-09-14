@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link href="style.css" rel="stylesheet">
+</head>
+<body>
+  // Classe que representa cada produto do estoque
+class Produto {
+    constructor(codigo, descricao, quantidade, valor) {
+        this.codigo = codigo;
+        this.descricao = descricao;
+        this.quantidade = Number(quantidade);
+        this.valor = Number(valor);
+    }
+}
+
+// Classe que gerencia o estoque e suas operações
+class GerenciadorEstoque {
+    constructor() {
+        this.produtos = [];
+    }
+
+    // 1. Cadastrar um novo produto
+    cadastrarProduto(codigo, descricao, quantidade, valor) {
+        // Validação se o código já existe
+        const produtoExistente = this.produtos.find(p => p.codigo === codigo);
+        if (produtoExistente) {
+            console.log(`❌ Erro: Já existe um produto com o código ${codigo}.`);
+            return;
+        }
+
+        const novoProduto = new Produto(codigo, descricao, quantidade, valor);
+        this.produtos.push(novoProduto);
+        console.log(`✅ Produto "${descricao}" cadastrado com sucesso!`);
+    }
+
+    // 2. Listar os produtos cadastrados
+    listarProdutos() {
+        if (this.produtos.length === 0) {
+            console.log("⚠️ O estoque está vazio.");
+            return;
+        }
+
+        console.log("\n=== LISTA DE PRODUTOS NO ESTOQUE ===");
+        console.table(this.produtos); // Exibe os dados em formato de tabela no console
+    }
+
+    // 3. Alterar o valor de um produto
+    alterarValor(codigo, novoValor) {
+        const produto = this.produtos.find(p => p.codigo === codigo);
+        
+        if (!produto) {
+            console.log(`❌ Erro: Produto com código ${codigo} não encontrado.`);
+            return;
+        }
+
+        const valorAntigo = produto.valor;
+        produto.valor = Number(novoValor);
+        console.log(`💲 Valor do produto "${produto.descricao}" atualizado de R$ ${valorAntigo.toFixed(2)} para R$ ${produto.valor.toFixed(2)}.`);
+    }
+
+    // 4. Alterar a quantidade de um produto
+    alterarQuantidade(codigo, novaQuantidade) {
+        const produto = this.produtos.find(p => p.codigo === codigo);
+
+        if (!produto) {
+            console.log(`❌ Erro: Produto com código ${codigo} não encontrado.`);
+            return;
+        }
+
+        const qtdAntiga = produto.quantidade;
+        produto.quantidade = Number(novaQuantidade);
+        console.log(`📦 Quantidade do produto "${produto.descricao}" atualizada de ${qtdAntiga} para ${produto.quantidade} unidades.`);
+    }
+}
+
+// ==========================================
+// SIMULAÇÃO DO USO DO SISTEMA
+// ==========================================
+
+const meuEstoque = new GerenciadorEstoque();
+
+// Testando o cadastro
+meuEstoque.cadastrarProduto("001", "Notebook Dell", 10, 4500.00);
+meuEstoque.cadastrarProduto("002", "Mouse Sem Fio", 50, 89.90);
+meuEstoque.cadastrarProduto("003", "Teclado Mecânico", 25, 250.00);
+
+// Tentando cadastrar código duplicado para testar validação
+meuEstoque.cadastrarProduto("001", "Notebook HP", 5, 4200.00);
+
+// Listando os produtos iniciais
+meuEstoque.listarProdutos();
+
+// Alterando o valor do Mouse
+meuEstoque.alterarValor("002", 79.90);
+
+// Alterando a quantidade do Notebook
+meuEstoque.alterarQuantidade("001", 15);
+
+// Listando novamente para ver o resultado final alterado
+meuEstoque.listarProdutos();
+
+  <script src="script.js"></script>
+  
+</body>
+</html>
