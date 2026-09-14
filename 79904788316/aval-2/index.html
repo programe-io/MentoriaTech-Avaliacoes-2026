@@ -1,0 +1,961 @@
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Minifeed Cristão ✝️</title>
+
+
+    <style>
+
+        /* =========================
+           CONFIGURAÇÕES GERAIS
+        ========================= */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #f5f0e6,
+                    #ffffff,
+                    #e7dcc5
+                );
+
+            color: #333;
+        }
+
+
+        /* =========================
+           CABEÇALHO
+        ========================= */
+
+        header {
+            background:
+                linear-gradient(
+                    135deg,
+                    #171717,
+                    #4a3519,
+                    #171717
+                );
+
+            color: white;
+
+            text-align: center;
+
+            padding: 35px 20px;
+
+            border-bottom: 4px solid #d4af37;
+
+            box-shadow:
+                0 5px 20px rgba(0,0,0,0.3);
+        }
+
+        header h1 {
+            color: #f5d76e;
+
+            font-size: 35px;
+
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 16px;
+        }
+
+
+        /* =========================
+           CONTAINER
+        ========================= */
+
+        main {
+            max-width: 700px;
+
+            margin: 30px auto;
+
+            padding: 0 15px;
+        }
+
+
+        /* =========================
+           CRIAR POST
+        ========================= */
+
+        .criar-post {
+            background: white;
+
+            padding: 20px;
+
+            border-radius: 15px;
+
+            margin-bottom: 25px;
+
+            box-shadow:
+                0 5px 20px rgba(0,0,0,0.12);
+        }
+
+        .criar-post h2 {
+            color: #5b421e;
+
+            margin-bottom: 15px;
+        }
+
+        textarea {
+            width: 100%;
+
+            height: 90px;
+
+            resize: none;
+
+            padding: 12px;
+
+            border: 1px solid #ccc;
+
+            border-radius: 10px;
+
+            outline: none;
+
+            font-size: 15px;
+        }
+
+        textarea:focus {
+            border-color: #d4af37;
+        }
+
+        .btn-publicar {
+            margin-top: 10px;
+
+            padding: 12px 22px;
+
+            border: none;
+
+            border-radius: 10px;
+
+            background: #5b421e;
+
+            color: white;
+
+            cursor: pointer;
+
+            font-weight: bold;
+        }
+
+        .btn-publicar:hover {
+            background: #80602d;
+        }
+
+
+        /* =========================
+           POST
+        ========================= */
+
+        .post {
+            background: white;
+
+            padding: 20px;
+
+            margin-bottom: 25px;
+
+            border-radius: 15px;
+
+            box-shadow:
+                0 5px 20px rgba(0,0,0,0.12);
+
+            transition: 0.3s;
+        }
+
+        .post:hover {
+            transform: translateY(-3px);
+        }
+
+
+        /* =========================
+           USUÁRIO
+        ========================= */
+
+        .usuario {
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+
+            margin-bottom: 15px;
+        }
+
+        .perfil {
+            width: 50px;
+
+            height: 50px;
+
+            border-radius: 50%;
+
+            background: #d4af37;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            font-size: 24px;
+        }
+
+        .usuario strong {
+            display: block;
+
+            color: #3d2b16;
+        }
+
+        .usuario small {
+            color: #888;
+        }
+
+
+        /* =========================
+           TEXTO
+        ========================= */
+
+        .texto-post {
+            line-height: 1.6;
+
+            margin-bottom: 15px;
+        }
+
+
+        /* =========================
+           IMAGENS
+        ========================= */
+
+        .post img {
+            width: 100%;
+
+            max-height: 400px;
+
+            object-fit: cover;
+
+            border-radius: 12px;
+        }
+
+
+        /* =========================
+           BOTÕES
+        ========================= */
+
+        .acoes {
+            display: flex;
+
+            gap: 10px;
+
+            margin-top: 15px;
+        }
+
+        .acoes button {
+            border: none;
+
+            padding: 10px 15px;
+
+            border-radius: 10px;
+
+            background: #f1eadb;
+
+            color: #4c381a;
+
+            cursor: pointer;
+
+            transition: 0.2s;
+        }
+
+        .acoes button:hover {
+            background: #dfd0ae;
+
+            transform: scale(1.03);
+        }
+
+        .acoes .curtido {
+            background: #ffd6d6;
+
+            color: #d00000;
+        }
+
+
+        /* =========================
+           COMENTÁRIOS
+        ========================= */
+
+        .comentarios {
+            display: none;
+
+            margin-top: 15px;
+
+            padding-top: 15px;
+
+            border-top: 1px solid #ddd;
+        }
+
+        .comentarios input {
+            width: calc(100% - 105px);
+
+            padding: 10px;
+
+            border: 1px solid #ccc;
+
+            border-radius: 8px;
+
+            outline: none;
+        }
+
+        .comentarios button {
+            width: 95px;
+
+            padding: 10px 5px;
+
+            border: none;
+
+            border-radius: 8px;
+
+            background: #5b421e;
+
+            color: white;
+
+            cursor: pointer;
+        }
+
+        .comentario {
+            background: #f5f1e8;
+
+            padding: 10px;
+
+            margin-top: 10px;
+
+            border-radius: 8px;
+
+            border-left: 3px solid #d4af37;
+        }
+
+
+        /* =========================
+           RODAPÉ
+        ========================= */
+
+        footer {
+            background: #171717;
+
+            color: white;
+
+            text-align: center;
+
+            padding: 25px;
+
+            border-top: 3px solid #d4af37;
+        }
+
+
+        /* =========================
+           CELULAR
+        ========================= */
+
+        @media (max-width: 600px) {
+
+            header h1 {
+                font-size: 27px;
+            }
+
+            .acoes {
+                flex-direction: column;
+            }
+
+            .acoes button {
+                width: 100%;
+            }
+
+            .comentarios input {
+                width: 100%;
+
+                margin-bottom: 8px;
+            }
+
+            .comentarios button {
+                width: 100%;
+            }
+
+        }
+
+    </style>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+
+<body>
+
+
+    <!-- =========================
+         CABEÇALHO
+    ========================= -->
+
+    <header>
+
+        <h1>✝️ Minifeed Cristão</h1>
+
+        <p>
+            Fé • Esperança • Amor • Deus
+        </p>
+
+    </header>
+
+
+
+    <main>
+
+
+        <!-- =========================
+             CRIAR POST
+        ========================= -->
+
+        <section class="criar-post">
+
+            <h2>📝 Compartilhe sua fé</h2>
+
+            <textarea
+                id="novoTexto"
+                placeholder="Escreva uma mensagem, versículo ou reflexão..."
+            ></textarea>
+
+            <button
+                class="btn-publicar"
+                onclick="criarPost()">
+
+                ✨ Publicar
+
+            </button>
+
+        </section>
+
+
+
+        <!-- =========================
+             FEED
+        ========================= -->
+
+        <section id="feed">
+
+
+            <!-- POST 1 -->
+
+            <article class="post">
+
+                <div class="usuario">
+
+                    <div class="perfil">
+                        🙏
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Palavra de Deus
+                        </strong>
+
+                        <small>
+                            Hoje
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <p class="texto-post">
+
+                    Deus está sempre ao nosso lado.
+                    Mesmo quando não conseguimos enxergar
+                    uma saída, devemos continuar confiando. 🙏❤️
+
+                </p>
+
+
+                <img
+                    src="https://images.unsplash.com/photo-1504052434569-70ad5836ab65?auto=format&fit=crop&w=900&q=80"
+                    alt="Bíblia aberta"
+                >
+
+
+                <div class="acoes">
+
+                    <button onclick="curtir(this)">
+
+                        ❤️ Curtir
+                        <span>0</span>
+
+                    </button>
+
+
+                    <button
+                        onclick="mostrarComentarios(this)">
+
+                        💬 Comentários
+
+                    </button>
+
+                </div>
+
+
+                <div class="comentarios">
+
+                    <input
+                        type="text"
+                        placeholder="Escreva um comentário..."
+                    >
+
+                    <button onclick="comentar(this)">
+                        Enviar
+                    </button>
+
+
+                    <div class="lista-comentarios"></div>
+
+                </div>
+
+            </article>
+
+
+
+            <!-- POST 2 -->
+
+            <article class="post">
+
+                <div class="usuario">
+
+                    <div class="perfil">
+                        ✝️
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Versículo do Dia
+                        </strong>
+
+                        <small>
+                            Ontem
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <p class="texto-post">
+
+                    📖 "Tudo posso naquele que me fortalece."
+
+                    <br><br>
+
+                    <b>Filipenses 4:13</b>
+
+                </p>
+
+
+                <img
+                    src="https://images.unsplash.com/photo-1473177104440-ffee2f376098?auto=format&fit=crop&w=900&q=80"
+                    alt="Igreja"
+                >
+
+
+                <div class="acoes">
+
+                    <button onclick="curtir(this)">
+
+                        ❤️ Curtir
+                        <span>0</span>
+
+                    </button>
+
+
+                    <button
+                        onclick="mostrarComentarios(this)">
+
+                        💬 Comentários
+
+                    </button>
+
+                </div>
+
+
+                <div class="comentarios">
+
+                    <input
+                        type="text"
+                        placeholder="Escreva um comentário..."
+                    >
+
+                    <button onclick="comentar(this)">
+                        Enviar
+                    </button>
+
+
+                    <div class="lista-comentarios"></div>
+
+                </div>
+
+            </article>
+
+
+
+            <!-- POST 3 -->
+
+            <article class="post">
+
+                <div class="usuario">
+
+                    <div class="perfil">
+                        ❤️
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Mensagem de Esperança
+                        </strong>
+
+                        <small>
+                            2 dias atrás
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <p class="texto-post">
+
+                    Nunca desista dos seus sonhos.
+
+                    Deus conhece suas lutas,
+                    seus medos e também suas conquistas.
+
+                    Continue acreditando. 🙏✨
+
+                </p>
+
+
+                <img
+                    src="https://images.unsplash.com/photo-1507692049790-de58290a4334?auto=format&fit=crop&w=900&q=80"
+                    alt="Cruz no pôr do sol"
+                >
+
+
+                <div class="acoes">
+
+                    <button onclick="curtir(this)">
+
+                        ❤️ Curtir
+                        <span>0</span>
+
+                    </button>
+
+
+                    <button
+                        onclick="mostrarComentarios(this)">
+
+                        💬 Comentários
+
+                    </button>
+
+                </div>
+
+
+                <div class="comentarios">
+
+                    <input
+                        type="text"
+                        placeholder="Escreva um comentário..."
+                    >
+
+                    <button onclick="comentar(this)">
+                        Enviar
+                    </button>
+
+
+                    <div class="lista-comentarios"></div>
+
+                </div>
+
+            </article>
+
+
+        </section>
+
+    </main>
+
+
+
+    <!-- =========================
+         RODAPÉ
+    ========================= -->
+
+    <footer>
+
+        <p>
+            ✝️ Que Deus abençoe o seu dia! 🙏
+        </p>
+
+    </footer>
+
+
+
+    <!-- =========================
+         JAVASCRIPT
+    ========================= -->
+
+    <script>
+
+        // =========================
+        // CURTIR
+        // =========================
+
+        function curtir(botao) {
+
+            const contador =
+                botao.querySelector("span");
+
+            let numero =
+                Number(contador.textContent);
+
+
+            if (botao.classList.contains("curtido")) {
+
+                numero--;
+
+                botao.classList.remove("curtido");
+
+            } else {
+
+                numero++;
+
+                botao.classList.add("curtido");
+
+            }
+
+
+            contador.textContent = numero;
+
+        }
+
+
+
+        // =========================
+        // MOSTRAR COMENTÁRIOS
+        // =========================
+
+        function mostrarComentarios(botao) {
+
+            const post =
+                botao.closest(".post");
+
+            const comentarios =
+                post.querySelector(".comentarios");
+
+
+            if (comentarios.style.display === "block") {
+
+                comentarios.style.display = "none";
+
+            } else {
+
+                comentarios.style.display = "block";
+
+            }
+
+        }
+
+
+
+        // =========================
+        // ADICIONAR COMENTÁRIO
+        // =========================
+
+        function comentar(botao) {
+
+            const area =
+                botao.closest(".comentarios");
+
+            const input =
+                area.querySelector("input");
+
+            const lista =
+                area.querySelector(".lista-comentarios");
+
+
+            const texto =
+                input.value.trim();
+
+
+            if (texto === "") {
+
+                alert(
+                    "Digite um comentário antes de enviar!"
+                );
+
+                return;
+
+            }
+
+
+            const comentario =
+                document.createElement("div");
+
+
+            comentario.className =
+                "comentario";
+
+
+            comentario.innerHTML =
+                `🙏 <strong>Você:</strong> ${texto}`;
+
+
+            lista.appendChild(comentario);
+
+
+            input.value = "";
+
+        }
+
+
+
+        // =========================
+        // CRIAR NOVO POST
+        // =========================
+
+        function criarPost() {
+
+            const campo =
+                document.getElementById("novoTexto");
+
+
+            const texto =
+                campo.value.trim();
+
+
+            if (texto === "") {
+
+                alert(
+                    "Escreva alguma coisa antes de publicar!"
+                );
+
+                return;
+
+            }
+
+
+            const feed =
+                document.getElementById("feed");
+
+
+            const post =
+                document.createElement("article");
+
+
+            post.className = "post";
+
+
+            post.innerHTML = `
+
+                <div class="usuario">
+
+                    <div class="perfil">
+                        ✝️
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Você
+                        </strong>
+
+                        <small>
+                            Agora
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <p class="texto-post">
+                    ${texto}
+                </p>
+
+
+                <div class="acoes">
+
+                    <button onclick="curtir(this)">
+
+                        ❤️ Curtir
+                        <span>0</span>
+
+                    </button>
+
+
+                    <button
+                        onclick="mostrarComentarios(this)">
+
+                        💬 Comentários
+
+                    </button>
+
+                </div>
+
+
+                <div class="comentarios">
+
+                    <input
+                        type="text"
+                        placeholder="Escreva um comentário..."
+                    >
+
+                    <button onclick="comentar(this)">
+                        Enviar
+                    </button>
+
+
+                    <div class="lista-comentarios"></div>
+
+                </div>
+
+            `;
+
+
+            // Coloca o novo post no início
+
+            feed.prepend(post);
+
+
+            // Limpa o campo
+
+            campo.value = "";
+
+        }
+
+    </script>
+
+
+<script src="script.js"></script></body>
+
+</html>
+```
