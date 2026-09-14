@@ -1,4 +1,4 @@
-// Lista (Array) de Produtos
+/ Lista (Array) de Produtos
 let produtos = [];
 
 function validarProduto(descricao, quantidade, valor){
