@@ -1,78 +1,103 @@
 let produtos = [];
 
-function validarProduto(descricao, quantidade, valor){
-    if(descricao.length < 5){
-        throw new Error("Descricao deve ter no mínimo cinco caracteres");
+function validarProduto(descricao, quantidade, valor) {
+
+    if (descricao.length < 5) {
+        throw new Error("Descrição deve ter no mínimo cinco caracteres");
     }
 
-    if(quantidade < 1){
+    if (quantidade < 1) {
         throw new Error("Quantidade deve ser maior que zero");
     }
 
-    if(valor < 0){
+    if (valor < 0) {
         throw new Error("Valor deve ser maior ou igual a zero");
     }
 }
 
-function cadastrarProduto(descricao, quantidade, valor){
-    validarProduto(descricao, quantidade, valor);
+function cadastrarProduto() {
 
-    let novoProduto = {
-        "codigo": produtos.length + 1,
-        "descricao": descricao,
-        "quantidade": quantidade,
-        "valor": valor
-    };
+    const descricao = document.getElementById("descricao").value;
+    const quantidade = Number(document.getElementById("quantidade").value);
+    const valor = Number(document.getElementById("valor").value);
 
-    produtos.push(novoProduto);
+    try {
+
+        validarProduto(descricao, quantidade, valor);
+
+        let novoProduto = {
+            codigo: produtos.length + 1,
+            descricao: descricao,
+            quantidade: quantidade,
+            valor: valor
+        };
+
+        produtos.push(novoProduto);
+
+        listarProdutos();
+
+        document.getElementById("descricao").value = "";
+        document.getElementById("quantidade").value = "";
+        document.getElementById("valor").value = "";
+
+    } catch (erro) {
+        alert(erro.message);
+    }
 }
 
-function listarProdutos(){
-    console.log(produtos);
+function listarProdutos() {
+
+    const lista = document.getElementById("listaProdutos");
+
+    lista.innerHTML = "";
+
+    produtos.forEach(function(produto) {
+
+        const linha = document.createElement("tr");
+
+        linha.innerHTML = `
+            <td>${produto.codigo}</td>
+            <td>${produto.descricao}</td>
+            <td>${produto.quantidade}</td>
+            <td>R$ ${produto.valor.toFixed(2)}</td>
+        `;
+
+        lista.appendChild(linha);
+    });
 }
 
-function atualizarValor(codigoProduto, novoValor){
-    if(novoValor < 0){
+function atualizarValor(codigoProduto, novoValor) {
+
+    if (novoValor < 0) {
         throw new Error("Valor deve ser maior ou igual a zero");
     }
 
-    const produto = produtos.find(prod => prod.codigo === codigoProduto);
+    const produto = produtos.find(
+        prod => prod.codigo === codigoProduto
+    );
 
-    if(produto){
+    if (produto) {
         produto.valor = novoValor;
-    }
-    else{
-        throw new Error("Produto nao encontrado");
+        listarProdutos();
+    } else {
+        throw new Error("Produto não encontrado");
     }
 }
 
-function atualizarQuantidade(codigoProduto, novaQuantidade){
-    if(novaQuantidade < 0){
+function atualizarQuantidade(codigoProduto, novaQuantidade) {
+
+    if (novaQuantidade < 0) {
         throw new Error("Quantidade deve ser maior ou igual a zero");
     }
 
-    const produto = produtos.find(prod => prod.codigo === codigoProduto);
+    const produto = produtos.find(
+        prod => prod.codigo === codigoProduto
+    );
 
-    if(produto){
+    if (produto) {
         produto.quantidade += novaQuantidade;
-    }
-    else{
-        throw new Error("Produto nao encontrado");
+        listarProdutos();
+    } else {
+        throw new Error("Produto não encontrado");
     }
 }
-
-// Testes
-listarProdutos();
-
-cadastrarProduto("Cadeira Gamer", 12, 699.00);
-cadastrarProduto("Mouse Log", 38, 99.00);
-
-listarProdutos();
-
-atualizarValor(2, 97.00);
-
-listarProdutos();
-
-atualizarQuantidade(1, 3);
-
-listarProdutos();
