@@ -1,0 +1,580 @@
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Mini Feed - Princesinha Sofia</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #eadcff, #fff0fa);
+            color: #4b326b;
+        }
+
+        /* CABEÇALHO */
+        header {
+            background: linear-gradient(90deg, #7b4bb7, #b77be8);
+            color: white;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(80, 40, 120, 0.3);
+        }
+
+        header h1 {
+            font-size: 32px;
+        }
+
+        header p {
+            margin-top: 8px;
+            font-size: 16px;
+        }
+
+        /* MENU */
+        nav {
+            background: white;
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            padding: 15px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        nav button {
+            border: none;
+            background: #eee0ff;
+            color: #663399;
+            padding: 10px 18px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        nav button:hover {
+            background: #cda8f2;
+            color: white;
+        }
+
+        /* FEED */
+        .feed {
+            width: 90%;
+            max-width: 650px;
+            margin: 25px auto;
+        }
+
+        /* CARD */
+        .post {
+            background: white;
+            border-radius: 20px;
+            margin-bottom: 25px;
+            overflow: hidden;
+            box-shadow: 0 5px 18px rgba(85, 45, 120, 0.18);
+            transition: transform 0.3s;
+        }
+
+        .post:hover {
+            transform: translateY(-4px);
+        }
+
+        .post-top {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+        }
+
+        .avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #d8b7f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 27px;
+            margin-right: 12px;
+        }
+
+        .post-top h3 {
+            color: #663399;
+        }
+
+        .post-top small {
+            color: #999;
+        }
+
+        .post img {
+            width: 100%;
+            height: 350px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .post-content {
+            padding: 18px;
+        }
+
+        .post-content h2 {
+            color: #713ca6;
+            margin-bottom: 8px;
+        }
+
+        .post-content p {
+            line-height: 1.5;
+            color: #5c4a69;
+        }
+
+        /* BOTÕES */
+        .actions {
+            display: flex;
+            gap: 10px;
+            padding: 0 18px 18px;
+        }
+
+        .actions button {
+            flex: 1;
+            border: none;
+            padding: 11px;
+            border-radius: 12px;
+            cursor: pointer;
+            background: #f0e3ff;
+            color: #663399;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .actions button:hover {
+            background: #b77be8;
+            color: white;
+        }
+
+        .liked {
+            background: #9b59d0 !important;
+            color: white !important;
+        }
+
+        /* COMENTÁRIOS */
+        .comments {
+            display: none;
+            padding: 0 18px 18px;
+        }
+
+        .comments input {
+            width: 75%;
+            padding: 10px;
+            border: 1px solid #d4b9ec;
+            border-radius: 10px;
+            outline: none;
+        }
+
+        .comments button {
+            padding: 10px 12px;
+            border: none;
+            background: #7b4bb7;
+            color: white;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        .comment-list {
+            margin-top: 10px;
+        }
+
+        .comment-list p {
+            background: #f5edff;
+            padding: 8px;
+            border-radius: 10px;
+            margin-top: 5px;
+        }
+
+        /* BOTÃO MAIS */
+        #mais {
+            display: block;
+            margin: 20px auto 40px;
+            border: none;
+            background: #7b4bb7;
+            color: white;
+            padding: 14px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        #mais:hover {
+            background: #5e328e;
+        }
+
+        footer {
+            text-align: center;
+            padding: 25px;
+            background: #7043a0;
+            color: white;
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+    <header>
+        <h1>👑 Mini Feed da Princesinha Sofia 💜</h1>
+        <p>✨ Um cantinho mágico cheio de aventuras! ✨</p>
+    </header>
+
+    <nav>
+        <button onclick="inicio()">🏰 Início</button>
+        <button onclick="mostrarMensagem('👑 Bem-vinda ao Reino de Encantia!')">
+            👑 Reino
+        </button>
+        <button onclick="mostrarMensagem('🦋 Você encontrou uma mensagem mágica!')">
+            🦋 Magia
+        </button>
+        <button onclick="mostrarMensagem('💜 Obrigada por visitar o feed!')">
+            💜 Sobre
+        </button>
+    </nav>
+
+    <main class="feed">
+
+        <!-- POST 1 -->
+        <article class="post">
+
+            <div class="post-top">
+                <div class="avatar">👸</div>
+
+                <div>
+                    <h3>Princesinha Sofia</h3>
+                    <small>Hoje às 10:30</small>
+                </div>
+            </div>
+
+            <img
+                src="https://loremflickr.com/800/500/princess,castle"
+                alt="Princesa em um castelo">
+
+            <div class="post-content">
+                <h2>🏰 Um dia mágico no castelo!</h2>
+
+                <p>
+                    Hoje foi um dia maravilhoso no reino!
+                    A Sofia está pronta para viver uma nova aventura
+                    cheia de amizade, coragem e magia. ✨👑
+                </p>
+            </div>
+
+            <div class="actions">
+                <button onclick="curtir(this)">
+                    💜 Curtir <span>0</span>
+                </button>
+
+                <button onclick="comentarios(this)">
+                    💬 Comentar
+                </button>
+
+                <button onclick="compartilhar()">
+                    📤 Compartilhar
+                </button>
+            </div>
+
+            <div class="comments">
+                <input type="text" placeholder="Escreva um comentário...">
+                <button onclick="adicionarComentario(this)">
+                    Enviar
+                </button>
+
+                <div class="comment-list"></div>
+            </div>
+
+        </article>
+
+
+        <!-- POST 2 -->
+        <article class="post">
+
+            <div class="post-top">
+                <div class="avatar">🦋</div>
+
+                <div>
+                    <h3>Diário do Reino</h3>
+                    <small>Ontem às 16:20</small>
+                </div>
+            </div>
+
+            <img
+                src="https://loremflickr.com/800/500/fairy,castle"
+                alt="Castelo mágico">
+
+            <div class="post-content">
+                <h2>🦋 Uma aventura encantada</h2>
+
+                <p>
+                    No reino, todos estavam preparando uma grande festa.
+                    Será que Sofia vai conseguir ajudar seus amigos?
+                    🌸✨
+                </p>
+            </div>
+
+            <div class="actions">
+                <button onclick="curtir(this)">
+                    💜 Curtir <span>0</span>
+                </button>
+
+                <button onclick="comentarios(this)">
+                    💬 Comentar
+                </button>
+
+                <button onclick="compartilhar()">
+                    📤 Compartilhar
+                </button>
+            </div>
+
+            <div class="comments">
+                <input type="text" placeholder="Escreva um comentário...">
+                <button onclick="adicionarComentario(this)">
+                    Enviar
+                </button>
+
+                <div class="comment-list"></div>
+            </div>
+
+        </article>
+
+
+        <!-- POST 3 -->
+        <article class="post">
+
+            <div class="post-top">
+                <div class="avatar">✨</div>
+
+                <div>
+                    <h3>Amigos de Encantia</h3>
+                    <small>Ontem às 12:00</small>
+                </div>
+            </div>
+
+            <img
+                src="https://loremflickr.com/800/500/princess,magic"
+                alt="Princesa em um mundo mágico">
+
+            <div class="post-content">
+                <h2>✨ A força da amizade</h2>
+
+                <p>
+                    Uma verdadeira princesa sabe que a maior magia
+                    é ajudar seus amigos e acreditar em si mesma. 💜
+                </p>
+            </div>
+
+            <div class="actions">
+                <button onclick="curtir(this)">
+                    💜 Curtir <span>0</span>
+                </button>
+
+                <button onclick="comentarios(this)">
+                    💬 Comentar
+                </button>
+
+                <button onclick="compartilhar()">
+                    📤 Compartilhar
+                </button>
+            </div>
+
+            <div class="comments">
+                <input type="text" placeholder="Escreva um comentário...">
+                <button onclick="adicionarComentario(this)">
+                    Enviar
+                </button>
+
+                <div class="comment-list"></div>
+            </div>
+
+        </article>
+
+        <button id="mais" onclick="carregarMais()">
+            ✨ Carregar mais aventuras
+        </button>
+
+    </main>
+
+    <footer>
+        👑 Mini Feed Princesinha Sofia 💜
+        <br>
+        ✨ Feito com HTML, CSS e JavaScript ✨
+    </footer>
+
+
+    <script>
+
+        // CURTIR
+        function curtir(botao) {
+
+            let numero = botao.querySelector("span");
+
+            let quantidade = Number(numero.innerText);
+
+            if (botao.classList.contains("liked")) {
+                quantidade--;
+                botao.classList.remove("liked");
+            } else {
+                quantidade++;
+                botao.classList.add("liked");
+            }
+
+            numero.innerText = quantidade;
+        }
+
+
+        // MOSTRAR COMENTÁRIOS
+        function comentarios(botao) {
+
+            let post = botao.closest(".post");
+            let area = post.querySelector(".comments");
+
+            if (area.style.display === "block") {
+                area.style.display = "none";
+            } else {
+                area.style.display = "block";
+            }
+        }
+
+
+        // ADICIONAR COMENTÁRIO
+        function adicionarComentario(botao) {
+
+            let area = botao.closest(".comments");
+            let input = area.querySelector("input");
+            let lista = area.querySelector(".comment-list");
+
+            if (input.value.trim() === "") {
+                alert("Digite um comentário primeiro! 💜");
+                return;
+            }
+
+            let novoComentario = document.createElement("p");
+
+            novoComentario.innerHTML =
+                "💜 <strong>Você:</strong> " + input.value;
+
+            lista.appendChild(novoComentario);
+
+            input.value = "";
+        }
+
+
+        // COMPARTILHAR
+        function compartilhar() {
+
+            if (navigator.share) {
+
+                navigator.share({
+                    title: "Mini Feed Princesinha Sofia",
+                    text: "Olha esse mini feed mágico! 👑💜"
+                });
+
+            } else {
+
+                alert(
+                    "✨ Link compartilhado! ✨\n\n" +
+                    "Mini Feed da Princesinha Sofia 💜"
+                );
+            }
+        }
+
+
+        // BOTÕES DO MENU
+        function mostrarMensagem(texto) {
+            alert(texto);
+        }
+
+
+        function inicio() {
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+        }
+
+
+        // CARREGAR MAIS
+        function carregarMais() {
+
+            let feed = document.querySelector(".feed");
+            let botao = document.getElementById("mais");
+
+            let novoPost = document.createElement("article");
+
+            novoPost.className = "post";
+
+            novoPost.innerHTML = `
+                <div class="post-top">
+                    <div class="avatar">👑</div>
+
+                    <div>
+                        <h3>Nova aventura</h3>
+                        <small>Agora mesmo</small>
+                    </div>
+                </div>
+
+                <img
+                    src="https://loremflickr.com/800/500/castle,princess"
+                    alt="Nova aventura no castelo">
+
+                <div class="post-content">
+                    <h2>👑 Uma nova aventura!</h2>
+
+                    <p>
+                        Sofia encontrou uma nova aventura
+                        no reino! Prepare-se para descobrir
+                        uma história cheia de magia. ✨💜
+                    </p>
+                </div>
+
+                <div class="actions">
+                    <button onclick="curtir(this)">
+                        💜 Curtir <span>0</span>
+                    </button>
+
+                    <button onclick="comentarios(this)">
+                        💬 Comentar
+                    </button>
+
+                    <button onclick="compartilhar()">
+                        📤 Compartilhar
+                    </button>
+                </div>
+
+                <div class="comments">
+                    <input
+                        type="text"
+                        placeholder="Escreva um comentário...">
+
+                    <button onclick="adicionarComentario(this)">
+                        Enviar
+                    </button>
+
+                    <div class="comment-list"></div>
+                </div>
+            `;
+
+            feed.insertBefore(novoPost, botao);
+
+            alert("✨ Uma nova aventura apareceu!");
+        }
+
+    </script>
+
+<script src="script.js"></script></body>
+</html>
+```
