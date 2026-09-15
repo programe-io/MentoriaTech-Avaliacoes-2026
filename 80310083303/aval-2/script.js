@@ -1,97 +1,24 @@
-const target = document.getElementById("target");
-const gameArea = document.getElementById("gameArea");
+function mostrarMensagem() {
+        alert(
+                "A internet continua evoluindo e está cada vez mais presente nos estudos, trabalho, comunicação e entretenimento!"
+                    );
+                    }
 
-const scoreText = document.getElementById("score");
-const timeText = document.getElementById("time");
+                    function mostrarCuriosidade() {
 
-const startButton = document.getElementById("startButton");
-const message = document.getElementById("message");
+                        const curiosidades = [
+                                "A internet permite que pessoas de diferentes países se comuniquem em poucos segundos.",
+                                        "Hoje, muitos serviços podem ser acessados diretamente pelo celular.",
+                                                "A computação em nuvem permite acessar arquivos de diferentes dispositivos.",
+                                                        "A inteligência artificial está sendo integrada a diversos serviços digitais.",
+                                                                "A internet é utilizada para educação, trabalho, comunicação, compras e entretenimento."
+                                                                    ];
 
-let score = 0;
-let time = 30;
-let playing = false;
-let timer;
+                                                                        const numero = Math.floor(
+                                                                                Math.random() * curiosidades.length
+                                                                                    );
 
-// Começar o jogo
-startButton.addEventListener("click", startGame);
-
-function startGame() {
-
-    score = 0;
-        time = 30;
-            playing = true;
-
-                scoreText.textContent = score;
-                    timeText.textContent = time;
-
-                        message.textContent = "Clique no 🎯 o mais rápido que puder!";
-
-                            startButton.textContent = "Reiniciar";
-
-                                target.style.display = "flex";
-
-                                    moveTarget();
-
-                                        clearInterval(timer);
-
-                                            timer = setInterval(() => {
-
-                                                    time--;
-
-                                                            timeText.textContent = time;
-
-                                                                    if (time <= 0) {
-                                                                                endGame();
-                                                                                        }
-
-                                                                                            }, 1000);
-                                                                                            }
-
-
-                                                                                            // Clicar no alvo
-                                                                                            target.addEventListener("click", () => {
-
-                                                                                                if (!playing) return;
-
-                                                                                                    score++;
-
-                                                                                                        scoreText.textContent = score;
-
-                                                                                                            moveTarget();
-                                                                                                            });
-
-
-                                                                                                            // Mover o alvo
-                                                                                                            function moveTarget() {
-
-                                                                                                                const areaWidth = gameArea.clientWidth;
-                                                                                                                    const areaHeight = gameArea.clientHeight;
-
-                                                                                                                        const targetWidth = target.offsetWidth;
-                                                                                                                            const targetHeight = target.offsetHeight;
-
-                                                                                                                                const maxX = areaWidth - targetWidth;
-                                                                                                                                    const maxY = areaHeight - targetHeight;
-
-                                                                                                                                        const x = Math.random() * maxX;
-                                                                                                                                            const y = Math.random() * maxY;
-
-                                                                                                                                                target.style.left = x + "px";
-                                                                                                                                                    target.style.top = y + "px";
-                                                                                                                                                    }
-
-
-                                                                                                                                                    // Finalizar jogo
-                                                                                                                                                    function endGame() {
-
-                                                                                                                                                        playing = false;
-
-                                                                                                                                                            clearInterval(timer);
-
-                                                                                                                                                                target.style.display = "none";
-
-                                                                                                                                                                    message.textContent =
-                                                                                                                                                                            `🏆 Fim de jogo! Você fez ${score} pontos!`;
-
-                                                                                                                                                                                startButton.textContent = "Jogar Novamente";
-                                                                                                                                                                                }
+                                                                                        document.getElementById("textoCuriosidade").textContent =
+                                                                                                curiosidades[numero];
+                                                                                                }
+}
