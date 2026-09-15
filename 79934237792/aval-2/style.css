@@ -1,436 +1,628 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Capitão Mem - Mini Feed</title>
+/* ================================
+   HENRY DANGER - DARK + YELLOW
+   ================================ */
 
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: Arial, Helvetica, sans-serif;
+:root {
+    --bg-dark: #080808;
+    --bg-card: #111111;
+    --bg-card-hover: #181818;
+
+    --yellow: #ffd400;
+    --yellow-dark: #e6b900;
+    --yellow-light: #ffe45c;
+
+    --white: #ffffff;
+    --gray: #b8b8b8;
+    --gray-dark: #252525;
+
+    --danger-red: #e53935;
+
+    --shadow: 0 8px 25px rgba(0, 0, 0, 0.55);
+    --yellow-glow: 0 0 18px rgba(255, 212, 0, 0.25);
+
+    --radius: 16px;
+}
+
+/* ================================
+   RESET
+   ================================ */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background:
+        radial-gradient(circle at top, #242000 0%, #080808 35%),
+        var(--bg-dark);
+    color: var(--white);
+    min-height: 100vh;
+}
+
+/* ================================
+   SCROLLBAR
+   ================================ */
+
+::-webkit-scrollbar {
+    width: 9px;
+}
+
+::-webkit-scrollbar-track {
+    background: #090909;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--yellow);
+    border-radius: 20px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--yellow-light);
+}
+
+/* ================================
+   HEADER / NAVBAR
+   ================================ */
+
+header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 15px 7%;
+
+    background: rgba(8, 8, 8, 0.92);
+    border-bottom: 2px solid var(--yellow);
+
+    backdrop-filter: blur(12px);
+
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.logo {
+    color: var(--yellow);
+    font-size: 1.8rem;
+    font-weight: 900;
+    letter-spacing: 2px;
+
+    text-shadow:
+        0 0 5px rgba(255, 212, 0, 0.5),
+        0 0 15px rgba(255, 212, 0, 0.2);
+}
+
+nav {
+    display: flex;
+    gap: 10px;
+}
+
+nav a {
+    color: var(--white);
+    text-decoration: none;
+    padding: 9px 15px;
+    border-radius: 8px;
+
+    font-weight: bold;
+
+    transition: 0.25s ease;
+}
+
+nav a:hover,
+nav a.active {
+    background: var(--yellow);
+    color: #000;
+
+    box-shadow: var(--yellow-glow);
+}
+
+/* ================================
+   CONTAINER
+   ================================ */
+
+.container {
+    width: min(100% - 30px, 900px);
+    margin: 30px auto;
+}
+
+/* ================================
+   HERO
+   ================================ */
+
+.hero {
+    position: relative;
+    overflow: hidden;
+
+    padding: 50px 35px;
+    margin-bottom: 25px;
+
+    border: 1px solid rgba(255, 212, 0, 0.35);
+    border-radius: var(--radius);
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 212, 0, 0.15),
+            rgba(0, 0, 0, 0.95) 65%
+        );
+
+    box-shadow: var(--shadow);
+}
+
+.hero::before {
+    content: "";
+
+    position: absolute;
+    width: 220px;
+    height: 220px;
+
+    right: -70px;
+    top: -70px;
+
+    background: var(--yellow);
+
+    border-radius: 50%;
+
+    opacity: 0.08;
+
+    box-shadow:
+        0 0 80px var(--yellow),
+        0 0 150px var(--yellow);
+}
+
+.hero h1 {
+    position: relative;
+
+    color: var(--yellow);
+
+    font-size: clamp(2rem, 6vw, 4rem);
+    font-weight: 1000;
+
+    text-transform: uppercase;
+
+    text-shadow:
+        3px 3px 0 #000,
+        0 0 20px rgba(255, 212, 0, 0.3);
+}
+
+.hero p {
+    position: relative;
+
+    max-width: 600px;
+
+    margin-top: 12px;
+
+    color: var(--gray);
+
+    line-height: 1.6;
+}
+
+/* ================================
+   POST CARD
+   ================================ */
+
+.post {
+    background: var(--bg-card);
+
+    border: 1px solid #292929;
+    border-left: 4px solid var(--yellow);
+
+    border-radius: var(--radius);
+
+    margin-bottom: 22px;
+
+    overflow: hidden;
+
+    box-shadow: var(--shadow);
+
+    transition:
+        transform 0.25s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+.post:hover {
+    transform: translateY(-4px);
+
+    border-color: var(--yellow);
+
+    box-shadow:
+        var(--shadow),
+        0 0 25px rgba(255, 212, 0, 0.12);
+}
+
+/* ================================
+   POST HEADER
+   ================================ */
+
+.post-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    padding: 16px;
+}
+
+.avatar {
+    width: 48px;
+    height: 48px;
+
+    border-radius: 50%;
+
+    border: 2px solid var(--yellow);
+
+    object-fit: cover;
+
+    background: var(--gray-dark);
+
+    box-shadow: var(--yellow-glow);
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-info strong {
+    color: var(--white);
+}
+
+.user-info span {
+    color: var(--gray);
+    font-size: 0.8rem;
+}
+
+/* ================================
+   POST CONTENT
+   ================================ */
+
+.post-content {
+    padding: 0 16px 16px;
+}
+
+.post-content p {
+    color: #ddd;
+    line-height: 1.6;
+}
+
+/* ================================
+   POST IMAGE
+   ================================ */
+
+.post-image {
+    width: 100%;
+
+    max-height: 500px;
+
+    object-fit: cover;
+
+    display: block;
+
+    border-top: 1px solid #242424;
+    border-bottom: 1px solid #242424;
+
+    transition: 0.35s ease;
+}
+
+.post:hover .post-image {
+    filter: brightness(1.08);
+}
+
+/* ================================
+   BUTTONS
+   ================================ */
+
+button {
+    border: none;
+    cursor: pointer;
+
+    font-family: inherit;
+    font-weight: bold;
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+button:active {
+    transform: scale(0.94);
+}
+
+.btn-yellow {
+    background: var(--yellow);
+    color: #000;
+
+    padding: 11px 18px;
+
+    border-radius: 9px;
+
+    box-shadow: 0 4px 12px rgba(255, 212, 0, 0.2);
+}
+
+.btn-yellow:hover {
+    background: var(--yellow-light);
+
+    box-shadow:
+        0 5px 18px rgba(255, 212, 0, 0.35);
+}
+
+.btn-dark {
+    background: #1c1c1c;
+    color: var(--white);
+
+    padding: 11px 18px;
+
+    border: 1px solid #333;
+    border-radius: 9px;
+}
+
+.btn-dark:hover {
+    border-color: var(--yellow);
+    color: var(--yellow);
+}
+
+/* ================================
+   POST ACTIONS
+   ================================ */
+
+.post-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 12px 16px;
+
+    border-top: 1px solid #242424;
+}
+
+.action-btn {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+
+    background: transparent;
+    color: var(--gray);
+
+    padding: 8px 12px;
+
+    border-radius: 8px;
+}
+
+.action-btn:hover {
+    background: #222;
+    color: var(--yellow);
+}
+
+.action-btn.liked {
+    color: var(--yellow);
+
+    background: rgba(255, 212, 0, 0.1);
+}
+
+/* ================================
+   LIKE ANIMATION
+   ================================ */
+
+@keyframes likePop {
+    0% {
+        transform: scale(1);
     }
 
-    body {
-      background: #eef2f7;
-      color: #222;
+    50% {
+        transform: scale(1.3);
     }
 
-    /* TOPO */
+    100% {
+        transform: scale(1);
+    }
+}
+
+.action-btn.liked {
+    animation: likePop 0.3s ease;
+}
+
+/* ================================
+   COMMENTS
+   ================================ */
+
+.comments {
+    padding: 0 16px 16px;
+
+    display: none;
+}
+
+.comments.active {
+    display: block;
+}
+
+.comment {
+    background: #191919;
+
+    border-left: 3px solid var(--yellow);
+
+    padding: 10px 12px;
+
+    margin-top: 8px;
+
+    border-radius: 6px;
+}
+
+.comment strong {
+    color: var(--yellow);
+}
+
+.comment p {
+    color: #ccc;
+    margin-top: 4px;
+}
+
+/* ================================
+   INPUT
+   ================================ */
+
+input,
+textarea {
+    width: 100%;
+
+    background: #151515;
+    color: white;
+
+    border: 1px solid #333;
+
+    padding: 12px 14px;
+
+    border-radius: 9px;
+
+    outline: none;
+
+    transition: 0.2s ease;
+}
+
+input:focus,
+textarea:focus {
+    border-color: var(--yellow);
+
+    box-shadow:
+        0 0 0 2px rgba(255, 212, 0, 0.1);
+}
+
+input::placeholder,
+textarea::placeholder {
+    color: #777;
+}
+
+/* ================================
+   CREATE POST
+   ================================ */
+
+.create-post {
+    background: var(--bg-card);
+
+    padding: 20px;
+
+    margin-bottom: 25px;
+
+    border-radius: var(--radius);
+
+    border: 1px solid #292929;
+
+    box-shadow: var(--shadow);
+}
+
+.create-post h2 {
+    color: var(--yellow);
+
+    margin-bottom: 15px;
+}
+
+.create-post textarea {
+    resize: vertical;
+    min-height: 100px;
+    margin-bottom: 12px;
+}
+
+/* ================================
+   BADGES
+   ================================ */
+
+.badge {
+    display: inline-block;
+
+    padding: 5px 10px;
+
+    background: var(--yellow);
+    color: #000;
+
+    border-radius: 20px;
+
+    font-size: 0.72rem;
+    font-weight: 900;
+
+    text-transform: uppercase;
+}
+
+/* ================================
+   FOOTER
+   ================================ */
+
+footer {
+    text-align: center;
+
+    padding: 30px 15px;
+
+    margin-top: 50px;
+
+    color: #777;
+
+    border-top: 1px solid #222;
+}
+
+footer strong {
+    color: var(--yellow);
+}
+
+/* ================================
+   RESPONSIVIDADE
+   ================================ */
+
+@media (max-width: 700px) {
+
     header {
-      height: 65px;
-      background: linear-gradient(135deg, #071a44, #0d47a1);
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 7%;
-      box-shadow: 0 3px 12px rgba(0,0,0,.25);
-      position: sticky;
-      top: 0;
-      z-index: 10;
+        padding: 12px 15px;
+
+        flex-direction: column;
+        gap: 12px;
     }
 
-    .logo {
-      font-size: 25px;
-      font-weight: bold;
-      letter-spacing: 1px;
+    nav {
+        width: 100%;
+
+        justify-content: center;
+
+        overflow-x: auto;
     }
 
-    .logo span {
-      color: #ffd600;
+    nav a {
+        white-space: nowrap;
     }
 
-    .search {
-      background: rgba(255,255,255,.15);
-      border: 1px solid rgba(255,255,255,.3);
-      color: white;
-      padding: 10px 18px;
-      border-radius: 25px;
-      outline: none;
-      width: 260px;
+    .container {
+        width: min(100% - 20px, 900px);
+        margin-top: 20px;
     }
 
-    .search::placeholder {
-      color: #ddd;
-    }
-
-    /* CAPA */
-    .cover {
-      width: 100%;
-      height: 270px;
-      background:
-        linear-gradient(rgba(3,20,55,.25), rgba(3,20,55,.75)),
-        url("https://images.unsplash.com/photo-1531058020387-3be344556be6?auto=format&fit=crop&w=1600&q=80")
-        center/cover;
-      position: relative;
-    }
-
-    .hero-text {
-      position: absolute;
-      bottom: 35px;
-      left: 8%;
-      color: white;
-    }
-
-    .hero-text h1 {
-      font-size: 42px;
-      text-shadow: 3px 3px 8px #000;
-    }
-
-    .hero-text p {
-      margin-top: 5px;
-      font-size: 17px;
-    }
-
-    /* PERFIL */
-    .profile {
-      max-width: 900px;
-      margin: -50px auto 25px;
-      background: white;
-      border-radius: 15px;
-      padding: 20px;
-      position: relative;
-      box-shadow: 0 5px 20px rgba(0,0,0,.12);
-      display: flex;
-      align-items: center;
-      gap: 20px;
-    }
-
-    .avatar {
-      width: 105px;
-      height: 105px;
-      border-radius: 50%;
-      border: 5px solid white;
-      background:
-        url("https://images.unsplash.com/photo-1568602471122-7832951cc4c5?auto=format&fit=crop&w=300&q=80")
-        center/cover;
-      box-shadow: 0 3px 10px rgba(0,0,0,.3);
-    }
-
-    .profile-info h2 {
-      color: #09265d;
-    }
-
-    .verified {
-      color: #1976d2;
-    }
-
-    .profile-info p {
-      color: #777;
-      margin-top: 5px;
-    }
-
-    .follow {
-      margin-left: auto;
-      background: #e30613;
-      border: none;
-      color: white;
-      padding: 11px 22px;
-      border-radius: 25px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .follow:hover {
-      background: #b9000b;
-    }
-
-    /* FEED */
-    main {
-      width: 900px;
-      max-width: 94%;
-      margin: auto;
+    .hero {
+        padding: 35px 22px;
     }
 
     .post {
-      background: white;
-      border-radius: 15px;
-      margin-bottom: 22px;
-      padding: 20px;
-      box-shadow: 0 4px 15px rgba(0,0,0,.08);
+        border-left-width: 3px;
     }
 
-    .post-header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 15px;
+    .post-actions {
+        overflow-x: auto;
     }
 
-    .small-avatar {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      background:
-        url("https://images.unsplash.com/photo-1568602471122-7832951cc4c5?auto=format&fit=crop&w=200&q=80")
-        center/cover;
+    .action-btn {
+        white-space: nowrap;
     }
+}
 
-    .post-name {
-      font-weight: bold;
-      color: #09265d;
-    }
+/* ================================
+   SELEÇÃO DE TEXTO
+   ================================ */
 
-    .time {
-      color: #999;
-      font-size: 13px;
-      margin-top: 3px;
-    }
-
-    .post-text {
-      line-height: 1.6;
-      margin-bottom: 15px;
-    }
-
-    /* IMAGEM DO POST */
-    .post-image {
-      width: 100%;
-      max-height: 500px;
-      object-fit: cover;
-      border-radius: 12px;
-      display: block;
-    }
-
-    /* BARRA DE AÇÕES */
-    .actions {
-      display: flex;
-      gap: 10px;
-      border-top: 1px solid #eee;
-      margin-top: 15px;
-      padding-top: 12px;
-    }
-
-    .action {
-      border: none;
-      background: transparent;
-      padding: 8px 15px;
-      border-radius: 8px;
-      cursor: pointer;
-      color: #555;
-      font-size: 15px;
-    }
-
-    .action:hover {
-      background: #edf3ff;
-      color: #0d47a1;
-    }
-
-    .like:hover {
-      color: #e30613;
-    }
-
-    /* COMENTÁRIO */
-    .comment {
-      display: flex;
-      gap: 10px;
-      margin-top: 15px;
-    }
-
-    .comment-avatar {
-      width: 35px;
-      height: 35px;
-      border-radius: 50%;
-      background:
-        url("https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&q=80")
-        center/cover;
-    }
-
-    .comment-box {
-      background: #f1f3f6;
-      padding: 9px 13px;
-      border-radius: 15px;
-      font-size: 14px;
-    }
-
-    .comment-box strong {
-      color: #09265d;
-    }
-
-    /* RESPONSIVO */
-    @media (max-width: 700px) {
-      header {
-        padding: 0 15px;
-      }
-
-      .search {
-        width: 150px;
-      }
-
-      .cover {
-        height: 220px;
-      }
-
-      .hero-text {
-        left: 20px;
-      }
-
-      .hero-text h1 {
-        font-size: 30px;
-      }
-
-      .profile {
-        margin-top: -35px;
-        flex-wrap: wrap;
-      }
-
-      .avatar {
-        width: 80px;
-        height: 80px;
-      }
-
-      .follow {
-        margin-left: 0;
-      }
-    }
-  </style>
-</head>
-
-<body>
-
-  <header>
-    <div class="logo">CAPITÃO <span>MEM</span> 🛡️</div>
-    <input class="search" type="text" placeholder="Pesquisar no feed...">
-  </header>
-
-  <section class="cover">
-    <div class="hero-text">
-      <h1>CAPITÃO MEM</h1>
-      <p>O herói oficial dos melhores memes da internet.</p>
-    </div>
-  </section>
-
-  <section class="profile">
-
-    <div class="avatar"></div>
-
-    <div class="profile-info">
-      <h2>Capitão Mem <span class="verified">✓</span></h2>
-      <p>@capitaomem • Criador de memes</p>
-    </div>
-
-    <button class="follow">+ Seguir</button>
-
-  </section>
-
-  <main>
-
-    <!-- POST 1 -->
-    <article class="post">
-
-      <div class="post-header">
-        <div class="small-avatar"></div>
-
-        <div>
-          <div class="post-name">
-            Capitão Mem ✓
-          </div>
-          <div class="time">
-            Hoje às 10:42
-          </div>
-        </div>
-      </div>
-
-      <p class="post-text">
-        Quando você abre o celular só para ver uma mensagem
-        e acaba passando 3 horas vendo memes. 😂
-      </p>
-
-      <img
-        class="post-image"
-        src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1000&q=80"
-        alt="Pessoa usando computador">
-
-      <div class="actions">
-        <button class="action like">❤️ Curtir</button>
-        <button class="action">💬 Comentar</button>
-        <button class="action">↗ Compartilhar</button>
-      </div>
-
-      <div class="comment">
-        <div class="comment-avatar"></div>
-
-        <div class="comment-box">
-          <strong>Maria</strong><br>
-          Esse sou eu todos os dias 😂
-        </div>
-      </div>
-
-    </article>
-
-
-    <!-- POST 2 -->
-    <article class="post">
-
-      <div class="post-header">
-        <div class="small-avatar"></div>
-
-        <div>
-          <div class="post-name">
-            Capitão Mem ✓
-          </div>
-          <div class="time">
-            Ontem às 18:20
-          </div>
-        </div>
-      </div>
-
-      <p class="post-text">
-        O importante é nunca desistir... principalmente
-        quando o meme ainda não carregou. 🫡
-      </p>
-
-      <img
-        class="post-image"
-        src="https://images.unsplash.com/photo-1531297484001-80022131f5a1?auto=format&fit=crop&w=1000&q=80"
-        alt="Computador com código">
-
-      <div class="actions">
-        <button class="action like">❤️ Curtir</button>
-        <button class="action">💬 Comentar</button>
-        <button class="action">↗ Compartilhar</button>
-      </div>
-
-    </article>
-
-
-    <!-- POST 3 -->
-    <article class="post">
-
-      <div class="post-header">
-        <div class="small-avatar"></div>
-
-        <div>
-          <div class="post-name">
-            Capitão Mem ✓
-          </div>
-          <div class="time">
-            15 de setembro
-          </div>
-        </div>
-      </div>
-
-      <p class="post-text">
-        Novo dia, novo meme. O Capitão está pronto para salvar
-        a internet! 🛡️🔥
-      </p>
-
-      <img
-        class="post-image"
-        src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1000&q=80"
-        alt="Evento com pessoas">
-
-      <div class="actions">
-        <button class="action like">❤️ Curtir</button>
-        <button class="action">💬 Comentar</button>
-        <button class="action">↗ Compartilhar</button>
-      </div>
-
-    </article>
-
-  </main>
-
-</body>
-</html>
+::selection {
+    background: var(--yellow);
+    color: #000;
+}
