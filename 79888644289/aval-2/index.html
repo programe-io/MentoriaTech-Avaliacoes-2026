@@ -1,0 +1,747 @@
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>MotoFeed 🏍️</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background: #0d0d0d;
+    color: white;
+}
+
+/* CABEÇALHO */
+header {
+    background: linear-gradient(135deg, #ff3c00, #8b0000);
+    padding: 25px;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+header h1 {
+    font-size: 32px;
+    margin-bottom: 8px;
+}
+
+header p {
+    margin-bottom: 15px;
+}
+
+#pesquisa {
+    width: 90%;
+    max-width: 600px;
+    padding: 13px 18px;
+    border: none;
+    border-radius: 25px;
+    outline: none;
+    font-size: 15px;
+}
+
+/* CONTAINER */
+.container {
+    width: 95%;
+    max-width: 700px;
+    margin: 25px auto;
+}
+
+/* CARD */
+.card {
+    background: #1b1b1b;
+    padding: 20px;
+    margin-bottom: 22px;
+    border-radius: 16px;
+    box-shadow: 0 5px 20px rgba(0,0,0,.4);
+}
+
+/* PERFIL */
+.perfil {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 15px;
+}
+
+.avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #ff3c00;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 25px;
+}
+
+/* IMAGEM */
+.moto-img {
+    width: 100%;
+    height: 330px;
+    object-fit: cover;
+    border-radius: 12px;
+    margin: 15px 0;
+    cursor: pointer;
+    transition: .3s;
+}
+
+.moto-img:hover {
+    transform: scale(1.02);
+    filter: brightness(1.1);
+}
+
+/* BOTÕES */
+.acoes {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+button {
+    border: none;
+    background: #303030;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 9px;
+    cursor: pointer;
+    transition: .2s;
+}
+
+button:hover {
+    background: #ff3c00;
+    transform: translateY(-2px);
+}
+
+.curtido {
+    background: #ff3c00;
+}
+
+/* COMENTÁRIOS */
+.comentarios {
+    margin-top: 15px;
+    display: none;
+}
+
+.comentarios input {
+    width: 75%;
+    padding: 11px;
+    border: none;
+    border-radius: 8px;
+    outline: none;
+}
+
+.comentario {
+    background: #292929;
+    padding: 10px;
+    margin-top: 8px;
+    border-radius: 8px;
+}
+
+/* PUBLICAÇÃO */
+textarea {
+    width: 100%;
+    min-height: 100px;
+    resize: none;
+    padding: 15px;
+    border: none;
+    border-radius: 10px;
+    outline: none;
+    margin: 15px 0;
+}
+
+.publicar {
+    width: 100%;
+    background: #ff3c00;
+    font-size: 16px;
+}
+
+/* MODAL DA IMAGEM */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 100;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,.9);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal img {
+    max-width: 90%;
+    max-height: 85%;
+    border-radius: 12px;
+    box-shadow: 0 0 30px black;
+}
+
+.fechar {
+    position: absolute;
+    top: 25px;
+    right: 35px;
+    font-size: 40px;
+    cursor: pointer;
+}
+
+/* RODAPÉ */
+footer {
+    text-align: center;
+    color: #aaa;
+    padding: 30px;
+}
+
+/* RESPONSIVO */
+@media(max-width:600px) {
+
+    header h1 {
+        font-size: 26px;
+    }
+
+    .moto-img {
+        height: 240px;
+    }
+
+    .comentarios input {
+        width: 65%;
+    }
+}
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+<header>
+
+    <h1>🏍️ MotoFeed</h1>
+
+    <p>O lugar dos apaixonados por motos!</p>
+
+    <input
+        id="pesquisa"
+        type="text"
+        placeholder="🔎 Pesquisar motos..."
+        onkeyup="pesquisar()"
+    >
+
+</header>
+
+
+<div class="container">
+
+    <!-- CRIAR POST -->
+    <div class="card">
+
+        <h2>📢 Nova publicação</h2>
+
+        <textarea
+            id="textoPost"
+            placeholder="Fale sobre sua moto..."
+        ></textarea>
+
+        <button class="publicar" onclick="publicar()">
+            🚀 Publicar
+        </button>
+
+    </div>
+
+
+    <!-- POST 1 -->
+    <div class="card post">
+
+        <div class="perfil">
+
+            <div class="avatar">🏍️</div>
+
+            <div>
+                <strong>Lucas Rider</strong>
+                <small> · Há 10 minutos</small>
+            </div>
+
+        </div>
+
+        <p>
+            A máquina dos sonhos! 🔥
+            Quem também gosta de motos esportivas?
+        </p>
+
+        <img
+            class="moto-img"
+            src="https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=1200&q=80"
+            onclick="ampliar(this)"
+            alt="Moto esportiva"
+        >
+
+        <div class="acoes">
+
+            <button onclick="curtir(this)">
+                ❤️ Curtir <span>0</span>
+            </button>
+
+            <button onclick="mostrarComentarios(this)">
+                💬 Comentários
+            </button>
+
+            <button onclick="compartilhar()">
+                📤 Compartilhar
+            </button>
+
+        </div>
+
+        <div class="comentarios">
+
+            <input
+                type="text"
+                placeholder="Escreva um comentário..."
+            >
+
+            <button onclick="adicionarComentario(this)">
+                Enviar
+            </button>
+
+            <div class="lista"></div>
+
+        </div>
+
+    </div>
+
+
+    <!-- POST 2 -->
+    <div class="card post">
+
+        <div class="perfil">
+
+            <div class="avatar">🔥</div>
+
+            <div>
+                <strong>Marcos Moto</strong>
+                <small> · Há 30 minutos</small>
+            </div>
+
+        </div>
+
+        <p>
+            Nada melhor que pegar a estrada no fim de semana. 🏍️💨
+        </p>
+
+        <img
+            class="moto-img"
+            src="https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?auto=format&fit=crop&w=1200&q=80"
+            onclick="ampliar(this)"
+            alt="Motocicleta na estrada"
+        >
+
+        <div class="acoes">
+
+            <button onclick="curtir(this)">
+                ❤️ Curtir <span>0</span>
+            </button>
+
+            <button onclick="mostrarComentarios(this)">
+                💬 Comentários
+            </button>
+
+            <button onclick="compartilhar()">
+                📤 Compartilhar
+            </button>
+
+        </div>
+
+        <div class="comentarios">
+
+            <input
+                type="text"
+                placeholder="Escreva um comentário..."
+            >
+
+            <button onclick="adicionarComentario(this)">
+                Enviar
+            </button>
+
+            <div class="lista"></div>
+
+        </div>
+
+    </div>
+
+
+    <!-- POST 3 -->
+    <div class="card post">
+
+        <div class="perfil">
+
+            <div class="avatar">🏁</div>
+
+            <div>
+                <strong>Speed Moto</strong>
+                <small> · Há 1 hora</small>
+            </div>
+
+        </div>
+
+        <p>
+            Qual vocês escolheriam? 👇
+            <br><br>
+            🏁 Yamaha R1<br>
+            🔥 Kawasaki Ninja<br>
+            ⚡ BMW S1000RR
+        </p>
+
+        <img
+            class="moto-img"
+            src="https://images.unsplash.com/photo-1558980664-10ea7a14c647?auto=format&fit=crop&w=1200&q=80"
+            onclick="ampliar(this)"
+            alt="Moto esportiva"
+        >
+
+        <div class="acoes">
+
+            <button onclick="curtir(this)">
+                ❤️ Curtir <span>0</span>
+            </button>
+
+            <button onclick="mostrarComentarios(this)">
+                💬 Comentários
+            </button>
+
+            <button onclick="compartilhar()">
+                📤 Compartilhar
+            </button>
+
+        </div>
+
+        <div class="comentarios">
+
+            <input
+                type="text"
+                placeholder="Escreva um comentário..."
+            >
+
+            <button onclick="adicionarComentario(this)">
+                Enviar
+            </button>
+
+            <div class="lista"></div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<footer>
+    🏍️ MotoFeed © 2026
+</footer>
+
+
+<!-- MODAL -->
+<div class="modal" id="modal" onclick="fecharModal()">
+
+    <span class="fechar">&times;</span>
+
+    <img id="imagemAmpliada">
+
+</div>
+
+
+<script>
+
+/* =========================
+   CURTIR
+========================= */
+
+function curtir(botao) {
+
+    let contador = botao.querySelector("span");
+
+    let numero = Number(contador.innerText);
+
+    if (botao.classList.contains("curtido")) {
+
+        numero--;
+
+        botao.classList.remove("curtido");
+
+    } else {
+
+        numero++;
+
+        botao.classList.add("curtido");
+
+    }
+
+    contador.innerText = numero;
+}
+
+
+/* =========================
+   AMPLIAR IMAGEM
+========================= */
+
+function ampliar(imagem) {
+
+    let modal = document.getElementById("modal");
+
+    let imagemAmpliada =
+        document.getElementById("imagemAmpliada");
+
+    imagemAmpliada.src = imagem.src;
+
+    modal.style.display = "flex";
+}
+
+
+/* =========================
+   FECHAR IMAGEM
+========================= */
+
+function fecharModal() {
+
+    document.getElementById("modal").style.display = "none";
+
+}
+
+
+/* =========================
+   COMENTÁRIOS
+========================= */
+
+function mostrarComentarios(botao) {
+
+    let card = botao.closest(".post");
+
+    let comentarios =
+        card.querySelector(".comentarios");
+
+    if (comentarios.style.display === "block") {
+
+        comentarios.style.display = "none";
+
+    } else {
+
+        comentarios.style.display = "block";
+
+    }
+
+}
+
+
+/* =========================
+   ADICIONAR COMENTÁRIO
+========================= */
+
+function adicionarComentario(botao) {
+
+    let area = botao.closest(".comentarios");
+
+    let input = area.querySelector("input");
+
+    let lista = area.querySelector(".lista");
+
+    if (input.value.trim() === "") {
+
+        alert("Digite um comentário!");
+
+        return;
+
+    }
+
+    let comentario =
+        document.createElement("div");
+
+    comentario.className = "comentario";
+
+    comentario.innerHTML =
+        "👤 <strong>Você:</strong> " +
+        input.value;
+
+    lista.appendChild(comentario);
+
+    input.value = "";
+
+}
+
+
+/* =========================
+   COMPARTILHAR
+========================= */
+
+function compartilhar() {
+
+    if (navigator.share) {
+
+        navigator.share({
+
+            title: "MotoFeed 🏍️",
+
+            text: "Confira essa publicação incrível de motos!"
+
+        });
+
+    } else {
+
+        navigator.clipboard.writeText(
+            "Confira essa publicação no MotoFeed 🏍️"
+        );
+
+        alert(
+            "Link da publicação copiado!"
+        );
+
+    }
+
+}
+
+
+/* =========================
+   PESQUISA
+========================= */
+
+function pesquisar() {
+
+    let pesquisa =
+        document
+        .getElementById("pesquisa")
+        .value
+        .toLowerCase();
+
+    let posts =
+        document.querySelectorAll(".post");
+
+    posts.forEach(function(post) {
+
+        let texto =
+            post.innerText.toLowerCase();
+
+        if (texto.includes(pesquisa)) {
+
+            post.style.display = "block";
+
+        } else {
+
+            post.style.display = "none";
+
+        }
+
+    });
+
+}
+
+
+/* =========================
+   PUBLICAR
+========================= */
+
+function publicar() {
+
+    let texto =
+        document
+        .getElementById("textoPost")
+        .value
+        .trim();
+
+    if (texto === "") {
+
+        alert("Escreva algo antes de publicar!");
+
+        return;
+
+    }
+
+    let novoPost =
+        document.createElement("div");
+
+    novoPost.className = "card post";
+
+    novoPost.innerHTML = `
+
+        <div class="perfil">
+
+            <div class="avatar">
+                🏍️
+            </div>
+
+            <div>
+                <strong>Você</strong>
+                <small> · Agora</small>
+            </div>
+
+        </div>
+
+        <p>${texto}</p>
+
+        <div
+            style="
+                background:#292929;
+                padding:35px;
+                text-align:center;
+                border-radius:12px;
+                margin:15px 0;
+                font-size:60px;
+            "
+        >
+            🏍️
+        </div>
+
+        <div class="acoes">
+
+            <button onclick="curtir(this)">
+                ❤️ Curtir <span>0</span>
+            </button>
+
+            <button onclick="mostrarComentarios(this)">
+                💬 Comentários
+            </button>
+
+            <button onclick="compartilhar()">
+                📤 Compartilhar
+            </button>
+
+        </div>
+
+        <div class="comentarios">
+
+            <input
+                type="text"
+                placeholder="Escreva um comentário..."
+            >
+
+            <button onclick="adicionarComentario(this)">
+                Enviar
+            </button>
+
+            <div class="lista"></div>
+
+        </div>
+    `;
+
+    document
+        .querySelector(".container")
+        .appendChild(novoPost);
+
+    document
+        .getElementById("textoPost")
+        .value = "";
+
+    alert("Publicação criada! 🏍️🔥");
+
+}
+
+</script>
+
+<script src="script.js"></script></body>
+</html>
+```
