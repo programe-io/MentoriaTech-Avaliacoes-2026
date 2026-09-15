@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MiniFeed | Futebol Feminino</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #7c3aed;
+      --primary-dark: #5b21b6;
+      --pink: #ec4899;
+      --bg: #f5f5f7;
+      --card: #ffffff;
+      --text: #18181b;
+      --muted: #71717a;
+      --border: #e4e4e7;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      transition: .3s;
+    }
+
+    body.dark {
+      --bg: #09090b;
+      --card: #18181b;
+      --text: #f4f4f5;
+      --muted: #a1a1aa;
+      --border: #27272a;
+    }
+
+    /* HEADER */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255,255,255,.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    body.dark header {
+      background: rgba(9,9,11,.92);
+    }
+
+    .navbar {
+      max-width: 1100px;
+      margin: auto;
+      height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      gap: 20px;
+    }
+
+    .logo {
+      font-size: 23px;
+      font-weight: 900;
+      color: var(--primary);
+      white-space: nowrap;
+    }
+
+    .logo span {
+      color: var(--pink);
+    }
+
+    .search {
+      flex: 1;
+      max-width: 450px;
+      position: relative;
+    }
+
+    .search input {
+      width: 100%;
+      padding: 12px 18px 12px 42px;
+      border: 1px solid var(--border);
+      border-radius: 30px;
+      outline: none;
+      background: var(--card);
+      color: var(--text);
+      font-size: 14px;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 16px;
+      top: 11px;
+      font-size: 18px;
+    }
+
+    .theme-btn {
+      border: 0;
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--text);
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 18px;
+    }
+
+    /* LAYOUT */
+    .container {
+      max-width: 1100px;
+      margin: 25px auto;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: 220px 1fr 250px;
+      gap: 25px;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      position: sticky;
+      top: 95px;
+      height: fit-content;
+    }
+
+    .sidebar h3 {
+      margin-bottom: 15px;
+    }
+
+    .menu {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .menu button {
+      text-align: left;
+      padding: 13px;
+      border: 0;
+      background: transparent;
+      border-radius: 10px;
+      cursor: pointer;
+      color: var(--text);
+      font-size: 14px;
+      transition: .2s;
+    }
+
+    .menu button:hover,
+    .menu button.active {
+      background: #ede9fe;
+      color: var(--primary);
+      font-weight: bold;
+    }
+
+    body.dark .menu button:hover,
+    body.dark .menu button.active {
+      background: #2e1065;
+    }
+
+    /* FEED */
+    .feed {
+      min-width: 0;
+    }
+
+    .feed-title {
+      margin-bottom: 18px;
+    }
+
+    .feed-title h1 {
+      font-size: 28px;
+      margin-bottom: 5px;
+    }
+
+    .feed-title p {
+      color: var(--muted);
+    }
+
+    .post {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      margin-bottom: 20px;
+      overflow: hidden;
+      box-shadow: 0 3px 12px rgba(0,0,0,.04);
+    }
+
+    .post-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 15px;
+    }
+
+    .avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .author {
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .date {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 3px;
+    }
+
+    .post-content {
+      padding: 0 15px 15px;
+    }
+
+    .post-content h2 {
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
+
+    .post-content p {
+      color: var(--muted);
+      line-height: 1.5;
+      font-size: 14px;
+    }
+
+    .post-image {
+      width: 100%;
+      height: 310px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .post-actions {
+      padding: 12px 15px;
+      display: flex;
+      gap: 18px;
+      border-top: 1px solid var(--border);
+    }
+
+    .action {
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .action:hover {
+      color: var(--primary);
+    }
+
+    .action.liked {
+      color: #ef4444;
+    }
+
+    .likes {
+      padding: 0 15px 10px;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    /* RIGHT SIDEBAR */
+    .right-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 18px;
+      border-radius: 16px;
+      margin-bottom: 18px;
+    }
+
+    .right-card h3 {
+      margin-bottom: 15px;
+      font-size: 16px;
+    }
+
+    .trend {
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .trend:last-child {
+      border: 0;
+    }
+
+    .trend small {
+      color: var(--muted);
+    }
+
+    .trend strong {
+      display: block;
+      margin-top: 4px;
+    }
+
+    .team {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 13px;
+    }
+
+    .team img {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    /* COMMENTS */
+    .comments {
+      display: none;
+      padding: 15px;
+      border-top: 1px solid var(--border);
+    }
+
+    .comment {
+      font-size: 13px;
+      margin-bottom: 10px;
+      color: var(--muted);
+    }
+
+    .comment strong {
+      color: var(--text);
+    }
+
+    .comment-form {
+      display: flex;
+      gap: 7px;
+      margin-top: 10px;
+    }
+
+    .comment-form input {
+      flex: 1;
+      padding: 9px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg);
+      color: var(--text);
+      outline: none;
+    }
+
+    .comment-form button {
+      border: 0;
+      background: var(--primary);
+      color: white;
+      border-radius: 8px;
+      padding: 0 12px;
+      cursor: pointer;
+    }
+
+    /* RESPONSIVO */
+    @media (max-width: 900px) {
+      .container {
+        grid-template-columns: 180px 1fr;
+      }
+
+      .right-sidebar {
+        display: none;
+      }
+    }
+
+    @media (max-width: 650px) {
+      .navbar {
+        height: auto;
+        padding: 12px 15px;
+        flex-wrap: wrap;
+      }
+
+      .logo {
+        font-size: 20px;
+      }
+
+      .search {
+        order: 3;
+        max-width: none;
+        flex-basis: 100%;
+      }
+
+      .container {
+        display: block;
+        margin-top: 15px;
+      }
+
+      .sidebar {
+        position: static;
+        margin-bottom: 20px;
+      }
+
+      .menu {
+        flex-direction: row;
+        overflow-x: auto;
+      }
+
+      .menu button {
+        white-space: nowrap;
+        background: var(--card);
+        border: 1px solid var(--border);
+      }
+
+      .post-image {
+        height: 230px;
+      }
+
+      .feed-title h1 {
+        font-size: 24px;
+      }
+    }
+  </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <nav class="navbar">
+      <div class="logo">
+        Mini<span>Feed</span> ⚽
+      </div>
+
+      <div class="search">
+        <span class="search-icon">🔎</span>
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="Pesquisar no MiniFeed..."
+          onkeyup="searchPosts()"
+        >
+      </div>
+
+      <button class="theme-btn" onclick="toggleDarkMode()" title="Modo escuro">
+        🌙
+      </button>
+    </nav>
+  </header>
+
+  <!-- CONTEÚDO -->
+  <main class="container">
+
+    <!-- MENU -->
+    <aside class="sidebar">
+      <h3>Explorar</h3>
+
+      <div class="menu">
+        <button class="active" onclick="filterPosts('todos', this)">
+          🏠 Início
+        </button>
+
+        <button onclick="filterPosts('brasil', this)">
+          🇧🇷 Brasil
+        </button>
+
+        <button onclick="filterPosts('internacional', this)">
+          🌎 Internacional
+        </button>
+
+        <button onclick="filterPosts('clubes', this)">
+          🏆 Clubes
+        </button>
+
+        <button onclick="filterPosts('selecao', this)">
+          ⭐ Seleção
+        </button>
+      </div>
+    </aside>
+
+    <!-- FEED -->
+    <section class="feed">
+
+      <div class="feed-title">
+        <h1>Futebol Feminino</h1>
+        <p>As principais notícias, jogos e histórias do futebol feminino.</p>
+      </div>
+
+      <!-- POST 1 -->
+      <article class="post" data-category="brasil">
+
+        <div class="post-header">
+          <img
+            class="avatar"
+            src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=100"
+            alt="Perfil"
+          >
+
+          <div>
+            <div class="author">MiniFeed Futebol</div>
+            <div class="date">Hoje às 10:32</div>
+          </div>
+        </div>
+
+        <div class="post-content">
+          <h2>⚽ O futebol feminino brasileiro está em alta!</h2>
+
+          <p>
+            Clubes brasileiros seguem investindo cada vez mais na modalidade,
+            aumentando a visibilidade e criando novas oportunidades para as atletas.
+          </p>
+        </div>
+
+        <img
+          class="post-image"
+          src="https://images.unsplash.com/photo-1553778263-73a83bab9b0c?w=1000"
+          alt="Futebol feminino"
+        >
+
+        <div class="likes">
+          ❤️ <span class="like-count">128</span> curtidas
+        </div>
+
+        <div class="post-actions">
+          <button class="action" onclick="likePost(this)">
+            ❤️ Curtir
+          </button>
+
+          <button class="action" onclick="toggleComments(this)">
+            💬 Comentar
+          </button>
+
+          <button class="action" onclick="sharePost()">
+            ↗️ Compartilhar
+          </button>
+        </div>
+
+        <div class="comments">
+          <div class="comment">
+            <strong>Ana:</strong> Que evolução incrível! 🔥
+          </div>
+
+          <div class="comment">
+            <strong>Mariana:</strong> O futebol feminino merece ainda mais espaço.
+          </div>
+
+          <div class="comment-form">
+            <input type="text" placeholder="Escreva um comentário...">
+            <button onclick="addComment(this)">Enviar</button>
+          </div>
+        </div>
+
+      </article>
+
+      <!-- POST 2 -->
+      <article class="post" data-category="internacional">
+
+        <div class="post-header">
+          <img
+            class="avatar"
+            src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100"
+            alt="Perfil"
+          >
+
+          <div>
+            <div class="author">Women Football News</div>
+            <div class="date">Hoje às 08:15</div>
+          </div>
+        </div>
+
+        <div class="post-content">
+          <h2>🌎 A nova geração de estrelas internacionais</h2>
+
+          <p>
+            Jovens jogadoras estão conquistando espaço nos grandes campeonatos
+            e mostrando que o futuro do futebol feminino é cada vez mais promissor.
+          </p>
+        </div>
+
+        <img
+          class="post-image"
+          src="https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=1000"
+          alt="Jogadoras de futebol"
+        >
+
+        <div class="likes">
+          ❤️ <span class="like-count">94</span> curtidas
+        </div>
+
+        <div class="post-actions">
+          <button class="action" onclick="likePost(this)">
+            ❤️ Curtir
+          </button>
+
+          <button class="action" onclick="toggleComments(this)">
+            💬 Comentar
+          </button>
+
+          <button class="action" onclick="sharePost()">
+            ↗️ Compartilhar
+          </button>
+        </div>
+
+        <div class="comments">
+          <div class="comment">
+            <strong>Julia:</strong> Que fase maravilhosa para o futebol feminino! ⚽
+          </div>
+
+          <div class="comment-form">
+            <input type="text" placeholder="Escreva um comentário...">
+            <button onclick="addComment(this)">Enviar</button>
+          </div>
+        </div>
+
+      </article>
+
+      <!-- POST 3 -->
+      <article class="post" data-category="selecao">
+
+        <div class="post-header">
+          <img
+            class="avatar"
+            src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100"
+            alt="Perfil"
+          >
+
+          <div>
+            <div class="author">Seleção Feminina</div>
+            <div class="date">Ontem às 19:40</div>
+          </div>
+        </div>
+
+        <div class="post-content">
+          <h2>🇧🇷 Seleção feminina se prepara para novos desafios</h2>
+
+          <p>
+            A equipe segue trabalhando forte nos treinamentos em busca de grandes
+            resultados e de mais conquistas para o futebol brasileiro.
+          </p>
+        </div>
+
+        <img
+          class="post-image"
+          src="https://images.unsplash.com/photo-1517466787929-bc90951d0974?w=1000"
+          alt="Treino de futebol"
+        >
+
+        <div class="likes">
+          ❤️ <span class="like-count">231</span> curtidas
+        </div>
+
+        <div class="post-actions">
+          <button class="action" onclick="likePost(this)">
+            ❤️ Curtir
+          </button>
+
+          <button class="action" onclick="toggleComments(this)">
+            💬 Comentar
+          </button>
+
+          <button class="action" onclick="sharePost()">
+            ↗️ Compartilhar
+          </button>
+        </div>
+
+        <div class="comments">
+          <div class="comment">
+            <strong>Camila:</strong> Vamos, Brasil! 🇧🇷💚💛
+          </div>
+
+          <div class="comment-form">
+            <input type="text" placeholder="Escreva um comentário...">
+            <button onclick="addComment(this)">Enviar</button>
+          </div>
+        </div>
+
+      </article>
+
+      <!-- POST 4 -->
+      <article class="post" data-category="clubes">
+
+        <div class="post-header">
+          <img
+            class="avatar"
+            src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100"
+            alt="Perfil"
+          >
+
+          <div>
+            <div class="author">Futebol nos Clubes</div>
+            <div class="date">Ontem às 15:20</div>
+          </div>
+        </div>
+
+        <div class="post-content">
+          <h2>🏆 Grandes jogos movimentam o futebol feminino</h2>
+
+          <p>
+            A rodada promete partidas emocionantes e muita disputa pelos primeiros
+            lugares nas competições nacionais.
+          </p>
+        </div>
+
+        <img
+          class="post-image"
+          src="https://images.unsplash.com/photo-1526232761682-d26e03ac148e?w=1000"
+          alt="Partida de futebol"
+        >
+
+        <div class="likes">
+          ❤️ <span class="like-count">76</span> curtidas
+        </div>
+
+        <div class="post-actions">
+          <button class="action" onclick="likePost(this)">
+            ❤️ Curtir
+          </button>
+
+          <button class="action" onclick="toggleComments(this)">
+            💬 Comentar
+          </button>
+
+          <button class="action" onclick="sharePost()">
+            ↗️ Compartilhar
+          </button>
+        </div>
+
+        <div class="comments">
+          <div class="comment-form">
+            <input type="text" placeholder="Escreva um comentário...">
+            <button onclick="addComment(this)">Enviar</button>
+          </div>
+        </div>
+
+      </article>
+
+    </section>
+
+    <!-- LATERAL DIREITA -->
+    <aside class="right-sidebar">
+
+      <div class="right-card">
+        <h3>🔥 Em alta</h3>
+
+        <div class="trend">
+          <small>#1 • Futebol Feminino</small>
+          <strong>Brasileirão Feminino</strong>
+        </div>
+
+        <div class="trend">
+          <small>#2 • Seleção</small>
+          <strong>Seleção Brasileira</strong>
+        </div>
+
+        <div class="trend">
+          <small>#3 • Internacional</small>
+          <strong>Champions League</strong>
+        </div>
+
+        <div class="trend">
+          <small>#4 • Clubes</small>
+          <strong>Mercado da bola</strong>
+        </div>
+      </div>
+
+      <div class="right-card">
+        <h3>⭐ Destaques</h3>
+
+        <div class="team">
+          <img
+            src="https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=100"
+            alt=""
+          >
+          <div>
+            <strong>Jogadoras</strong><br>
+            <small>Novas estrelas</small>
+          </div>
+        </div>
+
+        <div class="team">
+          <img
+            src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=100"
+            alt=""
+          >
+          <div>
+            <strong>Times</strong><br>
+            <small>Grandes clubes</small>
+          </div>
+        </div>
+      </div>
+
+    </aside>
+
+  </main>
+
+  <script>
+
+    // CURTIR
+    function likePost(button) {
+
+      const post = button.closest(".post");
+      const count = post.querySelector(".like-count");
+
+      let likes = parseInt(count.textContent);
+
+      if (button.classList.contains("liked")) {
+        likes--;
+        button.classList.remove("liked");
+        button.innerHTML = "❤️ Curtir";
+      } else {
+        likes++;
+        button.classList.add("liked");
+        button.innerHTML = "❤️ Curtido";
+      }
+
+      count.textContent = likes;
+    }
+
+
+    // COMENTÁRIOS
+    function toggleComments(button) {
+
+      const post = button.closest(".post");
+      const comments = post.querySelector(".comments");
+
+      if (comments.style.display === "block") {
+        comments.style.display = "none";
+      } else {
+        comments.style.display = "block";
+      }
+    }
+
+
+    // ADICIONAR COMENTÁRIO
+    function addComment(button) {
+
+      const form = button.closest(".comment-form");
+      const input = form.querySelector("input");
+      const comments = form.parentElement;
+
+      const text = input.value.trim();
+
+      if (text === "") {
+        alert("Digite um comentário.");
+        return;
+      }
+
+      const comment = document.createElement("div");
+
+      comment.className = "comment";
+
+      comment.innerHTML =
+        "<strong>Você:</strong> " +
+        escapeHTML(text);
+
+      comments.insertBefore(comment, form);
+
+      input.value = "";
+    }
+
+
+    // PROTEÇÃO BÁSICA CONTRA HTML INSERIDO NO COMENTÁRIO
+    function escapeHTML(text) {
+
+      const div = document.createElement("div");
+      div.textContent = text;
+
+      return div.innerHTML;
+    }
+
+
+    // COMPARTILHAR
+    function sharePost() {
+
+      if (navigator.share) {
+
+        navigator.share({
+          title: "MiniFeed - Futebol Feminino",
+          text: "Confira esta notícia sobre futebol feminino!"
+        });
+
+      } else {
+
+        navigator.clipboard.writeText(window.location.href);
+
+        alert("Link copiado para a área de transferência!");
+
+      }
+    }
+
+
+    // BUSCA
+    function searchPosts() {
+
+      const search =
+        document
+          .getElementById("searchInput")
+          .value
+          .toLowerCase();
+
+      const posts =
+        document.querySelectorAll(".post");
+
+      posts.forEach(post => {
+
+        const content =
+          post.textContent.toLowerCase();
+
+        if (content.includes(search)) {
+          post.style.display = "";
+        } else {
+          post.style.display = "none";
+        }
+
+      });
+    }
+
+
+    // FILTROS
+    function filterPosts(category, button) {
+
+      document
+        .querySelectorAll(".menu button")
+        .forEach(btn => btn.classList.remove("active"));
+
+      button.classList.add("active");
+
+      const posts =
+        document.querySelectorAll(".post");
+
+      posts.forEach(post => {
+
+        if (
+          category === "todos" ||
+          post.dataset.category === category
+        ) {
+
+          post.style.display = "";
+
+        } else {
+
+          post.style.display = "none";
+
+        }
+
+      });
+
+      document.getElementById("searchInput").value = "";
+    }
+
+
+    // MODO ESCURO
+    function toggleDarkMode() {
+
+      document.body.classList.toggle("dark");
+
+      const button =
+        document.querySelector(".theme-btn");
+
+      if (document.body.classList.contains("dark")) {
+        button.textContent = "☀️";
+        localStorage.setItem("darkMode", "true");
+      } else {
+        button.textContent = "🌙";
+        localStorage.setItem("darkMode", "false");
+      }
+    }
+
+
+    // MANTER TEMA ESCOLHIDO
+    if (localStorage.getItem("darkMode") === "true") {
+      document.body.classList.add("dark");
+      document.querySelector(".theme-btn").textContent = "☀️";
+    }
+
+  </script>
+
+<script src="script.js"></script></body>
+</html>
