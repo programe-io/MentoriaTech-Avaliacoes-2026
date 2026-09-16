@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cacheadas & Encantos</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Poppins", Arial, sans-serif;
+      background: #fff5f8;
+      color: #4a2940;
+    }
+
+    header {
+      background: linear-gradient(135deg, #c85a91, #8e477e);
+      color: white;
+      padding: 28px 20px;
+      text-align: center;
+      border-radius: 0 0 30px 30px;
+    }
+
+    header h1 {
+      font-size: 28px;
+      margin-bottom: 8px;
+    }
+
+    header p {
+      font-size: 14px;
+      opacity: 0.95;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: 25px auto;
+      padding: 0 15px;
+    }
+
+    .perfil {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      background: white;
+      padding: 18px;
+      border-radius: 20px;
+      box-shadow: 0 5px 18px rgba(150, 70, 110, 0.08);
+      margin-bottom: 20px;
+    }
+
+    .perfil img {
+      width: 65px;
+      height: 65px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid #e9a7c5;
+    }
+
+    .perfil h2 {
+      font-size: 18px;
+    }
+
+    .perfil p {
+      font-size: 13px;
+      color: #987187;
+    }
+
+    .filtros {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      margin-bottom: 20px;
+      padding-bottom: 5px;
+    }
+
+    .filtros button {
+      border: none;
+      background: #f4d5e4;
+      color: #7b3e64;
+      padding: 10px 18px;
+      border-radius: 25px;
+      cursor: pointer;
+      white-space: nowrap;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+
+    .filtros button:hover,
+    .filtros button.ativo {
+      background: #b95187;
+      color: white;
+    }
+
+    .post {
+      background: white;
+      border-radius: 22px;
+      overflow: hidden;
+      margin-bottom: 22px;
+      box-shadow: 0 5px 20px rgba(150, 70, 110, 0.1);
+      transition: 0.3s;
+    }
+
+    .post:hover {
+      transform: translateY(-3px);
+    }
+
+    .post-topo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 15px;
+    }
+
+    .post-topo img {
+      width: 42px;
+      height: 42px;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+
+    .post-topo strong {
+      font-size: 14px;
+      display: block;
+    }
+
+    .post-topo span {
+      font-size: 12px;
+      color: #a27b91;
+    }
+
+    .post-imagem {
+      width: 100%;
+      height: 310px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .post-conteudo {
+      padding: 18px;
+    }
+
+    .post-conteudo h3 {
+      font-size: 18px;
+      margin-bottom: 8px;
+      color: #8e477e;
+    }
+
+    .post-conteudo p {
+      font-size: 14px;
+      line-height: 1.6;
+      color: #765568;
+    }
+
+    .produto {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #fff0f6;
+      padding: 12px;
+      border-radius: 15px;
+      margin-top: 15px;
+    }
+
+    .produto img {
+      width: 70px;
+      height: 70px;
+      border-radius: 12px;
+      object-fit: cover;
+    }
+
+    .produto h4 {
+      font-size: 14px;
+      color: #743b61;
+    }
+
+    .produto p {
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
+    .acoes {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 0 18px 18px;
+    }
+
+    .acoes button {
+      border: none;
+      background: transparent;
+      color: #8e477e;
+      font-size: 14px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .acoes button:hover {
+      color: #d34f91;
+      transform: scale(1.05);
+    }
+
+    .acoes .curtido {
+      color: #e34283;
+    }
+
+    .comentarios {
+      display: none;
+      padding: 0 18px 18px;
+      border-top: 1px solid #f5dce8;
+      margin-top: 5px;
+      padding-top: 15px;
+    }
+
+    .comentarios input {
+      width: 100%;
+      padding: 11px;
+      border: 1px solid #edc5d9;
+      border-radius: 12px;
+      outline: none;
+      margin-bottom: 8px;
+    }
+
+    .comentarios button {
+      background: #b95187;
+      color: white;
+      border: none;
+      padding: 9px 15px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .comentario-lista {
+      margin-top: 12px;
+      font-size: 13px;
+      color: #765568;
+    }
+
+    .favoritos {
+      display: none;
+      text-align: center;
+      padding: 25px;
+      background: white;
+      border-radius: 20px;
+      color: #8e477e;
+    }
+
+    .mensagem {
+      text-align: center;
+      color: #b95187;
+      font-size: 14px;
+      margin-bottom: 15px;
+      min-height: 20px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 25px;
+      font-size: 12px;
+      color: #a27b91;
+    }
+
+    @media (max-width: 500px) {
+      header h1 {
+        font-size: 23px;
+      }
+
+      .post-imagem {
+        height: 250px;
+      }
+    }
+  </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+  <header>
+    <h1>✨ Cacheadas & Encantos ✨</h1>
+    <p>Beleza, autocuidado e produtos para realçar seus cachos</p>
+  </header>
+
+  <main class="container">
+
+    <section class="perfil">
+      <img src="https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&w=200&q=80" alt="Perfil de uma mulher">
+      <div>
+        <h2>Meu Minifeed 💕</h2>
+        <p>Inspirações para cuidar dos seus cabelos e da sua beleza.</p>
+      </div>
+    </section>
+
+    <div class="filtros">
+      <button class="ativo" onclick="filtrar('todos', this)">Todos</button>
+      <button onclick="filtrar('cachos', this)">Cachos</button>
+      <button onclick="filtrar('produtos', this)">Produtos</button>
+      <button onclick="filtrar('beleza', this)">Beleza</button>
+      <button onclick="mostrarFavoritos()">❤️ Favoritos</button>
+    </div>
+
+    <div class="mensagem" id="mensagem"></div>
+
+    <section id="feed">
+
+      <article class="post" data-categoria="cachos">
+        <div class="post-topo">
+          <img src="https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&w=100&q=80" alt="Perfil">
+          <div>
+            <strong>Cacheadas em Foco ✨</strong>
+            <span>Hoje, 10:30</span>
+          </div>
+        </div>
+
+        <img class="post-imagem" src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=900&q=85" alt="Mulher com cabelos cacheados">
+
+        <div class="post-conteudo">
+          <h3>Seu cacho merece todo esse carinho! 🌸</h3>
+          <p>Uma rotina de hidratação, nutrição e finalização pode deixar os fios mais definidos, macios e cheios de vida.</p>
+
+          <div class="produto">
+            <img src="https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?auto=format&fit=crop&w=200&q=80" alt="Produtos de cabelo">
+            <div>
+              <h4>Kit Hidratação dos Cachos</h4>
+              <p>Shampoo + máscara + creme de pentear</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="acoes">
+          <button onclick="curtir(this)">♡ Curtir <span>0</span></button>
+          <button onclick="toggleComentario(this)">💬 Comentar</button>
+          <button onclick="favoritar(this)">🔖 Salvar</button>
+        </div>
+
+        <div class="comentarios">
+          <input type="text" placeholder="Escreva um comentário...">
+          <button onclick="comentar(this)">Publicar</button>
+          <div class="comentario-lista"></div>
+        </div>
+      </article>
+
+      <article class="post" data-categoria="produtos">
+        <div class="post-topo">
+          <img src="https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?auto=format&fit=crop&w=100&q=80" alt="Perfil">
+          <div>
+            <strong>Clube da Beleza 💄</strong>
+            <span>Ontem, 18:45</span>
+          </div>
+        </div>
+
+        <img class="post-imagem" src="https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?auto=format&fit=crop&w=900&q=85" alt="Produtos femininos de beleza">
+
+        <div class="post-conteudo">
+          <h3>Produtos que deixam a rotina mais especial 💗</h3>
+          <p>Cuidados com a pele, cabelos e pequenos momentos de autocuidado fazem toda a diferença no dia.</p>
+
+          <div class="produto">
+            <img src="https://images.unsplash.com/photo-1556229010-6c3f2c9ca5f8?auto=format&fit=crop&w=200&q=80" alt="Creme de beleza">
+            <div>
+              <h4>Creme Facial Iluminador</h4>
+              <p>Textura leve para uma rotina de skincare</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="acoes">
+          <button onclick="curtir(this)">♡ Curtir <span>0</span></button>
+          <button onclick="toggleComentario(this)">💬 Comentar</button>
+          <button onclick="favoritar(this)">🔖 Salvar</button>
+        </div>
+
+        <div class="comentarios">
+          <input type="text" placeholder="Escreva um comentário...">
+          <button onclick="comentar(this)">Publicar</button>
+          <div class="comentario-lista"></div>
+        </div>
+      </article>
+
+      <article class="post" data-categoria="beleza">
+        <div class="post-topo">
+          <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&q=80" alt="Perfil">
+          <div>
+            <strong>Diário de Autocuidado 🌷</strong>
+            <span>12 de setembro</span>
+          </div>
+        </div>
+
+        <img class="post-imagem" src="https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=900&q=85" alt="Mulher em momento de autocuidado">
+
+        <div class="post-conteudo">
+          <h3>Um momento só seu 🧴</h3>
+          <p>Reserve um tempinho para cuidar de você. Uma máscara capilar, uma música e muito amor próprio.</p>
+        </div>
+
+        <div class="acoes">
+          <button onclick="curtir(this)">♡ Curtir <span>0</span></button>
+          <button onclick="toggleComentario(this)">💬 Comentar</button>
+          <button onclick="favoritar(this)">🔖 Salvar</button>
+        </div>
+
+        <div class="comentarios">
+          <input type="text" placeholder="Escreva um comentário...">
+          <button onclick="comentar(this)">Publicar</button>
+          <div class="comentario-lista"></div>
+        </div>
+      </article>
+
+    </section>
+
+    <section class="favoritos" id="favoritos">
+      <h3>❤️ Seus favoritos</h3>
+      <p>As publicações salvas aparecerão aqui.</p>
+    </section>
+
+  </main>
+
+  <footer>
+    Feito com carinho para todas as cacheadas 💕
+  </footer>
+
+  <script>
+    function curtir(botao) {
+      const contador = botao.querySelector("span");
+      let numero = parseInt(contador.textContent);
+
+      if (botao.classList.contains("curtido")) {
+        numero--;
+        botao.classList.remove("curtido");
+        botao.innerHTML = "♡ Curtir <span>" + numero + "</span>";
+      } else {
+        numero++;
+        botao.classList.add("curtido");
+        botao.innerHTML = "♥ Curtido <span>" + numero + "</span>";
+      }
+    }
+
+    function toggleComentario(botao) {
+      const post = botao.closest(".post");
+      const comentarios = post.querySelector(".comentarios");
+
+      comentarios.style.display =
+        comentarios.style.display === "block" ? "none" : "block";
+    }
+
+    function comentar(botao) {
+      const comentarios = botao.closest(".comentarios");
+      const input = comentarios.querySelector("input");
+      const lista = comentarios.querySelector(".comentario-lista");
+
+      if (input.value.trim() === "") {
+        alert("Digite um comentário antes de publicar!");
+        return;
+      }
+
+      const novoComentario = document.createElement("p");
+      novoComentario.textContent = "💬 Você: " + input.value;
+      lista.appendChild(novoComentario);
+
+      input.value = "";
+    }
+
+    function favoritar(botao) {
+      const post = botao.closest(".post");
+
+      if (post.classList.contains("favorito")) {
+        post.classList.remove("favorito");
+        botao.textContent = "🔖 Salvar";
+        mostrarMensagem("Publicação removida dos favoritos.");
+      } else {
+        post.classList.add("favorito");
+        botao.textContent = "✅ Salvo";
+        mostrarMensagem("Publicação salva nos favoritos! 💕");
+      }
+    }
+
+    function filtrar(categoria, botao) {
+      document.querySelectorAll(".filtros button").forEach(b => {
+        b.classList.remove("ativo");
+      });
+
+      botao.classList.add("ativo");
+
+      document.getElementById("feed").style.display = "block";
+      document.getElementById("favoritos").style.display = "none";
+
+      document.querySelectorAll(".post").forEach(post => {
+        if (categoria === "todos" || post.dataset.categoria === categoria) {
+          post.style.display = "block";
+        } else {
+          post.style.display = "none";
+        }
+      });
+    }
+
+    function mostrarFavoritos() {
+      document.querySelectorAll(".filtros button").forEach(b => {
+        b.classList.remove("ativo");
+      });
+
+      document.getElementById("feed").style.display = "block";
+      document.getElementById("favoritos").style.display = "none";
+
+      document.querySelectorAll(".post").forEach(post => {
+        post.style.display = post.classList.contains("favorito") ? "block" : "none";
+      });
+
+      const temFavoritos = document.querySelector(".post.favorito");
+
+      if (!temFavoritos) {
+        document.getElementById("favoritos").style.display = "block";
+      }
+    }
+
+    function mostrarMensagem(texto) {
+      const mensagem = document.getElementById("mensagem");
+      mensagem.textContent = texto;
+
+      setTimeout(() => {
+        mensagem.textContent = "";
+      }, 2500);
+    }
+  </script>
+
+</body>
+</html>
