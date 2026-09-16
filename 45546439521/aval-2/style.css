@@ -1,0 +1,162 @@
+* {
+      box-sizing: border-box;
+        font-family: Arial, sans-serif;
+        }
+
+        body {
+          margin: 0;
+            padding: 30px 15px;
+              background-color: #f3f4f6;
+                color: #1f2937;
+                }
+
+                .container {
+                  width: 100%;
+                    max-width: 900px;
+                      margin: auto;
+                        padding: 25px;
+                          background-color: white;
+                            border-radius: 12px;
+                              box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+                              }
+
+                              h1 {
+                                margin-top: 0;
+                                  text-align: center;
+                                    color: #1e3a5f;
+                                    }
+
+                                    h2 {
+                                      color: #1e3a5f;
+                                      }
+
+                                      .menu {
+                                        display: flex;
+                                          flex-wrap: wrap;
+                                            gap: 10px;
+                                              margin-bottom: 20px;
+                                              }
+
+                                              button {
+                                                padding: 11px 16px;
+                                                  border: none;
+                                                    border-radius: 6px;
+                                                      background-color: #2563eb;
+                                                        color: white;
+                                                          font-size: 14px;
+                                                            cursor: pointer;
+                                                            }
+
+                                                            button:hover {
+                                                              background-color: #1d4ed8;
+                                                              }
+
+                                                              .botao-sair {
+                                                                background-color: #dc2626;
+                                                                }
+
+                                                                .botao-sair:hover {
+                                                                  background-color: #b91c1c;
+                                                                  }
+
+                                                                  #areaFormulario {
+                                                                    margin-bottom: 20px;
+                                                                    }
+
+                                                                    .formulario {
+                                                                      padding: 20px;
+                                                                        background-color: #f8fafc;
+                                                                          border: 1px solid #d1d5db;
+                                                                            border-radius: 8px;
+                                                                            }
+
+                                                                            .formulario label {
+                                                                              display: block;
+                                                                                margin-top: 12px;
+                                                                                  margin-bottom: 5px;
+                                                                                    font-weight: bold;
+                                                                                    }
+
+                                                                                    .formulario input,
+                                                                                    .formulario select {
+                                                                                      width: 100%;
+                                                                                        padding: 10px;
+                                                                                          border: 1px solid #9ca3af;
+                                                                                            border-radius: 5px;
+                                                                                              background-color: white;
+                                                                                              }
+
+                                                                                              .formulario button {
+                                                                                                margin-top: 15px;
+                                                                                                }
+
+                                                                                                #mensagem {
+                                                                                                  display: none;
+                                                                                                    margin-bottom: 20px;
+                                                                                                      padding: 12px;
+                                                                                                        border-radius: 6px;
+                                                                                                          font-weight: bold;
+                                                                                                          }
+
+                                                                                                          .mensagem-sucesso {
+                                                                                                            display: block !important;
+                                                                                                              background-color: #dcfce7;
+                                                                                                                color: #166534;
+                                                                                                                  border: 1px solid #86efac;
+                                                                                                                  }
+
+                                                                                                                  .mensagem-erro {
+                                                                                                                    display: block !important;
+                                                                                                                      background-color: #fee2e2;
+                                                                                                                        color: #991b1b;
+                                                                                                                          border: 1px solid #fca5a5;
+                                                                                                                          }
+
+                                                                                                                          .tarefas {
+                                                                                                                            padding-top: 10px;
+                                                                                                                              border-top: 2px solid #e5e7eb;
+                                                                                                                              }
+
+                                                                                                                              .tarefa {
+                                                                                                                                margin-bottom: 12px;
+                                                                                                                                  padding: 15px;
+                                                                                                                                    background-color: #eff6ff;
+                                                                                                                                      border-left: 5px solid #2563eb;
+                                                                                                                                        border-radius: 6px;
+                                                                                                                                        }
+
+                                                                                                                                        .tarefa p {
+                                                                                                                                          margin: 5px 0;
+                                                                                                                                          }
+
+                                                                                                                                          .tarefa-concluida {
+                                                                                                                                            background-color: #f0fdf4;
+                                                                                                                                              border-left-color: #16a34a;
+                                                                                                                                                opacity: 0.8;
+                                                                                                                                                }
+
+                                                                                                                                                .prioridade-alta {
+                                                                                                                                                  color: #dc2626;
+                                                                                                                                                    font-weight: bold;
+                                                                                                                                                    }
+
+                                                                                                                                                    .prioridade-media {
+                                                                                                                                                      color: #d97706;
+                                                                                                                                                        font-weight: bold;
+                                                                                                                                                        }
+
+                                                                                                                                                        .prioridade-baixa {
+                                                                                                                                                          color: #16a34a;
+                                                                                                                                                            font-weight: bold;
+                                                                                                                                                            }
+
+                                                                                                                                                            .status-execucao {
+                                                                                                                                                              color: #2563eb;
+                                                                                                                                                                font-weight: bold;
+                                                                                                                                                                }
+
+                                                                                                                                                                .status-concluida {
+                                                                                                                                                                  color: #16a34a;
+                                                                                                                                                                    font-weight: bold;
+                                                                                                                                                                    }
+}
