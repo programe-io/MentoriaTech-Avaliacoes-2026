@@ -1,770 +1,669 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: Arial, Helvetica, sans-serif;
-}
+<!DOCTYPE html>
+<html lang="pt-BR">
 
-:root {
-  --bg: #07111f;
-  --card: #0e1c2d;
-  --card2: #13243a;
+<head>
+  <meta charset="UTF-8">
 
-  --text: #ffffff;
-  --muted: #9caec3;
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  --blue: #008cff;
-  --blue2: #00c6ff;
+  <title>Rapunzel Feed 🌸</title>
 
-  --red: #e63946;
+  <link rel="stylesheet" href="style.css">
+</head>
 
-  --border: rgba(255, 255, 255, .08);
-}
+<body>
 
+  <!-- HEADER -->
+  <header>
 
-/* =========================
-   TEMA CLARO
-========================= */
+    <div class="header-content">
 
-body.light {
-  --bg: #edf3f8;
-  --card: #ffffff;
-  --card2: #e8f0f7;
+      <div class="logo">
+        RAPUN<span>FEED</span> 🌸
+      </div>
 
-  --text: #101820;
-  --muted: #607080;
+      <div class="header-buttons">
 
-  --border: rgba(0, 0, 0, .1);
-}
+        <button
+          class="icon-button"
+          id="themeButton"
+          onclick="toggleTheme()">
+          🌙
+        </button>
 
+        <button
+          class="icon-button"
+          onclick="goToFeed()">
+          📰
+        </button>
 
-/* =========================
-   BODY
-========================= */
+      </div>
 
-body {
-  min-height: 100vh;
+    </div>
 
-  color: var(--text);
+  </header>
 
-  background:
-    radial-gradient(
-      circle at 15% 10%,
-      rgba(0, 140, 255, .20),
-      transparent 30%
-    ),
 
-    radial-gradient(
-      circle at 90% 90%,
-      rgba(0, 198, 255, .12),
-      transparent 30%
-    ),
+  <!-- PERFIL -->
+  <section class="profile">
 
-    var(--bg);
+    <div class="cover"></div>
 
-  transition:
-    background .3s,
-    color .3s;
-}
+    <div class="profile-info">
 
+      <div class="profile-row">
 
-/* =========================
-   HEADER
-========================= */
+        <div>
 
-header {
-  position: sticky;
-  top: 0;
+          <img
+            class="avatar"
+            src="https://image.tmdb.org/t/p/w500/4iGf3S9QwG5g1W6YQ8M7j4W3m8V.jpg"
+            alt="Rapunzel"
+          >
 
-  z-index: 100;
+          <h1 class="profile-name">
 
-  height: 70px;
+            Rapunzel
+            <span class="verified">✓</span>
 
-  background:
-    rgba(7, 17, 31, .88);
+          </h1>
 
-  backdrop-filter: blur(15px);
+          <p class="username">
+            @rapunzel
+          </p>
 
-  border-bottom:
-    1px solid var(--border);
-}
+        </div>
 
-body.light header {
-  background:
-    rgba(255, 255, 255, .88);
-}
+        <button
+          class="follow-button"
+          id="followButton"
+          onclick="follow()">
 
+          Seguir
 
-.header-content {
-  width: min(1100px, 94%);
+        </button>
 
-  height: 100%;
+      </div>
 
-  margin: auto;
 
-  display: flex;
+      <p class="bio">
 
-  align-items: center;
+        🌸 Bem-vindo ao Reino de Corona!
+        ✨ Cabelos mágicos, lanternas,
+        aventuras e muita diversão. 🏰💜
 
-  justify-content: space-between;
-}
+      </p>
 
+    </div>
 
-/* =========================
-   LOGO
-========================= */
+  </section>
 
-.logo {
-  font-size: 25px;
 
-  font-weight: 900;
+  <!-- FILTROS -->
+  <nav class="filters">
 
-  letter-spacing: -1px;
-}
+    <button
+      class="filter active"
+      onclick="filterPosts('all', this)">
+      ✨ Todos
+    </button>
 
-.logo span {
-  color: var(--blue2);
-}
+    <button
+      class="filter"
+      onclick="filterPosts('photos', this)">
+      📸 Fotos
+    </button>
 
+    <button
+      class="filter"
+      onclick="filterPosts('adventure', this)">
+      🏰 Aventuras
+    </button>
 
-/* =========================
-   BOTÕES DO HEADER
-========================= */
+    <button
+      class="filter"
+      onclick="filterPosts('lanterns', this)">
+      🏮 Lanternas
+    </button>
 
-.header-buttons {
-  display: flex;
+  </nav>
 
-  gap: 10px;
-}
 
-.icon-btn {
-  width: 42px;
-  height: 42px;
+  <!-- FEED -->
+  <main class="feed" id="feed">
 
-  border: 1px solid var(--border);
 
-  background: var(--card);
+    <!-- POST 1 -->
+    <article
+      class="post"
+      data-category="photos">
 
-  color: var(--text);
+      <div class="post-header">
 
-  border-radius: 50%;
+        <img
+          class="post-avatar"
+          src="https://image.tmdb.org/t/p/w500/4iGf3S9QwG5g1W6YQ8M7j4W3m8V.jpg"
+          alt="Rapunzel"
+        >
 
-  cursor: pointer;
+        <div>
 
-  font-size: 18px;
+          <div class="post-user">
+            Rapunzel ✓
+          </div>
 
-  transition: .2s;
-}
+          <span class="post-time">
+            Hoje • 18:30
+          </span>
 
-.icon-btn:hover {
-  transform: scale(1.08);
+        </div>
 
-  background: var(--blue);
+      </div>
 
-  color: white;
-}
 
+      <p class="post-text">
 
-/* =========================
-   PERFIL
-========================= */
+        Um dia perfeito para explorar o mundo
+        além da torre. 🌸✨
 
-.profile {
-  width: min(1100px, 94%);
+      </p>
 
-  margin: 30px auto 20px;
 
-  background: var(--card);
+      <img
+        class="post-image"
+        onclick="openImage(this.src)"
+        src="https://image.tmdb.org/t/p/original/4iGf3S9QwG5g1W6YQ8M7j4W3m8V.jpg"
+        alt="Rapunzel"
+      >
 
-  border:
-    1px solid var(--border);
 
-  border-radius: 22px;
+      <div class="stats">
 
-  overflow: hidden;
+        <span>
+          ❤️ <span class="like-count">3842</span>
+          curtidas
+        </span>
 
-  box-shadow:
-    0 15px 50px rgba(0, 0, 0, .2);
-}
+        <span>
+          💬 231 comentários
+        </span>
 
+      </div>
 
-/* =========================
-   CAPA
-========================= */
 
-.cover {
-  height: 210px;
+      <div class="actions">
 
-  position: relative;
+        <button
+          class="action"
+          onclick="likePost(this)">
+          ❤️ Curtir
+        </button>
 
-  background:
-    linear-gradient(
-      120deg,
-      rgba(0, 85, 160, .95),
-      rgba(0, 195, 255, .25)
-    ),
+        <button
+          class="action"
+          onclick="commentPost()">
+          💬 Comentar
+        </button>
 
-    url(
-      "https://commons.wikimedia.org/wiki/Special:FilePath/Khvicha%20kvaratskhelia%20napoli.jpg"
-    );
+        <button
+          class="action"
+          onclick="sharePost()">
+          ↗️ Compartilhar
+        </button>
 
-  background-size: cover;
+      </div>
 
-  background-position: center 25%;
-}
+    </article>
 
-.cover::after {
-  content: "";
 
-  position: absolute;
+    <!-- POST 2 -->
+    <article
+      class="post"
+      data-category="lanterns">
 
-  inset: 0;
+      <div class="post-header">
 
-  background:
-    linear-gradient(
-      transparent,
-      rgba(0, 0, 0, .7)
-    );
-}
+        <img
+          class="post-avatar"
+          src="https://image.tmdb.org/t/p/w500/4iGf3S9QwG5g1W6YQ8M7j4W3m8V.jpg"
+          alt="Rapunzel"
+        >
 
+        <div>
 
-/* =========================
-   INFORMAÇÕES DO PERFIL
-========================= */
+          <div class="post-user">
+            Corona News 🏰
+          </div>
 
-.profile-info {
-  padding:
-    0 28px 25px;
+          <span class="post-time">
+            Ontem • 21:15
+          </span>
 
-  position: relative;
-}
+        </div>
 
-.profile-row {
-  display: flex;
+      </div>
 
-  justify-content: space-between;
 
-  align-items: flex-end;
+      <p class="post-text">
 
-  gap: 20px;
-}
+        🏮 O céu de Corona ficou iluminado
+        pelas lanternas. ✨💜
 
+      </p>
 
-.avatar {
-  width: 110px;
-  height: 110px;
 
-  border-radius: 50%;
+      <img
+        class="post-image"
+        onclick="openImage(this.src)"
+        src="https://image.tmdb.org/t/p/original/3qY3Jx5v2Q6J4P5qM9V5p7F8vY.jpg"
+        alt="Lanternas"
+      >
 
-  border:
-    5px solid var(--card);
 
-  object-fit: cover;
+      <div class="stats">
 
-  position: relative;
+        <span>
+          ❤️ 7291 curtidas
+        </span>
 
-  margin-top: -55px;
+        <span>
+          💬 527 comentários
+        </span>
 
-  z-index: 2;
+      </div>
 
-  background: #111;
-}
 
+      <div class="actions">
 
-.profile h1 {
-  font-size: 29px;
+        <button
+          class="action"
+          onclick="likePost(this)">
+          ❤️ Curtir
+        </button>
 
-  font-weight: 900;
+        <button
+          class="action"
+          onclick="commentPost()">
+          💬 Comentar
+        </button>
 
-  margin-top: 8px;
-}
+        <button
+          class="action"
+          onclick="sharePost()">
+          ↗️ Compartilhar
+        </button>
 
+      </div>
 
-.verified {
-  color: #1da1f2;
-}
+    </article>
 
 
-.username {
-  color: var(--muted);
+    <!-- POST 3 -->
+    <article
+      class="post"
+      data-category="adventure">
 
-  margin-top: 4px;
-}
+      <div class="post-header">
 
+        <img
+          class="post-avatar"
+          src="https://image.tmdb.org/t/p/w500/4iGf3S9QwG5g1W6YQ8M7j4W3m8V.jpg"
+          alt="Rapunzel"
+        >
 
-.bio {
-  margin-top: 15px;
+        <div>
 
-  line-height: 1.5;
+          <div class="post-user">
+            Corona Adventures 🌸
+          </div>
 
-  color: var(--muted);
+          <span class="post-time">
+            2 dias atrás
+          </span>
 
-  max-width: 700px;
-}
+        </div>
 
+      </div>
 
-/* =========================
-   BOTÃO SEGUIR
-========================= */
 
-.follow-btn {
-  border: 0;
+      <p class="post-text">
 
-  background:
-    linear-gradient(
-      90deg,
-      var(--blue),
-      var(--blue2)
-    );
+        🐴 Pascal e Maximus prontos
+        para mais uma aventura!
 
-  color: white;
+      </p>
 
-  padding:
-    12px 23px;
 
-  border-radius: 25px;
+      <img
+        class="post-image"
+        onclick="openImage(this.src)"
+        src="https://image.tmdb.org/t/p/original/5VQX5V0mX8m4V9Q8H8F8G8G8G8.jpg"
+        alt="Rapunzel e amigos"
+      >
 
-  font-weight: bold;
 
-  cursor: pointer;
+      <div class="stats">
 
-  white-space: nowrap;
+        <span>
+          ❤️ 5128 curtidas
+        </span>
 
-  transition: .2s;
-}
+        <span>
+          💬 308 comentários
+        </span>
 
-.follow-btn:hover {
-  transform: translateY(-2px);
+      </div>
 
-  box-shadow:
-    0 8px 25px
-    rgba(0, 140, 255, .35);
-}
 
-.follow-btn.following {
-  background: #27394d;
-}
+      <div class="actions">
 
+        <button
+          class="action"
+          onclick="likePost(this)">
+          ❤️ Curtir
+        </button>
 
-/* =========================
-   FILTROS
-========================= */
+        <button
+          class="action"
+          onclick="commentPost()">
+          💬 Comentar
+        </button>
 
-.feed-nav {
-  width: min(1100px, 94%);
+        <button
+          class="action"
+          onclick="sharePost()">
+          ↗️ Compartilhar
+        </button>
 
-  margin: 20px auto;
+      </div>
 
-  display: flex;
+    </article>
 
-  gap: 10px;
+  </main>
 
-  overflow-x: auto;
-}
 
-.filter {
-  border:
-    1px solid var(--border);
+  <!-- MODAL -->
+  <div
+    class="modal"
+    id="imageModal"
+    onclick="closeImage()">
 
-  background: var(--card);
+    <span class="close">
+      ×
+    </span>
 
-  color: var(--muted);
+    <img
+      id="modalImage"
+      src=""
+      alt="Imagem ampliada"
+    >
 
-  padding:
-    10px 18px;
+  </div>
 
-  border-radius: 25px;
 
-  cursor: pointer;
+  <!-- JAVASCRIPT -->
+  <script>
 
-  white-space: nowrap;
+    function follow() {
 
-  transition: .2s;
-}
+      const button =
+        document.getElementById(
+          "followButton"
+        );
 
-.filter:hover {
-  background: var(--blue);
+      button.classList.toggle(
+        "following"
+      );
 
-  color: white;
+      if (
+        button.classList.contains(
+          "following"
+        )
+      ) {
 
-  border-color: var(--blue);
-}
+        button.innerText =
+          "Seguindo ✓";
 
-.filter.active {
-  background: var(--blue);
+      } else {
 
-  color: white;
+        button.innerText =
+          "Seguir";
 
-  border-color: var(--blue);
-}
+      }
 
+    }
 
-/* =========================
-   FEED
-========================= */
 
-.feed {
-  width: min(760px, 94%);
+    function likePost(button) {
 
-  margin: auto;
+      const post =
+        button.closest(".post");
 
-  padding-bottom: 50px;
-}
+      const counter =
+        post.querySelector(
+          ".like-count"
+        );
 
+      button.classList.toggle(
+        "liked"
+      );
 
-/* =========================
-   POST
-========================= */
+      if (!counter) {
 
-.post {
-  background: var(--card);
+        button.innerText =
+          button.classList.contains("liked")
+            ? "❤️ Curtido"
+            : "❤️ Curtir";
 
-  border:
-    1px solid var(--border);
+        return;
 
-  border-radius: 20px;
+      }
 
-  margin-bottom: 20px;
+      let number =
+        parseInt(
+          counter.textContent
+        );
 
-  overflow: hidden;
+      if (
+        button.classList.contains(
+          "liked"
+        )
+      ) {
 
-  animation:
-    appear .4s ease;
+        number++;
 
-  box-shadow:
-    0 8px 30px
-    rgba(0, 0, 0, .10);
-}
+        button.innerText =
+          "❤️ Curtido";
 
+      } else {
 
-@keyframes appear {
+        number--;
 
-  from {
-    opacity: 0;
+        button.innerText =
+          "❤️ Curtir";
 
-    transform:
-      translateY(15px);
-  }
+      }
 
-  to {
-    opacity: 1;
+      counter.textContent =
+        number.toLocaleString(
+          "pt-BR"
+        );
 
-    transform:
-      translateY(0);
-  }
+    }
 
-}
 
+    function commentPost() {
 
-/* =========================
-   CABEÇALHO DO POST
-========================= */
+      const comment =
+        prompt(
+          "Digite seu comentário:"
+        );
 
-.post-header {
-  display: flex;
+      if (
+        comment &&
+        comment.trim() !== ""
+      ) {
 
-  align-items: center;
+        alert(
+          "Comentário publicado! 🌸💜"
+        );
 
-  padding: 17px;
+      }
 
-  gap: 12px;
-}
+    }
 
 
-.small-avatar {
-  width: 45px;
-  height: 45px;
+    function sharePost() {
 
-  border-radius: 50%;
+      if (navigator.share) {
 
-  object-fit: cover;
-}
+        navigator.share({
 
+          title:
+            "Rapunzel Feed",
 
-.post-header strong {
-  display: block;
+          text:
+            "Confira este post de Rapunzel! 🌸",
 
-  font-size: 15px;
-}
+          url:
+            window.location.href
 
+        });
 
-.post-header span {
-  display: block;
+      } else {
 
-  font-size: 13px;
+        navigator.clipboard.writeText(
+          window.location.href
+        );
 
-  color: var(--muted);
+        alert(
+          "Link copiado! ✨"
+        );
 
-  margin-top: 3px;
-}
+      }
 
+    }
 
-/* =========================
-   TEXTO
-========================= */
 
-.post-text {
-  padding:
-    0 18px 16px;
+    function toggleTheme() {
 
-  line-height: 1.55;
+      document.body.classList.toggle(
+        "dark"
+      );
 
-  font-size: 15px;
-}
+      const button =
+        document.getElementById(
+          "themeButton"
+        );
 
+      if (
+        document.body.classList.contains(
+          "dark"
+        )
+      ) {
 
-/* =========================
-   IMAGEM
-========================= */
+        button.innerText = "☀️";
 
-.post-image {
-  width: 100%;
+      } else {
 
-  display: block;
+        button.innerText = "🌙";
 
-  max-height: 600px;
+      }
 
-  object-fit: cover;
+    }
 
-  cursor: pointer;
 
-  transition: .3s;
-}
+    function filterPosts(
+      category,
+      button
+    ) {
 
-.post-image:hover {
-  filter:
-    brightness(1.08);
+      document
+        .querySelectorAll(".filter")
+        .forEach(item => {
 
-  transform:
-    scale(1.01);
-}
+          item.classList.remove(
+            "active"
+          );
 
+        });
 
-/* =========================
-   ESTATÍSTICAS
-========================= */
 
-.stats {
-  padding:
-    13px 18px;
+      button.classList.add(
+        "active"
+      );
 
-  display: flex;
 
-  justify-content: space-between;
+      document
+        .querySelectorAll(".post")
+        .forEach(post => {
 
-  color: var(--muted);
+          if (
+            category === "all" ||
+            post.dataset.category ===
+            category
+          ) {
 
-  font-size: 14px;
+            post.style.display =
+              "block";
 
-  border-bottom:
-    1px solid var(--border);
-}
+          } else {
 
+            post.style.display =
+              "none";
 
-/* =========================
-   AÇÕES
-========================= */
+          }
 
-.actions {
-  display: grid;
+        });
 
-  grid-template-columns:
-    repeat(3, 1fr);
+    }
 
-  padding: 8px;
 
-  gap: 5px;
-}
+    function openImage(src) {
 
+      const modal =
+        document.getElementById(
+          "imageModal"
+        );
 
-.action {
-  border: 0;
+      const image =
+        document.getElementById(
+          "modalImage"
+        );
 
-  background: transparent;
+      image.src = src;
 
-  color: var(--muted);
+      modal.classList.add(
+        "show"
+      );
 
-  padding: 11px;
+    }
 
-  border-radius: 10px;
 
-  cursor: pointer;
+    function closeImage() {
 
-  font-size: 15px;
+      document
+        .getElementById(
+          "imageModal"
+        )
+        .classList.remove(
+          "show"
+        );
 
-  transition: .2s;
-}
+    }
 
 
-.action:hover {
-  background: var(--card2);
+    function goToFeed() {
 
-  color: var(--text);
-}
+      document
+        .getElementById("feed")
+        .scrollIntoView({
+          behavior: "smooth"
+        });
 
+    }
 
-.action.liked {
-  color: #ff3155;
-}
+  </script>
 
-
-/* =========================
-   MODAL
-========================= */
-
-.modal {
-  display: none;
-
-  position: fixed;
-
-  inset: 0;
-
-  background:
-    rgba(0, 0, 0, .88);
-
-  z-index: 999;
-
-  align-items: center;
-
-  justify-content: center;
-
-  padding: 20px;
-}
-
-
-.modal.show {
-  display: flex;
-}
-
-
-.modal img {
-  max-width: 95%;
-
-  max-height: 90vh;
-
-  border-radius: 15px;
-
-  box-shadow:
-    0 20px 80px
-    rgba(0, 0, 0, .6);
-
-  animation:
-    zoom .25s ease;
-}
-
-
-@keyframes zoom {
-
-  from {
-    transform: scale(.8);
-
-    opacity: 0;
-  }
-
-  to {
-    transform: scale(1);
-
-    opacity: 1;
-  }
-
-}
-
-
-.close {
-  position: fixed;
-
-  top: 20px;
-
-  right: 25px;
-
-  font-size: 40px;
-
-  color: white;
-
-  cursor: pointer;
-
-  z-index: 1000;
-}
-
-
-/* =========================
-   SCROLLBAR
-========================= */
-
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--bg);
-}
-
-::-webkit-scrollbar-thumb {
-  background: #167ec1;
-
-  border-radius: 20px;
-}
-
-
-/* =========================
-   RESPONSIVO
-========================= */
-
-@media (max-width: 600px) {
-
-  header {
-    height: 62px;
-  }
-
-  .logo {
-    font-size: 20px;
-  }
-
-  .cover {
-    height: 160px;
-  }
-
-  .profile-info {
-    padding:
-      0 18px 20px;
-  }
-
-  .avatar {
-    width: 90px;
-    height: 90px;
-
-    margin-top: -45px;
-  }
-
-  .profile h1 {
-    font-size: 21px;
-  }
-
-  .profile-row {
-    align-items: center;
-  }
-
-  .follow-btn {
-    padding:
-      10px 15px;
-
-    font-size: 13px;
-  }
-
-  .bio {
-    font-size: 14px;
-  }
-
-  .post-image {
-    max-height: 500px;
-  }
-
-  .action {
-    font-size: 13px;
-
-    padding:
-      10px 4px;
-  }
-
-}
+</body>
+</html>
