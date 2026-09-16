@@ -18,7 +18,9 @@ function validarDadosDaTarefa(titulo, prioridade) {
 
                                     function buscarTarefa(codigo) {
                                       const tarefa = tarefas.find(
-                                          tarefa => tarefa.codigo === 
+                                          tarefa => tarefa.codigo === codigo
+                                            );
+
                                               if (!tarefa) {
                                                   throw new Error("Tarefa não encontrada.");
                                                     }
