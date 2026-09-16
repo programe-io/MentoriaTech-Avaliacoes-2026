@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Projeto CRUD e Estoque - Aula 14</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+    body {
+      background-color: #f4f6f8;
+      padding: 20px;
+      margin: 0;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .card {
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    .form-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+    input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      min-width: 150px;
+    }
+    button {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      color: #fff;
+      background-color: #28a745;
+    }
+    button:hover {
+      opacity: 0.9;
+    }
+    .btn-warning { background-color: #ffc107; color: #000; }
+    .btn-info { background-color: #17a2b8; }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: left;
+    }
+    th {
+      background-color: #1c688b;
+      color: rgb(0, 0, 0);
+    }
+  </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container">
+  <h1>REI DO LANCHE</h1>
+
+  <div class="card">
+    <h3>1. Cadastrar Produto</h3>
+    <div class="form-group">
+      <input type="text" id="cadDescricao" placeholder="Descrição (min. 5 letras)">
+      <input type="number" id="cadQuantidade" placeholder="Quantidade (> 0)">
+      <input type="number" step="0.01" id="cadValor" placeholder="Valor (R$ >= 0)">
+      <button onclick="executarCadastrar()">Cadastrar</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>2. Atualizar Valor</h3>
+    <div class="form-group">
+      <input type="number" id="altCodigoValor" placeholder="Código do Produto">
+      <input type="number" step="0.01" id="altNovoValor" placeholder="Novo Valor (Substitui)">
+      <button class="btn-warning" onclick="executarAtualizarValor()">Atualizar Valor</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>3. Somar Quantidade</h3>
+    <div class="form-group">
+      <input type="number" id="altCodigoQtd" placeholder="Código do Produto">
+      <input type="number" id="altAdicionarQtd" placeholder="Qtd. a Adicionar (Soma)">
+      <button class="btn-info" onclick="executarAtualizarQuantidade()">Adicionar Estoque</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Produtos no Estoque</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Código</th>
+          <th>Descrição</th>
+          <th>Quantidade</th>
+          <th>Valor</th>
+        </tr>
+      </thead>
+      <tbody id="tabelaEstoque">
+        </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  // 4. Criação da lista de produtos (resumo item 4)
+  let produtos = [];
+
+  // 6. Função para validar produto (resumo item 6 ao 9)
+  function validarProduto(descricao, quantidade, valor) {
+    if (descricao.length < 5) {
+      throw new Error("Descrição deve ter, no mínimo, cinco caracteres");
+    }
+    if (quantidade < 1) {
+      throw new Error("Quantidade deve ser maior que zero");
+    }
+    if (valor < 0) {
+      throw new Error("Valor deve ser maior ou igual a zero");
+    }
+  }
+
+  // 10. Função para cadastrar produto (resumo item 10 ao 13)
+  function cadastrarProduto(descricao, quantidade, valor) {
+    validarProduto(descricao, quantidade, valor);
+
+    let novoProduto = {
+      codigo: produtos.length + 1, // Geração automática do código (item 12)
+      descricao: descricao,
+      quantidade: quantidade,
+      valor: valor
+    };
+
+    produtos.push(novoProduto); // Adição ao array (item 13)
+  }
+
+  // 14. Função para listar produtos (resumo item 14)
+  function listarProdutos() {
+    const tbody = document.getElementById("tabelaEstoque");
+    tbody.innerHTML = "";
+
+    produtos.forEach(produto => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${produto.codigo}</td>
+        <td>${produto.descricao}</td>
+        <td>${produto.quantidade}</td>
+        <td>R$ ${produto.valor.toFixed(2)}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    // Mantém o console.log conforme ensinado no resumo (item 14)
+    console.log(produtos);
+  }
+
+  // 16. Função para atualizar o valor do produto (resumo item 16 a 18)
+  function atualizarValor(codigoProduto, novoValor) {
+    if (novoValor < 0) {
+      throw new Error("Valor deve ser maior ou igual a zero");
+    }
+
+    const produto = produtos.find((prod) => prod.codigo === codigoProduto);
+
+    if (produto) {
+      produto.valor = novoValor;
+    } else {
+      throw new Error("Produto não encontrado");
+    }
+  }
+
+  // 19. Função para atualizar a quantidade do produto (resumo item 19 e 20)
+  function atualizarQuantidade(codigoProduto, novaQuantidade) {
+    if (novaQuantidade < 1) {
+      throw new Error("Quantidade deve ser maior que zero");
+    }
+
+    const produto = produtos.find((prod) => prod.codigo === codigoProduto);
+
+    if (produto) {
+      // Diferença chave: A quantidade é somada ao estoque existente (item 20)
+      produto.quantidade = produto.quantidade + novaQuantidade;
+    } else {
+      throw new Error("Produto não encontrado");
+    }
+  }
+
+  // =========================================================================
+  // FUNÇÕES DE INTEGRAÇÃO COM OS BOTÕES DA TELA (TRATAMENTO COM TRY/CATCH)
+  // =========================================================================
+
+  function executarCadastrar() {
+    try {
+      const desc = document.getElementById("cadDescricao").value;
+      const qtd = Number(document.getElementById("cadQuantidade").value);
+      const val = Number(document.getElementById("cadValor").value);
+
+      cadastrarProduto(desc, qtd, val);
+
+      document.getElementById("cadDescricao").value = "";
+      document.getElementById("cadQuantidade").value = "";
+      document.getElementById("cadValor").value = "";
+
+      listarProdutos();
+    } catch (erro) {
+      alert("Erro: " + erro.message);
+    }
+  }
+
+  function executarAtualizarValor() {
+    try {
+      const codigo = Number(document.getElementById("altCodigoValor").value);
+      const novoValor = Number(document.getElementById("altNovoValor").value);
+
+      atualizarValor(codigo, novoValor);
+
+      document.getElementById("altCodigoValor").value = "";
+      document.getElementById("altNovoValor").value = "";
+
+      listarProdutos();
+    } catch (erro) {
+      alert("Erro: " + erro.message);
+    }
+  }
+
+  function executarAtualizarQuantidade() {
+    try {
+      const codigo = Number(document.getElementById("altCodigoQtd").value);
+      const novaQtd = Number(document.getElementById("altAdicionarQtd").value);
+
+      atualizarQuantidade(codigo, novaQtd);
+
+      document.getElementById("altCodigoQtd").value = "";
+      document.getElementById("altAdicionarQtd").value = "";
+
+      listarProdutos();
+    } catch (erro) {
+      alert("Erro: " + erro.message);
+    }
+  }
+
+  // Testes Iniciais (Baseados no resumo - Item 15)
+  try {
+    cadastrarProduto("Cadeira gamer", 12, 699);
+    cadastrarProduto("Mouse Logitech", 38, 99);
+    listarProdutos();
+  } catch (erro) {
+    console.error(erro.message);
+  }
+</script>
+
+</body>
+</html>
