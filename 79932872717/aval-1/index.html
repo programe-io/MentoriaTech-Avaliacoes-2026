@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>✨ Rapunzel — Mini Feed</title>
+  <title>Frozen Feed ❄️</title>
 
   <style>
     * {
@@ -14,110 +14,104 @@
     }
 
     body {
-      background: linear-gradient(135deg, #2d174d, #6b3fa0, #f5c96b);
+      background: linear-gradient(135deg, #dff7ff, #a9ddf5, #e9faff);
+      color: #174a68;
       min-height: 100vh;
-      color: #fff;
     }
 
     header {
+      background: linear-gradient(135deg, #77cbea, #3c9fd0);
+      color: white;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
       position: sticky;
       top: 0;
       z-index: 10;
-      background: rgba(35, 18, 58, 0.95);
-      backdrop-filter: blur(10px);
-      padding: 18px 25px;
+    }
+
+    header h1 {
+      font-size: 30px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,.2);
+    }
+
+    header p {
+      margin-top: 5px;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: 25px auto;
+      padding: 0 15px;
+    }
+
+    .profile {
+      background: rgba(255,255,255,.85);
+      border-radius: 20px;
+      padding: 20px;
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      box-shadow: 0 3px 15px rgba(0,0,0,.3);
+      gap: 15px;
+      margin-bottom: 20px;
+      box-shadow: 0 5px 18px rgba(38,130,170,.18);
     }
 
-    .logo {
-      font-size: 25px;
-      font-weight: bold;
-      color: #ffd76a;
+    .profile img {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid #fff;
     }
 
-    nav button {
+    .profile h2 {
+      font-size: 20px;
+    }
+
+    .profile button {
+      margin-left: auto;
       border: none;
-      background: #8e5ac7;
+      background: #43a8d5;
       color: white;
       padding: 10px 15px;
       border-radius: 20px;
       cursor: pointer;
-      margin-left: 6px;
-      transition: .3s;
+      transition: .2s;
     }
 
-    nav button:hover {
-      background: #b17be8;
+    button:hover {
       transform: scale(1.05);
+      opacity: .9;
     }
 
-    main {
-      width: 95%;
-      max-width: 700px;
-      margin: 30px auto;
-    }
-
-    .intro {
-      text-align: center;
-      margin-bottom: 25px;
-    }
-
-    .intro h1 {
-      font-size: 35px;
-      color: #ffe08a;
-      margin-bottom: 8px;
-    }
-
-    .intro p {
-      color: #f4eaff;
-    }
-
-    .feed {
-      display: flex;
-      flex-direction: column;
-      gap: 22px;
-    }
-
-    .card {
-      background: rgba(255,255,255,.96);
-      color: #38204d;
+    .feed-card {
+      background: rgba(255,255,255,.93);
       border-radius: 22px;
       overflow: hidden;
-      box-shadow: 0 8px 25px rgba(0,0,0,.3);
-      transition: .3s;
+      margin-bottom: 25px;
+      box-shadow: 0 7px 25px rgba(31,117,158,.2);
     }
 
-    .card:hover {
-      transform: translateY(-4px);
-    }
-
-    .user {
+    .post-header {
       display: flex;
       align-items: center;
       gap: 12px;
       padding: 15px;
     }
 
-    .avatar {
+    .post-header img {
       width: 45px;
       height: 45px;
+      object-fit: cover;
       border-radius: 50%;
-      background: linear-gradient(135deg,#a96fe8,#ffd76a);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 22px;
     }
 
-    .user strong {
+    .post-header strong {
       display: block;
     }
 
-    .user small {
-      color: #777;
+    .post-header small {
+      color: #6a9ab0;
     }
 
     .post-image {
@@ -127,121 +121,109 @@
       display: block;
     }
 
-    .content {
-      padding: 18px;
+    .post-content {
+      padding: 17px;
     }
 
-    .content h2 {
-      color: #713b9e;
+    .post-content h3 {
       margin-bottom: 8px;
+      color: #207aa4;
     }
 
-    .content p {
+    .post-content p {
       line-height: 1.5;
-      color: #555;
     }
 
     .actions {
       display: flex;
       gap: 10px;
-      margin-top: 15px;
-      flex-wrap: wrap;
+      padding: 0 17px 17px;
     }
 
     .actions button {
       border: none;
-      padding: 10px 16px;
-      border-radius: 20px;
-      background: #eee3f8;
-      color: #66358d;
+      background: #e4f6fd;
+      color: #287c9f;
+      padding: 10px 15px;
+      border-radius: 18px;
       cursor: pointer;
-      font-weight: bold;
-      transition: .25s;
+      transition: .2s;
     }
 
-    .actions button:hover {
-      background: #d8b9f0;
-    }
-
-    .like.active {
-      background: #ff83a8;
+    .actions button.liked {
+      background: #55bce5;
       color: white;
     }
 
     .comments {
-      margin-top: 15px;
-      display: none;
-      border-top: 1px solid #ddd;
-      padding-top: 12px;
+      padding: 0 17px 17px;
     }
 
     .comments input {
-      width: 75%;
-      padding: 10px;
-      border: 1px solid #ccc;
+      width: 100%;
+      padding: 11px;
+      border: 1px solid #b7dfed;
       border-radius: 20px;
       outline: none;
     }
 
-    .comments button {
-      border: none;
-      padding: 10px 14px;
-      border-radius: 20px;
-      background: #7644a0;
-      color: white;
-      cursor: pointer;
-    }
-
     .comment-list {
       margin-top: 10px;
-      color: #555;
+    }
+
+    .comment {
+      background: #eefaff;
+      padding: 8px 12px;
+      border-radius: 15px;
+      margin-top: 6px;
+    }
+
+    .snowflake {
+      position: fixed;
+      top: -20px;
+      color: white;
+      font-size: 20px;
+      animation: fall linear infinite;
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    @keyframes fall {
+      to {
+        transform: translateY(110vh) rotate(360deg);
+      }
+    }
+
+    .dark {
+      background: linear-gradient(135deg, #071d35, #16496b);
+      color: #e8faff;
+    }
+
+    .dark .feed-card,
+    .dark .profile {
+      background: rgba(14, 48, 75, .95);
+      color: #e8faff;
+    }
+
+    .dark .post-content h3 {
+      color: #78d5ff;
+    }
+
+    .dark .actions button {
+      background: #1b5a7b;
+      color: white;
+    }
+
+    .dark .comments input {
+      background: #123c5b;
+      color: white;
+      border-color: #3987aa;
     }
 
     footer {
       text-align: center;
       padding: 30px;
-      color: #f8e8ff;
-    }
-
-    /* Tema claro */
-    body.light {
-      background: linear-gradient(135deg, #ffe7a8, #f7c8df, #d9c5ff);
-      color: #38204d;
-    }
-
-    body.light header {
-      background: rgba(255,255,255,.9);
-    }
-
-    body.light .logo {
-      color: #704099;
-    }
-
-    body.light nav button {
-      background: #9b67c9;
-    }
-
-    @media (max-width: 600px) {
-      header {
-        padding: 15px;
-      }
-
-      .logo {
-        font-size: 19px;
-      }
-
-      nav button {
-        padding: 8px 10px;
-        font-size: 12px;
-      }
-
-      .post-image {
-        height: 280px;
-      }
-
-      .intro h1 {
-        font-size: 28px;
-      }
+      color: #39748f;
     }
   </style>
 <script src="https://cdn.tailwindcss.com"></script>
@@ -251,270 +233,312 @@
 <body>
 
   <header>
-    <div class="logo">🌸 Rapunzel Feed</div>
-
-    <nav>
-      <button onclick="scrollToTop()">🏰 Início</button>
-      <button onclick="toggleTheme()">🌙 Tema</button>
-    </nav>
+    <h1>❄️ Frozen Feed ❄️</h1>
+    <p>Um cantinho mágico no reino de Arendelle</p>
   </header>
 
-  <main>
+  <main class="container">
 
-    <section class="intro">
-      <h1>✨ Bem-vindo ao Reino ✨</h1>
-      <p>Um pequeno feed inspirado no mundo mágico de Rapunzel.</p>
+    <section class="profile">
+      <img
+        src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&q=80"
+        alt="Perfil">
+      <div>
+        <h2>Meu Reino de Gelo</h2>
+        <p>✨ Explorando Arendelle</p>
+      </div>
+
+      <button onclick="toggleTheme()" id="themeButton">
+        🌙 Tema
+      </button>
     </section>
 
-    <section class="feed">
+    <!-- POST 1 -->
+    <article class="feed-card">
 
-      <!-- POST 1 -->
-      <article class="card">
-
-        <div class="user">
-          <div class="avatar">👸</div>
-          <div>
-            <strong>Rapunzel</strong>
-            <small>Hoje, 10:30</small>
-          </div>
-        </div>
-
+      <div class="post-header">
         <img
-          class="post-image"
-          src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1000&q=80"
-          alt="Castelo iluminado">
+          src="https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=150&q=80"
+          alt="Paisagem congelada">
 
-        <div class="content">
-          <h2>🌸 Um novo dia!</h2>
-
-          <p>
-            Depois de tantos anos na torre, cada novo lugar parece uma
-            aventura. Nunca deixe de explorar o mundo!
-          </p>
-
-          <div class="actions">
-            <button class="like" onclick="likePost(this)">
-              ❤️ Curtir <span>0</span>
-            </button>
-
-            <button onclick="toggleComments(this)">
-              💬 Comentários
-            </button>
-
-            <button onclick="showMessage()">
-              ✨ Compartilhar
-            </button>
-          </div>
-
-          <div class="comments">
-            <input type="text" placeholder="Escreva um comentário...">
-            <button onclick="addComment(this)">Enviar</button>
-
-            <div class="comment-list"></div>
-          </div>
+        <div>
+          <strong>Elsa ❄️</strong>
+          <small>Há 10 minutos</small>
         </div>
-      </article>
+      </div>
 
+      <img
+        class="post-image"
+        src="https://images.unsplash.com/photo-1483347756197-71ef80e95f73?auto=format&fit=crop&w=1000&q=80"
+        alt="Paisagem de inverno">
 
-      <!-- POST 2 -->
-      <article class="card">
+      <div class="post-content">
+        <h3>Um dia congelante! ☃️</h3>
+        <p>
+          A neve chegou em Arendelle! 
+          Que tal aproveitar esse lindo dia de inverno?
+          ❄️💙
+        </p>
+      </div>
 
-        <div class="user">
-          <div class="avatar">🐴</div>
-          <div>
-            <strong>Pascal & Maximus</strong>
-            <small>Ontem, 18:45</small>
-          </div>
-        </div>
+      <div class="actions">
+        <button onclick="likePost(this)">
+          🤍 Curtir <span>0</span>
+        </button>
 
+        <button onclick="focusComment(this)">
+          💬 Comentar
+        </button>
+
+        <button onclick="sharePost()">
+          📤 Compartilhar
+        </button>
+      </div>
+
+      <div class="comments">
+        <input
+          type="text"
+          placeholder="Escreva um comentário..."
+          onkeydown="addComment(event, this)"
+        >
+
+        <div class="comment-list"></div>
+      </div>
+
+    </article>
+
+    <!-- POST 2 -->
+    <article class="feed-card">
+
+      <div class="post-header">
         <img
-          class="post-image"
-          src="https://images.unsplash.com/photo-1517849845537-4d257902454a?auto=format&fit=crop&w=1000&q=80"
-          alt="Animal em um cenário natural">
+          src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=150&q=80"
+          alt="Anna">
 
-        <div class="content">
-          <h2>🐴 Aventura pelo reino</h2>
-
-          <p>
-            Uma aventura nunca é completa sem bons amigos ao nosso lado.
-            E, claro, um pouco de confusão!
-          </p>
-
-          <div class="actions">
-            <button class="like" onclick="likePost(this)">
-              ❤️ Curtir <span>0</span>
-            </button>
-
-            <button onclick="toggleComments(this)">
-              💬 Comentários
-            </button>
-
-            <button onclick="showMessage()">
-              ✨ Compartilhar
-            </button>
-          </div>
-
-          <div class="comments">
-            <input type="text" placeholder="Escreva um comentário...">
-            <button onclick="addComment(this)">Enviar</button>
-
-            <div class="comment-list"></div>
-          </div>
+        <div>
+          <strong>Anna 💙</strong>
+          <small>Há 1 hora</small>
         </div>
-      </article>
+      </div>
 
+      <img
+        class="post-image"
+        src="https://images.unsplash.com/photo-1517299321609-52687d1bc55a?auto=format&fit=crop&w=1000&q=80"
+        alt="Montanhas cobertas de neve">
 
-      <!-- POST 3 -->
-      <article class="card">
+      <div class="post-content">
+        <h3>Vamos explorar! 🏔️</h3>
+        <p>
+          Nada melhor do que uma aventura pelo reino
+          coberto de neve. Quem vem comigo?
+          🩵❄️
+        </p>
+      </div>
 
-        <div class="user">
-          <div class="avatar">💜</div>
-          <div>
-            <strong>Diário da Torre</strong>
-            <small>2 dias atrás</small>
-          </div>
-        </div>
+      <div class="actions">
+        <button onclick="likePost(this)">
+          🤍 Curtir <span>0</span>
+        </button>
 
+        <button onclick="focusComment(this)">
+          💬 Comentar
+        </button>
+
+        <button onclick="sharePost()">
+          📤 Compartilhar
+        </button>
+      </div>
+
+      <div class="comments">
+        <input
+          type="text"
+          placeholder="Escreva um comentário..."
+          onkeydown="addComment(event, this)"
+        >
+
+        <div class="comment-list"></div>
+      </div>
+
+    </article>
+
+    <!-- POST 3 -->
+    <article class="feed-card">
+
+      <div class="post-header">
         <img
-          class="post-image"
-          src="https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=1000&q=80"
-          alt="Céu estrelado">
+          src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=150&q=80"
+          alt="Olaf">
 
-        <div class="content">
-          <h2>🌟 Luzes no céu</h2>
-
-          <p>
-            Às vezes, tudo o que precisamos é olhar para o céu e acreditar
-            que nossos sonhos podem se tornar realidade.
-          </p>
-
-          <div class="actions">
-            <button class="like" onclick="likePost(this)">
-              ❤️ Curtir <span>0</span>
-            </button>
-
-            <button onclick="toggleComments(this)">
-              💬 Comentários
-            </button>
-
-            <button onclick="showMessage()">
-              ✨ Compartilhar
-            </button>
-          </div>
-
-          <div class="comments">
-            <input type="text" placeholder="Escreva um comentário...">
-            <button onclick="addComment(this)">Enviar</button>
-
-            <div class="comment-list"></div>
-          </div>
+        <div>
+          <strong>Olaf ☃️</strong>
+          <small>Há 3 horas</small>
         </div>
-      </article>
+      </div>
 
-    </section>
+      <img
+        class="post-image"
+        src="https://images.unsplash.com/photo-1453306458620-5bbef13a5bca?auto=format&fit=crop&w=1000&q=80"
+        alt="Floresta nevada">
+
+      <div class="post-content">
+        <h3>Abraços quentinhos! ☃️❤️</h3>
+        <p>
+          Mesmo no inverno, um bom abraço deixa qualquer
+          dia mais quentinho! ⛄
+        </p>
+      </div>
+
+      <div class="actions">
+        <button onclick="likePost(this)">
+          🤍 Curtir <span>0</span>
+        </button>
+
+        <button onclick="focusComment(this)">
+          💬 Comentar
+        </button>
+
+        <button onclick="sharePost()">
+          📤 Compartilhar
+        </button>
+      </div>
+
+      <div class="comments">
+        <input
+          type="text"
+          placeholder="Escreva um comentário..."
+          onkeydown="addComment(event, this)"
+        >
+
+        <div class="comment-list"></div>
+      </div>
+
+    </article>
+
   </main>
 
   <footer>
-    🌸 Feito com magia, flores e lanternas ✨
+    Feito com ❄️ e magia • Frozen Feed
   </footer>
 
 
   <script>
 
-    // Botão Curtir
+    // CURTIR
     function likePost(button) {
+
       const counter = button.querySelector("span");
       let likes = Number(counter.textContent);
 
-      if (button.classList.contains("active")) {
+      if (button.classList.contains("liked")) {
         likes--;
-        button.classList.remove("active");
+        button.classList.remove("liked");
+        button.innerHTML = `🤍 Curtir <span>${likes}</span>`;
       } else {
         likes++;
-        button.classList.add("active");
+        button.classList.add("liked");
+        button.innerHTML = `💙 Curtido <span>${likes}</span>`;
       }
-
-      counter.textContent = likes;
     }
 
 
-    // Mostrar/esconder comentários
-    function toggleComments(button) {
-      const comments = button
-        .closest(".content")
-        .querySelector(".comments");
+    // FOCO NO CAMPO DE COMENTÁRIO
+    function focusComment(button) {
 
-      if (comments.style.display === "block") {
-        comments.style.display = "none";
+      const card = button.closest(".feed-card");
+      const input = card.querySelector(".comments input");
+
+      input.focus();
+    }
+
+
+    // ADICIONAR COMENTÁRIO
+    function addComment(event, input) {
+
+      if (event.key === "Enter") {
+
+        const text = input.value.trim();
+
+        if (text === "") return;
+
+        const commentList =
+          input.parentElement.querySelector(".comment-list");
+
+        const comment = document.createElement("div");
+
+        comment.className = "comment";
+        comment.textContent = "💙 Você: " + text;
+
+        commentList.appendChild(comment);
+
+        input.value = "";
+      }
+    }
+
+
+    // COMPARTILHAR
+    function sharePost() {
+
+      if (navigator.share) {
+
+        navigator.share({
+          title: "Frozen Feed ❄️",
+          text: "Olha esse post mágico do Frozen Feed!"
+        });
+
       } else {
-        comments.style.display = "block";
+
+        navigator.clipboard.writeText(
+          "Olha esse post mágico do Frozen Feed! ❄️"
+        );
+
+        alert("📋 Link/texto copiado para a área de transferência!");
       }
     }
 
 
-    // Adicionar comentário
-    function addComment(button) {
-      const container = button.closest(".comments");
-      const input = container.querySelector("input");
-      const list = container.querySelector(".comment-list");
-
-      const text = input.value.trim();
-
-      if (text === "") {
-        alert("Digite um comentário primeiro! 💜");
-        return;
-      }
-
-      const comment = document.createElement("p");
-      comment.innerHTML = "💬 <strong>Você:</strong> " + escapeHTML(text);
-
-      list.appendChild(comment);
-
-      input.value = "";
-    }
-
-
-    // Evita inserir HTML digitado pelo usuário
-    function escapeHTML(text) {
-      const div = document.createElement("div");
-      div.textContent = text;
-      return div.innerHTML;
-    }
-
-
-    // Compartilhar
-    function showMessage() {
-      alert("✨ Post compartilhado com sucesso no Reino!");
-    }
-
-
-    // Alternar tema
+    // TEMA ESCURO
     function toggleTheme() {
-      document.body.classList.toggle("light");
 
-      if (document.body.classList.contains("light")) {
-        localStorage.setItem("theme", "light");
+      document.body.classList.toggle("dark");
+
+      const button = document.getElementById("themeButton");
+
+      if (document.body.classList.contains("dark")) {
+        button.textContent = "☀️ Claro";
       } else {
-        localStorage.setItem("theme", "dark");
+        button.textContent = "🌙 Tema";
       }
     }
 
 
-    // Recuperar tema salvo
-    window.onload = function() {
-      if (localStorage.getItem("theme") === "light") {
-        document.body.classList.add("light");
-      }
-    };
+    // NEVE CAINDO
+    function createSnowflake() {
 
+      const snowflake = document.createElement("div");
 
-    // Voltar ao topo
-    function scrollToTop() {
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-      });
+      snowflake.className = "snowflake";
+      snowflake.textContent = "❄";
+
+      snowflake.style.left =
+        Math.random() * 100 + "vw";
+
+      snowflake.style.animationDuration =
+        (Math.random() * 5 + 5) + "s";
+
+      snowflake.style.opacity =
+        Math.random();
+
+      snowflake.style.fontSize =
+        (Math.random() * 15 + 10) + "px";
+
+      document.body.appendChild(snowflake);
+
+      setTimeout(() => {
+        snowflake.remove();
+      }, 10000);
     }
+
+    setInterval(createSnowflake, 350);
 
   </script>
 
