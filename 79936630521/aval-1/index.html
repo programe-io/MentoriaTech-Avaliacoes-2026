@@ -3,409 +3,35 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>Kvara Feed ⚽</title>
 
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: Arial, Helvetica, sans-serif;
-    }
-
-    :root {
-      --bg: #07111f;
-      --card: #0e1c2d;
-      --card2: #13243a;
-      --text: #ffffff;
-      --muted: #9caec3;
-      --blue: #008cff;
-      --blue2: #00c6ff;
-      --red: #e63946;
-      --border: rgba(255,255,255,.08);
-    }
-
-    body.light {
-      --bg: #edf3f8;
-      --card: #ffffff;
-      --card2: #e8f0f7;
-      --text: #101820;
-      --muted: #607080;
-      --border: rgba(0,0,0,.1);
-    }
-
-    body {
-      background:
-        radial-gradient(circle at 20% 10%, rgba(0,140,255,.18), transparent 30%),
-        radial-gradient(circle at 90% 90%, rgba(0,198,255,.10), transparent 30%),
-        var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      transition: .3s;
-    }
-
-    /* HEADER */
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      height: 70px;
-      background: rgba(7,17,31,.88);
-      backdrop-filter: blur(15px);
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-    }
-
-    body.light header {
-      background: rgba(255,255,255,.88);
-    }
-
-    .header-content {
-      width: min(1100px, 94%);
-      margin: auto;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .logo {
-      font-size: 25px;
-      font-weight: 900;
-      letter-spacing: -1px;
-    }
-
-    .logo span {
-      color: var(--blue2);
-    }
-
-    .header-buttons {
-      display: flex;
-      gap: 10px;
-    }
-
-    .icon-btn {
-      width: 42px;
-      height: 42px;
-      border: 1px solid var(--border);
-      background: var(--card);
-      color: var(--text);
-      border-radius: 50%;
-      cursor: pointer;
-      font-size: 18px;
-      transition: .2s;
-    }
-
-    .icon-btn:hover {
-      transform: scale(1.08);
-      background: var(--blue);
-      color: white;
-    }
-
-    /* PROFILE */
-    .profile {
-      width: min(1100px, 94%);
-      margin: 30px auto 20px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 22px;
-      overflow: hidden;
-      box-shadow: 0 15px 50px rgba(0,0,0,.2);
-    }
-
-    .cover {
-      height: 210px;
-      position: relative;
-      background:
-        linear-gradient(120deg, rgba(0, 85, 160, .95), rgba(0, 195, 255, .25)),
-        url("https://commons.wikimedia.org/wiki/Special:FilePath/Khvicha%20kvaratskhelia%20napoli.jpg");
-      background-size: cover;
-      background-position: center 25%;
-    }
-
-    .cover::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(transparent, rgba(0,0,0,.7));
-    }
-
-    .profile-info {
-      padding: 0 28px 25px;
-      position: relative;
-    }
-
-    .avatar {
-      width: 110px;
-      height: 110px;
-      border-radius: 50%;
-      border: 5px solid var(--card);
-      object-fit: cover;
-      position: relative;
-      margin-top: -55px;
-      z-index: 2;
-      background: #111;
-    }
-
-    .profile-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      gap: 20px;
-    }
-
-    .profile-name {
-      font-size: 29px;
-      font-weight: 900;
-      margin-top: 8px;
-    }
-
-    .verified {
-      color: #1da1f2;
-    }
-
-    .username {
-      color: var(--muted);
-      margin-top: 4px;
-    }
-
-    .bio {
-      margin-top: 15px;
-      line-height: 1.5;
-      color: var(--muted);
-      max-width: 700px;
-    }
-
-    .follow-btn {
-      border: 0;
-      background: linear-gradient(90deg, var(--blue), var(--blue2));
-      color: white;
-      padding: 12px 23px;
-      border-radius: 25px;
-      font-weight: bold;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: .2s;
-    }
-
-    .follow-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(0,140,255,.35);
-    }
-
-    .follow-btn.following {
-      background: #27394d;
-    }
-
-    /* NAV */
-    .feed-nav {
-      width: min(1100px, 94%);
-      margin: 20px auto;
-      display: flex;
-      gap: 10px;
-      overflow-x: auto;
-    }
-
-    .filter {
-      border: 1px solid var(--border);
-      background: var(--card);
-      color: var(--muted);
-      padding: 10px 18px;
-      border-radius: 25px;
-      cursor: pointer;
-      white-space: nowrap;
-    }
-
-    .filter.active,
-    .filter:hover {
-      background: var(--blue);
-      color: white;
-      border-color: var(--blue);
-    }
-
-    /* FEED */
-    .feed {
-      width: min(760px, 94%);
-      margin: auto;
-      padding-bottom: 50px;
-    }
-
-    .post {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      margin-bottom: 20px;
-      overflow: hidden;
-      animation: appear .4s ease;
-    }
-
-    @keyframes appear {
-      from {
-        opacity: 0;
-        transform: translateY(15px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .post-header {
-      display: flex;
-      align-items: center;
-      padding: 17px;
-      gap: 12px;
-    }
-
-    .small-avatar {
-      width: 45px;
-      height: 45px;
-      border-radius: 50%;
-      object-fit: cover;
-    }
-
-    .post-user {
-      font-weight: bold;
-    }
-
-    .post-time {
-      font-size: 13px;
-      color: var(--muted);
-      margin-top: 3px;
-    }
-
-    .post-text {
-      padding: 0 18px 16px;
-      line-height: 1.55;
-    }
-
-    .post-image {
-      width: 100%;
-      display: block;
-      max-height: 600px;
-      object-fit: cover;
-      cursor: pointer;
-      transition: .3s;
-    }
-
-    .post-image:hover {
-      filter: brightness(1.08);
-    }
-
-    .stats {
-      padding: 13px 18px;
-      display: flex;
-      justify-content: space-between;
-      color: var(--muted);
-      font-size: 14px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .actions {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      padding: 8px;
-      gap: 5px;
-    }
-
-    .action {
-      border: 0;
-      background: transparent;
-      color: var(--muted);
-      padding: 11px;
-      border-radius: 10px;
-      cursor: pointer;
-      font-size: 15px;
-      transition: .2s;
-    }
-
-    .action:hover {
-      background: var(--card2);
-      color: var(--text);
-    }
-
-    .action.liked {
-      color: #ff3155;
-    }
-
-    /* MODAL */
-    .modal {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,.85);
-      z-index: 999;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-
-    .modal.show {
-      display: flex;
-    }
-
-    .modal img {
-      max-width: 95%;
-      max-height: 90vh;
-      border-radius: 15px;
-      box-shadow: 0 20px 80px rgba(0,0,0,.6);
-    }
-
-    .close {
-      position: fixed;
-      top: 20px;
-      right: 25px;
-      font-size: 35px;
-      color: white;
-      cursor: pointer;
-    }
-
-    /* RESPONSIVO */
-    @media(max-width: 600px) {
-      .cover {
-        height: 160px;
-      }
-
-      .profile-row {
-        align-items: center;
-      }
-
-      .profile-name {
-        font-size: 22px;
-      }
-
-      .follow-btn {
-        padding: 10px 15px;
-      }
-
-      .profile-info {
-        padding: 0 18px 20px;
-      }
-
-      .avatar {
-        width: 90px;
-        height: 90px;
-      }
-    }
-  </style>
-<script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="style.css">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="style.css" rel="stylesheet"></head>
 
 <body>
 
+  <!-- HEADER -->
   <header>
     <div class="header-content">
-      <div class="logo">KVARA<span>FEED</span> ⚽</div>
+
+      <div class="logo">
+        KVARA<span>FEED</span> ⚽
+      </div>
 
       <div class="header-buttons">
-        <button class="icon-btn" onclick="toggleTheme()" title="Mudar tema">
+
+        <button class="icon-btn" onclick="toggleTheme()">
           🌙
         </button>
-        <button class="icon-btn" onclick="scrollToFeed()" title="Ir para o feed">
+
+        <button class="icon-btn" onclick="scrollToFeed()">
           📰
         </button>
+
       </div>
+
     </div>
   </header>
 
@@ -420,51 +46,65 @@
       <div class="profile-row">
 
         <div>
+
           <img
             class="avatar"
             src="https://commons.wikimedia.org/wiki/Special:FilePath/Khvicha%20kvaratskhelia%20napoli.jpg"
             alt="Khvicha Kvaratskhelia"
           >
 
-          <div class="profile-name">
+          <h1>
             Khvicha Kvaratskhelia
             <span class="verified">✓</span>
-          </div>
+          </h1>
 
-          <div class="username">@kvara</div>
+          <p class="username">@kvara</p>
+
         </div>
 
-        <button class="follow-btn" id="followBtn" onclick="toggleFollow()">
+        <button
+          class="follow-btn"
+          id="followBtn"
+          onclick="toggleFollow()">
           Seguir
         </button>
 
       </div>
 
       <p class="bio">
-        🇬🇪 Khvicha Kvaratskhelia • Kvara • Futebol, dribles,
-        velocidade e momentos inesquecíveis. ⚽🔥
+        🇬🇪 Khvicha Kvaratskhelia • Kvara • Futebol,
+        dribles, velocidade e momentos inesquecíveis. ⚽🔥
       </p>
 
     </div>
+
   </section>
 
 
   <!-- FILTROS -->
   <nav class="feed-nav">
 
-    <button class="filter active" onclick="filterPosts('all', this)">
+    <button
+      class="filter active"
+      onclick="filterPosts('all', this)">
       ✨ Todos
     </button>
 
-    <button class="filter" onclick="filterPosts('photos', this)">
+    <button
+      class="filter"
+      onclick="filterPosts('photos', this)">
       📸 Fotos
     </button>
 
-    <button class="filter" onclick="filterPosts('news', this)">
+    <button
+      class="filter"
+      onclick="filterPosts('news', this)">
       📰 Notícias
     </button>
 
-    <button class="filter" onclick="filterPosts('highlights', this)">
+    <button
+      class="filter"
+      onclick="filterPosts('highlights', this)">
       🔥 Highlights
     </button>
 
@@ -483,12 +123,12 @@
         <img
           class="small-avatar"
           src="https://commons.wikimedia.org/wiki/Special:FilePath/Khvicha%20kvaratskhelia%20napoli.jpg"
-          alt=""
+          alt="Kvara"
         >
 
         <div>
-          <div class="post-user">Khvicha Kvaratskhelia ✓</div>
-          <div class="post-time">Hoje • 12:30</div>
+          <strong>Khvicha Kvaratskhelia ✓</strong>
+          <span>Hoje • 12:30</span>
         </div>
 
       </div>
@@ -507,11 +147,19 @@
       >
 
       <div class="stats">
-        <span class="likes">❤️ <span class="like-count">2.847</span> curtidas</span>
-        <span>💬 184 comentários</span>
+
+        <span>
+          ❤️ <span class="like-count">2847</span> curtidas
+        </span>
+
+        <span>
+          💬 184 comentários
+        </span>
+
       </div>
 
       <div class="actions">
+
         <button class="action" onclick="likePost(this)">
           ❤️ Curtir
         </button>
@@ -523,6 +171,7 @@
         <button class="action" onclick="sharePost()">
           ↗️ Compartilhar
         </button>
+
       </div>
 
     </article>
@@ -536,34 +185,37 @@
         <img
           class="small-avatar"
           src="https://commons.wikimedia.org/wiki/Special:FilePath/Khvicha%20Kvaratskhelia%20in%202022.jpg"
-          alt=""
-          class="small-avatar"
+          alt="Kvara"
         >
 
         <div>
-          <div class="post-user">Kvara Highlights 🔥</div>
-          <div class="post-time">Ontem • 20:15</div>
+          <strong>Kvara Highlights 🔥</strong>
+          <span>Ontem • 20:15</span>
         </div>
 
       </div>
 
       <p class="post-text">
-        Quando o Kvara começa a driblar... fica difícil parar. 😮‍💨🔥
+        Quando o Kvara começa a driblar...
+        fica difícil parar. 😮‍💨🔥
       </p>
 
       <img
         class="post-image"
         onclick="openImage(this.src)"
         src="https://commons.wikimedia.org/wiki/Special:FilePath/Khvicha%20Kvaratskhelia%20in%202022.jpg"
-        alt="Khvicha Kvaratskhelia"
+        alt="Kvara"
       >
 
       <div class="stats">
+
         <span>❤️ 5.921 curtidas</span>
         <span>💬 412 comentários</span>
+
       </div>
 
       <div class="actions">
+
         <button class="action" onclick="likePost(this)">
           ❤️ Curtir
         </button>
@@ -575,6 +227,7 @@
         <button class="action" onclick="sharePost()">
           ↗️ Compartilhar
         </button>
+
       </div>
 
     </article>
@@ -588,35 +241,37 @@
         <img
           class="small-avatar"
           src="https://commons.wikimedia.org/wiki/Special:FilePath/Khvicha%20kvaratskhelia%20napoli.jpg"
-          alt=""
-          class="small-avatar"
+          alt="Kvara"
         >
 
         <div>
-          <div class="post-user">Kvara News 📰</div>
-          <div class="post-time">2 dias atrás</div>
+          <strong>Kvara News 📰</strong>
+          <span>2 dias atrás</span>
         </div>
 
       </div>
 
       <p class="post-text">
-        📰 Feed dedicado aos melhores momentos, fotos e novidades
-        relacionadas ao craque georgiano.
+        📰 Feed dedicado aos melhores momentos,
+        fotos e novidades relacionadas ao craque georgiano.
       </p>
 
       <img
         class="post-image"
         onclick="openImage(this.src)"
-        src="https://commons.wikimedia.org/wiki/Special:FilePath/Khvicha%20Kvaratskhelia%20cropped.jpg"
-        alt="Khvicha Kvaratskhelia"
+        src="https://commons.wikimedia.org/wiki/Special:FilePath/Khvicha%20kvaratskhelia%20cropped.jpg"
+        alt="Kvara"
       >
 
       <div class="stats">
+
         <span>❤️ 3.274 curtidas</span>
         <span>💬 96 comentários</span>
+
       </div>
 
       <div class="actions">
+
         <button class="action" onclick="likePost(this)">
           ❤️ Curtir
         </button>
@@ -628,6 +283,7 @@
         <button class="action" onclick="sharePost()">
           ↗️ Compartilhar
         </button>
+
       </div>
 
     </article>
@@ -635,145 +291,177 @@
   </main>
 
 
-  <!-- MODAL DA IMAGEM -->
-  <div class="modal" id="imageModal" onclick="closeImage()">
-    <span class="close">&times;</span>
-    <img id="modalImage" src="" alt="Imagem ampliada">
+  <!-- MODAL -->
+  <div
+    class="modal"
+    id="imageModal"
+    onclick="closeImage()">
+
+    <span class="close">
+      ×
+    </span>
+
+    <img
+      id="modalImage"
+      src=""
+      alt="Imagem ampliada"
+    >
+
   </div>
 
 
   <script>
 
-    // SEGUIR
     function toggleFollow() {
 
-      const btn = document.getElementById("followBtn");
+      const button =
+        document.getElementById("followBtn");
 
-      if (btn.classList.contains("following")) {
+      button.classList.toggle("following");
 
-        btn.classList.remove("following");
-        btn.innerText = "Seguir";
-
+      if (button.classList.contains("following")) {
+        button.innerHTML = "Seguindo ✓";
       } else {
-
-        btn.classList.add("following");
-        btn.innerText = "Seguindo ✓";
-
+        button.innerHTML = "Seguir";
       }
+
     }
 
 
-    // CURTIR
     function likePost(button) {
 
       const post = button.closest(".post");
-      const counter = post.querySelector(".like-count");
+
+      const counter =
+        post.querySelector(".like-count");
 
       button.classList.toggle("liked");
 
+      if (!counter) return;
+
+      let number =
+        parseInt(counter.textContent);
+
       if (button.classList.contains("liked")) {
+
+        number++;
 
         button.innerHTML = "❤️ Curtido";
 
-        if (counter) {
-          let value = parseInt(counter.innerText.replace(".", ""));
-          counter.innerText = (value + 1).toLocaleString("pt-BR");
-        }
-
       } else {
+
+        number--;
 
         button.innerHTML = "❤️ Curtir";
 
-        if (counter) {
-          let value = parseInt(counter.innerText.replace(".", ""));
-          counter.innerText = (value - 1).toLocaleString("pt-BR");
-        }
-
       }
+
+      counter.textContent =
+        number.toLocaleString("pt-BR");
+
     }
 
 
-    // COMENTAR
     function commentPost() {
 
-      const comment = prompt("Digite seu comentário:");
+      const comment =
+        prompt("Digite seu comentário:");
 
       if (comment && comment.trim() !== "") {
-        alert("Comentário publicado! 💬");
+
+        alert(
+          "Comentário publicado! 💬"
+        );
+
       }
 
     }
 
 
-    // COMPARTILHAR
     function sharePost() {
 
       if (navigator.share) {
 
         navigator.share({
           title: "Kvara Feed",
-          text: "Confira este post sobre Khvicha Kvaratskhelia!",
+          text: "Confira este post sobre Kvaratskhelia!",
           url: window.location.href
         });
 
       } else {
 
-        navigator.clipboard.writeText(window.location.href);
+        navigator.clipboard.writeText(
+          window.location.href
+        );
 
         alert("Link copiado! 📋");
 
       }
+
     }
 
 
-    // TEMA
     function toggleTheme() {
 
       document.body.classList.toggle("light");
 
-      const button = document.querySelector(".header-buttons .icon-btn");
+      const button =
+        document.querySelector(".header-buttons .icon-btn");
 
-      if (document.body.classList.contains("light")) {
-        button.innerText = "☀️";
+      if (
+        document.body.classList.contains("light")
+      ) {
+
+        button.innerHTML = "☀️";
+
       } else {
-        button.innerText = "🌙";
+
+        button.innerHTML = "🌙";
+
       }
 
     }
 
 
-    // FILTRO
     function filterPosts(category, button) {
 
-      document.querySelectorAll(".filter").forEach(btn => {
-        btn.classList.remove("active");
-      });
+      document
+        .querySelectorAll(".filter")
+        .forEach(btn => {
+          btn.classList.remove("active");
+        });
 
       button.classList.add("active");
 
-      document.querySelectorAll(".post").forEach(post => {
+      document
+        .querySelectorAll(".post")
+        .forEach(post => {
 
-        if (category === "all" ||
-            post.dataset.category === category) {
+          if (
+            category === "all" ||
+            post.dataset.category === category
+          ) {
 
-          post.style.display = "block";
+            post.style.display = "block";
 
-        } else {
+          } else {
 
-          post.style.display = "none";
+            post.style.display = "none";
 
-        }
+          }
 
-      });
+        });
 
     }
 
 
-    // ABRIR IMAGEM
     function openImage(src) {
 
-      const modal = document.getElementById("imageModal");
-      const image = document.getElementById("modalImage");
+      const modal =
+        document.getElementById("imageModal");
+
+      const image =
+        document.getElementById("modalImage");
 
       image.src = src;
 
@@ -782,21 +470,22 @@
     }
 
 
-    // FECHAR IMAGEM
     function closeImage() {
 
-      document.getElementById("imageModal")
+      document
+        .getElementById("imageModal")
         .classList.remove("show");
 
     }
 
 
-    // IR PARA FEED
     function scrollToFeed() {
 
-      document.getElementById("feed").scrollIntoView({
-        behavior: "smooth"
-      });
+      document
+        .getElementById("feed")
+        .scrollIntoView({
+          behavior: "smooth"
+        });
 
     }
 
