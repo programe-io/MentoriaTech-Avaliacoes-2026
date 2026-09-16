@@ -1,406 +1,274 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>NeymarFeed ⚽</title>
-
-<style>
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: Arial, sans-serif;
-}
-
-body {
-    background: #07110b;
-    color: white;
-}
-
-/* HEADER */
-header {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-
-    height: 70px;
-
-    background: #050505;
-    border-bottom: 2px solid #19e66b;
-
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    padding: 0 7%;
-}
-
-.logo {
-    font-size: 28px;
-    font-weight: bold;
-    color: #19e66b;
-}
-
-.logo span {
-    color: white;
-}
-
-header button {
-    background: #19e66b;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 20px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-/* FEED */
-.feed {
-    max-width: 650px;
-    margin: 30px auto;
-    padding: 0 15px;
-}
-
-/* PERFIL */
-.perfil {
-    background: #111;
-    border-radius: 18px;
-    padding: 20px;
-
-    display: flex;
-    align-items: center;
-    gap: 15px;
-
-    margin-bottom: 20px;
-
-    border: 1px solid #222;
-}
-
-.avatar {
-    width: 75px;
-    height: 75px;
-
-    border-radius: 50%;
-    object-fit: cover;
-
-    border: 3px solid #19e66b;
-}
-
-.perfil h2 {
-    font-size: 21px;
-}
-
-.verificado {
-    color: #19e66b;
-}
-
-.perfil p {
-    color: #888;
-    margin-top: 5px;
-}
-
-/* NOVO POST */
-.novo-post {
-    width: 100%;
-    padding: 16px;
-
-    border: none;
-    border-radius: 15px;
-
-    background: #19e66b;
-    color: #001b0c;
-
-    font-weight: bold;
-    font-size: 16px;
-
-    cursor: pointer;
-
-    margin-bottom: 20px;
-}
-
-.novo-post:hover {
-    background: white;
-}
-
-/* PUBLICAÇÃO */
-.post {
-    background: #111;
-    border: 1px solid #242424;
-
-    border-radius: 18px;
-
-    overflow: hidden;
-
-    margin-bottom: 25px;
-
-    box-shadow: 0 5px 25px rgba(0,0,0,.3);
-}
-
-.post-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-
-    padding: 15px;
-}
-
-.post-header img {
-    width: 48px;
-    height: 48px;
-
-    object-fit: cover;
-    border-radius: 50%;
-
-    border: 2px solid #19e66b;
-}
-
-.post-header strong {
-    display: block;
-}
-
-.post-header small {
-    color: #777;
-}
-
-.post-text {
-    padding: 0 15px 15px;
-
-    color: #ddd;
-    line-height: 1.5;
-}
-
-/* FOTO */
-.post-image {
-    width: 100%;
-    display: block;
-
-    max-height: 650px;
-    object-fit: cover;
-}
-
-/* AÇÕES */
-.actions {
-    display: flex;
-    gap: 8px;
-
-    padding: 15px;
-}
-
-.action {
-    flex: 1;
-
-    padding: 11px 5px;
-
-    border: none;
-    border-radius: 20px;
-
-    background: #222;
-    color: white;
-
-    cursor: pointer;
-
-    transition: .2s;
-}
-
-.action:hover {
-    background: #19e66b;
-    color: black;
-}
-
-.action.liked {
-    background: #19e66b;
-    color: black;
-}
-
-.likes {
-    padding: 0 15px 15px;
-
-    color: #999;
-    font-size: 14px;
-}
-
-/* COMENTÁRIOS */
-.comments {
-    padding: 0 15px;
-}
-
-.comment {
-    background: #1d1d1d;
-
-    padding: 10px;
-
-    margin-bottom: 7px;
-
-    border-radius: 10px;
-
-    color: #ddd;
-}
-
-.comment strong {
-    color: #19e66b;
-}
-
-/* FORMULÁRIO */
-.comment-form {
-    display: flex;
-    gap: 8px;
-
-    padding: 15px;
-
-    border-top: 1px solid #222;
-}
-
-.comment-form input {
-    flex: 1;
-
-    background: #222;
-
-    color: white;
-
-    border: none;
-    outline: none;
-
-    padding: 12px 15px;
-
-    border-radius: 20px;
-}
-
-.comment-form button {
-    border: none;
-
-    background: #19e66b;
-
-    color: black;
-
-    padding: 0 18px;
-
-    border-radius: 20px;
-
-    font-weight: bold;
-
-    cursor: pointer;
-}
-
-/* MODAL */
-.modal {
-    position: fixed;
-    inset: 0;
-
-    background: rgba(0,0,0,.8);
-
-    display: none;
-
-    align-items: center;
-    justify-content: center;
-
-    z-index: 200;
-
-    padding: 20px;
-}
-
-.modal.active {
-    display: flex;
-}
-
-.modal-box {
-    width: 100%;
-    max-width: 450px;
-
-    background: #111;
-
-    border: 1px solid #19e66b;
-
-    border-radius: 20px;
-
-    padding: 25px;
-}
-
-.modal-box h2 {
-    color: #19e66b;
-    margin-bottom: 20px;
-}
-
-.modal-box input,
-.modal-box textarea {
-    width: 100%;
-
-    background: #222;
-
-    border: none;
-    outline: none;
-
-    color: white;
-
-    padding: 13px;
-
-    border-radius: 10px;
-
-    margin-bottom: 12px;
-}
-
-.modal-box textarea {
-    height: 100px;
-    resize: none;
-}
-
-.modal-buttons {
-    display: flex;
-    gap: 10px;
-}
-
-.modal-buttons button {
-    flex: 1;
-
-    padding: 13px;
-
-    border: none;
-    border-radius: 10px;
-
-    cursor: pointer;
-
-    font-weight: bold;
-}
-
-.publish {
-    background: #19e66b;
-}
-
-.cancel {
-    background: #333;
-    color: white;
-}
-
-/* FOOTER */
-footer {
-    text-align: center;
-
-    padding: 30px;
-
-    color: #666;
-}
-
-/* CELULAR */
-@media(max-width:600px) {
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Neymar Feed ⚽</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #071d3a, #00a859);
+      min-height: 100vh;
+      color: #222;
+    }
 
     header {
-        padding: 0 15px;
+      background: #061a33;
+      color: white;
+      padding: 18px 25px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      box-shadow: 0 3px 15px rgba(0,0,0,.3);
     }
 
-    .logo {
-        font-size: 22px;
+    header h1 {
+      font-size: 24px;
     }
 
-    .action {
-        font-size: 12px;
+    header span {
+      color: #ffdf00;
     }
 
-    .perfil {
-        padding: 15px;
+    .follow-btn {
+      background: #ffdf00;
+      color: #071d3a;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: .2s;
     }
-}
-</style>
+
+    .follow-btn:hover {
+      transform: scale(1.05);
+    }
+
+    .container {
+      width: 95%;
+      max-width: 650px;
+      margin: 25px auto;
+    }
+
+    .profile {
+      background: white;
+      border-radius: 18px;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 20px;
+      box-shadow: 0 5px 20px rgba(0,0,0,.2);
+    }
+
+    .profile img {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid #ffdf00;
+    }
+
+    .profile h2 {
+      font-size: 20px;
+    }
+
+    .profile p {
+      color: #666;
+      margin-top: 5px;
+    }
+
+    .post {
+      background: white;
+      border-radius: 18px;
+      overflow: hidden;
+      margin-bottom: 25px;
+      box-shadow: 0 5px 20px rgba(0,0,0,.2);
+    }
+
+    .post-header {
+      padding: 15px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .post-header img {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .post-header strong {
+      display: block;
+    }
+
+    .verified {
+      color: #1683ff;
+    }
+
+    .post-header small {
+      color: #777;
+    }
+
+    .post-image {
+      width: 100%;
+      height: 400px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .post-content {
+      padding: 15px;
+    }
+
+    .caption {
+      line-height: 1.5;
+      margin-bottom: 15px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      border-top: 1px solid #eee;
+      padding-top: 12px;
+    }
+
+    .action-btn {
+      border: none;
+      background: #f2f2f2;
+      padding: 10px 14px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 15px;
+      transition: .2s;
+    }
+
+    .action-btn:hover {
+      background: #e2e2e2;
+    }
+
+    .like.active {
+      background: #ffe3e3;
+      color: #e60023;
+    }
+
+    .comments {
+      margin-top: 15px;
+      display: none;
+    }
+
+    .comments.show {
+      display: block;
+    }
+
+    .comment-input {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .comment-input input {
+      flex: 1;
+      padding: 11px;
+      border: 1px solid #ddd;
+      border-radius: 20px;
+      outline: none;
+    }
+
+    .comment-input button {
+      border: none;
+      background: #071d3a;
+      color: white;
+      padding: 0 15px;
+      border-radius: 20px;
+      cursor: pointer;
+    }
+
+    .comment-list {
+      margin-top: 10px;
+    }
+
+    .comment {
+      background: #f4f4f4;
+      padding: 9px 12px;
+      border-radius: 12px;
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+
+    .new-post {
+      background: white;
+      border-radius: 18px;
+      padding: 20px;
+      margin-bottom: 25px;
+      box-shadow: 0 5px 20px rgba(0,0,0,.2);
+    }
+
+    .new-post h3 {
+      margin-bottom: 12px;
+    }
+
+    .new-post textarea {
+      width: 100%;
+      min-height: 90px;
+      resize: vertical;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      padding: 12px;
+      outline: none;
+    }
+
+    .publish {
+      margin-top: 10px;
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 12px;
+      background: #00a859;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .publish:hover {
+      background: #008f4c;
+    }
+
+    .share-message {
+      color: #00a859;
+      font-size: 13px;
+      margin-top: 8px;
+      display: none;
+    }
+
+    @media (max-width: 600px) {
+      .post-image {
+        height: 300px;
+      }
+
+      header h1 {
+        font-size: 19px;
+      }
+
+      .action-btn {
+        padding: 9px 10px;
+        font-size: 13px;
+      }
+    }
+  </style>
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="style.css" rel="stylesheet"></head>
@@ -408,489 +276,360 @@ footer {
 <body>
 
 <header>
-
-    <div class="logo">
-        ⚽ Neymar<span>Feed</span>
-    </div>
-
-    <button onclick="seguir()">
-        <span id="followText">Seguir</span>
-    </button>
-
+  <h1>⚽ <span>Neymar</span> Feed</h1>
+  <button class="follow-btn" onclick="seguir()">Seguir</button>
 </header>
 
+<main class="container">
 
-<main class="feed">
+  <section class="profile">
+    <img
+      src="https://upload.wikimedia.org/wikipedia/commons/2/2e/Neymar_2018.jpg"
+      alt="Neymar">
+    <div>
+      <h2>Neymar Jr. ✓</h2>
+      <p>⚽ Futebol • 🇧🇷 Brasil</p>
+    </div>
+  </section>
 
-    <!-- PERFIL -->
-    <section class="perfil">
+  <!-- Criar publicação -->
+  <section class="new-post">
+    <h3>📝 Criar publicação</h3>
 
-        <img
-            class="avatar"
-            src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Neymar_2018.jpg/500px-Neymar_2018.jpg"
-            alt="Neymar">
+    <textarea
+      id="newText"
+      placeholder="O que você quer publicar?"
+    ></textarea>
 
-        <div>
-            <h2>
-                Neymar Jr
-                <span class="verificado">✓</span>
-            </h2>
-
-            <p>@neymarjr • Futebol ⚽</p>
-        </div>
-
-    </section>
-
-
-    <!-- NOVO POST -->
-    <button class="novo-post" onclick="abrirModal()">
-        ➕ Criar publicação
+    <button class="publish" onclick="publicar()">
+      Publicar
     </button>
+  </section>
 
+  <!-- POST 1 -->
+  <article class="post">
 
-    <!-- POST -->
-    <article class="post">
+    <div class="post-header">
+      <img
+        src="https://upload.wikimedia.org/wikipedia/commons/2/2e/Neymar_2018.jpg"
+        alt="Neymar">
+      <div>
+        <strong>Neymar Jr. <span class="verified">✔</span></strong>
+        <small>2 horas atrás</small>
+      </div>
+    </div>
 
-        <div class="post-header">
+    <img
+      class="post-image"
+      src="https://upload.wikimedia.org/wikipedia/commons/2/2e/Neymar_2018.jpg"
+      alt="Neymar no futebol">
 
-            <img
-                src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Neymar_2018.jpg/500px-Neymar_2018.jpg">
+    <div class="post-content">
 
-            <div>
-                <strong>Neymar Jr ✓</strong>
-                <small> • Hoje</small>
-            </div>
+      <p class="caption">
+        ⚡ Mais um momento especial dentro de campo!
+        <br>
+        🇧🇷⚽ #NeymarJr #Futebol #Brasil
+      </p>
 
+      <div class="actions">
+
+        <button class="action-btn like" onclick="curtir(this)">
+          ❤️ Curtir <span>0</span>
+        </button>
+
+        <button class="action-btn" onclick="toggleComments(this)">
+          💬 Comentários
+        </button>
+
+        <button class="action-btn" onclick="compartilhar(this)">
+          🔗 Compartilhar
+        </button>
+
+      </div>
+
+      <div class="comments">
+
+        <div class="comment-list"></div>
+
+        <div class="comment-input">
+          <input
+            type="text"
+            placeholder="Escreva um comentário..."
+          >
+          <button onclick="comentar(this)">
+            Enviar
+          </button>
         </div>
 
+      </div>
 
-        <p class="post-text">
-            Futebol é alegria, paixão e dedicação! ⚽🇧🇷💚
-        </p>
+      <p class="share-message">
+        ✓ Link copiado!
+      </p>
 
-
-        <img
-            class="post-image"
-            src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Neymar_2018.jpg/500px-Neymar_2018.jpg"
-            alt="Neymar Jr">
+    </div>
+  </article>
 
 
-        <div class="actions">
+  <!-- POST 2 -->
+  <article class="post">
 
-            <button class="action" onclick="like(this)">
-                ❤️ Curtir
-            </button>
+    <div class="post-header">
+      <img
+        src="https://upload.wikimedia.org/wikipedia/commons/2/2e/Neymar_2018.jpg"
+        alt="Neymar">
+      <div>
+        <strong>Neymar Jr. <span class="verified">✔</span></strong>
+        <small>Ontem</small>
+      </div>
+    </div>
 
-            <button class="action" onclick="focusComment(this)">
-                💬 Comentar
-            </button>
+    <img
+      class="post-image"
+      src="https://upload.wikimedia.org/wikipedia/commons/7/7c/Neymar_Paris_Saint-Germain.jpg"
+      alt="Neymar">
 
-            <button class="action" onclick="sharePost()">
-                📤 Compartilhar
-            </button>
+    <div class="post-content">
 
+      <p class="caption">
+        ✨ Momentos que ficam na memória.
+        <br>
+        O futebol é feito de paixão, trabalho e dedicação!
+        ⚽🔥
+      </p>
+
+      <div class="actions">
+
+        <button class="action-btn like" onclick="curtir(this)">
+          ❤️ Curtir <span>0</span>
+        </button>
+
+        <button class="action-btn" onclick="toggleComments(this)">
+          💬 Comentários
+        </button>
+
+        <button class="action-btn" onclick="compartilhar(this)">
+          🔗 Compartilhar
+        </button>
+
+      </div>
+
+      <div class="comments">
+
+        <div class="comment-list"></div>
+
+        <div class="comment-input">
+          <input
+            type="text"
+            placeholder="Escreva um comentário..."
+          >
+          <button onclick="comentar(this)">
+            Enviar
+          </button>
         </div>
 
+      </div>
 
-        <div class="likes">
-            <span class="likeNumber">1.248</span> curtidas
-        </div>
+      <p class="share-message">
+        ✓ Link copiado!
+      </p>
 
-
-        <div class="comments">
-
-            <div class="comment">
-                <strong>João:</strong>
-                Monstro! 🔥
-            </div>
-
-            <div class="comment">
-                <strong>Lucas:</strong>
-                Craque brasileiro! 🇧🇷
-            </div>
-
-        </div>
-
-
-        <div class="comment-form">
-
-            <input
-                type="text"
-                placeholder="Escreva um comentário...">
-
-            <button onclick="comment(this)">
-                Enviar
-            </button>
-
-        </div>
-
-    </article>
-
-
-    <!-- SEGUNDO POST -->
-    <article class="post">
-
-        <div class="post-header">
-
-            <img
-                src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Neymar_2018.jpg/500px-Neymar_2018.jpg">
-
-            <div>
-                <strong>Neymar Jr ✓</strong>
-                <small> • Ontem</small>
-            </div>
-
-        </div>
-
-
-        <p class="post-text">
-            Nunca desista dos seus sonhos. 💚💛
-        </p>
-
-
-        <img
-            class="post-image"
-            src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Neymar_2018.jpg/500px-Neymar_2018.jpg"
-            alt="Neymar">
-
-
-        <div class="actions">
-
-            <button class="action" onclick="like(this)">
-                ❤️ Curtir
-            </button>
-
-            <button class="action" onclick="focusComment(this)">
-                💬 Comentar
-            </button>
-
-            <button class="action" onclick="sharePost()">
-                📤 Compartilhar
-            </button>
-
-        </div>
-
-
-        <div class="likes">
-            <span class="likeNumber">985</span> curtidas
-        </div>
-
-
-        <div class="comments"></div>
-
-
-        <div class="comment-form">
-
-            <input
-                type="text"
-                placeholder="Escreva um comentário...">
-
-            <button onclick="comment(this)">
-                Enviar
-            </button>
-
-        </div>
-
-    </article>
+    </div>
+  </article>
 
 </main>
 
 
-<footer>
-    NeymarFeed ⚽ • Página demonstrativa
-</footer>
-
-
-<!-- MODAL -->
-
-<div class="modal" id="modal">
-
-    <div class="modal-box">
-
-        <h2>Nova publicação ⚽</h2>
-
-        <input
-            type="text"
-            id="name"
-            placeholder="Seu nome">
-
-        <textarea
-            id="text"
-            placeholder="O que você quer publicar?"></textarea>
-
-        <input
-            type="text"
-            id="image"
-            placeholder="URL da imagem (opcional)">
-
-        <div class="modal-buttons">
-
-            <button class="cancel" onclick="closeModal()">
-                Cancelar
-            </button>
-
-            <button class="publish" onclick="publish()">
-                Publicar
-            </button>
-
-        </div>
-
-    </div>
-
-</div>
-
-
 <script>
 
-/* SEGUIR */
+  // Curtir publicação
+  function curtir(button) {
 
-function seguir() {
+    const contador = button.querySelector("span");
+    let numero = parseInt(contador.textContent);
 
-    const button = document.querySelector("header button");
-    const text = document.getElementById("followText");
-
-    if (text.innerText === "Seguir") {
-
-        text.innerText = "✓ Seguindo";
-        button.style.background = "white";
-
+    if (button.classList.contains("active")) {
+      numero--;
+      button.classList.remove("active");
     } else {
-
-        text.innerText = "Seguir";
-        button.style.background = "#19e66b";
-
+      numero++;
+      button.classList.add("active");
     }
-}
+
+    contador.textContent = numero;
+  }
 
 
-/* CURTIR */
-
-function like(button) {
+  // Mostrar comentários
+  function toggleComments(button) {
 
     const post = button.closest(".post");
+    const comments = post.querySelector(".comments");
 
-    const number =
-        post.querySelector(".likeNumber");
+    comments.classList.toggle("show");
+  }
 
-    let likes =
-        parseInt(number.innerText.replace(".", ""));
 
-    if (!button.classList.contains("liked")) {
+  // Adicionar comentário
+  function comentar(button) {
 
-        likes++;
+    const area = button.closest(".comments");
+    const input = area.querySelector("input");
+    const lista = area.querySelector(".comment-list");
 
-        button.classList.add("liked");
+    const texto = input.value.trim();
 
-        button.innerHTML = "💚 Curtido";
-
-    } else {
-
-        likes--;
-
-        button.classList.remove("liked");
-
-        button.innerHTML = "❤️ Curtir";
+    if (texto === "") {
+      alert("Digite um comentário!");
+      return;
     }
 
-    number.innerText =
-        likes.toLocaleString("pt-BR");
-}
+    const comentario = document.createElement("div");
 
+    comentario.className = "comment";
+    comentario.innerHTML =
+      "<strong>Você:</strong> " + escapeHTML(texto);
 
-/* COMENTAR */
-
-function comment(button) {
-
-    const form = button.parentElement;
-
-    const input =
-        form.querySelector("input");
-
-    const text = input.value.trim();
-
-    if (text === "") {
-
-        alert("Digite um comentário!");
-
-        return;
-    }
-
-    const post =
-        button.closest(".post");
-
-    const comments =
-        post.querySelector(".comments");
-
-    const newComment =
-        document.createElement("div");
-
-    newComment.className = "comment";
-
-    newComment.innerHTML =
-        "<strong>Você:</strong> " + text;
-
-    comments.appendChild(newComment);
+    lista.appendChild(comentario);
 
     input.value = "";
-}
+  }
 
 
-/* FOCO NO COMENTÁRIO */
+  // Compartilhar
+  function compartilhar(button) {
 
-function focusComment(button) {
-
-    const post =
-        button.closest(".post");
-
-    post.querySelector(
-        ".comment-form input"
-    ).focus();
-}
-
-
-/* COMPARTILHAR */
-
-function sharePost() {
+    const post = button.closest(".post");
+    const mensagem = post.querySelector(".share-message");
 
     if (navigator.share) {
 
-        navigator.share({
-            title: "NeymarFeed",
-            text: "Confira este post no NeymarFeed!"
-        });
+      navigator.share({
+        title: "Neymar Feed",
+        text: "Confira este post sobre Neymar!",
+        url: window.location.href
+      });
 
     } else {
 
-        navigator.clipboard.writeText(
-            window.location.href
-        );
+      navigator.clipboard.writeText(window.location.href);
 
-        alert("Link copiado!");
+      mensagem.style.display = "block";
+
+      setTimeout(() => {
+        mensagem.style.display = "none";
+      }, 2000);
     }
-}
+  }
 
 
-/* MODAL */
+  // Seguir perfil
+  function seguir() {
 
-function abrirModal() {
+    const button = document.querySelector(".follow-btn");
 
-    document
-        .getElementById("modal")
-        .classList.add("active");
-}
-
-
-function closeModal() {
-
-    document
-        .getElementById("modal")
-        .classList.remove("active");
-}
+    if (button.textContent === "Seguir") {
+      button.textContent = "✓ Seguindo";
+      button.style.background = "#00a859";
+      button.style.color = "white";
+    } else {
+      button.textContent = "Seguir";
+      button.style.background = "#ffdf00";
+      button.style.color = "#071d3a";
+    }
+  }
 
 
-/* PUBLICAR */
+  // Criar nova publicação
+  function publicar() {
 
-function publish() {
+    const textarea = document.getElementById("newText");
+    const texto = textarea.value.trim();
 
-    const name =
-        document.getElementById("name").value.trim();
-
-    const text =
-        document.getElementById("text").value.trim();
-
-    const image =
-        document.getElementById("image").value.trim();
-
-    if (text === "") {
-
-        alert("Escreva algo antes de publicar!");
-
-        return;
+    if (texto === "") {
+      alert("Escreva algo antes de publicar!");
+      return;
     }
 
-    const post =
-        document.createElement("article");
+    const container = document.querySelector(".container");
+    const newPost = document.createElement("article");
 
-    post.className = "post";
+    newPost.className = "post";
 
-    post.innerHTML = `
-
-        <div class="post-header">
-
-            <img
-                src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Neymar_2018.jpg/500px-Neymar_2018.jpg">
-
-            <div>
-
-                <strong>
-                    ${name || "Você"}
-                </strong>
-
-                <small> • Agora</small>
-
-            </div>
-
+    newPost.innerHTML = `
+      <div class="post-header">
+        <img
+          src="https://upload.wikimedia.org/wikipedia/commons/2/2e/Neymar_2018.jpg"
+          alt="Neymar">
+        <div>
+          <strong>Você</strong>
+          <small>Agora</small>
         </div>
+      </div>
 
-        <p class="post-text">
-            ${text}
+      <div class="post-content">
+
+        <p class="caption">
+          ${escapeHTML(texto)}
         </p>
-
-        ${
-            image
-            ? `<img class="post-image" src="${image}">`
-            : ""
-        }
 
         <div class="actions">
 
-            <button class="action" onclick="like(this)">
-                ❤️ Curtir
-            </button>
+          <button class="action-btn like" onclick="curtir(this)">
+            ❤️ Curtir <span>0</span>
+          </button>
 
-            <button class="action" onclick="focusComment(this)">
-                💬 Comentar
-            </button>
+          <button class="action-btn" onclick="toggleComments(this)">
+            💬 Comentários
+          </button>
 
-            <button class="action" onclick="sharePost()">
-                📤 Compartilhar
-            </button>
+          <button class="action-btn" onclick="compartilhar(this)">
+            🔗 Compartilhar
+          </button>
 
         </div>
 
-        <div class="likes">
-            <span class="likeNumber">0</span> curtidas
-        </div>
+        <div class="comments">
 
-        <div class="comments"></div>
+          <div class="comment-list"></div>
 
-        <div class="comment-form">
-
+          <div class="comment-input">
             <input
-                type="text"
-                placeholder="Escreva um comentário...">
+              type="text"
+              placeholder="Escreva um comentário...">
 
-            <button onclick="comment(this)">
-                Enviar
+            <button onclick="comentar(this)">
+              Enviar
             </button>
+          </div>
 
         </div>
+
+        <p class="share-message">
+          ✓ Link copiado!
+        </p>
+
+      </div>
     `;
 
-    const feed =
-        document.querySelector(".feed");
+    container.insertBefore(
+      newPost,
+      document.querySelector(".new-post").nextElementSibling
+    );
 
-    const firstPost =
-        document.querySelector(".post");
+    textarea.value = "";
+  }
 
-    feed.insertBefore(post, firstPost);
 
-    document.getElementById("name").value = "";
-    document.getElementById("text").value = "";
-    document.getElementById("image").value = "";
+  // Evita inserir HTML malicioso nos comentários/publicações
+  function escapeHTML(text) {
 
-    closeModal();
-}
+    const div = document.createElement("div");
+    div.textContent = text;
+
+    return div.innerHTML;
+  }
 
 </script>
 
