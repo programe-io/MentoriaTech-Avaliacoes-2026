@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rapunzel • MiniFeed</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background:
+        linear-gradient(rgba(255, 238, 249, .88), rgba(231, 220, 255, .92)),
+        url("https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1600&q=80")
+        center/cover fixed;
+      color: #3f2853;
+      min-height: 100vh;
+    }
+
+    header {
+      background: linear-gradient(135deg, #6d3e91, #a65fc1);
+      color: white;
+      padding: 22px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      box-shadow: 0 4px 18px rgba(68, 32, 91, .25);
+    }
+
+    .header-content {
+      max-width: 850px;
+      margin: auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 26px;
+      font-weight: 800;
+    }
+
+    .logo span {
+      color: #ffd76b;
+    }
+
+    .profile-button {
+      border: none;
+      background: rgba(255,255,255,.18);
+      color: white;
+      padding: 10px 16px;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: .2s;
+    }
+
+    .profile-button:hover {
+      background: rgba(255,255,255,.3);
+      transform: scale(1.04);
+    }
+
+    main {
+      width: 100%;
+      max-width: 650px;
+      margin: 30px auto;
+      padding: 0 15px;
+    }
+
+    .intro {
+      text-align: center;
+      background: rgba(255,255,255,.82);
+      padding: 24px;
+      border-radius: 25px;
+      margin-bottom: 22px;
+      box-shadow: 0 8px 25px rgba(80, 45, 100, .12);
+    }
+
+    .intro h1 {
+      color: #6d3e91;
+      margin-bottom: 8px;
+    }
+
+    .intro p {
+      color: #735d80;
+    }
+
+    .post {
+      background: rgba(255,255,255,.95);
+      border-radius: 22px;
+      overflow: hidden;
+      margin-bottom: 25px;
+      box-shadow: 0 8px 30px rgba(80, 45, 100, .16);
+    }
+
+    .post-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px;
+    }
+
+    .avatar {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid #d6a5ec;
+    }
+
+    .user-info strong {
+      display: block;
+      color: #4e2869;
+    }
+
+    .user-info small {
+      color: #927ba0;
+    }
+
+    .post-image {
+      width: 100%;
+      height: 390px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .post-content {
+      padding: 16px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 13px;
+    }
+
+    .action-btn {
+      border: none;
+      background: #f4eafa;
+      color: #69407e;
+      border-radius: 20px;
+      padding: 9px 14px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: .2s;
+    }
+
+    .action-btn:hover {
+      background: #e8d5f4;
+      transform: translateY(-1px);
+    }
+
+    .action-btn.liked {
+      background: #ffdce9;
+      color: #d32f68;
+    }
+
+    .caption {
+      line-height: 1.5;
+      margin-bottom: 14px;
+    }
+
+    .likes {
+      font-weight: bold;
+      color: #674071;
+      margin-bottom: 15px;
+    }
+
+    .comments {
+      border-top: 1px solid #eee2f2;
+      padding-top: 13px;
+    }
+
+    .comment {
+      margin-bottom: 9px;
+      line-height: 1.4;
+      font-size: 14px;
+    }
+
+    .comment strong {
+      color: #663a78;
+    }
+
+    .comment-form {
+      display: flex;
+      gap: 8px;
+      margin-top: 13px;
+    }
+
+    .comment-form input {
+      flex: 1;
+      border: 1px solid #dcc9e5;
+      border-radius: 20px;
+      padding: 11px 15px;
+      outline: none;
+    }
+
+    .comment-form input:focus {
+      border-color: #9b5db8;
+      box-shadow: 0 0 0 3px rgba(155,93,184,.12);
+    }
+
+    .comment-form button {
+      border: none;
+      background: #7a4a99;
+      color: white;
+      padding: 0 17px;
+      border-radius: 20px;
+      cursor: pointer;
+    }
+
+    .comment-form button:hover {
+      background: #63377e;
+    }
+
+    .new-post {
+      background: rgba(255,255,255,.95);
+      padding: 20px;
+      border-radius: 22px;
+      margin-bottom: 25px;
+      box-shadow: 0 8px 30px rgba(80, 45, 100, .12);
+    }
+
+    .new-post h2 {
+      font-size: 20px;
+      margin-bottom: 15px;
+      color: #623b76;
+    }
+
+    .new-post textarea {
+      width: 100%;
+      min-height: 90px;
+      resize: vertical;
+      border: 1px solid #dcc9e5;
+      border-radius: 15px;
+      padding: 13px;
+      outline: none;
+      font-family: inherit;
+      margin-bottom: 10px;
+    }
+
+    .new-post input {
+      width: 100%;
+      border: 1px solid #dcc9e5;
+      border-radius: 15px;
+      padding: 12px;
+      margin-bottom: 10px;
+      outline: none;
+    }
+
+    .publish {
+      width: 100%;
+      border: none;
+      background: linear-gradient(135deg, #75439a, #b16bca);
+      color: white;
+      padding: 13px;
+      border-radius: 18px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .publish:hover {
+      filter: brightness(1.08);
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 25px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #432951;
+      color: white;
+      padding: 13px 20px;
+      border-radius: 25px;
+      opacity: 0;
+      transition: .3s;
+      z-index: 99;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    @media (max-width: 600px) {
+      .post-image {
+        height: 300px;
+      }
+
+      .header-content {
+        padding: 0 5px;
+      }
+
+      .logo {
+        font-size: 21px;
+      }
+    }
+  </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+<header>
+  <div class="header-content">
+    <div class="logo">🌸 Rapunzel <span>MiniFeed</span></div>
+    <button class="profile-button" onclick="showToast('✨ Bem-vinda ao reino!')">
+      👑 Meu perfil
+    </button>
+  </div>
+</header>
+
+<main>
+
+  <section class="intro">
+    <h1>🌸 Diário da Rapunzel</h1>
+    <p>
+      Um cantinho mágico para compartilhar aventuras,
+      sonhos e momentos do reino.
+    </p>
+  </section>
+
+  <!-- NOVO POST -->
+  <section class="new-post">
+    <h2>✨ Compartilhe um momento mágico</h2>
+
+    <textarea
+      id="newCaption"
+      placeholder="O que está acontecendo no reino?"
+    ></textarea>
+
+    <input
+      id="newImage"
+      type="url"
+      placeholder="URL de uma imagem (opcional)"
+    >
+
+    <button class="publish" onclick="createPost()">
+      ✨ Publicar
+    </button>
+  </section>
+
+  <!-- POST 1 -->
+  <article class="post">
+
+    <div class="post-header">
+      <img
+        class="avatar"
+        src="https://i.pravatar.cc/100?img=47"
+        alt="Rapunzel"
+      >
+
+      <div class="user-info">
+        <strong>Rapunzel 🌸</strong>
+        <small>Há 10 minutos • Torre</small>
+      </div>
+    </div>
+
+    <img
+      class="post-image"
+      src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1000&q=85"
+      alt="Paisagem de conto de fadas"
+    >
+
+    <div class="post-content">
+
+      <div class="actions">
+        <button class="action-btn" onclick="likePost(this)">
+          💜 Curtir <span class="like-count">128</span>
+        </button>
+
+        <button class="action-btn" onclick="focusComment(this)">
+          💬 Comentar
+        </button>
+
+        <button class="action-btn" onclick="sharePost()">
+          🔗 Compartilhar
+        </button>
+      </div>
+
+      <div class="likes">
+        <span class="like-total">128</span> pessoas curtiram
+      </div>
+
+      <p class="caption">
+        <strong>Rapunzel:</strong>
+        Hoje o sol entrou pela janela da torre e tudo ficou dourado. 🌞✨
+        Às vezes, os momentos mais simples são os mais mágicos.
+      </p>
+
+      <div class="comments">
+
+        <div class="comment">
+          <strong>Pascal 🦎:</strong> 💚💚💚
+        </div>
+
+        <div class="comment">
+          <strong>Flora:</strong> Que lugar maravilhoso! 🌸
+        </div>
+
+        <div class="comment">
+          <strong>Lucas:</strong> Parece um verdadeiro conto de fadas! ✨
+        </div>
+
+        <div class="comment-list"></div>
+
+        <form class="comment-form" onsubmit="addComment(event, this)">
+          <input
+            type="text"
+            placeholder="Escreva um comentário..."
+            required
+          >
+          <button type="submit">Enviar</button>
+        </form>
+
+      </div>
+    </div>
+  </article>
+
+  <!-- POST 2 -->
+  <article class="post">
+
+    <div class="post-header">
+      <img
+        class="avatar"
+        src="https://i.pravatar.cc/100?img=32"
+        alt="Visitante do reino"
+      >
+
+      <div class="user-info">
+        <strong>Diário do Reino 👑</strong>
+        <small>Há 1 hora • Reino</small>
+      </div>
+    </div>
+
+    <img
+      class="post-image"
+      src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1000&q=85"
+      alt="Montanhas e natureza"
+    >
+
+    <div class="post-content">
+
+      <div class="actions">
+        <button class="action-btn" onclick="likePost(this)">
+          💜 Curtir <span class="like-count">94</span>
+        </button>
+
+        <button class="action-btn" onclick="focusComment(this)">
+          💬 Comentar
+        </button>
+
+        <button class="action-btn" onclick="sharePost()">
+          🔗 Compartilhar
+        </button>
+      </div>
+
+      <div class="likes">
+        <span class="like-total">94</span> pessoas curtiram
+      </div>
+
+      <p class="caption">
+        <strong>Diário do Reino:</strong>
+        Uma nova aventura começou além das montanhas.
+        Para onde será que Rapunzel irá agora? 🏰🌿
+      </p>
+
+      <div class="comments">
+
+        <div class="comment">
+          <strong>Marina:</strong> Quero acompanhar essa aventura! 💜
+        </div>
+
+        <div class="comment-list"></div>
+
+        <form class="comment-form" onsubmit="addComment(event, this)">
+          <input
+            type="text"
+            placeholder="Escreva um comentário..."
+            required
+          >
+          <button type="submit">Enviar</button>
+        </form>
+
+      </div>
+    </div>
+  </article>
+
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  // CURTIR
+  function likePost(button) {
+    const countElement = button.querySelector(".like-count");
+    const post = button.closest(".post");
+    const totalElement = post.querySelector(".like-total");
+
+    let count = Number(countElement.textContent);
+
+    if (button.classList.contains("liked")) {
+      count--;
+      button.classList.remove("liked");
+      button.innerHTML = `💜 Curtir <span class="like-count">${count}</span>`;
+    } else {
+      count++;
+      button.classList.add("liked");
+      button.innerHTML = `💖 Curtido <span class="like-count">${count}</span>`;
+    }
+
+    totalElement.textContent = count;
+  }
+
+
+  // COMENTAR
+  function addComment(event, form) {
+    event.preventDefault();
+
+    const input = form.querySelector("input");
+    const text = input.value.trim();
+
+    if (!text) return;
+
+    const comments = form.parentElement.querySelector(".comment-list");
+
+    const comment = document.createElement("div");
+    comment.className = "comment";
+
+    comment.innerHTML = `
+      <strong>Você:</strong>
+      ${escapeHTML(text)}
+    `;
+
+    comments.appendChild(comment);
+
+    input.value = "";
+
+    showToast("💬 Comentário publicado!");
+  }
+
+
+  // FOCA NO CAMPO DE COMENTÁRIO
+  function focusComment(button) {
+    const post = button.closest(".post");
+    const input = post.querySelector(".comment-form input");
+
+    input.focus();
+
+    input.scrollIntoView({
+      behavior: "smooth",
+      block: "center"
+    });
+  }
+
+
+  // COMPARTILHAR
+  function sharePost() {
+    if (navigator.share) {
+      navigator.share({
+        title: "Rapunzel MiniFeed",
+        text: "Olha esse momento mágico do MiniFeed da Rapunzel! 🌸✨"
+      });
+    } else {
+      navigator.clipboard.writeText(window.location.href);
+      showToast("🔗 Link copiado!");
+    }
+  }
+
+
+  // CRIAR NOVO POST
+  function createPost() {
+    const caption = document
+      .getElementById("newCaption")
+      .value
+      .trim();
+
+    const image = document
+      .getElementById("newImage")
+      .value
+      .trim();
+
+    if (!caption) {
+      showToast("⚠️ Escreva algo antes de publicar!");
+      return;
+    }
+
+    const post = document.createElement("article");
+    post.className = "post";
+
+    const imageURL = image ||
+      "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1000&q=85";
+
+    post.innerHTML = `
+      <div class="post-header">
+        <img
+          class="avatar"
+          src="https://i.pravatar.cc/100?img=12"
+          alt="Você"
+        >
+
+        <div class="user-info">
+          <strong>Você ✨</strong>
+          <small>Agora • Reino</small>
+        </div>
+      </div>
+
+      <img
+        class="post-image"
+        src="${escapeAttribute(imageURL)}"
+        alt="Imagem do novo post"
+        onerror="this.src='https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1000&q=85'"
+      >
+
+      <div class="post-content">
+
+        <div class="actions">
+          <button class="action-btn" onclick="likePost(this)">
+            💜 Curtir <span class="like-count">0</span>
+          </button>
+
+          <button class="action-btn" onclick="focusComment(this)">
+            💬 Comentar
+          </button>
+
+          <button class="action-btn" onclick="sharePost()">
+            🔗 Compartilhar
+          </button>
+        </div>
+
+        <div class="likes">
+          <span class="like-total">0</span> pessoas curtiram
+        </div>
+
+        <p class="caption">
+          <strong>Você:</strong>
+          ${escapeHTML(caption)}
+        </p>
+
+        <div class="comments">
+          <div class="comment-list"></div>
+
+          <form class="comment-form" onsubmit="addComment(event, this)">
+            <input
+              type="text"
+              placeholder="Escreva um comentário..."
+              required
+            >
+            <button type="submit">Enviar</button>
+          </form>
+        </div>
+
+      </div>
+    `;
+
+    document.querySelector("main").appendChild(post);
+
+    document.getElementById("newCaption").value = "";
+    document.getElementById("newImage").value = "";
+
+    post.scrollIntoView({
+      behavior: "smooth"
+    });
+
+    showToast("✨ Post publicado com sucesso!");
+  }
+
+
+  // NOTIFICAÇÃO
+  function showToast(message) {
+    const toast = document.getElementById("toast");
+
+    toast.textContent = message;
+    toast.classList.add("show");
+
+    setTimeout(() => {
+      toast.classList.remove("show");
+    }, 2500);
+  }
+
+
+  // PROTEÇÃO CONTRA HTML INSERIDO NOS COMENTÁRIOS
+  function escapeHTML(text) {
+    const div = document.createElement("div");
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+
+  // PROTEÇÃO DA URL DA IMAGEM
+  function escapeAttribute(text) {
+    return text
+      .replace(/&/g, "&amp;")
+      .replace(/"/g, "&quot;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+  }
+</script>
+
+</body>
+</html>
