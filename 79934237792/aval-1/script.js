@@ -1,332 +1,188 @@
-// ==========================================
-// ANIMAÇÃO DE ENTRADA
-// ==========================================
+/* =====================================
+   HOMEM-ARANHA - JAVASCRIPT
+   ===================================== */
 
-const elementos = document.querySelectorAll(
-    "section, .card, .sobre img, .galeria img"
-);
+// Espera o HTML carregar
+document.addEventListener("DOMContentLoaded", () => {
 
-const observer = new IntersectionObserver(
-    (entries) => {
-        entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add("visivel");
-            }
-        });
-    },
-    {
-        threshold: 0.15
-    }
-);
+    // =====================================
+    // EFEITO DE TEIA AO CLICAR
+    // =====================================
 
-elementos.forEach((elemento) => {
-    elemento.style.opacity = "0";
-    elemento.style.transform = "translateY(30px)";
-    elemento.style.transition = "opacity 0.7s ease, transform 0.7s ease";
+    document.addEventListener("click", (event) => {
 
-    observer.observe(elemento);
-});
+        const teia = document.createElement("div");
 
+        teia.innerHTML = "🕸️";
 
-// ==========================================
-// ADICIONA CLASSE VISÍVEL
-// ==========================================
-
-const estilo = document.createElement("style");
-
-estilo.innerHTML = `
-    .visivel {
-        opacity: 1 !important;
-        transform: translateY(0) !important;
-    }
-
-    .teia {
-        position: fixed;
-        width: 4px;
-        height: 4px;
-        background: white;
-        border-radius: 50%;
-        pointer-events: none;
-        z-index: 9999;
-        animation: teiaCaindo 1.5s linear forwards;
-    }
-
-    @keyframes teiaCaindo {
-        0% {
-            transform: scale(1);
-            opacity: 1;
-        }
-
-        100% {
-            transform: translateY(100vh) scale(0);
-            opacity: 0;
-        }
-    }
-
-    .imagem-ampliada {
-        position: fixed;
-        inset: 0;
-        background: rgba(0,0,0,0.9);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 99999;
-        cursor: pointer;
-    }
-
-    .imagem-ampliada img {
-        max-width: 90%;
-        max-height: 85%;
-        border: 4px solid #e50914;
-        border-radius: 15px;
-        box-shadow: 0 0 40px #e50914;
-    }
-
-    .contador {
-        text-align: center;
-        margin: 50px auto;
-        font-size: 25px;
-        color: #e50914;
-    }
-`;
-
-document.head.appendChild(estilo);
-
-
-// ==========================================
-// EFEITO DE TEIA AO CLICAR
-// ==========================================
-
-document.addEventListener("click", (evento) => {
-
-    for (let i = 0; i < 8; i++) {
-
-        const teia = document.createElement("span");
-
-        teia.classList.add("teia");
-
-        teia.style.left = evento.clientX + "px";
-        teia.style.top = evento.clientY + "px";
-
-        teia.style.animationDelay =
-            Math.random() * 0.3 + "s";
+        teia.style.position = "fixed";
+        teia.style.left = event.clientX + "px";
+        teia.style.top = event.clientY + "px";
+        teia.style.fontSize = "35px";
+        teia.style.pointerEvents = "none";
+        teia.style.zIndex = "9999";
+        teia.style.transform = "translate(-50%, -50%) scale(0)";
+        teia.style.transition = "all 0.7s ease";
 
         document.body.appendChild(teia);
 
         setTimeout(() => {
+            teia.style.transform =
+                "translate(-50%, -50%) scale(1.5)";
+            teia.style.opacity = "0";
+        }, 50);
+
+        setTimeout(() => {
             teia.remove();
-        }, 1800);
-    }
-});
+        }, 800);
+    });
 
 
-// ==========================================
-// GALERIA DE IMAGENS
-// ==========================================
+    // =====================================
+    // ANIMAÇÃO DOS CARDS
+    // =====================================
 
-const imagens = document.querySelectorAll(
-    ".galeria img, .card img, .sobre img"
-);
+    const cards = document.querySelectorAll(".card");
 
-imagens.forEach((imagem) => {
+    cards.forEach((card, index) => {
 
-    imagem.style.cursor = "pointer";
+        card.style.opacity = "0";
+        card.style.transform = "translateY(50px)";
 
-    imagem.addEventListener("click", () => {
+        setTimeout(() => {
+            card.style.transition =
+                "opacity 0.8s ease, transform 0.8s ease";
 
-        const janela = document.createElement("div");
+            card.style.opacity = "1";
+            card.style.transform = "translateY(0)";
 
-        janela.classList.add("imagem-ampliada");
+        }, index * 250);
+    });
 
-        const imagemGrande = document.createElement("img");
 
-        imagemGrande.src = imagem.src;
-        imagemGrande.alt = imagem.alt;
+    // =====================================
+    // EFEITO NAS IMAGENS
+    // =====================================
 
-        janela.appendChild(imagemGrande);
+    const imagens = document.querySelectorAll(".card img");
 
-        document.body.appendChild(janela);
+    imagens.forEach((imagem) => {
 
-        janela.addEventListener("click", () => {
-            janela.remove();
+        imagem.addEventListener("click", () => {
+
+            imagem.classList.toggle("imagem-grande");
+
         });
-    });
-});
 
-
-// ==========================================
-// EFEITO NOS CARDS
-// ==========================================
-
-const cards = document.querySelectorAll(".card");
-
-cards.forEach((card) => {
-
-    card.addEventListener("mouseenter", () => {
-
-        card.style.transform =
-            "translateY(-12px) scale(1.03)";
-
-        card.style.boxShadow =
-            "0 15px 40px rgba(229, 9, 20, 0.7)";
     });
 
-    card.addEventListener("mouseleave", () => {
 
-        card.style.transform = "";
+    // =====================================
+    // TROCA AUTOMÁTICA DE IMAGENS
+    // =====================================
 
-        card.style.boxShadow = "";
-    });
-});
+    const imagensAranha = [
+        "https://images.unsplash.com/photo-1534809027769-b00d750a6bac?auto=format&fit=crop&w=1000&q=80",
 
+        "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1000&q=80",
 
-// ==========================================
-// MENU SUAVE
-// ==========================================
+        "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1000&q=80"
+    ];
 
-const links = document.querySelectorAll(
-    'nav a[href^="#"]'
-);
+    let imagemAtual = 0;
 
-links.forEach((link) => {
+    const imagemPrincipal =
+        document.querySelector("header");
 
-    link.addEventListener("click", (evento) => {
+    if (imagemPrincipal) {
 
-        evento.preventDefault();
-
-        const destino = document.querySelector(
-            link.getAttribute("href")
-        );
-
-        if (destino) {
-
-            destino.scrollIntoView({
-                behavior: "smooth"
-            });
-        }
-    });
-});
-
-
-// ==========================================
-// EFEITO DE MOVIMENTO DO MOUSE
-// ==========================================
-
-const hero = document.querySelector(".hero");
-
-if (hero) {
-
-    document.addEventListener("mousemove", (evento) => {
-
-        const x =
-            (evento.clientX / window.innerWidth - 0.5) * 10;
-
-        const y =
-            (evento.clientY / window.innerHeight - 0.5) * 10;
-
-        hero.style.transform =
-            `translate(${x}px, ${y}px)`;
-    });
-}
-
-
-// ==========================================
-// CONTADOR DE AVENTURAS
-// ==========================================
-
-let contador = 0;
-
-const contadorElemento =
-    document.createElement("div");
-
-contadorElemento.classList.add("contador");
-
-contadorElemento.innerHTML =
-    "🕷️ Aventuras do Homem-Aranha: <strong>0</strong>";
-
-const personagens =
-    document.querySelector("#personagens");
-
-if (personagens) {
-
-    personagens.appendChild(
-        contadorElemento
-    );
-
-    const numero =
-        contadorElemento.querySelector("strong");
-
-    const intervalo =
         setInterval(() => {
 
-            contador += 1;
+            imagemAtual++;
 
-            numero.textContent = contador;
-
-            if (contador >= 100) {
-                clearInterval(intervalo);
+            if (imagemAtual >= imagensAranha.length) {
+                imagemAtual = 0;
             }
 
-        }, 30);
-}
+            imagemPrincipal.style.backgroundImage =
+                `linear-gradient(
+                    rgba(0,0,0,.45),
+                    rgba(0,0,0,.7)
+                ),
+                url("${imagensAranha[imagemAtual]}")`;
 
-
-// ==========================================
-// FRASES DO HOMEM-ARANHA
-// ==========================================
-
-const frases = [
-    "🕷️ Com grandes poderes vêm grandes responsabilidades.",
-    "🕸️ Nunca desista de fazer o que é certo.",
-    "🕷️ Um herói pode estar escondido em qualquer pessoa.",
-    "🕸️ A responsabilidade acompanha o poder.",
-    "🕷️ Continue lutando!"
-];
-
-let fraseAtual = 0;
-
-const botaoFrase = document.createElement("button");
-
-botaoFrase.textContent =
-    "🕷️ Nova frase";
-
-botaoFrase.style.cssText = `
-    display: block;
-    margin: 30px auto;
-    padding: 14px 25px;
-    background: #e50914;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 16px;
-`;
-
-document.body.appendChild(botaoFrase);
-
-botaoFrase.addEventListener("click", () => {
-
-    fraseAtual++;
-
-    if (fraseAtual >= frases.length) {
-        fraseAtual = 0;
+        }, 5000);
     }
 
-    alert(frases[fraseAtual]);
+
+    // =====================================
+    // BOTÃO DO HERÓI
+    // =====================================
+
+    const botao = document.querySelector(".botao");
+
+    if (botao) {
+
+        botao.addEventListener("click", () => {
+
+            const destino =
+                document.querySelector("#personagens");
+
+            if (destino) {
+
+                destino.scrollIntoView({
+                    behavior: "smooth"
+                });
+
+            }
+        });
+    }
+
+
+    // =====================================
+    // MENSAGEM DO HOMEM-ARANHA
+    // =====================================
+
+    const mensagem = document.createElement("div");
+
+    mensagem.innerText =
+        "🕷️ Com grandes poderes vêm grandes responsabilidades!";
+
+    mensagem.style.position = "fixed";
+    mensagem.style.bottom = "25px";
+    mensagem.style.left = "50%";
+    mensagem.style.transform =
+        "translateX(-50%)";
+
+    mensagem.style.background =
+        "linear-gradient(90deg, #d90416, #071a70)";
+
+    mensagem.style.color = "#fff";
+    mensagem.style.padding = "14px 22px";
+    mensagem.style.borderRadius = "10px";
+
+    mensagem.style.fontWeight = "bold";
+    mensagem.style.boxShadow =
+        "0 0 20px rgba(255,0,0,.6)";
+
+    mensagem.style.zIndex = "9998";
+
+    document.body.appendChild(mensagem);
+
+
+    // Esconde a mensagem depois de alguns segundos
+
+    setTimeout(() => {
+
+        mensagem.style.transition =
+            "opacity .5s ease";
+
+        mensagem.style.opacity = "0";
+
+        setTimeout(() => {
+            mensagem.remove();
+        }, 500);
+
+    }, 5000);
+
 });
-
-
-// ==========================================
-// MENSAGEM NO CONSOLE
-// ==========================================
-
-console.log(
-    "%c🕷️ HOMEM-ARANHA 🕷️",
-    "color: red; font-size: 25px; font-weight: bold;"
-);
-
-console.log(
-    "%cGrandes poderes trazem grandes responsabilidades!",
-    "color: white; font-size: 16px;"
-);
