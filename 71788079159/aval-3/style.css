@@ -1,24 +1,378 @@
 <!DOCTYPE html>
-<html lang="pt-BR" translate="no">
-
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-  <meta http-equiv="cache-control" content="no-cache">
-  <meta http-equiv="expires" content="0">
-  <meta http-equiv="pragma" content="no-cache">
-  <meta name="google" content="notranslate">
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
-    rel="stylesheet" />
-  <link rel="icon" type="image/png" href="/favicon.png">
-  <title>PROGRAMA DE MENTORIAS</title>
-  <script type="module" crossorigin src="/assets/index-YhfXmj8M.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slide - Aplicações em Interfaces</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #111827;
+      font-family: Arial, sans-serif;
+    }
+
+    .slide {
+      width: 1280px;
+      height: 720px;
+      padding: 55px 70px;
+      position: relative;
+      overflow: hidden;
+      color: white;
+
+      background:
+        radial-gradient(circle at 85% 15%, #06b6d455, transparent 30%),
+        radial-gradient(circle at 10% 90%, #3b82f655, transparent 25%),
+        linear-gradient(135deg, #0f172a, #082f49);
+    }
+
+    /* CABEÇALHO */
+    .header {
+      border-left: 6px solid #22d3ee;
+      padding-left: 20px;
+      margin-bottom: 32px;
+    }
+
+    .header h1 {
+      font-size: 52px;
+      color: #67e8f9;
+      letter-spacing: 2px;
+    }
+
+    .header p {
+      font-size: 22px;
+      color: #cbd5e1;
+      margin-top: 5px;
+    }
+
+    /* CONTEÚDO */
+    .content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 25px;
+    }
+
+    .card {
+      background: #ffffff0d;
+      border: 1px solid #ffffff1c;
+      border-radius: 20px;
+      padding: 25px;
+      backdrop-filter: blur(8px);
+    }
+
+    .card h2 {
+      font-size: 27px;
+      color: #67e8f9;
+      margin-bottom: 15px;
+    }
+
+    .card p {
+      font-size: 19px;
+      line-height: 1.5;
+      color: #e2e8f0;
+    }
+
+    /* INTERFACE ILUSTRATIVA */
+    .interface {
+      height: 230px;
+      margin-top: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .screen {
+      width: 360px;
+      height: 210px;
+      background: #0f172a;
+      border: 3px solid #22d3ee;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 0 30px #22d3ee44;
+    }
+
+    .topbar {
+      height: 35px;
+      background: #164e63;
+      display: flex;
+      align-items: center;
+      padding-left: 12px;
+      gap: 7px;
+    }
+
+    .circle {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+    }
+
+    .red {
+      background: #f87171;
+    }
+
+    .yellow {
+      background: #facc15;
+    }
+
+    .green {
+      background: #4ade80;
+    }
+
+    .menu {
+      display: flex;
+      gap: 8px;
+      padding: 12px;
+    }
+
+    .menu-item {
+      height: 10px;
+      width: 55px;
+      border-radius: 5px;
+      background: #334155;
+    }
+
+    .main-ui {
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      gap: 12px;
+      padding: 10px;
+    }
+
+    .sidebar {
+      height: 120px;
+      border-radius: 8px;
+      background: #1e293b;
+    }
+
+    .ui-content {
+      display: grid;
+      gap: 8px;
+    }
+
+    .box {
+      height: 30px;
+      border-radius: 6px;
+      background: #164e63;
+    }
+
+    .button {
+      width: 90px;
+      height: 25px;
+      border-radius: 6px;
+      background: #06b6d4;
+    }
+
+    /* APLICAÇÕES */
+    .applications {
+      grid-column: 1 / 3;
+    }
+
+    .apps {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 13px;
+    }
+
+    .app {
+      padding: 16px 10px;
+      text-align: center;
+      background: #0f172acc;
+      border-radius: 14px;
+      border: 1px solid #ffffff12;
+      transition: 0.3s;
+    }
+
+    .app:hover {
+      transform: translateY(-5px);
+      border-color: #22d3ee;
+    }
+
+    .app .icon {
+      font-size: 30px;
+      margin-bottom: 8px;
+    }
+
+    .app h3 {
+      font-size: 16px;
+      color: #67e8f9;
+      margin-bottom: 5px;
+    }
+
+    .app p {
+      font-size: 13px;
+      color: #94a3b8;
+    }
+
+    /* OBJETIVO */
+    .objective {
+      grid-column: 1 / 3;
+      padding: 16px 25px;
+      border-radius: 14px;
+      text-align: center;
+
+      background: linear-gradient(
+        90deg,
+        #0891b233,
+        #2563eb22
+      );
+
+      border: 1px solid #22d3ee44;
+      color: #cffafe;
+      font-size: 19px;
+    }
+
+    .footer {
+      position: absolute;
+      bottom: 20px;
+      right: 45px;
+      color: #64748b;
+      font-size: 14px;
+    }
+  </style>
 </head>
 
 <body>
-  <div id="root"></div>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a37da4f38decf1ed',t:'MTc4ODg2NzI2OQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v31edd6df95cf4e85bb4c19e7a9bdbcba1788362987495" integrity="sha512-iIg7k2xntmwu6/uSb5tpc/hySgZc4eoL31yB29W6tJFo2akwjPWcEqnCEdJvGexCL0KEQwVYv5BlowfhVz26hg==" data-cf-beacon='{"version":"2024.11.0","token":"cb746e2a1cce43b8bafb9943288eb7c8","r":1,"spa":2}' crossorigin="anonymous"></script>
+
+  <main class="slide">
+
+    <!-- CABEÇALHO -->
+    <header class="header">
+      <h1>APLICAÇÕES EM INTERFACES</h1>
+      <p>Como as interfaces facilitam a interação com sistemas</p>
+    </header>
+
+
+    <section class="content">
+
+      <!-- O QUE SÃO INTERFACES -->
+      <div class="card">
+
+        <h2>🖥️ O que são interfaces?</h2>
+
+        <p>
+          Uma <strong>interface</strong> é o meio pelo qual
+          uma pessoa interage com um sistema, aplicativo
+          ou dispositivo.
+        </p>
+
+        <br>
+
+        <p>
+          Ela permite realizar ações de maneira
+          <strong>visual, simples e intuitiva</strong>.
+        </p>
+
+      </div>
+
+
+      <!-- ILUSTRAÇÃO -->
+      <div class="card">
+
+        <h2>💻 Exemplo de Interface</h2>
+
+        <div class="interface">
+
+          <div class="screen">
+
+            <div class="topbar">
+              <div class="circle red"></div>
+              <div class="circle yellow"></div>
+              <div class="circle green"></div>
+            </div>
+
+            <div class="menu">
+              <div class="menu-item"></div>
+              <div class="menu-item"></div>
+              <div class="menu-item"></div>
+              <div class="menu-item"></div>
+            </div>
+
+            <div class="main-ui">
+
+              <div class="sidebar"></div>
+
+              <div class="ui-content">
+                <div class="box"></div>
+                <div class="box"></div>
+                <div class="box"></div>
+                <div class="button"></div>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- APLICAÇÕES -->
+      <div class="card applications">
+
+        <h2>🔧 Principais aplicações</h2>
+
+        <div class="apps">
+
+          <div class="app">
+            <div class="icon">🖱️</div>
+            <h3>GUI</h3>
+            <p>Janelas, menus e botões</p>
+          </div>
+
+          <div class="app">
+            <div class="icon">📱</div>
+            <h3>Aplicativos</h3>
+            <p>Smartphones e tablets</p>
+          </div>
+
+          <div class="app">
+            <div class="icon">🌐</div>
+            <h3>Web</h3>
+            <p>Sites e sistemas online</p>
+          </div>
+
+          <div class="app">
+            <div class="icon">🎮</div>
+            <h3>Jogos</h3>
+            <p>Menus e controles</p>
+          </div>
+
+          <div class="app">
+            <div class="icon">🤖</div>
+            <h3>Assistentes</h3>
+            <p>Voz e texto</p>
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- OBJETIVO -->
+      <div class="objective">
+        🎯 Uma boa interface deve ser
+        <strong>fácil, rápida, intuitiva e acessível</strong>,
+        proporcionando uma melhor experiência ao usuário.
+      </div>
+
+    </section>
+
+
+    <div class="footer">
+      Tecnologia • Interfaces
+    </div>
+
+  </main>
+
 </body>
+</html>
