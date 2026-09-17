@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Mini Feed - Os Vingadores</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #111827;
+            display: flex;
+            justify-content: center;
+            padding: 30px 15px;
+        }
+
+        .feed {
+            width: 100%;
+            max-width: 600px;
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+            margin-bottom: 25px;
+        }
+
+        .post {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px;
+            background: linear-gradient(90deg, #b91c1c, #1d4ed8);
+            color: white;
+        }
+
+        .avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #111827;
+            border: 2px solid white;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            font-size: 25px;
+        }
+
+        .post-header strong {
+            font-size: 17px;
+        }
+
+        .post-header p {
+            font-size: 13px;
+            opacity: 0.8;
+            margin-top: 3px;
+        }
+
+        .post-image {
+            width: 100%;
+            height: 350px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .post-content {
+            padding: 20px;
+        }
+
+        .post-content p {
+            color: #333;
+            line-height: 1.5;
+            font-size: 16px;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 18px;
+        }
+
+        button {
+            border: none;
+            padding: 11px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+        }
+
+        .like {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .dislike {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .active-like {
+            background: #15803d !important;
+            color: white !important;
+        }
+
+        .active-dislike {
+            background: #dc2626 !important;
+            color: white !important;
+        }
+
+        .comments {
+            background: #f3f4f6;
+            padding: 20px;
+        }
+
+        .comments h2 {
+            color: #1f2937;
+            font-size: 19px;
+            margin-bottom: 15px;
+        }
+
+        .comment-form {
+            display: flex;
+            gap: 8px;
+        }
+
+        .comment-form input {
+            flex: 1;
+            padding: 12px;
+
+            border: 1px solid #ccc;
+            border-radius: 8px;
+
+            outline: none;
+            font-size: 14px;
+        }
+
+        .comment-form input:focus {
+            border-color: #2563eb;
+        }
+
+        .comment-form button {
+            background: #2563eb;
+            color: white;
+        }
+
+        .comment {
+            background: white;
+            margin-top: 12px;
+            padding: 12px;
+
+            border-radius: 8px;
+            border-left: 4px solid #2563eb;
+
+            animation: aparecer 0.3s ease;
+        }
+
+        .comment strong {
+            color: #1d4ed8;
+        }
+
+        .comment p {
+            margin-top: 5px;
+            color: #444;
+            font-size: 14px;
+        }
+
+        @keyframes aparecer {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 600px) {
+
+            body {
+                padding: 15px 8px;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
+            .post-image {
+                height: 270px;
+            }
+
+            .buttons {
+                flex-direction: column;
+            }
+
+            .buttons button {
+                width: 100%;
+            }
+
+            .comment-form {
+                flex-direction: column;
+            }
+
+            .comment-form button {
+                width: 100%;
+            }
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+    <main class="feed">
+
+        <h1>🦸‍♂️ Mini Feed dos Vingadores</h1>
+
+        <article class="post">
+
+            <!-- Cabeçalho -->
+            <div class="post-header">
+
+                <div class="avatar">
+                    🛡️
+                </div>
+
+                <div>
+                    <strong>Os Vingadores</strong>
+                    <p>@vingadores • agora</p>
+                </div>
+
+            </div>
+
+            <!-- Imagem -->
+            <img
+                class="post-image"
+                src="https://images.unsplash.com/photo-1534809027769-b00d750a6bac?auto=format&fit=crop&w=1000&q=80"
+                alt="Imagem temática de super-heróis">
+
+            <!-- Conteúdo -->
+            <div class="post-content">
+
+                <p>
+                    🦸‍♂️ Os Vingadores estão reunidos!
+                    Juntos, os heróis estão preparados para proteger
+                    o mundo de qualquer ameaça.
+                </p>
+
+                <!-- Botões -->
+                <div class="buttons">
+
+                    <button
+                        id="likeButton"
+                        class="like"
+                        onclick="darLike()">
+
+                        👍 Like
+                        <span id="likes">0</span>
+
+                    </button>
+
+                    <button
+                        id="dislikeButton"
+                        class="dislike"
+                        onclick="darDislike()">
+
+                        👎 Deslike
+                        <span id="dislikes">0</span>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+            <!-- Comentários -->
+            <section class="comments">
+
+                <h2>💬 Comentários</h2>
+
+                <div class="comment-form">
+
+                    <input
+                        type="text"
+                        id="commentInput"
+                        placeholder="Escreva um comentário...">
+
+                    <button onclick="adicionarComentario()">
+                        Comentar
+                    </button>
+
+                </div>
+
+                <div id="commentList"></div>
+
+            </section>
+
+        </article>
+
+    </main>
+
+
+    <script>
+
+        let likes = 0;
+        let dislikes = 0;
+
+        let curtiu = false;
+        let naoCurtiu = false;
+
+
+        // LIKE
+        function darLike() {
+
+            const likeButton =
+                document.getElementById("likeButton");
+
+            const dislikeButton =
+                document.getElementById("dislikeButton");
+
+            if (!curtiu) {
+
+                likes++;
+                curtiu = true;
+
+                // Remove o dislike
+                if (naoCurtiu) {
+                    dislikes--;
+                    naoCurtiu = false;
+
+                    dislikeButton.classList.remove(
+                        "active-dislike"
+                    );
+                }
+
+                likeButton.classList.add(
+                    "active-like"
+                );
+
+            } else {
+
+                likes--;
+                curtiu = false;
+
+                likeButton.classList.remove(
+                    "active-like"
+                );
+            }
+
+            document.getElementById("likes").textContent =
+                likes;
+
+            document.getElementById("dislikes").textContent =
+                dislikes;
+        }
+
+
+        // DESLIKE
+        function darDislike() {
+
+            const likeButton =
+                document.getElementById("likeButton");
+
+            const dislikeButton =
+                document.getElementById("dislikeButton");
+
+            if (!naoCurtiu) {
+
+                dislikes++;
+                naoCurtiu = true;
+
+                // Remove o like
+                if (curtiu) {
+                    likes--;
+                    curtiu = false;
+
+                    likeButton.classList.remove(
+                        "active-like"
+                    );
+                }
+
+                dislikeButton.classList.add(
+                    "active-dislike"
+                );
+
+            } else {
+
+                dislikes--;
+                naoCurtiu = false;
+
+                dislikeButton.classList.remove(
+                    "active-dislike"
+                );
+            }
+
+            document.getElementById("likes").textContent =
+                likes;
+
+            document.getElementById("dislikes").textContent =
+                dislikes;
+        }
+
+
+        // ADICIONAR COMENTÁRIO
+        function adicionarComentario() {
+
+            const input =
+                document.getElementById("commentInput");
+
+            const lista =
+                document.getElementById("commentList");
+
+            const texto =
+                input.value.trim();
+
+
+            if (texto === "") {
+
+                alert("Digite um comentário!");
+
+                return;
+            }
+
+
+            const novoComentario =
+                document.createElement("div");
+
+            novoComentario.classList.add("comment");
+
+
+            novoComentario.innerHTML = `
+                <strong>🦸 Usuário</strong>
+                <p>${texto}</p>
+            `;
+
+
+            lista.appendChild(novoComentario);
+
+
+            // Limpa o campo
+            input.value = "";
+        }
+
+
+        // Comentar usando ENTER
+        document
+            .getElementById("commentInput")
+            .addEventListener("keypress", function(event) {
+
+                if (event.key === "Enter") {
+
+                    adicionarComentario();
+
+                }
+
+            });
+
+    </script>
+
+<script src="script.js"></script></body>
+
+</html>
