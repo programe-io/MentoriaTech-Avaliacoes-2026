@@ -13,6 +13,5 @@ function mostrarMensagem(projeto) {
 
 function mostrarContato() {
     let mensagem = document.getElementById("mensagem");
-    mensagem.innerHTML =
-        "Entre em contato pelo Instagram, WhatsApp ou e-mail.";
+    mensagem.innerHTML = "Entre em contato pelo e-mail: lucasryan009@gmail.com";
 }
