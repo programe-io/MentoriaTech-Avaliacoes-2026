@@ -1,68 +1,54 @@
-const perguntas = [
-    {
-        pergunta: "Quanto tempo uma garrafa PET leva para se decompor na natureza?",
-        opcoes: ["Aproximadamente 10 anos", "Cerca de 100 anos", "Mais de 400 anos", "1000 anos"],
-        correta: 2
-    },
-    {
-        pergunta: "Qual das opções é uma fonte de energia renovável?",
-        opcoes: ["Carvão mineral", "Energia Solar", "Petróleo", "Gás Natural"],
-        correta: 1
-    },
-    {
-        pergunta: "O que significa a regra dos 3 R's da sustentabilidade?",
-        opcoes: ["Reciclar, Reorganizar, Recuperar", "Reduzir, Reutilizar, Reciclar", "Refazer, Recolher, Resgatar", "Reter, Reformar, Renovado"],
-        correta: 1
+const texto =
+"Estudante de Desenvolvimento de Sistemas • Apaixonada por Tecnologia e Astronomia";
+
+let i = 0;
+
+function escreverTexto() {
+    if(i < texto.length){
+        document.getElementById("textoDigitando").innerHTML += texto.charAt(i);
+        i++;
+        setTimeout(escreverTexto, 50);
     }
-];
+}
 
-let indiceAtual = 0;
-let pontuacao = 0;
+escreverTexto();
 
-function carregarPergunta() {
-    const q = perguntas[indiceAtual];
-    document.getElementById("pergunta").innerText = q.pergunta;
-    
-    const containerOpcoes = document.getElementById("opcoes");
-    containerOpcoes.innerHTML = "";
+function mostrarMensagem(){
+    alert(
+        "Olá! Sou Valina Rosendo. Obrigada por visitar meu portfólio!"
+    );
+}
 
-    q.opcoes.forEach((opcao, index) => {
-        const btn = document.createElement("button");
-        btn.innerText = opcao;
-        btn.onclick = () => verificarResposta(index);
-        containerOpcoes.appendChild(btn);
+function mudarCor(){
+    document.body.classList.toggle("tema-claro");
+}
+
+function mostrarData(){
+    const data = new Date();
+
+    document.getElementById("resultado").innerHTML =
+    "Data e hora atual: " + data.toLocaleString("pt-BR");
+}
+
+window.addEventListener("scroll", () => {
+
+    const cards = document.querySelectorAll(".card");
+
+    cards.forEach(card => {
+
+        const posicao = card.getBoundingClientRect().top;
+
+        if(posicao < window.innerHeight - 100){
+            card.style.opacity = "1";
+            card.style.transform = "translateY(0)";
+        }
+
     });
-}
 
-function verificarResposta(selecionada) {
-    if (selecionada === perguntas[indiceAtual].correta) {
-        pontuacao++;
-    }
+});
 
-    indiceAtual++;
-
-    if (indiceAtual < perguntas.length) {
-        carregarPergunta();
-    } else {
-        mostrarResultado();
-    }
-}
-
-function mostrarResultado() {
-    document.getElementById("quiz").classList.add("escondido");
-    document.getElementById("resultado").classList.remove("escondido");
-    
-    const msg = document.getElementById("mensagem-final");
-    msg.innerText = `Você acertou ${pontuacao} de ${perguntas.length} perguntas!`;
-}
-
-function reiniciarQuiz() {
-    indiceAtual = 0;
-    pontuacao = 0;
-    document.getElementById("resultado").classList.add("escondido");
-    document.getElementById("quiz").classList.remove("escondido");
-    carregarPergunta();
-}
-
-// Inicializa a primeira pergunta
-carregarPergunta();
+document.querySelectorAll(".card").forEach(card => {
+    card.style.opacity = "0";
+    card.style.transform = "translateY(50px)";
+    card.style.transition = "0.8s";
+});
