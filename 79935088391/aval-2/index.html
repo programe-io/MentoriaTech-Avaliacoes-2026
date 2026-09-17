@@ -1,0 +1,1438 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Daily Planet - Superman Feed</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #eef1f5;
+            color: #222;
+        }
+
+        /* HEADER */
+        header {
+            height: 70px;
+            background: linear-gradient(135deg, #071d49, #1456b8);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 8%;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 3px 12px rgba(0,0,0,.25);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .logo-shield {
+            width: 45px;
+            height: 45px;
+            background: #d71920;
+            border: 3px solid #ffd629;
+            clip-path: polygon(
+                50% 0%,
+                94% 18%,
+                82% 72%,
+                50% 100%,
+                18% 72%,
+                6% 18%
+            );
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffd629;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        nav {
+            display: flex;
+            gap: 20px;
+        }
+
+        nav button {
+            background: transparent;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 15px;
+            padding: 8px;
+        }
+
+        nav button:hover {
+            color: #ffd629;
+        }
+
+        /* LAYOUT */
+        .container {
+            max-width: 1150px;
+            margin: 25px auto;
+            display: grid;
+            grid-template-columns: 250px 1fr 250px;
+            gap: 20px;
+            padding: 0 15px;
+        }
+
+        /* SIDEBARS */
+        .sidebar,
+        .rightbar {
+            background: white;
+            border-radius: 15px;
+            padding: 18px;
+            height: fit-content;
+            box-shadow: 0 2px 10px rgba(0,0,0,.08);
+        }
+
+        .profile {
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 18px;
+            margin-bottom: 18px;
+        }
+
+        .profile-img {
+            width: 90px;
+            height: 90px;
+            margin: auto;
+            border-radius: 50%;
+            background-image:
+                url("https://images.unsplash.com/photo-1531259683007-016a7b628fc3?w=300");
+            background-size: cover;
+            background-position: center;
+            border: 4px solid #d71920;
+        }
+
+        .profile h3 {
+            margin-top: 10px;
+        }
+
+        .profile p {
+            color: #777;
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        .menu-item {
+            padding: 12px;
+            margin: 5px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: .2s;
+        }
+
+        .menu-item:hover {
+            background: #edf3ff;
+            color: #1456b8;
+        }
+
+        /* RIGHTBAR */
+        .rightbar h3 {
+            margin-bottom: 15px;
+            color: #0b2d6b;
+        }
+
+        .hero-info {
+            background:
+                linear-gradient(
+                    rgba(215,25,32,.88),
+                    rgba(86,0,5,.92)
+                ),
+                url("https://images.unsplash.com/photo-1531259683007-016a7b628fc3?w=700");
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 18px;
+        }
+
+        .hero-info h4 {
+            font-size: 22px;
+            margin-bottom: 8px;
+        }
+
+        .hero-info p {
+            line-height: 1.5;
+        }
+
+        .trend {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .trend strong {
+            color: #1456b8;
+        }
+
+        /* CREATE POST */
+        .create-post {
+            background: white;
+            padding: 18px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,.08);
+            margin-bottom: 20px;
+        }
+
+        .create-post h2 {
+            color: #0b2d6b;
+            margin-bottom: 15px;
+        }
+
+        .post-input {
+            width: 100%;
+            min-height: 90px;
+            resize: vertical;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 13px;
+            font-size: 15px;
+            outline: none;
+        }
+
+        .post-input:focus {
+            border-color: #1456b8;
+        }
+
+        .create-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+            gap: 10px;
+        }
+
+        .image-input {
+            flex: 1;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 11px;
+            outline: none;
+        }
+
+        .publish-btn {
+            background: #d71920;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 11px 20px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .publish-btn:hover {
+            background: #ad1017;
+        }
+
+        /* POST */
+        .post {
+            background: white;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,.08);
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            gap: 12px;
+        }
+
+        .avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-size: cover;
+            background-position: center;
+            flex-shrink: 0;
+            border: 2px solid #d71920;
+        }
+
+        /* IMAGENS DOS PERSONAGENS */
+        .avatar-superman {
+            background-image:
+                url("https://images.unsplash.com/photo-1531259683007-016a7b628fc3?w=300");
+        }
+
+        .avatar-lois {
+            background-image:
+                url("https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300");
+        }
+
+        .avatar-clark {
+            background-image:
+                url("https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300");
+        }
+
+        .post-user {
+            flex: 1;
+        }
+
+        .post-user strong {
+            display: block;
+            font-size: 15px;
+        }
+
+        .verified {
+            color: #1677ff;
+        }
+
+        .post-date {
+            color: #888;
+            font-size: 12px;
+        }
+
+        .delete-btn {
+            border: none;
+            background: none;
+            cursor: pointer;
+            color: #999;
+            font-size: 18px;
+        }
+
+        .delete-btn:hover {
+            color: red;
+        }
+
+        .post-text {
+            padding: 0 16px 16px;
+            line-height: 1.6;
+        }
+
+        .post-image {
+            width: 100%;
+            max-height: 500px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .post-stats {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 16px;
+            color: #777;
+            font-size: 14px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .post-actions {
+            display: flex;
+            padding: 6px;
+        }
+
+        .action-btn {
+            flex: 1;
+            border: none;
+            background: white;
+            padding: 12px;
+            cursor: pointer;
+            border-radius: 8px;
+            font-size: 15px;
+            color: #555;
+        }
+
+        .action-btn:hover {
+            background: #f0f3f8;
+        }
+
+        .like-btn.liked {
+            color: #d71920;
+            font-weight: bold;
+        }
+
+        /* COMMENTS */
+        .comments {
+            display: none;
+            padding: 12px 16px 16px;
+            background: #fafafa;
+        }
+
+        .comments.open {
+            display: block;
+        }
+
+        .comment {
+            display: flex;
+            gap: 9px;
+            margin-bottom: 10px;
+        }
+
+        .comment-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-size: cover;
+            background-position: center;
+            background-color: #ddd;
+            flex-shrink: 0;
+        }
+
+        .comment-box {
+            background: #e9edf3;
+            padding: 8px 11px;
+            border-radius: 12px;
+            font-size: 13px;
+        }
+
+        .comment-box strong {
+            display: block;
+            margin-bottom: 3px;
+        }
+
+        .comment-form {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .comment-input {
+            flex: 1;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            padding: 9px 13px;
+            outline: none;
+        }
+
+        .comment-submit {
+            background: #1456b8;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 8px 15px;
+            cursor: pointer;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 900px) {
+            .container {
+                grid-template-columns: 200px 1fr;
+            }
+
+            .rightbar {
+                display: none;
+            }
+        }
+
+        @media (max-width: 650px) {
+            header {
+                padding: 0 15px;
+            }
+
+            nav {
+                display: none;
+            }
+
+            .container {
+                display: block;
+                margin-top: 15px;
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            .create-bottom {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .image-input {
+                width: 100%;
+            }
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+<header>
+
+    <div class="logo">
+        <div class="logo-shield">S</div>
+        Daily Planet
+    </div>
+
+    <nav>
+        <button onclick="scrollToTop()">Início</button>
+        <button onclick="focusPost()">Criar post</button>
+        <button onclick="aboutSite()">Sobre</button>
+    </nav>
+
+</header>
+
+
+<div class="container">
+
+    <!-- MENU -->
+    <aside class="sidebar">
+
+        <div class="profile">
+
+            <div class="profile-img"></div>
+
+            <h3>Metropolis Fan</h3>
+
+            <p>@metropolisfan</p>
+
+        </div>
+
+        <div class="menu-item">🏠 Página inicial</div>
+        <div class="menu-item">🦸 Superman</div>
+        <div class="menu-item">📰 Notícias</div>
+        <div class="menu-item">⭐ Favoritos</div>
+        <div class="menu-item">👥 Comunidade</div>
+        <div class="menu-item">⚙️ Configurações</div>
+
+    </aside>
+
+
+    <!-- FEED -->
+    <main>
+
+        <!-- CRIAR POST -->
+        <section class="create-post">
+
+            <h2>🦸 O que está acontecendo em Metropolis?</h2>
+
+            <textarea
+                id="postText"
+                class="post-input"
+                placeholder="Escreva uma publicação sobre o Superman..."
+            ></textarea>
+
+            <div class="create-bottom">
+
+                <input
+                    type="text"
+                    id="imageUrl"
+                    class="image-input"
+                    placeholder="URL de uma imagem do Superman (opcional)"
+                >
+
+                <button
+                    class="publish-btn"
+                    onclick="createPost()"
+                >
+                    Publicar
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- FEED -->
+        <div id="feed">
+
+            <!-- POST 1 -->
+            <article class="post">
+
+                <div class="post-header">
+
+                    <div class="avatar avatar-superman"></div>
+
+                    <div class="post-user">
+
+                        <strong>
+                            Superman <span class="verified">✔</span>
+                        </strong>
+
+                        <span class="post-date">
+                            Há 10 minutos
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <div class="post-text">
+
+                    Hoje é um ótimo dia para proteger Metropolis! 🦸‍♂️
+
+                    <br><br>
+
+                    "Grandes poderes significam grandes responsabilidades."
+
+                </div>
+
+                <img
+                    class="post-image"
+                    src="https://images.unsplash.com/photo-1531259683007-016a7b628fc3?w=1000"
+                    alt="Super-herói"
+                >
+
+                <div class="post-stats">
+
+                    <span class="likes-count">
+                        ❤️ 248 curtidas
+                    </span>
+
+                    <span class="comments-count">
+                        12 comentários
+                    </span>
+
+                </div>
+
+                <div class="post-actions">
+
+                    <button
+                        class="action-btn like-btn"
+                        onclick="toggleLike(this)"
+                    >
+                        ❤️ Curtir
+                    </button>
+
+                    <button
+                        class="action-btn"
+                        onclick="toggleComments(this)"
+                    >
+                        💬 Comentar
+                    </button>
+
+                    <button
+                        class="action-btn"
+                        onclick="sharePost()"
+                    >
+                        ↗️ Compartilhar
+                    </button>
+
+                </div>
+
+                <div class="comments">
+
+                    <div class="comment">
+
+                        <div
+                            class="comment-avatar"
+                            style="
+                                background-image:
+                                url('https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100');
+                            "
+                        ></div>
+
+                        <div class="comment-box">
+
+                            <strong>Lois Lane</strong>
+
+                            Você é realmente incrível! ❤️
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="comment">
+
+                        <div
+                            class="comment-avatar"
+                            style="
+                                background-image:
+                                url('https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100');
+                            "
+                        ></div>
+
+                        <div class="comment-box">
+
+                            <strong>Jimmy Olsen</strong>
+
+                            Metropolis está segura! 🔥
+
+                        </div>
+
+                    </div>
+
+
+                    <form
+                        class="comment-form"
+                        onsubmit="addComment(event, this)"
+                    >
+
+                        <input
+                            class="comment-input"
+                            placeholder="Escreva um comentário..."
+                            required
+                        >
+
+                        <button class="comment-submit">
+                            Enviar
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </article>
+
+
+            <!-- POST 2 -->
+            <article class="post">
+
+                <div class="post-header">
+
+                    <div class="avatar avatar-lois"></div>
+
+                    <div class="post-user">
+
+                        <strong>
+                            Lois Lane <span class="verified">✔</span>
+                        </strong>
+
+                        <span class="post-date">
+                            Há 1 hora
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <div class="post-text">
+
+                    Acabei de terminar uma matéria sobre o Superman.
+
+                    <br>
+
+                    O que vocês acham do maior herói de Metropolis? 📰
+
+                </div>
+
+                <img
+                    class="post-image"
+                    src="https://images.unsplash.com/photo-1531259683007-016a7b628fc3?w=1000"
+                    alt="Superman"
+                >
+
+                <div class="post-stats">
+
+                    <span class="likes-count">
+                        ❤️ 531 curtidas
+                    </span>
+
+                    <span class="comments-count">
+                        27 comentários
+                    </span>
+
+                </div>
+
+                <div class="post-actions">
+
+                    <button
+                        class="action-btn like-btn"
+                        onclick="toggleLike(this)"
+                    >
+                        ❤️ Curtir
+                    </button>
+
+                    <button
+                        class="action-btn"
+                        onclick="toggleComments(this)"
+                    >
+                        💬 Comentar
+                    </button>
+
+                    <button
+                        class="action-btn"
+                        onclick="sharePost()"
+                    >
+                        ↗️ Compartilhar
+                    </button>
+
+                </div>
+
+                <div class="comments">
+
+                    <div class="comment">
+
+                        <div
+                            class="comment-avatar"
+                            style="
+                                background-image:
+                                url('https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100');
+                            "
+                        ></div>
+
+                        <div class="comment-box">
+
+                            <strong>Clark Kent</strong>
+
+                            Excelente matéria, Lois!
+
+                        </div>
+
+                    </div>
+
+
+                    <form
+                        class="comment-form"
+                        onsubmit="addComment(event, this)"
+                    >
+
+                        <input
+                            class="comment-input"
+                            placeholder="Escreva um comentário..."
+                            required
+                        >
+
+                        <button class="comment-submit">
+                            Enviar
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </article>
+
+
+            <!-- POST 3 -->
+            <article class="post">
+
+                <div class="post-header">
+
+                    <div class="avatar avatar-superman"></div>
+
+                    <div class="post-user">
+
+                        <strong>
+                            Superman <span class="verified">✔</span>
+                        </strong>
+
+                        <span class="post-date">
+                            Há 3 horas
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <div class="post-text">
+
+                    Voando sobre Metropolis nesta manhã. ☀️🦸‍♂️
+
+                    <br><br>
+
+                    Sempre de olho na cidade.
+
+                </div>
+
+                <img
+                    class="post-image"
+                    src="https://images.unsplash.com/photo-1444723121867-7a241cacace9?w=1000"
+                    alt="Metropolis"
+                >
+
+                <div class="post-stats">
+
+                    <span class="likes-count">
+                        ❤️ 194 curtidas
+                    </span>
+
+                    <span class="comments-count">
+                        8 comentários
+                    </span>
+
+                </div>
+
+                <div class="post-actions">
+
+                    <button
+                        class="action-btn like-btn"
+                        onclick="toggleLike(this)"
+                    >
+                        ❤️ Curtir
+                    </button>
+
+                    <button
+                        class="action-btn"
+                        onclick="toggleComments(this)"
+                    >
+                        💬 Comentar
+                    </button>
+
+                    <button
+                        class="action-btn"
+                        onclick="sharePost()"
+                    >
+                        ↗️ Compartilhar
+                    </button>
+
+                </div>
+
+                <div class="comments">
+
+                    <form
+                        class="comment-form"
+                        onsubmit="addComment(event, this)"
+                    >
+
+                        <input
+                            class="comment-input"
+                            placeholder="Escreva um comentário..."
+                            required
+                        >
+
+                        <button class="comment-submit">
+                            Enviar
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </article>
+
+        </div>
+
+    </main>
+
+
+    <!-- DIREITA -->
+    <aside class="rightbar">
+
+        <div class="hero-info">
+
+            <h4>🦸 Superman</h4>
+
+            <p>
+                O Homem de Aço acompanha as notícias
+                de Metropolis.
+            </p>
+
+        </div>
+
+
+        <h3>🔥 Assuntos do momento</h3>
+
+
+        <div class="trend">
+
+            <strong>#Superman</strong>
+
+            <br>
+
+            <small>45 mil publicações</small>
+
+        </div>
+
+
+        <div class="trend">
+
+            <strong>#Metropolis</strong>
+
+            <br>
+
+            <small>28 mil publicações</small>
+
+        </div>
+
+
+        <div class="trend">
+
+            <strong>#DailyPlanet</strong>
+
+            <br>
+
+            <small>17 mil publicações</small>
+
+        </div>
+
+
+        <div class="trend">
+
+            <strong>#LoisLane</strong>
+
+            <br>
+
+            <small>12 mil publicações</small>
+
+        </div>
+
+    </aside>
+
+</div>
+
+
+<script>
+
+    /* =========================
+       CURTIR
+    ========================= */
+
+    function toggleLike(button) {
+
+        const post = button.closest(".post");
+
+        const countElement =
+            post.querySelector(".likes-count");
+
+        let number =
+            parseInt(
+                countElement.textContent.replace(/\D/g, "")
+            ) || 0;
+
+
+        if (button.classList.contains("liked")) {
+
+            number--;
+
+            button.classList.remove("liked");
+
+            button.innerHTML = "❤️ Curtir";
+
+        } else {
+
+            number++;
+
+            button.classList.add("liked");
+
+            button.innerHTML = "💖 Curtido";
+
+        }
+
+
+        countElement.textContent =
+            "❤️ " + number + " curtidas";
+    }
+
+
+    /* =========================
+       COMENTÁRIOS
+    ========================= */
+
+    function toggleComments(button) {
+
+        const post =
+            button.closest(".post");
+
+        const comments =
+            post.querySelector(".comments");
+
+        comments.classList.toggle("open");
+
+
+        if (comments.classList.contains("open")) {
+
+            const input =
+                comments.querySelector(".comment-input");
+
+            if (input) {
+
+                setTimeout(() => {
+                    input.focus();
+                }, 100);
+
+            }
+        }
+    }
+
+
+    /* =========================
+       ADICIONAR COMENTÁRIO
+    ========================= */
+
+    function addComment(event, form) {
+
+        event.preventDefault();
+
+
+        const input =
+            form.querySelector(".comment-input");
+
+        const text =
+            input.value.trim();
+
+
+        if (!text) return;
+
+
+        const comments =
+            form.closest(".comments");
+
+
+        const comment =
+            document.createElement("div");
+
+        comment.className = "comment";
+
+
+        comment.innerHTML = `
+
+            <div
+                class="comment-avatar"
+                style="
+                    background-image:
+                    url('https://images.unsplash.com/photo-1531259683007-016a7b628fc3?w=100');
+                "
+            ></div>
+
+            <div class="comment-box">
+
+                <strong>Você</strong>
+
+                ${escapeHTML(text)}
+
+            </div>
+        `;
+
+
+        comments.insertBefore(comment, form);
+
+        input.value = "";
+
+
+        const post =
+            form.closest(".post");
+
+
+        const count =
+            post.querySelector(".comments-count");
+
+
+        let number =
+            parseInt(count.textContent) || 0;
+
+
+        number++;
+
+
+        count.textContent =
+            number + " comentários";
+    }
+
+
+    /* =========================
+       SEGURANÇA
+    ========================= */
+
+    function escapeHTML(text) {
+
+        const div =
+            document.createElement("div");
+
+        div.textContent = text;
+
+        return div.innerHTML;
+    }
+
+
+    function escapeAttribute(value) {
+
+        return value
+            .replace(/&/g, "&amp;")
+            .replace(/"/g, "&quot;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;");
+    }
+
+
+    /* =========================
+       CRIAR POST
+    ========================= */
+
+    function createPost() {
+
+        const text =
+            document
+                .getElementById("postText")
+                .value
+                .trim();
+
+
+        const image =
+            document
+                .getElementById("imageUrl")
+                .value
+                .trim();
+
+
+        if (!text) {
+
+            alert(
+                "Escreva alguma coisa antes de publicar!"
+            );
+
+            return;
+        }
+
+
+        const feed =
+            document.getElementById("feed");
+
+
+        const post =
+            document.createElement("article");
+
+        post.className = "post";
+
+
+        const imageHTML = image
+
+            ? `
+                <img
+                    class="post-image"
+                    src="${escapeAttribute(image)}"
+                    alt="Imagem do Superman"
+                    onerror="this.style.display='none'"
+                >
+            `
+
+            : "";
+
+
+        post.innerHTML = `
+
+            <div class="post-header">
+
+                <div
+                    class="avatar avatar-superman"
+                ></div>
+
+
+                <div class="post-user">
+
+                    <strong>
+                        Você
+                    </strong>
+
+                    <span class="post-date">
+                        Agora
+                    </span>
+
+                </div>
+
+
+                <button
+                    class="delete-btn"
+                    onclick="deletePost(this)"
+                    title="Excluir publicação"
+                >
+                    🗑️
+                </button>
+
+            </div>
+
+
+            <div class="post-text">
+
+                ${escapeHTML(text)}
+
+            </div>
+
+
+            ${imageHTML}
+
+
+            <div class="post-stats">
+
+                <span class="likes-count">
+                    ❤️ 0 curtidas
+                </span>
+
+                <span class="comments-count">
+                    0 comentários
+                </span>
+
+            </div>
+
+
+            <div class="post-actions">
+
+                <button
+                    class="action-btn like-btn"
+                    onclick="toggleLike(this)"
+                >
+                    ❤️ Curtir
+                </button>
+
+
+                <button
+                    class="action-btn"
+                    onclick="toggleComments(this)"
+                >
+                    💬 Comentar
+                </button>
+
+
+                <button
+                    class="action-btn"
+                    onclick="sharePost()"
+                >
+                    ↗️ Compartilhar
+                </button>
+
+            </div>
+
+
+            <div class="comments">
+
+                <form
+                    class="comment-form"
+                    onsubmit="addComment(event, this)"
+                >
+
+                    <input
+                        class="comment-input"
+                        placeholder="Escreva um comentário..."
+                        required
+                    >
+
+
+                    <button class="comment-submit">
+                        Enviar
+                    </button>
+
+                </form>
+
+            </div>
+        `;
+
+
+        feed.prepend(post);
+
+
+        document
+            .getElementById("postText")
+            .value = "";
+
+
+        document
+            .getElementById("imageUrl")
+            .value = "";
+
+
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+    }
+
+
+    /* =========================
+       EXCLUIR POST
+    ========================= */
+
+    function deletePost(button) {
+
+        const confirmed =
+            confirm(
+                "Deseja realmente excluir esta publicação?"
+            );
+
+
+        if (!confirmed) return;
+
+
+        const post =
+            button.closest(".post");
+
+
+        post.remove();
+    }
+
+
+    /* =========================
+       COMPARTILHAR
+    ========================= */
+
+    function sharePost() {
+
+        if (navigator.share) {
+
+            navigator.share({
+
+                title: "Daily Planet",
+
+                text:
+                    "Confira esta publicação sobre o Superman!"
+
+            });
+
+        } else {
+
+            navigator.clipboard.writeText(
+                window.location.href
+            );
+
+
+            alert(
+                "Link copiado para a área de transferência!"
+            );
+        }
+    }
+
+
+    /* =========================
+       CRIAR POST
+    ========================= */
+
+    function focusPost() {
+
+        const input =
+            document.getElementById("postText");
+
+
+        input.focus();
+
+
+        window.scrollTo({
+
+            top: 0,
+
+            behavior: "smooth"
+
+        });
+    }
+
+
+    /* =========================
+       TOPO
+    ========================= */
+
+    function scrollToTop() {
+
+        window.scrollTo({
+
+            top: 0,
+
+            behavior: "smooth"
+
+        });
+    }
+
+
+    /* =========================
+       SOBRE
+    ========================= */
+
+    function aboutSite() {
+
+        alert(
+            "🦸 Daily Planet\n\n" +
+            "Um feed inspirado no universo do Superman."
+        );
+    }
+
+</script>
+
+</body>
+</html>
