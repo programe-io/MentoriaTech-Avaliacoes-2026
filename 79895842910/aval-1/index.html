@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet">
+</head>
+<body>
+  ```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlashFeed ⚡</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            background: #090909;
+            color: white;
+        }
+
+        /* CABEÇALHO */
+        header {
+            background: linear-gradient(135deg, #8b0000, #e10600, #ffcc00);
+            padding: 18px 30px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            box-shadow: 0 3px 15px rgba(255, 0, 0, .4);
+        }
+
+        .header-content {
+            max-width: 900px;
+            margin: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 2px 2px #7a0000;
+        }
+
+        .logo span {
+            color: #ffd900;
+        }
+
+        .flash-icon {
+            font-size: 32px;
+        }
+
+        /* CONTEÚDO */
+        main {
+            max-width: 650px;
+            margin: 25px auto;
+            padding: 0 15px;
+        }
+
+        /* CRIAR POST */
+        .new-post {
+            background: #151515;
+            border: 1px solid #3a3a3a;
+            border-radius: 15px;
+            padding: 18px;
+            margin-bottom: 25px;
+        }
+
+        .new-post h2 {
+            color: #ffd400;
+            margin-bottom: 12px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 80px;
+            resize: vertical;
+            padding: 12px;
+            border-radius: 10px;
+            border: none;
+            outline: none;
+            background: #252525;
+            color: white;
+            font-size: 15px;
+        }
+
+        .post-btn {
+            margin-top: 10px;
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background: #e10600;
+            color: white;
+            font-weight: bold;
+            transition: .2s;
+        }
+
+        .post-btn:hover {
+            background: #ff1a14;
+            transform: scale(1.01);
+        }
+
+        /* POST */
+        .post {
+            background: #151515;
+            border: 1px solid #333;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, .4);
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            gap: 12px;
+        }
+
+        .avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #e10600;
+        }
+
+        .user-info strong {
+            display: block;
+            color: #ffd400;
+        }
+
+        .user-info small {
+            color: #999;
+        }
+
+        .post-text {
+            padding: 0 15px 15px;
+            line-height: 1.5;
+        }
+
+        .post-image {
+            width: 100%;
+            max-height: 450px;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* AÇÕES */
+        .actions {
+            display: flex;
+            padding: 10px 15px;
+            gap: 8px;
+            border-top: 1px solid #333;
+        }
+
+        .action-btn {
+            background: transparent;
+            border: none;
+            color: #ccc;
+            cursor: pointer;
+            padding: 9px 12px;
+            border-radius: 8px;
+            transition: .2s;
+            font-size: 14px;
+        }
+
+        .action-btn:hover {
+            background: #292929;
+            color: white;
+        }
+
+        .like-btn.liked {
+            color: #ff3333;
+        }
+
+        /* COMENTÁRIOS */
+        .comments {
+            border-top: 1px solid #333;
+            padding: 15px;
+            display: none;
+        }
+
+        .comments.active {
+            display: block;
+        }
+
+        .comment {
+            background: #222;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 8px;
+        }
+
+        .comment strong {
+            color: #ffd400;
+        }
+
+        .comment-input {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .comment-input input {
+            flex: 1;
+            background: #292929;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 10px;
+            outline: none;
+        }
+
+        .comment-input button {
+            background: #e10600;
+            border: none;
+            color: white;
+            padding: 0 15px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .comment-input button:hover {
+            background: #ff1a14;
+        }
+
+        .empty {
+            color: #888;
+            text-align: center;
+            padding: 10px;
+        }
+
+        /* RESPONSIVO */
+        @media (max-width: 600px) {
+            header {
+                padding: 15px;
+            }
+
+            .logo {
+                font-size: 22px;
+            }
+
+            main {
+                margin-top: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="header-content">
+        <div class="logo">
+            ⚡ Flash<span>Feed</span>
+        </div>
+
+        <div class="flash-icon">
+            🟡⚡
+        </div>
+    </div>
+</header>
+
+<main>
+
+    <!-- CRIAR PUBLICAÇÃO -->
+    <section class="new-post">
+        <h2>⚡ Nova publicação</h2>
+
+        <textarea
+            id="newPostText"
+            placeholder="O que está acontecendo em Central City?"
+        ></textarea>
+
+        <button class="post-btn" onclick="createPost()">
+            PUBLICAR ⚡
+        </button>
+    </section>
+
+    <!-- FEED -->
+    <section id="feed">
+
+        <!-- POST 1 -->
+        <article class="post">
+
+            <div class="post-header">
+                <img
+                    class="avatar"
+                    src="https://upload.wikimedia.org/wikipedia/en/5/58/Barry_Allen_Flash.jpg"
+                    alt="Flash"
+                >
+
+                <div class="user-info">
+                    <strong>Barry Allen ⚡</strong>
+                    <small>Há 5 minutos · Central City</small>
+                </div>
+            </div>
+
+            <div class="post-text">
+                Quando você é rápido o suficiente, qualquer problema pode ser resolvido. ⚡🔴
+            </div>
+
+            <img
+                class="post-image"
+                src="https://images.unsplash.com/photo-1531058020387-3be344556be6?auto=format&fit=crop&w=900&q=80"
+                alt="Cidade com luzes"
+            >
+
+            <div class="actions">
+                <button class="action-btn like-btn" onclick="likePost(this)">
+                    ❤️ Curtir <span>0</span>
+                </button>
+
+                <button class="action-btn" onclick="toggleComments(this)">
+                    💬 Comentários
+                </button>
+
+                <button class="action-btn" onclick="sharePost()">
+                    📤 Compartilhar
+                </button>
+            </div>
+
+            <div class="comments">
+
+                <div class="comment">
+                    <strong>Iris West</strong>
+                    <div>Você sempre chega na hora certa! ❤️</div>
+                </div>
+
+                <div class="comment-input">
+                    <input
+                        type="text"
+                        placeholder="Escreva um comentário..."
+                    >
+
+                    <button onclick="addComment(this)">
+                        Enviar
+                    </button>
+                </div>
+
+            </div>
+
+        </article>
+
+
+        <!-- POST 2 -->
+        <article class="post">
+
+            <div class="post-header">
+                <img
+                    class="avatar"
+                    src="https://i.pravatar.cc/100?img=12"
+                    alt="Cisco"
+                >
+
+                <div class="user-info">
+                    <strong>Cisco Ramon ⚡</strong>
+                    <small>Há 18 minutos · S.T.A.R. Labs</small>
+                </div>
+            </div>
+
+            <div class="post-text">
+                Alguém mais acha que o novo uniforme do Flash está incrível? 🔥⚡
+            </div>
+
+            <img
+                class="post-image"
+                src="https://images.unsplash.com/photo-1519608487953-e999c86e7455?auto=format&fit=crop&w=900&q=80"
+                alt="Cidade iluminada"
+            >
+
+            <div class="actions">
+
+                <button class="action-btn like-btn" onclick="likePost(this)">
+                    ❤️ Curtir <span>0</span>
+                </button>
+
+                <button class="action-btn" onclick="toggleComments(this)">
+                    💬 Comentários
+                </button>
+
+                <button class="action-btn" onclick="sharePost()">
+                    📤 Compartilhar
+                </button>
+
+            </div>
+
+            <div class="comments">
+
+                <div class="empty">
+                    Ainda não existem comentários.
+                </div>
+
+                <div class="comment-input">
+                    <input
+                        type="text"
+                        placeholder="Escreva um comentário..."
+                    >
+
+                    <button onclick="addComment(this)">
+                        Enviar
+                    </button>
+                </div>
+
+            </div>
+
+        </article>
+
+    </section>
+
+</main>
+
+
+<script>
+
+    // CURTIR POST
+    function likePost(button) {
+
+        const counter = button.querySelecto
+```
+
+  <script src="script.js"></script>
+  
+</body>
+</html>
