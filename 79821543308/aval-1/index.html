@@ -1,0 +1,632 @@
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Mini Feed Marvel</title>
+
+
+    <style>
+
+        /* =========================
+           CONFIGURAÇÃO DA PÁGINA
+        ========================= */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+
+            background: linear-gradient(
+                135deg,
+                #080808,
+                #350000,
+                #080808
+            );
+
+            color: white;
+
+            min-height: 100vh;
+        }
+
+
+        /* =========================
+           CABEÇALHO
+        ========================= */
+
+        header {
+
+            background: #e10600;
+
+            padding: 25px;
+
+            text-align: center;
+
+            border-bottom: 5px solid white;
+
+            box-shadow: 0 0 20px #e10600;
+        }
+
+        header h1 {
+
+            font-size: 35px;
+
+            color: white;
+
+            text-transform: uppercase;
+
+            text-shadow: 3px 3px 5px black;
+        }
+
+        header p {
+
+            margin-top: 8px;
+
+            font-size: 17px;
+        }
+
+
+        /* =========================
+           FEED
+        ========================= */
+
+        .feed {
+
+            width: 90%;
+
+            max-width: 650px;
+
+            margin: 40px auto;
+        }
+
+
+        /* =========================
+           PUBLICAÇÃO
+        ========================= */
+
+        .post {
+
+            background: #181818;
+
+            border: 2px solid #e10600;
+
+            border-radius: 18px;
+
+            overflow: hidden;
+
+            box-shadow:
+                0 0 20px rgba(255, 0, 0, 0.4);
+
+            transition: 0.3s;
+        }
+
+        .post:hover {
+
+            transform: translateY(-5px);
+
+            box-shadow:
+                0 0 30px rgba(255, 0, 0, 0.7);
+        }
+
+
+        /* =========================
+           IMAGEM
+        ========================= */
+
+        .post img {
+
+            width: 100%;
+
+            height: 350px;
+
+            object-fit: cover;
+
+            display: block;
+        }
+
+
+        /* =========================
+           CONTEÚDO
+        ========================= */
+
+        .conteudo {
+
+            padding: 25px;
+        }
+
+        .conteudo h2 {
+
+            color: #e10600;
+
+            font-size: 27px;
+
+            margin-bottom: 12px;
+        }
+
+        .conteudo p {
+
+            color: #dddddd;
+
+            font-size: 17px;
+
+            line-height: 1.6;
+        }
+
+
+        /* =========================
+           BOTÕES
+        ========================= */
+
+        .botoes {
+
+            display: flex;
+
+            gap: 12px;
+
+            margin-top: 20px;
+        }
+
+        button {
+
+            border: none;
+
+            padding: 12px 18px;
+
+            border-radius: 10px;
+
+            font-size: 16px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            transition: 0.2s;
+        }
+
+
+        /* LIKE */
+
+        .like {
+
+            background: #e10600;
+
+            color: white;
+        }
+
+        .like:hover {
+
+            background: #ff211b;
+
+            transform: scale(1.05);
+        }
+
+
+        /* DESLIKE */
+
+        .deslike {
+
+            background: #444;
+
+            color: white;
+        }
+
+        .deslike:hover {
+
+            background: #666;
+
+            transform: scale(1.05);
+        }
+
+
+        /* =========================
+           COMENTÁRIOS
+        ========================= */
+
+        .comentarios {
+
+            margin-top: 30px;
+
+            padding-top: 20px;
+
+            border-top: 1px solid #444;
+        }
+
+        .comentarios h3 {
+
+            color: #e10600;
+
+            margin-bottom: 15px;
+        }
+
+
+        /* CAIXA DE TEXTO */
+
+        textarea {
+
+            width: 100%;
+
+            height: 90px;
+
+            padding: 12px;
+
+            resize: none;
+
+            background: #292929;
+
+            color: white;
+
+            border: 2px solid #444;
+
+            border-radius: 10px;
+
+            font-size: 15px;
+
+            outline: none;
+        }
+
+        textarea:focus {
+
+            border-color: #e10600;
+        }
+
+
+        /* BOTÃO COMENTAR */
+
+        .enviar {
+
+            background: white;
+
+            color: #e10600;
+
+            margin-top: 10px;
+        }
+
+        .enviar:hover {
+
+            background: #dddddd;
+
+            transform: scale(1.03);
+        }
+
+
+        /* =========================
+           COMENTÁRIOS CRIADOS
+        ========================= */
+
+        #listaComentarios {
+
+            margin-top: 20px;
+        }
+
+        .comentario {
+
+            background: #292929;
+
+            border-left: 4px solid #e10600;
+
+            padding: 12px;
+
+            margin-top: 10px;
+
+            border-radius: 8px;
+
+            animation: aparecer 0.3s ease;
+        }
+
+
+        /* =========================
+           ANIMAÇÃO
+        ========================= */
+
+        @keyframes aparecer {
+
+            from {
+
+                opacity: 0;
+
+                transform: translateY(10px);
+            }
+
+            to {
+
+                opacity: 1;
+
+                transform: translateY(0);
+            }
+        }
+
+
+        /* =========================
+           CELULAR
+        ========================= */
+
+        @media (max-width: 600px) {
+
+            header h1 {
+
+                font-size: 25px;
+            }
+
+            .feed {
+
+                width: 95%;
+
+                margin: 25px auto;
+            }
+
+            .post img {
+
+                height: 280px;
+            }
+
+            .botoes {
+
+                flex-direction: column;
+            }
+
+            button {
+
+                width: 100%;
+            }
+        }
+
+    </style>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+
+<body>
+
+
+    <!-- =========================
+         CABEÇALHO
+    ========================= -->
+
+    <header>
+
+        <h1>MARVEL</h1>
+
+        <p>
+            Bem-vindo ao Mini Feed dos Heróis! 🦸‍♂️
+        </p>
+
+    </header>
+
+
+
+    <!-- =========================
+         FEED
+    ========================= -->
+
+    <main class="feed">
+
+
+        <article class="post">
+
+
+            <!-- IMAGEM -->
+
+            <img
+                src="https://images.unsplash.com/photo-1531259683007-016a7b628fc3"
+                alt="Imagem relacionada a super-heróis"
+            >
+
+
+            <div class="conteudo">
+
+
+                <h2>🦸‍♂️ Universo Marvel</h2>
+
+
+                <p>
+
+                    Os heróis da Marvel conquistaram fãs
+                    no mundo inteiro. Qual é o seu herói
+                    favorito?
+
+                </p>
+
+
+
+                <!-- =========================
+                     BOTÕES
+                ========================= -->
+
+                <div class="botoes">
+
+
+                    <button
+                        class="like"
+                        onclick="curtir()"
+                    >
+
+                        ❤️ Like
+                        <span id="likes">0</span>
+
+                    </button>
+
+
+
+                    <button
+                        class="deslike"
+                        onclick="descurtir()"
+                    >
+
+                        👎 Deslike
+                        <span id="deslikes">0</span>
+
+                    </button>
+
+
+                </div>
+
+
+
+                <!-- =========================
+                     COMENTÁRIOS
+                ========================= -->
+
+                <div class="comentarios">
+
+
+                    <h3>
+                        💬 Comentários
+                    </h3>
+
+
+                    <textarea
+                        id="comentario"
+                        placeholder="Escreva seu comentário..."
+                    ></textarea>
+
+
+                    <button
+                        class="enviar"
+                        onclick="adicionarComentario()"
+                    >
+
+                        💬 Comentar
+
+                    </button>
+
+
+                    <div id="listaComentarios"></div>
+
+
+                </div>
+
+
+            </div>
+
+        </article>
+
+
+    </main>
+
+
+
+    <!-- =========================
+         JAVASCRIPT
+    ========================= -->
+
+    <script>
+
+
+        // Contador de Likes
+
+        let likes = 0;
+
+
+        // Contador de Deslikes
+
+        let deslikes = 0;
+
+
+
+        // =========================
+        // FUNÇÃO LIKE
+        // =========================
+
+        function curtir() {
+
+            likes++;
+
+            document.getElementById("likes")
+                .textContent = likes;
+
+        }
+
+
+
+        // =========================
+        // FUNÇÃO DESLIKE
+        // =========================
+
+        function descurtir() {
+
+            deslikes++;
+
+            document.getElementById("deslikes")
+                .textContent = deslikes;
+
+        }
+
+
+
+        // =========================
+        // ADICIONAR COMENTÁRIO
+        // =========================
+
+        function adicionarComentario() {
+
+
+            // Pega o texto digitado
+
+            let texto =
+                document.getElementById("comentario")
+                .value;
+
+
+            // Verifica se está vazio
+
+            if (texto.trim() === "") {
+
+                alert(
+                    "Digite um comentário antes de enviar!"
+                );
+
+                return;
+            }
+
+
+            // Cria uma nova div
+
+            let novoComentario =
+                document.createElement("div");
+
+
+            // Adiciona a classe
+
+            novoComentario.className =
+                "comentario";
+
+
+            // Coloca o comentário na div
+
+            novoComentario.textContent =
+                "🦸 " + texto;
+
+
+            // Adiciona na página
+
+            document
+                .getElementById("listaComentarios")
+                .appendChild(novoComentario);
+
+
+            // Limpa a caixa de texto
+
+            document.getElementById("comentario")
+                .value = "";
+
+        }
+
+    </script>
+
+
+</body>
+
+</html>
+```
