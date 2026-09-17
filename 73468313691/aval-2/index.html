@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Meu Dia — Gerenciador de Tarefas</title>
+
+    <link rel="stylesheet" href="style.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+    <div class="app">
+
+        <!-- MENU LATERAL -->
+        <aside class="sidebar">
+
+            <div class="brand">
+                <div class="brand-icon">✓</div>
+
+                <div>
+                    <strong>Meu Dia</strong>
+                    <span>organize sua rotina</span>
+                </div>
+            </div>
+
+            <nav class="menu">
+
+                <button class="menu-item active" data-view="today">
+                    <span>☀</span>
+                    Hoje
+                    <b id="todayCount">0</b>
+                </button>
+
+                <button class="menu-item" data-view="upcoming">
+                    <span>◷</span>
+                    Próximas
+                </button>
+
+                <button class="menu-item" data-view="completed">
+                    <span>✓</span>
+                    Concluídas
+                </button>
+
+                <button class="menu-item" data-view="all">
+                    <span>☷</span>
+                    Todas as tarefas
+                </button>
+
+            </nav>
+
+            <div class="sidebar-section">
+
+                <p>CATEGORIAS</p>
+
+                <button class="category" data-category="Trabalho">
+                    <i class="dot purple"></i>
+                    Trabalho
+                </button>
+
+                <button class="category" data-category="Estudos">
+                    <i class="dot blue"></i>
+                    Estudos
+                </button>
+
+                <button class="category" data-category="Pessoal">
+                    <i class="dot green"></i>
+                    Pessoal
+                </button>
+
+                <button class="category" data-category="Casa">
+                    <i class="dot orange"></i>
+                    Casa
+                </button>
+
+            </div>
+
+            <div class="sidebar-footer">
+                <div class="mini-avatar">EU</div>
+
+                <div>
+                    <strong>Minha rotina</strong>
+                    <span>vamos organizar?</span>
+                </div>
+            </div>
+
+        </aside>
+
+
+        <!-- CONTEÚDO -->
+        <main class="content">
+
+            <header class="topbar">
+
+                <div class="mobile-brand">
+                    <button id="openSidebar">☰</button>
+                    <strong>Meu Dia</strong>
+                </div>
+
+                <div class="search">
+                    <span>⌕</span>
+                    <input
+                        type="text"
+                        id="search"
+                        placeholder="Procurar uma tarefa..."
+                    >
+                </div>
+
+                <button class="profile">
+                    <div class="avatar">EU</div>
+                </button>
+
+            </header>
+
+
+            <section class="page">
+
+                <!-- CABEÇALHO -->
+                <div class="welcome">
+
+                    <div>
+                        <span class="date" id="currentDate"></span>
+
+                        <h1 id="greeting">
+                            Bom dia! 👋
+                        </h1>
+
+                        <p id="welcomeText">
+                            Vamos fazer algumas coisas boas hoje?
+                        </p>
+                    </div>
+
+                    <button class="new-task" id="newTask">
+                        <span>+</span>
+                        Nova tarefa
+                    </button>
+
+                </div>
+
+
+                <!-- RESUMO -->
+                <div class="summary">
+
+                    <div class="summary-card main-summary">
+
+                        <div class="summary-top">
+
+                            <div>
+                                <span>Seu progresso hoje</span>
+                                <strong id="progressText">0%</strong>
+                            </div>
+
+                            <div class="progress-circle" id="progressCircle">
+                                <span>✓</span>
+                            </div>
+
+                        </div>
+
+                        <div class="progress-bar">
+                            <div id="progressFill"></div>
+                        </div>
+
+                        <p id="progressMessage">
+                            Comece por uma tarefa e vá em frente.
+                        </p>
+
+                    </div>
+
+
+                    <div class="summary-card">
+
+                        <span>Tarefas de hoje</span>
+                        <strong id="totalToday">0</strong>
+
+                        <small>
+                            tarefas planejadas
+                        </small>
+
+                    </div>
+
+
+                    <div class="summary-card">
+
+                        <span>Concluídas</span>
+                        <strong id="completedToday">0</strong>
+
+                        <small>
+                            você está indo bem!
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <!-- FILTROS -->
+                <div class="task-header">
+
+                    <div>
+                        <h2 id="listTitle">Minhas tarefas</h2>
+                        <p id="listSubtitle">
+                            O que precisa ser feito?
+                        </p>
+                    </div>
+
+                    <div class="filters">
+
+                        <button class="filter active" data-filter="all">
+                            Todas
+                        </button>
+
+                        <button class="filter" data-filter="high">
+                            Importantes
+                        </button>
+
+                        <button class="filter" data-filter="pending">
+                            Pendentes
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- LISTA -->
+                <div class="tasks" id="taskList"></div>
+
+
+                <!-- ESTADO VAZIO -->
+                <div class="empty" id="emptyState">
+
+                    <div class="empty-icon">☕</div>
+
+                    <h3>Nenhuma tarefa por aqui</h3>
+
+                    <p>
+                        Que tal aproveitar esse espaço para organizar
+                        alguma coisa?
+                    </p>
+
+                    <button class="new-task" id="emptyNewTask">
+                        + Criar uma tarefa
+                    </button>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+    <!-- MODAL -->
+    <div class="modal-overlay" id="modal">
+
+        <div class="modal">
+
+            <div class="modal-header">
+
+                <div>
+                    <h2 id="modalTitle">
+                        Nova tarefa
+                    </h2>
+
+                    <p>
+                        Coloque aqui o que você precisa fazer.
+                    </p>
+                </div>
+
+                <button id="closeModal" class="close">
+                    ×
+                </button>
+
+            </div>
+
+
+            <form id="taskForm">
+
+                <input type="hidden" id="taskId">
+
+
+                <label>
+                    O que você precisa fazer?
+                </label>
+
+                <input
+                    id="taskTitle"
+                    type="text"
+                    placeholder="Ex.: Estudar para a prova"
+                    required
+                >
+
+
+                <label>
+                    Um pouco mais de detalhes
+                </label>
+
+                <textarea
+                    id="taskDescription"
+                    placeholder="Adicione uma observação, se quiser..."
+                ></textarea>
+
+
+                <div class="form-row">
+
+                    <div>
+
+                        <label>Quando?</label>
+
+                        <input
+                            id="taskDate"
+                            type="date"
+                        >
+
+                    </div>
+
+
+                    <div>
+
+                        <label>Prioridade</label>
+
+                        <select id="taskPriority">
+
+                            <option value="normal">
+                                Normal
+                            </option>
+
+                            <option value="high">
+                                Importante
+                            </option>
+
+                            <option value="low">
+                                Baixa
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                <label>
+                    Categoria
+                </label>
+
+                <select id="taskCategory">
+
+                    <option value="Pessoal">
+                        Pessoal
+                    </option>
+
+                    <option value="Trabalho">
+                        Trabalho
+                    </option>
+
+                    <option value="Estudos">
+                        Estudos
+                    </option>
+
+                    <option value="Casa">
+                        Casa
+                    </option>
+
+                </select>
+
+
+                <div class="modal-actions">
+
+                    <button
+                        type="button"
+                        class="cancel"
+                        id="cancelModal"
+                    >
+                        Cancelar
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="save"
+                    >
+                        Salvar tarefa
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <div class="toast" id="toast"></div>
+
+    <script src="script.js"></script>
+
+<script src="script.js"></script></body>
+</html>
