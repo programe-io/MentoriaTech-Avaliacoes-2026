@@ -1,223 +1,272 @@
-let produtos = JSON.parse(localStorage.getItem("produtos")) || [];
+let tarefas = JSON.parse(
+    localStorage.getItem("tarefas")
+) || [];
 
-const formulario = document.getElementById("produtoForm");
-const listaProdutos = document.getElementById("listaProdutos");
+const form = document.getElementById("formTarefa");
+const lista = document.getElementById("listaTarefas");
 const pesquisa = document.getElementById("pesquisa");
 
-formulario.addEventListener("submit", function(event) {
+/* ADICIONAR TAREFA */
+
+form.addEventListener("submit", function(event) {
 
     event.preventDefault();
 
-    const nome = document.getElementById("nome").value;
-    const categoria = document.getElementById("categoria").value;
-    const quantidade = Number(document.getElementById("quantidade").value);
-    const preco = Number(document.getElementById("preco").value);
+    const tarefa = {
 
-    const produto = {
         id: Date.now(),
-        nome,
-        categoria,
-        quantidade,
-        preco
+
+        titulo:
+            document.getElementById("titulo").value,
+
+        responsavel:
+            document.getElementById("responsavel").value,
+
+        data:
+            document.getElementById("data").value,
+
+        prioridade:
+            document.getElementById("prioridade").value,
+
+        status:
+            document.getElementById("status").value
     };
 
-    produtos.push(produto);
+    tarefas.push(tarefa);
 
-    salvarProdutos();
+    salvar();
 
-    formulario.reset();
+    form.reset();
 
-    mostrarProdutos();
+    mostrarTarefas();
 });
 
-function salvarProdutos() {
-    localStorage.setItem("produtos", JSON.stringify(produtos));
+
+/* SALVAR */
+
+function salvar() {
+
+    localStorage.setItem(
+        "tarefas",
+        JSON.stringify(tarefas)
+    );
 }
 
-function mostrarProdutos() {
 
-    listaProdutos.innerHTML = "";
+/* MOSTRAR TAREFAS */
 
-    const termo = pesquisa.value.toLowerCase();
+function mostrarTarefas() {
 
-    const produtosFiltrados = produtos.filter(produto =>
-        produto.nome.toLowerCase().includes(termo) ||
-        produto.categoria.toLowerCase().includes(termo)
+    lista.innerHTML = "";
+
+    const termo =
+        pesquisa.value.toLowerCase();
+
+    const filtradas = tarefas.filter(tarefa =>
+
+        tarefa.titulo
+            .toLowerCase()
+            .includes(termo)
+
+        ||
+
+        tarefa.responsavel
+            .toLowerCase()
+            .includes(termo)
+
     );
 
-    produtosFiltrados.forEach(produto => {
+    filtradas.forEach(tarefa => {
 
-        let status;
-        let classeStatus;
+        let classePrioridade =
+            tarefa.prioridade
+                .toLowerCase()
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "");
 
-        if (produto.quantidade === 0) {
-            status = "Esgotado";
-            classeStatus = "esgotado";
-        } 
-        else if (produto.quantidade <= 5) {
-            status = "Estoque baixo";
-            classeStatus = "baixo";
-        } 
-        else {
-            status = "Disponível";
-            classeStatus = "disponivel";
-        }
+        let classeStatus =
+            tarefa.status
+                .toLowerCase()
+                .replace(" ", "-")
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "");
 
-        const valorTotal = produto.quantidade * produto.preco;
-
-        const linha = document.createElement("tr");
+        const linha =
+            document.createElement("tr");
 
         linha.innerHTML = `
-            <td>${produto.nome}</td>
-
-            <td>${produto.categoria}</td>
-
-            <td>${produto.quantidade}</td>
 
             <td>
-                ${formatarMoeda(produto.preco)}
+                <strong>
+                    ${tarefa.titulo}
+                </strong>
             </td>
 
             <td>
-                ${formatarMoeda(valorTotal)}
+                ${tarefa.responsavel}
             </td>
 
             <td>
-                <span class="status ${classeStatus}">
-                    ${status}
+                ${formatarData(tarefa.data)}
+            </td>
+
+            <td>
+                <span class="prioridade ${classePrioridade}">
+                    ${tarefa.prioridade}
                 </span>
             </td>
 
             <td>
+                <span class="status ${classeStatus}">
+                    ${tarefa.status}
+                </span>
+            </td>
+
+            <td>
+
                 <div class="acoes">
 
-                    <button 
-                        class="btn-editar"
-                        onclick="editarProduto(${produto.id})">
-                        Editar
+                    <button
+                        class="editar"
+                        onclick="editar(${tarefa.id})">
+                        ✏️
                     </button>
 
-                    <button 
-                        class="btn-excluir"
-                        onclick="excluirProduto(${produto.id})">
-                        Excluir
+                    <button
+                        class="excluir"
+                        onclick="excluir(${tarefa.id})">
+                        🗑️
                     </button>
 
                 </div>
+
             </td>
         `;
 
-        listaProdutos.appendChild(linha);
+        lista.appendChild(linha);
+
     });
 
     atualizarDashboard();
 }
 
-function excluirProduto(id) {
 
-    const confirmar = confirm(
-        "Tem certeza que deseja excluir este produto?"
-    );
+/* EDITAR */
+
+function editar(id) {
+
+    const tarefa =
+        tarefas.find(t => t.id === id);
+
+    if (!tarefa) return;
+
+    const novoTitulo =
+        prompt(
+            "Nome da tarefa:",
+            tarefa.titulo
+        );
+
+    if (novoTitulo === null) return;
+
+    const novoResponsavel =
+        prompt(
+            "Responsável:",
+            tarefa.responsavel
+        );
+
+    if (novoResponsavel === null) return;
+
+    const novoStatus =
+        prompt(
+            "Status:\nPendente\nEm andamento\nConcluído",
+            tarefa.status
+        );
+
+    if (novoStatus === null) return;
+
+    tarefa.titulo = novoTitulo;
+    tarefa.responsavel = novoResponsavel;
+    tarefa.status = novoStatus;
+
+    salvar();
+
+    mostrarTarefas();
+}
+
+
+/* EXCLUIR */
+
+function excluir(id) {
+
+    const confirmar =
+        confirm(
+            "Deseja realmente excluir esta tarefa?"
+        );
 
     if (!confirmar) return;
 
-    produtos = produtos.filter(produto => produto.id !== id);
+    tarefas =
+        tarefas.filter(
+            tarefa => tarefa.id !== id
+        );
 
-    salvarProdutos();
+    salvar();
 
-    mostrarProdutos();
+    mostrarTarefas();
 }
 
-function editarProduto(id) {
 
-    const produto = produtos.find(produto => produto.id === id);
-
-    if (!produto) return;
-
-    const novoNome = prompt(
-        "Nome do produto:",
-        produto.nome
-    );
-
-    if (novoNome === null) return;
-
-    const novaCategoria = prompt(
-        "Categoria:",
-        produto.categoria
-    );
-
-    if (novaCategoria === null) return;
-
-    const novaQuantidade = prompt(
-        "Quantidade:",
-        produto.quantidade
-    );
-
-    if (novaQuantidade === null) return;
-
-    const novoPreco = prompt(
-        "Preço:",
-        produto.preco
-    );
-
-    if (novoPreco === null) return;
-
-    produto.nome = novoNome;
-    produto.categoria = novaCategoria;
-    produto.quantidade = Number(novaQuantidade);
-    produto.preco = Number(novoPreco);
-
-    salvarProdutos();
-
-    mostrarProdutos();
-}
+/* DASHBOARD */
 
 function atualizarDashboard() {
 
-    const totalProdutos = produtos.length;
+    document.getElementById(
+        "totalTarefas"
+    ).textContent = tarefas.length;
 
-    const totalItens = produtos.reduce(
-        (total, produto) =>
-            total + produto.quantidade,
-        0
-    );
+    document.getElementById(
+        "pendentes"
+    ).textContent =
+        tarefas.filter(
+            t => t.status === "Pendente"
+        ).length;
 
-    const estoqueBaixo = produtos.filter(
-        produto =>
-            produto.quantidade <= 5
-    ).length;
+    document.getElementById(
+        "andamento"
+    ).textContent =
+        tarefas.filter(
+            t => t.status === "Em andamento"
+        ).length;
 
-    const valorEstoque = produtos.reduce(
-        (total, produto) =>
-            total + produto.quantidade * produto.preco,
-        0
-    );
-
-    document.getElementById("totalProdutos").textContent =
-        totalProdutos;
-
-    document.getElementById("totalItens").textContent =
-        totalItens;
-
-    document.getElementById("estoqueBaixo").textContent =
-        estoqueBaixo;
-
-    document.getElementById("valorEstoque").textContent =
-        formatarMoeda(valorEstoque);
+    document.getElementById(
+        "concluidas"
+    ).textContent =
+        tarefas.filter(
+            t => t.status === "Concluído"
+        ).length;
 }
 
-function formatarMoeda(valor) {
 
-    return valor.toLocaleString("pt-BR", {
-        style: "currency",
-        currency: "BRL"
-    });
+/* DATA */
 
+function formatarData(data) {
+
+    if (!data) return "";
+
+    const partes = data.split("-");
+
+    return `${partes[2]}/${partes[1]}/${partes[0]}`;
 }
+
+
+/* PESQUISA */
 
 pesquisa.addEventListener(
     "input",
-    mostrarProdutos
+    mostrarTarefas
 );
 
-mostrarProdutos();
+
+/* INICIAR */
+
+mostrarTarefas();
