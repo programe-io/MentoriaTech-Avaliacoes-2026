@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Controle de Estoque</title>
+    <!-- Google Fonts & FontAwesome para ícones -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --danger: #ef4444;
+            --success: #10b981;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        header {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2rem;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+        }
+
+        header h1 i {
+            color: var(--primary);
+        }
+
+        header p {
+            color: var(--text-light);
+        }
+
+        /* Cards de Estatísticas */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border: 1px solid var(--border);
+        }
+
+        .stat-card h3 {
+            font-size: 0.875rem;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card .value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        /* Formulário */
+        .form-card {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border: 1px solid var(--border);
+            margin-bottom: 2rem;
+        }
+
+        .form-card h2 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) 120px;
+            gap: 1rem;
+            align-items: end;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-group label {
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-bottom: 0.3rem;
+            color: var(--text-light);
+        }
+
+        .input-group input {
+            padding: 0.7rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .input-group input:focus {
+            border-color: var(--primary);
+        }
+
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.7rem 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            height: 42px;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            padding: 0.4rem 0.8rem;
+            font-size: 0.85rem;
+            height: auto;
+        }
+
+        .btn-danger:hover {
+            background-color: #dc2626;
+        }
+
+        /* Tabela */
+        .table-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th, td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background-color: #f1f5f9;
+            font-size: 0.85rem;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        td {
+            font-size: 0.95rem;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-light);
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"><link href="style.css" rel="stylesheet"></head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1><i class="fa-solid fa-boxes-stacked"></i> Controle de Estoque</h1>
+            <p>Gerencie seus produtos, quantidades e valores de forma simples e rápida.</p>
+        </header>
+
+        <!-- Cards de Resumo -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Total de Itens Cadastrados</h3>
+                <div class="value" id="totalItems">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Quantidade em Estoque</h3>
+                <div class="value" id="totalStock">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Valor Total do Estoque</h3>
+                <div class="value" id="totalValue">R$ 0,00</div>
+            </div>
+        </div>
+
+        <!-- Formulário de Cadastro -->
+        <div class="form-card">
+            <h2>Adicionar Novo Produto</h2>
+            <form id="productForm">
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label for="name">Nome do Produto</label>
+                        <input type="text" id="name" placeholder="Ex: Camiseta Básica" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="quantity">Quantidade</label>
+                        <input type="number" id="quantity" min="0" placeholder="Ex: 15" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="price">Preço Unitário (R$)</label>
+                        <input type="number" id="price" step="0.01" min="0" placeholder="Ex: 49.90" required>
+                    </div>
+                    <button type="submit" class="btn">Cadastrar</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Tabela de Produtos -->
+        <div class="table-card">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Produto</th>
+                        <th>Quantidade</th>
+                        <th>Preço Unitário</th>
+                        <th>Total no Estoque</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="productTableBody">
+                    <!-- Os produtos entram aqui dinamicamente via JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Array para armazenar os produtos (carrega do localStorage se houver)
+        let products = JSON.parse(localStorage.getItem('stock_products')) || [];
+
+        const productForm = document.getElementById('productForm');
+        const productTableBody = document.getElementById('productTableBody');
+        const totalItemsEl = document.getElementById('totalItems');
+        const totalStockEl = document.getElementById('totalStock');
+        const totalValueEl = document.getElementById('totalValue');
+
+        // Função para salvar no LocalStorage e atualizar a tela
+        function saveAndRender() {
+            localStorage.setItem('stock_products', JSON.stringify(products));
+            renderTable();
+            updateStats();
+        }
+
+        // Adicionar novo produto
+        productForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const name = document.getElementById('name').value;
+            const quantity = parseInt(document.getElementById('quantity').value);
+            const price = parseFloat(document.getElementById('price').value);
+
+            const newProduct = {
+                id: Date.now(),
+                name,
+                quantity,
+                price
+            };
+
+            products.push(newProduct);
+            saveAndRender();
+            productForm.reset();
+            document.getElementById('name').focus();
+        });
+
+        // Deletar produto
+        function deleteProduct(id) {
+            products = products.filter(product => product.id !== id);
+            saveAndRender();
+        }
+
+        // Renderizar Tabela
+        function renderTable() {
+            productTableBody.innerHTML = '';
+
+            if (products.length === 0) {
+                productTableBody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="empty-state">Nenhum produto cadastrado no estoque.</td>
+                    </tr>
+                `;
+                return;
+            }
+
+            products.forEach(product => {
+                const totalItemPrice = product.quantity * product.price;
+                const tr = document.createElement('tr');
+
+                tr.innerHTML = `
+                    <td><strong>${product.name}</strong></td>
+                    <td>${product.quantity} un</td>
+                    <td>R$ ${product.price.toFixed(2).replace('.', ',')}</td>
+                    <td>R$ ${totalItemPrice.toFixed(2).replace('.', ',')}</td>
+                    <td>
+                        <button class="btn btn-danger" onclick="deleteProduct(${product.id})">
+                            <i class="fa-solid fa-trash"></i> Excluir
+                        </button>
+                    </td>
+                `;
+
+                productTableBody.appendChild(tr);
+            });
+        }
+
+        // Atualizar Estatísticas do Topo
+        function updateStats() {
+            const totalItems = products.length;
+            const totalStock = products.reduce((acc, curr) => acc + curr.quantity, 0);
+            const totalValue = products.reduce((acc, curr) => acc + (curr.quantity * curr.price), 0);
+
+            totalItemsEl.textContent = totalItems;
+            totalStockEl.textContent = totalStock;
+            totalValueEl.textContent = `R$ ${totalValue.toFixed(2).replace('.', ',')}`;
+        }
+
+        // Executar carregamento inicial ao abrir a página
+        renderTable();
+        updateStats();
+    </script>
+<script src="script.js"></script></body>
+</html>
