@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"><link href="style.css" rel="stylesheet">
+</head>
+<body>
+  <!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BloGeek - O Blog Geek Moderno</title>
+
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    /* Custom Color Palette matching reference screenshot */
+    :root {
+      --bg-page: #0d223a;
+      --header-bg: #1f64b3;
+      --navbar-bg: #0a192c;
+      --card-bg: #143256;
+      --card-border: #1f4575;
+      --card-hover: #183c66;
+      --text-main: #ffffff;
+      --text-muted: #9bb5d6;
+      --accent-blue: #2a85e8;
+    }
+
+    body {
+      background-color: var(--bg-page);
+      color: #e2e8f0;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .bg-blog-header {
+      background-color: var(--header-bg);
+    }
+
+    .bg-blog-nav {
+      background-color: var(--navbar-bg);
+    }
+
+    .bg-blog-card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--card-border);
+    }
+
+    /* Simple smooth transitions */
+    .btn-blog {
+      background-color: #2575d0;
+      transition: background-color 0.2s ease, transform 0.1s ease;
+    }
+    .btn-blog:hover {
+      background-color: #1a62b8;
+    }
+
+    .gallery-box {
+      background-color: #1c4270;
+      border: 1px solid #285891;
+      transition: all 0.2s ease;
+    }
+    .gallery-box:hover {
+      background-color: #24528a;
+      border-color: #3b7bca;
+    }
+
+    /* Modal Backdrop */
+    .modal-overlay {
+      background-color: rgba(5, 12, 22, 0.85);
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0a192c;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1f4575;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #2a85e8;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-blue-600 selection:text-white">
+
+  <!-- TOP NAVBAR -->
+  <nav class="bg-blog-nav border-b border-blue-900/50 text-white py-2.5 px-4 sticky top-0 z-30 shadow-md">
+    <div class="max-w-6xl mx-auto flex items-center justify-between">
+      
+      <!-- Center Navigation Links -->
+      <div class="flex items-center space-x-6 text-sm font-medium mx-auto sm:mx-0">
+        <a href="#" onclick="filterPosts('all', event)" class="hover:text-blue-300 transition-colors">Início</a>
+        <a href="#galeria-sec" class="hover:text-blue-300 transition-colors">Galeria</a>
+        <a href="#" onclick="filterPosts('Colunas', event)" class="hover:text-blue-300 transition-colors">Colunas</a>
+        <a href="#footer-sec" class="hover:text-blue-300 transition-colors">Contatos</a>
+      </div>
+
+      <!-- Action Buttons (Login & Create Post) -->
+      <div class="hidden sm:flex items-center space-x-3">
+        <button onclick="openCreatePostModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-3 py-1.5 rounded flex items-center gap-1.5 shadow transition-all">
+          <i class="fa-solid fa-plus text-[11px]"></i> Novo Post
+        </button>
+
+        <div id="authNavArea">
+          <button onclick="openAuthModal()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-3.5 py-1.5 rounded flex items-center gap-1.5 shadow transition-all">
+            <i class="fa-solid fa-user text-[11px]"></i> Login
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </nav>
+
+  <!-- MAIN BANNER HEADER (Identical to reference image) -->
+  <header class="bg-blog-header py-8 px-4 text-center text-white shadow-lg border-b border-blue-600/30">
+    <div class="max-w-4xl mx-auto">
+      <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight mb-1">
+        BloGeek
+      </h1>
+      <p class="text-blue-100 text-sm sm:text-base font-normal opacity-90">
+        Notícias, Colunas e Conteúdo Geek Todos os Dias, deixa o like!
+      </p>
+    </div>
+  </header>
+
+  <!-- MAIN LAYOUT CONTAINER (2 Columns) -->
+  <main class="max-w-6xl mx-auto px-4 py-8 flex-grow w-full">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      
+      <!-- LEFT SIDEBAR (Narrower) -->
+      <aside class="lg:col-span-4 space-y-6">
+        
+        <!-- SOBRE (Author Profile Card) -->
+        <div class="bg-blog-card rounded-lg p-5 shadow-md">
+          <h2 class="text-xl font-bold text-white mb-3 border-b border-blue-900/60 pb-2">
+            Sobre
+          </h2>
+
+          <div class="flex items-center space-x-3 mb-3">
+            <!-- Author Avatar -->
+            <img id="authorAvatar" src="https://images.unsplash.com/photo-1501432377862-3d0432b87a14?q=80&w=387&auto=format&fit=crop" 
+              alt="Avatar Luan M." class="w-14 h-14 rounded-full border-2 border-blue-400 object-cover shadow">
+            
+            <div>
+              <div class="flex items-center gap-1.5">
+                <h3 id="authorNameDisplay" class="font-bold text-white text-base">Luan M.</h3>
+                <span id="verifiedBadge" class="hidden text-blue-400 text-xs" title="Conta Verificada">
+                  <i class="fa-solid fa-circle-check"></i>
+                </span>
+              </div>
+              <span class="text-xs text-blue-300 font-mono">@luan_geek</span>
+            </div>
+          </div>
+
+          <p id="authorBio" class="text-sm text-blue-100/90 leading-relaxed">
+            Gosto de jogos, hq's e livros.
+          </p>
+
+          <!-- User status tag -->
+          <div class="mt-4 pt-3 border-t border-blue-900/60 flex items-center justify-between text-xs text-blue-300">
+            <span>Status: <strong id="userStatusText" class="text-emerald-400 font-semibold">Dev</strong></span>
+            <button onclick="openAuthModal()" class="text-blue-300 hover:text-white underline text-[11px]">Alternar conta</button>
+          </div>
+        </div>
+
+        <!-- GALERIA (Sidebar Image Section - Fixed quotes error) -->
+        <div id="galeria-sec" class="bg-blog-card rounded-lg p-5 shadow-md">
+          <h2 class="text-xl font-bold text-white mb-1">
+            Galeria
+          </h2>
+          <p class="text-xs text-blue-200 mb-4 opacity-80">
+            Só imagem top!
+          </p>
+
+          <div class="space-y-3">
+            <div onclick="openLightbox('https://images.unsplash.com/photo-1620336655052-b57986f5a26a?w=800&auto=format&fit=crop&q=80', 'Marvel HQs')" 
+              class="gallery-box p-3 rounded cursor-pointer flex items-center justify-between group">
+              <span class="text-sm text-blue-100 font-medium group-hover:text-white">Marvel</span>
+              <i class="fa-regular fa-image text-blue-300 text-xs"></i>
+            </div>
+
+            <div onclick="openLightbox('https://images.unsplash.com/photo-1604866830893-c13cafa515d5?w=800&auto=format&fit=crop&q=80', 'Livros e Leitura')" 
+              class="gallery-box p-3 rounded cursor-pointer flex items-center justify-between group">
+              <span class="text-sm text-blue-100 font-medium group-hover:text-white">Livros</span>
+              <i class="fa-regular fa-image text-blue-300 text-xs"></i>
+            </div>
+
+            <div onclick="openLightbox('https://images.unsplash.com/photo-1616588589676-62b3bd4ff6d2?w=800&auto=format&fit=crop&q=80', 'Setup Gamer 2026')" 
+              class="gallery-box p-3 rounded cursor-pointer flex items-center justify-between group">
+              <span class="text-sm text-blue-100 font-medium group-hover:text-white">Meu Setup Gamer</span>
+              <i class="fa-regular fa-image text-blue-300 text-xs"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- CATEGORIAS SIMPLES -->
+        <div class="bg-blog-card rounded-lg p-5 shadow-md">
+          <h2 class="text-lg font-bold text-white mb-3 border-b border-blue-900/60 pb-2">
+            Categorias
+          </h2>
+          <div class="flex flex-col space-y-1.5 text-sm">
+            <button onclick="filterPosts('all', event)" class="text-left px-2 py-1.5 rounded hover:bg-blue-900/40 text-blue-200 hover:text-white transition-colors">
+              <i class="fa-solid fa-layer-group text-xs mr-1.5"></i> Todas as Notícias
+            </button>
+            <button onclick="filterPosts('Games', event)" class="text-left px-2 py-1.5 rounded hover:bg-blue-900/40 text-blue-200 hover:text-white transition-colors">
+              <i class="fa-solid fa-gamepad text-xs mr-1.5"></i> Games
+            </button>
+            <button onclick="filterPosts('Colunas', event)" class="text-left px-2 py-1.5 rounded hover:bg-blue-900/40 text-blue-200 hover:text-white transition-colors">
+              <i class="fa-solid fa-newspaper text-xs mr-1.5"></i> Colunas & Opinião
+            </button>
+          </div>
+        </div>
+
+      </aside>
+
+      <!-- RIGHT FEED (Posts List) -->
+      <section class="lg:col-span-8 space-y-6">
+        
+        <!-- Mobile Post Add Button -->
+        <div class="sm:hidden flex justify-end">
+          <button onclick="openCreatePostModal()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 px-4 rounded text-sm shadow">
+            <i class="fa-solid fa-plus mr-1"></i> Criar Nova Postagem
+          </button>
+        </div>
+
+        <!-- POSTS FEED CONTAINER -->
+        <div id="postsFeed" class="space-y-6">
+          <!-- Posts will be populated dynamically by JavaScript -->
+        </div>
+
+      </section>
+
+    </div>
+  </main>
+
+  <!-- MODAL: LOGIN & VERIFICAÇÃO DE CONTA REAL -->
+  <div id="authModal" onclick="handleBackdropClick(event, 'authModal')" class="fixed inset-0 z-50 hidden modal-overlay flex items-center justify-center p-4">
+    <div class="bg-blog-card border border-blue-500/40 max-w-md w-full p-6 rounded-lg shadow-2xl relative">
+      
+      <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-blue-300 hover:text-white text-lg">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <h3 class="text-xl font-bold text-white mb-1 flex items-center gap-2">
+        <i class="fa-solid fa-right-to-bracket text-blue-400"></i> Entrar no BloGeek
+      </h3>
+      <p class="text-xs text-blue-200 mb-5">
+        Insira seus dados para verificar se sua conta é real.
+      </p>
+
+      <form id="authForm" onsubmit="handleLoginSubmit(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-medium text-blue-200 mb-1">NOME DO AUTOR / USUÁRIO</label>
+          <input type="text" id="loginName" required placeholder="Ex: Luan M." 
+            class="w-full bg-slate-900 border border-blue-900 rounded p-2 text-sm text-white focus:outline-none focus:border-blue-400">
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-blue-200 mb-1">E-MAIL REAL (COM VERIFICAÇÃO)</label>
+          <input type="email" id="loginEmail" required placeholder="seuemail@provedor.com" 
+            class="w-full bg-slate-900 border border-blue-900 rounded p-2 text-sm text-white focus:outline-none focus:border-blue-400">
+          <span class="text-[11px] text-blue-300 mt-1 block">Verificamos o formato de e-mail autêntico.</span>
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-blue-200 mb-1">SENHA</label>
+          <input type="password" id="loginPassword" required minlength="6" placeholder="Mínimo 6 caracteres" 
+            class="w-full bg-slate-900 border border-blue-900 rounded p-2 text-sm text-white focus:outline-none focus:border-blue-400">
+        </div>
+
+        <!-- Validation Alert Box -->
+        <div id="authError" class="hidden p-3 bg-red-950/80 border border-red-600 rounded text-red-200 text-xs">
+          <i class="fa-solid fa-circle-exclamation mr-1"></i>
+          <span id="authErrorMsg">Formato de e-mail inválido.</span>
+        </div>
+
+        <button type="submit" class="w-full btn-blog text-white font-bold py-2.5 rounded text-sm shadow mt-2">
+          ENTRAR E VERIFICAR CONTA
+        </button>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- MODAL: POSTAR NOTAS COM IMAGENS -->
+  <div id="createPostModal" onclick="handleBackdropClick(event, 'createPostModal')" class="fixed inset-0 z-50 hidden modal-overlay flex items-center justify-center p-4">
+    <div class="bg-blog-card border border-blue-500/40 max-w-xl w-full p-6 rounded-lg shadow-2xl relative max-h-[90vh] overflow-y-auto">
+      
+      <button onclick="closeCreatePostModal()" class="absolute top-4 right-4 text-blue-300 hover:text-white text-lg">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <h3 class="text-xl font-bold text-white mb-1 flex items-center gap-2">
+        <i class="fa-solid fa-pen-to-square text-emerald-400"></i> Publicar Nova Nota
+      </h3>
+      <p class="text-xs text-blue-200 mb-4">
+        Escreva seu texto e insira o link da imagem da capa.
+      </p>
+
+      <form onsubmit="handleCreatePostSubmit(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-medium text-blue-200 mb-1">TÍTULO DA PUBLICAÇÃO</label>
+          <input type="text" id="postTitle" required placeholder="Ex: GTA 6 sera que vai ser adiado de novo??" 
+            class="w-full bg-slate-900 border border-blue-900 rounded p-2 text-sm text-white focus:outline-none focus:border-blue-400">
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-medium text-blue-200 mb-1">CATEGORIA</label>
+            <select id="postCategory" class="w-full bg-slate-900 border border-blue-900 rounded p-2 text-sm text-white focus:outline-none focus:border-blue-400">
+              <option value="Games">Games</option>
+              <option value="Colunas">Colunas</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-blue-200 mb-1">AUTOR</label>
+            <input type="text" id="postAuthorInput" readonly 
+              class="w-full bg-slate-800 border border-blue-900 rounded p-2 text-sm text-blue-300 font-semibold cursor-not-allowed">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-blue-200 mb-1">LINK / URL DA IMAGEM</label>
+          <input type="url" id="postImageUrl" required placeholder="https://exemplo.com/imagem.jpg" 
+            class="w-full bg-slate-900 border border-blue-900 rounded p-2 text-sm text-white focus:outline-none focus:border-blue-400">
+          
+          <!-- Quick Image Presets -->
+          <div class="mt-2">
+            <span class="text-[11px] text-blue-300 block mb-1">Ou selecione uma imagem de teste rápida:</span>
+            <div class="flex gap-2 flex-wrap">
+              <button type="button" onclick="setPresetImg('https://images.unsplash.com/photo-1542751371-adc38448a05e?w=800')" class="text-xs bg-blue-900/60 hover:bg-blue-800 px-2 py-1 rounded text-blue-200 border border-blue-700">GTA VI</button>
+              <button type="button" onclick="setPresetImg('https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=800')" class="text-xs bg-blue-900/60 hover:bg-blue-800 px-2 py-1 rounded text-blue-200 border border-blue-700">Resident Evil</button>
+              <button type="button" onclick="setPresetImg('https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800')" class="text-xs bg-blue-900/60 hover:bg-blue-800 px-2 py-1 rounded text-blue-200 border border-blue-700">Hardware</button>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-blue-200 mb-1">TEXTO DA NOTA / CONTEÚDO</label>
+          <textarea id="postContent" rows="4" required placeholder="Escreva o texto completo da postagem aqui..." 
+            class="w-full bg-slate-900 border border-blue-900 rounded p-2 text-sm text-white focus:outline-none focus:border-blue-400"></textarea>
+        </div>
+
+        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded text-sm shadow mt-2">
+          PUBLICAR NOTA
+        </button>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- LIGHTBOX MODAL PARA EXPANDIR IMAGENS DA GALERIA -->
+  <div id="lightboxModal" onclick="handleBackdropClick(event, 'lightboxModal')" class="fixed inset-0 z-50 hidden modal-overlay flex items-center justify-center p-4">
+    <button onclick="closeLightbox()" class="absolute top-6 right-6 text-white text-3xl hover:text-blue-300">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+    <div class="max-w-3xl text-center space-y-3">
+      <img id="lightboxImg" src="" alt="Galeria Ampliada" class="max-w-full max-h-[80vh] object-contain rounded border-2 border-blue-500 mx-auto shadow-2xl">
+      <p id="lightboxCaption" class="text-white font-semibold text-base"></p>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-blue-950 border border-blue-400 px-4 py-3 rounded shadow-xl flex items-center space-x-3 text-sm text-white">
+    <i id="toastIcon" class="fa-solid fa-circle-check text-emerald-400 text-base"></i>
+    <span id="toastMsg">Mensagem</span>
+  </div>
+
+  <!-- FOOTER -->
+  <footer id="footer-sec" class="bg-blog-nav border-t border-blue-900/60 py-6 mt-12 text-center text-xs text-blue-300">
+    <div class="max-w-6xl mx-auto px-4 space-y-2">
+      <p class="font-semibold text-white">BloGeek - O Blog Geek Moderno</p>
+      <p>© 2026 Luan Matheus. Todos os direitos reservados. Vídeos e Notícias Todos os Dias!</p>
+    </div>
+  </footer>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    
+    // Application Initial State
+    let currentUser = {
+      name: "Luan M.",
+      email: "luan@blogeek.com",
+      isLoggedIn: false,
+      isVerified: false
+    };
+
+    let activeFilter = "all";
+
+    // Initial posts matching screenshot layout and content (Fixed typo in date)
+    let posts = [
+      {
+        id: 1,
+        title: "GTA 6 sera que vai ser adiado de novo??",
+        author: "Luan M.",
+        date: "18 Setembro 2026",
+        imageUrl: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=1000&auto=format&fit=crop&q=80",
+        content: "Lorem ipsum dolor sit, amet consectetur...\n\nLorem, ipsum dolor sit amet consectetur adipisicing elit. Distinctio, laudantium consequatur ad quo? Dolorum, repudiandae provident assumenda nesciunt eius placeat asperiores architecto cumque inventore eum! Lorem ipsum dolor sit amet consectetur, adipisicing elit. Nemo voluptas delectus illum adipisci dolor repudiandae eius, nisi voluptatem, corrupti iste nobis reprehenderit! Quaerat dicta ipsa perspi.",
+        category: "Games"
+      },
+      {
+        id: 2,
+        title: "Resident Evil: Requiem - Teaser Oficial Anunciado",
+        author: "Luan M.",
+        date: "02 Fevereiro 2026",
+        imageUrl: "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=1000&auto=format&fit=crop&q=80",
+        content: "Novas imagens divulgadas mostram o retorno do clima aterrorizante e sombrio da franquia clássica. Confira os primeiros detalhes divulgados pela equipe do jogo.",
+        category: "Games"
+      }
+    ];
+
+    // Render Posts in the feed
+    function renderPosts() {
+      const container = document.getElementById('postsFeed');
+      if (!container) return;
+
+      const filtered = posts.filter(p => activeFilter === 'all' || p.category === activeFilter);
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="bg-blog-card p-8 rounded-lg text-center text-blue-200">
+            <i class="fa-regular fa-folder-open text-3xl mb-2 text-blue-400"></i>
+            <p class="font-bold">Nenhuma postagem encontrada nesta categoria.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filtered.map(post => `
+        <article class="bg-blog-card rounded-lg p-5 shadow-md border border-blue-900/60">
+          
+          <!-- Post Title -->
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-white mb-1 tracking-tight">
+            ${escapeHtml(post.title)}
+          </h2>
+
+          <!-- Author | Date Subtitle -->
+          <p class="text-xs sm:text-sm text-blue-300 mb-4 font-normal">
+            ${escapeHtml(post.author)} | ${escapeHtml(post.date)}
+          </p>
+
+          <!-- Large Featured Image -->
+          <div class="rounded-md overflow-hidden bg-slate-900 mb-4 border border-blue-900/40">
+            <img src="${escapeHtml(post.imageUrl)}" alt="${escapeHtml(post.title)}" class="w-full h-auto max-h-[480px] object-cover" onerror="this.src='https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800'">
+          </div>
+
+          <!-- Paragraph Text Below Image -->
+          <div class="text-blue-100 text-sm sm:text-base leading-relaxed space-y-3 font-normal">
+            ${post.content.split('\n\n').map(paragraph => `<p>${escapeHtml(paragraph)}</p>`).join('')}
+          </div>
+
+          <!-- Like & Interaction Bar -->
+          <div class="mt-4 pt-3 border-t border-blue-900/60 flex items-center justify-between text-xs text-blue-300">
+            <button onclick="likePost(this)" class="hover:text-pink-400 font-semibold flex items-center gap-1.5 transition-colors">
+              <i class="fa-regular fa-heart text-pink-500"></i> <span>Deixar o Like</span>
+            </button>
+            <span class="bg-blue-900/50 px-2 py-1 rounded text-[11px] text-blue-200 border border-blue-800">${escapeHtml(post.category)}</span>
+          </div>
+
+        </article>
+      `).join('');
+    }
+
+    // Auth & Account Verification Handlers
+    function openAuthModal() {
+      document.getElementById('authModal').classList.remove('hidden');
+      document.getElementById('authError').classList.add('hidden');
+      if (currentUser.isLoggedIn) {
+        document.getElementById('loginName').value = currentUser.name;
+        document.getElementById('loginEmail').value = currentUser.email;
+      }
+    }
+
+    function closeAuthModal() {
+      document.getElementById('authModal').classList.add('hidden');
+    }
+
+    function handleLoginSubmit(e) {
+      e.preventDefault();
+      
+      const name = document.getElementById('loginName').value.trim();
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+
+      // Real email validation via Regex
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        showAuthError("Por favor, insira um endereço de e-mail real e válido (exemplo: usuario@gmail.com).");
+        return;
+      }
+
+      if (password.length < 6) {
+        showAuthError("A senha precisa conter no mínimo 6 caracteres.");
+        return;
+      }
+
+      // Successful verification
+      currentUser.name = name;
+      currentUser.email = email;
+      currentUser.isLoggedIn = true;
+      currentUser.isVerified = true;
+
+      updateUserUI();
+      closeAuthModal();
+      showToast(`Conta verificada com sucesso! Bem-vindo(a) ${name}`);
+    }
+
+    function showAuthError(msg) {
+      const errBox = document.getElementById('authError');
+      const errTxt = document.getElementById('authErrorMsg');
+      errTxt.textContent = msg;
+      errBox.classList.remove('hidden');
+    }
+
+    function updateUserUI() {
+      const badge = document.getElementById('verifiedBadge');
+      const authorDisplay = document.getElementById('authorNameDisplay');
+      const statusText = document.getElementById('userStatusText');
+      const authorInput = document.getElementById('postAuthorInput');
+      const authNavArea = document.getElementById('authNavArea');
+
+      if (currentUser.isLoggedIn) {
+        authorDisplay.textContent = currentUser.name;
+        if (currentUser.isVerified && badge) badge.classList.remove('hidden');
+        if (statusText) {
+          statusText.textContent = "Conta Verificada";
+          statusText.className = "text-emerald-400 font-semibold";
+        }
+        if (authorInput) authorInput.value = currentUser.name;
+
+        if (authNavArea) {
+          authNavArea.innerHTML = `
+            <div class="flex items-center space-x-2 bg-blue-900/60 border border-blue-700 px-2.5 py-1 rounded cursor-pointer" onclick="openAuthModal()" title="Ver Perfil">
+              <span class="text-xs font-bold text-white">${escapeHtml(currentUser.name)}</span>
+              <i class="fa-solid fa-circle-check text-blue-400 text-xs" title="Verificado"></i>
+            </div>
+          `;
+        }
+      } else {
+        if (authorInput) authorInput.value = "Luan M.";
+      }
+    }
+
+    // Create Post Handlers
+    function openCreatePostModal() {
+      document.getElementById('createPostModal').classList.remove('hidden');
+      document.getElementById('postAuthorInput').value = currentUser.name || "Luan M.";
+    }
+
+    function closeCreatePostModal() {
+      document.getElementById('createPostModal').classList.add('hidden');
+    }
+
+    function setPresetImg(url) {
+      document.getElementById('postImageUrl').value = url;
+    }
+
+    function handleCreatePostSubmit(e) {
+      e.preventDefault();
+
+      const title = document.getElementById('postTitle').value.trim();
+      const category = document.getElementById('postCategory').value;
+      const imageUrl = document.getElementById('postImageUrl').value.trim();
+      const content = document.getElementById('postContent').value.trim();
+      const author = currentUser.name || "Luan Matheus";
+
+      // Date formatting in Portuguese (e.g., 18 Setembro 2026)
+      const now = new Date();
+      const months = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+      const dateStr = `${String(now.getDate()).padStart(2, '0')} ${months[now.getMonth()]} ${now.getFullYear()}`;
+
+      const newPost = {
+        id: Date.now(),
+        title: title,
+        author: author,
+        date: dateStr,
+        imageUrl: imageUrl,
+        content: content,
+        category: category
+      };
+
+      // Add to top of feed
+      posts.unshift(newPost);
+      renderPosts();
+      closeCreatePostModal();
+
+      // Reset form
+      e.target.reset();
+      showToast("Sua nota foi publicada no feed!");
+    }
+
+    // Lightbox for Gallery images
+    function openLightbox(url, caption) {
+      document.getElementById('lightboxImg').src = url;
+      document.getElementById('lightboxCaption').textContent = caption;
+      document.getElementById('lightboxModal').classList.remove('hidden');
+    }
+
+    function closeLightbox() {
+      document.getElementById('lightboxModal').classList.add('hidden');
+    }
+
+    // Helper Functions & Filtering
+    function filterPosts(cat, event) {
+      if (event) event.preventDefault();
+      activeFilter = cat;
+      renderPosts();
+      showToast(cat === 'all' ? "Exibindo todas as notícias" : `Filtrado por: ${cat}`);
+    }
+
+    function likePost(btn) {
+      btn.innerHTML = `<i class="fa-solid fa-heart text-pink-500"></i> <span class="text-pink-400 font-bold">Likado!</span>`;
+      showToast("Obrigado pelo like!");
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toastMsg');
+      if (!toast || !toastMsg) return;
+
+      toastMsg.textContent = msg;
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      
+      clearTimeout(window.toastTimer);
+      window.toastTimer = setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 3000);
+    }
+  <script src="script.js"></script>
+  
+</body>
+</html>
