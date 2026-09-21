@@ -1,1657 +1,299 @@
+```html
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
-  <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
-
-  <title>Rapunzel Feed 🌸</title>
-
-  <style>
-
-    /* ==============================
-       RESET
-    ============================== */
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: Arial, Helvetica, sans-serif;
-    }
-
-
-    /* ==============================
-       CORES
-    ============================== */
-
-    :root {
-
-      --bg: #fff5fb;
-
-      --card: #ffffff;
-
-      --purple: #7045a5;
-
-      --purple-dark: #4b2c70;
-
-      --pink: #e98ac7;
-
-      --yellow: #ffd45c;
-
-      --text: #382542;
-
-      --muted: #8b7893;
-
-      --border: rgba(90, 50, 100, .12);
-
-    }
-
-
-    body.dark {
-
-      --bg: #21182b;
-
-      --card: #30223b;
-
-      --purple: #b47ce0;
-
-      --purple-dark: #d09bea;
-
-      --pink: #ed8fd0;
-
-      --yellow: #ffd96b;
-
-      --text: #fff;
-
-      --muted: #c9b8d1;
-
-      --border: rgba(255,255,255,.1);
-
-    }
-
-
-    /* ==============================
-       BODY
-    ============================== */
-
-    body {
-
-      min-height: 100vh;
-
-      color: var(--text);
-
-      background:
-
-        radial-gradient(
-          circle at 10% 10%,
-          rgba(233,138,199,.3),
-          transparent 30%
-        ),
-
-        radial-gradient(
-          circle at 90% 90%,
-          rgba(112,69,165,.18),
-          transparent 30%
-        ),
-
-        var(--bg);
-
-      transition: .3s;
-
-    }
-
-
-    /* ==============================
-       HEADER
-    ============================== */
-
-    header {
-
-      height: 70px;
-
-      position: sticky;
-
-      top: 0;
-
-      z-index: 100;
-
-      background: rgba(255,255,255,.85);
-
-      backdrop-filter: blur(15px);
-
-      border-bottom:
-        1px solid var(--border);
-
-    }
-
-
-    body.dark header {
-
-      background:
-        rgba(33,24,43,.88);
-
-    }
-
-
-    .header-content {
-
-      width: min(1100px, 94%);
-
-      height: 100%;
-
-      margin: auto;
-
-      display: flex;
-
-      align-items: center;
-
-      justify-content: space-between;
-
-    }
-
-
-    /* LOGO */
-
-    .logo {
-
-      font-size: 25px;
-
-      font-weight: 900;
-
-      color: var(--purple-dark);
-
-    }
-
-
-    .logo span {
-
-      color: var(--pink);
-
-    }
-
-
-    /* HEADER BUTTONS */
-
-    .header-buttons {
-
-      display: flex;
-
-      gap: 10px;
-
-    }
-
-
-    .icon-button {
-
-      width: 42px;
-
-      height: 42px;
-
-      border: 1px solid var(--border);
-
-      border-radius: 50%;
-
-      background: var(--card);
-
-      color: var(--text);
-
-      cursor: pointer;
-
-      font-size: 18px;
-
-      transition: .2s;
-
-    }
-
-
-    .icon-button:hover {
-
-      transform: scale(1.08);
-
-      background: var(--purple);
-
-      color: white;
-
-    }
-
-
-    /* ==============================
-       PERFIL
-    ============================== */
-
-    .profile {
-
-      width: min(1100px, 94%);
-
-      margin: 30px auto 20px;
-
-      background: var(--card);
-
-      border-radius: 25px;
-
-      overflow: hidden;
-
-      border:
-        1px solid var(--border);
-
-      box-shadow:
-        0 15px 50px rgba(100,50,120,.15);
-
-    }
-
-
-    /* CAPA */
-
-    .cover {
-
-      height: 230px;
-
-      position: relative;
-
-      background:
-
-        linear-gradient(
-          120deg,
-          rgba(73,35,100,.35),
-          rgba(238,139,201,.2)
-        ),
-
-        url(
-          "https://image.tmdb.org/t/p/original/4iGf3S9QwG5g1W6YQ8M7j4W3m8V.jpg"
-        );
-
-      background-size: cover;
-
-      background-position: center;
-
-    }
-
-
-    .cover::after {
-
-      content: "";
-
-      position: absolute;
-
-      inset: 0;
-
-      background:
-        linear-gradient(
-          transparent,
-          rgba(50,20,70,.65)
-        );
-
-    }
-
-
-    /* PERFIL INFO */
-
-    .profile-info {
-
-      padding:
-        0 28px 25px;
-
-    }
-
-
-    .profile-row {
-
-      display: flex;
-
-      align-items: flex-end;
-
-      justify-content: space-between;
-
-      gap: 20px;
-
-    }
-
-
-    .avatar {
-
-      width: 115px;
-
-      height: 115px;
-
-      object-fit: cover;
-
-      border-radius: 50%;
-
-      border:
-        5px solid var(--card);
-
-      margin-top: -55px;
-
-      position: relative;
-
-      z-index: 2;
-
-    }
-
-
-    .profile-name {
-
-      font-size: 28px;
-
-      font-weight: 900;
-
-      margin-top: 8px;
-
-    }
-
-
-    .verified {
-
-      color: #3da9ff;
-
-    }
-
-
-    .username {
-
-      color: var(--muted);
-
-      margin-top: 4px;
-
-    }
-
-
-    .bio {
-
-      color: var(--muted);
-
-      line-height: 1.6;
-
-      margin-top: 15px;
-
-    }
-
-
-    /* FOLLOW */
-
-    .follow-button {
-
-      border: 0;
-
-      padding:
-        12px 23px;
-
-      border-radius: 30px;
-
-      color: white;
-
-      font-weight: bold;
-
-      cursor: pointer;
-
-      background:
-
-        linear-gradient(
-          90deg,
-          var(--purple),
-          var(--pink)
-        );
-
-      transition: .2s;
-
-    }
-
-
-    .follow-button:hover {
-
-      transform:
-        translateY(-2px);
-
-      box-shadow:
-        0 8px 25px
-        rgba(112,69,165,.3);
-
-    }
-
-
-    .follow-button.following {
-
-      background:
-        #765d82;
-
-    }
-
-
-    /* ==============================
-       FILTROS
-    ============================== */
-
-    .filters {
-
-      width: min(1100px, 94%);
-
-      margin: 20px auto;
-
-      display: flex;
-
-      gap: 10px;
-
-      overflow-x: auto;
-
-    }
-
-
-    .filter {
-
-      padding:
-        10px 18px;
-
-      border-radius: 30px;
-
-      border:
-        1px solid var(--border);
-
-      background: var(--card);
-
-      color: var(--muted);
-
-      cursor: pointer;
-
-      white-space: nowrap;
-
-      transition: .2s;
-
-    }
-
-
-    .filter:hover,
-
-    .filter.active {
-
-      background: var(--purple);
-
-      color: white;
-
-      border-color:
-        var(--purple);
-
-    }
-
-
-    /* ==============================
-       FEED
-    ============================== */
-
-    .feed {
-
-      width: min(760px, 94%);
-
-      margin: auto;
-
-      padding-bottom: 50px;
-
-    }
-
-
-    /* ==============================
-       POST
-    ============================== */
-
-    .post {
-
-      background: var(--card);
-
-      border:
-        1px solid var(--border);
-
-      border-radius: 20px;
-
-      overflow: hidden;
-
-      margin-bottom: 20px;
-
-      box-shadow:
-        0 8px 30px
-        rgba(80,30,100,.08);
-
-      animation:
-        appear .4s ease;
-
-    }
-
-
-    @keyframes appear {
-
-      from {
-
-        opacity: 0;
-
-        transform:
-          translateY(15px);
-
-      }
-
-      to {
-
-        opacity: 1;
-
-        transform:
-          translateY(0);
-
-      }
-
-    }
-
-
-    /* POST HEADER */
-
-    .post-header {
-
-      display: flex;
-
-      align-items: center;
-
-      gap: 12px;
-
-      padding: 17px;
-
-    }
-
-
-    .post-avatar {
-
-      width: 45px;
-
-      height: 45px;
-
-      border-radius: 50%;
-
-      object-fit: cover;
-
-    }
-
-
-    .post-user {
-
-      font-weight: bold;
-
-    }
-
-
-    .post-time {
-
-      display: block;
-
-      color: var(--muted);
-
-      font-size: 13px;
-
-      margin-top: 4px;
-
-    }
-
-
-    /* TEXTO */
-
-    .post-text {
-
-      padding:
-        0 18px 16px;
-
-      line-height: 1.6;
-
-    }
-
-
-    /* IMAGEM */
-
-    .post-image {
-
-      width: 100%;
-
-      max-height: 600px;
-
-      display: block;
-
-      object-fit: cover;
-
-      cursor: pointer;
-
-      transition: .3s;
-
-    }
-
-
-    .post-image:hover {
-
-      filter:
-        brightness(1.08);
-
-      transform:
-        scale(1.01);
-
-    }
-
-
-    /* ESTATÍSTICAS */
-
-    .stats {
-
-      padding:
-        13px 18px;
-
-      display: flex;
-
-      justify-content: space-between;
-
-      color: var(--muted);
-
-      font-size: 14px;
-
-      border-bottom:
-        1px solid var(--border);
-
-    }
-
-
-    /* AÇÕES */
-
-    .actions {
-
-      display: grid;
-
-      grid-template-columns:
-        repeat(3, 1fr);
-
-      padding: 8px;
-
-      gap: 5px;
-
-    }
-
-
-    .action {
-
-      border: 0;
-
-      background: transparent;
-
-      color: var(--muted);
-
-      padding: 11px;
-
-      border-radius: 10px;
-
-      cursor: pointer;
-
-      transition: .2s;
-
-      font-size: 14px;
-
-    }
-
-
-    .action:hover {
-
-      background: var(--bg);
-
-      color: var(--text);
-
-    }
-
-
-    .action.liked {
-
-      color: #e84276;
-
-    }
-
-
-    /* ==============================
-       MODAL
-    ============================== */
-
-    .modal {
-
-      position: fixed;
-
-      inset: 0;
-
-      z-index: 999;
-
-      background:
-        rgba(20,10,25,.9);
-
-      display: none;
-
-      align-items: center;
-
-      justify-content: center;
-
-      padding: 20px;
-
-    }
-
-
-    .modal.show {
-
-      display: flex;
-
-    }
-
-
-    .modal img {
-
-      max-width: 95%;
-
-      max-height: 90vh;
-
-      border-radius: 15px;
-
-      box-shadow:
-        0 20px 70px rgba(0,0,0,.6);
-
-      animation:
-        zoom .25s ease;
-
-    }
-
-
-    @keyframes zoom {
-
-      from {
-
-        transform: scale(.8);
-
-        opacity: 0;
-
-      }
-
-      to {
-
-        transform: scale(1);
-
-        opacity: 1;
-
-      }
-
-    }
-
-
-    .close {
-
-      position: fixed;
-
-      right: 25px;
-
-      top: 15px;
-
-      color: white;
-
-      font-size: 40px;
-
-      cursor: pointer;
-
-    }
-
-
-    /* ==============================
-       RESPONSIVO
-    ============================== */
-
-    @media (max-width: 600px) {
-
-      header {
-        height: 62px;
-      }
-
-      .logo {
-        font-size: 20px;
-      }
-
-      .cover {
-        height: 170px;
-      }
-
-      .profile-info {
-        padding:
-          0 18px 20px;
-      }
-
-      .avatar {
-        width: 90px;
-        height: 90px;
-        margin-top: -45px;
-      }
-
-      .profile-name {
-        font-size: 21px;
-      }
-
-      .follow-button {
-        padding:
-          10px 15px;
-        font-size: 13px;
-      }
-
-      .post-image {
-        max-height: 500px;
-      }
-
-      .action {
-        font-size: 13px;
-        padding: 10px 4px;
-      }
-
-    }
-
-  </style>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini Feed - Neymar Jr.</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f0f2f5;
+        }
+
+        header {
+            background: linear-gradient(90deg, #008000, #ffdf00);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 30px;
+        }
+
+        .feed {
+            width: 500px;
+            max-width: 95%;
+            margin: 25px auto;
+        }
+
+        .post {
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            padding: 15px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+        }
+
+        .perfil {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .perfil img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .perfil strong {
+            font-size: 17px;
+        }
+
+        .perfil small {
+            display: block;
+            color: gray;
+        }
+
+        .post > img {
+            width: 100%;
+            border-radius: 10px;
+            max-height: 450px;
+            object-fit: cover;
+        }
+
+        .legenda {
+            padding: 12px 0;
+            font-size: 16px;
+        }
+
+        .botoes {
+            display: flex;
+            gap: 8px;
+            border-top: 1px solid #ddd;
+            padding-top: 12px;
+        }
+
+        button {
+            border: none;
+            background: #eee;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        button:hover {
+            background: #ddd;
+        }
+
+        .curtido {
+            background: #ff4d6d;
+            color: white;
+        }
+
+        .comentarios {
+            margin-top: 12px;
+            display: none;
+        }
+
+        .comentarios input {
+            width: 75%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 7px;
+        }
+
+        .comentarios button {
+            background: #008000;
+            color: white;
+        }
+
+        .lista-comentarios {
+            margin-top: 10px;
+        }
+
+        .lista-comentarios p {
+            background: #f1f1f1;
+            padding: 8px;
+            border-radius: 7px;
+            margin-top: 5px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: gray;
+        }
+    </style>
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="style.css" rel="stylesheet"></head>
 
-
 <body>
 
-
-  <!-- ============================
-       HEADER
-  ============================= -->
-
-  <header>
-
-    <div class="header-content">
-
-      <div class="logo">
-        RAPUN<span>FEED</span> 🌸
-      </div>
-
-
-      <div class="header-buttons">
-
-        <button
-          class="icon-button"
-          onclick="toggleTheme()"
-          id="themeButton">
-
-          🌙
-
-        </button>
-
-
-        <button
-          class="icon-button"
-          onclick="goToFeed()">
-
-          📰
-
-        </button>
-
-      </div>
-
-    </div>
-
-  </header>
-
-
-  <!-- ============================
-       PERFIL
-  ============================= -->
-
-  <section class="profile">
-
-
-    <div class="cover"></div>
-
-
-    <div class="profile-info">
-
-
-      <div class="profile-row">
-
-
-        <div>
-
-          <img
-            class="avatar"
-            src="https://image.tmdb.org/t/p/w500/4iGf3S9QwG5g1W6YQ8M7j4W3m8V.jpg"
-            alt="Rapunzel"
-          >
-
-
-          <div class="profile-name">
-
-            Rapunzel
-
-            <span class="verified">
-              ✓
-            </span>
-
-          </div>
-
-
-          <div class="username">
-            @rapunzel
-          </div>
-
-        </div>
-
-
-        <button
-          class="follow-button"
-          id="followButton"
-          onclick="follow()">
-
-          Seguir
-
-        </button>
-
-
-      </div>
-
-
-      <p class="bio">
-
-        🌸 Bem-vindo ao Reino de Corona!
-        ✨ Cabelos mágicos, lanternas, aventuras
-        e muita diversão. 🏰💜
-
-      </p>
-
-    </div>
-
-  </section>
-
-
-  <!-- ============================
-       FILTROS
-  ============================= -->
-
-  <nav class="filters">
-
-
-    <button
-      class="filter active"
-      onclick="filterPosts('all', this)">
-
-      ✨ Todos
-
-    </button>
-
-
-    <button
-      class="filter"
-      onclick="filterPosts('photos', this)">
-
-      📸 Fotos
-
-    </button>
-
-
-    <button
-      class="filter"
-      onclick="filterPosts('adventure', this)">
-
-      🏰 Aventuras
-
-    </button>
-
-
-    <button
-      class="filter"
-      onclick="filterPosts('lanterns', this)">
-
-      🏮 Lanternas
-
-    </button>
-
-
-  </nav>
-
-
-  <!-- ============================
-       FEED
-  ============================= -->
-
-  <main
-    class="feed"
-    id="feed">
-
+<header>
+    <h1>⚽ Neymar Jr. Feed</h1>
+    <p>Futebol, dribles e momentos do craque!</p>
+</header>
+
+<div class="feed">
 
     <!-- POST 1 -->
+    <div class="post">
 
-    <article
-      class="post"
-      data-category="photos">
-
-
-      <div class="post-header">
-
-
-        <img
-          class="post-avatar"
-          src="https://image.tmdb.org/t/p/w500/4iGf3S9QwG5g1W6YQ8M7j4W3m8V.jpg"
-          alt="Rapunzel"
-        >
-
-
-        <div>
-
-          <div class="post-user">
-            Rapunzel ✓
-          </div>
-
-          <span class="post-time">
-            Hoje • 18:30
-          </span>
-
+        <div class="perfil">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/1/1b/Neymar_Paris_Saint-Germain_2018.jpg">
+            <div>
+                <strong>Neymar Jr. ⭐</strong>
+                <small>@neymarjr</small>
+            </div>
         </div>
 
-      </div>
+        <img src="https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=900&q=80">
 
+        <p class="legenda">
+            ⚽ Momentos inesquecíveis dentro de campo! 
+            A paixão pelo futebol nunca para. 🔥
+        </p>
 
-      <p class="post-text">
+        <div class="botoes">
+            <button onclick="curtir(this)">❤️ Curtir</button>
+            <button onclick="mostrarComentarios(this)">💬 Comentar</button>
+            <button onclick="compartilhar()">📤 Compartilhar</button>
+        </div>
 
-        Um dia perfeito para explorar o mundo
-        além da torre. 🌸✨
+        <div class="comentarios">
+            <input type="text" placeholder="Escreva um comentário...">
+            <button onclick="adicionarComentario(this)">Enviar</button>
 
-      </p>
+            <div class="lista-comentarios"></div>
+        </div>
 
-
-      <img
-        class="post-image"
-        onclick="openImage(this.src)"
-        src="https://image.tmdb.org/t/p/original/4iGf3S9QwG5g1W6YQ8M7j4W3m8V.jpg"
-        alt="Rapunzel"
-      >
-
-
-      <div class="stats">
-
-        <span>
-          ❤️ <span class="like-count">3842</span>
-          curtidas
-        </span>
-
-        <span>
-          💬 231 comentários
-        </span>
-
-      </div>
-
-
-      <div class="actions">
-
-
-        <button
-          class="action"
-          onclick="likePost(this)">
-
-          ❤️ Curtir
-
-        </button>
-
-
-        <button
-          class="action"
-          onclick="commentPost()">
-
-          💬 Comentar
-
-        </button>
-
-
-        <button
-          class="action"
-          onclick="sharePost()">
-
-          ↗️ Compartilhar
-
-        </button>
-
-
-      </div>
-
-    </article>
+    </div>
 
 
     <!-- POST 2 -->
+    <div class="post">
 
-    <article
-      class="post"
-      data-category="lanterns">
+        <div class="perfil">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/1/1b/Neymar_Paris_Saint-Germain_2018.jpg">
 
-
-      <div class="post-header">
-
-
-        <img
-          class="post-avatar"
-          src="https://image.tmdb.org/t/p/w500/4iGf3S9QwG5g1W6YQ8M7j4W3m8V.jpg"
-          alt="Rapunzel"
-        >
-
-
-        <div>
-
-          <div class="post-user">
-            Corona News 🏰
-          </div>
-
-          <span class="post-time">
-            Ontem • 21:15
-          </span>
-
+            <div>
+                <strong>Neymar Jr. ⭐</strong>
+                <small>Hoje</small>
+            </div>
         </div>
 
-      </div>
+        <img src="https://images.unsplash.com/photo-1553778263-73a83bab9b0c?auto=format&fit=crop&w=900&q=80">
 
+        <p class="legenda">
+            🏆 Treino, dedicação e muita vontade de vencer!
+            Nunca desista dos seus sonhos. 💪
+        </p>
 
-      <p class="post-text">
-
-        🏮 O céu de Corona ficou iluminado
-        pelas lanternas. Um dos momentos
-        mais mágicos da história! ✨💜
-
-      </p>
-
-
-      <img
-        class="post-image"
-        onclick="openImage(this.src)"
-        src="https://image.tmdb.org/t/p/original/3qY3Jx5v2Q6J4P5qM9V5p7F8vY.jpg"
-        alt="Lanternas de Rapunzel"
-      >
-
-
-      <div class="stats">
-
-        <span>
-          ❤️ 7291 curtidas
-        </span>
-
-        <span>
-          💬 527 comentários
-        </span>
-
-      </div>
-
-
-      <div class="actions">
-
-
-        <button
-          class="action"
-          onclick="likePost(this)">
-
-          ❤️ Curtir
-
-        </button>
-
-
-        <button
-          class="action"
-          onclick="commentPost()">
-
-          💬 Comentar
-
-        </button>
-
-
-        <button
-          class="action"
-          onclick="sharePost()">
-
-          ↗️ Compartilhar
-
-        </button>
-
-
-      </div>
-
-    </article>
-
-
-    <!-- POST 3 -->
-
-    <article
-      class="post"
-      data-category="adventure">
-
-
-      <div class="post-header">
-
-
-        <img
-          class="post-avatar"
-          src="https://image.tmdb.org/t/p/w500/4iGf3S9QwG5g1W6YQ8M7j4W3m8V.jpg"
-          alt="Rapunzel"
-        >
-
-
-        <div>
-
-          <div class="post-user">
-            Corona Adventures 🌸
-          </div>
-
-          <span class="post-time">
-            2 dias atrás
-          </span>
-
+        <div class="botoes">
+            <button onclick="curtir(this)">❤️ Curtir</button>
+            <button onclick="mostrarComentarios(this)">💬 Comentar</button>
+            <button onclick="compartilhar()">📤 Compartilhar</button>
         </div>
 
-      </div>
+        <div class="comentarios">
+            <input type="text" placeholder="Escreva um comentário...">
+            <button onclick="adicionarComentario(this)">Enviar</button>
+
+            <div class="lista-comentarios"></div>
+        </div>
+
+    </div>
+
+</div>
+
+<footer>
+    <p>⚽ Mini Feed Neymar Jr. — Projeto HTML</p>
+</footer>
 
 
-      <p class="post-text">
+<script>
 
-        🐴 Pascal e Maximus prontos
-        para mais uma aventura!
+    // BOTÃO CURTIR
+    function curtir(botao) {
 
-      </p>
-
-
-      <img
-        class="post-image"
-        onclick="openImage(this.src)"
-        src="https://image.tmdb.org/t/p/original/5VQX5V0mX8m4V9Q8H8F8G8G8G8.jpg"
-        alt="Rapunzel e seus amigos"
-      >
-
-
-      <div class="stats">
-
-        <span>
-          ❤️ 5128 curtidas
-        </span>
-
-        <span>
-          💬 308 comentários
-        </span>
-
-      </div>
-
-
-      <div class="actions">
-
-
-        <button
-          class="action"
-          onclick="likePost(this)">
-
-          ❤️ Curtir
-
-        </button>
-
-
-        <button
-          class="action"
-          onclick="commentPost()">
-
-          💬 Comentar
-
-        </button>
-
-
-        <button
-          class="action"
-          onclick="sharePost()">
-
-          ↗️ Compartilhar
-
-        </button>
-
-
-      </div>
-
-    </article>
-
-
-  </main>
-
-
-  <!-- ============================
-       MODAL
-  ============================= -->
-
-  <div
-    class="modal"
-    id="imageModal"
-    onclick="closeImage()">
-
-
-    <span class="close">
-      ×
-    </span>
-
-
-    <img
-      id="modalImage"
-      src=""
-      alt="Imagem ampliada"
-    >
-
-  </div>
-
-
-  <!-- ============================
-       JAVASCRIPT
-  ============================= -->
-
-  <script>
-
-
-    /* SEGUIR */
-
-    function follow() {
-
-      const button =
-        document.getElementById(
-          "followButton"
-        );
-
-
-      button.classList.toggle(
-        "following"
-      );
-
-
-      if (
-        button.classList.contains(
-          "following"
-        )
-      ) {
-
-        button.innerText =
-          "Seguindo ✓";
-
-      } else {
-
-        button.innerText =
-          "Seguir";
-
-      }
-
+        if (botao.classList.contains("curtido")) {
+            botao.classList.remove("curtido");
+            botao.innerHTML = "❤️ Curtir";
+        } else {
+            botao.classList.add("curtido");
+            botao.innerHTML = "💖 Curtido!";
+        }
     }
 
 
-    /* CURTIR */
+    // MOSTRAR COMENTÁRIOS
+    function mostrarComentarios(botao) {
 
-    function likePost(button) {
+        const post = botao.closest(".post");
+        const comentarios = post.querySelector(".comentarios");
 
-      const post =
-        button.closest(".post");
-
-
-      const counter =
-        post.querySelector(
-          ".like-count"
-        );
-
-
-      button.classList.toggle(
-        "liked"
-      );
-
-
-      if (!counter) {
-
-        button.innerText =
-          button.classList.contains("liked")
-            ? "❤️ Curtido"
-            : "❤️ Curtir";
-
-        return;
-
-      }
-
-
-      let number =
-        parseInt(
-          counter.textContent
-        );
-
-
-      if (
-        button.classList.contains(
-          "liked"
-        )
-      ) {
-
-        number++;
-
-        button.innerText =
-          "❤️ Curtido";
-
-      } else {
-
-        number--;
-
-        button.innerText =
-          "❤️ Curtir";
-
-      }
-
-
-      counter.textContent =
-        number.toLocaleString(
-          "pt-BR"
-        );
-
+        if (comentarios.style.display === "block") {
+            comentarios.style.display = "none";
+        } else {
+            comentarios.style.display = "block";
+        }
     }
 
 
-    /* COMENTÁRIO */
+    // ADICIONAR COMENTÁRIO
+    function adicionarComentario(botao) {
 
-    function commentPost() {
+        const comentarios = botao.parentElement;
+        const input = comentarios.querySelector("input");
+        const lista = comentarios.querySelector(".lista-comentarios");
 
-      const comment =
-        prompt(
-          "Digite seu comentário:"
-        );
+        if (input.value.trim() === "") {
+            alert("Digite um comentário!");
+            return;
+        }
 
+        const novoComentario = document.createElement("p");
 
-      if (
-        comment &&
-        comment.trim() !== ""
-      ) {
+        novoComentario.innerHTML = "👤 <strong>Você:</strong> " + input.value;
 
-        alert(
-          "Comentário publicado! 🌸💜"
-        );
+        lista.appendChild(novoComentario);
 
-      }
-
+        input.value = "";
     }
 
 
-    /* COMPARTILHAR */
+    // COMPARTILHAR
+    function compartilhar() {
 
-    function sharePost() {
+        if (navigator.share) {
 
-      if (
-        navigator.share
-      ) {
+            navigator.share({
+                title: "Neymar Jr. Feed",
+                text: "Confira este Mini Feed do Neymar Jr.! ⚽🔥"
+            });
 
-        navigator.share({
+        } else {
 
-          title:
-            "Rapunzel Feed",
-
-          text:
-            "Confira este post de Rapunzel! 🌸",
-
-          url:
-            window.location.href
-
-        });
-
-      } else {
-
-        navigator.clipboard.writeText(
-          window.location.href
-        );
-
-        alert(
-          "Link copiado! ✨"
-        );
-
-      }
-
+            alert("Post compartilhado! ⚽🔥");
+        }
     }
 
-
-    /* TEMA */
-
-    function toggleTheme() {
-
-      document.body.classList.toggle(
-        "dark"
-      );
-
-
-      const button =
-        document.getElementById(
-          "themeButton"
-        );
-
-
-      if (
-        document.body.classList.contains(
-          "dark"
-        )
-      ) {
-
-        button.innerText =
-          "☀️";
-
-      } else {
-
-        button.innerText =
-          "🌙";
-
-      }
-
-    }
-
-
-    /* FILTROS */
-
-    function filterPosts(
-      category,
-      button
-    ) {
-
-
-      document
-        .querySelectorAll(".filter")
-        .forEach(
-          item => {
-
-            item.classList.remove(
-              "active"
-            );
-
-          }
-        );
-
-
-      button.classList.add(
-        "active"
-      );
-
-
-      document
-        .querySelectorAll(".post")
-        .forEach(
-          post => {
-
-
-            if (
-              category === "all" ||
-              post.dataset.category ===
-              category
-            ) {
-
-              post.style.display =
-                "block";
-
-            } else {
-
-              post.style.display =
-                "none";
-
-            }
-
-          }
-        );
-
-    }
-
-
-    /* ABRIR IMAGEM */
-
-    function openImage(src) {
-
-      const modal =
-        document.getElementById(
-          "imageModal"
-        );
-
-
-      const image =
-        document.getElementById(
-          "modalImage"
-        );
-
-
-      image.src = src;
-
-
-      modal.classList.add(
-        "show"
-      );
-
-    }
-
-
-    /* FECHAR IMAGEM */
-
-    function closeImage() {
-
-      document
-        .getElementById(
-          "imageModal"
-        )
-        .classList.remove(
-          "show"
-        );
-
-    }
-
-
-    /* IR PARA FEED */
-
-    function goToFeed() {
-
-      document
-        .getElementById(
-          "feed"
-        )
-        .scrollIntoView({
-
-          behavior:
-            "smooth"
-
-        });
-
-    }
-
-
-  </script>
+</script>
 
 </body>
-
 </html>
+```
