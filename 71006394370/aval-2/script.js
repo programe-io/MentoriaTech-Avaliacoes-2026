@@ -1,318 +1,540 @@
-```javascript
-// =========================
-// ELEMENTOS DO HTML
-// =========================
-
-const tarefaInput = document.getElementById("tarefaInput");
-const adicionarBtn = document.getElementById("adicionarBtn");
-const listaTarefas = document.getElementById("listaTarefas");
-const contador = document.getElementById("contador");
-const mensagemVazia = document.getElementById("mensagemVazia");
-const limparConcluidas = document.getElementById("limparConcluidas");
-
-const filtros = document.querySelectorAll(".filtro");
+/* =========================================================
+   FERNANDES PORTFOLIO
+   JavaScript
+========================================================= */
 
 
-// =========================
-// LISTA DE TAREFAS
-// =========================
+/* =========================================================
+   ELEMENTOS
+========================================================= */
 
-let tarefas = JSON.parse(localStorage.getItem("tarefas")) || [];
+const header = document.getElementById("header");
+const nav = document.getElementById("nav");
+const menuButton = document.getElementById("menuButton");
 
-let filtroAtual = "todas";
+const modal = document.getElementById("projectModal");
+const modalOverlay = document.getElementById("modalOverlay");
+const modalClose = document.getElementById("modalClose");
 
+const modalNumber = document.getElementById("modalNumber");
+const modalTitle = document.getElementById("modalTitle");
+const modalDescription = document.getElementById("modalDescription");
+const modalTech = document.getElementById("modalTech");
+const modalAction = document.getElementById("modalAction");
 
-// =========================
-// SALVAR TAREFAS
-// =========================
+const toast = document.getElementById("toast");
+const toastMessage = document.getElementById("toastMessage");
 
-function salvarTarefas() {
+const contactForm = document.getElementById("contactForm");
+const copyEmail = document.getElementById("copyEmail");
 
-    localStorage.setItem(
-        "tarefas",
-        JSON.stringify(tarefas)
-    );
-}
-
-
-// =========================
-// MOSTRAR TAREFAS
-// =========================
-
-function mostrarTarefas() {
-
-    listaTarefas.innerHTML = "";
-
-    let tarefasFiltradas = tarefas.filter(function(tarefa) {
-
-        if (filtroAtual === "pendentes") {
-            return !tarefa.concluida;
-        }
-
-        if (filtroAtual === "concluidas") {
-            return tarefa.concluida;
-        }
-
-        return true;
-    });
+const year = document.getElementById("year");
 
 
-    // Mostrar mensagem quando não houver tarefas
+/* =========================================================
+   ANO AUTOMÁTICO
+========================================================= */
 
-    if (tarefasFiltradas.length === 0) {
+year.textContent = new Date().getFullYear();
 
-        mensagemVazia.style.display = "block";
+
+/* =========================================================
+   HEADER AO ROLAR
+========================================================= */
+
+window.addEventListener("scroll", () => {
+
+    if (window.scrollY > 50) {
+
+        header.classList.add("scrolled");
 
     } else {
 
-        mensagemVazia.style.display = "none";
+        header.classList.remove("scrolled");
+
     }
 
-
-    // Criar cada tarefa
-
-    tarefasFiltradas.forEach(function(tarefa) {
-
-        const li = document.createElement("li");
-
-        li.classList.add("tarefa");
-
-        if (tarefa.concluida) {
-            li.classList.add("concluida");
-        }
+});
 
 
-        // Texto da tarefa
+/* =========================================================
+   MENU MOBILE
+========================================================= */
 
-        const span = document.createElement("span");
+menuButton.addEventListener("click", () => {
 
-        span.textContent = tarefa.texto;
+    nav.classList.toggle("open");
 
+    menuButton.classList.toggle("active");
 
-        // Botão concluir
-
-        const botaoConcluir = document.createElement("button");
-
-        botaoConcluir.classList.add("botao-concluir");
-
-        botaoConcluir.textContent = "✓";
-
-        botaoConcluir.title = "Concluir tarefa";
-
-        botaoConcluir.addEventListener("click", function() {
-
-            concluirTarefa(tarefa.id);
-
-        });
+});
 
 
-        // Botão excluir
+/* Fechar menu ao clicar em um link */
 
-        const botaoExcluir = document.createElement("button");
+document.querySelectorAll(".nav-link, .nav-contact").forEach(link => {
 
-        botaoExcluir.classList.add("botao-excluir");
+    link.addEventListener("click", () => {
 
-        botaoExcluir.textContent = "✕";
+        nav.classList.remove("open");
 
-        botaoExcluir.title = "Excluir tarefa";
-
-        botaoExcluir.addEventListener("click", function() {
-
-            excluirTarefa(tarefa.id);
-
-        });
-
-
-        li.appendChild(span);
-
-        li.appendChild(botaoConcluir);
-
-        li.appendChild(botaoExcluir);
-
-        listaTarefas.appendChild(li);
+        menuButton.classList.remove("active");
 
     });
 
+});
 
-    atualizarContador();
+
+/* =========================================================
+   NAVEGAÇÃO ATIVA
+========================================================= */
+
+const sections = document.querySelectorAll("section[id]");
+const navLinks = document.querySelectorAll(".nav-link");
+
+function updateActiveNavigation() {
+
+    let currentSection = "";
+
+    sections.forEach(section => {
+
+        const sectionTop = section.offsetTop - 180;
+
+        if (window.scrollY >= sectionTop) {
+
+            currentSection = section.getAttribute("id");
+
+        }
+
+    });
+
+    navLinks.forEach(link => {
+
+        link.classList.remove("active");
+
+        const href = link.getAttribute("href");
+
+        if (href === `#${currentSection}`) {
+
+            link.classList.add("active");
+
+        }
+
+    });
+
 }
 
-
-// =========================
-// ADICIONAR TAREFA
-// =========================
-
-function adicionarTarefa() {
-
-    const texto = tarefaInput.value.trim();
+window.addEventListener("scroll", updateActiveNavigation);
 
 
-    // Verificar se está vazio
+/* =========================================================
+   SCROLL REVEAL
+========================================================= */
 
-    if (texto === "") {
+const revealElements = document.querySelectorAll(".reveal");
 
-        alert("Digite uma tarefa!");
+const revealObserver = new IntersectionObserver(
 
-        tarefaInput.focus();
+    (entries, observer) => {
+
+        entries.forEach(entry => {
+
+            if (entry.isIntersecting) {
+
+                entry.target.classList.add("visible");
+
+                observer.unobserve(entry.target);
+
+            }
+
+        });
+
+    },
+
+    {
+        threshold: 0.12
+    }
+
+);
+
+revealElements.forEach(element => {
+
+    revealObserver.observe(element);
+
+});
+
+
+/* =========================================================
+   PROJETOS
+========================================================= */
+
+const projects = {
+
+    portfolio: {
+
+        number: "PROJETO 01 / WEB",
+
+        title: "Portfólio pessoal",
+
+        description:
+            "Um website desenvolvido para apresentar a trajetória, os conhecimentos, interesses e projetos de Fernandes. A proposta utiliza uma interface moderna, responsiva e focada em experiência do usuário.",
+
+        technologies: [
+            "HTML",
+            "CSS",
+            "JavaScript",
+            "Responsive Design"
+        ]
+
+    },
+
+    sistema: {
+
+        number: "PROJETO 02 / SISTEMA",
+
+        title: "Sistema de estudos",
+
+        description:
+            "Conceito de uma plataforma para ajudar estudantes a organizar tarefas, acompanhar atividades e estruturar sua rotina de estudos.",
+
+        technologies: [
+            "HTML",
+            "CSS",
+            "JavaScript",
+            "UI/UX"
+        ]
+
+    },
+
+    laboratorio: {
+
+        number: "PROJETO 03 / EXPERIMENTO",
+
+        title: "Laboratório Web",
+
+        description:
+            "Ambiente criado para experimentar novas interfaces, animações, componentes e ideias relacionadas ao desenvolvimento web.",
+
+        technologies: [
+            "Front-end",
+            "JavaScript",
+            "CSS",
+            "Experimentos"
+        ]
+
+    }
+
+};
+
+
+/* =========================================================
+   ABRIR MODAL
+========================================================= */
+
+document.querySelectorAll(".project-button").forEach(button => {
+
+    button.addEventListener("click", () => {
+
+        const projectId = button.dataset.project;
+
+        const project = projects[projectId];
+
+        if (!project) return;
+
+        modalNumber.textContent = project.number;
+
+        modalTitle.textContent = project.title;
+
+        modalDescription.textContent = project.description;
+
+        modalTech.innerHTML = "";
+
+        project.technologies.forEach(technology => {
+
+            const tag = document.createElement("span");
+
+            tag.textContent = technology;
+
+            modalTech.appendChild(tag);
+
+        });
+
+        modal.classList.add("active");
+
+        document.body.classList.add("modal-open");
+
+    });
+
+});
+
+
+/* =========================================================
+   FECHAR MODAL
+========================================================= */
+
+function closeModal() {
+
+    modal.classList.remove("active");
+
+    document.body.classList.remove("modal-open");
+
+}
+
+modalClose.addEventListener("click", closeModal);
+
+modalOverlay.addEventListener("click", closeModal);
+
+modalAction.addEventListener("click", closeModal);
+
+
+/* ESC PARA FECHAR */
+
+document.addEventListener("keydown", event => {
+
+    if (event.key === "Escape") {
+
+        closeModal();
+
+    }
+
+});
+
+
+/* =========================================================
+   COPIAR E-MAIL
+========================================================= */
+
+copyEmail.addEventListener("click", async () => {
+
+    const email = document.getElementById("emailText").textContent.trim();
+
+    try {
+
+        await navigator.clipboard.writeText(email);
+
+        showToast("E-mail copiado para a área de transferência!");
+
+        copyEmail.textContent = "Copiado ✓";
+
+        setTimeout(() => {
+
+            copyEmail.textContent = "Copiar e-mail";
+
+        }, 2500);
+
+    } catch (error) {
+
+        showToast("Não foi possível copiar o e-mail.");
+
+    }
+
+});
+
+
+/* =========================================================
+   FORMULÁRIO
+========================================================= */
+
+contactForm.addEventListener("submit", event => {
+
+    event.preventDefault();
+
+    const name = document.getElementById("name").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const message = document.getElementById("message").value.trim();
+
+    if (!name || !email || !message) {
+
+        showToast("Preencha todos os campos.");
 
         return;
+
     }
 
+    if (!isValidEmail(email)) {
 
-    // Criar tarefa
+        showToast("Digite um e-mail válido.");
 
-    const novaTarefa = {
+        return;
 
-        id: Date.now(),
+    }
 
-        texto: texto,
+    const button = contactForm.querySelector(".submit-button");
 
-        concluida: false
-    };
+    const originalHTML = button.innerHTML;
 
+    button.innerHTML = `
+        <span>Enviando...</span>
+        <span>...</span>
+    `;
 
-    tarefas.push(novaTarefa);
-
-
-    salvarTarefas();
-
-    mostrarTarefas();
-
-
-    // Limpar campo
-
-    tarefaInput.value = "";
-
-    tarefaInput.focus();
-}
+    button.disabled = true;
 
 
-// =========================
-// CONCLUIR TAREFA
-// =========================
+    /*
+       Aqui você pode conectar futuramente
+       o formulário a um backend ou serviço
+       de envio de mensagens.
+    */
 
-function concluirTarefa(id) {
+    setTimeout(() => {
 
-    tarefas = tarefas.map(function(tarefa) {
+        button.innerHTML = `
+            <span>Mensagem enviada ✓</span>
+            <span>✓</span>
+        `;
 
-        if (tarefa.id === id) {
+        showToast(`Obrigado pela mensagem, ${name}!`);
 
-            tarefa.concluida = !tarefa.concluida;
-        }
+        contactForm.reset();
 
-        return tarefa;
-    });
+        setTimeout(() => {
 
+            button.innerHTML = originalHTML;
 
-    salvarTarefas();
+            button.disabled = false;
 
-    mostrarTarefas();
-}
+        }, 3000);
 
+    }, 1200);
 
-// =========================
-// EXCLUIR TAREFA
-// =========================
-
-function excluirTarefa(id) {
-
-    tarefas = tarefas.filter(function(tarefa) {
-
-        return tarefa.id !== id;
-    });
-
-
-    salvarTarefas();
-
-    mostrarTarefas();
-}
-
-
-// =========================
-// CONTADOR
-// =========================
-
-function atualizarContador() {
-
-    const pendentes = tarefas.filter(function(tarefa) {
-
-        return !tarefa.concluida;
-
-    }).length;
-
-
-    contador.textContent = pendentes;
-}
-
-
-// =========================
-// LIMPAR CONCLUÍDAS
-// =========================
-
-limparConcluidas.addEventListener("click", function() {
-
-    tarefas = tarefas.filter(function(tarefa) {
-
-        return !tarefa.concluida;
-
-    });
-
-
-    salvarTarefas();
-
-    mostrarTarefas();
 });
 
 
-// =========================
-// BOTÃO ADICIONAR
-// =========================
+/* =========================================================
+   VALIDAR E-MAIL
+========================================================= */
 
-adicionarBtn.addEventListener("click", adicionarTarefa);
+function isValidEmail(email) {
+
+    const pattern =
+        /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    return pattern.test(email);
+
+}
 
 
-// =========================
-// ENTER PARA ADICIONAR
-// =========================
+/* =========================================================
+   TOAST
+========================================================= */
 
-tarefaInput.addEventListener("keydown", function(event) {
+let toastTimeout;
 
-    if (event.key === "Enter") {
+function showToast(message) {
 
-        adicionarTarefa();
+    toastMessage.textContent = message;
+
+    toast.classList.add("active");
+
+    clearTimeout(toastTimeout);
+
+    toastTimeout = setTimeout(() => {
+
+        toast.classList.remove("active");
+
+    }, 3500);
+
+}
+
+
+/* =========================================================
+   FECHAR MENU QUANDO CLICAR FORA
+========================================================= */
+
+document.addEventListener("click", event => {
+
+    const clickedInsideNav = nav.contains(event.target);
+
+    const clickedMenuButton = menuButton.contains(event.target);
+
+    if (
+        nav.classList.contains("open") &&
+        !clickedInsideNav &&
+        !clickedMenuButton
+    ) {
+
+        nav.classList.remove("open");
+
+        menuButton.classList.remove("active");
+
     }
+
 });
 
 
-// =========================
-// FILTROS
-// =========================
+/* =========================================================
+   EFEITO DE MOVIMENTO NO CARD DE CÓDIGO
+========================================================= */
 
-filtros.forEach(function(botao) {
+const visualCard = document.querySelector(".visual-card");
 
-    botao.addEventListener("click", function() {
+if (visualCard && window.innerWidth > 900) {
 
-        filtros.forEach(function(item) {
+    document.addEventListener("mousemove", event => {
 
-            item.classList.remove("ativo");
+        const x = (window.innerWidth / 2 - event.clientX) / 80;
+
+        const y = (window.innerHeight / 2 - event.clientY) / 100;
+
+        visualCard.style.transform = `
+            perspective(1000px)
+            rotateY(${x}deg)
+            rotateX(${y}deg)
+        `;
+
+    });
+
+}
+
+
+/* =========================================================
+   SMOOTH SCROLL PERSONALIZADO
+========================================================= */
+
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+
+    anchor.addEventListener("click", event => {
+
+        const targetId = anchor.getAttribute("href");
+
+        if (targetId === "#") return;
+
+        const target = document.querySelector(targetId);
+
+        if (!target) return;
+
+        event.preventDefault();
+
+        const headerHeight = header.offsetHeight;
+
+        const targetPosition =
+            target.getBoundingClientRect().top +
+            window.scrollY -
+            headerHeight;
+
+        window.scrollTo({
+
+            top: targetPosition,
+
+            behavior: "smooth"
 
         });
 
-
-        botao.classList.add("ativo");
-
-
-        filtroAtual = botao.dataset.filtro;
-
-
-        mostrarTarefas();
     });
+
 });
 
 
-// =========================
-// INICIAR PROGRAMA
-// =========================
+/* =========================================================
+   CONSOLE
+========================================================= */
 
-mostrarTarefas();
-```
+console.log(
+    "%c Fernandes Portfolio ",
+    "background:#d8ff3e;color:#07090d;font-size:16px;font-weight:bold;padding:8px;"
+);
+
+console.log(
+    "Website desenvolvido com HTML, CSS e JavaScript."
+);
