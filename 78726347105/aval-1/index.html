@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Controle de Estoque Simples</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f4f4f9; }
+        h1 { color: #333; }
+        form, table { background: #fff; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        input, button { padding: 8px; margin: 5px 0; width: 100%; box-sizing: border-box; }
+        button { background: #28a745; color: white; border: none; cursor: pointer; border-radius: 4px; }
+        button:hover { background: #218838; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 10px; border: 1px solid #ddd; text-align: left; }
+        th { background: #f8f9fa; }
+        .btn-del { background: #dc3545; width: auto; padding: 5px 10px; }
+        .btn-del:hover { background: #c82333; }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+    <h1>Controle de Estoque</h1>
+
+    <form id="form-produto">
+        <label>Nome do Produto:</label>
+        <input type="text" id="nome" required>
+        <label>Quantidade:</label>
+        <input type="number" id="qtd" required>
+        <label>Preço (R\$):</label>
+        <input type="number" step="0.01" id="preco" required>
+        <button type="submit">Adicionar Produto</button>
+    </form>
+
+    <h2>Itens no Estoque</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Quantidade</th>
+                <th>Preço</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody id="lista-produtos"></tbody>
+    </table>
+
+    <script>
+        const form = document.getElementById('form-produto');
+        const lista = document.getElementById('lista-produtos');
+        
+        let produtos = JSON.parse(localStorage.getItem('estoque')) || [];
+
+        function salvarEstoque() {
+            localStorage.setItem('estoque', JSON.stringify(produtos));
+        }
+
+        function renderizar() {
+            lista.innerHTML = '';
+            produtos.forEach((prod, index) => {
+                lista.innerHTML += `
+                    <tr>
+                        <td>${prod.nome}</td>
+                        <td>${prod.qtd}</td>
+                        <td>R$ ${Number(prod.preco).toFixed(2)}</td>
+                        <td><button class="btn-del" onclick="remover(${index})">Excluir</button></td>
+                    </tr>
+                `;
+            });
+        }
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const nome = document.getElementById('nome').value;
+            const qtd = document.getElementById('qtd').value;
+            const preco = document.getElementById('preco').value;
+
+            produtos.push({ nome, qtd, preco });
+            salvarEstoque();
+            renderizar();
+            form.reset();
+        });
+
+        function remover(index) {
+            produtos.splice(index, 1);
+            salvarEstoque();
+            renderizar();
+        }
+
+        renderizar();
+    </script>
+</body>
+</html>
