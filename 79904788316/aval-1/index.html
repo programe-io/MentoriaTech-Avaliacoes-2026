@@ -3,1369 +3,2100 @@
 <html lang="pt-BR">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Michael Jackson | Mini Feed</title>
-
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
-        body {
-            font-family: Arial, Helvetica, sans-serif;
-            background:
-                radial-gradient(circle at top, #252525 0%, #080808 45%, #000 100%);
-            color: white;
-        }
-
-        /* =========================
-           CABEÇALHO
-        ========================= */
-
-        header {
-            min-height: 420px;
-            background:
-                linear-gradient(rgba(0,0,0,.35), rgba(0,0,0,.9)),
-                url("https://upload.wikimedia.org/wikipedia/commons/3/31/Michael_Jackson_in_1988.jpg")
-                center/cover;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 40px 20px;
-        }
-
-        .hero {
-            max-width: 850px;
-        }
-
-        .hero h1 {
-            font-size: clamp(45px, 8vw, 90px);
-            letter-spacing: 5px;
-            text-transform: uppercase;
-            text-shadow: 0 0 20px black;
-        }
-
-        .hero p {
-            font-size: 20px;
-            margin-top: 15px;
-            color: #ddd;
-        }
-
-        .btn {
-            display: inline-block;
-            margin-top: 25px;
-            padding: 12px 25px;
-            border: 1px solid white;
-            color: white;
-            text-decoration: none;
-            border-radius: 30px;
-            transition: .3s;
-        }
-
-        .btn:hover {
-            background: white;
-            color: black;
-        }
-
-        /* =========================
-           MENU
-        ========================= */
-
-        nav {
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            background: rgba(0,0,0,.95);
-            border-bottom: 1px solid #333;
-        }
-
-        nav ul {
-            list-style: none;
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        nav a {
-            display: block;
-            color: white;
-            text-decoration: none;
-            padding: 15px 18px;
-            font-weight: bold;
-        }
-
-        nav a:hover {
-            background: #222;
-        }
-
-        /* =========================
-           CONTAINER
-        ========================= */
-
-        main {
-            max-width: 1100px;
-            margin: auto;
-            padding: 30px 20px;
-        }
-
-        section {
-            margin-bottom: 70px;
-        }
-
-        .titulo {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .titulo h2 {
-            font-size: 35px;
-            text-transform: uppercase;
-        }
-
-        .titulo p {
-            color: #aaa;
-            margin-top: 8px;
-        }
-
-        /* =========================
-           HISTÓRIA
-        ========================= */
-
-        .historia {
-            background: #111;
-            padding: 30px;
-            border-radius: 15px;
-            border: 1px solid #292929;
-            line-height: 1.8;
-        }
-
-        .historia h3 {
-            margin-top: 25px;
-            margin-bottom: 10px;
-            font-size: 24px;
-        }
-
-        .historia h3:first-child {
-            margin-top: 0;
-        }
-
-        .historia p {
-            color: #ddd;
-            margin-bottom: 12px;
-        }
-
-        /* =========================
-           MÚSICAS
-        ========================= */
-
-        .musicas {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-        }
-
-        .musica {
-            background: #111;
-            padding: 22px;
-            border-radius: 15px;
-            border: 1px solid #292929;
-            transition: .3s;
-        }
-
-        .musica:hover {
-            transform: translateY(-5px);
-            border-color: #777;
-        }
-
-        .musica img {
-            width: 100%;
-            height: 230px;
-            object-fit: cover;
-            border-radius: 10px;
-        }
-
-        .musica h3 {
-            margin: 15px 0 5px;
-        }
-
-        .musica p {
-            color: #aaa;
-            margin-bottom: 15px;
-        }
-
-        audio {
-            width: 100%;
-        }
-
-        .aviso-musica {
-            margin-top: 10px;
-            color: #888;
-            font-size: 13px;
-        }
-
-        /* =========================
-           ÁLBUNS
-        ========================= */
-
-        .albuns {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 20px;
-        }
-
-        .album {
-            background: #111;
-            padding: 12px;
-            border-radius: 12px;
-            border: 1px solid #292929;
-            transition: .3s;
-        }
-
-        .album:hover {
-            transform: scale(1.04);
-        }
-
-        .album img {
-            width: 100%;
-            aspect-ratio: 1;
-            object-fit: cover;
-            border-radius: 8px;
-        }
-
-        .album h3 {
-            margin-top: 10px;
-            font-size: 16px;
-        }
-
-        .album span {
-            color: #888;
-            font-size: 13px;
-        }
-
-        /* =========================
-           POSTS
-        ========================= */
-
-        .feed {
-            max-width: 700px;
-            margin: auto;
-        }
-
-        .post {
-            background: #111;
-            border: 1px solid #292929;
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-
-        .post-top {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 15px;
-        }
-
-        .post-top img {
-            width: 50px;
-            height: 50px;
-            object-fit: cover;
-            border-radius: 50%;
-        }
-
-        .post-top small {
-            color: #777;
-        }
-
-        .post > img {
-            width: 100%;
-            max-height: 450px;
-            object-fit: cover;
-            border-radius: 10px;
-            margin: 15px 0;
-        }
-
-        .acoes {
-            display: flex;
-            gap: 10px;
-        }
-
-        .acoes button {
-            background: #222;
-            border: 0;
-            color: white;
-            padding: 10px 15px;
-            border-radius: 20px;
-            cursor: pointer;
-        }
-
-        .acoes button:hover {
-            background: #444;
-        }
-
-        .curtido {
-            background: #444 !important;
-        }
-
-        .comentarios {
-            margin-top: 15px;
-            border-top: 1px solid #292929;
-            padding-top: 15px;
-        }
-
-        .comentarios input {
-            width: 75%;
-            padding: 11px;
-            background: #080808;
-            border: 1px solid #333;
-            color: white;
-            border-radius: 8px;
-        }
-
-        .comentarios button {
-            padding: 11px 15px;
-            background: white;
-            color: black;
-            border: 0;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-
-        .lista-comentarios {
-            margin-top: 12px;
-        }
-
-        .comentario {
-            background: #1b1b1b;
-            padding: 10px;
-            border-radius: 8px;
-            margin-top: 8px;
-            color: #ddd;
-        }
-
-        /* =========================
-           GALERIA
-        ========================= */
-
-        .galeria {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-            gap: 15px;
-        }
-
-        .galeria img {
-            width: 100%;
-            height: 280px;
-            object-fit: cover;
-            border-radius: 12px;
-            transition: .3s;
-        }
-
-        .galeria img:hover {
-            transform: scale(1.03);
-        }
-
-        /* =========================
-           PESQUISA
-        ========================= */
-
-        .pesquisa {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .pesquisa input {
-            width: min(600px, 100%);
-            padding: 14px 18px;
-            background: #111;
-            border: 1px solid #444;
-            border-radius: 30px;
-            color: white;
-            outline: none;
-        }
-
-        /* =========================
-           RODAPÉ
-        ========================= */
-
-        footer {
-            text-align: center;
-            padding: 40px 20px;
-            background: #050505;
-            color: #777;
-        }
-
-        /* =========================
-           RESPONSIVO
-        ========================= */
-
-        @media (max-width: 600px) {
-
-            nav a {
-                padding: 10px;
-                font-size: 13px;
-            }
-
-            .historia {
-                padding: 20px;
-            }
-
-            .comentarios input {
-                width: 100%;
-                margin-bottom: 8px;
-            }
-
-            .comentarios button {
-                width: 100%;
-            }
-        }
-    </style>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>MJ Universe 👑</title>
+
+<style>
+
+/* =========================
+   RESET
+========================= */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+
+    background:
+    radial-gradient(
+        circle at top,
+        #292929,
+        #080808 45%,
+        #000 100%
+    );
+
+    color:white;
+
+    font-family:Arial, Helvetica, sans-serif;
+
+    min-height:100vh;
+}
+
+
+/* =========================
+   HEADER
+========================= */
+
+header{
+
+    position:sticky;
+    top:0;
+    z-index:1000;
+
+    height:75px;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    padding:0 6%;
+
+    background:rgba(0,0,0,.94);
+
+    border-bottom:
+    1px solid #333;
+
+    backdrop-filter:blur(15px);
+}
+
+.logo{
+
+    font-size:27px;
+
+    font-weight:bold;
+
+    letter-spacing:5px;
+
+    color:#d4af37;
+}
+
+.logo span{
+    color:white;
+}
+
+.menu{
+
+    display:flex;
+
+    gap:10px;
+}
+
+.menu button{
+
+    width:42px;
+    height:42px;
+
+    border:0;
+
+    border-radius:50%;
+
+    background:#171717;
+
+    color:white;
+
+    font-size:18px;
+
+    cursor:pointer;
+
+    transition:.3s;
+}
+
+.menu button:hover{
+
+    background:#d4af37;
+
+    color:#000;
+
+    transform:
+    translateY(-3px)
+    scale(1.08);
+}
+
+
+/* =========================
+   CONTAINER
+========================= */
+
+.container{
+
+    width:100%;
+
+    max-width:1000px;
+
+    margin:auto;
+
+    padding:
+    30px 20px 80px;
+}
+
+
+/* =========================
+   PERFIL
+========================= */
+
+.profile{
+
+    padding:35px;
+
+    margin-bottom:25px;
+
+    border-radius:25px;
+
+    background:
+    linear-gradient(
+        135deg,
+        #181818,
+        #050505
+    );
+
+    border:
+    1px solid #333;
+
+    box-shadow:
+    0 20px 60px
+    rgba(0,0,0,.7);
+}
+
+.profile-content{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:25px;
+}
+
+.profile-photo{
+
+    width:130px;
+    height:130px;
+
+    border-radius:50%;
+
+    object-fit:cover;
+
+    border:
+    4px solid #d4af37;
+
+    box-shadow:
+    0 0 30px
+    rgba(212,175,55,.35);
+}
+
+.profile h1{
+
+    color:#d4af37;
+
+    font-size:32px;
+
+    margin-bottom:7px;
+}
+
+.profile p{
+
+    color:#aaa;
+
+    margin:6px 0;
+}
+
+.stats{
+
+    display:flex;
+
+    gap:25px;
+
+    margin-top:15px;
+}
+
+.stats strong{
+
+    color:white;
+
+    font-size:18px;
+}
+
+
+/* =========================
+   STORIES
+========================= */
+
+.stories{
+
+    display:flex;
+
+    gap:20px;
+
+    overflow-x:auto;
+
+    padding:
+    10px 5px 25px;
+
+    scrollbar-width:none;
+}
+
+.stories::-webkit-scrollbar{
+    display:none;
+}
+
+.story{
+
+    min-width:90px;
+
+    text-align:center;
+}
+
+.story-image{
+
+    width:78px;
+    height:78px;
+
+    padding:3px;
+
+    border-radius:50%;
+
+    background:
+    linear-gradient(
+        135deg,
+        #d4af37,
+        #fff,
+        #d4af37
+    );
+}
+
+.story-image img{
+
+    width:100%;
+    height:100%;
+
+    border-radius:50%;
+
+    object-fit:cover;
+
+    border:3px solid black;
+}
+
+.story p{
+
+    font-size:12px;
+
+    color:#aaa;
+
+    margin-top:7px;
+}
+
+
+/* =========================
+   CRIAR POST
+========================= */
+
+.create{
+
+    padding:22px;
+
+    margin-bottom:30px;
+
+    background:#101010;
+
+    border:
+    1px solid #292929;
+
+    border-radius:18px;
+}
+
+.create h2{
+
+    color:#d4af37;
+
+    margin-bottom:15px;
+}
+
+textarea{
+
+    width:100%;
+
+    min-height:100px;
+
+    resize:vertical;
+
+    padding:15px;
+
+    background:#050505;
+
+    color:white;
+
+    border:
+    1px solid #333;
+
+    border-radius:12px;
+
+    outline:none;
+
+    font-size:15px;
+}
+
+textarea:focus{
+
+    border-color:#d4af37;
+}
+
+.create-bottom{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-top:12px;
+}
+
+.publish{
+
+    padding:
+    11px 23px;
+
+    border:0;
+
+    border-radius:25px;
+
+    background:#d4af37;
+
+    color:#000;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+    transition:.3s;
+}
+
+.publish:hover{
+
+    background:#ffe477;
+
+    transform:scale(1.05);
+}
+
+
+/* =========================
+   POST
+========================= */
+
+.post{
+
+    overflow:hidden;
+
+    margin-bottom:30px;
+
+    background:#101010;
+
+    border:
+    1px solid #292929;
+
+    border-radius:20px;
+
+    box-shadow:
+    0 10px 40px
+    rgba(0,0,0,.6);
+}
+
+.post-header{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:13px;
+
+    padding:16px;
+}
+
+.avatar{
+
+    width:52px;
+    height:52px;
+
+    border-radius:50%;
+
+    object-fit:cover;
+
+    border:
+    2px solid #d4af37;
+}
+
+.user{
+
+    font-weight:bold;
+}
+
+.time{
+
+    color:#777;
+
+    font-size:12px;
+
+    margin-top:4px;
+}
+
+
+/* =========================
+   IMAGEM DO POST
+========================= */
+
+.post-image{
+
+    width:100%;
+
+    max-height:750px;
+
+    object-fit:cover;
+
+    display:block;
+
+    cursor:pointer;
+
+    transition:.4s;
+}
+
+.post-image:hover{
+
+    filter:brightness(1.12);
+
+    transform:scale(1.01);
+}
+
+
+/* =========================
+   CONTEÚDO
+========================= */
+
+.post-content{
+
+    padding:18px;
+}
+
+.caption{
+
+    line-height:1.6;
+
+    margin-bottom:15px;
+}
+
+.hashtag{
+
+    color:#d4af37;
+}
+
+
+/* =========================
+   BOTÕES
+========================= */
+
+.actions{
+
+    display:flex;
+
+    gap:20px;
+
+    padding-top:13px;
+
+    border-top:
+    1px solid #242424;
+}
+
+.action{
+
+    background:none;
+
+    border:0;
+
+    color:#ddd;
+
+    cursor:pointer;
+
+    font-size:15px;
+
+    transition:.2s;
+}
+
+.action:hover{
+
+    color:#d4af37;
+
+    transform:scale(1.05);
+}
+
+.liked{
+
+    color:#ff304f !important;
+}
+
+.likes{
+
+    margin-top:10px;
+
+    color:#aaa;
+
+    font-size:14px;
+}
+
+
+/* =========================
+   COMENTÁRIOS
+========================= */
+
+.comments{
+
+    margin-top:12px;
+}
+
+.comment{
+
+    padding:7px 0;
+
+    border-bottom:
+    1px solid #202020;
+}
+
+.comment strong{
+
+    color:#d4af37;
+}
+
+.comment-box{
+
+    display:flex;
+
+    gap:8px;
+
+    margin-top:13px;
+}
+
+.comment-box input{
+
+    flex:1;
+
+    padding:
+    11px 15px;
+
+    background:#050505;
+
+    color:white;
+
+    border:
+    1px solid #333;
+
+    border-radius:25px;
+
+    outline:none;
+}
+
+.comment-box input:focus{
+
+    border-color:#d4af37;
+}
+
+.comment-box button{
+
+    width:42px;
+    height:42px;
+
+    border:0;
+
+    border-radius:50%;
+
+    background:#d4af37;
+
+    cursor:pointer;
+}
+
+
+/* =========================
+   GALERIA
+========================= */
+
+.gallery{
+
+    margin-top:50px;
+}
+
+.gallery-title{
+
+    color:#d4af37;
+
+    font-size:28px;
+
+    margin-bottom:20px;
+}
+
+.gallery-grid{
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(3,1fr);
+
+    gap:8px;
+}
+
+.gallery-item{
+
+    position:relative;
+
+    overflow:hidden;
+
+    border-radius:10px;
+
+    height:300px;
+
+    cursor:pointer;
+}
+
+.gallery-item img{
+
+    width:100%;
+    height:100%;
+
+    object-fit:cover;
+
+    transition:.4s;
+}
+
+.gallery-item:hover img{
+
+    transform:scale(1.08);
+
+    filter:brightness(1.2);
+}
+
+
+/* =========================
+   MODAL
+========================= */
+
+.modal{
+
+    position:fixed;
+
+    inset:0;
+
+    z-index:5000;
+
+    display:none;
+
+    align-items:center;
+
+    justify-content:center;
+
+    padding:20px;
+
+    background:
+    rgba(0,0,0,.95);
+}
+
+.modal img{
+
+    max-width:95%;
+
+    max-height:90vh;
+
+    border-radius:10px;
+
+    box-shadow:
+    0 0 50px
+    rgba(212,175,55,.2);
+}
+
+.close{
+
+    position:absolute;
+
+    top:20px;
+
+    right:30px;
+
+    font-size:40px;
+
+    color:white;
+
+    cursor:pointer;
+}
+
+
+/* =========================
+   FOOTER
+========================= */
+
+footer{
+
+    text-align:center;
+
+    padding:45px 20px;
+
+    border-top:
+    1px solid #222;
+
+    color:#666;
+}
+
+footer strong{
+
+    color:#d4af37;
+}
+
+
+/* =========================
+   RESPONSIVO
+========================= */
+
+@media(max-width:700px){
+
+    header{
+        padding:0 15px;
+    }
+
+    .logo{
+        font-size:19px;
+        letter-spacing:3px;
+    }
+
+    .container{
+        padding:
+        20px 10px 60px;
+    }
+
+    .profile{
+        padding:25px 15px;
+    }
+
+    .profile-content{
+
+        flex-direction:column;
+
+        text-align:center;
+    }
+
+    .stats{
+
+        justify-content:center;
+
+        gap:15px;
+    }
+
+    .gallery-grid{
+
+        grid-template-columns:
+        repeat(2,1fr);
+    }
+
+    .gallery-item{
+
+        height:220px;
+    }
+
+}
+
+</style>
+
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="style.css" rel="stylesheet"></head>
 
+
 <body>
 
-    <!-- =========================
-         CABEÇALHO
-    ========================= -->
 
-    <header id="inicio">
+<!-- =========================
+     HEADER
+========================= -->
 
-        <div class="hero">
+<header>
 
-            <h1>Michael Jackson</h1>
+    <div class="logo">
+        MJ<span>UNIVERSE</span>
+    </div>
+
+    <div class="menu">
+
+        <button onclick="home()">
+            🏠
+        </button>
+
+        <button onclick="goCreate()">
+            ➕
+        </button>
+
+        <button onclick="alert('❤️ Você recebeu uma curtida!')">
+            ❤️
+        </button>
+
+        <button onclick="alert('👑 Bem-vindo ao MJ Universe!')">
+            👑
+        </button>
+
+    </div>
+
+</header>
+
+
+<main class="container">
+
+
+<!-- =========================
+     PERFIL
+========================= -->
+
+<section class="profile">
+
+    <div class="profile-content">
+
+        <img
+        class="profile-photo"
+        src="https://commons.wikimedia.org/wiki/Special:FilePath/Michael%20Jackson%20-%20High%20Res%20version%20%284518178333%29.jpg"
+        alt="Michael Jackson"
+        >
+
+        <div>
+
+            <h1>
+                Michael Jackson ✓
+            </h1>
 
             <p>
-                The King of Pop
+                👑 King of Pop
             </p>
 
-            <a href="#musicas" class="btn">
-                🎵 Ouvir músicas
-            </a>
+            <p>
+                🎤 Music • Dance • Legacy
+            </p>
+
+            <div class="stats">
+
+                <div>
+                    <strong>20</strong> posts
+                </div>
+
+                <div>
+                    <strong>∞</strong> fãs
+                </div>
+
+                <div>
+                    <strong>👑</strong> Legend
+                </div>
+
+            </div>
 
         </div>
 
-    </header>
+    </div>
+
+</section>
 
 
-    <!-- =========================
-         MENU
-    ========================= -->
+<!-- =========================
+     STORIES
+========================= -->
 
-    <nav>
-
-        <ul>
-
-            <li>
-                <a href="#inicio">Início</a>
-            </li>
-
-            <li>
-                <a href="#historia">História</a>
-            </li>
-
-            <li>
-                <a href="#musicas">Músicas</a>
-            </li>
-
-            <li>
-                <a href="#albuns">Álbuns</a>
-            </li>
-
-            <li>
-                <a href="#shows">Shows</a>
-            </li>
-
-            <li>
-                <a href="#feed">Feed</a>
-            </li>
-
-        </ul>
-
-    </nav>
+<div class="stories">
 
 
-    <main>
+<div class="story">
+
+<div class="story-image">
+
+<img src="https://commons.wikimedia.org/wiki/Special:FilePath/Michael%20Jackson%20-%20High%20Res%20version%20%284518178333%29.jpg">
+
+</div>
+
+<p>Bad Tour</p>
+
+</div>
 
 
-        <!-- =========================
-             HISTÓRIA
-        ========================= -->
+<div class="story">
 
-        <section id="historia">
+<div class="story-image">
 
-            <div class="titulo">
+<img src="https://commons.wikimedia.org/wiki/Special:FilePath/Michaeljacksonphoto%20drewcohen.JPG">
 
-                <h2>História</h2>
+</div>
 
-                <p>
-                    A trajetória de Michael Jackson
-                </p>
+<p>1988</p>
+
+</div>
+
+
+<div class="story">
+
+<div class="story-image">
+
+<img src="https://commons.wikimedia.org/wiki/Special:FilePath/Michael%20Jackson%20%2820588392634%29.jpg">
+
+</div>
+
+<p>Dangerous</p>
+
+</div>
+
+
+<div class="story">
+
+<div class="story-image">
+
+<img src="https://commons.wikimedia.org/wiki/Special:FilePath/Michael%20Jackson%20%2820589963363%29.jpg">
+
+</div>
+
+<p>1992</p>
+
+</div>
+
+
+<div class="story">
+
+<div class="story-image">
+
+<img src="https://commons.wikimedia.org/wiki/Special:FilePath/Michael%20Jackson%20%2821211088815%29.jpg">
+
+</div>
+
+<p>Show</p>
+
+</div>
+
+
+<div class="story">
+
+<div class="story-image">
+
+<img src="https://commons.wikimedia.org/wiki/Special:FilePath/Michael%20Jackson%20Lausanne%2020%20juin%201997.jpg">
+
+</div>
+
+<p>HIStory</p>
+
+</div>
+
+
+</div>
+
+
+<!-- =========================
+     CRIAR POST
+========================= -->
+
+<section
+class="create"
+id="create"
+>
+
+<h2>
+✨ Criar publicação
+</h2>
+
+<textarea
+id="postText"
+placeholder="Escreva algo sobre Michael Jackson..."
+></textarea>
+
+<div class="create-bottom">
+
+<span>
+🎤 MJ Forever
+</span>
+
+<button
+class="publish"
+onclick="createPost()"
+>
+Publicar
+</button>
+
+</div>
+
+</section>
+
+
+<!-- =========================
+     POST 1
+========================= -->
+
+<article class="post">
+
+<div class="post-header">
+
+<img
+class="avatar"
+src="https://commons.wikimedia.org/wiki/Special:FilePath/Michael%20Jackson%20-%20High%20Res%20version%20%284518178333%29.jpg"
+>
+
+<div>
+
+<div class="user">
+Michael Jackson ✓
+</div>
+
+<div class="time">
+Hoje
+</div>
+
+</div>
+
+</div>
+
+
+<img
+class="post-image"
+onclick="openImage(this)"
+src="https://commons.wikimedia.org/wiki/Special:FilePath/Michaeljacksonphoto%20drewcohen.JPG"
+alt="Michael Jackson no palco"
+>
+
+
+<div class="post-content">
+
+<p class="caption">
+
+🎤 Michael Jackson durante uma apresentação.
+
+<br><br>
+
+<span class="hashtag">
+#MichaelJackson #KingOfPop #MJ
+</span>
+
+</p>
+
+
+<div class="actions">
+
+<button
+class="action"
+onclick="like(this)"
+>
+❤️ Curtir
+</button>
+
+<button
+class="action"
+onclick="focusComment(this)"
+>
+💬 Comentar
+</button>
+
+<button
+class="action"
+onclick="sharePost()"
+>
+📤 Compartilhar
+</button>
+
+</div>
+
+
+<div class="likes">
+
+<span>352</span>
+curtidas
+
+</div>
+
+
+<div class="comments">
+
+<div class="comment">
+
+<strong>moonwalker:</strong>
+Lenda! 👑
+
+</div>
+
+<div class="comment">
+
+<strong>mjfan:</strong>
+O Rei do Pop! ❤️
+
+</div>
+
+</div>
+
+
+<div class="comment-box">
+
+<input
+placeholder="Adicione um comentário..."
+>
+
+<button onclick="addComment(this)">
+➤
+</button>
+
+</div>
+
+</div>
+
+</article>
+
+
+<!-- =========================
+     POST 2
+========================= -->
+
+<article class="post">
+
+<div class="post-header">
+
+<img
+class="avatar"
+src="https://commons.wikimedia.org/wiki/Special:FilePath/Michael%20Jackson%20%2820588392634%29.jpg"
+>
+
+<div>
+
+<div class="user">
+MJ Memories
+</div>
+
+<div class="time">
+Ontem
+</div>
+
+</div>
+
+</div>
+
+
+<img
+class="post-image"
+onclick="openImage(this)"
+src="https://commons.wikimedia.org/wiki/Special:FilePath/Michael%20Jackson%20%2820588392634%29.jpg"
+alt="Michael Jackson Dangerous Tour"
+>
+
+
+<div class="post-content">
+
+<p class="caption">
+
+🌎 Dangerous Tour — Michael Jackson
+no palco em 1992.
+
+<br><br>
+
+<span class="hashtag">
+#DangerousTour #MJ #Moonwalker
+</span>
+
+</p>
+
+
+<div class="actions">
+
+<button class="action"
+onclick="like(this)">
+❤️ Curtir
+</button>
+
+<button class="action"
+onclick="focusComment(this)">
+💬 Comentar
+</button>
+
+<button class="action"
+onclick="sharePost()">
+📤 Compartilhar
+</button>
+
+</div>
+
+
+<div class="likes">
+
+<span>489</span>
+curtidas
+
+</div>
+
+
+<div class="comments"></div>
+
+
+<div class="comment-box">
+
+<input
+placeholder="Adicione um comentário..."
+>
+
+<button onclick="addComment(this)">
+➤
+</button>
+
+</div>
+
+</div>
+
+</article>
+
+
+<!-- =========================
+     POST 3
+========================= -->
+
+<article class="post">
+
+<div class="post-header">
+
+<img
+class="avatar"
+src="https://commons.wikimedia.org/wiki/Special:FilePath/Michael%20Jackson%20%2820589963363%29.jpg"
+>
+
+<div>
+
+<div class="user">
+Moonwalker Club
+</div>
+
+<div class="time">
+2 dias atrás
+</div>
+
+</div>
+
+</div>
+
+
+<img
+class="post-image"
+onclick="openImage(this)"
+src="https://commons.wikimedia.org/wiki/Special:FilePath/Michael%20Jackson%20%2820589963363%29.jpg"
+alt="Michael Jackson"
+>
+
+
+<div class="post-content">
+
+<p class="caption">
+
+✨ Um momento inesquecível da Dangerous Tour.
+
+<br><br>
+
+<span class="hashtag">
+#MichaelJackson #Dangerous #MJForever
+</span>
+
+</p>
+
+
+<div class="actions">
+
+<button class="action"
+onclick="like(this)">
+❤️ Curtir
+</button>
+
+<button class="action"
+onclick="focusComment(this)">
+💬 Comentar
+</button>
+
+<button class="action"
+onclick="sharePost()">
+📤 Compartilhar
+</button>
+
+</div>
+
+
+<div class="likes">
+
+<span>276</span>
+curtidas
+
+</div>
+
+
+<div class="comments"></div>
+
+
+<div class="comment-box">
+
+<input
+placeholder="Adicione um comentário..."
+>
+
+<button onclick="addComment(this)">
+➤
+</button>
+
+</div>
+
+</div>
+
+</article>
+
+
+<!-- =========================
+     POST 4
+========================= -->
+
+<article class="post">
+
+<div class="post-header">
+
+<img
+class="avatar"
+src="https://commons.wikimedia.org/wiki/Special:FilePath/Michael%20Jackson%20%2821211088815%29.jpg"
+>
+
+<div>
+
+<div class="user">
+MJ Universe
+</div>
+
+<div class="time">
+3 dias atrás
+</div>
+
+</div>
+
+</div>
+
+
+<img
+class="post-image"
+onclick="openImage(this)"
+src="https://commons.wikimedia.org/wiki/Special:FilePath/Michael%20Jackson%20%2821211088815%29.jpg"
+alt="Michael Jackson no palco"
+>
+
+
+<div class="post-content">
+
+<p class="caption">
+
+🔥 Energia de palco que marcou a história da música.
+
+<br><br>
+
+<span class="hashtag">
+#MJ #KingOfPop #Legend
+</span>
+
+</p>
+
+
+<div class="actions">
+
+<button class="action"
+onclick="like(this)">
+❤️ Curtir
+</button>
+
+<button class="action"
+onclick="focusComment(this)">
+💬 Comentar
+</button>
+
+<button class="action"
+onclick="sharePost()">
+📤 Compartilhar
+</button>
+
+</div>
+
+
+<div class="likes">
+
+<span>614</span>
+curtidas
+
+</div>
+
+
+<div class="comments"></div>
+
+
+<div class="comment-box">
+
+<input
+placeholder="Adicione um comentário..."
+>
+
+<button onclick="addComment(this)">
+➤
+</button>
+
+</div>
+
+</div>
+
+</article>
+
+
+<!-- =========================
+     POST 5
+========================= -->
+
+<article class="post">
+
+<div class="post-header">
+
+<img
+class="avatar"
+src="https://commons.wikimedia.org/wiki/Special:FilePath/Michael%20Jackson%20Lausanne%2020%20juin%201997.jpg"
+>
+
+<div>
+
+<div class="user">
+HIStory Fans
+</div>
+
+<div class="time">
+5 dias atrás
+</div>
+
+</div>
+
+</div>
+
+
+<img
+class="post-image"
+onclick="openImage(this)"
+src="https://commons.wikimedia.org/wiki/Special:FilePath/Michael%20Jackson%20Lausanne%2020%20juin%201997.jpg"
+alt="Michael Jackson 1997"
+>
+
+
+<div class="post-content">
+
+<p class="caption">
+
+👑 Michael Jackson durante a era HIStory.
+
+<br><br>
+
+<span class="hashtag">
+#HIStory #MichaelJackson #MJ
+</span>
+
+</p>
+
+
+<div class="actions">
+
+<button class="action"
+onclick="like(this)">
+❤️ Curtir
+</button>
+
+<button class="action"
+onclick="focusComment(this)">
+💬 Comentar
+</button>
+
+<button class="action"
+onclick="sharePost()">
+📤 Compartilhar
+</button>
+
+</div>
+
+
+<div class="likes">
+
+<span>728</span>
+curtidas
+
+</div>
+
+
+<div class="comments"></div>
+
+
+<div class="comment-box">
+
+<input
+placeholder="Adicione um comentário..."
+>
+
+<button onclick="addComment(this)">
+➤
+</button>
+
+</div>
+
+</div>
+
+</article>
+
+
+<!-- =========================
+     GALERIA GRANDE
+========================= -->
+
+<section class="gallery">
+
+<h2 class="gallery-title">
+📸 Galeria Michael Jackson
+</h2>
+
+
+<div class="gallery-grid">
+
+
+<div class="gallery-item">
+
+<img
+onclick="openImage(this)"
+src="https://commons.wikimedia.org/wiki/Special:FilePath/Michael%20Jackson%20-%20High%20Res%20version%20%284518179397%29.jpg"
+alt="Michael Jackson"
+>
+
+</div>
+
+
+<div class="gallery-item">
+
+<img
+onclick="openImage(this)"
+src="https://commons.wikimedia.org/wiki/Special:FilePath/Michael%20Jackson%20-%20High%20Res%20version%20%284518180385%29.jpg"
+alt="Michael Jackson"
+>
+
+</div>
+
+
+<div class="gallery-item">
+
+<img
+onclick="openImage(this)"
+src="https://commons.wikimedia.org/wiki/Special:FilePath/Michael%20Jackson%20-%20High%20Res%20version%20%284518184491%29.jpg"
+alt="Michael Jackson"
+>
+
+</div>
+
+
+<div class="gallery-item">
+
+<img
+onclick="openImage(this)"
+src="https://commons.wikimedia.org/wiki/Special:FilePath/Michael%20Jackson%20%281%29.jpg"
+alt="Michael Jackson"
+>
+
+</div>
+
+
+<div class="gallery-item">
+
+<img
+onclick="openImage(this)"
+src="https://commons.wikimedia.org/wiki/Special:FilePath/Michael%20Jackson%20%282058991783%29.jpg"
+alt="Michael Jackson Dangerous Tour"
+>
+
+</div>
+
+
+<div class="gallery-item">
+
+<img
+onclick="openImage(this)"
+src="https://commons.wikimedia.org/wiki/Special:FilePath/Michael%20Jackson%20%2821023177638%29.jpg"
+alt="Michael Jackson"
+>
+
+</div>
+
+
+<div class="gallery-item">
+
+<img
+onclick="openImage(this)"
+src="https://commons.wikimedia.org/wiki/Special:FilePath/Michael%20Jackson%20%2821024273069%29.jpg"
+alt="Michael Jackson"
+>
+
+</div>
+
+
+<div class="gallery-item">
+
+<img
+onclick="openImage(this)"
+src="https://commons.wikimedia.org/wiki/Special:FilePath/Michael%20Jackson%20%2821219021471%29.jpg"
+alt="Michael Jackson"
+>
+
+</div>
+
+
+<div class="gallery-item">
+
+<img
+onclick="openImage(this)"
+src="https://commons.wikimedia.org/wiki/Special:FilePath/Michael%20Jackson%20%281988%29.jpg"
+alt="Michael Jackson"
+>
+
+</div>
+
+
+<div class="gallery-item">
+
+<img
+onclick="openImage(this)"
+src="https://commons.wikimedia.org/wiki/Special:FilePath/Michaeljackson1.jpg"
+alt="Michael Jackson"
+>
+
+</div>
+
+
+<div class="gallery-item">
+
+<img
+onclick="openImage(this)"
+src="https://commons.wikimedia.org/wiki/Special:FilePath/Michael%20Jackson%2C%201988%20%283661952885%29.jpg"
+alt="Michael Jackson"
+>
+
+</div>
+
+
+<div class="gallery-item">
+
+<img
+onclick="openImage(this)"
+src="https://commons.wikimedia.org/wiki/Special:FilePath/Michael%20Jackson%2C%201988%20%283662753754%29.jpg"
+alt="Michael Jackson"
+>
+
+</div>
+
+
+</div>
+
+</section>
+
+
+</main>
+
+
+<!-- =========================
+     MODAL
+========================= -->
+
+<div
+class="modal"
+id="modal"
+onclick="closeImage()"
+>
+
+<span class="close">
+×
+</span>
+
+<img
+id="modalImg"
+>
+
+</div>
+
+
+<footer>
+
+<p>
+👑 <strong>MJ UNIVERSE</strong>
+</p>
+
+<p>
+Michael Jackson • King of Pop
+</p>
+
+</footer>
+
+
+<script>
+
+
+/* =========================
+   CURTIR
+========================= */
+
+function like(button){
+
+    const post =
+    button.closest(".post");
+
+    const number =
+    post.querySelector(".likes span");
+
+    let total =
+    parseInt(number.textContent);
+
+    if(button.classList.contains("liked")){
+
+        total--;
+
+        button.classList.remove("liked");
+
+        button.innerHTML =
+        "❤️ Curtir";
+
+    }else{
+
+        total++;
+
+        button.classList.add("liked");
+
+        button.innerHTML =
+        "❤️ Curtido";
+    }
+
+    number.textContent =
+    total;
+}
+
+
+/* =========================
+   COMENTAR
+========================= */
+
+function addComment(button){
+
+    const post =
+    button.closest(".post");
+
+    const input =
+    post.querySelector(
+        ".comment-box input"
+    );
+
+    const text =
+    input.value.trim();
+
+    if(text === ""){
+
+        alert(
+            "Digite um comentário!"
+        );
+
+        return;
+    }
+
+    const comments =
+    post.querySelector(
+        ".comments"
+    );
+
+    const comment =
+    document.createElement(
+        "div"
+    );
+
+    comment.className =
+    "comment";
+
+    comment.innerHTML =
+    `<strong>Você:</strong> ${text}`;
+
+    comments.appendChild(
+        comment
+    );
+
+    input.value = "";
+}
+
+
+/* =========================
+   FOCAR COMENTÁRIO
+========================= */
+
+function focusComment(button){
+
+    const post =
+    button.closest(".post");
+
+    const input =
+    post.querySelector(
+        ".comment-box input"
+    );
+
+    input.focus();
+}
+
+
+/* =========================
+   COMPARTILHAR
+========================= */
+
+function sharePost(){
+
+    if(navigator.share){
+
+        navigator.share({
+
+            title:
+            "MJ Universe",
+
+            text:
+            "Confira esse post sobre Michael Jackson!",
+
+            url:
+            window.location.href
+
+        });
+
+    }else{
+
+        navigator.clipboard.writeText(
+            window.location.href
+        );
+
+        alert(
+            "Link copiado! 📤"
+        );
+    }
+}
+
+
+/* =========================
+   CRIAR POST
+========================= */
+
+function createPost(){
+
+    const textarea =
+    document.getElementById(
+        "postText"
+    );
+
+    const text =
+    textarea.value.trim();
+
+    if(text === ""){
+
+        alert(
+            "Escreva algo antes de publicar!"
+        );
+
+        return;
+    }
+
+    const post =
+    document.createElement(
+        "article"
+    );
+
+    post.className =
+    "post";
+
+    post.innerHTML = `
+
+        <div class="post-header">
+
+            <img
+            class="avatar"
+            src="https://commons.wikimedia.org/wiki/Special:FilePath/Michael%20Jackson%20%281988%29.jpg"
+            >
+
+            <div>
+
+                <div class="user">
+                    Você 🎤
+                </div>
+
+                <div class="time">
+                    Agora
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="post-content">
+
+            <p class="caption">
+                ${text}
+            </p>
+
+
+            <div class="actions">
+
+                <button
+                class="action"
+                onclick="like(this)"
+                >
+                ❤️ Curtir
+                </button>
+
+
+                <button
+                class="action"
+                onclick="focusComment(this)"
+                >
+                💬 Comentar
+                </button>
+
+
+                <button
+                class="action"
+                onclick="sharePost()"
+                >
+                📤 Compartilhar
+                </button>
 
             </div>
 
 
-            <div class="historia">
+            <div class="likes">
 
-                <h3>👶 Infância</h3>
-
-                <p>
-                    Michael Joseph Jackson nasceu em 29 de agosto de 1958,
-                    em Gary, Indiana, nos Estados Unidos.
-                </p>
-
-                <p>
-                    Ele começou sua carreira artística ainda criança,
-                    integrando o grupo Jackson 5 ao lado de seus irmãos.
-                    O grupo alcançou grande sucesso e Michael rapidamente
-                    chamou atenção por sua voz, dança e presença de palco.
-                </p>
-
-
-                <h3>🎤 Carreira solo</h3>
-
-                <p>
-                    Na década de 1970, Michael começou a construir sua
-                    carreira solo. Entre seus primeiros álbuns estão
-                    <strong>Got to Be There</strong>, <strong>Ben</strong>,
-                    <strong>Music & Me</strong> e
-                    <strong>Forever, Michael</strong>.
-                </p>
-
-
-                <h3>🕺 Off the Wall</h3>
-
-                <p>
-                    Em 1979, Michael lançou <strong>Off the Wall</strong>.
-                    O álbum marcou uma importante transformação em sua
-                    carreira e mostrou sua força como artista solo adulto.
-                </p>
-
-
-                <h3>🔥 Thriller</h3>
-
-                <p>
-                    Em 1982 chegou <strong>Thriller</strong>, um dos álbuns
-                    mais importantes da história da música.
-                    O trabalho trouxe músicas como
-                    <strong>Billie Jean</strong>,
-                    <strong>Beat It</strong> e
-                    <strong>The Girl Is Mine</strong>.
-                </p>
-
-                <p>
-                    O videoclipe de Thriller também se tornou um marco
-                    cultural, ajudando a transformar os videoclipes em
-                    grandes produções.
-                </p>
-
-
-                <h3>⚡ Bad</h3>
-
-                <p>
-                    Em 1987, Michael lançou <strong>Bad</strong>.
-                    O álbum apresentou uma nova fase visual e musical,
-                    acompanhada por uma grande turnê mundial.
-                </p>
-
-
-                <h3>🌎 Dangerous</h3>
-
-                <p>
-                    Em 1991, veio <strong>Dangerous</strong>, trazendo
-                    músicas como Black or White, Remember the Time,
-                    Heal the World e outras faixas marcantes.
-                </p>
-
-
-                <h3>📖 HIStory</h3>
-
-                <p>
-                    Em 1995 foi lançado
-                    <strong>HIStory: Past, Present and Future, Book I</strong>.
-                    O projeto combinava sucessos anteriores com novas
-                    músicas e refletia diferentes momentos da vida e
-                    carreira do artista.
-                </p>
-
-
-                <h3>💿 Blood on the Dance Floor</h3>
-
-                <p>
-                    Em 1997, Michael lançou
-                    <strong>Blood on the Dance Floor</strong>,
-                    que combinava novas músicas com remixes.
-                </p>
-
-
-                <h3>⭐ Invincible</h3>
-
-                <p>
-                    Em 2001, lançou <strong>Invincible</strong>,
-                    seu último álbum de estúdio lançado durante sua vida.
-                </p>
-
-
-                <h3>🌟 Últimos anos</h3>
-
-                <p>
-                    Michael Jackson continuou sendo uma das figuras mais
-                    conhecidas da música mundial. Em 2009, preparava a
-                    série de shows <strong>This Is It</strong>.
-                </p>
-
-                <p>
-                    Michael Jackson faleceu em 25 de junho de 2009,
-                    aos 50 anos.
-                </p>
-
-
-                <h3>👑 Legado</h3>
-
-                <p>
-                    Seu legado permanece presente na música, na dança,
-                    nos videoclipes e na cultura popular. Seu estilo de
-                    dança, suas apresentações e sua influência artística
-                    continuam sendo estudados e lembrados por fãs de
-                    diferentes gerações.
-                </p>
-
-            </div>
-
-        </section>
-
-
-        <!-- =========================
-             MÚSICAS
-        ========================= -->
-
-        <section id="musicas">
-
-            <div class="titulo">
-
-                <h2>🎵 Músicas</h2>
-
-                <p>
-                    Coloque seus próprios links de áudio
-                </p>
+                <span>0</span>
+                curtidas
 
             </div>
 
 
-            <div class="musicas">
+            <div class="comments"></div>
 
 
-                <!-- MÚSICA 1 -->
-
-                <div class="musica">
-
-                    <img
-                        src="https://upload.wikimedia.org/wikipedia/en/5/51/Michael_Jackson_-_Thriller.png"
-                        alt="Thriller">
-
-                    <h3>The Girl Is Mine</h3>
-
-                    <p>
-                        Thriller • 1982
-                    </p>
-
-                    <!--
-                        TROQUE O SRC PELO LINK DA MÚSICA
-                    -->
-
-                    <audio controls preload="none">
-
-                        <source
-                            src="https://youtu.be/8GB9BULxZ8c?si=RrcFBVaGtrADHKGO"
-                            type="audio/mpeg">
-
-                        Seu navegador não suporta áudio.
-
-                    </audio>
-
-                    <p class="aviso-musica">
-                        🔗 Troque o link dentro do atributo src.
-                    </p>
-
-                </div>
-
-
-                <!-- MÚSICA 2 -->
-
-                <div class="musica">
-
-                    <img
-                        src="https://upload.wikimedia.org/wikipedia/en/5/51/Michael_Jackson_-_Thriller.png"
-                        alt="Michael Jackson">
-
-                    <h3>I Heaven Can I</h3>
-
-                    <p>
-                        Música personalizada
-                    </p>
-
-                    <audio controls preload="none">
-
-                        <source
-                            src="https://youtu.be/TDVlDUAIz5k?si=4EAvOItn-5Sk75aY"
-                            type="audio/mpeg">
-
-                        Seu navegador não suporta áudio.
-
-                    </audio>
-
-                    <p class="aviso-musica">
-                        🔗 Troque o link dentro do atributo src.
-                    </p>
-
-                </div>
-
-
-                <!-- MÚSICA 3 -->
-
-                <div class="musica">
-
-                    <img
-                        src="https://upload.wikimedia.org/wikipedia/en/5/51/Michael_Jackson_-_Thriller.png"
-                        alt="Billie Jean">
-
-                    <h3>Billie Jean</h3>
-
-                    <p>
-                        Thriller • 1982
-                    </p>
-
-                    <audio controls preload="none">
-
-                        <source
-                            src="https://youtu.be/tSi6Dn1H36Y?si=ZYOmZVRshz46_KWA"
-                            type="audio/mpeg">
-
-                        Seu navegador não suporta áudio.
-
-                    </audio>
-
-                    <p class="aviso-musica">
-                        🔗 Troque o link dentro do atributo src.
-                    </p>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- =========================
-             ÁLBUNS
-        ========================= -->
-
-        <section id="albuns">
-
-            <div class="titulo">
-
-                <h2>💿 Álbuns</h2>
-
-                <p>
-                    Principais álbuns da carreira solo
-                </p>
-
-            </div>
-
-
-            <div class="albuns">
-
-
-                <div class="album">
-
-                    <img
-                        src="https://upload.wikimedia.org/wikipedia/en/0/0e/GotToBeThere.jpg"
-                        alt="Got to Be There">
-
-                    <h3>Got to Be There</h3>
-                    <span>1972</span>
-
-                </div>
-
-
-                <div class="album">
-
-                    <img
-                        src="https://upload.wikimedia.org/wikipedia/en/0/01/Ben_%28Michael_Jackson_album%29.jpg"
-                        alt="Ben">
-
-                    <h3>Ben</h3>
-                    <span>1972</span>
-
-                </div>
-
-
-                <div class="album">
-
-                    <img
-                        src="https://upload.wikimedia.org/wikipedia/en/0/0c/Music_%26_Me.jpg"
-                        alt="Music and Me">
-
-                    <h3>Music & Me</h3>
-                    <span>1973</span>
-
-                </div>
-
-
-                <div class="album">
-
-                    <img
-                        src="https://upload.wikimedia.org/wikipedia/en/7/71/Forever_Michael.jpg"
-                        alt="Forever Michael">
-
-                    <h3>Forever, Michael</h3>
-                    <span>1975</span>
-
-                </div>
-
-
-                <div class="album">
-
-                    <img
-                        src="https://upload.wikimedia.org/wikipedia/en/2/22/Michael_Jackson_-_Off_the_Wall.jpg"
-                        alt="Off the Wall">
-
-                    <h3>Off the Wall</h3>
-                    <span>1979</span>
-
-                </div>
-
-
-                <div class="album">
-
-                    <img
-                        src="https://upload.wikimedia.org/wikipedia/en/5/51/Michael_Jackson_-_Thriller.png"
-                        alt="Thriller">
-
-                    <h3>Thriller</h3>
-                    <span>1982</span>
-
-                </div>
-
-
-                <div class="album">
-
-                    <img
-                        src="https://upload.wikimedia.org/wikipedia/en/5/51/Michael_Jackson_-_Bad.png"
-                        alt="Bad">
-
-                    <h3>Bad</h3>
-                    <span>1987</span>
-
-                </div>
-
-
-                <div class="album">
-
-                    <img
-                        src="https://upload.wikimedia.org/wikipedia/en/6/62/Michael_Jackson_-_Dangerous.jpg"
-                        alt="Dangerous">
-
-                    <h3>Dangerous</h3>
-                    <span>1991</span>
-
-                </div>
-
-
-                <div class="album">
-
-                    <img
-                        src="https://upload.wikimedia.org/wikipedia/en/5/51/HIStory_%28Michael_Jackson_album%29.jpg"
-                        alt="HIStory">
-
-                    <h3>HIStory</h3>
-                    <span>1995</span>
-
-                </div>
-
-
-                <div class="album">
-
-                    <img
-                        src="https://upload.wikimedia.org/wikipedia/en/5/58/Blood_On_The_Dance_Floor.jpg"
-                        alt="Blood on the Dance Floor">
-
-                    <h3>Blood on the Dance Floor</h3>
-                    <span>1997</span>
-
-                </div>
-
-
-                <div class="album">
-
-                    <img
-                        src="https://upload.wikimedia.org/wikipedia/en/9/9f/Invincible_%28Michael_Jackson_album%29.jpg"
-                        alt="Invincible">
-
-                    <h3>Invincible</h3>
-                    <span>2001</span>
-
-                </div>
-
-
-                <div class="album">
-
-                    <img
-                        src="https://upload.wikimedia.org/wikipedia/en/1/16/Michael_Jackson_-_Michael_%28album%29.jpg"
-                        alt="Michael">
-
-                    <h3>Michael</h3>
-                    <span>2010</span>
-
-                </div>
-
-
-                <div class="album">
-
-                    <img
-                        src="https://upload.wikimedia.org/wikipedia/en/8/8e/Xscape_Michael_Jackson_album_cover.jpg"
-                        alt="Xscape">
-
-                    <h3>Xscape</h3>
-                    <span>2014</span>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- =========================
-             SHOWS
-        ========================= -->
-
-        <section id="shows">
-
-            <div class="titulo">
-
-                <h2>📸 Shows</h2>
-
-                <p>
-                    Michael Jackson nos palcos
-                </p>
-
-            </div>
-
-
-            <div class="galeria">
-
-
-                <img
-                    src="https://upload.wikimedia.org/wikipedia/commons/3/31/Michael_Jackson_in_1988.jpg"
-                    alt="Michael Jackson show">
-
-
-                <img
-                    src="https://upload.wikimedia.org/wikipedia/commons/0/0d/Michael_Jackson_Dangerous_Tour_1992.jpg"
-                    alt="Michael Jackson Dangerous Tour">
-
-
-                <img
-                    src="https://upload.wikimedia.org/wikipedia/commons/0/09/Michael_Jackson_1988.jpg"
-                    alt="Michael Jackson no palco">
-
-
-                <img
-                    src="https://upload.wikimedia.org/wikipedia/commons/8/8e/Michael_Jackson_1988.jpg"
-                    alt="Michael Jackson performance">
-
-
-            </div>
-
-        </section>
-
-
-        <!-- =========================
-             MINI FEED
-        ========================= -->
-
-        <section id="feed">
-
-            <div class="titulo">
-
-                <h2>📱 Mini Feed</h2>
-
-                <p>
-                    Curta e comente as publicações
-                </p>
-
-            </div>
-
-
-            <div class="pesquisa">
+            <div class="comment-box">
 
                 <input
-                    type="text"
-                    id="pesquisa"
-                    placeholder="🔎 Pesquisar no feed..."
-                    onkeyup="pesquisarPosts()">
+                placeholder="Adicione um comentário..."
+                >
+
+                <button
+                onclick="addComment(this)"
+                >
+                ➤
+                </button>
 
             </div>
 
+        </div>
+    `;
 
-            <div class="feed" id="listaPosts">
+    const create =
+    document.getElementById(
+        "create"
+    );
 
+    create.insertAdjacentElement(
+        "afterend",
+        post
+    );
 
-                <!-- POST 1 -->
+    textarea.value = "";
 
-                <article class="post">
+    post.scrollIntoView({
+        behavior:"smooth"
+    });
+}
 
-                    <div class="post-top">
 
-                        <img
-                            src="https://upload.wikimedia.org/wikipedia/commons/3/31/Michael_Jackson_in_1988.jpg"
-                            alt="Michael">
+/* =========================
+   ABRIR IMAGEM
+========================= */
 
-                        <div>
+function openImage(image){
 
-                            <strong>Michael Jackson</strong>
+    const modal =
+    document.getElementById(
+        "modal"
+    );
 
-                            <br>
+    const modalImg =
+    document.getElementById(
+        "modalImg"
+    );
 
-                            <small>Thriller Era</small>
+    modalImg.src =
+    image.src;
 
-                        </div>
+    modal.style.display =
+    "flex";
+}
 
-                    </div>
 
+/* =========================
+   FECHAR IMAGEM
+========================= */
 
-                    <p>
-                        Billie Jean continua sendo uma das músicas mais
-                        marcantes da carreira de Michael Jackson. 🕺
-                    </p>
+function closeImage(){
 
+    document.getElementById(
+        "modal"
+    ).style.display =
+    "none";
+}
 
-                    <img
-                        src="https://upload.wikimedia.org/wikipedia/commons/3/31/Michael_Jackson_in_1988.jpg"
-                        alt="Michael Jackson">
 
+/* =========================
+   HOME
+========================= */
 
-                    <div class="acoes">
+function home(){
 
-                        <button onclick="curtir(this)">
-                            ❤️ Curtir <span>0</span>
-                        </button>
+    window.scrollTo({
 
-                        <button onclick="focarComentario(this)">
-                            💬 Comentar
-                        </button>
+        top:0,
 
-                    </div>
+        behavior:"smooth"
 
+    });
+}
 
-                    <div class="comentarios">
 
-                        <input
-                            type="text"
-                            placeholder="Escreva um comentário...">
+/* =========================
+   CRIAR
+========================= */
 
-                        <button onclick="comentar(this)">
-                            Enviar
-                        </button>
+function goCreate(){
 
-                        <div class="lista-comentarios"></div>
+    const create =
+    document.getElementById(
+        "create"
+    );
 
-                    </div>
+    create.scrollIntoView({
 
-                </article>
+        behavior:"smooth",
 
+        block:"center"
 
-                <!-- POST 2 -->
+    });
 
-                <article class="post">
+    setTimeout(()=>{
 
-                    <div class="post-top">
+        document.getElementById(
+            "postText"
+        ).focus();
 
-                        <img
-                            src="https://upload.wikimedia.org/wikipedia/commons/3/31/Michael_Jackson_in_1988.jpg"
-                            alt="Michael">
+    },500);
+}
 
-                        <div>
 
-                            <strong>Michael Jackson</strong>
-
-                            <br>
-
-                            <small>Bad Tour</small>
-
-                        </div>
-
-                    </div>
-
-
-                    <p>
-                        O palco sempre foi um dos lugares onde Michael
-                        demonstrava toda sua criatividade. ⭐
-                    </p>
-
-
-                    <img
-                        src="https://upload.wikimedia.org/wikipedia/commons/3/31/Michael_Jackson_in_1988.jpg"
-                        alt="Michael Jackson">
-
-
-                    <div class="acoes">
-
-                        <button onclick="curtir(this)">
-                            ❤️ Curtir <span>0</span>
-                        </button>
-
-                        <button onclick="focarComentario(this)">
-                            💬 Comentar
-                        </button>
-
-                    </div>
-
-
-                    <div class="comentarios">
-
-                        <input
-                            type="text"
-                            placeholder="Escreva um comentário...">
-
-                        <button onclick="comentar(this)">
-                            Enviar
-                        </button>
-
-                        <div class="lista-comentarios"></div>
-
-                    </div>
-
-                </article>
-
-
-                <!-- POST 3 -->
-
-                <article class="post">
-
-                    <div class="post-top">
-
-                        <img
-                            src="https://upload.wikimedia.org/wikipedia/commons/3/31/Michael_Jackson_in_1988.jpg"
-                            alt="Michael">
-
-                        <div>
-
-                            <strong>Michael Jackson</strong>
-
-                            <br>
-
-                            <small>The King of Pop</small>
-
-                        </div>
-
-                    </div>
-
-
-                    <p>
-                        Música, dança e espetáculo. O legado de Michael
-                        Jackson continua influenciando artistas até hoje. 👑
-                    </p>
-
-
-                    <img
-                        src="https://upload.wikimedia.org/wikipedia/commons/3/31/Michael_Jackson_in_1988.jpg"
-                        alt="Michael Jackson">
-
-
-                    <div class="acoes">
-
-                        <button onclick="curtir(this)">
-                            ❤️ Curtir <span>0</span>
-                        </button>
-
-                        <button onclick="focarComentario(this)">
-                            💬 Comentar
-                        </button>
-
-                    </div>
-
-
-                    <div class="comentarios">
-
-                        <input
-                            type="text"
-                            placeholder="Escreva um comentário...">
-
-                        <button onclick="comentar(this)">
-                            Enviar
-                        </button>
-
-                        <div class="lista-comentarios"></div>
-
-                    </div>
-
-                </article>
-
-            </div>
-
-        </section>
-
-    </main>
-
-
-    <!-- =========================
-         RODAPÉ
-    ========================= -->
-
-    <footer>
-
-        <p>
-            👑 Michael Jackson Mini Feed
-        </p>
-
-        <p>
-            Projeto feito em HTML, CSS e JavaScript.
-        </p>
-
-    </footer>
-
-
-    <!-- =========================
-         JAVASCRIPT
-    ========================= -->
-
-    <script>
-
-        /* =========================
-           CURTIR
-        ========================= */
-
-        function curtir(botao) {
-
-            const contador = botao.querySelector("span");
-
-            let numero = Number(contador.textContent);
-
-            if (botao.classList.contains("curtido")) {
-
-                numero--;
-
-                botao.classList.remove("curtido");
-
-            } else {
-
-                numero++;
-
-                botao.classList.add("curtido");
-
-            }
-
-            contador.textContent = numero;
-        }
-
-
-        /* =========================
-           COMENTAR
-        ========================= */
-
-        function comentar(botao) {
-
-            const area = botao.parentElement;
-
-            const input = area.querySelector("input");
-
-            const lista = area.querySelector(".lista-comentarios");
-
-            const texto = input.value.trim();
-
-
-            if (texto === "") {
-
-                alert("Digite um comentário!");
-
-                return;
-
-            }
-
-
-            const novoComentario = document.createElement("div");
-
-            novoComentario.className = "comentario";
-
-            novoComentario.textContent = "💬 " + texto;
-
-
-            lista.appendChild(novoComentario);
-
-
-            input.value = "";
-
-        }
-
-
-        /* =========================
-           BOTÃO COMENTAR
-        ========================= */
-
-        function focarComentario(botao) {
-
-            const post = botao.closest(".post");
-
-            const input = post.querySelector(".comentarios input");
-
-            input.focus();
-
-        }
-
-
-        /* =========================
-           PESQUISA
-        ========================= */
-
-        function pesquisarPosts() {
-
-            const pesquisa =
-                document
-                .getElementById("pesquisa")
-                .value
-                .toLowerCase();
-
-
-            const posts =
-                document.querySelectorAll(".post");
-
-
-            posts.forEach(function(post) {
-
-                const texto =
-                    post.textContent.toLowerCase();
-
-
-                if (texto.includes(pesquisa)) {
-
-                    post.style.display = "";
-
-                } else {
-
-                    post.style.display = "none";
-
-                }
-
-            });
-
-        }
-
-    </script>
+</script>
 
 <script src="script.js"></script></body>
-
 </html>
 ```

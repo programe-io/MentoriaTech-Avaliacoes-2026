@@ -1,1216 +1,738 @@
-```javascript
 /* =========================================================
    MICHAEL JACKSON MINI FEED
-   SCRIPT.JS
+   JAVASCRIPT SEGURO E INTERATIVO
 ========================================================= */
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", function () {
 
-    iniciarCurtidas();
-    iniciarComentarios();
-    iniciarMusicas();
-    iniciarGaleria();
-    iniciarPesquisa();
-    iniciarMenu();
-    iniciarAlbuns();
+    /* =====================================================
+       NOTIFICAÇÃO
+    ===================================================== */
 
-});
+    function mensagem(texto) {
 
+        const antiga = document.querySelector(".notification");
 
-/* =========================================================
-   1. CURTIDAS
-========================================================= */
-
-function iniciarCurtidas() {
-
-    const botoes =
-        document.querySelectorAll(".acoes button:first-child");
-
-    botoes.forEach((botao, index) => {
-
-        let curtido =
-            localStorage.getItem("mj_curtida_" + index);
-
-        let quantidade =
-            localStorage.getItem("mj_likes_" + index);
-
-        if (quantidade === null) {
-            quantidade = 0;
+        if (antiga) {
+            antiga.remove();
         }
 
-        const contador =
-            botao.querySelector("span");
+        const aviso = document.createElement("div");
 
-        contador.textContent = quantidade;
+        aviso.className = "notification";
+        aviso.textContent = texto;
 
-        if (curtido === "true") {
-            botao.classList.add("curtido");
-        }
+        document.body.appendChild(aviso);
 
-        botao.onclick = function () {
-
-            let numero =
-                Number(contador.textContent);
-
-            if (botao.classList.contains("curtido")) {
-
-                numero--;
-
-                botao.classList.remove("curtido");
-
-                localStorage.setItem(
-                    "mj_curtida_" + index,
-                    "false"
-                );
-
-            } else {
-
-                numero++;
-
-                botao.classList.add("curtido");
-
-                localStorage.setItem(
-                    "mj_curtida_" + index,
-                    "true"
-                );
-
+        setTimeout(function () {
+            if (aviso) {
+                aviso.remove();
             }
-
-            contador.textContent = numero;
-
-            localStorage.setItem(
-                "mj_likes_" + index,
-                numero
-            );
-
-        };
-
-    });
-
-}
-
-
-/* =========================================================
-   2. COMENTÁRIOS
-========================================================= */
-
-function iniciarComentarios() {
-
-    const posts =
-        document.querySelectorAll(".post");
-
-    posts.forEach((post, index) => {
-
-        const input =
-            post.querySelector(".comentarios input");
-
-        const enviar =
-            post.querySelector(".comentarios button");
-
-        const lista =
-            post.querySelector(".lista-comentarios");
-
-        if (!input || !enviar || !lista) return;
-
-
-        carregarComentarios(
-            index,
-            lista
-        );
-
-
-        enviar.onclick = () => {
-
-            adicionarComentario(
-                index,
-                input,
-                lista
-            );
-
-        };
-
-
-        input.addEventListener(
-            "keydown",
-            evento => {
-
-                if (evento.key === "Enter") {
-
-                    adicionarComentario(
-                        index,
-                        input,
-                        lista
-                    );
-
-                }
-
-            }
-        );
-
-    });
-
-}
-
-
-/* =========================================================
-   ADICIONAR COMENTÁRIO
-========================================================= */
-
-function adicionarComentario(
-    index,
-    input,
-    lista
-) {
-
-    const texto =
-        input.value.trim();
-
-
-    if (texto === "") {
-
-        mostrarAviso(
-            "Digite um comentário!"
-        );
-
-        input.focus();
-
-        return;
-
+        }, 2000);
     }
 
 
-    const comentarios =
-        JSON.parse(
-            localStorage.getItem(
-                "mj_comentarios_" + index
-            ) || "[]"
-        );
+    /* =====================================================
+       EFEITO DE CLIQUE
+    ===================================================== */
+
+    document.addEventListener("click", function (evento) {
+
+        const efeito = document.createElement("span");
+
+        efeito.className = "click-effect";
+
+        efeito.style.left =
+            evento.clientX - 10 + "px";
+
+        efeito.style.top =
+            evento.clientY - 10 + "px";
+
+        document.body.appendChild(efeito);
+
+        setTimeout(function () {
+            efeito.remove();
+        }, 600);
+
+    });
 
 
-    comentarios.push(texto);
+    /* =====================================================
+       MODAL PARA AUMENTAR IMAGENS
+    ===================================================== */
+
+    const modal = document.querySelector(".modal");
+
+    let imagemModal = null;
+
+    if (modal) {
+        imagemModal = modal.querySelector("img");
+    }
 
 
-    localStorage.setItem(
-        "mj_comentarios_" + index,
-        JSON.stringify(comentarios)
-    );
+    function abrirImagem(imagem) {
 
-
-    input.value = "";
-
-
-    atualizarComentarios(
-        index,
-        lista
-    );
-
-}
-
-
-/* =========================================================
-   ATUALIZAR COMENTÁRIOS
-========================================================= */
-
-function atualizarComentarios(
-    index,
-    lista
-) {
-
-    lista.innerHTML = "";
-
-
-    const comentarios =
-        JSON.parse(
-            localStorage.getItem(
-                "mj_comentarios_" + index
-            ) || "[]"
-        );
-
-
-    comentarios.forEach(
-        (texto, numero) => {
-
-            const comentario =
-                document.createElement("div");
-
-            comentario.className =
-                "comentario";
-
-
-            const span =
-                document.createElement("span");
-
-            span.textContent =
-                "💬 " + texto;
-
-
-            const apagar =
-                document.createElement("button");
-
-            apagar.textContent = "×";
-
-            apagar.title =
-                "Apagar comentário";
-
-
-            apagar.style.float = "right";
-
-            apagar.style.background =
-                "transparent";
-
-            apagar.style.border =
-                "none";
-
-            apagar.style.color =
-                "#888";
-
-            apagar.style.cursor =
-                "pointer";
-
-            apagar.style.fontSize =
-                "18px";
-
-
-            apagar.onclick = () => {
-
-                apagarComentario(
-                    index,
-                    numero,
-                    lista
-                );
-
-            };
-
-
-            comentario.appendChild(span);
-
-            comentario.appendChild(apagar);
-
-            lista.appendChild(comentario);
-
+        if (!modal || !imagemModal) {
+            return;
         }
+
+        imagemModal.src = imagem.src;
+
+        imagemModal.alt =
+            imagem.alt || "Michael Jackson";
+
+        modal.classList.add("active");
+
+        document.body.style.overflow = "hidden";
+    }
+
+
+    function fecharImagem() {
+
+        if (!modal) {
+            return;
+        }
+
+        modal.classList.remove("active");
+
+        document.body.style.overflow = "";
+    }
+
+
+    /* =====================================================
+       TODAS AS IMAGENS DO FEED
+    ===================================================== */
+
+    const imagens = document.querySelectorAll(
+        ".post-image, .gallery-grid img"
     );
 
-}
+    imagens.forEach(function (imagem) {
+
+        imagem.style.cursor = "pointer";
+
+        imagem.addEventListener("click", function () {
+
+            abrirImagem(imagem);
+
+        });
+
+    });
 
 
-/* =========================================================
-   CARREGAR COMENTÁRIOS
-========================================================= */
+    /* =====================================================
+       FECHAR MODAL
+    ===================================================== */
 
-function carregarComentarios(
-    index,
-    lista
-) {
+    if (modal) {
 
-    atualizarComentarios(
-        index,
-        lista
-    );
+        modal.addEventListener("click", function (evento) {
 
-}
+            if (
+                evento.target === modal ||
+                evento.target.classList.contains("close-modal")
+            ) {
+                fecharImagem();
+            }
 
-
-/* =========================================================
-   APAGAR COMENTÁRIO
-========================================================= */
-
-function apagarComentario(
-    index,
-    numero,
-    lista
-) {
-
-    const comentarios =
-        JSON.parse(
-            localStorage.getItem(
-                "mj_comentarios_" + index
-            ) || "[]"
-        );
-
-
-    comentarios.splice(
-        numero,
-        1
-    );
-
-
-    localStorage.setItem(
-        "mj_comentarios_" + index,
-        JSON.stringify(comentarios)
-    );
-
-
-    atualizarComentarios(
-        index,
-        lista
-    );
-
-}
-
-
-/* =========================================================
-   3. BOTÃO COMENTAR
-========================================================= */
-
-function focarComentario(botao) {
-
-    const post =
-        botao.closest(".post");
-
-
-    if (!post) return;
-
-
-    const input =
-        post.querySelector(
-            ".comentarios input"
-        );
-
-
-    if (input) {
-
-        input.focus();
-
-        input.scrollIntoView({
-            behavior: "smooth",
-            block: "center"
         });
 
     }
 
-}
 
+    /* =====================================================
+       ESC FECHA A IMAGEM
+    ===================================================== */
 
-/* =========================================================
-   4. MÚSICAS
-========================================================= */
-
-function iniciarMusicas() {
-
-    const players =
-        document.querySelectorAll("audio");
-
-
-    players.forEach(player => {
-
-        player.addEventListener(
-            "play",
-            () => {
-
-                players.forEach(
-                    outro => {
-
-                        if (outro !== player) {
-
-                            outro.pause();
-
-                        }
-
-                    }
-                );
-
-            }
-        );
-
-
-        player.addEventListener(
-            "error",
-            () => {
-
-                mostrarAviso(
-                    "Não foi possível carregar esta música. Verifique o link do áudio."
-                );
-
-            }
-        );
-
-    });
-
-}
-
-
-/* =========================================================
-   5. GALERIA
-========================================================= */
-
-function iniciarGaleria() {
-
-    const imagens =
-        document.querySelectorAll(
-            ".galeria img"
-        );
-
-
-    imagens.forEach(imagem => {
-
-        imagem.addEventListener(
-            "click",
-            () => {
-
-                abrirImagem(
-                    imagem.src,
-                    imagem.alt
-                );
-
-            }
-        );
-
-    });
-
-}
-
-
-/* =========================================================
-   VISUALIZADOR DE FOTO
-========================================================= */
-
-function abrirImagem(
-    src,
-    alt
-) {
-
-    const fundo =
-        document.createElement("div");
-
-
-    fundo.style.position =
-        "fixed";
-
-    fundo.style.inset = "0";
-
-    fundo.style.background =
-        "rgba(0,0,0,0.95)";
-
-    fundo.style.zIndex =
-        "99999";
-
-    fundo.style.display =
-        "flex";
-
-    fundo.style.justifyContent =
-        "center";
-
-    fundo.style.alignItems =
-        "center";
-
-    fundo.style.padding =
-        "20px";
-
-
-    const imagem =
-        document.createElement("img");
-
-
-    imagem.src = src;
-
-    imagem.alt = alt;
-
-
-    imagem.style.maxWidth =
-        "95%";
-
-    imagem.style.maxHeight =
-        "90vh";
-
-    imagem.style.objectFit =
-        "contain";
-
-    imagem.style.borderRadius =
-        "12px";
-
-
-    const fechar =
-        document.createElement("button");
-
-
-    fechar.textContent = "×";
-
-
-    fechar.style.position =
-        "absolute";
-
-    fechar.style.top = "15px";
-
-    fechar.style.right = "25px";
-
-    fechar.style.background =
-        "transparent";
-
-    fechar.style.border = "none";
-
-    fechar.style.color = "white";
-
-    fechar.style.fontSize = "50px";
-
-    fechar.style.cursor = "pointer";
-
-
-    fundo.appendChild(imagem);
-
-    fundo.appendChild(fechar);
-
-    document.body.appendChild(fundo);
-
-
-    fechar.onclick =
-        () => fundo.remove();
-
-
-    fundo.onclick =
-        evento => {
-
-            if (
-                evento.target === fundo
-            ) {
-
-                fundo.remove();
-
-            }
-
-        };
-
-
-    document.addEventListener(
-        "keydown",
-        fecharESC
-    );
-
-
-    function fecharESC(evento) {
+    document.addEventListener("keydown", function (evento) {
 
         if (evento.key === "Escape") {
 
-            fundo.remove();
-
-            document.removeEventListener(
-                "keydown",
-                fecharESC
-            );
-
-        }
-
-    }
-
-}
-
-
-/* =========================================================
-   6. PESQUISA
-========================================================= */
-
-function iniciarPesquisa() {
-
-    const campo =
-        document.getElementById(
-            "pesquisa"
-        );
-
-
-    if (!campo) return;
-
-
-    campo.addEventListener(
-        "input",
-        pesquisarPosts
-    );
-
-}
-
-
-function pesquisarPosts() {
-
-    const campo =
-        document.getElementById(
-            "pesquisa"
-        );
-
-
-    const texto =
-        campo.value
-            .toLowerCase()
-            .trim();
-
-
-    const posts =
-        document.querySelectorAll(
-            ".post"
-        );
-
-
-    posts.forEach(post => {
-
-        const conteudo =
-            post.textContent
-                .toLowerCase();
-
-
-        if (
-            conteudo.includes(texto)
-        ) {
-
-            post.style.display =
-                "";
-
-        } else {
-
-            post.style.display =
-                "none";
+            fecharImagem();
+            fecharStory();
 
         }
 
     });
 
-}
+
+    /* =====================================================
+       DUPLO CLIQUE NA FOTO = CORAÇÃO
+    ===================================================== */
+
+    imagens.forEach(function (imagem) {
+
+        imagem.addEventListener("dblclick", function () {
+
+            const container =
+                imagem.closest(".post-image-container") ||
+                imagem.parentElement;
+
+            if (!container) {
+                return;
+            }
+
+            container.style.position = "relative";
+
+            const coracao =
+                document.createElement("div");
+
+            coracao.className = "big-heart";
+
+            coracao.textContent = "♥";
+
+            container.appendChild(coracao);
+
+            setTimeout(function () {
+                coracao.classList.add("show");
+            }, 10);
+
+            setTimeout(function () {
+                coracao.remove();
+            }, 900);
+
+        });
+
+    });
 
 
-/* =========================================================
-   7. MENU
-========================================================= */
+    /* =====================================================
+       CURTIR POSTS
+    ===================================================== */
 
-function iniciarMenu() {
+    const botoesCurtir =
+        document.querySelectorAll(".like-button");
 
-    const links =
-        document.querySelectorAll(
-            "nav a"
-        );
+    botoesCurtir.forEach(function (botao) {
 
+        botao.addEventListener("click", function () {
 
-    links.forEach(link => {
+            const post =
+                botao.closest(".post");
 
-        link.addEventListener(
-            "click",
-            evento => {
+            if (!post) {
+                return;
+            }
 
-                const destino =
-                    link.getAttribute(
-                        "href"
-                    );
+            const contador =
+                post.querySelector(".likes");
 
+            let numero = 0;
 
-                if (
-                    destino &&
-                    destino.startsWith("#")
-                ) {
+            if (contador) {
 
-                    const elemento =
-                        document.querySelector(
-                            destino
-                        );
+                const resultado =
+                    contador.textContent.match(/\d+/);
 
+                if (resultado) {
+                    numero = Number(resultado[0]);
+                }
 
-                    if (elemento) {
-
-                        evento.preventDefault();
+            }
 
 
-                        elemento.scrollIntoView({
-                            behavior: "smooth"
-                        });
+            if (botao.classList.contains("liked")) {
+
+                botao.classList.remove("liked");
+
+                numero--;
+
+                botao.textContent = "♡";
+
+            } else {
+
+                botao.classList.add("liked");
+
+                numero++;
+
+                botao.textContent = "♥";
+
+                const imagem =
+                    post.querySelector(".post-image");
+
+                if (imagem) {
+
+                    const container =
+                        imagem.parentElement;
+
+                    if (container) {
+
+                        container.style.position =
+                            "relative";
+
+                        const coracao =
+                            document.createElement("div");
+
+                        coracao.className =
+                            "big-heart";
+
+                        coracao.textContent = "♥";
+
+                        container.appendChild(coracao);
+
+                        setTimeout(function () {
+                            coracao.classList.add("show");
+                        }, 10);
+
+                        setTimeout(function () {
+                            coracao.remove();
+                        }, 900);
 
                     }
 
                 }
 
             }
-        );
+
+
+            if (contador) {
+
+                contador.textContent =
+                    numero +
+                    (numero === 1
+                        ? " curtida"
+                        : " curtidas");
+
+            }
+
+        });
 
     });
 
-}
+
+    /* =====================================================
+       COMENTÁRIOS
+    ===================================================== */
+
+    const comentarios =
+        document.querySelectorAll(".comments");
+
+    comentarios.forEach(function (area) {
+
+        const input =
+            area.querySelector("input");
+
+        if (!input) {
+            return;
+        }
+
+        input.addEventListener("keydown", function (evento) {
+
+            if (evento.key !== "Enter") {
+                return;
+            }
+
+            evento.preventDefault();
+
+            const texto =
+                input.value.trim();
+
+            if (texto === "") {
+                return;
+            }
+
+            const comentario =
+                document.createElement("div");
+
+            comentario.className = "comment";
+
+            comentario.textContent =
+                "Você: " + texto;
+
+            area.appendChild(comentario);
+
+            input.value = "";
+
+            mensagem("💬 Comentário adicionado!");
+
+        });
+
+    });
 
 
-/* =========================================================
-   8. ÁLBUNS
-========================================================= */
+    /* =====================================================
+       STORIES
+    ===================================================== */
 
-function iniciarAlbuns() {
+    const storiesHTML =
+        document.querySelectorAll(".story");
 
-    const albuns =
-        document.querySelectorAll(
-            ".album"
-        );
+    const stories = [];
 
 
-    albuns.forEach(album => {
+    storiesHTML.forEach(function (story, indice) {
 
-        album.addEventListener(
+        const imagem =
+            story.querySelector("img");
+
+        if (!imagem) {
+            return;
+        }
+
+        stories.push({
+            imagem: imagem.src,
+            titulo:
+                story.querySelector("p")?.textContent ||
+                "Michael Jackson"
+        });
+
+
+        story.addEventListener("click", function () {
+
+            abrirStory(indice);
+
+        });
+
+    });
+
+
+    let storyAtual = 0;
+    let storyModal = null;
+    let timerStory = null;
+
+
+    /* =====================================================
+       CRIAR MODAL DOS STORIES
+    ===================================================== */
+
+    function criarModalStory() {
+
+        if (storyModal) {
+            return;
+        }
+
+        storyModal =
+            document.createElement("div");
+
+        storyModal.className =
+            "story-modal";
+
+        storyModal.innerHTML = `
+
+            <button class="story-fechar">
+                ×
+            </button>
+
+            <button class="story-anterior">
+                ❮
+            </button>
+
+            <div class="story-conteudo">
+
+                <div class="story-barra">
+                    <div class="story-progresso"></div>
+                </div>
+
+                <img class="story-imagem">
+
+                <h2 class="story-titulo"></h2>
+
+            </div>
+
+            <button class="story-proximo">
+                ❯
+            </button>
+        `;
+
+        document.body.appendChild(storyModal);
+
+
+        /* Fechar */
+
+        const fechar =
+            storyModal.querySelector(".story-fechar");
+
+        if (fechar) {
+
+            fechar.addEventListener(
+                "click",
+                fecharStory
+            );
+
+        }
+
+
+        /* Próximo */
+
+        const proximo =
+            storyModal.querySelector(".story-proximo");
+
+        if (proximo) {
+
+            proximo.addEventListener(
+                "click",
+                proximoStory
+            );
+
+        }
+
+
+        /* Anterior */
+
+        const anterior =
+            storyModal.querySelector(".story-anterior");
+
+        if (anterior) {
+
+            anterior.addEventListener(
+                "click",
+                anteriorStory
+            );
+
+        }
+
+
+        /* Clicar fora */
+
+        storyModal.addEventListener(
             "click",
-            () => {
+            function (evento) {
 
-                const nome =
-                    album.querySelector(
-                        "h3"
-                    );
-
-
-                if (nome) {
-
-                    mostrarAviso(
-                        "💿 Álbum: " +
-                        nome.textContent
-                    );
-
+                if (evento.target === storyModal) {
+                    fecharStory();
                 }
 
             }
         );
 
-    });
-
-}
-
-
-/* =========================================================
-   9. CRIAR POST
-========================================================= */
-
-function criarNovoPost() {
-
-    const texto =
-        prompt(
-            "Escreva o seu post:"
-        );
-
-
-    if (!texto || texto.trim() === "") {
-
-        return;
-
     }
 
 
-    const feed =
-        document.getElementById(
-            "listaPosts"
-        );
+    /* =====================================================
+       ABRIR STORY
+    ===================================================== */
 
+    function abrirStory(indice) {
 
-    if (!feed) return;
+        if (stories.length === 0) {
+            mensagem("Nenhum Story encontrado.");
+            return;
+        }
 
+        storyAtual = indice;
 
-    const post =
-        document.createElement(
-            "article"
-        );
+        criarModalStory();
 
+        const imagem =
+            storyModal.querySelector(".story-imagem");
 
-    post.className = "post";
+        const titulo =
+            storyModal.querySelector(".story-titulo");
 
-
-    post.innerHTML = `
-
-        <div class="post-top">
-
-            <img
-                src="https://upload.wikimedia.org/wikipedia/commons/3/31/Michael_Jackson_in_1988.jpg"
-                alt="Michael Jackson"
-            >
-
-            <div>
-
-                <strong>
-                    Fã do Michael Jackson
-                </strong>
-
-                <br>
-
-                <small>
-                    Agora
-                </small>
-
-            </div>
-
-        </div>
-
-
-        <p>
-            ${protegerHTML(texto)}
-        </p>
-
-
-        <div class="acoes">
-
-            <button>
-                ❤️ Curtir <span>0</span>
-            </button>
-
-            <button>
-                💬 Comentar
-            </button>
-
-        </div>
-
-
-        <div class="comentarios">
-
-            <input
-                type="text"
-                placeholder="Escreva um comentário..."
-            >
-
-            <button>
-                Enviar
-            </button>
-
-            <div class="lista-comentarios"></div>
-
-        </div>
-
-    `;
-
-
-    feed.prepend(post);
-
-
-    /*
-       Reativa os botões do novo post.
-    */
-
-    iniciarNovoPost(post);
-
-
-    mostrarAviso(
-        "✅ Post publicado!"
-    );
-
-}
-
-
-/* =========================================================
-   ATIVAR NOVO POST
-========================================================= */
-
-function iniciarNovoPost(post) {
-
-    const curtir =
-        post.querySelector(
-            ".acoes button:first-child"
-        );
-
-
-    const comentarBotao =
-        post.querySelector(
-            ".acoes button:nth-child(2)"
-        );
-
-
-    const enviar =
-        post.querySelector(
-            ".comentarios button"
-        );
-
-
-    const input =
-        post.querySelector(
-            ".comentarios input"
-        );
-
-
-    const lista =
-        post.querySelector(
-            ".lista-comentarios"
-        );
-
-
-    curtir.onclick =
-        () => {
-
-            const span =
-                curtir.querySelector("span");
-
-            let numero =
-                Number(span.textContent);
-
-
-            if (
-                curtir.classList.contains(
-                    "curtido"
-                )
-            ) {
-
-                numero--;
-
-                curtir.classList.remove(
-                    "curtido"
-                );
-
-            } else {
-
-                numero++;
-
-                curtir.classList.add(
-                    "curtido"
-                );
-
-            }
-
-
-            span.textContent =
-                numero;
-
-        };
-
-
-    comentarBotao.onclick =
-        () => {
-
-            input.focus();
-
-        };
-
-
-    enviar.onclick =
-        () => {
-
-            if (
-                input.value.trim() === ""
-            ) {
-
-                mostrarAviso(
-                    "Digite um comentário!"
-                );
-
-                return;
-
-            }
-
-
-            const comentario =
-                document.createElement(
-                    "div"
-                );
-
-
-            comentario.className =
-                "comentario";
-
-
-            comentario.textContent =
-                "💬 " +
-                input.value;
-
-
-            lista.appendChild(
-                comentario
+        const progresso =
+            storyModal.querySelector(
+                ".story-progresso"
             );
 
 
-            input.value = "";
+        if (imagem) {
 
-        };
-
-}
-
-
-/* =========================================================
-   10. PROTEGER TEXTO
-========================================================= */
-
-function protegerHTML(texto) {
-
-    const elemento =
-        document.createElement("div");
-
-
-    elemento.textContent =
-        texto;
-
-
-    return elemento.innerHTML;
-
-}
-
-
-/* =========================================================
-   11. AVISOS
-========================================================= */
-
-function mostrarAviso(
-    mensagem
-) {
-
-    const antigo =
-        document.getElementById(
-            "avisoMJ"
-        );
-
-
-    if (antigo) {
-
-        antigo.remove();
-
-    }
-
-
-    const aviso =
-        document.createElement(
-            "div"
-        );
-
-
-    aviso.id =
-        "avisoMJ";
-
-
-    aviso.textContent =
-        mensagem;
-
-
-    aviso.style.position =
-        "fixed";
-
-    aviso.style.bottom =
-        "25px";
-
-    aviso.style.left =
-        "50%";
-
-    aviso.style.transform =
-        "translateX(-50%)";
-
-    aviso.style.background =
-        "white";
-
-    aviso.style.color =
-        "black";
-
-    aviso.style.padding =
-        "13px 22px";
-
-    aviso.style.borderRadius =
-        "30px";
-
-    aviso.style.fontWeight =
-        "bold";
-
-    aviso.style.zIndex =
-        "99999";
-
-    aviso.style.boxShadow =
-        "0 5px 25px rgba(0,0,0,.5)";
-
-
-    document.body.appendChild(
-        aviso
-    );
-
-
-    setTimeout(
-        () => {
-
-            aviso.remove();
-
-        },
-        2500
-    );
-
-}
-
-
-/* =========================================================
-   12. TECLA /
-   ABRE A PESQUISA
-========================================================= */
-
-document.addEventListener(
-    "keydown",
-    evento => {
-
-        if (
-            evento.key === "/" &&
-            evento.target.tagName !== "INPUT"
-        ) {
-
-            evento.preventDefault();
-
-
-            const pesquisa =
-                document.getElementById(
-                    "pesquisa"
-                );
-
-
-            if (pesquisa) {
-
-                pesquisa.focus();
-
-            }
+            imagem.src =
+                stories[storyAtual].imagem;
 
         }
 
+
+        if (titulo) {
+
+            titulo.textContent =
+                stories[storyAtual].titulo;
+
+        }
+
+
+        storyModal.classList.add("ativo");
+
+        document.body.style.overflow = "hidden";
+
+
+        /* Reiniciar barra */
+
+        if (progresso) {
+
+            progresso.style.transition = "none";
+
+            progresso.style.width = "0%";
+
+            setTimeout(function () {
+
+                progresso.style.transition =
+                    "width 5s linear";
+
+                progresso.style.width = "100%";
+
+            }, 50);
+
+        }
+
+
+        clearTimeout(timerStory);
+
+        timerStory =
+            setTimeout(function () {
+
+                proximoStory();
+
+            }, 5000);
+
     }
-);
 
 
-/* =========================================================
-   13. BOTÃO DE NOVO POST
-========================================================= */
+    /* =====================================================
+       PRÓXIMO STORY
+    ===================================================== */
 
-function adicionarBotaoPost() {
+    function proximoStory() {
 
-    const feed =
-        document.querySelector(
-            "#feed .titulo"
-        );
+        if (stories.length === 0) {
+            return;
+        }
 
+        storyAtual++;
 
-    if (!feed) return;
+        if (storyAtual >= stories.length) {
+            storyAtual = 0;
+        }
 
+        abrirStory(storyAtual);
 
-    const botao =
-        document.createElement(
-            "button"
-        );
-
-
-    botao.textContent =
-        "➕ Criar publicação";
+    }
 
 
-    botao.style.marginTop =
-        "15px";
+    /* =====================================================
+       STORY ANTERIOR
+    ===================================================== */
 
-    botao.style.padding =
-        "12px 20px";
+    function anteriorStory() {
 
-    botao.style.borderRadius =
-        "25px";
+        if (stories.length === 0) {
+            return;
+        }
 
-    botao.style.border =
-        "1px solid #555";
+        storyAtual--;
 
-    botao.style.background =
-        "#111";
+        if (storyAtual < 0) {
+            storyAtual = stories.length - 1;
+        }
 
-    botao.style.color =
-        "white";
+        abrirStory(storyAtual);
 
-    botao.style.cursor =
-        "pointer";
-
-
-    botao.onclick =
-        criarNovoPost;
+    }
 
 
-    feed.appendChild(
-        botao
+    /* =====================================================
+       FECHAR STORY
+    ===================================================== */
+
+    function fecharStory() {
+
+        if (!storyModal) {
+            return;
+        }
+
+        storyModal.classList.remove("ativo");
+
+        clearTimeout(timerStory);
+
+        document.body.style.overflow = "";
+
+    }
+
+
+    /* =====================================================
+       TECLADO DOS STORIES
+    ===================================================== */
+
+    document.addEventListener("keydown", function (evento) {
+
+        if (
+            !storyModal ||
+            !storyModal.classList.contains("ativo")
+        ) {
+            return;
+        }
+
+        if (evento.key === "ArrowRight") {
+            proximoStory();
+        }
+
+        if (evento.key === "ArrowLeft") {
+            anteriorStory();
+        }
+
+    });
+
+
+    /* =====================================================
+       NAVEGAÇÃO
+    ===================================================== */
+
+    const botoesNav =
+        document.querySelectorAll("nav button");
+
+    botoesNav.forEach(function (botao) {
+
+        botao.addEventListener("click", function () {
+
+            const texto =
+                botao.textContent.toLowerCase();
+
+
+            if (
+                texto.includes("início") ||
+                texto.includes("inicio")
+            ) {
+
+                window.scrollTo({
+                    top: 0,
+                    behavior: "smooth"
+                });
+
+            }
+
+
+            if (texto.includes("galeria")) {
+
+                const galeria =
+                    document.querySelector(".gallery");
+
+                if (galeria) {
+
+                    galeria.scrollIntoView({
+                        behavior: "smooth"
+                    });
+
+                }
+
+            }
+
+
+            if (texto.includes("criar")) {
+
+                const criar =
+                    document.querySelector(".create-post");
+
+                if (criar) {
+
+                    criar.scrollIntoView({
+                        behavior: "smooth"
+                    });
+
+                }
+
+            }
+
+        });
+
+    });
+
+
+    /* =====================================================
+       MENSAGEM FINAL
+    ===================================================== */
+
+    console.log(
+        "⭐ MJ Universe carregado com sucesso!"
     );
 
-}
-
-
-/* =========================================================
-   INICIAR BOTÃO DE POST
-========================================================= */
-
-document.addEventListener(
-    "DOMContentLoaded",
-    () => {
-
-        adicionarBotaoPost();
-
-    }
-);
-```
+});
