@@ -1,188 +1,351 @@
-/* =====================================
-   HOMEM-ARANHA - JAVASCRIPT
-   ===================================== */
+// ==========================================
+// HOMEM-ARANHA - JAVASCRIPT
+// ==========================================
 
 // Espera o HTML carregar
 document.addEventListener("DOMContentLoaded", () => {
 
-    // =====================================
-    // EFEITO DE TEIA AO CLICAR
-    // =====================================
+    // ======================================
+    // BOTÕES "SEGUIR"
+    // ======================================
 
-    document.addEventListener("click", (event) => {
+    const botoesSeguir = document.querySelectorAll(".seguir");
+
+    botoesSeguir.forEach((botao) => {
+
+        botao.addEventListener("click", (evento) => {
+
+            // Evita que o link seja aberto
+            evento.preventDefault();
+
+            if (botao.classList.contains("seguindo")) {
+
+                botao.classList.remove("seguindo");
+
+                botao.textContent = "Seguir";
+
+                botao.style.background = "#e00000";
+
+            } else {
+
+                botao.classList.add("seguindo");
+
+                botao.textContent = "✓ Seguindo";
+
+                botao.style.background = "#174cff";
+
+                criarTeia(botao);
+            }
+
+        });
+
+    });
+
+
+    // ======================================
+    // EFEITO DE TEIA
+    // ======================================
+
+    function criarTeia(elemento) {
 
         const teia = document.createElement("div");
 
         teia.innerHTML = "🕸️";
 
         teia.style.position = "fixed";
-        teia.style.left = event.clientX + "px";
-        teia.style.top = event.clientY + "px";
-        teia.style.fontSize = "35px";
-        teia.style.pointerEvents = "none";
+        teia.style.left = "50%";
+        teia.style.top = "50%";
+        teia.style.fontSize = "45px";
         teia.style.zIndex = "9999";
-        teia.style.transform = "translate(-50%, -50%) scale(0)";
-        teia.style.transition = "all 0.7s ease";
+        teia.style.pointerEvents = "none";
 
         document.body.appendChild(teia);
 
-        setTimeout(() => {
-            teia.style.transform =
-                "translate(-50%, -50%) scale(1.5)";
-            teia.style.opacity = "0";
-        }, 50);
+        teia.animate(
+            [
+                {
+                    transform: "translate(-50%, -50%) scale(0)",
+                    opacity: 0
+                },
+                {
+                    transform: "translate(-50%, -50%) scale(1.5)",
+                    opacity: 1
+                },
+                {
+                    transform: "translate(-50%, -50%) scale(3)",
+                    opacity: 0
+                }
+            ],
+            {
+                duration: 900,
+                easing: "ease-out"
+            }
+        );
 
         setTimeout(() => {
             teia.remove();
-        }, 800);
-    });
-
-
-    // =====================================
-    // ANIMAÇÃO DOS CARDS
-    // =====================================
-
-    const cards = document.querySelectorAll(".card");
-
-    cards.forEach((card, index) => {
-
-        card.style.opacity = "0";
-        card.style.transform = "translateY(50px)";
-
-        setTimeout(() => {
-            card.style.transition =
-                "opacity 0.8s ease, transform 0.8s ease";
-
-            card.style.opacity = "1";
-            card.style.transform = "translateY(0)";
-
-        }, index * 250);
-    });
-
-
-    // =====================================
-    // EFEITO NAS IMAGENS
-    // =====================================
-
-    const imagens = document.querySelectorAll(".card img");
-
-    imagens.forEach((imagem) => {
-
-        imagem.addEventListener("click", () => {
-
-            imagem.classList.toggle("imagem-grande");
-
-        });
-
-    });
-
-
-    // =====================================
-    // TROCA AUTOMÁTICA DE IMAGENS
-    // =====================================
-
-    const imagensAranha = [
-        "https://images.unsplash.com/photo-1534809027769-b00d750a6bac?auto=format&fit=crop&w=1000&q=80",
-
-        "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1000&q=80",
-
-        "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1000&q=80"
-    ];
-
-    let imagemAtual = 0;
-
-    const imagemPrincipal =
-        document.querySelector("header");
-
-    if (imagemPrincipal) {
-
-        setInterval(() => {
-
-            imagemAtual++;
-
-            if (imagemAtual >= imagensAranha.length) {
-                imagemAtual = 0;
-            }
-
-            imagemPrincipal.style.backgroundImage =
-                `linear-gradient(
-                    rgba(0,0,0,.45),
-                    rgba(0,0,0,.7)
-                ),
-                url("${imagensAranha[imagemAtual]}")`;
-
-        }, 5000);
+        }, 900);
     }
 
 
-    // =====================================
-    // BOTÃO DO HERÓI
-    // =====================================
+    // ======================================
+    // FOTO DO HOMEM-ARANHA
+    // ======================================
 
-    const botao = document.querySelector(".botao");
+    const foto = document.querySelector(".foto");
 
-    if (botao) {
+    if (foto) {
+
+        foto.addEventListener("click", () => {
+
+            foto.classList.add("foto-animada");
+
+            mostrarMensagem(
+                "🕷️ O Homem-Aranha está pronto para a ação!"
+            );
+
+            setTimeout(() => {
+                foto.classList.remove("foto-animada");
+            }, 800);
+
+        });
+
+    }
+
+
+    // ======================================
+    // MENSAGEM NA TELA
+    // ======================================
+
+    function mostrarMensagem(texto) {
+
+        const mensagem = document.createElement("div");
+
+        mensagem.textContent = texto;
+
+        mensagem.style.position = "fixed";
+        mensagem.style.bottom = "30px";
+        mensagem.style.left = "50%";
+        mensagem.style.transform = "translateX(-50%)";
+
+        mensagem.style.padding = "15px 25px";
+
+        mensagem.style.background = "#e00000";
+        mensagem.style.color = "#fff";
+
+        mensagem.style.fontWeight = "bold";
+
+        mensagem.style.borderRadius = "30px";
+
+        mensagem.style.boxShadow =
+            "0 0 25px rgba(255, 0, 0, .7)";
+
+        mensagem.style.zIndex = "10000";
+
+        document.body.appendChild(mensagem);
+
+        mensagem.animate(
+            [
+                {
+                    opacity: 0,
+                    transform: "translate(-50%, 30px)"
+                },
+                {
+                    opacity: 1,
+                    transform: "translate(-50%, 0)"
+                }
+            ],
+            {
+                duration: 400,
+                easing: "ease-out"
+            }
+        );
+
+        setTimeout(() => {
+
+            mensagem.animate(
+                [
+                    {
+                        opacity: 1
+                    },
+                    {
+                        opacity: 0
+                    }
+                ],
+                {
+                    duration: 400
+                }
+            );
+
+            setTimeout(() => {
+                mensagem.remove();
+            }, 400);
+
+        }, 2500);
+    }
+
+
+    // ======================================
+    // EFEITO DE BALANÇO DA FOTO
+    // ======================================
+
+    if (foto) {
+
+        foto.addEventListener("mouseenter", () => {
+
+            foto.style.transform =
+                "scale(1.05) rotate(2deg)";
+
+        });
+
+        foto.addEventListener("mouseleave", () => {
+
+            foto.style.transform =
+                "scale(1) rotate(0deg)";
+
+        });
+
+    }
+
+
+    // ======================================
+    // BOTÃO "VER MAIS"
+    // ======================================
+
+    const botaoVerMais = document.querySelector(
+        'a[href="#sobre"]'
+    );
+
+    if (botaoVerMais) {
+
+        botaoVerMais.addEventListener("click", () => {
+
+            mostrarMensagem(
+                "🕷️ Com grandes poderes vêm grandes responsabilidades!"
+            );
+
+        });
+
+    }
+
+
+    // ======================================
+    // CONTADOR DE SEGUIDORES
+    // ======================================
+
+    let seguidores = 1250;
+
+    const contador = document.querySelector(
+        "#contador-seguidores"
+    );
+
+    if (contador) {
+
+        contador.textContent =
+            seguidores.toLocaleString("pt-BR");
+
+    }
+
+
+    botoesSeguir.forEach((botao) => {
 
         botao.addEventListener("click", () => {
 
-            const destino =
-                document.querySelector("#personagens");
+            if (botao.classList.contains("seguindo")) {
 
-            if (destino) {
+                seguidores++;
 
-                destino.scrollIntoView({
-                    behavior: "smooth"
-                });
+            } else {
+
+                seguidores--;
 
             }
+
+            if (contador) {
+
+                contador.textContent =
+                    seguidores.toLocaleString("pt-BR");
+
+            }
+
         });
+
+    });
+
+
+    // ======================================
+    // TEIA AUTOMÁTICA NO FUNDO
+    // ======================================
+
+    function criarTeiaFundo() {
+
+        const teia = document.createElement("div");
+
+        teia.textContent = "🕸️";
+
+        teia.style.position = "fixed";
+
+        teia.style.left =
+            Math.random() * 100 + "%";
+
+        teia.style.top = "-50px";
+
+        teia.style.fontSize =
+            Math.random() * 25 + 20 + "px";
+
+        teia.style.opacity = "0.4";
+
+        teia.style.pointerEvents = "none";
+
+        teia.style.zIndex = "0";
+
+        document.body.appendChild(teia);
+
+        teia.animate(
+            [
+                {
+                    transform: "translateY(0) rotate(0deg)",
+                    opacity: 0
+                },
+                {
+                    transform:
+                        "translateY(50vh) rotate(180deg)",
+                    opacity: 0.5
+                },
+                {
+                    transform:
+                        "translateY(110vh) rotate(360deg)",
+                    opacity: 0
+                }
+            ],
+            {
+                duration:
+                    Math.random() * 5000 + 5000,
+
+                easing: "linear"
+            }
+        );
+
+        setTimeout(() => {
+            teia.remove();
+        }, 10000);
     }
 
 
-    // =====================================
-    // MENSAGEM DO HOMEM-ARANHA
-    // =====================================
-
-    const mensagem = document.createElement("div");
-
-    mensagem.innerText =
-        "🕷️ Com grandes poderes vêm grandes responsabilidades!";
-
-    mensagem.style.position = "fixed";
-    mensagem.style.bottom = "25px";
-    mensagem.style.left = "50%";
-    mensagem.style.transform =
-        "translateX(-50%)";
-
-    mensagem.style.background =
-        "linear-gradient(90deg, #d90416, #071a70)";
-
-    mensagem.style.color = "#fff";
-    mensagem.style.padding = "14px 22px";
-    mensagem.style.borderRadius = "10px";
-
-    mensagem.style.fontWeight = "bold";
-    mensagem.style.boxShadow =
-        "0 0 20px rgba(255,0,0,.6)";
-
-    mensagem.style.zIndex = "9998";
-
-    document.body.appendChild(mensagem);
+    // Cria uma nova teia periodicamente
+    setInterval(criarTeiaFundo, 1800);
 
 
-    // Esconde a mensagem depois de alguns segundos
+    // ======================================
+    // MENSAGEM INICIAL
+    // ======================================
 
     setTimeout(() => {
 
-        mensagem.style.transition =
-            "opacity .5s ease";
+        mostrarMensagem(
+            "🕷️ Bem-vindo ao mundo do Homem-Aranha!"
+        );
 
-        mensagem.style.opacity = "0";
-
-        setTimeout(() => {
-            mensagem.remove();
-        }, 500);
-
-    }, 5000);
+    }, 1000);
 
 });

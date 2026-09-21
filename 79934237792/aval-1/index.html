@@ -3,151 +3,257 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Homem-Aranha</title>
+
+    <title>Homem-Aranha | O Herói</title>
 
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
         }
 
         body {
-            font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #050b2e, #071d63, #b40000);
+            background:
+                radial-gradient(circle at 20% 20%, #b30000 0%, transparent 25%),
+                radial-gradient(circle at 80% 80%, #001b55 0%, transparent 30%),
+                #050505;
             color: white;
+            min-height: 100vh;
+        }
+
+        /* Fundo com teias */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            opacity: 0.12;
+            background-image:
+                linear-gradient(45deg, transparent 48%, white 49%, transparent 50%),
+                linear-gradient(-45deg, transparent 48%, white 49%, transparent 50%);
+            background-size: 80px 80px;
         }
 
         header {
-            min-height: 100vh;
+            position: relative;
+            z-index: 2;
+            padding: 25px 8%;
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 40px 20px;
-            background:
-                linear-gradient(rgba(0,0,0,.45), rgba(0,0,0,.65)),
-                url("https://images.unsplash.com/photo-1534809027769-b00d750a6bac?auto=format&fit=crop&w=1600&q=80");
-            background-size: cover;
-            background-position: center;
+            background: rgba(0, 0, 0, 0.75);
+            border-bottom: 2px solid #e00000;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: #e00000;
+            text-shadow: 0 0 15px red;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 25px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        nav a:hover {
+            color: #ff2222;
         }
 
         .hero {
-            max-width: 900px;
+            position: relative;
+            z-index: 1;
+            min-height: 600px;
+            padding: 70px 8%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 50px;
         }
 
-        .hero h1 {
-            font-size: 70px;
-            color: #ff2020;
-            text-shadow: 4px 4px 0 #06164f, 0 0 25px black;
-            margin-bottom: 20px;
+        .texto {
+            max-width: 600px;
         }
 
-        .hero p {
-            font-size: 22px;
-            margin-bottom: 30px;
+        .texto h1 {
+            font-size: clamp(50px, 8vw, 100px);
+            line-height: 0.9;
+            text-transform: uppercase;
+            color: #e00000;
+            text-shadow:
+                4px 4px 0 #ffffff,
+                8px 8px 0 #001d66;
+        }
+
+        .texto h2 {
+            margin-top: 25px;
+            font-size: 28px;
+        }
+
+        .texto p {
+            margin-top: 20px;
+            font-size: 18px;
+            line-height: 1.7;
+            color: #ddd;
+        }
+
+        .foto {
+            width: 380px;
+            height: 480px;
+            object-fit: cover;
+            border-radius: 25px;
+            border: 5px solid #e00000;
+            box-shadow:
+                0 0 30px rgba(255, 0, 0, 0.6),
+                0 0 80px rgba(0, 50, 255, 0.3);
+            transition: 0.4s;
+        }
+
+        .foto:hover {
+            transform: scale(1.04) rotate(1deg);
+        }
+
+        .botoes {
+            margin-top: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
         .botao {
             display: inline-block;
-            padding: 15px 30px;
-            background: #e50914;
-            color: white;
+            padding: 14px 24px;
+            border-radius: 30px;
             text-decoration: none;
-            border-radius: 8px;
+            color: white;
             font-weight: bold;
-            transition: .3s;
+            background: #e00000;
+            border: 2px solid #ff3333;
+            transition: 0.3s;
         }
 
         .botao:hover {
-            background: #ff3030;
-            transform: scale(1.08);
+            background: white;
+            color: #d00000;
+            transform: translateY(-4px);
         }
 
-        section {
-            padding: 70px 8%;
-        }
-
-        section h2 {
+        .social {
+            position: relative;
+            z-index: 2;
+            padding: 60px 8%;
+            background: rgba(0, 0, 0, 0.8);
             text-align: center;
+        }
+
+        .social h2 {
             font-size: 40px;
-            margin-bottom: 40px;
-            color: #ff2929;
-            text-shadow: 2px 2px #000;
+            margin-bottom: 15px;
+        }
+
+        .social h2 span {
+            color: #e00000;
+        }
+
+        .social p {
+            color: #ccc;
+            margin-bottom: 35px;
         }
 
         .cards {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(3, 1fr);
             gap: 25px;
+            max-width: 1000px;
+            margin: auto;
         }
 
         .card {
-            background: rgba(0, 0, 0, .55);
-            border: 2px solid #d71920;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,.5);
-            transition: .3s;
+            background: linear-gradient(145deg, #111, #1b1b1b);
+            padding: 30px 20px;
+            border-radius: 20px;
+            border: 1px solid #333;
+            transition: 0.3s;
         }
 
         .card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 0 25px #e50914;
+            transform: translateY(-8px);
+            border-color: #e00000;
+            box-shadow: 0 10px 30px rgba(220, 0, 0, 0.3);
         }
 
-        .card img {
-            width: 100%;
-            height: 280px;
-            object-fit: cover;
-        }
-
-        .card-content {
-            padding: 20px;
+        .icone {
+            font-size: 45px;
+            margin-bottom: 15px;
         }
 
         .card h3 {
-            color: #ff3030;
+            font-size: 23px;
             margin-bottom: 10px;
-            font-size: 24px;
         }
 
         .card p {
-            line-height: 1.6;
-            color: #ddd;
+            color: #aaa;
+            margin-bottom: 20px;
         }
 
-        .sobre {
-            background: rgba(0,0,0,.35);
-            text-align: center;
+        .seguir {
+            display: inline-block;
+            background: #e00000;
+            color: white;
+            text-decoration: none;
+            padding: 11px 25px;
+            border-radius: 25px;
+            font-weight: bold;
+            transition: 0.3s;
         }
 
-        .sobre p {
-            max-width: 800px;
-            margin: auto;
-            font-size: 18px;
-            line-height: 1.8;
+        .seguir:hover {
+            background: #ffffff;
+            color: #e00000;
         }
 
         footer {
             text-align: center;
             padding: 25px;
-            background: #03051b;
-            color: #aaa;
+            background: #000;
+            color: #777;
+            border-top: 1px solid #222;
         }
 
-        .teia {
-            font-size: 50px;
-            margin-bottom: 15px;
-        }
-
-        @media (max-width: 600px) {
-            .hero h1 {
-                font-size: 45px;
+        @media (max-width: 800px) {
+            header {
+                flex-direction: column;
+                gap: 15px;
             }
 
-            .hero p {
-                font-size: 18px;
+            nav a {
+                margin: 0 8px;
+            }
+
+            .hero {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .foto {
+                width: 90%;
+                max-width: 380px;
+            }
+
+            .botoes {
+                justify-content: center;
+            }
+
+            .cards {
+                grid-template-columns: 1fr;
+                max-width: 400px;
             }
         }
     </style>
@@ -158,81 +264,139 @@
 <body>
 
     <header>
-        <div class="hero">
-            <div class="teia">🕷️</div>
+        <div class="logo">🕷️ SPIDER-MAN</div>
 
-            <h1>HOMEM-ARANHA</h1>
-
-            <p>
-                Com grandes poderes vêm grandes responsabilidades.
-            </p>
-
-            <a href="#personagens" class="botao">
-                Conheça o herói
-            </a>
-        </div>
+        <nav>
+            <a href="#inicio">Início</a>
+            <a href="#seguir">Seguir</a>
+            <a href="#sobre">Sobre</a>
+        </nav>
     </header>
 
-    <section id="personagens">
-        <h2>O Universo do Aranha</h2>
+    <main>
 
-        <div class="cards">
+        <section class="hero" id="inicio">
 
-            <div class="card">
-                <img
-                    src="https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=800&q=80"
-                    alt="Cidade à noite">
-                <div class="card-content">
-                    <h3>O Herói</h3>
-                    <p>
-                        Peter Parker é um jovem que recebe poderes especiais
-                        e decide usá-los para proteger as pessoas.
-                    </p>
+            <div class="texto">
+
+                <h1>Homem<br>Aranha</h1>
+
+                <h2>Com grandes poderes vêm grandes responsabilidades.</h2>
+
+                <p>
+                    Entre nos prédios, balance pelas ruas e acompanhe
+                    o herói que protege Nova York com suas teias.
+                </p>
+
+                <div class="botoes">
+                    <a class="botao" href="#seguir">
+                        🕷️ Seguir o Herói
+                    </a>
+
+                    <a class="botao" href="#sobre">
+                        Ver mais
+                    </a>
                 </div>
+
             </div>
 
-            <div class="card">
-                <img
-                    src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80"
-                    alt="Cidade com luzes">
-                <div class="card-content">
-                    <h3>Nova York</h3>
+            <img
+                class="foto"
+                src="https://commons.wikimedia.org/wiki/Special:Redirect/file/Spider-Man%20(cropped).jpg"
+                alt="Homem-Aranha"
+            >
+
+        </section>
+
+
+        <section class="social" id="seguir">
+
+            <h2>Siga o <span>Homem-Aranha</span></h2>
+
+            <p>
+                Escolha uma rede social para acompanhar as novidades.
+            </p>
+
+            <div class="cards">
+
+                <div class="card">
+                    <div class="icone">📸</div>
+
+                    <h3>Instagram</h3>
+
                     <p>
-                        Entre prédios, ruas e arranha-céus, o Homem-Aranha
-                        usa suas teias para atravessar a cidade.
+                        Fotos, vídeos e novidades.
                     </p>
+
+                    <a
+                        class="seguir"
+                        href="https://www.instagram.com/marvel/"
+                        target="_blank"
+                    >
+                        Seguir
+                    </a>
                 </div>
+
+
+                <div class="card">
+                    <div class="icone">▶️</div>
+
+                    <h3>YouTube</h3>
+
+                    <p>
+                        Vídeos e conteúdos da Marvel.
+                    </p>
+
+                    <a
+                        class="seguir"
+                        href="https://www.youtube.com/@marvel"
+                        target="_blank"
+                    >
+                        Seguir
+                    </a>
+                </div>
+
+
+                <div class="card">
+                    <div class="icone">🎵</div>
+
+                    <h3>TikTok</h3>
+
+                    <p>
+                        Vídeos curtos e novidades.
+                    </p>
+
+                    <a
+                        class="seguir"
+                        href="#"
+                        onclick="alert('Coloque aqui o link do perfil que você deseja seguir!')"
+                    >
+                        Seguir
+                    </a>
+                </div>
+
             </div>
 
-            <div class="card">
-                <img
-                    src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=800&q=80"
-                    alt="Computador e tecnologia">
-                <div class="card-content">
-                    <h3>Tecnologia</h3>
-                    <p>
-                        As aventuras do herói também envolvem ciência,
-                        invenções e equipamentos especiais.
-                    </p>
-                </div>
-            </div>
+        </section>
 
-        </div>
-    </section>
 
-    <section class="sobre">
-        <h2>Sobre o Homem-Aranha</h2>
+        <section class="social" id="sobre">
 
-        <p>
-            O Homem-Aranha é um dos personagens mais conhecidos dos
-            quadrinhos. Sua história combina ação, humor, responsabilidade
-            e desafios do cotidiano de um jovem que precisa equilibrar
-            sua vida pessoal com a missão de proteger outras pessoas.
-        </p>
-    </section>
+            <h2>🕷️ Sobre o <span>Herói</span></h2>
+
+            <p>
+                O Homem-Aranha é um personagem da Marvel conhecido por
+                suas habilidades de escalar paredes, lançar teias e
+                enfrentar diversos vilões.
+            </p>
+
+        </section>
+
+    </main>
+
 
     <footer>
-        🕷️ Página temática do Homem-Aranha 🕷️
+        Site criado com HTML e CSS • Tema inspirado no Homem-Aranha
     </footer>
 
 <script src="script.js"></script></body>
