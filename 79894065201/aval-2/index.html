@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messi Feed</title>
+
+    <!-- Arquivo CSS -->
+    <link rel="stylesheet" href="style.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+    <header class="topo">
+        <h1>⚽ Messi Feed</h1>
+        <p>O melhor do futebol em um só lugar</p>
+    </header>
+
+    <main class="feed">
+
+        <!-- PUBLICAÇÃO -->
+        <article class="post">
+
+            <div class="usuario">
+                <div class="avatar">🐐</div>
+
+                <div>
+                    <h3>Messi Fans Brasil</h3>
+                    <span>@messi_fans • 2h</span>
+                </div>
+            </div>
+
+            <p class="texto">
+                Lionel Messi, sempre deixando sua marca dentro de campo! 🇦🇷⚽
+                <br>
+                Um verdadeiro craque do futebol! 🐐
+            </p>
+
+            <img
+                class="foto"
+                src="https://commons.wikimedia.org/wiki/Special:Redirect/file/Lionel-Messi-Argentina-2022-FIFA-World-Cup.jpg"
+                alt="Lionel Messi jogando pela Argentina"
+            >
+
+            <div class="estatisticas">
+                <span id="curtidas">125 curtidas</span>
+                <span id="comentariosQtd">8 comentários</span>
+            </div>
+
+            <div class="botoes">
+
+                <button id="likeBtn" onclick="curtirPost()">
+                    🤍 Curtir
+                </button>
+
+                <button onclick="mostrarComentario()">
+                    💬 Comentar
+                </button>
+
+                <button onclick="compartilharPost()">
+                    📤 Compartilhar
+                </button>
+
+            </div>
+
+            <!-- ÁREA DE COMENTÁRIOS -->
+
+            <div class="comentarios" id="comentarios">
+
+                <div class="comentario">
+                    <strong>João:</strong>
+                    Messi é simplesmente incrível! 🐐
+                </div>
+
+                <div class="comentario">
+                    <strong>Lucas:</strong>
+                    O maior da história! ⚽🔥
+                </div>
+
+            </div>
+
+            <!-- CAMPO PARA NOVO COMENTÁRIO -->
+
+            <div class="novo-comentario" id="novoComentario">
+
+                <input
+                    type="text"
+                    id="comentarioInput"
+                    placeholder="Escreva um comentário..."
+                >
+
+                <button onclick="adicionarComentario()">
+                    Enviar
+                </button>
+
+            </div>
+
+        </article>
+
+
+        <!-- SEGUNDA PUBLICAÇÃO -->
+
+        <article class="post">
+
+            <div class="usuario">
+
+                <div class="avatar">
+                    ⚽
+                </div>
+
+                <div>
+                    <h3>Futebol Mundial</h3>
+                    <span>@futebol_mundo • 5h</span>
+                </div>
+
+            </div>
+
+            <p class="texto">
+                A camisa 10 sempre representa talento, criatividade
+                e muita história. 🇦🇷💙
+            </p>
+
+            <img
+                class="foto"
+                src="https://commons.wikimedia.org/wiki/Special:Redirect/file/Lionel_Messi_WC2022.jpg"
+                alt="Lionel Messi"
+            >
+
+            <div class="estatisticas">
+                <span>89 curtidas</span>
+                <span>12 comentários</span>
+            </div>
+
+            <div class="botoes">
+
+                <button onclick="alert('Você curtiu esta publicação! ❤️')">
+                    🤍 Curtir
+                </button>
+
+                <button onclick="alert('Área de comentários aberta! 💬')">
+                    💬 Comentar
+                </button>
+
+                <button onclick="compartilharPost()">
+                    📤 Compartilhar
+                </button>
+
+            </div>
+
+        </article>
+
+    </main>
+
+
+    <script>
+
+        let numeroCurtidas = 125;
+        let jaCurtiu = false;
+        let numeroComentarios = 8;
+
+
+        // CURTIR PUBLICAÇÃO
+
+        function curtirPost() {
+
+            const botao = document.getElementById("likeBtn");
+            const contador = document.getElementById("curtidas");
+
+            if (!jaCurtiu) {
+
+                numeroCurtidas++;
+                jaCurtiu = true;
+
+                botao.innerHTML = "❤️ Curtido";
+                botao.classList.add("curtido");
+
+            } else {
+
+                numeroCurtidas--;
+                jaCurtiu = false;
+
+                botao.innerHTML = "🤍 Curtir";
+                botao.classList.remove("curtido");
+
+            }
+
+            contador.innerHTML = numeroCurtidas + " curtidas";
+        }
+
+
+        // MOSTRAR CAMPO DE COMENTÁRIO
+
+        function mostrarComentario() {
+
+            const campo = document.getElementById("novoComentario");
+
+            campo.style.display = "flex";
+
+            document.getElementById("comentarioInput").focus();
+        }
+
+
+        // ADICIONAR COMENTÁRIO
+
+        function adicionarComentario() {
+
+            const input = document.getElementById("comentarioInput");
+            const texto = input.value.trim();
+
+            if (texto === "") {
+
+                alert("Digite um comentário antes de enviar.");
+
+                return;
+            }
+
+            const comentarios = document.getElementById("comentarios");
+
+            const novoComentario = document.createElement("div");
+
+            novoComentario.classList.add("comentario");
+
+            novoComentario.innerHTML =
+                "<strong>Você:</strong> " + texto;
+
+            comentarios.appendChild(novoComentario);
+
+            numeroComentarios++;
+
+            document.getElementById("comentariosQtd").innerHTML =
+                numeroComentarios + " comentários";
+
+            input.value = "";
+        }
+
+
+        // COMPARTILHAR
+
+        function compartilharPost() {
+
+            if (navigator.share) {
+
+                navigator.share({
+
+                    title: "Messi Feed",
+
+                    text: "Confira esta publicação sobre Messi! ⚽🐐",
+
+                    url: window.location.href
+
+                });
+
+            } else {
+
+                navigator.clipboard.writeText(window.location.href);
+
+                alert("Link copiado para a área de transferência! 📋");
+
+            }
+        }
+
+    </script>
+
+</body>
+</html>
