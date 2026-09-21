@@ -1,0 +1,1257 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini Feed - Sistema DM e Busca de Usuários</title>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #1877f2;
+            --primary-hover: #166fe5;
+            --bg-color: #f0f2f5;
+            --card-bg: #ffffff;
+            --text-main: #1c1e21;
+            --text-secondary: #65676b;
+            --border-color: #e4e6eb;
+            --chat-bubble-user: #0084ff;
+            --chat-bubble-other: #e4e6eb;
+        }
+
+        html, body {
+            height: 100%;
+            width: 100vw;
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .app-layout {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            width: 100vw;
+        }
+
+        /* --- AUTENTICAÇÃO --- */
+        .auth-body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            width: 100vw;
+            padding: 16px;
+        }
+
+        .auth-box {
+            background: var(--card-bg);
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .auth-box h1 {
+            color: #4a5568;
+            margin-bottom: 6px;
+            font-size: 22px;
+        }
+
+        .auth-box p {
+            color: #718096;
+            margin-bottom: 16px;
+            font-size: 13px;
+        }
+
+        .input-group {
+            text-align: left;
+            margin-bottom: 12px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 12px;
+            color: #4a5568;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+
+        .input-group input, 
+        .input-group textarea,
+        .input-group select {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #cbd5e0;
+            border-radius: 6px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+            background: #fff;
+        }
+
+        .input-group input:focus, 
+        .input-group textarea:focus,
+        .input-group select:focus {
+            border-color: var(--primary-color);
+        }
+
+        .btn-primary {
+            width: 100%;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-follow, .btn-chat {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .btn-chat {
+            background-color: #e4e6eb;
+            color: #050505;
+        }
+
+        .btn-chat:hover {
+            background-color: #d8dadf;
+        }
+
+        .btn-follow.following {
+            background-color: var(--border-color);
+            color: var(--text-main);
+        }
+
+        .auth-footer {
+            margin-top: 12px;
+            font-size: 12px;
+        }
+
+        .auth-footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        /* --- NAVBAR --- */
+        .navbar {
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 12px 16px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            width: 100vw;
+        }
+
+        .nav-container {
+            width: 100%;
+            padding: 0 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-container h2 {
+            font-size: 20px;
+            color: var(--primary-color);
+            cursor: pointer;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-icon-btn {
+            background: var(--border-color);
+            border: none;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .logout-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        /* --- ESTATÍSTICAS --- */
+        .live-stats-box {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background: var(--bg-color);
+            padding: 10px 6px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border: 1px solid var(--border-color);
+        }
+
+        .stat-item {
+            text-align: center;
+            flex: 1;
+        }
+
+        .stat-item:first-child {
+            border-right: 1px solid var(--border-color);
+        }
+
+        .stat-number {
+            display: block;
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .stat-label {
+            font-size: 10px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        /* --- LAYOUT --- */
+        .main-layout {
+            width: 100vw;
+            padding: 12px 16px;
+            display: grid;
+            grid-template-columns: 280px 1fr 280px;
+            gap: 16px;
+            flex: 1;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            padding: 14px;
+            border-radius: 8px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+            margin-bottom: 12px;
+            width: 100%;
+        }
+
+        /* SIDEBARS */
+        .profile-summary {
+            text-align: center;
+        }
+
+        .profile-avatar-container {
+            width: 68px;
+            height: 68px;
+            margin: 0 auto 8px auto;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 2px solid var(--primary-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: var(--bg-color);
+        }
+
+        .profile-avatar-container img, .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 14px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .nav-links-sidebar {
+            list-style: none;
+            text-align: left;
+            border-top: 1px solid var(--border-color);
+            padding-top: 8px;
+        }
+
+        .nav-links-sidebar li {
+            padding: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-links-sidebar li:hover {
+            background-color: var(--bg-color);
+            color: var(--primary-color);
+        }
+
+        /* --- FEED E POSTS --- */
+        .post {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+            padding: 14px;
+            margin-bottom: 12px;
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .post-author-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* --- DIRECT / CHAT --- */
+        .chat-container {
+            display: flex;
+            height: 520px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            background: var(--card-bg);
+        }
+
+        .chat-sidebar {
+            width: 35%;
+            border-right: 1px solid var(--border-color);
+            overflow-y: auto;
+            background: #fafafa;
+        }
+
+        .chat-user-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+        }
+
+        .chat-user-item:hover, .chat-user-item.active {
+            background: #edf5ff;
+        }
+
+        .chat-main {
+            width: 65%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 14px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            background: #f9f9f9;
+        }
+
+        .message-bubble {
+            max-width: 70%;
+            padding: 8px 12px;
+            border-radius: 16px;
+            font-size: 13px;
+        }
+
+        .message-bubble.mine {
+            align-self: flex-end;
+            background-color: var(--chat-bubble-user);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message-bubble.other {
+            align-self: flex-start;
+            background-color: var(--chat-bubble-other);
+            color: black;
+            border-bottom-left-radius: 4px;
+        }
+
+        .chat-input-area {
+            padding: 10px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 8px;
+        }
+
+        .chat-input-area input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #cbd5e0;
+            border-radius: 20px;
+            outline: none;
+        }
+
+        .chat-blocked-notice {
+            padding: 12px;
+            background: #fff3cd;
+            color: #856404;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        /* --- LISTAS DE USUÁRIOS E BUSCA (REFEITAS) --- */
+        .tab-menu-header {
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 12px;
+        }
+
+        .tab-item {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+        }
+
+        .tab-item.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+
+        .user-card-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 8px;
+            background: #fff;
+        }
+
+        .user-card-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-card-details strong {
+            font-size: 14px;
+            display: block;
+        }
+
+        .user-card-details span {
+            font-size: 12px;
+            color: var(--text-secondary);
+            display: block;
+        }
+
+        .user-card-actions {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 13px;
+            padding: 20px 0;
+        }
+
+        footer {
+            text-align: center;
+            padding: 16px;
+            background-color: var(--card-bg);
+            color: var(--text-secondary);
+            font-size: 12px;
+            border-top: 1px solid var(--border-color);
+            margin-top: auto;
+            width: 100vw;
+        }
+
+        @media (max-width: 850px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+                padding: 0;
+            }
+            .sidebar-left, .sidebar-right {
+                display: none;
+            }
+            .chat-container {
+                flex-direction: column;
+                height: 70vh;
+            }
+            .chat-sidebar {
+                width: 100%;
+                height: 35%;
+            }
+            .chat-main {
+                width: 100%;
+                height: 65%;
+            }
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+    <!-- AUTENTICAÇÃO -->
+    <div id="auth-screen" class="auth-body">
+        <div class="auth-box">
+            <h1 id="auth-title">Mini Feed</h1>
+            <p id="auth-subtitle">Acesse com suas credenciais ou crie uma conta nova.</p>
+            
+            <form id="auth-form">
+                <div class="input-group">
+                    <label for="username">Nome de Usuário</label>
+                    <input type="text" id="username" required placeholder="Digite seu nome">
+                </div>
+                
+                <div class="input-group">
+                    <label for="password">Senha</label>
+                    <input type="password" id="password" required placeholder="Sua senha">
+                </div>
+
+                <button type="submit" id="auth-submit-btn" class="btn-primary">Entrar</button>
+            </form>
+
+            <div class="auth-footer">
+                <p id="auth-toggle-text">Não tem uma conta? <a href="#" id="toggle-auth-btn">Cadastre-se</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- APLICAÇÃO PRINCIPAL -->
+    <div id="app-screen" class="app-layout hidden">
+        
+        <header class="navbar">
+            <div class="nav-container">
+                <h2 onclick="switchCenterView('feed')">Mini Feed</h2>
+                <div class="nav-right">
+                    <button class="nav-icon-btn" onclick="switchCenterView('chat')" title="Mensagens Direct">💬</button>
+                    <button class="logout-btn" id="logout-btn">Sair</button>
+                </div>
+            </div>
+        </header>
+
+        <div class="main-layout">
+            
+            <!-- SIDEBAR ESQUERDA -->
+            <aside class="sidebar-left">
+                <div class="card profile-summary">
+                    <div class="profile-avatar-container" id="sidebar-avatar-wrapper">
+                        <span id="sidebar-avatar-text">?</span>
+                    </div>
+                    <h3 id="sidebar-username">Usuário</h3>
+                    <p id="sidebar-bio">Explorando o Mini Feed...</p>
+
+                    <div class="live-stats-box">
+                        <div class="stat-item">
+                            <span class="stat-number" id="side-followers-count">0</span>
+                            <span class="stat-label">Seguidores</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" id="side-following-count">0</span>
+                            <span class="stat-label">Seguindo</span>
+                        </div>
+                    </div>
+                    
+                    <ul class="nav-links-sidebar">
+                        <li id="menu-feed">🏠 Página Inicial</li>
+                        <li id="menu-chat">💬 Mensagens Direct</li>
+                        <li id="menu-network">👥 Minha Rede de Conexões</li>
+                        <li id="menu-search">🔍 Buscar Usuários</li>
+                        <li id="menu-profile">⚙️ Editar Perfil & Direct</li>
+                    </ul>
+                </div>
+            </aside>
+
+            <!-- COLUNA CENTRAL -->
+            <main class="center-content">
+                
+                <!-- FEED -->
+                <div id="feed-view">
+                    <section class="card" style="display:flex; justify-content:space-between; align-items:center;">
+                        <div>
+                            <strong class="current-user-name">Usuário</strong>
+                            <span style="display:block; font-size: 12px; color: var(--text-secondary);">O que está acontecendo?</span>
+                        </div>
+                        <button class="btn-primary" style="width: auto; padding: 8px 16px;" id="go-to-publish-btn">Publicar</button>
+                    </section>
+                    <section id="feed-posts-container"></section>
+                </div>
+
+                <!-- CHAT DIRECT -->
+                <div id="chat-view" class="card hidden" style="padding:0; overflow:hidden;">
+                    <div class="chat-container">
+                        <div class="chat-sidebar" id="chat-users-list"></div>
+                        <div class="chat-main">
+                            <div class="chat-header">
+                                <div class="avatar" id="chat-active-avatar">?</div>
+                                <div>
+                                    <strong id="chat-active-name" style="font-size:14px;">Selecione uma conversa</strong>
+                                    <span id="chat-active-status" style="display:block; font-size:11px; color:var(--text-secondary);"></span>
+                                </div>
+                            </div>
+
+                            <div class="chat-messages" id="chat-messages-body">
+                                <div class="empty-state">Selecione um contato ao lado.</div>
+                            </div>
+
+                            <div id="chat-input-wrapper">
+                                <form class="chat-input-area" id="chat-form" onsubmit="sendChatMessage(event)">
+                                    <input type="text" id="chat-message-input" placeholder="Escreva uma mensagem..." autocomplete="off">
+                                    <button type="submit" class="btn-primary" style="width:auto; padding:0 16px; border-radius:20px;">Enviar</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MINHA REDE (REFEITO) -->
+                <div id="network-view" class="card hidden">
+                    <h2>Minha Rede de Conexões</h2>
+                    <p style="font-size:12px; color:var(--text-secondary); margin-bottom:12px;">Acompanhe quem interage e se conecta com você.</p>
+                    
+                    <div class="tab-menu-header">
+                        <div class="tab-item active" id="tab-net-followers" onclick="switchNetworkTab('followers')">
+                            Seguidores (<span id="net-followers-count">0</span>)
+                        </div>
+                        <div class="tab-item" id="tab-net-following" onclick="switchNetworkTab('following')">
+                            Seguindo (<span id="net-following-count">0</span>)
+                        </div>
+                    </div>
+
+                    <div id="network-list-container"></div>
+                </div>
+
+                <!-- BUSCAR USUÁRIOS (REFEITO) -->
+                <div id="search-view" class="card hidden">
+                    <h2>Buscar Usuários</h2>
+                    <p style="font-size:12px; color:var(--text-secondary); margin-bottom:12px;">Encontre membros da comunidade e inicie conversas.</p>
+
+                    <div class="input-group">
+                        <input type="text" id="user-search-input" placeholder="Digite o nome do usuário..." oninput="renderUserSearchResults()">
+                    </div>
+
+                    <div id="user-search-results-container"></div>
+                </div>
+
+                <!-- NOVO POST -->
+                <div id="publish-view" class="card hidden">
+                    <h2>Nova Publicação</h2>
+                    <form id="create-post-form" style="margin-top:10px;">
+                        <div class="input-group">
+                            <textarea id="post-text" rows="3" placeholder="O que você deseja compartilhar?"></textarea>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button type="button" class="btn-chat" style="width:100%; border-radius:6px;" id="cancel-publish-btn">Cancelar</button>
+                            <button type="submit" class="btn-primary">Publicar</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- EDITAR PERFIL & CONFIGURAÇÕES -->
+                <div id="profile-view" class="card hidden">
+                    <h2>Editar Perfil & Privacidade de DM</h2>
+                    <form id="update-profile-form" style="margin-top:10px;">
+                        <div class="input-group">
+                            <label for="profile-avatar-file">Foto de Perfil</label>
+                            <input type="file" id="profile-avatar-file" accept="image/*">
+                        </div>
+
+                        <div class="input-group">
+                            <label for="profile-bio-input">Biografia</label>
+                            <input type="text" id="profile-bio-input" placeholder="Sua biografia...">
+                        </div>
+
+                        <div class="input-group" style="border-top:1px solid var(--border-color); padding-top:10px; margin-top:10px;">
+                            <label for="dm-permission-select"><strong>Quem pode te enviar Mensagem Direct?</strong></label>
+                            <select id="dm-permission-select">
+                                <option value="all">Qualquer pessoa</option>
+                                <option value="following_only">Apenas pessoas que EU SIGO</option>
+                                <option value="nobody">Ninguém</option>
+                            </select>
+                        </div>
+
+                        <div style="display:flex; gap:10px; margin-top:12px;">
+                            <button type="button" class="btn-chat" style="width:100%; border-radius:6px;" id="cancel-profile-btn">Voltar</button>
+                            <button type="submit" class="btn-primary">Salvar</button>
+                        </div>
+                    </form>
+                </div>
+
+            </main>
+
+            <!-- SIDEBAR DIREITA -->
+            <aside class="sidebar-right">
+                <div class="card">
+                    <h4>Recomendações</h4>
+                    <p style="font-size:12px; color:var(--text-secondary); margin-top:6px;">Use a aba de busca para encontrar perfis do seu interesse.</p>
+                </div>
+            </aside>
+
+        </div>
+
+        <footer>
+            <p>&copy; 2026 Mini Feed. Todos os direitos reservados.</p>
+        </footer>
+    </div>
+
+    <script>
+        let db = {
+            users: JSON.parse(localStorage.getItem('mf_users')) || [],
+            posts: JSON.parse(localStorage.getItem('mf_posts')) || [],
+            chats: JSON.parse(localStorage.getItem('mf_chats')) || []
+        };
+
+        let currentUser = JSON.parse(localStorage.getItem('mf_current_user')) || null;
+        let isSignUpMode = false;
+        let activeChatUser = null;
+        let currentNetworkTab = 'followers';
+
+        const authScreen = document.getElementById('auth-screen');
+        const appScreen = document.getElementById('app-screen');
+        const authForm = document.getElementById('auth-form');
+        const authTitle = document.getElementById('auth-title');
+        const authSubmitBtn = document.getElementById('auth-submit-btn');
+        const toggleAuthBtn = document.getElementById('toggle-auth-btn');
+
+        const feedView = document.getElementById('feed-view');
+        const chatView = document.getElementById('chat-view');
+        const networkView = document.getElementById('network-view');
+        const searchView = document.getElementById('search-view');
+        const publishView = document.getElementById('publish-view');
+        const profileView = document.getElementById('profile-view');
+        const feedPostsContainer = document.getElementById('feed-posts-container');
+
+        window.addEventListener('DOMContentLoaded', () => {
+            if (currentUser) showApp();
+            else showAuth();
+        });
+
+        function saveData() {
+            localStorage.setItem('mf_users', JSON.stringify(db.users));
+            localStorage.setItem('mf_posts', JSON.stringify(db.posts));
+            localStorage.setItem('mf_chats', JSON.stringify(db.chats));
+            localStorage.setItem('mf_current_user', JSON.stringify(currentUser));
+        }
+
+        function showAuth() {
+            authScreen.classList.remove('hidden');
+            appScreen.classList.add('hidden');
+        }
+
+        function showApp() {
+            authScreen.classList.add('hidden');
+            appScreen.classList.remove('hidden');
+            const freshUser = db.users.find(u => u.id === currentUser.id);
+            if (freshUser) currentUser = freshUser;
+
+            updateUIProfileData();
+            updateLiveCounters();
+            renderFeed();
+        }
+
+        function updateLiveCounters() {
+            if (!currentUser) return;
+            const followersCount = (currentUser.followers || []).length;
+            const followingCount = (currentUser.following || []).length;
+
+            document.getElementById('side-followers-count').textContent = followersCount;
+            document.getElementById('side-following-count').textContent = followingCount;
+            document.getElementById('net-followers-count').textContent = followersCount;
+            document.getElementById('net-following-count').textContent = followingCount;
+        }
+
+        function updateUIProfileData() {
+            document.querySelectorAll('.current-user-name').forEach(el => el.textContent = currentUser.username);
+            document.getElementById('sidebar-username').textContent = currentUser.username;
+            document.getElementById('sidebar-bio').textContent = currentUser.bio || "Explorando o Mini Feed...";
+            
+            const sideAvatarWrapper = document.getElementById('sidebar-avatar-wrapper');
+            if (currentUser.avatar) {
+                sideAvatarWrapper.innerHTML = `<img src="${currentUser.avatar}" alt="Avatar">`;
+            } else {
+                const initial = currentUser.username[0].toUpperCase();
+                sideAvatarWrapper.innerHTML = `<span style="font-size: 24px; font-weight: bold; color: var(--primary-color);">${initial}</span>`;
+            }
+        }
+
+        /* --- LOGIN & CADASTRO --- */
+        toggleAuthBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            isSignUpMode = !isSignUpMode;
+            authTitle.textContent = isSignUpMode ? "Criar Conta" : "Mini Feed";
+            authSubmitBtn.textContent = isSignUpMode ? "Cadastrar" : "Entrar";
+        });
+
+        authForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+
+            if (isSignUpMode) {
+                if (db.users.find(u => u.username.toLowerCase() === username.toLowerCase())) return alert("Usuário já existe!");
+                const newUser = { id: Date.now(), username, password, bio: "", avatar: null, following: [], followers: [], dmPermission: 'all' };
+                db.users.push(newUser);
+                currentUser = newUser;
+                saveData();
+                showApp();
+            } else {
+                const user = db.users.find(u => u.username.toLowerCase() === username.toLowerCase() && u.password === password);
+                if (!user) return alert("Credenciais incorretas.");
+                if (!user.following) user.following = [];
+                if (!user.followers) user.followers = [];
+                if (!user.dmPermission) user.dmPermission = 'all';
+                currentUser = user;
+                saveData();
+                showApp();
+            }
+        });
+
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            currentUser = null;
+            saveData();
+            showAuth();
+        });
+
+        /* --- NAVEGAÇÃO --- */
+        function switchCenterView(viewName) {
+            feedView.classList.add('hidden');
+            chatView.classList.add('hidden');
+            networkView.classList.add('hidden');
+            searchView.classList.add('hidden');
+            publishView.classList.add('hidden');
+            profileView.classList.add('hidden');
+
+            if (viewName === 'feed') feedView.classList.remove('hidden');
+            if (viewName === 'chat') { chatView.classList.remove('hidden'); renderChatSidebar(); }
+            if (viewName === 'network') { networkView.classList.remove('hidden'); renderNetworkList(); }
+            if (viewName === 'search') { searchView.classList.remove('hidden'); renderUserSearchResults(); }
+            if (viewName === 'publish') publishView.classList.remove('hidden');
+            if (viewName === 'profile') {
+                profileView.classList.remove('hidden');
+                document.getElementById('profile-bio-input').value = currentUser.bio || "";
+                document.getElementById('dm-permission-select').value = currentUser.dmPermission || "all";
+            }
+            updateLiveCounters();
+        }
+
+        document.getElementById('menu-feed').addEventListener('click', () => { renderFeed(); switchCenterView('feed'); });
+        document.getElementById('menu-chat').addEventListener('click', () => switchCenterView('chat'));
+        document.getElementById('menu-network').addEventListener('click', () => switchCenterView('network'));
+        document.getElementById('menu-search').addEventListener('click', () => switchCenterView('search'));
+        document.getElementById('menu-profile').addEventListener('click', () => switchCenterView('profile'));
+        document.getElementById('go-to-publish-btn').addEventListener('click', () => switchCenterView('publish'));
+        document.getElementById('cancel-publish-btn').addEventListener('click', () => switchCenterView('feed'));
+        document.getElementById('cancel-profile-btn').addEventListener('click', () => switchCenterView('feed'));
+
+        /* =========================================================
+           SISTEMA DE REDE DE SEGUIDORES E SEGUINDO (REFEITO)
+        ========================================================= */
+        function switchNetworkTab(tab) {
+            currentNetworkTab = tab;
+            document.getElementById('tab-net-followers').classList.toggle('active', tab === 'followers');
+            document.getElementById('tab-net-following').classList.toggle('active', tab === 'following');
+            renderNetworkList();
+        }
+
+        function renderNetworkList() {
+            const container = document.getElementById('network-list-container');
+            container.innerHTML = '';
+
+            const listUsernames = currentNetworkTab === 'followers' ? (currentUser.followers || []) : (currentUser.following || []);
+
+            if (listUsernames.length === 0) {
+                container.innerHTML = `<div class="empty-state">Nenhum usuário encontrado nesta lista.</div>`;
+                return;
+            }
+
+            listUsernames.forEach(uname => {
+                const targetUser = db.users.find(u => u.username === uname);
+                if (targetUser) {
+                    container.appendChild(createUserCardElement(targetUser));
+                }
+            });
+        }
+
+        /* =========================================================
+           SISTEMA DE BUSCA DE USUÁRIOS (REFEITO)
+        ========================================================= */
+        function renderUserSearchResults() {
+            const query = document.getElementById('user-search-input').value.trim().toLowerCase();
+            const container = document.getElementById('user-search-results-container');
+            container.innerHTML = '';
+
+            // Filtra todos os usuários exceto o atual
+            const matchedUsers = db.users.filter(u => 
+                u.username !== currentUser.username && 
+                u.username.toLowerCase().includes(query)
+            );
+
+            if (matchedUsers.length === 0) {
+                container.innerHTML = `<div class="empty-state">Nenhum usuário encontrado com o termo "${query}".</div>`;
+                return;
+            }
+
+            matchedUsers.forEach(user => {
+                container.appendChild(createUserCardElement(user));
+            });
+        }
+
+        /* COMPONENTE REUTILIZÁVEL DE CARD DE USUÁRIO COM BOTÕES DE AÇÃO */
+        function createUserCardElement(user) {
+            const card = document.createElement('div');
+            card.className = 'user-card-item';
+
+            const isFollowing = (currentUser.following || []).includes(user.username);
+            
+            let avatarHTML = `<div class="avatar">${user.username[0].toUpperCase()}</div>`;
+            if (user.avatar) {
+                avatarHTML = `<div class="avatar"><img src="${user.avatar}"></div>`;
+            }
+
+            card.innerHTML = `
+                <div class="user-card-info">
+                    ${avatarHTML}
+                    <div class="user-card-details">
+                        <strong>${user.username}</strong>
+                        <span>${user.bio || 'Sem biografia.'}</span>
+                    </div>
+                </div>
+                <div class="user-card-actions">
+                    <button class="btn-chat" onclick="openChatWith('${user.username}')">💬 Direct</button>
+                    <button class="btn-follow ${isFollowing ? 'following' : ''}" onclick="toggleFollowFromList('${user.username}')">
+                        ${isFollowing ? 'Seguindo' : 'Seguir'}
+                    </button>
+                </div>
+            `;
+            return card;
+        }
+
+        function toggleFollowFromList(targetUsername) {
+            toggleFollow(targetUsername);
+            if (!networkView.classList.contains('hidden')) renderNetworkList();
+            if (!searchView.classList.contains('hidden')) renderUserSearchResults();
+        }
+
+        /* =========================================================
+           SISTEMA DE DIRECT & VALIDAÇÕES
+        ========================================================= */
+        function canSendDMTo(targetUsername) {
+            if (targetUsername === currentUser.username) return { allowed: false, reason: "Você não pode mandar mensagem para você mesmo." };
+
+            const targetUser = db.users.find(u => u.username === targetUsername);
+            if (!targetUser) return { allowed: false, reason: "Usuário não encontrado." };
+
+            const permission = targetUser.dmPermission || 'all';
+
+            if (permission === 'nobody') {
+                return { allowed: false, reason: `${targetUsername} desativou o recebimento de mensagens diretas.` };
+            }
+
+            if (permission === 'following_only') {
+                const targetFollowsCurrent = (targetUser.following || []).includes(currentUser.username);
+                if (!targetFollowsCurrent) {
+                    return { allowed: false, reason: `${targetUsername} permite mensagens apenas de pessoas que ele segue.` };
+                }
+            }
+
+            return { allowed: true };
+        }
+
+        window.openChatWith = function(targetUsername) {
+            const check = canSendDMTo(targetUsername);
+            switchCenterView('chat');
+            activeChatUser = targetUsername;
+            renderChatSidebar();
+            renderChatConversation();
+
+            if (!check.allowed) {
+                document.getElementById('chat-input-wrapper').innerHTML = `<div class="chat-blocked-notice">⚠️ ${check.reason}</div>`;
+            } else {
+                document.getElementById('chat-input-wrapper').innerHTML = `
+                    <form class="chat-input-area" id="chat-form" onsubmit="sendChatMessage(event)">
+                        <input type="text" id="chat-message-input" placeholder="Escreva uma mensagem..." autocomplete="off">
+                        <button type="submit" class="btn-primary" style="width:auto; padding:0 16px; border-radius:20px;">Enviar</button>
+                    </form>
+                `;
+            }
+        };
+
+        function renderChatSidebar() {
+            const sidebar = document.getElementById('chat-users-list');
+            sidebar.innerHTML = '';
+
+            const chatPartners = new Set();
+            db.chats.forEach(msg => {
+                if (msg.sender === currentUser.username) chatPartners.add(msg.receiver);
+                if (msg.receiver === currentUser.username) chatPartners.add(msg.sender);
+            });
+
+            (currentUser.following || []).forEach(f => chatPartners.add(f));
+
+            if (chatPartners.size === 0) {
+                sidebar.innerHTML = `<div class="empty-state">Nenhum contato recente.</div>`;
+                return;
+            }
+
+            chatPartners.forEach(partnerName => {
+                const userObj = db.users.find(u => u.username === partnerName);
+                if (!userObj) return;
+
+                const item = document.createElement('div');
+                item.className = `chat-user-item ${activeChatUser === partnerName ? 'active' : ''}`;
+                item.onclick = () => openChatWith(partnerName);
+
+                let avatarHTML = `<div class="avatar" style="width:32px; height:32px; font-size:12px;">${partnerName[0]}</div>`;
+                if (userObj.avatar) avatarHTML = `<div class="avatar" style="width:32px; height:32px;"><img src="${userObj.avatar}"></div>`;
+
+                item.innerHTML = `
+                    ${avatarHTML}
+                    <div style="overflow:hidden;">
+                        <strong style="font-size:13px; display:block;">${partnerName}</strong>
+                        <span style="font-size:10px; color:var(--text-secondary);">Abrir conversa</span>
+                    </div>
+                `;
+                sidebar.appendChild(item);
+            });
+        }
+
+        function renderChatConversation() {
+            const body = document.getElementById('chat-messages-body');
+            const headerName = document.getElementById('chat-active-name');
+            const headerStatus = document.getElementById('chat-active-status');
+            const headerAvatar = document.getElementById('chat-active-avatar');
+
+            if (!activeChatUser) {
+                headerName.textContent = "Selecione uma conversa";
+                headerStatus.textContent = "";
+                body.innerHTML = `<div class="empty-state">Selecione um usuário para conversar.</div>`;
+                return;
+            }
+
+            const targetUser = db.users.find(u => u.username === activeChatUser);
+            headerName.textContent = activeChatUser;
+            headerStatus.textContent = targetUser ? (targetUser.bio || "Usuário Mini Feed") : "";
+            
+            if (targetUser && targetUser.avatar) {
+                headerAvatar.innerHTML = `<img src="${targetUser.avatar}">`;
+            } else {
+                headerAvatar.textContent = activeChatUser[0].toUpperCase();
+            }
+
+            const history = db.chats.filter(m => 
+                (m.sender === currentUser.username && m.receiver === activeChatUser) ||
+                (m.sender === activeChatUser && m.receiver === currentUser.username)
+            );
+
+            if (history.length === 0) {
+                body.innerHTML = `<div class="empty-state">Sem mensagens com ${activeChatUser}.</div>`;
+                return;
+            }
+
+            body.innerHTML = history.map(msg => `
+                <div class="message-bubble ${msg.sender === currentUser.username ? 'mine' : 'other'}">
+                    ${msg.text}
+                </div>
+            `).join('');
+
+            body.scrollTop = body.scrollHeight;
+        }
+
+        function sendChatMessage(e) {
+            e.preventDefault();
+            const input = document.getElementById('chat-message-input');
+            const text = input.value.trim();
+
+            if (!text || !activeChatUser) return;
+
+            const check = canSendDMTo(activeChatUser);
+            if (!check.allowed) return alert(check.reason);
+
+            db.chats.push({
+                id: Date.now(),
+                sender: currentUser.username,
+                receiver: activeChatUser,
+                text: text
+            });
+
+            saveData();
+            input.value = '';
+            renderChatConversation();
+            renderChatSidebar();
+        }
+
+        /* --- POSTS E OUTROS --- */
+        function renderFeed() {
+            feedPostsContainer.innerHTML = '';
+            if (db.posts.length === 0) {
+                feedPostsContainer.innerHTML = `<div class="card empty-state">Nenhum post publicado ainda.</div>`;
+                return;
+            }
+
+            db.posts.forEach(post => {
+                const article = document.createElement('article');
+                article.className = 'post';
+
+                let authorAvatarHTML = `<div class="avatar">${post.author[0]}</div>`;
+                if (post.authorAvatar) authorAvatarHTML = `<div class="avatar"><img src="${post.authorAvatar}"></div>`;
+
+                let actionsHTML = '';
+                if (post.author !== currentUser.username) {
+                    const isFollowing = (currentUser.following || []).includes(post.author);
+                    actionsHTML = `
+                        <button class="btn-chat" onclick="openChatWith('${post.author}')">💬 Direct</button>
+                        <button class="btn-follow ${isFollowing ? 'following' : ''}" onclick="toggleFollow('${post.author}')">${isFollowing ? 'Seguindo' : 'Seguir'}</button>
+                    `;
+                }
+
+                article.innerHTML = `
+                    <div class="post-header">
+                        <div class="post-author-wrapper">
+                            ${authorAvatarHTML}
+                            <div>
+                                <strong>${post.author}</strong>
+                                <span style="display:block; font-size:11px; color:var(--text-secondary);">${post.createdAt}</span>
+                            </div>
+                        </div>
+                        <div style="display:flex; gap:6px;">${actionsHTML}</div>
+                    </div>
+                    <div style="margin-bottom:10px; font-size:14px;"><p>${post.text}</p></div>
+                `;
+                feedPostsContainer.appendChild(article);
+            });
+        }
+
+        document.getElementById('create-post-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const text = document.getElementById('post-text').value.trim();
+            if (!text) return alert("Escreva algo para publicar.");
+
+            db.posts.unshift({
+                id: Date.now(),
+                author: currentUser.username,
+                authorAvatar: currentUser.avatar,
+                text: text,
+                createdAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            });
+
+            saveData();
+            document.getElementById('post-text').value = '';
+            switchCenterView('feed');
+            renderFeed();
+        });
+
+        window.toggleFollow = function(targetUsername) {
+            if (targetUsername === currentUser.username) return;
+            const targetUser = db.users.find(u => u.username === targetUsername);
+            if (!targetUser) return;
+
+            const index = currentUser.following.indexOf(targetUsername);
+            if (index === -1) {
+                currentUser.following.push(targetUsername);
+                if (!targetUser.followers) targetUser.followers = [];
+                targetUser.followers.push(currentUser.username);
+            } else {
+                currentUser.following.splice(index, 1);
+                const fIdx = targetUser.followers.indexOf(currentUser.username);
+                if (fIdx !== -1) targetUser.followers.splice(fIdx, 1);
+            }
+
+            saveData();
+            renderFeed();
+            updateLiveCounters();
+        };
+
+        document.getElementById('update-profile-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            currentUser.bio = document.getElementById('profile-bio-input').value.trim();
+            currentUser.dmPermission = document.getElementById('dm-permission-select').value;
+
+            const avatarFile = document.getElementById('profile-avatar-file').files[0];
+            if (avatarFile) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    currentUser.avatar = event.target.result;
+                    finalizeProfileUpdate();
+                };
+                reader.readAsDataURL(avatarFile);
+            } else {
+                finalizeProfileUpdate();
+            }
+        });
+
+        function finalizeProfileUpdate() {
+            const idx = db.users.findIndex(u => u.id === currentUser.id);
+            if (idx !== -1) db.users[idx] = currentUser;
+            saveData();
+            updateUIProfileData();
+            switchCenterView('feed');
+            alert("Perfil atualizado!");
+        }
+    </script>
+</body>
+</html>
