@@ -1,7 +1,1 @@
-<h1>Contador</h1>
-
-<p>Cliques: <span id="numero">0</span></p>
-
-<button id="botao">Clique aqui!</button>
-
-<script src="script.js"></script>
+// =============================== // SITE DO CAIO CESAR // JavaScript // =============================== // Mensagem de boas-vindas function boasVindas() { alert("Olá! Seja bem-vindo ao site do Caio Cesar! 🎮💻"); } // Mostrar informações sobre o curso function mostrarCurso() { const mensagem = document.getElementById("mensagem"); mensagem.innerHTML = ` <h3>💻 Desenvolvimento de Sistemas</h3> <p> Caio Cesar está cursando Desenvolvimento de Sistemas e aprendendo programação, tecnologia e criação de sites. </p> `; } // Mostrar habilidades function mostrarHabilidades() { const mensagem = document.getElementById("mensagem"); mensagem.innerHTML = ` <h3>⭐ Minhas habilidades</h3> <p>🎮 Jogos</p> <p>💻 Programação</p> <p>🌐 HTML</p> <p>🎨 CSS</p> <p>⚡ JavaScript</p> `; } // Mudar o tema da página function mudarTema() { document.body.classList.toggle("tema-escuro"); const botao = document.getElementById("tema"); if (document.body.classList.contains("tema-escuro")) { botao.textContent = "☀️ Modo Claro"; } else { botao.textContent = "🌙 Modo Escuro"; } } // Efeito de clique nos cards const cards = document.querySelectorAll(".card"); cards.forEach(function(card) { card.addEventListener("click", function() { card.style.transform = "scale(1.05)"; setTimeout(function() { card.style.transform = ""; }, 300); }); }); // Mensagem no console console.log("Site do Caio Cesar carregado com sucesso! 🚀"); // Data atual const data = new Date(); console.log( "Data de acesso: " + data.toLocaleDateString("pt-BR") );
