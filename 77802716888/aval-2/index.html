@@ -1,0 +1,331 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blinder 💖</title>
+    <link rel="stylesheet" href="style.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+<header>
+    <div class="header">
+        <div class="logo">
+            Blinder <span>♥</span>
+        </div>
+
+        <div class="search">
+            <input
+                id="search"
+                placeholder="🔎 Procurar pessoas..."
+                oninput="searchPeople(this.value)"
+            >
+        </div>
+
+        <div class="nav">
+            <button onclick="goHome()" title="Início">🏠</button>
+
+            <button onclick="openProfile()" title="Meu perfil">👤</button>
+
+            <button
+                onclick="toggleDarkMode()"
+                id="darkModeButton"
+                title="Modo escuro"
+            >
+                🌙
+            </button>
+
+            <button
+                onclick="toggleNotifications()"
+                title="Notificações"
+            >
+                🔔
+            </button>
+        </div>
+    </div>
+</header>
+
+<div id="notificationBox" class="notification">
+    <h3>🔔 Notificações</h3>
+    <div id="notificationList"></div>
+</div>
+
+<main class="container">
+    <div class="layout">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar card">
+
+            <div class="profile-mini">
+                <div class="row">
+                    <div class="avatar" id="miniAvatar">
+                        M
+                    </div>
+
+                    <div>
+                        <div class="name" id="miniName">
+                            Maju🧡
+                        </div>
+
+                        <div class="muted">
+                            Meu perfil ✨
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="goHome()">
+                🏠 Descobrir
+            </button>
+
+            <button onclick="showMatches()">
+                💕 Meus interesses
+            </button>
+
+            <button onclick="showMessages()">
+                💬 Mensagens
+            </button>
+
+            <button onclick="openProfile()">
+                ⚙️ Meu perfil
+            </button>
+
+            <div class="match-box">
+                <strong>💕 Blinder Match</strong>
+
+                <p class="muted" style="margin-top:6px">
+                    Encontre pessoas com interesses parecidos.
+                </p>
+            </div>
+
+        </aside>
+
+        <!-- CENTRO -->
+        <section>
+
+            <div class="welcome">
+                <h1 id="welcomeTitle">
+                    Olá, Maju! 💖
+                </h1>
+
+                <p>
+                    Conheça novas pessoas e descubra conexões especiais.
+                </p>
+
+                <div class="heart">
+                    💗
+                </div>
+            </div>
+
+            <div id="featured"></div>
+
+            <div class="section-title">
+                <h2>✨ Pessoas para conhecer</h2>
+
+                <span class="muted">
+                    Hoje
+                </span>
+            </div>
+
+            <div id="people" class="people"></div>
+
+        </section>
+
+        <!-- DIREITA -->
+        <aside class="right">
+
+            <div class="right-card card">
+                <h3>💕 Seu Match</h3>
+
+                <div class="match-box">
+                    <strong>Majucuja</strong>
+
+                    <p class="muted">
+                        92% de compatibilidade
+                    </p>
+
+                    <button
+                        class="primary"
+                        style="width:100%;margin-top:12px"
+                        onclick="openMessage('Majucuja')"
+                    >
+                        💌 Enviar mensagem
+                    </button>
+                </div>
+            </div>
+
+            <div class="right-card card">
+                <h3>🟢 Online agora</h3>
+
+                <div class="online">
+                    <div class="avatar">M</div>
+
+                    <div>
+                        <strong>Majucuja</strong>
+
+                        <div class="muted">
+                            <span class="dot"></span>
+                            Online
+                        </div>
+                    </div>
+                </div>
+
+                <div class="online">
+                    <div class="avatar">A</div>
+
+                    <div>
+                        <strong>Ana</strong>
+
+                        <div class="muted">
+                            <span class="dot"></span>
+                            Online
+                        </div>
+                    </div>
+                </div>
+
+                <div class="online">
+                    <div class="avatar">L</div>
+
+                    <div>
+                        <strong>Lucas</strong>
+
+                        <div class="muted">
+                            <span class="dot"></span>
+                            Online
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="right-card card">
+                <h3>🔥 Interesses populares</h3>
+
+                <div class="interests">
+                    <span class="interest">🎵 Música</span>
+                    <span class="interest">🎬 Filmes</span>
+                    <span class="interest">✈️ Viagens</span>
+                    <span class="interest">📚 Livros</span>
+                    <span class="interest">🎮 Games</span>
+                    <span class="interest">📸 Fotos</span>
+                </div>
+            </div>
+
+        </aside>
+
+    </div>
+</main>
+
+<!-- MODAL DE MENSAGEM -->
+<div id="messageModal" class="modal">
+
+    <div class="modal-box">
+
+        <h2>
+            💌 Mensagem para
+            <span id="messageUser"></span>
+        </h2>
+
+        <textarea
+            id="messageText"
+            placeholder="Escreva uma mensagem..."
+        ></textarea>
+
+        <div class="modal-actions">
+
+            <button
+                class="secondary"
+                onclick="closeMessage()"
+            >
+                Cancelar
+            </button>
+
+            <button
+                class="primary"
+                onclick="sendMessage()"
+            >
+                Enviar 💖
+            </button>
+
+        </div>
+    </div>
+</div>
+
+<!-- MODAL DE PERFIL -->
+<div id="profileModal" class="modal">
+
+    <div class="modal-box">
+
+        <h2>
+            ✨ Editar meu perfil
+        </h2>
+
+        <div
+            class="preview-avatar"
+            id="profilePreview"
+        >
+            M
+        </div>
+
+        <label class="file-label">
+            🖼️ Escolher foto
+
+            <input
+                type="file"
+                id="profilePhoto"
+                accept="image/*"
+                onchange="previewPhoto(event)"
+            >
+        </label>
+
+        <input
+            type="text"
+            id="profileName"
+            placeholder="Seu nome"
+            maxlength="30"
+        >
+
+        <textarea
+            id="profileBio"
+            placeholder="Escreva sua bio..."
+            maxlength="180"
+        ></textarea>
+
+        <div class="modal-actions">
+
+            <button
+                class="secondary"
+                onclick="closeProfile()"
+            >
+                Cancelar
+            </button>
+
+            <button
+                class="primary"
+                onclick="saveProfile()"
+            >
+                💾 Salvar
+            </button>
+
+        </div>
+
+    </div>
+</div>
+
+<footer>
+    💖 © 2026 Blinder
+
+    <br>
+
+    <span class="muted">
+        Conectando pessoas e criando novas histórias ✨
+    </span>
+</footer>
+
+<script src="script.js"></script>
+
+<script src="script.js"></script></body>
+</html>
+```
