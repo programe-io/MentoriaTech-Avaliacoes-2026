@@ -1,0 +1,273 @@
+/* =========================
+   CONFIGURAÇÕES GERAIS
+========================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: linear-gradient(135deg, #0f172a, #1e293b, #334155);
+    color: #ffffff;
+    min-height: 100vh;
+    padding: 40px 20px;
+}
+
+/* =========================
+   CONTAINER PRINCIPAL
+========================= */
+
+.container {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+/* =========================
+   CABEÇALHO
+========================= */
+
+header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+header h1 {
+    font-size: 42px;
+    color: #38bdf8;
+    margin-bottom: 12px;
+    text-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+}
+
+header p {
+    font-size: 18px;
+    color: #cbd5e1;
+}
+
+/* =========================
+   CARDS
+========================= */
+
+.card {
+    background: rgba(15, 23, 42, 0.9);
+    border: 1px solid #334155;
+    border-radius: 18px;
+    padding: 30px;
+    margin-bottom: 25px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    transition: 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    border-color: #38bdf8;
+    box-shadow: 0 15px 35px rgba(56, 189, 248, 0.15);
+}
+
+.card h2 {
+    color: #38bdf8;
+    font-size: 25px;
+    margin-bottom: 25px;
+}
+
+/* =========================
+   ARRAY
+========================= */
+
+.array-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    padding: 25px;
+    background: #020617;
+    border-radius: 12px;
+}
+
+.array-box span {
+    width: 65px;
+    height: 65px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background: linear-gradient(135deg, #0284c7, #38bdf8);
+    color: white;
+
+    font-size: 22px;
+    font-weight: bold;
+
+    border-radius: 12px;
+
+    box-shadow: 0 5px 15px rgba(56, 189, 248, 0.3);
+
+    transition: 0.3s;
+}
+
+.array-box span:hover {
+    transform: scale(1.1) rotate(3deg);
+}
+
+/* =========================
+   OPERAÇÕES
+========================= */
+
+.operacoes {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.operacao {
+    background: #020617;
+    padding: 25px;
+    border-radius: 14px;
+    border-left: 5px solid #38bdf8;
+    transition: 0.3s;
+}
+
+.operacao:hover {
+    background: #0f172a;
+    transform: translateX(5px);
+}
+
+.operacao h3 {
+    color: #facc15;
+    font-size: 22px;
+    margin-bottom: 10px;
+}
+
+.operacao p {
+    color: #cbd5e1;
+    line-height: 1.6;
+}
+
+/* =========================
+   RESULTADO
+========================= */
+
+.resultado {
+    text-align: center;
+}
+
+.resultado p {
+    color: #cbd5e1;
+    font-size: 17px;
+    line-height: 1.7;
+    margin-bottom: 25px;
+}
+
+/* =========================
+   BOTÃO
+========================= */
+
+button {
+    border: none;
+    padding: 14px 30px;
+
+    background: linear-gradient(
+        135deg,
+        #0284c7,
+        #38bdf8
+    );
+
+    color: white;
+
+    font-size: 16px;
+    font-weight: bold;
+
+    border-radius: 10px;
+    cursor: pointer;
+
+    transition: 0.3s;
+
+    box-shadow: 0 5px 15px rgba(56, 189, 248, 0.3);
+}
+
+button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(56, 189, 248, 0.4);
+}
+
+button:active {
+    transform: scale(0.95);
+}
+
+/* =========================
+   RODAPÉ
+========================= */
+
+footer {
+    text-align: center;
+    padding: 30px 0 10px;
+    color: #94a3b8;
+    font-size: 14px;
+}
+
+/* =========================
+   RESPONSIVIDADE
+========================= */
+
+@media (max-width: 768px) {
+
+    body {
+        padding: 25px 15px;
+    }
+
+    header h1 {
+        font-size: 32px;
+    }
+
+    header p {
+        font-size: 16px;
+    }
+
+    .card {
+        padding: 20px;
+    }
+
+    .operacoes {
+        grid-template-columns: 1fr;
+    }
+
+    .array-box {
+        gap: 10px;
+    }
+
+    .array-box span {
+        width: 55px;
+        height: 55px;
+        font-size: 18px;
+    }
+}
+
+/* =========================
+   TELAS MUITO PEQUENAS
+========================= */
+
+@media (max-width: 400px) {
+
+    header h1 {
+        font-size: 27px;
+    }
+
+    .card h2 {
+        font-size: 21px;
+    }
+
+    .array-box span {
+        width: 48px;
+        height: 48px;
+        font-size: 16px;
+    }
+
+    button {
+        width: 100%;
+    }
+}
+
