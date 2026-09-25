@@ -1,164 +1,115 @@
-const player = document.getElementById("player");
-const game = document.getElementById("game");
-const scoreText = document.getElementById("score");
-const gameOver = document.getElementById("gameOver");
-const finalScore = document.getElementById("finalScore");
+* {
+        box-sizing: border-box;
+            margin: 0;
+                padding: 0;
+                }
 
-let playerX = 150;
-let score = 0;
-let speed = 5;
-let playing = true;
+                body {
+                    background: #111;
+                        font-family: Arial, sans-serif;
+                            overflow: hidden;
+                                text-align: center;
+                                    color: white;
+                                    }
 
-let enemies = [];
+                                    h1 {
+                                        margin: 10px;
+                                        }
 
-function moveLeft() {
-    if (!playing) return;
-
-        playerX -= 45;
-
-            if (playerX < 0) {
-                    playerX = 0;
-                        }
-
-                            player.style.left = playerX + "px";
-                            }
-
-                            function moveRight() {
-                                if (!playing) return;
-
-                                    playerX += 45;
-
-                                        if (playerX > 297) {
-                                                playerX = 297;
-                                                    }
-
-                                                        player.style.left = playerX + "px";
-                                                        }
-
-                                                        document.addEventListener("keydown", function(e) {
-
-                                                            if (e.key === "ArrowLeft" || e.key === "a") {
-                                                                    moveLeft();
+                                        #game {
+                                            position: relative;
+                                                width: 360px;
+                                                    height: 600px;
+                                                        margin: auto;
+                                                            overflow: hidden;
+                                                                background: #333;
+                                                                    border-left: 8px solid #555;
+                                                                        border-right: 8px solid #555;
                                                                         }
 
-                                                                            if (e.key === "ArrowRight" || e.key === "d") {
-                                                                                    moveRight();
-                                                                                        }
+                                                                        .line {
+                                                                            position: absolute;
+                                                                                width: 8px;
+                                                                                    height: 80px;
+                                                                                        background: white;
+                                                                                            left: 50%;
+                                                                                                transform: translateX(-50%);
+                                                                                                }
 
-                                                                                        });
+                                                                                                #player {
+                                                                                                    position: absolute;
+                                                                                                        width: 55px;
+                                                                                                            height: 90px;
+                                                                                                                background: red;
+                                                                                                                    border-radius: 12px;
+                                                                                                                        bottom: 25px;
+                                                                                                                            left: 150px;
+                                                                                                                                box-shadow: 0 0 10px black;
+                                                                                                                                }
 
-                                                                                        function createEnemy() {
+                                                                                                                                #player::before,
+                                                                                                                                .enemy::before {
+                                                                                                                                    content: "";
+                                                                                                                                        position: absolute;
+                                                                                                                                            width: 35px;
+                                                                                                                                                height: 25px;
+                                                                                                                                                    background: #8fdcff;
+                                                                                                                                                        left: 10px;
+                                                                                                                                                            top: 12px;
+                                                                                                                                                                border-radius: 6px;
+                                                                                                                                                                }
 
-                                                                                            if (!playing) return;
+                                                                                                                                                                .enemy {
+                                                                                                                                                                    position: absolute;
+                                                                                                                                                                        width: 55px;
+                                                                                                                                                                            height: 90px;
+                                                                                                                                                                                background: blue;
+                                                                                                                                                                                    border-radius: 12px;
+                                                                                                                                                                                    }
 
-                                                                                                const enemy = document.createElement("div");
+                                                                                                                                                                                    #score {
+                                                                                                                                                                                        position: absolute;
+                                                                                                                                                                                            top: 10px;
+                                                                                                                                                                                                left: 10px;
+                                                                                                                                                                                                    z-index: 10;
+                                                                                                                                                                                                        font-size: 20px;
+                                                                                                                                                                                                            font-weight: bold;
+                                                                                                                                                                                                            }
 
-                                                                                                    enemy.classList.add("enemy");
+                                                                                                                                                                                                            #gameOver {
+                                                                                                                                                                                                                display: none;
+                                                                                                                                                                                                                    position: absolute;
+                                                                                                                                                                                                                        inset: 0;
+                                                                                                                                                                                                                            background: rgba(0,0,0,.8);
+                                                                                                                                                                                                                                z-index: 20;
+                                                                                                                                                                                                                                    align-items: center;
+                                                                                                                                                                                                                                        justify-content: center;
+                                                                                                                                                                                                                                            flex-direction: column;
+                                                                                                                                                                                                                                                gap: 15px;
+                                                                                                                                                                                                                                                }
 
-                                                                                                        let x = Math.floor(Math.random() * 6) * 50;
+                                                                                                                                                                                                                                                button {
+                                                                                                                                                                                                                                                    padding: 12px 25px;
+                                                                                                                                                                                                                                                        border: none;
+                                                                                                                                                                                                                                                            border-radius: 10px;
+                                                                                                                                                                                                                                                                background: #00c853;
+                                                                                                                                                                                                                                                                    color: white;
+                                                                                                                                                                                                                                                                        font-size: 18px;
+                                                                                                                                                                                                                                                                            font-weight: bold;
+                                                                                                                                                                                                                                                                            }
 
-                                                                                                            enemy.style.left = x + "px";
-                                                                                                                enemy.style.top = "-100px";
+                                                                                                                                                                                                                                                                            .controls {
+                                                                                                                                                                                                                                                                                margin: 15px auto;
+                                                                                                                                                                                                                                                                                    display: flex;
+                                                                                                                                                                                                                                                                                        justify-content: center;
+                                                                                                                                                                                                                                                                                            gap: 30px;
+                                                                                                                                                                                                                                                                                            }
 
-                                                                                                                    game.appendChild(enemy);
-
-                                                                                                                        enemies.push(enemy);
-                                                                                                                        }
-
-                                                                                                                        function collision(a, b) {
-
-                                                                                                                            const r1 = a.getBoundingClientRect();
-                                                                                                                                const r2 = b.getBoundingClientRect();
-
-                                                                                                                                    return !(
-                                                                                                                                            r1.bottom < r2.top ||
-                                                                                                                                                    r1.top > r2.bottom ||
-                                                                                                                                                            r1.right < r2.left ||
-                                                                                                                                                                    r1.left > r2.right
-                                                                                                                                                                        );
-                                                                                                                                                                        }
-
-                                                                                                                                                                        function gameLoop() {
-
-                                                                                                                                                                            if (!playing) return;
-
-                                                                                                                                                                                document.querySelectorAll(".line").forEach(line => {
-
-                                                                                                                                                                                        let top = parseInt(line.style.top);
-
-                                                                                                                                                                                                top += speed;
-
-                                                                                                                                                                                                        if (top > 600) {
-                                                                                                                                                                                                                    top = -80;
-                                                                                                                                                                                                                            }
-
-                                                                                                                                                                                                                                    line.style.top = top + "px";
-
-                                                                                                                                                                                                                                        });
-
-                                                                                                                                                                                                                                            enemies.forEach((enemy, index) => {
-
-                                                                                                                                                                                                                                                    let top = parseInt(enemy.style.top);
-
-                                                                                                                                                                                                                                                            top += speed;
-
-                                                                                                                                                                                                                                                                    enemy.style.top = top + "px";
-
-                                                                                                                                                                                                                                                                            if (collision(player, enemy)) {
-                                                                                                                                                                                                                                                                                        endGame();
-                                                                                                                                                                                                                                                                                                }
-
-                                                                                                                                                                                                                                                                                                        if (top > 650) {
-
-                                                                                                                                                                                                                                                                                                                    enemy.remove();
-
-                                                                                                                                                                                                                                                                                                                                enemies.splice(index, 1);
-
-                                                                                                                                                                                                                                                                                                                                            score++;
-
-                                                                                                                                                                                                                                                                                                                                                        scoreText.textContent =
-                                                                                                                                                                                                                                                                                                                                                                        "Pontos: " + score;
-
-                                                                                                                                                                                                                                                                                                                                                                                    if (score % 5 === 0) {
-                                                                                                                                                                                                                                                                                                                                                                                                    speed++;
-                                                                                                                                                                                                                                                                                                                                                                                                                }
-                                                                                                                                                                                                                                                                                                                                                                                                                        }
-
-                                                                                                                                                                                                                                                                                                                                                                                                                            });
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                requestAnimationFrame(gameLoop);
-                                                                                                                                                                                                                                                                                                                                                                                                                                }
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                function endGame() {
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                    playing = false;
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                        finalScore.textContent =
-                                                                                                                                                                                                                                                                                                                                                                                                                                                "Você fez " + score + " pontos!";
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                    gameOver.style.display = "flex";
-                                                                                                                                                                                                                                                                                                                                                                                                                                                    }
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                    function restart() {
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                        enemies.forEach(enemy => enemy.remove());
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                            enemies = [];
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                score = 0;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                    speed = 5;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                        playerX = 150;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                            playing = true;
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                player.style.left = playerX + "px";
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    scoreText.textContent = "Pontos: 0";
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        gameOver.style.display = "none";
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            gameLoop();
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            }
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            setInterval(createEnemy, 1000);
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            gameLoop();
+                                                                                                                                                                                                                                                                                            .controls button {
+                                                                                                                                                                                                                                                                                                width: 100px;
+                                                                                                                                                                                                                                                                                                    height: 55px;
+                                                                                                                                                                                                                                                                                                        font-size: 25px;
+                                                                                                                                                                                                                                                                                                            background: #222;
+                                                                                                                                                                                                                                                                                                                border: 2px solid white;
+                                                                                                                                                                                                                                                                                                                }
+}
