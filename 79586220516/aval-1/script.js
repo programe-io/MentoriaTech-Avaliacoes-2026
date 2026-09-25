@@ -1,4 +1,4 @@
-/ 1. Função simples: mensagem de boas-vindas
+// 1. Função simples: mensagem de boas-vindas
 function boasVindas(nome) {
     return `Olá, \${nome\}! Seja muito bem-vindo(a)! 🎉`;
 \}
