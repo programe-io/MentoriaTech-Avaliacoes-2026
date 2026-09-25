@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>FlowTask - Gerencie seus projetos</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #071225;
+      color: white;
+    }
+
+    /* NAVBAR */
+    header {
+      width: 100%;
+      padding: 22px 7%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #071225;
+    }
+
+    .logo {
+      font-size: 20px;
+      font-weight: bold;
+      color: #6846ff;
+    }
+
+    nav {
+      display: flex;
+      gap: 30px;
+    }
+
+    nav a {
+      color: #b7c0d4;
+      text-decoration: none;
+      font-size: 14px;
+      transition: 0.3s;
+    }
+
+    nav a:hover {
+      color: white;
+    }
+
+    .btn-top {
+      background: #6240ff;
+      color: white;
+      text-decoration: none;
+      padding: 10px 17px;
+      border-radius: 5px;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    /* HERO */
+    .hero {
+      min-height: 390px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 70px 20px;
+      background:
+        radial-gradient(circle at center, rgba(69, 58, 180, 0.18), transparent 45%),
+        #071225;
+    }
+
+    .hero h1 {
+      font-size: 46px;
+      margin-bottom: 18px;
+      letter-spacing: -1px;
+    }
+
+    .hero p {
+      color: #9ca8bd;
+      max-width: 620px;
+      line-height: 1.6;
+      font-size: 15px;
+      margin-bottom: 28px;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 12px;
+    }
+
+    .primary-btn,
+    .secondary-btn {
+      padding: 12px 20px;
+      border-radius: 5px;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    .primary-btn {
+      background: #5b3df5;
+      color: white;
+    }
+
+    .secondary-btn {
+      border: 1px solid #33415c;
+      color: white;
+      background: transparent;
+    }
+
+    /* PLANOS */
+    .plans-section {
+      background: #101e32;
+      padding: 65px 7% 80px;
+      text-align: center;
+    }
+
+    .plans-section h2 {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      color: #8290a8;
+      font-size: 13px;
+      margin-bottom: 40px;
+    }
+
+    .plans {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .card {
+      background: #16263d;
+      border: 1px solid #263954;
+      border-radius: 6px;
+      padding: 28px 25px;
+      text-align: left;
+      position: relative;
+      min-height: 280px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card.featured {
+      border: 1px solid #6240ff;
+    }
+
+    .badge {
+      position: absolute;
+      top: -12px;
+      right: 18px;
+      background: #6544ff;
+      color: white;
+      padding: 5px 10px;
+      font-size: 10px;
+      border-radius: 10px;
+    }
+
+    .card h3 {
+      font-size: 17px;
+      margin-bottom: 12px;
+    }
+
+    .price {
+      font-size: 28px;
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+
+    .price span {
+      font-size: 12px;
+      font-weight: normal;
+      color: #7f8da5;
+    }
+
+    .description {
+      color: #7f8da5;
+      font-size: 12px;
+      margin-bottom: 20px;
+    }
+
+    .features {
+      list-style: none;
+      margin-bottom: 20px;
+    }
+
+    .features li {
+      font-size: 12px;
+      color: #aab4c7;
+      margin: 9px 0;
+    }
+
+    .features li::before {
+      content: "✓";
+      color: #7054ff;
+      margin-right: 8px;
+    }
+
+    .card-button {
+      margin-top: auto;
+      width: 100%;
+      padding: 10px;
+      border-radius: 4px;
+      border: 1px solid #5e45ef;
+      background: transparent;
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .featured .card-button {
+      background: #5e40f7;
+      border-color: #5e40f7;
+    }
+
+    .card-button:hover {
+      opacity: 0.85;
+    }
+
+    /* CTA */
+    .cta {
+      background: linear-gradient(90deg, #5032ec, #3822b9);
+      text-align: center;
+      padding: 48px 20px;
+    }
+
+    .cta h2 {
+      font-size: 25px;
+      margin-bottom: 10px;
+    }
+
+    .cta p {
+      color: #d0caff;
+      font-size: 13px;
+    }
+
+    /* RESPONSIVO */
+    @media (max-width: 800px) {
+      header {
+        padding: 20px;
+      }
+
+      nav {
+        display: none;
+      }
+
+      .hero h1 {
+        font-size: 34px;
+      }
+
+      .plans {
+        grid-template-columns: 1fr;
+        max-width: 400px;
+      }
+    }
+
+    @media (max-width: 450px) {
+      .hero h1 {
+        font-size: 29px;
+      }
+
+      .hero-buttons {
+        flex-direction: column;
+        width: 100%;
+        max-width: 250px;
+      }
+
+      .primary-btn,
+      .secondary-btn {
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- MENU -->
+  <header>
+    <div class="logo">FlowTask</div>
+
+    <nav>
+      <a href="#recursos">Recursos</a>
+      <a href="#planos">Preços</a>
+      <a href="#contato">Contato</a>
+    </nav>
+
+    <a href="#planos" class="btn-top">
+      Começar Grátis
+    </a>
+  </header>
+
+
+  <!-- HERO -->
+  <section class="hero">
+
+    <h1>Gerencie seus projetos com simplicidade</h1>
+
+    <p>
+      Organize tarefas, colabore com sua equipe e acompanhe
+      o progresso dos seus projetos em um só lugar.
+    </p>
+
+    <div class="hero-buttons">
+      <a href="#planos" class="primary-btn">
+        Teste Grátis por 14 dias
+      </a>
+
+      <a href="#recursos" class="secondary-btn">
+        Ver Demonstração
+      </a>
+    </div>
+
+  </section>
+
+
+  <!-- PLANOS -->
+  <section class="plans-section" id="planos">
+
+    <h2>Escolha seu plano</h2>
+
+    <p class="subtitle">
+      Comece grátis e escolha o plano que cresce com você
+    </p>
+
+    <div class="plans">
+
+      <!-- GRATUITO -->
+      <div class="card">
+
+        <h3>Grátis</h3>
+
+        <div class="price">
+          R$0 <span>/mês</span>
+        </div>
+
+        <p class="description">
+          Para começar
+        </p>
+
+        <ul class="features">
+          <li>Até 5 projetos</li>
+          <li>2 membros</li>
+          <li>500 MB de armazenamento</li>
+          <li>Suporte por e-mail</li>
+        </ul>
+
+        <button class="card-button">
+          Começar Grátis
+        </button>
+
+      </div>
+
+
+      <!-- PRO -->
+      <div class="card featured">
+
+        <div class="badge">
+          Popular
+        </div>
+
+        <h3>Pro</h3>
+
+        <div class="price">
+          R$49 <span>/mês</span>
+        </div>
+
+        <p class="description">
+          Para equipes
+        </p>
+
+        <ul class="features">
+          <li>Projetos ilimitados</li>
+          <li>10 membros</li>
+          <li>50 GB de armazenamento</li>
+          <li>Suporte prioritário</li>
+        </ul>
+
+        <button class="card-button">
+          Assinar Pro
+        </button>
+
+      </div>
+
+
+      <!-- EMPRESARIAL -->
+      <div class="card">
+
+        <h3>Enterprise</h3>
+
+        <div class="price">
+          R$199 <span>/mês</span>
+        </div>
+
+        <p class="description">
+          Para grandes empresas
+        </p>
+
+        <ul class="features">
+          <li>Projetos ilimitados</li>
+          <li>Membros ilimitados</li>
+          <li>500 GB de armazenamento</li>
+          <li>Suporte 24/7</li>
+        </ul>
+
+        <button class="card-button">
+          Falar com Vendas
+        </button>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- CTA -->
+  <section class="cta" id="contato">
+
+    <h2>Pronto para começar?</h2>
+
+    <p>
+      Junte-se a milhares de equipes que já usam o FlowTask.
+    </p>
+
+  </section>
+
+</body>
+</html>
