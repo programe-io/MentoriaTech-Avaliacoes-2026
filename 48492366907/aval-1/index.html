@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Um espaço pessoal para guardar memórias, sonhos e pequenos momentos de luz.">
+    <title>Iluminado | Memórias e sonhos</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@600;700&display=swap');
+
+        :root {
+            --ink: #20252b;
+            --muted: #6e7378;
+            --paper: #f7f4ee;
+            --cream: #fffdf9;
+            --coral: #e9785f;
+            --gold: #edbd65;
+            --line: rgba(32, 37, 43, .12);
+            --shadow: 0 22px 60px rgba(57, 44, 30, .12);
+        }
+
+        * { box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            margin: 0;
+            color: var(--ink);
+            background: var(--paper);
+            font-family: 'DM Sans', sans-serif;
+            line-height: 1.7;
+        }
+
+        a { color: inherit; text-decoration: none; }
+
+        .site-header {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            padding: 18px 6vw;
+            background: rgba(247, 244, 238, .88);
+            border-bottom: 1px solid var(--line);
+            backdrop-filter: blur(16px);
+        }
+
+        .brand {
+            color: var(--ink);
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: .02em;
+        }
+
+        .brand span { color: var(--coral); }
+
+        .nav { display: flex; gap: 28px; color: var(--muted); font-size: .9rem; }
+        .nav a { transition: color .2s ease; }
+        .nav a:hover { color: var(--coral); }
+
+        .hero {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(280px, 430px);
+            align-items: center;
+            gap: clamp(40px, 8vw, 120px);
+            max-width: 1180px;
+            min-height: 650px;
+            margin: 0 auto;
+            padding: 90px 6vw 110px;
+        }
+
+        .eyebrow {
+            margin: 0 0 18px;
+            color: var(--coral);
+            font-size: .78rem;
+            font-weight: 700;
+            letter-spacing: .18em;
+            text-transform: uppercase;
+        }
+
+        h1, h2, h3 { margin-top: 0; line-height: 1.15; }
+        h1, h2, h3 { font-family: 'Playfair Display', serif; }
+
+        h1 { max-width: 650px; margin-bottom: 24px; font-size: clamp(3.2rem, 7vw, 6.8rem); letter-spacing: -.04em; }
+        h1 em { color: var(--coral); font-style: normal; }
+        .hero-copy { max-width: 540px; color: var(--muted); font-size: 1.1rem; }
+        .hero-copy strong { color: var(--ink); font-weight: 700; }
+
+        .hero-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 22px;
+            padding: 13px 20px;
+            color: var(--cream);
+            background: var(--ink);
+            border-radius: 99px;
+            font-size: .9rem;
+            font-weight: 700;
+            transition: transform .2s ease, background .2s ease;
+        }
+
+        .hero-link:hover { background: var(--coral); transform: translateY(-3px); }
+
+        .hero-photo { position: relative; justify-self: center; width: min(100%, 370px); transform: translateX(28px); }
+        .hero-photo::before {
+            position: absolute;
+            inset: 22px -18px -18px 18px;
+            z-index: -1;
+            border: 1px solid var(--gold);
+            border-radius: 180px 180px 10px 10px;
+            content: '';
+        }
+        .hero-photo img { display: block; width: 100%; height: 470px; object-fit: cover; border-radius: 180px 180px 10px 10px; box-shadow: var(--shadow); }
+
+        .memories { padding: 90px 6vw 110px; background: var(--cream); }
+        .section-heading { display: flex; align-items: end; justify-content: space-between; gap: 30px; max-width: 1100px; margin: 0 auto 46px; }
+        .section-heading h2 { margin-bottom: 0; font-size: clamp(2.2rem, 4vw, 4rem); }
+        .section-heading p { max-width: 390px; margin: 0; color: var(--muted); }
+
+        .chapter-banner {
+            width: calc(100vw - 0px);
+            max-width: 100vw;
+            height: 820px;
+            margin: 0 calc(50% - 50vw) 32px;
+            overflow: hidden;
+            border-radius: 0;
+            border: none;
+            box-shadow: none;
+            background: #e5e0d8;
+        }
+
+        .chapter-banner img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+
+        .memory-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; max-width: 1100px; margin: auto; }
+        .memory-card { overflow: hidden; background: var(--paper); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 10px 34px rgba(57, 44, 30, .06); }
+        .memory-card img { display: block; width: 100%; height: 290px; object-fit: cover; object-position: center 30%; }
+        .memory-card .friends-photo { height: auto; object-fit: contain; }
+        .today-photos { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; padding: 18px 30px 0; }
+        .today-photos .photo-slot { display: grid; min-height: 230px; place-items: center; color: var(--muted); background: #e5e0d8; border: 1px dashed rgba(32, 37, 43, .28); font-size: .8rem; letter-spacing: .08em; text-transform: uppercase; }
+        .today-photos .photo-slot { overflow: hidden; padding: 0; }
+        .today-photos .photo-slot img { width: 100%; height: 230px; object-fit: cover; object-position: center; }
+        .today-photos .photo-slot--third img { object-position: center 20%; }
+        .memory-feature { display: grid; grid-column: 1 / -1; grid-template-columns: minmax(0, 1.15fr) minmax(260px, .85fr); align-items: center; gap: 48px; margin-top: 18px; }
+        .memory-feature img { display: block; width: 100%; height: auto; max-height: 760px; object-fit: contain; border-radius: 14px; box-shadow: var(--shadow); }
+        .memory-feature .card-content { padding: 0; }
+        .card-content { padding: 28px 30px 32px; }
+        .card-label { margin-bottom: 10px; color: var(--coral); font-size: .75rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+        .card-content h3 { margin-bottom: 14px; font-size: 1.65rem; }
+        .card-content p { margin: 0; color: var(--muted); }
+        .memory-card blockquote { margin: 22px 0 0; color: var(--coral); font-family: 'Playfair Display', serif; font-size: 1.15rem; font-weight: 600; }
+
+        .about { max-width: 900px; margin: 0 auto; padding: 110px 6vw; text-align: center; }
+        .about h2 { margin-bottom: 20px; font-size: clamp(2.2rem, 4vw, 3.6rem); }
+        .about p { margin: 0 auto; color: var(--muted); font-size: 1.1rem; }
+
+        footer { padding: 28px 6vw; color: var(--muted); border-top: 1px solid var(--line); font-size: .85rem; text-align: center; }
+
+        @media (max-width: 700px) {
+            .site-header { padding: 15px 5vw; }
+            .nav { gap: 14px; font-size: .78rem; }
+            .hero { display: block; min-height: auto; padding: 75px 7vw 90px; }
+            h1 { font-size: clamp(3rem, 16vw, 5rem); }
+            .hero-photo { width: min(82vw, 330px); margin: 60px auto 0; transform: none; }
+            .hero-photo img { height: 390px; }
+            .section-heading { display: block; }
+            .section-heading p { margin-top: 16px; }
+            .memory-grid { grid-template-columns: 1fr; }
+            .memory-card img { height: 250px; }
+            .today-photos { grid-template-columns: 1fr; padding: 18px 7vw 0; }
+            .memory-feature { display: block; }
+            .memory-feature .card-content { padding-top: 28px; }
+            .memories, .about { padding-right: 7vw; padding-left: 7vw; }
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <header class="site-header">
+        <a class="brand" href="#inicio">ilu<span>minado.</span></a>
+        <nav class="nav" aria-label="Navegação principal">
+            <a href="#memorias">Memórias</a>
+            <a href="#sobre">Sobre mim</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero" id="inicio">
+            <div>
+                <p class="eyebrow">um cantinho só meu</p>
+                <h1>Pequenas coisas, <em>grandes sentimentos.</em></h1>
+                <p class="hero-copy">Um espaço para guardar as histórias que fazem meus olhos brilharem e lembrar que a vida também mora nos detalhes.</p>
+                <a class="hero-link" href="#memorias">Conheça minhas memórias <span aria-hidden="true">→</span></a>
+            </div>
+            <div class="hero-photo">
+                <img src="c:\Users\ALUNO\Downloads\helloana\IMG_2678.jpg" alt="Retrato pessoal">
+            </div>
+        </section>
+
+        <section class="memories" id="memorias">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">capítulo 01</p>
+                    <h2>De onde eu vim</h2>
+                </div>
+                <p>Algumas lembranças envelhecem como fotografias bonitas: ficam mais especiais com o tempo.</p>
+            </div>
+            <div class="memory-grid">
+                <article class="memory-feature">
+                    <img src="c:\Users\ALUNO\Downloads\infancia✨.png" alt="Foto de uma lembrança da infância">
+                    <div class="card-content">
+                        <div class="card-label">infância</div>
+                        <h3>Pequena eu, grandes sonhos</h3>
+                        <p>Minha infância foi feita de descobertas, brincadeiras e momentos simples que ainda vivem na minha memória.</p>
+                    </div>
+                </article>
+                <article class="memory-card">
+                    <img src="c:\Users\ALUNO\Downloads\helloana\3.jpg" alt="Foto de uma lembrança especial">
+                    <div class="card-content">
+                        <div class="card-label">lembrança</div>
+                        <h3>Um pedacinho de mim</h3>
+                        <p>O tempo passou, mas a alegria e o jeito positivo de enxergar a vida continuam fazendo parte de quem eu sou.</p>
+                    </div>
+                </article>
+                <article class="memory-card">
+                    <img src="c:\Users\ALUNO\Downloads\helloana\1.jpg" alt="Criança brincando na água">
+                    <div class="card-content">
+                        <div class="card-label">alegria</div>
+                        <h3>A alegria que sempre esteve em mim</h3>
+                        <p>Quando olho para essa foto, vejo uma versão pequena de mim, mas com uma alegria que continua até hoje. Eu era uma criança que conseguia encontrar felicidade nas coisas mais simples, como brincar com água, sorrir para uma foto e aproveitar cada momento.</p>
+                        <p>Acho bonito perceber que, mesmo depois de crescer, esse jeito alegre ainda faz parte de mim. Talvez eu tenha mudado em muitas coisas, mas aquela menina sorridente continua aqui, me lembrando de valorizar as pequenas coisas e enxergar o lado bom da vida. 💕</p>
+                        <blockquote>“Eu cresci, mas a minha alegria cresceu comigo.” 🌷</blockquote>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section class="memories" id="capitulo-2" style="background: #f8f3ec;">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">capítulo 02</p>
+                    <h2>As mudanças que me ajudaram a crescer</h2>
+                </div>
+                <p>Nem toda mudança é fácil, mas todas têm o poder de nos transformar.</p>
+            </div>
+
+            <div class="chapter-banner">
+                <img src="capitulo2-banner.jpg" alt="Família no capítulo 2">
+            </div>
+
+            <div class="memory-grid">
+                <article class="memory-card" style="grid-column: 1 / -1;">
+                    <div class="card-content">
+                        <div class="card-label">crescimento</div>
+                        <h3>Aprender a seguir em frente</h3>
+                        <p>As mudanças que aconteceram na minha vida não foram fáceis, mas foram essenciais para o meu crescimento. Em alguns momentos, eu me senti perdida, insegura e até com medo de seguir em frente. A vida me levou por caminhos diferentes dos que eu imaginei, e nem sempre foi simples aceitar isso. No entanto, foi exatamente nesses momentos que eu entendi que crescer exige coragem, adaptação e força para continuar mesmo quando tudo parece incerto.</p>
+                        <p>Muitas vezes, as mudanças vêm para nos mostrar que estamos prontos para evoluir, mesmo quando ainda não acreditamos nisso. Houve épocas em que eu pensei que tudo estava acabando, mas, na verdade, estava apenas começando. Aprendi que não é fácil lidar com a incerteza, mas também que é impossível crescer sem passar por situações que nos fazem refletir sobre quem somos e para onde queremos ir. Foi assim que percebi que as dificuldades não eram apenas obstáculos, mas também oportunidades de amadurecimento.</p>
+                        <p>Essas experiências me ensinaram a valorizar mais minhas próprias forças. Eu aprendi que nem sempre posso controlar tudo ao meu redor, mas posso controlar a maneira como enfrento os desafios. Com o tempo, fui entendendo que o crescimento não acontece de uma forma instantânea, e sim aos poucos, por meio de pequenas escolhas, de superações e de aprendizados que parecem simples, mas que têm um grande peso na nossa vida. Cada dificuldade me deu uma nova visão de mundo e de mim mesma.</p>
+                        <blockquote>“Nem toda mudança dói, mas toda mudança ensina.”</blockquote>
+                    </div>
+                </article>
+
+                <article class="memory-card">
+                    <img src="c:\Users\ALUNO\Downloads\helloana\IMG_2609_jpg.jpg" alt="Família no capítulo 2">
+                    <div class="card-content">
+                        <div class="card-label">família</div>
+                        <h3>O apoio que me segurou</h3>
+                        <p>Minha família foi uma presença muito importante nesse processo. Eles sempre me acolheram, me aconselharam e me deram forças quando eu mais precisei. Mesmo quando eu não sabia como expressar minhas emoções, sabia que havia alguém em casa que me entendia e me apoiava. O amor e o cuidado da minha família me deram segurança para seguir em frente, mesmo em meio às incertezas. Foi por meio deles que aprendi que o apoio de quem nos ama é um dos maiores pilares para crescer.</p>
+                    </div>
+                </article>
+
+                <article class="memory-card">
+                    <img class="friends-photo" src="c:\Users\ALUNO\Downloads\helloana\Cream Light Romantic Wedding Heart Photo Collage.jpg" alt="Colagem de fotos com meus amigos">
+                    <div class="card-content">
+                        <div class="card-label">amigos</div>
+                        <h3>As pessoas que acreditaram em mim</h3>
+                        <p>Além da minha família, meus amigos também tiveram um papel essencial na minha formação. Eles estiveram presentes nos momentos de alegria, mas também nas horas em que eu precisava de alguém para ouvir, entender e me lembrar de que eu não estava sozinha. As conversas, as risadas, os conselhos e até a companhia silenciosa fizeram diferença na minha vida. Foi com eles que percebi que a amizade verdadeira é um presente importante, porque nos ajuda a enfrentar os desafios com mais leveza e coragem.</p>
+                    </div>
+                </article>
+
+                <article class="memory-card" style="grid-column: 1 / -1;">
+                    <div class="today-photos" aria-label="Três espaços para fotos de hoje">
+                        <div class="photo-slot">
+                            <img src="c:\Users\ALUNO\Downloads\Digitalizado_20260920-1747-05.jpg" alt="Foto de hoje 1">
+                        </div>
+                        <div class="photo-slot">
+                            <img src="c:\Users\ALUNO\Downloads\Digitalizado_20260920-1747-47.jpg" alt="Foto de hoje 2">
+                        </div>
+                        <div class="photo-slot photo-slot--third">
+                            <img src="c:\Users\ALUNO\Downloads\Digitalizado_20260920-1747-20.jpg" alt="Foto de hoje 3">
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <div class="card-label">reflexão final</div>
+                        <h3>Hoje eu agradeço</h3>
+                        <p>Hoje, olhando para trás, vejo que cada mudança me levou a um lugar melhor de mim mesma. Não foi um caminho fácil, mas foi um caminho de aprendizado. Eu me tornei mais forte, mais consciente e mais preparada para enfrentar o futuro. Agradeço a todas as experiências que me fizeram crescer, especialmente à minha família e aos meus amigos, que estiveram ao meu lado em cada etapa. Sem eles, talvez eu não tivesse encontrado tanta força para seguir. E foi justamente por isso que hoje eu entendo que as mudanças, mesmo quando doloridas, são parte do processo de se tornar quem a gente realmente é.</p>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section class="about" id="sobre">
+            <p class="eyebrow">sobre este espaço</p>
+            <h2>Para tudo aquilo que merece ser lembrado.</h2>
+            <p>Este é meu lugar para escrever, sonhar e celebrar cada fase da vida com carinho. Volte sempre que quiser acender uma luzinha.</p>
+        </section>
+    </main>
+
+    <footer>feito com carinho · iluminado.</footer>
+</body>
+</html>
