@@ -1,0 +1,40 @@
+```javascript
+const boca = document.querySelector(".boca");
+const blushes = document.querySelectorAll(".blush");
+const olhos = document.querySelectorAll(".olho");
+
+document.querySelectorAll(".batom").forEach(botao => {
+  botao.addEventListener("click", () => {
+      boca.style.backgroundColor = botao.dataset.cor;
+        });
+        });
+
+        document.querySelectorAll(".blushBtn").forEach(botao => {
+          botao.addEventListener("click", () => {
+              blushes.forEach(blush => {
+                    blush.style.backgroundColor = botao.dataset.cor;
+                        });
+                          });
+                          });
+
+                          document.querySelectorAll(".sombra").forEach(botao => {
+                            botao.addEventListener("click", () => {
+                                olhos.forEach(olho => {
+                                      olho.style.boxShadow = `0 -12px 0 ${botao.dataset.cor}`;
+                                          });
+                                            });
+                                            });
+
+                                            document.querySelector("#resetar").addEventListener("click", () => {
+                                              boca.style.backgroundColor = "#e91e63";
+
+                                                blushes.forEach(blush => {
+                                                    blush.style.backgroundColor = "";
+                                                      });
+
+                                                        olhos.forEach(olho => {
+                                                            olho.style.boxShadow = "none";
+                                                              });
+                                                              });
+                                                              ```
+                                                              
