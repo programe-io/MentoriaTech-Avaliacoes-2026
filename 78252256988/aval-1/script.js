@@ -1,1 +1,1 @@
-https://cdn.jsdeliuronet/npm/@tailwind /browser @ 4 ''x/script
+Classe mdh:Flex b9= Slate -100 Round  X:P md P-0 dar.#.
