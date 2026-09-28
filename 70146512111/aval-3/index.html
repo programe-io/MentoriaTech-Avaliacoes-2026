@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SocialSphere | Blog de Redes Sociais</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome para Ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Arquivo CSS Externo -->
+    <link rel="stylesheet" href="style.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"><link href="style.css" rel="stylesheet"></head>
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-300">
+
+    <!-- Cabeçalho -->
+    <header class="sticky top-0 z-50 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-700 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-brand-600 text-white p-2.5 rounded-xl shadow-md shadow-brand-500/30 flex items-center justify-center">
+                    <i class="fa-solid fa-globe text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight bg-gradient-to-r from-brand-600 to-blue-400 bg-clip-text text-transparent">SocialSphere</h1>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Dev: <span class="font-semibold text-brand-600 dark:text-brand-400">Kailane</span></p>
+                </div>
+            </div>
+
+            <!-- Busca Central (Desktop) -->
+            <div class="hidden md:flex items-center flex-1 max-w-md mx-8">
+                <div class="relative w-full">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">
+                        <i class="fa-solid fa-search"></i>
+                    </span>
+                    <input type="text" id="searchInput" placeholder="Pesquisar posts, tags ou autores..." class="w-full pl-10 pr-4 py-2 bg-slate-100 dark:bg-slate-700 border border-transparent focus:border-brand-500 dark:focus:border-brand-500 rounded-xl text-sm focus:outline-none transition">
+                </div>
+            </div>
+
+            <!-- Ações do Header -->
+            <div class="flex items-center space-x-3">
+                <button onclick="openModal()" class="bg-brand-600 hover:bg-brand-700 text-white text-sm font-medium px-4 py-2 rounded-xl shadow-md shadow-brand-600/30 transition flex items-center space-x-2">
+                    <i class="fa-solid fa-plus"></i>
+                    <span class="hidden sm:inline">Criar Post</span>
+                </button>
+                <button id="themeToggle" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition">
+                    <i class="fa-solid fa-moon dark:hidden"></i>
+                    <i class="fa-solid fa-sun hidden dark:block"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Barra de Pesquisa Mobile -->
+    <div class="md:hidden px-4 py-3 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
+        <div class="relative w-full">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">
+                <i class="fa-solid fa-search"></i>
+            </span>
+            <input type="text" id="searchInputMobile" placeholder="Pesquisar posts..." class="w-full pl-10 pr-4 py-2 bg-slate-100 dark:bg-slate-700 border border-transparent rounded-xl text-sm focus:outline-none">
+        </div>
+    </div>
+
+    <!-- Conteúdo Principal -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 grid grid-cols-1 lg:grid-cols-4 gap-8">
+        
+        <!-- Sidebar Esquerda: Categorias e Filtros -->
+        <aside class="lg:col-span-1 space-y-6">
+            <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 shadow-sm border border-slate-200 dark:border-slate-700">
+                <h3 class="text-sm font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-4">Plataformas</h3>
+                <nav id="categoryFilters" class="space-y-1">
+                    <button onclick="filterCategory('all')" class="category-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium transition bg-brand-50 dark:bg-brand-900/40 text-brand-600 dark:text-brand-400">
+                        <span class="flex items-center space-x-3"><i class="fa-solid fa-fire w-5 text-center"></i><span>Todos os Posts</span></span>
+                        <span class="bg-brand-200/50 dark:bg-brand-800 text-xs px-2 py-0.5 rounded-full" id="count-all">0</span>
+                    </button>
+                    <button onclick="filterCategory('Instagram')" class="category-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition">
+                        <span class="flex items-center space-x-3"><i class="fa-brands fa-instagram w-5 text-center text-pink-500"></i><span>Instagram</span></span>
+                        <span class="bg-slate-100 dark:bg-slate-700 text-xs px-2 py-0.5 rounded-full" id="count-Instagram">0</span>
+                    </button>
+                    <button onclick="filterCategory('TikTok')" class="category-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition">
+                        <span class="flex items-center space-x-3"><i class="fa-brands fa-tiktok w-5 text-center"></i><span>TikTok</span></span>
+                        <span class="bg-slate-100 dark:bg-slate-700 text-xs px-2 py-0.5 rounded-full" id="count-TikTok">0</span>
+                    </button>
+                    <button onclick="filterCategory('LinkedIn')" class="category-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition">
+                        <span class="flex items-center space-x-3"><i class="fa-brands fa-linkedin w-5 text-center text-blue-600"></i><span>LinkedIn</span></span>
+                        <span class="bg-slate-100 dark:bg-slate-700 text-xs px-2 py-0.5 rounded-full" id="count-LinkedIn">0</span>
+                    </button>
+                    <button onclick="filterCategory('Twitter')" class="category-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition">
+                        <span class="flex items-center space-x-3"><i class="fa-brands fa-x-twitter w-5 text-center"></i><span>Twitter / X</span></span>
+                        <span class="bg-slate-100 dark:bg-slate-700 text-xs px-2 py-0.5 rounded-full" id="count-Twitter">0</span>
+                    </button>
+                </nav>
+            </div>
+
+            <!-- Card Desenvolvedor -->
+            <div class="bg-gradient-to-br from-brand-600 to-blue-700 text-white rounded-2xl p-5 shadow-lg shadow-brand-500/20 relative overflow-hidden">
+                <div class="absolute -right-4 -bottom-4 text-white/10 text-8xl font-black pointer-events-none">
+                    <i class="fa-solid fa-code"></i>
+                </div>
+                <h4 class="font-bold text-lg mb-1">SocialSphere Blog</h4>
+                <p class="text-xs text-brand-100 mb-4">Plataforma desenvolvida para conectar ideias e tendências digitais.</p>
+                <div class="flex items-center space-x-3 pt-3 border-t border-white/20">
+                    <div class="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center font-bold text-sm">K</div>
+                    <div>
+                        <p class="text-xs text-brand-200">Criado por</p>
+                        <p class="text-sm font-semibold">Kailane</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Feed Central: Lista de Posts -->
+        <section class="lg:col-span-3 space-y-6">
+            <div id="postsFeed" class="space-y-6">
+                <!-- Posts injetados dinamicamente via JS -->
+            </div>
+
+            <!-- Estado Vazio -->
+            <div id="emptyState" class="hidden text-center py-16 bg-white dark:bg-slate-800 rounded-2xl border border-dashed border-slate-300 dark:border-slate-700">
+                <div class="text-slate-300 dark:text-slate-600 text-5xl mb-3">
+                    <i class="fa-solid fa-folder-open"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-slate-700 dark:text-slate-200">Nenhum post encontrado</h3>
+                <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Tente pesquisar por outro termo ou mude a categoria.</p>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal de Criação de Post -->
+    <div id="postModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 dark:border-slate-700 transform transition-all">
+            <div class="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-700">
+                <h3 class="text-lg font-bold">Criar Nova Publicação</h3>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xl font-bold">&times;</button>
+            </div>
+            <form id="postForm" onsubmit="handleCreatePost(event)" class="space-y-4 pt-4">
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-500 dark:text-slate-400 mb-1">Seu Nome / Autor</label>
+                    <input type="text" id="authorInput" required placeholder="Ex: Kailane" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-sm focus:outline-none focus:border-brand-500">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-500 dark:text-slate-400 mb-1">Plataforma</label>
+                        <select id="categoryInput" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-sm focus:outline-none focus:border-brand-500">
+                            <option value="Instagram">Instagram</option>
+                            <option value="TikTok">TikTok</option>
+                            <option value="LinkedIn">LinkedIn</option>
+                            <option value="Twitter">Twitter / X</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-500 dark:text-slate-400 mb-1">URL da Imagem (Opcional)</label>
+                        <input type="url" id="imageInput" placeholder="https://exemplo.com/foto.jpg" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-sm focus:outline-none focus:border-brand-500">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-500 dark:text-slate-400 mb-1">Conteúdo da Postagem</label>
+                    <textarea id="contentInput" required rows="4" placeholder="O que está acontecendo no mundo digital hoje?" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-sm focus:outline-none focus:border-brand-500 resize-none"></textarea>
+                </div>
+                <div class="flex justify-end space-x-3 pt-2">
+                    <button type="button" onclick="closeModal()" class="px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-700 transition">Cancelar</button>
+                    <button type="submit" class="px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-medium shadow-md shadow-brand-500/20 transition">Publicar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Rodapé -->
+    <footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-6 mt-auto text-center text-xs text-slate-500 dark:text-slate-400">
+        <p>&copy; 2026 SocialSphere. Todos os direitos reservados. Desenvolvido com dedicação por <strong class="text-brand-600 dark:text-brand-400">Kailane</strong>.</p>
+    </footer>
+
+    <!-- Arquivo JavaScript Externo -->
+    <script src="script.js"></script>
+<script src="script.js"></script></body>
+</html>
