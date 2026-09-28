@@ -1,131 +1,60 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Sistema Solar com Estrelas</title>
-<style>
-    body {
-        margin: 0;
-        background: black;
-        overflow: hidden;
-    }
-
-    /* Fundo estrelado */
-    .stars {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        background: transparent;
-    }
-
-    .star {
-        position: absolute;
-        width: 2px;
-        height: 2px;
-        background: white;
-        border-radius: 50%;
-        animation: blink 2s infinite alternate;
-    }
-
-    @keyframes blink {
-        from { opacity: 0.2; }
-        to { opacity: 1; }
-    }
-
-    .solar-system {
-        position: relative;
-        width: 100vw;
-        height: 100vh;
-    }
-
-    .sun {
-        position: absolute;
-        width: 100px;
-        height: 100px;
-        background: yellow;
-        border-radius: 50%;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        box-shadow: 0 0 30px yellow;
-    }
-
-    .orbit {
-        position: absolute;
-        border: 1px dashed rgba(255,255,255,0.2);
-        border-radius: 50%;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        animation: rotate linear infinite;
-    }
-
-    .planet {
-        position: absolute;
-        border-radius: 50%;
-        top: 50%;
-        left: 0;
-        transform: translate(-50%, -50%);
-    }
-
-    @keyframes rotate {
-        from { transform: translate(-50%, -50%) rotate(0deg); }
-        to { transform: translate(-50%, -50%) rotate(360deg); }
-    }
-
-    /* Planetas */
-    .mercury-orbit { width: 150px; height: 150px; animation-duration: 5s; }
-    .mercury { width: 10px; height: 10px; background: gray; }
-
-    .venus-orbit { width: 200px; height: 200px; animation-duration: 8s; }
-    .venus { width: 15px; height: 15px; background: orange; }
-
-    .earth-orbit { width: 260px; height: 260px; animation-duration: 12s; }
-    .earth { width: 16px; height: 16px; background: blue; }
-
-    .mars-orbit { width: 320px; height: 320px; animation-duration: 18s; }
-    .mars { width: 14px; height: 14px; background: red; }
-</style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MATH LAB — Matemática sem medo</title>
+  <link rel="stylesheet" href="style.css">
+<script src="https://cdn.tailwindcss.com"></script>
 <link href="style.css" rel="stylesheet"></head>
 <body>
+<div class="app">
+<aside class="sidebar">
+  <div class="logo">MATH<br><span>LAB</span></div>
+  <div class="tag">MATEMÁTICA SEM MEDO</div>
+  <nav class="nav">
+    <button class="active" onclick="show('home',this)">⌂ <span>Início</span></button>
+    <button onclick="show('modules',this)">▦ <span>Aulas</span></button>
+    <button onclick="show('challenge',this)">⚡ <span>Desafios</span></button>
+    <button onclick="show('progress',this)">◔ <span>Progresso</span></button>
+    <button onclick="show('resources',this)">▤ <span>Materiais</span></button>
+  </nav>
+  <div class="userbox"><div class="avatar">A</div><div style="display:inline-block;margin-left:9px;vertical-align:top"><b>Aluno</b><br><small style="color:#777">Nível 07</small></div></div>
+</aside>
 
-<!-- Estrelas -->
-<div class="stars">
-    <!-- várias estrelas -->
-    <div class="star" style="top:10%; left:20%;"></div>
-    <div class="star" style="top:30%; left:70%;"></div>
-    <div class="star" style="top:50%; left:40%;"></div>
-    <div class="star" style="top:80%; left:10%;"></div>
-    <div class="star" style="top:60%; left:90%;"></div>
-    <div class="star" style="top:15%; left:85%;"></div>
-    <div class="star" style="top:75%; left:60%;"></div>
-    <div class="star" style="top:25%; left:35%;"></div>
-    <div class="star" style="top:90%; left:50%;"></div>
-    <div class="star" style="top:45%; left:15%;"></div>
+<main class="main">
+<div id="home" class="page active">
+  <div class="top"><div><div class="eyebrow">MATH LAB // DASHBOARD</div><h1>APRENDA.<br>DOMINE.</h1><div class="subtitle">Uma jornada de Matemática baseada em aulas curtas, prática, desafios e evolução.</div></div><div class="stats"><div class="pill">⚡ 2.450 XP</div><div class="pill">🔥 7 dias</div></div></div>
+  <section class="hero"><div class="hero-content"><div class="eyebrow">CONTINUE SUA JORNADA</div><h2>Matemática sem medo. Um desafio de cada vez.</h2><p>Retome de onde parou e avance para a próxima missão.</p><button class="cta" onclick="show('modules',document.querySelectorAll('.nav button')[1])">CONTINUAR ESTUDANDO →</button></div></section>
+  <section class="section"><div class="section-head"><h3>Seu progresso</h3><span>42% concluído</span></div><div class="progress"><i></i></div></section>
+  <section class="section"><div class="section-head"><h3>Trilha de aprendizagem</h3><span>6 módulos</span></div><div class="grid" id="homeGrid"></div></section>
+  <section class="section"><div class="section-head"><h3>Desafio do dia</h3><span>+100 XP</span></div><div class="challenge"><div class="mission"><div class="eyebrow">MISSION // 001</div><h4>A senha do cofre</h4><p style="color:#999">Resolva a equação para descobrir a senha.</p><div class="equation">3x + 12 = 36</div><div class="answers"><button onclick="answer(6)">A) 6</button><button onclick="answer(8)">B) 8</button><button onclick="answer(10)">C) 10</button><button onclick="answer(12)">D) 12</button></div></div><div class="level"><div class="eyebrow">SEU NÍVEL</div><div class="xp">07</div><b>EXPLORADOR MATEMÁTICO</b><p style="color:#777">2.450 / 3.000 XP</p><div class="levelbar"><i></i></div><small style="color:#777">550 XP para o próximo nível</small></div></div></section>
 </div>
 
-<!-- Sistema Solar -->
-<div class="solar-system">
-    <div class="sun"></div>
-
-    <div class="orbit mercury-orbit">
-        <div class="planet mercury"></div>
-    </div>
-
-    <div class="orbit venus-orbit">
-        <div class="planet venus"></div>
-    </div>
-
-    <div class="orbit earth-orbit">
-        <div class="planet earth"></div>
-    </div>
-
-    <div class="orbit mars-orbit">
-        <div class="planet mars"></div>
-    </div>
+<div id="modules" class="page">
+  <div class="eyebrow">AULAS // TRILHA</div><h1>MÓDULOS</h1><div class="subtitle">Escolha um módulo e avance na sua jornada.</div>
+  <section class="section"><div class="grid" id="moduleGrid"></div></section>
+  <section class="section"><div class="mission"><div class="eyebrow">AULA ATUAL</div><h4>Equação do 1º grau</h4><p style="color:#888">12 minutos · 3 exercícios · +120 XP</p><div class="progress"><i style="width:68%"></i></div><br><button class="cta" onclick="toast('Aula aberta: Equação do 1º grau')">ABRIR AULA →</button></div></section>
 </div>
 
+<div id="challenge" class="page">
+  <div class="eyebrow">DESAFIOS // MISSÕES</div><h1>TESTE SEU<br>RACIOCÍNIO.</h1><div class="subtitle">Resolva problemas, acumule XP e desbloqueie conquistas.</div>
+  <section class="section"><div class="challenge"><div class="mission"><div class="eyebrow">MISSION // 002</div><h4>Área secreta</h4><p style="color:#999">Um quadrado tem lado de 7 cm. Qual é sua área?</p><div class="equation">A = ?</div><div class="answers"><button onclick="answer(49)">A) 49 cm²</button><button onclick="answer(14)">B) 14 cm²</button><button onclick="answer(28)">C) 28 cm²</button><button onclick="answer(21)">D) 21 cm²</button></div></div><div class="level"><div class="eyebrow">STREAK</div><div class="xp">🔥 7</div><b>DIAS CONSECUTIVOS</b><p style="color:#777">Continue amanhã para chegar a 8.</p></div></div></section>
+</div>
+
+<div id="progress" class="page">
+  <div class="eyebrow">PROGRESSO // EVOLUÇÃO</div><h1>SUA JORNADA.</h1><div class="subtitle">Veja o que você já domina e o que vem a seguir.</div>
+  <section class="section"><div class="mission"><div class="eyebrow">PROGRESSO GERAL</div><h4>42%</h4><div class="progress"><i></i></div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:22px"><div class="resource"><b>18</b><span>Aulas concluídas</span></div><div class="resource"><b>74</b><span>Questões resolvidas</span></div><div class="resource"><b>2.450</b><span>XP acumulado</span></div></div></div></section>
+  <section class="section"><h3>Mapa de domínio</h3><div class="grid" id="progressGrid"></div></section>
+</div>
+
+<div id="resources" class="page">
+  <div class="eyebrow">RECURSOS // MATERIAL</div><h1>CAIXA DE<br>FERRAMENTAS.</h1><div class="subtitle">Tudo o que você precisa para estudar melhor.</div>
+  <section class="section"><div class="resources"><div class="resource"><b>📚 RESUMOS</b><span>Revisões rápidas de cada tema.</span></div><div class="resource"><b>🧮 CALCULADORA</b><span>Ferramentas matemáticas.</span></div><div class="resource"><b>📄 PDFs</b><span>Material complementar.</span></div><div class="resource"><b>🎥 VIDEOAULAS</b><span>Aulas organizadas por módulo.</span></div><div class="resource"><b>📝 EXERCÍCIOS</b><span>Listas para praticar.</span></div><div class="resource"><b>🎯 SIMULADOS</b><span>Teste seus conhecimentos.</span></div><div class="resource"><b>🏆 CONQUISTAS</b><span>Medalhas desbloqueáveis.</span></div><div class="resource"><b>⚡ DESAFIOS</b><span>Missões de raciocínio.</span></div></div></section>
+</div>
+</main>
+</div>
+<div class="toast" id="toast"></div>
+  <script src="script.js"></script>
 <script src="script.js"></script></body>
 </html>
-<link rel="stylesheet" href="style.css">
-<script src="script.js"></script>
