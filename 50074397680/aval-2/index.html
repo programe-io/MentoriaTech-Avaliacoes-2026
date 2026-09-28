@@ -1,0 +1,676 @@
+DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RosaFeed - Rede Social Suprema</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Ícones do FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"><link href="style.css" rel="stylesheet"></head>
+<body>
+
+    <!-- Container de Notificações Toast -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Cabeçalho -->
+    <header>
+        <div class="header-content">
+            <h1><i class="fa-solid fa-spa"></i> RosaFeed</h1>
+            
+            <!-- Barra de Pesquisa em Tempo Real -->
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="searchInput" placeholder="Pesquisar publicações...">
+            </div>
+
+            <nav>
+                <a href="#" class="active-tab" data-filter="all"><i class="fa-solid fa-house"></i> Início</a>
+                <a href="#" data-filter="stories"><i class="fa-solid fa-circle-notch"></i> Stories</a>
+                <a href="#" data-filter="liked"><i class="fa-solid fa-heart"></i> Curtidos</a>
+                <a href="#" data-filter="saved"><i class="fa-solid fa-bookmark"></i> Salvos</a>
+                
+                <!-- Central de Notificações (Sininho) -->
+                <div class="notification-dropdown-wrapper">
+                    <button id="notificationBellBtn" title="Notificações">
+                        <i class="fa-solid fa-bell"></i>
+                        <span id="notifBadge" class="notif-badge" style="display: none;">0</span>
+                    </button>
+                    <div id="notificationMenu" class="notification-menu" style="display: none;">
+                        <div class="notif-header">
+                            <strong>Notificações</strong>
+                            <span id="clearNotifs" style="cursor: pointer; font-size: 0.7rem; color: var(--accent-color);">Limpar</span>
+                        </div>
+                        <div id="notifList" class="notif-list">
+                            <p class="empty-notifs">Nenhuma notificação nova 🌸</p>
+                        </div>
+                    </div>
+                </div>
+
+                <button id="themeToggleBtn" title="Alternar Modo Escuro"><i class="fa-solid fa-moon"></i></button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <main>
+        <!-- Barra de Stories -->
+        <section class="stories-container" id="storiesContainer">
+            <div class="story-item" onclick="openStoryModal('Mariana', 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80')">
+                <div class="story-ring"><div class="story-avatar">M</div></div>
+                <span>Seu Story</span>
+            </div>
+            <div class="story-item" onclick="openStoryModal('Bruna Lima', 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=600&q=80')">
+                <div class="story-ring"><div class="story-avatar" style="background: linear-gradient(135deg, #ff758c, #ff7eb3);">B</div></div>
+                <span>Bruna</span>
+            </div>
+            <div class="story-item" onclick="openStoryModal('Camila', 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=600&q=80')">
+                <div class="story-ring"><div class="story-avatar" style="background: linear-gradient(135deg, #fbc2eb, #a6c1ee);">C</div></div>
+                <span>Camila</span>
+            </div>
+            <div class="story-item" onclick="openStoryModal('Larissa', 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=600&q=80')">
+                <div class="story-ring"><div class="story-avatar" style="background: linear-gradient(135deg, #ff9a9e, #fecfef);">L</div></div>
+                <span>Larissa</span>
+            </div>
+        </section>
+
+        <!-- Seção de Perfil Avançada -->
+        <section class="profile-card">
+            <div class="profile-cover"></div>
+            <div class="profile-info-container">
+                <div class="profile-avatar-wrapper">
+                    <div class="avatar profile-main-avatar">M</div>
+                    <span class="online-indicator" title="Online agora"></span>
+                </div>
+                <div class="profile-details">
+                    <div class="profile-name-row">
+                        <h2 id="profileDisplayName">Mariana Silva</h2>
+                        <div class="profile-actions-btns">
+                            <button id="editStatusBtn" title="Alterar Humor/Status"><i class="fa-solid fa-face-smile"></i></button>
+                            <button id="editProfileBtn" title="Editar Perfil"><i class="fa-solid fa-pen"></i></button>
+                        </div>
+                    </div>
+                    <p id="profileDisplayBio">Apaixonada por gatinhos, café e tecnologia 🌸✨</p>
+                    <span id="profileDisplayStatus" class="profile-status-badge"><i class="fa-solid fa-headphones"></i> Ouvindo lo-fi</span>
+                    
+                    <!-- Estatísticas Clicáveis -->
+                    <div class="profile-stats">
+                        <div><strong id="statPostsCount">0</strong> <span>Posts</span></div>
+                        <div onclick="openFollowersModal('followers')" class="clickable-stat"><strong id="statFollowersCount">142</strong> <span>Seguidores</span></div>
+                        <div onclick="openFollowersModal('following')" class="clickable-stat"><strong id="statFollowingCount">89</strong> <span>Seguindo</span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Área de Nova Publicação com Upload Real e Galeria -->
+        <section class="new-post-card">
+            <div class="user-info">
+                <div class="avatar post-user-avatar">M</div>
+                <div class="user-text">
+                    <strong class="post-user-name">Mariana Silva</strong>
+                    <span>O que você quer compartilhar hoje?</span>
+                </div>
+            </div>
+            <div class="post-input-container">
+                <textarea id="postText" placeholder="Escreva uma legenda fofa..." maxlength="280"></textarea>
+                
+                <div class="post-bottom-controls">
+                    <div class="image-source-box">
+                        <input type="text" id="postImage" placeholder="Cole o link da foto ou escolha abaixo 👇">
+                        <label for="imageUploadInput" class="upload-file-btn" title="Enviar foto do computador"><i class="fa-solid fa-folder-open"></i></label>
+                        <input type="file" id="imageUploadInput" accept="image/*" style="display: none;">
+                        <button type="button" id="toggleGalleryBtn" title="Escolher foto fofa"><i class="fa-solid fa-image"></i></button>
+                    </div>
+                    <div id="presetGallery" class="preset-gallery" style="display: none;">
+                        <p>Escolha uma foto fofa:</p>
+                        <div class="gallery-thumbs">
+                            <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=400&q=80" alt="Gatinho" onclick="selectPresetImage(this.src)">
+                            <img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=400&q=80" alt="Café" onclick="selectPresetImage(this.src)">
+                            <img src="https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?auto=format&fit=crop&w=400&q=80" alt="Flores" onclick="selectPresetImage(this.src)">
+                            <img src="https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=400&q=80" alt="Paisagem Rosa" onclick="selectPresetImage(this.src)">
+                        </div>
+                    </div>
+                    <small id="charCount">280 caracteres restantes</small>
+                </div>
+                
+                <button id="publishBtn"><i class="fa-solid fa-paper-plane"></i> Publicar</button>
+            </div>
+        </section>
+
+        <!-- Feed dinâmico -->
+        <div id="feedContainer"></div>
+    </main>
+
+    <!-- Modais do Sistema -->
+    <div id="storyModal" class="story-modal" style="display: none;">
+        <div class="story-modal-content">
+            <span class="close-story" onclick="closeStoryModal()">&times;</span>
+            <h3 id="storyModalAuthor">Autor</h3>
+            <img id="storyModalImage" src="" alt="Story">
+        </div>
+    </div>
+
+    <div id="followModal" class="story-modal" style="display: none;">
+        <div class="story-modal-content" style="text-align: left;">
+            <span class="close-story" onclick="closeFollowModal()">&times;</span>
+            <h3 id="followModalTitle" style="margin-bottom: 15px; color: var(--accent-color);">Lista</h3>
+            <div id="followModalList" class="follow-list-container"></div>
+        </div>
+    </div>
+
+    <!-- Rodapé -->
+    <footer>
+        <p>&copy; 2026 RosaFeed - Experiência Suprema & Interativa 💖</p>
+    </footer>
+
+    <!-- Script Completo Atualizado -->
+    <script>
+        const defaultPosts = [
+            {
+                id: 1,
+                author: "Bruna Lima",
+                initial: "B",
+                gradient: "linear-gradient(135deg, #ff758c, #ff7eb3)",
+                time: "há 15 minutos",
+                text: "Olhem que gatinho mais fofo que encontrei passeando hoje! Meu coração não aguenta tanta lindeza 🐾✨",
+                image: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=800&q=80",
+                likesCount: 24,
+                isLikedByMe: false,
+                saved: false,
+                isFollowing: false,
+                comments: [{ author: "Larissa", text: "Que coisinha mais rica! Dá vontade de apertar 😻" }]
+            },
+            {
+                id: 2,
+                author: "Camila Souza",
+                initial: "C",
+                gradient: "linear-gradient(135deg, #fbc2eb, #a6c1ee)",
+                time: "há 1 hora",
+                text: "Um café quentinho, um bom livro e muita paz por aqui. Bom dia, meninas! ☕🌸",
+                image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=800&q=80",
+                likesCount: 19,
+                isLikedByMe: true,
+                saved: true,
+                isFollowing: true,
+                comments: []
+            }
+        ];
+
+        let userProfile = JSON.parse(localStorage.getItem('rosa_profile')) || {
+            name: "Mariana Silva",
+            bio: "Apaixonada por gatinhos, café e tecnologia 🌸✨",
+            status: "🎧 Ouvindo lo-fi",
+            initial: "M",
+            followers: 142,
+            following: 89
+        };
+
+        let followersList = JSON.parse(localStorage.getItem('rosa_followers')) || [
+            { name: "Bruna Lima", bio: "Fotógrafa e amante de pets 📸" },
+            { name: "Camila Souza", bio: "Leitora voraz e barista ☕" },
+            { name: "Larissa Mendes", bio: "Estudante de Design 🎨" }
+        ];
+
+        let followingList = JSON.parse(localStorage.getItem('rosa_following')) || [
+            { name: "Camila Souza", bio: "Leitora voraz e barista ☕" }
+        ];
+
+        let notifications = JSON.parse(localStorage.getItem('rosa_notifs')) || [
+            { text: "Bruna Lima curtiu sua foto", time: "há 10 min" },
+            { text: "Camila Souza começou a seguir você", time: "há 1 hora" }
+        ];
+
+        function showToast(message) {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = 'toast-msg';
+            toast.innerHTML = `<i class="fa-solid fa-heart"></i> ${message}`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.add('fade-out');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function updateProfileUI() {
+            document.getElementById('profileDisplayName').textContent = userProfile.name;
+            document.getElementById('profileDisplayBio').textContent = userProfile.bio;
+            document.getElementById('profileDisplayStatus').innerHTML = `<i class="fa-solid fa-face-smile"></i> ${userProfile.status}`;
+            document.getElementById('statFollowersCount').textContent = userProfile.followers;
+            document.getElementById('statFollowingCount').textContent = userProfile.following;
+            document.querySelectorAll('.post-user-name').forEach(el => el.textContent = userProfile.name);
+            document.querySelectorAll('.profile-main-avatar, .post-user-avatar').forEach(el => el.textContent = userProfile.initial);
+            
+            // Atualizar sino de notificações
+            const badge = document.getElementById('notifBadge');
+            if (notifications.length > 0) {
+                badge.style.display = 'inline-block';
+                badge.textContent = notifications.length;
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+        updateProfileUI();
+
+        // Gerenciar Sininho de Notificações
+        const bellBtn = document.getElementById('notificationBellBtn');
+        const notifMenu = document.getElementById('notificationMenu');
+        bellBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            notifMenu.style.display = notifMenu.style.display === 'none' ? 'block' : 'none';
+            renderNotifications();
+        });
+
+        function renderNotifications() {
+            const list = document.getElementById('notifList');
+            if (notifications.length === 0) {
+                list.innerHTML = `<p class="empty-notifs">Nenhuma notificação nova 🌸</p>`;
+                return;
+            }
+            list.innerHTML = notifications.map(n => `
+                <div class="notif-item">
+                    <span>${n.text}</span>
+                    <small>${n.time}</small>
+                </div>
+            `).join('');
+        }
+
+        document.getElementById('clearNotifs').addEventListener('click', () => {
+            notifications = [];
+            localStorage.setItem('rosa_notifs', JSON.stringify(notifications));
+            updateProfileUI();
+            renderNotifications();
+        });
+
+        // Editar Perfil
+        document.getElementById('editProfileBtn').addEventListener('click', () => {
+            const newName = prompt("Digite seu nome:", userProfile.name);
+            if (newName === null) return;
+            const newBio = prompt("Digite sua biografia fofa:", userProfile.bio);
+            if (newBio === null) return;
+
+            if (newName.trim() !== '') {
+                userProfile.name = newName.trim();
+                userProfile.initial = userProfile.name.charAt(0).toUpperCase();
+            }
+            if (newBio.trim() !== '') {
+                userProfile.bio = newBio.trim();
+            }
+
+            localStorage.setItem('rosa_profile', JSON.stringify(userProfile));
+            updateProfileUI();
+            showToast("Perfil atualizado com sucesso! ✨");
+        });
+
+        // Editar Status / Humor
+        document.getElementById('editStatusBtn').addEventListener('click', () => {
+            const newStatus = prompt("Qual é o seu humor ou status de hoje?", userProfile.status);
+            if (newStatus !== null && newStatus.trim() !== '') {
+                userProfile.status = newStatus.trim();
+                localStorage.setItem('rosa_profile', JSON.stringify(userProfile));
+                updateProfileUI();
+                showToast("Status atualizado! 🌸");
+            }
+        });
+
+        // Modais de Seguidores e Seguindo
+        window.openFollowersModal = function(type) {
+            const modal = document.getElementById('followModal');
+            const title = document.getElementById('followModalTitle');
+            const listContainer = document.getElementById('followModalList');
+            
+            if (type === 'followers') {
+                title.textContent = "Seguidores";
+                listContainer.innerHTML = followersList.map(u => `
+                    <div class="follow-user-row">
+                        <div class="avatar" style="width:35px;height:35px;font-size:0.8rem;">${u.name.charAt(0)}</div>
+                        <div><strong>${u.name}</strong><span>${u.bio}</span></div>
+                    </div>
+                `).join('') || '<p style="color:var(--text-secondary)">Nenhum seguidor ainda.</p>';
+            } else {
+                title.textContent = "Seguindo";
+                listContainer.innerHTML = followingList.map(u => `
+                    <div class="follow-user-row">
+                        <div class="avatar" style="width:35px;height:35px;font-size:0.8rem;">${u.name.charAt(0)}</div>
+                        <div><strong>${u.name}</strong><span>${u.bio}</span></div>
+                    </div>
+                `).join('') || '<p style="color:var(--text-secondary)">Você não segue ninguém ainda.</p>';
+            }
+            modal.style.display = 'flex';
+        };
+
+        window.closeFollowModal = function() {
+            document.getElementById('followModal').style.display = 'none';
+        };
+
+        // Upload de Imagem Real (FileReader)
+        const imageUploadInput = document.getElementById('imageUploadInput');
+        imageUploadInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    document.getElementById('postImage').value = event.target.result;
+                    showToast("Foto carregada com sucesso! 📸");
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Galeria de Sugestões
+        const toggleGalleryBtn = document.getElementById('toggleGalleryBtn');
+        const presetGallery = document.getElementById('presetGallery');
+        toggleGalleryBtn.addEventListener('click', () => {
+            presetGallery.style.display = presetGallery.style.display === 'none' ? 'block' : 'none';
+        });
+
+        function selectPresetImage(url) {
+            document.getElementById('postImage').value = url;
+            presetGallery.style.display = 'none';
+        }
+
+        // Contador de Caracteres
+        const postText = document.getElementById('postText');
+        const charCount = document.getElementById('charCount');
+        postText.addEventListener('input', () => {
+            const remaining = 280 - postText.value.length;
+            charCount.textContent = `${remaining} caracteres restantes`;
+            charCount.style.color = remaining < 0 ? '#ff4d79' : 'inherit';
+        });
+
+        let posts = JSON.parse(localStorage.getItem('rosa_posts')) || defaultPosts;
+        const feedContainer = document.getElementById('feedContainer');
+        let currentFilter = 'all';
+        let searchQuery = '';
+
+        function saveAndRender() {
+            localStorage.setItem('rosa_posts', JSON.stringify(posts));
+            renderFeed(currentFilter, searchQuery);
+        }
+
+        // Barra de Pesquisa em Tempo Real
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            searchQuery = e.target.value.toLowerCase();
+            renderFeed(currentFilter, searchQuery);
+        });
+
+        // Renderizar Feed Completo
+        function renderFeed(filter = 'all', query = '') {
+            currentFilter = filter;
+            feedContainer.innerHTML = '';
+            document.getElementById('statPostsCount').textContent = posts.length;
+
+            let filteredPosts = posts.filter(post => {
+                if (filter === 'liked' && !post.isLikedByMe) return false;
+                if (filter === 'saved' && !post.saved) return false;
+                
+                if (query) {
+                    const matchText = post.text.toLowerCase().includes(query);
+                    const matchAuthor = post.author.toLowerCase().includes(query);
+                    if (!matchText && !matchAuthor) return false;
+                }
+                return true;
+            });
+
+            if (filter === 'stories') {
+                feedContainer.innerHTML = `
+                    <div class="stories-feed-info post-card" style="text-align: center; padding: 40px;">
+                        <i class="fa-solid fa-circle-notch fa-spin" style="font-size: 2rem; color: #ff4d79; margin-bottom: 10px;"></i>
+                        <h3>Dica de Stories</h3>
+                        <p style="color: var(--text-secondary); margin-top: 5px;">Clique em qualquer bolinha de story no topo da página para abrir a visualização em tela cheia!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            if (filteredPosts.length === 0) {
+                feedContainer.innerHTML = `<p style="text-align: center; color: var(--text-secondary); padding: 30px;">Nenhuma publicação encontrada por aqui 🌸</p>`;
+                return;
+            }
+
+            filteredPosts.forEach(post => {
+                const article = document.createElement('article');
+                article.className = 'post-card';
+                article.dataset.id = post.id;
+
+                let imageHTML = post.image ? `
+                    <div class="post-image-container">
+                        <img src="${post.image}" alt="Imagem do post" onerror="this.style.display='none'">
+                    </div>
+                ` : '';
+
+                let commentsHTML = post.comments.map(c => `
+                    <div class="comment-item"><strong>${c.author}:</strong> ${c.text}</div>
+                `).join('');
+
+                const avatarStyle = post.gradient ? `style="background: ${post.gradient};"` : '';
+                const isOwnPost = post.author === userProfile.name;
+                const followBtnHTML = !isOwnPost ? `
+                    <button class="follow-action-btn ${post.isFollowing ? 'following' : ''}" onclick="toggleFollow(${post.id})">
+                        ${post.isFollowing ? 'Seguindo' : '+ Seguir'}
+                    </button>
+                ` : '';
+
+                const editBtnHTML = isOwnPost ? `
+                    <button class="edit-post-btn" title="Editar Publicação" onclick="editPost(${post.id})"><i class="fa-solid fa-pen"></i></button>
+                ` : '';
+
+                article.innerHTML = `
+                    <div class="post-header">
+                        <div class="avatar" ${avatarStyle}>${post.initial || post.author.charAt(0)}</div>
+                        <div class="post-meta">
+                            <div class="author-row">
+                                <strong>${post.author}</strong>
+                                ${followBtnHTML}
+                            </div>
+                            <span>${post.time}</span>
+                        </div>
+                        ${editBtnHTML}
+                        <button class="share-post-btn" title="Compartilhar / Copiar Link"><i class="fa-solid fa-share-nodes"></i></button>
+                        <button class="save-post-btn" title="Salvar publicação"><i class="${post.saved ? 'fa-solid' : 'fa-regular'} fa-bookmark"></i></button>
+                        <button class="delete-post-btn" title="Excluir postagem"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                    <div class="post-text">${post.text}</div>
+                    ${imageHTML}
+                    <div class="post-actions">
+                        <button class="action-btn like-btn ${post.isLikedByMe ? 'liked' : ''}" onclick="toggleLike(${post.id})">
+                            <i class="${post.isLikedByMe ? 'fa-solid' : 'fa-regular'} fa-heart"></i> 
+                            <span class="likes-count">${post.likesCount}</span>
+                        </button>
+                        <button class="action-btn comment-toggle-btn">
+                            <i class="fa-regular fa-comment"></i> Comentar (<span class="comment-count">${post.comments.length}</span>)
+                        </button>
+                    </div>
+                    <div class="comments-section" style="display: none;">
+                        <div class="comments-list">${commentsHTML}</div>
+                        <div class="comment-input-box">
+                            <input type="text" placeholder="Escreva um comentário fofo..." class="comment-input">
+                            <button class="send-comment-btn"><i class="fa-solid fa-arrow-up"></i></button>
+                        </div>
+                    </div>
+                `;
+                feedContainer.appendChild(article);
+            });
+
+            initPostEvents();
+        }
+
+        // Sistema de Curtidas Real
+        window.toggleLike = function(postId) {
+            const post = posts.find(p => p.id === postId);
+            if (post) {
+                post.isLikedByMe = !post.isLikedByMe;
+                post.likesCount += post.isLikedByMe ? 1 : -1;
+                saveAndRender();
+                if (post.isLikedByMe) showToast("Você curtiu esta publicação! ❤️");
+            }
+        };
+
+        // Sistema de Edição de Posts Próprios
+        window.editPost = function(postId) {
+            const post = posts.find(p => p.id === postId);
+            if (post) {
+                const newText = prompt("Edite sua legenda:", post.text);
+                if (newText !== null && newText.trim() !== '') {
+                    post.text = newText.trim();
+                    saveAndRender();
+                    showToast("Publicação editada com sucesso! ✨");
+                }
+            }
+        };
+
+        // Seguir / Deixar de Seguir Real
+        window.toggleFollow = function(postId) {
+            const post = posts.find(p => p.id === postId);
+            if (post) {
+                post.isFollowing = !post.isFollowing;
+                if (post.isFollowing) {
+                    userProfile.following += 1;
+                    followingList.push({ name: post.author, bio: "Usuário ativo do RosaFeed" });
+                    showToast(`Agora você está seguindo ${post.author}! 🌸`);
+                } else {
+                    userProfile.following = Math.max(0, userProfile.following - 1);
+                    followingList = followingList.filter(u => u.name !== post.author);
+                    showToast(`Você deixou de seguir ${post.author}.`);
+                }
+                localStorage.setItem('rosa_profile', JSON.stringify(userProfile));
+                localStorage.setItem('rosa_following', JSON.stringify(followingList));
+                updateProfileUI();
+                saveAndRender();
+            }
+        };
+
+        // Publicar Novo Post
+        document.getElementById('publishBtn').addEventListener('click', () => {
+            const textVal = postText.value.trim();
+            const imgVal = document.getElementById('postImage').value.trim();
+
+            if (textVal === '' && imgVal === '') {
+                alert('Escreva alguma coisa ou escolha uma imagem para publicar!');
+                return;
+            }
+
+            if (textVal.length > 280) {
+                alert('Sua postagem passou do limite de 280 caracteres!');
+                return;
+            }
+
+            const newPost = {
+                id: Date.now(),
+                author: userProfile.name,
+                initial: userProfile.initial,
+                gradient: "linear-gradient(135deg, #ff4d79, #ff8fa3)",
+                time: "agora mesmo",
+                text: textVal,
+                image: imgVal,
+                likesCount: 0,
+                isLikedByMe: false,
+                saved: false,
+                isFollowing: false,
+                comments: []
+            };
+
+            posts.unshift(newPost);
+            postText.value = '';
+            document.getElementById('postImage').value = '';
+            charCount.textContent = '280 caracteres restantes';
+            saveAndRender();
+            showToast("Publicado com sucesso! 💖");
+        });
+
+        // Eventos dos Posts
+        function initPostEvents() {
+            document.querySelectorAll('.post-card').forEach(card => {
+                const postId = Number(card.dataset.id);
+                const postObj = posts.find(p => p.id === postId);
+                if (!postObj) return;
+
+                // Compartilhar / Copiar Link
+                card.querySelector('.share-post-btn').onclick = () => {
+                    const dummyLink = `https://rosafeed.app/post/${postId}`;
+                    navigator.clipboard.writeText(dummyLink).then(() => {
+                        showToast("Link copiado para a área de transferência! 🔗");
+                    }).catch(() => {
+                        showToast("Link gerado com sucesso! ✨");
+                    });
+                };
+
+                // Salvar Post
+                card.querySelector('.save-post-btn').onclick = () => {
+                    postObj.saved = !postObj.saved;
+                    saveAndRender();
+                    showToast(postObj.saved ? "Post salvo com sucesso! 📌" : "Post removido dos salvos.");
+                };
+
+                // Deletar Post
+                card.querySelector('.delete-post-btn').onclick = () => {
+                    if (confirm('Deseja realmente apagar esta postagem?')) {
+                        posts = posts.filter(p => p.id !== postId);
+                        saveAndRender();
+                        showToast("Postagem excluída.");
+                    }
+                };
+
+                // Comentários
+                card.querySelector('.comment-toggle-btn').onclick = () => {
+                    const sec = card.querySelector('.comments-section');
+                    sec.style.display = sec.style.display === 'none' ? 'block' : 'none';
+                };
+
+                card.querySelector('.send-comment-btn').onclick = () => {
+                    const input = card.querySelector('.comment-input');
+                    const cText = input.value.trim();
+                    if (cText === '') return;
+
+                    postObj.comments.push({ author: userProfile.name, text: cText });
+                    input.value = '';
+                    saveAndRender();
+                    card.querySelector('.comments-section').style.display = 'block';
+                    showToast("Comentário adicionado! 🌸");
+                };
+            });
+        }
+
+        window.onclick = (e) => {
+            if (!e.target.closest('.notification-dropdown-wrapper')) {
+                document.getElementById('notificationMenu').style.display = 'none';
+            }
+        };
+
+        function openStoryModal(author, imgUrl) {
+            document.getElementById('storyModalAuthor').textContent = author;
+            document.getElementById('storyModalImage').src = imgUrl;
+            document.getElementById('storyModal').style.display = 'flex';
+        }
+
+        function closeStoryModal() {
+            document.getElementById('storyModal').style.display = 'none';
+        }
+
+        const filterLinks = document.querySelectorAll('nav a[data-filter]');
+        filterLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                filterLinks.forEach(l => l.classList.remove('active-tab'));
+                link.classList.add('active-tab');
+                renderFeed(link.getAttribute('data-filter'), searchQuery);
+            });
+        });
+
+        // Modo Escuro
+        const themeToggleBtn = document.getElementById('themeToggleBtn');
+        themeToggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('dark-theme');
+            const icon = themeToggleBtn.querySelector('i');
+            icon.className = document.body.classList.contains('dark-theme') ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+        });
+
+        renderFeed();
+    </script>
+</body>
+</html>
