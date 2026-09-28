@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Gaming | Blog por Maria Clara</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                            900: '#050505',
+                            800: '#0f0f0f',
+                            700: '#171717',
+                            600: '#222222'
+                        },
+                        neon: {
+                            cyan: '#00f2fe',
+                            purple: '#4facfe',
+                            pink: '#ff007f'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Link para o CSS Externo -->
+    <link rel="stylesheet" href="style.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"><link href="style.css" rel="stylesheet"></head>
+<body class="bg-dark-900 text-gray-100 font-['Inter',sans-serif] selection:bg-neon-pink selection:text-white min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="sticky top-0 z-50 bg-dark-800/90 backdrop-blur-md border-b border-dark-600">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="filterCategory('todos')">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-neon-cyan to-neon-purple flex items-center justify-center shadow-lg shadow-neon-cyan/20">
+                    <i class="fa-solid fa-gamepad text-dark-900 text-lg font-bold"></i>
+                </div>
+                <div>
+                    <span class="text-xl font-bold font-['Rajdhani'] tracking-wider bg-gradient-to-r from-neon-cyan to-neon-purple bg-clip-text text-transparent">NEXUS GAMING</span>
+                    <p class="text-xs text-gray-400">Dev. <span class="text-neon-pink font-semibold">Maria Clara</span></p>
+                </div>
+            </div>
+
+            <!-- Navegação e Busca -->
+            <div class="hidden md:flex items-center space-x-6">
+                <div class="relative">
+                    <input type="text" id="searchInput" placeholder="Buscar jogos, análises..." class="bg-dark-700 text-sm text-gray-200 px-4 py-2 pl-10 rounded-full border border-dark-600 focus:outline-none focus:border-neon-cyan w-64 transition-all">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-gray-400 text-sm"></i>
+                </div>
+                <button onclick="openNewPostModal()" class="bg-gradient-to-r from-neon-cyan to-neon-purple text-dark-900 font-semibold px-4 py-2 rounded-full text-sm hover:opacity-90 transition shadow-md shadow-neon-cyan/10 flex items-center space-x-2">
+                    <i class="fa-solid fa-plus"></i>
+                    <span>Nova Análise</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Banner -->
+    <section class="relative bg-dark-800 border-b border-dark-600 py-16 overflow-hidden">
+        <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#00f2fe_1px,transparent_1px)] [background-size:16px_16px]"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col md:flex-row items-center justify-between">
+            <div class="max-w-2xl mb-8 md:mb-0">
+                <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-neon-pink/10 text-neon-pink border border-neon-pink/20 mb-4 tracking-wider uppercase">Universo Gamer & Reviews</span>
+                <h1 class="text-4xl md:text-5xl font-extrabold font-['Rajdhani'] tracking-tight mb-4 leading-tight">
+                    Mergulhe no Futuro dos <span class="bg-gradient-to-r from-neon-cyan via-purple-400 to-neon-pink bg-clip-text text-transparent">Jogos Digitais</span>
+                </h1>
+                <p class="text-gray-400 text-base md:text-lg mb-6">
+                    Análises técnicas, dicas avançadas e notícias do mundo dos games reunidas em um só lugar. Criado e mantido por <strong class="text-gray-200">Maria Clara</strong>.
+                </p>
+                <div class="flex flex-wrap gap-3">
+                    <button onclick="filterCategory('todos')" class="cat-btn active px-5 py-2 rounded-lg text-sm font-semibold transition border border-dark-600 bg-dark-700 text-neon-cyan">Todos</button>
+                    <button onclick="filterCategory('RPG')" class="cat-btn px-5 py-2 rounded-lg text-sm font-semibold transition border border-dark-600 bg-dark-700 text-gray-300 hover:text-white">RPG</button>
+                    <button onclick="filterCategory('FPS')" class="cat-btn px-5 py-2 rounded-lg text-sm font-semibold transition border border-dark-600 bg-dark-700 text-gray-300 hover:text-white">FPS</button>
+                    <button onclick="filterCategory('Indie')" class="cat-btn px-5 py-2 rounded-lg text-sm font-semibold transition border border-dark-600 bg-dark-700 text-gray-300 hover:text-white">Indie</button>
+                    <button onclick="filterCategory('Ação')" class="cat-btn px-5 py-2 rounded-lg text-sm font-semibold transition border border-dark-600 bg-dark-700 text-gray-300 hover:text-white">Ação</button>
+                </div>
+            </div>
+            <div class="w-full md:w-auto flex justify-center">
+                <div class="w-72 h-44 sm:w-80 sm:h-48 rounded-2xl bg-gradient-to-tr from-dark-700 to-dark-600 border border-dark-600 p-6 flex flex-col justify-between shadow-2xl relative group overflow-hidden">
+                    <div class="absolute -right-10 -bottom-10 w-32 h-32 bg-neon-cyan/10 rounded-full blur-2xl group-hover:bg-neon-cyan/20 transition"></div>
+                    <div class="flex justify-between items-start">
+                        <span class="text-xs uppercase font-mono text-neon-cyan tracking-widest">Destaque da Semana</span>
+                        <i class="fa-solid fa-trophy text-amber-400 text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold font-['Rajdhani'] mb-1">Cyberpunk 2077: Phantom Liberty</h3>
+                        <p class="text-xs text-gray-400">A redenção épica da CD Projekt Red analisada a fundo.</p>
+                    </div>
+                    <div class="flex items-center justify-between text-xs text-gray-400 pt-2 border-t border-dark-600/50">
+                        <span>Nota: <strong class="text-neon-pink">9.8/10</strong></span>
+                        <span class="text-neon-cyan">Maria Clara</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Conteúdo Principal / Grid de Jogos -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
+        <div class="flex items-center justify-between mb-8">
+            <h2 class="text-2xl font-bold font-['Rajdhani'] tracking-wide flex items-center space-x-2">
+                <i class="fa-solid fa-fire text-neon-pink"></i>
+                <span>Últimas Análises & Artigos</span>
+            </h2>
+            <span id="postCount" class="text-xs text-gray-400 font-mono">Mostrando artigos</span>
+        </div>
+
+        <div id="postsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Os cards serão injetados dinamicamente via JavaScript -->
+        </div>
+
+        <!-- Mensagem de Nenhum Resultado -->
+        <div id="noResults" class="hidden text-center py-20">
+            <i class="fa-solid fa-ghost text-4xl text-gray-600 mb-4"></i>
+            <p class="text-gray-400 text-lg">Nenhum artigo encontrado com esses termos.</p>
+        </div>
+    </main>
+
+    <!-- Modal de Leitura Completa -->
+    <div id="readModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-dark-800 border border-dark-600 rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 relative shadow-2xl">
+            <button onclick="closeReadModal()" class="absolute top-6 right-6 text-gray-400 hover:text-white bg-dark-700 w-10 h-10 rounded-full flex items-center justify-center transition">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <div id="modalContent">
+                <!-- Conteúdo injetado via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Novo Post -->
+    <div id="newPostModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-dark-800 border border-dark-600 rounded-2xl max-w-xl w-full p-6 sm:p-8 relative shadow-2xl">
+            <button onclick="closeNewPostModal()" class="absolute top-6 right-6 text-gray-400 hover:text-white bg-dark-700 w-10 h-10 rounded-full flex items-center justify-center transition">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <h3 class="text-2xl font-bold font-['Rajdhani'] mb-6 flex items-center space-x-2">
+                <i class="fa-solid fa-pen-nib text-neon-cyan"></i>
+                <span>Publicar Nova Análise</span>
+            </h3>
+            <form id="newPostForm" onsubmit="handleNewPost(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">Título do Jogo / Artigo</label>
+                    <input type="text" id="postTitle" required placeholder="Ex: Elden Ring: Shadow of the Erdtree" class="w-full bg-dark-700 border border-dark-600 rounded-lg px-4 py-2 text-sm text-gray-200 focus:outline-none focus:border-neon-cyan">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">Categoria</label>
+                        <select id="postCategory" class="w-full bg-dark-700 border border-dark-600 rounded-lg px-4 py-2 text-sm text-gray-200 focus:outline-none focus:border-neon-cyan">
+                            <option value="RPG">RPG</option>
+                            <option value="FPS">FPS</option>
+                            <option value="Indie">Indie</option>
+                            <option value="Ação">Ação</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">Nota (0 a 10)</label>
+                        <input type="number" step="0.1" max="10" min="0" id="postRating" required placeholder="9.5" class="w-full bg-dark-700 border border-dark-600 rounded-lg px-4 py-2 text-sm text-gray-200 focus:outline-none focus:border-neon-cyan">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">URL da Imagem de Capa</label>
+                    <input type="url" id="postImage" required placeholder="https://exemplo.com/imagem.jpg" class="w-full bg-dark-700 border border-dark-600 rounded-lg px-4 py-2 text-sm text-gray-200 focus:outline-none focus:border-neon-cyan">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">Resumo Curto</label>
+                    <input type="text" id="postExcerpt" required placeholder="Breve descrição que aparece no card..." class="w-full bg-dark-700 border border-dark-600 rounded-lg px-4 py-2 text-sm text-gray-200 focus:outline-none focus:border-neon-cyan">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">Conteúdo Completo da Análise</label>
+                    <textarea id="postContentText" rows="4" required placeholder="Escreva os detalhes, gameplay, gráficos e considerações finais..." class="w-full bg-dark-700 border border-dark-600 rounded-lg px-4 py-2 text-sm text-gray-200 focus:outline-none focus:border-neon-cyan"></textarea>
+                </div>
+                <button type="submit" class="w-full bg-gradient-to-r from-neon-cyan to-neon-purple text-dark-900 font-bold py-3 rounded-lg text-sm hover:opacity-90 transition shadow-lg shadow-neon-cyan/20">
+                    Publicar Artigo
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Rodapé -->
+    <footer class="bg-dark-800 border-t border-dark-600 mt-auto py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between text-sm text-gray-400">
+            <div class="flex items-center space-x-2 mb-4 sm:mb-0">
+                <i class="fa-solid fa-gamepad text-neon-cyan"></i>
+                <span>Nexus Gaming &copy; 2026. Desenvolvido por <strong class="text-neon-pink font-semibold">Maria Clara</strong>.</span>
+            </div>
+            <div class="flex space-x-4">
+                <a href="#" class="hover:text-neon-cyan transition"><i class="fa-brands fa-github text-lg"></i></a>
+                <a href="#" class="hover:text-neon-cyan transition"><i class="fa-brands fa-discord text-lg"></i></a>
+                <a href="#" class="hover:text-neon-cyan transition"><i class="fa-brands fa-twitch text-lg"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Link para o JavaScript Externo -->
+    <script src="script.js"></script>
+<script src="script.js"></script></body>
+</html>
