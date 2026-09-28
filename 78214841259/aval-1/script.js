@@ -1,1 +1,1 @@
-https;//cdn.jsdeliuronet/npm/@tailwind/browser@4'x/5oript
+CLASSE MDH:FLEX BG= SLATE-100RONDX:MD P-O DAR.# .CLASSE
