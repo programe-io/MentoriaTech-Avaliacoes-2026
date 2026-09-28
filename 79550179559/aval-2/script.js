@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bem-vindo, Professor!</title>
+    <!-- Importando a fonte clássica estilo anos 80 -->
+    <link href="https://googleapis.com" rel="stylesheet">
+    <style>
+        /* CONFIGURAÇÕES GERAIS - ANOS 80 / RETRO */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #050505;
+            /* Efeito sutil de ruído/fita VHS de fundo */
+            background-image: url('https://transparenttextures.com');
+            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+            transition: background-color 1s ease, filter 0.5s ease;
+        }
+
+        /* CONTAINER PRINCIPAL */
+        .stranger-container {
+            background-color: rgba(10, 10, 10, 0.85);
+            border: 2px solid #111;
+            border-top: 4px solid #e50914; /* Linha vermelha clássica */
+            padding: 50px 40px;
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
+            position: relative;
+            transition: border-color 1s ease;
+        }
+
+        /* TÍTULO ESTILO NÉON STRANGER THINGS */
+        .title-stranger {
+            font-family: 'Benguiat', 'Georgia', serif;
+            color: #111;
+            font-size: 38px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            line-height: 1.1;
+            margin-bottom: 30px;
+            /* Efeito de brilho Néon Vermelho */
+            text-shadow: 
+                0 0 2px #fff,
+                0 0 4px #e50914,
+                0 0 10px #e50914,
+                0 0 20px #e50914;
+            animation: flicker 4s infinite alternate;
+        }
+
+        .subtitle-stranger {
+            font-size: 16px;
+            color: #cccccc;
+            margin-bottom: 40px;
+            letter-spacing: 1px;
+            line-height: 1.6;
+        }
+
+        /* BOTÕES ESTILO SÉRIE */
+        .btn-stranger {
+            display: block;
+            width: 100%;
+            background-color: transparent;
+            color: #e50914;
+            border: 2px solid #e50914;
+            padding: 15px 20px;
+            font-size: 14px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 5px rgba(229, 9, 20, 0.2);
+        }
+
+        .btn-stranger:hover {
+            background-color: #e50914;
+            color: #ffffff;
+            box-shadow: 0 0 15px #e50914;
+            transform: scale(1.02);
+        }
+
+        /* -------------------------------------------
+           MODO MUNDO INVERTIDO (ESTILOS VIA JAVASCRIPT)
+           ------------------------------------------- */
+        body.upside-down {
+            background-color: #0d131a; /* Tom azulado sombrio */
+        }
+
+        body.upside-down .stranger-container {
+            border-top-color: #4a90e2; /* Néon azul */
+            box-shadow: 0 0 40px rgba(74, 144, 226, 0.3);
+        }
+
+        body.upside-down .title-stranger {
+            text-shadow: 
+                0 0 2px #fff,
+                0 0 4px #4a90e2,
+                0 0 10px #4a90e2,
+                0 0 20px #1d3557;
+            animation: fast-flicker 0.3s infinite alternate;
+        }
+
+        body.upside-down .btn-stranger {
+            color: #4a90e2;
+            border-color: #4a90e2;
+        }
+
+        body.upside-down .btn-stranger:hover {
+            background-color: #4a90e2;
+            color: #ffffff;
+            box-shadow: 0 0 15px #4a90e2;
+        }
+
+        /* ANIMAÇÃO DE PISCAR DA LUZ (FLICKER) */
+        @keyframes flicker {
+            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+                text-shadow: 0 0 2px #fff, 0 0 4px #e50914, 0 0 10px #e50914, 0 0 20px #e50914;
+            }
+            20%, 24%, 55% {        
+                text-shadow: none;
+                color: #222;
+            }
+        }
+
+        @keyframes fast-flicker {
+            0%, 100% { text-shadow: 0 0 2px #fff, 0 0 4px #4a90e2, 0 0 10px #4a90e2; }
+            50% { text-shadow: none; color: #111; }
+        }
+
+        /* RESPONSIVIDADE */
+        @media (max-width: 480px) {
+            .title-stranger { font-size: 28px; }
+            .subtitle-stranger { font-size: 14px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="stranger-container">
+        <!-- Título Néon Estilizado -->
+        <h1 class="title-stranger" id="main-title">Stranger<br>Class</h1>
+        
+        <!-- Texto de status que muda dinamicamente -->
+        <p class="subtitle-stranger" id="status-text">
+            O ano é 1983. O sinal tocou e a aula está prestes a começar em Hawkins.
+        </p>
+        
+        <!-- Botões de Ação -->
+        <button class="btn-stranger" id="btn-start">Entrar na Sala</button>
+        <button class="btn-stranger" id="btn-portal">Mundo Invertido</button>
+    </div>
+
+    <!-- CÓDIGO JAVASCRIPT DE INTERAÇÃO -->
+    <script>
+        const btnStart = document.getElementById('btn-start');
+        const btnPortal = document.getElementById('btn-portal');
+        const statusText = document.getElementById('status-text');
+        const mainTitle = document.getElementById('main-title');
+        const bodyElement = document.body;
+
+        // 1. AÇÃO DO BOTÃO "ENTRAR NA SALA"
+        btnStart.addEventListener('click', () => {
+            // Verifica se está no mundo normal ou no invertido
+            if (!bodyElement.classList.contains('upside-down')) {
+                statusText.innerText = "Bem-vindo, Professor! Os dados foram lançados e a chamada começou. 🎲";
+                statusText.style.color = "#ff5555";
+            } else {
+                statusText.innerText = "Cuidado... O Demogorgon está no final do corredor. Fique em silêncio! 🤫";
+                statusText.style.color = "#a0c4ff";
+            }
+        });
+
+        // 2. AÇÃO DO BOTÃO "MUNDO INVERTIDO" (TRANSIÇÃO COMPLETA DE ESTILO)
+        btnPortal.addEventListener('click', () => {
+            // Alterna a classe no body que muda todas as cores via CSS
+            bodyElement.classList.toggle('upside-down');
+
+            if (bodyElement.classList.contains('upside-down')) {
+                // Configurações para o Mundo Invertido
+                mainTitle.innerHTML = "Upside<br>Down";
+                statusText.innerText = "Você atravessou o portal. As regras da física não funcionam mais aqui.";
+                statusText.style.color = "#84a59d";
+                btnPortal.innerText = "Voltar para Hawkins";
+            } else {
+                // Retorna para o Mundo Normal
+                mainTitle.innerHTML = "Stranger<br>Class";
+                statusText.innerText = "O ano é 1983. O sinal tocou e a aula está prestes a começar em Hawkins.";
+                statusText.style.color = "#cccccc";
+                btnPortal.innerText = "Mundo Invertido";
+            }
+        });
+    </script>
+
+</body>
+</html>
