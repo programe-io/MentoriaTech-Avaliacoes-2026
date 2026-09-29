@@ -1,296 +1,336 @@
-// Tabela de prêmios por pergunta
-const premios = [
+// 1. Banco de perguntas em ordem de dificuldade até 1 Milhão
+const perguntas = [
+    {
+        pergunta: "Qual é o animal terrestre mais rápido do mundo?",
+        respostas: [
+            { texto: "Guepardo", correta: true },
+            { texto: "Leão", correta: false },
+            { texto: "Coelho", correta: false },
+            { texto: "Gazela", correta: false }
+        ]
+    },
+    {
+        pergunta: "Qual é a capital do Brasil?",
+        respostas: [
+            { texto: "São Paulo", correta: false },
+            { texto: "Brasília", correta: true },
+            { texto: "Rio de Janeiro", correta: false },
+            { texto: "Salvador", correta: false }
+        ]
+    },
+    {
+        pergunta: "Quantos lados tem um hexágono?",
+        respostas: [
+            { texto: "5", correta: false },
+            { texto: "6", correta: true },
+            { texto: "8", correta: false },
+            { texto: "4", correta: false }
+        ]
+    },
+    {
+        pergunta: "Qual elemento químico tem o símbolo 'O'?",
+        respostas: [
+            { texto: "Ouro", correta: false },
+            { texto: "Oxigênio", correta: true },
+            { texto: "Osvaldo", correta: false },
+            { texto: "Ozônio", correta: false }
+        ]
+    },
+    {
+        pergunta: "Em que país fica a Torre Eiffel?",
+        respostas: [
+            { texto: "Itália", correta: false },
+            { texto: "França", correta: true },
+            { texto: "Espanha", correta: false },
+            { texto: "Inglaterra", correta: false }
+        ]
+    },
+    {
+        pergunta: "Quem pintou a obra 'Mona Lisa'?",
+        respostas: [
+            { texto: "Pablo Picasso", correta: false },
+            { texto: "Leonardo da Vinci", correta: true },
+            { texto: "Vincent van Gogh", correta: false },
+            { texto: "Michelangelo", correta: false }
+        ]
+    },
+    {
+        pergunta: "Qual é o maior planeta do Sistema Solar?",
+        respostas: [
+            { texto: "Terra", correta: false },
+            { texto: "Júpiter", correta: true },
+            { texto: "Saturno", correta: false },
+            { texto: "Marte", correta: false }
+        ]
+    },
+    {
+        pergunta: "Em que ano o homem pisou na Lua pela primeira vez?",
+        respostas: [
+            { texto: "1959", correta: false },
+            { texto: "1969", correta: true },
+            { texto: "1975", correta: false },
+            { texto: "1980", correta: false }
+        ]
+    },
+    {
+        pergunta: "Qual metal tem o símbolo químico 'Au'?",
+        respostas: [
+            { texto: "Prata", correta: false },
+            { texto: "Ouro", correta: true },
+            { texto: "Alumínio", correta: false },
+            { texto: "Cobre", correta: false }
+        ]
+    },
+    {
+        pergunta: "Qual é a fórmula química da água?",
+        respostas: [
+            { texto: "CO2", correta: false },
+            { texto: "H2O", correta: true },
+            { texto: "NaCl", correta: false },
+            { texto: "O2", correta: false }
+        ]
+    },
+    {
+        pergunta: "Qual oceano banha o litoral do Brasil?",
+        respostas: [
+            { texto: "Pacífico", correta: false },
+            { texto: "Atlântico", correta: true },
+            { texto: "Índico", correta: false },
+            { texto: "Ártico", correta: false }
+        ]
+    },
+    {
+        pergunta: "Qual é o maior país do mundo em extensão territorial?",
+        respostas: [
+            { texto: "Canadá", correta: false },
+            { texto: "Rússia", correta: true },
+            { texto: "China", correta: false },
+            { texto: "EUA", correta: false }
+        ]
+    },
+    {
+        pergunta: "Quantos ossos tem o corpo humano adulto?",
+        respostas: [
+            { texto: "300", correta: false },
+            { texto: "206", correta: true },
+            { texto: "150", correta: false },
+            { texto: "210", correta: false }
+        ]
+    },
+    {
+        pergunta: "Qual é o livro mais vendido no mundo depois da Bíblia?",
+        respostas: [
+            { texto: "O Senhor dos Anéis", correta: false },
+            { texto: "Dom Quixote", correta: true },
+            { texto: "O Pequeno Príncipe", correta: false },
+            { texto: "Harry Potter", correta: false }
+        ]
+    },
+    {
+        pergunta: "Em que ano terminou a Segunda Guerra Mundial?",
+        respostas: [
+            { texto: "1939", correta: false },
+            { texto: "1945", correta: true },
+            { texto: "1918", correta: false },
+            { texto: "1950", correta: false }
+        ]
+    },
+    {
+        pergunta: "PERGUNTA DO MILHÃO: Qual é o menor país do mundo em área territorial?",
+        respostas: [
+            { texto: "Mônaco", correta: false },
+            { texto: "Vaticano", correta: true },
+            { texto: "Nauru", correta: false },
+            { texto: "San Marino", correta: false }
+        ]
+    }
+];
+
+// 2. Tabela de valores (16 etapas)
+const valores = [
     1000, 2000, 3000, 4000, 5000,
     10000, 20000, 30000, 40000, 50000,
     100000, 200000, 300000, 400000, 500000,
     1000000
 ];
 
-// Lista de Perguntas
-const perguntas = [
-    {
-        pergunta: "Qual é a capital do Brasil?",
-        respostas: [
-            { texto: "A) São Paulo", correta: false },
-            { texto: "B) Rio de Janeiro", correta: false },
-            { texto: "C) Brasília", correta: true },
-            { texto: "D) Salvador", correta: false }
-        ]
-    },
-    {
-        pergunta: "Qual é o maior planeta do nosso Sistema Solar?",
-        respostas: [
-            { texto: "A) Terra", correta: false },
-            { texto: "B) Júpiter", correta: true },
-            { texto: "C) Saturno", correta: false },
-            { texto: "D) Marte", correta: false }
-        ]
-    },
-    {
-        pergunta: "Quanto é 8 x 7?",
-        respostas: [
-            { texto: "A) 54", correta: false },
-            { texto: "B) 56", correta: true },
-            { texto: "C) 64", correta: false },
-            { texto: "D) 48", correta: false }
-        ]
-    },
-    {
-        pergunta: "Quem pintou a obra 'Mona Lisa'?",
-        respostas: [
-            { texto: "A) Vincent van Gogh", correta: false },
-            { texto: "B) Pablo Picasso", correta: false },
-            { texto: "C) Leonardo da Vinci", correta: true },
-            { texto: "D) Michelangelo", correta: false }
-        ]
-    },
-    {
-        pergunta: "Qual elemento químico é representado pela letra 'O'?",
-        respostas: [
-            { texto: "A) Ouro", correta: false },
-            { texto: "B) Oxigênio", correta: true },
-            { texto: "C) Osvaldo", correta: false },
-            { texto: "D) Ozônio", correta: false }
-        ]
-    },
-    {
-        pergunta: "Em qual país surgiram os Jogos Olímpicos da Antiguidade?",
-        respostas: [
-            { texto: "A) Itália", correta: false },
-            { texto: "B) Grécia", correta: true },
-            { texto: "C) Egito", correta: false },
-            { texto: "D) França", correta: false }
-        ]
-    },
-    {
-        pergunta: "Qual é o único metal líquido em temperatura ambiente?",
-        respostas: [
-            { texto: "A) Ferro", correta: false },
-            { texto: "B) Mercúrio", correta: true },
-            { texto: "C) Chumbo", correta: false },
-            { texto: "D) Cobre", correta: false }
-        ]
-    },
-    {
-        pergunta: "Qual é a velocidade da luz no vácuo, aproximadamente?",
-        respostas: [
-            { texto: "A) 300.000 km/s", correta: true },
-            { texto: "B) 150.000 km/s", correta: false },
-            { texto: "C) 1.000.000 km/s", correta: false },
-            { texto: "D) 30.000 km/s", correta: false }
-        ]
-    }
-];
-
-// Elementos HTML
+// Elementos da interface
 const elementoPergunta = document.getElementById('pergunta');
 const caixaOpcoes = document.getElementById('caixa-opcoes');
-const btnProximo = document.getElementById('btn-proximo');
-const valorPremio = document.getElementById('valor-premio');
+const areaQuiz = document.getElementById('area-quiz');
+const ajudasContainer = document.getElementById('ajudas-container');
+const telaFim = document.getElementById('tela-fim');
+const mensagemFim = document.getElementById('mensagem-fim');
+const premioFinalDisplay = document.getElementById('premio-final');
+const btnReiniciar = document.getElementById('btn-reiniciar');
+
+const displayValAcerto = document.getElementById('val-acerto');
+const displayValParar = document.getElementById('val-parar');
+const displayValErro = document.getElementById('val-erro');
 
 const btnPular = document.getElementById('btn-pular');
-const btnCartas = document.getElementById('btn-cartas');
-const btnUniversitarios = document.getElementById('btn-universitarios');
+const btnEliminar = document.getElementById('btn-eliminar');
 const btnParar = document.getElementById('btn-parar');
-const pulosRestantesSpan = document.getElementById('pulos-restantes');
+const pulosRestantesDisplay = document.getElementById('pulos-restantes');
 
-const modal = document.getElementById('modal-ajuda');
-const modalTitulo = document.getElementById('modal-titulo');
-const modalTexto = document.getElementById('modal-texto');
-const btnFecharModal = document.getElementById('btn-fechar-modal');
-
-// Estado do Jogo
+// Variáveis de estado
 let indicePerguntaAtual = 0;
 let pulosRestantes = 3;
-let ajudaCartasUsada = false;
-let ajudaUniversitariosUsada = false;
+let eliminarUsado = false;
 
 function formatarMoeda(valor) {
-    return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
+    return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 }
 
-function iniciarQuiz() {
+function iniciarJogo() {
     indicePerguntaAtual = 0;
     pulosRestantes = 3;
-    ajudaCartasUsada = false;
-    ajudaUniversitariosUsada = false;
+    eliminarUsado = false;
     
-    pulosRestantesSpan.textContent = pulosRestantes;
+    pulosRestantesDisplay.textContent = pulosRestantes;
     btnPular.disabled = false;
-    btnCartas.disabled = false;
-    btnUniversitarios.disabled = false;
+    btnEliminar.disabled = false;
     btnParar.disabled = false;
+
+    telaFim.classList.add('escondido');
+    areaQuiz.classList.remove('escondido');
+    ajudasContainer.classList.remove('escondido');
     
-    btnProximo.textContent = "Próxima Pergunta ➔";
-    btnProximo.classList.add('escondido');
     mostrarPergunta();
+}
+
+function calcularValores() {
+    const valAcerto = valores[indicePerguntaAtual];
+    const valAtual = indicePerguntaAtual > 0 ? valores[indicePerguntaAtual - 1] : 0;
+    const valParar = valAtual;
+    
+    // Na pergunta do milhão, se errar perde tudo (R$ 0). Caso contrário, ganha metade do acumulado.
+    let valErro = 0;
+    if (indicePerguntaAtual === valores.length - 1) {
+        valErro = 0;
+    } else {
+        valErro = Math.floor(valAtual / 2);
+    }
+
+    displayValAcerto.textContent = formatarMoeda(valAcerto);
+    displayValParar.textContent = formatarMoeda(valParar);
+    displayValErro.textContent = formatarMoeda(valErro);
+
+    return { valAcerto, valParar, valErro };
 }
 
 function mostrarPergunta() {
     limparEstado();
-    
-    let perguntaAtual = perguntas[indicePerguntaAtual];
-    valorPremio.textContent = `Valendo: ${formatarMoeda(premios[indicePerguntaAtual])}`;
+    calcularValores();
+
+    const perguntaAtual = perguntas[indicePerguntaAtual];
     elementoPergunta.textContent = `${indicePerguntaAtual + 1}. ${perguntaAtual.pergunta}`;
 
-    perguntaAtual.respostas.forEach(resposta => {
+    // Embaralha as respostas
+    const respostasEmbaralhadas = [...perguntaAtual.respostas].sort(() => Math.random() - 0.5);
+
+    respostasEmbaralhadas.forEach(resposta => {
         const botao = document.createElement('button');
         botao.textContent = resposta.texto;
         botao.classList.add('btn-opcao');
-        
         if (resposta.correta) {
-            botao.dataset.correta = resposta.correta;
+            botao.dataset.correta = "true";
         }
-        
         botao.addEventListener('click', selecionarResposta);
         caixaOpcoes.appendChild(botao);
     });
 }
 
 function limparEstado() {
-    btnProximo.classList.add('escondido');
     while (caixaOpcoes.firstChild) {
         caixaOpcoes.removeChild(caixaOpcoes.firstChild);
     }
 }
 
-function selecionarResposta(evento) {
-    const botaoSelecionado = evento.target;
-    const isCorreta = botaoSelecionado.dataset.correta === "true";
-    
-    desativarAjudas();
+function selecionarResposta(e) {
+    const botaoSelecionado = e.target;
+    const eCorreta = botaoSelecionado.dataset.correta === "true";
+    const { valAcerto, valErro } = calcularValores();
 
-    if (isCorreta) {
+    Array.from(caixaOpcoes.children).forEach(btn => btn.disabled = true);
+    desativarAjudas(true);
+
+    if (eCorreta) {
         botaoSelecionado.classList.add('correto');
-        
-        if (indicePerguntaAtual === perguntas.length - 1) {
-            setTimeout(() => {
-                mostrarResultado(true);
-            }, 1000);
-            return;
-        }
-        
-        btnProximo.classList.remove('escondido');
+        setTimeout(() => {
+            indicePerguntaAtual++;
+            if (indicePerguntaAtual < perguntas.length) {
+                desativarAjudas(false);
+                mostrarPergunta();
+            } else {
+                finalizarJogo(valAcerto, "🏆 PARABÉNS! Você ganhou R$ 1 MILHÃO!");
+            }
+        }, 1200);
     } else {
         botaoSelecionado.classList.add('errado');
-        
-        Array.from(caixaOpcoes.children).forEach(botao => {
-            if (botao.dataset.correta === "true") {
-                botao.classList.add('correto');
-            }
-            botao.disabled = true;
+        Array.from(caixaOpcoes.children).forEach(btn => {
+            if (btn.dataset.correta === "true") btn.classList.add('correto');
         });
-
-        const valorPerda = indicePerguntaAtual > 0 ? premios[indicePerguntaAtual - 1] / 2 : 0;
         setTimeout(() => {
-            exibirModal("Você errou!", `Que pena! Você errou a pergunta e levou para casa: <strong>${formatarMoeda(valorPerda)}</strong>.`, () => {
-                mostrarResultado(false, valorPerda);
-            });
-        }, 1200);
+            finalizarJogo(valErro, "❌ Você errou a pergunta!");
+        }, 1500);
     }
 }
 
-function desativarAjudas() {
-    btnPular.disabled = true;
-    btnCartas.disabled = true;
-    btnUniversitarios.disabled = true;
-    btnParar.disabled = true;
-    Array.from(caixaOpcoes.children).forEach(botao => botao.disabled = true);
+function desativarAjudas(status) {
+    btnPular.disabled = status || pulosRestantes === 0;
+    btnEliminar.disabled = status || eliminarUsado;
+    btnParar.disabled = status;
 }
 
-// Ajudas
+// Eventos de Ajuda
 btnPular.addEventListener('click', () => {
     if (pulosRestantes > 0) {
         pulosRestantes--;
-        pulosRestantesSpan.textContent = pulosRestantes;
+        pulosRestantesDisplay.textContent = pulosRestantes;
         if (pulosRestantes === 0) btnPular.disabled = true;
         
-        indicePerguntaAtual = (indicePerguntaAtual + 1) % perguntas.length;
-        mostrarPergunta();
+        indicePerguntaAtual++;
+        if (indicePerguntaAtual < perguntas.length) {
+            mostrarPergunta();
+        } else {
+            finalizarJogo(valores[indicePerguntaAtual - 1], "Você pulou até a vitória!");
+        }
     }
 });
 
-btnCartas.addEventListener('click', () => {
-    if (ajudaCartasUsada) return;
-    ajudaCartasUsada = true;
-    btnCartas.disabled = true;
+btnEliminar.addEventListener('click', () => {
+    if (!eliminarUsado) {
+        eliminarUsado = true;
+        btnEliminar.disabled = true;
 
-    const qtdEliminar = Math.floor(Math.random() * 3) + 1;
-    const botoesIncorretos = Array.from(caixaOpcoes.children).filter(b => b.dataset.correta !== "true");
-    
-    botoesIncorretos.sort(() => Math.random() - 0.5);
-    for (let i = 0; i < Math.min(qtdEliminar, botoesIncorretos.length); i++) {
-        botoesIncorretos[i].style.visibility = "hidden";
+        const botoesIncorretos = Array.from(caixaOpcoes.children).filter(
+            btn => btn.dataset.correta !== "true"
+        );
+
+        botoesIncorretos.sort(() => Math.random() - 0.5);
+        for (let i = 0; i < 2 && i < botoesIncorretos.length; i++) {
+            botoesIncorretos[i].style.visibility = 'hidden';
+            botoesIncorretos[i].disabled = true;
+        }
     }
-
-    exibirModal("🃏 Cartas", `O baralho eliminou <strong>${Math.min(qtdEliminar, botoesIncorretos.length)}</strong> opção(ões) incorreta(s)!`);
-});
-
-btnUniversitarios.addEventListener('click', () => {
-    if (ajudaUniversitariosUsada) return;
-    ajudaUniversitariosUsada = true;
-    btnUniversitarios.disabled = true;
-
-    const perguntaAtual = perguntas[indicePerguntaAtual];
-    const corretaIndex = perguntaAtual.respostas.findIndex(r => r.correta);
-    const opcoes = ["A", "B", "C", "D"];
-    
-    exibirModal("🎓 Universitários", `Os 3 universitários indicam que a resposta certa é a alternativa <strong>${opcoes[corretaIndex]}</strong>!`);
 });
 
 btnParar.addEventListener('click', () => {
-    const valorGarantido = indicePerguntaAtual > 0 ? premios[indicePerguntaAtual - 1] : 0;
-    exibirModal("🛑 Parar o Jogo", `Você decidiu parar! Você leva para casa o prêmio acumulado de <strong>${formatarMoeda(valorGarantido)}</strong>!`, () => {
-        mostrarResultado(false, valorGarantido, true);
-    });
+    const { valParar } = calcularValores();
+    finalizarJogo(valParar, "🛑 Você decidiu parar!");
 });
 
-function exibirModal(titulo, texto, callbackFechar = null) {
-    modalTitulo.textContent = titulo;
-    modalTexto.innerHTML = texto;
-    modal.classList.remove('escondido');
+function finalizarJogo(premio, mensagem) {
+    areaQuiz.classList.add('escondido');
+    ajudasContainer.classList.add('escondido');
+    telaFim.classList.remove('escondido');
 
-    const novoFechar = () => {
-        modal.classList.add('escondido');
-        btnFecharModal.removeEventListener('click', novoFechar);
-        if (callbackFechar) callbackFechar();
-    };
-    btnFecharModal.onclick = novoFechar;
+    mensagemFim.textContent = mensagem;
+    premioFinalDisplay.textContent = `Prêmio Final: ${formatarMoeda(premio)}`;
 }
 
-btnProximo.addEventListener('click', () => {
-    indicePerguntaAtual++;
-    if (indicePerguntaAtual < perguntas.length) {
-        if (pulosRestantes > 0) btnPular.disabled = false;
-        if (!ajudaCartasUsada) btnCartas.disabled = false;
-        if (!ajudaUniversitariosUsada) btnUniversitarios.disabled = false;
-        btnParar.disabled = false;
+btnReiniciar.addEventListener('click', iniciarJogo);
 
-        mostrarPergunta();
-    } else {
-        mostrarResultado(true);
-    }
-});
-
-function mostrarResultado(vitoria = false, premioFinal = 0, parou = false) {
-    limparEstado();
-    desativarAjudas();
-
-    if (vitoria) {
-        elementoPergunta.innerHTML = `🏆 PARABÉNS! VOCÊ É O NOVO MILIONÁRIO! 🎉<br><br><span style="color:#f5c518; font-size: 1.8rem;">Você ganhou R$ 1.000.000!</span>`;
-    } else if (parou) {
-        elementoPergunta.innerHTML = `🛑 Jogo encerrado por decisão do jogador.<br><br>Você levou: <span style="color:#00d2ff">${formatarMoeda(premioFinal)}</span>`;
-    } else {
-        elementoPergunta.innerHTML = `💥 Fim de jogo!<br><br>Sua premiação final foi: <span style="color:#ff3838">${formatarMoeda(premioFinal)}</span>`;
-    }
-
-    btnProximo.textContent = "Jogar Novamente 🔄";
-    btnProximo.classList.remove('escondido');
-    
-    btnProximo.onclick = () => {
-        btnProximo.onclick = null;
-        iniciarQuiz();
-    };
-}
-
-iniciarQuiz();
+// Inicia o jogo
+iniciarJogo();

@@ -1,48 +1,200 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Show do Milhão</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <div class="quiz-container">
-        <header>
-            <h1>💰 Show do Milhão</h1>
-            <div class="premio-caixa"><span id="valor-premio">R$ 1.000</span></div>
-        </header>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap');
 
-        <!-- Painel de Recursos / Ajudas -->
-        <div id="painel-ajudas" class="painel-ajudas">
-            <button id="btn-pular" class="btn-ajuda">⏭️ Pular (<span id="pulos-restantes">3</span>)</button>
-            <button id="btn-cartas" class="btn-ajuda">🃏 Cartas</button>
-            <button id="btn-universitarios" class="btn-ajuda">🎓 Universitários</button>
-            <button id="btn-parar" class="btn-ajuda btn-parar">🛑 Parar</button>
-        </div>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Nunito', sans-serif;
+}
 
-        <main id="area-quiz">
-            <h2 id="pergunta">Carregando pergunta...</h2>
-            
-            <div id="caixa-opcoes" class="grid-opcoes">
-                <!-- Botões de resposta preenchidos pelo JS -->
-            </div>
-        </main>
+body {
+    background: radial-gradient(circle, #0b1d3a, #020b18);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    color: #ffffff;
+    padding: 15px;
+}
 
-        <div class="controles">
-            <button id="btn-proximo" class="escondido">Próxima Pergunta ➔</button>
-        </div>
-    </div>
+.quiz-container {
+    background-color: #0d1117;
+    border-radius: 20px;
+    padding: 25px;
+    width: 100%;
+    max-width: 650px;
+    box-shadow: 0 0 30px rgba(0, 210, 255, 0.2);
+    border: 3px solid #ffd700;
+    text-align: center;
+}
 
-    <!-- Modal para Exibir Mensagens de Ajuda e Final do Jogo -->
-    <div id="modal-ajuda" class="modal escondido">
-        <div class="modal-conteudo">
-            <h3 id="modal-titulo">Ajuda</h3>
-            <p id="modal-texto"></p>
-            <button id="btn-fechar-modal" class="btn-modal">Continuar</button>
-        </div>
-    </div>
+header {
+    border-bottom: 2px dashed #30363d;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+}
 
-    <script src="script.js"></script>
-</body>
-</html>
+h1 {
+    color: #ffd700;
+    font-size: 2.2rem;
+    font-weight: 900;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+    margin-bottom: 15px;
+}
+
+.placar-container {
+    display: flex;
+    justify-content: space-around;
+    gap: 10px;
+    background: #161b22;
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid #30363d;
+}
+
+.item-placar {
+    font-size: 0.85rem;
+    color: #8b949e;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.item-placar span {
+    display: block;
+    font-size: 1.1rem;
+    color: #2ea043;
+    margin-top: 4px;
+}
+
+.item-placar.destaque span {
+    color: #ffaa00;
+}
+
+.item-placar.alerta span {
+    color: #f85149;
+}
+
+.ajudas-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.btn-ajuda, .btn-parar {
+    background-color: #21262d;
+    color: #f0f6fc;
+    border: 2px solid #ffd700;
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-ajuda:hover:not(:disabled) {
+    background-color: #ffd700;
+    color: #000;
+    transform: translateY(-2px);
+}
+
+.btn-parar {
+    border-color: #f85149;
+    color: #f85149;
+}
+
+.btn-parar:hover:not(:disabled) {
+    background-color: #f85149;
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+.btn-ajuda:disabled, .btn-parar:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    border-color: #555;
+}
+
+h2 {
+    font-size: 1.3rem;
+    color: #ffffff;
+    margin-bottom: 20px;
+    min-height: 50px;
+}
+
+.grid-opcoes {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.btn-opcao {
+    background-color: #161b22;
+    color: #ffffff;
+    border: 2px solid #30363d;
+    border-radius: 12px;
+    padding: 14px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 0 #090d11;
+}
+
+.btn-opcao:hover:not(:disabled) {
+    background-color: #21262d;
+    border-color: #00d2ff;
+    color: #00d2ff;
+    transform: translateY(-2px);
+}
+
+.btn-opcao.correto {
+    background-color: #238636 !important;
+    border-color: #2ea043 !important;
+    color: #fff !important;
+}
+
+.btn-opcao.errado {
+    background-color: #da3633 !important;
+    border-color: #f85149 !important;
+    color: #fff !important;
+}
+
+#tela-fim {
+    padding: 20px 0;
+}
+
+#tela-fim h2 {
+    font-size: 2rem;
+    color: #ffd700;
+    margin-bottom: 15px;
+}
+
+#premio-final {
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: #3fb950;
+    margin-bottom: 25px;
+}
+
+.btn-reiniciar {
+    background-color: #238636;
+    color: white;
+    border: none;
+    padding: 14px 28px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 4px 0 #196127;
+}
+
+.btn-reiniciar:hover {
+    background-color: #2ea043;
+}
+
+.escondido {
+    display: none !important;
+}
