@@ -1,0 +1,77 @@
+feed.appendChild(postElement);
+      });
+    }
+
+    function addPost() {
+      const input = document.getElementById("postInput");
+      const content = input.value.trim();
+
+      if (!content) return;
+
+      const newPost = {
+        id: Date.now(),
+        author: "Você",
+        content: content,
+        likes: 0,
+        liked: false,
+        comments: []
+      };
+
+      posts.unshift(newPost);
+      input.value = "";
+      renderFeed();
+    }
+
+    function toggleLike(id) {
+      posts = posts.map(post => {
+        if (post.id === id) {
+          return {
+            ...post,
+            liked: !post.liked,
+            likes: post.liked ? post.likes - 1 : post.likes + 1
+          };
+        }
+        return post;
+      });
+      renderFeed();
+    }
+
+    function addComment(postId) {
+      const input = document.getElementById(`comment-input-${postId}`);
+      const text = input.value.trim();
+
+      if (!text) return;
+
+      posts = posts.map(post => {
+        if (post.id === postId) {
+          return { ...post, comments: [...post.comments, text] };
+        }
+        return post;
+      });
+
+      renderFeed();
+    }
+
+    function handleCommentKeyPress(event, postId) {
+      if (event.key === "Enter") {
+        addComment(postId);
+      }
+    }
+
+    function deletePost(id) {
+      posts = posts.filter(post => post.id !== id);
+      renderFeed();
+    }
+
+    function escapeHTML(str) {
+      return str.replace(/[&<>'"]/g, 
+        tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+      );
+    }
+
+    // Renderiza o feed inicial
+    renderFeed();
+  </script>
+
+</body>
+</html>

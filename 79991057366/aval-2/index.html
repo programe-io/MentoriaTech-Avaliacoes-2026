@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <script src="https://cdn.tailwindcss.com"></script>
+<link href="style.css" rel="stylesheet">
+</head>
+<body>
+  <!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mini Feed Social</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen py-8 text-gray-800">
+
+  <div class="max-w-xl mx-auto px-4">
+    <!-- Header -->
+    <header class="mb-6 text-center">
+      <h1 class="text-3xl font-bold text-blue-600">Mini Feed</h1>
+      <p class="text-sm text-gray-500">Compartilhe seus pensamentos</p>
+    </header>
+
+    <!-- Formulário de Criar Post -->
+    <div class="bg-white p-4 rounded-xl shadow mb-6">
+      <textarea 
+        id="postInput" 
+        rows="3" 
+        placeholder="O que você está pensando?..." 
+        class="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+      ></textarea>
+      <div class="flex justify-end mt-3">
+        <button 
+          onclick="addPost()" 
+          class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg transition"
+        >
+          Publicar
+        </button>
+      </div>
+    </div>
+
+    <!-- Feed de Posts -->
+    <div id="feed" class="space-y-4"></div>
+  </div>
+
+  <script>
+    let posts = [
+      {
+        id: 1,
+        author: "Maria Silva",
+        content: "Criando meu primeiro mini feed social! 🚀",
+        likes: 3,
+        liked: false,
+        comments: ["Muito legal!", "Ficou ótimo!"]
+      }
+    ];
+
+    function renderFeed() {
+      const feed = document.getElementById("feed");
+      feed.innerHTML = "";
+
+      posts.forEach(post => {
+        const postElement = document.createElement("div");
+        postElement.className = "bg-white p-5 rounded-xl shadow space-y-4";
+
+        const commentsHTML = post.comments
+          .map(c => `<div class="bg-gray-50 p-2 rounded text-sm text-gray-600 mt-1">${escapeHTML(c)}</div>`)
+          .join("");
+
+        postElement.innerHTML = `
+          <div class="flex justify-between items-center">
+            <div class="font-semibold text-gray-900">${escapeHTML(post.author)}</div>
+            <button onclick="deletePost(${post.id})" class="text-xs text-red-400 hover:text-red-600">Excluir</button>
+          </div>
+
+          <p class="text-gray-700">${escapeHTML(post.content)}</p>
+
+          <div class="flex items-center justify-between pt-2 border-t border-gray-100">
+            <button 
+              onclick="toggleLike(${post.id})" 
+              class="flex items-center space-x-1 text-sm ${post.liked ? 'text-red-500 font-bold' : 'text-gray-500 hover:text-red-500'}"
+            >
+              <span>${post.liked ? '❤️' : '🤍'}</span>
+              <span>${post.likes} Curtidas</span>
+            </button>
+            <span class="text-xs text-gray-400">${post.comments.length} comentários</span>
+          </div>
+
+          <!-- Seção de Comentários -->
+          <div class="pt-2 border-t border-gray-100 space-y-2">
+            <div class="flex gap-2">
+              <input 
+                type="text" 
+                id="comment-input-${post.id}" 
+                placeholder="Escreva um comentário..." 
+                class="flex-1 px-3 py-1 text-sm border rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500"
+                onkeypress="handleCommentKeyPress(event, ${post.id})"
+              />
+              <button 
+                onclick="addComment(${post.id})" 
+                class="text-xs bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded-lg font-medium"
+              >
+                Comentar
+              </button>
+            </div>
+            <div class="space-y-1">${commentsHTML}</div>
+          </div>
+  
+  
+</body>
+</html>
