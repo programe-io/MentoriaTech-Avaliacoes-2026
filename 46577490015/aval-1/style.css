@@ -1,0 +1,256 @@
+@import url("https://fonts.googleapis.com/css2?family=Chivo+Mono:wght@400;500;700&display=swap");
+
+/* ---------- Variáveis ---------- */
+:root {
+  --mesa: #d6d2c8;
+  --corpo: #e7e4dc;
+  --corpo-sombra: #b9b4a6;
+  --visor-fundo: #c5cdb2;
+  --visor-tinta: #29321f;
+  --visor-tinta-suave: rgba(41, 50, 31, 0.55);
+  --tecla-numero: #f5f3ed;
+  --tecla-operador: #3b4046;
+  --tecla-operador-texto: #f1eee6;
+  --tecla-funcao: #bdb8aa;
+  --tecla-igual: #e0532a;
+  --texto: #23262a;
+
+  --fonte: "Chivo Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  --raio-corpo: 28px;
+  --raio-tecla: 12px;
+  --raio-visor: 8px;
+  --espaco: 12px;
+}
+
+/* Tema escuro automático (ou force com <html data-tema="escuro">) */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-tema="claro"]) {
+    --mesa: #1c1d1f;
+    --corpo: #2b2d30;
+    --corpo-sombra: #131415;
+    --visor-fundo: #a9b592;
+    --tecla-numero: #40444a;
+    --tecla-operador: #17191b;
+    --tecla-funcao: #5a5e64;
+    --texto: #ecebe6;
+  }
+}
+
+:root[data-tema="escuro"] {
+  --mesa: #1c1d1f;
+  --corpo: #2b2d30;
+  --corpo-sombra: #131415;
+  --visor-fundo: #a9b592;
+  --tecla-numero: #40444a;
+  --tecla-operador: #17191b;
+  --tecla-funcao: #5a5e64;
+  --texto: #ecebe6;
+}
+
+/* ---------- Base ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--mesa);
+  color: var(--texto);
+  font-family: var(--fonte);
+  -webkit-font-smoothing: antialiased;
+}
+
+.pagina {
+  min-height: 100%;
+  display: grid;
+  place-items: center;
+  padding: 24px 16px;
+}
+
+/* ---------- Corpo da calculadora ---------- */
+.calculadora {
+  width: 100%;
+  max-width: 360px;
+  padding: 20px;
+  background: var(--corpo);
+  border-radius: var(--raio-corpo);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.5) inset,
+    0 -6px 0 var(--corpo-sombra) inset,
+    0 24px 40px -18px rgba(0, 0, 0, 0.45);
+}
+
+/* ---------- Visor ---------- */
+.visor {
+  min-height: 112px;
+  margin-bottom: 20px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-end;
+  gap: 4px;
+  background: var(--visor-fundo);
+  color: var(--visor-tinta);
+  border-radius: var(--raio-visor);
+  box-shadow:
+    0 3px 6px rgba(0, 0, 0, 0.28) inset,
+    0 1px 0 rgba(255, 255, 255, 0.35);
+  overflow: hidden;
+}
+
+.visor__historico {
+  min-height: 1.2em;
+  max-width: 100%;
+  font-size: 0.85rem;
+  color: var(--visor-tinta-suave);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.visor__valor {
+  max-width: 100%;
+  font-size: clamp(2rem, 11vw, 2.75rem);
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.visor__valor::-webkit-scrollbar {
+  display: none;
+}
+
+/* ---------- Teclado ---------- */
+.teclado {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: 64px;
+  gap: var(--espaco);
+}
+
+.tecla {
+  appearance: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  font-size: 1.35rem;
+  font-weight: 500;
+  color: var(--texto);
+  background: var(--tecla-numero);
+  border-radius: var(--raio-tecla);
+  cursor: pointer;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.6) inset,
+    0 4px 0 rgba(0, 0, 0, 0.22);
+  transition: transform 80ms ease, box-shadow 80ms ease, filter 120ms ease;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  user-select: none;
+}
+
+.tecla:hover {
+  filter: brightness(1.04);
+}
+
+/* A tecla afunda quando pressionada */
+.tecla:active,
+.tecla.is-pressionada {
+  transform: translateY(3px);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.4) inset,
+    0 1px 0 rgba(0, 0, 0, 0.22);
+}
+
+.tecla:focus-visible {
+  outline: 3px solid var(--tecla-igual);
+  outline-offset: 3px;
+}
+
+/* ---------- Variações de tecla ---------- */
+.tecla--operador {
+  background: var(--tecla-operador);
+  color: var(--tecla-operador-texto);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.14) inset,
+    0 4px 0 rgba(0, 0, 0, 0.4);
+}
+
+.tecla--limpar,
+.tecla--apagar {
+  background: var(--tecla-funcao);
+}
+
+.tecla--limpar {
+  color: #8f2410;
+  font-weight: 700;
+}
+
+.tecla--zero {
+  grid-column: span 2;
+  text-align: left;
+  padding-left: 26px;
+}
+
+.tecla--igual {
+  grid-row: span 2;
+  background: var(--tecla-igual);
+  color: #fff;
+  font-size: 1.75rem;
+  font-weight: 700;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.3) inset,
+    0 4px 0 rgba(0, 0, 0, 0.3);
+}
+
+/* Operador selecionado (aguardando o segundo número) */
+.tecla--operador.is-ativo {
+  background: var(--tecla-operador-texto);
+  color: var(--tecla-operador);
+}
+
+/* ---------- Responsivo ---------- */
+@media (max-width: 380px) {
+  .calculadora {
+    padding: 14px;
+    border-radius: 22px;
+  }
+  .teclado {
+    grid-auto-rows: 58px;
+    gap: 10px;
+  }
+  .tecla {
+    font-size: 1.2rem;
+  }
+}
+
+/* Celular deitado */
+@media (max-height: 560px) {
+  .visor {
+    min-height: 84px;
+    margin-bottom: 12px;
+  }
+  .teclado {
+    grid-auto-rows: 48px;
+    gap: 8px;
+  }
+}
+
+/* ---------- Movimento reduzido ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .tecla {
+    transition: none;
+  }
+}

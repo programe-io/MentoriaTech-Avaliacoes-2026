@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Calculadora</title>
+  <link rel="stylesheet" href="style.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+  <main class="pagina">
+    <section class="calculadora" aria-label="Calculadora">
+      <div class="visor">
+        <div class="visor__historico" id="historico"></div>
+        <output class="visor__valor" id="valor" aria-live="polite">0</output>
+      </div>
+
+      <div class="teclado">
+        <button class="tecla tecla--limpar" data-acao="limpar" aria-label="Limpar tudo">C</button>
+        <button class="tecla tecla--apagar" data-acao="apagar" aria-label="Apagar último dígito">⌫</button>
+        <button class="tecla tecla--operador" data-op="%" aria-label="Porcentagem">%</button>
+        <button class="tecla tecla--operador" data-op="/" aria-label="Dividir">÷</button>
+
+        <button class="tecla" data-num="7">7</button>
+        <button class="tecla" data-num="8">8</button>
+        <button class="tecla" data-num="9">9</button>
+        <button class="tecla tecla--operador" data-op="*" aria-label="Multiplicar">×</button>
+
+        <button class="tecla" data-num="4">4</button>
+        <button class="tecla" data-num="5">5</button>
+        <button class="tecla" data-num="6">6</button>
+        <button class="tecla tecla--operador" data-op="-" aria-label="Subtrair">−</button>
+
+        <button class="tecla" data-num="1">1</button>
+        <button class="tecla" data-num="2">2</button>
+        <button class="tecla" data-num="3">3</button>
+        <button class="tecla tecla--operador" data-op="+" aria-label="Somar">+</button>
+
+        <button class="tecla tecla--zero" data-num="0">0</button>
+        <button class="tecla" data-num=",">,</button>
+        <button class="tecla tecla--igual" data-acao="igual" aria-label="Calcular">=</button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const valorEl = document.getElementById("valor");
+    const historicoEl = document.getElementById("historico");
+    const simbolos = { "+": "+", "-": "−", "*": "×", "/": "÷", "%": "%" };
+
+    let atual = "0";      // número sendo digitado
+    let anterior = null;  // primeiro operando
+    let operador = null;  // operação pendente
+    let novoNumero = true;
+
+    const paraNumero = (t) => parseFloat(t.replace(",", "."));
+    const paraTexto = (n) =>
+      String(parseFloat(n.toPrecision(12))).replace(".", ",");
+
+    function atualizarTela() {
+      valorEl.textContent = atual;
+      historicoEl.textContent =
+        anterior !== null && operador ? `${anterior} ${simbolos[operador]}` : "";
+      document.querySelectorAll(".tecla--operador").forEach((b) =>
+        b.classList.toggle("is-ativo", novoNumero && b.dataset.op === operador)
+      );
+    }
+
+    function digitar(d) {
+      if (novoNumero) {
+        atual = d === "," ? "0," : d;
+        novoNumero = false;
+      } else if (d === ",") {
+        if (!atual.includes(",")) atual += ",";
+      } else {
+        atual = atual === "0" ? d : atual + d;
+      }
+      atualizarTela();
+    }
+
+    function calcular(a, b, op) {
+      switch (op) {
+        case "+": return a + b;
+        case "-": return a - b;
+        case "*": return a * b;
+        case "/": return b === 0 ? NaN : a / b;
+        case "%": return a % b;
+      }
+    }
+
+    function escolherOperador(op) {
+      if (operador && !novoNumero) resolver();
+      anterior = atual;
+      operador = op;
+      novoNumero = true;
+      atualizarTela();
+    }
+
+    function resolver() {
+      if (!operador || anterior === null) return;
+      const r = calcular(paraNumero(anterior), paraNumero(atual), operador);
+      atual = Number.isFinite(r) ? paraTexto(r) : "Erro";
+      anterior = null;
+      operador = null;
+      novoNumero = true;
+    }
+
+    function limpar() {
+      atual = "0";
+      anterior = null;
+      operador = null;
+      novoNumero = true;
+      atualizarTela();
+    }
+
+    function apagar() {
+      if (novoNumero || atual === "Erro") return limpar();
+      atual = atual.length > 1 ? atual.slice(0, -1) : "0";
+      atualizarTela();
+    }
+
+    document.querySelector(".teclado").addEventListener("click", (e) => {
+      const b = e.target.closest("button");
+      if (!b) return;
+      if (atual === "Erro" && !b.dataset.acao) limpar();
+
+      if (b.dataset.num) digitar(b.dataset.num);
+      else if (b.dataset.op) escolherOperador(b.dataset.op);
+      else if (b.dataset.acao === "igual") { resolver(); atualizarTela(); }
+      else if (b.dataset.acao === "limpar") limpar();
+      else if (b.dataset.acao === "apagar") apagar();
+    });
+
+    // Suporte ao teclado físico
+    document.addEventListener("keydown", (e) => {
+      const k = e.key;
+      let seletor = null;
+      if (/^[0-9]$/.test(k)) seletor = `[data-num="${k}"]`;
+      else if (k === "," || k === ".") seletor = `[data-num=","]`;
+      else if ("+-*/%".includes(k)) seletor = `[data-op="${k}"]`;
+      else if (k === "Enter" || k === "=") seletor = `[data-acao="igual"]`;
+      else if (k === "Backspace") seletor = `[data-acao="apagar"]`;
+      else if (k === "Escape") seletor = `[data-acao="limpar"]`;
+      if (!seletor) return;
+
+      e.preventDefault();
+      const btn = document.querySelector(seletor);
+      btn.classList.add("is-pressionada");
+      setTimeout(() => btn.classList.remove("is-pressionada"), 100);
+      btn.click();
+    });
+
+    atualizarTela();
+  </script>
+<script src="script.js"></script></body>
+</html>
