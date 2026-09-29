@@ -1,4 +1,61 @@
-feed.appendChild(postElement);
+
+    </div>
+
+    <!-- Feed de Posts -->
+    <div id="feed" class="space-y-4"></div>
+  </div>
+
+  <script>
+    let posts = [
+      {
+        id: 1,
+        author: "Maria Silva",
+        content: "Criando meu primeiro mini feed social! 🚀",
+        likes: 3,
+        liked: false,
+        comments: ["Muito legal!", "Ficou ótimo!"]
+      }
+    ];
+
+    function renderFeed() {
+      const feed = document.getElementById("feed");
+      feed.innerHTML = "";
+
+      posts.forEach(post => {
+        const postElement = document.createElement("div");
+        postElement.className = "bg-white p-5 rounded-xl shadow space-y-4";
+
+        const commentsHTML = post.comments
+          .map(c => `<div class="bg-gray-50 p-2 rounded text-sm text-gray-600 mt-1">${escapeHTML(c)}</div>`)
+          .join("");
+
+        postElement.innerHTML = `
+          <div class="flex justify-between items-center">
+            <div class="font-semibold text-gray-900">${escapeHTML(post.author)}</div>
+            <button onclick="deletePost(${post.id})" class="text-xs text-red-400 hover:text-red-600">Excluir</button>
+          </div>
+
+          <p class="text-gray-700">${escapeHTML(post.content)}</p>
+
+          <div class="flex items-center justify-between pt-2 border-t border-gray-100">
+            <button 
+              onclick="toggleLike(${post.id})" 
+              class="flex items-center space-x-1 text-sm ${post.liked ? 'text-red-500 font-bold' : 'text-gray-500 hover:text-red-500'}"
+            >
+              <span>${post.liked ? '❤️' : '🤍'}</span>
+              <span>${post.likes} Curtidas</span>
+            </button>
+            <span class="text-xs text-gray-400">${post.comments.length} comentários</span>
+          </div>
+
+          <!-- Seção de Comentários -->
+          <div class="pt-2 border-t border-gray-100 space-y-2">
+            <div class="flex gap-2">
+              <input 
+ </div>
+        `;
+
+        feed.appendChild(postElement);
       });
     }
 
@@ -73,5 +130,3 @@ feed.appendChild(postElement);
     renderFeed();
   </script>
 
-</body>
-</html>

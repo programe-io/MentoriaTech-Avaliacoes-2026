@@ -1,20 +1,12 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <script src="https://cdn.tailwindcss.com"></script>
-<link href="style.css" rel="stylesheet">
-</head>
-<body>
-  <!DOCTYPE html>
-<html lang="pt-BR">
-<head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mini Feed Social</title>
   <script src="https://cdn.tailwindcss.com"></script>
-</head>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="style.css" rel="stylesheet"></head>
 <body class="bg-gray-100 min-h-screen py-8 text-gray-800">
 
   <div class="max-w-xl mx-auto px-4">
@@ -107,8 +99,76 @@
               </button>
             </div>
             <div class="space-y-1">${commentsHTML}</div>
-          </div>
-  
-  
+         {
+      const input = document.getElementById("postInput");
+      const content = input.value.trim();
+
+      if (!content) return;
+
+      const newPost = {
+        id: Date.now(),
+        author: "Você",
+        content: content,
+        likes: 0,
+        liked: false,
+        comments: []
+      };
+
+      posts.unshift(newPost);
+      input.value = "";
+      renderFeed();
+    }
+
+    function toggleLike(id) {
+      posts = posts.map(post => {
+        if (post.id === id) {
+          return {
+            ...post,
+            liked: !post.liked,
+            likes: post.liked ? post.likes - 1 : post.likes + 1
+          };
+        }
+        return post;
+      });
+      renderFeed();
+    }
+
+    function addComment(postId) {
+      const input = document.getElementById(`comment-input-${postId}`);
+      const text = input.value.trim();
+
+      if (!text) return;
+
+      posts = posts.map(post => {
+        if (post.id === postId) {
+          return { ...post, comments: [...post.comments, text] };
+        }
+        return post;
+      });
+
+      renderFeed();
+    }
+
+    function handleCommentKeyPress(event, postId) {
+      if (event.key === "Enter") {
+        addComment(postId);
+      }
+    }
+
+    function deletePost(id) {
+      posts = posts.filter(post => post.id !== id);
+      renderFeed();
+    }
+
+    function escapeHTML(str) {
+      return str.replace(/[&<>'"]/g, 
+        tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+      );
+    }
+
+    // Renderiza o feed inicial
+    renderFeed();
+  </script>
+
 </body>
 </html>
