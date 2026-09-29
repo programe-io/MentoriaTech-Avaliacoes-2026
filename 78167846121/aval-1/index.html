@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amarelou! - Onde você compra e vende de tudo!</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        amarelouYellow: '#ffd800',
+                        amarelouDarkYellow: '#e6c200',
+                        amarelouBlue: '#2d68c4',
+                        amarelouDarkBlue: '#1a4185',
+                        amarelouGreen: '#00a650',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        ::-webkit-scrollbar { height: 6px; width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"><link href="style.css" rel="stylesheet"></head>
+<body class="bg-[#f5f5f5] text-slate-800 antialiased min-h-screen flex flex-col justify-between">
+
+    <!-- Top Header -->
+    <header class="bg-amarelouYellow shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-2.5 flex flex-col md:flex-row items-center justify-between gap-3">
+            <!-- Brand Logo & Location -->
+            <div class="flex items-center justify-between w-full md:w-auto gap-6">
+                <a href="#" onclick="switchTab('home')" class="flex items-center gap-1 group">
+                    <div class="bg-slate-900 text-amarelouYellow px-3 py-1.5 rounded-lg font-extrabold italic tracking-tighter text-2xl shadow-sm flex items-center gap-1">
+                        <span>Amarelou!</span>
+                    </div>
+                </a>
+                
+                <button onclick="openLocationModal()" class="hidden sm:flex items-center gap-2 text-xs text-slate-900 hover:opacity-75 transition">
+                    <i class="fa-solid fa-location-dot text-slate-900 text-base"></i>
+                    <div class="text-left">
+                        <p class="text-[10px] text-slate-700 leading-none">Enviar para</p>
+                        <p class="font-bold leading-tight">São Paulo 01310-100</p>
+                    </div>
+                </button>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="w-full md:w-5/12 flex items-center">
+                <div class="flex w-full bg-white rounded-md shadow-sm overflow-hidden border-2 border-transparent focus-within:border-amarelouBlue">
+                    <input type="text" id="searchInput" placeholder="Buscar videogames, TVs, livros, roupas..." class="w-full px-4 py-2 text-sm text-slate-800 focus:outline-none" onkeyup="handleSearch(event)">
+                    <button onclick="executeSearch()" class="px-5 text-slate-600 hover:text-amarelouBlue bg-white border-l border-slate-200 transition">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- User Actions & Cart -->
+            <div class="flex items-center gap-5 text-sm w-full md:w-auto justify-end">
+                <button onclick="switchTab('profile')" class="flex items-center gap-2 hover:opacity-80 transition">
+                    <div class="w-8 h-8 rounded-full bg-slate-900 text-amarelouYellow flex items-center justify-center font-bold text-xs shadow">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                    <span class="hidden lg:inline font-semibold text-slate-900">João Silva</span>
+                </button>
+
+                <div class="h-4 w-px bg-slate-400 hidden lg:block"></div>
+
+                <button onclick="switchTab('profile')" class="hidden lg:inline hover:text-amarelouBlue font-medium text-slate-900">Minha Conta</button>
+                <button onclick="switchTab('profile')" class="hidden lg:inline hover:text-amarelouBlue font-medium text-slate-900">Pedidos</button>
+
+                <button onclick="toggleCart()" class="relative p-2 text-slate-900 hover:text-amarelouBlue transition">
+                    <i class="fa-solid fa-cart-shopping text-xl"></i>
+                    <span id="cartBadge" class="absolute -top-1 -right-1 bg-amarelouBlue text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center shadow">0</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Slogan Highlight Bar -->
+        <div class="bg-[#f3dc00] border-t border-yellow-300 py-1.5 px-4 text-center">
+            <p class="text-xs md:text-sm font-bold tracking-wide text-slate-900 flex items-center justify-center gap-2">
+                <i class="fa-solid fa-bolt text-amber-700 animate-pulse"></i> 
+                <span>Amarelou! Onde você compra e vende de tudo com frete grátis e entrega ultra rápida!</span>
+            </p>
+        </div>
+
+        <!-- Secondary Nav Links -->
+        <div class="max-w-7xl mx-auto px-4 py-2 flex items-center justify-between text-xs overflow-x-auto whitespace-nowrap gap-6 text-slate-800 font-medium">
+            <div class="flex items-center gap-6">
+                <button onclick="switchTab('home')" class="hover:text-blue-700 font-bold transition">Início</button>
+                <button onclick="filterByCategory('Videogames')" class="hover:text-blue-700 transition">Videogames</button>
+                <button onclick="filterByCategory('Televisões')" class="hover:text-blue-700 transition">Televisões</button>
+                <button onclick="filterByCategory('Livros')" class="hover:text-blue-700 transition">Livros</button>
+                <button onclick="filterByCategory('Móveis')" class="hover:text-blue-700 transition">Móveis</button>
+                <button onclick="filterByCategory('Roupas')" class="hover:text-blue-700 transition">Roupas</button>
+                <button onclick="filterByCategory('Eletrodomésticos')" class="hover:text-blue-700 transition">Eletrodomésticos</button>
+            </div>
+            <div class="hidden md:flex items-center gap-3 text-slate-800">
+                <span class="bg-green-100 text-amarelouGreen px-2 py-0.5 rounded-full font-bold text-[10px]">Amarelou+ Cashback</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main App Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 py-6">
+
+        <!-- HOME TAB VIEW -->
+        <div id="homeView" class="tab-view space-y-8">
+            
+            <!-- Hero Carousel / Banner -->
+            <div class="relative bg-gradient-to-r from-slate-900 to-blue-950 rounded-2xl overflow-hidden shadow-lg text-white">
+                <div class="absolute inset-0 bg-black/20"></div>
+                <div class="relative z-10 px-8 py-12 md:py-16 max-w-xl space-y-4">
+                    <span class="bg-amarelouYellow text-slate-900 text-xs font-extrabold px-3 py-1 rounded-full uppercase tracking-wider shadow">Super Ofertas Amarelou</span>
+                    <h1 class="text-3xl md:text-5xl font-extrabold leading-tight">Tecnologia, Casa e Estilo com Descontos Reais</h1>
+                    <p class="text-sm md:text-base text-slate-300">Encontre PS5, TVs OLED, Roupas e Móveis com entrega imediata em todo o país.</p>
+                    <div class="pt-2 flex gap-3">
+                        <button onclick="filterByCategory('Videogames')" class="bg-amarelouYellow text-slate-900 font-extrabold px-6 py-2.5 rounded-lg shadow hover:bg-yellow-400 transition text-sm">Explorar Videogames</button>
+                        <button onclick="switchTab('profile')" class="bg-white/10 hover:bg-white/20 text-white font-semibold px-6 py-2.5 rounded-lg transition text-sm border border-white/20">Minha Conta</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Categories Grid -->
+            <section class="space-y-4">
+                <h2 class="text-xl font-bold text-slate-900">Explore por Categorias</h2>
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
+                    <div onclick="filterByCategory('Videogames')" class="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition cursor-pointer text-center group border border-slate-200">
+                        <div class="w-14 h-14 mx-auto bg-blue-50 rounded-full flex items-center justify-center text-amarelouBlue mb-3 group-hover:bg-amarelouBlue group-hover:text-white transition">
+                            <i class="fa-solid fa-gamepad text-xl"></i>
+                        </div>
+                        <h3 class="font-bold text-sm text-slate-800">Videogames</h3>
+                    </div>
+                    <div onclick="filterByCategory('Televisões')" class="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition cursor-pointer text-center group border border-slate-200">
+                        <div class="w-14 h-14 mx-auto bg-amber-50 rounded-full flex items-center justify-center text-amber-600 mb-3 group-hover:bg-amber-500 group-hover:text-white transition">
+                            <i class="fa-solid fa-tv text-xl"></i>
+                        </div>
+                        <h3 class="font-bold text-sm text-slate-800">Televisões</h3>
+                    </div>
+                    <div onclick="filterByCategory('Livros')" class="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition cursor-pointer text-center group border border-slate-200">
+                        <div class="w-14 h-14 mx-auto bg-purple-50 rounded-full flex items-center justify-center text-purple-600 mb-3 group-hover:bg-purple-600 group-hover:text-white transition">
+                            <i class="fa-solid fa-book-open text-xl"></i>
+                        </div>
+                        <h3 class="font-bold text-sm text-slate-800">Livros</h3>
+                    </div>
+                    <div onclick="filterByCategory('Móveis')" class="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition cursor-pointer text-center group border border-slate-200">
+                        <div class="w-14 h-14 mx-auto bg-emerald-50 rounded-full flex items-center justify-center text-amarelouGreen mb-3 group-hover:bg-amarelouGreen group-hover:text-white transition">
+                            <i class="fa-solid fa-couch text-xl"></i>
+                        </div>
+                        <h3 class="font-bold text-sm text-slate-800">Móveis</h3>
+                    </div>
+                    <div onclick="filterByCategory('Roupas')" class="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition cursor-pointer text-center group border border-slate-200">
+                        <div class="w-14 h-14 mx-auto bg-rose-50 rounded-full flex items-center justify-center text-rose-600 mb-3 group-hover:bg-rose-600 group-hover:text-white transition">
+                            <i class="fa-solid fa-shirt text-xl"></i>
+                        </div>
+                        <h3 class="font-bold text-sm text-slate-800">Roupas</h3>
+                    </div>
+                    <div onclick="filterByCategory('Eletrodomésticos')" class="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition cursor-pointer text-center group border border-slate-200">
+                        <div class="w-14 h-14 mx-auto bg-cyan-50 rounded-full flex items-center justify-center text-cyan-600 mb-3 group-hover:bg-cyan-600 group-hover:text-white transition">
+                            <i class="fa-solid fa-blender text-xl"></i>
+                        </div>
+                        <h3 class="font-bold text-sm text-slate-800">Eletrodomésticos</h3>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Main Product Showcase -->
+            <section class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <h2 id="productSectionTitle" class="text-xl font-extrabold text-slate-900">Produtos em Destaque</h2>
+                    <div class="flex gap-2 text-xs">
+                        <button onclick="filterByCategory('Todos')" class="px-3 py-1.5 rounded-md bg-slate-200 text-slate-800 font-bold hover:bg-slate-300 transition">Todos</button>
+                        <button onclick="filterByCategory('Videogames')" class="px-3 py-1.5 rounded-md bg-slate-200 text-slate-800 font-bold hover:bg-slate-300 transition">Videogames</button>
+                        <button onclick="filterByCategory('Televisões')" class="px-3 py-1.5 rounded-md bg-slate-200 text-slate-800 font-bold hover:bg-slate-300 transition">TVs</button>
+                    </div>
+                </div>
+                <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+                    <!-- Populated by JS -->
+                </div>
+            </section>
+        </div>
+
+        <!-- PROFILE / PERSONAL INFO TAB VIEW -->
+        <div id="profileView" class="tab-view hidden space-y-6">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <!-- Profile Header Banner -->
+                <div class="bg-gradient-to-r from-slate-900 to-blue-900 h-36 p-6 flex items-end justify-between text-white">
+                    <div class="flex items-center gap-4">
+                        <div class="w-16 h-16 rounded-full bg-amarelouYellow text-slate-900 font-extrabold text-2xl flex items-center justify-center border-4 border-white shadow">
+                            JS
+                        </div>
+                        <div>
+                            <h1 class="text-xl font-bold">João Silva</h1>
+                            <p class="text-xs text-slate-300">joao.silva@amarelou.com • Cliente Nível 5 Amarelou+</p>
+                        </div>
+                    </div>
+                    <span class="bg-amarelouYellow text-slate-900 text-xs font-extrabold px-3 py-1 rounded shadow">Conta Verificada</span>
+                </div>
+
+                <!-- Navigation Subtabs inside Profile -->
+                <div class="flex border-b border-slate-200 px-6 bg-slate-50 overflow-x-auto">
+                    <button onclick="switchProfileSub('info')" id="subBtnInfo" class="py-3 px-4 text-sm font-bold border-b-2 border-amarelouBlue text-amarelouBlue">Informações Pessoais</button>
+                    <button onclick="switchProfileSub('orders')" id="subBtnOrders" class="py-3 px-4 text-sm font-semibold text-slate-600 hover:text-slate-900">Histórico de Compras</button>
+                    <button onclick="switchProfileSub('addresses')" id="subBtnAddresses" class="py-3 px-4 text-sm font-semibold text-slate-600 hover:text-slate-900">Endereços</button>
+                    <button onclick="switchProfileSub('wishlist')" id="subBtnWishlist" class="py-3 px-4 text-sm font-semibold text-slate-600 hover:text-slate-900">Favoritos (<span id="wishlistCount">2</span>)</button>
+                </div>
+
+                <!-- Subtab Content Area -->
+                <div class="p-6">
+                    <!-- Personal Info -->
+                    <div id="subInfo" class="profile-subtab space-y-6">
+                        <h2 class="text-lg font-bold text-slate-900">Dados Pessoais e Conta</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="space-y-1">
+                                <label class="text-xs font-bold text-slate-600">Nome Completo</label>
+                                <input type="text" value="João da Silva Santos" class="w-full px-3 py-2 border rounded-lg text-sm bg-slate-50 focus:bg-white transition">
+                            </div>
+                            <div class="space-y-1">
+                                <label class="text-xs font-bold text-slate-600">E-mail Principal</label>
+                                <input type="email" value="joao.silva@amarelou.com" class="w-full px-3 py-2 border rounded-lg text-sm bg-slate-50 focus:bg-white transition">
+                            </div>
+                            <div class="space-y-1">
+                                <label class="text-xs font-bold text-slate-600">CPF</label>
+                                <input type="text" value="***.456.789-**" disabled class="w-full px-3 py-2 border rounded-lg text-sm bg-slate-100 text-slate-500">
+                            </div>
+                            <div class="space-y-1">
+                                <label class="text-xs font-bold text-slate-600">Telefone / WhatsApp</label>
+                                <input type="text" value="(11) 98765-4321" class="w-full px-3 py-2 border rounded-lg text-sm bg-slate-50 focus:bg-white transition">
+                            </div>
+                        </div>
+                        <div class="pt-4 flex justify-end">
+                            <button onclick="showToast('Dados atualizados com sucesso!')" class="bg-slate-900 text-amarelouYellow font-bold px-6 py-2.5 rounded-lg text-sm hover:bg-slate-800 transition shadow">Salvar Alterações</button>
+                        </div>
+                    </div>
+
+                    <!-- Order History -->
+                    <div id="subOrders" class="profile-subtab hidden space-y-4">
+                        <h2 class="text-lg font-bold text-slate-900">Pedidos Recentes</h2>
+                        <div class="space-y-3">
+                            <div class="border rounded-xl p-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-50">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-12 h-12 bg-emerald-100 text-amarelouGreen rounded-full flex items-center justify-center font-bold">
+                                        <i class="fa-solid fa-box-check text-lg"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs text-slate-500">Pedido #AM-789201 • 24 de Setembro</p>
+                                        <h4 class="font-bold text-slate-900 text-sm">Console PlayStation 5 Slim 1TB Standard</h4>
+                                        <p class="text-xs text-amarelouGreen font-bold">Entregue com sucesso</p>
+                                    </div>
+                                </div>
+                                <div class="text-right flex md:flex-col items-center md:items-end justify-between w-full md:w-auto">
+                                    <span class="font-bold text-slate-900">R$ 3.799,00</span>
+                                    <button onclick="showToast('Nota fiscal baixada!')" class="text-xs text-amarelouBlue font-bold hover:underline mt-1">Ver recibo</button>
+                                </div>
+                            </div>
+                            <div class="border rounded-xl p-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-50">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-12 h-12 bg-blue-100 text-amarelouBlue rounded-full flex items-center justify-center font-bold">
+                                        <i class="fa-solid fa-truck-fast text-lg"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs text-slate-500">Pedido #AM-788942 • 28 de Setembro</p>
+                                        <h4 class="font-bold text-slate-900 text-sm">Air Fryer Digital 5L Mondial Grand Family</h4>
+                                        <p class="text-xs text-blue-700 font-bold">A caminho do seu endereço</p>
+                                    </div>
+                                </div>
+                                <div class="text-right flex md:flex-col items-center md:items-end justify-between w-full md:w-auto">
+                                    <span class="font-bold text-slate-900">R$ 499,00</span>
+                                    <button onclick="showToast('Rastreando pacote...')" class="text-xs text-amarelouBlue font-bold hover:underline mt-1">Rastrear</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Addresses -->
+                    <div id="subAddresses" class="profile-subtab hidden space-y-4">
+                        <div class="flex justify-between items-center">
+                            <h2 class="text-lg font-bold text-slate-900">Endereços Salvos</h2>
+                            <button onclick="showToast('Endereço adicionado com sucesso!')" class="text-xs bg-slate-200 hover:bg-slate-300 font-bold px-3 py-2 rounded-lg transition">Adicionar Novo</button>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="border-2 rounded-xl p-4 border-amarelouBlue bg-blue-50/20 relative">
+                                <span class="absolute top-3 right-3 text-[10px] bg-amarelouBlue text-white px-2 py-0.5 rounded font-bold">Principal</span>
+                                <h4 class="font-bold text-sm text-slate-900">Casa</h4>
+                                <p class="text-xs text-slate-700 mt-1">Av. Paulista, 1000, Apto 42</p>
+                                <p class="text-xs text-slate-700">Bela Vista, São Paulo - SP</p>
+                                <p class="text-xs text-slate-500 mt-2">CEP: 01310-100</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Wishlist -->
+                    <div id="subWishlist" class="profile-subtab hidden space-y-4">
+                        <h2 class="text-lg font-bold text-slate-900">Produtos Favoritos</h2>
+                        <div id="wishlistContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Shopping Cart Slide-over Drawer -->
+    <div id="cartDrawer" class="fixed inset-0 z-50 overflow-hidden hidden">
+        <div class="absolute inset-0 bg-black/50 transition-opacity" onclick="toggleCart()"></div>
+        <div class="absolute inset-y-0 right-0 max-w-full flex pl-10">
+            <div class="w-screen max-w-md bg-white shadow-xl flex flex-col justify-between">
+                <!-- Cart Header -->
+                <div class="p-4 bg-amarelouYellow flex items-center justify-between border-b">
+                    <h2 class="font-bold text-slate-900 flex items-center gap-2">
+                        <i class="fa-solid fa-cart-shopping"></i> Seu Carrinho Amarelou (<span id="cartCountHeader">0</span>)
+                    </h2>
+                    <button onclick="toggleCart()" class="text-slate-900 hover:text-black p-1 text-lg"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <!-- Cart Items List -->
+                <div id="cartItemsList" class="p-4 flex-grow overflow-y-auto space-y-4 divide-y divide-slate-100">
+                    <!-- Dynamic -->
+                </div>
+                <!-- Cart Footer & Checkout -->
+                <div class="p-4 bg-slate-50 border-t space-y-3">
+                    <div class="flex justify-between text-sm text-slate-600">
+                        <span>Frete Amarelou Full</span>
+                        <span class="text-amarelouGreen font-bold">Grátis</span>
+                    </div>
+                    <div class="flex justify-between text-base font-bold text-slate-900">
+                        <span>Total</span>
+                        <span id="cartTotalPrice">R$ 0,00</span>
+                    </div>
+                    <button onclick="openCheckoutModal()" class="w-full bg-slate-900 hover:bg-slate-800 text-amarelouYellow font-extrabold py-3 rounded-lg shadow transition text-sm flex items-center justify-center gap-2">
+                        <span>Continuar para o Pagamento</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Detail / Quick View Modal -->
+    <div id="productModal" class="fixed inset-0 z-50 flex items-center justify-center hidden p-4">
+        <div class="absolute inset-0 bg-black/60" onclick="closeProductModal()"></div>
+        <div class="relative bg-white rounded-2xl shadow-2xl max-w-2xl w-full overflow-hidden z-10 p-6 flex flex-col md:flex-row gap-6">
+            <button onclick="closeProductModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 text-lg"><i class="fa-solid fa-xmark"></i></button>
+            <div class="w-full md:w-1/2 flex items-center justify-center bg-slate-50 p-4 rounded-xl">
+                <img id="modalImg" src="" alt="Produto" class="max-h-64 object-contain">
+            </div>
+            <div class="w-full md:w-1/2 flex flex-col justify-between space-y-4">
+                <div>
+                    <span id="modalCondition" class="text-[10px] bg-slate-200 text-slate-800 font-bold px-2.5 py-1 rounded">Novo</span>
+                    <h2 id="modalTitle" class="text-xl font-bold text-slate-900 mt-2">Nome do Produto</h2>
+                    <p id="modalRating" class="text-xs text-amber-500 mt-1"><i class="fa-solid fa-star"></i> 4.9 (240 avaliações)</p>
+                    <div class="mt-3">
+                        <span id="modalOriginalPrice" class="text-xs text-slate-400 line-through">R$ 0,00</span>
+                        <div class="text-3xl font-extrabold text-slate-900" id="modalPrice">R$ 0,00</div>
+                        <p class="text-xs text-amarelouGreen font-bold mt-1">em 12x R$ <span id="modalInstallment">0,00</span> sem juros</p>
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <button onclick="addCurrentProductToCart()" class="w-full bg-amarelouYellow hover:bg-yellow-400 text-slate-900 font-extrabold py-3 rounded-lg transition text-sm shadow">Adicionar ao Carrinho</button>
+                    <button onclick="buyNowCurrentProduct()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-lg transition text-sm">Comprar Agora</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div id="checkoutModal" class="fixed inset-0 z-50 flex items-center justify-center hidden p-4">
+        <div class="absolute inset-0 bg-black/60" onclick="closeCheckoutModal()"></div>
+        <div class="relative bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 z-10 space-y-4">
+            <h2 class="text-xl font-bold text-slate-900">Finalizar Compra Amarelou</h2>
+            <div class="space-y-3 text-sm">
+                <div>
+                    <label class="text-xs font-bold text-slate-600">Forma de Pagamento</label>
+                    <select class="w-full border rounded-lg p-2.5 mt-1 bg-slate-50 font-medium">
+                        <option>Cartão de Crédito Amarelou Pay (Até 12x sem juros)</option>
+                        <option>Pix Instantâneo (5% de desconto)</option>
+                        <option>Boleto Bancário</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-slate-600">Endereço de Entrega</label>
+                    <p class="text-xs text-slate-800 bg-slate-50 p-3 rounded-lg border mt-1 font-medium">Av. Paulista, 1000, Apto 42 - São Paulo, SP</p>
+                </div>
+                <div class="bg-amber-50 p-3.5 rounded-xl border border-amber-200 flex justify-between items-center">
+                    <span class="font-bold text-slate-800 text-xs">Total do Pedido:</span>
+                    <span id="checkoutTotal" class="font-extrabold text-lg text-slate-900">R$ 0,00</span>
+                </div>
+            </div>
+            <div class="flex gap-2 pt-2">
+                <button onclick="closeCheckoutModal()" class="w-1/2 bg-slate-200 hover:bg-slate-300 font-bold py-2.5 rounded-lg text-sm transition">Cancelar</button>
+                <button onclick="finalizePurchase()" class="w-1/2 bg-amarelouYellow hover:bg-yellow-400 text-slate-900 font-extrabold py-2.5 rounded-lg text-sm transition shadow">Confirmar Pedido</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Location Modal -->
+    <div id="locationModal" class="fixed inset-0 z-50 flex items-center justify-center hidden p-4">
+        <div class="absolute inset-0 bg-black/60" onclick="closeLocationModal()"></div>
+        <div class="relative bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 z-10 space-y-4">
+            <h2 class="text-lg font-bold text-slate-900">Escolha onde receber suas compras</h2>
+            <p class="text-xs text-slate-600">Informe seu CEP para calcular prazos exatos.</p>
+            <input type="text" id="cepInput" placeholder="01310-100" class="w-full border rounded-lg p-2.5 text-sm font-medium">
+            <button onclick="saveLocation()" class="w-full bg-amarelouYellow text-slate-900 font-extrabold py-2.5 rounded-lg text-sm hover:bg-yellow-400 transition shadow">Calcular Frete</button>
+        </div>
+    </div>
+
+    <!-- Floating Toast Notification -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 bg-slate-900 text-amarelouYellow font-bold text-xs px-4 py-3 rounded-xl shadow-xl transform translate-y-20 opacity-0 transition-all duration-300 flex items-center gap-2 border border-yellow-400/30">
+        <i class="fa-solid fa-circle-check text-amarelouYellow text-base"></i>
+        <span id="toastMsg" class="text-white">Ação realizada com sucesso!</span>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 text-slate-600 text-xs mt-12 py-10">
+        <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="space-y-3">
+                <h4 class="font-bold text-slate-900 text-sm">Sobre o Amarelou!</h4>
+                <ul class="space-y-1.5 font-medium">
+                    <li><a href="#" class="hover:text-amarelouBlue">Trabalhe conosco</a></li>
+                    <li><a href="#" class="hover:text-amarelouBlue">Relações com investidores</a></li>
+                    <li><a href="#" class="hover:text-amarelouBlue">Sustentabilidade</a></li>
+                </ul>
+            </div>
+            <div class="space-y-3">
+                <h4 class="font-bold text-slate-900 text-sm">Serviços Amarelou</h4>
+                <ul class="space-y-1.5 font-medium">
+                    <li><a href="#" class="hover:text-amarelouBlue">Amarelou Pay</a></li>
+                    <li><a href="#" class="hover:text-amarelouBlue">Envios Full Express</a></li>
+                    <li><a href="#" class="hover:text-amarelouBlue">Publicidade Ads</a></li>
+                </ul>
+            </div>
+            <div class="space-y-3">
+                <h4 class="font-bold text-slate-900 text-sm">Atendimento</h4>
+                <ul class="space-y-1.5 font-medium">
+                    <li><a href="#" class="hover:text-amarelouBlue">Central de Ajuda</a></li>
+                    <li><a href="#" class="hover:text-amarelouBlue">Resolução de Impasses</a></li>
+                    <li><a href="#" class="hover:text-amarelouBlue">Segurança e Privacidade</a></li>
+                </ul>
+            </div>
+            <div class="space-y-3">
+                <h4 class="font-bold text-slate-900 text-sm">Redes Sociais</h4>
+                <div class="flex gap-3 text-lg text-slate-800">
+                    <a href="#" class="hover:text-amarelouBlue"><i class="fa-brands fa-facebook"></i></a>
+                    <a href="#" class="hover:text-amarelouBlue"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" class="hover:text-amarelouBlue"><i class="fa-brands fa-twitter"></i></a>
+                    <a href="#" class="hover:text-amarelouBlue"><i class="fa-brands fa-youtube"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 border-t border-slate-100 pt-6 flex flex-col md:flex-row items-center justify-between text-slate-400">
+            <p>Copyright © 1999-2026 Amarelou! Comércio Eletrônico S.A.</p>
+            <p>Plataforma inspirada no Mercado Livre com identidade amarela vibrante.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        const products = [
+            // Videogames
+            { id: 1, title: 'Console PlayStation 5 Slim 1TB Standard Sony', category: 'Videogames', price: 3799.00, originalPrice: 4299.00, img: 'https://placehold.co/300x300/f1f5f9/1a4185?text=PlayStation+5', condition: 'Novo', full: true, rating: 4.9 },
+            { id: 2, title: 'Console Xbox Series X 1TB Microsoft Preto', category: 'Videogames', price: 3899.00, originalPrice: 4499.00, img: 'https://placehold.co/300x300/f1f5f9/1a4185?text=Xbox+Series+X', condition: 'Novo', full: true, rating: 4.8 },
+            { id: 3, title: 'Console Nintendo Switch OLED 64GB Neon Joy-Con', category: 'Videogames', price: 2199.00, originalPrice: 2599.00, img: 'https://placehold.co/300x300/f1f5f9/1a4185?text=Nintendo+Switch', condition: 'Novo', full: true, rating: 4.9 },
+            
+            // Televisões
+            { id: 4, title: 'Smart TV 55" OLED 4K UHD LG evo C3 WebOS', category: 'Televisões', price: 4899.00, originalPrice: 5999.00, img: 'https://placehold.co/300x300/f1f5f9/1a4185?text=Smart+TV+OLED+55', condition: 'Novo', full: true, rating: 5.0 },
+            { id: 5, title: 'Smart TV LED 50" 4K UHD Samsung Crystal UHD', category: 'Televisões', price: 2299.00, originalPrice: 2799.00, img: 'https://placehold.co/300x300/f1f5f9/1a4185?text=Smart+TV+LED+50', condition: 'Novo', full: true, rating: 4.7 },
+
+            // Livros
+            { id: 6, title: 'Box Trilogia O Senhor dos Anéis + Pôster Exclusivo', category: 'Livros', price: 119.90, originalPrice: 159.90, img: 'https://placehold.co/300x300/f1f5f9/1a4185?text=Senhor+dos+Aneis', condition: 'Novo', full: true, rating: 4.9 },
+            { id: 7, title: 'Livro: Hábitos Atômicos - James Clear (Best-seller)', category: 'Livros', price: 42.90, originalPrice: 59.90, img: 'https://placehold.co/300x300/f1f5f9/1a4185?text=Habitos+Atomicos', condition: 'Novo', full: true, rating: 4.8 },
+
+            // Móveis
+            { id: 8, title: 'Sofá 3 Lugares Retrátil e Reclinável Suede Amaciado', category: 'Móveis', price: 1299.00, originalPrice: 1699.00, img: 'https://placehold.co/300x300/f1f5f9/1a4185?text=Sofa+Retratil', condition: 'Novo', full: false, rating: 4.6 },
+            { id: 9, title: 'Mesa de Jantar 6 Lugares Tampo de Vidro e Cadeiras', category: 'Móveis', price: 1899.00, originalPrice: 2399.00, img: 'https://placehold.co/300x300/f1f5f9/1a4185?text=Mesa+de+Jantar', condition: 'Novo', full: false, rating: 4.5 },
+            { id: 10, title: 'Cadeira Gamer Ergonômica Reclinável com Almofadas', category: 'Móveis', price: 799.00, originalPrice: 1099.00, img: 'https://placehold.co/300x300/f1f5f9/1a4185?text=Cadeira+Gamer', condition: 'Novo', full: true, rating: 4.7 },
+
+            // Roupas
+            { id: 11, title: 'Kit com 3 Camisetas Básicas 100% Algodão Premium', category: 'Roupas', price: 119.90, originalPrice: 159.90, img: 'https://placehold.co/300x300/f1f5f9/1a4185?text=Kit+Camisetas', condition: 'Novo', full: true, rating: 4.8 },
+            { id: 12, title: 'Calça Jeans Masculina Slim Confortável Stretch', category: 'Roupas', price: 139.90, originalPrice: 189.90, img: 'https://placehold.co/300x300/f1f5f9/1a4185?text=Calca+Jeans', condition: 'Novo', full: true, rating: 4.6 },
+            { id: 13, title: 'Jaqueta Puffer Masculina Forrada Impermeável', category: 'Roupas', price: 259.00, originalPrice: 349.00, img: 'https://placehold.co/300x300/f1f5f9/1a4185?text=Jaqueta+Puffer', condition: 'Novo', full: true, rating: 4.7 },
+
+            // Eletrodomésticos
+            { id: 14, title: 'Geladeira Frost Free Brastemp Duplex 375L Inox', category: 'Eletrodomésticos', price: 3199.00, originalPrice: 3799.00, img: 'https://placehold.co/300x300/f1f5f9/1a4185?text=Geladeira+Frost+Free', condition: 'Novo', full: false, rating: 4.9 },
+            { id: 15, title: 'Air Fryer Digital Mondial Grand Family 5L Inox', category: 'Eletrodomésticos', price: 499.00, originalPrice: 699.00, img: 'https://placehold.co/300x300/f1f5f9/1a4185?text=Air+Fryer+5L', condition: 'Novo', full: true, rating: 4.9 },
+            { id: 16, title: 'Máquina de Lavar Roupas 12kg Brastemp com Ciclo Tira Manchas', category: 'Eletrodomésticos', price: 2199.00, originalPrice: 2699.00, img: 'https://placehold.co/300x300/f1f5f9/1a4185?text=Lavadora+12kg', condition: 'Novo', full: false, rating: 4.8 }
+        ];
+
+        let cart = [];
+        let wishlist = [products[0], products[3]];
+        let currentSelectedProduct = null;
+
+        window.onload = function() {
+            renderProducts(products);
+            renderWishlist();
+            updateCartBadge();
+        };
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-view').forEach(el => el.classList.add('hidden'));
+            if (tabName === 'home') {
+                document.getElementById('homeView').classList.remove('hidden');
+            } else if (tabName === 'profile') {
+                document.getElementById('profileView').classList.remove('hidden');
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function switchProfileSub(subName) {
+            document.querySelectorAll('.profile-subtab').forEach(el => el.classList.add('hidden'));
+            ['subBtnInfo', 'subBtnOrders', 'subBtnAddresses', 'subBtnWishlist'].forEach(id => {
+                document.getElementById(id).className = "py-3 px-4 text-sm font-semibold text-slate-600 hover:text-slate-900 border-b-2 border-transparent";
+            });
+
+            if (subName === 'info') {
+                document.getElementById('subInfo').classList.remove('hidden');
+                document.getElementById('subBtnInfo').className = "py-3 px-4 text-sm font-bold border-b-2 border-amarelouBlue text-amarelouBlue";
+            } else if (subName === 'orders') {
+                document.getElementById('subOrders').classList.remove('hidden');
+                document.getElementById('subBtnOrders').className = "py-3 px-4 text-sm font-bold border-b-2 border-amarelouBlue text-amarelouBlue";
+            } else if (subName === 'addresses') {
+                document.getElementById('subAddresses').classList.remove('hidden');
+                document.getElementById('subBtnAddresses').className = "py-3 px-4 text-sm font-bold border-b-2 border-amarelouBlue text-amarelouBlue";
+            } else if (subName === 'wishlist') {
+                document.getElementById('subWishlist').classList.remove('hidden');
+                document.getElementById('subBtnWishlist').className = "py-3 px-4 text-sm font-bold border-b-2 border-amarelouBlue text-amarelouBlue";
+            }
+        }
+
+        function filterByCategory(category) {
+            switchTab('home');
+            const titleEl = document.getElementById('productSectionTitle');
+            if (category === 'Todos') {
+                titleEl.innerText = "Produtos em Destaque";
+                renderProducts(products);
+            } else {
+                titleEl.innerText = "Categoria: " + category;
+                const filtered = products.filter(p => p.category === category);
+                renderProducts(filtered.length > 0 ? filtered : products);
+            }
+        }
+
+        function handleSearch(e) {
+            if (e.key === 'Enter') {
+                executeSearch();
+            }
+        }
+
+        function executeSearch() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            switchTab('home');
+            const filtered = products.filter(p => p.title.toLowerCase().includes(query) || p.category.toLowerCase().includes(query));
+            document.getElementById('productSectionTitle').innerText = `Resultados para: "${query}"`;
+            renderProducts(filtered);
+        }
+
+        function renderProducts(list) {
+            const grid = document.getElementById('productGrid');
+            grid.innerHTML = '';
+            if (list.length === 0) {
+                grid.innerHTML = '<div class="col-span-4 text-center py-12 text-slate-500 font-medium">Nenhum produto encontrado para esta busca.</div>';
+                return;
+            }
+            list.forEach(p => {
+                const discount = Math.round(((p.originalPrice - p.price) / p.originalPrice) * 100);
+                const formattedPrice = p.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+                const formattedOrig = p.originalPrice.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-xl shadow-sm hover:shadow-lg transition border border-slate-200 flex flex-col justify-between group overflow-hidden cursor-pointer";
+                card.onclick = () => openProductModal(p);
+
+                card.innerHTML = `
+                    <div>
+                        <div class="relative bg-slate-50 p-4 h-52 flex items-center justify-center overflow-hidden">
+                            <img src="${p.img}" alt="${p.title}" class="h-full object-contain group-hover:scale-105 transition duration-300">
+                            <button onclick="event.stopPropagation(); toggleWishlist(${p.id})" class="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/90 shadow flex items-center justify-center text-slate-700 hover:text-rose-600 transition">
+                                <i class="fa-regular fa-heart"></i>
+                            </button>
+                        </div>
+                        <div class="p-4 space-y-2">
+                            <div class="text-[10px] text-slate-400 line-through">R$ ${formattedOrig}</div>
+                            <div class="flex items-baseline gap-2">
+                                <span class="text-xl font-extrabold text-slate-900">R$ ${formattedPrice}</span>
+                                <span class="text-xs font-extrabold text-amarelouGreen">${discount}% OFF</span>
+                            </div>
+                            ${p.full ? '<div class="flex items-center gap-1 text-xs font-extrabold text-amarelouGreen"><i class="fa-solid fa-bolt text-[10px]"></i> FULL EXPRESS</div>' : ''}
+                            <p class="text-xs text-slate-800 line-clamp-2 leading-relaxed font-medium">${p.title}</p>
+                        </div>
+                    </div>
+                    <div class="p-4 pt-0">
+                        <span class="text-[11px] text-amarelouGreen font-bold">Frete Grátis</span>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function renderWishlist() {
+            const container = document.getElementById('wishlistContainer');
+            document.getElementById('wishlistCount').innerText = wishlist.length;
+            container.innerHTML = '';
+            if (wishlist.length === 0) {
+                container.innerHTML = '<p class="text-xs text-slate-500 font-medium">Nenhum produto favorito.</p>';
+                return;
+            }
+            wishlist.forEach(p => {
+                const formattedPrice = p.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+                const item = document.createElement('div');
+                item.className = "border rounded-xl p-3 flex gap-3 items-center bg-white shadow-sm";
+                item.innerHTML = `
+                    <img src="${p.img}" class="w-16 h-16 object-contain bg-slate-50 rounded p-1">
+                    <div class="flex-grow">
+                        <h5 class="text-xs font-bold line-clamp-1 text-slate-900">${p.title}</h5>
+                        <p class="text-sm font-extrabold text-slate-900 mt-1">R$ ${formattedPrice}</p>
+                        <button onclick="addToCartFromWish(${p.id})" class="text-[11px] text-amarelouBlue font-bold hover:underline mt-1">Adicionar ao carrinho</button>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function toggleCart() {
+            const drawer = document.getElementById('cartDrawer');
+            drawer.classList.toggle('hidden');
+            renderCartItems();
+        }
+
+        function renderCartItems() {
+            const list = document.getElementById('cartItemsList');
+            list.innerHTML = '';
+            let total = 0;
+
+            if (cart.length === 0) {
+                list.innerHTML = '<div class="text-center py-12 text-slate-400"><i class="fa-solid fa-cart-shopping text-4xl mb-2"></i><p class="text-sm font-medium">Seu carrinho está vazio</p></div>';
+                document.getElementById('cartTotalPrice').innerText = 'R$ 0,00';
+                document.getElementById('cartCountHeader').innerText = '0';
+                document.getElementById('cartBadge').innerText = '0';
+                return;
+            }
+
+            cart.forEach((item, index) => {
+                total += item.price * item.qty;
+                const formattedPrice = (item.price * item.qty).toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+                const row = document.createElement('div');
+                row.className = "flex items-center justify-between py-3";
+                row.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <img src="${item.img}" class="w-12 h-12 object-contain bg-slate-50 rounded p-1">
+                        <div>
+                            <h4 class="text-xs font-bold text-slate-900 line-clamp-1">${item.title}</h4>
+                            <p class="text-xs text-slate-500">Qtd: ${item.qty} x R$ ${item.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
+                        </div>
+                    </div>
+                    <div class="text-right flex items-center gap-3">
+                        <span class="text-xs font-bold text-slate-900">R$ ${formattedPrice}</span>
+                        <button onclick="removeFromCart(${index})" class="text-slate-400 hover:text-red-500"><i class="fa-solid fa-trash text-xs"></i></button>
+                    </div>
+                `;
+                list.appendChild(row);
+            });
+
+            const formattedTotal = total.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+            document.getElementById('cartTotalPrice').innerText = `R$ ${formattedTotal}`;
+            document.getElementById('cartCountHeader').innerText = cart.reduce((acc, i) => acc + i.qty, 0);
+            document.getElementById('cartBadge').innerText = cart.reduce((acc, i) => acc + i.qty, 0);
+        }
+
+        function addToCart(product) {
+            const found = cart.find(i => i.id === product.id);
+            if (found) {
+                found.qty += 1;
+            } else {
+                cart.push({ ...product, qty: 1 });
+            }
+            updateCartBadge();
+            showToast('Produto adicionado ao carrinho com sucesso!');
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            renderCartItems();
+            updateCartBadge();
+        }
+
+        function updateCartBadge() {
+            const totalQty = cart.reduce((acc, i) => acc + i.qty, 0);
+            document.getElementById('cartBadge').innerText = totalQty;
+        }
+
+        function openProductModal(product) {
+            currentSelectedProduct = product;
+            document.getElementById('modalImg').src = product.img;
+            document.getElementById('modalTitle').innerText = product.title;
+            document.getElementById('modalCondition').innerText = product.condition;
+            document.getElementById('modalPrice').innerText = `R$ ${product.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+            document.getElementById('modalOriginalPrice').innerText = `R$ ${product.originalPrice.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+            document.getElementById('modalInstallment').innerText = (product.price / 12).toFixed(2).replace('.', ',');
+            document.getElementById('productModal').classList.remove('hidden');
+        }
+
+        function closeProductModal() {
+            document.getElementById('productModal').classList.add('hidden');
+        }
+
+        function addCurrentProductToCart() {
+            if (currentSelectedProduct) {
+                addToCart(currentSelectedProduct);
+                closeProductModal();
+                toggleCart();
+            }
+        }
+
+        function buyNowCurrentProduct() {
+            if (currentSelectedProduct) {
+                addToCart(currentSelectedProduct);
+                closeProductModal();
+                openCheckoutModal();
+            }
+        }
+
+        function openCheckoutModal() {
+            if (cart.length === 0) {
+                showToast('Adicione produtos ao carrinho antes de finalizar!');
+                return;
+            }
+            const total = cart.reduce((acc, i) => acc + (i.price * i.qty), 0);
+            document.getElementById('checkoutTotal').innerText = `R$ ${total.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+            document.getElementById('cartDrawer').classList.add('hidden');
+            document.getElementById('checkoutModal').classList.remove('hidden');
+        }
+
+        function closeCheckoutModal() {
+            document.getElementById('checkoutModal').classList.add('hidden');
+        }
+
+        function finalizePurchase() {
+            closeCheckoutModal();
+            cart = [];
+            updateCartBadge();
+            showToast('Pedido realizado com sucesso! Obrigado por comprar no Amarelou!');
+            switchTab('profile');
+            switchProfileSub('orders');
+        }
+
+        function openLocationModal() {
+            document.getElementById('locationModal').classList.remove('hidden');
+        }
+
+        function closeLocationModal() {
+            document.getElementById('locationModal').classList.add('hidden');
+        }
+
+        function saveLocation() {
+            const cep = document.getElementById('cepInput').value;
+            if (cep.length < 8) {
+                showToast('Informe um CEP válido.');
+                return;
+            }
+            closeLocationModal();
+            showToast('Endereço de entrega atualizado com sucesso!');
+        }
+
+        function toggleWishlist(productId) {
+            const p = products.find(item => item.id === productId);
+            const index = wishlist.findIndex(item => item.id === productId);
+            if (index > -1) {
+                wishlist.splice(index, 1);
+                showToast('Removido dos favoritos.');
+            } else {
+                wishlist.push(p);
+                showToast('Adicionado aos favoritos!');
+            }
+            renderWishlist();
+        }
+
+        function addToCartFromWish(productId) {
+            const p = products.find(item => item.id === productId);
+            addToCart(p);
+            toggleCart();
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMsg').innerText = message;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+    </script>
+<script src="script.js"></script></body>
+</html>
