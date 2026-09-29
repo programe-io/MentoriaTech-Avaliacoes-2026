@@ -1,136 +1,33 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gerador de Site a partir de Imagem</title>
-<style>
-  /* ===== CSS - Tema Preto e Branco ===== */
-  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
+// Aguarda o documento HTML ser completamente carregado
+document.addEventListener('DOMContentLoaded', () => {
+    
+    // Seleciona os elementos do HTML pelo ID
+    const botao = document.getElementById('btn-interacao');
+    const mensagem = document.getElementById('mensagem-retorno');
 
-  body {
-    background: #000;                       /* fundo preto */
-    color: #fff;                            /* texto branco */
-    min-height: 100vh;
-  }
+    // Adiciona um evento de "clique" ao botão
+    botao.addEventListener('click', () => {
+        
+        // Descobre a hora atual
+        const horaAtual = new Date().getHours();
+        let saudacao = 'Olá!';
 
-  /* faixa branca no topo */
-  header {
-    background: #fff;
-    color: #000;
-    text-align: center;
-    padding: 40px 20px 30px;
-    border-bottom: 4px solid #000;
-  }
-  header h1 { font-size: 2rem; margin-bottom: 8px; }
-  header p { color: #333; }
+        // Define a saudação com base no horário
+        if (horaAtual >= 5 && horaAtual < 12) {
+            saudacao = 'Bom dia!';
+        } else if (horaAtual >= 12 && horaAtual < 18) {
+            saudacao = 'Boa tarde!';
+        } else {
+            saudacao = 'Boa noite!';
+        }
 
-  /* área do formulário */
-  .form {
-    display: flex; gap: 10px; justify-content: center;
-    margin: 30px auto; max-width: 700px; padding: 0 20px; flex-wrap: wrap;
-  }
-  .form input {
-    flex: 1; min-width: 250px; padding: 12px 16px;
-    border-radius: 8px; border: 2px solid #fff;
-    background: #000; color: #fff; font-size: 1rem;
-  }
-  .form input::placeholder { color: #aaa; }
-  .form button {
-    padding: 12px 24px; border-radius: 8px;
-    border: 2px solid #fff; background: #fff; color: #000;
-    font-size: 1rem; font-weight: bold; cursor: pointer;
-    transition: .2s;
-  }
-  .form button:hover { background: #000; color: #fff; }
-
-  .erro { text-align: center; color: #fff; background: #000; display: none; padding: 8px; }
-
-  /* card preto com borda branca */
-  #site {
-    display: none; max-width: 900px; margin: 20px auto 60px; padding: 20px;
-    background: #000; color: #fff;
-    border: 3px solid #fff; border-radius: 16px;
-  }
-  #site img { width: 100%; border-radius: 10px; display: block; border: 2px solid #fff; }
-  #site h2 { margin: 20px 0 10px; color: #fff; border-left: 5px solid #fff; padding-left: 10px; }
-  #site p.info { color: #ccc; line-height: 1.6; }
-
-  .meta { display: flex; gap: 20px; margin-top: 15px; flex-wrap: wrap; }
-  .meta span {
-    background: #fff; color: #000;
-    padding: 6px 14px; border-radius: 20px; font-size: .85rem;
-  }
-
-  /* rodapé branco */
-  footer {
-    background: #fff; color: #000; text-align: center;
-    padding: 15px; font-size: .85rem;
-  }
-</style>
-<base target="_blank">
-</head>
-<body>
-
-<header>
-  <h1>🖼️ Site Instantâneo</h1>
-  <p>Cole o link de uma imagem e veja-a virar um site!</p>
-</header>
-
-<div class="form">
-  <input type="text" id="urlImagem" placeholder="Cole aqui o link da imagem (https://...)" />
-  <button onclick="gerarSite()">Gerar Site</button>
-</div>
-
-<p class="erro" id="erro">❌ Não foi possível carregar a imagem. Verifique o link e tente novamente.</p>
-
-<section id="site">
-  <img id="imagem" src="" alt="Imagem do site gerado" />
-  <h2 id="titulo"></h2>
-  <p class="info" id="descricao"></p>
-  <div class="meta">
-    <span>📏 Dimensões: <b id="dimensoes"></b></span>
-    <span>🔗 Fonte: <a id="fonte" href="#" target="_blank" style="color:#000;font-weight:bold">abrir original</a></span>
-  </div>
-</section>
-
-<footer>Feito com HTML + CSS + JavaScript — tema preto &amp; branco</footer>
-
-<script>
-function gerarSite() {
-  const url = document.getElementById('urlImagem').value.trim();
-  const erro = document.getElementById('erro');
-  const site = document.getElementById('site');
-
-  erro.style.display = 'none';
-  site.style.display = 'none';
-
-  if (!url) { erro.textContent = '⚠️ Por favor, cole um link de imagem.'; erro.style.display = 'block'; return; }
-
-  const img = new Image();
-  img.crossOrigin = 'anonymous';
-  img.onload = () => {
-    document.getElementById('imagem').src = url;
-    document.getElementById('fonte').href = url;
-
-    // Nome do arquivo como título
-    const nome = decodeURIComponent(url.split('/').pop().split('?')[0]) || 'Imagem sem título';
-    document.getElementById('titulo').textContent = nome.replace(/\.(jpg|jpeg|png|gif|webp|svg)$/i, '');
-
-    document.getElementById('dimensoes').textContent = img.naturalWidth + ' × ' + img.naturalHeight + ' px';
-
-    document.getElementById('descricao').textContent =
-      'Esta página foi gerada automaticamente a partir da imagem "' + nome +
-      '". Ela possui ' + img.naturalWidth + ' pixels de largura por ' +
-      img.naturalHeight + ' pixels de altura. Use o botão acima com qualquer outro link para criar um novo site!';
-
-    site.style.display = 'block';
-    site.scrollIntoView({ behavior: 'smooth' });
-  };
-  img.onerror = () => { erro.style.display = 'block'; };
-  img.src = url;
-}
-</script>
-
-</body>
-</html>
+        // Exibe a mensagem na tela e muda a cor do texto
+        mensagem.textContent = `${saudacao} Obrigado por conferir meu portfólio. Bora codar!`;
+        mensagem.style.color = '#18bc9c';
+        
+        // Desativa o botão após o clique para evitar repetições
+        botao.disabled = true;
+        botao.style.backgroundColor = '#95a5a6';
+        botao.style.cursor = 'not-allowed';
+    });
+});
