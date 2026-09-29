@@ -1,76 +1,72 @@
-<script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, addDoc, onSnapshot, orderBy, query, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-/* =====================================================
-   MINI FEED SOCIAL
-===================================================== */
+const firebaseConfig = {
+  apiKey: "SUA_API_KEY",
+  authDomain: "SEU_PROJETO.firebaseapp.com",
+  projectId: "SEU_PROJECT_ID"
+};
 
-const avatarList = [
-  "🎮",
-  "🐠",
-  "🧸",
-  "🍪",
-  "💉",
-  "🌸",
-  "🫧",
-  "⭐",
-  "🐰",
-  "💎"
-];
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
+const q = query(collection(db, "posts"), orderBy("createdAt", "desc"));
 
-/* ---------------------------------------------
-   POSTS
---------------------------------------------- */
+onSnapshot(q, (snapshot) => {
+  const container = document.getElementById("posts");
+  container.innerHTML = "";
 
-function getPosts(){
-  return JSON.parse(
-    localStorage.getItem("socialFeedPosts") || "[]"
-  );
-}
+  snapshot.forEach((docSnap) => {
+    const p = docSnap.data();
 
+    const div = document.createElement("div");
+    div.className = "post";
 
-function savePosts(posts){
-  localStorage.setItem(
-    "socialFeedPosts",
-    JSON.stringify(posts)
-  );
-}
+    div.innerHTML = `
+      <div class="username">${p.name}</div>
+      <p>${p.text}</p>
+      ${p.image ? `<img src="${p.image}" width="200">` : ""}
+      <div class="like">❤️ ${p.likes}</div>
+    `;
 
+    div.querySelector(".like").onclick = () => {
+      updateDoc(doc(db, "posts", docSnap.id), {
+        likes: p.likes + 1
+      });
+    };
 
-/* ---------------------------------------------
-   DATA
---------------------------------------------- */
-
-function formatDate(date){
-
-  const d = new Date(date);
-
-  return d.toLocaleDateString("pt-BR", {
-    day:"2-digit",
-    month:"2-digit",
-    year:"numeric"
-  }) + " • " +
-  d.toLocaleTimeString("pt-BR", {
-    hour:"2-digit",
-    minute:"2-digit"
+    container.appendChild(div);
   });
-}
+});
 
+window.postComment = async function () {
+  const name = document.getElementById("name").value || "Anônimo";
+  const text = document.getElementById("comment").value;
+  const file = document.getElementById("imageUpload").files[0];
 
-/* ---------------------------------------------
-   USERNAME
---------------------------------------------- */
+  if (!text && !file) return;
 
-function createHandle(name){
-
-  return "@" +
-    name
-      .toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g,"")
-      .replace(/[^a-z0-9]/g,"")
-      .slice(0,18);
-}
-
-
-/* ---------------------------------------------
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = async function (e) {
+      await addDoc(collection(db, "posts"), {
+        name,
+        text,
+        image: e.target.result,
+        likes: 0,
+        createdAt: Date.now()
+      });
+    };
+    reader.readAsDataURL(file);
+  } else {
+    await addDoc(collection(db, "posts"), {
+      name,
+      text,
+      image: null,
+      likes: 0,
+      createdAt: Date.now()
+    });
+  }
+};
+</script>
