@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>BLACK//MARKET</title>
+
+    <link rel="stylesheet" href="style.css">
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+
+<body>
+
+    <div class="scanlines"></div>
+    <div class="noise"></div>
+
+
+    <main class="container">
+
+
+        <!-- =========================
+             CABEÇALHO
+        ========================== -->
+
+        <header class="header">
+
+            <div class="status">
+
+                <span class="status-dot"></span>
+
+                SYSTEM ONLINE
+
+            </div>
+
+
+            <h1>
+                BLACK<span>//</span>MARKET
+            </h1>
+
+
+            <p class="subtitle">
+                UNKNOWN INVENTORY MANAGEMENT SYSTEM
+            </p>
+
+
+            <div class="header-line"></div>
+
+        </header>
+
+
+
+        <!-- =========================
+             LOGIN
+        ========================== -->
+
+        <section
+            id="loginScreen"
+            class="panel"
+        >
+
+            <div class="panel-header">
+
+                <span>[01]</span>
+                AUTHENTICATION
+
+            </div>
+
+
+            <div class="warning">
+
+                ⚠ RESTRICTED ACCESS
+
+            </div>
+
+
+            <p class="description">
+
+                An unidentified entity is requesting
+                access to the inventory database.
+
+            </p>
+
+
+            <label for="senha">
+
+                &gt; ENTER YOUR DESIGNATION
+
+            </label>
+
+
+            <input
+                type="password"
+                id="senha"
+                placeholder="••••••••"
+                autocomplete="off"
+            >
+
+
+            <button onclick="validarAcesso()">
+
+                AUTHENTICATE
+
+            </button>
+
+
+            <div
+                id="mensagemLogin"
+                class="message"
+            ></div>
+
+
+            <div class="terminal-text">
+
+                <p>&gt; CONNECTION: ENCRYPTED</p>
+                <p>&gt; LOCATION: UNKNOWN</p>
+                <p>&gt; DATABASE: LOCKED</p>
+                <p>&gt; AWAITING IDENTIFICATION...</p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================
+             MENU PRINCIPAL
+        ========================== -->
+
+        <section
+            id="menuScreen"
+            class="hidden"
+        >
+
+            <div class="panel">
+
+                <div class="panel-header">
+
+                    <span>[02]</span>
+                    MAIN TERMINAL
+
+                </div>
+
+
+                <p class="description">
+
+                    Authentication successful.
+                    Select an operation.
+
+                </p>
+
+
+                <button onclick="abrirCadastro()">
+
+                    [ REGISTER NEW OBJECT ]
+
+                </button>
+
+
+                <button onclick="abrirEstoque()">
+
+                    [ ACCESS INVENTORY ]
+
+                </button>
+
+
+                <button onclick="abrirRemocao()">
+
+                    [ REMOVE OBJECT ]
+
+                </button>
+
+
+                <button
+                    class="back-button"
+                    onclick="confirmarRetorno()"
+                >
+
+                    &lt; DISCONNECT
+
+                </button>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================
+             CADASTRO
+        ========================== -->
+
+        <section
+            id="cadastroScreen"
+            class="hidden"
+        >
+
+            <div class="panel">
+
+                <div class="panel-header">
+
+                    <span>[03]</span>
+                    NEW INVENTORY ENTRY
+
+                </div>
+
+
+                <p class="description">
+
+                    Register an unidentified object
+                    into the database.
+
+                </p>
+
+
+                <div class="form-group">
+
+                    <label for="nome">
+
+                        &gt; ITEM DESIGNATION
+
+                    </label>
+
+
+                    <input
+                        type="text"
+                        id="nome"
+                        placeholder="UNKNOWN_OBJECT"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="quantidade">
+
+                        &gt; QUANTITY
+
+                    </label>
+
+
+                    <input
+                        type="number"
+                        id="quantidade"
+                        placeholder="00"
+                        min="1"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="valor">
+
+                        &gt; VALUE
+
+                    </label>
+
+
+                    <input
+                        type="number"
+                        id="valor"
+                        placeholder="000.00"
+                        min="0"
+                        step="0.01"
+                    >
+
+                </div>
+
+
+                <button onclick="cadastrarItem()">
+
+                    REGISTER OBJECT
+
+                </button>
+
+
+                <div
+                    id="mensagemCadastro"
+                    class="message"
+                ></div>
+
+
+                <button
+                    class="back-button"
+                    onclick="voltarMenu()"
+                >
+
+                    &lt; RETURN TO TERMINAL
+
+                </button>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================
+             ESTOQUE
+        ========================== -->
+
+        <section
+            id="estoqueScreen"
+            class="hidden"
+        >
+
+            <div class="panel">
+
+                <div class="panel-header">
+
+                    <span>[04]</span>
+                    INVENTORY DATABASE
+
+                </div>
+
+
+                <div id="listaEstoque">
+
+                    <!-- Produtos aparecem aqui -->
+
+                </div>
+
+
+                <button
+                    class="back-button"
+                    onclick="voltarMenu()"
+                >
+
+                    &lt; RETURN TO TERMINAL
+
+                </button>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================
+             REMOÇÃO
+        ========================== -->
+
+        <section
+            id="remocaoScreen"
+            class="hidden"
+        >
+
+            <div class="panel">
+
+                <div class="panel-header">
+
+                    <span>[05]</span>
+                    OBJECT REMOVAL
+
+                </div>
+
+
+                <p class="description">
+
+                    Enter the unique 8-character
+                    identification code of the object.
+
+                </p>
+
+
+                <label for="codigoRemocao">
+
+                    &gt; OBJECT IDENTIFICATION CODE
+
+                </label>
+
+
+                <input
+                    type="text"
+                    id="codigoRemocao"
+                    placeholder="XXXXXXXX"
+                    maxlength="8"
+                    autocomplete="off"
+                >
+
+
+                <button onclick="removerItem()">
+
+                    REMOVE OBJECT
+
+                </button>
+
+
+                <div
+                    id="mensagemRemocao"
+                    class="message"
+                ></div>
+
+
+                <button
+                    class="back-button"
+                    onclick="voltarMenu()"
+                >
+
+                    &lt; RETURN TO TERMINAL
+
+                </button>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+
+    <!-- =========================
+         MODAL
+    ========================== -->
+
+    <div
+        id="confirmModal"
+        class="modal hidden"
+    >
+
+        <div class="modal-box">
+
+            <div class="modal-title">
+
+                СИСТЕМНОЕ ПРЕДУПРЕЖДЕНИЕ
+
+            </div>
+
+
+            <div class="modal-line"></div>
+
+
+            <p>
+
+                ВЕРНУТЬСЯ НА ГЛАВНЫЙ ЭКРАН?
+
+            </p>
+
+
+            <span class="modal-subtitle">
+
+                RETURN TO INITIAL SCREEN?
+
+            </span>
+
+
+            <div class="modal-buttons">
+
+                <button onclick="voltarInicio()">
+
+                    ДА
+
+                </button>
+
+
+                <button onclick="fecharConfirmacao()">
+
+                    НЕТ
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <footer>
+
+        BLACK//MARKET
+
+        <span>
+            — NOTHING IS WHAT IT SEEMS —
+        </span>
+
+    </footer>
+
+
+
+    <script src="script.js"></script>
+
+<script src="script.js"></script></body>
+
+</html>
