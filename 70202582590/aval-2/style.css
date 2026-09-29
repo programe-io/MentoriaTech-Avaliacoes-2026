@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Gerenciador de Tarefas</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #eeeeee;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 700px;
+            margin: 40px auto;
+            padding: 30px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px #aaaaaa;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333333;
+        }
+
+        .formulario {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #bbbbbb;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 12px 18px;
+            border: none;
+            border-radius: 5px;
+            background-color: #333333;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #555555;
+        }
+
+        .tarefa {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+            padding: 15px;
+            background-color: #f2f2f2;
+            border-radius: 5px;
+        }
+
+        .tarefa.concluida {
+            background-color: #d9f2d9;
+        }
+
+        .tarefa.concluida .texto {
+            text-decoration: line-through;
+        }
+
+        .botoes {
+            display: flex;
+            gap: 5px;
+        }
+
+        .botoes button {
+            padding: 8px 10px;
+        }
+
+        .contador {
+            margin-top: 25px;
+            font-weight: bold;
+        }
+
+        #mensagem {
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+    <div class="container">
+
+        <h1>Gerenciador de Tarefas</h1>
+
+        <p>
+            Adicione e organize suas tarefas.
+        </p>
+
+
+        <div class="formulario">
+
+            <input
+                type="text"
+                id="nomeTarefa"
+                placeholder="Digite uma tarefa"
+            >
+
+            <button onclick="adicionarTarefa()">
+                Adicionar
+            </button>
+
+        </div>
+
+
+        <p id="mensagem"></p>
+
+
+        <h2>Minhas tarefas</h2>
+
+        <div id="listaTarefas"></div>
+
+
+        <div class="contador">
+
+            <p id="totalTarefas">
+                Total de tarefas: 0
+            </p>
+
+            <p id="tarefasConcluidas">
+                Tarefas concluídas: 0
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <script>
+
+        // ==========================================
+        // VARIÁVEIS E TIPOS DE DADOS
+        // ==========================================
+
+        let tarefas = [];
+
+        let totalTarefas = 0;
+
+        let concluidas = 0;
+
+
+        // ==========================================
+        // FUNÇÃO PARA ADICIONAR TAREFA
+        // ==========================================
+
+        function adicionarTarefa() {
+
+            // ENTRADA DE DADOS
+
+            let nome =
+                document.getElementById("nomeTarefa").value;
+
+
+            // ==========================================
+            // IF E ELSE
+            // OPERADORES RELACIONAIS
+            // ==========================================
+
+            if (nome.length < 3) {
+
+                mostrarMensagem(
+                    "Digite uma tarefa com pelo menos 3 caracteres."
+                );
+
+                return;
+
+            } else {
+
+                mostrarMensagem(
+                    "Tarefa adicionada!"
+                );
+
+            }
+
+
+            // ==========================================
+            // CRIANDO A TAREFA
+            // ==========================================
+
+            let tarefa = {
+
+                nome: nome,
+
+                concluida: false
+
+            };
+
+
+            // ==========================================
+            // ARRAY
+            // ==========================================
+
+            tarefas.push(tarefa);
+
+
+            // ==========================================
+            // OPERADOR ARITMÉTICO
+            // ==========================================
+
+            totalTarefas = totalTarefas + 1;
+
+
+            mostrarTarefas();
+
+            limparCampo();
+
+        }
+
+
+        // ==========================================
+        // FUNÇÃO PARA MOSTRAR AS TAREFAS
+        // ==========================================
+
+        function mostrarTarefas() {
+
+            let lista =
+                document.getElementById("listaTarefas");
+
+
+            lista.innerHTML = "";
+
+
+            // ==========================================
+            // FOR
+            // ==========================================
+
+            for (
+                let i = 0;
+                i < tarefas.length;
+                i++
+            ) {
+
+                let tarefa = tarefas[i];
+
+
+                let classe = "";
+
+
+                // ==========================================
+                // CONDICIONAL
+                // ==========================================
+
+                if (tarefa.concluida == true) {
+
+                    classe = "concluida";
+
+                } else {
+
+                    classe = "";
+
+                }
+
+
+                lista.innerHTML += `
+
+                    <div class="tarefa ${classe}">
+
+                        <span class="texto">
+                            ${tarefa.nome}
+                        </span>
+
+                        <div class="botoes">
+
+                            <button
+                                onclick="concluirTarefa(${i})"
+                            >
+                                Concluir
+                            </button>
+
+                            <button
+                                onclick="excluirTarefa(${i})"
+                            >
+                                Excluir
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                `;
+
+            }
+
+
+            document.getElementById(
+                "totalTarefas"
+            ).innerText =
+                "Total de tarefas: " + totalTarefas;
+
+
+            document.getElementById(
+                "tarefasConcluidas"
+            ).innerText =
+                "Tarefas concluídas: " + concluidas;
+
+        }
+
+
+        // ==========================================
+        // FUNÇÃO PARA CONCLUIR TAREFA
+        // ==========================================
+
+        function concluirTarefa(indice) {
+
+            if (tarefas[indice].concluida == false) {
+
+                tarefas[indice].concluida = true;
+
+                concluidas = concluidas + 1;
+
+            } else {
+
+                tarefas[indice].concluida = false;
+
+                concluidas = concluidas - 1;
+
+            }
+
+
+            mostrarTarefas();
+
+        }
+
+
+        // ==========================================
+        // FUNÇÃO PARA EXCLUIR TAREFA
+        // ==========================================
+
+        function excluirTarefa(indice) {
+
+            if (tarefas[indice].concluida == true) {
+
+                concluidas = concluidas - 1;
+
+            }
+
+
+            tarefas.splice(indice, 1);
+
+            totalTarefas = totalTarefas - 1;
+
+
+            mostrarTarefas();
+
+        }
+
+
+        // ==========================================
+        // FUNÇÃO PARA LIMPAR O CAMPO
+        // ==========================================
+
+        function limparCampo() {
+
+            document.getElementById(
+                "nomeTarefa"
+            ).value = "";
+
+        }
+
+
+        // ==========================================
+        // FUNÇÃO PARA MOSTRAR MENSAGEM
+        // ==========================================
+
+        function mostrarMensagem(texto) {
+
+            document.getElementById(
+                "mensagem"
+            ).innerText = texto;
+
+        }
+
+
+        // ==========================================
+        // WHILE
+        // ==========================================
+
+        let contador = 0;
+
+        while (contador < 0) {
+
+            console.log(
+                "Tarefa número: " + contador
+            );
+
+            contador++;
+
+        }
+
+
+        // ==========================================
+        // DO WHILE
+        // ==========================================
+
+        let inicio = 0;
+
+        do {
+
+            console.log(
+                "Gerenciador iniciado."
+            );
+
+            inicio++;
+
+        } while (inicio < 1);
+
+
+        // ==========================================
+        // ASSINCRONISMO
+        // ==========================================
+
+        setTimeout(function() {
+
+            console.log(
+                "Sistema carregado."
+            );
+
+        }, 1000);
+
+    </script>
+
+</body>
+
+</html>
