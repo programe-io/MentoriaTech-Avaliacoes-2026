@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet">
+</head>
+<body>
+  <!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Feed Motivacional</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 min-h-screen py-8 text-slate-100">
+
+  <div class="max-w-xl mx-auto px-4">
+    <!-- Header -->
+    <header class="mb-8 text-center space-y-2">
+      <h1 class="text-3xl font-extrabold text-amber-400 flex items-center justify-center gap-2">
+        <span>✨</span> Feed de Inspiração
+      </h1>
+      <p class="text-sm text-slate-400">Sua dose diária de motivação e pensamentos positivos</p>
+    </header>
+
+    <!-- Formulário de Publicação -->
+    <div class="bg-slate-800 border border-slate-700 p-5 rounded-2xl shadow-xl mb-8 space-y-4">
+      <div class="flex justify-between items-center text-xs text-slate-400">
+        <label for="quoteInput" class="font-medium">Compartilhe uma frase:</label>
+        <button 
+          onclick="generateRandomQuote()" 
+          class="text-amber-400 hover:underline flex items-center gap-1"
+        >
+          🎲 Sortear frase
+        </button>
+      </div>
+
+      <textarea 
+        id="quoteInput" 
+        rows="3" 
+        placeholder="Digite uma frase inspiradora..." 
+        class="w-full p-3 bg-slate-900 border border-slate-700 rounded-xl text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-400 resize-none"
+      ></textarea>
+
+      <div class="flex flex-col sm:flex-row gap-3 justify-between items-center">
+        <input 
+          type="text" 
+          id="authorInput" 
+          placeholder="Autor da frase (opcional)" 
+          class="w-full sm:w-1/2 px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-sm text-slate-100 focus:outline-none focus:ring-2 focus:ring-amber-400"
+        />
+
+        <button 
+          onclick="addPost()" 
+          class="w-full sm:w-auto bg-amber-400 hover:bg-amber-500 text-slate-950 font-bold px-5 py-2 rounded-lg transition"
+        >
+          Publicar
+        </button>
+      </div>
+    </div>
+
+    <!-- Feed de Posts -->
+    <div id="feed" class="space-y-6"></div>
+  </div>
+
+  <script>
+    // Banco de frases para o sorteador aleatório
+    const randomQuotes = [
+      { text: "Acredite que você pode, assim você já está no meio do caminho.", author: "Theodore Roosevelt" },
+      { text: "Não espere por oportunidades, crie-as.", author: "Autor Desconhecido" },
+      { text: "O único lugar onde o sucesso vem antes do trabalho é no dicionário.", author: "Vidal Sassoon" },
+      { text: "Pequenos passos todos os dias levam a grandes resultados.", author: "Anônimo" },
+      { text: "Sua única limitação é aquela que você impõe à sua própria mente.", author: "Napoleon Hill" }
+    ];
+
+    // Estado inicial dos posts
+    let posts = [
+      {
+        id: 1,
+        quote: "O segredo para progredir é começar.",
+        author: "Mark Twain",
+        likes: 12,
+        liked: false,
+        comments: ["Essa frase muda tudo!", "Começando hoje mesmo 💪"]
+      },
+      {
+        id: 2,
+        quote: "Você é muito mais forte do que imagina. Não desista agora.",
+        author: "Motivação diária",
+        likes: 8,
+        liked: true,
+        comments: ["Precisava ler isso hoje, obrigado!"]
+      }
+    ];
+
+    function renderFeed() {
+      const feed = document.getElementById("feed");
+      feed.innerHTML = "";
+
+      posts.forEach(post => {
+        const postElement = document.createElement("div");
+        postElement.className = "bg-slate-800 border border-slate-700/60 p-6 rounded-2xl shadow-lg space-y-4";
+
+        const commentsHTML = post.comments
+          .map(c => `<div class="bg-slate-900/80 p-2.5 rounded-lg text-xs text-slate-300 border border-slate-700/40">${escapeHTML(c)}</div>`)
+          .join("");
+
+        postElement.innerHTML = `
+          <div class="flex justify-between items-start">
+            <span class="text-3xl text-amber-400/40 font-serif">“</span>
+            <button onclick="deletePost(${post.id})" class="text-xs text-slate-500 hover:text-red-400 transition">
+              Excluir
+            </button>
+          </div>
+
+          <div class="space-y-2 -mt-4">
+            <p class="text-lg font-medium italic text-slate-100 leading-relaxed">
+              "${escapeHTML(post.quote)}"
+            </p>
+            <p class="text-xs font-semibold text-amber-400 text-right">
+              — ${escapeHTML(post.author || "Autor Desconhecido")}
+            </p>
+          </div>
+
+          <!-- Ações -->
+          <div class="flex items-center justify-between pt-3 border-t border-slate-700/50">
+            <button 
+              onclick="toggleLike(${post.id})" 
+              class="flex items-center space-x-1.5 text-sm transition ${post.liked ? 'text-rose-500 font-bold' : 'text-slate-400 hover:text-rose-400'}"
+            >
+              <span>${post.liked ? '❤️' : '🤍'}</span>
+              <span>${post.likes}</span>
+            </button>
+            <span class="text-xs text-slate-500">${post.comments.length} comentários</span>
+          </div>
+
+          <!-- Comentários -->
+          <div class="pt-2 space-y-2">
+            <div class="flex gap-2">
+              <input 
+                type="text" 
+                id="comment-input-${post.id}" 
+                placeholder="Deixe uma mensagem..." 
+                class="flex-1 px-3 py-1.5 text-xs bg-slate-900 border border-slate-700 rounded-lg text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-amber-400"
+                onkeypress="handleCommentKeyPress(event, ${post.id})"
+              />
+              <button 
+                onclick="addComment(${post.id})" 
+                class="text-xs bg-slate-700 hover:bg-slate-600 text-slate-200 px-3 py-1.5 rounded-lg font-medium transition"
+              >
+                Enviar
+              </button>
+            </div>
+            <div class="space-y-1.5 pt-1">${commentsHTML}</div>
+          </div
+  
+  
+</body>
+</html>
