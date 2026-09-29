@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Estoque</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background-color: white;
+            padding: 25px;
+            border-radius: 10px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        button {
+            padding: 10px;
+            margin: 5px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .produto {
+            background-color: #eee;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+
+        .baixo {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+<div class="container">
+
+    <h1>Sistema de Estoque</h1>
+
+    <button onclick="cadastrarProduto()">Cadastrar produto</button>
+    <button onclick="listarProdutos()">Listar produtos</button>
+    <button onclick="buscarProduto()">Buscar produto</button>
+    <button onclick="venderProduto()">Vender produto</button>
+    <button onclick="reporEstoque()">Repor estoque</button>
+    <button onclick="mostrarEstoqueBaixo()">Estoque baixo</button>
+
+    <div id="resultado"></div>
+
+</div>
+
+
+<script>
+
+    // ==========================================
+    // 1.02 - VARIÁVEIS E TIPOS DE DADOS
+    // ==========================================
+
+    let produtos = [];
+
+
+    // ==========================================
+    // 1.10 / 1.11 - FUNÇÕES
+    // ==========================================
+
+    function cadastrarProduto() {
+
+        let nome = prompt("Digite o nome do produto:");
+        let preco = Number(prompt("Digite o preço do produto:"));
+        let quantidade = Number(prompt("Digite a quantidade em estoque:"));
+
+        // ==========================================
+        // 1.05 - IF E ELSE + OPERADORES LÓGICOS
+        // ==========================================
+
+        if (nome == "" || isNaN(preco) || isNaN(quantidade)) {
+
+            alert("Preencha todos os dados corretamente.");
+
+        } else {
+
+            let produto = {
+                nome: nome,
+                preco: preco,
+                quantidade: quantidade
+            };
+
+            produtos.push(produto);
+
+            alert("Produto cadastrado com sucesso!");
+        }
+    }
+
+
+    // ==========================================
+    // 1.12 - ARRAYS
+    // ==========================================
+
+    function listarProdutos() {
+
+        let resultado = document.getElementById("resultado");
+
+        resultado.innerHTML = "<h2>Produtos em estoque</h2>";
+
+        // ==========================================
+        // 1.07 - ESTRUTURA FOR
+        // ==========================================
+
+        if (produtos.length == 0) {
+
+            resultado.innerHTML += "<p>Nenhum produto cadastrado.</p>";
+
+        } else {
+
+            for (let i = 0; i < produtos.length; i++) {
+
+                let produto = produtos[i];
+
+                resultado.innerHTML += `
+                    <div class="produto">
+                        <strong>${produto.nome}</strong><br>
+                        Preço: R$ ${produto.preco.toFixed(2)}<br>
+                        Quantidade: ${produto.quantidade}
+                    </div>
+                `;
+            }
+        }
+    }
+
+
+    // ==========================================
+    // 1.04 - OPERADORES RELACIONAIS
+    // ==========================================
+
+    function buscarProduto() {
+
+        let nome = prompt("Digite o nome do produto:");
+
+        let encontrado = false;
+
+        // ==========================================
+        // 1.08 - ESTRUTURA WHILE
+        // ==========================================
+
+        let i = 0;
+
+        while (i < produtos.length) {
+
+            if (produtos[i].nome.toLowerCase() == nome.toLowerCase()) {
+
+                alert(
+                    "Produto encontrado!\n\n" +
+                    "Nome: " + produtos[i].nome + "\n" +
+                    "Preço: R$ " + produtos[i].preco.toFixed(2) + "\n" +
+                    "Quantidade: " + produtos[i].quantidade
+                );
+
+                encontrado = true;
+            }
+
+            i++;
+        }
+
+        if (encontrado == false) {
+            alert("Produto não encontrado.");
+        }
+    }
+
+
+    // ==========================================
+    // VENDER PRODUTO
+    // ==========================================
+
+    function venderProduto() {
+
+        let nome = prompt("Digite o nome do produto:");
+
+        let quantidadeVenda = Number(
+            prompt("Digite a quantidade que deseja vender:")
+        );
+
+        let encontrado = false;
+
+        for (let i = 0; i < produtos.length; i++) {
+
+            if (produtos[i].nome.toLowerCase() == nome.toLowerCase()) {
+
+                encontrado = true;
+
+                // ==========================================
+                // 1.05 - IF / ELSE
+                // ==========================================
+
+                if (quantidadeVenda <= produtos[i].quantidade &&
+                    quantidadeVenda > 0) {
+
+                    produtos[i].quantidade =
+                        produtos[i].quantidade - quantidadeVenda;
+
+                    alert("Venda realizada com sucesso!");
+
+                } else {
+
+                    alert("Quantidade indisponível no estoque.");
+                }
+            }
+        }
+
+        if (encontrado == false) {
+            alert("Produto não encontrado.");
+        }
+    }
+
+
+    // ==========================================
+    // REPOR ESTOQUE
+    // ==========================================
+
+    function reporEstoque() {
+
+        let nome = prompt("Digite o nome do produto:");
+
+        let quantidade = Number(
+            prompt("Digite a quantidade que deseja adicionar:")
+        );
+
+        let encontrado = false;
+
+        for (let i = 0; i < produtos.length; i++) {
+
+            if (produtos[i].nome.toLowerCase() == nome.toLowerCase()) {
+
+                encontrado = true;
+
+                if (quantidade > 0) {
+
+                    produtos[i].quantidade =
+                        produtos[i].quantidade + quantidade;
+
+                    alert("Estoque atualizado!");
+
+                } else {
+
+                    alert("Digite uma quantidade válida.");
+                }
+            }
+        }
+
+        if (encontrado == false) {
+            alert("Produto não encontrado.");
+        }
+    }
+
+
+    // ==========================================
+    // 1.06 - CONDICIONAIS ENCADEADAS + SWITCH
+    // ==========================================
+
+    function mostrarEstoqueBaixo() {
+
+        let resultado = document.getElementById("resultado");
+
+        resultado.innerHTML = "<h2>Estoque baixo</h2>";
+
+        let encontrou = false;
+
+        for (let i = 0; i < produtos.length; i++) {
+
+            let quantidade = produtos[i].quantidade;
+
+            // Condicionais encadeadas
+
+            if (quantidade == 0) {
+
+                resultado.innerHTML += `
+                    <div class="produto">
+                        <strong>${produtos[i].nome}</strong>
+                        <p class="baixo">Produto esgotado!</p>
+                    </div>
+                `;
+
+                encontrou = true;
+
+            } else if (quantidade <= 5) {
+
+                resultado.innerHTML += `
+                    <div class="produto">
+                        <strong>${produtos[i].nome}</strong>
+                        <p class="baixo">
+                            Poucas unidades: ${quantidade}
+                        </p>
+                    </div>
+                `;
+
+                encontrou = true;
+            }
+        }
+
+        if (encontrou == false) {
+
+            resultado.innerHTML +=
+                "<p>Nenhum produto com estoque baixo.</p>";
+        }
+    }
+
+
+    // ==========================================
+    // 1.09 - DO WHILE
+    // ==========================================
+
+    function exemploDoWhile() {
+
+        let resposta;
+
+        do {
+
+            resposta = prompt(
+                "Digite SIM para continuar ou NÃO para sair:"
+            );
+
+        } while (
+            resposta != "SIM" &&
+            resposta != "NÃO"
+        );
+
+        alert("Resposta registrada: " + resposta);
+    }
+
+
+    // ==========================================
+    // 1.06 - SWITCH
+    // ==========================================
+
+    function menuSwitch() {
+
+        let opcao = Number(
+            prompt(
+                "MENU\n\n" +
+                "1 - Cadastrar produto\n" +
+                "2 - Listar produtos\n" +
+                "3 - Buscar produto\n" +
+                "4 - Vender produto\n" +
+                "5 - Repor estoque\n\n" +
+                "Digite uma opção:"
+            )
+        );
+
+        switch (opcao) {
+
+            case 1:
+                cadastrarProduto();
+                break;
+
+            case 2:
+                listarProdutos();
+                break;
+
+            case 3:
+                buscarProduto();
+                break;
+
+            case 4:
+                venderProduto();
+                break;
+
+            case 5:
+                reporEstoque();
+                break;
+
+            default:
+                alert("Opção inválida.");
+        }
+    }
+
+
+    // ==========================================
+    // 1.13 - INTRODUÇÃO AO ASSINCRONISMO
+    // ==========================================
+
+    function carregarSistema() {
+
+        return new Promise(function(resolve) {
+
+            setTimeout(function() {
+
+                resolve("Sistema carregado com sucesso!");
+
+            }, 1000);
+
+        });
+    }
+
+
+    async function iniciarSistema() {
+
+        let mensagem = await carregarSistema();
+
+        console.log(mensagem);
+    }
+
+
+    // Inicia o sistema
+
+    iniciarSistema();
+
+</script>
+
+</body>
+</html>
