@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Dashboard de controle financeiro pessoal">
+    <title>Finanzy — Dashboard Financeiro</title>
+
+    <link rel="stylesheet" href="css/style.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+    <div class="app">
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-icon">F</div>
+                <span>Finanzy</span>
+            </div>
+
+            <nav class="navigation">
+                <a href="#" class="nav-item active">
+                    <span class="nav-icon">⌂</span>
+                    <span>Visão geral</span>
+                </a>
+
+                <a href="#transactions" class="nav-item">
+                    <span class="nav-icon">↔</span>
+                    <span>Transações</span>
+                </a>
+
+                <a href="#budgets" class="nav-item">
+                    <span class="nav-icon">▣</span>
+                    <span>Orçamento</span>
+                </a>
+
+                <a href="#reports" class="nav-item">
+                    <span class="nav-icon">◫</span>
+                    <span>Relatórios</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-bottom">
+                <button class="nav-item" id="themeButton">
+                    <span class="nav-icon">☾</span>
+                    <span>Modo escuro</span>
+                </button>
+
+                <div class="user-profile">
+                    <div class="avatar">JS</div>
+                    <div>
+                        <strong>João Silva</strong>
+                        <small>Conta pessoal</small>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Conteúdo principal -->
+        <main class="main-content">
+
+            <header class="topbar">
+                <div>
+                    <p class="greeting">Olá, João 👋</p>
+                    <h1>Visão geral</h1>
+                </div>
+
+                <button class="add-button" id="openModal">
+                    <span>+</span>
+                    Nova transação
+                </button>
+            </header>
+
+            <!-- Cards -->
+            <section class="summary-grid">
+
+                <article class="summary-card balance-card">
+                    <div class="card-header">
+                        <span>Saldo disponível</span>
+                        <span class="card-icon">R$</span>
+                    </div>
+
+                    <strong class="balance-value" id="balance">
+                        R$ 8.450,00
+                    </strong>
+
+                    <p class="positive">
+                        ↑ 12,5% <span>vs. mês anterior</span>
+                    </p>
+                </article>
+
+                <article class="summary-card">
+                    <div class="card-header">
+                        <span>Receitas</span>
+                        <span class="card-icon green">↗</span>
+                    </div>
+
+                    <strong class="income-value" id="income">
+                        R$ 12.800,00
+                    </strong>
+
+                    <p class="positive">
+                        ↑ 8,2% <span>este mês</span>
+                    </p>
+                </article>
+
+                <article class="summary-card">
+                    <div class="card-header">
+                        <span>Despesas</span>
+                        <span class="card-icon red">↘</span>
+                    </div>
+
+                    <strong class="expense-value" id="expenses">
+                        R$ 4.350,00
+                    </strong>
+
+                    <p class="negative">
+                        ↑ 3,1% <span>este mês</span>
+                    </p>
+                </article>
+
+                <article class="summary-card">
+                    <div class="card-header">
+                        <span>Economia</span>
+                        <span class="card-icon purple">%</span>
+                    </div>
+
+                    <strong id="savingRate">
+                        66,0%
+                    </strong>
+
+                    <p class="positive">
+                        Excelente <span>meta: 50%</span>
+                    </p>
+                </article>
+
+            </section>
+
+            <!-- Gráficos -->
+            <section class="content-grid">
+
+                <article class="panel chart-panel" id="reports">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Fluxo financeiro</h2>
+                            <p>Receitas e despesas dos últimos 6 meses</p>
+                        </div>
+
+                        <select id="chartPeriod">
+                            <option value="6">Últimos 6 meses</option>
+                            <option value="3">Últimos 3 meses</option>
+                        </select>
+                    </div>
+
+                    <div class="chart">
+                        <div class="chart-y">
+                            <span>15k</span>
+                            <span>10k</span>
+                            <span>5k</span>
+                            <span>0</span>
+                        </div>
+
+                        <div class="chart-area">
+                            <div class="grid-line"></div>
+                            <div class="grid-line"></div>
+                            <div class="grid-line"></div>
+                            <div class="grid-line"></div>
+
+                            <div class="bars" id="chartBars">
+                                <div class="bar-group">
+                                    <div class="bar income-bar" style="height: 80%"></div>
+                                    <div class="bar expense-bar" style="height: 35%"></div>
+                                    <span>Mai</span>
+                                </div>
+
+                                <div class="bar-group">
+                                    <div class="bar income-bar" style="height: 67%"></div>
+                                    <div class="bar expense-bar" style="height: 40%"></div>
+                                    <span>Jun</span>
+                                </div>
+
+                                <div class="bar-group">
+                                    <div class="bar income-bar" style="height: 88%"></div>
+                                    <div class="bar expense-bar" style="height: 45%"></div>
+                                    <span>Jul</span>
+                                </div>
+
+                                <div class="bar-group">
+                                    <div class="bar income-bar" style="height: 72%"></div>
+                                    <div class="bar expense-bar" style="height: 32%"></div>
+                                    <span>Ago</span>
+                                </div>
+
+                                <div class="bar-group">
+                                    <div class="bar income-bar" style="height: 92%"></div>
+                                    <div class="bar expense-bar" style="height: 42%"></div>
+                                    <span>Set</span>
+                                </div>
+
+                                <div class="bar-group">
+                                    <div class="bar income-bar" style="height: 84%"></div>
+                                    <div class="bar expense-bar" style="height: 38%"></div>
+                                    <span>Out</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="chart-legend">
+                        <span>
+                            <i class="legend-income"></i>
+                            Receitas
+                        </span>
+
+                        <span>
+                            <i class="legend-expense"></i>
+                            Despesas
+                        </span>
+                    </div>
+                </article>
+
+                <!-- Categorias -->
+                <article class="panel" id="budgets">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Despesas por categoria</h2>
+                            <p>Distribuição deste mês</p>
+                        </div>
+                    </div>
+
+                    <div class="category-list">
+
+                        <div class="category">
+                            <div class="category-top">
+                                <span>
+                                    <i class="category-dot blue"></i>
+                                    Moradia
+                                </span>
+                                <strong>R$ 1.500</strong>
+                            </div>
+
+                            <div class="progress">
+                                <span style="width: 78%"></span>
+                            </div>
+
+                            <small>78% do orçamento</small>
+                        </div>
+
+                        <div class="category">
+                            <div class="category-top">
+                                <span>
+                                    <i class="category-dot orange"></i>
+                                    Alimentação
+                                </span>
+                                <strong>R$ 950</strong>
+                            </div>
+
+                            <div class="progress">
+                                <span class="orange-progress" style="width: 62%"></span>
+                            </div>
+
+                            <small>62% do orçamento</small>
+                        </div>
+
+                        <div class="category">
+                            <div class="category-top">
+                                <span>
+                                    <i class="category-dot purple"></i>
+                                    Lazer
+                                </span>
+                                <strong>R$ 620</strong>
+                            </div>
+
+                            <div class="progress">
+                                <span class="purple-progress" style="width: 45%"></span>
+                            </div>
+
+                            <small>45% do orçamento</small>
+                        </div>
+
+                        <div class="category">
+                            <div class="category-top">
+                                <span>
+                                    <i class="category-dot green"></i>
+                                    Transporte
+                                </span>
+                                <strong>R$ 480</strong>
+                            </div>
+
+                            <div class="progress">
+                                <span class="green-progress" style="width: 38%"></span>
+                            </div>
+
+                            <small>38% do orçamento</small>
+                        </div>
+
+                    </div>
+                </article>
+
+            </section>
+
+            <!-- Transações -->
+            <section class="panel transactions-panel" id="transactions">
+
+                <div class="panel-header">
+                    <div>
+                        <h2>Transações recentes</h2>
+                        <p>Últimas movimentações da sua conta</p>
+                    </div>
+
+                    <button class="text-button" id="clearTransactions">
+                        Limpar
+                    </button>
+                </div>
+
+                <div class="transaction-list" id="transactionList">
+
+                    <div class="transaction">
+                        <div class="transaction-icon income">↗</div>
+
+                        <div class="transaction-info">
+                            <strong>Salário</strong>
+                            <span>Hoje • Receita</span>
+                        </div>
+
+                        <strong class="transaction-value income-text">
+                            + R$ 8.500,00
+                        </strong>
+                    </div>
+
+                    <div class="transaction">
+                        <div class="transaction-icon expense">🛒</div>
+
+                        <div class="transaction-info">
+                            <strong>Supermercado</strong>
+                            <span>Ontem • Alimentação</span>
+                        </div>
+
+                        <strong class="transaction-value">
+                            - R$ 385,40
+                        </strong>
+                    </div>
+
+                    <div class="transaction">
+                        <div class="transaction-icon expense">🚗</div>
+
+                        <div class="transaction-info">
+                            <strong>Combustível</strong>
+                            <span>28 Set • Transporte</span>
+                        </div>
+
+                        <strong class="transaction-value">
+                            - R$ 240,00
+                        </strong>
+                    </div>
+
+                    <div class="transaction">
+                        <div class="transaction-icon income">↗</div>
+
+                        <div class="transaction-info">
+                            <strong>Freelance</strong>
+                            <span>27 Set • Receita</span>
+                        </div>
+
+                        <strong class="transaction-value income-text">
+                            + R$ 1.200,00
+                        </strong>
+                    </div>
+
+                </div>
+
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal">
+
+        <div class="modal">
+
+            <div class="modal-header">
+                <div>
+                    <h2>Nova transação</h2>
+                    <p>Adicione uma entrada ou saída.</p>
+                </div>
+
+                <button class="close-button" id="closeModal">×</button>
+            </div>
+
+            <form id="transactionForm">
+
+                <div class="form-group">
+                    <label for="description">Descrição</label>
+                    <input
+                        type="text"
+                        id="description"
+                        placeholder="Ex.: Conta de energia"
+                        required
+                    >
+                </div>
+
+                <div class="form-row">
+
+                    <div class="form-group">
+                        <label for="amount">Valor</label>
+                        <input
+                            type="number"
+                            id="amount"
+                            placeholder="0,00"
+                            min="0.01"
+                            step="0.01"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="type">Tipo</label>
+
+                        <select id="type">
+                            <option value="expense">Despesa</option>
+                            <option value="income">Receita</option>
+                        </select>
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+                    <label for="category">Categoria</label>
+
+                    <select id="category">
+                        <option>Alimentação</option>
+                        <option>Moradia</option>
+                        <option>Transporte</option>
+                        <option>Lazer</option>
+                        <option>Saúde</option>
+                        <option>Educação</option>
+                        <option>Outros</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="submit-button">
+                    Adicionar transação
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <script src="js/script.js"></script>
+<script src="script.js"></script></body>
+</html>
