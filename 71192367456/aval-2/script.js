@@ -1,18 +1,11 @@
-let numero = 17;
+let meuArray = [];
 
-switch (numero) {
-    case 53:
-        console.log("O valor é igual a 53");
-        break;
+meuArray.unshift(1);
+meuArray.unshift(8);
+meuArray.unshift(3);
 
-    case 10:
-        console.log("O valor é igual a 10");
-        break;
+console.log(meuArray);
 
-    case 15:
-        console.log("O valor é igual a 15");
-        break;
+meuArray.shift();
 
-    default:
-        console.log("Não tenho um case para o valor especificado");
-\}$0
+console.log(meuArray);
