@@ -1,0 +1,425 @@
+/* ============ RESET ============ */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --bg: #0a0a18;
+    --bg-card: #14142b;
+    --bg-item: #1e1e3a;
+    --border: #2a2a4a;
+    --text: #eaeaf5;
+    --text-muted: #9a9ab5;
+    --accent: #00d2ff;
+    --accent-2: #7b2ff7;
+    --success: #22c55e;
+    --danger: #ef4444;
+    --warn: #facc15;
+    --gradient: linear-gradient(135deg, #00d2ff 0%, #7b2ff7 100%);
+}
+
+html, body { min-height: 100vh; }
+
+body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem;
+    overflow-x: hidden;
+    position: relative;
+}
+
+.fundo-decorativo {
+    position: fixed;
+    inset: 0;
+    background:
+        radial-gradient(circle at 20% 15%, rgba(0, 210, 255, 0.12), transparent 55%),
+        radial-gradient(circle at 80% 85%, rgba(123, 47, 247, 0.12), transparent 55%);
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* ============ HEADER ============ */
+header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+header h1 {
+    font-family: 'Poppins', sans-serif;
+    font-size: clamp(2rem, 6vw, 3rem);
+    letter-spacing: 1px;
+    margin-bottom: 0.5rem;
+}
+
+.gradient-text {
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+header p {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+}
+
+/* ============ CONTAINER ============ */
+.container-jogo {
+    background: var(--bg-card);
+    padding: 2rem;
+    border-radius: 24px;
+    border: 1px solid var(--border);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    width: 100%;
+    max-width: 720px;
+    animation: fadeInUp 0.6s ease;
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ============ INFO TOPO ============ */
+.info-topo {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 10px;
+    margin-bottom: 1.2rem;
+}
+
+.info-item {
+    background: var(--bg-item);
+    padding: 10px 14px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.info-label {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+}
+
+.info-valor {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--accent);
+}
+
+.info-valor.dica { color: var(--warn); }
+
+/* ============ PLACAR ============ */
+.placar {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 1.5rem;
+}
+
+.placar-item {
+    background: var(--bg-item);
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    text-align: center;
+}
+
+.placar-label {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.placar-valor {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text);
+}
+
+/* ============ ÁREA DO JOGO ============ */
+.area-jogo {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 1.5rem;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+/* Boneco */
+.forca-container {
+    background: var(--bg-item);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.forca-svg {
+    width: 100%;
+    max-width: 180px;
+    height: auto;
+}
+
+.linha-base {
+    stroke: var(--text-muted);
+    stroke-width: 5;
+    stroke-linecap: round;
+    opacity: 0.6;
+}
+
+.parte {
+    stroke: var(--danger);
+    stroke-width: 5;
+    stroke-linecap: round;
+    fill: none;
+    opacity: 0;
+    transition: opacity 0.4s;
+}
+
+.parte.visivel {
+    opacity: 1;
+    animation: aparecerParte 0.4s ease;
+}
+
+@keyframes aparecerParte {
+    from { opacity: 0; transform: scale(0.6); }
+    to   { opacity: 1; transform: scale(1); }
+}
+
+.vidas {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+}
+
+.vidas-label { color: var(--text-muted); font-weight: 600; }
+
+.vidas-valor {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 800;
+    font-size: 1.2rem;
+    color: var(--success);
+    transition: color 0.3s;
+}
+
+.vidas-valor.baixo { color: var(--warn); }
+.vidas-valor.critico { color: var(--danger); }
+
+/* Palavra */
+.palavra-area {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+}
+
+.palavra {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+}
+
+.letra-slot {
+    width: 38px;
+    height: 48px;
+    border-bottom: 3px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--accent);
+    transition: all 0.3s;
+}
+
+.letra-slot.revelada {
+    color: var(--success);
+    border-color: var(--success);
+    animation: popIn 0.35s ease;
+}
+
+@keyframes popIn {
+    0%   { transform: scale(0); opacity: 0; }
+    60%  { transform: scale(1.15); }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.letra-slot.espaco { border-bottom-color: transparent; }
+
+.mensagem {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    min-height: 1.5em;
+    color: var(--text-muted);
+    text-align: center;
+    transition: color 0.3s;
+}
+
+.mensagem.vitoria { color: var(--success); }
+.mensagem.derrota { color: var(--danger); }
+
+/* ============ TECLADO ============ */
+.teclado {
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    gap: 6px;
+    margin-bottom: 1.5rem;
+}
+
+.tecla {
+    aspect-ratio: 1 / 1;
+    background: var(--bg-item);
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tecla:hover:not(:disabled) {
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 210, 255, 0.2);
+}
+
+.tecla:active:not(:disabled) { transform: translateY(0); }
+
+.tecla.acerto {
+    background: var(--success);
+    border-color: var(--success);
+    color: #fff;
+    animation: acerto 0.4s ease;
+}
+
+.tecla.erro {
+    background: var(--danger);
+    border-color: var(--danger);
+    color: #fff;
+    animation: erro 0.4s ease;
+}
+
+.tecla:disabled { cursor: not-allowed; opacity: 0.6; }
+
+@keyframes acerto {
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.15); }
+}
+
+@keyframes erro {
+    0%, 100% { transform: translateX(0); }
+    25%      { transform: translateX(-4px); }
+    75%      { transform: translateX(4px); }
+}
+
+/* ============ AÇÕES ============ */
+.acoes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.btn-primario, .btn-secundario {
+    padding: 14px 20px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 700;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+}
+
+.btn-primario {
+    background: var(--gradient);
+    color: #fff;
+    box-shadow: 0 6px 20px rgba(0, 210, 255, 0.3);
+}
+
+.btn-primario:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px rgba(0, 210, 255, 0.5);
+}
+
+.btn-secundario {
+    background: transparent;
+    color: var(--text);
+    border: 2px solid var(--border);
+}
+
+.btn-secundario:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: translateY(-2px);
+}
+
+/* ============ FOOTER ============ */
+footer {
+    margin-top: auto;
+    padding: 2rem 1rem 0;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    text-align: center;
+}
+
+kbd {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-family: monospace;
+    font-size: 0.8rem;
+    color: var(--text);
+}
+
+/* ============ RESPONSIVO ============ */
+@media (max-width: 640px) {
+    body { padding: 1rem 0.75rem; }
+    .container-jogo { padding: 1.25rem; border-radius: 18px; }
+
+    .area-jogo {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .forca-container { padding: 0.75rem; }
+    .forca-svg { max-width: 140px; }
+
+    .teclado { grid-template-columns: repeat(7, 1fr); gap: 4px; }
+    .tecla { font-size: 0.85rem; border-radius: 8px; }
+
+    .letra-slot { width: 28px; height: 40px; font-size: 1.2rem; }
+    .letra-slot.espaco { width: 14px; }
+
+    .placar-valor { font-size: 1.2rem; }
+}
