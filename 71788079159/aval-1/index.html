@@ -1,300 +1,165 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Slide - Grafos</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slide - Grafos</title>
 
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-    body {
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: #111827;
-      font-family: Arial, sans-serif;
-    }
+        body {
+            background: #111827;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
 
-    .slide {
-      width: 1280px;
-      height: 720px;
-      padding: 55px 70px;
-      position: relative;
-      overflow: hidden;
-      color: white;
-      background:
-        radial-gradient(circle at 85% 15%, #2563eb55, transparent 30%),
-        linear-gradient(135deg, #0f172a, #172554);
-    }
+        .slide {
+            width: 1280px;
+            height: 720px;
+            background: #ffffff;
+            padding: 55px 75px;
+            position: relative;
+            overflow: hidden;
+        }
 
-    /* Cabeçalho */
-    .header {
-      border-left: 6px solid #38bdf8;
-      padding-left: 20px;
-      margin-bottom: 35px;
-    }
+        h1 {
+            color: #2563eb;
+            font-size: 52px;
+            margin-bottom: 12px;
+        }
 
-    .header h1 {
-      font-size: 58px;
-      color: #38bdf8;
-      letter-spacing: 2px;
-    }
+        .subtitulo {
+            color: #4b5563;
+            font-size: 22px;
+            margin-bottom: 35px;
+        }
 
-    .header p {
-      font-size: 22px;
-      color: #cbd5e1;
-      margin-top: 5px;
-    }
+        .conteudo {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
 
-    /* Conteúdo */
-    .content {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 45px;
-    }
+        .card {
+            background: #f3f6fb;
+            border-left: 6px solid #2563eb;
+            padding: 22px;
+            border-radius: 10px;
+        }
 
-    .card {
-      background: #ffffff0d;
-      border: 1px solid #ffffff1c;
-      border-radius: 20px;
-      padding: 28px;
-      backdrop-filter: blur(8px);
-    }
+        .card h2 {
+            color: #1e40af;
+            font-size: 25px;
+            margin-bottom: 12px;
+        }
 
-    .card h2 {
-      font-size: 28px;
-      color: #7dd3fc;
-      margin-bottom: 18px;
-    }
+        .card p,
+        .card li {
+            color: #374151;
+            font-size: 18px;
+            line-height: 1.5;
+        }
 
-    .card p {
-      font-size: 21px;
-      line-height: 1.5;
-      color: #e2e8f0;
-    }
+        ul {
+            padding-left: 22px;
+        }
 
-    .items {
-      margin-top: 20px;
-      display: grid;
-      gap: 12px;
-    }
+        .aplicacoes {
+            grid-column: span 2;
+            background: #eff6ff;
+            border-left-color: #16a34a;
+        }
 
-    .item {
-      padding: 13px 16px;
-      background: #0f172acc;
-      border-radius: 12px;
-      font-size: 19px;
-    }
+        .exemplo {
+            margin-top: 25px;
+            text-align: center;
+            font-size: 30px;
+            color: #1f2937;
+        }
 
-    .item strong {
-      color: #38bdf8;
-    }
+        .grafo {
+            margin-top: 10px;
+            font-size: 42px;
+            color: #2563eb;
+            font-weight: bold;
+        }
 
-    /* Grafo */
-    .graph {
-      height: 270px;
-      position: relative;
-      margin-top: 10px;
-    }
-
-    .node {
-      position: absolute;
-      width: 55px;
-      height: 55px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      border-radius: 50%;
-      background: #2563eb;
-      border: 4px solid #7dd3fc;
-      font-size: 20px;
-      font-weight: bold;
-      box-shadow: 0 0 20px #38bdf855;
-      z-index: 2;
-    }
-
-    .a { left: 45%; top: 10px; }
-    .b { left: 18%; top: 105px; }
-    .c { left: 70%; top: 105px; }
-    .d { left: 25%; top: 200px; }
-    .e { left: 65%; top: 200px; }
-
-    .line {
-      position: absolute;
-      height: 4px;
-      background: #38bdf8;
-      transform-origin: left center;
-      z-index: 1;
-    }
-
-    .ab {
-      width: 120px;
-      left: 43%;
-      top: 48px;
-      transform: rotate(150deg);
-    }
-
-    .ac {
-      width: 125px;
-      left: 48%;
-      top: 48px;
-      transform: rotate(30deg);
-    }
-
-    .bc {
-      width: 190px;
-      left: 23%;
-      top: 130px;
-    }
-
-    .bd {
-      width: 105px;
-      left: 25%;
-      top: 150px;
-      transform: rotate(55deg);
-    }
-
-    .ce {
-      width: 105px;
-      left: 72%;
-      top: 150px;
-      transform: rotate(125deg);
-    }
-
-    .de {
-      width: 170px;
-      left: 30%;
-      top: 225px;
-      transform: rotate(-8deg);
-    }
-
-    /* Aplicações */
-    .applications {
-      grid-column: 1 / 3;
-      display: flex;
-      gap: 15px;
-    }
-
-    .app {
-      flex: 1;
-      text-align: center;
-      padding: 18px;
-      border-radius: 15px;
-      background: #ffffff0d;
-      border: 1px solid #ffffff1a;
-      font-size: 18px;
-    }
-
-    .app span {
-      display: block;
-      font-size: 30px;
-      margin-bottom: 8px;
-    }
-
-    .footer {
-      position: absolute;
-      bottom: 22px;
-      right: 45px;
-      color: #64748b;
-      font-size: 14px;
-    }
-  </style>
+        .rodape {
+            position: absolute;
+            bottom: 22px;
+            right: 45px;
+            color: #9ca3af;
+            font-size: 14px;
+        }
+    </style>
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="style.css" rel="stylesheet"></head>
+</head>
 
 <body>
 
-  <main class="slide">
+    <div class="slide">
 
-    <header class="header">
-      <h1>GRAFOS</h1>
-      <p>Estruturas de Dados e suas Conexões</p>
-    </header>
+        <h1>GRAFOS</h1>
 
-    <section class="content">
-
-      <div class="card">
-        <h2>🔵 O que é um Grafo?</h2>
-
-        <p>
-          Um <strong>grafo</strong> é uma estrutura de dados
-          usada para representar objetos e as relações entre eles.
+        <p class="subtitulo">
+            Estruturas usadas para representar relações e conexões entre elementos.
         </p>
 
-        <div class="items">
-          <div class="item">
-            🔵 <strong>Vértices:</strong> representam os elementos.
-          </div>
+        <div class="conteudo">
 
-          <div class="item">
-            🔗 <strong>Arestas:</strong> representam as conexões.
-          </div>
-        </div>
-      </div>
+            <div class="card">
+                <h2>🔹 Principais elementos</h2>
+                <ul>
+                    <li><strong>Vértices:</strong> representam os elementos.</li>
+                    <li><strong>Arestas:</strong> representam as conexões.</li>
+                    <li><strong>Grau:</strong> quantidade de conexões de um vértice.</li>
+                    <li><strong>Caminho:</strong> sequência de vértices conectados.</li>
+                </ul>
+            </div>
 
+            <div class="card">
+                <h2>🔹 Tipos de grafos</h2>
+                <ul>
+                    <li><strong>Direcionado:</strong> possui direção.</li>
+                    <li><strong>Não direcionado:</strong> não possui direção.</li>
+                    <li><strong>Ponderado:</strong> possui valores nas arestas.</li>
+                </ul>
+            </div>
 
-      <div class="card">
-        <h2>🔗 Exemplo de Grafo</h2>
-
-        <div class="graph">
-
-          <!-- Conexões -->
-          <div class="line ab"></div>
-          <div class="line ac"></div>
-          <div class="line bc"></div>
-          <div class="line bd"></div>
-          <div class="line ce"></div>
-          <div class="line de"></div>
-
-          <!-- Vértices -->
-          <div class="node a">A</div>
-          <div class="node b">B</div>
-          <div class="node c">C</div>
-          <div class="node d">D</div>
-          <div class="node e">E</div>
+            <div class="card aplicacoes">
+                <h2>💡 Aplicações</h2>
+                <p>
+                    Redes sociais • GPS e mapas • Redes de computadores •
+                    Sistemas de recomendação • Logística
+                </p>
+            </div>
 
         </div>
-      </div>
 
-
-      <div class="applications">
-
-        <div class="app">
-          <span>📍</span>
-          GPS e mapas
+        <div class="exemplo">
+            <strong>Exemplo:</strong>
+            <div class="grafo">
+                ● ───── ● ───── ●
+            </div>
+            <small>
+                Vértices = ● &nbsp;&nbsp; | &nbsp;&nbsp; Arestas = ─
+            </small>
         </div>
 
-        <div class="app">
-          <span>👥</span>
-          Redes sociais
+        <div class="rodape">
+            Estruturas de Dados — Grafos
         </div>
 
-        <div class="app">
-          <span>🌐</span>
-          Internet
-        </div>
-
-        <div class="app">
-          <span>🎬</span>
-          Recomendações
-        </div>
-
-      </div>
-
-    </section>
-
-    <div class="footer">
-      Estruturas de Dados • Grafos
     </div>
 
-  </main>
-
-<script src="script.js"></script></body>
+</body>
 </html>
