@@ -1,0 +1,97 @@
+
+/* Array que vai guardar o conjunto de todas as tarefas */
+let tarefas = [];
+
+// Função para validar os dados da tarefa
+function validarDadosTarefa(titulo, prioridade) {
+    if (titulo.length < 5) {
+        throw new Error('O título deve ter no mínimo 5 caracteres');
+    }
+
+    if (prioridade < 1 || prioridade > 3) {
+        throw new Error('Informe uma prioridade entre 1 e 3');
+    }
+}
+
+// Cadastrar uma nova tarefa
+function cadastrarTarefa(titulo, prioridade) {
+    validarDadosTarefa(titulo, prioridade);
+
+    let tarefa = {
+        titulo: titulo,
+        prioridade: prioridade,
+        concluida: false
+    };
+
+    tarefas.push(tarefa);
+
+    console.log('Tarefa cadastrada com sucesso!');
+}
+
+// Listar todas as tarefas
+function listarTarefas() {
+    if (tarefas.length === 0) {
+        console.log('Nenhuma tarefa cadastrada.');
+        return;
+    }
+
+    console.log('--- Lista de Tarefas ---');
+
+    tarefas.forEach((tarefa, indice) => {
+        console.log(
+            (indice + 1) + '. ' +
+            tarefa.titulo +
+            ' | Prioridade: ' + tarefa.prioridade +
+            ' | Concluída: ' + (tarefa.concluida ? 'Sim' : 'Não')
+        );
+    });
+}
+
+// Marcar uma tarefa como concluída
+function concluirTarefa(indice) {
+    if (indice < 0 || indice >= tarefas.length) {
+        throw new Error('Tarefa não encontrada.');
+    }
+
+    tarefas[indice].concluida = true;
+
+    console.log('Tarefa marcada como concluída!');
+}
+
+// Alterar a prioridade de uma tarefa
+function alterarPrioridade(indice, novaPrioridade) {
+    if (indice < 0 || indice >= tarefas.length) {
+        throw new Error('Tarefa não encontrada.');
+    }
+
+    if (novaPrioridade < 1 || novaPrioridade > 3) {
+        throw new Error('Informe uma prioridade entre 1 e 3');
+    }
+
+    tarefas[indice].prioridade = novaPrioridade;
+
+    console.log('Prioridade alterada com sucesso!');
+}
+
+
+/* Testes do Algoritmo */
+
+// Cadastrar tarefas
+cadastrarTarefa('Cadastrar projeto', 3);
+cadastrarTarefa('Fazer atividade', 1);
+cadastrarTarefa('Estudar JavaScript', 2);
+
+// Listar tarefas
+listarTarefas();
+
+// Concluir a primeira tarefa
+concluirTarefa(0);
+
+// Alterar a prioridade da segunda tarefa
+alterarPrioridade(1, 2);
+
+// Listar novamente
+listarTarefas();
+
+
+
