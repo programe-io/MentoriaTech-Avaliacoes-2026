@@ -1,0 +1,35 @@
+<!DOCTYPE>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>CacheiaFeed</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>CacheiaFeed | Yasmim Costa</header>
+
+<main>
+    <h1> Meu MiniFeed</h1>
+
+    <div class="criar">
+        <textarea id="texto" placeholder="O que você quer compartilhar?"></textarea>
+        <button onclick="postar()">Publicar</button>
+    </div>
+
+    <div id="feed">
+
+        <div class="post">
+            <b> Yasmim Costa</b>
+            <p>Hoje cuidei dos meus cachos! </p>
+            <img src="https://images.unsplash.com/photo-1580618672591-eb180b1a973f?auto=format&fit=crop&w=700&q=80">
+            <button onclick="curtir(this)"> 10</button>
+            <button> 2</button>
+        </div>
+
+    </div>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>
