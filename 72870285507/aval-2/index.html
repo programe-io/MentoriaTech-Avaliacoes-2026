@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Catálogo do Multiverso de AUs de Undertale com datas de criação, sinopses e curiosidades.">
+  <title>Undertale AU Multiverse Vault</title>
+  
+  <!-- Fontes Google (Poppins para leitura + Press Start 2P para estilo retro) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;900&family=Press+Start+2P&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-dark: #07080c;
+      --card-bg: #101420;
+      --card-border: #202738;
+      --text-light: #f1f5f9;
+      --text-muted: #94a3b8;
+      --gold-accent: #ffcc00;
+      --red-soul: #ff2b2b;
+      --purple-void: #9933ff;
+      --blue-magic: #0099ff;
+      --green-kindness: #2ecc71;
+      --orange-bravery: #e67e22;
+      --font-family: 'Poppins', sans-serif;
+      --font-pixel: 'Press Start 2P', monospace;
+      --transition-speed: 0.3s;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-family);
+      background-color: var(--bg-dark);
+      color: var(--text-light);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      background: linear-gradient(180deg, rgba(153, 51, 255, 0.15) 0%, rgba(7, 8, 12, 1) 100%);
+      padding: 2.5rem 1.5rem 1.5rem;
+      border-bottom: 2px solid var(--card-border);
+    }
+
+    .header-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .logo-area {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .logo-title {
+      font-size: 2.2rem;
+      font-weight: 900;
+      letter-spacing: 2px;
+      color: var(--text-light);
+      text-transform: uppercase;
+    }
+
+    .logo-title span {
+      color: var(--red-soul);
+      text-shadow: 0 0 12px rgba(255, 43, 43, 0.7);
+    }
+
+    .logo-subtitle {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-top: 0.4rem;
+    }
+
+    .controls-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: space-between;
+      align-items: center;
+      background-color: var(--card-bg);
+      padding: 1rem 1.5rem;
+      border-radius: 12px;
+      border: 1px solid var(--card-border);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 260px;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background-color: var(--bg-dark);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      color: var(--text-light);
+      font-family: var(--font-family);
+      font-size: 0.95rem;
+      transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
+    }
+
+    .search-box input:focus {
+      outline: none;
+      border-color: var(--purple-void);
+      box-shadow: 0 0 10px rgba(153, 51, 255, 0.4);
+    }
+
+    .filters-group {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .filters-group select {
+      padding: 0.75rem 1rem;
+      background-color: var(--bg-dark);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      color: var(--text-light);
+      font-family: var(--font-family);
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: border-color var(--transition-speed);
+    }
+
+    .filters-group select:focus {
+      outline: none;
+      border-color: var(--purple-void);
+    }
+
+    .main-container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+      flex: 1;
+      width: 100%;
+    }
+
+    .aus-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.8rem;
+    }
+
+    .au-card {
+      background-color: var(--card-bg);
+      border-radius: 12px;
+      border: 1px solid var(--card-border);
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform var(--transition-speed), box-shadow var(--transition-speed), border-color var(--transition-speed);
+      display: flex;
+      flex-direction: column;
+      animation: fadeIn 0.4s ease-in-out;
+    }
+
+    .au-card:hover {
+      transform: translateY(-6px);
+      border-color: var(--gold-accent);
+      box-shadow: 0 10px 20px rgba(255, 204, 0, 0.25);
+    }
+
+    .card-image-wrapper {
+      position: relative;
+      width: 100%;
+      height: 190px;
+      background-color: #0d101a;
+      overflow: hidden;
+    }
+
+    .card-image-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+
+    .au-card:hover .card-image-wrapper img {
+      transform: scale(1.08);
+    }
+
+    /* Category Badges */
+    .category-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      padding: 0.3rem 0.7rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      border-radius: 20px;
+      color: #fff;
+      letter-spacing: 0.5px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);
+    }
+
+    .cat-swap { background-color: var(--blue-magic); }
+    .cat-dark { background-color: var(--red-soul); }
+    .cat-horror { background-color: #8b0000; }
+    .cat-multiverse { background-color: var(--purple-void); }
+    .cat-action { background-color: var(--orange-bravery); }
+    .cat-sci-fi { background-color: #008080; }
+    .cat-story { background-color: #6c5ce7; }
+    .cat-canon { background-color: var(--green-kindness); }
+
+    .card-content {
+      padding: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .card-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.3rem;
+      color: var(--text-light);
+    }
+
+    .card-meta {
+      font-size: 0.85rem;
+      color: var(--gold-accent);
+      margin-bottom: 0.8rem;
+      font-weight: 600;
+    }
+
+    .card-synopsis-preview {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      margin-bottom: 1rem;
+    }
+
+    .card-footer {
+      margin-top: auto;
+      font-size: 0.85rem;
+      color: var(--purple-void);
+      font-weight: 600;
+    }
+
+    .no-results {
+      text-align: center;
+      padding: 4rem 1rem;
+      color: var(--text-muted);
+      font-size: 1.2rem;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      padding: 1.5rem;
+      transition: opacity 0.3s ease;
+    }
+
+    .modal.hidden {
+      display: none;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .modal-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(6px);
+    }
+
+    .modal-content {
+      position: relative;
+      background-color: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      width: 100%;
+      max-width: 750px;
+      max-height: 90vh;
+      overflow-y: auto;
+      z-index: 1001;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
+      animation: modalUp 0.3s ease-out;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      background: rgba(0, 0, 0, 0.6);
+      border: none;
+      color: var(--text-light);
+      font-size: 2rem;
+      cursor: pointer;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1002;
+      transition: background-color var(--transition-speed);
+    }
+
+    .modal-close:hover {
+      background-color: var(--red-soul);
+    }
+
+    .modal-body {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-image-container {
+      position: relative;
+      width: 100%;
+      height: 300px;
+      background-color: #0d101a;
+    }
+
+    .modal-image-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .modal-info {
+      padding: 2rem;
+    }
+
+    .modal-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: var(--text-light);
+    }
+
+    .modal-meta {
+      display: flex;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+      font-size: 0.95rem;
+      color: var(--gold-accent);
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 1rem;
+    }
+
+    .modal-section {
+      margin-bottom: 1.5rem;
+    }
+
+    .modal-section h3 {
+      font-size: 1.1rem;
+      color: var(--purple-void);
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .modal-synopsis {
+      color: var(--text-light);
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
+
+    .curiosities-list {
+      list-style: none;
+    }
+
+    .curiosities-list li {
+      position: relative;
+      padding-left: 1.5rem;
+      margin-bottom: 0.6rem;
+      font-size: 0.92rem;
+      color: var(--text-muted);
+    }
+
+    .curiosities-list li::before {
+      content: "❤";
+      position: absolute;
+      left: 0;
+      color: var(--red-soul);
+      font-size: 0.8rem;
+    }
+
+    /* Footer & Animations */
+    .footer {
+      text-align: center;
+      padding: 2rem;
+      border-top: 1px solid var(--card-border);
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin-top: 3rem;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes modalUp {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    @media (max-width: 600px) {
+      .logo-title { font-size: 1.7rem; }
+      .controls-bar { flex-direction: column; align-items: stretch; }
+      .filters-group { flex-direction: column; }
+      .modal-meta { flex-direction: column; gap: 0.3rem; }
+      .modal-image-container { height: 200px; }
+    }
+  </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+  <header class="header">
+    <div class="header-container">
+      <div class="logo-area">
+        <h1 class="logo-title">UNDERTALE <span>AUs</span></h1>
+        <p class="logo-subtitle">Explorando o Multiverso e os Universos Alternativos da Comunidade</p>
+      </div>
+
+      <div class="controls-bar">
+        <div class="search-box">
+          <input 
+            type="text" 
+            id="search-input" 
+            placeholder="Buscar por nome, criador ou curiosidade..." 
+            aria-label="Buscar AU"
+          >
+        </div>
+
+        <div class="filters-group">
+          <select id="category-filter" aria-label="Filtrar por categoria">
+            <option value="all">Todas as Categorias</option>
+            <option value="swap">Troca de Papéis (Swap)</option>
+            <option value="dark">Sombrias & Genocidas</option>
+            <option value="horror">Horror</option>
+            <option value="multiverse">Protetores & Entidades</option>
+            <option value="action">Ação & Shonen</option>
+            <option value="sci-fi">Sci-Fi & Cósmico</option>
+            <option value="story">História & Dramáticas</option>
+            <option value="canon">Oficial / Canon</option>
+          </select>
+
+          <select id="sort-order" aria-label="Ordenar AUs">
+            <option value="oldest">Mais Antigas Primeiro</option>
+            <option value="newest">Mais Recentes Primeiro</option>
+            <option value="alpha">Ordem Alfabética (A-Z)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-container">
+    <div id="aus-grid" class="aus-grid"></div>
+    
+    <div id="no-results" class="no-results hidden">
+      <p>Nenhuma AU encontrada para a sua busca no Multiverso.</p>
+    </div>
+  </main>
+
+  <div id="au-modal" class="modal hidden" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal-overlay" id="modal-overlay"></div>
+    <div class="modal-content">
+      <button class="modal-close" id="modal-close" aria-label="Fechar modal">&times;</button>
+      
+      <div class="modal-body">
+        <div class="modal-image-container">
+          <img id="modal-image" src="" alt="">
+          <span id="modal-category-badge" class="category-badge"></span>
+        </div>
+        
+        <div class="modal-info">
+          <h2 id="modal-title" class="modal-title"></h2>
+          
+          <div class="modal-meta">
+            <p><strong>Criador:</strong> <span id="modal-creator"></span></p>
+            <p><strong>Criação:</strong> <span id="modal-date"></span></p>
+          </div>
+
+          <div class="modal-section">
+            <h3>Sinopse da AU</h3>
+            <p id="modal-synopsis" class="modal-synopsis"></p>
+          </div>
+
+          <div class="modal-section">
+            <h3>Curiosidades Multiversais</h3>
+            <ul id="modal-curiosities" class="curiosities-list"></ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>&copy; Undertale AU Vault — Feito por fãs com Determinação ❤</p>
+  </footer>
+
+  <script>
+    /* ==========================================================================
+       DATASET COM CAMINHOS DE IMAGEM FACILMENTE SUBSTITUÍVEIS
+       ========================================================================== */
+    const undertaleAUs = [
+      {
+        id: "underswap",
+        title: "Underswap",
+        creator: "Popcross Studios / Hatsune Miku (Comunidade)",
+        releaseDate: "2015-11-01",
+        category: "swap",
+        // 🔴 SUBSTiTUA AQUI PELO CAMINHO DA SUA IMAGEM LOCAL OU URL:
+        image: "https://undertale-au.fandom.com/wiki/Underswap_MH", 
+        synopsis: "Uma das AUs mais famosas, onde os papéis e personalidades de pares de personagens são trocados mantendo suas essências originais (ex: Sans troca com Papyrus, Toriel com Asgore, Alphys com Undyne).",
+        curiosities: [
+          "A versão de Sans em Underswap é carinhosamente apelidada pela comunidade de 'Blueberry'.",
+          "Foi uma das primeiras grandes AUs criadas logo após o lançamento do jogo original em 2015.",
+          "Apesar das trocas de papéis, as relações fundamentais de parentesco e amizade permanecem intactas."
+        ]
+      },
+      {
+        id: "underfell",
+        title: "Underfell",
+        creator: "Vic the Slick",
+        releaseDate: "2015-10-25",
+        category: "dark",
+        // 🔴 SUBSTiTUA AQUI:
+        image: "assets/underfell.png", 
+        synopsis: "Um universo sombrio e opressivo onde a regra do Subsolo é 'matar ou morrer'. Todos os monstros tornaram-se cruéis e violentos, vestindo preto e vermelho, enquanto Flowey/Frisk tentam guiar todos para a redenção.",
+        curiosities: [
+          "Flowey é o único personagem verdadeiramente bondoso desde o início nesta AU, agindo como companheiro de Frisk.",
+          "O design marcante focado nas cores preta, vermelha e dourada tornou-se um padrão estético de referência no fandom.",
+          "Inspirou dezenas de animações e fangames independentes no Game Jolt."
+        ]
+      },
+      {
+        id: "ink-sans",
+        title: "Ink!Sans (Inktale)",
+        creator: "Comet-Milt / Comyet",
+        releaseDate: "2016-01-15",
+        category: "multiverse",
+        // 🔴 SUBSTiTUA AQUI:
+        image: "assets/ink-sans.png", 
+        synopsis: "Ink!Sans não possui uma AU própria completa; ele existe no Void para proteger e apoiar a criação de novas AUs do Multiverso de Undertale, utilizando um pincel gigante chamado Broomie.",
+        curiosities: [
+          "Ink precisa beber tintas coloridas de frascos em seu peito para conseguir sentir emoções.",
+          "Ele não tem uma alma própria e esquece das coisas rapidamente quando fica sem suprimento de tinta.",
+          "É o líder e fundador defensivo do grupo comunitário 'The Star Sanes'."
+        ]
+      },
+      {
+        id: "error-sans",
+        title: "Error!Sans (Errortale)",
+        creator: "Crayon Queen (Loverofpiggies)",
+        releaseDate: "2016-02-05",
+        category: "multiverse",
+        // 🔴 SUBSTiTUA AQUI:
+        image: "assets/error-sans.png", 
+        synopsis: "Nascido de um glitch no código do jogo, Error considera todas as AUs como 'anomalias imundas' e dedica sua existência a destruí-las uma a uma usando cordas mágicas azuis.",
+        curiosities: [
+          "Error!Sans sofre de afefobia (medo extremo de ser tocado).",
+          "Possui uma rivalidade eterna e icônica contra Ink!Sans pelo destino das AUs.",
+          "Ele adora assistir novelas em sua dimensão vazia chamada 'Anti-Void'."
+        ]
+      },
+      {
+        id: "horrortale",
+        title: "Horrortale",
+        creator: "Sour-Apple-Studio",
+        releaseDate: "2016-04-12",
+        category: "horror",
+        // 🔴 SUBSTiTUA AQUI:
+        image: "assets/horrortale.png", 
+        synopsis: "Anos após uma Rota Neutra sem saída, a Rainha Undyne governa com mão de ferro. Os monstros do Subsolo estão famintos, enlouquecidos e recorrem ao canibalismo para sobreviver.",
+        curiosities: [
+          "A AU ganhou uma webcomic de grande sucesso e um jogo em formato Point-and-Click feito pelo criador.",
+          "Sans possui uma enorme rachadura no crânio causada por um confronto contra Undyne.",
+          "Frisk é substituído por uma garota humana com um vestido roxo chamada Aliza."
+        ]
+      },
+      {
+        id: "epictale",
+        title: "Epictale",
+        creator: "Yugobyte (Yugo)",
+        releaseDate: "2016-02-21",
+        category: "action",
+        // 🔴 SUBSTiTUA AQUI:
+        image: "assets/epictale.png", 
+        synopsis: "Uma versão focada em ação de grande escala e batalhas estilo anime Shonen. Epic!Sans é o cientista real com poder desmedido que enfrenta ameaças colossais junto de seu melhor amigo Epic!Papyrus.",
+        curiosities: [
+          "Famoso pelo bordão 'Bruh' dito por Epic!Sans em quase todas as frases.",
+          "Possui animações com qualidade cinematográfica produzidas pelo criador no YouTube.",
+          "O olho esquerdo de Epic!Sans brilha em uma cor roxa intensa alimentada por poder concentrado."
+        ]
+      },
+      {
+        id: "deltarune",
+        title: "Deltarune (Canon Alternate Universe)",
+        creator: "Toby Fox",
+        releaseDate: "2018-10-31",
+        category: "canon",
+        // 🔴 SUBSTiTUA AQUI:
+        image: "assets/deltarune.png", 
+        synopsis: "O jogo e universo paralelo oficial criado por Toby Fox. Kris, Susie e Ralsei viajam pelos Mundos das Sombras para selar as Fontes das Trevas e manter o equilíbrio entre Luz e Sombra.",
+        curiosities: [
+          "É um anagrama direto da palavra UNDERTALE.",
+          "Embora use vários personagens de Undertale em papéis diferentes, Toby Fox confirmou que é um universo à parte.",
+          "A ideia de Deltarune veio a Toby Fox em um sonho em 2011, antes mesmo de criar Undertale."
+        ]
+      },
+      {
+        id: "outertale",
+        title: "Outertale",
+        creator: "2pi (Mimi)",
+        releaseDate: "2015-12-10",
+        category: "sci-fi",
+        // 🔴 SUBSTiTUA AQUI:
+        image: "assets/outertale.png", 
+        synopsis: "Neste universo de ficção científica, os monstros foram banidos não para o fundo de uma montanha, mas para o Cinturão de Asteroides Ebott no espaço sideral.",
+        curiosities: [
+          "Possui uma das trilhas sonoras rearranged (remixadas) mais admiradas da comunidade.",
+          "Os trajes dos personagens possuem estética de astronautas estilizados em tons de azul e dourado estelar.",
+          "A história segue os mesmos eventos da Rota Pacifista do jogo original, porém com temática cósmica."
+        ]
+      },
+      {
+        id: "aftertale",
+        title: "Aftertale (Geno!Sans)",
+        creator: "Crayon Queen (Loverofpiggies)",
+        releaseDate: "2015-12-28",
+        category: "story",
+        // 🔴 SUBSTiTUA AQUI:
+        image: "assets/aftertale.png", 
+        synopsis: "Geno!Sans é um Sans que injetou Determinação para sobreviver ao golpe final da Rota Genocida, ficando preso no Menu do Jogo (Save Screen) enquanto tenta impedir futuros massacres.",
+        curiosities: [
+          "Deu origem a um dos quadrinhos em estilo mangá mais lidos do fandom de Undertale.",
+          "Geno!Sans usa o cachecol vermelho de seu falecido irmão Papyrus em sinal de luto constante.",
+          "Foi um elemento chave para a expansão da história do Multiverso."
+        ]
+      },
+      {
+        id: "dusttale",
+        title: "Dusttale (Murder!Sans)",
+        creator: "Osteophile / Ask-DustTale",
+        releaseDate: "2016-02-28",
+        category: "dark",
+        // 🔴 SUBSTiTUA AQUI:
+        image: "assets/dusttale.png", 
+        synopsis: "Após presenciar centenas de Rotas Genocidas seguidas sem conseguir impedir o humano, Sans ganha determinação para matar todos os monstros do Subsolo e acumular LV para vencer o humano.",
+        curiosities: [
+          "Sans é acompanhado pelo fantasma assustador de Papyrus, que só ele consegue ver e ouvir.",
+          "Seus olhos mudam para uma combinação de vermelho (Determinação) e azul (Magia).",
+          "É uma das AUs mais famosas e adaptadas em batalhas customizadas de jogos no estilo Fan Game."
+        ]
+      }
+    ];
+
+    const ausGrid = document.getElementById("aus-grid");
+    const searchInput = document.getElementById("search-input");
+    const categoryFilter = document.getElementById("category-filter");
+    const sortOrder = document.getElementById("sort-order");
+    const noResults = document.getElementById("no-results");
+
+    const modal = document.getElementById("au-modal");
+    const modalOverlay = document.getElementById("modal-overlay");
+    const modalClose = document.getElementById("modal-close");
+    const modalTitle = document.getElementById("modal-title");
+    const modalImage = document.getElementById("modal-image");
+    const modalCreator = document.getElementById("modal-creator");
+    const modalDate = document.getElementById("modal-date");
+    const modalSynopsis = document.getElementById("modal-synopsis");
+    const modalCuriosities = document.getElementById("modal-curiosities");
+    const modalCategoryBadge = document.getElementById("modal-category-badge");
+
+    function formatDate(dateString) {
+      const [year, month, day] = dateString.split("-");
+      return `${day}/${month}/${year}`;
+    }
+
+    function getCategoryLabel(category) {
+      switch (category) {
+        case "swap": return "Swap";
+        case "dark": return "Sombria";
+        case "horror": return "Horror";
+        case "multiverse": return "Multiverso";
+        case "action": return "Ação";
+        case "sci-fi": return "Sci-Fi";
+        case "story": return "História";
+        case "canon": return "Oficial";
+        default: return category;
+      }
+    }
+
+    // Fallback image generator if a local path is missing
+    function handleImageError(imgElement, title) {
+      imgElement.onerror = null;
+      imgElement.src = `https://placehold.co/600x400/101420/FF2B2B?text=${encodeURIComponent(title)}`;
+    }
+
+    function renderAUs(auList) {
+      ausGrid.innerHTML = "";
+
+      if (auList.length === 0) {
+        noResults.classList.remove("hidden");
+        return;
+      } else {
+        noResults.classList.add("hidden");
+      }
+
+      auList.forEach(au => {
+        const card = document.createElement("article");
+        card.className = "au-card";
+        card.setAttribute("data-id", au.id);
+
+        card.innerHTML = `
+          <div class="card-image-wrapper">
+            <img 
+              src="${au.image}" 
+              alt="${au.title}" 
+              loading="lazy"
+              onerror="handleImageError(this, '${au.title}')"
+            >
+            <span class="category-badge cat-${au.category}">${getCategoryLabel(au.category)}</span>
+          </div>
+          <div class="card-content">
+            <h2 class="card-title">${au.title}</h2>
+            <p class="card-meta">Por ${au.creator} (${formatDate(au.releaseDate)})</p>
+            <p class="card-synopsis-preview">${au.synopsis}</p>
+            <span class="card-footer">Explorar AU &rarr;</span>
+          </div>
+        `;
+
+        card.addEventListener("click", () => openModal(au.id));
+        ausGrid.appendChild(card);
+      });
+    }
+
+    function filterAndSortAUs() {
+      const searchTerm = searchInput.value.toLowerCase().trim();
+      const selectedCategory = categoryFilter.value;
+      const selectedSort = sortOrder.value;
+
+      let filtered = undertaleAUs.filter(au => {
+        const matchesSearch = au.title.toLowerCase().includes(searchTerm) ||
+                              au.creator.toLowerCase().includes(searchTerm) ||
+                              au.curiosities.some(c => c.toLowerCase().includes(searchTerm));
+        
+        const matchesCategory = selectedCategory === "all" || au.category === selectedCategory;
+
+        return matchesSearch && matchesCategory;
+      });
+
+      filtered.sort((a, b) => {
+        if (selectedSort === "oldest") {
+          return new Date(a.releaseDate) - new Date(b.releaseDate);
+        } else if (selectedSort === "newest") {
+          return new Date(b.releaseDate) - new Date(a.releaseDate);
+        } else if (selectedSort === "alpha") {
+          return a.title.localeCompare(b.title);
+        }
+        return 0;
+      });
+
+      renderAUs(filtered);
+    }
+
+    function openModal(auId) {
+      const au = undertaleAUs.find(item => item.id === auId);
+      if (!au) return;
+
+      modalTitle.textContent = au.title;
+      modalImage.src = au.image;
+      modalImage.alt = au.title;
+      modalImage.onerror = function() { handleImageError(this, au.title); };
+      
+      modalCreator.textContent = au.creator;
+      modalDate.textContent = formatDate(au.releaseDate);
+      modalSynopsis.textContent = au.synopsis;
+
+      modalCategoryBadge.textContent = getCategoryLabel(au.category);
+      modalCategoryBadge.className = `category-badge cat-${au.category}`;
+
+      modalCuriosities.innerHTML = "";
+      au.curiosities.forEach(curiosity => {
+        const li = document.createElement("li");
+        li.textContent = curiosity;
+        modalCuriosities.appendChild(li);
+      });
+
+      modal.classList.remove("hidden");
+      modal.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeModal() {
+      modal.classList.add("hidden");
+      modal.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "auto";
+    }
+
+    function init() {
+      searchInput.addEventListener("input", filterAndSortAUs);
+      categoryFilter.addEventListener("change", filterAndSortAUs);
+      sortOrder.addEventListener("change", filterAndSortAUs);
+
+      modalClose.addEventListener("click", closeModal);
+      modalOverlay.addEventListener("click", closeModal);
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && !modal.classList.contains("hidden")) {
+          closeModal();
+        }
+      });
+
+      filterAndSortAUs();
+    }
+
+    document.addEventListener("DOMContentLoaded", init);
+  </script>
+<script src="script.js"></script></body>
+</html>

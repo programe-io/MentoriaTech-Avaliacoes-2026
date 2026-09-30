@@ -1,0 +1,432 @@
+/* ==========================================================================
+   1. VARIÁVEIS E ESTILOS GLOBAIS
+   ========================================================================== */
+:root {
+  --bg-dark: #090A0F;
+  --card-bg: #121520;
+  --card-border: #22293A;
+  --text-light: #F1F5F9;
+  --text-muted: #94A3B8;
+  --gold-accent: #FFCC00;
+  --red-soul: #FF2B2B;
+  --purple-void: #9933FF;
+  --blue-magic: #0099FF;
+  --green-kindness: #2ECC71;
+  --orange-bravery: #E67E22;
+  --font-family: 'Poppins', sans-serif;
+  --font-pixel: 'Press Start 2P', monospace;
+  --transition-speed: 0.3s;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--bg-dark);
+  color: var(--text-light);
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ==========================================================================
+   2. CABEÇALHO E CONTROLES
+   ========================================================================== */
+.header {
+  background: linear-gradient(180deg, rgba(153, 51, 255, 0.15) 0%, rgba(9, 10, 15, 1) 100%);
+  padding: 2.5rem 1.5rem 1.5rem;
+  border-bottom: 2px solid var(--card-border);
+}
+
+.header-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.logo-area {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.logo-title {
+  font-size: 2.5rem;
+  font-weight: 900;
+  letter-spacing: 2px;
+  color: var(--text-light);
+  text-transform: uppercase;
+}
+
+.logo-title span {
+  color: var(--red-soul);
+  text-shadow: 0 0 12px rgba(255, 43, 43, 0.6);
+}
+
+.logo-subtitle {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  margin-top: 0.3rem;
+}
+
+/* Barra de Filtros e Busca */
+.controls-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--card-bg);
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  border: 1px solid var(--card-border);
+}
+
+.search-box {
+  flex: 1;
+  min-width: 260px;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background-color: var(--bg-dark);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  color: var(--text-light);
+  font-family: var(--font-family);
+  font-size: 0.95rem;
+  transition: border-color var(--transition-speed);
+}
+
+.search-box input:focus {
+  outline: none;
+  border-color: var(--purple-void);
+  box-shadow: 0 0 10px rgba(153, 51, 255, 0.4);
+}
+
+.filters-group {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.filters-group select {
+  padding: 0.75rem 1rem;
+  background-color: var(--bg-dark);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  color: var(--text-light);
+  font-family: var(--font-family);
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: border-color var(--transition-speed);
+}
+
+.filters-group select:focus {
+  outline: none;
+  border-color: var(--purple-void);
+}
+
+/* ==========================================================================
+   3. GRID DE CARDS
+   ========================================================================== */
+.main-container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1.5rem;
+  flex: 1;
+  width: 100%;
+}
+
+.aus-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.8rem;
+}
+
+.au-card {
+  background-color: var(--card-bg);
+  border-radius: 12px;
+  border: 1px solid var(--card-border);
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform var(--transition-speed), box-shadow var(--transition-speed), border-color var(--transition-speed);
+  display: flex;
+  flex-direction: column;
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+.au-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--gold-accent);
+  box-shadow: 0 10px 20px rgba(255, 204, 0, 0.2);
+}
+
+.card-image-wrapper {
+  position: relative;
+  width: 100%;
+  height: 180px;
+  overflow: hidden;
+}
+
+.card-image-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.au-card:hover .card-image-wrapper img {
+  transform: scale(1.08);
+}
+
+/* Badges de Categoria */
+.category-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 0.3rem 0.7rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  border-radius: 20px;
+  color: #fff;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+}
+
+.cat-swap { background-color: var(--blue-magic); }
+.cat-dark { background-color: var(--red-soul); }
+.cat-horror { background-color: #8B0000; }
+.cat-multiverse { background-color: var(--purple-void); }
+.cat-action { background-color: var(--orange-bravery); }
+.cat-sci-fi { background-color: #008080; }
+.cat-story { background-color: #6C5CE7; }
+.cat-canon { background-color: var(--green-kindness); }
+
+.card-content {
+  padding: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.card-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 0.3rem;
+  color: var(--text-light);
+}
+
+.card-meta {
+  font-size: 0.85rem;
+  color: var(--gold-accent);
+  margin-bottom: 0.8rem;
+  font-weight: 600;
+}
+
+.card-synopsis-preview {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+
+.card-footer {
+  margin-top: auto;
+  font-size: 0.85rem;
+  color: var(--purple-void);
+  font-weight: 600;
+}
+
+.no-results {
+  text-align: center;
+  padding: 4rem 1rem;
+  color: var(--text-muted);
+  font-size: 1.2rem;
+}
+
+/* ==========================================================================
+   4. MODAL
+   ========================================================================== */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 1.5rem;
+  transition: opacity 0.3s ease;
+}
+
+.modal.hidden {
+  display: none;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.modal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(6px);
+}
+
+.modal-content {
+  position: relative;
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 750px;
+  max-height: 90vh;
+  overflow-y: auto;
+  z-index: 1001;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
+  animation: modalUp 0.3s ease-out;
+}
+
+.modal-close {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  background: rgba(0, 0, 0, 0.6);
+  border: none;
+  color: var(--text-light);
+  font-size: 2rem;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1002;
+  transition: background-color var(--transition-speed);
+}
+
+.modal-close:hover {
+  background-color: var(--red-soul);
+}
+
+.modal-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-image-container {
+  position: relative;
+  width: 100%;
+  height: 280px;
+}
+
+.modal-image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.modal-info {
+  padding: 2rem;
+}
+
+.modal-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: var(--text-light);
+}
+
+.modal-meta {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+  color: var(--gold-accent);
+  border-bottom: 1px solid var(--card-border);
+  padding-bottom: 1rem;
+}
+
+.modal-section {
+  margin-bottom: 1.5rem;
+}
+
+.modal-section h3 {
+  font-size: 1.1rem;
+  color: var(--purple-void);
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.modal-synopsis {
+  color: var(--text-light);
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+
+.curiosities-list {
+  list-style: none;
+}
+
+.curiosities-list li {
+  position: relative;
+  padding-left: 1.5rem;
+  margin-bottom: 0.6rem;
+  font-size: 0.92rem;
+  color: var(--text-muted);
+}
+
+.curiosities-list li::before {
+  content: "❤";
+  position: absolute;
+  left: 0;
+  color: var(--red-soul);
+  font-size: 0.8rem;
+}
+
+/* ==========================================================================
+   5. RODAPÉ E ANIMAÇÕES
+   ========================================================================== */
+.footer {
+  text-align: center;
+  padding: 2rem;
+  border-top: 1px solid var(--card-border);
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  margin-top: 3rem;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes modalUp {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Responsividade */
+@media (max-width: 600px) {
+  .logo-title { font-size: 1.8rem; }
+  .controls-bar { flex-direction: column; align-items: stretch; }
+  .filters-group { flex-direction: column; }
+  .modal-meta { flex-direction: column; gap: 0.3rem; }
+  .modal-image-container { height: 200px; }
+}
