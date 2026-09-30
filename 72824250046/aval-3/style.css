@@ -1,0 +1,107 @@
+:root {
+  --fundo: #e6eeea;
+  --coluna: #d5e2db;
+  --cartao: #ffffff;
+  --tinta: #1a2b24;
+  --mudo: #566b61;
+  --linha: #b9cbc1;
+  --acento: #2456d6;
+  --acento-tinta: #ffffff;
+  --alta: #b42318;
+  --media: #a16207;
+  --baixa: #2f7a4d;
+  --titulo: "Outfit", system-ui, sans-serif;
+  --corpo: "Nunito Sans", system-ui, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fundo: #101a16;
+    --coluna: #182620;
+    --cartao: #21332b;
+    --tinta: #e6f0ea;
+    --mudo: #9db3a8;
+    --linha: #2f463b;
+    --acento: #7fa2ff;
+    --acento-tinta: #101a16;
+    --alta: #ff8a80;
+    --media: #f2c14e;
+    --baixa: #7bd39b;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 24px clamp(16px, 4vw, 40px) 48px;
+  background: var(--fundo);
+  color: var(--tinta);
+  font: 400 16px/1.5 var(--corpo);
+  display: grid;
+  gap: 20px;
+}
+
+.topo { display: flex; flex-wrap: wrap; gap: 16px 40px; align-items: end; justify-content: space-between; }
+h1 { margin: 0; font: 700 1.9rem var(--titulo); letter-spacing: -0.02em; }
+h2 { margin: 0 0 12px; font: 600 1.05rem var(--titulo); display: flex; align-items: center; gap: 8px; }
+p { margin: 0; }
+.mudo { color: var(--mudo); font-size: 0.9rem; }
+
+.progresso { min-width: 220px; display: grid; gap: 4px; }
+.trilha { height: 10px; border-radius: 999px; background: var(--coluna); overflow: hidden; }
+.barra { height: 100%; width: 0; background: var(--baixa); transition: width 0.35s; }
+
+button, input, select {
+  font: inherit;
+  color: inherit;
+  border: 1px solid var(--linha);
+  border-radius: 8px;
+  padding: 8px 12px;
+  background: var(--cartao);
+}
+button { cursor: pointer; }
+button[type="submit"] { background: var(--acento); border-color: var(--acento); color: var(--acento-tinta); font-weight: 600; }
+button.fantasma { background: transparent; }
+:focus-visible { outline: 3px solid var(--acento); outline-offset: 2px; }
+
+.nova { display: flex; flex-wrap: wrap; gap: 12px; align-items: end; }
+.nova label, .filtros label { display: grid; gap: 4px; font-size: 0.9rem; color: var(--mudo); }
+.nova .grande { flex: 1; min-width: 220px; }
+.erro { width: 100%; min-height: 1.3em; color: var(--alta); font-size: 0.9rem; }
+.filtros { display: flex; flex-wrap: wrap; gap: 12px; align-items: end; justify-content: space-between; }
+
+.quadro { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; align-items: start; }
+.coluna { background: var(--coluna); border-radius: 12px; padding: 14px; min-height: 240px; }
+.coluna.alvo { outline: 3px dashed var(--acento); outline-offset: -3px; }
+.cont { font: 600 0.8rem var(--corpo); background: var(--cartao); border-radius: 999px; padding: 0 9px; color: var(--mudo); }
+
+.lista { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; min-height: 120px; align-content: start; }
+.vazio { color: var(--mudo); font-size: 0.9rem; padding: 8px 2px; }
+
+.tarefa {
+  background: var(--cartao);
+  border: 1px solid var(--linha);
+  border-left-width: 6px;
+  border-radius: 10px;
+  padding: 12px;
+  cursor: grab;
+}
+.tarefa.alta { border-left-color: var(--alta); }
+.tarefa.media { border-left-color: var(--media); }
+.tarefa.baixa { border-left-color: var(--baixa); }
+.tarefa.arrastando { opacity: 0.45; }
+.tarefa h3 { margin: 0 0 4px; font: 600 1rem var(--corpo); overflow-wrap: anywhere; }
+.tarefa.feita h3 { text-decoration: line-through; color: var(--mudo); }
+.meta { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 0.85rem; color: var(--mudo); }
+.meta .atrasada { color: var(--alta); font-weight: 600; }
+.acoes { display: flex; gap: 6px; margin-top: 10px; }
+.acoes button { padding: 2px 10px; font-size: 0.9rem; }
+.acoes .excluir { margin-left: auto; color: var(--alta); }
+
+@media (max-width: 820px) {
+  .quadro { grid-template-columns: minmax(0, 1fr); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .barra { transition: none; }
+}
