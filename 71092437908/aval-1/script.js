@@ -1,133 +1,161 @@
+// ===============================
+// SISTEMA DE ESTOQUE
+// ===============================
+
 let produtos = JSON.parse(localStorage.getItem("produtos")) || [];
 
-const form = document.getElementById("produtoForm");
-
-const codigo = document.getElementById("codigo");
-const nome = document.getElementById("nome");
-const categoria = document.getElementById("categoria");
-const quantidade = document.getElementById("quantidade");
-const estoqueMinimo = document.getElementById("estoqueMinimo");
-const preco = document.getElementById("preco");
-const produtoId = document.getElementById("produtoId");
-
+const form = document.getElementById("formProduto");
 const tabela = document.getElementById("tabelaProdutos");
-const busca = document.getElementById("busca");
-
-const btnSalvar = document.getElementById("btnSalvar");
+const pesquisa = document.getElementById("pesquisa");
 const btnCancelar = document.getElementById("btnCancelar");
 
-// Salvar produtos
-function salvarLocalStorage() {
-    localStorage.setItem("produtos", JSON.stringify(produtos));
+// ===============================
+// FORMATAR MOEDA
+// ===============================
+
+function formatarMoeda(valor) {
+
+    return Number(valor).toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL"
+    });
+
 }
 
-// Cadastro / edição
+// ===============================
+// SALVAR NO LOCALSTORAGE
+// ===============================
+
+function salvarDados() {
+
+    localStorage.setItem(
+        "produtos",
+        JSON.stringify(produtos)
+    );
+
+}
+
+// ===============================
+// GERAR ID
+// ===============================
+
+function gerarId() {
+
+    return Date.now();
+
+}
+
+// ===============================
+// CADASTRAR / EDITAR PRODUTO
+// ===============================
+
 form.addEventListener("submit", function(event) {
 
     event.preventDefault();
 
+    const id = document.getElementById("produtoId").value;
+
+    const nome = document.getElementById("nome").value.trim();
+    const categoria = document.getElementById("categoria").value.trim();
+    const quantidade = Number(
+        document.getElementById("quantidade").value
+    );
+    const preco = Number(
+        document.getElementById("preco").value
+    );
+    const estoqueMinimo = Number(
+        document.getElementById("estoqueMinimo").value
+    );
+
+    if (!nome || !categoria) {
+        alert("Preencha todos os campos.");
+        return;
+    }
+
     const produto = {
-        codigo: codigo.value.trim(),
-        nome: nome.value.trim(),
-        categoria: categoria.value.trim(),
-        quantidade: Number(quantidade.value),
-        estoqueMinimo: Number(estoqueMinimo.value),
-        preco: Number(preco.value)
+        id: id ? Number(id) : gerarId(),
+        nome,
+        categoria,
+        quantidade,
+        preco,
+        estoqueMinimo
     };
 
-    if (produtoId.value) {
+    if (id) {
 
         const index = produtos.findIndex(
-            p => p.id == produtoId.value
+            item => item.id === Number(id)
         );
 
-        if (index !== -1) {
-            produtos[index] = {
-                ...produtos[index],
-                ...produto
-            };
-        }
+        produtos[index] = produto;
+
+        alert("Produto atualizado com sucesso!");
 
     } else {
 
-        produto.id = Date.now();
-
         produtos.push(produto);
+
+        alert("Produto cadastrado com sucesso!");
+
     }
 
-    salvarLocalStorage();
-
-    form.reset();
-
-    produtoId.value = "";
-
-    btnSalvar.textContent = "Cadastrar produto";
-
-    btnCancelar.classList.add("hidden");
-
-    atualizarTabela();
-    atualizarDashboard();
+    salvarDados();
+    atualizarTela();
+    limparFormulario();
 
 });
 
-// Atualizar tabela
-function atualizarTabela() {
+// ===============================
+// LISTAR PRODUTOS
+// ===============================
 
-    const textoBusca = busca.value.toLowerCase();
+function atualizarTela() {
 
     tabela.innerHTML = "";
+
+    const textoPesquisa = pesquisa.value
+        .toLowerCase()
+        .trim();
 
     const produtosFiltrados = produtos.filter(produto => {
 
         return (
-            produto.nome.toLowerCase().includes(textoBusca) ||
-            produto.codigo.toLowerCase().includes(textoBusca) ||
-            produto.categoria.toLowerCase().includes(textoBusca)
+            produto.nome.toLowerCase().includes(textoPesquisa) ||
+            produto.categoria.toLowerCase().includes(textoPesquisa)
         );
 
     });
 
-    if (produtosFiltrados.length === 0) {
-
-        tabela.innerHTML = `
-            <tr>
-                <td colspan="8" style="text-align:center">
-                    Nenhum produto encontrado.
-                </td>
-            </tr>
-        `;
-
-        return;
-    }
-
     produtosFiltrados.forEach(produto => {
 
-        let status = "";
-        let classeStatus = "";
+        const linha = document.createElement("tr");
+
+        let status;
+        let classeStatus;
 
         if (produto.quantidade === 0) {
 
             status = "Esgotado";
-            classeStatus = "status-esgotado";
+            classeStatus = "esgotado";
 
-        } else if (produto.quantidade <= produto.estoqueMinimo) {
+        } else if (
+            produto.quantidade <= produto.estoqueMinimo
+        ) {
 
             status = "Estoque baixo";
-            classeStatus = "status-baixo";
+            classeStatus = "baixo";
 
         } else {
 
             status = "Normal";
-            classeStatus = "status-ok";
+            classeStatus = "normal";
+
         }
 
-        const total = produto.quantidade * produto.preco;
-
-        const linha = document.createElement("tr");
+        const valorTotal =
+            produto.quantidade * produto.preco;
 
         linha.innerHTML = `
-
-            <td>${produto.codigo}</td>
 
             <td>${produto.nome}</td>
 
@@ -137,7 +165,7 @@ function atualizarTabela() {
 
             <td>${formatarMoeda(produto.preco)}</td>
 
-            <td>${formatarMoeda(total)}</td>
+            <td>${formatarMoeda(valorTotal)}</td>
 
             <td>
                 <span class="status ${classeStatus}">
@@ -165,70 +193,16 @@ function atualizarTabela() {
         tabela.appendChild(linha);
 
     });
+
+    atualizarResumo();
+
 }
 
-// Editar
-function editarProduto(id) {
+// ===============================
+// ATUALIZAR RESUMO
+// ===============================
 
-    const produto = produtos.find(p => p.id === id);
-
-    if (!produto) return;
-
-    produtoId.value = produto.id;
-
-    codigo.value = produto.codigo;
-    nome.value = produto.nome;
-    categoria.value = produto.categoria;
-    quantidade.value = produto.quantidade;
-    estoqueMinimo.value = produto.estoqueMinimo;
-    preco.value = produto.preco;
-
-    btnSalvar.textContent = "Salvar alterações";
-
-    btnCancelar.classList.remove("hidden");
-
-    window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-    });
-}
-
-// Cancelar edição
-btnCancelar.addEventListener("click", function() {
-
-    form.reset();
-
-    produtoId.value = "";
-
-    btnSalvar.textContent = "Cadastrar produto";
-
-    btnCancelar.classList.add("hidden");
-
-});
-
-// Excluir
-function excluirProduto(id) {
-
-    const produto = produtos.find(p => p.id === id);
-
-    if (!produto) return;
-
-    const confirmar = confirm(
-        `Deseja realmente excluir o produto "${produto.nome}"?`
-    );
-
-    if (!confirmar) return;
-
-    produtos = produtos.filter(p => p.id !== id);
-
-    salvarLocalStorage();
-
-    atualizarTabela();
-    atualizarDashboard();
-}
-
-// Dashboard
-function atualizarDashboard() {
+function atualizarResumo() {
 
     const totalProdutos = produtos.length;
 
@@ -238,43 +212,138 @@ function atualizarDashboard() {
         0
     );
 
-    const produtosBaixos = produtos.filter(
+    const produtosBaixo = produtos.filter(
         produto =>
             produto.quantidade <= produto.estoqueMinimo
     ).length;
 
-    const valorTotal = produtos.reduce(
+    const valorEstoque = produtos.reduce(
         (total, produto) =>
-            total + (produto.quantidade * produto.preco),
+            total +
+            (produto.quantidade * produto.preco),
         0
     );
 
-    document.getElementById("totalProdutos").textContent =
-        totalProdutos;
+    document.getElementById(
+        "totalProdutos"
+    ).textContent = totalProdutos;
 
-    document.getElementById("totalItens").textContent =
-        totalItens;
+    document.getElementById(
+        "totalItens"
+    ).textContent = totalItens;
 
-    document.getElementById("estoqueBaixo").textContent =
-        produtosBaixos;
+    document.getElementById(
+        "estoqueBaixo"
+    ).textContent = produtosBaixo;
 
-    document.getElementById("valorEstoque").textContent =
-        formatarMoeda(valorTotal);
+    document.getElementById(
+        "valorEstoque"
+    ).textContent = formatarMoeda(valorEstoque);
+
 }
 
-// Formatação de moeda
-function formatarMoeda(valor) {
+// ===============================
+// EDITAR PRODUTO
+// ===============================
 
-    return valor.toLocaleString("pt-BR", {
-        style: "currency",
-        currency: "BRL"
+function editarProduto(id) {
+
+    const produto = produtos.find(
+        item => item.id === id
+    );
+
+    if (!produto) return;
+
+    document.getElementById("produtoId").value =
+        produto.id;
+
+    document.getElementById("nome").value =
+        produto.nome;
+
+    document.getElementById("categoria").value =
+        produto.categoria;
+
+    document.getElementById("quantidade").value =
+        produto.quantidade;
+
+    document.getElementById("preco").value =
+        produto.preco;
+
+    document.getElementById("estoqueMinimo").value =
+        produto.estoqueMinimo;
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
     });
 
 }
 
-// Busca
-busca.addEventListener("input", atualizarTabela);
+// ===============================
+// EXCLUIR PRODUTO
+// ===============================
 
-// Inicialização
-atualizarTabela();
-atualizarDashboard();
+function excluirProduto(id) {
+
+    const produto = produtos.find(
+        item => item.id === id
+    );
+
+    if (!produto) return;
+
+    const confirmar = confirm(
+        `Deseja realmente excluir o produto "${produto.nome}"?`
+    );
+
+    if (!confirmar) return;
+
+    produtos = produtos.filter(
+        item => item.id !== id
+    );
+
+    salvarDados();
+    atualizarTela();
+
+}
+
+// ===============================
+// LIMPAR FORMULÁRIO
+// ===============================
+
+function limparFormulario() {
+
+    form.reset();
+
+    document.getElementById(
+        "produtoId"
+    ).value = "";
+
+    document.getElementById(
+        "estoqueMinimo"
+    ).value = 5;
+
+}
+
+// ===============================
+// BOTÃO CANCELAR
+// ===============================
+
+btnCancelar.addEventListener(
+    "click",
+    limparFormulario
+);
+
+// ===============================
+// PESQUISA
+// ===============================
+
+pesquisa.addEventListener(
+    "input",
+    atualizarTela
+);
+
+// ===============================
+// INICIALIZAÇÃO
+// ===============================
+
+atualizarTela();
