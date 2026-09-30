@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AeroSky Passagens - Reserve seus voos com facilidade</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Modal Animations & Effects */
+        @keyframes modalEnter {
+            from {
+                opacity: 0;
+                transform: scale(0.95) translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .modal-enter {
+            animation: modalEnter 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        /* Glassmorphism Accents */
+        .glass-hero {
+            background: linear-gradient(135deg, rgba(30, 58, 138, 0.95) 0%, rgba(37, 99, 235, 0.9) 100%);
+        }
+
+        /* Custom Input Focus Glow */
+        input:focus, select:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+
+        /* Floating Badge Hover Effect */
+        .destination-card {
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .destination-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px -10px rgba(15, 23, 42, 0.12);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-blue-600 selection:text-white">
+
+    <!-- Navbar -->
+    <header class="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-slate-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-3 cursor-pointer" onclick="navigateHome()">
+                <div class="w-10 h-10 rounded-2xl bg-blue-600 flex items-center justify-center text-white shadow-lg shadow-blue-600/30">
+                    <i class="fa-solid fa-plane-departure text-lg"></i>
+                </div>
+                <div>
+                    <span class="text-xl font-black tracking-tight text-slate-900">Aero<span class="text-blue-600">Sky</span></span>
+                    <span class="block text-[10px] font-bold uppercase tracking-widest text-slate-400">Passagens Aéreas</span>
+                </div>
+            </div>
+
+            <nav class="hidden md:flex items-center gap-8 text-sm font-semibold text-slate-600">
+                <a href="#" onclick="navigateHome()" class="hover:text-blue-600 transition-colors">Início</a>
+                <a href="#destinations" class="hover:text-blue-600 transition-colors">Destinos</a>
+                <a href="#" onclick="openMyTripsModal()" class="hover:text-blue-600 transition-colors flex items-center gap-1.5">
+                    <i class="fa-solid fa-ticket text-xs"></i> Minhas Viagens
+                </a>
+                <a href="#" onclick="openSupportModal()" class="hover:text-blue-600 transition-colors">Ajuda</a>
+            </nav>
+
+            <div class="flex items-center gap-3">
+                <button onclick="openMyTripsModal()" class="md:hidden w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-700">
+                    <i class="fa-solid fa-ticket"></i>
+                </button>
+                <button onclick="openSupportModal()" class="hidden sm:flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-4 py-2.5 rounded-xl text-sm transition-all">
+                    <i class="fa-solid fa-headset text-blue-600"></i> Suporte
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section & Search Engine -->
+    <main class="flex-grow">
+        <section class="relative py-16 lg:py-24 glass-hero overflow-hidden text-white">
+            <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]"></div>
+            
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="text-center max-w-3xl mx-auto mb-10">
+                    <span class="bg-white/10 text-blue-200 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider mb-4 inline-block backdrop-blur-sm border border-white/10">
+                        ✨ Sua próxima viagem começa aqui
+                    </span>
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight mb-4">
+                        Explore o mundo com os melhores preços.
+                    </h1>
+                    <p class="text-blue-100 text-base sm:text-lg">
+                        Encontre passagens aéreas para milhares de destinos com segurança e rapidez.
+                    </p>
+                </div>
+
+                <!-- Flight Search Card -->
+                <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-2xl text-slate-900 max-w-5xl mx-auto border border-white/20">
+                    <form id="flightSearchForm" onsubmit="handleSearchFlights(event)" class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <!-- Origin -->
+                            <div class="space-y-1.5">
+                                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500">Origem</label>
+                                <div class="relative">
+                                    <span class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                                        <i class="fa-solid fa-plane-departure"></i>
+                                    </span>
+                                    <select id="originSelect" class="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3.5 pl-11 pr-4 text-sm font-semibold text-slate-900 focus:bg-white transition-all">
+                                        <option value="São Paulo (GRU)">São Paulo (GRU)</option>
+                                        <option value="Rio de Janeiro (GIG)">Rio de Janeiro (GIG)</option>
+                                        <option value="Brasília (BSB)">Brasília (BSB)</option>
+                                        <option value="Belo Horizonte (CNF)">Belo Horizonte (CNF)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Destination -->
+                            <div class="space-y-1.5">
+                                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500">Destino</label>
+                                <div class="relative">
+                                    <span class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                                        <i class="fa-solid fa-plane-arrival"></i>
+                                    </span>
+                                    <select id="destinationSelect" class="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3.5 pl-11 pr-4 text-sm font-semibold text-slate-900 focus:bg-white transition-all">
+                                        <option value="Lisboa (LIS)">Lisboa (LIS)</option>
+                                        <option value="Paris (CDG)">Paris (CDG)</option>
+                                        <option value="Miami (MIA)">Miami (MIA)</option>
+                                        <option value="Buenos Aires (EZE)">Buenos Aires (EZE)</option>
+                                        <option value="Nova York (JFK)">Nova York (JFK)</option>
+                                        <option value="Tóquio (HND)">Tóquio (HND)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Departure Date -->
+                            <div class="space-y-1.5">
+                                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500">Ida</label>
+                                <div class="relative">
+                                    <span class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                                        <i class="fa-regular fa-calendar"></i>
+                                    </span>
+                                    <input type="date" id="departureDate" class="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3 pl-11 pr-4 text-sm font-semibold text-slate-900 focus:bg-white transition-all">
+                                </div>
+                            </div>
+
+                            <!-- Return Date -->
+                            <div class="space-y-1.5">
+                                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500">Volta</label>
+                                <div class="relative">
+                                    <span class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                                        <i class="fa-regular fa-calendar-days"></i>
+                                    </span>
+                                    <input type="date" id="returnDate" class="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3 pl-11 pr-4 text-sm font-semibold text-slate-900 focus:bg-white transition-all">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-slate-100">
+                            <!-- Passengers & Class -->
+                            <div class="flex items-center gap-4 w-full sm:w-auto">
+                                <div class="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2.5 w-full sm:w-auto">
+                                    <i class="fa-solid fa-users text-slate-400 text-sm"></i>
+                                    <select id="passengerSelect" class="bg-transparent text-sm font-bold text-slate-800 focus:outline-none">
+                                        <option value="1">1 Passageiro, Econômica</option>
+                                        <option value="2">2 Passageiros, Econômica</option>
+                                        <option value="3">3 Passageiros, Econômica</option>
+                                        <option value="4+">4+ Passageiros, Econômica</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Search Button -->
+                            <button type="submit" class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-black px-8 py-4 rounded-2xl shadow-xl shadow-blue-600/30 transition-all flex items-center justify-center gap-2 text-base">
+                                <i class="fa-solid fa-magnifying-glass"></i> Buscar Voos
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- Search Results Section (Hidden by default) -->
+        <section id="resultsContainer" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+                <div>
+                    <h2 id="resultsTitle" class="text-2xl font-black text-slate-900">Resultados da Busca</h2>
+                    <p class="text-sm text-slate-500">Selecione o voo ideal para continuar a sua reserva.</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Ordenar por:</span>
+                    <select id="sortSelect" onchange="sortFlights()" class="bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm font-bold text-slate-700 shadow-sm">
+                        <option value="price">Menor Preço</option>
+                        <option value="duration">Menor Duração</option>
+                        <option value="departure">Horário de Saída</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="flightList" class="space-y-4">
+                <!-- Dynamically populated flight cards -->
+            </div>
+        </section>
+
+        <!-- Popular Destinations Grid -->
+        <section id="destinations" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+            <div class="text-center max-w-2xl mx-auto mb-12">
+                <span class="text-blue-600 font-extrabold text-xs uppercase tracking-widest bg-blue-50 px-3 py-1 rounded-full mb-2 inline-block">Destinos em Alta</span>
+                <h2 class="text-3xl font-black text-slate-900 mt-1">Para onde você quer voar hoje?</h2>
+                <p class="text-slate-500 text-sm mt-2">Escolha um dos nossos destinos favoritos e reserve com tarifas promocionais.</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Destination 1 -->
+                <div onclick="selectQuickDestination('Lisboa (LIS)')" class="destination-card bg-white rounded-3xl overflow-hidden border border-slate-200 shadow-sm cursor-pointer group">
+                    <div class="h-48 bg-slate-200 relative overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1513603174371-d1f56649f570?auto=format&fit=crop&q=80&w=800" alt="Lisboa" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-slate-900 shadow-sm">
+                            A partir de R$ 3.200
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <span class="text-xs font-bold text-blue-600 uppercase tracking-wider">Portugal</span>
+                        <h3 class="text-xl font-black text-slate-900 mt-1">Lisboa (LIS)</h3>
+                        <p class="text-xs text-slate-500 mt-2">Descubra a rica história, gastronomia e encantos da capital portuguesa.</p>
+                    </div>
+                </div>
+
+                <!-- Destination 2 -->
+                <div onclick="selectQuickDestination('Paris (CDG)')" class="destination-card bg-white rounded-3xl overflow-hidden border border-slate-200 shadow-sm cursor-pointer group">
+                    <div class="h-48 bg-slate-200 relative overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&q=80&w=800" alt="Paris" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-slate-900 shadow-sm">
+                            A partir de R$ 4.100
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <span class="text-xs font-bold text-blue-600 uppercase tracking-wider">França</span>
+                        <h3 class="text-xl font-black text-slate-900 mt-1">Paris (CDG)</h3>
+                        <p class="text-xs text-slate-500 mt-2">A cidade luz espera por você com seus monumentos e cultura inesquecíveis.</p>
+                    </div>
+                </div>
+
+                <!-- Destination 3 -->
+                <div onclick="selectQuickDestination('Miami (MIA)')" class="destination-card bg-white rounded-3xl overflow-hidden border border-slate-200 shadow-sm cursor-pointer group">
+                    <div class="h-48 bg-slate-200 relative overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1514214246283-d427a95c5d2f?auto=format&fit=crop&q=80&w=800" alt="Miami" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-slate-900 shadow-sm">
+                            A partir de R$ 2.850
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <span class="text-xs font-bold text-blue-600 uppercase tracking-wider">Estados Unidos</span>
+                        <h3 class="text-xl font-black text-slate-900 mt-1">Miami (MIA)</h3>
+                        <p class="text-xs text-slate-500 mt-2">Praias ensolaradas, compras e muita diversão na Flórida.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 pt-16 pb-12 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
+            <div class="space-y-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-xl bg-blue-600 flex items-center justify-center text-white">
+                        <i class="fa-solid fa-plane-departure text-sm"></i>
+                    </div>
+                    <span class="text-lg font-black text-white">Aero<span class="text-blue-500">Sky</span></span>
+                </div>
+                <p class="text-xs text-slate-400 leading-relaxed">
+                    Sua agência de viagens digital de confiança. Voe mais longe com tarifas transparentes e suporte 24/7.
+                </p>
+            </div>
+            <div>
+                <h4 class="text-xs font-extrabold uppercase tracking-widest text-white mb-4">Empresa</h4>
+                <ul class="space-y-2 text-xs">
+                    <li><a href="#" class="hover:text-white transition-colors">Sobre Nós</a></li>
+                    <li><a href="#" class="hover:text-white transition-colors">Carreiras</a></li>
+                    <li><a href="#" class="hover:text-white transition-colors">Imprensa</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-xs font-extrabold uppercase tracking-widest text-white mb-4">Suporte</h4>
+                <ul class="space-y-2 text-xs">
+                    <li><a href="#" onclick="openSupportModal(); return false;" class="hover:text-white transition-colors">Central de Ajuda</a></li>
+                    <li><a href="#" class="hover:text-white transition-colors">Termos de Uso</a></li>
+                    <li><a href="#" class="hover:text-white transition-colors">Política de Privacidade</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-xs font-extrabold uppercase tracking-widest text-white mb-4">Newsletter</h4>
+                <p class="text-xs mb-3">Receba ofertas relâmpago direto no seu e-mail.</p>
+                <div class="flex gap-2">
+                    <input type="email" placeholder="Seu e-mail" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500 flex-grow">
+                    <button onclick="alertNewsletter()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-2 rounded-xl text-xs transition-colors">Assinar</button>
+                </div>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 border-t border-slate-800 text-center text-xs">
+            &copy; 2026 AeroSky Passagens S.A. Todos os direitos reservados.
+        </div>
+    </footer>
+
+    <!-- Checkout Modal -->
+    <div id="checkoutModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/60 backdrop-blur-sm p-4 overflow-y-auto">
+        <div class="bg-white rounded-3xl max-w-xl w-full p-6 sm:p-8 shadow-2xl modal-enter relative my-8">
+            <button onclick="closeCheckoutModal()" class="absolute top-6 right-6 text-slate-400 hover:text-slate-700 w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center transition-colors">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+
+            <!-- Steps Header -->
+            <div class="flex items-center justify-between mb-6 pb-6 border-b border-slate-100 pr-10">
+                <div id="stepIndicator1" class="flex items-center gap-2 text-blue-600 font-bold text-sm">
+                    <span class="w-6 h-6 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-xs">1</span> Passageiro
+                </div>
+                <div class="w-8 h-0.5 bg-slate-200"></div>
+                <div id="stepIndicator2" class="flex items-center gap-2 text-slate-400 text-sm">
+                    <span class="w-6 h-6 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center text-xs">2</span> Pagamento
+                </div>
+                <div class="w-8 h-0.5 bg-slate-200"></div>
+                <div id="stepIndicator3" class="flex items-center gap-2 text-slate-400 text-sm">
+                    <span class="w-6 h-6 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center text-xs">3</span> Sucesso
+                </div>
+            </div>
+
+            <!-- Flight Summary Box -->
+            <div id="checkoutFlightSummary" class="bg-blue-50 border border-blue-100 rounded-2xl p-4 mb-6 flex items-center justify-between">
+                <!-- Dynamically populated summary -->
+            </div>
+
+            <!-- STEP 1: Passenger Info -->
+            <div id="step1Content" class="space-y-4">
+                <h3 class="font-black text-slate-900 text-base">Informações do Passageiro</h3>
+                <div class="space-y-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Nome Completo</label>
+                        <input type="text" id="passengerName" placeholder="Ex: Maria da Silva" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold text-slate-900">
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">CPF ou Passaporte</label>
+                            <input type="text" id="passengerDocument" placeholder="000.000.000-00" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold text-slate-900">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Telefone</label>
+                            <input type="text" id="passengerPhone" placeholder="(11) 99999-9999" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold text-slate-900">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">E-mail para Confirmação</label>
+                        <input type="email" id="passengerEmail" placeholder="maria@email.com" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold text-slate-900">
+                    </div>
+                </div>
+                <div class="pt-4 flex justify-end">
+                    <button onclick="goToStep2()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-3 rounded-xl text-sm transition-all shadow-md">
+                        Avançar para Pagamento <i class="fa-solid fa-arrow-right ml-1"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- STEP 2: Payment Form -->
+            <div id="step2Content" class="hidden space-y-4">
+                <h3 class="font-black text-slate-900 text-base">Forma de Pagamento</h3>
+                
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    <button type="button" onclick="selectPaymentMethod('credit')" id="payBtnCredit" class="p-3 rounded-xl border-2 border-blue-600 bg-blue-50 text-blue-700 font-bold text-xs flex flex-col items-center justify-center gap-1.5 transition-all">
+                        <i class="fa-solid fa-credit-card text-base"></i> Cartão
+                    </button>
+                    <button type="button" onclick="selectPaymentMethod('pix')" id="payBtnPix" class="p-3 rounded-xl border-2 border-slate-200 bg-slate-50 text-slate-600 font-semibold text-xs flex flex-col items-center justify-center gap-1.5 transition-all">
+                        <i class="fa-solid fa-qrcode text-base"></i> PIX
+                    </button>
+                    <button type="button" onclick="selectPaymentMethod('boleto')" id="payBtnBoleto" class="p-3 rounded-xl border-2 border-slate-200 bg-slate-50 text-slate-600 font-semibold text-xs flex flex-col items-center justify-center gap-1.5 transition-all">
+                        <i class="fa-solid fa-barcode text-base"></i> Boleto
+                    </button>
+                    <button type="button" onclick="selectPaymentMethod('paypal')" id="payBtnPaypal" class="p-3 rounded-xl border-2 border-slate-200 bg-slate-50 text-slate-600 font-semibold text-xs flex flex-col items-center justify-center gap-1.5 transition-all">
+                        <i class="fa-brands fa-paypal text-base"></i> PayPal
+                    </button>
+                </div>
+
+                <form id="checkoutForm" onsubmit="handleCheckoutSubmit(event)" class="space-y-3 pt-2">
+                    <!-- Credit Card Form Content -->
+                    <div id="paymentCreditForm" class="space-y-3">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Número do Cartão</label>
+                            <input type="text" placeholder="4532 •••• •••• 8821" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold text-slate-900">
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Validade</label>
+                                <input type="text" placeholder="MM/AA" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold text-slate-900">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">CVV</label>
+                                <input type="text" placeholder="123" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold text-slate-900">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PIX Form Content -->
+                    <div id="paymentPixForm" class="hidden text-center py-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
+                        <div class="w-32 h-32 bg-white border border-slate-200 mx-auto rounded-xl flex items-center justify-center text-slate-400">
+                            <i class="fa-solid fa-qrcode text-5xl"></i>
+                        </div>
+                        <p class="text-xs text-slate-500 px-4">Escaneie o QR Code acima com o aplicativo do seu banco para aprovação instantânea.</p>
+                    </div>
+
+                    <!-- Boleto Form Content -->
+                    <div id="paymentBoletoForm" class="hidden text-center py-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
+                        <i class="fa-solid fa-file-invoice text-3xl text-slate-400"></i>
+                        <p class="text-xs font-bold text-slate-700">O boleto será gerado após a confirmação.</p>
+                        <p class="text-[11px] text-slate-400">Vencimento em 1 dia útil. A reserva é confirmada após a compensação.</p>
+                    </div>
+
+                    <!-- PayPal Form Content -->
+                    <div id="paymentPaypalForm" class="hidden text-center py-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
+                        <i class="fa-brands fa-paypal text-3xl text-blue-600"></i>
+                        <p class="text-xs font-bold text-slate-700">Você será redirecionado para o ambiente seguro do PayPal.</p>
+                    </div>
+
+                    <div class="pt-4 flex items-center justify-between">
+                        <button type="button" onclick="goToStep1()" class="text-slate-500 font-bold text-xs hover:text-slate-800">
+                            <i class="fa-solid fa-arrow-left mr-1"></i> Voltar
+                        </button>
+                        <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-black px-8 py-3 rounded-xl text-sm transition-all shadow-md">
+                            Confirmar Pagamento
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- STEP 3: Success Confirmation -->
+            <div id="step3Content" class="hidden text-center py-6 space-y-4">
+                <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto text-2xl shadow-inner">
+                    <i class="fa-solid fa-check"></i>
+                </div>
+                <div>
+                    <span class="bg-emerald-50 text-emerald-700 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider inline-block mb-2">Reserva Confirmada!</span>
+                    <h3 class="text-2xl font-black text-slate-900">Boa viagem!</h3>
+                    <p class="text-xs text-slate-500 mt-1">Enviamos todos os detalhes do seu bilhete para o e-mail cadastrado.</p>
+                </div>
+
+                <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 text-left space-y-2 text-xs">
+                    <div class="flex justify-between">
+                        <span class="text-slate-400">Código PNR:</span>
+                        <strong id="successPNR" class="text-slate-900 font-mono"></strong>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-slate-400">Passageiro:</span>
+                        <strong id="successPassenger" class="text-slate-900"></strong>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-slate-400">Trecho:</span>
+                        <strong id="successRoute" class="text-slate-900"></strong>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-slate-400">Companhia:</span>
+                        <strong id="successAirline" class="text-slate-900"></strong>
+                    </div>
+                </div>
+
+                <button onclick="closeCheckoutModal(); navigateHome();" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl text-sm transition-all shadow-md">
+                    Voltar ao Início
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- My Trips Modal -->
+    <div id="myTripsModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/60 backdrop-blur-sm p-4 overflow-y-auto">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl modal-enter relative">
+            <button onclick="closeMyTripsModal()" class="absolute top-6 right-6 text-slate-400 hover:text-slate-700 w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center transition-colors">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+            <h3 class="text-xl font-black text-slate-900 mb-1">Minhas Viagens</h3>
+            <p class="text-xs text-slate-500 mb-6">Histórico de passagens emitidas neste dispositivo.</p>
+
+            <div id="tripsListContainer" class="space-y-3 max-h-80 overflow-y-auto pr-1">
+                <!-- Dynamically populated trips -->
+            </div>
+
+            <div class="mt-6 pt-4 border-t border-slate-100 text-right">
+                <button onclick="closeMyTripsModal()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-5 py-2.5 rounded-xl text-xs transition-colors">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Support Modal -->
+    <div id="supportModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/60 backdrop-blur-sm p-4 overflow-y-auto">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl modal-enter relative text-center space-y-4">
+            <button onclick="closeSupportModal()" class="absolute top-6 right-6 text-slate-400 hover:text-slate-700 w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center transition-colors">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+            <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mx-auto text-xl">
+                <i class="fa-solid fa-headset"></i>
+            </div>
+            <div>
+                <h3 class="text-xl font-black text-slate-900">Central de Atendimento</h3>
+                <p class="text-xs text-slate-500 mt-1">Estamos disponíveis 24 horas por dia para ajudar com sua reserva.</p>
+            </div>
+            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-xs space-y-2 text-left">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-phone text-blue-600"></i>
+                    <span class="font-bold text-slate-800">0800 591 2026 (Gratuito)</span>
+                </div>
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-envelope text-blue-600"></i>
+                    <span class="font-bold text-slate-800">suporte@aerosky.com.br</span>
+                </div>
+            </div>
+            <button onclick="closeSupportModal()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl text-xs transition-colors">Entendido</button>
+        </div>
+    </div>
+
+    <!-- JavaScript Implementation -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const today = new Date();
+            const nextWeek = new Date(today);
+            nextWeek.setDate(today.getDate() + 7);
+            const returnWeek = new Date(today);
+            returnWeek.setDate(today.getDate() + 14);
+
+            const depInput = document.getElementById('departureDate');
+            const retInput = document.getElementById('returnDate');
+            
+            if (depInput) depInput.valueAsDate = nextWeek;
+            if (retInput) retInput.valueAsDate = returnWeek;
+
+            if (!localStorage.getItem('aerosky_trips')) {
+                localStorage.setItem('aerosky_trips', JSON.stringify([]));
+            }
+        });
+
+        let currentFlightsData = [];
+        let selectedFlight = null;
+
+        const airlines = [
+            { name: "AeroSky Airlines", logo: "fa-plane-departure", color: "text-blue-600" },
+            { name: "Global Wings", logo: "fa-feather", color: "text-indigo-600" },
+            { name: "Atlantic Airways", logo: "fa-cloud", color: "text-sky-600" },
+            { name: "Meridian Express", logo: "fa-globe-americas", color: "text-emerald-600" }
+        ];
+
+        function navigateHome() {
+            const resultsContainer = document.getElementById('resultsContainer');
+            if(resultsContainer) resultsContainer.classList.add('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function selectQuickDestination(countryName) {
+            const destSelect = document.getElementById('destinationSelect');
+            if(destSelect) {
+                destSelect.value = countryName;
+            }
+            const searchForm = document.getElementById('flightSearchForm');
+            if(searchForm) {
+                searchForm.scrollIntoView({ behavior: 'smooth' });
+                searchForm.dispatchEvent(new Event('submit'));
+            }
+        }
+
+        function handleSearchFlights(e) {
+            e.preventDefault();
+            const origin = document.getElementById('originSelect').value;
+            const destination = document.getElementById('destinationSelect').value;
+            const passengers = document.getElementById('passengerSelect').value;
+
+            const resultsContainer = document.getElementById('resultsContainer');
+            const resultsTitle = document.getElementById('resultsTitle');
+
+            if(resultsContainer) resultsContainer.classList.remove('hidden');
+            if(resultsTitle) resultsTitle.innerText = `Voos de ${origin} para ${destination} (${passengers} Passageiro(s))`;
+
+            generateSimulatedFlights(destination);
+
+            if(resultsContainer) resultsContainer.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function generateSimulatedFlights(dest) {
+            currentFlightsData = [];
+            const count = 5;
+            
+            for(let i = 0; i < count; i++) {
+                const airline = airlines[Math.floor(Math.random() * airlines.length)];
+                const basePrice = Math.floor(Math.random() * 3500) + 1200;
+                const hours = Math.floor(Math.random() * 10) + 2;
+                const stops = Math.random() > 0.5 ? 'Direto' : '1 Escala';
+                
+                const depHour = `${String(Math.floor(Math.random() * 18) + 6).padStart(2,'0')}:${Math.random() > 0.5 ? '00' : '30'}`;
+                const arrHour = `${String((parseInt(depHour.split(':')[0]) + hours) % 24).padStart(2,'0')}:${depHour.split(':')[1]}`;
+
+                currentFlightsData.push({
+                    id: `FL-${Math.floor(Math.random()*90000)+10000}`,
+                    airline: airline.name,
+                    airlineLogo: airline.logo,
+                    airlineColor: airline.color,
+                    origin: document.getElementById('originSelect').value,
+                    destination: dest,
+                    departureTime: depHour,
+                    arrivalTime: arrHour,
+                    duration: `${hours}h 15m`,
+                    stops: stops,
+                    price: basePrice
+                });
+            }
+
+            renderFlights(currentFlightsData);
+        }
+
+        function renderFlights(flights) {
+            const listEl = document.getElementById('flightList');
+            if(!listEl) return;
+            listEl.innerHTML = '';
+
+            flights.forEach(flight => {
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-2xl p-6 shadow-sm border border-slate-200 hover:shadow-md transition-all flex flex-col md:flex-row items-center justify-between gap-6";
+                card.innerHTML = `
+                    <div class="flex items-center gap-4 w-full md:w-auto">
+                        <div class="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center text-xl ${flight.airlineColor}">
+                            <i class="fa-solid ${flight.airlineLogo}"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-slate-900">${flight.airline}</h4>
+                            <span class="text-xs font-semibold text-slate-400">Voo ${flight.id} • Classe Econômica</span>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-6 text-center w-full md:w-auto justify-between md:justify-center">
+                        <div>
+                            <span class="block text-lg font-extrabold text-slate-900">${flight.departureTime}</span>
+                            <span class="text-xs text-slate-500">${flight.origin}</span>
+                        </div>
+                        <div class="flex flex-col items-center px-4">
+                            <span class="text-xs text-slate-400 mb-1">${flight.duration}</span>
+                            <div class="w-32 h-0.5 bg-slate-200 relative">
+                                <div class="absolute -top-1.5 left-1/2 -translate-x-1/2 bg-white px-1 text-slate-400 text-[10px]">
+                                    <i class="fa-solid fa-plane"></i>
+                                </div>
+                            </div>
+                            <span class="text-[11px] font-semibold text-blue-600 mt-1">${flight.stops}</span>
+                        </div>
+                        <div>
+                            <span class="block text-lg font-extrabold text-slate-900">${flight.arrivalTime}</span>
+                            <span class="text-xs text-slate-500">${flight.destination}</span>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between w-full md:w-auto gap-4 pt-4 md:pt-0 border-t md:border-t-0 border-slate-100">
+                        <div class="text-right">
+                            <span class="text-xs text-slate-400 block">por passageiro</span>
+                            <span class="text-2xl font-black text-blue-600">R$ ${flight.price.toLocaleString('pt-BR')}</span>
+                        </div>
+                        <button onclick='openCheckoutModal(${JSON.stringify(flight)})' class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-3 rounded-xl shadow-md transition-all">
+                            Selecionar Voo
+                        </button>
+                    </div>
+                `;
+                listEl.appendChild(card);
+            });
+        }
+
+        function sortFlights() {
+            const sortBy = document.getElementById('sortSelect').value;
+            if(sortBy === 'price') {
+                currentFlightsData.sort((a,b) => a.price - b.price);
+            } else if(sortBy === 'duration') {
+                currentFlightsData.sort((a,b) => parseInt(a.duration) - parseInt(b.duration));
+            } else if(sortBy === 'departure') {
+                currentFlightsData.sort((a,b) => a.departureTime.localeCompare(b.departureTime));
+            }
+            renderFlights(currentFlightsData);
+        }
+
+        function openCheckoutModal(flight) {
+            selectedFlight = flight;
+            const modal = document.getElementById('checkoutModal');
+            if(modal) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex', 'modal-enter');
+            }
+
+            const summary = document.getElementById('checkoutFlightSummary');
+            if(summary) {
+                summary.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <i class="fa-solid fa-plane text-blue-600 text-xl"></i>
+                        <div>
+                            <strong class="block text-sm text-slate-900">${flight.airline} (${flight.origin} ➔ ${flight.destination})</strong>
+                            <span class="text-xs text-slate-500">Saída às ${flight.departureTime} • ${flight.stops}</span>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-xs text-slate-400 block">Total</span>
+                        <span class="text-lg font-bold text-blue-600">R$ ${flight.price.toLocaleString('pt-BR')}</span>
+                    </div>
+                `;
+            }
+
+            goToStep1();
+        }
+
+        function closeCheckoutModal() {
+            const modal = document.getElementById('checkoutModal');
+            if(modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        }
+
+        function goToStep1() {
+            document.getElementById('step1Content').classList.remove('hidden');
+            document.getElementById('step2Content').classList.add('hidden');
+            document.getElementById('step3Content').classList.add('hidden');
+
+            document.getElementById('stepIndicator1').className = "flex items-center gap-2 text-blue-600 font-bold text-sm";
+            document.getElementById('stepIndicator2').className = "flex items-center gap-2 text-slate-400 text-sm";
+        }
+
+        function goToStep2() {
+            const name = document.getElementById('passengerName').value;
+            const doc = document.getElementById('passengerDocument').value;
+            const email = document.getElementById('passengerEmail').value;
+            const phone = document.getElementById('passengerPhone').value;
+
+            if(!name || !doc || !email || !phone) {
+                alert("Por favor, preencha todos os campos obrigatórios de informações pessoais.");
+                return;
+            }
+
+            document.getElementById('step1Content').classList.add('hidden');
+            document.getElementById('step2Content').classList.remove('hidden');
+            document.getElementById('step3Content').classList.add('hidden');
+
+            document.getElementById('stepIndicator1').className = "flex items-center gap-2 text-slate-400 text-sm";
+            document.getElementById('stepIndicator2').className = "flex items-center gap-2 text-blue-600 font-bold text-sm";
+        }
+
+        function selectPaymentMethod(method) {
+            const methods = ['credit', 'pix', 'boleto', 'paypal'];
+            methods.forEach(m => {
+                const btn = document.getElementById(`payBtn${m.charAt(0).toUpperCase() + m.slice(1)}`);
+                const form = document.getElementById(`payment${m.charAt(0).toUpperCase() + m.slice(1)}Form`);
+                if(btn) btn.className = "p-3 rounded-xl border-2 border-slate-200 bg-slate-50 text-slate-600 font-semibold text-xs flex flex-col items-center justify-center gap-1.5 transition-all";
+                if(form) form.classList.add('hidden');
+            });
+
+            const activeBtn = document.getElementById(`payBtn${method.charAt(0).toUpperCase() + method.slice(1)}`);
+            const activeForm = document.getElementById(`payment${method.charAt(0).toUpperCase() + method.slice(1)}Form`);
+            if(activeBtn) activeBtn.className = "p-3 rounded-xl border-2 border-blue-600 bg-blue-50 text-blue-700 font-bold text-xs flex flex-col items-center justify-center gap-1.5 transition-all";
+            if(activeForm) activeForm.classList.remove('hidden');
+        }
+
+        function handleCheckoutSubmit(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('passengerName').value;
+            const pnr = `SK${Math.floor(Math.random()*90000)+10000}`;
+
+            const trips = JSON.parse(localStorage.getItem('aerosky_trips') || '[]');
+            const newTrip = {
+                pnr: pnr,
+                passenger: name,
+                route: `${selectedFlight.origin} ➔ ${selectedFlight.destination}`,
+                airline: selectedFlight.airline,
+                price: selectedFlight.price,
+                date: new Date().toLocaleDateString('pt-BR')
+            };
+            trips.push(newTrip);
+            localStorage.setItem('aerosky_trips', JSON.stringify(trips));
+
+            document.getElementById('successPNR').innerText = pnr;
+            document.getElementById('successPassenger').innerText = name;
+            document.getElementById('successRoute').innerText = newTrip.route;
+            document.getElementById('successAirline').innerText = newTrip.airline;
+
+            document.getElementById('step2Content').classList.add('hidden');
+            document.getElementById('step3Content').classList.remove('hidden');
+
+            document.getElementById('stepIndicator2').className = "flex items-center gap-2 text-slate-400 text-sm";
+            document.getElementById('stepIndicator3').className = "flex items-center gap-2 text-emerald-600 font-bold text-sm";
+        }
+
+        function openMyTripsModal() {
+            const trips = JSON.parse(localStorage.getItem('aerosky_trips') || '[]');
+            const container = document.getElementById('tripsListContainer');
+            if(!container) return;
+            container.innerHTML = '';
+
+            if(trips.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8 text-slate-400">
+                        <i class="fa-solid fa-ticket text-4xl mb-2"></i>
+                        <p class="text-sm">Nenhuma viagem encontrada no seu histórico recente.</p>
+                    </div>
+                `;
+            } else {
+                trips.forEach(trip => {
+                    const item = document.createElement('div');
+                    item.className = "bg-slate-50 p-4 rounded-2xl border border-slate-200 flex items-center justify-between";
+                    item.innerHTML = `
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-2 py-0.5 rounded">PNR: ${trip.pnr}</span>
+                            <h4 class="font-bold text-slate-900 mt-1">${trip.route}</h4>
+                            <p class="text-xs text-slate-500">${trip.airline} • Passageiro: ${trip.passenger}</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-sm font-extrabold text-slate-900">R$ ${trip.price.toLocaleString('pt-BR')}</span>
+                            <span class="block text-[10px] text-slate-400">Emitido em ${trip.date}</span>
+                        </div>
+                    `;
+                    container.appendChild(item);
+                });
+            }
+
+            const modal = document.getElementById('myTripsModal');
+            if(modal) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            }
+        }
+
+        function closeMyTripsModal() {
+            const modal = document.getElementById('myTripsModal');
+            if(modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        }
+
+        function openSupportModal() {
+            const modal = document.getElementById('supportModal');
+            if(modal) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            }
+        }
+
+        function closeSupportModal() {
+            const modal = document.getElementById('supportModal');
+            if(modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        }
+
+        function alertNewsletter() {
+            alert("E-mail cadastrado com sucesso! Você receberá nossas ofertas.");
+        }
+    </script>
+</body>
+</html>

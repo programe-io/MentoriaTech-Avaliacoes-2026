@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AeroSky Passagens - Descubra o Mundo</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Custom CSS Link -->
+    <link rel="stylesheet" href="style.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"><link href="style.css" rel="stylesheet"></head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased flex flex-col min-h-screen">
+
+    <header class="bg-white sticky top-0 z-40 shadow-sm border-b border-slate-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="navigateHome()">
+                <div class="w-11 h-11 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center text-white shadow-md shadow-blue-500/20">
+                    <i class="fa-solid fa-plane-departure text-xl"></i>
+                </div>
+                <div>
+                    <span class="text-2xl font-extrabold tracking-tight text-slate-900">Aero<span class="text-blue-600">Sky</span></span>
+                    <span class="block text-[10px] font-semibold uppercase tracking-widest text-slate-400">Passagens & Viagens</span>
+                </div>
+            </div>
+
+            <nav class="hidden md:flex items-center space-x-8 text-sm font-medium text-slate-600">
+                <a href="#inicio" onclick="navigateHome()" class="hover:text-blue-600 transition-colors">Início</a>
+                <a href="#destinos" class="hover:text-blue-600 transition-colors">Destinos</a>
+                <a href="#minhas-viagens" onclick="openMyTripsModal()" class="hover:text-blue-600 transition-colors flex items-center gap-1.5">
+                    <i class="fa-solid fa-ticket text-blue-500"></i> Minhas Viagens
+                </a>
+                <a href="#suporte" onclick="openSupportModal()" class="hover:text-blue-600 transition-colors">Suporte</a>
+            </nav>
+
+            <div class="flex items-center space-x-4">
+                <div class="hidden sm:flex items-center space-x-2 bg-slate-100 px-3 py-1.5 rounded-full text-xs font-medium text-slate-600">
+                    <i class="fa-solid fa-globe text-blue-600"></i>
+                    <span>BRL (R$)</span>
+                </div>
+                <button onclick="openMyTripsModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-semibold text-sm shadow-md shadow-blue-600/20 transition-all transform active:scale-95 flex items-center gap-2">
+                    <i class="fa-solid fa-user"></i> Entrar
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <section id="inicio" class="relative bg-gradient-to-br from-blue-900 via-indigo-900 to-slate-900 text-white py-16 lg:py-24 overflow-hidden">
+        <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#3b82f6_1px,transparent_1px)] [background-size:16px_16px]"></div>
+        <div class="absolute -right-20 -top-20 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center max-w-3xl mx-auto mb-10">
+                <span class="inline-flex items-center gap-2 bg-blue-500/20 text-blue-300 px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider mb-4 border border-blue-400/30">
+                    <i class="fa-solid fa-sparkles"></i> Mais de 50 Países Disponíveis
+                </span>
+                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight mb-6 leading-tight">
+                    Para onde o seu próximo sonho te leva?
+                </h1>
+                <p class="text-lg text-slate-300">
+                    Compare tarifas de centenas de companhias aéreas e viaje com segurança, economia e total flexibilidade.
+                </p>
+            </div>
+
+            <!-- Search Card Container -->
+            <div class="bg-white text-slate-800 rounded-3xl shadow-2xl p-6 sm:p-8 max-w-5xl mx-auto border border-slate-100">
+                <div class="flex items-center space-x-6 mb-6 pb-4 border-b border-slate-100 text-sm font-semibold">
+                    <label class="flex items-center gap-2 cursor-pointer text-blue-600 font-bold">
+                        <input type="radio" name="tripType" value="idaVolta" checked class="text-blue-600 focus:ring-blue-500">
+                        <span>Ida e Volta</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer text-slate-600 hover:text-slate-900">
+                        <input type="radio" name="tripType" value="ida" class="text-blue-600 focus:ring-blue-500">
+                        <span>Somente Ida</span>
+                    </label>
+                </div>
+
+                <form id="flightSearchForm" onsubmit="handleSearchFlights(event)" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="space-y-1.5">
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-500">Origem</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400">
+                                <i class="fa-solid fa-plane-departure"></i>
+                            </span>
+                            <select id="originSelect" required class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 pl-10 pr-4 text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all">
+                                <option value="GRU" selected>São Paulo (GRU) - Brasil</option>
+                                <option value="GIG">Rio de Janeiro (GIG) - Brasil</option>
+                                <option value="BSB">Brasília (BSB) - Brasil</option>
+                                <option value="CNF">Belo Horizonte (CNF) - Brasil</option>
+                                <option value="SSA">Salvador (SSA) - Brasil</option>
+                                <option value="FOR">Fortaleza (FOR) - Brasil</option>
+                                <option value="REC">Recife (REC) - Brasil</option>
+                                <option value="POA">Porto Alegre (POA) - Brasil</option>
+                                <option value="LIS">Lisboa (LIS) - Portugal</option>
+                                <option value="MIA">Miami (MIA) - Estados Unidos</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Destination Menu with 50+ Countries -->
+                    <div class="space-y-1.5">
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-500">Destino (Mais de 50 Países)</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400">
+                                <i class="fa-solid fa-plane-arrival"></i>
+                            </span>
+                            <select id="destinationSelect" required class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 pl-10 pr-4 text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all">
+                                <optgroup label="América do Sul">
+                                    <option value="Argentina">🇦🇷 Argentina (Buenos Aires)</option>
+                                    <option value="Chile">🇨🇱 Chile (Santiago)</option>
+                                    <option value="Uruguai">🇺🇾 Uruguai (Montevidéu)</option>
+                                    <option value="Colombia">🇨🇴 Colômbia (Bogotá)</option>
+                                    <option value="Peru">🇵🇪 Peru (Lima)</option>
+                                    <option value="Equador">🇪🇨 Equador (Quito)</option>
+                                    <option value="Bolivia">🇧🇴 Bolívia (La Paz)</option>
+                                    <option value="Paraguai">🇵🇾 Paraguai (Assunção)</option>
+                                    <option value="Venezuela">🇻🇪 Venezuela (Caracas)</option>
+                                    <option value="Guiana">🇬🇾 Guiana (Georgetown)</option>
+                                    <option value="Suriname">🇸🇷 Suriname (Paramaribo)</option>
+                                </optgroup>
+                                <optgroup label="América do Norte e Central">
+                                    <option value="Estados Unidos" selected>🇺🇸 Estados Unidos (Nova York / Miami)</option>
+                                    <option value="Canada">🇨🇦 Canadá (Toronto / Vancouver)</option>
+                                    <option value="Mexico">🇲🇽 México (Cidade do México)</option>
+                                    <option value="Costa Rica">🇨🇷 Costa Rica (San José)</option>
+                                    <option value="Panama">🇵🇦 Panamá (Cidade do Panamá)</option>
+                                    <option value="Republica Dominicana">🇩🇴 República Dominicana (Punta Cana)</option>
+                                    <option value="Cuba">🇨🇺 Cuba (Havana)</option>
+                                    <option value="Jamaica">🇯🇲 Jamaica (Kingston)</option>
+                                    <option value="Guatemala">🇬🇹 Guatemala (Cidade da Guatemala)</option>
+                                    <option value="Honduras">🇭🇳 Honduras (Tegucigalpa)</option>
+                                </optgroup>
+                                <optgroup label="Europa">
+                                    <option value="Portugal">🇵🇹 Portugal (Lisboa / Porto)</option>
+                                    <option value="Espanha">🇪🇸 Espanha (Madri / Barcelona)</option>
+                                    <option value="Franca">🇫🇷 França (Paris)</option>
+                                    <option value="Italia">🇮🇹 Itália (Roma / Milão)</option>
+                                    <option value="Reino Unido">🇬🇧 Reino Unido (Londres)</option>
+                                    <option value="Alemanha">🇩🇪 Alemanha (Berlim / Frankfurt)</option>
+                                    <option value="Suiça">🇨🇭 Suíça (Zurique)</option>
+                                    <option value="Holanda">🇳🇱 Países Baixos (Amsterdã)</option>
+                                    <option value="Belgica">🇧🇪 Bélgica (Bruxelas)</option>
+                                    <option value="Grecia">🇬🇷 Grécia (Atenas)</option>
+                                    <option value="Irlanda">🇮🇪 Irlanda (Dublin)</option>
+                                    <option value="Suecia">🇸🇪 Suécia (Estocolmo)</option>
+                                    <option value="Noruega">🇳🇴 Noruega (Oslo)</option>
+                                    <option value="Dinamarca">🇩🇰 Dinamarca (Copenhague)</option>
+                                    <option value="Austria">🇦🇹 Áustria (Viena)</option>
+                                    <option value="Polonia">🇵🇱 Polônia (Varsóvia)</option>
+                                    <option value="Republica Tcheca">🇨🇿 República Tcheca (Praga)</option>
+                                    <option value="Hungria">🇭🇺 Hungria (Budapeste)</option>
+                                    <option value="Turquia">🇹🇷 Turquia (Istambul)</option>
+                                    <option value="Islandia">🇮🇸 Islândia (Reykjavik)</option>
+                                    <option value="Finlandia">🇫🇮 Finlândia (Helsinque)</option>
+                                    <option value="Croacia">🇭🇷 Croácia (Zagreb)</option>
+                                </optgroup>
+                                <optgroup label="Ásia e Oriente Médio">
+                                    <option value="Japao">🇯🇵 Japão (Tóquio)</option>
+                                    <option value="China">🇨🇳 China (Pequim / Xangai)</option>
+                                    <option value="Coreia do Sul">🇰🇷 Coreia do Sul (Seul)</option>
+                                    <option value="Tailandia">🇹🇭 Tailândia (Bangkok)</option>
+                                    <option value="Emirados Arabes">🇦🇪 Emirados Árabes Unidos (Dubai)</option>
+                                    <option value="Cingapura">🇸🇬 Singapura (Cingapura)</option>
+                                    <option value="India">🇮🇳 Índia (Nova Delhi)</option>
+                                    <option value="Vietna">🇻🇳 Vietnã (Hanói)</option>
+                                    <option value="Indonesia">🇮🇩 Indonésia (Bali)</option>
+                                    <option value="Filipinas">🇵🇭 Filipinas (Manila)</option>
+                                    <option value="Malasia">🇲🇾 Malásia (Kuala Lumpur)</option>
+                                    <option value="Qatar">🇶🇦 Catar (Doha)</option>
+                                    <option value="Israel">🇮🇱 Israel (Tel Aviv)</option>
+                                    <option value="Arabia Saudita">🇸🇦 Arábia Saudita (Riade)</option>
+                                </optgroup>
+                                <optgroup label="África e Oceania">
+                                    <option value="Africa do Sul">🇿🇦 África do Sul (Cidade do Cabo)</option>
+                                    <option value="Egito">🇪🇬 Egito (Cairo)</option>
+                                    <option value="Marrocos">🇲🇦 Marrocos (Marraquexe)</option>
+                                    <option value="Australia">🇦🇺 Austrália (Sydney / Melbourne)</option>
+                                    <option value="Nova Zelandia">🇳🇿 Nova Zelândia (Auckland)</option>
+                                    <option value="Quenia">🇰🇪 Quênia (Nairóbi)</option>
+                                </optgroup>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2">
+                        <div class="space-y-1.5">
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500">Ida</label>
+                            <input type="date" id="departureDate" required class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-3 text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all">
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500">Volta</label>
+                            <input type="date" id="returnDate" required class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-3 text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all">
+                        </div>
+                    </div>
+
+                    <div class="space-y-1.5 flex flex-col justify-end">
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-500">Passageiros</label>
+                        <div class="flex gap-2">
+                            <select id="passengerSelect" class="w-1/2 bg-slate-50 border border-slate-200 rounded-xl py-3 px-2 text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="1">1 Adulto</option>
+                                <option value="2">2 Adultos</option>
+                                <option value="3">3 Adultos</option>
+                                <option value="4">Família (4+)</option>
+                            </select>
+                            <button type="submit" class="w-1/2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl shadow-lg shadow-blue-600/30 transition-all transform active:scale-95 flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-magnifying-glass"></i> Buscar
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
+        <div id="resultsContainer" class="hidden space-y-6">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-900" id="resultsTitle">Voos encontrados</h2>
+                    <p class="text-sm text-slate-500 mt-1">Mostrando as melhores tarifas e companhias aéreas parceiras</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="text-xs font-semibold uppercase text-slate-400">Ordenar por:</span>
+                    <select id="sortSelect" onchange="sortFlights()" class="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="price">Menor Preço</option>
+                        <option value="duration">Menor Duração</option>
+                        <option value="departure">Horário de Saída</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="flightList" class="space-y-4"></div>
+        </div>
+
+        <div id="destinos" class="mt-8">
+            <div class="text-center max-w-2xl mx-auto mb-12">
+                <span class="text-blue-600 font-bold uppercase tracking-widest text-xs">Explore o Globo</span>
+                <h2 class="text-3xl font-extrabold text-slate-900 mt-2">Destinos Populares em Destaque</h2>
+                <p class="text-slate-600 mt-2">Conectamos você a mais de 50 países com voos diretos e com conexão ao redor do mundo.</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div onclick="selectQuickDestination('Estados Unidos')" class="group relative rounded-3xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer h-80 bg-slate-900">
+                    <img src="https://placehold.co/600x800/1e293b/ffffff?text=Estados+Unidos" alt="Estados Unidos" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-80">
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent"></div>
+                    <div class="absolute top-4 right-4 bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold text-white border border-white/30">🇺🇸 Estados Unidos</div>
+                    <div class="absolute bottom-6 left-6 right-6 text-white">
+                        <span class="text-xs font-semibold text-blue-400 uppercase tracking-widest">A partir de R$ 2.450</span>
+                        <h3 class="text-2xl font-bold mt-1">Nova York & Miami</h3>
+                        <p class="text-xs text-slate-300 mt-2 flex items-center gap-1">Ver voos disponíveis <i class="fa-solid fa-arrow-right"></i></p>
+                    </div>
+                </div>
+
+                <div onclick="selectQuickDestination('Portugal')" class="group relative rounded-3xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer h-80 bg-slate-900">
+                    <img src="https://placehold.co/600x800/1e293b/ffffff?text=Portugal" alt="Portugal" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-80">
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent"></div>
+                    <div class="absolute top-4 right-4 bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold text-white border border-white/30">🇵🇹 Portugal</div>
+                    <div class="absolute bottom-6 left-6 right-6 text-white">
+                        <span class="text-xs font-semibold text-blue-400 uppercase tracking-widest">A partir de R$ 3.120</span>
+                        <h3 class="text-2xl font-bold mt-1">Lisboa & Porto</h3>
+                        <p class="text-xs text-slate-300 mt-2 flex items-center gap-1">Ver voos disponíveis <i class="fa-solid fa-arrow-right"></i></p>
+                    </div>
+                </div>
+
+                <div onclick="selectQuickDestination('Franca')" class="group relative rounded-3xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer h-80 bg-slate-900">
+                    <img src="https://placehold.co/600x800/1e293b/ffffff?text=Franca" alt="França" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-80">
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent"></div>
+                    <div class="absolute top-4 right-4 bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold text-white border border-white/30">🇫🇷 França</div>
+                    <div class="absolute bottom-6 left-6 right-6 text-white">
+                        <span class="text-xs font-semibold text-blue-400 uppercase tracking-widest">A partir de R$ 3.590</span>
+                        <h3 class="text-2xl font-bold mt-1">Paris</h3>
+                        <p class="text-xs text-slate-300 mt-2 flex items-center gap-1">Ver voos disponíveis <i class="fa-solid fa-arrow-right"></i></p>
+                    </div>
+                </div>
+
+                <div onclick="selectQuickDestination('Japao')" class="group relative rounded-3xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer h-80 bg-slate-900">
+                    <img src="https://placehold.co/600x800/1e293b/ffffff?text=Japao" alt="Japão" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-80">
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent"></div>
+                    <div class="absolute top-4 right-4 bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold text-white border border-white/30">🇯🇵 Japão</div>
+                    <div class="absolute bottom-6 left-6 right-6 text-white">
+                        <span class="text-xs font-semibold text-blue-400 uppercase tracking-widest">A partir de R$ 5.800</span>
+                        <h3 class="text-2xl font-bold mt-1">Tóquio</h3>
+                        <p class="text-xs text-slate-300 mt-2 flex items-center gap-1">Ver voos disponíveis <i class="fa-solid fa-arrow-right"></i></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="checkoutModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-2xl w-full overflow-hidden border border-slate-100 my-8">
+            <div class="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-5 text-white flex items-center justify-between">
+                <div>
+                    <span class="text-xs font-semibold uppercase tracking-widest bg-white/20 px-2.5 py-1 rounded-md">Reserva Segura</span>
+                    <h3 id="checkoutModalTitle" class="text-xl font-bold mt-1">Finalizar Compra da Passagem</h3>
+                </div>
+                <button onclick="closeCheckoutModal()" class="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-all">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <div class="bg-slate-50 px-6 py-4 border-b border-slate-100 flex items-center justify-between text-xs font-bold text-slate-500">
+                <div id="stepIndicator1" class="flex items-center gap-2 text-blue-600">
+                    <span class="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs">1</span>
+                    <span>Dados Pessoais</span>
+                </div>
+                <div class="h-0.5 w-12 bg-slate-200"></div>
+                <div id="stepIndicator2" class="flex items-center gap-2 text-slate-400">
+                    <span class="w-6 h-6 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center text-xs">2</span>
+                    <span>Pagamento</span>
+                </div>
+                <div class="h-0.5 w-12 bg-slate-200"></div>
+                <div id="stepIndicator3" class="flex items-center gap-2 text-slate-400">
+                    <span class="w-6 h-6 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center text-xs">3</span>
+                    <span>Confirmação</span>
+                </div>
+            </div>
+
+            <div class="p-6 sm:p-8">
+                <div id="checkoutFlightSummary" class="bg-blue-50/60 border border-blue-100 rounded-2xl p-4 mb-6 flex items-center justify-between"></div>
+
+                <form id="checkoutForm" onsubmit="handleCheckoutSubmit(event)">
+                    <!-- Step 1: Personal Info -->
+                    <div id="step1Content" class="space-y-4">
+                        <h4 class="text-sm font-bold uppercase tracking-wider text-slate-400 mb-2">Informações do Passageiro Principal</h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="space-y-1 sm:col-span-2">
+                                <label class="block text-xs font-semibold text-slate-600">Nome Completo (Conforme Documento)</label>
+                                <input type="text" id="passengerName" required placeholder="Ex: Carlos Eduardo Silva" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none">
+                            </div>
+                            <div class="space-y-1">
+                                <label class="block text-xs font-semibold text-slate-600">CPF ou Passaporte</label>
+                                <input type="text" id="passengerDocument" required placeholder="000.000.000-00" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none">
+                            </div>
+                            <div class="space-y-1">
+                                <label class="block text-xs font-semibold text-slate-600">Data de Nascimento</label>
+                                <input type="date" id="passengerDob" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none">
+                            </div>
+                            <div class="space-y-1">
+                                <label class="block text-xs font-semibold text-slate-600">E-mail para E-ticket</label>
+                                <input type="email" id="passengerEmail" required placeholder="carlos@email.com" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none">
+                            </div>
+                            <div class="space-y-1">
+                                <label class="block text-xs font-semibold text-slate-600">Telefone / Celular</label>
+                                <input type="tel" id="passengerPhone" required placeholder="(11) 99999-9999" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none">
+                            </div>
+                        </div>
+                        <div class="pt-4 flex justify-end">
+                            <button type="button" onclick="goToStep2()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-3 rounded-xl shadow-md transition-all flex items-center gap-2">
+                                Continuar para Pagamento <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Payment Methods (Credit Card, PIX, Boleto, PayPal) -->
+                    <div id="step2Content" class="space-y-6 hidden">
+                        <h4 class="text-sm font-bold uppercase tracking-wider text-slate-400">Escolha o Método de Pagamento</h4>
+                        
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                            <button type="button" onclick="selectPaymentMethod('credit')" id="payBtnCredit" class="p-4 rounded-2xl border-2 border-blue-600 bg-blue-50 text-blue-700 font-semibold text-xs flex flex-col items-center justify-center gap-2 transition-all">
+                                <i class="fa-solid fa-credit-card text-xl"></i> Cartão de Crédito
+                            </button>
+                            <button type="button" onclick="selectPaymentMethod('pix')" id="payBtnPix" class="p-4 rounded-2xl border-2 border-slate-200 bg-slate-50 text-slate-600 font-semibold text-xs flex flex-col items-center justify-center gap-2 transition-all">
+                                <i class="fa-solid fa-qrcode text-xl"></i> PIX (Instantâneo)
+                            </button>
+                            <button type="button" onclick="selectPaymentMethod('boleto')" id="payBtnBoleto" class="p-4 rounded-2xl border-2 border-slate-200 bg-slate-50 text-slate-600 font-semibold text-xs flex flex-col items-center justify-center gap-2 transition-all">
+                                <i class="fa-solid fa-barcode text-xl"></i> Boleto Bancário
+                            </button>
+                            <button type="button" onclick="selectPaymentMethod('paypal')" id="payBtnPaypal" class="p-4 rounded-2xl border-2 border-slate-200 bg-slate-50 text-slate-600 font-semibold text-xs flex flex-col items-center justify-center gap-2 transition-all">
+                                <i class="fa-brands fa-paypal text-xl"></i> PayPal
+                            </button>
+                        </div>
+
+                        <div id="paymentCreditForm" class="space-y-4 pt-2">
+                            <div class="space-y-1">
+                                <label class="block text-xs font-semibold text-slate-600">Número do Cartão</label>
+                                <input type="text" placeholder="0000 0000 0000 0000" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none">
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="space-y-1">
+                                    <label class="block text-xs font-semibold text-slate-600">Validade</label>
+                                    <input type="text" placeholder="MM/AA" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none">
+                                </div>
+                                <div class="space-y-1">
+                                    <label class="block text-xs font-semibold text-slate-600">CVV</label>
+                                    <input type="password" placeholder="123" maxlength="4" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none">
+                                </div>
+                            </div>
+                            <div class="space-y-1">
+                                <label class="block text-xs font-semibold text-slate-600">Parcelamento</label>
+                                <select class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none">
+                                    <option>1x sem juros</option>
+                                    <option>3x sem juros</option>
+                                    <option>6x sem juros</option>
+                                    <option>12x com juros</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div id="paymentPixForm" class="space-y-4 pt-2 hidden text-center">
+                            <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200 inline-block mx-auto">
+                                <div class="w-40 h-40 bg-white mx-auto flex items-center justify-center border border-slate-200 rounded-xl shadow-inner mb-3">
+                                    <i class="fa-solid fa-qrcode text-7xl text-slate-800"></i>
+                                </div>
+                                <p class="text-xs text-slate-500">Escaneie o QR Code com o aplicativo do seu banco</p>
+                            </div>
+                            <p class="text-xs text-emerald-600 font-semibold"><i class="fa-solid fa-circle-check"></i> Aprovação instantânea após pagamento</p>
+                        </div>
+
+                        <div id="paymentBoletoForm" class="space-y-4 pt-2 hidden text-center">
+                            <div class="bg-amber-50 p-6 rounded-2xl border border-amber-200 text-amber-900">
+                                <i class="fa-solid fa-file-invoice text-4xl mb-2 text-amber-600"></i>
+                                <h5 class="font-bold text-sm">Boleto Bancário gerado com vencimento em 1 dia útil</h5>
+                                <p class="text-xs text-amber-700 mt-1">O bilhete será emitido após a compensação bancária.</p>
+                            </div>
+                        </div>
+
+                        <div id="paymentPaypalForm" class="space-y-4 pt-2 hidden text-center">
+                            <div class="bg-blue-50 p-6 rounded-2xl border border-blue-200 text-blue-900">
+                                <i class="fa-brands fa-paypal text-4xl mb-2 text-blue-600"></i>
+                                <h5 class="font-bold text-sm">Você será redirecionado para concluir com PayPal</h5>
+                            </div>
+                        </div>
+
+                        <div class="pt-4 flex justify-between">
+                            <button type="button" onclick="goToStep1()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-5 py-3 rounded-xl transition-all">
+                                <i class="fa-solid fa-arrow-left"></i> Voltar
+                            </button>
+                            <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-8 py-3 rounded-xl shadow-lg shadow-emerald-600/30 transition-all transform active:scale-95 flex items-center gap-2">
+                                <i class="fa-solid fa-lock"></i> Concluir Compra
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Confirmation Screen -->
+                    <div id="step3Content" class="space-y-6 hidden text-center py-4">
+                        <div class="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto text-4xl shadow-inner">
+                            <i class="fa-solid fa-check"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-widest bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full">Passagem Emitida com Sucesso!</span>
+                            <h4 class="text-2xl font-extrabold text-slate-900 mt-3">Sua viagem está garantida!</h4>
+                            <p class="text-sm text-slate-600 mt-1">Enviamos todos os detalhes e o e-ticket para o seu e-mail cadastrado.</p>
+                        </div>
+
+                        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-6 max-w-md mx-auto text-left space-y-3">
+                            <div class="flex justify-between items-center pb-3 border-b border-slate-200">
+                                <span class="text-xs font-semibold text-slate-400 uppercase">Localizador (PNR):</span>
+                                <span id="successPNR" class="text-lg font-mono font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-lg">SK9842</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-slate-500">Passageiro:</span>
+                                <span id="successPassenger" class="font-semibold text-slate-800">Carlos Silva</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-slate-500">Rota:</span>
+                                <span id="successRoute" class="font-semibold text-slate-800">GRU ➔ Estados Unidos</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-slate-500">Companhia:</span>
+                                <span id="successAirline" class="font-semibold text-slate-800">AeroSky Airlines</span>
+                            </div>
+                        </div>
+
+                        <div class="pt-4 flex justify-center gap-4">
+                            <button type="button" onclick="closeCheckoutModal()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-8 py-3 rounded-xl shadow-md transition-all">
+                                Concluir & Ver Minhas Viagens
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- My Trips & Support Modals -->
+    <div id="myTripsModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-xl w-full p-6 sm:p-8 relative">
+            <button onclick="closeMyTripsModal()" class="absolute top-6 right-6 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center text-xl"><i class="fa-solid fa-ticket"></i></div>
+                <div>
+                    <h3 class="text-xl font-bold text-slate-900">Minhas Viagens Reservadas</h3>
+                    <p class="text-xs text-slate-500">Histórico de passagens emitidas no AeroSky</p>
+                </div>
+            </div>
+            <div id="tripsListContainer" class="space-y-4 max-h-80 overflow-y-auto pr-1"></div>
+            <div class="mt-6 pt-4 border-t border-slate-100 flex justify-end">
+                <button onclick="closeMyTripsModal()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-5 py-2.5 rounded-xl text-sm">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="supportModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full p-6 sm:p-8 relative">
+            <button onclick="closeSupportModal()" class="absolute top-6 right-6 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-2xl flex items-center justify-center text-xl"><i class="fa-solid fa-headset"></i></div>
+                <div>
+                    <h3 class="text-xl font-bold text-slate-900">Central de Suporte AeroSky</h3>
+                    <p class="text-xs text-slate-500">Atendimento 24 horas por dia, 7 dias por semana</p>
+                </div>
+            </div>
+            <div class="space-y-4 text-sm text-slate-600">
+                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex items-center gap-3">
+                    <i class="fa-brands fa-whatsapp text-emerald-600 text-2xl"></i>
+                    <div><strong class="block text-slate-900">WhatsApp Oficial</strong><span>+55 (11) 98888-7777</span></div>
+                </div>
+                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex items-center gap-3">
+                    <i class="fa-solid fa-envelope text-blue-600 text-2xl"></i>
+                    <div><strong class="block text-slate-900">E-mail de Atendimento</strong><span>suporte@aerosky.com.br</span></div>
+                </div>
+            </div>
+            <div class="mt-6 pt-4 border-t border-slate-100 flex justify-end">
+                <button onclick="closeSupportModal()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-2.5 rounded-xl text-sm">Entendido</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer id="suporte" class="bg-slate-900 text-slate-400 pt-16 pb-12 mt-auto border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
+                <div class="space-y-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-9 h-9 bg-blue-600 rounded-xl flex items-center justify-center text-white"><i class="fa-solid fa-plane-departure"></i></div>
+                        <span class="text-xl font-extrabold text-white">Aero<span class="text-blue-500">Sky</span></span>
+                    </div>
+                    <p class="text-sm text-slate-400">Sua agência de viagens digital de confiança para voar para mais de 50 países em todos os continentes.</p>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold text-sm uppercase tracking-wider mb-4">Destinos Populares</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" onclick="selectQuickDestination('Estados Unidos')" class="hover:text-white transition-colors">Estados Unidos</a></li>
+                        <li><a href="#" onclick="selectQuickDestination('Portugal')" class="hover:text-white transition-colors">Portugal</a></li>
+                        <li><a href="#" onclick="selectQuickDestination('Franca')" class="hover:text-white transition-colors">França</a></li>
+                        <li><a href="#" onclick="selectQuickDestination('Japao')" class="hover:text-white transition-colors">Japão</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold text-sm uppercase tracking-wider mb-4">Métodos de Pagamento</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-credit-card text-blue-500"></i> Cartão de Crédito (até 12x)</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-qrcode text-emerald-500"></i> PIX Instantâneo</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-barcode text-amber-500"></i> Boleto Bancário</li>
+                        <li class="flex items-center gap-2"><i class="fa-brands fa-paypal text-blue-400"></i> PayPal</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold text-sm uppercase tracking-wider mb-4">Newsletter</h4>
+                    <p class="text-xs text-slate-400 mb-3">Receba promoções relâmpago de passagens para o mundo todo.</p>
+                    <div class="flex gap-2">
+                        <input type="email" placeholder="Seu e-mail" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white w-full outline-none focus:border-blue-500">
+                        <button onclick="alertNewsletter()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-sm font-bold"><i class="fa-solid fa-paper-plane"></i></button>
+                    </div>
+                </div>
+            </div>
+            <div class="pt-8 border-t border-slate-800 text-center text-xs text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <p>&copy; 2026 AeroSky Passagens Aéreas S.A. Todos os direitos reservados.</p>
+                <div class="flex space-x-6">
+                    <a href="#" class="hover:text-slate-400">Termos de Uso</a>
+                    <a href="#" class="hover:text-slate-400">Política de Privacidade</a>
+                    <a href="#" class="hover:text-slate-400">Cookies</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Custom JavaScript Link -->
+    <script src="script.js"></script>
+<script src="script.js"></script></body>
+</html>
