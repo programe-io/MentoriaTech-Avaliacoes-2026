@@ -1,0 +1,430 @@
+
+/* =========================
+   CONFIGURAÇÕES GERAIS
+========================= */
+
+:root {
+    --background: #100c19;
+    --panel: #1a1427;
+    --card: #281d3c;
+    --purple: #bd75ff;
+    --pink: #ff79cf;
+    --white: #fff5ff;
+    --muted: #b9a9c9;
+    --border: #48315f;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    background:
+        radial-gradient(ellipse at top, #302044 0%, transparent 55%),
+        var(--background);
+    color: var(--white);
+    font-family: Arial, Helvetica, sans-serif;
+    line-height: 1.6;
+}
+
+button,
+select {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+button:focus-visible,
+select:focus-visible {
+    outline: 2px solid var(--pink);
+    outline-offset: 4px;
+}
+
+/* =========================
+   CABEÇALHO
+========================= */
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 7%;
+    border-bottom: 1px solid var(--border);
+    background: rgba(16, 12, 25, 0.85);
+}
+
+.logo {
+    color: var(--pink);
+    font-size: 1.25rem;
+    font-weight: 900;
+    letter-spacing: 2px;
+    text-decoration: none;
+}
+
+.header-label {
+    color: var(--muted);
+    font-size: 0.75rem;
+    letter-spacing: 3px;
+}
+
+/* =========================
+   INTRODUÇÃO
+========================= */
+
+.container {
+    width: min(900px, 92%);
+    margin: 0 auto;
+}
+
+.intro {
+    text-align: center;
+    padding: 40px 10px 30px;
+}
+
+.mascot {
+    display: grid;
+    place-items: center;
+    width: 85px;
+    height: 85px;
+    margin: 0 auto 15px;
+    border-radius: 50%;
+    border: 1px solid var(--purple);
+    background: var(--panel);
+    font-size: 3rem;
+    box-shadow: 0 0 25px #bd75ff22;
+    animation: float 3s ease-in-out infinite;
+}
+
+.eyebrow {
+    color: var(--pink);
+    font-size: 0.72rem;
+    letter-spacing: 4px;
+    font-weight: bold;
+}
+
+.intro h1 {
+    margin: 8px 0;
+    font-size: clamp(2rem, 6vw, 3.3rem);
+    line-height: 1.2;
+}
+
+.intro h1 span {
+    color: var(--purple);
+}
+
+.subtitle {
+    max-width: 520px;
+    margin: 12px auto 0;
+    color: var(--muted);
+}
+
+/* =========================
+   PAINEL DO JOGO
+========================= */
+
+.game-panel {
+    padding: 25px;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    background: rgba(26, 20, 39, 0.92);
+    box-shadow: 0 15px 50px #00000030;
+}
+
+.settings {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+
+.settings select {
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--card);
+    color: var(--white);
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.stat {
+    padding: 12px 5px;
+    text-align: center;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+}
+
+.stat-label {
+    display: block;
+    color: var(--muted);
+    font-size: 0.65rem;
+    letter-spacing: 1px;
+}
+
+.stat strong {
+    display: block;
+    margin-top: 3px;
+    color: var(--pink);
+    font-size: 1.35rem;
+}
+
+/* =========================
+   TABULEIRO E CARTAS
+========================= */
+
+.game-board {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+    min-height: 200px;
+}
+
+.start-message {
+    grid-column: 1 / -1;
+    align-self: center;
+    padding: 60px 10px;
+    text-align: center;
+    color: var(--muted);
+}
+
+.card {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    min-width: 0;
+    padding: 0;
+    border: 1px solid #62447e;
+    border-radius: 12px;
+    background: linear-gradient(145deg, #38234e, #21162f);
+    color: var(--white);
+    font-size: clamp(1.6rem, 5vw, 2.5rem);
+    transition:
+        transform 0.2s,
+        background 0.2s,
+        border-color 0.2s;
+    transform-style: preserve-3d;
+}
+
+.card:hover:not(:disabled) {
+    transform: translateY(-3px);
+    border-color: var(--pink);
+}
+
+.card::before {
+    content: "♡";
+    color: var(--purple);
+    font-size: 1.5rem;
+}
+
+.card.flipped,
+.card.matched {
+    background: #f5ddff;
+    color: #30133e;
+    border-color: var(--pink);
+    animation: reveal 0.25s ease;
+}
+
+.card.flipped::before,
+.card.matched::before {
+    content: none;
+}
+
+.card.matched {
+    background: #e9c7ff;
+    border: 2px solid var(--pink);
+    opacity: 0.75;
+    cursor: default;
+}
+
+.card:disabled {
+    cursor: default;
+}
+
+.message {
+    min-height: 30px;
+    margin: 20px 0;
+    text-align: center;
+    color: var(--pink);
+    font-size: 0.95rem;
+}
+
+/* =========================
+   BOTÕES
+========================= */
+
+.game-controls {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.button {
+    min-width: 150px;
+    padding: 12px 20px;
+    border-radius: 9px;
+    font-weight: bold;
+    transition: transform 0.2s, filter 0.2s;
+}
+
+.button:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.12);
+}
+
+.button.primary {
+    color: #24112e;
+    border: none;
+    background: linear-gradient(100deg, var(--purple), var(--pink));
+}
+
+.button.secondary {
+    color: var(--white);
+    border: 1px solid var(--border);
+    background: var(--card);
+}
+
+/* =========================
+   INSTRUÇÕES E RODAPÉ
+========================= */
+
+.instructions {
+    padding: 35px 0;
+}
+
+.instructions h2 {
+    margin-bottom: 18px;
+    text-align: center;
+    color: var(--pink);
+}
+
+.instruction-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.instruction-list p {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    background: var(--panel);
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+
+.instruction-list span {
+    color: var(--purple);
+    font-weight: bold;
+}
+
+.footer {
+    padding: 25px 15px;
+    text-align: center;
+    border-top: 1px solid var(--border);
+    color: var(--pink);
+}
+
+.footer span {
+    display: block;
+    margin-top: 5px;
+    color: var(--muted);
+    font-size: 0.75rem;
+}
+
+/* =========================
+   ANIMAÇÕES
+========================= */
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-7px);
+    }
+}
+
+@keyframes reveal {
+    from {
+        transform: scale(0.85);
+    }
+
+    to {
+        transform: scale(1);
+    }
+}
+
+/* =========================
+   RESPONSIVIDADE
+========================= */
+
+@media (max-width: 550px) {
+    .header {
+        padding: 15px 5%;
+    }
+
+    .logo {
+        font-size: 1rem;
+    }
+
+    .header-label {
+        font-size: 0.6rem;
+        letter-spacing: 1px;
+    }
+
+    .intro {
+        padding-top: 30px;
+    }
+
+    .game-panel {
+        padding: 15px 12px;
+    }
+
+    .stats {
+        gap: 6px;
+    }
+
+    .stat-label {
+        font-size: 0.55rem;
+        letter-spacing: 0;
+    }
+
+    .stat strong {
+        font-size: 1.1rem;
+    }
+
+    .game-board {
+        gap: 8px;
+    }
+
+    .card {
+        border-radius: 8px;
+    }
+
+    .instruction-list {
+        grid-template-columns: 1fr;
+    }
+
+    .button {
+        min-width: 125px;
+        padding: 11px 14px;
+    }
+}
