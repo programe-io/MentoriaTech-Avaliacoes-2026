@@ -1,0 +1,118 @@
+:root {
+  --fundo: #e8edef;
+  --painel: #f7f9fa;
+  --tinta: #16252d;
+  --mudo: #5b6c75;
+  --linha: #c9d3d8;
+  --acento: #0e7c8b;
+  --ok: #2b7a4b;
+  --instavel: #b96f05;
+  --offline: #b3261e;
+  --fonte: "IBM Plex Sans", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fundo: #0f1a20;
+    --painel: #16252d;
+    --tinta: #e4ecef;
+    --mudo: #90a3ad;
+    --linha: #2b3e48;
+    --acento: #4cc3d3;
+    --ok: #5cc98a;
+    --instavel: #f0a63a;
+    --offline: #ff7b72;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--fundo);
+  color: var(--tinta);
+  font: 400 16px/1.5 var(--fonte);
+}
+
+.topo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 24px;
+  padding: 20px clamp(16px, 4vw, 40px);
+  border-bottom: 1px solid var(--linha);
+}
+.topo h1 { margin: 0; font-size: 1.5rem; font-weight: 600; }
+.topo p { margin: 0; flex: 1; }
+
+main { padding: 24px clamp(16px, 4vw, 40px) 48px; display: grid; gap: 24px; }
+
+h2 { margin: 0 0 12px; font-size: 1.05rem; font-weight: 600; }
+h3 { margin: 0 0 8px; font-size: 1rem; }
+
+.mudo { color: var(--mudo); font-size: 0.9rem; }
+
+button, input, select {
+  font: inherit;
+  color: inherit;
+  background: var(--painel);
+  border: 1px solid var(--linha);
+  border-radius: 6px;
+  padding: 8px 12px;
+}
+button { cursor: pointer; background: var(--acento); border-color: var(--acento); color: #fff; font-weight: 500; }
+button.sec { background: transparent; color: var(--offline); border-color: var(--linha); padding: 4px 10px; }
+:focus-visible { outline: 3px solid var(--acento); outline-offset: 2px; }
+
+.resumo { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 16px; }
+.indicador { border-left: 4px solid var(--acento); padding: 4px 0 4px 14px; }
+.indicador span { display: block; font: 500 2.2rem/1.1 var(--mono); }
+.indicador small { color: var(--mudo); font-size: 0.9rem; }
+.indicador:nth-child(1) { border-color: var(--ok); }
+.indicador:nth-child(2) { border-color: var(--instavel); }
+.indicador:nth-child(3) { border-color: var(--offline); }
+
+.paineis { display: grid; grid-template-columns: 3fr 2fr; gap: 24px; }
+.painel { background: var(--painel); border: 1px solid var(--linha); border-radius: 10px; padding: 20px; }
+.painel svg { width: 100%; height: auto; display: block; }
+
+.barra { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 12px; }
+.barra h2 { margin: 0; flex: 1; min-width: 140px; }
+
+.rolagem { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--linha); white-space: nowrap; }
+th { color: var(--mudo); font-weight: 500; }
+td.mono { font-family: var(--mono); }
+
+.estado { display: inline-flex; align-items: center; gap: 8px; }
+.ponto { width: 10px; height: 10px; border-radius: 50%; background: var(--mudo); }
+.ponto.online { background: var(--ok); }
+.ponto.instavel { background: var(--instavel); border-radius: 2px; }
+.ponto.offline { background: var(--offline); clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+
+.novo { display: flex; flex-wrap: wrap; gap: 12px; align-items: end; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--linha); }
+.novo h3 { width: 100%; }
+.novo label { display: grid; gap: 4px; font-size: 0.9rem; color: var(--mudo); }
+.erro { width: 100%; margin: 0; color: var(--offline); min-height: 1.4em; font-size: 0.9rem; }
+
+/* Elementos do SVG */
+.link { stroke: var(--linha); stroke-width: 2; }
+.no-rotulo { fill: var(--tinta); font: 500 12px var(--fonte); text-anchor: middle; }
+.no-ip { fill: var(--mudo); font: 400 10px var(--mono); text-anchor: middle; }
+.no-forma.online { fill: var(--ok); }
+.no-forma.instavel { fill: var(--instavel); }
+.no-forma.offline { fill: var(--offline); }
+.roteador { fill: var(--acento); }
+.eixo { stroke: var(--linha); }
+.limite { stroke: var(--instavel); stroke-dasharray: 4 4; }
+.curva { fill: none; stroke: var(--acento); stroke-width: 2.5; }
+.rotulo-eixo { fill: var(--mudo); font: 400 10px var(--mono); }
+
+@media (max-width: 820px) {
+  .paineis { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .indicador span { transition: color 0.3s; }
+}

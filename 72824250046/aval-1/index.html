@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Monitor de Rede</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+  <header class="topo">
+    <h1>Monitor de rede</h1>
+    <p id="atualizado" class="mudo" aria-live="polite">Aguardando primeira leitura…</p>
+    <button id="btn-pausar" type="button">Pausar leitura</button>
+  </header>
+
+  <main>
+    <section class="resumo" aria-label="Resumo da rede">
+      <div class="indicador"><span id="r-online">0</span><small>dispositivos online</small></div>
+      <div class="indicador"><span id="r-instavel">0</span><small>instáveis</small></div>
+      <div class="indicador"><span id="r-offline">0</span><small>offline</small></div>
+      <div class="indicador"><span id="r-latencia">0 ms</span><small>latência média</small></div>
+    </section>
+
+    <section class="paineis">
+      <article class="painel mapa">
+        <h2>Topologia</h2>
+        <svg id="topologia" viewBox="0 0 600 420" role="img" aria-label="Mapa de dispositivos ligados ao roteador"></svg>
+      </article>
+      <article class="painel">
+        <h2>Latência média (últimas leituras)</h2>
+        <svg id="grafico" viewBox="0 0 400 200" role="img" aria-label="Gráfico de latência média"></svg>
+        <p class="mudo">Linha tracejada: limite de 100 ms.</p>
+      </article>
+    </section>
+
+    <section class="painel">
+      <div class="barra">
+        <h2>Dispositivos</h2>
+        <input id="busca" type="search" placeholder="Buscar por nome ou IP" aria-label="Buscar dispositivo">
+        <select id="filtro" aria-label="Filtrar por estado">
+          <option value="todos">Todos os estados</option>
+          <option value="online">Online</option>
+          <option value="instavel">Instáveis</option>
+          <option value="offline">Offline</option>
+        </select>
+      </div>
+      <div class="rolagem">
+        <table>
+          <thead>
+            <tr><th>Estado</th><th>Nome</th><th>Tipo</th><th>IP</th><th>Latência</th><th>Perda</th><th></th></tr>
+          </thead>
+          <tbody id="tabela"></tbody>
+        </table>
+      </div>
+      <p id="vazio" class="mudo" hidden>Nenhum dispositivo encontrado. Ajuste a busca ou o filtro.</p>
+
+      <form id="form-novo" class="novo" novalidate>
+        <h3>Adicionar dispositivo</h3>
+        <label>Nome <input name="nome" required maxlength="30"></label>
+        <label>IP <input name="ip" required placeholder="192.168.0.50" inputmode="decimal"></label>
+        <label>Tipo
+          <select name="tipo">
+            <option>Servidor</option><option>Computador</option><option>Impressora</option>
+            <option>Câmera</option><option>Ponto de acesso</option>
+          </select>
+        </label>
+        <button type="submit">Adicionar</button>
+        <p id="erro" class="erro" role="alert"></p>
+      </form>
+    </section>
+  </main>
+
+  <script src="js/app.js"></script>
+<script src="script.js"></script></body>
+</html>
