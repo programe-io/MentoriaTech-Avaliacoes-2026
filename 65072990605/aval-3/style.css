@@ -1,0 +1,643 @@
+/* =====================================================
+   RESET
+===================================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    min-height: 100%;
+
+    overflow: hidden;
+}
+
+body {
+    background: #05070a;
+
+    color: #eafcff;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+}
+
+
+/* =====================================================
+   GAME WRAPPER
+===================================================== */
+
+.game-wrapper {
+    width: 100vw;
+    height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+
+    background:
+        radial-gradient(
+            circle at center,
+            #101d24 0%,
+            #05070a 70%
+        );
+}
+
+
+/* =====================================================
+   HUD
+===================================================== */
+
+.hud {
+    height: 70px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+
+    gap: 35px;
+
+    padding: 0 25px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #101820,
+            #080d12
+        );
+
+    border-bottom:
+        1px solid
+        rgba(0, 229, 255, .25);
+
+    box-shadow:
+        0 0 25px
+        rgba(0, 229, 255, .08);
+
+    z-index: 20;
+}
+
+.hud-item {
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+}
+
+.hud-label {
+    color: #6d858d;
+
+    font-size: 9px;
+    font-weight: bold;
+
+    letter-spacing: 1.5px;
+}
+
+.hud-item strong {
+    color: #00e5ff;
+
+    font-size: 17px;
+}
+
+.health-container {
+    min-width: 220px;
+}
+
+.health-bar {
+    width: 100px;
+    height: 8px;
+
+    overflow: hidden;
+
+    background: #1b252a;
+
+    border:
+        1px solid
+        #304047;
+}
+
+.health-fill {
+    width: 100%;
+    height: 100%;
+
+    background:
+        linear-gradient(
+            90deg,
+            #00ff88,
+            #00e5ff
+        );
+
+    transition: width .15s;
+}
+
+.ammo-container {
+    margin-left: auto;
+}
+
+
+/* =====================================================
+   GAME CONTAINER
+===================================================== */
+
+.game-container {
+    position: relative;
+
+    flex: 1;
+
+    overflow: hidden;
+
+    background: #071016;
+}
+
+canvas {
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+
+    cursor: none;
+}
+
+
+/* =====================================================
+   CROSSHAIR
+===================================================== */
+
+.crosshair {
+    position: absolute;
+
+    width: 26px;
+    height: 26px;
+
+    pointer-events: none;
+
+    transform:
+        translate(-50%, -50%);
+
+    z-index: 15;
+}
+
+.crosshair::before,
+.crosshair::after,
+.crosshair span::before,
+.crosshair span::after {
+    content: "";
+
+    position: absolute;
+
+    background: #00e5ff;
+
+    box-shadow:
+        0 0 6px
+        #00e5ff;
+}
+
+.crosshair::before {
+    width: 2px;
+    height: 8px;
+
+    left: 12px;
+    top: 0;
+}
+
+.crosshair::after {
+    width: 2px;
+    height: 8px;
+
+    left: 12px;
+    bottom: 0;
+}
+
+.crosshair span::before {
+    width: 8px;
+    height: 2px;
+
+    left: 0;
+    top: 12px;
+}
+
+.crosshair span::after {
+    width: 8px;
+    height: 2px;
+
+    right: 0;
+    top: 12px;
+}
+
+
+/* =====================================================
+   SCREENS
+===================================================== */
+
+.screen {
+    position: absolute;
+
+    inset: 0;
+
+    display: none;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 25px;
+
+    background:
+        rgba(2, 6, 9, .82);
+
+    backdrop-filter: blur(5px);
+
+    z-index: 30;
+}
+
+.screen.active {
+    display: flex;
+}
+
+.screen-content {
+    width: min(600px, 100%);
+
+    padding: 45px;
+
+    text-align: center;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(12, 25, 32, .98),
+            rgba(5, 11, 15, .98)
+        );
+
+    border:
+        1px solid
+        rgba(0, 229, 255, .3);
+
+    box-shadow:
+        0 0 50px
+        rgba(0, 229, 255, .1);
+}
+
+
+/* =====================================================
+   LOGO
+===================================================== */
+
+.game-logo {
+    margin-bottom: 10px;
+
+    color: white;
+
+    font-size: clamp(55px, 10vw, 100px);
+
+    font-weight: 900;
+
+    line-height: .8;
+
+    letter-spacing: -5px;
+}
+
+.game-logo span {
+    display: block;
+
+    color: #00e5ff;
+}
+
+.screen-content > p {
+    margin: 25px 0;
+
+    color: #6d858d;
+
+    font-size: 10px;
+    font-weight: bold;
+
+    letter-spacing: 4px;
+}
+
+
+/* =====================================================
+   BUTTONS
+===================================================== */
+
+.game-button {
+    min-width: 210px;
+
+    padding: 15px 25px;
+
+    border:
+        1px solid
+        #00e5ff;
+
+    background: #00e5ff;
+
+    color: #031014;
+
+    font-weight: 900;
+
+    letter-spacing: 1px;
+
+    cursor: pointer;
+
+    transition: .2s;
+}
+
+.game-button:hover {
+    background: #69f1ff;
+
+    box-shadow:
+        0 0 25px
+        rgba(0,229,255,.35);
+
+    transform: translateY(-2px);
+}
+
+.game-button.secondary {
+    display: block;
+
+    margin: 12px auto 0;
+
+    background: transparent;
+
+    color: #00e5ff;
+}
+
+
+/* =====================================================
+   CONTROLS
+===================================================== */
+
+.controls {
+    display: flex;
+
+    justify-content: center;
+
+    flex-wrap: wrap;
+
+    gap: 12px;
+
+    margin-top: 35px;
+}
+
+.controls span {
+    padding: 7px 10px;
+
+    background: rgba(255,255,255,.04);
+
+    color: #687d84;
+
+    font-size: 9px;
+}
+
+.controls b {
+    color: white;
+}
+
+
+/* =====================================================
+   GAME OVER
+===================================================== */
+
+.game-over-label {
+    color: #ff375f;
+
+    font-size: 10px;
+    font-weight: bold;
+
+    letter-spacing: 3px;
+}
+
+.screen-content h1 {
+    margin: 10px 0 30px;
+
+    color: white;
+
+    font-size: clamp(45px, 8vw, 80px);
+
+    line-height: 1;
+}
+
+.final-score span {
+    display: block;
+
+    color: #6d858d;
+
+    font-size: 9px;
+    font-weight: bold;
+
+    letter-spacing: 2px;
+}
+
+.final-score strong {
+    display: block;
+
+    margin: 5px 0 15px;
+
+    color: #00e5ff;
+
+    font-size: 50px;
+}
+
+.final-wave {
+    margin-bottom: 30px;
+
+    color: #72858b;
+
+    font-size: 12px;
+}
+
+.final-wave strong {
+    color: white;
+}
+
+
+/* =====================================================
+   RELOAD
+===================================================== */
+
+.reload-indicator {
+    position: absolute;
+
+    left: 50%;
+    bottom: 30px;
+
+    transform:
+        translateX(-50%);
+
+    display: none;
+
+    padding: 10px 18px;
+
+    background: rgba(0,0,0,.8);
+
+    border:
+        1px solid
+        #00e5ff;
+
+    color: #00e5ff;
+
+    font-size: 10px;
+    font-weight: bold;
+
+    letter-spacing: 2px;
+
+    z-index: 25;
+}
+
+.reload-indicator.active {
+    display: block;
+}
+
+
+/* =====================================================
+   DAMAGE EFFECT
+===================================================== */
+
+.damage-effect {
+    position: absolute;
+
+    inset: 0;
+
+    pointer-events: none;
+
+    background:
+        radial-gradient(
+            circle,
+            transparent 30%,
+            rgba(255,0,50,.4)
+        );
+
+    opacity: 0;
+
+    z-index: 10;
+}
+
+.damage-effect.active {
+    animation: damageFlash .25s;
+}
+
+@keyframes damageFlash {
+
+    0% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+
+}
+
+
+/* =====================================================
+   MOBILE CONTROLS
+===================================================== */
+
+.mobile-controls {
+    display: none;
+
+    position: absolute;
+
+    left: 15px;
+    bottom: 80px;
+
+    z-index: 40;
+}
+
+.mobile-controls button {
+    width: 48px;
+    height: 48px;
+
+    margin: 2px;
+
+    border:
+        1px solid
+        rgba(0,229,255,.3);
+
+    background:
+        rgba(0,20,27,.75);
+
+    color: #00e5ff;
+
+    font-size: 18px;
+
+    border-radius: 5px;
+}
+
+
+/* =====================================================
+   FOOTER
+===================================================== */
+
+.footer {
+    height: 35px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 15px;
+
+    background: #05080a;
+
+    color: #45565c;
+
+    font-size: 8px;
+
+    letter-spacing: 1px;
+}
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width: 700px) {
+
+    .hud {
+        height: 60px;
+
+        gap: 10px;
+
+        padding: 0 10px;
+    }
+
+    .hud-label {
+        display: none;
+    }
+
+    .health-container {
+        min-width: 100px;
+    }
+
+    .health-bar {
+        width: 60px;
+    }
+
+    .ammo-container {
+        margin-left: 0;
+    }
+
+    .mobile-controls {
+        display: block;
+    }
+
+    .screen-content {
+        padding: 30px 20px;
+    }
+
+    .controls {
+        display: none;
+    }
+
+    .game-logo {
+        letter-spacing: -3px;
+    }
+
+}
