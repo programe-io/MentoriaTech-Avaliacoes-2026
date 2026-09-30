@@ -1,0 +1,657 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600;1,700&family=Jost:wght@400;500&display=swap');
+
+/*
+  Tema: noite de chuva em Mystic Falls.
+  Paleta tirada do pôster: preto molhado com fundo esverdeado,
+  vermelho de sangue (o caixão e o rastro do logo) e o latão do símbolo do infinito.
+  Funciona com o mesmo HTML, sem alterar nada nele.
+  Único movimento da página: a chuva ao fundo.
+*/
+
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --night: #050707;
+    --wet: #0b1211;
+    --panel: #0e1514;
+    --mahogany: #170b0d;
+    --border: #22302c;
+
+    --blood: #b3172b;
+    --blood-dark: #6d0c1a;
+    --blood-glow: #ff3a55;
+
+    --brass: #b8a063;
+    --brass-dim: rgba(184, 160, 99, 0.35);
+
+    --text: #e3e9e7;
+    --muted: #869491;
+    --fog: #aebbb8;
+
+    --serif: "Cormorant Garamond", Georgia, serif;
+    --sans: "Jost", system-ui, sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    background:
+        radial-gradient(ellipse at 50% -5%, rgba(120, 150, 140, 0.16), transparent 55%),
+        linear-gradient(180deg, var(--night), var(--wet) 60%, #121d1a);
+    background-attachment: fixed;
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+:focus-visible {
+    outline: 2px solid var(--blood-glow);
+    outline-offset: 3px;
+}
+
+/* ---------- CHUVA E NÉVOA ---------- */
+
+/* névoa no chão + vinheta escura nas bordas */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+        linear-gradient(0deg, rgba(150, 175, 168, 0.13), transparent 28%),
+        radial-gradient(ellipse at 50% 40%, transparent 45%, rgba(0, 0, 0, 0.75) 100%);
+}
+
+/* fios de chuva caindo, levemente inclinados */
+body::after {
+    content: "";
+    position: fixed;
+    inset: -25%;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.55;
+    transform: rotate(10deg);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='200'%3E%3Cg stroke='%23b9c8cc' stroke-width='1' stroke-linecap='round'%3E%3Cline x1='10' y1='15' x2='10' y2='75' opacity='.30'/%3E%3Cline x1='34' y1='110' x2='34' y2='150' opacity='.22'/%3E%3Cline x1='58' y1='40' x2='58' y2='110' opacity='.34'/%3E%3Cline x1='83' y1='130' x2='83' y2='190' opacity='.26'/%3E%3Cline x1='106' y1='5' x2='106' y2='55' opacity='.20'/%3E%3Cline x1='96' y1='85' x2='96' y2='115' opacity='.16'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: 120px 200px;
+    animation: rain 0.75s linear infinite;
+}
+
+@keyframes rain {
+    to {
+        background-position: 0 200px;
+    }
+}
+
+.topbar,
+.container,
+footer {
+    position: relative;
+    z-index: 1;
+}
+
+/* ---------- TOPO ---------- */
+
+.topbar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px clamp(18px, 5vw, 48px);
+    background: rgba(5, 7, 7, 0.82);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--brass-dim);
+    box-shadow: 0 1px 0 rgba(179, 23, 43, 0.55);
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+/* o "P" some e dá lugar ao símbolo do infinito, como no caixão do pôster */
+.logo-mark {
+    width: 42px;
+    height: 42px;
+    display: grid;
+    place-items: center;
+    font-size: 0;
+    color: var(--brass);
+    border: 1px solid var(--brass);
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #1d2623, #070a09);
+    box-shadow: 0 0 14px rgba(184, 160, 99, 0.18), inset 0 0 8px rgba(0, 0, 0, 0.8);
+}
+
+.logo-mark::before {
+    content: "\221E";
+    font-family: var(--serif);
+    font-size: 30px;
+    font-weight: 600;
+    line-height: 1;
+}
+
+.logo strong {
+    display: block;
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 700;
+    font-size: 30px;
+    line-height: 0.95;
+    letter-spacing: 0.5px;
+    color: #fff;
+}
+
+.logo small {
+    display: block;
+    margin-top: 3px;
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 1px;
+}
+
+.status {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 13px;
+    color: var(--fog);
+}
+
+/* ponto vermelho, como a luz de uma vela ao longe */
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--blood-glow);
+    box-shadow: 0 0 10px 2px rgba(255, 58, 85, 0.6);
+}
+
+/* ---------- COLUNA ÚNICA ---------- */
+
+.container {
+    width: min(700px, calc(100% - 28px));
+    margin: 44px auto 0;
+}
+
+/* ---------- COMPOSER: página de diário ---------- */
+
+.composer {
+    background:
+        linear-gradient(180deg, rgba(179, 23, 43, 0.10), transparent 90px),
+        var(--mahogany);
+    border: 1px solid var(--brass-dim);
+    border-top: 3px solid var(--blood);
+    border-radius: 3px;
+    padding: 26px;
+    box-shadow:
+        0 24px 60px rgba(0, 0, 0, 0.6),
+        inset 0 0 40px rgba(0, 0, 0, 0.45);
+}
+
+.composer-top {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 22px;
+}
+
+.composer-top h2 {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 700;
+    font-size: 28px;
+    line-height: 1.1;
+    color: #fff;
+}
+
+.composer-top p {
+    margin-top: 4px;
+    font-size: 13px;
+    color: var(--muted);
+}
+
+/* ---------- AVATAR ---------- */
+
+.avatar {
+    width: 46px;
+    height: 46px;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    background: radial-gradient(circle at 35% 30%, #1f2a27, #080c0b);
+    color: var(--brass);
+    border: 1px solid var(--brass);
+    border-radius: 50%;
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 700;
+    font-size: 23px;
+    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.8);
+}
+
+/* ---------- CAMPOS ---------- */
+
+input[type="text"],
+textarea {
+    width: 100%;
+    background: rgba(4, 6, 6, 0.75);
+    color: var(--text);
+    border: 1px solid #2a3532;
+    border-radius: 2px;
+    font-family: var(--sans);
+    font-size: 15px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input[type="text"] {
+    height: 46px;
+    padding: 0 14px;
+    margin-bottom: 12px;
+}
+
+/* o texto do post é escrito em linhas de caderno, como um diário */
+textarea {
+    min-height: 160px;
+    padding: 4px 14px;
+    resize: vertical;
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 32px;
+    background-image: repeating-linear-gradient(
+        transparent 0 31px,
+        rgba(184, 160, 99, 0.16) 31px 32px
+    );
+    background-attachment: local;
+}
+
+input::placeholder,
+textarea::placeholder {
+    color: #56635f;
+}
+
+input[type="text"]:focus,
+textarea:focus {
+    outline: none;
+    border-color: var(--blood);
+    box-shadow: 0 0 0 3px rgba(179, 23, 43, 0.22);
+}
+
+/* ---------- BOTÕES ---------- */
+
+.composer-bottom {
+    margin-top: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.file-button {
+    cursor: pointer;
+    padding: 10px 16px;
+    color: var(--brass);
+    border: 1px solid var(--brass-dim);
+    border-radius: 2px;
+    font-size: 13px;
+    font-weight: 500;
+    transition: border-color 0.2s, background-color 0.2s, color 0.2s;
+}
+
+.file-button:hover {
+    color: #e6d29b;
+    border-color: var(--brass);
+    background: rgba(184, 160, 99, 0.08);
+}
+
+.file-button:focus-within {
+    outline: 2px solid var(--blood-glow);
+    outline-offset: 3px;
+}
+
+.file-button input {
+    display: none;
+}
+
+.post-button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 24px;
+    background: linear-gradient(180deg, var(--blood), var(--blood-dark));
+    color: #fbeeee;
+    border: 1px solid #c8283f;
+    border-radius: 2px;
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 700;
+    font-size: 19px;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(109, 12, 26, 0.55);
+    transition: box-shadow 0.2s, filter 0.2s;
+}
+
+.post-button span {
+    font-size: 17px;
+    font-style: normal;
+}
+
+.post-button:hover {
+    filter: brightness(1.15);
+    box-shadow: 0 6px 26px rgba(255, 58, 85, 0.42);
+}
+
+.post-button:active {
+    filter: brightness(0.9);
+}
+
+.file-name {
+    margin-top: 12px;
+    font-size: 12px;
+    color: var(--muted);
+    word-break: break-word;
+}
+
+.file-name:empty {
+    display: none;
+}
+
+/* ---------- CABEÇALHO DO FEED ---------- */
+
+.feed {
+    margin-top: 54px;
+}
+
+.feed-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 30px;
+}
+
+.section-label {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 600;
+    font-size: 16px;
+    text-transform: lowercase;
+    color: var(--blood-glow);
+}
+
+/* o rastro vermelho embaixo do título lembra o logo da série */
+.feed-header h1 {
+    position: relative;
+    display: inline-block;
+    margin-top: 2px;
+    padding-bottom: 12px;
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 700;
+    font-size: clamp(42px, 8vw, 62px);
+    line-height: 1;
+    color: #fff;
+}
+
+.feed-header h1::after {
+    content: "";
+    position: absolute;
+    left: -4%;
+    bottom: 0;
+    width: 108%;
+    height: 9px;
+    border-bottom: 2px solid var(--blood);
+    border-radius: 50%;
+    transform: rotate(-1.5deg);
+    filter: drop-shadow(0 0 4px rgba(255, 58, 85, 0.5));
+}
+
+.post-count {
+    padding-bottom: 14px;
+    font-size: 13px;
+    color: var(--muted);
+}
+
+/* ---------- POSTS: entradas do diário ---------- */
+
+.post {
+    background: linear-gradient(180deg, rgba(16, 24, 22, 0.92), rgba(9, 14, 13, 0.92));
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--blood);
+    border-radius: 3px;
+    padding: 24px 26px;
+    margin-bottom: 22px;
+    box-shadow: 0 14px 36px rgba(0, 0, 0, 0.5);
+}
+
+.post-head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.user-info strong {
+    display: block;
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 700;
+    font-size: 22px;
+    line-height: 1.1;
+    color: #fff;
+}
+
+.user-info span {
+    display: block;
+    margin-top: 3px;
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.post-id {
+    margin-left: auto;
+    align-self: flex-start;
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 15px;
+    color: var(--brass);
+    opacity: 0.8;
+}
+
+.post-content {
+    margin-top: 20px;
+}
+
+.post-content p {
+    max-width: 58ch;
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 1.6;
+    color: #e6ecea;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+/* ---------- IMAGEM ---------- */
+
+.post-image {
+    margin-top: 18px;
+    overflow: hidden;
+    background: #030505;
+    border: 1px solid var(--brass-dim);
+    border-radius: 2px;
+    box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.6);
+}
+
+.post-image img {
+    display: block;
+    width: 100%;
+    max-height: 520px;
+    object-fit: contain;
+    filter: saturate(0.8) contrast(1.05);
+}
+
+/* ---------- CURTIR ---------- */
+
+.post-actions {
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px solid #1a2623;
+}
+
+.like {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 10px 4px 6px;
+    background: transparent;
+    color: var(--muted);
+    border: none;
+    border-radius: 2px;
+    font-family: var(--sans);
+    font-size: 13px;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.like .heart {
+    color: var(--blood);
+    transition: text-shadow 0.2s, color 0.2s;
+}
+
+.like:hover {
+    color: var(--text);
+}
+
+.like:hover .heart {
+    color: var(--blood-glow);
+    text-shadow: 0 0 12px rgba(255, 58, 85, 0.85);
+}
+
+.heart {
+    font-size: 22px;
+    line-height: 1;
+}
+
+/* ---------- ESTADO VAZIO ---------- */
+
+.empty-state {
+    padding: 70px 24px;
+    text-align: center;
+    background: rgba(9, 14, 13, 0.7);
+    border: 1px dashed var(--brass-dim);
+    border-radius: 3px;
+}
+
+.empty-icon {
+    width: 50px;
+    height: 50px;
+    margin: 0 auto 16px;
+    display: grid;
+    place-items: center;
+    color: var(--brass);
+    border: 1px solid var(--brass-dim);
+    border-radius: 50%;
+    font-size: 24px;
+}
+
+.empty-state h3 {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 700;
+    font-size: 28px;
+    color: #fff;
+}
+
+.empty-state p {
+    margin-top: 6px;
+    font-size: 14px;
+    color: var(--muted);
+}
+
+/* ---------- RODAPÉ ---------- */
+
+footer {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 44px;
+    padding: 26px 18px 34px;
+    font-size: 12px;
+    color: #566461;
+}
+
+footer span:first-child {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--brass);
+}
+
+/* ---------- CELULAR ---------- */
+
+@media (max-width: 560px) {
+
+    .topbar {
+        padding: 12px 16px;
+    }
+
+    .logo strong {
+        font-size: 26px;
+    }
+
+    .container {
+        margin-top: 30px;
+    }
+
+    .composer {
+        padding: 20px;
+    }
+
+    .composer-top h2 {
+        font-size: 24px;
+    }
+
+    .post {
+        padding: 20px;
+    }
+
+    .post-content p {
+        font-size: 19px;
+    }
+
+    .composer-bottom {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .file-button,
+    .post-button {
+        justify-content: center;
+        text-align: center;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    body::after {
+        animation: none;
+    }
+
+    * {
+        transition: none !important;
+    }
+}
