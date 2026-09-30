@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InstaFeed - Mini Feed Instagram</title>
+    
+    <!-- External Libraries -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* ==========================================================================
+           1. BASE & TYPOGRAPHY
+           ========================================================================== */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Custom Scrollbar Removal */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* ==========================================================================
+           2. INSTAGRAM SPECIFIC BRANDING & GRADIENTS
+           ========================================================================== */
+        .insta-gradient-bg {
+            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+        }
+
+        .insta-brand-text {
+            background: linear-gradient(to right, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* ==========================================================================
+           3. KEYFRAME ANIMATIONS
+           ========================================================================== */
+        @keyframes heartPopup {
+            0% {
+                transform: scale(0) rotate(-15deg);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.2) rotate(0deg);
+                opacity: 0.9;
+            }
+            100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 0;
+            }
+        }
+
+        .animate-heart-popup {
+            animation: heartPopup 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        /* ==========================================================================
+           4. TRANSITIONS & INTERACTION UTILITIES
+           ========================================================================== */
+        .modal-backdrop {
+            backdrop-filter: blur(8px);
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .post-image-container {
+            user-select: none;
+            touch-action: manipulation;
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"><link href="style.css" rel="stylesheet"></head>
+<body class="bg-gray-50 text-gray-900 dark:bg-zinc-950 dark:text-gray-100 transition-colors duration-200 min-h-screen pb-12">
+
+    <!-- Navigation Header -->
+    <header class="sticky top-0 z-30 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md border-b border-gray-200 dark:border-zinc-800 transition-colors duration-200">
+        <div class="max-w-xl mx-auto px-4 h-14 flex items-center justify-between">
+            <!-- Brand Logo -->
+            <div class="flex items-center space-x-2">
+                <span class="text-2xl font-bold insta-brand-text font-serif tracking-wide cursor-pointer select-none">
+                    InstaFeed
+                </span>
+            </div>
+
+            <!-- Desktop Search Bar -->
+            <div class="hidden sm:flex items-center bg-gray-100 dark:bg-zinc-800 rounded-lg px-3 py-1.5 text-sm text-gray-500 dark:text-gray-400 w-48">
+                <i class="fa-solid fa-magnifying-glass text-xs mr-2"></i>
+                <input type="text" id="searchInput" placeholder="Pesquisar..." class="bg-transparent border-none outline-none w-full text-gray-800 dark:text-gray-200 text-xs">
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex items-center space-x-4 text-xl">
+                <button id="themeToggleBtn" title="Alternar Tema" class="p-1 hover:text-rose-500 transition-colors">
+                    <i class="fa-solid fa-moon dark:hidden"></i>
+                    <i class="fa-solid fa-sun hidden dark:inline text-amber-400"></i>
+                </button>
+                <button id="openCreatePostBtn" title="Nova Publicação" class="p-1 hover:text-rose-500 transition-colors">
+                    <i class="fa-regular fa-square-plus"></i>
+                </button>
+                <button id="notificationsBtn" title="Notificações" class="p-1 hover:text-rose-500 transition-colors relative">
+                    <i class="fa-regular fa-heart"></i>
+                    <span class="absolute top-0 right-0 w-2 h-2 bg-rose-500 rounded-full"></span>
+                </button>
+                <button id="messagesBtn" title="Mensagens" class="p-1 hover:text-rose-500 transition-colors">
+                    <i class="fa-regular fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-xl mx-auto px-0 sm:px-4 py-4">
+        
+        <!-- Stories Section -->
+        <section class="bg-white dark:bg-zinc-900 sm:rounded-xl border-y sm:border border-gray-200 dark:border-zinc-800 p-3 mb-4 shadow-sm">
+            <div id="storiesContainer" class="flex space-x-4 overflow-x-auto no-scrollbar py-1">
+                <!-- Dynamic Stories Rendered Here -->
+            </div>
+        </section>
+
+        <!-- Mobile Search Bar -->
+        <div class="px-4 mb-4 sm:hidden">
+            <div class="flex items-center bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-lg px-3 py-2 text-sm text-gray-500 dark:text-gray-400">
+                <i class="fa-solid fa-magnifying-glass text-xs mr-2"></i>
+                <input type="text" id="mobileSearchInput" placeholder="Pesquisar..." class="bg-transparent border-none outline-none w-full text-gray-800 dark:text-gray-200 text-xs">
+            </div>
+        </div>
+
+        <!-- Feed Posts Section -->
+        <section id="feedContainer" class="space-y-4">
+            <!-- Dynamic Feed Posts Rendered Here -->
+        </section>
+
+        <!-- Empty Feed Placeholder -->
+        <div id="emptyFeedMessage" class="hidden text-center py-12 text-gray-500 dark:text-gray-400">
+            <i class="fa-regular fa-image text-4xl mb-2"></i>
+            <p class="text-sm font-medium">Nenhuma publicação encontrada.</p>
+        </div>
+    </main>
+
+    <!-- Create Post Modal -->
+    <div id="createPostModal" class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 hidden modal-backdrop">
+        <div class="bg-white dark:bg-zinc-900 rounded-2xl max-w-md w-full overflow-hidden shadow-2xl border border-gray-200 dark:border-zinc-800">
+            <div class="flex justify-between items-center px-4 py-3 border-b border-gray-200 dark:border-zinc-800">
+                <h3 class="font-bold text-gray-900 dark:text-gray-100 text-center w-full">Criar nova publicação</h3>
+                <button id="closeCreatePostBtn" class="text-gray-500 hover:text-gray-800 dark:hover:text-gray-200">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <form id="createPostForm" class="p-4 space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-1">URL da Imagem</label>
+                    <input type="url" id="postImageUrl" required placeholder="https://images.unsplash.com/..." class="w-full px-3 py-2 bg-gray-100 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-lg text-sm outline-none focus:ring-2 focus:ring-rose-500 dark:text-white">
+                </div>
+
+                <div>
+                    <span class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Sugestões rápidas:</span>
+                    <div class="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
+                        <button type="button" data-preset="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80" class="preset-btn text-xs bg-gray-200 dark:bg-zinc-800 hover:bg-rose-100 dark:hover:bg-zinc-700 px-2.5 py-1 rounded-full whitespace-nowrap">🏖️ Praia</button>
+                        <button type="button" data-preset="https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=800&q=80" class="preset-btn text-xs bg-gray-200 dark:bg-zinc-800 hover:bg-rose-100 dark:hover:bg-zinc-700 px-2.5 py-1 rounded-full whitespace-nowrap">🌌 Montanhas</button>
+                        <button type="button" data-preset="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=800&q=80" class="preset-btn text-xs bg-gray-200 dark:bg-zinc-800 hover:bg-rose-100 dark:hover:bg-zinc-700 px-2.5 py-1 rounded-full whitespace-nowrap">🍕 Pizza</button>
+                        <button type="button" data-preset="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=800&q=80" class="preset-btn text-xs bg-gray-200 dark:bg-zinc-800 hover:bg-rose-100 dark:hover:bg-zinc-700 px-2.5 py-1 rounded-full whitespace-nowrap">🐶 Pet</button>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-1">Localização</label>
+                    <input type="text" id="postLocation" placeholder="Ex: Teresina, Piauí" class="w-full px-3 py-2 bg-gray-100 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-lg text-sm outline-none focus:ring-2 focus:ring-rose-500 dark:text-white">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-1">Legenda</label>
+                    <textarea id="postCaption" rows="3" placeholder="Escreva uma legenda..." class="w-full px-3 py-2 bg-gray-100 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-lg text-sm outline-none focus:ring-2 focus:ring-rose-500 dark:text-white resize-none"></textarea>
+                </div>
+
+                <button type="submit" class="w-full bg-rose-500 hover:bg-rose-600 text-white font-semibold py-2 px-4 rounded-xl shadow-md transition-colors">
+                    Compartilhar
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Story Viewer Modal -->
+    <div id="storyViewer" class="fixed inset-0 bg-black/95 z-50 flex flex-col justify-between p-4 hidden">
+        <div class="w-full bg-gray-800 h-1 rounded-full overflow-hidden mb-2">
+            <div id="storyProgress" class="bg-white h-full w-0 transition-all duration-100 ease-linear"></div>
+        </div>
+
+        <div class="flex items-center justify-between text-white z-10">
+            <div class="flex items-center space-x-3">
+                <img id="storyViewerAvatar" src="" class="w-8 h-8 rounded-full border border-white/50 object-cover">
+                <div>
+                    <span id="storyViewerName" class="font-bold text-sm block"></span>
+                    <span class="text-xs text-gray-300">Há 2 h</span>
+                </div>
+            </div>
+            <button id="closeStoryBtn" class="text-white text-2xl hover:text-gray-300 p-2">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <div class="relative flex-1 flex items-center justify-center my-4 overflow-hidden rounded-xl">
+            <img id="storyViewerImg" src="" class="max-h-full max-w-full object-contain rounded-lg">
+        </div>
+
+        <div class="flex items-center space-x-3">
+            <input type="text" placeholder="Enviar mensagem..." class="flex-1 bg-white/10 text-white placeholder-gray-400 border border-white/20 rounded-full px-4 py-2 text-sm outline-none focus:border-white">
+            <button id="storyReactBtn" class="text-white text-2xl hover:scale-110 transition-transform">❤️</button>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-5 left-1/2 -translate-x-1/2 bg-gray-900/90 dark:bg-white/90 text-white dark:text-gray-900 px-4 py-2.5 rounded-full text-xs font-semibold shadow-lg backdrop-blur-md opacity-0 pointer-events-none transition-all duration-300 z-50">
+        <span id="toastMsg">Notificação</span>
+    </div>
+
+    <script>
+        /* ==========================================================================
+           INSTAFEED MODULAR JAVASCRIPT APP
+           ========================================================================== */
+
+        /**
+         * App State & Data Layer
+         */
+        const AppState = {
+            stories: [
+                { id: 'user_you', username: 'Seu story', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80', storyImg: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=800&q=80', isUser: true },
+                { id: 'dev_alex', username: 'alex_dev', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80', storyImg: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=800&q=80' },
+                { id: 'maria_design', username: 'maria.ux', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&q=80', storyImg: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80' },
+                { id: 'lucas_photo', username: 'lucas_clicks', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80', storyImg: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80' },
+                { id: 'travel_life', username: 'travel_vibes', avatar: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=150&q=80', storyImg: 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=800&q=80' }
+            ],
+            posts: [
+                {
+                    id: 1,
+                    username: 'lucas_clicks',
+                    userAvatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80',
+                    location: 'Rio de Janeiro, Brasil',
+                    image: 'https://images.unsplash.com/photo-1483728642387-6c3bdd6c93e5?auto=format&fit=crop&w=800&q=80',
+                    likes: 124,
+                    isLiked: false,
+                    isSaved: false,
+                    caption: 'Dia incrível explorando a natureza! A energia desse lugar é simplesmente renovadora. 🏔️✨',
+                    hashtags: '#natureza #fotografia #aventura',
+                    timeAgo: 'HÁ 3 HORAS',
+                    comments: [
+                        { id: 101, username: 'maria.ux', text: 'Que foto espetacular! Bravo! 👏' },
+                        { id: 102, username: 'alex_dev', text: 'Lugar sensacional!' }
+                    ]
+                },
+                {
+                    id: 2,
+                    username: 'maria.ux',
+                    userAvatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&q=80',
+                    location: 'São Paulo, Brasil',
+                    image: 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=800&q=80',
+                    likes: 89,
+                    isLiked: true,
+                    isSaved: true,
+                    caption: 'Cantinho de café perfeito para focar nos projetos da semana. Quem mais ama um bom café expresso? ☕💻',
+                    hashtags: '#coffeelovers #design #workspace',
+                    timeAgo: 'HÁ 5 HORAS',
+                    comments: [
+                        { id: 201, username: 'travel_vibes', text: 'Me passa o endereço desse café!! 😍' }
+                    ]
+                },
+                {
+                    id: 3,
+                    username: 'alex_dev',
+                    userAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80',
+                    location: 'Teresina, Piauí',
+                    image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=800&q=80',
+                    likes: 256,
+                    isLiked: false,
+                    isSaved: false,
+                    caption: 'Noite de código produtivo! Criando interfaces modernas e responsivas. 🚀⚡',
+                    hashtags: '#code #javascript #webdev',
+                    timeAgo: 'HÁ 8 HORAS',
+                    comments: []
+                }
+            ],
+            storyTimer: null,
+            filterQuery: ''
+        };
+
+        /**
+         * STREAMING_CHUNK:Defining UI Render Module...
+         * Render Engine Component
+         */
+        const UIRenderer = {
+            renderStories() {
+                const container = document.getElementById('storiesContainer');
+                container.innerHTML = AppState.stories.map(story => `
+                    <div onclick="StoryModule.open('${story.id}')" class="flex flex-col items-center space-y-1 cursor-pointer flex-shrink-0 group">
+                        <div class="relative p-[2px] rounded-full ${story.isUser ? 'border-2 border-dashed border-gray-300 dark:border-zinc-700' : 'insta-gradient-bg'}">
+                            <img src="${story.avatar}" class="w-14 h-14 rounded-full object-cover border-2 border-white dark:border-zinc-900 group-hover:scale-105 transition-transform">
+                            ${story.isUser ? `
+                                <div class="absolute bottom-0 right-0 bg-rose-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs border-2 border-white dark:border-zinc-900">
+                                    <i class="fa-solid fa-plus text-[10px]"></i>
+                                </div>
+                            ` : ''}
+                        </div>
+                        <span class="text-xs text-gray-700 dark:text-gray-300 truncate w-16 text-center font-normal">${story.username}</span>
+                    </div>
+                `).join('');
+            },
+
+            renderPosts() {
+                const container = document.getElementById('feedContainer');
+                const emptyMsg = document.getElementById('emptyFeedMessage');
+
+                const query = AppState.filterQuery.toLowerCase();
+                const filteredPosts = AppState.posts.filter(p => 
+                    p.username.toLowerCase().includes(query) ||
+                    p.caption.toLowerCase().includes(query) ||
+                    p.hashtags.toLowerCase().includes(query) ||
+                    (p.location && p.location.toLowerCase().includes(query))
+                );
+
+                if (filteredPosts.length === 0) {
+                    container.innerHTML = '';
+                    emptyMsg.classList.remove('hidden');
+                    return;
+                } else {
+                    emptyMsg.classList.add('hidden');
+                }
+
+                container.innerHTML = filteredPosts.map(post => `
+                    <article class="bg-white dark:bg-zinc-900 sm:rounded-xl border-y sm:border border-gray-200 dark:border-zinc-800 overflow-hidden shadow-sm transition-colors duration-200" id="post-${post.id}">
+                        
+                        <!-- Header -->
+                        <div class="flex items-center justify-between p-3">
+                            <div class="flex items-center space-x-3">
+                                <div class="p-[1.5px] rounded-full insta-gradient-bg">
+                                    <img src="${post.userAvatar}" class="w-8 h-8 rounded-full object-cover border-2 border-white dark:border-zinc-900">
+                                </div>
+                                <div>
+                                    <span class="font-semibold text-sm text-gray-900 dark:text-gray-100 block leading-none hover:underline cursor-pointer">${post.username}</span>
+                                    ${post.location ? `<span class="text-[11px] text-gray-500 dark:text-gray-400 block mt-0.5">${post.location}</span>` : ''}
+                                </div>
+                            </div>
+                            <button onclick="ToastModule.show('Opções da publicação')" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white p-1">
+                                <i class="fa-solid fa-ellipsis"></i>
+                            </button>
+                        </div>
+
+                        <!-- Image & Double Tap -->
+                        <div class="relative overflow-hidden bg-black flex items-center justify-center post-image-container" ondoubleclick="PostActions.handleDoubleClick(${post.id})">
+                            <img src="${post.image}" class="w-full max-h-[550px] object-cover select-none">
+                            <div id="heart-anim-${post.id}" class="absolute pointer-events-none opacity-0 flex items-center justify-center">
+                                <i class="fa-solid fa-heart text-red-500 text-7xl drop-shadow-lg"></i>
+                            </div>
+                        </div>
+
+                        <!-- Actions Bar -->
+                        <div class="p-3 pb-1">
+                            <div class="flex items-center justify-between text-2xl mb-2">
+                                <div class="flex items-center space-x-4">
+                                    <button onclick="PostActions.toggleLike(${post.id})" class="focus:outline-none transition-transform active:scale-125">
+                                        <i class="${post.isLiked ? 'fa-solid fa-heart text-red-500' : 'fa-regular fa-heart hover:text-gray-600 dark:hover:text-gray-300'}"></i>
+                                    </button>
+                                    <button onclick="PostActions.focusCommentInput(${post.id})" class="hover:text-gray-600 dark:hover:text-gray-300">
+                                        <i class="fa-regular fa-comment"></i>
+                                    </button>
+                                    <button onclick="PostActions.share(${post.id})" class="hover:text-gray-600 dark:hover:text-gray-300">
+                                        <i class="fa-regular fa-paper-plane"></i>
+                                    </button>
+                                </div>
+                                <button onclick="PostActions.toggleSave(${post.id})" class="hover:text-gray-600 dark:hover:text-gray-300">
+                                    <i class="${post.isSaved ? 'fa-solid fa-bookmark text-gray-900 dark:text-white' : 'fa-regular fa-bookmark'}"></i>
+                                </button>
+                            </div>
+
+                            <div class="font-semibold text-sm text-gray-900 dark:text-gray-100 mb-1">
+                                ${post.likes.toLocaleString()} curtidas
+                            </div>
+
+                            <div class="text-sm text-gray-900 dark:text-gray-100 mb-1">
+                                <span class="font-semibold mr-1">${post.username}</span>
+                                <span>${post.caption}</span>
+                                <span class="text-blue-600 dark:text-blue-400 font-medium cursor-pointer ml-1 block sm:inline">${post.hashtags}</span>
+                            </div>
+
+                            <!-- Comments List -->
+                            <div class="space-y-1 my-2">
+                                ${post.comments.map(c => `
+                                    <div class="text-xs text-gray-800 dark:text-gray-200 flex justify-between items-start">
+                                        <div>
+                                            <span class="font-semibold mr-1">${c.username}</span>
+                                            <span>${c.text}</span>
+                                        </div>
+                                        <button onclick="ToastModule.show('Comentário curtido!')" class="text-gray-400 hover:text-red-500 text-[10px] ml-2">
+                                            <i class="fa-regular fa-heart"></i>
+                                        </button>
+                                    </div>
+                                `).join('')}
+                            </div>
+
+                            <div class="text-[10px] text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">
+                                ${post.timeAgo}
+                            </div>
+                        </div>
+
+                        <!-- Comment Input Form -->
+                        <form onsubmit="PostActions.addComment(event, ${post.id})" class="border-t border-gray-100 dark:border-zinc-800 px-3 py-2 flex items-center">
+                            <button type="button" onclick="ToastModule.show('Emojis disponíveis em breve!')" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 pr-2 text-lg">
+                                <i class="fa-regular fa-face-smile"></i>
+                            </button>
+                            <input type="text" id="comment-input-${post.id}" placeholder="Adicione um comentário..." class="w-full text-xs bg-transparent outline-none text-gray-800 dark:text-gray-200 placeholder-gray-400">
+                            <button type="submit" class="text-rose-500 font-semibold text-xs ml-2 hover:text-rose-600 transition-colors">
+                                Publicar
+                            </button>
+                        </form>
+                    </article>
+                `).join('');
+            }
+        };
+
+        /**
+         * STREAMING_CHUNK:Defining Post Interaction Logic Module...
+         * Post Actions Logic Module
+         */
+        const PostActions = {
+            toggleLike(postId) {
+                const post = AppState.posts.find(p => p.id === postId);
+                if (!post) return;
+
+                post.isLiked = !post.isLiked;
+                post.likes += post.isLiked ? 1 : -1;
+                UIRenderer.renderPosts();
+            },
+
+            handleDoubleClick(postId) {
+                const post = AppState.posts.find(p => p.id === postId);
+                if (!post) return;
+
+                if (!post.isLiked) {
+                    post.isLiked = true;
+                    post.likes += 1;
+                }
+
+                const heartAnim = document.getElementById(`heart-anim-${postId}`);
+                if (heartAnim) {
+                    heartAnim.classList.remove('animate-heart-popup');
+                    void heartAnim.offsetWidth; // Force Reflow
+                    heartAnim.classList.add('animate-heart-popup');
+                }
+
+                UIRenderer.renderPosts();
+            },
+
+            toggleSave(postId) {
+                const post = AppState.posts.find(p => p.id === postId);
+                if (!post) return;
+
+                post.isSaved = !post.isSaved;
+                ToastModule.show(post.isSaved ? 'Publicação salva!' : 'Publicação removida dos salvos.');
+                UIRenderer.renderPosts();
+            },
+
+            addComment(event, postId) {
+                event.preventDefault();
+                const input = document.getElementById(`comment-input-${postId}`);
+                const text = input.value.trim();
+
+                if (!text) return;
+
+                const post = AppState.posts.find(p => p.id === postId);
+                if (post) {
+                    post.comments.push({
+                        id: Date.now(),
+                        username: 'seu_usuario',
+                        text: text
+                    });
+                    input.value = '';
+                    UIRenderer.renderPosts();
+                    ToastModule.show('Comentário publicado!');
+                }
+            },
+
+            focusCommentInput(postId) {
+                const input = document.getElementById(`comment-input-${postId}`);
+                if (input) input.focus();
+            },
+
+            share(postId) {
+                const post = AppState.posts.find(p => p.id === postId);
+                const shareText = `Confira a publicação de @${post.username}: ${post.caption}`;
+
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(shareText);
+                } else {
+                    const dummy = document.createElement('textarea');
+                    document.body.appendChild(dummy);
+                    dummy.value = shareText;
+                    dummy.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(dummy);
+                }
+                ToastModule.show('Link copiado para a área de transferência!');
+            }
+        };
+
+        /**
+         * STREAMING_CHUNK:Defining Story Viewer Module...
+         * Story Viewer Module
+         */
+        const StoryModule = {
+            open(storyId) {
+                const story = AppState.stories.find(s => s.id === storyId);
+                if (!story) return;
+
+                document.getElementById('storyViewerAvatar').src = story.avatar;
+                document.getElementById('storyViewerName').textContent = story.username;
+                document.getElementById('storyViewerImg').src = story.storyImg;
+
+                const viewer = document.getElementById('storyViewer');
+                const progress = document.getElementById('storyProgress');
+
+                viewer.classList.remove('hidden');
+                progress.style.width = '0%';
+
+                setTimeout(() => {
+                    progress.style.width = '100%';
+                }, 50);
+
+                clearTimeout(AppState.storyTimer);
+                AppState.storyTimer = setTimeout(() => {
+                    this.close();
+                }, 5000);
+            },
+
+            close() {
+                const viewer = document.getElementById('storyViewer');
+                const progress = document.getElementById('storyProgress');
+                viewer.classList.add('hidden');
+                progress.style.width = '0%';
+                clearTimeout(AppState.storyTimer);
+            }
+        };
+
+        /**
+         * STREAMING_CHUNK:Defining Toast and Modal Modules...
+         * Notification Toast Module
+         */
+        const ToastModule = {
+            show(message) {
+                const toast = document.getElementById('toast');
+                const toastMsg = document.getElementById('toastMsg');
+                toastMsg.textContent = message;
+
+                toast.classList.remove('opacity-0', 'pointer-events-none');
+                toast.classList.add('opacity-100');
+
+                setTimeout(() => {
+                    toast.classList.remove('opacity-100');
+                    toast.classList.add('opacity-0', 'pointer-events-none');
+                }, 2500);
+            }
+        };
+
+        /**
+         * Create Post Modal Module
+         */
+        const CreatePostModalModule = {
+            open() {
+                document.getElementById('createPostModal').classList.remove('hidden');
+            },
+            close() {
+                document.getElementById('createPostModal').classList.add('hidden');
+                document.getElementById('createPostForm').reset();
+            },
+            setPreset(url) {
+                document.getElementById('postImageUrl').value = url;
+            },
+            handleSubmit(event) {
+                event.preventDefault();
+                const imageUrl = document.getElementById('postImageUrl').value;
+                const location = document.getElementById('postLocation').value;
+                const caption = document.getElementById('postCaption').value;
+
+                const newPost = {
+                    id: Date.now(),
+                    username: 'seu_usuario',
+                    userAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80',
+                    location: location || 'Brasil',
+                    image: imageUrl,
+                    likes: 0,
+                    isLiked: false,
+                    isSaved: false,
+                    caption: caption,
+                    hashtags: '#novo #instafeed',
+                    timeAgo: 'AGORA MESMO',
+                    comments: []
+                };
+
+                AppState.posts.unshift(newPost);
+                UIRenderer.renderPosts();
+                this.close();
+                ToastModule.show('Publicação criada com sucesso!');
+            }
+        };
+
+        /**
+         * STREAMING_CHUNK:Initializing Application Listeners...
+         * Event Listeners & Bootstrapping
+         */
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initial Render
+            UIRenderer.renderStories();
+            UIRenderer.renderPosts();
+
+            // Theme Toggle
+            document.getElementById('themeToggleBtn').addEventListener('click', () => {
+                const html = document.documentElement;
+                html.classList.toggle('dark');
+                html.classList.toggle('light');
+            });
+
+            // Modal Triggers
+            document.getElementById('openCreatePostBtn').addEventListener('click', () => CreatePostModalModule.open());
+            document.getElementById('closeCreatePostBtn').addEventListener('click', () => CreatePostModalModule.close());
+            document.getElementById('createPostForm').addEventListener('submit', (e) => CreatePostModalModule.handleSubmit(e));
+
+            // Preset Buttons
+            document.querySelectorAll('.preset-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    CreatePostModalModule.setPreset(btn.getAttribute('data-preset'));
+                });
+            });
+
+            // Story Close
+            document.getElementById('closeStoryBtn').addEventListener('click', () => StoryModule.close());
+            document.getElementById('storyReactBtn').addEventListener('click', () => ToastModule.show('Reação enviada! ❤️'));
+
+            // Search Inputs
+            const handleSearch = (e) => {
+                AppState.filterQuery = e.target.value;
+                UIRenderer.renderPosts();
+            };
+            document.getElementById('searchInput').addEventListener('input', handleSearch);
+            document.getElementById('mobileSearchInput').addEventListener('input', handleSearch);
+
+            // Notifications & Messages Stubs
+            document.getElementById('notificationsBtn').addEventListener('click', () => ToastModule.show('Você não tem novas notificações.'));
+            document.getElementById('messagesBtn').addEventListener('click', () => ToastModule.show('Mensagens diretas em breve!'));
+        });
+    </script>
+</body>
+</html>
