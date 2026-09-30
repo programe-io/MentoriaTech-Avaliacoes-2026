@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PixelVault - Games em Mídia Digital</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                            900: '#070a13',
+                            800: '#0f172a',
+                            700: '#1e293b',
+                            600: '#334155'
+                        },
+                        neon: {
+                            purple: '#9333ea',
+                            cyan: '#06b6d4',
+                            pink: '#ec4899',
+                            green: '#10b981',
+                            amber: '#f59e0b'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #070a13;
+            color: #f8fafc;
+        }
+        h1, h2, h3, h4, .font-gamer {
+            font-family: 'Orbitron', sans-serif;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #070a13;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #9333ea;
+        }
+        .neon-glow {
+            box-shadow: 0 0 25px rgba(147, 51, 234, 0.3);
+        }
+        .neon-glow-cyan {
+            box-shadow: 0 0 25px rgba(6, 182, 212, 0.3);
+        }
+        .cyber-grid {
+            background-image: radial-gradient(rgba(147, 51, 234, 0.1) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-neon-purple selection:text-white cyber-grid">
+
+    <header class="sticky top-0 z-50 bg-dark-800/90 backdrop-blur-xl border-b border-dark-700">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            
+            <!-- Logo -->
+            <div class="flex items-center space-x-3 cursor-pointer group" onclick="switchView('store')">
+                <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-neon-purple via-indigo-600 to-neon-cyan flex items-center justify-center neon-glow group-hover:scale-105 transition-transform">
+                    <i class="fa-solid fa-gamepad text-white text-xl"></i>
+                </div>
+                <div>
+                    <span class="text-2xl font-black font-gamer tracking-wider bg-gradient-to-r from-neon-cyan via-neon-purple to-neon-pink bg-clip-text text-transparent">PIXELVAULT</span>
+                    <span class="block text-[10px] text-gray-400 tracking-widest uppercase font-semibold">Mídia Digital 24/7</span>
+                </div>
+            </div>
+
+            <!-- Search Bar (Desktop) -->
+            <div class="hidden md:flex items-center flex-1 max-w-md mx-8">
+                <div class="relative w-full">
+                    <input type="text" id="searchInput" oninput="handleSearch()" placeholder="Buscar entre mais de 200 jogos digitais..." class="w-full bg-dark-900 border border-dark-700 rounded-full py-2.5 pl-11 pr-4 text-sm text-gray-200 focus:outline-none focus:border-neon-purple transition-all">
+                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-gray-400"></i>
+                </div>
+            </div>
+
+            <!-- Nav Actions -->
+            <div class="flex items-center space-x-4">
+                <!-- Cart Button -->
+                <button onclick="toggleCartModal()" class="relative p-2.5 bg-dark-700 hover:bg-dark-600 rounded-2xl transition-all text-gray-200 flex items-center space-x-2 border border-dark-600">
+                    <i class="fa-solid fa-cart-shopping text-neon-cyan"></i>
+                    <span class="hidden sm:inline text-sm font-semibold">Carrinho</span>
+                    <span id="cartBadge" class="absolute -top-1.5 -right-1.5 bg-neon-pink text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center shadow-lg">0</span>
+                </button>
+
+                <!-- My Account Button -->
+                <button onclick="switchView('account')" class="p-2.5 bg-gradient-to-r from-neon-purple to-indigo-600 hover:opacity-90 rounded-2xl transition-all text-white flex items-center space-x-2 shadow-lg shadow-purple-900/30 border border-purple-500/30">
+                    <i class="fa-solid fa-user-shield"></i>
+                    <span class="text-sm font-bold font-gamer tracking-wide hidden sm:inline">Minha Conta</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Search Bar (Mobile) -->
+        <div class="md:hidden px-4 pb-3">
+            <div class="relative w-full">
+                <input type="text" id="mobileSearchInput" oninput="handleSearchMobile()" placeholder="Buscar entre mais de 200 jogos..." class="w-full bg-dark-900 border border-dark-700 rounded-full py-2 pl-10 pr-4 text-sm text-gray-200 focus:outline-none focus:border-neon-purple">
+                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-gray-400 text-sm"></i>
+            </div>
+        </div>
+    </header>
+
+    <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-24 opacity-0 transition-all duration-300 bg-dark-800 border border-neon-purple/50 text-white px-5 py-3.5 rounded-2xl shadow-2xl flex items-center space-x-3 backdrop-blur-xl">
+        <div id="toastIcon" class="w-8 h-8 rounded-xl bg-neon-purple/20 flex items-center justify-center text-neon-purple">
+            <i class="fa-solid fa-check"></i>
+        </div>
+        <div>
+            <h4 id="toastTitle" class="text-sm font-bold font-gamer">Sucesso!</h4>
+            <p id="toastMsg" class="text-xs text-gray-400">Ação realizada com sucesso.</p>
+        </div>
+    </div>
+
+    <!-- Main Dynamic View Container -->
+    <main class="flex-1">
+        
+        <div id="storeView" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            
+            <!-- Hero Banner Slider / Carousel -->
+            <div class="relative rounded-3xl overflow-hidden mb-12 bg-gradient-to-r from-indigo-950 via-purple-950 to-dark-800 border border-dark-700 p-8 md:p-12 shadow-2xl">
+                <div class="absolute -right-20 -bottom-20 w-96 h-96 bg-neon-purple/20 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="relative z-10 max-w-2xl">
+                    <span class="px-3.5 py-1 bg-neon-purple/20 border border-neon-purple/50 text-neon-purple text-xs font-bold uppercase tracking-widest rounded-full">⚡ Mídia Digital Original 24h</span>
+                    <h1 class="text-4xl md:text-6xl font-black font-gamer mt-4 mb-3 tracking-wide leading-tight">JOGOS AAA COM <span class="bg-gradient-to-r from-neon-cyan via-neon-purple to-neon-pink bg-clip-text text-transparent">ATÉ 80% OFF</span></h1>
+                    <p class="text-gray-300 text-sm md:text-base mb-6 leading-relaxed">Mais de 200 títulos disponíveis para PC (Steam/Epic), PlayStation, Xbox e Nintendo Switch. Envio automático e garantia vitalícia.</p>
+                    <div class="flex flex-wrap gap-4">
+                        <button onclick="scrollToCatalog()" class="px-7 py-3.5 bg-gradient-to-r from-neon-cyan to-blue-600 text-dark-900 font-black rounded-2xl hover:opacity-90 transition-all font-gamer tracking-wider flex items-center space-x-2 shadow-lg shadow-cyan-500/20">
+                            <i class="fa-solid fa-gamepad"></i>
+                            <span>EXPLORAR CATÁLOGO (200+ JOGOS)</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Bar -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+                <div class="bg-dark-800/80 border border-dark-700 p-5 rounded-2xl flex items-center space-x-4 shadow-xl">
+                    <div class="w-12 h-12 bg-neon-purple/10 rounded-2xl flex items-center justify-center text-neon-purple text-xl">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-base font-bold font-gamer">100% Garantido</h4>
+                        <p class="text-xs text-gray-400">Contas seguras</p>
+                    </div>
+                </div>
+                <div class="bg-dark-800/80 border border-dark-700 p-5 rounded-2xl flex items-center space-x-4 shadow-xl">
+                    <div class="w-12 h-12 bg-neon-cyan/10 rounded-2xl flex items-center justify-center text-neon-cyan text-xl">
+                        <i class="fa-solid fa-bolt"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-base font-bold font-gamer">Envio Imediato</h4>
+                        <p class="text-xs text-gray-400">Chave na hora</p>
+                    </div>
+                </div>
+                <div class="bg-dark-800/80 border border-dark-700 p-5 rounded-2xl flex items-center space-x-4 shadow-xl">
+                    <div class="w-12 h-12 bg-neon-pink/10 rounded-2xl flex items-center justify-center text-neon-pink text-xl">
+                        <i class="fa-solid fa-headset"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-base font-bold font-gamer">Suporte 24/7</h4>
+                        <p class="text-xs text-gray-400">Atendimento vip</p>
+                    </div>
+                </div>
+                <div class="bg-dark-800/80 border border-dark-700 p-5 rounded-2xl flex items-center space-x-4 shadow-xl">
+                    <div class="w-12 h-12 bg-emerald-500/10 rounded-2xl flex items-center justify-center text-emerald-400 text-xl">
+                        <i class="fa-solid fa-star"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-base font-bold font-gamer">4.9 / 5.0</h4>
+                        <p class="text-xs text-gray-400">+20k clientes</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="catalogAnchor"></div>
+
+            <div class="bg-dark-800 border border-dark-700 rounded-3xl p-6 mb-8 shadow-2xl">
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+                    
+                    <!-- Platform Filters -->
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span class="text-xs font-bold text-gray-400 uppercase tracking-widest mr-2">Plataforma:</span>
+                        <button onclick="filterPlatform('all')" id="btn-plat-all" class="px-4 py-2 rounded-xl text-sm font-semibold transition-all bg-neon-purple text-white shadow-md shadow-purple-900/30">Todos</button>
+                        <button onclick="filterPlatform('PC')" id="btn-plat-PC" class="px-4 py-2 rounded-xl text-sm font-semibold transition-all bg-dark-700 text-gray-300 hover:bg-dark-600">PC (Steam/Epic)</button>
+                        <button onclick="filterPlatform('PlayStation')" id="btn-plat-PlayStation" class="px-4 py-2 rounded-xl text-sm font-semibold transition-all bg-dark-700 text-gray-300 hover:bg-dark-600">PlayStation</button>
+                        <button onclick="filterPlatform('Xbox')" id="btn-plat-Xbox" class="px-4 py-2 rounded-xl text-sm font-semibold transition-all bg-dark-700 text-gray-300 hover:bg-dark-600">Xbox</button>
+                        <button onclick="filterPlatform('Nintendo')" id="btn-plat-Nintendo" class="px-4 py-2 rounded-xl text-sm font-semibold transition-all bg-dark-700 text-gray-300 hover:bg-dark-600">Nintendo</button>
+                    </div>
+
+                    <!-- Genre & Sort Filters -->
+                    <div class="flex flex-wrap items-center gap-3">
+                        <div class="relative">
+                            <select id="genreSelect" onchange="filterGenre(this.value)" class="bg-dark-900 border border-dark-700 text-gray-300 text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:border-neon-purple cursor-pointer">
+                                <option value="all">Todos os Gêneros</option>
+                                <option value="Ação">Ação</option>
+                                <option value="RPG">RPG</option>
+                                <option value="FPS">FPS / Tiro</option>
+                                <option value="Aventura">Aventura</option>
+                                <option value="Esportes">Esportes</option>
+                                <option value="Corrida">Corrida</option>
+                                <option value="Terror">Terror</option>
+                                <option value="Estratégia">Estratégia</option>
+                            </select>
+                        </div>
+                        <div class="relative">
+                            <select id="sortSelect" onchange="sortCatalog(this.value)" class="bg-dark-900 border border-dark-700 text-gray-300 text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:border-neon-purple cursor-pointer">
+                                <option value="popular">Mais Populares</option>
+                                <option value="price-asc">Menor Preço</option>
+                                <option value="price-desc">Maior Preço</option>
+                                <option value="name">Nome (A-Z)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grid Header -->
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold font-gamer tracking-wide">Catálogo de Jogos (200+ Opções)</h2>
+                <span id="gameCount" class="text-sm text-gray-400 font-medium">Mostrando 200+ jogos</span>
+            </div>
+
+            <!-- Games Catalog Grid -->
+            <div id="gamesGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <!-- Populated by JS -->
+            </div>
+
+            <!-- Load More / Pagination -->
+            <div class="mt-12 text-center" id="paginationContainer">
+                <button onclick="loadMoreGames()" id="loadMoreBtn" class="px-8 py-3.5 bg-dark-800 hover:bg-dark-700 border border-dark-700 rounded-2xl font-gamer tracking-wider font-bold transition-all text-gray-200 shadow-xl">
+                    CARREGAR MAIS JOGOS
+                </button>
+            </div>
+
+        </div>
+
+        <div id="accountView" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 hidden">
+            
+            <!-- Account Header -->
+            <div class="bg-dark-800 border border-dark-700 rounded-3xl p-6 md:p-8 mb-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl">
+                <div class="flex items-center space-x-5">
+                    <div class="w-20 h-20 rounded-2xl bg-gradient-to-tr from-neon-purple to-neon-pink p-1 shadow-xl">
+                        <div class="w-full h-full bg-dark-900 rounded-xl flex items-center justify-center text-3xl text-white font-gamer">
+                            PV
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex items-center space-x-3">
+                            <h2 class="text-2xl font-bold font-gamer tracking-wide">GamerMaster_99</h2>
+                            <span class="px-2.5 py-0.5 bg-neon-cyan/20 text-neon-cyan text-xs font-bold rounded-full border border-neon-cyan/30">VIP Elite</span>
+                        </div>
+                        <p class="text-sm text-gray-400">gamer.master99@pixelvault.com</p>
+                        <p class="text-xs text-gray-500 mt-1"><i class="fa-regular fa-calendar text-neon-purple"></i> Membro desde: Janeiro de 2026</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3 w-full md:w-auto">
+                    <div class="bg-dark-900 border border-dark-700 px-5 py-3 rounded-2xl text-center flex-1 md:flex-initial">
+                        <span class="block text-xs text-gray-400 uppercase tracking-widest">Jogos Adquiridos</span>
+                        <span id="libraryCount" class="text-2xl font-extrabold font-gamer text-neon-cyan">0</span>
+                    </div>
+                    <div class="bg-dark-900 border border-dark-700 px-5 py-3 rounded-2xl text-center flex-1 md:flex-initial">
+                        <span class="block text-xs text-gray-400 uppercase tracking-widest">Saldo Pix / Cashback</span>
+                        <span class="text-2xl font-extrabold font-gamer text-emerald-400">R$ 150,00</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="flex border-b border-dark-700 mb-8 space-x-8">
+                <button onclick="switchAccountTab('library')" id="tabLibraryBtn" class="pb-4 font-gamer text-lg font-bold border-b-2 border-neon-purple text-neon-purple tracking-wide transition-all">
+                    <i class="fa-solid fa-gamepad mr-2"></i> Minha Biblioteca Digital
+                </button>
+                <button onclick="switchAccountTab('orders')" id="tabOrdersBtn" class="pb-4 font-gamer text-lg font-bold border-b-2 border-transparent text-gray-400 hover:text-gray-200 tracking-wide transition-all">
+                    <i class="fa-solid fa-receipt mr-2"></i> Histórico de Compras & Faturas
+                </button>
+            </div>
+
+            <!-- Tab 1: Library -->
+            <div id="tabLibraryContent">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold font-gamer tracking-wide">Jogos na sua Conta (Chaves de Ativação e Download)</h3>
+                </div>
+                <div id="libraryGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- Tab 2: Orders -->
+            <div id="tabOrdersContent" class="hidden">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold font-gamer tracking-wide">Histórico de Pedidos Realizados</h3>
+                </div>
+                <div id="ordersList" class="space-y-4">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <div id="gameModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="bg-dark-800 border border-dark-700 rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative animate-in fade-in zoom-in duration-200">
+            <button onclick="closeGameModal()" class="absolute top-4 right-4 z-10 w-10 h-10 bg-dark-900/80 hover:bg-dark-700 rounded-full flex items-center justify-center text-gray-300 transition-all">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <div id="modalContent">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <div id="cartModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-end">
+        <div class="bg-dark-800 border-l border-dark-700 w-full max-w-md h-full flex flex-col shadow-2xl animate-in slide-in-from-right duration-300">
+            
+            <div class="p-6 border-b border-dark-700 flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <i class="fa-solid fa-cart-shopping text-neon-cyan text-xl"></i>
+                    <h3 class="text-xl font-bold font-gamer tracking-wide">Carrinho de Compras</h3>
+                </div>
+                <button onclick="toggleCartModal()" class="w-8 h-8 rounded-full bg-dark-900 hover:bg-dark-700 flex items-center justify-center text-gray-400">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Cart Items List -->
+            <div id="cartItemsList" class="flex-1 overflow-y-auto p-6 space-y-4">
+                <!-- Populated by JS -->
+            </div>
+
+            <!-- Coupon Input & Summary -->
+            <div class="p-6 border-t border-dark-700 bg-dark-900/50 space-y-4">
+                <div class="flex space-x-2">
+                    <input type="text" id="couponInput" placeholder="Cupom de Desconto (ex: PIXEL10)" class="flex-1 bg-dark-800 border border-dark-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-neon-purple uppercase">
+                    <button onclick="applyCoupon()" class="px-4 py-2 bg-dark-700 hover:bg-dark-600 text-xs font-bold rounded-xl text-gray-200 transition-all font-gamer">APLICAR</button>
+                </div>
+                <div class="space-y-1.5 text-sm">
+                    <div class="flex justify-between text-gray-400">
+                        <span>Subtotal</span>
+                        <span id="cartSubtotal">R$ 0,00</span>
+                    </div>
+                    <div id="discountRow" class="flex justify-between text-emerald-400 hidden">
+                        <span id="discountLabel">Desconto (Cupom)</span>
+                        <span id="cartDiscountAmount">- R$ 0,00</span>
+                    </div>
+                    <div class="flex justify-between text-lg font-bold font-gamer text-white pt-2 border-t border-dark-700">
+                        <span>Total a Pagar</span>
+                        <span id="cartTotal" class="text-neon-cyan">R$ 0,00</span>
+                    </div>
+                </div>
+                <button onclick="openCheckout()" class="w-full py-4 bg-gradient-to-r from-neon-purple via-indigo-600 to-neon-pink hover:opacity-90 rounded-2xl font-gamer font-bold text-lg tracking-wider text-white shadow-xl shadow-purple-900/30 transition-all flex items-center justify-center space-x-2">
+                    <span>FINALIZAR COMPRA</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="checkoutModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-dark-800 border border-dark-700 rounded-3xl max-w-xl w-full p-6 md:p-8 shadow-2xl relative">
+            <button onclick="closeCheckoutModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            <h3 class="text-2xl font-bold font-gamer tracking-wide mb-6">Gateway de Pagamento Seguro</h3>
+            
+            <div class="space-y-6">
+                <!-- Payment Options -->
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Selecione a Forma de Pagamento:</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <label class="border border-neon-purple bg-dark-900 p-4 rounded-2xl flex items-center space-x-3 cursor-pointer payment-card active" onclick="selectPaymentMethod('pix')">
+                            <input type="radio" name="payment" checked class="text-neon-purple focus:ring-neon-purple">
+                            <div>
+                                <span class="block font-bold text-sm text-white"><i class="fa-solid fa-qrcode text-neon-cyan mr-1"></i> PIX</span>
+                                <span class="text-[10px] text-emerald-400">Aprovação imediata + 5% off</span>
+                            </div>
+                        </label>
+                        <label class="border border-dark-700 bg-dark-900 p-4 rounded-2xl flex items-center space-x-3 cursor-pointer payment-card hover:border-gray-600" onclick="selectPaymentMethod('credit')">
+                            <input type="radio" name="payment" class="text-neon-purple focus:ring-neon-purple">
+                            <div>
+                                <span class="block font-bold text-sm text-white"><i class="fa-solid fa-credit-card text-neon-purple mr-1"></i> Cartão</span>
+                                <span class="text-[10px] text-gray-400">Até 12x sem juros</span>
+                            </div>
+                        </label>
+                        <label class="border border-dark-700 bg-dark-900 p-4 rounded-2xl flex items-center space-x-3 cursor-pointer payment-card hover:border-gray-600" onclick="selectPaymentMethod('boleto')">
+                            <input type="radio" name="payment" class="text-neon-purple focus:ring-neon-purple">
+                            <div>
+                                <span class="block font-bold text-sm text-white"><i class="fa-solid fa-barcode text-yellow-500 mr-1"></i> Boleto</span>
+                                <span class="text-[10px] text-gray-400">Até 2 dias úteis</span>
+                            </div>
+                        </label>
+                        <label class="border border-dark-700 bg-dark-900 p-4 rounded-2xl flex items-center space-x-3 cursor-pointer payment-card hover:border-gray-600" onclick="selectPaymentMethod('paypal')">
+                            <input type="radio" name="payment" class="text-neon-purple focus:ring-neon-purple">
+                            <div>
+                                <span class="block font-bold text-sm text-white"><i class="fa-brands fa-paypal text-blue-400 mr-1"></i> PayPal</span>
+                                <span class="text-[10px] text-gray-400">Proteção ao comprador</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Pix QR Code Box -->
+                <div id="pixDetails" class="bg-dark-900 border border-dark-700 p-4 rounded-2xl text-center space-y-3">
+                    <p class="text-xs text-gray-400">Escaneie o QR Code abaixo com o aplicativo do seu banco:</p>
+                    <div class="w-36 h-36 bg-white mx-auto p-2 rounded-2xl flex items-center justify-center">
+                        <i class="fa-solid fa-qrcode text-7xl text-dark-900"></i>
+                    </div>
+                    <p class="text-xs font-mono text-neon-cyan select-all bg-dark-800 p-2.5 rounded-xl border border-dark-700">00020126580014br.gov.bcb.pix0136pixelvault-games-digital-key-883921</p>
+                </div>
+
+                <!-- Credit Card Details Form -->
+                <div id="cardDetails" class="bg-dark-900 border border-dark-700 p-4 rounded-2xl space-y-4 hidden">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-400 mb-1">Número do Cartão</label>
+                        <input type="text" placeholder="4532 •••• •••• 8890" class="w-full bg-dark-800 border border-dark-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-neon-purple">
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-400 mb-1">Validade</label>
+                            <input type="text" placeholder="MM/AA" class="w-full bg-dark-800 border border-dark-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-neon-purple">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-400 mb-1">CVV</label>
+                            <input type="password" placeholder="•••" class="w-full bg-dark-800 border border-dark-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-neon-purple">
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="finalizePurchase()" class="w-full py-4 bg-emerald-500 hover:bg-emerald-400 text-dark-900 font-extrabold font-gamer text-lg rounded-2xl transition-all shadow-xl shadow-emerald-500/20 flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-lock"></i>
+                    <span>CONFIRMAR PAGAMENTO E LIBERAR JOGOS</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-dark-800 border-t border-dark-700 mt-20 py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div>
+                <div class="flex items-center space-x-3 mb-4">
+                    <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-neon-purple to-neon-cyan flex items-center justify-center">
+                        <i class="fa-solid fa-gamepad text-white text-sm"></i>
+                    </div>
+                    <span class="text-xl font-bold font-gamer tracking-wider text-white">PIXELVAULT</span>
+                </div>
+                <p class="text-xs text-gray-400 leading-relaxed">Sua plataforma definitiva de jogos em mídia digital com mais de 200 títulos para PC e Consoles. Entrega instantânea 24 horas.</p>
+            </div>
+            <div>
+                <h4 class="text-sm font-bold font-gamer text-white uppercase tracking-wider mb-4">Plataformas</h4>
+                <ul class="space-y-2 text-xs text-gray-400">
+                    <li><a href="#" onclick="filterPlatform('PC')" class="hover:text-neon-cyan transition-colors">PC (Steam & Epic)</a></li>
+                    <li><a href="#" onclick="filterPlatform('PlayStation')" class="hover:text-neon-cyan transition-colors">PlayStation 4 & 5</a></li>
+                    <li><a href="#" onclick="filterPlatform('Xbox')" class="hover:text-neon-cyan transition-colors">Xbox One & Series X/S</a></li>
+                    <li><a href="#" onclick="filterPlatform('Nintendo')" class="hover:text-neon-cyan transition-colors">Nintendo Switch</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-sm font-bold font-gamer text-white uppercase tracking-wider mb-4">Ajuda & Suporte</h4>
+                <ul class="space-y-2 text-xs text-gray-400">
+                    <li><a href="#" class="hover:text-neon-cyan transition-colors">Como Resgatar a Chave</a></li>
+                    <li><a href="#" class="hover:text-neon-cyan transition-colors">Garantia & Reembolso</a></li>
+                    <li><a href="#" class="hover:text-neon-cyan transition-colors">Termos de Uso</a></li>
+                    <li><a href="#" class="hover:text-neon-cyan transition-colors">Atendimento via Discord</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-sm font-bold font-gamer text-white uppercase tracking-wider mb-4">Segurança & Pagamento</h4>
+                <div class="flex flex-wrap gap-3 text-xl text-gray-400 mb-4">
+                    <i class="fa-brands fa-pix" title="PIX"></i>
+                    <i class="fa-brands fa-cc-visa" title="Visa"></i>
+                    <i class="fa-brands fa-cc-mastercard" title="Mastercard"></i>
+                    <i class="fa-brands fa-paypal" title="PayPal"></i>
+                </div>
+                <p class="text-[10px] text-gray-500">Transações protegidas com criptografia SSL 256-bit.</p>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-dark-700 mt-8 pt-8 text-center text-xs text-gray-500">
+            &copy; 2026 PixelVault Games Mídia Digital Ltda. Todos os direitos reservados.
+        </div>
+    </footer>
+
+    <script>
+        const baseFranchises = [
+            { name: "Cyberpunk 2077", genre: "RPG", basePrice: 99.90, plat: ["PC", "PlayStation", "Xbox"], img: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=600&q=80" },
+            { name: "Elden Ring", genre: "RPG", basePrice: 199.90, plat: ["PC", "PlayStation", "Xbox"], img: "https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?auto=format&fit=crop&w=600&q=80" },
+            { name: "Grand Theft Auto V", genre: "Ação", basePrice: 49.90, plat: ["PC", "PlayStation", "Xbox"], img: "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=600&q=80" },
+            { name: "Red Dead Redemption 2", genre: "Aventura", basePrice: 89.90, plat: ["PC", "PlayStation", "Xbox"], img: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=600&q=80" },
+            { name: "EA Sports FC 25", genre: "Esportes", basePrice: 249.90, plat: ["PC", "PlayStation", "Xbox", "Nintendo"], img: "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=600&q=80" },
+            { name: "Call of Duty: Modern Warfare III", genre: "FPS", basePrice: 199.90, plat: ["PC", "PlayStation", "Xbox"], img: "https://images.unsplash.com/photo-1542751110-97427bbecf20?auto=format&fit=crop&w=600&q=80" },
+            { name: "God of War Ragnarök", genre: "Ação", basePrice: 179.90, plat: ["PlayStation", "PC"], img: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=600&q=80" },
+            { name: "The Legend of Zelda: Tears of the Kingdom", genre: "Aventura", basePrice: 229.90, plat: ["Nintendo"], img: "https://images.unsplash.com/photo-1612810806563-4cb8265db55f?auto=format&fit=crop&w=600&q=80" },
+            { name: "Hogwarts Legacy", genre: "RPG", basePrice: 129.90, plat: ["PC", "PlayStation", "Xbox", "Nintendo"], img: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=600&q=80" },
+            { name: "Baldur's Gate 3", genre: "RPG", basePrice: 199.90, plat: ["PC", "PlayStation", "Xbox"], img: "https://images.unsplash.com/photo-1534423861386-85a16f5d13fd?auto=format&fit=crop&w=600&q=80" },
+            { name: "Resident Evil 4 Remake", genre: "Terror", basePrice: 109.90, plat: ["PC", "PlayStation", "Xbox"], img: "https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?auto=format&fit=crop&w=600&q=80" },
+            { name: "Forza Horizon 5", genre: "Corrida", basePrice: 99.90, plat: ["PC", "Xbox"], img: "https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=600&q=80" }
+        ];
+
+        const adjectives = ["Ultimate", "Deluxe", "Remastered", "Director's Cut", "Next-Gen", "Anniversary", "Special Edition", "GOTY", "Legendary", "Enhanced"];
+        const nouns = ["Chronicles", "Legacy", "Protocol", "Saga", "Revolution", "Odyssey", "Origins", "Tactics", "Zero", "Prime", "Awakening", "Rebirth"];
+        const genresList = ["Ação", "RPG", "FPS", "Aventura", "Esportes", "Corrida", "Terror", "Estratégia"];
+        const platformsList = [["PC"], ["PlayStation"], ["Xbox"], ["Nintendo"], ["PC", "PlayStation", "Xbox"], ["PC", "Nintendo"], ["PlayStation", "Xbox"]];
+        const imagesList = [
+            "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=600&q=80",
+            "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=600&q=80",
+            "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=600&q=80",
+            "https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?auto=format&fit=crop&w=600&q=80",
+            "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=600&q=80",
+            "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=600&q=80",
+            "https://images.unsplash.com/photo-1534423861386-85a16f5d13fd?auto=format&fit=crop&w=600&q=80"
+        ];
+
+        let allGames = [];
+        let displayedCount = 24;
+        let currentPlatformFilter = 'all';
+        let currentGenreFilter = 'all';
+        let currentSort = 'popular';
+        let searchQuery = '';
+        let appliedDiscount = 0;
+
+        let cart = [];
+        let userLibrary = [
+            { id: 999, title: "Cyberpunk 2077 (Bônus de Boas-Vindas)", platform: "PC", key: "CP77-PV99X-88231-ALPHA", date: "15/01/2026", image: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=600&q=80" }
+        ];
+        let userOrders = [
+            { id: "ORD-89421", date: "15/01/2026", total: "R$ 99,90", payment: "PIX", status: "Aprovado", items: ["Cyberpunk 2077"] }
+        ];
+
+        function generateCatalog() {
+            baseFranchises.forEach((f, idx) => {
+                allGames.push({
+                    id: idx + 1,
+                    title: f.name,
+                    genre: f.genre,
+                    price: f.basePrice,
+                    originalPrice: +(f.basePrice * 1.6).toFixed(2),
+                    platforms: f.plat,
+                    image: f.img,
+                    rating: (4.6 + Math.random() * 0.35).toFixed(1),
+                    sales: Math.floor(1000 + Math.random() * 9000),
+                    description: `Mídia digital oficial e original para ${f.plat.join(', ')}. Receba os dados de acesso ou chave de ativação imediatamente após a confirmação do pagamento. Garantia vitalícia e suporte dedicado.`
+                });
+            });
+
+            for (let i = baseFranchises.length + 1; i <= 210; i++) {
+                const adj = adjectives[Math.floor(Math.random() * adjectives.length)];
+                const noun = nouns[Math.floor(Math.random() * nouns.length)];
+                const title = `Cyber ${noun} ${i}: ${adj}`;
+                const genre = genresList[Math.floor(Math.random() * genresList.length)];
+                const price = +(39.90 + Math.random() * 180).toFixed(2);
+                const originalPrice = +(price * 1.5).toFixed(2);
+                const plat = platformsList[Math.floor(Math.random() * platformsList.length)];
+                const img = imagesList[Math.floor(Math.random() * imagesList.length)];
+
+                allGames.push({
+                    id: i,
+                    title: title,
+                    genre: genre,
+                    price: price,
+                    originalPrice: originalPrice,
+                    platforms: plat,
+                    image: img,
+                    rating: (4.0 + Math.random() * 0.9).toFixed(1),
+                    sales: Math.floor(100 + Math.random() * 5000),
+                    description: `Chave de ativação digital e original de ${title}. Plataformas compatíveis: ${plat.join(', ')}. Download direto e seguro com suporte 24h.`
+                });
+            }
+        }
+
+        window.onload = function() {
+            generateCatalog();
+            renderCatalog();
+            updateCartUI();
+            renderLibrary();
+            renderOrders();
+        }
+
+        function getFilteredGames() {
+            return allGames.filter(game => {
+                const matchPlatform = currentPlatformFilter === 'all' || game.platforms.includes(currentPlatformFilter);
+                const matchGenre = currentGenreFilter === 'all' || game.genre === currentGenreFilter;
+                const matchSearch = game.title.toLowerCase().includes(searchQuery.toLowerCase()) || game.genre.toLowerCase().includes(searchQuery.toLowerCase());
+                return matchPlatform && matchGenre && matchSearch;
+            }).sort((a, b) => {
+                if (currentSort === 'popular') return b.sales - a.sales;
+                if (currentSort === 'price-asc') return a.price - b.price;
+                if (currentSort === 'price-desc') return b.price - a.price;
+                if (currentSort === 'name') return a.title.localeCompare(b.title);
+            });
+        }
+
+        function renderCatalog() {
+            const filtered = getFilteredGames();
+            const grid = document.getElementById('gamesGrid');
+            const countLabel = document.getElementById('gameCount');
+            const loadMoreBtn = document.getElementById('paginationContainer');
+
+            countLabel.innerText = `Mostrando ${Math.min(displayedCount, filtered.length)} de ${filtered.length} jogos`;
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full py-16 text-center">
+                        <i class="fa-solid fa-gamepad text-5xl text-gray-600 mb-4"></i>
+                        <h3 class="text-xl font-bold font-gamer text-gray-300">Nenhum jogo encontrado</h3>
+                        <p class="text-xs text-gray-500 mt-1">Tente mudar os filtros ou o termo de busca.</p>
+                    </div>
+                `;
+                loadMoreBtn.style.display = 'none';
+                return;
+            }
+
+            const chunk = filtered.slice(0, displayedCount);
+            
+            grid.innerHTML = chunk.map(game => {
+                const discount = Math.round((1 - game.price / game.originalPrice) * 100);
+                return `
+                    <div class="bg-dark-800 border border-dark-700/80 hover:border-neon-purple/50 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:shadow-purple-900/20 flex flex-col group">
+                        <div class="relative h-48 overflow-hidden cursor-pointer" onclick="openGameModal(${game.id})">
+                            <img src="${game.image}" alt="${game.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.src='https://placehold.co/600x400/111827/9333ea?text=PixelVault'">
+                            <div class="absolute top-3 left-3 flex flex-wrap gap-1">
+                                ${game.platforms.map(p => `<span class="px-2 py-0.5 bg-dark-900/90 backdrop-blur-md text-[10px] font-bold text-neon-cyan rounded-md border border-dark-700">${p}</span>`).join('')}
+                            </div>
+                            <span class="absolute top-3 right-3 px-2 py-0.5 bg-neon-pink text-white text-xs font-bold rounded-md shadow-lg">-${discount}%</span>
+                        </div>
+                        <div class="p-5 flex-1 flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center justify-between text-xs text-gray-400 mb-1">
+                                    <span>${game.genre}</span>
+                                    <span class="text-yellow-400 flex items-center"><i class="fa-solid fa-star mr-1 text-[10px]"></i> ${game.rating}</span>
+                                </div>
+                                <h3 onclick="openGameModal(${game.id})" class="font-bold font-gamer text-lg text-white hover:text-neon-cyan cursor-pointer transition-colors line-clamp-1">${game.title}</h3>
+                            </div>
+                            <div class="mt-4 pt-4 border-t border-dark-700/60 flex items-center justify-between">
+                                <div>
+                                    <span class="block text-[10px] text-gray-500 line-through">R$ ${game.originalPrice.toFixed(2)}</span>
+                                    <span class="text-lg font-extrabold font-gamer text-emerald-400">R$ ${game.price.toFixed(2)}</span>
+                                </div>
+                                <button onclick="addToCart(${game.id})" class="p-3 bg-neon-purple/20 hover:bg-neon-purple text-neon-purple hover:text-white rounded-xl transition-all shadow-md">
+                                    <i class="fa-solid fa-cart-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            if (displayedCount >= filtered.length) {
+                loadMoreBtn.style.display = 'none';
+            } else {
+                loadMoreBtn.style.display = 'block';
+            }
+        }
+
+        function loadMoreGames() {
+            displayedCount += 24;
+            renderCatalog();
+        }
+
+        function filterPlatform(plat) {
+            currentPlatformFilter = plat;
+            displayedCount = 24;
+            ['all', 'PC', 'PlayStation', 'Xbox', 'Nintendo'].forEach(p => {
+                const btn = document.getElementById(`btn-plat-${p}`);
+                if (btn) {
+                    if (p === plat) {
+                        btn.className = "px-4 py-2 rounded-xl text-sm font-semibold transition-all bg-neon-purple text-white shadow-md shadow-purple-900/30";
+                    } else {
+                        btn.className = "px-4 py-2 rounded-xl text-sm font-semibold transition-all bg-dark-700 text-gray-300 hover:bg-dark-600";
+                    }
+                }
+            });
+            renderCatalog();
+        }
+
+        function filterGenre(genre) {
+            currentGenreFilter = genre;
+            displayedCount = 24;
+            renderCatalog();
+        }
+
+        function sortCatalog(sortVal) {
+            currentSort = sortVal;
+            renderCatalog();
+        }
+
+        function handleSearch() {
+            searchQuery = document.getElementById('searchInput').value;
+            displayedCount = 24;
+            renderCatalog();
+        }
+
+        function handleSearchMobile() {
+            searchQuery = document.getElementById('mobileSearchInput').value;
+            displayedCount = 24;
+            renderCatalog();
+        }
+
+        function scrollToCatalog() {
+            document.getElementById('catalogAnchor').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function switchView(viewName) {
+            const storeView = document.getElementById('storeView');
+            const accountView = document.getElementById('accountView');
+            if (viewName === 'store') {
+                storeView.classList.remove('hidden');
+                accountView.classList.add('hidden');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else if (viewName === 'account') {
+                storeView.classList.add('hidden');
+                accountView.classList.remove('hidden');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function switchAccountTab(tab) {
+            const libTab = document.getElementById('tabLibraryBtn');
+            const ordTab = document.getElementById('tabOrdersBtn');
+            const libContent = document.getElementById('tabLibraryContent');
+            const ordContent = document.getElementById('tabOrdersContent');
+
+            if (tab === 'library') {
+                libTab.className = "pb-4 font-gamer text-lg font-bold border-b-2 border-neon-purple text-neon-purple tracking-wide transition-all";
+                ordTab.className = "pb-4 font-gamer text-lg font-bold border-b-2 border-transparent text-gray-400 hover:text-gray-200 tracking-wide transition-all";
+                libContent.classList.remove('hidden');
+                ordContent.classList.add('hidden');
+            } else {
+                ordTab.className = "pb-4 font-gamer text-lg font-bold border-b-2 border-neon-purple text-neon-purple tracking-wide transition-all";
+                libTab.className = "pb-4 font-gamer text-lg font-bold border-b-2 border-transparent text-gray-400 hover:text-gray-200 tracking-wide transition-all";
+                ordContent.classList.remove('hidden');
+                libContent.classList.add('hidden');
+            }
+        }
+
+        function openGameModal(id) {
+            const game = allGames.find(g => g.id === id);
+            if (!game) return;
+
+            const modal = document.getElementById('gameModal');
+            const content = document.getElementById('modalContent');
+            const discount = Math.round((1 - game.price / game.originalPrice) * 100);
+
+            content.innerHTML = `
+                <div class="relative h-64 md:h-80">
+                    <img src="${game.image}" alt="${game.title}" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-dark-800 via-transparent to-transparent"></div>
+                    <div class="absolute bottom-4 left-6 right-6 flex items-end justify-between">
+                        <div>
+                            <span class="px-3 py-1 bg-neon-purple text-white text-xs font-bold rounded-lg">${game.genre}</span>
+                            <h2 class="text-2xl md:text-3xl font-extrabold font-gamer text-white mt-2">${game.title}</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6 md:p-8 space-y-6">
+                    <div class="flex flex-wrap items-center justify-between gap-4 bg-dark-900 p-4 rounded-2xl border border-dark-700">
+                        <div>
+                            <span class="block text-xs text-gray-400 uppercase tracking-widest">Plataformas Suportadas</span>
+                            <div class="flex gap-2 mt-1">
+                                ${game.platforms.map(p => `<span class="px-3 py-1 bg-dark-800 text-neon-cyan font-bold text-xs rounded-lg border border-dark-700">${p}</span>`).join('')}
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-xs text-gray-500 line-through">R$ ${game.originalPrice.toFixed(2)}</span>
+                            <div class="text-2xl font-extrabold font-gamer text-emerald-400">R$ ${game.price.toFixed(2)} <span class="text-xs bg-neon-pink text-white px-2 py-0.5 rounded ml-1">-${discount}%</span></div>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-bold font-gamer text-white uppercase tracking-wider mb-2">Sobre o Jogo & Mídia Digital</h4>
+                        <p class="text-sm text-gray-300 leading-relaxed">${game.description}</p>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 pt-4 border-t border-dark-700">
+                        <div class="flex items-center space-x-3 text-xs text-gray-400">
+                            <i class="fa-solid fa-bolt text-neon-cyan text-base"></i>
+                            <span>Envio automático em até 1 minuto</span>
+                        </div>
+                        <div class="flex items-center space-x-3 text-xs text-gray-400">
+                            <i class="fa-solid fa-shield-halved text-emerald-400 text-base"></i>
+                            <span>Garantia Vitalícia PixelVault</span>
+                        </div>
+                    </div>
+                    <div class="flex gap-4 pt-2">
+                        <button onclick="addToCart(${game.id}); closeGameModal();" class="flex-1 py-3.5 bg-gradient-to-r from-neon-purple to-neon-pink text-white font-gamer font-bold text-lg rounded-xl shadow-lg shadow-purple-900/30 hover:opacity-90 transition-all flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-cart-plus"></i>
+                            <span>ADICIONAR AO CARRINHO</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+            modal.classList.remove('hidden');
+        }
+
+        function closeGameModal() {
+            document.getElementById('gameModal').classList.add('hidden');
+        }
+
+        function toggleCartModal() {
+            const modal = document.getElementById('cartModal');
+            modal.classList.toggle('hidden');
+            renderCartItems();
+        }
+
+        function addToCart(id) {
+            const game = allGames.find(g => g.id === id);
+            if (!game) return;
+
+            const existing = cart.find(item => item.id === id);
+            if (existing) {
+                existing.quantity += 1;
+            } else {
+                cart.push({ ...game, quantity: 1 });
+            }
+
+            updateCartUI();
+            showToast("Item Adicionado!", `${game.title} foi adicionado ao carrinho.`, "fa-cart-shopping");
+        }
+
+        function removeFromCart(id) {
+            cart = cart.filter(item => item.id !== id);
+            updateCartUI();
+            renderCartItems();
+        }
+
+        function updateCartUI() {
+            const badge = document.getElementById('cartBadge');
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            badge.innerText = totalItems;
+        }
+
+        function applyCoupon() {
+            const code = document.getElementById('couponInput').value.trim().toUpperCase();
+            if (code === 'PIXEL10' || code === 'VAULT10') {
+                appliedDiscount = 0.10;
+                showToast("Cupom Aplicado!", "10% de desconto adicionado ao pedido.", "fa-tag");
+            } else if (code === 'PIXEL20') {
+                appliedDiscount = 0.20;
+                showToast("Cupom Aplicado!", "20% de desconto adicionado ao pedido.", "fa-tag");
+            } else {
+                appliedDiscount = 0;
+                showToast("Cupom Inválido", "Código de cupom não reconhecido.", "fa-triangle-exclamation");
+            }
+            renderCartItems();
+        }
+
+        function renderCartItems() {
+            const list = document.getElementById('cartItemsList');
+            const subtotalEl = document.getElementById('cartSubtotal');
+            const totalEl = document.getElementById('cartTotal');
+            const discountRow = document.getElementById('discountRow');
+            const discountAmountEl = document.getElementById('cartDiscountAmount');
+
+            if (cart.length === 0) {
+                list.innerHTML = `
+                    <div class="text-center py-16 text-gray-500">
+                        <i class="fa-solid fa-cart-shopping text-4xl mb-3 text-gray-600"></i>
+                        <p class="text-sm font-gamer">Seu carrinho está vazio</p>
+                    </div>
+                `;
+                subtotalEl.innerText = "R$ 0,00";
+                totalEl.innerText = "R$ 0,00";
+                discountRow.classList.add('hidden');
+                return;
+            }
+
+            let subtotal = 0;
+            list.innerHTML = cart.map(item => {
+                subtotal += item.price * item.quantity;
+                return `
+                    <div class="bg-dark-900 border border-dark-700 p-4 rounded-2xl flex items-center space-x-4">
+                        <img src="${item.image}" alt="${item.title}" class="w-16 h-16 object-cover rounded-xl">
+                        <div class="flex-1">
+                            <h4 class="font-bold font-gamer text-white text-sm line-clamp-1">${item.title}</h4>
+                            <span class="text-xs text-neon-cyan">${item.platforms[0]}</span>
+                            <div class="text-sm font-extrabold text-emerald-400 mt-1">R$ ${item.price.toFixed(2)}</div>
+                        </div>
+                        <button onclick="removeFromCart(${item.id})" class="text-gray-500 hover:text-red-400 p-2 transition-colors">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+            }).join('');
+
+            const discountVal = subtotal * appliedDiscount;
+            const finalTotal = subtotal - discountVal;
+
+            subtotalEl.innerText = `R$ ${subtotal.toFixed(2)}`;
+            if (appliedDiscount > 0) {
+                discountRow.classList.remove('hidden');
+                discountAmountEl.innerText = `- R$ ${discountVal.toFixed(2)}`;
+            } else {
+                discountRow.classList.add('hidden');
+            }
+            totalEl.innerText = `R$ ${finalTotal.toFixed(2)}`;
+        }
+
+        function openCheckout() {
+            if (cart.length === 0) {
+                showToast("Carrinho Vazio", "Adicione pelo menos um jogo antes de finalizar.", "fa-triangle-exclamation");
+                return;
+            }
+            toggleCartModal();
+            document.getElementById('checkoutModal').classList.remove('hidden');
+        }
+
+        function closeCheckoutModal() {
+            document.getElementById('checkoutModal').classList.add('hidden');
+        }
+
+        function selectPaymentMethod(method) {
+            const pixBox = document.getElementById('pixDetails');
+            const cardBox = document.getElementById('cardDetails');
+
+            if (method === 'pix' || method === 'boleto' || method === 'paypal') {
+                pixBox.classList.remove('hidden');
+                cardBox.classList.add('hidden');
+            } else {
+                pixBox.classList.add('hidden');
+                cardBox.classList.remove('hidden');
+            }
+        }
+
+        function finalizePurchase() {
+            cart.forEach(item => {
+                userLibrary.push({
+                    id: item.id,
+                    title: item.title,
+                    platform: item.platforms[0],
+                    key: `PV-${Math.random().toString(36).substring(2, 8).toUpperCase()}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
+                    date: new Date().toLocaleDateString(),
+                    image: item.image
+                });
+            });
+
+            const rawTotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+            const finalOrderTotal = rawTotal * (1 - appliedDiscount);
+
+            userOrders.unshift({
+                id: `ORD-${Math.floor(10000 + Math.random() * 90000)}`,
+                date: new Date().toLocaleDateString(),
+                total: `R$ ${finalOrderTotal.toFixed(2)}`,
+                payment: "PIX / Aprovado",
+                status: "Concluído",
+                items: cart.map(i => i.title)
+            });
+
+            cart = [];
+            appliedDiscount = 0;
+            updateCartUI();
+            closeCheckoutModal();
+
+            renderLibrary();
+            renderOrders();
+
+            showToast("Compra Aprovada!", "Jogos liberados na sua Conta / Biblioteca!", "fa-circle-check");
+            switchView('account');
+        }
+
+        function renderLibrary() {
+            const grid = document.getElementById('libraryGrid');
+            const countEl = document.getElementById('libraryCount');
+            countEl.innerText = userLibrary.length;
+
+            grid.innerHTML = userLibrary.map(item => `
+                <div class="bg-dark-800 border border-dark-700 rounded-2xl p-5 flex flex-col justify-between shadow-xl relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-neon-purple/10 rounded-full blur-2xl pointer-events-none"></div>
+                    <div>
+                        <div class="flex items-center space-x-4 mb-4">
+                            <img src="${item.image}" alt="${item.title}" class="w-16 h-16 object-cover rounded-xl border border-dark-700">
+                            <div>
+                                <span class="px-2 py-0.5 bg-dark-900 text-neon-cyan text-[10px] font-bold rounded border border-dark-700">${item.platform}</span>
+                                <h4 class="font-bold font-gamer text-white text-base mt-1 line-clamp-1">${item.title}</h4>
+                                <span class="text-[10px] text-gray-400">Adquirido em: ${item.date}</span>
+                            </div>
+                        </div>
+                        <div class="bg-dark-900 border border-dark-700 p-3 rounded-xl mb-4">
+                            <span class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Chave de Ativação / Conta Digital</span>
+                            <div class="flex items-center justify-between">
+                                <span id="key-${item.id}" class="font-mono text-xs text-neon-cyan font-bold">${item.key}</span>
+                                <button onclick="copyKey('${item.key}')" class="text-xs text-gray-400 hover:text-white bg-dark-800 px-2.5 py-1 rounded-lg border border-dark-700 transition-colors">
+                                    <i class="fa-regular fa-copy"></i> Copiar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="showToast('Download Iniciado', 'O instalador do jogo foi acionado com sucesso.', 'fa-download')" class="w-full py-2.5 bg-neon-purple hover:bg-purple-600 text-white font-gamer font-bold rounded-xl transition-all shadow-md flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-download"></i>
+                        <span>BAIXAR / INSTALAR</span>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function renderOrders() {
+            const list = document.getElementById('ordersList');
+            list.innerHTML = userOrders.map(ord => `
+                <div class="bg-dark-800 border border-dark-700 p-5 rounded-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                    <div>
+                        <div class="flex items-center space-x-3 mb-1">
+                            <span class="font-bold font-gamer text-white text-base">${ord.id}</span>
+                            <span class="px-2.5 py-0.5 bg-emerald-500/20 text-emerald-400 text-xs font-bold rounded-full border border-emerald-500/30">${ord.status}</span>
+                        </div>
+                        <p class="text-xs text-gray-400">Itens: ${ord.items.join(', ')}</p>
+                        <p class="text-[10px] text-gray-500 mt-1"><i class="fa-regular fa-calendar text-neon-purple mr-1"></i> Data: ${ord.date} • Pagamento: ${ord.payment}</p>
+                    </div>
+                    <div class="text-right w-full md:w-auto flex md:flex-col items-center md:items-end justify-between">
+                        <span class="text-xs text-gray-400">Total Pago</span>
+                        <span class="text-lg font-extrabold font-gamer text-emerald-400">${ord.total}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function copyKey(keyText) {
+            const textarea = document.createElement('textarea');
+            textarea.value = keyText;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            showToast("Chave Copiada!", "Chave copiada para a área de transferência.", "fa-copy");
+        }
+
+        function showToast(title, msg, iconClass) {
+            const toast = document.getElementById('toast');
+            const titleEl = document.getElementById('toastTitle');
+            const msgEl = document.getElementById('toastMsg');
+            const iconEl = document.getElementById('toastIcon');
+
+            titleEl.innerText = title;
+            msgEl.innerText = msg;
+            iconEl.innerHTML = `<i class="fa-solid ${iconClass}"></i>`;
+
+            toast.classList.remove('translate-y-24', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-24', 'opacity-0');
+            }, 3500);
+        }
+    </script>
+</body>
+</html>
