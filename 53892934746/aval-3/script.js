@@ -1,162 +1,161 @@
-// =====================================
+// ==========================================
 // MENU MOBILE
-// =====================================
+// ==========================================
 
-const menuBtn = document.getElementById("menuBtn");
-const nav = document.getElementById("nav");
+const menuButton = document.getElementById("menuButton");
+const menu = document.getElementById("menu");
 
-menuBtn.addEventListener("click", () => {
+menuButton.addEventListener("click", function () {
 
-    nav.classList.toggle("active");
+    menu.classList.toggle("active");
 
 });
 
 
-// Fecha o menu ao clicar em um link
+// Fecha o menu ao clicar em uma opção
 
-document.querySelectorAll("#nav a").forEach(link => {
+const menuLinks = document.querySelectorAll("#menu a");
 
-    link.addEventListener("click", () => {
+menuLinks.forEach(function (link) {
 
-        nav.classList.remove("active");
+    link.addEventListener("click", function () {
+
+        menu.classList.remove("active");
 
     });
 
 });
 
 
-// =====================================
+// ==========================================
 // ESPECIALIDADES
-// =====================================
+// ==========================================
 
 const specialties = {
 
     estetica: {
-        title: "Odontologia Estética",
         icon: "✨",
+        title: "Odontologia Estética",
 
-        description:
-            "Área da odontologia voltada para procedimentos " +
-            "que buscam melhorar a aparência e a harmonia " +
-            "do sorriso, sempre considerando a avaliação " +
-            "e indicação profissional."
+        text:
+            "A odontologia estética reúne procedimentos " +
+            "destinados a melhorar a aparência e a harmonia " +
+            "do sorriso. A indicação de cada procedimento " +
+            "depende da avaliação individual do paciente."
     },
-
 
     clareamento: {
+        icon: "🦷",
         title: "Clareamento Dental",
-        icon: "🦷",
 
-        description:
-            "Procedimento odontológico destinado à alteração " +
-            "da tonalidade dos dentes, realizado de acordo " +
-            "com avaliação profissional e indicação adequada."
+        text:
+            "O clareamento dental é um procedimento que " +
+            "pode modificar a tonalidade dos dentes. O " +
+            "tratamento deve ser realizado de acordo com " +
+            "avaliação e orientação odontológica."
     },
 
-
-    implantes: {
+    implante: {
+        icon: "🦷",
         title: "Implantodontia",
-        icon: "🦷",
 
-        description:
-            "Área da odontologia relacionada ao planejamento " +
-            "e tratamento com implantes dentários para " +
-            "reabilitação oral."
+        text:
+            "A implantodontia é a área da odontologia " +
+            "relacionada ao planejamento e tratamento com " +
+            "implantes dentários para reabilitação oral."
     },
-
 
     ortodontia: {
-        title: "Ortodontia",
         icon: "😁",
+        title: "Ortodontia",
 
-        description:
-            "Área odontológica relacionada ao diagnóstico, " +
-            "prevenção e tratamento das alterações de " +
-            "posição dos dentes e da relação das arcadas."
+        text:
+            "A ortodontia trabalha com diagnóstico, " +
+            "prevenção e tratamento de alterações na " +
+            "posição dos dentes e na relação das arcadas."
     },
-
 
     prevencao: {
-        title: "Prevenção Odontológica",
         icon: "🪥",
+        title: "Prevenção",
 
-        description:
-            "A prevenção busca preservar a saúde bucal por " +
-            "meio de acompanhamento profissional, higiene " +
-            "adequada e cuidados preventivos."
+        text:
+            "A prevenção odontológica busca manter a saúde " +
+            "bucal por meio de acompanhamento profissional, " +
+            "higiene adequada e cuidados preventivos."
     },
 
-
-    saude: {
-        title: "Saúde Bucal",
+    saudebucal: {
         icon: "❤️",
+        title: "Saúde Bucal",
 
-        description:
-            "Acompanhamento odontológico destinado à manutenção " +
-            "da saúde oral e identificação de necessidades " +
-            "de tratamento."
+        text:
+            "O acompanhamento da saúde bucal permite " +
+            "avaliar as necessidades de cada paciente e " +
+            "orientar cuidados para manutenção da saúde oral."
     }
 
 };
 
 
-// =====================================
+// ==========================================
 // MODAL
-// =====================================
+// ==========================================
 
-const modal =
-    document.getElementById("modal");
-
-const modalTitle =
-    document.getElementById("modalTitle");
-
-const modalIcon =
-    document.getElementById("modalIcon");
-
-const modalDescription =
-    document.getElementById("modalDescription");
+const modal = document.getElementById("modal");
 
 const closeModal =
     document.getElementById("closeModal");
 
+const modalIcon =
+    document.getElementById("modalIcon");
 
-// Abrir modal
+const modalTitle =
+    document.getElementById("modalTitle");
 
-document.querySelectorAll(".details")
-    .forEach(button => {
+const modalText =
+    document.getElementById("modalText");
 
-        button.addEventListener("click", () => {
 
-            const specialtyId =
-                button.dataset.specialty;
+const specialtyButtons =
+    document.querySelectorAll(".more-button");
 
-            const specialty =
-                specialties[specialtyId];
 
-            if (!specialty) {
-                return;
-            }
+specialtyButtons.forEach(function (button) {
 
-            modalTitle.textContent =
-                specialty.title;
+    button.addEventListener("click", function () {
 
-            modalIcon.textContent =
-                specialty.icon;
+        const specialtyName =
+            button.dataset.specialty;
 
-            modalDescription.textContent =
-                specialty.description;
+        const specialty =
+            specialties[specialtyName];
 
-            modal.classList.add("active");
+        if (!specialty) {
+            return;
+        }
 
-            document.body.style.overflow =
-                "hidden";
+        modalIcon.textContent =
+            specialty.icon;
 
-        });
+        modalTitle.textContent =
+            specialty.title;
+
+        modalText.textContent =
+            specialty.text;
+
+        modal.classList.add("active");
+
+        document.body.style.overflow = "hidden";
 
     });
 
+});
 
-// Fechar modal
+
+// ==========================================
+// FECHAR MODAL
+// ==========================================
 
 function closeSpecialtyModal() {
 
@@ -173,9 +172,9 @@ closeModal.addEventListener(
 );
 
 
-// Clicar fora
+// Fechar clicando fora da janela
 
-modal.addEventListener("click", event => {
+modal.addEventListener("click", function (event) {
 
     if (event.target === modal) {
 
@@ -186,9 +185,9 @@ modal.addEventListener("click", event => {
 });
 
 
-// ESC
+// Fechar usando ESC
 
-document.addEventListener("keydown", event => {
+document.addEventListener("keydown", function (event) {
 
     if (event.key === "Escape") {
 
@@ -199,42 +198,41 @@ document.addEventListener("keydown", event => {
 });
 
 
-// =====================================
+// ==========================================
 // FORMULÁRIO
-// =====================================
+// ==========================================
 
 const form =
     document.getElementById("contactForm");
 
-form.addEventListener("submit", event => {
+
+form.addEventListener("submit", function (event) {
 
     event.preventDefault();
 
+
     const name =
-        document.getElementById("name")
-            .value
-            .trim();
+        document.getElementById("name").value.trim();
 
     const email =
-        document.getElementById("email")
-            .value
-            .trim();
+        document.getElementById("email").value.trim();
 
     const phone =
-        document.getElementById("phone")
-            .value
-            .trim();
+        document.getElementById("phone").value.trim();
 
     const message =
-        document.getElementById("message")
-            .value
-            .trim();
+        document.getElementById("message").value.trim();
 
 
-    if (!name || !email || !phone || !message) {
+    if (
+        name === "" ||
+        email === "" ||
+        phone === "" ||
+        message === ""
+    ) {
 
         alert(
-            "Preencha todos os campos antes de enviar."
+            "Por favor, preencha todos os campos."
         );
 
         return;
@@ -243,12 +241,10 @@ form.addEventListener("submit", event => {
 
 
     alert(
-        `Olá, ${name}!\n\n` +
-        "Sua mensagem foi registrada neste exemplo " +
-        "de site.\n\n" +
-        "Para receber mensagens reais, conecte " +
-        "o formulário a um serviço de backend ou " +
-        "WhatsApp."
+        "Obrigado, " +
+        name +
+        "!\n\n" +
+        "Sua mensagem foi enviada com sucesso."
     );
 
 
@@ -257,26 +253,84 @@ form.addEventListener("submit", event => {
 });
 
 
-// =====================================
-// ANIMAÇÃO AO ROLAR
-// =====================================
+// ==========================================
+// MÁSCARA DE TELEFONE
+// ==========================================
 
-const elements =
+const phoneInput =
+    document.getElementById("phone");
+
+
+phoneInput.addEventListener("input", function () {
+
+    let value =
+        phoneInput.value.replace(/\D/g, "");
+
+
+    if (value.length > 11) {
+
+        value = value.substring(0, 11);
+
+    }
+
+
+    if (value.length <= 10) {
+
+        value =
+            value.replace(
+                /^(\d{2})(\d)/,
+                "($1) $2"
+            );
+
+        value =
+            value.replace(
+                /(\d{4})(\d)/,
+                "$1-$2"
+            );
+
+    } else {
+
+        value =
+            value.replace(
+                /^(\d{2})(\d)/,
+                "($1) $2"
+            );
+
+        value =
+            value.replace(
+                /(\d{5})(\d)/,
+                "$1-$2"
+            );
+
+    }
+
+
+    phoneInput.value = value;
+
+});
+
+
+// ==========================================
+// ANIMAÇÃO DOS CARDS
+// ==========================================
+
+const animatedElements =
     document.querySelectorAll(
-        ".card, .about-image, .gallery-grid img"
+        ".specialty-card, .about-image, .gallery-grid img"
     );
 
 
 const observer =
     new IntersectionObserver(
-        entries => {
 
-            entries.forEach(entry => {
+        function (entries) {
+
+            entries.forEach(function (entry) {
 
                 if (entry.isIntersecting) {
 
                     entry.target.classList.add(
-                        "show"
+                        "visible"
                     );
 
                 }
@@ -284,37 +338,56 @@ const observer =
             });
 
         },
+
         {
-            threshold: 0.12
+            threshold: 0.15
         }
+
     );
 
 
-elements.forEach(element => {
-
-    element.style.opacity = "0";
-
-    element.style.transform =
-        "translateY(20px)";
-
-    element.style.transition =
-        "opacity .6s ease, transform .6s ease";
+animatedElements.forEach(function (element) {
 
     observer.observe(element);
 
 });
 
 
-// Adiciona a animação quando o elemento aparece
+// ==========================================
+// ESTILO DA ANIMAÇÃO
+// ==========================================
 
-const style =
+const animationStyle =
     document.createElement("style");
 
-style.textContent = `
-    .show {
-        opacity: 1 !important;
-        transform: translateY(0) !important;
+
+animationStyle.textContent = `
+
+    .specialty-card,
+    .about-image,
+    .gallery-grid img {
+
+        opacity: 0;
+
+        transform: translateY(25px);
+
+        transition:
+            opacity .7s ease,
+            transform .7s ease;
+
     }
+
+    .specialty-card.visible,
+    .about-image.visible,
+    .gallery-grid img.visible {
+
+        opacity: 1;
+
+        transform: translateY(0);
+
+    }
+
 `;
 
-document.head.appendChild(style);
+
+document.head.appendChild(animationStyle);
