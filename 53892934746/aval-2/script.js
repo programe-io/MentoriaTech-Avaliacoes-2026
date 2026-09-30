@@ -2,29 +2,23 @@
 // MENU MOBILE
 // ==========================================
 
-const menuBtn =
-    document.getElementById("menuBtn");
-
-const menu =
-    document.getElementById("menu");
-
+const menuBtn = document.getElementById("menuBtn");
+const nav = document.getElementById("nav");
 
 menuBtn.addEventListener("click", () => {
 
-    menu.classList.toggle("ativo");
+    nav.classList.toggle("active");
 
 });
 
 
-const linksMenu =
-    document.querySelectorAll("#menu a");
+// Fecha o menu ao clicar em um link
 
-
-linksMenu.forEach(link => {
+document.querySelectorAll("#nav a").forEach(link => {
 
     link.addEventListener("click", () => {
 
-        menu.classList.remove("ativo");
+        nav.classList.remove("active");
 
     });
 
@@ -32,64 +26,213 @@ linksMenu.forEach(link => {
 
 
 // ==========================================
-// MODAL DAS ESPECIALIDADES
+// DADOS DAS ESPECIALIDADES
+// ==========================================
+
+const specialties = {
+
+    analises: {
+
+        title: "Análises Clínicas",
+
+        icon: "🧬",
+
+        text:
+            "Área da Biomedicina relacionada à realização " +
+            "e análise de exames laboratoriais. A atuação " +
+            "deve observar a habilitação profissional e " +
+            "as normas aplicáveis."
+
+    },
+
+
+    estetica: {
+
+        title: "Biomedicina Estética",
+
+        icon: "✨",
+
+        text:
+            "Área de atuação voltada à estética dentro das " +
+            "competências, habilitações profissionais e " +
+            "regulamentações aplicáveis à Biomedicina."
+
+    },
+
+
+    microbiologia: {
+
+        title: "Microbiologia",
+
+        icon: "🔬",
+
+        text:
+            "Área dedicada ao estudo dos microrganismos, " +
+            "suas características e suas relações com " +
+            "diferentes processos biológicos."
+
+    },
+
+
+    hematologia: {
+
+        title: "Hematologia",
+
+        icon: "🩸",
+
+        text:
+            "Área relacionada ao estudo do sangue, células " +
+            "sanguíneas e processos relacionados ao " +
+            "sistema hematológico."
+
+    },
+
+
+    imunologia: {
+
+        title: "Imunologia",
+
+        icon: "🧪",
+
+        text:
+            "Área dedicada ao estudo do sistema imunológico, " +
+            "suas células, mecanismos de defesa e respostas."
+
+    },
+
+
+    bemestar: {
+
+        title: "Saúde e Bem-estar",
+
+        icon: "❤️",
+
+        text:
+            "Área relacionada à promoção da saúde, qualidade " +
+            "de vida e cuidados que estejam dentro das " +
+            "competências profissionais aplicáveis."
+
+    }
+
+};
+
+
+// ==========================================
+// MODAL
 // ==========================================
 
 const modal =
     document.getElementById("modal");
 
-const modalTitulo =
-    document.getElementById("modalTitulo");
+const modalTitle =
+    document.getElementById("modalTitle");
 
-const fecharModal =
-    document.getElementById("fecharModal");
+const modalText =
+    document.getElementById("modalText");
 
-const botoesEspecialidade =
-    document.querySelectorAll(".saiba-btn");
+const modalIcon =
+    document.getElementById("modalIcon");
+
+const closeModal =
+    document.getElementById("closeModal");
+
+const modalContact =
+    document.getElementById("modalContact");
 
 
-botoesEspecialidade.forEach(botao => {
+// Abrir especialidade
 
-    botao.addEventListener("click", () => {
+document.querySelectorAll(".details-btn")
+    .forEach(button => {
 
-        const titulo =
-            botao.dataset.titulo;
+        button.addEventListener("click", () => {
 
-        modalTitulo.textContent =
-            titulo;
+            const id =
+                button.dataset.specialty;
 
-        modal.classList.add("ativo");
+            const specialty =
+                specialties[id];
+
+            if (!specialty) {
+                return;
+            }
+
+            modalTitle.textContent =
+                specialty.title;
+
+            modalText.textContent =
+                specialty.text;
+
+            modalIcon.textContent =
+                specialty.icon;
+
+            modal.classList.add("active");
+
+            document.body.style.overflow =
+                "hidden";
+
+        });
 
     });
 
-});
+
+// Fechar modal
+
+function closeSpecialtyModal() {
+
+    modal.classList.remove("active");
+
+    document.body.style.overflow =
+        "";
+
+}
 
 
-fecharModal.addEventListener("click", () => {
+closeModal.addEventListener(
+    "click",
+    closeSpecialtyModal
+);
 
-    modal.classList.remove("ativo");
 
-});
+// Clicar fora do modal
 
+modal.addEventListener("click", event => {
 
-modal.addEventListener("click", evento => {
+    if (event.target === modal) {
 
-    if (evento.target === modal) {
-
-        modal.classList.remove("ativo");
+        closeSpecialtyModal();
 
     }
 
 });
 
 
-document.addEventListener("keydown", evento => {
+// Tecla ESC
 
-    if (evento.key === "Escape") {
+document.addEventListener("keydown", event => {
 
-        modal.classList.remove("ativo");
+    if (event.key === "Escape") {
+
+        closeSpecialtyModal();
 
     }
+
+});
+
+
+// ==========================================
+// BOTÃO "TENHO INTERESSE"
+// ==========================================
+
+modalContact.addEventListener("click", () => {
+
+    closeSpecialtyModal();
+
+    document
+        .getElementById("contato")
+        .scrollIntoView({
+            behavior: "smooth"
+        });
 
 });
 
@@ -98,29 +241,30 @@ document.addEventListener("keydown", evento => {
 // FORMULÁRIO
 // ==========================================
 
-const formulario =
-    document.getElementById("contatoForm");
+const form =
+    document.getElementById("contactForm");
 
+form.addEventListener("submit", event => {
 
-formulario.addEventListener("submit", evento => {
-
-    evento.preventDefault();
+    event.preventDefault();
 
     const nome =
-        document.getElementById("nome").value.trim();
+        document.getElementById("nome")
+            .value
+            .trim();
 
     const email =
-        document.getElementById("email").value.trim();
+        document.getElementById("email")
+            .value
+            .trim();
 
     const mensagem =
-        document.getElementById("mensagem").value.trim();
+        document.getElementById("mensagem")
+            .value
+            .trim();
 
 
-    if (
-        nome === "" ||
-        email === "" ||
-        mensagem === ""
-    ) {
+    if (!nome || !email || !mensagem) {
 
         alert(
             "Por favor, preencha todos os campos."
@@ -132,56 +276,63 @@ formulario.addEventListener("submit", evento => {
 
 
     alert(
-        `Obrigada, ${nome}!\n\n` +
-        "Sua mensagem foi registrada no formulário " +
-        "de demonstração."
+        `Olá, ${nome}!\n\n` +
+        "Sua mensagem foi preenchida com sucesso. " +
+        "Para receber mensagens de verdade, " +
+        "será necessário conectar este formulário " +
+        "a um serviço de envio."
     );
 
 
-    formulario.reset();
+    form.reset();
 
 });
 
 
 // ==========================================
-// ANIMAÇÃO AO ROLAR
+// ANIMAÇÃO DOS CARDS
 // ==========================================
 
-const elementos =
+const animatedElements =
     document.querySelectorAll(
-        ".especialidade, .servico, " +
-        ".sobre-grid, .contato-grid"
+        ".specialty-card, .service, .about-image"
     );
 
 
-const observador =
+const observer =
     new IntersectionObserver(
+        entries => {
 
-        entradas => {
+            entries.forEach(entry => {
 
-            entradas.forEach(entrada => {
+                if (entry.isIntersecting) {
 
-                if (entrada.isIntersecting) {
+                    entry.target.style.opacity = "1";
 
-                    entrada.target.classList.add(
-                        "aparecer"
-                    );
+                    entry.target.style.transform =
+                        "translateY(0)";
 
                 }
 
             });
 
         },
-
         {
-            threshold: 0.15
+            threshold: 0.12
         }
-
     );
 
 
-elementos.forEach(elemento => {
+animatedElements.forEach(element => {
 
-    observador.observe(elemento);
+    element.style.opacity = "0";
+
+    element.style.transform =
+        "translateY(20px)";
+
+    element.style.transition =
+        "opacity .6s ease, transform .6s ease";
+
+    observer.observe(element);
 
 });
