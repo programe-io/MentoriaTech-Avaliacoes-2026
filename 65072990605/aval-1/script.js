@@ -1,73 +1,207 @@
-// Lógica do Menu Mobile
-const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-const mobileMenu = document.getElementById('mobileMenu');
+/* =====================================================
+   MENU MOBILE
+===================================================== */
 
-if (mobileMenuBtn && mobileMenu) {
-    mobileMenuBtn.addEventListener('click', () => {
-        mobileMenu.classList.toggle('hidden');
-    });
+const menuToggle = document.getElementById("menuToggle");
+const nav = document.getElementById("nav");
 
-    // Fechar menu ao clicar em algum link interno
-    mobileMenu.querySelectorAll('a').forEach(link => {
-        link.addEventListener('click', () => {
-            mobileMenu.classList.add('hidden');
-        });
-    });
-}
+menuToggle.addEventListener("click", () => {
 
-// Funções para Modais
-function openModal(modalId) {
-    const modal = document.getElementById(modalId);
-    if (modal) {
-        modal.classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
-    }
-}
+    nav.classList.toggle("active");
 
-function closeModal(modalId) {
-    const modal = document.getElementById(modalId);
-    if (modal) {
-        modal.classList.add('hidden');
-        document.body.style.overflow = 'auto';
-    }
-}
-
-// Fechar modal ao clicar fora da caixa principal
-window.addEventListener('click', (e) => {
-    ['loginModal', 'signupModal'].forEach(modalId => {
-        const modal = document.getElementById(modalId);
-        if (modal && e.target === modal) {
-            closeModal(modalId);
-        }
-    });
 });
 
-// Sistema de Notificações Toast
-function showToast(message) {
-    const toast = document.getElementById('toast');
-    const toastMessage = document.getElementById('toastMessage');
-    
-    if (toast && toastMessage) {
-        toastMessage.textContent = message;
-        toast.classList.remove('translate-y-32');
-        
-        setTimeout(() => {
-            toast.classList.add('translate-y-32');
-        }, 3500);
+
+/* =====================================================
+   FECHAR MENU AO CLICAR EM UM LINK
+===================================================== */
+
+const navLinks = document.querySelectorAll(".nav a");
+
+navLinks.forEach(link => {
+
+    link.addEventListener("click", () => {
+
+        nav.classList.remove("active");
+
+    });
+
+});
+
+
+/* =====================================================
+   FILTRO DE JOGOS
+===================================================== */
+
+const filters = document.querySelectorAll(".filter");
+const matchCards = document.querySelectorAll(".match-card");
+
+filters.forEach(filter => {
+
+    filter.addEventListener("click", () => {
+
+        filters.forEach(item => {
+            item.classList.remove("active");
+        });
+
+        filter.classList.add("active");
+
+        const selectedFilter = filter.dataset.filter;
+
+        matchCards.forEach(card => {
+
+            const category = card.dataset.category;
+
+            if (
+                selectedFilter === "todos" ||
+                selectedFilter === category
+            ) {
+
+                card.style.display = "block";
+
+                setTimeout(() => {
+                    card.style.opacity = "1";
+                    card.style.transform = "translateY(0)";
+                }, 10);
+
+            } else {
+
+                card.style.opacity = "0";
+                card.style.transform = "translateY(10px)";
+
+                setTimeout(() => {
+                    card.style.display = "none";
+                }, 200);
+
+            }
+
+        });
+
+    });
+
+});
+
+
+/* =====================================================
+   BOTÕES DE DETALHES
+===================================================== */
+
+const detailButtons = document.querySelectorAll(".details-btn");
+
+detailButtons.forEach(button => {
+
+    button.addEventListener("click", () => {
+
+        const card = button.closest(".match-card");
+
+        const teams = card.querySelectorAll(".match-teams strong");
+
+        const homeTeam = teams[0].textContent;
+        const awayTeam = teams[1].textContent;
+
+        alert(
+            `Partida selecionada:\n\n${homeTeam} x ${awayTeam}\n\nOs detalhes da partida poderão ser carregados através de uma API de futebol.`
+        );
+
+    });
+
+});
+
+
+/* =====================================================
+   SELETOR DE CAMPEONATO
+===================================================== */
+
+const leagueSelect = document.getElementById("leagueSelect");
+
+leagueSelect.addEventListener("change", () => {
+
+    const league = leagueSelect.value;
+
+    if (league === "premier") {
+
+        alert(
+            "Tabela da Premier League selecionada.\n\nAqui você poderá carregar os dados através de uma API."
+        );
+
+    } else {
+
+        alert(
+            "Tabela do Brasileirão selecionada."
+        );
+
     }
+
+});
+
+
+/* =====================================================
+   ANIMAÇÃO AO ENTRAR NA TELA
+===================================================== */
+
+const animatedElements = document.querySelectorAll(
+    ".match-card, .news-card, .player-card, .stat-box"
+);
+
+const observer = new IntersectionObserver(
+    entries => {
+
+        entries.forEach(entry => {
+
+            if (entry.isIntersecting) {
+
+                entry.target.classList.add("show");
+
+            }
+
+        });
+
+    },
+    {
+        threshold: 0.12
+    }
+);
+
+animatedElements.forEach(element => {
+
+    element.classList.add("animate");
+
+    observer.observe(element);
+
+});
+
+
+/* =====================================================
+   ANO AUTOMÁTICO DO FOOTER
+===================================================== */
+
+const footerYear = document.querySelector(".footer-bottom p");
+
+if (footerYear) {
+
+    footerYear.textContent =
+        `© ${new Date().getFullYear()} FutebolNews. Todos os direitos reservados.`;
+
 }
 
-// Manipulador simulado de Autenticação
-function handleAuth(event, successMessage) {
-    event.preventDefault();
-    
-    // Fecha todos os modais abertos
-    closeModal('loginModal');
-    closeModal('signupModal');
-    
-    // Exibe notificação de sucesso
-    showToast(successMessage);
-    
-    // Reseta o formulário
-    event.target.reset();
-}
+
+/* =====================================================
+   EFEITO DE SCROLL NO HEADER
+===================================================== */
+
+const header = document.querySelector(".header");
+
+window.addEventListener("scroll", () => {
+
+    if (window.scrollY > 50) {
+
+        header.style.boxShadow =
+            "0 5px 25px rgba(0,0,0,.25)";
+
+    } else {
+
+        header.style.boxShadow = "none";
+
+    }
+
+});
