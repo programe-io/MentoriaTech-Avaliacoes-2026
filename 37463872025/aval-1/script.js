@@ -1,194 +1,113 @@
-let tarefas = [];
+let produtos = [];
 
-function cadastrarTarefa() {
+function cadastrarProduto() {
 
     let codigo = document.getElementById("codigo").value;
+    let descricao = document.getElementById("descricao").value;
+    let quantidade = Number(document.getElementById("quantidade").value);
+    let valor = Number(document.getElementById("valor").value);
 
-    let titulo = document.getElementById("titulo").value;
+    if (codigo === "" || descricao === "") {
+        alert("Preencha todos os campos.");
+        return;
+    }
 
-    let prioridade = Number(
-        document.getElementById("prioridade").value
+    let produtoExistente = produtos.find(
+        produto => produto.codigo === codigo
     );
 
-
-    // Validação do código
-    if (codigo === "") {
-
-        alert("Informe o código da tarefa.");
-
+    if (produtoExistente) {
+        alert("Já existe um produto com esse código.");
         return;
     }
 
-
-    // Verifica código repetido
-    let tarefaExistente = tarefas.find(
-        tarefa => tarefa.codigo === codigo
-    );
-
-    if (tarefaExistente) {
-
-        alert("Já existe uma tarefa com esse código.");
-
-        return;
-    }
-
-
-    // Validação do título
-    if (titulo.length < 5) {
-
-        alert("O título deve ter no mínimo 5 caracteres.");
-
-        return;
-    }
-
-
-    // Validação da prioridade
-    if (prioridade < 1 || prioridade > 3) {
-
-        alert("Escolha uma prioridade entre 1 e 3.");
-
-        return;
-    }
-
-
-    let tarefa = {
-
+    let produto = {
         codigo: codigo,
-
-        titulo: titulo,
-
-        prioridade: prioridade,
-
-        concluida: false
-
+        descricao: descricao,
+        quantidade: quantidade,
+        valor: valor
     };
 
-
-    tarefas.push(tarefa);
+    produtos.push(produto);
 
     limparCampos();
 
-    listarTarefas();
+    listarProdutos();
 }
 
 
-function listarTarefas() {
+function listarProdutos() {
 
-    let tabela = document.getElementById("listaTarefas");
+    let tabela = document.getElementById("listaProdutos");
 
     tabela.innerHTML = "";
 
-
-    tarefas.forEach(function(tarefa) {
-
-        let prioridadeTexto;
-
-
-        if (tarefa.prioridade === 1) {
-
-            prioridadeTexto = "Alta";
-
-        } else if (tarefa.prioridade === 2) {
-
-            prioridadeTexto = "Média";
-
-        } else {
-
-            prioridadeTexto = "Baixa";
-
-        }
-
-
-        let status;
-
-        if (tarefa.concluida) {
-
-            status = "Concluída";
-
-        } else {
-
-            status = "Pendente";
-
-        }
-
+    produtos.forEach(function(produto) {
 
         tabela.innerHTML += `
             <tr>
-
-                <td>${tarefa.codigo}</td>
-
-                <td>${tarefa.titulo}</td>
-
-                <td>${prioridadeTexto}</td>
-
-                <td>${status}</td>
+                <td>${produto.codigo}</td>
+                <td>${produto.descricao}</td>
+                <td>${produto.quantidade}</td>
+                <td>R$ ${produto.valor.toFixed(2)}</td>
 
                 <td>
-
-                    <button onclick="concluirTarefa('${tarefa.codigo}')">
-                        Concluir
+                    <button onclick="alterarQuantidade('${produto.codigo}')">
+                        Quantidade
                     </button>
 
-                    <button onclick="alterarPrioridade('${tarefa.codigo}')">
-                        Alterar prioridade
+                    <button onclick="alterarValor('${produto.codigo}')">
+                        Valor
                     </button>
-
                 </td>
-
             </tr>
         `;
     });
 }
 
 
-function concluirTarefa(codigo) {
+function alterarValor(codigo) {
 
-    let tarefa = tarefas.find(
-        tarefa => tarefa.codigo === codigo
+    let produto = produtos.find(
+        produto => produto.codigo === codigo
     );
 
-    tarefa.concluida = true;
+    let novoValor = Number(
+        prompt("Digite o novo valor:")
+    );
 
-    listarTarefas();
+    if (novoValor >= 0) {
+
+        produto.valor = novoValor;
+
+        listarProdutos();
+    }
 }
 
 
-function alterarPrioridade(codigo) {
+function alterarQuantidade(codigo) {
 
-    let tarefa = tarefas.find(
-        tarefa => tarefa.codigo === codigo
+    let produto = produtos.find(
+        produto => produto.codigo === codigo
     );
 
-
-    let novaPrioridade = Number(
-        prompt(
-            "Digite a nova prioridade:\n" +
-            "1 - Alta\n" +
-            "2 - Média\n" +
-            "3 - Baixa"
-        )
+    let novaQuantidade = Number(
+        prompt("Digite a nova quantidade:")
     );
 
+    if (novaQuantidade >= 0) {
 
-    if (novaPrioridade < 1 || novaPrioridade > 3) {
+        produto.quantidade = novaQuantidade;
 
-        alert("A prioridade deve estar entre 1 e 3.");
-
-        return;
+        listarProdutos();
     }
-
-
-    tarefa.prioridade = novaPrioridade;
-
-    listarTarefas();
 }
 
 
 function limparCampos() {
 
     document.getElementById("codigo").value = "";
-
-    document.getElementById("titulo").value = "";
-
-    document.getElementById("prioridade").value = "";
+    document.getElementById("descricao").value = "";
+    document.getElementById("quantidade").value = "";
+    document.getElementById("valor").value = "";
 }
