@@ -1,82 +1,300 @@
+```html
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  
-</head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Produtos</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f2f2f2;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #333;
+        }
+
+        .formulario {
+            display: grid;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        input, button {
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
+
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            text-align: center;
+        }
+
+        th {
+            background: #007bff;
+            color: white;
+        }
+
+        .mensagem {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .erro {
+            background: #ffd6d6;
+            color: #a00000;
+        }
+
+        .sucesso {
+            background: #d6ffd6;
+            color: #006400;
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
 <body>
-  // Lista (Array) do produtos
-let produtos = [];
 
-function validarProduto(descricao, quantidade, valor){
-  if(descricao.length < 5){
-       throw new Error("descricao deve ter no minimo cinco caracteres");
-  }
-  if(quantidade < 1) {
-        throw new Error("Quantidade de ser maior que zero");
-  }
-  if (valor < 0) {
-        throw new Error("Valor deve ser maior igual a zero"); 
-  }
-}
+<div class="container">
 
-function cadastrarProdutos(descricao, quantidade, valor) {
-  validarProduto(descricao, quantidade, valor);
-  let novoProduto = {
-    "codigo": produtos.length + 1,
-    "descricao": descricao,
-    "quantidade": quantidade,
-    "valor": valor
-  }
-  produtos.push(novoProduto);
-}
+    <h1>Cadastro de Produtos</h1>
 
-function listarProdutos( ){
-  console.log(produtos);
-}
+    <div class="formulario">
+        <input type="text" id="descricao" placeholder="Descrição do produto">
 
-function atualizarValor (codigoProduto, novoValor){
-  if(novoValor < 0){
-     throw new Error("Valor deve ser maior igual a zero");
-  }
-  const produto = produtos.find(prod => prod.codigo === codigoProduto);
-  if(produto){
-    produto.valor = novoValor;
-  }
-  else {
-     throw new Error("Produto não encontrado");
-  }
-}
+        <input type="number" id="quantidade" placeholder="Quantidade" min="1">
 
-function atualizarQuantidade(codigoProduto, novaQuantidade){
-     if(novaQuantidade < 1){
-      throw new Error("Quantidade deve ser maior que zero");
-     }
-     const produto = produtos.find(prod => prod.codigo === codigoProduto);
-    if(produto){
-    produto.quantidade += novaQuantidade;
-  }
-   else {
-     throw new Error("Produto não encontrado");
-  }
-}
+        <input type="number" id="valor" placeholder="Valor" min="0" step="0.01">
 
+        <button onclick="cadastrarProdutoTela()">
+            Cadastrar Produto
+        </button>
+    </div>
 
+    <div id="mensagem" class="mensagem"></div>
 
+    <h2>Produtos cadastrados</h2>
 
-//-------------------------------
-listarProdutos();
-cadastrarProdutos("Cadeira Gamer", 12, 699.00);
-cadastrarProdutos("Mouse logi", 38, 99.00);
-listarProdutos();
-atualizarValor(2, 97.00);
-listarProdutos();
+    <table>
+        <thead>
+            <tr>
+                <th>Código</th>
+                <th>Descrição</th>
+                <th>Quantidade</th>
+                <th>Valor</th>
+            </tr>
+        </thead>
 
-atualizarQuantidade(1, 3);
-listarProdutos();
+        <tbody id="listaProdutos">
+        </tbody>
+    </table>
 
-  
-  
-</body>
+</div>
+
+<script>
+
+    // Lista de produtos
+    let produtos = [];
+
+    function validarProduto(descricao, quantidade, valor) {
+
+        if (descricao.length < 5) {
+            throw new Error(
+                "A descrição deve ter no mínimo cinco caracteres."
+            );
+        }
+
+        if (quantidade < 1) {
+            throw new Error(
+                "A quantidade deve ser maior que zero."
+            );
+        }
+
+        if (valor < 0) {
+            throw new Error(
+                "O valor deve ser maior ou igual a zero."
+            );
+        }
+    }
+
+    function cadastrarProdutos(descricao, quantidade, valor) {
+
+        validarProduto(descricao, quantidade, valor);
+
+        let novoProduto = {
+            codigo: produtos.length + 1,
+            descricao: descricao,
+            quantidade: quantidade,
+            valor: valor
+        };
+
+        produtos.push(novoProduto);
+    }
+
+    function listarProdutos() {
+
+        const tabela = document.getElementById("listaProdutos");
+
+        tabela.innerHTML = "";
+
+        produtos.forEach(produto => {
+
+            const linha = document.createElement("tr");
+
+            linha.innerHTML = `
+                <td>${produto.codigo}</td>
+                <td>${produto.descricao}</td>
+                <td>${produto.quantidade}</td>
+                <td>R$ ${produto.valor.toFixed(2)}</td>
+            `;
+
+            tabela.appendChild(linha);
+        });
+    }
+
+    function atualizarValor(codigoProduto, novoValor) {
+
+        if (novoValor < 0) {
+            throw new Error(
+                "O valor deve ser maior ou igual a zero."
+            );
+        }
+
+        const produto = produtos.find(
+            prod => prod.codigo === codigoProduto
+        );
+
+        if (produto) {
+            produto.valor = novoValor;
+        } else {
+            throw new Error("Produto não encontrado.");
+        }
+    }
+
+    function atualizarQuantidade(codigoProduto, novaQuantidade) {
+
+        if (novaQuantidade < 1) {
+            throw new Error(
+                "A quantidade deve ser maior que zero."
+            );
+        }
+
+        const produto = produtos.find(
+            prod => prod.codigo === codigoProduto
+        );
+
+        if (produto) {
+            produto.quantidade += novaQuantidade;
+        } else {
+            throw new Error("Produto não encontrado.");
+        }
+    }
+
+    function cadastrarProdutoTela() {
+
+        try {
+
+            const descricao =
+                document.getElementById("descricao").value;
+
+            const quantidade =
+                Number(document.getElementById("quantidade").value);
+
+            const valor =
+                Number(document.getElementById("valor").value);
+
+            cadastrarProdutos(
+                descricao,
+                quantidade,
+                valor
+            );
+
+            listarProdutos();
+
+            mostrarMensagem(
+                "Produto cadastrado com sucesso!",
+                "sucesso"
+            );
+
+            document.getElementById("descricao").value = "";
+            document.getElementById("quantidade").value = "";
+            document.getElementById("valor").value = "";
+
+        } catch (erro) {
+
+            mostrarMensagem(
+                erro.message,
+                "erro"
+            );
+        }
+    }
+
+    function mostrarMensagem(texto, tipo) {
+
+        const mensagem =
+            document.getElementById("mensagem");
+
+        mensagem.textContent = texto;
+
+        mensagem.className =
+            "mensagem " + tipo;
+
+        mensagem.style.display = "block";
+
+        setTimeout(() => {
+            mensagem.style.display = "none";
+        }, 3000);
+    }
+
+</script>
+
+<script src="script.js"></script></body>
 </html>
+```
+
+Esse código mantém a **mesma lógica do seu JavaScript**, mas agora possui uma interface visual no navegador. Basta salvar como **`index.html`** e abrir no navegador.
+
+Se quiser separar corretamente em **`index.html` + `style.css` + `script.js`**, também posso organizar dessa forma.
