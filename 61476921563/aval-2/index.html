@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wanderlust - Viagens & Hotéis</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Arquivo CSS separado -->
+    <link rel="stylesheet" href="style.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"><link href="style.css" rel="stylesheet"></head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased">
+
+    <!-- Navegação -->
+    <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-100 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+                <div class="bg-indigo-600 text-white p-2.5 rounded-xl shadow-md shadow-indigo-100">
+                    <i class="fa-solid fa-compass text-xl"></i>
+                </div>
+                <span class="text-2xl font-extrabold tracking-tight text-slate-900">Wander<span class="text-indigo-600">lust</span></span>
+            </div>
+            
+            <nav class="hidden md:flex items-center space-x-8 font-medium text-slate-600">
+                <a href="#inicio" class="hover:text-indigo-600 transition">Início</a>
+                <a href="#hoteis" class="hover:text-indigo-600 transition">Destinos & Hotéis</a>
+            </nav>
+
+            <div class="flex items-center space-x-4">
+                <button onclick="abrirMinhasReservas()" class="relative bg-indigo-50 text-indigo-600 px-4 py-2.5 rounded-xl font-semibold hover:bg-indigo-100 transition flex items-center space-x-2">
+                    <i class="fa-solid fa-ticket"></i>
+                    <span class="hidden sm:inline">Minhas Reservas</span>
+                    <span id="badge-reservas" class="absolute -top-1.5 -right-1.5 bg-rose-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold shadow-sm hidden">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="inicio" class="relative pt-20 pb-32 overflow-hidden bg-gradient-to-b from-indigo-900 via-slate-900 to-slate-950 text-white">
+        <div class="absolute inset-0 opacity-20 bg-[radial-gradient(#4f46e5_1px,transparent_1px)] [background-size:16px_16px]"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+            <span class="inline-block bg-indigo-500/20 text-indigo-300 px-4 py-1.5 rounded-full text-sm font-semibold mb-6 border border-indigo-500/30">
+                🚀 Descubra o mundo com preços exclusivos
+            </span>
+            <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight max-w-3xl mx-auto leading-tight mb-6">
+                Sua próxima grande aventura começa <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-teal-300">aqui.</span>
+            </h1>
+            <p class="text-lg text-slate-300 max-w-xl mx-auto mb-12">
+                Explore os destinos mais deslumbrantes do planeta e garanta sua estadia perfeita com apenas alguns cliques.
+            </p>
+
+            <!-- Barra de Busca -->
+            <div class="max-w-4xl mx-auto bg-white p-4 rounded-2xl shadow-2xl text-slate-800 grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
+                <div class="text-left px-3 border-b md:border-b-0 md:border-r border-slate-200 pb-3 md:pb-0">
+                    <label class="block text-xs font-bold uppercase text-slate-400 mb-1"><i class="fa-solid fa-location-dot text-indigo-600 mr-1"></i> Destino</label>
+                    <input type="text" id="filtro-destino" placeholder="Ex: Rio de Janeiro, São Paulo..." class="w-full focus:outline-none font-semibold text-slate-700 placeholder:text-slate-400">
+                </div>
+                <div class="text-left px-3 border-b md:border-b-0 md:border-r border-slate-200 pb-3 md:pb-0">
+                    <label class="block text-xs font-bold uppercase text-slate-400 mb-1"><i class="fa-solid fa-calendar text-indigo-600 mr-1"></i> Check-in</label>
+                    <input type="date" id="data-checkin" class="w-full focus:outline-none font-semibold text-slate-700">
+                </div>
+                <div class="text-left px-3 pb-3 md:pb-0">
+                    <label class="block text-xs font-bold uppercase text-slate-400 mb-1"><i class="fa-solid fa-calendar-check text-indigo-600 mr-1"></i> Check-out</label>
+                    <input type="date" id="data-checkout" class="w-full focus:outline-none font-semibold text-slate-700">
+                </div>
+                <div>
+                    <button onclick="filtrarHoteis()" class="w-full bg-indigo-600 text-white font-bold py-4 rounded-xl hover:bg-indigo-700 transition shadow-lg shadow-indigo-200 flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <span>Buscar Hotéis</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Filtros de Categoria -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 relative z-25">
+        <div class="flex items-center justify-center space-x-3 overflow-x-auto pb-4 no-scrollbar">
+            <button onclick="mudarCategoria('todos', event)" class="cat-btn active bg-indigo-600 text-white px-6 py-3 rounded-2xl font-bold shadow-md transition whitespace-nowrap flex items-center space-x-2">
+                <i class="fa-solid fa-globe"></i> <span>Todos</span>
+            </button>
+            <button onclick="mudarCategoria('Praia', event)" class="cat-btn bg-white text-slate-600 px-6 py-3 rounded-2xl font-bold shadow-md hover:bg-slate-100 transition whitespace-nowrap flex items-center space-x-2">
+                <i class="fa-solid fa-umbrella-beach text-teal-500"></i> <span>Praias</span>
+            </button>
+            <button onclick="mudarCategoria('Montanha', event)" class="cat-btn bg-white text-slate-600 px-6 py-3 rounded-2xl font-bold shadow-md hover:bg-slate-100 transition whitespace-nowrap flex items-center space-x-2">
+                <i class="fa-solid fa-mountain text-amber-600"></i> <span>Montanhas</span>
+            </button>
+            <button onclick="mudarCategoria('Urbano', event)" class="cat-btn bg-white text-slate-600 px-6 py-3 rounded-2xl font-bold shadow-md hover:bg-slate-100 transition whitespace-nowrap flex items-center space-x-2">
+                <i class="fa-solid fa-city text-indigo-500"></i> <span>Urbano</span>
+            </button>
+        </div>
+    </section>
+
+    <!-- Lista de Hotéis / Destinos -->
+    <main id="hoteis" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div class="flex items-center justify-between mb-8">
+            <div>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">Hotéis e Resorts em Destaque</h2>
+                <p class="text-slate-500 text-sm mt-1">Escolha o lugar perfeito para sua estadia</p>
+            </div>
+            <span id="contador-resultados" class="text-sm font-semibold text-slate-500 bg-slate-200 px-3 py-1 rounded-full"></span>
+        </div>
+
+        <!-- Grid dinâmico -->
+        <div id="grid-hoteis" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Inserido dinamicamente via JS -->
+        </div>
+    </main>
+
+    <!-- Modal de Reserva -->
+    <div id="modal-reserva" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl">
+            <div class="bg-indigo-600 p-6 text-white flex justify-between items-center">
+                <div>
+                    <span id="modal-categoria" class="text-xs uppercase font-extrabold tracking-wider bg-indigo-500/40 px-2.5 py-1 rounded-md">Reserva</span>
+                    <h3 id="modal-hotel-nome" class="text-xl font-bold mt-1">Nome do Hotel</h3>
+                </div>
+                <button onclick="fecharModal()" class="w-10 h-10 rounded-full bg-white/15 hover:bg-white/30 flex items-center justify-center text-white transition">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            
+            <form id="form-reserva" onsubmit="confirmarReserva(event)" class="p-6 space-y-4 max-h-[75vh] overflow-y-auto">
+                <input type="hidden" id="reserva-hotel-id">
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Check-in</label>
+                        <input type="date" id="reserva-checkin" required class="w-full bg-slate-50 border border-slate-200 p-3 rounded-xl font-medium focus:outline-none focus:border-indigo-600">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Check-out</label>
+                        <input type="date" id="reserva-checkout" required class="w-full bg-slate-50 border border-slate-200 p-3 rounded-xl font-medium focus:outline-none focus:border-indigo-600">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Nome Completo do Hóspede</label>
+                    <input type="text" id="reserva-nome" required placeholder="Ex: Maria Silva" class="w-full bg-slate-50 border border-slate-200 p-3 rounded-xl font-medium focus:outline-none focus:border-indigo-600">
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1">E-mail</label>
+                        <input type="email" id="reserva-email" required placeholder="seu@email.com" class="w-full bg-slate-50 border border-slate-200 p-3 rounded-xl font-medium focus:outline-none focus:border-indigo-600">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Número de Hóspedes</label>
+                        <select id="reserva-hospedes" class="w-full bg-slate-50 border border-slate-200 p-3 rounded-xl font-medium focus:outline-none focus:border-indigo-600">
+                            <option value="1">1 Hóspede</option>
+                            <option value="2" selected>2 Hóspedes</option>
+                            <option value="3">3 Hóspedes</option>
+                            <option value="4">4 Hóspedes</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Forma de Pagamento</label>
+                    <select id="reserva-pagamento" class="w-full bg-slate-50 border border-slate-200 p-3 rounded-xl font-medium focus:outline-none focus:border-indigo-600">
+                        <option value="Cartão de Crédito">Cartão de Crédito</option>
+                        <option value="Pix">Pix (Aprovação imediata)</option>
+                        <option value="Boleto Bancário">Boleto Bancário</option>
+                    </select>
+                </div>
+
+                <div class="bg-indigo-50/50 p-4 rounded-2xl border border-indigo-100 flex items-center justify-between">
+                    <div>
+                        <span class="text-xs text-slate-500 font-semibold block">Valor Total Estimado</span>
+                        <span id="modal-preco-total" class="text-xl font-extrabold text-indigo-600">R$ 0,00</span>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-xs text-slate-400 block" id="modal-diarias-calc">0 diárias</span>
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full bg-indigo-600 text-white font-bold py-4 rounded-xl hover:bg-indigo-700 transition shadow-lg shadow-indigo-200 flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-check-circle"></i>
+                    <span>Confirmar Reserva</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Minhas Reservas -->
+    <div id="modal-minhas-reservas" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-2xl w-full overflow-hidden shadow-2xl">
+            <div class="bg-slate-900 p-6 text-white flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <i class="fa-solid fa-ticket text-indigo-400 text-xl"></i>
+                    <h3 class="text-xl font-bold">Minhas Reservas Confirmadas</h3>
+                </div>
+                <button onclick="fecharMinhasReservas()" class="w-10 h-10 rounded-full bg-white/15 hover:bg-white/30 flex items-center justify-center text-white transition">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            
+            <div id="lista-minhas-reservas" class="p-6 space-y-4 max-h-[70vh] overflow-y-auto bg-slate-50">
+                <!-- Preenchido via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Rodapé -->
+    <footer class="bg-slate-950 text-slate-400 py-12 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div class="flex items-center space-x-2">
+                <div class="bg-indigo-600 text-white p-2 rounded-xl">
+                    <i class="fa-solid fa-compass"></i>
+                </div>
+                <span class="text-xl font-bold text-white">Wanderlust</span>
+            </div>
+            <p class="text-sm text-slate-500">&copy; 2026 Wanderlust Viagens S.A. Todos os direitos reservados.</p>
+            <div class="flex space-x-4 text-lg">
+                <a href="#" class="hover:text-indigo-400 transition"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#" class="hover:text-indigo-400 transition"><i class="fa-brands fa-facebook"></i></a>
+                <a href="#" class="hover:text-indigo-400 transition"><i class="fa-brands fa-twitter"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Arquivo JavaScript separado -->
+    <script src="script.js"></script>
+<script src="script.js"></script></body>
+</html>
