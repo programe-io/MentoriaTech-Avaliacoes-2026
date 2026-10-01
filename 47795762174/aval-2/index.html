@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Tarefas</title>
+    <link rel="stylesheet" href="style.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+    <div class="container">
+        <h1>Lista de Tarefas</h1>
+
+        <div class="formulario">
+            <input type="text" id="titulo" placeholder="Digite a tarefa">
+
+            <select id="prioridade">
+                <option value="1">Prioridade 1</option>
+                <option value="2">Prioridade 2</option>
+                <option value="3">Prioridade 3</option>
+            </select>
+
+            <button onclick="adicionarTarefa()">Adicionar</button>
+        </div>
+
+        <div id="listaTarefas"></div>
+    </div>
+
+    <script>
+        let tarefas = [];
+        let proximoCodigo = 1;
+
+        function adicionarTarefa() {
+            const titulo = document.getElementById("titulo").value;
+            const prioridade = Number(
+                document.getElementById("prioridade").value
+            );
+
+            if (titulo.trim() === "") {
+                alert("Digite o título da tarefa!");
+                return;
+            }
+
+            const tarefa = {
+                codigo: proximoCodigo,
+                titulo: titulo,
+                prioridade: prioridade,
+                status: true
+            };
+
+            tarefas.push(tarefa);
+            proximoCodigo++;
+
+            document.getElementById("titulo").value = "";
+
+            mostrarTarefas();
+        }
+
+        function alterarPrioridade(codigo) {
+            const tarefa = tarefas.find(tarefa => tarefa.codigo === codigo);
+
+            if (tarefa) {
+                tarefa.prioridade++;
+
+                if (tarefa.prioridade > 3) {
+                    tarefa.prioridade = 1;
+                }
+
+                mostrarTarefas();
+            }
+        }
+
+        function alterarStatus(codigo) {
+            const tarefa = tarefas.find(tarefa => tarefa.codigo === codigo);
+
+            if (tarefa) {
+                tarefa.status = !tarefa.status;
+                mostrarTarefas();
+            }
+        }
+
+        function excluirTarefa(codigo) {
+            tarefas = tarefas.filter(
+                tarefa => tarefa.codigo !== codigo
+            );
+
+            mostrarTarefas();
+        }
+
+        function mostrarTarefas() {
+            const lista = document.getElementById("listaTarefas");
+
+            lista.innerHTML = "";
+
+            tarefas.forEach(tarefa => {
+                const div = document.createElement("div");
+
+                div.className = "tarefa";
+
+                div.innerHTML = `
+                    <div>
+                        <h2>${tarefa.titulo}</h2>
+
+                        <p>
+                            Código: ${tarefa.codigo}
+                        </p>
+
+                        <p>
+                            Prioridade: ${tarefa.prioridade}
+                        </p>
+
+                        <p>
+                            Status:
+                            ${tarefa.status ? "Ativa" : "Concluída"}
+                        </p>
+                    </div>
+
+                    <div class="botoes">
+                        <button onclick="alterarPrioridade(${tarefa.codigo})">
+                            Alterar prioridade
+                        </button>
+
+                        <button onclick="alterarStatus(${tarefa.codigo})">
+                            Alterar status
+                        </button>
+
+                        <button
+                            class="excluir"
+                            onclick="excluirTarefa(${tarefa.codigo})">
+                            Excluir
+                        </button>
+                    </div>
+                `;
+
+                lista.appendChild(div);
+            });
+        }
+    </script>
+
+<script src="script.js"></script></body>
+</html>
