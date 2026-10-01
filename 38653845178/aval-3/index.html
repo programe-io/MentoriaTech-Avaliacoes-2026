@@ -1,1616 +1,267 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>Mentoria Tech SEDUC-PI | Vozes do Piauí</title>
-
-  <meta name="description"
-        content="Vozes do Piauí — um vlog digital sobre cultura, história, turismo, gastronomia e identidade piauiense.">
-
-  <style>
-    /* =========================
-       RESET
-    ========================= */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-    body {
-      font-family: Arial, Helvetica, sans-serif;
-      background: #071b14;
-      color: #fff;
-      line-height: 1.6;
-      overflow-x: hidden;
-    }
-
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    img {
-      max-width: 100%;
-      display: block;
-    }
-
-    button {
-      font-family: inherit;
-    }
-
-    /* =========================
-       VARIÁVEIS
-    ========================= */
-    :root {
-      --verde: #087f45;
-      --verde-escuro: #041d14;
-      --verde-claro: #16a05d;
-      --amarelo: #f4c430;
-      --amarelo-claro: #ffe38a;
-      --vermelho: #c92b32;
-      --branco: #ffffff;
-      --cinza: #aebdb7;
-      --card: rgba(255,255,255,.07);
-      --borda: rgba(255,255,255,.12);
-    }
-
-    /* =========================
-       HEADER
-    ========================= */
-    header {
-      position: fixed;
-      top: 0;
-      width: 100%;
-      z-index: 1000;
-      padding: 16px 6%;
-      background: rgba(4, 29, 20, .82);
-      backdrop-filter: blur(18px);
-      border-bottom: 1px solid rgba(255,255,255,.08);
-    }
-
-    .nav {
-      max-width: 1250px;
-      margin: auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-weight: 900;
-      letter-spacing: .5px;
-    }
-
-    .logo-icon {
-      width: 43px;
-      height: 43px;
-      border-radius: 13px;
-      background: linear-gradient(135deg, var(--amarelo), #fff0a9);
-      color: var(--verde-escuro);
-      display: grid;
-      place-items: center;
-      font-size: 22px;
-      box-shadow: 0 8px 25px rgba(244,196,48,.2);
-    }
-
-    .logo span {
-      display: block;
-      font-size: 15px;
-    }
-
-    .logo small {
-      display: block;
-      color: var(--amarelo);
-      font-size: 10px;
-      letter-spacing: 1.5px;
-    }
-
-    nav ul {
-      display: flex;
-      gap: 30px;
-      list-style: none;
-    }
-
-    nav a {
-      font-size: 14px;
-      color: #e8efec;
-      transition: .3s;
-    }
-
-    nav a:hover {
-      color: var(--amarelo);
-    }
-
-    .menu-btn {
-      display: none;
-      border: 0;
-      background: transparent;
-      color: white;
-      font-size: 27px;
-      cursor: pointer;
-    }
-
-    /* =========================
-       HERO
-    ========================= */
-    .hero {
-      min-height: 100vh;
-      position: relative;
-      display: flex;
-      align-items: center;
-      overflow: hidden;
-      background:
-        linear-gradient(90deg, rgba(3,25,17,.96) 0%, rgba(3,25,17,.78) 45%, rgba(3,25,17,.30) 100%),
-        url("https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=2000&q=90")
-        center/cover;
-    }
-
-    .hero::before {
-      content: "";
-      position: absolute;
-      width: 550px;
-      height: 550px;
-      border-radius: 50%;
-      background: rgba(8,127,69,.28);
-      filter: blur(90px);
-      right: -120px;
-      bottom: -180px;
-    }
-
-    .hero-content {
-      position: relative;
-      z-index: 2;
-      width: min(1250px, 88%);
-      margin: auto;
-      padding-top: 70px;
-    }
-
-    .tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      color: var(--amarelo);
-      border: 1px solid rgba(244,196,48,.3);
-      background: rgba(244,196,48,.08);
-      padding: 8px 14px;
-      border-radius: 100px;
-      font-size: 12px;
-      font-weight: bold;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      margin-bottom: 22px;
-    }
-
-    .hero h1 {
-      font-size: clamp(48px, 8vw, 96px);
-      line-height: .95;
-      max-width: 800px;
-      letter-spacing: -4px;
-      margin-bottom: 25px;
-    }
-
-    .hero h1 span {
-      color: var(--amarelo);
-    }
-
-    .hero p {
-      max-width: 650px;
-      color: #d4dfda;
-      font-size: 18px;
-      margin-bottom: 35px;
-    }
-
-    .buttons {
-      display: flex;
-      gap: 14px;
-      flex-wrap: wrap;
-    }
-
-    .btn {
-      padding: 14px 22px;
-      border-radius: 12px;
-      font-weight: bold;
-      border: 1px solid transparent;
-      cursor: pointer;
-      transition: .3s;
-      display: inline-flex;
-      align-items: center;
-      gap: 9px;
-    }
-
-    .btn-primary {
-      background: var(--amarelo);
-      color: #132015;
-      box-shadow: 0 12px 35px rgba(244,196,48,.18);
-    }
-
-    .btn-primary:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 18px 40px rgba(244,196,48,.3);
-    }
-
-    .btn-outline {
-      border-color: rgba(255,255,255,.25);
-      background: rgba(255,255,255,.06);
-      color: white;
-    }
-
-    .btn-outline:hover {
-      background: rgba(255,255,255,.12);
-    }
-
-    /* =========================
-       INTRO
-    ========================= */
-    section {
-      padding: 100px 6%;
-    }
-
-    .container {
-      width: min(1250px, 100%);
-      margin: auto;
-    }
-
-    .section-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: end;
-      gap: 30px;
-      margin-bottom: 45px;
-    }
-
-    .section-label {
-      color: var(--amarelo);
-      text-transform: uppercase;
-      font-size: 12px;
-      font-weight: bold;
-      letter-spacing: 2px;
-      margin-bottom: 10px;
-    }
-
-    .section-title {
-      font-size: clamp(32px, 5vw, 52px);
-      line-height: 1;
-      letter-spacing: -2px;
-    }
-
-    .section-description {
-      max-width: 500px;
-      color: var(--cinza);
-    }
-
-    /* =========================
-       CARDS
-    ========================= */
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
-    }
-
-    .card {
-      background: var(--card);
-      border: 1px solid var(--borda);
-      border-radius: 22px;
-      overflow: hidden;
-      transition: .35s;
-    }
-
-    .card:hover {
-      transform: translateY(-8px);
-      border-color: rgba(244,196,48,.4);
-      box-shadow: 0 25px 60px rgba(0,0,0,.25);
-    }
-
-    .card-img {
-      height: 240px;
-      overflow: hidden;
-      position: relative;
-    }
-
-    .card-img img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: .6s;
-    }
-
-    .card:hover img {
-      transform: scale(1.08);
-    }
-
-    .card-body {
-      padding: 24px;
-    }
-
-    .category {
-      color: var(--amarelo);
-      font-size: 11px;
-      font-weight: bold;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-    }
-
-    .card h3 {
-      font-size: 22px;
-      margin: 8px 0;
-    }
-
-    .card p {
-      color: var(--cinza);
-      font-size: 14px;
-    }
-
-    .read {
-      margin-top: 18px;
-      display: inline-block;
-      color: var(--amarelo);
-      font-size: 13px;
-      font-weight: bold;
-    }
-
-    /* =========================
-       DESTAQUE
-    ========================= */
-    .feature {
-      background: #0b251b;
-    }
-
-    .feature-box {
-      display: grid;
-      grid-template-columns: 1.1fr .9fr;
-      border-radius: 30px;
-      overflow: hidden;
-      background: linear-gradient(135deg, #0d3826, #092217);
-      border: 1px solid var(--borda);
-    }
-
-    .feature-text {
-      padding: 60px;
-    }
-
-    .feature-text h2 {
-      font-size: clamp(34px, 5vw, 58px);
-      line-height: 1;
-      margin: 15px 0 22px;
-      letter-spacing: -2px;
-    }
-
-    .feature-text p {
-      color: var(--cinza);
-      margin-bottom: 25px;
-    }
-
-    .feature-img {
-      min-height: 430px;
-      background:
-        linear-gradient(0deg, rgba(0,0,0,.1), transparent),
-        url("https://images.unsplash.com/photo-1518005020951-eccb494ad742?auto=format&fit=crop&w=1200&q=85")
-        center/cover;
-    }
-
-    /* =========================
-       CULTURA
-    ========================= */
-    .culture-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
-    }
-
-    .culture {
-      min-height: 280px;
-      border-radius: 22px;
-      padding: 25px;
-      display: flex;
-      flex-direction: column;
-      justify-content: end;
-      position: relative;
-      overflow: hidden;
-      background-size: cover;
-      background-position: center;
-    }
-
-    .culture::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(0deg, rgba(0,0,0,.85), transparent);
-    }
-
-    .culture-content {
-      position: relative;
-      z-index: 2;
-    }
-
-    .culture h3 {
-      font-size: 23px;
-      margin-bottom: 5px;
-    }
-
-    .culture p {
-      color: #ccd7d3;
-      font-size: 13px;
-    }
-
-    .c1 {
-      background-image: url("https://images.unsplash.com/photo-1539650116574-75c0c6d73f6e?auto=format&fit=crop&w=800&q=80");
-    }
-
-    .c2 {
-      background-image: url("https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?auto=format&fit=crop&w=800&q=80");
-    }
-
-    .c3 {
-      background-image: url("https://images.unsplash.com/photo-1548610762-7c6bfb6c0e66?auto=format&fit=crop&w=800&q=80");
-    }
-
-    .c4 {
-      background-image: url("https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=80");
-    }
-
-    /* =========================
-       MAPA / EXPLORAÇÃO
-    ========================= */
-    .explore {
-      background: linear-gradient(180deg, #071b14, #09271b);
-    }
-
-    .explore-box {
-      display: grid;
-      grid-template-columns: .8fr 1.2fr;
-      gap: 40px;
-      align-items: center;
-    }
-
-    .map-card {
-      min-height: 460px;
-      border-radius: 28px;
-      border: 1px solid var(--borda);
-      background:
-        radial-gradient(circle at 50% 40%, rgba(244,196,48,.18), transparent 35%),
-        linear-gradient(145deg, #0c3826, #061a12);
-      display: grid;
-      place-items: center;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .map-symbol {
-      width: 250px;
-      height: 310px;
-      background: var(--verde);
-      clip-path: polygon(
-        31% 3%, 54% 0, 72% 12%, 94% 15%,
-        91% 34%, 79% 45%, 91% 62%,
-        75% 74%, 76% 95%, 52% 90%,
-        39% 100%, 27% 84%, 8% 78%,
-        17% 60%, 4% 45%, 18% 31%, 9% 13%
-      );
-      box-shadow: 0 0 80px rgba(8,127,69,.6);
-      position: relative;
-    }
-
-    .map-symbol::after {
-      content: "PI";
-      position: absolute;
-      inset: 0;
-      display: grid;
-      place-items: center;
-      font-size: 58px;
-      font-weight: 900;
-      color: var(--amarelo);
-      text-shadow: 0 5px 15px rgba(0,0,0,.2);
-    }
-
-    .places {
-      display: grid;
-      gap: 14px;
-    }
-
-    .place {
-      padding: 20px;
-      border-radius: 16px;
-      background: rgba(255,255,255,.05);
-      border: 1px solid var(--borda);
-      display: flex;
-      align-items: center;
-      gap: 18px;
-      transition: .3s;
-    }
-
-    .place:hover {
-      background: rgba(255,255,255,.09);
-      transform: translateX(7px);
-    }
-
-    .place-icon {
-      width: 45px;
-      height: 45px;
-      flex-shrink: 0;
-      display: grid;
-      place-items: center;
-      border-radius: 12px;
-      background: rgba(244,196,48,.12);
-      color: var(--amarelo);
-      font-size: 20px;
-    }
-
-    .place h4 {
-      margin-bottom: 2px;
-    }
-
-    .place p {
-      color: var(--cinza);
-      font-size: 13px;
-    }
-
-    /* =========================
-       VLOG
-    ========================= */
-    .video {
-      position: relative;
-      min-height: 540px;
-      border-radius: 30px;
-      overflow: hidden;
-      display: flex;
-      align-items: end;
-      background:
-        linear-gradient(0deg, rgba(0,0,0,.9), rgba(0,0,0,.1)),
-        url("https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=1800&q=90")
-        center/cover;
-    }
-
-    .play {
-      position: absolute;
-      left: 50%;
-      top: 42%;
-      transform: translate(-50%, -50%);
-      width: 82px;
-      height: 82px;
-      border-radius: 50%;
-      border: 2px solid white;
-      background: rgba(255,255,255,.15);
-      backdrop-filter: blur(8px);
-      color: white;
-      font-size: 28px;
-      cursor: pointer;
-      transition: .3s;
-    }
-
-    .play:hover {
-      transform: translate(-50%, -50%) scale(1.1);
-      background: var(--amarelo);
-      color: #111;
-    }
-
-    .video-info {
-      position: relative;
-      padding: 45px;
-      max-width: 700px;
-    }
-
-    .video-info h2 {
-      font-size: clamp(35px, 5vw, 62px);
-      line-height: 1;
-      margin: 10px 0;
-    }
-
-    .video-info p {
-      color: #d0d8d4;
-    }
-
-    /* =========================
-       GALERIA
-    ========================= */
-    .gallery {
-      display: grid;
-      grid-template-columns: 1.4fr .8fr .8fr;
-      grid-template-rows: 230px 230px;
-      gap: 14px;
-    }
-
-    .gallery-item {
-      overflow: hidden;
-      border-radius: 18px;
-      position: relative;
-    }
-
-    .gallery-item:first-child {
-      grid-row: span 2;
-    }
-
-    .gallery-item img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: .5s;
-    }
-
-    .gallery-item:hover img {
-      transform: scale(1.07);
-    }
-
-    /* =========================
-       NEWSLETTER
-    ========================= */
-    .newsletter {
-      background: var(--amarelo);
-      color: #102016;
-      border-radius: 30px;
-      padding: 55px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 30px;
-    }
-
-    .newsletter h2 {
-      font-size: 38px;
-      line-height: 1;
-      margin-bottom: 8px;
-    }
-
-    .newsletter p {
-      color: #465642;
-    }
-
-    .newsletter form {
-      display: flex;
-      background: white;
-      padding: 5px;
-      border-radius: 12px;
-      min-width: 390px;
-    }
-
-    .newsletter input {
-      flex: 1;
-      border: 0;
-      outline: 0;
-      padding: 12px;
-      font-size: 14px;
-    }
-
-    .newsletter button {
-      border: 0;
-      background: var(--verde-escuro);
-      color: white;
-      border-radius: 9px;
-      padding: 12px 18px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    /* =========================
-       FOOTER
-    ========================= */
-    footer {
-      background: #03130d;
-      padding: 55px 6% 25px;
-      border-top: 1px solid var(--borda);
-    }
-
-    .footer-grid {
-      width: min(1250px, 100%);
-      margin: auto;
-      display: grid;
-      grid-template-columns: 1.5fr 1fr 1fr 1fr;
-      gap: 40px;
-    }
-
-    .footer-brand p {
-      color: var(--cinza);
-      max-width: 350px;
-      margin-top: 15px;
-      font-size: 14px;
-    }
-
-    footer h4 {
-      margin-bottom: 15px;
-    }
-
-    footer ul {
-      list-style: none;
-    }
-
-    footer li {
-      color: var(--cinza);
-      font-size: 14px;
-      margin: 9px 0;
-    }
-
-    footer li a:hover {
-      color: var(--amarelo);
-    }
-
-    .copyright {
-      width: min(1250px, 100%);
-      margin: 45px auto 0;
-      padding-top: 20px;
-      border-top: 1px solid rgba(255,255,255,.08);
-      color: #74837c;
-      font-size: 12px;
-      display: flex;
-      justify-content: space-between;
-      gap: 20px;
-    }
-
-    /* =========================
-       MODAL
-    ========================= */
-    .modal {
-      position: fixed;
-      inset: 0;
-      z-index: 2000;
-      background: rgba(0,0,0,.85);
-      display: none;
-      place-items: center;
-      padding: 20px;
-      backdrop-filter: blur(8px);
-    }
-
-    .modal.active {
-      display: grid;
-    }
-
-    .modal-content {
-      width: min(850px, 100%);
-      background: #0a2519;
-      border: 1px solid var(--borda);
-      border-radius: 25px;
-      padding: 35px;
-      position: relative;
-    }
-
-    .close {
-      position: absolute;
-      top: 18px;
-      right: 20px;
-      border: 0;
-      background: transparent;
-      color: white;
-      font-size: 27px;
-      cursor: pointer;
-    }
-
-    .modal-video {
-      aspect-ratio: 16 / 9;
-      border-radius: 16px;
-      margin-top: 20px;
-      background:
-        linear-gradient(rgba(0,0,0,.35), rgba(0,0,0,.55)),
-        url("https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1200&q=85")
-        center/cover;
-      display: grid;
-      place-items: center;
-      font-size: 50px;
-    }
-
-    /* =========================
-       RESPONSIVIDADE
-    ========================= */
-    @media (max-width: 900px) {
-      nav ul {
-        display: none;
-      }
-
-      .menu-btn {
-        display: block;
-      }
-
-      nav.active ul {
-        display: flex;
-        position: absolute;
-        top: 75px;
-        left: 5%;
-        right: 5%;
-        flex-direction: column;
-        padding: 25px;
-        background: #062017;
-        border: 1px solid var(--borda);
-        border-radius: 18px;
-      }
-
-      .cards {
-        grid-template-columns: 1fr 1fr;
-      }
-
-      .culture-grid {
-        grid-template-columns: 1fr 1fr;
-      }
-
-      .feature-box,
-      .explore-box {
-        grid-template-columns: 1fr;
-      }
-
-      .feature-img {
-        min-height: 320px;
-      }
-
-      .newsletter {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      .footer-grid {
-        grid-template-columns: 1fr 1fr;
-      }
-    }
-
-    @media (max-width: 600px) {
-      section {
-        padding: 75px 5%;
-      }
-
-      .hero h1 {
-        letter-spacing: -2px;
-      }
-
-      .hero p {
-        font-size: 16px;
-      }
-
-      .cards,
-      .culture-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .feature-text {
-        padding: 35px 25px;
-      }
-
-      .gallery {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        grid-template-rows: 200px 160px 160px;
-      }
-
-      .gallery-item:first-child {
-        grid-column: span 2;
-        grid-row: span 1;
-      }
-
-      .newsletter {
-        padding: 35px 25px;
-      }
-
-      .newsletter form {
-        min-width: 0;
-        width: 100%;
-      }
-
-      .footer-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .copyright {
-        flex-direction: column;
-      }
-    }
-  </style>
-<script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"></head>
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
 <body>
+  <!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>São Julião - PI | Homenagem a Cristina de Jesus</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Playfair Display & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        piauiterra: '#b45309',
+                        piauiverde: '#15803d',
+                        piauiouro: '#d97706',
+                        piauisand: '#fef3c7',
+                        piauibeige: '#fdf8f6',
+                    },
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'serif'],
+                        sans: ['"Inter"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+        .hero-bg {
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.6)), url('https://placehold.co/1920x1080/15803d/ffffff?text=Sao+Juliao+PI') center/cover no-repeat;
+        }
+        @keyframes floatSlow {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+        .animate-float {
+            animation: floatSlow 4s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="bg-piauibeige text-slate-800 font-sans antialiased selection:bg-piauiouro selection:text-white">
 
-  <!-- =========================
-       HEADER
-  ========================== -->
-  <header>
-    <div class="nav">
-
-      <a href="#inicio" class="logo">
-        <div class="logo-icon">✦</div>
-        <div>
-          <span>VOZES DO PIAUÍ</span>
-          <small>MENTORIA TECH • SEDUC-PI</small>
-        </div>
-      </a>
-
-      <nav id="nav">
-        <ul>
-          <li><a href="#inicio">Início</a></li>
-          <li><a href="#cultura">Cultura</a></li>
-          <li><a href="#lugares">Lugares</a></li>
-          <li><a href="#vlog">Vlog</a></li>
-          <li><a href="#galeria">Galeria</a></li>
-        </ul>
-      </nav>
-
-      <button class="menu-btn" id="menuBtn">☰</button>
-
-    </div>
-  </header>
-
-
-  <!-- =========================
-       HERO
-  ========================== -->
-  <main>
-
-    <section class="hero" id="inicio">
-      <div class="hero-content">
-
-        <div class="tag">
-          ✦ Conheça o Piauí
-        </div>
-
-        <h1>
-          O Piauí que
-          <span>vive em nós.</span>
-        </h1>
-
-        <p>
-          Uma experiência digital para descobrir histórias,
-          pessoas, sabores, paisagens e tradições que fazem
-          do Piauí um lugar único.
-        </p>
-
-        <div class="buttons">
-          <a href="#cultura" class="btn btn-primary">
-            Explorar o Piauí →
-          </a>
-
-          <a href="#vlog" class="btn btn-outline">
-            ▶ Assistir ao vlog
-          </a>
-        </div>
-
-      </div>
-    </section>
-
-
-    <!-- =========================
-         DESTAQUES
-    ========================== -->
-    <section>
-
-      <div class="container">
-
-        <div class="section-head">
-          <div>
-            <div class="section-label">Nossa identidade</div>
-            <h2 class="section-title">
-              Histórias que merecem<br>
-              ser contadas.
-            </h2>
-          </div>
-
-          <p class="section-description">
-            O Piauí vai muito além de paisagens.
-            É memória, criatividade, tradição,
-            resistência e gente que transforma
-            todos os dias.
-          </p>
-        </div>
-
-        <div class="cards">
-
-          <article class="card">
-            <div class="card-img">
-              <img
-                src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=85"
-                alt="Paisagem natural">
+    <header class="fixed top-0 left-0 right-0 z-50 glass-card border-b border-amber-900/10 shadow-sm transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-full bg-piauiverde flex items-center justify-center text-white shadow-md">
+                    <i class="fa-solid fa-dove text-lg"></i>
+                </div>
+                <div>
+                    <span class="font-serif font-bold text-xl text-slate-900 block leading-tight">São Julião - PI</span>
+                    <span class="text-xs font-medium text-piauiterra uppercase tracking-wider">Especial para Cristina de Jesus</span>
+                </div>
             </div>
-
-            <div class="card-body">
-              <div class="category">Natureza</div>
-              <h3>Entre serras e rios</h3>
-              <p>
-                Descubra paisagens e ambientes naturais
-                que ajudam a contar a história do estado.
-              </p>
-              <a href="#lugares" class="read">Explorar →</a>
-            </div>
-          </article>
-
-
-          <article class="card">
-            <div class="card-img">
-              <img
-                src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=900&q=85"
-                alt="Cultura e música">
-            </div>
-
-            <div class="card-body">
-              <div class="category">Cultura</div>
-              <h3>Vozes e tradições</h3>
-              <p>
-                Festas, música, dança e manifestações
-                culturais que atravessam gerações.
-              </p>
-              <a href="#cultura" class="read">Conhecer →</a>
-            </div>
-          </article>
-
-
-          <article class="card">
-            <div class="card-img">
-              <img
-                src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&q=85"
-                alt="Comida típica">
-            </div>
-
-            <div class="card-body">
-              <div class="category">Gastronomia</div>
-              <h3>Sabores do Piauí</h3>
-              <p>
-                Uma viagem pelos sabores, ingredientes
-                e receitas presentes na mesa piauiense.
-              </p>
-              <a href="#cultura" class="read">Experimentar →</a>
-            </div>
-          </article>
-
-        </div>
-      </div>
-    </section>
-
-
-    <!-- =========================
-         DESTAQUE PRINCIPAL
-    ========================== -->
-    <section class="feature">
-
-      <div class="container">
-
-        <div class="feature-box">
-
-          <div class="feature-text">
-
-            <div class="section-label">
-              Especial do mês
-            </div>
-
-            <h2>
-              Onde a história
-              encontra a paisagem.
-            </h2>
-
-            <p>
-              Conheça um pouco das riquezas históricas,
-              arqueológicas e naturais do Piauí através
-              de uma nova perspectiva.
-            </p>
-
-            <button class="btn btn-primary" onclick="openModal()">
-              ▶ Ver episódio
+            <nav class="hidden md:flex items-center space-x-8 font-medium text-sm">
+                <a href="#inicio" class="text-slate-700 hover:text-piauiterra transition-colors">Início</a>
+                <a href="#homenagem" class="text-slate-700 hover:text-piauiterra transition-colors">Para Cristina</a>
+                <a href="#historia" class="text-slate-700 hover:text-piauiterra transition-colors">A Cidade</a>
+                <a href="#pontos" class="text-slate-700 hover:text-piauiterra transition-colors">Turismo & Fé</a>
+                <a href="#galeria" class="text-slate-700 hover:text-piauiterra transition-colors">Galeria</a>
+                <a href="#mensagem" class="px-4 py-2 rounded-full bg-piauiverde text-white hover:bg-green-800 shadow-md transition-all">Recado Especial</a>
+            </nav>
+            <button id="mobileMenuBtn" class="md:hidden text-slate-700 text-2xl focus:outline-none">
+                <i class="fa-solid fa-bars"></i>
             </button>
-
-          </div>
-
-          <div class="feature-img"></div>
-
         </div>
-
-      </div>
-
-    </section>
-
-
-    <!-- =========================
-         CULTURA
-    ========================== -->
-    <section id="cultura">
-
-      <div class="container">
-
-        <div class="section-head">
-
-          <div>
-            <div class="section-label">
-              Cultura piauiense
-            </div>
-
-            <h2 class="section-title">
-              Uma identidade<br>
-              cheia de histórias.
-            </h2>
-          </div>
-
-          <p class="section-description">
-            Conheça manifestações, costumes e expressões
-            que ajudam a formar a identidade cultural
-            do Piauí.
-          </p>
-
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="hidden md:hidden px-4 pt-2 pb-4 space-y-2 bg-white/95 border-b shadow-lg">
+            <a href="#inicio" class="block py-2 text-slate-700 font-medium">Início</a>
+            <a href="#homenagem" class="block py-2 text-slate-700 font-medium">Para Cristina</a>
+            <a href="#historia" class="block py-2 text-slate-700 font-medium">A Cidade</a>
+            <a href="#pontos" class="block py-2 text-slate-700 font-medium">Turismo & Fé</a>
+            <a href="#galeria" class="block py-2 text-slate-700 font-medium">Galeria</a>
+            <a href="#mensagem" class="block py-2 text-piauiverde font-bold">Recado Especial</a>
         </div>
+    </header>
 
-
-        <div class="culture-grid">
-
-          <article class="culture c1">
-            <div class="culture-content">
-              <h3>Artes e artesanato</h3>
-              <p>
-                Criatividade transformada em arte.
-              </p>
-            </div>
-          </article>
-
-          <article class="culture c2">
-            <div class="culture-content">
-              <h3>Música e dança</h3>
-              <p>
-                Ritmos que contam histórias.
-              </p>
-            </div>
-          </article>
-
-          <article class="culture c3">
-            <div class="culture-content">
-              <h3>Festas populares</h3>
-              <p>
-                Tradição compartilhada.
-              </p>
-            </div>
-          </article>
-
-          <article class="culture c4">
-            <div class="culture-content">
-              <h3>Sabores</h3>
-              <p>
-                Gastronomia e memória.
-              </p>
-            </div>
-          </article>
-
-        </div>
-
-      </div>
-
-    </section>
-
-
-    <!-- =========================
-         LUGARES
-    ========================== -->
-    <section class="explore" id="lugares">
-
-      <div class="container">
-
-        <div class="explore-box">
-
-          <div class="map-card">
-            <div class="map-symbol"></div>
-          </div>
-
-
-          <div>
-
-            <div class="section-label">
-              Explore
-            </div>
-
-            <h2 class="section-title">
-              Destinos que
-              despertam curiosidade.
-            </h2>
-
-            <p class="section-description" style="margin:20px 0 28px;">
-              Do litoral ao sertão, existem muitos lugares
-              para descobrir e histórias para ouvir.
+    <section id="inicio" class="hero-bg min-h-screen flex items-center justify-center text-center px-4 pt-20">
+        <div class="max-w-4xl mx-auto text-white space-y-6">
+            <span class="inline-flex items-center space-x-2 bg-white/20 backdrop-blur-md px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-widest text-amber-200 border border-white/30 animate-float">
+                <i class="fa-solid fa-heart text-amber-300"></i> <span>Tributo Afetuoso & Inspirador</span>
+            </span>
+            <h1 class="font-serif text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight leading-tight drop-shadow-lg">
+                Terra de Raízes, Fé e Luz
+            </h1>
+            <p class="text-lg sm:text-2xl text-amber-100 max-w-2xl mx-auto font-light leading-relaxed">
+                Um espaço digital exclusivo dedicado à jovem <strong class="text-white font-semibold">Cristina de Jesus</strong>, celebrando a beleza e a alma de São Julião, Piauí.
             </p>
+            <div class="pt-6 flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a href="#homenagem" class="w-full sm:w-auto px-8 py-4 rounded-full bg-piauiouro hover:bg-amber-600 text-white font-semibold shadow-lg hover:shadow-xl transition-all flex items-center justify-center space-x-2">
+                    <span>Ler Mensagem para Cristina</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </a>
+                <a href="#historia" class="w-full sm:w-auto px-8 py-4 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md text-white font-semibold border border-white/30 transition-all flex items-center justify-center space-x-2">
+                    <span>Conhecer São Julião</span>
+                    <i class="fa-solid fa-compass"></i>
+                </a>
+            </div>
+        </div>
+    </section>
 
+    <section id="homenagem" class="py-24 px-4 max-w-6xl mx-auto">
+        <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+            <span class="text-piauiverde font-bold text-sm uppercase tracking-widest">Especialmente Dedicado</span>
+            <h2 class="font-serif text-3xl sm:text-5xl font-bold text-slate-900">Para Cristina de Jesus</h2>
+            <div class="w-24 h-1 bg-piauiouro mx-auto rounded-full"></div>
+        </div>
 
-            <div class="places">
-
-              <div class="place">
-                <div class="place-icon">🏛</div>
-
-                <div>
-                  <h4>Parque Nacional da Serra da Capivara</h4>
-                  <p>Patrimônio arqueológico e paisagens únicas.</p>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
+            <div class="glass-card p-8 rounded-3xl shadow-xl flex flex-col justify-between border-t-4 border-piauiverde">
+                <div class="space-y-4">
+                    <div class="w-12 h-12 rounded-2xl bg-piauiverde/10 text-piauiverde flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-seedling"></i>
+                    </div>
+                    <h3 class="font-serif text-2xl font-bold text-slate-900">Origens e Valores</h3>
+                    <p class="text-slate-600 leading-relaxed text-sm sm:text-base">
+                        Assim como a terra firme e o sol forte do Piauí moldam a resiliência de São Julião, os valores cristãos, a bondade e a dedicação moldam a bela jornada da Cristina de Jesus. Raízes firmes que geram frutos de esperança.
+                    </p>
                 </div>
-              </div>
-
-
-              <div class="place">
-                <div class="place-icon">🌊</div>
-
-                <div>
-                  <h4>Delta do Parnaíba</h4>
-                  <p>Natureza, rios, ilhas e encontros com o mar.</p>
+                <div class="pt-6 border-t border-slate-100 flex items-center space-x-2 text-xs font-semibold text-piauiverde uppercase">
+                    <i class="fa-solid fa-check"></i> <span>Essência Piauiense</span>
                 </div>
-              </div>
-
-
-              <div class="place">
-                <div class="place-icon">🏙</div>
-
-                <div>
-                  <h4>Teresina</h4>
-                  <p>A capital e seus espaços de cultura e história.</p>
-                </div>
-              </div>
-
-
-              <div class="place">
-                <div class="place-icon">⛰</div>
-
-                <div>
-                  <h4>Serra das Confusões</h4>
-                  <p>Formações naturais e grandes paisagens.</p>
-                </div>
-              </div>
-
             </div>
 
-          </div>
-
-        </div>
-
-      </div>
-
-    </section>
-
-
-    <!-- =========================
-         VLOG
-    ========================== -->
-    <section id="vlog">
-
-      <div class="container">
-
-        <div class="section-label">
-          Episódio em destaque
-        </div>
-
-        <div class="video">
-
-          <button class="play" onclick="openModal()">
-            ▶
-          </button>
-
-          <div class="video-info">
-
-            <div class="category">
-              VOZES DO PIAUÍ • EP. 01
+            <div class="glass-card p-8 rounded-3xl shadow-xl flex flex-col justify-between border-t-4 border-piauiouro bg-gradient-to-b from-amber-50/50 to-white">
+                <div class="space-y-4">
+                    <div class="w-12 h-12 rounded-2xl bg-piauiouro/10 text-piauiouro flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-cross"></i>
+                    </div>
+                    <h3 class="font-serif text-2xl font-bold text-slate-900">Fé e Inspiração</h3>
+                        <p class="text-slate-600 leading-relaxed text-sm sm:text-base">
+                            Tendo o sagrado em seu próprio nome, Cristina carrega consigo um brilho especial. Que a sua fé seja sempre o seu escudo e a sua alegria, contagiando todos ao seu redor com a luz do bem e do amor divino.
+                        </p>
+                </div>
+                <div class="pt-6 border-t border-slate-100 flex items-center space-x-2 text-xs font-semibold text-piauiouro uppercase">
+                    <i class="fa-solid fa-star"></i> <span>Coração Iluminado</span>
+                </div>
             </div>
 
-            <h2>
-              Uma viagem pelas
-              raízes do Piauí.
-            </h2>
-
-            <p>
-              Pessoas, paisagens e histórias que ajudam
-              a revelar a beleza do nosso estado.
-            </p>
-
-          </div>
-
+            <div class="glass-card p-8 rounded-3xl shadow-xl flex flex-col justify-between border-t-4 border-piauiterra">
+                <div class="space-y-4">
+                    <div class="w-12 h-12 rounded-2xl bg-piauiterra/10 text-piauiterra flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-sun"></i>
+                    </div>
+                    <h3 class="font-serif text-2xl font-bold text-slate-900">Futuro Brilhante</h3>
+                    <p class="text-slate-600 leading-relaxed text-sm sm:text-base">
+                        Que este site sirva como um lembrete constante de quão especial você é. Que cada sonho em seu coração encontre terra fértil em São Julião e no mundo para desabrochar com toda a beleza.
+                    </p>
+                </div>
+                <div class="pt-6 border-t border-slate-100 flex items-center space-x-2 text-xs font-semibold text-piauiterra uppercase">
+                    <i class="fa-solid fa-arrow-up-right-dots"></i> <span>Caminho de Sucesso</span>
+                </div>
+            </div>
         </div>
-
-      </div>
-
     </section>
 
+    <section id="historia" class="py-24 bg-white/60 border-y border-amber-900/5">
+        <div class="max-w-6xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div class="space-y-6">
+                <span class="text-piauiverde font-bold text-sm uppercase tracking-widest">Nossa História</span>
+                <h2 class="font-serif text-3xl sm:text-4xl font-bold text-slate-900">São Julião, Piauí: Tradição e Acolhimento</h2>
+                <p class="text-slate-600 leading-relaxed">
+                    Localizado no sul do estado do Piauí, o município de São Julião brilha pela força de sua gente batalhadora, pela rica cultura nordestina e pela calorosa hospitalidade que faz qualquer visitante se sentir em casa.
+                </p>
+                <p class="text-slate-600 leading-relaxed">
+                    Entre festas tradicionais, ruas pacatas e paisagens marcadas pelo clima semiárido e vegetação resistente, a cidade guarda a memória de famílias que construíram com suor e fé este recanto especial do Piauí.
+                </p>
+                <div class="grid grid-cols-2 gap-4 pt-4">
+                    <div class="bg-amber-50 p-4 rounded-2xl border border-amber-200/50">
+                        <span class="block font-serif font-bold text-2xl text-piauiterra">Sul Piauiense</span>
+                        <span class="text-xs text-slate-600">Localização Estratégica</span>
+                    </div>
+                    <div class="bg-green-50 p-4 rounded-2xl border border-green-200/50">
+                        <span class="block font-serif font-bold text-2xl text-piauiverde">Fé & Povo</span>
+                        <span class="text-xs text-slate-600">Tradição Religiosa</span>
+                    </div>
+                </div>
+            </div>
+            <div class="relative">
+                <div class="absolute -inset-4 bg-gradient-to-r from-piauiouro to-piauiverde rounded-3xl opacity-20 blur-xl"></div>
+                <div class="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white bg-slate-100">
+                    <img src="https://placehold.co/800x600/b45309/ffffff?text=Paisagem+Sao+Juliao+PI" alt="Paisagem de São Julião PI" class="w-full h-auto object-cover hover:scale-105 transition-transform duration-500" onerror="this.src='https://placehold.co/800x600/15803d/ffffff?text=Sao+Juliao+PI'">
+                </div>
+            </div>
+        </div>
+    </section>
 
-    <!-- =========================
-         GALERIA
-    ========================== -->
-    <section id="galeria">
+    <section id="pontos" class="py-24 max-w-6xl mx-auto px-4">
+        <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+            <span class="text-piauiverde font-bold text-sm uppercase tracking-widest">Patrimônio & Beleza</span>
+            <h2 class="font-serif text-3xl sm:text-5xl font-bold text-slate-900">Belezas e Pontos de Destaque</h2>
+            <div class="w-24 h-1 bg-piauiouro mx-auto rounded-full"></div>
+            <p class="text-slate-600">Conheça os recantos que dão vida, cor e identidade à nossa terra amada.</p>
+        </div>
 
-      <div class="container">
-
-        <div class="section-head">
-
-          <div>
-            <div class="section-label">
-              Galeria
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="glass-card rounded-3xl overflow-hidden shadow-lg group">
+                <div class="h-48 overflow-hidden relative">
+                    <img src="https://placehold.co/600x400/15803d/ffffff?text=Igreja+Matriz" alt="Igreja Matriz" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-4">
+                        <span class="text-white font-serif text-lg font-bold">Igreja Matriz</span>
+                    </div>
+                </div>
+                <div class="p-6 space-y-3">
+                    <p class="text-slate-600 text-sm leading-relaxed">
+                        O coração espiritual da cidade, onde a comunidade se reúne em oração, festejos e celebrações que marcam a fé cristã do povo de São Julião.
+                    </p>
+                    <span class="inline-block text-xs font-semibold text-piauiverde bg-green-50 px-3 py-1 rounded-full">Centro Religioso</span>
+                </div>
             </div>
 
-            <h2 class="section-title">
-              Olhares sobre<br>
-              o Piauí.
-            </h2>
-          </div>
+            <div class="glass-card rounded-3xl overflow-hidden shadow-lg group">
+                <div class="h-48 overflow-hidden relative">
+                    <img src="https://placehold.co/600x400/b45309/ffffff?text=Pracas+e+Convivencia" alt="Praças de São Julião" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-4">
+                        <span class="text-white font-serif text-lg font-bold">Praças & Convivência</span>
+                    </div>
+                </div>
+                <div class="p-6 space-y-3">
+                    <p class="text-slate-600 text-sm leading-relaxed">
+                        Espaços de encontro onde famílias conversam, jovens compartilham sorrisos e a brisa mansa do entardecer traz paz e aconchego.
+                    </p>
+                    <span class="inline-block text-xs font-semibold text-piauiterra bg-amber-50 px-3 py-1 rounded-full">Ponto de Encontro</span>
+                </div>
+            </div>
 
-          <p class="section-description">
-            Uma seleção visual para representar
-            diferentes paisagens e experiências.
-          </p>
-
+            <div class="glass-card rounded-3xl overflow-hidden shadow-lg group">
+                <div class="h-48 overflow-hidden relative">
+                    <img src="https://placehold.co/600x400/d97706/ffffff?text=Sertao+Piauiense" alt="Sertão Piauiense" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-4">
+                        <span class="text-white font-serif text-lg font-bold">Natureza & Sertão</span>
+                    </div>
+                </div>
+                <div class="p-6 space-y-3">
+                    <p class="text-slate-600 text-sm leading-relaxed">
+                        A beleza rústica e encantadora da caatinga e do semiárido, mostrando a força e a exuberância da flora e fauna nordestina.
+                    </p>
+                    <span class="inline-block text-xs font-semibold text-piauiouro bg-amber-100 px-3 py-1 rounded-full">Paisagem Natural</span>
+                </div>
+            </div>
         </div>
-
-
-        <div class="gallery">
-
-          <div class="gallery-item">
-            <img
-              src="https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=1200&q=85"
-              alt="Paisagem">
-          </div>
-
-          <div class="gallery-item">
-            <img
-              src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=800&q=85"
-              alt="Natureza">
-          </div>
-
-          <div class="gallery-item">
-            <img
-              src="https://images.unsplash.com/photo-1497250681960-ef046c08a56e?auto=format&fit=crop&w=800&q=85"
-              alt="Vegetação">
-          </div>
-
-          <div class="gallery-item">
-            <img
-              src="https://images.unsplash.com/photo-1518005020951-eccb494ad742?auto=format&fit=crop&w=800&q=85"
-              alt="Arquitetura">
-          </div>
-
-          <div class="gallery-item">
-            <img
-              src="https://images.unsplash.com/photo-1473448912268-2022ce9509d8?auto=format&fit=crop&w=800&q=85"
-              alt="Paisagem natural">
-          </div>
-
-        </div>
-
-      </div>
-
     </section>
 
-
-    <!-- =========================
-         NEWSLETTER
-    ========================== -->
-    <section>
-
-      <div class="container">
-
-        <div class="newsletter">
-
-          <div>
-            <h2>
-              Faça parte dessa história.
-            </h2>
-
-            <p>
-              Receba novos episódios e histórias
-              sobre o Piauí.
-            </p>
-          </div>
-
-          <form id="newsletterForm">
-
-            <input
-              type="email"
-              placeholder="Seu melhor e-mail"
-              required
-              aria-label="Seu e-mail">
-
-            <button type="submit">
-              Inscrever
-            </button>
-
-          </form>
-
-        </div>
-
-      </div>
-
-    </section>
-
-  </main>
-
-
-  <!-- =========================
-       FOOTER
-  ========================== -->
-  <footer>
-
-    <div class="footer-grid">
-
-      <div class="footer-brand">
-
-        <a href="#inicio" class="logo">
-
-          <div class="logo-icon">✦</div>
-
-          <div>
-            <span>VOZES DO PIAUÍ</span>
-            <small>MENTORIA TECH • SEDUC-PI</small>
-          </div>
-
-        </a>
-
-        <p>
-          Um projeto digital dedicado a apresentar
-          histórias, cultura, pessoas e lugares
-          do estado do Piauí.
-        </p>
-
-      </div>
-
-
-      <div>
-        <h4>Explorar</h4>
-
-        <ul>
-          <li><a href="#cultura">Cultura</a></li>
-          <li><a href="#lugares">Lugares</a></li>
-          <li><a href="#vlog">Vlog</a></li>
-          <li><a href="#galeria">Galeria</a></li>
-        </ul>
-      </div>
-
-
-      <div>
-        <h4>Projeto</h4>
-
-        <ul>
-          <li><a href="#">Sobre o projeto</a></li>
-          <li><a href="#">Mentoria Tech</a></li>
-          <li><a href="#">SEDUC-PI</a></li>
-          <li><a href="#">Equipe</a></li>
-        </ul>
-      </div>
-
-
-      <div>
-        <h4>Conecte-se</h4>
-
-        <ul>
-          <li><a href="#">Instagram</a></li>
-          <li><a href="#">YouTube</a></li>
-          <li><a href="#">TikTok</a></li>
-          <li><a href="#">Contato</a></li>
-        </ul>
-      </div>
-
-    </div>
-
-
-    <div class="copyright">
-
-      <span>
-        © 2026 Vozes do Piauí — Projeto Mentoria Tech SEDUC-PI.
-      </span>
-
-      <span>
-        Feito com tecnologia e identidade piauiense.
-      </span>
-
-    </div>
-
-  </footer>
-
-
-  <!-- =========================
-       MODAL DO VÍDEO
-  ========================== -->
-  <div class="modal" id="modal">
-
-    <div class="modal-content">
-
-      <button class="close" onclick="closeModal()">
-        ×
-      </button>
-
-      <div class="section-label">
-        VOZES DO PIAUÍ
-      </div>
-
-      <h2>
-        Uma viagem pelas raízes do Piauí
-      </h2>
-
-      <div class="modal-video">
-        ▶
-      </div>
-
-      <p style="color:#aebdb7; margin-top:18px;">
-        Espaço reservado para o vídeo principal do vlog.
-        Você pode substituir esta área por um vídeo do
-        YouTube ou por um arquivo de vídeo do próprio projeto.
-      </p>
-
-    </div>
-
-  </div>
-
-
-  <!-- =========================
-       JAVASCRIPT
-  ========================== -->
-  <script>
-
-    // Menu mobile
-    const menuBtn = document.getElementById("menuBtn");
-    const nav = document.getElementById("nav");
-
-    menuBtn.addEventListener("click", () => {
-      nav.classList.toggle("active");
-    });
-
-
-    // Fechar menu ao clicar em um link
-    document.querySelectorAll("nav a").forEach(link => {
-      link.addEventListener("click", () => {
-        nav.classList.remove("active");
-      });
-    });
-
-
-    // Modal
-    const modal = document.getElementById("modal");
-
-    function openModal() {
-      modal.classList.add("active");
-      document.body.style.overflow = "hidden";
-    }
-
-    function closeModal() {
-      modal.classList.remove("active");
-      document.body.style.overflow = "";
-    }
-
-
-    // Fechar clicando fora do conteúdo
-    modal.addEventListener("click", (event) => {
-      if (event.target === modal) {
-        closeModal();
-      }
-    });
-
-
-    // Fechar com ESC
-    document.addEventListener("keydown", (event) => {
-      if (event.key === "Escape") {
-        closeModal();
-      }
-    });
-
-
-    // Newsletter
-    const form = document.getElementById("newsletterForm");
-
-    form.addEventListener("submit", (event) => {
-      event.preventDefault();
-
-      const email = form.querySelector("input").value;
-
-      if (email) {
-        alert(
-          "Obrigado por participar!\\n\\n" +
-          "O e-mail " + email +
-          " foi registrado no projeto."
-        );
-
-        form.reset();
-      }
-    });
-
-
-    // Pequeno efeito no header durante o scroll
-    window.addEventListener("scroll", () => {
-
-      const header = document.querySelector("header");
-
-      if (window.scrollY > 80) {
-        header.style.background = "rgba(3, 19, 13, .95)";
-      } else {
-        header.style.background = "rgba(4, 29, 20, .82)";
-      }
-
-    });
-
-  </script>
-
+  
+  
 </body>
 </html>
