@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Cadastro de Produtos</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #f2f4f7;
+            padding: 40px 20px;
+            color: #222;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #222;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .formulario {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .campo {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .campo label {
+            margin-bottom: 7px;
+            font-weight: bold;
+        }
+
+        .campo input {
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .campo input:focus {
+            border-color: #007bff;
+        }
+
+        .campo.descricao {
+            grid-column: 1 / -1;
+        }
+
+        .botoes {
+            grid-column: 1 / -1;
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .btn-cadastrar {
+            background: #007bff;
+            color: white;
+        }
+
+        .btn-cadastrar:hover {
+            background: #0056b3;
+        }
+
+        .btn-limpar {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-limpar:hover {
+            background: #545b62;
+        }
+
+        .mensagem {
+            display: none;
+            padding: 12px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .sucesso {
+            display: block;
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .erro {
+            display: block;
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .tabela-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 14px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background: #007bff;
+            color: white;
+        }
+
+        tr:hover {
+            background: #f5f5f5;
+        }
+
+        .valor {
+            color: #198754;
+            font-weight: bold;
+        }
+
+        .acoes {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-atualizar {
+            background: #ffc107;
+            color: #000;
+            padding: 8px 12px;
+            font-size: 14px;
+        }
+
+        .btn-atualizar:hover {
+            background: #e0a800;
+        }
+
+        .btn-excluir {
+            background: #dc3545;
+            color: white;
+            padding: 8px 12px;
+            font-size: 14px;
+        }
+
+        .btn-excluir:hover {
+            background: #b02a37;
+        }
+
+        .vazio {
+            text-align: center;
+            padding: 30px;
+            color: #777;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            .formulario {
+                grid-template-columns: 1fr;
+            }
+
+            .campo.descricao {
+                grid-column: auto;
+            }
+
+            .botoes {
+                grid-column: auto;
+                flex-direction: column;
+            }
+
+            .acoes {
+                flex-direction: column;
+            }
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+    <div class="container">
+
+        <h1>Cadastro de Produtos</h1>
+
+        <div id="mensagem" class="mensagem"></div>
+
+        <h2>Cadastrar Produto</h2>
+
+        <form id="formProduto" class="formulario">
+
+            <div class="campo descricao">
+                <label for="descricao">Descrição</label>
+
+                <input
+                    type="text"
+                    id="descricao"
+                    placeholder="Digite a descrição do produto"
+                    minlength="5"
+                    required
+                >
+            </div>
+
+            <div class="campo">
+                <label for="quantidade">Quantidade</label>
+
+                <input
+                    type="number"
+                    id="quantidade"
+                    placeholder="Digite a quantidade"
+                    min="1"
+                    step="1"
+                    required
+                >
+            </div>
+
+            <div class="campo">
+                <label for="valor">Valor</label>
+
+                <input
+                    type="number"
+                    id="valor"
+                    placeholder="Digite o valor"
+                    min="0"
+                    step="0.01"
+                    required
+                >
+            </div>
+
+            <div class="botoes">
+                <button type="submit" class="btn-cadastrar">
+                    Cadastrar Produto
+                </button>
+
+                <button type="button" class="btn-limpar" onclick="limparFormulario()">
+                    Limpar
+                </button>
+            </div>
+
+        </form>
+
+        <h2>Produtos Cadastrados</h2>
+
+        <div class="tabela-container">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Descrição</th>
+                        <th>Quantidade</th>
+                        <th>Valor</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+
+                <tbody id="listaProdutos">
+                    <tr>
+                        <td colspan="5" class="vazio">
+                            Nenhum produto cadastrado.
+                        </td>
+                    </tr>
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+    <script>
+        // Lista de produtos
+        let produtos = [];
+
+        // Elementos HTML
+        const formProduto = document.getElementById("formProduto");
+        const listaProdutos = document.getElementById("listaProdutos");
+        const mensagem = document.getElementById("mensagem");
+
+        // Validação do produto
+        function validarProduto(descricao, quantidade, valor) {
+
+            if (descricao.length < 5) {
+                throw new Error(
+                    "A descrição deve ter no mínimo cinco caracteres."
+                );
+            }
+
+            if (quantidade < 1) {
+                throw new Error(
+                    "A quantidade deve ser maior que zero."
+                );
+            }
+
+            if (valor < 0) {
+                throw new Error(
+                    "O valor deve ser maior ou igual a zero."
+                );
+            }
+        }
+
+        // Cadastrar produto
+        function cadastrarProduto(descricao, quantidade, valor) {
+
+            validarProduto(descricao, quantidade, valor);
+
+            const novoProduto = {
+                codigo: produtos.length + 1,
+                descricao: descricao,
+                quantidade: quantidade,
+                valor: valor
+            };
+
+            produtos.push(novoProduto);
+
+            listarProdutos();
+
+            mostrarMensagem(
+                "Produto cadastrado com sucesso!",
+                "sucesso"
+            );
+        }
+
+        // Listar produtos
+        function listarProdutos() {
+
+            listaProdutos.innerHTML = "";
+
+            if (produtos.length === 0) {
+
+                listaProdutos.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="vazio">
+                            Nenhum produto cadastrado.
+                        </td>
+                    </tr>
+                `;
+
+                return;
+            }
+
+            produtos.forEach(produto => {
+
+                const linha = document.createElement("tr");
+
+                linha.innerHTML = `
+                    <td>${produto.codigo}</td>
+
+                    <td>${produto.descricao}</td>
+
+                    <td>${produto.quantidade}</td>
+
+                    <td class="valor">
+                        R$ ${produto.valor.toFixed(2).replace(".", ",")}
+                    </td>
+
+                    <td>
+                        <div class="acoes">
+
+                            <button
+                                class="btn-atualizar"
+                                onclick="atualizarValor(${produto.codigo})"
+                            >
+                                Atualizar Valor
+                            </button>
+
+                            <button
+                                class="btn-excluir"
+                                onclick="excluirProduto(${produto.codigo})"
+                            >
+                                Excluir
+                            </button>
+
+                        </div>
+                    </td>
+                `;
+
+                listaProdutos.appendChild(linha);
+            });
+        }
+
+        // Atualizar valor
+        function atualizarValor(codigoProduto) {
+
+            const produto = produtos.find(
+                prod => prod.codigo === codigoProduto
+            );
+
+            if (!produto) {
+                mostrarMensagem(
+                    "Produto não encontrado.",
+                    "erro"
+                );
+
+                return;
+            }
+
+            const novoValor = prompt(
+                `Digite o novo valor para "${produto.descricao}":`,
+                produto.valor.toFixed(2)
+            );
+
+            if (novoValor === null) {
+                return;
+            }
+
+            const valorConvertido = Number(
+                novoValor.replace(",", ".")
+            );
+
+            if (isNaN(valorConvertido) || valorConvertido < 0) {
+
+                mostrarMensagem(
+                    "O valor deve ser um número maior ou igual a zero.",
+                    "erro"
+                );
+
+                return;
+            }
+
+            produto.valor = valorConvertido;
+
+            listarProdutos();
+
+            mostrarMensagem(
+                "Valor atualizado com sucesso!",
+                "sucesso"
+            );
+        }
+
+        // Excluir produto
+        function excluirProduto(codigoProduto) {
+
+            const produto = produtos.find(
+                prod => prod.codigo === codigoProduto
+            );
+
+            if (!produto) {
+                mostrarMensagem(
+                    "Produto não encontrado.",
+                    "erro"
+                );
+
+                return;
+            }
+
+            const confirmar = confirm(
+                `Deseja realmente excluir "${produto.descricao}"?`
+            );
+
+            if (!confirmar) {
+                return;
+            }
+
+            produtos = produtos.filter(
+                prod => prod.codigo !== codigoProduto
+            );
+
+            // Reorganiza os códigos
+            produtos.forEach((produto, index) => {
+                produto.codigo = index + 1;
+            });
+
+            listarProdutos();
+
+            mostrarMensagem(
+                "Produto excluído com sucesso!",
+                "sucesso"
+            );
+        }
+
+        // Limpar formulário
+        function limparFormulario() {
+            formProduto.reset();
+            document.getElementById("descricao").focus();
+        }
+
+        // Mostrar mensagens
+        function mostrarMensagem(texto, tipo) {
+
+            mensagem.textContent = texto;
+
+            mensagem.className = "mensagem " + tipo;
+
+            setTimeout(() => {
+                mensagem.className = "mensagem";
+            }, 3000);
+        }
+
+        // Evento do formulário
+        formProduto.addEventListener("submit", function(event) {
+
+            event.preventDefault();
+
+            try {
+
+                const descricao = document
+                    .getElementById("descricao")
+                    .value
+                    .trim();
+
+                const quantidade = Number(
+                    document.getElementById("quantidade").value
+                );
+
+                const valor = Number(
+                    document.getElementById("valor").value
+                );
+
+                cadastrarProduto(
+                    descricao,
+                    quantidade,
+                    valor
+                );
+
+                limparFormulario();
+
+            } catch (erro) {
+
+                mostrarMensagem(
+                    erro.message,
+                    "erro"
+                );
+            }
+        });
+
+        // Produtos iniciais
+        cadastrarProduto(
+            "Cadeira Gamer",
+            12,
+            699.00
+        );
+
+        cadastrarProduto(
+            "Mouse Logitech",
+            38,
+            99.00
+        );
+
+        listarProdutos();
+    </script>
+
+</body>
+</html>
