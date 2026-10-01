@@ -1,69 +1,20 @@
-// Lista (Array) do produtos
-let produtos = [];
+const produtos = [
+    {
+        codigo: 1,
+        descricao: "Cadeira Gamer",
+        quantidade: 12,
+        valor: 699
+    },
+    {
+        codigo: 2,
+        descricao: "Mouse Logi",
+        quantidade: 38,
+        valor: 99
+    }
+];
 
-function validarProduto(descricao, quantidade, valor){
-  if(descricao.length < 5){
-       throw new Error("descricao deve ter no minimo cinco caracteres");
-  }
-  if(quantidade < 1) {
-        throw new Error("Quantidade de ser maior que zero");
-  }
-  if (valor < 0) {
-        throw new Error("Valor deve ser maior igual a zero"); 
-  }
-}
+console.log(1);
+console.log(produtos[0]);
+console.log(produtos[1]);
 
-function cadastrarProdutos(descricao, quantidade, valor) {
-  validarProduto(descricao, quantidade, valor);
-  let novoProduto = {
-    "codigo": produtos.length + 1,
-    "descricao": descricao,
-    "quantidade": quantidade,
-    "valor": valor
-  }
-  produtos.push(novoProduto);
-}
-
-function listarProdutos( ){
-  console.log(produtos);
-}
-
-function atualizarValor (codigoProduto, novoValor){
-  if(novoValor < 0){
-     throw new Error("Valor deve ser maior igual a zero");
-  }
-  const produto = produtos.find(prod => prod.codigo === codigoProduto);
-  if(produto){
-    produto.valor = novoValor;
-  }
-  else {
-     throw new Error("Produto não encontrado");
-  }
-}
-
-function atualizarQuantidade(codigoProduto, novaQuantidade){
-     if(novaQuantidade < 1){
-      throw new Error("Quantidade deve ser maior que zero");
-     }
-     const produto = produtos.find(prod => prod.codigo === codigoProduto);
-    if(produto){
-    produto.quantidade += novaQuantidade;
-  }
-   else {
-     throw new Error("Produto não encontrado");
-  }
-}
-
-
-
-
-//-------------------------------
-listarProdutos();
-cadastrarProdutos("Cadeira Gamer", 12, 699.00);
-cadastrarProdutos("Mouse logi", 38, 99.00);
-listarProdutos();
-atualizarValor(2, 97.00);
-listarProdutos();
-
-atualizarQuantidade(1, 3);
-listarProdutos();
+console.log(produtos);
