@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang='pt-BR'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>StockPro | Gestão de Estoque</title>
+
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css'>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js'></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f4f7;
+            color: #333;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 260px;
+            background: #111827;
+            color: white;
+            padding: 25px 18px;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 35px;
+        }
+
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #2563eb, #60a5fa);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 21px;
+        }
+
+        .logo h2 {
+            font-size: 21px;
+        }
+
+        .menu {
+            list-style: none;
+        }
+
+        .menu li {
+            margin-bottom: 8px;
+        }
+
+        .menu button {
+            width: 100%;
+            border: none;
+            background: transparent;
+            color: #d1d5db;
+            padding: 13px;
+            text-align: left;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .menu button:hover,
+        .menu .ativo {
+            background: #1f2937;
+            color: white;
+        }
+
+        .menu i {
+            width: 25px;
+        }
+
+        .principal {
+            margin-left: 260px;
+            width: calc(100% - 260px);
+        }
+
+        .topbar {
+            height: 70px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            border-bottom: 1px solid #e5e7eb;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .topbar h1 {
+            font-size: 21px;
+            color: #111827;
+        }
+
+        .usuario {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #555;
+        }
+
+        .usuario i {
+            font-size: 30px;
+            color: #2563eb;
+        }
+
+        .conteudo {
+            padding: 30px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: white;
+            padding: 22px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px #0000000d;
+        }
+
+        .card-topo {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card h3 {
+            font-size: 14px;
+            color: #6b7280;
+            font-weight: normal;
+        }
+
+        .card i {
+            font-size: 22px;
+            color: #2563eb;
+        }
+
+        .card strong {
+            display: block;
+            margin-top: 10px;
+            font-size: 27px;
+            color: #111827;
+        }
+
+        .toolbar {
+            background: white;
+            padding: 18px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .pesquisa {
+            flex: 1;
+            min-width: 220px;
+            position: relative;
+        }
+
+        .pesquisa i {
+            position: absolute;
+            left: 13px;
+            top: 13px;
+            color: #9ca3af;
+        }
+
+        .pesquisa input {
+            width: 100%;
+            padding: 11px 15px 11px 38px;
+            border: 1px solid #d1d5db;
+            border-radius: 7px;
+            outline: none;
+        }
+
+        .pesquisa input:focus {
+            border-color: #2563eb;
+        }
+
+        .btn {
+            border: none;
+            border-radius: 7px;
+            padding: 11px 16px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .azul {
+            background: #2563eb;
+            color: white;
+        }
+
+        .verde {
+            background: #16a34a;
+            color: white;
+        }
+
+        .vermelho {
+            background: #dc2626;
+            color: white;
+        }
+
+        .cinza {
+            background: #6b7280;
+            color: white;
+        }
+
+        .tabela {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px #0000000d;
+        }
+
+        .tabela-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .tabela-header h2 {
+            font-size: 18px;
+            color: #111827;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 15px 20px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background: #f9fafb;
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+        td {
+            font-size: 14px;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .status.normal {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .status.baixo {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .acoes {
+            display: flex;
+            gap: 6px;
+        }
+
+        .acoes button {
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .editar {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+
+        .excluir {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .qr {
+            background: #f3e8ff;
+            color: #7e22ce;
+        }
+
+        .vazio {
+            text-align: center;
+            padding: 35px;
+            color: #777;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: #00000088;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            padding: 20px;
+        }
+
+        .modal.ativo {
+            display: flex;
+        }
+
+        .modal-box {
+            background: white;
+            width: 100%;
+            max-width: 500px;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .modal-topo {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-topo h2 {
+            font-size: 19px;
+        }
+
+        .fechar {
+            border: none;
+            background: transparent;
+            font-size: 22px;
+            cursor: pointer;
+            color: #777;
+        }
+
+        .modal-corpo {
+            padding: 20px;
+        }
+
+        .campo {
+            margin-bottom: 15px;
+        }
+
+        .campo label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .campo input {
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #d1d5db;
+            border-radius: 7px;
+            outline: none;
+        }
+
+        .modal-botoes {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            padding: 18px 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .qr-box {
+            text-align: center;
+            padding: 25px;
+        }
+
+        #qrcode {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        @media (max-width: 1000px) {
+            .cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .sidebar {
+                width: 210px;
+            }
+
+            .principal {
+                margin-left: 210px;
+                width: calc(100% - 210px);
+            }
+        }
+
+        @media (max-width: 700px) {
+            .sidebar {
+                position: static;
+                width: 100%;
+                min-height: auto;
+            }
+
+            .layout {
+                display: block;
+            }
+
+            .principal {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .menu {
+                display: flex;
+                gap: 5px;
+                overflow-x: auto;
+            }
+
+            .menu li {
+                min-width: 130px;
+            }
+
+            .topbar {
+                padding: 0 15px;
+            }
+
+            .conteudo {
+                padding: 15px;
+            }
+
+            .cards {
+                grid-template-columns: 1fr;
+            }
+
+            .tabela {
+                overflow-x: auto;
+            }
+
+            table {
+                min-width: 850px;
+            }
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"></head>
+
+<body>
+
+<div class='layout'>
+
+    <aside class='sidebar'>
+        <div class='logo'>
+            <div class='logo-icon'>
+                <i class='fa-solid fa-boxes-stacked'></i>
+            </div>
+            <h2>StockPro</h2>
+        </div>
+
+        <ul class='menu'>
+            <li>
+                <button class='ativo' onclick='mostrarTodos()'>
+                    <i class='fa-solid fa-chart-line'></i>
+                    Dashboard
+                </button>
+            </li>
+
+            <li>
+                <button onclick='mostrarTodos()'>
+                    <i class='fa-solid fa-box'></i>
+                    Produtos
+                </button>
+            </li>
+
+            <li>
+                <button onclick='mostrarBaixo()'>
+                    <i class='fa-solid fa-triangle-exclamation'></i>
+                    Estoque Baixo
+                </button>
+            </li>
+        </ul>
+    </aside>
+
+    <div class='principal'>
+
+        <header class='topbar'>
+            <h1>Gestão de Estoque</h1>
+
+            <div class='usuario'>
+                <span>Administrador</span>
+                <i class='fa-solid fa-circle-user'></i>
+            </div>
+        </header>
+
+        <main class='conteudo'>
+
+            <section class='cards'>
+
+                <div class='card'>
+                    <div class='card-topo'>
+                        <h3>Total de Produtos</h3>
+                        <i class='fa-solid fa-box'></i>
+                    </div>
+                    <strong id='totalProdutos'>0</strong>
+                </div>
+
+                <div class='card'>
+                    <div class='card-topo'>
+                        <h3>Quantidade em Estoque</h3>
+                        <i class='fa-solid fa-layer-group'></i>
+                    </div>
+                    <strong id='totalQuantidade'>0</strong>
+                </div>
+
+                <div class='card'>
+                    <div class='card-topo'>
+                        <h3>Estoque Baixo</h3>
+                        <i class='fa-solid fa-triangle-exclamation'></i>
+                    </div>
+                    <strong id='totalBaixo'>0</strong>
+                </div>
+
+                <div class='card'>
+                    <div class='card-topo'>
+                        <h3>Valor do Estoque</h3>
+                        <i class='fa-solid fa-dollar-sign'></i>
+                    </div>
+                    <strong id='valorEstoque'>R$ 0,00</strong>
+                </div>
+
+            </section>
+
+            <section class='toolbar'>
+
+                <div class='pesquisa'>
+                    <i class='fa-solid fa-magnifying-glass'></i>
+                    <input
+                        type='text'
+                        id='pesquisa'
+                        placeholder='Pesquisar produto...'
+                        oninput='filtrar()'
+                    >
+                </div>
+
+                <button class='btn azul' onclick='abrirCadastro()'>
+                    <i class='fa-solid fa-plus'></i>
+                    Novo Produto
+                </button>
+
+                <button class='btn verde' onclick='atualizar()'>
+                    <i class='fa-solid fa-rotate'></i>
+                    Atualizar
+                </button>
+
+                <button class='btn cinza' onclick='exportar()'>
+                    <i class='fa-solid fa-file-export'></i>
+                    Exportar
+                </button>
+
+            </section>
+
+            <section class='tabela'>
+
+                <div class='tabela-header'>
+                    <h2>Produtos cadastrados</h2>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Produto</th>
+                            <th>Quantidade</th>
+                            <th>Valor</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id='listaProdutos'></tbody>
+                </table>
+
+            </section>
+
+        </main>
+    </div>
+</div>
+
+<div class='modal' id='modalCadastro'>
+
+    <div class='modal-box'>
+
+        <div class='modal-topo'>
+            <h2 id='tituloModal'>Novo Produto</h2>
+
+            <button class='fechar' onclick='fecharCadastro()'>
+                <i class='fa-solid fa-xmark'></i>
+            </button>
+        </div>
+
+        <div class='modal-corpo'>
+
+            <input type='hidden' id='produtoId'>
+
+            <div class='campo'>
+                <label>Código</label>
+                <input type='text' id='codigo' placeholder='Ex: P001'>
+            </div>
+
+            <div class='campo'>
+                <label>Descrição</label>
+                <input type='text' id='descricao' placeholder='Nome do produto'>
+            </div>
+
+            <div class='campo'>
+                <label>Quantidade</label>
+                <input type='number' id='quantidade' min='0' placeholder='0'>
+            </div>
+
+            <div class='campo'>
+                <label>Valor unitário</label>
+                <input type='number' id='valor' min='0' step='0.01' placeholder='0,00'>
+            </div>
+
+        </div>
+
+        <div class='modal-botoes'>
+            <button class='btn cinza' onclick='fecharCadastro()'>
+                Cancelar
+            </button>
+
+            <button class='btn azul' onclick='salvarProduto()'>
+                <i class='fa-solid fa-check'></i>
+                Salvar
+            </button>
+        </div>
+
+    </div>
+</div>
+
+<div class='modal' id='modalQR'>
+
+    <div class='modal-box'>
+
+        <div class='modal-topo'>
+            <h2>QR Code do Produto</h2>
+
+            <button class='fechar' onclick='fecharQR()'>
+                <i class='fa-solid fa-xmark'></i>
+            </button>
+        </div>
+
+        <div class='qr-box'>
+            <h3 id='nomeQR'></h3>
+
+            <div id='qrcode'></div>
+
+            <button class='btn azul' onclick='imprimirQR()'>
+                <i class='fa-solid fa-print'></i>
+                Imprimir
+            </button>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    let produtos = JSON.parse(localStorage.getItem('stockpro_produtos')) || [];
+    let somenteBaixo = false;
+
+    function salvarStorage() {
+        localStorage.setItem('stockpro_produtos', JSON.stringify(produtos));
+    }
+
+    function dinheiro(valor) {
+        return Number(valor).toLocaleString('pt-BR', {
+            style: 'currency',
+            currency: 'BRL'
+        });
+    }
+
+    function atualizarDashboard() {
+        let quantidade = 0;
+        let baixo = 0;
+        let valor = 0;
+
+        produtos.forEach(function(produto) {
+            quantidade += Number(produto.quantidade);
+            valor += Number(produto.quantidade) * Number(produto.valor);
+
+            if (Number(produto.quantidade) <= 5) {
+                baixo++;
+            }
+        });
+
+        document.getElementById('totalProdutos').textContent = produtos.length;
+        document.getElementById('totalQuantidade').textContent = quantidade;
+        document.getElementById('totalBaixo').textContent = baixo;
+        document.getElementById('valorEstoque').textContent = dinheiro(valor);
+    }
+
+    function mostrarProdutos(lista) {
+        let tabela = document.getElementById('listaProdutos');
+
+        if (lista.length === 0) {
+            tabela.innerHTML = `
+                <tr>
+                    <td colspan='7' class='vazio'>
+                        Nenhum produto encontrado.
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        tabela.innerHTML = '';
+
+        lista.forEach(function(produto) {
+
+            let total = Number(produto.quantidade) * Number(produto.valor);
+            let baixo = Number(produto.quantidade) <= 5;
+
+            let linha = document.createElement('tr');
+
+            linha.innerHTML = `
+                <td>${produto.codigo}</td>
+                <td>${produto.descricao}</td>
+                <td>${produto.quantidade}</td>
+                <td>${dinheiro(produto.valor)}</td>
+                <td>${dinheiro(total)}</td>
+                <td>
+                    <span class='status ${baixo ? 'baixo' : 'normal'}'>
+                        ${baixo ? 'Estoque baixo' : 'Normal'}
+                    </span>
+                </td>
+                <td>
+                    <div class='acoes'>
+                        <button class='editar' onclick='editarProduto(${produto.id})' title='Editar'>
+                            <i class='fa-solid fa-pen'></i>
+                        </button>
+
+                        <button class='qr' onclick='gerarQR(${produto.id})' title='QR Code'>
+                            <i class='fa-solid fa-qrcode'></i>
+                        </button>
+
+                        <button class='excluir' onclick='excluirProduto(${produto.id})' title='Excluir'>
+                            <i class='fa-solid fa-trash'></i>
+                        </button>
+                    </div>
+                </td>
+            `;
+
+            tabela.appendChild(linha);
+        });
+    }
+
+    function listar() {
+        let busca = document.getElementById('pesquisa').value.toLowerCase();
+
+        let lista = produtos.filter(function(produto) {
+
+            let texto =
+                produto.codigo.toLowerCase() +
+                ' ' +
+                produto.descricao.toLowerCase();
+
+            let encontrado = texto.includes(busca);
+
+            if (somenteBaixo) {
+                return encontrado && Number(produto.quantidade) <= 5;
+            }
+
+            return encontrado;
+        });
+
+        mostrarProdutos(lista);
+        atualizarDashboard();
+    }
+
+    function filtrar() {
+        somenteBaixo = false;
+        listar();
+    }
+
+    function mostrarTodos() {
+        somenteBaixo = false;
+        document.getElementById('pesquisa').value = '';
+        listar();
+    }
+
+    function mostrarBaixo() {
+        somenteBaixo = true;
+        document.getElementById('pesquisa').value = '';
+        listar();
+    }
+
+    function abrirCadastro() {
+        document.getElementById('modalCadastro').classList.add('ativo');
+
+        document.getElementById('tituloModal').textContent = 'Novo Produto';
+
+        document.getElementById('produtoId').value = '';
+        document.getElementById('codigo').value = '';
+        document.getElementById('descricao').value = '';
+        document.getElementById('quantidade').value = '';
+        document.getElementById('valor').value = '';
+    }
+
+    function fecharCadastro() {
+        document.getElementById('modalCadastro').classList.remove('ativo');
+    }
+
+    function salvarProduto() {
+        let id = document.getElementById('produtoId').value;
+        let codigo = document.getElementById('codigo').value.trim();
+        let descricao = document.getElementById('descricao').value.trim();
+        let quantidade = Number(document.getElementById('quantidade').value);
+        let valor = Number(document.getElementById('valor').value);
+
+        if (!codigo || !descricao) {
+            alert('Preencha o código e a descrição.');
+            return;
+        }
+
+        if (quantidade < 0 || valor < 0 || isNaN(quantidade) || isNaN(valor)) {
+            alert('Informe valores válidos.');
+            return;
+        }
+
+        if (id) {
+
+            let produto = produtos.find(function(p) {
+                return p.id == id;
+            });
+
+            if (produto) {
+                produto.codigo = codigo;
+                produto.descricao = descricao;
+                produto.quantidade = quantidade;
+                produto.valor = valor;
+            }
+
+        } else {
+
+            produtos.push({
+                id: Date.now(),
+                codigo: codigo,
+                descricao: descricao,
+                quantidade: quantidade,
+                valor: valor
+            });
+        }
+
+        salvarStorage();
+        fecharCadastro();
+        listar();
+    }
+
+    function editarProduto(id) {
+
+        let produto = produtos.find(function(p) {
+            return p.id == id;
+        });
+
+        if (!produto) {
+            return;
+        }
+
+        document.getElementById('modalCadastro').classList.add('ativo');
+
+        document.getElementById('tituloModal').textContent = 'Editar Produto';
+
+        document.getElementById('produtoId').value = produto.id;
+        document.getElementById('codigo').value = produto.codigo;
+        document.getElementById('descricao').value = produto.descricao;
+        document.getElementById('quantidade').value = produto.quantidade;
+        document.getElementById('valor').value = produto.valor;
+    }
+
+    function excluirProduto(id) {
+
+        let produto = produtos.find(function(p) {
+            return p.id == id;
+        });
+
+        if (!produto) {
+            return;
+        }
+
+        if (confirm('Deseja excluir o produto ' + produto.descricao + '?')) {
+
+            produtos = produtos.filter(function(p) {
+                return p.id != id;
+            });
+
+            salvarStorage();
+            listar();
+        }
+    }
+
+    function atualizar() {
+        listar();
+        alert('Estoque atualizado.');
+    }
+
+    function gerarQR(id) {
+
+        let produto = produtos.find(function(p) {
+            return p.id == id;
+        });
+
+        if (!produto) {
+            return;
+        }
+
+        document.getElementById('modalQR').classList.add('ativo');
+        document.getElementById('nomeQR').textContent = produto.descricao;
+
+        let qr = document.getElementById('qrcode');
+        qr.innerHTML = '';
+
+        new QRCode(qr, {
+            text: 'Código: ' + produto.codigo + ' | Produto: ' + produto.descricao,
+            width: 180,
+            height: 180
+        });
+    }
+
+    function fecharQR() {
+        document.getElementById('modalQR').classList.remove('ativo');
+    }
+
+    function imprimirQR() {
+
+        let qr = document.getElementById('qrcode').innerHTML;
+        let nome = document.getElementById('nomeQR').textContent;
+
+        let janela = window.open('', '', 'width=500,height=600');
+
+        janela.document.write(`
+            <html>
+            <head>
+                <title>QR Code</title>
+                <style>
+                    body {
+                        font-family: Arial;
+                        text-align: center;
+                        padding: 40px;
+                    }
+                </style>
+            </head>
+            <body>
+                <h2>${nome}</h2>
+                ${qr}
+                <script>
+                    window.onload = function() {
+                        window.print();
+                    };
+                <\/script>
+            </body>
+            </html>
+        `);
+
+        janela.document.close();
+    }
+
+    function exportar() {
+
+        if (produtos.length === 0) {
+            alert('Não existem produtos para exportar.');
+            return;
+        }
+
+        let csv = 'Código;Descrição;Quantidade;Valor;Valor Total\n';
+
+        produtos.forEach(function(produto) {
+
+            let total = Number(produto.quantidade) * Number(produto.valor);
+
+            csv +=
+                produto.codigo + ';' +
+                produto.descricao + ';' +
+                produto.quantidade + ';' +
+                produto.valor + ';' +
+                total + '\n';
+        });
+
+        let arquivo = new Blob(
+            ['\ufeff' + csv],
+            { type: 'text/csv;charset=utf-8;' }
+        );
+
+        let url = URL.createObjectURL(arquivo);
+        let link = document.createElement('a');
+
+        link.href = url;
+        link.download = 'estoque-stockpro.csv';
+        link.click();
+
+        URL.revokeObjectURL(url);
+    }
+
+    document.getElementById('modalCadastro').addEventListener('click', function(evento) {
+        if (evento.target === this) {
+            fecharCadastro();
+        }
+    });
+
+    document.getElementById('modalQR').addEventListener('click', function(evento) {
+        if (evento.target === this) {
+            fecharQR();
+        }
+    });
+
+    document.addEventListener('keydown', function(evento) {
+        if (evento.key === 'Escape') {
+            fecharCadastro();
+            fecharQR();
+        }
+    });
+
+    listar();
+</script>
+
+</body>
+</html>
