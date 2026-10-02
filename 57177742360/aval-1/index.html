@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Estoque</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f2f4f7;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #333;
+        }
+
+        .formulario {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr auto;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        input {
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        button {
+            border: none;
+            padding: 12px 18px;
+            border-radius: 6px;
+            cursor: pointer;
+            background: #2563eb;
+            color: white;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        .pesquisa {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #2563eb;
+            color: white;
+        }
+
+        .excluir {
+            background: #dc2626;
+            padding: 8px 12px;
+        }
+
+        .excluir:hover {
+            background: #b91c1c;
+        }
+
+        .resumo {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        @media (max-width: 700px) {
+            .formulario {
+                grid-template-columns: 1fr;
+            }
+
+            table {
+                font-size: 14px;
+            }
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+<div class="container">
+
+    <h1>📦 Sistema de Estoque</h1>
+
+    <div class="formulario">
+        <input type="text" id="produto" placeholder="Nome do produto">
+        <input type="number" id="quantidade" placeholder="Quantidade">
+        <input type="number" id="preco" placeholder="Preço">
+        <button onclick="adicionarProduto()">Adicionar</button>
+    </div>
+
+    <input
+        type="text"
+        id="pesquisa"
+        class="pesquisa"
+        placeholder="🔎 Pesquisar produto..."
+        onkeyup="pesquisarProduto()"
+    >
+
+    <div class="resumo">
+        <span>Total de produtos: <span id="totalProdutos">0</span></span>
+        <span>Itens no estoque: <span id="totalItens">0</span></span>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Produto</th>
+                <th>Quantidade</th>
+                <th>Preço</th>
+                <th>Ação</th>
+            </tr>
+        </thead>
+
+        <tbody id="listaProdutos">
+        </tbody>
+    </table>
+
+</div>
+
+<script>
+    let produtos = [];
+
+    function adicionarProduto() {
+
+        const nome = document.getElementById("produto").value;
+        const quantidade = Number(document.getElementById("quantidade").value);
+        const preco = Number(document.getElementById("preco").value);
+
+        if (nome === "" || quantidade <= 0 || preco <= 0) {
+            alert("Preencha todos os campos corretamente!");
+            return;
+        }
+
+        const produto = {
+            nome: nome,
+            quantidade: quantidade,
+            preco: preco
+        };
+
+        produtos.push(produto);
+
+        document.getElementById("produto").value = "";
+        document.getElementById("quantidade").value = "";
+        document.getElementById("preco").value = "";
+
+        mostrarProdutos();
+    }
+
+    function mostrarProdutos(lista = produtos) {
+
+        const tabela = document.getElementById("listaProdutos");
+
+        tabela.innerHTML = "";
+
+        lista.forEach((produto, index) => {
+
+            const linha = document.createElement("tr");
+
+            linha.innerHTML = `
+                <td>${produto.nome}</td>
+                <td>${produto.quantidade}</td>
+                <td>R$ ${produto.preco.toFixed(2)}</td>
+                <td>
+                    <button class="excluir"
+                    onclick="excluirProduto(${index})">
+                        Excluir
+                    </button>
+                </td>
+            `;
+
+            tabela.appendChild(linha);
+        });
+
+        atualizarResumo();
+    }
+
+    function excluirProduto(index) {
+
+        produtos.splice(index, 1);
+
+        mostrarProdutos();
+    }
+
+    function pesquisarProduto() {
+
+        const texto = document
+            .getElementById("pesquisa")
+            .value
+            .toLowerCase();
+
+        const resultado = produtos.filter(produto =>
+            produto.nome.toLowerCase().includes(texto)
+        );
+
+        mostrarProdutos(resultado);
+    }
+
+    function atualizarResumo() {
+
+        document.getElementById("totalProdutos").textContent =
+            produtos.length;
+
+        const total = produtos.reduce(
+            (soma, produto) => soma + produto.quantidade,
+            0
+        );
+
+        document.getElementById("totalItens").textContent = total;
+    }
+</script>
+
+<script src="script.js"></script></body>
+</html>
