@@ -1,454 +1,325 @@
-const noticias = [
-
-    {
-        categoria: "LIBERTADORES",
-        titulo: "Flamengo chega à semifinal da Libertadores",
-        texto: "O Rubro-Negro empatou em 1 a 1 com o Independiente del Valle no Maracanã e avançou com 3 a 1 no placar agregado.",
-        data: "17/09/2026",
-        imagem: "https://storage.googleapis.com/crf-strapi-media-prd/Whats_App_Image_2026_09_17_at_23_30_03_817d9ce2d7/Whats_App_Image_2026_09_17_at_23_30_03_817d9ce2d7.jpeg",
-        fonte: "https://www.flamengo.com.br/noticias/futebol/com-gol-de-arrascaeta-flamengo-busca-empate-com-del-valle-e-garante-vaga-na-semifinal-da-libertadores"
-    },
-
-    {
-        categoria: "BRASILEIRÃO",
-        titulo: "Flamengo vence Bragantino e segue na liderança",
-        texto: "Varela e Pedro marcaram na vitória por 2 a 1 sobre o RB Bragantino no Maracanã.",
-        data: "20/09/2026",
-        imagem: "https://storage.googleapis.com/crf-strapi-media-prd/Whats_App_Image_2026_09_20_at_18_56_48_53067717ec/Whats_App_Image_2026_09_20_at_18_56_48_53067717ec.jpeg",
-        fonte: "https://www.flamengo.com.br/noticias/futebol/com-maraca-lotado-mengao-vence-rb-bragantino-e-segue-na-lideranca-do-brasileirao"
-    },
-
-    {
-        categoria: "LIBERTADORES",
-        titulo: "Arrascaeta pode ficar fora da semifinal",
-        texto: "O meia sofreu uma fratura no punho esquerdo e deve ser desfalque nos confrontos contra o Estudiantes.",
-        data: "29/09/2026",
-        imagem: "https://storage.googleapis.com/crf-strapi-media-prd/Whats_App_Image_2026_09_17_at_23_29_21_db85510157/Whats_App_Image_2026_09_17_at_23_29_21_db85510157.jpeg",
-        fonte: "https://ge.globo.com/futebol/times/flamengo/noticia/2026/09/29/sem-arrascaeta-flamengo-trabalha-opcoes-para-volta-da-data-fifa-jorginho-tambem-desfalca-na-libertadores.ghtml"
-    },
-
-    {
-        categoria: "LIBERTADORES",
-        titulo: "Jorginho será desfalque no jogo de ida",
-        texto: "O volante foi expulso contra o Independiente del Valle e cumprirá suspensão automática diante do Estudiantes.",
-        data: "29/09/2026",
-        imagem: "https://storage.googleapis.com/crf-strapi-media-prd/Whats_App_Image_2026_09_17_at_23_30_03_817d9ce2d7/Whats_App_Image_2026_09_17_at_23_30_03_817d9ce2d7.jpeg",
-        fonte: "https://ge.globo.com/futebol/times/flamengo/noticia/2026/09/29/sem-arrascaeta-flamengo-trabalha-opcoes-para-volta-da-data-fifa-jorginho-tambem-desfalca-na-libertadores.ghtml"
-    },
-
-    {
-        categoria: "BRASILEIRÃO",
-        titulo: "Flamengo tem números fortes quando abre o placar cedo",
-        texto: "Segundo levantamento publicado pelo próprio clube, o Flamengo abriu o placar nos primeiros 15 minutos em 13 partidas de Brasileirão e Libertadores em 2026.",
-        data: "23/09/2026",
-        imagem: "https://storage.googleapis.com/crf-strapi-media-prd/Whats_App_Image_2026_09_20_at_18_56_48_53067717ec/Whats_App_Image_2026_09_20_at_18_56_48_53067717ec.jpeg",
-        fonte: "https://www.flamengo.com.br/noticias/futebol/flamengo-nao-perde-quando-abre-o-placar-antes-dos-15-minutos-em-2026"
-    },
-
-    {
-        categoria: "AGENDA",
-        titulo: "Estudiantes x Flamengo será em 15 de outubro",
-        texto: "A partida de ida da semifinal da Libertadores está marcada para La Plata. A volta acontece no Maracanã em 22 de outubro.",
-        data: "24/09/2026",
-        imagem: "https://storage.googleapis.com/crf-strapi-media-prd/Whats_App_Image_2026_09_17_at_23_29_21_db85510157/Whats_App_Image_2026_09_17_at_23_29_21_db85510157.jpeg",
-        fonte: "https://ge.globo.com/futebol/times/flamengo/noticia/2026/09/24/estudiantes-confirma-em-qual-estadio-mandara-a-semifinal-da-libertadores-contra-flamengo-veja-detalhes.ghtml"
-    }
-
-];
-
-
-/* =========================
-CARREGAR NOTÍCIAS
-========================= */
-
-function carregarNoticias(lista = noticias) {
-
-    const feed = document.getElementById("feedNoticias");
-
-    feed.innerHTML = "";
-
-
-    if (lista.length === 0) {
-
-        feed.innerHTML = `
-            <p>
-                Nenhuma notícia encontrada.
-            </p>
-        `;
-
-        return;
-    }
-
-
-    lista.forEach((noticia, index) => {
-
-        const card = document.createElement("article");
-
-        card.className = "card-noticia";
-
-
-        card.innerHTML = `
-
-            <img
-                src="${noticia.imagem}"
-                alt="${noticia.titulo}"
-                loading="lazy"
-            >
-
-            <div class="card-info">
-
-                <span class="categoria">
-                    ${noticia.categoria}
-                </span>
-
-                <h3>
-                    ${noticia.titulo}
-                </h3>
-
-                <p>
-                    ${noticia.texto}
-                </p>
-
-                <span class="card-data">
-                    ${noticia.data}
-                </span>
-
-                <button
-                    class="leia"
-                    onclick="abrirNoticia(${index})"
-                >
-                    Ler matéria →
-                </button>
-
-            </div>
-
-        `;
-
-
-        feed.appendChild(card);
-
-    });
-
-}
-
-
-/* =========================
-ABRIR NOTÍCIA
-========================= */
-
-function abrirNoticia(index) {
-
-    const noticia = noticias[index];
-
-    document.getElementById("modalImagem").src =
-        noticia.imagem;
-
-    document.getElementById("modalCategoria").textContent =
-        noticia.categoria;
-
-    document.getElementById("modalTitulo").textContent =
-        noticia.titulo;
-
-    document.getElementById("modalData").textContent =
-        noticia.data;
-
-    document.getElementById("modalTexto").textContent =
-        noticia.texto;
-
-    document.getElementById("modalFonte").href =
-        noticia.fonte;
-
-
-    document.getElementById("modal").classList.add("ativo");
-
-    document.body.style.overflow = "hidden";
-}
-
-
-/* =========================
-FECHAR NOTÍCIA
-========================= */
-
-function fecharNoticia() {
-
-    document.getElementById("modal")
-        .classList.remove("ativo");
-
-    document.body.style.overflow = "auto";
-
-}
-
-
-/* =========================
-PESQUISA
-========================= */
-
-function filtrarNoticias() {
-
-    const termo =
-        document
-            .getElementById("pesquisa")
-            .value
-            .toLowerCase();
-
-
-    const resultado =
-        noticias.filter(noticia => {
-
-            return (
-                noticia.titulo
-                    .toLowerCase()
-                    .includes(termo)
-
-                ||
-
-                noticia.texto
-                    .toLowerCase()
-                    .includes(termo)
-
-                ||
-
-                noticia.categoria
-                    .toLowerCase()
-                    .includes(termo)
-            );
-
-        });
-
-
-    carregarNoticias(resultado);
-}
-
-
-/* =========================
-COMENTÁRIOS
-========================= */
-
-let comentarios =
-    JSON.parse(
-        localStorage.getItem("flaComentarios")
-    ) || [
-
-        {
-            nome: "João",
-            texto: "Que venha o Estudiantes! Mengão até o fim! 🔴⚫",
-            data: "Comentário da torcida"
-        },
-
-        {
-            nome: "Mariana",
-            texto: "Essa semifinal promete. Vamos Flamengo!",
-            data: "Comentário da torcida"
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flávio Bolsonaro | Blog</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-    ];
-
-
-/* =========================
-SALVAR COMENTÁRIOS
-========================= */
-
-function salvarComentarios() {
-
-    localStorage.setItem(
-        "flaComentarios",
-        JSON.stringify(comentarios)
-    );
-
-}
-
-
-/* =========================
-PUBLICAR
-========================= */
-
-function publicarComentario() {
-
-    const nome =
-        document
-            .getElementById("nome")
-            .value
-            .trim();
-
-    const texto =
-        document
-            .getElementById("comentario")
-            .value
-            .trim();
-
-
-    if (!nome || !texto) {
-
-        alert(
-            "Digite seu nome e comentário."
-        );
-
-        return;
-    }
-
-
-    if (texto.length < 3) {
-
-        alert(
-            "Seu comentário é muito curto."
-        );
-
-        return;
-    }
-
-
-    const novoComentario = {
-
-        nome: nome,
-
-        texto: texto,
-
-        data: new Date()
-            .toLocaleString("pt-BR")
-
-    };
-
-
-    comentarios.unshift(novoComentario);
-
-
-    salvarComentarios();
-
-    mostrarComentarios();
-
-
-    document.getElementById("nome").value = "";
-
-    document.getElementById("comentario").value = "";
-
-}
-
-
-/* =========================
-MOSTRAR COMENTÁRIOS
-========================= */
-
-function mostrarComentarios() {
-
-    const lista =
-        document.getElementById(
-            "listaComentarios"
-        );
-
-
-    lista.innerHTML = "";
-
-
-    if (comentarios.length === 0) {
-
-        lista.innerHTML = `
-            <div class="vazio">
-                Ainda não há comentários.
-            </div>
-        `;
-
-        return;
-    }
-
-
-    comentarios.forEach(comentario => {
-
-        const div =
-            document.createElement("div");
-
-        div.className = "comentario";
-
-
-        div.innerHTML = `
-
-            <div class="comentario-topo">
-
-                <span class="usuario">
-                    🔴 ${escaparHTML(comentario.nome)}
-                </span>
-
-                <span class="hora">
-                    ${comentario.data}
-                </span>
-
-            </div>
-
-            <p>
-                ${escaparHTML(comentario.texto)}
-            </p>
-
-        `;
-
-
-        lista.appendChild(div);
-
-    });
-
-}
-
-
-/* =========================
-SEGURANÇA
-========================= */
-
-function escaparHTML(texto) {
-
-    const div =
-        document.createElement("div");
-
-    div.textContent = texto;
-
-    return div.innerHTML;
-
-}
-
-
-/* =========================
-MENU
-========================= */
-
-function abrirMenu() {
-
-    const menu =
-        document.getElementById("menuMobile");
-
-
-    if (
-        menu.style.display === "block"
-    ) {
-
-        menu.style.display = "none";
-
-    } else {
-
-        menu.style.display = "block";
-
-    }
-
-}
-
-
-/* =========================
-FECHAR MODAL CLICANDO FORA
-========================= */
-
-document
-    .getElementById("modal")
-    .addEventListener("click", function(event) {
-
-        if (event.target === this) {
-
-            fecharNoticia();
-
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            line-height: 1.6;
+            background: #f4f6f8;
+            color: #222;
         }
 
-    });
+        header {
+            background: linear-gradient(135deg, #006b3c, #009c5b);
+            color: white;
+            text-align: center;
+            padding: 50px 20px;
+        }
+
+        header h1 {
+            font-size: 42px;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 18px;
+        }@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+body {
+    font-family: 'Poppins', sans-serif;
+}
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+body {
+    font-family: 'Poppins', sans-serif;
+}
 
 
-/* =========================
-INICIALIZAÇÃO
-========================= */
+        nav {
+            background: #222;
+            padding: 15px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
 
-carregarNoticias();
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: bold;
+        }
 
-mostrarComentarios();
+        nav a:hover {
+            color: #00b866;
+        }
+
+        main {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        section {
+            background: white;
+            margin-bottom: 30px;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        section h2 {
+            color: #006b3c;
+            margin-bottom: 15px;
+            border-left: 5px solid #00a859;
+            padding-left: 12px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .card {
+            background: #f7f9fa;
+            padding: 22px;
+            border-radius: 10px;
+            border-top: 4px solid #009c5b;
+        }
+
+        .card h3 {
+            color: #006b3c;
+            margin-bottom: 10px;
+        }
+
+        .timeline {
+            border-left: 4px solid #009c5b;
+            padding-left: 25px;
+            margin-top: 20px;
+        }
+
+        .timeline article {
+            margin-bottom: 25px;
+        }
+
+        .timeline strong {
+            color: #006b3c;
+        }
+
+        .quote {
+            background: #e8f5ee;
+            border-left: 5px solid #009c5b;
+            padding: 20px;
+            margin-top: 20px;
+            font-style: italic;
+        }
+
+        footer {
+            background: #222;
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+            margin-top: 40px;
+        }
+
+        footer p {
+            margin: 5px;
+        }
+
+        @media (max-width: 600px) {
+            header h1 {
+                font-size: 32px;
+            }
+
+            nav a {
+                display: inline-block;
+                margin: 5px 8px;
+            }
+
+            section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>Flávio Bolsonaro</h1>
+        <p>Biografia, trajetória política e atuação pública</p>
+    </header>
+
+    <nav>
+        <a href="#inicio">Início</a>
+        <a href="#biografia">Biografia</a>
+        <a href="#politica">Política</a>
+        <a href="#trajetoria">Trajetória</a>
+        <a href="#debates">Debates</a>
+    </nav>
+
+    <main>
+
+        <section id="inicio">
+            <h2>Sobre Flávio Bolsonaro</h2>
+
+            <p>
+                Flávio Nantes Bolsonaro é um político brasileiro, filho do ex-presidente
+                Jair Bolsonaro. Sua trajetória política está principalmente ligada ao
+                estado do Rio de Janeiro e ao grupo político associado ao bolsonarismo.
+            </p>
+
+            <p>
+                Ao longo de sua carreira, ocupou cargos no Legislativo e participou de
+                diferentes debates nacionais relacionados à política, segurança pública,
+                economia e costumes.
+            </p>
+        </section>
+
+        <section id="biografia">
+            <h2>Biografia</h2>
+
+            <div class="cards">
+
+                <div class="card">
+                    <h3>Nome</h3>
+                    <p>Flávio Nantes Bolsonaro</p>
+                </div>
+
+                <div class="card">
+                    <h3>Data de nascimento</h3>
+                    <p>30 de abril de 1981</p>
+                </div>
+
+                <div class="card">
+                    <h3>Naturalidade</h3>
+                    <p>Rio de Janeiro, Brasil</p>
+                </div>
+
+                <div class="card">
+                    <h3>Profissão</h3>
+                    <p>Político e advogado</p>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="politica">
+            <h2>Carreira política</h2>
+
+            <p>
+                Flávio Bolsonaro iniciou sua carreira política no Rio de Janeiro,
+                onde exerceu mandato como deputado estadual. Posteriormente,
+                passou a representar o estado no Senado Federal.
+            </p>
+
+            <p>
+                No Senado, participou de discussões e votações relacionadas a temas
+                como segurança pública, legislação penal, economia e administração
+                pública.
+            </p>
+
+            <div class="quote">
+                A atuação de Flávio Bolsonaro é frequentemente analisada dentro do
+                contexto mais amplo da política brasileira e do movimento político
+                associado à família Bolsonaro.
+            </div>
+        </section>
+
+        <section id="trajetoria">
+            <h2>Trajetória</h2>
+
+            <div class="timeline">
+
+                <article>
+                    <strong>1981</strong>
+                    <p>
+                        Nasce Flávio Nantes Bolsonaro, no Rio de Janeiro.
+                    </p>
+                </article>
+
+                <article>
+                    <strong>Década de 2000</strong>
+                    <p>
+                        Inicia sua trajetória eleitoral e passa a atuar na política
+                        do estado do Rio de Janeiro.
+                    </p>
+                </article>
+
+                <article>
+                    <strong>Deputado estadual</strong>
+                    <p>
+                        Exerce mandato na Assembleia Legislativa do Estado do
+                        Rio de Janeiro (Alerj).
+                    </p>
+                </article>
+
+                <article>
+                    <strong>Senado Federal</strong>
+                    <p>
+                        É eleito senador pelo estado do Rio de Janeiro e passa a
+                        atuar no Congresso Nacional.
+                    </p>
+                </article>
+
+            </div>
+        </section>
+
+        <section id="debates">
+            <h2>Debates e controvérsias</h2>
+
+            <p>
+                Como figura pública e integrante de uma família politicamente
+                conhecida, Flávio Bolsonaro esteve envolvido em diversos debates
+                públicos e controvérsias ao longo de sua trajetória.
+            </p>
+
+            <p>
+                Entre os assuntos que receberam atenção da imprensa estão questões
+                relacionadas à sua atuação parlamentar, investigações e disputas
+                políticas. Esses temas devem ser analisados com base em documentos,
+                decisões judiciais e fontes jornalísticas confiáveis, distinguindo
+                alegações de fatos comprovados.
+            </p>
+        </section>
+
+        <section>
+            <h2>Conclusão</h2>
+
+            <p>
+                Flávio Bolsonaro é uma das figuras da política brasileira
+                contemporânea associadas ao bolsonarismo. Sua trajetória inclui
+                diferentes cargos eletivos e participação em debates importantes
+                para a política nacional.
+            </p>
+
+            <p>
+                Para compreender sua atuação de maneira equilibrada, é importante
+                consultar diferentes fontes e separar informações verificadas de
+                opiniões e interpretações políticas.
+            </p>
+        </section>
+
+    </main>
+
+    <footer>
+        <p><strong>Blog Flávio Bolsonaro</strong></p>
+        <p>Conteúdo informativo sobre trajetória e atuação política.</p>
+        <p>&copy; 2026 - Todos os direitos reservados.</p>
+    </footer>
+
+</body>
+</html>
