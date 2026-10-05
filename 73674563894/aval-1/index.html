@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elainy Artesanato | Feito à Mão com Amor</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Link para o CSS -->
+    <link rel="stylesheet" href="style.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"><link href="style.css" rel="stylesheet"></head>
+<body>
+
+    <!-- CABEÇALHO -->
+    <header>
+        <div class="top-bar">
+            <p><i class="fa-solid fa-seedling"></i> Peças exclusivas feitas à mão por Elainy Artesanato • Envio para todo o Brasil</p>
+        </div>
+        <div class="main-header container">
+            <div class="logo">
+                <i class="fa-solid fa-hands-holding-child"></i>
+                <div>
+                    <h1>Elainy Artesanato</h1>
+                    <span>Arte & Afeto</span>
+                </div>
+            </div>
+            <div class="header-actions">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Buscar peça...">
+                    <button id="searchBtn"><i class="fa-solid fa-magnifying-glass"></i></button>
+                </div>
+                <button class="cart-icon-btn" onclick="switchSection('carrinho')">
+                    <i class="fa-solid fa-basket-shopping"></i>
+                    <span id="cartBadge" class="badge">0</span>
+                </button>
+            </div>
+        </div>
+        <!-- MENU PRINCIPAL -->
+        <nav class="main-nav">
+            <div class="container">
+                <ul>
+                    <li><a href="#" class="nav-link active" data-section="todos" onclick="switchSection('todos')"><i class="fa-solid fa-store"></i> Todos</a></li>
+                    <li><a href="#" class="nav-link" data-section="objetos" onclick="switchSection('objetos')"><i class="fa-solid fa-house-chimney"></i> Objetos</a></li>
+                    <li><a href="#" class="nav-link" data-section="acessorios" onclick="switchSection('acessorios')"><i class="fa-solid fa-gem"></i> Acessórios</a></li>
+                    <li><a href="#" class="nav-link" data-section="promocoes" onclick="switchSection('promocoes')"><i class="fa-solid fa-tags"></i> Promoções</a></li>
+                    <li><a href="#" class="nav-link" data-section="estoque" onclick="switchSection('estoque')"><i class="fa-solid fa-boxes-stacked"></i> Estoque</a></li>
+                    <li><a href="#" class="nav-link" data-section="carrinho" onclick="switchSection('carrinho')"><i class="fa-solid fa-cart-shopping"></i> Carrinho</a></li>
+                    <li><a href="#" class="nav-link" data-section="contato" onclick="switchSection('contato')"><i class="fa-solid fa-headset"></i> Contato do Vendedor</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="container">
+
+        <!-- SEÇÃO: TODOS OS PRODUTOS (CATÁLOGO) -->
+        <section id="section-todos" class="section-content active">
+            <div class="banner">
+                <div class="banner-text">
+                    <h2>Coleção Artesanal Exclusiva</h2>
+                    <p>Cada peça conta uma história única, modelada e tecida com carinho para o seu lar.</p>
+                </div>
+            </div>
+            <div class="section-title">
+                <h3>Catálogo de Peças</h3>
+                <p>Explore nosso acervo artesanal disponível para encomenda ou pronta-entrega.</p>
+            </div>
+            <div id="productGrid" class="product-grid">
+                <!-- Inserido dinamicamente via JavaScript -->
+            </div>
+        </section>
+
+        <!-- SEÇÃO: OBJETOS -->
+        <section id="section-objetos" class="section-content">
+            <div class="section-title">
+                <h3>Objetos de Decoração</h3>
+                <p>Enfeites, vasos, cerâmicas e artigos para deixar sua casa ainda mais aconchegante.</p>
+            </div>
+            <div id="gridObjetos" class="product-grid"></div>
+        </section>
+
+        <!-- SEÇÃO: ACESSÓRIOS -->
+        <section id="section-acessorios" class="section-content">
+            <div class="section-title">
+                <h3>Acessórios Artesanais</h3>
+                <p>Bolsas, colares, brincos e peças de vestuário cheias de estilo e identidade.</p>
+            </div>
+            <div id="gridAcessorios" class="product-grid"></div>
+        </section>
+
+        <!-- SEÇÃO: PROMOÇÕES -->
+        <section id="section-promocoes" class="section-content">
+            <div class="section-title">
+                <h3>Promoções Especiais</h3>
+                <p>Oportunidades imperdíveis com descontos especiais em peças selecionadas.</p>
+            </div>
+            <div id="gridPromocoes" class="product-grid"></div>
+        </section>
+
+        <!-- SEÇÃO: ESTOQUE (PAINEL DE GESTÃO) -->
+        <section id="section-estoque" class="section-content">
+            <div class="section-title">
+                <h3>Controle de Estoque da Loja</h3>
+                <p>Gerencie o inventário, adicione novos produtos ou atualize quantidades disponíveis.</p>
+            </div>
+            
+            <div class="estoque-container">
+                <div class="card form-card">
+                    <h4><i class="fa-solid fa-plus-circle"></i> Cadastrar Novo Produto</h4>
+                    <form id="productForm" onsubmit="handleAddProduct(event)">
+                        <input type="hidden" id="editIndex" value="-1">
+                        <div class="form-group">
+                            <label>Nome do Produto:</label>
+                            <input type="text" id="prodName" required placeholder="Ex: Vaso de Cerâmica Rústica">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Categoria:</label>
+                                <select id="prodCategory" required>
+                                    <option value="objetos">Objetos</option>
+                                    <option value="acessorios">Acessórios</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Preço (R$):</label>
+                                <input type="number" step="0.01" id="prodPrice" required placeholder="0.00">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Quantidade em Estoque:</label>
+                                <input type="number" id="prodStock" required placeholder="10">
+                            </div>
+                            <div class="form-group">
+                                <label>Em Promoção?</label>
+                                <select id="prodPromo">
+                                    <option value="nao">Não</option>
+                                    <option value="sim">Sim</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>URL da Imagem (Opcional):</label>
+                            <input type="text" id="prodImage" placeholder="https://exemplo.com/foto.jpg">
+                        </div>
+                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Salvar Produto</button>
+                        <button type="button" id="cancelEditBtn" class="btn btn-secondary" style="display:none;" onclick="cancelEdit()">Cancelar Edição</button>
+                    </form>
+                </div>
+
+                <div class="card table-card">
+                    <h4><i class="fa-solid fa-list-check"></i> Inventário Atual</h4>
+                    <div class="table-responsive">
+                        <table id="stockTable">
+                            <thead>
+                                <tr>
+                                    <th>Produto</th>
+                                    <th>Categoria</th>
+                                    <th>Preço</th>
+                                    <th>Estoque</th>
+                                    <th>Promoção</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="stockTableBody">
+                                <!-- Preenchido via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEÇÃO: CARRINHO -->
+        <section id="section-carrinho" class="section-content">
+            <div class="section-title">
+                <h3>Seu Carrinho de Compras</h3>
+                <p>Revise suas peças selecionadas antes de finalizar com a artesã.</p>
+            </div>
+            
+            <div class="cart-layout">
+                <div class="cart-items-container">
+                    <div id="cartItemsList">
+                        <!-- Itens do carrinho aqui -->
+                    </div>
+                </div>
+                <div class="cart-summary card">
+                    <h4>Resumo do Pedido</h4>
+                    <div class="summary-line">
+                        <span>Subtotal:</span>
+                        <span id="cartSubtotal">R$ 0,00</span>
+                    </div>
+                    <div class="summary-line">
+                        <span>Frete:</span>
+                        <span>Calculado no WhatsApp</span>
+                    </div>
+                    <hr>
+                    <div class="summary-line total">
+                        <span>Total Estimado:</span>
+                        <span id="cartTotal">R$ 0,00</span>
+                    </div>
+                    <button class="btn btn-whatsapp" onclick="checkoutWhatsApp()">
+                        <i class="fa-brands fa-whatsapp"></i> Finalizar Pedido via WhatsApp
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEÇÃO: CONTATO DO VENDEDOR -->
+        <section id="section-contato" class="section-content">
+            <div class="section-title">
+                <h3>Fale com a Artesã</h3>
+                <p>Tire dúvidas sobre encomendas personalizadas, prazos e entregas.</p>
+            </div>
+            
+            <div class="contact-grid">
+                <div class="card contact-info">
+                    <h4><i class="fa-solid id-card fa-address-card"></i> Canais de Atendimento</h4>
+                    <p><i class="fa-brands fa-whatsapp" style="color: #25d366;"></i> <strong>WhatsApp:</strong> (89) 99988-7766</p>
+                    <p><i class="fa-solid fa-envelope" style="color: var(--primary);"></i> <strong>E-mail:</strong> elainy.artesanato@email.com</p>
+                    <p><i class="fa-solid fa-location-dot" style="color: var(--accent);"></i> <strong>Ateliê:</strong> Oeiras, PI - Brasil</p>
+                    <p><i class="fa-solid fa-clock" style="color: #d4a373;"></i> <strong>Horário:</strong> Segunda a Sábado, das 8h às 18h</p>
+                </div>
+
+                <div class="card contact-form-card">
+                    <h4><i class="fa-solid fa-paper-plane"></i> Envie uma Mensagem</h4>
+                    <form onsubmit="handleContact(event)">
+                        <div class="form-group">
+                            <label>Seu Nome:</label>
+                            <input type="text" required placeholder="Como podemos te chamar?">
+                        </div>
+                        <div class="form-group">
+                            <label>Seu E-mail ou Telefone:</label>
+                            <input type="text" required placeholder="Para retorno">
+                        </div>
+                        <div class="form-group">
+                            <label>Mensagem / Encomenda Personalizada:</label>
+                            <textarea rows="4" required placeholder="Descreva o que você precisa..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-paper-plane"></i> Enviar Mensagem</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- RODAPÉ -->
+    <footer>
+        <div class="container footer-content">
+            <div>
+                <h3>Elainy Artesanato</h3>
+                <p>Transformando matéria-prima em afeto e decoração para sua casa.</p>
+            </div>
+            <div>
+                <p>&copy; 2026 Elainy Artesanato. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Link para o JavaScript -->
+    <script src="script.js"></script>
+<script src="script.js"></script></body>
+</html>
