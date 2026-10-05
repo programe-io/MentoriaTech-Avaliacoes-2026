@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avaliações - Supermercado Alvorada</title>
+    <!-- Fonte Inter para um visual moderno -->
+    <link rel="preconnect" href="https://googleapis.com">
+    <link rel="preconnect" href="https://gstatic.com" crossorigin>
+    <link href="https://googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --background: #f8fafc;
+            --surface: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --star-active: #f59e0b;
+            --star-inactive: #cbd5e1;
+            --border: #e2e8f0;
+            --radius: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background);
+            color: var(--text-main);
+            line-height: 1.5;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--surface);
+            padding: 2rem;
+            border-radius: var(--radius);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .input-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .input-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        textarea.input-control {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        /* Sistema de Estrelas Interativo */
+        .stars-rating {
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: flex-end;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stars-rating input {
+            display: none;
+        }
+
+        .stars-rating label {
+            font-size: 2rem;
+            color: var(--star-inactive);
+            cursor: pointer;
+            transition: color 0.2s ease;
+            margin-bottom: 0;
+        }
+
+        .stars-rating label:hover,
+        .stars-rating label:hover ~ label,
+        .stars-rating input:checked ~ label {
+            color: var(--star-active);
+        }
+
+        .btn-submit {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.85rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .btn-submit:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .success-message {
+            display: none;
+            background-color: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            color: #166534;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+<div class="container">
+    <div class="card">
+        <div class="header">
+            <h1>Sua opinião importa!</h1>
+            <p>Conte-nos como foi a sua experiência no Supermercado Alvorada.</p>
+        </div>
+
+        <div id="successMessage" class="success-message">
+            🎉 Obrigado! Sua avaliação foi enviada com sucesso.
+        </div>
+
+        <form id="evaluationForm" onsubmit="handleFormSubmit(event)">
+            <!-- Seleção de Estrelas -->
+            <div class="form-group">
+                <label>Sua Nota</label>
+                <div class="stars-rating">
+                    <input type="radio" id="star5" name="rating" value="5" required>
+                    <label for="star5" title="Excelente">&#9733;</label>
+                    
+                    <input type="radio" id="star4" name="rating" value="4">
+                    <label for="star4" title="Muito bom">&#9733;</label>
+                    
+                    <input type="radio" id="star3" name="rating" value="3">
+                    <label for="star3" title="Regular">&#9733;</label>
+                    
+                    <input type="radio" id="star2" name="rating" value="2">
+                    <label for="star2" title="Ruim">&#9733;</label>
+                    
+                    <input type="radio" id="star1" name="rating" value="1">
+                    <label for="star1" title="Péssimo">&#9733;</label>
+                </div>
+            </div>
+
+            <!-- Setor Avaliado -->
+            <div class="form-group">
+                <label for="sector">Setor de destaque</label>
+                <select id="sector" class="input-control" required>
+                    <option value="" disabled selected>Selecione um setor...</option>
+                    <option value="hortifruti">Hortifruti</option>
+                    <option value="padaria">Padaria</option>
+                    <option value="acougue">Açougue</option>
+                    <option value="caixas">Atendimento dos Caixas</option>
+                    <option value="limpeza">Limpeza e Organização</option>
+                    <option value="geral">Geral / Outros</option>
+                </select>
+            </div>
+
+            <!-- Nome do Cliente -->
+            <div class="form-group">
+                <label for="clientName">Seu Nome (Opcional)</label>
+                <input type="text" id="clientName" class="input-control" placeholder="Ex: João Silva">
+            </div>
+
+            <!-- Comentários -->
+            <div class="form-group">
+                <label for="comments">Seu Comentário</label>
+                <textarea id="comments" class="input-control" placeholder="Escreva aqui o que você mais gostou ou o que podemos melhorar..." required></textarea>
+            </div>
+
+            <!-- Botão de Envio -->
+            <button type="submit" class="btn-submit">Enviar Avaliação</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    function handleFormSubmit(event) {
+        event.preventDefault();
+        
+        // Coleta dos dados preenchidos
+        const rating = document.querySelector('input[name="rating"]:checked').value;
+        const sector = document.getElementById('sector').value;
+        const name = document.getElementById('clientName').value || 'Anônimo';
+        const comments = document.getElementById('comments').value;
+
+        // Exibe os dados no console (simulando o envio para um banco de dados)
+        console.log('Avaliação Recebida:', { rating, sector, name, comments });
+
+        // Exibe a mensagem de sucesso na tela
+        const successBlock = document.getElementById('successMessage');
+        successBlock.style.display = 'block';
+
+        // Reseta o formulário
+        document.getElementById('evaluationForm').reset();
+
+        // Rola a página suavemente até o topo da mensagem
+        successBlock.scrollIntoView({ behavior: 'smooth' });
+
+        // Esconde a mensagem após 5 segundos
+        setTimeout(() => {
+            successBlock.style.display = 'none';
+        }, 5000);
+    }
+</script>
+
+<script src="script.js"></script></body>
+</html>

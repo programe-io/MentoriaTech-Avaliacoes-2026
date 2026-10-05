@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avaliações - Papelaria Candy Craft</title>
+    <style>
+        /* ==========================================================================
+           RESET & CONFIGURAÇÕES GERAIS
+           ========================================================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        :root {
+            /* Paleta de Cores Moderna - Vibes Papelaria */
+            --bg-principal: #f8f9fa;
+            --bg-card: #ffffff;
+            --texto-principal: #2d3748;
+            --texto-secundario: #718096;
+            
+            /* Cores de Destaque (Tons Pastel de Canetas/Marca-textos) */
+            --rosa-pastel: #ffb7b2;
+            --amarelo-pastel: #ffdac1;
+            --verde-pastel: #e2f0cb;
+            --azul-pastel: #b5ead7;
+            --lilas-pastel: #c7ceea;
+            
+            --cor-estrela: #ffb7b2; /* Rosa para uma papelaria fofa, ou use #ffc107 para dourado */
+            --sombra-suave: 0 10px 30px rgba(0, 0, 0, 0.05);
+            --borda-raio: 16px;
+            --transicao: all 0.3s ease;
+        }
+
+        body {
+            background-color: var(--bg-principal);
+            background-image: radial-gradient(var(--amarelo-pastel) 0.5px, transparent 0.5px), radial-gradient(var(--rosa-pastel) 0.5px, var(--bg-principal) 0.5px);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+            color: var(--texto-principal);
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* ==========================================================================
+           CONTAINER PRINCIPAL
+           ========================================================================== */
+        .container-avaliacoes {
+            width: 100%;
+            max-width: 900px;
+            background: var(--bg-card);
+            padding: 40px;
+            border-radius: var(--borda-raio);
+            box-shadow: var(--sombra-suave);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+        }
+
+        /* Cabeçalho da Seção */
+        .cabecalho-secao {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .cabecalho-secao h2 {
+            font-size: 2rem;
+            color: var(--texto-principal);
+            margin-bottom: 8px;
+            position: relative;
+            display: inline-block;
+        }
+
+        /* Detalhe de marca-texto sob o título */
+        .cabecalho-secao h2::after {
+            content: '';
+            position: absolute;
+            bottom: 4px;
+            left: 0;
+            width: 100%;
+            height: 12px;
+            background: var(--azul-pastel);
+            z-index: -1;
+            transform: rotate(-1deg);
+        }
+
+        .cabecalho-secao p {
+            color: var(--texto-secundario);
+            font-size: 1rem;
+        }
+
+        /* ==========================================================================
+           GRID DE AVALIAÇÕES (FEEDBACKS)
+           ========================================================================== */
+        .grid-avaliacoes {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .card-avaliacao {
+            background: var(--bg-card);
+            border: 1px solid #edf2f7;
+            padding: 24px;
+            border-radius: var(--borda-raio);
+            transition: var(--transicao);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Detalhes coloridos no topo de cada card simulando post-its/abas */
+        .card-avaliacao::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+        }
+
+        .card-avaliacao:nth-child(1)::before { background: var(--rosa-pastel); }
+        .card-avaliacao:nth-child(2)::before { background: var(--lilas-pastel); }
+        .card-avaliacao:nth-child(3)::before { background: var(--verde-pastel); }
+
+        .card-avaliacao:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        /* Perfil do Usuário */
+        .usuario-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--amarelo-pastel);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: var(--texto-principal);
+            font-size: 0.95rem;
+            border: 2px solid #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .nome-usuario h4 {
+            font-size: 1rem;
+            color: var(--texto-principal);
+        }
+
+        .nome-usuario span {
+            font-size: 0.8rem;
+            color: var(--texto-secundario);
+        }
+
+        /* Estrelas */
+        .estrelas {
+            color: var(--cor-estrela);
+            margin-bottom: 12px;
+            font-size: 1.1rem;
+        }
+
+        .texto-comentario {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: var(--texto-principal);
+        }
+
+        /* ==========================================================================
+           FORMULÁRIO DE NOVA AVALIAÇÃO
+           ========================================================================== */
+        .formulario-avaliacao {
+            border-top: 2px dashed #e2e8f0;
+            padding-top: 40px;
+        }
+
+        .formulario-avaliacao h3 {
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            color: var(--texto-principal);
+        }
+
+        .grupo-input {
+            margin-bottom: 20px;
+        }
+
+        .grupo-input label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--texto-principal);
+        }
+
+        .input-estilizado {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            background-color: #fcfdfd;
+            font-size: 0.95rem;
+            color: var(--texto-principal);
+            transition: var(--transicao);
+            outline: none;
+        }
+
+        .input-estilizado:focus {
+            border-color: var(--lilas-pastel);
+            background-color: #fff;
+            box-shadow: 0 0 0 4px rgba(199, 206, 234, 0.4);
+        }
+
+        textarea.input-estilizado {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        /* Seleção de Estrelas Interativa (Simulação Visual) */
+        .selecao-estrelas {
+            display: flex;
+            gap: 8px;
+            flex-direction: row-reverse;
+            justify-content: flex-end;
+            margin-bottom: 24px;
+        }
+
+        .selecao-estrelas input {
+            display: none;
+        }
+
+        .selecao-estrelas label {
+            font-size: 2rem;
+            color: #cbd5e0;
+            cursor: pointer;
+            transition: var(--transicao);
+        }
+
+        .selecao-estrelas label:hover,
+        .selecao-estrelas label:hover ~ label,
+        .selecao-estrelas input:checked ~ label {
+            color: var(--cor-estrela);
+        }
+
+        /* Botão de Enviar Estilo Papelaria */
+        .botao-enviar {
+            background: linear-gradient(135deg, var(--rosa-pastel), var(--lilas-pastel));
+            color: var(--texto-principal);
+            border: none;
+            padding: 14px 32px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: var(--transicao);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(199, 206, 234, 0.4);
+        }
+
+        .botao-enviar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(199, 206, 234, 0.6);
+            opacity: 0.95;
+        }
+
+        .botao-enviar:active {
+            transform: translateY(0);
+        }
+
+        /* Responsividade */
+        @media (max-width: 600px) {
+            .container-avaliacoes {
+                padding: 24px 16px;
+            }
+            .cabecalho-secao h2 {
+                font-size: 1.6rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container-avaliacoes">
+        
+        <!-- Cabeçalho -->
+        <header class="cabecalho-secao">
+            <h2>O que dizem os nossos Loucos por Papelaria</h2>
+            <p>Deixe seu feedback sobre nossos planners, canetas e mimos!</p>
+        </header>
+
+        <!-- Grid de Avaliações Existentes -->
+        <section class="grid-avaliacoes">
+            
+            <!-- Card 1 -->
+            <article class="card-avaliacao">
+                <div class="usuario-info">
+                    <div class="avatar" style="background-color: var(--rosa-pastel);">MA</div>
+                    <div class="nome-usuario">
+                        <h4>Mariana Alencar</h4>
+                        <span>Há 2 dias</span>
+                    </div>
+                </div>
+                <div class="estrelas">★★★★★</div>
