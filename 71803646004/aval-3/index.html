@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Sistema de Estoque</title>
+
+    <link rel="stylesheet" href="style.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+    <div class="container">
+
+        <!-- MENU LATERAL -->
+        <aside class="sidebar">
+
+            <div class="logo">
+                <div class="logo-icon">📦</div>
+                <div>
+                    <h2>StockPro</h2>
+                    <span>Controle de Estoque</span>
+                </div>
+            </div>
+
+            <nav>
+                <a href="#dashboard" class="menu-item active">
+                    🏠 Dashboard
+                </a>
+
+                <a href="#produtos" class="menu-item">
+                    📦 Produtos
+                </a>
+
+                <a href="#cadastro" class="menu-item">
+                    ➕ Cadastrar
+                </a>
+
+                <a href="#relatorio" class="menu-item">
+                    📊 Relatório
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <p>Sistema de Estoque</p>
+                <span>Versão 1.0</span>
+            </div>
+
+        </aside>
+
+
+        <!-- CONTEÚDO PRINCIPAL -->
+        <main class="main">
+
+            <!-- TOPO -->
+            <header class="topbar">
+
+                <div>
+                    <h1>Sistema de Estoque</h1>
+                    <p>Gerencie seus produtos de forma simples e eficiente.</p>
+                </div>
+
+                <div class="user">
+                    <div class="user-icon">👤</div>
+                    <div>
+                        <strong>Administrador</strong>
+                        <span>Online</span>
+                    </div>
+                </div>
+
+            </header>
+
+
+            <!-- DASHBOARD -->
+            <section id="dashboard" class="section">
+
+                <div class="section-title">
+                    <div>
+                        <h2>Dashboard</h2>
+                        <p>Resumo geral do seu estoque.</p>
+                    </div>
+                </div>
+
+
+                <div class="cards">
+
+                    <div class="card">
+                        <div class="card-icon blue">📦</div>
+                        <div>
+                            <span>Total de produtos</span>
+                            <h3 id="totalProdutos">0</h3>
+                        </div>
+                    </div>
+
+
+                    <div class="card">
+                        <div class="card-icon green">🔢</div>
+                        <div>
+                            <span>Itens em estoque</span>
+                            <h3 id="totalItens">0</h3>
+                        </div>
+                    </div>
+
+
+                    <div class="card">
+                        <div class="card-icon orange">⚠️</div>
+                        <div>
+                            <span>Estoque baixo</span>
+                            <h3 id="estoqueBaixo">0</h3>
+                        </div>
+                    </div>
+
+
+                    <div class="card">
+                        <div class="card-icon purple">💰</div>
+                        <div>
+                            <span>Valor do estoque</span>
+                            <h3 id="valorEstoque">R$ 0,00</h3>
+                        </div>
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- PRODUTOS RECENTES -->
+            <section class="content-grid">
+
+                <div class="panel">
+
+                    <div class="panel-header">
+                        <div>
+                            <h2>Produtos recentes</h2>
+                            <p>Últimos produtos cadastrados.</p>
+                        </div>
+
+                        <a href="#produtos" class="btn-secondary">
+                            Ver todos
+                        </a>
+                    </div>
+
+                    <div id="produtosRecentes" class="recent-products">
+                        <!-- Produtos inseridos pelo JavaScript -->
+                    </div>
+
+                </div>
+
+
+                <!-- ALERTAS -->
+                <div class="panel">
+
+                    <div class="panel-header">
+                        <div>
+                            <h2>Alertas</h2>
+                            <p>Produtos que precisam de atenção.</p>
+                        </div>
+                    </div>
+
+                    <div id="alertas" class="alerts">
+                        <!-- Alertas inseridos pelo JavaScript -->
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- LISTA DE PRODUTOS -->
+            <section id="produtos" class="section">
+
+                <div class="section-title">
+
+                    <div>
+                        <h2>Produtos</h2>
+                        <p>Consulte e gerencie os produtos cadastrados.</p>
+                    </div>
+
+                    <a href="#cadastro" class="btn-primary">
+                        + Novo produto
+                    </a>
+
+                </div>
+
+
+                <!-- FILTROS -->
+                <div class="filters">
+
+                    <div class="search-box">
+                        🔎
+                        <input
+                            type="text"
+                            id="campoBusca"
+                            placeholder="Pesquisar produto..."
+                        >
+                    </div>
+
+
+                    <select id="filtroCategoria">
+
+                        <option value="todos">
+                            Todas as categorias
+                        </option>
+
+                    </select>
+
+
+                    <select id="filtroStatus">
+
+                        <option value="todos">
+                            Todos os status
+                        </option>
+
+                        <option value="normal">
+                            Estoque normal
+                        </option>
+
+                        <option value="baixo">
+                            Estoque baixo
+                        </option>
+
+                        <option value="esgotado">
+                            Esgotado
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- TABELA -->
+                <div class="table-container">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+                                <th>Código</th>
+                                <th>Produto</th>
+                                <th>Categoria</th>
+                                <th>Quantidade</th>
+                                <th>Preço</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="tabelaProdutos">
+                            <!-- Produtos inseridos pelo JavaScript -->
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+
+            <!-- CADASTRO -->
+            <section id="cadastro" class="section">
+
+                <div class="section-title">
+
+                    <div>
+                        <h2>Cadastrar produto</h2>
+                        <p>Adicione um novo produto ao estoque.</p>
+                    </div>
+
+                </div>
+
+
+                <div class="form-card">
+
+                    <form id="formProduto">
+
+                        <div class="form-grid">
+
+                            <div class="input-group">
+
+                                <label for="codigo">
+                                    Código
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="codigo"
+                                    placeholder="Ex: PROD-001"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div class="input-group">
+
+                                <label for="nome">
+                                    Nome do produto
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="nome"
+                                    placeholder="Digite o nome"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div class="input-group">
+
+                                <label for="categoria">
+                                    Categoria
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="categoria"
+                                    placeholder="Ex: Informática"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div class="input-group">
+
+                                <label for="quantidade">
+                                    Quantidade
+                                </label>
+
+                                <input
+                                    type="number"
+                                    id="quantidade"
+                                    min="0"
+                                    placeholder="0"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div class="input-group">
+
+                                <label for="preco">
+                                    Preço
+                                </label>
+
+                                <input
+                                    type="number"
+                                    id="preco"
+                                    min="0"
+                                    step="0.01"
+                                    placeholder="0,00"
+                                    required
+                                >
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="form-actions">
+
+                            <button
+                                type="reset"
+                                class="btn-secondary"
+                            >
+                                Limpar
+                            </button>
+
+                            <button
+                                type="submit"
+                                class="btn-primary"
+                            >
+                                Cadastrar produto
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </section>
+
+
+            <!-- RELATÓRIO -->
+            <section id="relatorio" class="section">
+
+                <div class="section-title">
+
+                    <div>
+                        <h2>Relatório</h2>
+                        <p>Resumo financeiro e quantitativo.</p>
+                    </div>
+
+                </div>
+
+
+                <div class="report-card">
+
+                    <div class="report-item">
+                        <span>Produtos cadastrados</span>
+                        <strong id="relatorioProdutos">0</strong>
+                    </div>
+
+                    <div class="report-item">
+                        <span>Total de itens</span>
+                        <strong id="relatorioItens">0</strong>
+                    </div>
+
+                    <div class="report-item">
+                        <span>Produtos com estoque baixo</span>
+                        <strong id="relatorioBaixo">0</strong>
+                    </div>
+
+                    <div class="report-item">
+                        <span>Produtos esgotados</span>
+                        <strong id="relatorioEsgotado">0</strong>
+                    </div>
+
+                    <div class="report-item">
+                        <span>Valor total do estoque</span>
+                        <strong id="relatorioValor">R$ 0,00</strong>
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- RODAPÉ -->
+            <footer>
+
+                <p>
+                    © 2026 StockPro - Sistema de Controle de Estoque
+                </p>
+
+            </footer>
+
+        </main>
+
+    </div>
+
+
+    <!-- NOTIFICAÇÃO -->
+    <div id="toast" class="toast">
+        Produto cadastrado com sucesso!
+    </div>
+
+
+    <script src="script.js"></script>
+
+<script src="script.js"></script></body>
+</html>
