@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mata & Madeira | Loja de Janelas de Madeira</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"><link href="style.css" rel="stylesheet"></head>
+<body>
+
+    <!-- CABEÇALHO -->
+    <header>
+        <div class="top-bar">
+            <p><i class="fa-solid fa-tree"></i> Madeira nobre de manejo sustentável • Alta durabilidade e acabamento impecável</p>
+        </div>
+        <div class="main-header container">
+            <div class="logo">
+                <i class="fa-solid fa-door-open"></i>
+                <div>
+                    <h1>Mata & Madeira</h1>
+                    <span>Janelas e Esquadrias</span>
+                </div>
+            </div>
+            <div class="header-actions">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Buscar modelo...">
+                    <button id="searchBtn"><i class="fa-solid fa-magnifying-glass"></i></button>
+                </div>
+                <div class="coupon-display" onclick="switchSection('cupons')">
+                    <i class="fa-solid fa-ticket"></i>
+                    <span id="headerCouponBadge">Cupons</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- MENU EXATO SOLICITADO -->
+        <nav class="main-nav">
+            <div class="container">
+                <ul>
+                    <li><a href="#" class="nav-link active" data-section="todos" onclick="switchSection('todos')"><i class="fa-solid fa-store"></i> Todos</a></li>
+                    <li><a href="#" class="nav-link" data-section="estoque" onclick="switchSection('estoque')"><i class="fa-solid fa-boxes-stacked"></i> Estoque</a></li>
+                    <li><a href="#" class="nav-link" data-section="promocoes" onclick="switchSection('promocoes')"><i class="fa-solid fa-tags"></i> Promoções</a></li>
+                    <li><a href="#" class="nav-link" data-section="cupons" onclick="switchSection('cupons')"><i class="fa-solid fa-percent"></i> Cupons</a></li>
+                    <li><a href="#" class="nav-link" data-section="contato" onclick="switchSection('contato')"><i class="fa-solid fa-headset"></i> Contato do vendedor</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="container">
+
+        <!-- SEÇÃO: TODOS -->
+        <section id="section-todos" class="section-content active">
+            <div class="banner">
+                <div class="banner-text">
+                    <h2>Elegância e Resistência em Madeira Nobre</h2>
+                    <p>Transforme a iluminação e o visual da sua casa com janelas artesanais e industriais de alto padrão.</p>
+                </div>
+            </div>
+            <div class="section-title">
+                <h3>Catálogo de Janelas</h3>
+                <p>Conheça nossos modelos de correr, basculantes, venezianas e pivotantes.</p>
+            </div>
+            <div id="productGrid" class="product-grid">
+                <!-- Renderizado via JavaScript -->
+            </div>
+        </section>
+
+        <!-- SEÇÃO: ESTOQUE -->
+        <section id="section-estoque" class="section-content">
+            <div class="section-title">
+                <h3>Controle e Gestão de Estoque</h3>
+                <p>Cadastre novos lotes de madeira, atualize quantidades ou edite preços.</p>
+            </div>
+            
+            <div class="estoque-container">
+                <div class="card form-card">
+                    <h4><i class="fa-solid fa-plus-circle"></i> Cadastrar Janela / Modelo</h4>
+                    <form id="productForm" onsubmit="handleAddProduct(event)">
+                        <input type="hidden" id="editIndex" value="-1">
+                        <div class="form-group">
+                            <label>Nome do Modelo / Tipo:</label>
+                            <input type="text" id="prodName" required placeholder="Ex: Janela Veneziana 1,20x1,00m">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Tipo de Madeira:</label>
+                                <select id="prodWood" required>
+                                    <option value="Itaúba">Itaúba</option>
+                                    <option value="Cedro">Cedro</option>
+                                    <option value="Angelim">Angelim</option>
+                                    <option value="Eucalipto Tratado">Eucalipto Tratado</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Preço (R$):</label>
+                                <input type="number" step="0.01" id="prodPrice" required placeholder="0.00">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Quantidade Pronta:</label>
+                                <input type="number" id="prodStock" required placeholder="5">
+                            </div>
+                            <div class="form-group">
+                                <label>Em Promoção?</label>
+                                <select id="prodPromo">
+                                    <option value="nao">Não</option>
+                                    <option value="sim">Sim</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>URL da Imagem Ilustrativa:</label>
+                            <input type="text" id="prodImage" placeholder="https://exemplo.com/foto-janela.jpg">
+                        </div>
+                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Salvar no Estoque</button>
+                        <button type="button" id="cancelEditBtn" class="btn btn-secondary" style="display:none;" onclick="cancelEdit()">Cancelar</button>
+                    </form>
+                </div>
+
+                <div class="card table-card">
+                    <h4><i class="fa-solid fa-clipboard-list"></i> Inventário de Esquadrias</h4>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Modelo</th>
+                                    <th>Madeira</th>
+                                    <th>Preço</th>
+                                    <th>Estoque</th>
+                                    <th>Promo</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="stockTableBody">
+                                <!-- Preenchido via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEÇÃO: PROMOÇÕES -->
+        <section id="section-promocoes" class="section-content">
+            <div class="section-title">
+                <h3>Ofertas Especiais em Janelas</h3>
+                <p>Modelos selecionados com preços imperdíveis para sua obra ou reforma.</p>
+            </div>
+            <div id="gridPromocoes" class="product-grid"></div>
+        </section>
+
+        <!-- SEÇÃO: CUPONS -->
+        <section id="section-cupons" class="section-content">
+            <div class="section-title">
+                <h3>Cupons de Desconto Ativos</h3>
+                <p>Copie o código do cupom e informe ao vendedor na hora do orçamento.</p>
+            </div>
+            
+            <div class="coupons-grid">
+                <div class="card coupon-card">
+                    <div class="coupon-badge-top">10% OFF</div>
+                    <h4>PRIMEIRAOBRA</h4>
+                    <p>Desconto válido em qualquer modelo de janela de madeira para primeira compra.</p>
+                    <button class="btn btn-secondary" onclick="copyCoupon('PRIMEIRAOBRA')"><i class="fa-regular fa-copy"></i> Copiar Cupom</button>
+                </div>
+                <div class="card coupon-card">
+                    <div class="coupon-badge-top">R$ 150 OFF</div>
+                    <h4>MADEIRANOBRE150</h4>
+                    <p>Desconto aplicável em compras acima de R$ 1.500,00 em janelas de Itaúba.</p>
+                    <button class="btn btn-secondary" onclick="copyCoupon('MADEIRANOBRE150')"><i class="fa-regular fa-copy"></i> Copiar Cupom</button>
+                </div>
+                <div class="card coupon-card">
+                    <div class="coupon-badge-top">Frete Grátis</div>
+                    <h4>ENTREGAREGIONAL</h4>
+                    <p>Frete grátis para entregas estruturadas na região urbana.</p>
+                    <button class="btn btn-secondary" onclick="copyCoupon('ENTREGAREGIONAL')"><i class="fa-regular fa-copy"></i> Copiar Cupom</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEÇÃO: CONTATO DO VENDEDOR -->
+        <section id="section-contato" class="section-content">
+            <div class="section-title">
+                <h3>Fale com o Vendedor Especialista</h3>
+                <p>Tire dúvidas sobre medidas especiais, instalação, tipos de madeira e orçamentos corporativos.</p>
+            </div>
+            
+            <div class="contact-grid">
+                <div class="card contact-info">
+                    <h4><i class="fa-solid fa-address-card"></i> Canais Oficiais de Atendimento</h4>
+                    <p><i class="fa-brands fa-whatsapp" style="color: #25d366;"></i> <strong>WhatsApp Comercial:</strong> (89) 98877-6655</p>
+                    <p><i class="fa-solid fa-envelope" style="color: var(--primary);"></i> <strong>E-mail:</strong> vendas@mataemadeira.com.br</p>
+                    <p><i class="fa-solid fa-location-dot" style="color: var(--accent);"></i> <strong>Depósito & Loja:</strong> Rodovia BR, KM 12 - Oeiras, PI</p>
+                    <p><i class="fa-solid fa-clock" style="color: #c86d34;"></i> <strong>Horário:</strong> Seg a Sex das 07:30 às 17:30</p>
+                    
+                    <button class="btn btn-whatsapp" onclick="openWhatsAppContact()" style="margin-top: 15px;">
+                        <i class="fa-brands fa-whatsapp"></i> Iniciar Atendimento Direto
+                    </button>
+                </div>
+
+                <div class="card contact-form-card">
+                    <h4><i class="fa-solid fa-paper-plane"></i> Solicitar Orçamento Personalizado</h4>
+                    <form onsubmit="handleContact(event)">
+                        <div class="form-group">
+                            <label>Seu Nome / Construtor:</label>
+                            <input type="text" required placeholder="Ex: Carlos Eduardo">
+                        </div>
+                        <div class="form-group">
+                            <label>Telefone / WhatsApp:</label>
+                            <input type="text" required placeholder="(99) 99999-9999">
+                        </div>
+                        <div class="form-group">
+                            <label>Detalhes do Projeto (Medidas e Quantidades):</label>
+                            <textarea rows="4" required placeholder="Preciso de 4 janelas de correr 1,00x1,20 em madeira Itaúba..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-paper-plane"></i> Enviar Solicitação</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- RODAPÉ -->
+    <footer>
+        <div class="container footer-content">
+            <div>
+                <h3>Mata & Madeira</h3>
+                <p>Especialistas em esquadrias e janelas de madeira de alto padrão e durabilidade.</p>
+            </div>
+            <div>
+                <p>&copy; 2026 Mata & Madeira. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="script.js"></script>
+<script src="script.js"></script></body>
+</html>
