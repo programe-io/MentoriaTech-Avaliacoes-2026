@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Estoque</title>
+</head>
+<body>
+
+    <h2>Cadastro de Produto</h2>
+    Código: <input type="text" id="cod"><br><br>
+    Descrição: <input type="text" id="desc"><br><br>
+    Quantidade: <input type="number" id="qtd"><br><br>
+    Valor: <input type="number" id="val"><br><br>
+    <button onclick="cadastrar()">Cadastrar</button>
+
+    <h2>Produtos</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Código</th>
+                <th>Descrição</th>
+                <th>Qtd</th>
+                <th>Valor</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody id="lista"></tbody>
+    </table>
+
+    <script>
+        let estoque = [];
+
+        function cadastrar() {
+            let codigo = document.getElementById('cod').value;
+            let descricao = document.getElementById('desc').value;
+            let quantidade = parseInt(document.getElementById('qtd').value);
+            let valor = parseFloat(document.getElementById('val').value);
+
+            estoque.push({ codigo, descricao, quantidade, valor });
+            mostrar();
+        }
+
+        function mostrar() {
+            let tbody = document.getElementById('lista');
+            tbody.innerHTML = '';
+            
+            estoque.forEach(p => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${p.codigo}</td>
+                        <td>${p.descricao}</td>
+                        <td>${p.quantidade}</td>
+                        <td>R$ ${p.valor}</td>
+                        <td>
+                            <button onclick="mudarPreco('${p.codigo}')">Mudar Preço</button>
+                            <button onclick="mudarQtd('${p.codigo}')">Mudar Qtd</button>
+                        </td>
+                    </tr>`;
+            });
+        }
+
+        function mudarPreco(codigo) {
+            let p = estoque.find(prod => prod.codigo === codigo);
+            p.valor = parseFloat(prompt("Novo valor:", p.valor));
+            mostrar();
+        }
+
+        function mudarQtd(codigo) {
+            let p = estoque.find(prod => prod.codigo === codigo);
+            p.quantidade = parseInt(prompt("Nova quantidade:", p.quantidade));
+            mostrar();
+        }
+    </script>
+<script src="script.js"></script></body>
+</html>
