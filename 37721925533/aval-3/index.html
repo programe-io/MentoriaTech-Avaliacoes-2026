@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulação de IMC</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            max-width: 600px;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        /* Cores distintas para os status */
+        .abaixo-peso {
+            color: #17a2b8;
+            font-weight: bold;
+        }
+        .normal {
+            color: #28a745;
+            font-weight: bold;
+        }
+        .sobrepeso {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        .obesidade {
+            color: #721c24;
+            font-weight: bold;
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+    <h2>Tabela de Dados e IMC</h2>
+
+    <table id="tabela-pessoas">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Peso (kg)</th>
+                <th>Altura (m)</th>
+                <th>IMC</th>
+                <th>Situação</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Os dados serão inseridos e calculados pelo JavaScript -->
+        </tbody>
+    </table>
+
+    <script>
+        // Simulando a lista de dados sobre as pessoas
+        const pessoas = [
+            { nome: "João 1", peso: 72.0, altura: 1.65 },
+            { nome: "João 2", peso: 51.0, altura: 1.68 },
+            { nome: "Maria", peso: 60.0, altura: 1.60 },
+            { nome: "Carlos", peso: 95.0, altura: 1.75 }
+        ];
+
+        const tbody = document.querySelector("#tabela-pessoas tbody");
+
+        pessoas.forEach(pessoa => {
+            // Cálculo do IMC: peso / (altura * altura)
+            const imc = (pessoa.peso / (pessoa.altura * pessoa.altura)).toFixed(1);
+            
+            let situacao = "";
+            let classeCor = "";
+
+            // Definindo o status e a classe de cor correspondente
+            if (imc < 18.5) {
+                situacao = "Abaixo do peso";
+                classeCor = "abaixo-peso";
+            } else if (imc >= 18.5 && imc <= 24.9) {
+                situacao = "Normal";
+                classeCor = "normal";
+            } else if (imc >= 25.0 && imc <= 29.9) {
+                situacao = "Sobrepeso";
+                classeCor = "sobrepeso";
+            } else {
+                situacao = "Obesidade";
+                classeCor = "obesidade";
+            }
+
+            // Criando a linha da tabela
+            const linha = document.createElement("tr");
+            linha.innerHTML = `
+                <td>${pessoa.nome}</td>
+                <td>${pessoa.peso.toFixed(1)}</td>
+                <td>${pessoa.altura.toFixed(2)}</td>
+                <td>${imc}</td>
+                <td class="${classeCor}">${situacao}</td>
+            `;
+
+            tbody.appendChild(linha);
+        });
+    </script>
+
+<script src="script.js"></script></body>
+</html>
