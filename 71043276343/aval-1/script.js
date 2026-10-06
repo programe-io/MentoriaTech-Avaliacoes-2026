@@ -1,4 +1,5 @@
 
+
 // Lista (array) de produtos
 let produtos = [];
 
@@ -30,41 +31,40 @@ function listarProdutos(){
 
 function atualizarValor(codigoProduto, novoValor){
     if(novoValor < 0){
-       throw new Error("Valor deve ser maior igaul a zero");
+       throw new Error("Valor deve ser maior igual a zero");
     }
 
     const produto = produtos.find(prod => prod.codigo ===codigoProduto);
-  
   if(produto){
     produto.valor = novoValor;
   }
-  else{
-    throw new Error("Produto nao encontrado");
+ else{
+   throw new Error("Produto não encontrado");
   }
 }
+
 function atualizarQuantidade(codigoProduto, novaQuantidade){
-if(novaQuantidade < 1){
-  throw new Error("Valor deve maior igual a zero"); 
-}
-  const produto = produtos.find(prod => prod.codigo ===codigoProduto);
+  if(novaQuantidade < 1){
+    throw new Error("Valor deve maior igual a zero");
+  }
+  const produto = produtos.find(prod => prod.codigo === codigoProduto);
   if(produto){
     produto.quantidade += novaQuantidade;
-   }
+  }
   else{
-    throw new Error("Produto nao encontrado");
+    throw new Error("Produto não encontrado");
   }
 }
 
 
 
+  // -------------------------
+  listarProdutos();
+  cadastrarProduto("Cadeira Gamer", 12, 699.00);
+  cadastrarProduto("Mouse Logi", 38,99.00);
+  listarProdutos();
+  atualizarValor(2,97.00);
+  listarProdutos();
 
-// -----------------------------
-listarProdutos();
-cadastrarProduto("Cadeira Gamer", 12, 699.00);
-cadastrarProduto("Mouse Logi",33,99,00);
-listarProdutos();
-atualizarValor(1,97.00);
-listarProdutos();
-
-atualizarQuantidade(1,3);
-listarProdutos();
+  atualizarQuantidade(1, 3);
+  listarProdutos();
