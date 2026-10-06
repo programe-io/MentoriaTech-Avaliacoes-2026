@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Variedade de Acessórios | Joias & Semijoias</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <!-- FontAwesome para ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Arquivo CSS -->
+    <link rel="stylesheet" href="style.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"><link href="style.css" rel="stylesheet"></head>
+<body>
+
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <p>✨ Frete Grátis nas compras acima de R$ 300 | Parcele em até 6x sem juros ✨</p>
+    </div>
+
+    <!-- Header / Navbar -->
+    <header class="header">
+        <div class="container nav-container">
+            <a href="#" class="logo" onclick="switchTab('todos')">
+                <i class="fa-solid fa-gem"></i> Variedade de Acessórios
+            </a>
+            
+            <nav class="nav-menu" id="navMenu">
+                <button class="nav-link active" data-target="todos" onclick="switchTab('todos')">Todos</button>
+                <button class="nav-link" data-target="estoque" onclick="switchTab('estoque')">Estoque</button>
+                <button class="nav-link" data-target="promocoes" onclick="switchTab('promocoes')">Promoções</button>
+                <button class="nav-link" data-target="contato" onclick="switchTab('contato')">Contato do Cliente</button>
+            </nav>
+
+            <div class="header-actions">
+                <button class="cart-btn" id="cartBtn" onclick="toggleCartModal()">
+                    <i class="fa-solid fa-bag-shopping"></i>
+                    <span class="cart-badge" id="cartCount">0</span>
+                </button>
+                <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleMobileMenu()">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container main-content">
+
+        <!-- SEÇÃO: TODOS OS PRODUTOS -->
+        <section id="tab-todos" class="tab-content active">
+            <div class="hero-banner">
+                <h1>Elegância em Cada Detalhe</h1>
+                <p>Descubra nossa coleção exclusiva de joias e semijoias feitas para realçar a sua beleza única.</p>
+            </div>
+
+            <div class="filters-bar">
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="searchInput" placeholder="Buscar por anel, colar, brinco..." oninput="filterProducts()">
+                </div>
+                <div class="category-filters">
+                    <button class="cat-btn active" onclick="filterByCategory('todos', this)">Todos</button>
+                    <button class="cat-btn" onclick="filterByCategory('anel', this)">Anéis</button>
+                    <button class="cat-btn" onclick="filterByCategory('colar', this)">Colares</button>
+                    <button class="cat-btn" onclick="filterByCategory('brinco', this)">Brincos</button>
+                    <button class="cat-btn" onclick="filterByCategory('pulseira', this)">Pulseiras</button>
+                </div>
+            </div>
+
+            <div class="products-grid" id="productsGrid">
+                <!-- Inserido dinamicamente via JS -->
+            </div>
+        </section>
+
+        <!-- SEÇÃO: ESTOQUE -->
+        <section id="tab-estoque" class="tab-content">
+            <div class="section-header">
+                <h2>Controle de Estoque</h2>
+                <p>Monitore a disponibilidade em tempo real das nossas peças exclusivas.</p>
+            </div>
+            
+            <div class="stock-summary">
+                <div class="stock-card">
+                    <i class="fa-solid fa-boxes-stacked"></i>
+                    <div>
+                        <span id="totalItemsStock">0</span>
+                        <p>Total de Peças</p>
+                    </div>
+                </div>
+                <div class="stock-card">
+                    <i class="fa-solid fa-triangle-exclamation" style="color: #d97706;"></i>
+                    <div>
+                        <span id="lowStockCount">0</span>
+                        <p>Estoque Baixo (&lt; 5)</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="stock-table">
+                    <thead>
+                        <tr>
+                            <th>Produto</th>
+                            <th>Categoria</th>
+                            <th>Preço Unitário</th>
+                            <th>Unidades Disponíveis</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="stockTableBody">
+                        <!-- Inserido dinamicamente via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- SEÇÃO: PROMOÇÕES -->
+        <section id="tab-promocoes" class="tab-content">
+            <div class="hero-banner promo-banner">
+                <h1>✨ Ofertas Especiais ✨</h1>
+                <p>Peças selecionadas com descontos exclusivos por tempo limitado.</p>
+            </div>
+
+            <div class="products-grid" id="promoProductsGrid">
+                <!-- Inserido dinamicamente via JS -->
+            </div>
+        </section>
+
+        <!-- SEÇÃO: CONTATO DO CLIENTE -->
+        <section id="tab-contato" class="tab-content">
+            <div class="section-header">
+                <h2>Fale Conosco</h2>
+                <p>Estamos à disposição para tirar dúvidas, auxiliar em trocas ou criar peças personalizadas.</p>
+            </div>
+
+            <div class="contact-wrapper">
+                <div class="contact-info">
+                    <div class="info-item">
+                        <i class="fa-solid fa-location-dot"></i>
+                        <div>
+                            <h4>Showroom Principal</h4>
+                            <p>Av. Paulista, 1000 - Sala 42 - São Paulo/SP</p>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <i class="fa-solid fa-phone"></i>
+                        <div>
+                            <h4>Telefone / WhatsApp</h4>
+                            <p>(11) 99888-7766</p>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <i class="fa-solid fa-envelope"></i>
+                        <div>
+                            <h4>E-mail</h4>
+                            <p>atendimento@variedadedeacessorios.com.br</p>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <i class="fa-solid fa-clock"></i>
+                        <div>
+                            <h4>Horário de Atendimento</h4>
+                            <p>Segunda a Sexta: 09h às 18h<br>Sábados: 10h às 14h</p>
+                        </div>
+                    </div>
+                </div>
+
+                <form class="contact-form" id="contactForm" onsubmit="handleContactSubmit(event)">
+                    <h3>Envie sua Mensagem</h3>
+                    <div class="form-group">
+                        <label for="clientName">Seu Nome</label>
+                        <input type="text" id="clientName" required placeholder="Digite seu nome completo">
+                    </div>
+                    <div class="form-group">
+                        <label for="clientEmail">E-mail</label>
+                        <input type="email" id="clientEmail" required placeholder="seu@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="clientSubject">Assunto</label>
+                        <select id="clientSubject" required>
+                            <option value="">Selecione o assunto</option>
+                            <option value="duvida">Dúvida sobre Produto</option>
+                            <option value="pedido">Acompanhamento de Pedido</option>
+                            <option value="troca">Troca ou Devolução</option>
+                            <option value="outro">Outro Assunto</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="clientMessage">Mensagem</label>
+                        <textarea id="clientMessage" rows="4" required placeholder="Como podemos ajudar você hoje?"></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary">Enviar Mensagem</button>
+                    <div id="formSuccessMsg" class="success-message" style="display: none;">
+                        <i class="fa-solid fa-circle-check"></i> Mensagem enviada com sucesso! Retornaremos em breve.
+                    </div>
+                </form>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal do Carrinho -->
+    <div class="cart-modal-overlay" id="cartModalOverlay">
+        <div class="cart-modal">
+            <div class="cart-header">
+                <h3>Sua Sacola de Joias</h3>
+                <button class="close-cart" onclick="toggleCartModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="cart-items" id="cartItemsContainer">
+                <!-- Itens do carrinho aqui -->
+            </div>
+            <div class="cart-footer" id="cartFooter">
+                <div class="cart-total">
+                    <span>Subtotal:</span>
+                    <strong id="cartSubtotal">R$ 0,00</strong>
+                </div>
+                <button class="btn-primary checkout-btn" onclick="checkoutWhatsApp()">Finalizar via WhatsApp</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 Variedade de Acessórios. Todos os direitos reservados.</p>
+            <div class="social-links">
+                <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#"><i class="fa-brands fa-facebook"></i></a>
+                <a href="#"><i class="fa-brands fa-whatsapp"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Arquivo JavaScript -->
+    <script src="script.js"></script>
+<script src="script.js"></script></body>
+</html>
