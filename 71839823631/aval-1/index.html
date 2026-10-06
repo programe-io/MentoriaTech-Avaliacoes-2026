@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NAT MAKES - Sistema de Controle de Estoque</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Poppins -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <!-- Seu arquivo CSS customizado -->
+  <link rel="stylesheet" href="style.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col">
+
+  <!-- TOP HEADER -->
+  <header class="bg-white border-b border-sky-100 sticky top-0 z-30 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      
+      <!-- Logo & Marca -->
+      <div class="flex items-center space-x-3">
+        <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-sky-400 to-sky-200 flex items-center justify-center text-white shadow-md shadow-sky-200">
+          <i data-lucide="sparkles" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <h1 class="text-2xl font-bold tracking-wider text-sky-500 flex items-center gap-1">
+            NAT MAKES
+          </h1>
+          <p class="text-xs text-sky-400 font-medium tracking-widest uppercase">Estoque de Cosméticos & Maquiagem</p>
+        </div>
+      </div>
+
+      <!-- Barra de Pesquisa Global & Ações -->
+      <div class="flex items-center space-x-4">
+        <div class="relative hidden sm:block w-64 md:w-80">
+          <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-sky-400"></i>
+          <input type="text" id="global-search" oninput="filtrarProdutos()" placeholder="Buscar por produto, SKU ou marca..." 
+                 class="w-full pl-9 pr-4 py-2 text-sm bg-sky-50/50 border border-sky-200 rounded-full focus:outline-none focus:ring-2 focus:ring-sky-400 focus:bg-white transition-all placeholder:text-sky-300">
+        </div>
+
+        <button onclick="abrirModalProduto()" class="bg-sky-400 hover:bg-sky-500 text-white px-5 py-2.5 rounded-full font-medium text-sm flex items-center gap-2 shadow-lg shadow-sky-200 transition-all hover:scale-105">
+          <i data-lucide="plus" class="w-4 h-4"></i>
+          <span>Novo Produto</span>
+        </button>
+
+        <div class="h-8 w-px bg-sky-100 hidden sm:block"></div>
+
+        <div class="flex items-center space-x-3 pl-2">
+          <div class="w-10 h-10 rounded-full bg-sky-100 flex items-center justify-center text-sky-600 font-semibold border-2 border-sky-200">
+            NM
+          </div>
+          <div class="hidden lg:block text-left">
+            <p class="text-xs font-semibold text-slate-700">Administrador</p>
+            <p class="text-[10px] text-sky-400">loja@natmakes.com</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONTEÚDO PRINCIPAL -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+    <!-- CARDS DE ESTATÍSTICAS -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      
+      <!-- Total de Itens -->
+      <div class="bg-white p-5 rounded-2xl border border-sky-100 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+        <div class="absolute -right-4 -bottom-4 w-20 h-20 bg-sky-50 rounded-full group-hover:scale-110 transition-transform"></div>
+        <div class="flex items-center justify-between mb-3 relative">
+          <span class="text-xs font-semibold text-sky-500 tracking-wider uppercase">Total em Estoque</span>
+          <div class="p-2.5 bg-sky-100/70 text-sky-500 rounded-xl">
+            <i data-lucide="package" class="w-5 h-5"></i>
+          </div>
+        </div>
+        <div class="relative">
+          <h3 id="stat-total-itens" class="text-3xl font-bold text-slate-800">0</h3>
+          <p class="text-xs text-slate-400 mt-1">unidades cadastradas</p>
+        </div>
+      </div>
+
+      <!-- Valor do Estoque -->
+      <div class="bg-white p-5 rounded-2xl border border-sky-100 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+        <div class="absolute -right-4 -bottom-4 w-20 h-20 bg-sky-50 rounded-full group-hover:scale-110 transition-transform"></div>
+        <div class="flex items-center justify-between mb-3 relative">
+          <span class="text-xs font-semibold text-sky-500 tracking-wider uppercase">Valor Total</span>
+          <div class="p-2.5 bg-sky-100/70 text-sky-500 rounded-xl">
+            <i data-lucide="circle-dollar-sign" class="w-5 h-5"></i>
+          </div>
+        </div>
+        <div class="relative">
+          <h3 id="stat-valor-total" class="text-3xl font-bold text-slate-800">R$ 0,00</h3>
+          <p class="text-xs text-sky-500 font-medium mt-1">Patrimônio em produtos</p>
+        </div>
+      </div>
+
+      <!-- Estoque Baixo -->
+      <div class="bg-white p-5 rounded-2xl border border-sky-100 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+        <div class="absolute -right-4 -bottom-4 w-20 h-20 bg-amber-50 rounded-full group-hover:scale-110 transition-transform"></div>
+        <div class="flex items-center justify-between mb-3 relative">
+          <span class="text-xs font-semibold text-amber-500 tracking-wider uppercase">Estoque Baixo</span>
+          <div class="p-2.5 bg-amber-100/70 text-amber-500 rounded-xl">
+            <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+          </div>
+        </div>
+        <div class="relative">
+          <h3 id="stat-estoque-baixo" class="text-3xl font-bold text-amber-600">0</h3>
+          <p class="text-xs text-amber-500 mt-1">Produtos precisando repor</p>
+        </div>
+      </div>
+
+      <!-- Categorias -->
+      <div class="bg-white p-5 rounded-2xl border border-sky-100 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+        <div class="absolute -right-4 -bottom-4 w-20 h-20 bg-sky-50 rounded-full group-hover:scale-110 transition-transform"></div>
+        <div class="flex items-center justify-between mb-3 relative">
+          <span class="text-xs font-semibold text-sky-500 tracking-wider uppercase">Categorias</span>
+          <div class="p-2.5 bg-sky-100/70 text-sky-500 rounded-xl">
+            <i data-lucide="layers" class="w-5 h-5"></i>
+          </div>
+        </div>
+        <div class="relative">
+          <h3 id="stat-categorias" class="text-3xl font-bold text-slate-800">0</h3>
+          <p class="text-xs text-slate-400 mt-1">Seções no catálogo</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- PAINEL DE GRÁFICOS -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- Gráfico Categoria -->
+      <div class="bg-white p-6 rounded-2xl border border-sky-100 shadow-sm lg:col-span-2">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h2 class="text-base font-semibold text-slate-800">Distribuição por Categoria</h2>
+            <p class="text-xs text-slate-400">Quantidade de itens em cada linha de cosméticos</p>
+          </div>
+          <span class="p-2 bg-sky-50 text-sky-500 rounded-xl">
+            <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+          </span>
+        </div>
+        <div class="h-64">
+          <canvas id="chartCategoria"></canvas>
+        </div>
+      </div>
+
+      <!-- Gráfico Status -->
+      <div class="bg-white p-6 rounded-2xl border border-sky-100 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h2 class="text-base font-semibold text-slate-800">Status do Estoque</h2>
+            <p class="text-xs text-slate-400">Proporção de disponibilidade</p>
+          </div>
+          <span class="p-2 bg-sky-50 text-sky-500 rounded-xl">
+            <i data-lucide="pie-chart" class="w-4 h-4"></i>
+          </span>
+        </div>
+        <div class="h-64 flex items-center justify-center">
+          <canvas id="chartStatus"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- TABELA DE PRODUTOS & FILTROS -->
+    <div class="bg-white rounded-2xl border border-sky-100 shadow-sm overflow-hidden">
+      
+      <!-- Filtros Header -->
+      <div class="p-5 border-b border-sky-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+            Catálogo de Maquiagens e Cosméticos
+          </h2>
+          <p class="text-xs text-slate-400">Gerencie preços, quantidades e detalhes dos itens da Nat Makes</p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-3">
+          <!-- Filtro Categoria -->
+          <select id="filter-categoria" onchange="filtrarProdutos()" class="px-3 py-2 text-xs bg-sky-50/60 border border-sky-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-400 text-slate-700">
+            <option value="">Todas as Categorias</option>
+            <option value="Maquiagem">Maquiagem</option>
+            <option value="Skincare">Skincare</option>
+            <option value="Perfumaria">Perfumaria</option>
+            <option value="Acessórios">Acessórios</option>
+          </select>
+
+          <!-- Filtro Status -->
+          <select id="filter-status" onchange="filtrarProdutos()" class="px-3 py-2 text-xs bg-sky-50/60 border border-sky-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-400 text-slate-700">
+            <option value="">Todos os Status</option>
+            <option value="Disponível">Disponível</option>
+            <option value="Estoque Baixo">Estoque Baixo</option>
+            <option value="Esgotado">Esgotado</option>
+          </select>
+
+          <!-- Movimentação Rápida -->
+          <button onclick="abrirModalMovimento()" class="px-4 py-2 text-xs bg-sky-100 hover:bg-sky-200 text-sky-700 font-medium rounded-xl transition-colors flex items-center gap-1.5">
+            <i data-lucide="arrow-left-right" class="w-3.5 h-3.5"></i>
+            <span>Registrar Entrada/Saída</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Tabela -->
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-sky-50/50 text-[11px] font-semibold uppercase tracking-wider text-sky-700 border-b border-sky-100">
+              <th class="py-3.5 px-4">Produto</th>
+              <th class="py-3.5 px-4">SKU / Marca</th>
+              <th class="py-3.5 px-4">Categoria</th>
+              <th class="py-3.5 px-4 text-center">Qtd. Estoque</th>
+              <th class="py-3.5 px-4">Preço Un.</th>
+              <th class="py-3.5 px-4">Status</th>
+              <th class="py-3.5 px-4 text-center">Ações</th>
+            </tr>
+          </thead>
+          <tbody id="tabela-produtos" class="divide-y divide-sky-50 text-sm">
+            <!-- Inserido dinamicamente pelo JavaScript -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Tabela Vazia Indicator -->
+      <div id="no-products" class="hidden p-12 text-center">
+        <div class="w-16 h-16 bg-sky-50 rounded-full flex items-center justify-center mx-auto mb-3 text-sky-400">
+          <i data-lucide="package-x" class="w-8 h-8"></i>
+        </div>
+        <p class="text-slate-600 font-medium">Nenhum cosmético encontrado</p>
+        <p class="text-xs text-slate-400 mt-1">Tente ajustar seus filtros de busca ou cadastre um novo produto.</p>
+      </div>
+    </div>
+
+    <!-- HISTÓRICO DE MOVIMENTAÇÕES -->
+    <div class="bg-white rounded-2xl border border-sky-100 shadow-sm p-5">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <h3 class="text-base font-bold text-slate-800">Histórico de Movimentações Recentes</h3>
+          <p class="text-xs text-slate-400">Registro de entradas e saídas do estoque</p>
+        </div>
+        <span class="p-2 bg-sky-50 text-sky-500 rounded-xl">
+          <i data-lucide="history" class="w-4 h-4"></i>
+        </span>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs">
+          <thead>
+            <tr class="text-slate-400 border-b border-slate-100 font-medium">
+              <th class="pb-2">Data/Hora</th>
+              <th class="pb-2">Tipo</th>
+              <th class="pb-2">Produto</th>
+              <th class="pb-2 text-center">Qtd.</th>
+              <th class="pb-2">Observação</th>
+            </tr>
+          </thead>
+          <tbody id="tabela-historico" class="divide-y divide-slate-50 text-slate-600">
+            <!-- Preenchido via JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- RODAPÉ -->
+  <footer class="bg-white border-t border-sky-100 py-6 text-center text-xs text-sky-500 mt-auto">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-2">
+      <p class="font-medium">NAT MAKES &copy; 2026 - Todos os direitos reservados</p>
+      <p class="text-sky-400">Sistema de Gestão e Controle de Estoque de Cosméticos</p>
+    </div>
+  </footer>
+
+  <!-- MODAL CADASTRO / EDIÇÃO PRODUTO -->
+  <div id="modal-produto" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-200">
+    <div class="bg-white w-full max-w-xl rounded-3xl shadow-2xl overflow-hidden border border-sky-100 transform scale-95 transition-transform duration-200 max-h-[90vh] flex flex-col">
+      
+      <div class="bg-gradient-to-r from-sky-400 to-sky-300 p-6 text-white flex justify-between items-center">
+        <div>
+          <h3 id="modal-titulo" class="text-xl font-bold">Cadastrar Novo Cosmético</h3>
+          <p class="text-xs text-sky-100 mt-0.5">Preencha as informações do produto da Nat Makes</p>
+        </div>
+        <button onclick="fecharModalProduto()" class="text-white/80 hover:text-white p-1 rounded-full hover:bg-white/10 transition-colors">
+          <i data-lucide="x" class="w-6 h-6"></i>
+        </button>
+      </div>
+
+      <form id="form-produto" onsubmit="salvarProduto(event)" class="p-6 overflow-y-auto space-y-4 text-sm flex-1">
+        <input type="hidden" id="prod-id">
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Nome do Produto *</label>
+          <input type="text" id="prod-nome" required placeholder="Ex: Base Líquida Glow Nat Makes" 
+                 class="w-full px-3.5 py-2.5 bg-sky-50/40 border border-sky-200 rounded-xl focus:ring-2 focus:ring-sky-400 focus:bg-white focus:outline-none">
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">SKU / Código *</label>
+            <input type="text" id="prod-sku" required placeholder="EX: NM-1001" 
+                   class="w-full px-3.5 py-2.5 bg-sky-50/40 border border-sky-200 rounded-xl focus:ring-2 focus:ring-sky-400 focus:bg-white focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Marca *</label>
+            <input type="text" id="prod-marca" required placeholder="Ex: Nat Makes" 
+                   class="w-full px-3.5 py-2.5 bg-sky-50/40 border border-sky-200 rounded-xl focus:ring-2 focus:ring-sky-400 focus:bg-white focus:outline-none">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Categoria *</label>
+            <select id="prod-categoria" required class="w-full px-3.5 py-2.5 bg-sky-50/40 border border-sky-200 rounded-xl focus:ring-2 focus:ring-sky-400 focus:bg-white focus:outline-none">
+              <option value="Maquiagem">Maquiagem</option>
+              <option value="Skincare">Skincare</option>
+              <option value="Perfumaria">Perfumaria</option>
+              <option value="Acessórios">Acessórios</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Preço Un. (R$) *</label>
+            <input type="number" step="0.01" min="0" id="prod-preco" required placeholder="0.00" 
+                   class="w-full px-3.5 py-2.5 bg-sky-50/40 border border-sky-200 rounded-xl focus:ring-2 focus:ring-sky-400 focus:bg-white focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Qtd Inicial *</label>
+            <input type="number" min="0" id="prod-qtd" required placeholder="0" 
+                   class="w-full px-3.5 py-2.5 bg-sky-50/40 border border-sky-200 rounded-xl focus:ring-2 focus:ring-sky-400 focus:bg-white focus:outline-none">
+          </div>
+        </div>
+
+        <!-- Seleção de Imagens Pré-definidas -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Selecione uma Imagem do Produto *</label>
+          <div class="grid grid-cols-6 gap-2 mt-2" id="galeria-imagens">
+            <!-- Renderizado via JS -->
+          </div>
+          <input type="hidden" id="prod-imagem" required>
+        </div>
+
+        <div class="pt-4 flex justify-end gap-3 border-t border-sky-100">
+          <button type="button" onclick="fecharModalProduto()" class="px-5 py-2.5 rounded-xl border border-sky-200 text-slate-600 hover:bg-sky-50 font-medium text-xs transition-colors">
+            Cancelar
+          </button>
+          <button type="submit" class="px-5 py-2.5 rounded-xl bg-sky-400 hover:bg-sky-500 text-white font-medium text-xs shadow-md shadow-sky-200 transition-colors">
+            Salvar Produto
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- MODAL MOVIMENTAÇÃO DE ESTOQUE -->
+  <div id="modal-movimento" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-200">
+    <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden border border-sky-100 transform scale-95 transition-transform duration-200">
+      
+      <div class="bg-gradient-to-r from-sky-400 to-sky-300 p-5 text-white flex justify-between items-center">
+        <div>
+          <h3 class="text-lg font-bold">Registrar Entrada / Saída</h3>
+          <p class="text-xs text-sky-100 mt-0.5">Atualização rápida de quantidades</p>
+        </div>
+        <button onclick="fecharModalMovimento()" class="text-white/80 hover:text-white p-1 rounded-full hover:bg-white/10 transition-colors">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form id="form-movimento" onsubmit="salvarMovimento(event)" class="p-6 space-y-4 text-sm">
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Produto *</label>
+          <select id="mov-produto" required class="w-full px-3.5 py-2.5 bg-sky-50/40 border border-sky-200 rounded-xl focus:ring-2 focus:ring-sky-400 focus:outline-none">
+            <!-- Opções via JS -->
+          </select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Tipo de Operação *</label>
+            <select id="mov-tipo" required class="w-full px-3.5 py-2.5 bg-sky-50/40 border border-sky-200 rounded-xl focus:ring-2 focus:ring-sky-400 focus:outline-none">
+              <option value="ENTRADA">Entrada (+)</option>
+              <option value="SAIDA">Saída (-)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Quantidade *</label>
+            <input type="number" min="1" id="mov-qtd" required placeholder="1" 
+                   class="w-full px-3.5 py-2.5 bg-sky-50/40 border border-sky-200 rounded-xl focus:ring-2 focus:ring-sky-400 focus:outline-none">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Motivo / Observação</label>
+          <input type="text" id="mov-obs" placeholder="Ex: Reposição de estoque, Venda balcão..." 
+                 class="w-full px-3.5 py-2.5 bg-sky-50/40 border border-sky-200 rounded-xl focus:ring-2 focus:ring-sky-400 focus:outline-none">
+        </div>
+
+        <div class="pt-3 flex justify-end gap-3 border-t border-sky-100">
+          <button type="button" onclick="fecharModalMovimento()" class="px-4 py-2 rounded-xl border border-sky-200 text-slate-600 hover:bg-sky-50 font-medium text-xs transition-colors">
+            Cancelar
+          </button>
+          <button type="submit" class="px-4 py-2 rounded-xl bg-sky-400 hover:bg-sky-500 text-white font-medium text-xs shadow-md shadow-sky-200 transition-colors">
+            Confirmar Registro
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- MODAL DE IMAGEM EXPANDIDA -->
+  <div id="modal-imagem" class="fixed inset-0 bg-slate-900/70 backdrop-blur-md z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-200" onclick="fecharModalImagem()">
+    <div class="relative max-w-lg w-full p-4" onclick="event.stopPropagation()">
+      <button onclick="fecharModalImagem()" class="absolute -top-10 right-2 text-white hover:text-sky-200">
+        <i data-lucide="x" class="w-8 h-8"></i>
+      </button>
+      <img id="img-ampliada" src="" alt="Produto Nat Makes" class="w-full h-96 object-cover rounded-3xl shadow-2xl border-4 border-white">
+      <p id="img-titulo" class="text-center text-white text-base font-semibold mt-3"></p>
+    </div>
+  </div>
+
+  <!-- Seu arquivo JavaScript customizado -->
+  <script src="script.js"></script>
+<script src="script.js"></script></body>
+</html>
