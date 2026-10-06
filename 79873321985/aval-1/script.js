@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>MiniFeed</title>
         <link rel="stylesheet" href="style.css">
-    <link href="style.css" rel="stylesheet"></head>
+    </head>
     <body>
 
         <header>
@@ -88,5 +88,5 @@
          <p>MiniFeed - Todos os Direitos Reservados - 2026</p>  
         </footer>
 
-    <script src="script.js"></script></body>
+    </body>
 </html>
