@@ -1,44 +1,25 @@
-const tarefaInput = document.getElementById("tarefaInput");
-const adicionarBtn = document.getElementById("adicionarBtn");
-const listaTarefas = document.getElementById("listaTarefas");
+const formulario = document.getElementById("formulario");
+const mensagem = document.getElementById("mensagem");
 
-function adicionarTarefa() {
-const texto = tarefaInput.value.trim();
+formulario.addEventListener("submit", function(event) {
+event.preventDefault();
 
-if (texto === "") {
-alert("Digite uma tarefa antes de adicionar.");
+const nome = document.getElementById("nome").value.trim();
+const turma = document.getElementById("turma").value.trim();
+const titulo = document.getElementById("titulo").value.trim();
+const descricao = document.getElementById("descricao").value.trim();
+const arquivo = document.getElementById("arquivo").files[0];
+
+if (!nome || !turma || !titulo || !descricao || !arquivo) {
+mensagem.textContent = "⚠️ Preencha todos os campos.";
+mensagem.style.color = "#dc2626";
 return;
 }
 
-const li = document.createElement("li");
+mensagem.textContent =
+"✅ Trabalho enviado com sucesso! Aguarde a avaliação do professor.";
 
-const span = document.createElement("span");
-span.textContent = texto;
+mensagem.style.color = "#16a34a";
 
-const removerBtn = document.createElement("button");
-removerBtn.textContent = "Remover";
-removerBtn.classList.add("remover");
-
-span.addEventListener("click", function () {
-li.classList.toggle("concluida");
-});
-
-removerBtn.addEventListener("click", function () {
-li.remove();
-});
-
-li.appendChild(span);
-li.appendChild(removerBtn);
-listaTarefas.appendChild(li);
-
-tarefaInput.value = "";
-tarefaInput.focus();
-}
-
-adicionarBtn.addEventListener("click", adicionarTarefa);
-
-tarefaInput.addEventListener("keypress", function (event) {
-if (event.key === "Enter") {
-adicionarTarefa();
-}
+formulario.reset();
 });
