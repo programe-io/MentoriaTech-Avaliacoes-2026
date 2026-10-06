@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>MiniFeed</title>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+
+        <header>
+
+            <div class="header-content">
+
+                <h1>MiniFeed</h1>
+
+            <nav>
+                <a href="#">Inicio</a>
+               <a href="#">Perfil</a>              
+            </nav>
+
+        </div>
+
+     </header>
+
+     
+
+
+     <main>
+
+        <section class="new-post">
+
+            <div class="user">
+
+                <div class="avatar">
+                    G
+                </div>
+
+                <div> 
+                <strong>giovanna</strong>
+                <span>o que voce esta pensando?</span>
+            </div>
+    
+        </div>
+
+        <button>Publicar</button>
+
+
+        </section>
+
+        <article class="post"> 
+
+            <div class="post-header"> 
+
+                 <div class="avatar">
+                    G
+                </div>
+
+                <div> 
+                    <strong>giovanna</strong>
+                    <span>10 minutos</span>
+                </div>
+
+            </div>
+
+            <div class="post-text">
+                Hoje eu vi o novo filme do homiranha,
+                top, to feliz :D
+            </div>
+
+            <img src="https://ichef.bbci.co.uk/ace/ws/640/cpsprodpb/0407/live/4ea1a010-8c30-11f1-a7ab-8b30adf0800a.jpg.webp" alt="Imagem do homen aranha">
+
+            <div class="post-actions">
+
+                <button>Curtir</button>
+                <button>Comentar</button>
+
+             </div>
+
+
+        </article>
+     
+     
+
+     </main>
+
+        <footer>
+         <p>MiniFeed - Todos os Direitos Reservados - 2026</p>  
+        </footer>
+
+    </body>
+</html>
