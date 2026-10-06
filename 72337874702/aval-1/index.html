@@ -1,26 +1,343 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR" class="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>calcular area do triangulo</title>
+    <title>Maison Élise - Sistema de Controle de Estoque</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js para Gráficos -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- FontAwesome para Ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Playfair Display & Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+    <!-- Arquivo CSS Externo -->
     <link rel="stylesheet" href="style.css">
-<link href="style.css" rel="stylesheet"></head>
-<body>
-    <div class="dark-mold">
-        <button onclick="dark()">modo dark</button>
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        rose: {
+                            50: '#fdf2f4',
+                            100: '#fce7eb',
+                            200: '#f8d2d9',
+                            300: '#f2aeb9',
+                            400: '#e87d8f',
+                            500: '#d9526a',
+                            600: '#c23b53',
+                            700: '#a32f44',
+                            800: '#872a3b',
+                            900: '#732635',
+                            950: '#40111a',
+                        },
+                        blush: '#fff0f3',
+                        softpink: '#f9d5df'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"><link href="style.css" rel="stylesheet"></head>
+<body class="bg-rose-50/60 dark:bg-zinc-950 text-zinc-800 dark:text-zinc-100 font-sans min-h-screen transition-colors duration-300 flex flex-col">
+
+    <!-- Header Principal -->
+    <header class="sticky top-0 z-40 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md border-b border-rose-200/60 dark:border-zinc-800 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Logo & Brand -->
+            <div class="flex items-center space-x-3">
+                <div class="w-12 h-12 rounded-full bg-rose-200 dark:bg-rose-900/50 flex items-center justify-center border-2 border-rose-400 shadow-inner">
+                    <i class="fa-solid fa-gem text-rose-600 dark:text-rose-300 text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-serif font-bold tracking-wide text-rose-700 dark:text-rose-300">Maison Élise</h1>
+                    <p class="text-xs uppercase tracking-widest text-zinc-500 dark:text-zinc-400 font-medium">Gestão de Estoque & Alta Costura</p>
+                </div>
+            </div>
+
+            <!-- Ações do Topo -->
+            <div class="flex items-center space-x-4">
+                <button onclick="openNewProductModal()" class="hidden sm:inline-flex items-center space-x-2 bg-rose-500 hover:bg-rose-600 text-white px-4 py-2.5 rounded-xl font-medium text-sm transition-all shadow-md shadow-rose-500/20 active:scale-95">
+                    <i class="fa-solid fa-plus"></i>
+                    <span>Novo Produto</span>
+                </button>
+                <button onclick="toggleDarkMode()" class="w-10 h-10 rounded-xl bg-rose-100 dark:bg-zinc-800 text-rose-700 dark:text-rose-300 flex items-center justify-center transition-all hover:bg-rose-200 dark:hover:bg-zinc-700" title="Alternar Tema">
+                    <i id="themeIcon" class="fa-solid fa-moon"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+        <!-- Cards de Indicadores (KPIs) -->
+        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <!-- Total de Peças -->
+            <div class="bg-white dark:bg-zinc-900 p-6 rounded-2xl border border-rose-100 dark:border-zinc-800 shadow-sm relative overflow-hidden group">
+                <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-rose-100 dark:bg-rose-900/20 rounded-full transition-transform group-hover:scale-110 pointer-events-none"></div>
+                <div class="flex items-center justify-between relative z-10">
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Total em Estoque</p>
+                        <h3 id="kpiTotalPieces" class="text-3xl font-bold font-serif text-zinc-900 dark:text-white mt-1">0</h3>
+                    </div>
+                    <div class="w-12 h-12 rounded-xl bg-rose-100 dark:bg-rose-900/40 text-rose-600 dark:text-rose-400 flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-shirt"></i>
+                    </div>
+                </div>
+                <div class="mt-4 flex items-center text-xs text-emerald-600 dark:text-emerald-400 font-medium">
+                    <i class="fa-solid fa-arrow-trend-up mr-1"></i> Peças cadastradas ativas
+                </div>
+            </div>
+
+            <!-- Valor Total -->
+            <div class="bg-white dark:bg-zinc-900 p-6 rounded-2xl border border-rose-100 dark:border-zinc-800 shadow-sm relative overflow-hidden group">
+                <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-rose-100 dark:bg-rose-900/20 rounded-full transition-transform group-hover:scale-110 pointer-events-none"></div>
+                <div class="flex items-center justify-between relative z-10">
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Valor do Estoque</p>
+                        <h3 id="kpiTotalValue" class="text-3xl font-bold font-serif text-zinc-900 dark:text-white mt-1">R$ 0,00</h3>
+                    </div>
+                    <div class="w-12 h-12 rounded-xl bg-rose-100 dark:bg-rose-900/40 text-rose-600 dark:text-rose-400 flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-wallet"></i>
+                    </div>
+                </div>
+                <div class="mt-4 flex items-center text-xs text-zinc-500 dark:text-zinc-400">
+                    <i class="fa-solid fa-tag mr-1 text-rose-500"></i> Baseado no preço de venda
+                </div>
+            </div>
+
+            <!-- Estoque Baixo -->
+            <div class="bg-white dark:bg-zinc-900 p-6 rounded-2xl border border-rose-100 dark:border-zinc-800 shadow-sm relative overflow-hidden group">
+                <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-amber-100 dark:bg-amber-900/20 rounded-full transition-transform group-hover:scale-110 pointer-events-none"></div>
+                <div class="flex items-center justify-between relative z-10">
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Alerta de Reposição</p>
+                        <h3 id="kpiLowStock" class="text-3xl font-bold font-serif text-amber-600 dark:text-amber-400 mt-1">0</h3>
+                    </div>
+                    <div class="w-12 h-12 rounded-xl bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </div>
+                </div>
+                <div class="mt-4 flex items-center text-xs text-amber-600 dark:text-amber-400 font-medium">
+                    <i class="fa-solid fa-bell mr-1"></i> Itens com menos de 5 unidades
+                </div>
+            </div>
+
+            <!-- Categorias Ativas -->
+            <div class="bg-white dark:bg-zinc-900 p-6 rounded-2xl border border-rose-100 dark:border-zinc-800 shadow-sm relative overflow-hidden group">
+                <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-rose-100 dark:bg-rose-900/20 rounded-full transition-transform group-hover:scale-110 pointer-events-none"></div>
+                <div class="flex items-center justify-between relative z-10">
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Categorias</p>
+                        <h3 id="kpiCategories" class="text-3xl font-bold font-serif text-zinc-900 dark:text-white mt-1">0</h3>
+                    </div>
+                    <div class="w-12 h-12 rounded-xl bg-rose-100 dark:bg-rose-900/40 text-rose-600 dark:text-rose-400 flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-layer-group"></i>
+                    </div>
+                </div>
+                <div class="mt-4 flex items-center text-xs text-zinc-500 dark:text-zinc-400">
+                    <i class="fa-solid fa-check mr-1 text-rose-500"></i> Seções de vestuário ativas
+                </div>
+            </div>
+        </section>
+
+        <!-- Seção de Gráficos e Estatísticas -->
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Gráfico de Distribuição por Categoria -->
+            <div class="lg:col-span-2 bg-white dark:bg-zinc-900 p-6 rounded-2xl border border-rose-100 dark:border-zinc-800 shadow-sm flex flex-col justify-between">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-lg font-serif font-bold text-zinc-900 dark:text-white">Distribuição por Categoria</h2>
+                    <span class="text-xs bg-rose-100 dark:bg-rose-900/40 text-rose-600 dark:text-rose-300 px-3 py-1 rounded-full font-medium">Atualizado em tempo real</span>
+                </div>
+                <div class="relative h-64 w-full flex items-center justify-center">
+                    <canvas id="categoryChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Painel Rápido de Alertas / Destaques -->
+            <div class="bg-white dark:bg-zinc-900 p-6 rounded-2xl border border-rose-100 dark:border-zinc-800 shadow-sm flex flex-col">
+                <h2 class="text-lg font-serif font-bold text-zinc-900 dark:text-white mb-4">Destaques da Coleção</h2>
+                <div class="space-y-4 flex-grow overflow-y-auto max-h-64 pr-1" id="quickHighlights">
+                    <!-- Preenchido via JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Seção de Gerenciamento de Estoque (Filtros e Tabela) -->
+        <section class="bg-white dark:bg-zinc-900 rounded-2xl border border-rose-100 dark:border-zinc-800 shadow-sm overflow-hidden">
+            <!-- Barra de Ferramentas / Filtros -->
+            <div class="p-5 border-b border-rose-100 dark:border-zinc-800 flex flex-col md:flex-row items-center justify-between gap-4">
+                <!-- Busca -->
+                <div class="relative w-full md:w-80">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-zinc-400">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </span>
+                    <input type="text" id="searchInput" oninput="filterProducts()" placeholder="Buscar por peça, cor ou categoria..." class="w-full pl-10 pr-4 py-2.5 bg-rose-50/50 dark:bg-zinc-800/50 border border-rose-200 dark:border-zinc-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-rose-400 dark:text-white">
+                </div>
+
+                <!-- Filtros por Categoria e Tamanho -->
+                <div class="flex items-center space-x-3 w-full md:w-auto overflow-x-auto pb-2 md:pb-0">
+                    <select id="categoryFilter" onchange="filterProducts()" class="bg-rose-50/50 dark:bg-zinc-800/50 border border-rose-200 dark:border-zinc-700 rounded-xl px-3 py-2.5 text-sm text-zinc-700 dark:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-rose-400">
+                        <option value="">Todas as Categorias</option>
+                        <option value="Vestidos">Vestidos</option>
+                        <option value="Blusas & Tricô">Blusas & Tricô</option>
+                        <option value="Jeans & Calças">Jeans & Calças</option>
+                        <option value="Casacos & Jaquetas">Casacos & Jaquetas</option>
+                        <option value="Conjuntos">Conjuntos</option>
+                    </select>
+
+                    <select id="sizeFilter" onchange="filterProducts()" class="bg-rose-50/50 dark:bg-zinc-800/50 border border-rose-200 dark:border-zinc-700 rounded-xl px-3 py-2.5 text-sm text-zinc-700 dark:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-rose-400">
+                        <option value="">Todos os Tamanhos</option>
+                        <option value="PP">PP</option>
+                        <option value="P">P</option>
+                        <option value="M">M</option>
+                        <option value="G">G</option>
+                        <option value="GG">GG</option>
+                        <option value="Único">Único</option>
+                    </select>
+
+                    <button onclick="openNewProductModal()" class="md:hidden bg-rose-500 text-white p-2.5 rounded-xl">
+                        <i class="fa-solid fa-plus"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tabela de Produtos / Galeria Visual -->
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-rose-50/60 dark:bg-zinc-800/50 border-b border-rose-100 dark:border-zinc-800 text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400">
+                            <th class="py-4 px-6">Peça / Foto</th>
+                            <th class="py-4 px-4">Categoria</th>
+                            <th class="py-4 px-4">Tamanho</th>
+                            <th class="py-4 px-4">Cor</th>
+                            <th class="py-4 px-4">Preço (R$)</th>
+                            <th class="py-4 px-4 text-center">Estoque</th>
+                            <th class="py-4 px-6 text-right">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productTableBody" class="divide-y divide-rose-100/60 dark:divide-zinc-800 text-sm">
+                        <!-- Preenchido via JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Estado Vazio -->
+            <div id="emptyState" class="hidden py-16 text-center space-y-3">
+                <div class="w-16 h-16 bg-rose-100 dark:bg-rose-900/30 text-rose-500 rounded-full flex items-center justify-center mx-auto text-2xl">
+                    <i class="fa-solid fa-shirt"></i>
+                </div>
+                <h3 class="text-lg font-serif font-bold text-zinc-700 dark:text-zinc-300">Nenhuma peça encontrada</h3>
+                <p class="text-sm text-zinc-500 dark:text-zinc-400">Tente ajustar seus filtros de busca ou cadastre uma nova peça.</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Rodapé -->
+    <footer class="mt-auto border-t border-rose-200/60 dark:border-zinc-800 bg-white/50 dark:bg-zinc-900/50 py-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between text-xs text-zinc-500 dark:text-zinc-400 gap-4">
+            <p>&copy; 2026 Maison Élise - Alta Costura & Elegância. Todos os direitos reservados.</p>
+            <div class="flex items-center space-x-4">
+                <span>Sistema de Gestão v2.5</span>
+                <span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span>
+                <span>Modo Seguro Ativo</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal de Cadastro / Edição -->
+    <div id="productModal" class="fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/60 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white dark:bg-zinc-900 rounded-3xl max-w-lg w-full mx-4 shadow-2xl border border-rose-100 dark:border-zinc-800 transform scale-95 transition-transform duration-300 overflow-hidden" id="modalContainer">
+            <!-- Modal Header -->
+            <div class="px-6 py-5 bg-rose-50/80 dark:bg-zinc-800/80 border-b border-rose-100 dark:border-zinc-700 flex items-center justify-between">
+                <h3 id="modalTitle" class="text-xl font-serif font-bold text-rose-700 dark:text-rose-300">Nova Peça no Estoque</h3>
+                <button onclick="closeProductModal()" class="w-8 h-8 rounded-full bg-white dark:bg-zinc-700 text-zinc-500 dark:text-zinc-300 flex items-center justify-center hover:bg-rose-100 dark:hover:bg-zinc-600 transition-colors">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Modal Form -->
+            <form id="productForm" onsubmit="saveProduct(event)" class="p-6 space-y-4">
+                <input type="hidden" id="productId">
+                
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 mb-1">Nome da Peça</label>
+                    <input type="text" id="productName" required placeholder="Ex: Vestido Midi Floral Romântico" class="w-full px-4 py-2.5 bg-rose-50/50 dark:bg-zinc-800/50 border border-rose-200 dark:border-zinc-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-rose-400 dark:text-white">
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 mb-1">Categoria</label>
+                        <select id="productCategory" required class="w-full px-3 py-2.5 bg-rose-50/50 dark:bg-zinc-800/50 border border-rose-200 dark:border-zinc-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-rose-400 dark:text-white">
+                            <option value="Vestidos">Vestidos</option>
+                            <option value="Blusas & Tricô">Blusas & Tricô</option>
+                            <option value="Jeans & Calças">Jeans & Calças</option>
+                            <option value="Casacos & Jaquetas">Casacos & Jaquetas</option>
+                            <option value="Conjuntos">Conjuntos</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 mb-1">Tamanho</label>
+                        <select id="productSize" required class="w-full px-3 py-2.5 bg-rose-50/50 dark:bg-zinc-800/50 border border-rose-200 dark:border-zinc-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-rose-400 dark:text-white">
+                            <option value="PP">PP</option>
+                            <option value="P">P</option>
+                            <option value="M">M</option>
+                            <option value="G">G</option>
+                            <option value="GG">GG</option>
+                            <option value="Único">Único</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 mb-1">Cor</label>
+                        <input type="text" id="productColor" required placeholder="Ex: Rosa Pastel" class="w-full px-3 py-2.5 bg-rose-50/50 dark:bg-zinc-800/50 border border-rose-200 dark:border-zinc-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-rose-400 dark:text-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 mb-1">Preço (R$)</label>
+                        <input type="number" step="0.01" id="productPrice" required placeholder="189.90" class="w-full px-3 py-2.5 bg-rose-50/50 dark:bg-zinc-800/50 border border-rose-200 dark:border-zinc-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-rose-400 dark:text-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 mb-1">Quantidade</label>
+                        <input type="number" id="productStock" required placeholder="12" class="w-full px-3 py-2.5 bg-rose-50/50 dark:bg-zinc-800/50 border border-rose-200 dark:border-zinc-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-rose-400 dark:text-white">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 mb-1">URL da Foto da Peça</label>
+                    <input type="url" id="productImage" required placeholder="https://exemplo.com/foto-vestido.jpg" class="w-full px-4 py-2.5 bg-rose-50/50 dark:bg-zinc-800/50 border border-rose-200 dark:border-zinc-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-rose-400 dark:text-white">
+                </div>
+
+                <div class="pt-4 flex items-center justify-end space-x-3">
+                    <button type="button" onclick="closeProductModal()" class="px-5 py-2.5 rounded-xl border border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 font-medium text-sm hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="px-6 py-2.5 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-medium text-sm shadow-md shadow-rose-500/20 transition-all">
+                        Salvar Peça
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
-<div class="conteiner">
-<div class="box">
-    <h2>
-        calcular area do retangulo
-    </h2>
-    <input type="number" id="base" placeholder="digite a base">
-    <input type="number" id="altura" placeholder="digite a altura">
-    <button onclick="calcularArea()">calcular</button>
-    <p id="resultado">resultado</p>
-</div>
-<script src="script.js"></script>
-</div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-24 opacity-0 transition-all duration-300 bg-zinc-900 text-white px-5 py-3 rounded-2xl shadow-xl flex items-center space-x-3 border border-zinc-800">
+        <div id="toastIcon" class="text-rose-400 text-lg"></div>
+        <span id="toastMessage" class="text-sm font-medium"></span>
+    </div>
+
+    <!-- Arquivo JS Externo -->
+    <script src="script.js"></script>
 <script src="script.js"></script></body>
 </html>
