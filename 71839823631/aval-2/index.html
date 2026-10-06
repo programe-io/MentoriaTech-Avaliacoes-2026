@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduTask - Gerenciador de Tarefas Escolares</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        pastel: {
+                            50: '#f0f8ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Chart.js para Estatísticas -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <!-- Arquivo CSS Externo -->
+    <link rel="stylesheet" href="style.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body class="bg-pastel-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen transition-colors duration-300 font-sans">
+
+    <!-- Top Navigation Bar -->
+    <header class="sticky top-0 z-30 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border-b border-pastel-100 dark:border-slate-700 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="p-2 bg-pastel-500 text-white rounded-xl shadow-md shadow-pastel-200 dark:shadow-none">
+                    <i data-lucide="graduation-cap" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg leading-tight text-pastel-900 dark:text-pastel-200">EduTask</h1>
+                    <p class="text-xs text-pastel-600 dark:text-pastel-400 font-medium">Gerenciador Escolar Inteligente</p>
+                </div>
+            </div>
+
+            <!-- Gamification Summary Widget -->
+            <div class="hidden md:flex items-center gap-4 bg-pastel-50 dark:bg-slate-700/50 px-4 py-1.5 rounded-full border border-pastel-200 dark:border-slate-600">
+                <div class="flex items-center gap-1.5" title="Sua sequência de dias estudados">
+                    <i data-lucide="flame" class="w-5 h-5 text-amber-500 fill-amber-500 animate-bounce"></i>
+                    <span id="streak-counter" class="font-bold text-sm text-slate-700 dark:text-slate-200">0 Dias</span>
+                </div>
+                <div class="h-4 w-[1px] bg-pastel-300 dark:bg-slate-600"></div>
+                <div class="flex items-center gap-2">
+                    <div class="text-xs text-right">
+                        <div class="font-bold text-pastel-700 dark:text-pastel-300" id="level-display">Nível 1</div>
+                        <div class="text-[10px] text-slate-500 dark:text-slate-400" id="xp-text">0/100 XP</div>
+                    </div>
+                    <div class="w-16 bg-slate-200 dark:bg-slate-600 rounded-full h-2.5 overflow-hidden">
+                        <div id="xp-bar-fill" class="bg-gradient-to-r from-pastel-400 to-pastel-600 h-2.5 rounded-full w-0 transition-all duration-500"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions Controls -->
+            <div class="flex items-center gap-2">
+                <button id="sound-toggle-btn" onclick="toggleSound()" class="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-pastel-100 dark:hover:bg-slate-700 transition" title="Alternar Efeitos Sonoros">
+                    <i data-lucide="volume-2" id="sound-icon" class="w-5 h-5"></i>
+                </button>
+                <button onclick="toggleDarkMode()" class="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-pastel-100 dark:hover:bg-slate-700 transition" title="Alternar Tema Claro/Escuro">
+                    <i data-lucide="moon" class="w-5 h-5 dark:hidden"></i>
+                    <i data-lucide="sun" class="w-5 h-5 hidden dark:block text-amber-400"></i>
+                </button>
+                <button onclick="openNewTaskModal()" class="flex items-center gap-2 bg-pastel-500 hover:bg-pastel-600 text-white px-4 py-2 rounded-xl text-sm font-semibold shadow-md shadow-pastel-200 dark:shadow-none hover:shadow-lg transition active:scale-95">
+                    <i data-lucide="plus" class="w-4 h-4"></i>
+                    <span class="hidden sm:inline">Nova Tarefa</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+        <!-- Navigation Tabs -->
+        <div class="flex border-b border-pastel-200 dark:border-slate-700 mb-6 overflow-x-auto no-scrollbar">
+            <button onclick="switchTab('tasks')" id="tab-btn-tasks" class="tab-active py-3 px-5 font-semibold text-sm flex items-center gap-2 border-b-2 transition whitespace-nowrap">
+                <i data-lucide="check-square" class="w-4 h-4"></i>
+                Gerenciador de Tarefas
+            </button>
+            <button onclick="switchTab('pomodoro')" id="tab-btn-pomodoro" class="tab-inactive py-3 px-5 font-medium text-sm flex items-center gap-2 border-b-2 transition whitespace-nowrap">
+                <i data-lucide="timer" class="w-4 h-4"></i>
+                Timer Pomodoro
+            </button>
+            <button onclick="switchTab('schedule')" id="tab-btn-schedule" class="tab-inactive py-3 px-5 font-medium text-sm flex items-center gap-2 border-b-2 transition whitespace-nowrap">
+                <i data-lucide="calendar" class="w-4 h-4"></i>
+                Grade Semanal
+            </button>
+            <button onclick="switchTab('calculator')" id="tab-btn-calculator" class="tab-inactive py-3 px-5 font-medium text-sm flex items-center gap-2 border-b-2 transition whitespace-nowrap">
+                <i data-lucide="calculator" class="w-4 h-4"></i>
+                Calculadora de Notas
+            </button>
+            <button onclick="switchTab('stats')" id="tab-btn-stats" class="tab-inactive py-3 px-5 font-medium text-sm flex items-center gap-2 border-b-2 transition whitespace-nowrap">
+                <i data-lucide="bar-chart-2" class="w-4 h-4"></i>
+                Estatísticas & Badges
+            </button>
+        </div>
+
+        <!-- SECTION 1: TASK MANAGER VIEW -->
+        <section id="view-tasks" class="space-y-6">
+            <!-- Filter & View Controls Toolbar -->
+            <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-pastel-100 dark:border-slate-700/60 shadow-sm flex flex-col md:flex-row gap-4 justify-between items-stretch md:items-center">
+                <!-- Search Input -->
+                <div class="relative flex-1">
+                    <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                    <input type="text" id="search-input" oninput="filterTasks()" placeholder="Buscar tarefas ou trabalhos..." class="w-full pl-9 pr-4 py-2 bg-pastel-50 dark:bg-slate-700/50 border border-pastel-200 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pastel-400">
+                </div>
+
+                <!-- Filters -->
+                <div class="flex flex-wrap items-center gap-3">
+                    <select id="filter-subject" onchange="filterTasks()" class="px-3 py-2 bg-pastel-50 dark:bg-slate-700/50 border border-pastel-200 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pastel-400">
+                        <option value="ALL">Todas as Matérias</option>
+                        <option value="Matemática">Matemática</option>
+                        <option value="Português">Português</option>
+                        <option value="História">História</option>
+                        <option value="Geografia">Geografia</option>
+                        <option value="Ciências / Biologia">Ciências / Biologia</option>
+                        <option value="Física">Física</option>
+                        <option value="Química">Química</option>
+                        <option value="Inglês">Inglês</option>
+                        <option value="Artes">Artes</option>
+                        <option value="Outros">Outros</option>
+                    </select>
+
+                    <select id="filter-priority" onchange="filterTasks()" class="px-3 py-2 bg-pastel-50 dark:bg-slate-700/50 border border-pastel-200 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pastel-400">
+                        <option value="ALL">Todas as Prioridades</option>
+                        <option value="Urgente">🔴 Urgente</option>
+                        <option value="Alta">🟠 Alta</option>
+                        <option value="Média">🟡 Média</option>
+                        <option value="Baixa">🟢 Baixa</option>
+                    </select>
+
+                    <!-- Layout Toggle Buttons -->
+                    <div class="flex bg-pastel-100 dark:bg-slate-700 p-1 rounded-xl">
+                        <button id="btn-view-kanban" onclick="setViewMode('kanban')" class="p-1.5 rounded-lg text-pastel-700 dark:text-pastel-200 bg-white dark:bg-slate-600 shadow-sm" title="Visão Kanban">
+                            <i data-lucide="kanban" class="w-4 h-4"></i>
+                        </button>
+                        <button id="btn-view-list" onclick="setViewMode('list')" class="p-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-pastel-700 transition" title="Visão em Lista">
+                            <i data-lucide="list" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- KANBAN BOARD CONTAINER -->
+            <div id="kanban-view" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- Column: A Fazer -->
+                <div class="bg-slate-100/70 dark:bg-slate-800/50 p-4 rounded-2xl border border-pastel-100 dark:border-slate-700 flex flex-col min-h-[500px]">
+                    <div class="flex items-center justify-between mb-3 px-1">
+                        <div class="flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-slate-400"></span>
+                            <h3 class="font-bold text-sm text-slate-700 dark:text-slate-200">A Fazer</h3>
+                            <span id="count-todo" class="text-xs bg-slate-200 dark:bg-slate-700 px-2 py-0.5 rounded-full font-semibold text-slate-600 dark:text-slate-300">0</span>
+                        </div>
+                    </div>
+                    <div id="col-todo" class="kanban-dropzone flex-1 space-y-3" ondragover="handleDragOver(event)" ondrop="handleDrop(event, 'todo')">
+                        <!-- Dynamic Tasks -->
+                    </div>
+                </div>
+
+                <!-- Column: Em Progresso -->
+                <div class="bg-pastel-50/70 dark:bg-slate-800/50 p-4 rounded-2xl border border-pastel-100 dark:border-slate-700 flex flex-col min-h-[500px]">
+                    <div class="flex items-center justify-between mb-3 px-1">
+                        <div class="flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-pastel-400"></span>
+                            <h3 class="font-bold text-sm text-slate-700 dark:text-slate-200">Em Progresso</h3>
+                            <span id="count-in_progress" class="text-xs bg-pastel-200 dark:bg-slate-700 px-2 py-0.5 rounded-full font-semibold text-pastel-800 dark:text-pastel-300">0</span>
+                        </div>
+                    </div>
+                    <div id="col-in_progress" class="kanban-dropzone flex-1 space-y-3" ondragover="handleDragOver(event)" ondrop="handleDrop(event, 'in_progress')">
+                        <!-- Dynamic Tasks -->
+                    </div>
+                </div>
+
+                <!-- Column: Em Revisão / Estudo -->
+                <div class="bg-amber-50/50 dark:bg-slate-800/50 p-4 rounded-2xl border border-amber-100 dark:border-slate-700 flex flex-col min-h-[500px]">
+                    <div class="flex items-center justify-between mb-3 px-1">
+                        <div class="flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+                            <h3 class="font-bold text-sm text-slate-700 dark:text-slate-200">Em Revisão</h3>
+                            <span id="count-review" class="text-xs bg-amber-200 dark:bg-slate-700 px-2 py-0.5 rounded-full font-semibold text-amber-800 dark:text-amber-300">0</span>
+                        </div>
+                    </div>
+                    <div id="col-review" class="kanban-dropzone flex-1 space-y-3" ondragover="handleDragOver(event)" ondrop="handleDrop(event, 'review')">
+                        <!-- Dynamic Tasks -->
+                    </div>
+                </div>
+
+                <!-- Column: Concluído -->
+                <div class="bg-emerald-50/50 dark:bg-slate-800/50 p-4 rounded-2xl border border-emerald-100 dark:border-slate-700 flex flex-col min-h-[500px]">
+                    <div class="flex items-center justify-between mb-3 px-1">
+                        <div class="flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+                            <h3 class="font-bold text-sm text-slate-700 dark:text-slate-200">Concluído</h3>
+                            <span id="count-completed" class="text-xs bg-emerald-200 dark:bg-slate-700 px-2 py-0.5 rounded-full font-semibold text-emerald-800 dark:text-emerald-300">0</span>
+                        </div>
+                    </div>
+                    <div id="col-completed" class="kanban-dropzone flex-1 space-y-3" ondragover="handleDragOver(event)" ondrop="handleDrop(event, 'completed')">
+                        <!-- Dynamic Tasks -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- LIST VIEW CONTAINER (Hidden by default) -->
+            <div id="list-view" class="hidden bg-white dark:bg-slate-800 rounded-2xl border border-pastel-100 dark:border-slate-700 overflow-hidden shadow-sm">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-pastel-50 dark:bg-slate-700/50 text-slate-600 dark:text-slate-300 font-semibold border-b border-pastel-100 dark:border-slate-700">
+                            <tr>
+                                <th class="p-4">Status</th>
+                                <th class="p-4">Título da Tarefa</th>
+                                <th class="p-4">Matéria</th>
+                                <th class="p-4">Prioridade</th>
+                                <th class="p-4">Data de Entrega</th>
+                                <th class="p-4 text-right">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="list-table-body" class="divide-y divide-slate-100 dark:divide-slate-700">
+                            <!-- Dynamic Table Rows -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: POMODORO TIMER VIEW -->
+        <section id="view-pomodoro" class="hidden max-w-2xl mx-auto">
+            <div class="bg-white dark:bg-slate-800 p-8 rounded-3xl border border-pastel-100 dark:border-slate-700 shadow-md text-center space-y-6">
+                <div class="flex justify-center gap-2 p-1 bg-pastel-50 dark:bg-slate-700 rounded-2xl w-fit mx-auto border border-pastel-100 dark:border-slate-600">
+                    <button id="pomo-mode-work" onclick="setPomodoroMode('work')" class="px-5 py-2 rounded-xl font-semibold text-sm transition bg-pastel-500 text-white shadow">Foco (25m)</button>
+                    <button id="pomo-mode-short" onclick="setPomodoroMode('shortBreak')" class="px-5 py-2 rounded-xl font-semibold text-sm text-slate-600 dark:text-slate-300 hover:bg-pastel-100 dark:hover:bg-slate-600 transition">Pausa Curta (5m)</button>
+                    <button id="pomo-mode-long" onclick="setPomodoroMode('longBreak')" class="px-5 py-2 rounded-xl font-semibold text-sm text-slate-600 dark:text-slate-300 hover:bg-pastel-100 dark:hover:bg-slate-600 transition">Pausa Longa (15m)</button>
+                </div>
+
+                <!-- Timer Circular Display -->
+                <div class="relative w-64 h-64 mx-auto flex items-center justify-center">
+                    <svg class="w-full h-full transform -rotate-90">
+                        <circle cx="128" cy="128" r="110" stroke="currentColor" stroke-width="12" class="text-pastel-100 dark:text-slate-700" fill="transparent"/>
+                        <circle id="pomo-progress-circle" cx="128" cy="128" r="110" stroke="currentColor" stroke-width="12" class="text-pastel-500 transition-all duration-1000" fill="transparent" stroke-dasharray="691" stroke-dashoffset="0" stroke-linecap="round"/>
+                    </svg>
+                    <div class="absolute flex flex-col items-center">
+                        <span id="pomo-timer-display" class="text-5xl font-extrabold tracking-tight text-slate-800 dark:text-slate-100 font-mono">25:00</span>
+                        <span id="pomo-status-label" class="text-xs font-semibold uppercase tracking-wider text-pastel-600 dark:text-pastel-400 mt-2">Hora de Focar!</span>
+                    </div>
+                </div>
+
+                <!-- Linked Task Selector -->
+                <div class="max-w-md mx-auto">
+                    <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Vincular a uma Tarefa Atual:</label>
+                    <select id="pomo-task-select" class="w-full px-3 py-2 bg-pastel-50 dark:bg-slate-700/50 border border-pastel-200 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pastel-400">
+                        <option value="">Nenhuma (Estudo Geral)</option>
+                    </select>
+                </div>
+
+                <!-- Controls -->
+                <div class="flex items-center justify-center gap-4">
+                    <button id="pomo-start-btn" onclick="togglePomodoroTimer()" class="flex items-center gap-2 bg-pastel-500 hover:bg-pastel-600 text-white px-8 py-3 rounded-2xl font-bold shadow-lg shadow-pastel-200 dark:shadow-none transition active:scale-95 text-lg">
+                        <i data-lucide="play" id="pomo-btn-icon" class="w-5 h-5"></i>
+                        <span id="pomo-btn-text">Iniciar</span>
+                    </button>
+                    <button onclick="resetPomodoroTimer()" class="p-3 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300 rounded-2xl transition" title="Reiniciar Timer">
+                        <i data-lucide="rotate-ccw" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: WEEKLY CLASS SCHEDULE VIEW -->
+        <section id="view-schedule" class="hidden space-y-6">
+            <div class="bg-white dark:bg-slate-800 p-6 rounded-3xl border border-pastel-100 dark:border-slate-700 shadow-sm">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100">Grade Horária de Aulas</h2>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Organize suas aulas da semana para não perder o horário</p>
+                    </div>
+                    <button onclick="saveSchedule()" class="bg-pastel-500 hover:bg-pastel-600 text-white px-4 py-2 rounded-xl text-sm font-semibold flex items-center gap-2 shadow-sm transition">
+                        <i data-lucide="save" class="w-4 h-4"></i>
+                        Salvar Grade
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4" id="schedule-grid">
+                    <!-- Days Monday to Friday dynamically generated -->
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: GRADE CALCULATOR VIEW -->
+        <section id="view-calculator" class="hidden max-w-3xl mx-auto">
+            <div class="bg-white dark:bg-slate-800 p-6 rounded-3xl border border-pastel-100 dark:border-slate-700 shadow-sm space-y-6">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100">Calculadora de Média Escolar</h2>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Descubra sua média ou quanto falta para passar direto</p>
+                </div>
+
+                <div class="space-y-4">
+                    <div id="grades-container" class="space-y-3">
+                        <!-- Dynamic Grade Rows -->
+                    </div>
+
+                    <button onclick="addGradeRow()" class="flex items-center gap-2 text-pastel-600 dark:text-pastel-400 hover:text-pastel-700 font-semibold text-sm">
+                        <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                        Adicionar Nota/Avaliação
+                    </button>
+
+                    <div class="pt-4 border-t border-slate-100 dark:border-slate-700 flex flex-col sm:flex-row justify-between items-center gap-4">
+                        <div class="flex items-center gap-3">
+                            <label class="text-sm font-medium text-slate-600 dark:text-slate-300">Média Mínima para Aprovação:</label>
+                            <input type="number" id="min-passing-grade" value="7.0" step="0.5" class="w-20 px-3 py-1.5 bg-pastel-50 dark:bg-slate-700 border border-pastel-200 dark:border-slate-600 rounded-xl text-center font-bold text-sm">
+                        </div>
+
+                        <button onclick="calculateGrades()" class="w-full sm:w-auto bg-pastel-500 hover:bg-pastel-600 text-white px-6 py-2.5 rounded-xl font-bold text-sm shadow-md transition">
+                            Calcular Resultado
+                        </button>
+                    </div>
+
+                    <div id="grade-result-box" class="hidden p-4 rounded-2xl bg-pastel-50 dark:bg-slate-700/60 border border-pastel-200 dark:border-slate-600 text-center">
+                        <div class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Sua Média Final Ponderada</div>
+                        <div id="calculated-average" class="text-4xl font-extrabold text-pastel-600 dark:text-pastel-300 my-1">0.0</div>
+                        <div id="grade-status-message" class="text-sm font-medium text-slate-700 dark:text-slate-200"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 5: STATS & BADGES VIEW -->
+        <section id="view-stats" class="hidden space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Chart Summary Card -->
+                <div class="md:col-span-2 bg-white dark:bg-slate-800 p-6 rounded-3xl border border-pastel-100 dark:border-slate-700 shadow-sm">
+                    <h3 class="font-bold text-slate-800 dark:text-slate-100 mb-4">Distribuição de Tarefas por Matéria</h3>
+                    <div class="h-64 flex items-center justify-center">
+                        <canvas id="subjectChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Overall Stats Box -->
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-3xl border border-pastel-100 dark:border-slate-700 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <h3 class="font-bold text-slate-800 dark:text-slate-100 mb-4">Resumo de Desempenho</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between p-3 bg-pastel-50 dark:bg-slate-700/50 rounded-2xl">
+                                <span class="text-xs font-medium text-slate-600 dark:text-slate-300">Tarefas Concluídas</span>
+                                <span id="stat-completed-count" class="font-extrabold text-lg text-pastel-600 dark:text-pastel-300">0</span>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-pastel-50 dark:bg-slate-700/50 rounded-2xl">
+                                <span class="text-xs font-medium text-slate-600 dark:text-slate-300">Minutos de Estudo Pomodoro</span>
+                                <span id="stat-pomo-minutes" class="font-extrabold text-lg text-pastel-600 dark:text-pastel-300">0 min</span>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-pastel-50 dark:bg-slate-700/50 rounded-2xl">
+                                <span class="text-xs font-medium text-slate-600 dark:text-slate-300">Total de Pontos XP</span>
+                                <span id="stat-total-xp" class="font-extrabold text-lg text-amber-500">0 XP</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Data Backup Actions -->
+                    <div class="pt-4 border-t border-slate-100 dark:border-slate-700 flex gap-2">
+                        <button onclick="exportData()" class="flex-1 py-2 bg-pastel-100 dark:bg-slate-700 hover:bg-pastel-200 dark:hover:bg-slate-600 text-pastel-800 dark:text-pastel-200 rounded-xl text-xs font-semibold transition">
+                            Exportar Backup
+                        </button>
+                        <button onclick="document.getElementById('import-file-input').click()" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-semibold transition">
+                            Importar Backup
+                        </button>
+                        <input type="file" id="import-file-input" class="hidden" accept=".json" onchange="importData(event)">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gamification Badges Grid -->
+            <div class="bg-white dark:bg-slate-800 p-6 rounded-3xl border border-pastel-100 dark:border-slate-700 shadow-sm">
+                <h3 class="font-bold text-slate-800 dark:text-slate-100 mb-4 flex items-center gap-2">
+                    <i data-lucide="award" class="w-5 h-5 text-amber-500"></i>
+                    Conquistas & Medalhas Desbloqueáveis
+                </h3>
+                <div id="badges-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
+                    <!-- Badges rendered dynamically -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- CREATE/EDIT TASK MODAL -->
+    <div id="task-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white dark:bg-slate-800 w-full max-w-lg rounded-3xl border border-pastel-100 dark:border-slate-700 shadow-2xl overflow-hidden animate-fade-in">
+            <div class="p-6 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center">
+                <h3 id="modal-title" class="text-lg font-bold text-slate-800 dark:text-slate-100">Criar Nova Tarefa Escolar</h3>
+                <button onclick="closeTaskModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            
+            <form id="task-form" onsubmit="saveTask(event)" class="p-6 space-y-4">
+                <input type="hidden" id="task-id">
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Título da Tarefa / Trabalho *</label>
+                    <input type="text" id="task-title" required placeholder="Ex: Pesquisa de História sobre Império Romano" class="w-full px-3.5 py-2.5 bg-pastel-50 dark:bg-slate-700/50 border border-pastel-200 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pastel-400">
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Matéria / Disciplina *</label>
+                        <select id="task-subject" required class="w-full px-3.5 py-2.5 bg-pastel-50 dark:bg-slate-700/50 border border-pastel-200 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pastel-400">
+                            <option value="Matemática">Matemática</option>
+                            <option value="Português">Português</option>
+                            <option value="História">História</option>
+                            <option value="Geografia">Geografia</option>
+                            <option value="Ciências / Biologia">Ciências / Biologia</option>
+                            <option value="Física">Física</option>
+                            <option value="Química">Química</option>
+                            <option value="Inglês">Inglês</option>
+                            <option value="Artes">Artes</option>
+                            <option value="Outros">Outros</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Tipo de Atividade</label>
+                        <select id="task-type" class="w-full px-3.5 py-2.5 bg-pastel-50 dark:bg-slate-700/50 border border-pastel-200 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pastel-400">
+                            <option value="Dever de Casa">Dever de Casa</option>
+                            <option value="Trabalho">Trabalho / Seminário</option>
+                            <option value="Prova / Teste">Prova / Teste</option>
+                            <option value="Leitura">Leitura</option>
+                            <option value="Revisão">Revisão de Conteúdo</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Prioridade</label>
+                        <select id="task-priority" class="w-full px-3.5 py-2.5 bg-pastel-50 dark:bg-slate-700/50 border border-pastel-200 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pastel-400">
+                            <option value="Baixa">🟢 Baixa</option>
+                            <option value="Média" selected>🟡 Média</option>
+                            <option value="Alta">🟠 Alta</option>
+                            <option value="Urgente">🔴 Urgente</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Data de Entrega *</label>
+                        <input type="datetime-local" id="task-duedate" required class="w-full px-3.5 py-2.5 bg-pastel-50 dark:bg-slate-700/50 border border-pastel-200 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pastel-400">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Descrição / Anotações</label>
+                    <textarea id="task-description" rows="3" placeholder="Detalhes da tarefa, páginas do livro, grupo, etc..." class="w-full px-3.5 py-2.5 bg-pastel-50 dark:bg-slate-700/50 border border-pastel-200 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pastel-400"></textarea>
+                </div>
+
+                <!-- Checklist Subtasks Input -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Checklist de Etapas</label>
+                    <div class="flex gap-2 mb-2">
+                        <input type="text" id="subtask-input" placeholder="Ex: Ler capítulo 3" class="flex-1 px-3 py-1.5 bg-pastel-50 dark:bg-slate-700/50 border border-pastel-200 dark:border-slate-600 rounded-xl text-sm">
+                        <button type="button" onclick="addModalSubtask()" class="px-3 py-1.5 bg-pastel-200 dark:bg-slate-600 text-pastel-900 dark:text-pastel-100 rounded-xl text-xs font-bold hover:bg-pastel-300">Add</button>
+                    </div>
+                    <ul id="modal-subtask-list" class="space-y-1.5 max-h-28 overflow-y-auto">
+                        <!-- Subtasks listed here -->
+                    </ul>
+                </div>
+
+                <div class="pt-4 border-t border-slate-100 dark:border-slate-700 flex justify-end gap-3">
+                    <button type="button" onclick="closeTaskModal()" class="px-5 py-2.5 rounded-xl font-semibold text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition">Cancelar</button>
+                    <button type="submit" class="px-6 py-2.5 rounded-xl font-bold text-sm bg-pastel-500 hover:bg-pastel-600 text-white shadow-md shadow-pastel-200 dark:shadow-none transition">Salvar Tarefa</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Arquivo JavaScript Externo -->
+    <script src="script.js"></script>
+<script src="script.js"></script></body>
+</html>
