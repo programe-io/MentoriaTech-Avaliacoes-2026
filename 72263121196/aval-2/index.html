@@ -1,0 +1,161 @@
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciador de Tarefas</title>
+
+    <link rel="stylesheet" href="style.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+    <div class="container">
+
+        <h1>Gerenciador de Tarefas</h1>
+
+        <div class="formulario">
+
+            <label for="titulo">Título da tarefa:</label>
+            <input 
+                type="text" 
+                id="titulo" 
+                placeholder="Digite a tarefa"
+            >
+
+            <label for="prioridade">Prioridade:</label>
+            <select id="prioridade">
+                <option value="1">1 - Baixa</option>
+                <option value="2">2 - Média</option>
+                <option value="3">3 - Alta</option>
+            </select>
+
+            <button onclick="cadastrarTarefa()">
+                Cadastrar tarefa
+            </button>
+
+        </div>
+
+        <h2>Lista de tarefas</h2>
+
+        <div id="listaTarefas"></div>
+
+    </div>
+
+    <script>
+
+        let tarefas = [];
+        let geradorCodigo = 0;
+
+        function cadastrarTarefa() {
+
+            const titulo = document.getElementById("titulo").value;
+            const prioridade = Number(
+                document.getElementById("prioridade").value
+            );
+
+            if (titulo.length < 5) {
+                alert("O título deve ter no mínimo 5 caracteres.");
+                return;
+            }
+
+            if (prioridade < 1 || prioridade > 3) {
+                alert("Informe uma prioridade entre 1 e 3.");
+                return;
+            }
+
+            let tarefa = {
+                codigo: ++geradorCodigo,
+                titulo: titulo,
+                prioridade: prioridade,
+                status: true
+            };
+
+            tarefas.push(tarefa);
+
+            document.getElementById("titulo").value = "";
+
+            listarTarefas();
+        }
+
+        function concluirTarefa(codigo) {
+
+            const tarefa = tarefas.find(
+                tarefa => tarefa.codigo === codigo
+            );
+
+            if (tarefa) {
+                tarefa.status = false;
+                listarTarefas();
+            }
+        }
+
+        function listarTarefas() {
+
+            const lista = document.getElementById("listaTarefas");
+
+            lista.innerHTML = "";
+
+            if (tarefas.length === 0) {
+                lista.innerHTML = "<p>Nenhuma tarefa cadastrada.</p>";
+                return;
+            }
+
+            tarefas.forEach(tarefa => {
+
+                const div = document.createElement("div");
+
+                div.classList.add("tarefa");
+
+                if (!tarefa.status) {
+                    div.classList.add("concluida");
+                }
+
+                let prioridadeTexto;
+
+                if (tarefa.prioridade === 1) {
+                    prioridadeTexto = "Baixa";
+                } else if (tarefa.prioridade === 2) {
+                    prioridadeTexto = "Média";
+                } else {
+                    prioridadeTexto = "Alta";
+                }
+
+                div.innerHTML = `
+                    <h3>${tarefa.titulo}</h3>
+
+                    <p>
+                        Código: ${tarefa.codigo}
+                    </p>
+
+                    <p>
+                        Prioridade: ${prioridadeTexto}
+                    </p>
+
+                    <p>
+                        Status: 
+                        ${tarefa.status ? "Pendente" : "Concluída"}
+                    </p>
+
+                    ${
+                        tarefa.status
+                        ? `<button onclick="concluirTarefa(${tarefa.codigo})">
+                            Concluir
+                           </button>`
+                        : ""
+                    }
+                `;
+
+                lista.appendChild(div);
+            });
+        }
+
+        listarTarefas();
+
+    </script>
+
+<script src="script.js"></script></body>
+</html>
+```
