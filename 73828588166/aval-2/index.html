@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechStore - Smartphones & Acessórios</title>
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome para Ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Arquivo CSS Personalizado -->
+    <link rel="stylesheet" href="style.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"><link href="style.css" rel="stylesheet"></head>
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-300">
+
+    <!-- Header / Navbar -->
+    <header class="sticky top-0 z-40 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-700 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Logo -->
+            <div class="flex items-center space-x-2 cursor-pointer" onclick="resetFilters()">
+                <div class="bg-blue-600 text-white p-2.5 rounded-xl flex items-center justify-center shadow-md shadow-blue-500/20">
+                    <i class="fa-solid fa-mobile-screen-button text-xl"></i>
+                </div>
+                <span class="text-2xl font-black tracking-tight bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">TechStore</span>
+            </div>
+
+            <!-- Search Bar (Desktop) -->
+            <div class="hidden md:flex items-center flex-1 max-w-md mx-8">
+                <div class="relative w-full">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </span>
+                    <input type="text" id="searchInput" placeholder="Buscar por modelo, marca..." 
+                        class="w-full pl-10 pr-4 py-2.5 bg-slate-100 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition text-sm">
+                </div>
+            </div>
+
+            <!-- Actions (Theme Toggle & Cart) -->
+            <div class="flex items-center space-x-3">
+                <!-- Theme Toggle -->
+                <button id="themeToggle" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition">
+                    <i class="fa-solid fa-moon dark:hidden text-lg"></i>
+                    <i class="fa-solid fa-sun hidden dark:inline text-lg text-amber-400"></i>
+                </button>
+
+                <!-- Cart Button -->
+                <button id="cartBtn" class="relative p-2.5 rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition shadow-md shadow-blue-500/20 flex items-center space-x-2 px-4">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span class="hidden sm:inline font-medium text-sm">Carrinho</span>
+                    <span id="cartCount" class="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center shadow-sm border-2 border-white dark:border-slate-800">0</span>
+                </button>
+            </div>
+        </div>
+        <!-- Mobile Search Bar -->
+        <div class="px-4 pb-4 md:hidden">
+            <div class="relative w-full">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </span>
+                <input type="text" id="mobileSearchInput" placeholder="Buscar modelo..." 
+                    class="w-full pl-10 pr-4 py-2 bg-slate-100 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Hero Banner -->
+        <section class="relative bg-gradient-to-r from-blue-600 to-indigo-700 rounded-3xl p-8 sm:p-12 mb-10 text-white overflow-hidden shadow-xl shadow-blue-500/10">
+            <div class="absolute right-0 top-0 bottom-0 w-1/2 opacity-10 bg-no-repeat bg-right bg-contain hidden lg:block" style="background-image: url('https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&q=80&w=800');"></div>
+            <div class="relative z-10 max-w-xl">
+                <span class="inline-block bg-white/20 backdrop-blur-md px-3.5 py-1 rounded-full text-xs font-semibold mb-4 tracking-wide uppercase">Lançamentos 2026</span>
+                <h1 class="text-3xl sm:text-5xl font-black mb-4 tracking-tight leading-tight">Tecnologia de ponta na palma da sua mão.</h1>
+                <p class="text-blue-100 mb-6 text-sm sm:text-base">Encontre os smartphones mais potentes do mercado com descontos exclusivos e frete rápido para todo o país.</p>
+                <a href="#produtos" class="inline-flex items-center space-x-2 bg-white text-blue-600 font-bold px-6 py-3 rounded-xl shadow-lg hover:bg-slate-100 transition transform hover:-translate-y-0.5">
+                    <span>Ver Ofertas</span>
+                    <i class="fa-solid fa-arrow-down text-sm"></i>
+                </a>
+            </div>
+        </section>
+
+        <div id="produtos"></div>
+
+        <!-- Filtros e Ordenação -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+            <!-- Categorias / Marcas -->
+            <div class="flex items-center space-x-2 overflow-x-auto pb-2 md:pb-0 no-scrollbar" id="categoryFilters">
+                <button onclick="filterCategory('all')" class="cat-btn active px-4 py-2 rounded-xl text-sm font-semibold whitespace-nowrap transition bg-blue-600 text-white shadow-md shadow-blue-500/20">Todos</button>
+                <button onclick="filterCategory('Apple')" class="cat-btn px-4 py-2 rounded-xl text-sm font-semibold whitespace-nowrap transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700">Apple</button>
+                <button onclick="filterCategory('Samsung')" class="cat-btn px-4 py-2 rounded-xl text-sm font-semibold whitespace-nowrap transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700">Samsung</button>
+                <button onclick="filterCategory('Xiaomi')" class="cat-btn px-4 py-2 rounded-xl text-sm font-semibold whitespace-nowrap transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700">Xiaomi</button>
+                <button onclick="filterCategory('Motorola')" class="cat-btn px-4 py-2 rounded-xl text-sm font-semibold whitespace-nowrap transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700">Motorola</button>
+            </div>
+
+            <!-- Ordenação -->
+            <div class="flex items-center space-x-2 self-end md:self-auto">
+                <span class="text-xs text-slate-400 font-medium whitespace-nowrap">Ordenar por:</span>
+                <select id="sortSelect" class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="featured">Destaques</option>
+                    <option value="asc">Menor Preço</option>
+                    <option value="desc">Maior Preço</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Grade de Produtos -->
+        <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- Os produtos serão injetados via JavaScript -->
+        </div>
+
+        <!-- Estado Vazio (Sem resultados) -->
+        <div id="emptyState" class="hidden text-center py-16">
+            <div class="text-slate-400 text-5xl mb-4"><i class="fa-solid fa-box-open"></i></div>
+            <h3 class="text-lg font-bold mb-2">Nenhum celular encontrado</h3>
+            <p class="text-slate-500 text-sm mb-4">Tente buscar por outro termo ou limpar os filtros.</p>
+            <button onclick="resetFilters()" class="px-4 py-2 bg-blue-600 text-white rounded-xl text-sm font-medium hover:bg-blue-700 transition">Limpar Filtros</button>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 mt-16 py-8 text-center text-sm text-slate-500 dark:text-slate-400">
+        <p>&copy; 2026 TechStore. Todos os direitos reservados.</p>
+    </footer>
+
+    <!-- Modal Detalhes do Produto -->
+    <div id="productModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm hidden">
+        <div class="bg-white dark:bg-slate-800 rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl relative overflow-hidden transform transition-all">
+            <button onclick="closeModal()" class="absolute top-4 right-4 w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-500 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div id="modalContent" class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                <!-- Conteúdo injetado via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Drawer do Carrinho -->
+    <div id="cartDrawer" class="fixed inset-y-0 right-0 z-50 w-full max-w-md bg-white dark:bg-slate-800 shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col border-l border-slate-200 dark:border-slate-700">
+        <div class="p-6 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
+            <h2 class="text-lg font-bold flex items-center space-x-2">
+                <i class="fa-solid fa-bag-shopping text-blue-600"></i>
+                <span>Seu Carrinho</span>
+            </h2>
+            <button onclick="toggleCart()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-2 rounded-lg">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+        </div>
+        
+        <!-- Itens do Carrinho -->
+        <div id="cartItems" class="flex-1 overflow-y-auto p-6 space-y-4 divide-y divide-slate-100 dark:divide-slate-700/50">
+            <!-- Itens dinâmicos -->
+        </div>
+
+        <!-- Rodapé do Carrinho -->
+        <div class="p-6 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
+            <div class="flex items-center justify-between mb-4">
+                <span class="text-slate-500 dark:text-slate-400 font-medium">Total:</span>
+                <span id="cartTotal" class="text-2xl font-black text-blue-600">R$ 0,00</span>
+            </div>
+            <button onclick="checkout()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-blue-500/20 transition flex items-center justify-center space-x-2">
+                <span>Finalizar Pedido</span>
+                <i class="fa-solid fa-arrow-right text-sm"></i>
+            </button>
+        </div>
+    </div>
+    <div id="cartOverlay" class="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm hidden" onclick="toggleCart()"></div>
+
+    <!-- Arquivo JavaScript Principal -->
+    <script src="script.js"></script>
+<script src="script.js"></script></body>
+</html>
