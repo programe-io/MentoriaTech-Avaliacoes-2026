@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AURA PARFUMS — Cadastro de Produtos</title>
+
+    <link rel="stylesheet" href="cadastro.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+    <header class="topo">
+        <div class="logo">
+            AURA <span>PARFUMS</span>
+        </div>
+
+        <div class="admin-info">
+            <span class="status"></span>
+            Painel Administrativo
+        </div>
+    </header>
+
+    <main class="container">
+
+        <!-- CABEÇALHO -->
+        <section class="page-header">
+            <div>
+                <p class="mini-title">GERENCIAMENTO</p>
+                <h1>Cadastro de Produtos</h1>
+                <p>Adicione e gerencie os produtos da sua loja.</p>
+            </div>
+
+            <div class="total-box">
+                <span id="totalProdutos">0</span>
+                <small>Produtos cadastrados</small>
+            </div>
+        </section>
+
+
+        <!-- FORMULÁRIO -->
+        <section class="card">
+
+            <div class="card-title">
+                <div>
+                    <h2>Novo produto</h2>
+                    <p>Preencha as informações abaixo.</p>
+                </div>
+            </div>
+
+            <form id="produtoForm">
+
+                <input type="hidden" id="produtoId">
+
+                <div class="form-grid">
+
+                    <!-- NOME -->
+                    <div class="campo campo-grande">
+                        <label for="nome">Nome do produto *</label>
+                        <input
+                            type="text"
+                            id="nome"
+                            placeholder="Ex.: Sauvage Eau de Parfum"
+                            required
+                        >
+                    </div>
+
+                    <!-- MARCA -->
+                    <div class="campo">
+                        <label for="marca">Marca *</label>
+                        <input
+                            type="text"
+                            id="marca"
+                            placeholder="Ex.: Dior"
+                            required
+                        >
+                    </div>
+
+                    <!-- CATEGORIA -->
+                    <div class="campo">
+                        <label for="categoria">Categoria *</label>
+
+                        <select id="categoria" required>
+                            <option value="">Selecione</option>
+                            <option value="Feminino">Feminino</option>
+                            <option value="Masculino">Masculino</option>
+                            <option value="Unissex">Unissex</option>
+                            <option value="Kits">Kits</option>
+                            <option value="Body Splash">Body Splash</option>
+                            <option value="Outros">Outros</option>
+                        </select>
+                    </div>
+
+                    <!-- VOLUME -->
+                    <div class="campo">
+                        <label for="volume">Volume</label>
+
+                        <select id="volume">
+                            <option value="">Selecione</option>
+                            <option value="30ml">30ml</option>
+                            <option value="50ml">50ml</option>
+                            <option value="75ml">75ml</option>
+                            <option value="100ml">100ml</option>
+                            <option value="125ml">125ml</option>
+                            <option value="150ml">150ml</option>
+                            <option value="200ml">200ml</option>
+                        </select>
+                    </div>
+
+                    <!-- PREÇO -->
+                    <div class="campo">
+                        <label for="preco">Preço *</label>
+
+                        <div class="input-money">
+                            <span>R$</span>
+
+                            <input
+                                type="number"
+                                id="preco"
+                                placeholder="0,00"
+                                step="0.01"
+                                min="0"
+                                required
+                            >
+                        </div>
+                    </div>
+
+                    <!-- PREÇO PROMOCIONAL -->
+                    <div class="campo">
+                        <label for="precoPromocional">
+                            Preço promocional
+                        </label>
+
+                        <div class="input-money">
+                            <span>R$</span>
+
+                            <input
+                                type="number"
+                                id="precoPromocional"
+                                placeholder="0,00"
+                                step="0.01"
+                                min="0"
+                            >
+                        </div>
+                    </div>
+
+                    <!-- ESTOQUE -->
+                    <div class="campo">
+                        <label for="estoque">Estoque *</label>
+
+                        <input
+                            type="number"
+                            id="estoque"
+                            placeholder="Ex.: 20"
+                            min="0"
+                            required
+                        >
+                    </div>
+
+                    <!-- SKU -->
+                    <div class="campo">
+                        <label for="sku">SKU / Código</label>
+
+                        <input
+                            type="text"
+                            id="sku"
+                            placeholder="Ex.: PERF-001"
+                        >
+                    </div>
+
+                    <!-- DESCRIÇÃO -->
+                    <div class="campo campo-full">
+                        <label for="descricao">Descrição</label>
+
+                        <textarea
+                            id="descricao"
+                            rows="4"
+                            placeholder="Digite uma descrição do produto..."
+                        ></textarea>
+                    </div>
+
+                    <!-- NOTAS -->
+                    <div class="campo campo-full">
+                        <label for="notas">Notas olfativas</label>
+
+                        <input
+                            type="text"
+                            id="notas"
+                            placeholder="Ex.: Bergamota, baunilha, âmbar e sândalo"
+                        >
+                    </div>
+
+                    <!-- IMAGEM -->
+                    <div class="campo campo-full">
+
+                        <label>Imagem do produto</label>
+
+                        <div class="upload-area" id="uploadArea">
+
+                            <input
+                                type="file"
+                                id="imagem"
+                                accept="image/*"
+                                hidden
+                            >
+
+                            <div class="upload-content" id="uploadContent">
+                                <div class="upload-icon">＋</div>
+
+                                <strong>Adicionar imagem</strong>
+
+                                <span>
+                                    Clique aqui ou arraste uma imagem
+                                </span>
+
+                                <small>
+                                    PNG, JPG ou WEBP
+                                </small>
+                            </div>
+
+                            <img
+                                id="previewImagem"
+                                class="preview-imagem"
+                                alt="Preview do produto"
+                            >
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- OPÇÕES -->
+                <div class="opcoes">
+
+                    <label class="checkbox">
+                        <input type="checkbox" id="destaque">
+                        <span></span>
+                        Produto em destaque
+                    </label>
+
+                    <label class="checkbox">
+                        <input type="checkbox" id="oferta">
+                        <span></span>
+                        Produto em oferta
+                    </label>
+
+                </div>
+
+
+                <!-- BOTÕES -->
+                <div class="acoes">
+
+                    <button
+                        type="button"
+                        class="btn cancelar"
+                        id="btnCancelar"
+                    >
+                        Limpar
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="btn salvar"
+                    >
+                        <span id="textoBotao">Cadastrar produto</span>
+                    </button>
+
+                </div>
+
+            </form>
+
+        </section>
+
+
+        <!-- PRODUTOS -->
+        <section class="card produtos-section">
+
+            <div class="produtos-header">
+
+                <div>
+                    <p class="mini-title">CATÁLOGO</p>
+                    <h2>Produtos cadastrados</h2>
+                </div>
+
+                <div class="busca">
+                    <span>⌕</span>
+
+                    <input
+                        type="text"
+                        id="buscar"
+                        placeholder="Buscar produto..."
+                    >
+                </div>
+
+            </div>
+
+
+            <div id="listaProdutos" class="lista-produtos">
+
+                <!-- Produtos aparecem aqui -->
+
+            </div>
+
+
+            <div
+                id="semProdutos"
+                class="sem-produtos"
+            >
+                <div>📦</div>
+
+                <h3>Nenhum produto cadastrado</h3>
+
+                <p>
+                    Cadastre seu primeiro produto usando o formulário acima.
+                </p>
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- MODAL EXCLUSÃO -->
+    <div class="modal" id="modalExcluir">
+
+        <div class="modal-box">
+
+            <div class="modal-icon">
+                !
+            </div>
+
+            <h2>Excluir produto?</h2>
+
+            <p>
+                Essa ação não poderá ser desfeita.
+            </p>
+
+            <div class="modal-acoes">
+
+                <button
+                    class="btn cancelar"
+                    id="cancelarExclusao"
+                >
+                    Cancelar
+                </button>
+
+                <button
+                    class="btn excluir"
+                    id="confirmarExclusao"
+                >
+                    Excluir
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div id="notificacao" class="notificacao">
+        Produto cadastrado com sucesso!
+    </div>
+
+
+    <script src="cadastro.js"></script>
+
+<script src="script.js"></script></body>
+</html>
