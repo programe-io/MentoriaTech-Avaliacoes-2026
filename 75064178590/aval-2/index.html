@@ -1,0 +1,819 @@
+!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEO-HABIT // Cyber Productivity Terminal</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Orbitron & Rajdhani -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        cyber: {
+                            bg: '#05070f',
+                            card: 'rgba(12, 17, 31, 0.75)',
+                            border: '#1f293d',
+                            cyan: '#00f0ff',
+                            magenta: '#ff007f',
+                            yellow: '#ffe600',
+                            green: '#00ff66',
+                            purple: '#a855f7'
+                        }
+                    },
+                    fontFamily: {
+                        orbitron: ['Orbitron', 'sans-serif'],
+                        rajdhani: ['Rajdhani', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'neon-cyan': '0 0 15px rgba(0, 240, 255, 0.4), 0 0 30px rgba(0, 240, 255, 0.2)',
+                        'neon-magenta': '0 0 15px rgba(255, 0, 127, 0.4), 0 0 30px rgba(255, 0, 127, 0.2)',
+                        'neon-green': '0 0 15px rgba(0, 255, 102, 0.4)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #03050a;
+            color: #e2e8f0;
+            font-family: 'Rajdhani', sans-serif;
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(0, 240, 255, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 85% 85%, rgba(255, 0, 127, 0.05) 0%, transparent 40%),
+                linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 30px 30px, 30px 30px;
+            background-attachment: fixed;
+        }
+
+        /* Scanline Overlay Effect */
+        .scanline-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+            background-size: 100% 4px;
+            z-index: 99;
+            pointer-events: none;
+            opacity: 0.3;
+        }
+
+        /* Glowing texts */
+        .text-glow-cyan { text-shadow: 0 0 8px rgba(0, 240, 255, 0.6); }
+        .text-glow-magenta { text-shadow: 0 0 8px rgba(255, 0, 127, 0.6); }
+        .text-glow-green { text-shadow: 0 0 8px rgba(0, 255, 102, 0.6); }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #05070f; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #00f0ff; }
+
+        /* Progress ring smooth transition */
+        .progress-ring__circle {
+            transition: stroke-dashoffset 0.35s;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+
+        /* Sci-Fi Clips */
+        .cyber-clip {
+            clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+        }
+        .cyber-clip-sm {
+            clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"><link href="style.css" rel="stylesheet"></head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-cyber-cyan selection:text-black">
+
+    <div class="scanline-overlay"></div>
+
+    <header class="border-b border-cyber-border/80 bg-cyber-bg/90 backdrop-blur-md sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Brand Logo -->
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded bg-cyber-cyan/10 border border-cyber-cyan flex items-center justify-center text-cyber-cyan shadow-neon-cyan">
+                    <i class="fa-solid fa-microchip text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="font-orbitron font-extrabold text-xl tracking-wider text-white flex items-center gap-2">
+                        NEO<span class="text-cyber-cyan">//</span>HABIT
+                    </h1>
+                    <p class="text-xs text-slate-400 font-mono tracking-widest uppercase">CYBER PRODUCTIVITY OS v2.6</p>
+                </div>
+            </div>
+
+            <!-- Header Quick Stats & Date -->
+            <div class="hidden md:flex items-center space-x-6">
+                <div class="text-right">
+                    <div id="current-date-display" class="font-mono text-sm text-cyber-cyan">YYYY.MM.DD</div>
+                    <div id="clock-display" class="font-orbitron text-xs text-slate-400">00:00:00 UTC</div>
+                </div>
+                <button onclick="seedDemoData()" title="Carregar Dados Demo" class="px-3 py-1.5 text-xs font-mono border border-cyber-border hover:border-cyber-yellow text-slate-300 hover:text-cyber-yellow transition rounded cyber-clip-sm bg-cyber-card flex items-center gap-1.5">
+                    <i class="fa-solid fa-database"></i> DEMO DATA
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex-grow">
+        
+        <!-- Navigation Tabs -->
+        <div class="flex border-b border-cyber-border mb-8 overflow-x-auto no-scrollbar">
+            <button onclick="switchTab('tracker')" id="tab-tracker" class="px-6 py-3 font-orbitron text-sm font-semibold border-b-2 border-cyber-cyan text-cyber-cyan flex items-center gap-2 whitespace-nowrap transition-all">
+                <i class="fa-solid fa-list-check"></i> HÁBITOS DIÁRIOS
+            </button>
+            <button onclick="switchTab('pomodoro')" id="tab-pomodoro" class="px-6 py-3 font-orbitron text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-white flex items-center gap-2 whitespace-nowrap transition-all">
+                <i class="fa-solid fa-stopwatch"></i> POMODORO MATRIX
+            </button>
+            <button onclick="switchTab('analytics')" id="tab-analytics" class="px-6 py-3 font-orbitron text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-white flex items-center gap-2 whitespace-nowrap transition-all">
+                <i class="fa-solid fa-chart-line"></i> TELEMETRIA & METRICAS
+            </button>
+        </div>
+
+        <!-- ================= SECTION 1: HABIT TRACKER ================= -->
+        <section id="sec-tracker" class="space-y-6">
+            <!-- Top Summary Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="p-4 rounded-lg bg-cyber-card border border-cyber-border/80 backdrop-blur-md relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-16 h-16 bg-cyber-cyan/5 rounded-bl-full pointer-events-none"></div>
+                    <p class="text-xs font-mono text-slate-400 uppercase tracking-wider">Hábitos Totais</p>
+                    <div class="flex items-baseline justify-between mt-2">
+                        <span id="stat-total-habits" class="font-orbitron text-3xl font-bold text-white">0</span>
+                        <i class="fa-solid fa-square-check text-cyber-cyan/40 text-xl"></i>
+                    </div>
+                </div>
+
+                <div class="p-4 rounded-lg bg-cyber-card border border-cyber-border/80 backdrop-blur-md relative overflow-hidden group">
+                    <p class="text-xs font-mono text-slate-400 uppercase tracking-wider">Concluídos Hoje</p>
+                    <div class="flex items-baseline justify-between mt-2">
+                        <span id="stat-completed-today" class="font-orbitron text-3xl font-bold text-cyber-green text-glow-green">0</span>
+                        <i class="fa-solid fa-circle-check text-cyber-green/40 text-xl"></i>
+                    </div>
+                </div>
+
+                <div class="p-4 rounded-lg bg-cyber-card border border-cyber-border/80 backdrop-blur-md relative overflow-hidden group">
+                    <p class="text-xs font-mono text-slate-400 uppercase tracking-wider">Taxa Diária</p>
+                    <div class="flex items-baseline justify-between mt-2">
+                        <span id="stat-daily-rate" class="font-orbitron text-3xl font-bold text-cyber-yellow">0%</span>
+                        <i class="fa-solid fa-bolt text-cyber-yellow/40 text-xl"></i>
+                    </div>
+                </div>
+
+                <div class="p-4 rounded-lg bg-cyber-card border border-cyber-border/80 backdrop-blur-md relative overflow-hidden group">
+                    <p class="text-xs font-mono text-slate-400 uppercase tracking-wider">Maior Streak</p>
+                    <div class="flex items-baseline justify-between mt-2">
+                        <span id="stat-best-streak" class="font-orbitron text-3xl font-bold text-cyber-magenta text-glow-magenta">0d</span>
+                        <i class="fa-solid fa-fire text-cyber-magenta/40 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Bar -->
+            <div class="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4 bg-cyber-card p-4 rounded-lg border border-cyber-border">
+                <div class="relative flex-grow max-w-md">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"></i>
+                    <input type="text" id="habit-search" oninput="renderHabits()" placeholder="Buscar hábito..." class="w-full bg-cyber-bg border border-cyber-border rounded pl-10 pr-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-cyber-cyan transition">
+                </div>
+                
+                <div class="flex items-center gap-3">
+                    <select id="habit-category-filter" onchange="renderHabits()" class="bg-cyber-bg border border-cyber-border rounded px-3 py-2 text-sm text-slate-300 focus:outline-none focus:border-cyber-cyan">
+                        <option value="ALL">Todas Categorias</option>
+                        <option value="Health">Saúde & Corpo</option>
+                        <option value="Mind">Mente & Foco</option>
+                        <option value="Code">Tech & Code</option>
+                        <option value="Routine">Rotina</option>
+                    </select>
+
+                    <button onclick="openHabitModal()" class="px-4 py-2 bg-cyber-cyan/10 hover:bg-cyber-cyan/20 border border-cyber-cyan text-cyber-cyan font-orbitron text-xs font-bold tracking-wider rounded cyber-clip-sm transition-all shadow-neon-cyan flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-plus"></i> NOVO HÁBITO
+                    </button>
+                </div>
+            </div>
+
+            <!-- Habits Grid -->
+            <div id="habits-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Dynamic Content via JS -->
+            </div>
+        </section>
+
+        <!-- ================= SECTION 2: POMODORO MATRIX ================= -->
+        <section id="sec-pomodoro" class="hidden max-w-4xl mx-auto">
+            <div class="bg-cyber-card border border-cyber-border/90 rounded-2xl p-6 sm:p-10 backdrop-blur-xl relative shadow-2xl">
+                <!-- Mode Switchers -->
+                <div class="flex justify-center gap-2 sm:gap-4 mb-8">
+                    <button onclick="setPomodoroMode('focus')" id="pomo-mode-focus" class="px-4 py-2 rounded-lg font-orbitron text-xs sm:text-sm border border-cyber-cyan bg-cyber-cyan/20 text-cyber-cyan shadow-neon-cyan transition">
+                        MODO FOCO (25m)
+                    </button>
+                    <button onclick="setPomodoroMode('shortBreak')" id="pomo-mode-short" class="px-4 py-2 rounded-lg font-orbitron text-xs sm:text-sm border border-cyber-border text-slate-400 hover:text-white transition">
+                        PAUSA CURTA (5m)
+                    </button>
+                    <button onclick="setPomodoroMode('longBreak')" id="pomo-mode-long" class="px-4 py-2 rounded-lg font-orbitron text-xs sm:text-sm border border-cyber-border text-slate-400 hover:text-white transition">
+                        PAUSA LONGA (15m)
+                    </button>
+                </div>
+
+                <!-- Circular Timer Display -->
+                <div class="relative w-64 h-64 sm:w-80 sm:h-80 mx-auto flex items-center justify-center">
+                    <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="44" stroke="#1f293d" stroke-width="4" fill="transparent" />
+                        <circle id="pomo-progress-circle" class="progress-ring__circle" cx="50" cy="50" r="44" stroke="#00f0ff" stroke-width="4" fill="transparent" stroke-dasharray="276.46" stroke-dashoffset="0" stroke-linecap="round" />
+                    </svg>
+                    
+                    <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+                        <span id="pomo-timer-display" class="font-orbitron text-5xl sm:text-6xl font-extrabold text-white tracking-widest text-glow-cyan">25:00</span>
+                        <span id="pomo-status-label" class="text-xs font-mono uppercase tracking-widest text-slate-400 mt-2">PRONTO PARA INICIAR</span>
+                    </div>
+                </div>
+
+                <!-- Controls -->
+                <div class="flex items-center justify-center gap-4 mt-8">
+                    <button id="pomo-start-btn" onclick="togglePomodoro()" class="w-36 py-3 bg-cyber-cyan text-black font-orbitron font-bold text-sm tracking-wider rounded cyber-clip hover:bg-white transition shadow-neon-cyan">
+                        INICIAR
+                    </button>
+                    <button onclick="resetPomodoro()" class="px-4 py-3 bg-cyber-bg border border-cyber-border hover:border-slate-400 text-slate-300 font-orbitron text-sm rounded cyber-clip transition">
+                        <i class="fa-solid fa-rotate-right"></i>
+                    </button>
+                </div>
+
+                <!-- Session Counter -->
+                <div class="mt-8 pt-6 border-t border-cyber-border/60 flex justify-around text-center">
+                    <div>
+                        <div class="text-xs font-mono text-slate-400">SESSÕES HOJE</div>
+                        <div id="pomo-completed-count" class="font-orbitron text-xl text-cyber-cyan font-bold mt-1">0</div>
+                    </div>
+                    <div>
+                        <div class="text-xs font-mono text-slate-400">TEMPO TOTAL</div>
+                        <div id="pomo-total-time" class="font-orbitron text-xl text-cyber-magenta font-bold mt-1">0m</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SECTION 3: ANALYTICS ================= -->
+        <section id="sec-analytics" class="hidden space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Habit Completion Breakdown -->
+                <div class="bg-cyber-card border border-cyber-border p-6 rounded-xl">
+                    <h3 class="font-orbitron text-base font-bold text-white mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-chart-pie text-cyber-cyan"></i> TAXA DE CONCLUSÃO POR HÁBITO
+                    </h3>
+                    <div id="analytics-habit-bars" class="space-y-4">
+                        <!-- Rendered via JS -->
+                    </div>
+                </div>
+
+                <!-- Weekly Activity Pulse -->
+                <div class="bg-cyber-card border border-cyber-border p-6 rounded-xl flex flex-col justify-between">
+                    <div>
+                        <h3 class="font-orbitron text-base font-bold text-white mb-4 flex items-center gap-2">
+                            <i class="fa-solid fa-calendar-week text-cyber-magenta"></i> ATIVIDADE NOS ÚLTIMOS 7 DIAS
+                        </h3>
+                        <div id="analytics-weekly-grid" class="grid grid-cols-7 gap-2 items-end h-48 pt-6">
+                            <!-- Rendered via JS -->
+                        </div>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-cyber-border/50 text-xs font-mono text-slate-400 flex justify-between">
+                        <span>Status do Sistema: <span class="text-cyber-green">OTIMIZADO</span></span>
+                        <span>Sincronia Local: OK</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-cyber-border/60 bg-cyber-bg/80 py-4 mt-8">
+        <div class="max-w-7xl mx-auto px-4 text-center font-mono text-xs text-slate-500">
+            NEO-HABIT TERMINAL // LOCAL STORAGE ENCRYPTED // NO EXTERNAL TRACKERS
+        </div>
+    </footer>
+
+    <!-- MODAL: Create / Edit Habit -->
+    <div id="habit-modal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-cyber-card border border-cyber-cyan/50 w-full max-w-md p-6 rounded-xl shadow-2xl relative cyber-clip">
+            <h2 id="modal-title" class="font-orbitron text-lg font-bold text-white mb-4 text-glow-cyan">NOVO PROTOCOLO [HÁBITO]</h2>
+            
+            <form id="habit-form" onsubmit="saveHabit(event)" class="space-y-4">
+                <input type="hidden" id="modal-habit-id">
+                
+                <div>
+                    <label class="block text-xs font-mono text-slate-400 uppercase mb-1">Título do Hábito</label>
+                    <input type="text" id="modal-habit-title" required placeholder="Ex: Meditação Quantum" class="w-full bg-cyber-bg border border-cyber-border rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-cyber-cyan">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-mono text-slate-400 uppercase mb-1">Categoria</label>
+                    <select id="modal-habit-category" class="w-full bg-cyber-bg border border-cyber-border rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-cyber-cyan">
+                        <option value="Health">Saúde & Corpo</option>
+                        <option value="Mind">Mente & Foco</option>
+                        <option value="Code">Tech & Code</option>
+                        <option value="Routine">Rotina</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-mono text-slate-400 uppercase mb-1">Frequência</label>
+                    <select id="modal-habit-freq" class="w-full bg-cyber-bg border border-cyber-border rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-cyber-cyan">
+                        <option value="daily">Diário</option>
+                        <option value="weekdays">Dias úteis</option>
+                    </select>
+                </div>
+
+                <div class="flex justify-end gap-3 pt-4">
+                    <button type="button" onclick="closeHabitModal()" class="px-4 py-2 border border-cyber-border text-slate-400 hover:text-white rounded text-xs font-orbitron">CANCELAR</button>
+                    <button type="submit" class="px-4 py-2 bg-cyber-cyan text-black rounded text-xs font-orbitron font-bold hover:bg-white transition shadow-neon-cyan">SALVAR</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // ================= STATE MANAGEMENT =================
+        const STORAGE_KEY_HABITS = 'NEOHABIT_HABITS_DATA_V1';
+        const STORAGE_KEY_POMO = 'NEOHABIT_POMO_DATA_V1';
+
+        let habits = [];
+        let pomoStats = { completedSessions: 0, totalMinutes: 0 };
+
+        // Pomodoro State Variables
+        let pomoTimer = null;
+        let pomoTimeLeft = 25 * 60;
+        let pomoTotalDuration = 25 * 60;
+        let pomoIsRunning = false;
+        let pomoCurrentMode = 'focus'; // 'focus', 'shortBreak', 'longBreak'
+
+        const MODE_TIMES = {
+            focus: 25 * 60,
+            shortBreak: 5 * 60,
+            longBreak: 15 * 60
+        };
+
+        // Initialize App
+        window.onload = function() {
+            loadLocalStorage();
+            updateClock();
+            setInterval(updateClock, 1000);
+            renderHabits();
+            updateStatsHeader();
+            updatePomodoroUI();
+            renderAnalytics();
+        };
+
+        function loadLocalStorage() {
+            const storedHabits = localStorage.getItem(STORAGE_KEY_HABITS);
+            if (storedHabits) {
+                try { habits = JSON.parse(storedHabits); } catch(e) { habits = []; }
+            } else {
+                habits = getInitialDefaultHabits();
+                saveHabitsToStorage();
+            }
+
+            const storedPomo = localStorage.getItem(STORAGE_KEY_POMO);
+            if (storedPomo) {
+                try { pomoStats = JSON.parse(storedPomo); } catch(e) {}
+            }
+        }
+
+        function saveHabitsToStorage() {
+            localStorage.setItem(STORAGE_KEY_HABITS, JSON.stringify(habits));
+        }
+
+        function savePomoStorage() {
+            localStorage.setItem(STORAGE_KEY_POMO, JSON.stringify(pomoStats));
+        }
+
+        function getTodayString() {
+            return new Date().toISOString().split('T')[0];
+        }
+
+        function getInitialDefaultHabits() {
+            const today = getTodayString();
+            return [
+                {
+                    id: '1',
+                    title: 'Hydration Protocol (2L Aqua)',
+                    category: 'Health',
+                    streak: 3,
+                    history: { [today]: true },
+                    createdAt: today
+                },
+                {
+                    id: '2',
+                    title: 'Neural Deep Work (45 min)',
+                    category: 'Mind',
+                    streak: 5,
+                    history: {},
+                    createdAt: today
+                },
+                {
+                    id: '3',
+                    title: 'Review System Code / Commits',
+                    category: 'Code',
+                    streak: 2,
+                    history: { [today]: true },
+                    createdAt: today
+                }
+            ];
+        }
+
+        function seedDemoData() {
+            habits = getInitialDefaultHabits();
+            pomoStats = { completedSessions: 6, totalMinutes: 150 };
+            saveHabitsToStorage();
+            savePomoStorage();
+            renderHabits();
+            updateStatsHeader();
+            updatePomodoroUI();
+            renderAnalytics();
+            showNotification("Dados de demonstração recarregados!");
+        }
+
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('current-date-display').innerText = now.toISOString().split('T')[0].replace(/-/g, '.');
+            document.getElementById('clock-display').innerText = now.toTimeString().split(' ')[0] + ' UTC';
+        }
+
+        function switchTab(tab) {
+            ['tracker', 'pomodoro', 'analytics'].forEach(t => {
+                document.getElementById(`sec-${t}`).classList.add('hidden');
+                document.getElementById(`tab-${t}`).className = "px-6 py-3 font-orbitron text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-white flex items-center gap-2 whitespace-nowrap transition-all";
+            });
+
+            document.getElementById(`sec-${tab}`).classList.remove('hidden');
+            const activeBtn = document.getElementById(`tab-${tab}`);
+            activeBtn.className = "px-6 py-3 font-orbitron text-sm font-semibold border-b-2 border-cyber-cyan text-cyber-cyan flex items-center gap-2 whitespace-nowrap transition-all";
+
+            if (tab === 'analytics') renderAnalytics();
+        }
+
+        function renderHabits() {
+            const container = document.getElementById('habits-container');
+            const searchQuery = document.getElementById('habit-search').value.toLowerCase();
+            const categoryFilter = document.getElementById('habit-category-filter').value;
+            const today = getTodayString();
+
+            container.innerHTML = '';
+
+            const filteredHabits = habits.filter(h => {
+                const matchesSearch = h.title.toLowerCase().includes(searchQuery);
+                const matchesCat = categoryFilter === 'ALL' || h.category === categoryFilter;
+                return matchesSearch && matchesCat;
+            });
+
+            if (filteredHabits.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full py-12 text-center text-slate-500 font-mono">
+                        <i class="fa-solid fa-ghost text-3xl mb-2"></i>
+                        <p>NENHUM PROTOCOLO ENCONTRADO.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            filteredHabits.forEach(habit => {
+                const isCompleted = !!(habit.history && habit.history[today]);
+                
+                const card = document.createElement('div');
+                card.className = `p-5 rounded-xl bg-cyber-card border transition-all duration-300 flex flex-col justify-between ${
+                    isCompleted ? 'border-cyber-green/50 shadow-neon-green/10' : 'border-cyber-border hover:border-slate-600'
+                }`;
+
+                card.innerHTML = `
+                    <div>
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="px-2 py-0.5 text-[10px] font-mono rounded bg-cyber-bg border border-cyber-border text-slate-300">
+                                ${habit.category.toUpperCase()}
+                            </span>
+                            <div class="flex items-center gap-2">
+                                <button onclick="openHabitModal('${habit.id}')" class="text-slate-500 hover:text-cyber-cyan text-xs">
+                                    <i class="fa-solid fa-pen"></i>
+                                </button>
+                                <button onclick="deleteHabit('${habit.id}')" class="text-slate-500 hover:text-cyber-magenta text-xs">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <h4 class="font-orbitron font-semibold text-white text-base mb-2">${escapeHtml(habit.title)}</h4>
+                    </div>
+
+                    <div class="mt-4 pt-4 border-t border-cyber-border/40 flex items-center justify-between">
+                        <div class="flex items-center gap-1.5 text-cyber-magenta font-mono text-xs">
+                            <i class="fa-solid fa-fire text-sm"></i>
+                            <span>STREAK: <strong class="font-orbitron text-sm">${habit.streak || 0}d</strong></span>
+                        </div>
+
+                        <button onclick="toggleHabitToday('${habit.id}')" class="px-4 py-2 rounded font-orbitron text-xs font-bold transition-all flex items-center gap-2 ${
+                            isCompleted 
+                            ? 'bg-cyber-green/20 text-cyber-green border border-cyber-green shadow-neon-green' 
+                            : 'bg-cyber-bg border border-cyber-border hover:border-cyber-cyan text-slate-300'
+                        }">
+                            <i class="fa-solid ${isCompleted ? 'fa-check-double' : 'fa-check'}"></i>
+                            ${isCompleted ? 'CONCLUÍDO' : 'CONCLUIR'}
+                        </button>
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+
+        function toggleHabitToday(id) {
+            const habit = habits.find(h => h.id === id);
+            if (!habit) return;
+
+            const today = getTodayString();
+            if (!habit.history) habit.history = {};
+
+            if (habit.history[today]) {
+                delete habit.history[today];
+                habit.streak = Math.max(0, (habit.streak || 1) - 1);
+            } else {
+                habit.history[today] = true;
+                habit.streak = (habit.streak || 0) + 1;
+                playCyberSound(600, 0.1); // Audio cue
+            }
+
+            saveHabitsToStorage();
+            renderHabits();
+            updateStatsHeader();
+        }
+
+        function updateStatsHeader() {
+            const today = getTodayString();
+            const total = habits.length;
+            const completed = habits.filter(h => h.history && h.history[today]).length;
+            const rate = total > 0 ? Math.round((completed / total) * 100) : 0;
+            const maxStreak = habits.reduce((max, h) => Math.max(max, h.streak || 0), 0);
+
+            document.getElementById('stat-total-habits').innerText = total;
+            document.getElementById('stat-completed-today').innerText = completed;
+            document.getElementById('stat-daily-rate').innerText = `${rate}%`;
+            document.getElementById('stat-best-streak').innerText = `${maxStreak}d`;
+        }
+
+        function openHabitModal(habitId = null) {
+            const modal = document.getElementById('habit-modal');
+            const titleEl = document.getElementById('modal-title');
+            
+            if (habitId) {
+                const habit = habits.find(h => h.id === habitId);
+                if (!habit) return;
+                document.getElementById('modal-habit-id').value = habit.id;
+                document.getElementById('modal-habit-title').value = habit.title;
+                document.getElementById('modal-habit-category').value = habit.category;
+                titleEl.innerText = "EDITAR PROTOCOLO [HÁBITO]";
+            } else {
+                document.getElementById('modal-habit-id').value = '';
+                document.getElementById('habit-form').reset();
+                titleEl.innerText = "NOVO PROTOCOLO [HÁBITO]";
+            }
+            
+            modal.classList.remove('hidden');
+        }
+
+        function closeHabitModal() {
+            document.getElementById('habit-modal').classList.add('hidden');
+        }
+
+        function saveHabit(e) {
+            e.preventDefault();
+            const id = document.getElementById('modal-habit-id').value;
+            const title = document.getElementById('modal-habit-title').value;
+            const category = document.getElementById('modal-habit-category').value;
+
+            if (id) {
+                const habit = habits.find(h => h.id === id);
+                if (habit) {
+                    habit.title = title;
+                    habit.category = category;
+                }
+            } else {
+                habits.push({
+                    id: Date.now().toString(),
+                    title: title,
+                    category: category,
+                    streak: 0,
+                    history: {},
+                    createdAt: getTodayString()
+                });
+            }
+
+            saveHabitsToStorage();
+            closeHabitModal();
+            renderHabits();
+            updateStatsHeader();
+        }
+
+        function deleteHabit(id) {
+            habits = habits.filter(h => h.id !== id);
+            saveHabitsToStorage();
+            renderHabits();
+            updateStatsHeader();
+        }
+
+        function setPomodoroMode(mode) {
+            if (pomoIsRunning) togglePomodoro(); // Pause if running
+
+            pomoCurrentMode = mode;
+            pomoTimeLeft = MODE_TIMES[mode];
+            pomoTotalDuration = MODE_TIMES[mode];
+
+            ['focus', 'short', 'long'].forEach(m => {
+                const btn = document.getElementById(`pomo-mode-${m}`);
+                btn.className = "px-4 py-2 rounded-lg font-orbitron text-xs sm:text-sm border border-cyber-border text-slate-400 hover:text-white transition";
+            });
+
+            const activeBtn = document.getElementById(`pomo-mode-${mode === 'shortBreak' ? 'short' : mode === 'longBreak' ? 'long' : 'focus'}`);
+            activeBtn.className = "px-4 py-2 rounded-lg font-orbitron text-xs sm:text-sm border border-cyber-cyan bg-cyber-cyan/20 text-cyber-cyan shadow-neon-cyan transition";
+
+            updatePomodoroUI();
+        }
+
+        function togglePomodoro() {
+            const startBtn = document.getElementById('pomo-start-btn');
+            
+            if (pomoIsRunning) {
+                clearInterval(pomoTimer);
+                pomoIsRunning = false;
+                startBtn.innerText = "CONTINUAR";
+                startBtn.className = "w-36 py-3 bg-cyber-cyan text-black font-orbitron font-bold text-sm tracking-wider rounded cyber-clip hover:bg-white transition shadow-neon-cyan";
+                document.getElementById('pomo-status-label').innerText = "PAUSADO";
+            } else {
+                pomoIsRunning = true;
+                startBtn.innerText = "PAUSAR";
+                startBtn.className = "w-36 py-3 bg-cyber-magenta text-white font-orbitron font-bold text-sm tracking-wider rounded cyber-clip hover:bg-white transition shadow-neon-magenta";
+                document.getElementById('pomo-status-label').innerText = pomoCurrentMode === 'focus' ? "SESSÃO DE FOCO EM ANDAMENTO" : "PAUSA EM ANDAMENTO";
+
+                pomoTimer = setInterval(() => {
+                    pomoTimeLeft--;
+                    updatePomodoroUI();
+
+                    if (pomoTimeLeft <= 0) {
+                        clearInterval(pomoTimer);
+                        pomoIsRunning = false;
+                        onPomodoroFinished();
+                    }
+                }, 1000);
+            }
+        }
+
+        function resetPomodoro() {
+            if (pomoIsRunning) clearInterval(pomoTimer);
+            pomoIsRunning = false;
+            pomoTimeLeft = MODE_TIMES[pomoCurrentMode];
+            
+            const startBtn = document.getElementById('pomo-start-btn');
+            startBtn.innerText = "INICIAR";
+            startBtn.className = "w-36 py-3 bg-cyber-cyan text-black font-orbitron font-bold text-sm tracking-wider rounded cyber-clip hover:bg-white transition shadow-neon-cyan";
+            document.getElementById('pomo-status-label').innerText = "PRONTO PARA INICIAR";
+            
+            updatePomodoroUI();
+        }
+
+        function onPomodoroFinished() {
+            playCyberSound(800, 0.5); // End audio cue
+            showNotification("Sessão Pomodoro Concluída!");
+
+            if (pomoCurrentMode === 'focus') {
+                pomoStats.completedSessions += 1;
+                pomoStats.totalMinutes += Math.round(MODE_TIMES.focus / 60);
+                savePomoStorage();
+            }
+
+            resetPomodoro();
+        }
+
+        function updatePomodoroUI() {
+            const minutes = Math.floor(pomoTimeLeft / 60);
+            const seconds = pomoTimeLeft % 60;
+            const timeStr = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+            document.getElementById('pomo-timer-display').innerText = timeStr;
+
+            // Update Circle Progress
+            const circle = document.getElementById('pomo-progress-circle');
+            const circumference = 2 * Math.PI * 44; // r=44
+            const offset = circumference - (pomoTimeLeft / pomoTotalDuration) * circumference;
+            circle.style.strokeDashoffset = offset;
+
+            // Stats
+            document.getElementById('pomo-completed-count').innerText = pomoStats.completedSessions;
+            document.getElementById('pomo-total-time').innerText = `${pomoStats.totalMinutes}m`;
+        }
+
+        function renderAnalytics() {
+            // Render Habit Completion Rates
+            const habitBarsContainer = document.getElementById('analytics-habit-bars');
+            habitBarsContainer.innerHTML = '';
+
+            if (habits.length === 0) {
+                habitBarsContainer.innerHTML = '<p class="text-slate-500 font-mono text-sm">Sem dados suficientes para métricas.</p>';
+            } else {
+                habits.forEach(h => {
+                    const historyKeys = Object.keys(h.history || {});
+                    const completedDays = historyKeys.length;
+                    // Simple rate calculation based on 30 days window
+                    const rate = Math.min(100, Math.round((completedDays / 7) * 100)); 
+
+                    const bar = document.createElement('div');
+                    bar.className = 'space-y-1';
+                    bar.innerHTML = `
+                        <div class="flex justify-between text-xs font-mono">
+                            <span class="text-slate-300">${escapeHtml(h.title)}</span>
+                            <span class="text-cyber-cyan">${rate}%</span>
+                        </div>
+                        <div class="w-full bg-cyber-bg h-2 rounded overflow-hidden border border-cyber-border">
+                            <div class="bg-gradient-to-r from-cyber-cyan to-cyber-magenta h-full transition-all duration-500" style="width: ${rate}%"></div>
+                        </div>
+                    `;
+                    habitBarsContainer.appendChild(bar);
+                });
+            }
+
+            // Render Weekly Grid
+            const weeklyGrid = document.getElementById('analytics-weekly-grid');
+            weeklyGrid.innerHTML = '';
+
+            const days = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+            const today = new Date();
+
+            for (let i = 6; i >= 0; i--) {
+                const d = new Date();
+                d.setDate(today.getDate() - i);
+                const dateStr = d.toISOString().split('T')[0];
+                const dayName = days[d.getDay()];
+
+                // Count completed habits on this date
+                const count = habits.filter(h => h.history && h.history[dateStr]).length;
+                const heightPercent = habits.length > 0 ? Math.min(100, (count / habits.length) * 100) : 0;
+
+                const col = document.createElement('div');
+                col.className = 'flex flex-col items-center gap-2 h-full justify-end';
+                col.innerHTML = `
+                    <div class="w-full bg-cyber-bg border border-cyber-border rounded h-full flex items-end p-1">
+                        <div class="w-full bg-cyber-cyan/80 rounded transition-all" style="height: ${Math.max(10, heightPercent)}%"></div>
+                    </div>
+                    <span class="text-[10px] font-mono text-slate-400">${dayName}</span>
+                `;
+                weeklyGrid.appendChild(col);
+            }
+        }
+
+        function playCyberSound(freq = 440, duration = 0.2) {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+
+                osc.type = 'sine';
+                osc.frequency.value = freq;
+                gain.gain.setValueAtTime(0.1, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + duration);
+
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                osc.start();
+                osc.stop(ctx.currentTime + duration);
+            } catch(e) {}
+        }
+
+        function showNotification(msg) {
+            const toast = document.createElement('div');
+            toast.className = 'fixed bottom-6 right-6 z-50 px-4 py-3 bg-cyber-card border border-cyber-cyan text-cyber-cyan font-mono text-xs rounded shadow-neon-cyan flex items-center gap-2';
+            toast.innerHTML = `<i class="fa-solid fa-bell"></i> ${msg}`;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        function escapeHtml(str) {
+            return str.replace(/[&<>"']/g, function(m) {
+                return {
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    '"': '&quot;',
+                    "'": '&#039;'
+                }[m];
+            });
+        }
+    </script>
+</body>
+</html>
