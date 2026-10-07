@@ -1,249 +1,161 @@
-/* ==========================
-CURTIDAS
-========================== */
+// ==========================
+// CURTIR POSTS
+// ==========================
 
-const likeButtons = document.querySelectorAll(".like-button");
+document.addEventListener("click", function (event) {
 
-likeButtons.forEach(function(button) {
+    if (event.target.classList.contains("like-button")) {
 
-```
-button.addEventListener("click", function() {
+        const button = event.target;
 
-    const post = button.closest(".post");
+        const post = button.closest(".post");
 
-    const contador = post.querySelector(".like-count");
+        const count = post.querySelector(".like-count");
 
-    let curtidas = Number(contador.textContent);
+        let likes = Number(count.textContent);
 
+        if (button.classList.contains("liked")) {
 
-    if (button.classList.contains("liked")) {
+            button.classList.remove("liked");
 
-        curtidas--;
+            button.textContent = "♡";
 
-        button.classList.remove("liked");
+            likes--;
 
-        button.textContent = "♡";
+        } else {
 
-    } else {
+            button.classList.add("liked");
 
-        curtidas++;
+            button.textContent = "♥";
 
-        button.classList.add("liked");
+            likes++;
 
-        button.textContent = "♥";
+        }
 
+        count.textContent = likes;
     }
 
-
-    contador.textContent = curtidas;
-
-});
-```
-
 });
 
-/* ==========================
-COMENTÁRIOS
-========================== */
 
-const commentButtons =
-document.querySelectorAll(".comment-button");
+// ==========================
+// COMENTÁRIOS
+// ==========================
 
-commentButtons.forEach(function(button) {
+document.addEventListener("click", function (event) {
 
-```
-button.addEventListener("click", function() {
+    if (event.target.classList.contains("comment-button")) {
 
-    const comentario =
-        prompt("Digite seu comentário:");
+        const comentario = prompt("Digite seu comentário:");
 
-    if (
-        comentario !== null &&
-        comentario.trim() !== ""
-    ) {
+        if (comentario && comentario.trim() !== "") {
 
-        alert("Comentário publicado! 💬");
+            alert("Comentário publicado: " + comentario);
+
+        }
 
     }
 
 });
-```
-
-});
-
-/* ==========================
-PUBLICAR
-========================== */
-
-const publishButton =
-document.querySelector("#publishButton");
-
-const postInput =
-document.querySelector("#postInput");
-
-publishButton.addEventListener("click", function() {
-
-```
-const texto = postInput.value.trim();
 
 
-if (texto === "") {
+// ==========================
+// PUBLICAR POST
+// ==========================
 
-    alert("Digite alguma coisa antes de publicar.");
+const publishButton = document.getElementById("publishButton");
 
-    return;
+publishButton.addEventListener("click", function () {
 
-}
+    const input = document.getElementById("postInput");
 
+    const texto = input.value.trim();
 
-const main =
-    document.querySelector("main");
+    if (texto === "") {
 
+        alert("Digite alguma coisa antes de publicar!");
 
-const novoPost =
-    document.createElement("article");
-
-
-novoPost.classList.add("post");
+        return;
+    }
 
 
-novoPost.innerHTML = `
+    const novoPost = document.createElement("article");
 
-    <div class="post-header">
+    novoPost.classList.add("post");
 
-        <div class="post-user">
+    novoPost.innerHTML = `
+
+        <div class="post-header">
 
             <img
-                class="profile-photo"
+                class="avatar"
                 src="https://static.wikia.nocookie.net/dublagem/images/6/6e/Homem-Aranha_Cl%C3%A1ssico.png/revision/latest?cb=20231224151143&path-prefix=pt-br"
-                alt="Gabriel"
             >
 
             <div>
 
-                <strong>gabriel</strong>
+                <strong>Homem-Aranha</strong>
 
-                <span>Agora</span>
+                <small>agora</small>
 
             </div>
 
         </div>
 
-        <button class="more">
-            •••
-        </button>
+        <p>${texto}</p>
 
-    </div>
-
-
-    <div class="post-content">
-
-        <div class="actions">
+        <div class="post-actions">
 
             <button class="like-button">
                 ♡
             </button>
 
+            <span class="like-count">
+                0
+            </span>
+
             <button class="comment-button">
                 💬
             </button>
 
-            <button>
-                ➤
-            </button>
-
         </div>
+    `;
 
 
-        <p class="likes">
+    // Coloca o novo post no começo do feed
+    const feed = document.querySelector(".feed");
 
-            <strong>
-                <span class="like-count">0</span>
-                curtidas
-            </strong>
+    const newPostBox = document.querySelector(".new-post");
 
-        </p>
+    feed.insertBefore(novoPost, newPostBox.nextSibling);
 
 
-        <p>
-            <strong>gabriel</strong>
-            ${texto}
-        </p>
-
-    </div>
-
-`;
-
-
-main.appendChild(novoPost);
-
-
-/* Limpa o campo */
-
-postInput.value = "";
-
-
-/* Ativa curtida do novo post */
-
-const novoLike =
-    novoPost.querySelector(".like-button");
-
-
-novoLike.addEventListener("click", function() {
-
-    const contador =
-        novoPost.querySelector(".like-count");
-
-
-    let curtidas =
-        Number(contador.textContent);
-
-
-    if (novoLike.classList.contains("liked")) {
-
-        curtidas--;
-
-        novoLike.classList.remove("liked");
-
-        novoLike.textContent = "♡";
-
-    } else {
-
-        curtidas++;
-
-        novoLike.classList.add("liked");
-
-        novoLike.textContent = "♥";
-
-    }
-
-
-    contador.textContent = curtidas;
+    // Limpa o campo
+    input.value = "";
 
 });
 
 
-/* Ativa comentário */
+// ==========================
+// BOTÕES SEGUIR
+// ==========================
 
-const novoComentario =
-    novoPost.querySelector(".comment-button");
+document.addEventListener("click", function (event) {
 
+    if (event.target.classList.contains("follow-button")) {
 
-novoComentario.addEventListener("click", function() {
+        const button = event.target;
 
-    const comentario =
-        prompt("Digite seu comentário:");
+        if (button.textContent === "Seguir") {
 
-    if (
-        comentario !== null &&
-        comentario.trim() !== ""
-    ) {
+            button.textContent = "Seguindo";
 
-        alert("Comentário publicado! 💬");
+        } else {
+
+            button.textContent = "Seguir";
+
+        }
 
     }
-
-});
-```
 
 });
