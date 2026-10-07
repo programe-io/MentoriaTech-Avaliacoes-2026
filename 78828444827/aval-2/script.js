@@ -1,93 +1,108 @@
-/* =========================
-CURTIR
-========================= */
+/* ==========================
+CURTIDAS
+========================== */
 
-function ativarCurtida(botao) {
+const likeButtons = document.querySelectorAll(".like-button");
+
+likeButtons.forEach(function(button) {
 
 ```
-botao.addEventListener("click", function () {
+button.addEventListener("click", function() {
 
-    const contador = botao.querySelector("span");
+    const post = button.closest(".post");
+
+    const contador = post.querySelector(".like-count");
 
     let curtidas = Number(contador.textContent);
 
-    curtidas++;
+
+    if (button.classList.contains("liked")) {
+
+        curtidas--;
+
+        button.classList.remove("liked");
+
+        button.textContent = "♡";
+
+    } else {
+
+        curtidas++;
+
+        button.classList.add("liked");
+
+        button.textContent = "♥";
+
+    }
+
 
     contador.textContent = curtidas;
 
 });
 ```
 
-}
-
-/* Ativa o botão Curtir dos posts existentes */
-
-const botoesCurtir = document.querySelectorAll(".like-button");
-
-botoesCurtir.forEach(function (botao) {
-
-```
-ativarCurtida(botao);
-```
-
 });
 
-/* =========================
-COMENTAR
-========================= */
+/* ==========================
+COMENTÁRIOS
+========================== */
 
-function ativarComentario(botao) {
+const commentButtons =
+document.querySelectorAll(".comment-button");
+
+commentButtons.forEach(function(button) {
 
 ```
-botao.addEventListener("click", function () {
+button.addEventListener("click", function() {
 
-    const comentario = prompt("Digite seu comentário:");
+    const comentario =
+        prompt("Digite seu comentário:");
 
-    if (comentario === null) {
-        return;
+    if (
+        comentario !== null &&
+        comentario.trim() !== ""
+    ) {
+
+        alert("Comentário publicado! 💬");
+
     }
 
-    if (comentario.trim() === "") {
-        alert("Digite algum comentário.");
-        return;
-    }
-
-    alert("Comentário enviado! 💬");
-
 });
-```
-
-}
-
-const botoesComentar = document.querySelectorAll(".comment-button");
-
-botoesComentar.forEach(function (botao) {
-
-```
-ativarComentario(botao);
 ```
 
 });
 
-/* =========================
-NOVA PUBLICAÇÃO
-========================= */
+/* ==========================
+PUBLICAR
+========================== */
 
-const publicarButton = document.querySelector("#publishButton");
+const publishButton =
+document.querySelector("#publishButton");
 
-publicarButton.addEventListener("click", function () {
+const postInput =
+document.querySelector("#postInput");
+
+publishButton.addEventListener("click", function() {
 
 ```
-const texto = prompt("O que você está pensando?");
+const texto = postInput.value.trim();
 
-if (texto === null || texto.trim() === "") {
+
+if (texto === "") {
+
+    alert("Digite alguma coisa antes de publicar.");
+
     return;
+
 }
 
 
-const main = document.querySelector("main");
+const main =
+    document.querySelector("main");
 
-const novoPost = document.createElement("article");
+
+const novoPost =
+    document.createElement("article");
+
 
 novoPost.classList.add("post");
 
@@ -96,37 +111,64 @@ novoPost.innerHTML = `
 
     <div class="post-header">
 
-        <img
-            class="profile-photo"
-            src="https://static.wikia.nocookie.net/dublagem/images/6/6e/Homem-Aranha_Cl%C3%A1ssico.png/revision/latest?cb=20231224151143&path-prefix=pt-br"
-            alt="Foto de perfil do Gabriel"
-        >
+        <div class="post-user">
 
-        <div>
+            <img
+                class="profile-photo"
+                src="https://static.wikia.nocookie.net/dublagem/images/6/6e/Homem-Aranha_Cl%C3%A1ssico.png/revision/latest?cb=20231224151143&path-prefix=pt-br"
+                alt="Gabriel"
+            >
 
-            <strong>Gabriel</strong>
+            <div>
 
-            <span>agora</span>
+                <strong>gabriel</strong>
+
+                <span>Agora</span>
+
+            </div>
 
         </div>
+
+        <button class="more">
+            •••
+        </button>
 
     </div>
 
 
-    <p class="post-text">
-        ${texto}
-    </p>
+    <div class="post-content">
+
+        <div class="actions">
+
+            <button class="like-button">
+                ♡
+            </button>
+
+            <button class="comment-button">
+                💬
+            </button>
+
+            <button>
+                ➤
+            </button>
+
+        </div>
 
 
-    <div class="post-actions">
+        <p class="likes">
 
-        <button class="like-button">
-            ❤️ Curtir <span>0</span>
-        </button>
+            <strong>
+                <span class="like-count">0</span>
+                curtidas
+            </strong>
 
-        <button class="comment-button">
-            💬 Comentar
-        </button>
+        </p>
+
+
+        <p>
+            <strong>gabriel</strong>
+            ${texto}
+        </p>
 
     </div>
 
@@ -136,20 +178,72 @@ novoPost.innerHTML = `
 main.appendChild(novoPost);
 
 
-/* Ativa Curtir do novo post */
+/* Limpa o campo */
 
-const novoBotaoCurtir =
+postInput.value = "";
+
+
+/* Ativa curtida do novo post */
+
+const novoLike =
     novoPost.querySelector(".like-button");
 
-ativarCurtida(novoBotaoCurtir);
+
+novoLike.addEventListener("click", function() {
+
+    const contador =
+        novoPost.querySelector(".like-count");
 
 
-/* Ativa Comentar do novo post */
+    let curtidas =
+        Number(contador.textContent);
 
-const novoBotaoComentar =
+
+    if (novoLike.classList.contains("liked")) {
+
+        curtidas--;
+
+        novoLike.classList.remove("liked");
+
+        novoLike.textContent = "♡";
+
+    } else {
+
+        curtidas++;
+
+        novoLike.classList.add("liked");
+
+        novoLike.textContent = "♥";
+
+    }
+
+
+    contador.textContent = curtidas;
+
+});
+
+
+/* Ativa comentário */
+
+const novoComentario =
     novoPost.querySelector(".comment-button");
 
-ativarComentario(novoBotaoComentar);
+
+novoComentario.addEventListener("click", function() {
+
+    const comentario =
+        prompt("Digite seu comentário:");
+
+    if (
+        comentario !== null &&
+        comentario.trim() !== ""
+    ) {
+
+        alert("Comentário publicado! 💬");
+
+    }
+
+});
 ```
 
 });
