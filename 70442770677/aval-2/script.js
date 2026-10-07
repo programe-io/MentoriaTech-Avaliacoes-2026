@@ -1,0 +1,405 @@
+// ========================================
+// GERENCIADOR DE TAREFAS SAKURA
+// ========================================
+
+const CHAVE = "tarefasSakura";
+
+
+// ========================================
+// FLORES DE CEREJEIRA
+// ========================================
+
+function criarPetala() {
+
+    const container =
+        document.getElementById("sakura-container");
+
+    if (!container) return;
+
+    const petala =
+        document.createElement("div");
+
+    petala.classList.add("petala");
+
+    petala.style.left =
+        Math.random() * 100 + "%";
+
+    petala.style.animationDuration =
+        (5 + Math.random() * 6) + "s";
+
+    petala.style.animationDelay =
+        Math.random() * 5 + "s";
+
+    petala.style.width =
+        (8 + Math.random() * 8) + "px";
+
+    petala.style.height =
+        (8 + Math.random() * 8) + "px";
+
+    container.appendChild(petala);
+
+    setTimeout(() => {
+        petala.remove();
+    }, 12000);
+}
+
+
+// Criar várias flores
+setInterval(criarPetala, 300);
+
+for (let i = 0; i < 20; i++) {
+    criarPetala();
+}
+
+
+// ========================================
+// PEGAR TAREFAS
+// ========================================
+
+function pegarTarefas() {
+
+    const tarefas =
+        localStorage.getItem(CHAVE);
+
+    if (!tarefas) {
+        return [];
+    }
+
+    try {
+        return JSON.parse(tarefas);
+
+    } catch {
+
+        return [];
+    }
+}
+
+
+// ========================================
+// SALVAR TAREFAS
+// ========================================
+
+function salvarTarefas(tarefas) {
+
+    localStorage.setItem(
+        CHAVE,
+        JSON.stringify(tarefas)
+    );
+}
+
+
+// ========================================
+// ADICIONAR TAREFA
+// ========================================
+
+const formulario =
+    document.getElementById("form-tarefa");
+
+
+if (formulario) {
+
+    formulario.addEventListener(
+        "submit",
+        function(event) {
+
+            event.preventDefault();
+
+            const titulo =
+                document
+                    .getElementById("titulo")
+                    .value
+                    .trim();
+
+            const prioridade =
+                document
+                    .getElementById("prioridade")
+                    .value;
+
+
+            if (titulo === "") {
+
+                alert(
+                    "Digite uma tarefa antes de adicionar!"
+                );
+
+                return;
+            }
+
+
+            // Pegar tarefas existentes
+            const tarefas =
+                pegarTarefas();
+
+
+            // Criar nova tarefa
+            const novaTarefa = {
+
+                codigo: Date.now(),
+
+                titulo: titulo,
+
+                prioridade: prioridade,
+
+                concluida: false
+            };
+
+
+            // Adicionar à lista
+            tarefas.push(novaTarefa);
+
+
+            // Salvar
+            salvarTarefas(tarefas);
+
+
+            // Limpar campo
+            document
+                .getElementById("titulo")
+                .value = "";
+
+
+            // Atualizar lista imediatamente
+            mostrarTarefas();
+
+        }
+    );
+}
+
+
+// ========================================
+// MOSTRAR TAREFAS
+// ========================================
+
+function mostrarTarefas() {
+
+    const lista =
+        document.getElementById(
+            "lista-tarefas"
+        );
+
+    const contador =
+        document.getElementById(
+            "contador"
+        );
+
+    const mensagem =
+        document.getElementById(
+            "mensagem-vazia"
+        );
+
+
+    if (!lista) return;
+
+
+    const tarefas =
+        pegarTarefas();
+
+
+    // Limpar lista
+    lista.innerHTML = "";
+
+
+    // Contar
+    const concluidas =
+        tarefas.filter(
+            tarefa => tarefa.concluida
+        ).length;
+
+
+    contador.textContent =
+        `${tarefas.length} tarefa(s) • ${concluidas} concluída(s)`;
+
+
+    // Se não tiver tarefas
+    if (tarefas.length === 0) {
+
+        mensagem.style.display = "block";
+
+        return;
+    }
+
+
+    mensagem.style.display = "none";
+
+
+    // Criar cada tarefa
+    tarefas.forEach(tarefa => {
+
+        const div =
+            document.createElement("div");
+
+
+        div.classList.add("tarefa");
+
+
+        if (tarefa.concluida) {
+
+            div.classList.add("concluida");
+        }
+
+
+        // Prioridade
+        let nomePrioridade;
+        let classePrioridade;
+
+
+        if (tarefa.prioridade === "1") {
+
+            nomePrioridade = "🔵 Baixa";
+
+            classePrioridade = "baixa";
+
+        } else if (
+            tarefa.prioridade === "2"
+        ) {
+
+            nomePrioridade = "🟡 Média";
+
+            classePrioridade = "media";
+
+        } else {
+
+            nomePrioridade = "🔴 Alta";
+
+            classePrioridade = "alta";
+        }
+
+
+        div.innerHTML = `
+
+            <div class="titulo-tarefa">
+                ${escaparHTML(tarefa.titulo)}
+            </div>
+
+            <div class="info-tarefa">
+                Código: ${tarefa.codigo}
+            </div>
+
+            <span class="prioridade ${classePrioridade}">
+                ${nomePrioridade}
+            </span>
+
+            <div class="acoes">
+
+                <button
+                    class="botao-concluir"
+                    onclick="alternarTarefa(${tarefa.codigo})">
+
+                    ${
+                        tarefa.concluida
+                        ? "↩️ Reabrir"
+                        : "✅ Concluir"
+                    }
+
+                </button>
+
+                <button
+                    class="botao-excluir"
+                    onclick="excluirTarefa(${tarefa.codigo})">
+
+                    🗑️ Excluir
+
+                </button>
+
+            </div>
+
+        `;
+
+
+        lista.appendChild(div);
+
+    });
+}
+
+
+// ========================================
+// CONCLUIR / REABRIR
+// ========================================
+
+function alternarTarefa(codigo) {
+
+    const tarefas =
+        pegarTarefas();
+
+
+    const tarefa =
+        tarefas.find(
+            tarefa =>
+                tarefa.codigo === codigo
+        );
+
+
+    if (!tarefa) return;
+
+
+    tarefa.concluida =
+        !tarefa.concluida;
+
+
+    salvarTarefas(tarefas);
+
+
+    mostrarTarefas();
+}
+
+
+// ========================================
+// EXCLUIR TAREFA
+// ========================================
+
+function excluirTarefa(codigo) {
+
+    const confirmar =
+        confirm(
+            "Deseja excluir esta tarefa?"
+        );
+
+
+    if (!confirmar) return;
+
+
+    let tarefas =
+        pegarTarefas();
+
+
+    tarefas =
+        tarefas.filter(
+            tarefa =>
+                tarefa.codigo !== codigo
+        );
+
+
+    salvarTarefas(tarefas);
+
+
+    mostrarTarefas();
+}
+
+
+// ========================================
+// PROTEGER O TEXTO DA TAREFA
+// ========================================
+
+function escaparHTML(texto) {
+
+    const div =
+        document.createElement("div");
+
+    div.textContent = texto;
+
+    return div.innerHTML;
+}
+
+
+// ========================================
+// CARREGAR LISTA
+// ========================================
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+        mostrarTarefas();
+
+    }
+);
