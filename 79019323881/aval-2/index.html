@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Instagram</title>
+  <link rel="icon" href="https://static.cdninstagram.com/rsrc.php/v3/yR/r/lam-fZm7vnA.png" />
+  <style>
+    /* ===== RESET ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: #fafafa;
+      color: #262626;
+      min-height: 100vh;
+    }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+    img { display: block; max-width: 100%; }
+    ul { list-style: none; }
+
+    /* ===== HEADER ===== */
+    header.topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: #fff;
+      border-bottom: 1px solid #dbdbdb;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .topbar-inner {
+      width: 100%;
+      max-width: 975px;
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+    .logo {
+      font-family: "Billabong", "Dancing Script", cursive;
+      font-size: 28px;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+    .search {
+      flex: 1;
+      max-width: 270px;
+      position: relative;
+    }
+    .search input {
+      width: 100%;
+      padding: 8px 12px 8px 36px;
+      border: 1px solid #dbdbdb;
+      border-radius: 8px;
+      background: #efefef;
+      font-size: 14px;
+      outline: none;
+    }
+    .search input:focus { border-color: #a8a8a8; background: #fff; }
+    .search::before {
+      content: "🔍";
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 12px;
+      opacity: 0.5;
+    }
+    .topbar-nav { display: flex; gap: 22px; align-items: center; }
+    .topbar-nav button { font-size: 22px; transition: transform .2s; }
+    .topbar-nav button:hover { transform: scale(1.1); }
+    .topbar-nav .avatar-btn {
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 1px solid #dbdbdb;
+    }
+    .topbar-nav .avatar-btn img { width: 100%; height: 100%; object-fit: cover; }
+
+    /* ===== LAYOUT PRINCIPAL ===== */
+    .layout {
+      max-width: 975px;
+      margin: 30px auto;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 40px;
+    }
+    main.feed { min-width: 0; }
+
+    /* ===== STORIES ===== */
+    section.stories {
+      background: #fff;
+      border: 1px solid #dbdbdb;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 24px;
+      display: flex;
+      gap: 16px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    section.stories::-webkit-scrollbar { display: none; }
+    .story {
+      flex: 0 0 auto;
+      text-align: center;
+      cursor: pointer;
+      width: 70px;
+    }
+    .story-ring {
+      width: 66px; height: 66px;
+      border-radius: 50%;
+      padding: 3px;
+      background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+      margin: 0 auto 6px;
+    }
+    .story-ring.viewed { background: #dbdbdb; }
+    .story-ring img {
+      width: 100%; height: 100%;
+      border-radius: 50%;
+      border: 2px solid #fff;
+      object-fit: cover;
+    }
+    .story span {
+      display: block;
+      font-size: 12px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* ===== POSTS ===== */
+    article.post {
+      background: #fff;
+      border: 1px solid #dbdbdb;
+      border-radius: 8px;
+      margin-bottom: 24px;
+      overflow: hidden;
+    }
+    .post-header {
+      display: flex;
+      align-items: center;
+      padding: 14px 16px;
+      gap: 12px;
+    }
+    .post-header .avatar {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      padding: 2px;
+      background: linear-gradient(45deg, #f09433, #dc2743, #bc1888);
+    }
+    .post-header .avatar img {
+      width: 100%; height: 100%;
+      border-radius: 50%;
+      border: 2px solid #fff;
+      object-fit: cover;
+    }
+    .post-header .user-info { flex: 1; }
+    .post-header .username { font-weight: 600; font-size: 14px; }
+    .post-header .location { font-size: 12px; color: #737373; }
+    .post-header .more { font-size: 18px; }
+
+    .post-media {
+      position: relative;
+      background: #000;
+      aspect-ratio: 1/1;
+      overflow: hidden;
+    }
+    .post-media img { width: 100%; height: 100%; object-fit: cover; }
+    .heart-burst {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      font-size: 80px;
+      color: #fff;
+      pointer-events: none;
+      filter: drop-shadow(0 2px 8px rgba(0,0,0,.3));
+      opacity: 0;
+    }
+    .heart-burst.active {
+      animation: burst 0.9s ease forwards;
+    }
+    @keyframes burst {
+      0%   { transform: translate(-50%,-50%) scale(0); opacity: 0; }
+      25%  { transform: translate(-50%,-50%) scale(1.2); opacity: 1; }
+      60%  { transform: translate(-50%,-50%) scale(1); opacity: 1; }
+      100% { transform: translate(-50%,-50%) scale(1); opacity: 0; }
+    }
+
+    .post-actions {
+      display: flex;
+      align-items: center;
+      padding: 8px 12px;
+      gap: 14px;
+      font-size: 24px;
+    }
+    .post-actions .spacer { flex: 1; }
+    .post-actions button { transition: transform .15s; }
+    .post-actions button:hover { transform: scale(1.1); }
+    .post-actions .liked { color: #ed4956; }
+
+    .post-likes {
+      padding: 0 16px 4px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .post-caption {
+      padding: 4px 16px 8px;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+    .post-caption .username { font-weight: 600; margin-right: 6px; }
+    .post-comments-link {
+      padding: 0 16px 6px;
+      font-size: 14px;
+      color: #737373;
+      cursor: pointer;
+    }
+    .post-time {
+      padding: 0 16px 12px;
+      font-size: 10px;
+      color: #737373;
+      text-transform: uppercase;
+      letter-spacing: .3px;
+    }
+    .post-add-comment {
+      border-top: 1px solid #efefef;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .post-add-comment input {
+      flex: 1;
+      border: none;
+      outline: none;
+      font-size: 14px;
+      background: transparent;
+    }
+    .post-add-comment button {
+      color: #0095f6;
+      font-weight: 600;
+      font-size: 14px;
+      opacity: 0.4;
+    }
+    .post-add-comment button.active { opacity: 1; }
+
+    /* ===== SIDEBAR ===== */
+    aside.sidebar { padding-top: 10px; }
+    .profile-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+    .profile-card img {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    .profile-card .info { flex: 1; }
+    .profile-card .username { font-weight: 600; font-size: 14px; }
+    .profile-card .fullname { color: #737373; font-size: 14px; }
+    .profile-card .switch {
+      color: #0095f6;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .suggestions-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 14px;
+      font-size: 14px;
+      color: #737373;
+    }
+    .suggestions-header button {
+      font-size: 12px;
+      font-weight: 600;
+      color: #262626;
+    }
+    .suggestion {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .suggestion img {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    .suggestion .info { flex: 1; }
+    .suggestion .username { font-weight: 600; font-size: 14px; display: block; }
+    .suggestion .reason { font-size: 12px; color: #737373; }
+    .suggestion .follow-btn {
+      color: #0095f6;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .suggestion .follow-btn.following { color: #262626; }
+
+    footer.site-footer {
+      margin-top: 24px;
+      font-size: 11px;
+      color: #c7c7c7;
+      line-height: 1.6;
+    }
+    footer.site-footer a { margin-right: 4px; }
+
+    /* ===== MODAL STORY ===== */
+    .story-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.85);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+    }
+    .story-modal.active { display: flex; }
+    .story-viewer {
+      width: 420px;
+      max-width: 90vw;
+      height: 75vh;
+      background: #000;
+      border-radius: 12px;
+      position: relative;
+      overflow: hidden;
+    }
+    .story-viewer img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+    }
+    .story-viewer .close {
+      position: absolute;
+      top: 14px; right: 14px;
+      color: #fff;
+      font-size: 28px;
+      z-index: 2;
+    }
+    .story-viewer .progress {
+      position: absolute;
+      top: 10px; left: 10px; right: 10px;
+      height: 3px;
+      background: rgba(255,255,255,.3);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .story-viewer .progress::after {
+      content: "";
+      display: block;
+      height: 100%;
+      width: 0;
+      background: #fff;
+      animation: progress 5s linear forwards;
+    }
+    @keyframes progress { to { width: 100%; } }
+    .story-viewer .viewer-header {
+      position: absolute;
+      top: 24px; left: 14px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 2;
+    }
+    .story-viewer .viewer-header img {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+    }
+
+    /* ===== RESPONSIVO ===== */
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
+      aside.sidebar { display: none; }
+    }
+    @media (max-width: 600px) {
+      .search { display: none; }
+      .topbar-inner { padding: 0 12px; }
+      .layout { padding: 0; margin: 0; }
+      article.post { border-radius: 0; border-left: 0; border-right: 0; margin-bottom: 12px; }
+      section.stories { border-radius: 0; border-left: 0; border-right: 0; }
+    }
+  </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+  <!-- ====== CABEÇALHO ====== -->
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a href="#" class="logo" aria-label="Instagram">Instagram</a>
+
+      <form class="search" role="search" onsubmit="event.preventDefault();">
+        <label for="search-input" class="sr-only" style="position:absolute;left:-9999px;">Buscar</label>
+        <input id="search-input" type="search" placeholder="Pesquisar" />
+      </form>
+
+      <nav class="topbar-nav" aria-label="Navegação principal">
+        <button title="Início" aria-label="Início">🏠</button>
+        <button title="Messenger" aria-label="Messenger">💬</button>
+        <button title="Novo post" aria-label="Novo post">➕</button>
+        <button title="Explorar" aria-label="Explorar">🧭</button>
+        <button title="Notificações" aria-label="Notificações">❤️</button>
+        <button class="avatar-btn" title="Perfil" aria-label="Perfil">
+          <img src="https://picsum.photos/id/64/60/60" alt="Seu avatar" />
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ====== CONTEÚDO PRINCIPAL ====== -->
+  <div class="layout">
+    <main class="feed">
+
+      <!-- STORIES -->
+      <section class="stories" aria-label="Stories">
+        <!-- Stories serão inseridos via JS -->
+      </section>
+
+      <!-- FEED DE POSTS -->
+      <section id="posts" aria-label="Feed de publicações">
+        <!-- Posts serão inseridos via JS -->
+      </section>
+
+    </main>
+
+    <!-- ====== BARRA LATERAL ====== -->
+    <aside class="sidebar" aria-label="Informações e sugestões">
+
+      <section class="profile-card" aria-label="Seu perfil">
+        <img src="https://picsum.photos/id/64/120/120" alt="Seu avatar" />
+        <div class="info">
+          <span class="username">voce.dev</span>
+          <span class="fullname">Você Desenvolvedor</span>
+        </div>
+        <button class="switch">Alternar</button>
+      </section>
+
+      <section aria-label="Sugestões para você">
+        <header class="suggestions-header">
+          <span>Sugestões para você</span>
+          <button>Ver tudo</button>
+        </header>
+        <ul id="suggestions"></ul>
+      </section>
+
+      <footer class="site-footer">
+        <p>
+          <a href="#">Sobre</a> · <a href="#">Ajuda</a> · <a href="#">Imprensa</a> ·
+          <a href="#">API</a> · <a href="#">Carreiras</a> · <a href="#">Privacidade</a> ·
+          <a href="#">Termos</a>
+        </p>
+        <p style="margin-top:14px;">© 2026 INSTAGRAM CLONE — Projeto educacional</p>
+      </footer>
+    </aside>
+  </div>
+
+  <!-- ====== MODAL DO STORY ====== -->
+  <div class="story-modal" id="storyModal" role="dialog" aria-modal="true" aria-label="Visualizador de story">
+    <div class="story-viewer">
+      <div class="progress"></div>
+      <header class="viewer-header">
+        <img id="viewerAvatar" src="" alt="" />
+        <strong id="viewerUser"></strong>
+        <time>2h</time>
+      </header>
+      <img id="viewerImg" src="" alt="Conteúdo do story" />
+      <button class="close" id="closeStory" aria-label="Fechar story">×</button>
+    </div>
+  </div>
+
+  <script>
+    /* =========================================================
+       DADOS
+       ========================================================= */
+    const stories = [
+      { user: "seu.story",  img: "https://picsum.photos/id/64/400/700",   avatar: "https://picsum.photos/id/64/100/100",   viewed: false },
+      { user: "maria_lua",  img: "https://picsum.photos/id/1027/400/700", avatar: "https://picsum.photos/id/1027/100/100", viewed: false },
+      { user: "joao.trip",  img: "https://picsum.photos/id/1015/400/700", avatar: "https://picsum.photos/id/1015/100/100", viewed: false },
+      { user: "ana.codes",  img: "https://picsum.photos/id/180/400/700",  avatar: "https://picsum.photos/id/180/100/100",  viewed: false },
+      { user: "pedro.fit",  img: "https://picsum.photos/id/1012/400/700", avatar: "https://picsum.photos/id/1012/100/100", viewed: true  },
+      { user: "luiza.art",  img: "https://picsum.photos/id/1025/400/700", avatar: "https://picsum.photos/id/1025/100/100", viewed: true  },
+      { user: "rafael.dj",  img: "https://picsum.photos/id/1062/400/700", avatar: "https://picsum.photos/id/1062/100/100", viewed: true  },
+      { user: "bia.cook",   img: "https://picsum.photos/id/292/400/700",  avatar: "https://picsum.photos/id/292/100/100",  viewed: false },
+    ];
+
+    const posts = [
+      {
+        id: 1,
+        user: "maria_lua",
+        avatar: "https://picsum.photos/id/1027/100/100",
+        location: "Fernando de Noronha, PE",
+        image: "https://picsum.photos/id/1018/800/800",
+        likes: 1243,
+        caption: "Pôr do sol que cura a alma 🌅 #noronha #travel",
+        comments: 42,
+        time: "2 HORAS ATRÁS"
+      },
+      {
+        id: 2,
+        user: "ana.codes",
+        avatar: "https://picsum.photos/id/180/100/100",
+        location: "Home Office",
+        image: "https://picsum.photos/id/180/800/800",
+        likes: 892,
+        caption: "Setup novo, vida nova 💻✨ Quem mais ama trabalhar de casa?",
+        comments: 128,
+        time: "5 HORAS ATRÁS"
+      },
+      {
+        id: 3,
+        user: "pedro.fit",
+        avatar: "https://picsum.photos/id/1012/100/100",
+        location: "Academia Power",
+        image: "https://picsum.photos/id/1012/800/800",
+        likes: 3421,
+        caption: "Sem desculpas. Só resultados 💪 #fitness #motivation",
+        comments: 215,
+        time: "8 HORAS ATRÁS"
+      },
+      {
+        id: 4,
+        user: "luiza.art",
+        avatar: "https://picsum.photos/id/1025/100/100",
+        location: "Atelier São Paulo",
+        image: "https://picsum.photos/id/1025/800/800",
+        likes: 567,
+        caption: "Meu novo melhor amigo 🐾 Adotar é um ato de amor.",
+        comments: 73,
+        time: "1 DIA ATRÁS"
+      }
+    ];
+
+    const suggestions = [
+      { user: "carol.photo", name: "Carol Mendes",   reason: "Segue você",     avatar: "https://picsum.photos/id/1005/100/100" },
+      { user: "thiago.run",  name: "Thiago Alves",   reason: "Segue você",     avatar: "https://picsum.photos/id/1011/100/100" },
+      { user: "julia.yoga",  name: "Julia Prado",    reason: "Novo no Instagram", avatar: "https://picsum.photos/id/1013/100/100" },
+      { user: "bruno.dev",   name: "Bruno Silva",    reason: "Sugestão para você", avatar: "https://picsum.photos/id/1074/100/100" },
+      { user: "camila.bake", name: "Camila Rocha",   reason: "Segue você",     avatar: "https://picsum.photos/id/1027/100/100" },
+    ];
+
+    /* =========================================================
+       RENDER STORIES
+       ========================================================= */
+    const storiesEl = document.querySelector('.stories');
+    stories.forEach((s, i) => {
+      const el = document.createElement('article');
+      el.className = 'story';
+      el.setAttribute('role', 'button');
+      el.setAttribute('tabindex', '0');
+      el.innerHTML = `
+        <div class="story-ring ${s.viewed ? 'viewed' : ''}">
+          <img src="${s.avatar}" alt="Story de ${s.user}" />
+        </div>
+        <span>${s.user}</span>
+      `;
+      el.addEventListener('click', () => openStory(i));
+      el.addEventListener('keydown', e => { if (e.key === 'Enter') openStory(i); });
+      storiesEl.appendChild(el);
+    });
+
+    /* =========================================================
+       RENDER POSTS
+       ========================================================= */
+    const postsEl = document.getElementById('posts');
+    posts.forEach(p => {
+      const el = document.createElement('article');
+      el.className = 'post';
+      el.dataset.id = p.id;
+      el.innerHTML = `
+        <header class="post-header">
+          <div class="avatar"><img src="${p.avatar}" alt="${p.user}" /></div>
+          <div class="user-info">
+            <div class="username">${p.user}</div>
+            <div class="location">${p.location}</div>
+          </div>
+          <button class="more" aria-label="Mais opções">⋯</button>
+        </header>
+
+        <figure class="post-media">
+          <img src="${p.image}" alt="Publicação de ${p.user}" />
+          <span class="heart-burst" aria-hidden="true">❤</span>
+        </figure>
+
+        <div class="post-actions">
+          <button class="like-btn" aria-label="Curtir" title="Curtir">🤍</button>
+          <button aria-label="Comentar" title="Comentar">💬</button>
+          <button aria-label="Compartilhar" title="Compartilhar">📤</button>
+          <span class="spacer"></span>
+          <button class="save-btn" aria-label="Salvar" title="Salvar">🔖</button>
+        </div>
+
+        <p class="post-likes"><span class="likes-count">${p.likes.toLocaleString('pt-BR')}</span> curtidas</p>
+        <p class="post-caption"><span class="username">${p.user}</span>${p.caption}</p>
+        <p class="post-comments-link">Ver todos os ${p.comments} comentários</p>
+        <p class="post-time"><time>${p.time}</time></p>
+
+        <form class="post-add-comment" onsubmit="event.preventDefault();">
+          <input type="text" placeholder="Adicione um comentário..." />
+          <button type="submit">Publicar</button>
+        </form>
+      `;
+      postsEl.appendChild(el);
+      attachPostEvents(el, p);
+    });
+
+    /* =========================================================
+       RENDER SUGESTÕES
+       ========================================================= */
+    const sugEl = document.getElementById('suggestions');
+    suggestions.forEach(s => {
+      const li = document.createElement('li');
+      li.className = 'suggestion';
+      li.innerHTML = `
+        <img src="${s.avatar}" alt="${s.user}" />
+        <div class="info">
+          <span class="username">${s.user}</span>
+          <span class="reason">${s.reason}</span>
+        </div>
+        <button class="follow-btn">Seguir</button>
+      `;
+      const btn = li.querySelector('.follow-btn');
+      btn.addEventListener('click', () => {
+        const isFollowing = btn.classList.toggle('following');
+        btn.textContent = isFollowing ? 'Seguindo' : 'Seguir';
+      });
+      sugEl.appendChild(li);
+    });
+
+    /* =========================================================
+       INTERAÇÕES DOS POSTS
+       ========================================================= */
+    function attachPostEvents(article, postData) {
+      const likeBtn = article.querySelector('.like-btn');
+      const saveBtn = article.querySelector('.save-btn');
+      const likesCount = article.querySelector('.likes-count');
+      const media = article.querySelector('.post-media');
+      const heart = article.querySelector('.heart-burst');
+      const commentInput = article.querySelector('.post-add-comment input');
+      const commentBtn = article.querySelector('.post-add-comment button');
+
+      let liked = false;
+      let currentLikes = postData.likes;
+
+      function toggleLike() {
+        liked = !liked;
+        if (liked) {
+          likeBtn.textContent = '❤️';
+          likeBtn.classList.add('liked');
+          currentLikes++;
+        } else {
+          likeBtn.textContent = '🤍';
+          likeBtn.classList.remove('liked');
+          currentLikes--;
+        }
+        likesCount.textContent = currentLikes.toLocaleString('pt-BR');
+      }
+
+      likeBtn.addEventListener('click', toggleLike);
+
+      // Duplo clique na imagem = curtir
+      media.addEventListener('dblclick', () => {
+        if (!liked) toggleLike();
+        heart.classList.remove('active');
+        void heart.offsetWidth; // reinicia animação
+        heart.classList.add('active');
+      });
+
+      saveBtn.addEventListener('click', () => {
+        const saved = saveBtn.textContent === '🔖';
+        saveBtn.textContent = saved ? '📌' : '🔖';
+      });
+
+      // Habilita botão "Publicar" quando digita
+      commentInput.addEventListener('input', () => {
+        commentBtn.classList.toggle('active', commentInput.value.trim().length > 0);
+      });
+      commentBtn.addEventListener('click', () => {
+        if (commentInput.value.trim()) {
+          alert('Comentário publicado: "' + commentInput.value + '"');
+          commentInput.value = '';
+          commentBtn.classList.remove('active');
+        }
+      });
+    }
+
+    /* =========================================================
+       MODAL DO STORY
+       ========================================================= */
+    const modal = document.getElementById('storyModal');
+    const viewerImg = document.getElementById('viewerImg');
+    const viewerAvatar = document.getElementById('viewerAvatar');
+    const viewerUser = document.getElementById('viewerUser');
+    const closeBtn = document.getElementById('closeStory');
+
+    function openStory(index) {
+      const s = stories[index];
+      viewerImg.src = s.img;
+      viewerAvatar.src = s.avatar;
+      viewerUser.textContent = s.user;
+      modal.classList.add('active');
+
+      // marca como visualizado
+      const storyEls = document.querySelectorAll('.story');
+      storyEls[index].querySelector('.story-ring').classList.add('viewed');
+
+      // fecha automaticamente após 5s
+      clearTimeout(window._storyTimer);
+      window._storyTimer = setTimeout(closeStory, 5000);
+    }
+    function closeStory() {
+      modal.classList.remove('active');
+      clearTimeout(window._storyTimer);
+    }
+    closeBtn.addEventListener('click', closeStory);
+    modal.addEventListener('click', e => { if (e.target === modal) closeStory(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeStory(); });
+  </script>
+<script src="script.js"></script></body>
+</html>
