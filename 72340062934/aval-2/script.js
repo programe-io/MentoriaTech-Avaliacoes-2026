@@ -1,44 +1,57 @@
-```javascript
-// Array que armazenará as tarefas
+
+// Array onde as tarefas serão armazenadas
 let tarefas = [];
 
-// Elementos do HTML
-const form = document.getElementById("formTarefa");
-const listaTarefas = document.getElementById("listaTarefas");
 
-// Cadastrar uma nova tarefa
-form.addEventListener("submit", function (event) {
+// Pegando o formulário pelo ID
+const formTarefa = document.getElementById("formTarefa");
+
+
+// Evento executado quando o formulário for enviado
+formTarefa.addEventListener("submit", function(event) {
+
+    // Impede o navegador de recarregar a página
     event.preventDefault();
 
+
+    // Pegando os valores dos campos
     const codigo = Number(document.getElementById("codigo").value);
     const titulo = document.getElementById("titulo").value.trim();
-    const prioridade = Number(
-        document.getElementById("prioridade").value
-    );
+    const prioridade = Number(document.getElementById("prioridade").value);
 
-    // Validação do título
+
+    // ==========================
+    // VALIDAÇÕES
+    // ==========================
+
     if (titulo.length < 5) {
         alert("O título deve ter no mínimo 5 caracteres.");
         return;
     }
 
-    // Validação da prioridade
+
     if (prioridade < 1 || prioridade > 3) {
-        alert("A prioridade deve ser um valor entre 1 e 3.");
+        alert("A prioridade deve ser entre 1 e 3.");
         return;
     }
 
-    // Verifica se o código já existe
-    const codigoExiste = tarefas.some(
-        tarefa => tarefa.codigo === codigo
-    );
 
-    if (codigoExiste) {
+    // Verifica se o código já existe
+    const codigoExistente = tarefas.some(function(tarefa) {
+        return tarefa.codigo === codigo;
+    });
+
+
+    if (codigoExistente) {
         alert("Esse código já está cadastrado.");
         return;
     }
 
-    // Cria a nova tarefa
+
+    // ==========================
+    // CRIANDO A TAREFA
+    // ==========================
+
     const novaTarefa = {
         codigo: codigo,
         titulo: titulo,
@@ -46,53 +59,86 @@ form.addEventListener("submit", function (event) {
         concluida: false
     };
 
-    // Adiciona ao array
+
+    // Adiciona a tarefa ao array
     tarefas.push(novaTarefa);
 
+
+    // Mensagem de sucesso
+    alert("Tarefa cadastrada com sucesso!");
+
+
     // Limpa o formulário
-    form.reset();
+    formTarefa.reset();
+
 
     // Atualiza a lista
     listarTarefas();
+
 });
 
 
-// Listar tarefas
+// ==========================
+// LISTAR TAREFAS
+// ==========================
+
 function listarTarefas() {
 
-    listaTarefas.innerHTML = "";
+    const lista = document.getElementById("listaTarefas");
 
+    // Limpa a lista
+    lista.innerHTML = "";
+
+
+    // Se não houver tarefas
     if (tarefas.length === 0) {
-        listaTarefas.innerHTML =
-            '<p class="vazio">Nenhuma tarefa cadastrada.</p>';
+
+        lista.innerHTML = `
+            <p class="vazio">
+                Nenhuma tarefa cadastrada.
+            </p>
+        `;
 
         return;
     }
 
-    tarefas.forEach(function (tarefa) {
 
+    // Percorre todas as tarefas
+    tarefas.forEach(function(tarefa) {
+
+        let nomePrioridade;
+
+
+        if (tarefa.prioridade === 1) {
+            nomePrioridade = "Alta";
+        }
+        else if (tarefa.prioridade === 2) {
+            nomePrioridade = "Média";
+        }
+        else {
+            nomePrioridade = "Baixa";
+        }
+
+
+        // Cria o elemento da tarefa
         const div = document.createElement("div");
 
-        div.classList.add("tarefa");
+        div.className = "tarefa";
 
+
+        // Se estiver concluída
         if (tarefa.concluida) {
             div.classList.add("concluida");
         }
 
-        let nomePrioridade;
-
-        if (tarefa.prioridade === 1) {
-            nomePrioridade = "Alta";
-        } else if (tarefa.prioridade === 2) {
-            nomePrioridade = "Média";
-        } else {
-            nomePrioridade = "Baixa";
-        }
 
         div.innerHTML = `
             <h3>${tarefa.titulo}</h3>
 
-            <p><strong>Código:</strong> ${tarefa.codigo}</p>
+            <p>
+                <strong>Código:</strong>
+                ${tarefa.codigo}
+            </p>
 
             <p>
                 <strong>Prioridade:</strong>
@@ -109,7 +155,7 @@ function listarTarefas() {
                 <button
                     class="btn-concluir"
                     onclick="concluirTarefa(${tarefa.codigo})">
-                    ${tarefa.concluida ? "Concluída" : "Concluir"}
+                    Concluir
                 </button>
 
                 <button
@@ -121,55 +167,91 @@ function listarTarefas() {
             </div>
         `;
 
-        listaTarefas.appendChild(div);
+
+        // Coloca a tarefa dentro da lista
+        lista.appendChild(div);
+
     });
+
 }
 
 
-// Marcar tarefa como concluída
+// ==========================
+// CONCLUIR TAREFA
+// ==========================
+
 function concluirTarefa(codigo) {
 
-    const tarefa = tarefas.find(
-        tarefa => tarefa.codigo === codigo
-    );
+    const tarefa = tarefas.find(function(tarefa) {
+        return tarefa.codigo === codigo;
+    });
+
 
     if (!tarefa) {
         alert("Tarefa não encontrada.");
         return;
     }
+
 
     tarefa.concluida = true;
 
+
     listarTarefas();
+
 }
 
 
-// Alterar prioridade
+// ==========================
+// ALTERAR PRIORIDADE
+// ==========================
+
 function alterarPrioridade(codigo) {
 
-    const tarefa = tarefas.find(
-        tarefa => tarefa.codigo === codigo
-    );
+    const tarefa = tarefas.find(function(tarefa) {
+        return tarefa.codigo === codigo;
+    });
+
 
     if (!tarefa) {
         alert("Tarefa não encontrada.");
         return;
     }
 
+
     const novaPrioridade = Number(
         prompt(
-            "Digite a nova prioridade:\n1 - Alta\n2 - Média\n3 - Baixa"
+            "Digite a nova prioridade:\n\n" +
+            "1 - Alta\n" +
+            "2 - Média\n" +
+            "3 - Baixa"
         )
     );
 
-    // Validação
-    if (novaPrioridade < 1 || novaPrioridade > 3 || isNaN(novaPrioridade)) {
-        alert("A prioridade deve ser um valor entre 1 e 3.");
+
+    // Verifica a prioridade
+    if (
+        isNaN(novaPrioridade) ||
+        novaPrioridade < 1 ||
+        novaPrioridade > 3
+    ) {
+
+        alert("Digite uma prioridade válida entre 1 e 3.");
+
         return;
     }
 
+
     tarefa.prioridade = novaPrioridade;
 
+
+    alert("Prioridade alterada com sucesso!");
+
+
     listarTarefas();
+
 }
-```
+
+
+// Inicia a lista
+listarTarefas();
+
