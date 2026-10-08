@@ -1,186 +1,297 @@
-let tarefas = [];
-let proximoCodigo = 1;
+let produtos = [];
 
-// Adicionar tarefa
-function adicionarTarefa() {
 
-    const titulo = document.getElementById("titulo").value.trim();
-    const prioridade = document.getElementById("prioridade").value;
+// Validação do produto
+function validarProduto(descricao, quantidade, valor) {
 
-    if (titulo.length < 3) {
-        alert("Digite uma tarefa com pelo menos 3 caracteres.");
-        return;
+    if (descricao.length < 5) {
+        throw new Error(
+            "A descrição deve ter no mínimo 5 caracteres."
+        );
     }
 
-    const tarefa = {
-        codigo: proximoCodigo,
-        titulo: titulo,
-        prioridade: prioridade,
-        concluida: false
-    };
+    if (quantidade < 1) {
+        throw new Error(
+            "A quantidade deve ser maior que zero."
+        );
+    }
 
-    tarefas.push(tarefa);
-
-    proximoCodigo++;
-
-    document.getElementById("titulo").value = "";
-
-    salvarDados();
-    listarTarefas();
+    if (valor < 0) {
+        throw new Error(
+            "O valor deve ser maior ou igual a zero."
+        );
+    }
 }
 
 
-// Listar tarefas
-function listarTarefas() {
+// Cadastrar produto
+function cadastrarProduto() {
 
-    const lista = document.getElementById("listaTarefas");
-    const pesquisa = document
-        .getElementById("pesquisa")
+    const descricao = document
+        .getElementById("descricao")
         .value
-        .toLowerCase();
+        .trim();
+
+    const quantidade = Number(
+        document.getElementById("quantidade").value
+    );
+
+    const valor = Number(
+        document.getElementById("valor").value
+    );
+
+    try {
+
+        validarProduto(
+            descricao,
+            quantidade,
+            valor
+        );
+
+        const novoProduto = {
+
+            codigo: produtos.length + 1,
+
+            descricao: descricao,
+
+            quantidade: quantidade,
+
+            valor: valor
+        };
+
+        produtos.push(novoProduto);
+
+        alert("Produto cadastrado com sucesso!");
+
+        limparCampos();
+
+        listarProdutos();
+
+    } catch (erro) {
+
+        alert(erro.message);
+    }
+}
+
+
+// Listar produtos
+function listarProdutos() {
+
+    const lista = document.getElementById("listaProdutos");
 
     lista.innerHTML = "";
 
-    const tarefasFiltradas = tarefas.filter(tarefa =>
-        tarefa.titulo.toLowerCase().includes(pesquisa)
-    );
+    if (produtos.length === 0) {
 
-    tarefasFiltradas.forEach(tarefa => {
-
-        const div = document.createElement("div");
-
-        div.className = "tarefa";
-
-        if (tarefa.concluida) {
-            div.classList.add("concluida");
-        }
-
-        div.classList.add(
-            `prioridade-${tarefa.prioridade}`
-        );
-
-        div.innerHTML = `
-            <div>
-                <h3>${tarefa.titulo}</h3>
-
-                <p>
-                    Código: ${tarefa.codigo}
-                    |
-                    Prioridade: ${tarefa.prioridade}
-                </p>
-            </div>
-
-            <div class="acoes">
-
-                <button
-                    class="concluir"
-                    onclick="concluirTarefa(${tarefa.codigo})">
-                    ${tarefa.concluida ? "Reabrir" : "Concluir"}
-                </button>
-
-                <button
-                    class="excluir"
-                    onclick="excluirTarefa(${tarefa.codigo})">
-                    Excluir
-                </button>
-
-            </div>
+        lista.innerHTML = `
+            <tr>
+                <td colspan="5">
+                    Nenhum produto cadastrado.
+                </td>
+            </tr>
         `;
 
-        lista.appendChild(div);
-    });
-
-    atualizarEstatisticas();
-}
-
-
-// Concluir tarefa
-function concluirTarefa(codigo) {
-
-    const tarefa = tarefas.find(
-        tarefa => tarefa.codigo === codigo
-    );
-
-    if (!tarefa) {
         return;
     }
 
-    tarefa.concluida = !tarefa.concluida;
+    produtos.forEach(function(produto) {
 
-    salvarDados();
-    listarTarefas();
+        const linha = document.createElement("tr");
+
+        linha.innerHTML = `
+
+            <td>${produto.codigo}</td>
+
+            <td>${produto.descricao}</td>
+
+            <td>${produto.quantidade}</td>
+
+            <td>
+                R$ ${produto.valor.toFixed(2)}
+            </td>
+
+            <td>
+
+                <div class="acoes">
+
+                    <button
+                        class="btn-valor"
+                        onclick="alterarValor(${produto.codigo})">
+                        Alterar Valor
+                    </button>
+
+                    <button
+                        class="btn-quantidade"
+                        onclick="alterarQuantidade(${produto.codigo})">
+                        Alterar Quantidade
+                    </button>
+
+                    <button
+                        class="btn-excluir"
+                        onclick="excluirProduto(${produto.codigo})">
+                        Excluir
+                    </button>
+
+                </div>
+
+            </td>
+        `;
+
+        lista.appendChild(linha);
+    });
 }
 
 
-// Excluir tarefa
-function excluirTarefa(codigo) {
+// Alterar valor
+function alterarValor(codigoProduto) {
+
+    const produto = produtos.find(
+        produto => produto.codigo === codigoProduto
+    );
+
+    if (!produto) {
+
+        alert("Produto não encontrado.");
+
+        return;
+    }
+
+    const novoValor = Number(
+        prompt(
+            `Digite o novo valor para ${produto.descricao}:`
+        )
+    );
+
+    if (isNaN(novoValor) || novoValor < 0) {
+
+        alert(
+            "O valor deve ser maior ou igual a zero."
+        );
+
+        return;
+    }
+
+    produto.valor = novoValor;
+
+    listarProdutos();
+
+    alert("Valor alterado com sucesso!");
+}
+
+
+// Alterar quantidade
+function alterarQuantidade(codigoProduto) {
+
+    const produto = produtos.find(
+        produto => produto.codigo === codigoProduto
+    );
+
+    if (!produto) {
+
+        alert("Produto não encontrado.");
+
+        return;
+    }
+
+    const novaQuantidade = Number(
+        prompt(
+            `Digite a nova quantidade para ${produto.descricao}:`
+        )
+    );
+
+    if (isNaN(novaQuantidade) || novaQuantidade < 1) {
+
+        alert(
+            "A quantidade deve ser maior que zero."
+        );
+
+        return;
+    }
+
+    produto.quantidade = novaQuantidade;
+
+    listarProdutos();
+
+    alert("Quantidade alterada com sucesso!");
+}
+
+
+// Excluir produto
+function excluirProduto(codigoProduto) {
+
+    const produto = produtos.find(
+        produto => produto.codigo === codigoProduto
+    );
+
+    if (!produto) {
+
+        alert("Produto não encontrado.");
+
+        return;
+    }
 
     const confirmar = confirm(
-        "Deseja realmente excluir esta tarefa?"
+        `Deseja excluir o produto "${produto.descricao}"?`
     );
 
     if (!confirmar) {
         return;
     }
 
-    tarefas = tarefas.filter(
-        tarefa => tarefa.codigo !== codigo
+    produtos = produtos.filter(
+        produto => produto.codigo !== codigoProduto
     );
 
-    salvarDados();
-    listarTarefas();
+    listarProdutos();
+
+    alert("Produto excluído com sucesso!");
 }
 
 
-// Atualizar estatísticas
-function atualizarEstatisticas() {
+// Limpar formulário
+function limparCampos() {
 
-    const total = tarefas.length;
+    document.getElementById("descricao").value = "";
 
-    const concluidas = tarefas.filter(
-        tarefa => tarefa.concluida
-    ).length;
+    document.getElementById("quantidade").value = "";
 
-    const pendentes = total - concluidas;
-
-    document.getElementById("total").textContent = total;
-    document.getElementById("concluidas").textContent = concluidas;
-    document.getElementById("pendentes").textContent = pendentes;
+    document.getElementById("valor").value = "";
 }
 
 
-// Salvar no navegador
-function salvarDados() {
+// Produtos de exemplo
+cadastrarProdutoInicial(
+    "Cadeira Gamer",
+    12,
+    699.00
+);
 
-    localStorage.setItem(
-        "tarefas",
-        JSON.stringify(tarefas)
-    );
+cadastrarProdutoInicial(
+    "Mouse Logitech",
+    38,
+    99.00
+);
 
-    localStorage.setItem(
-        "proximoCodigo",
-        proximoCodigo
-    );
+
+// Função para criar produtos iniciais
+function cadastrarProdutoInicial(
+    descricao,
+    quantidade,
+    valor
+) {
+
+    produtos.push({
+
+        codigo: produtos.length + 1,
+
+        descricao: descricao,
+
+        quantidade: quantidade,
+
+        valor: valor
+    });
 }
 
 
-// Carregar dados
-function carregarDados() {
-
-    const dados = localStorage.getItem("tarefas");
-    const codigo = localStorage.getItem("proximoCodigo");
-
-    if (dados) {
-        tarefas = JSON.parse(dados);
-    }
-
-    if (codigo) {
-        proximoCodigo = Number(codigo);
-    }
-
-    listarTarefas();
-}
-
-
-// Iniciar sistema
-carregarDados();
+// Mostrar produtos ao abrir a página
+listarProdutos();
