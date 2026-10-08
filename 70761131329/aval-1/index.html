@@ -3,11 +3,84 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet">
 </head>
 <body>
-  https://github.com/nicaellyduarte/Atividade-1.git
-  
+  let tarefas = [];
+
+function cadastrarTarefa() {
+    let titulo = document.getElementById("titulo").value;
+        let prioridade = Number(document.getElementById("prioridade").value);
+
+            if (titulo.length < 5) {
+                    alert("O título deve ter no mínimo 5 caracteres!");
+                            return;
+                                }
+
+                                    if (prioridade < 1 || prioridade > 3) {
+                                            alert("A prioridade deve ser entre 1 e 3!");
+                                                    return;
+                                                        }
+
+                                                            tarefas.push({
+                                                                    titulo: titulo,
+                                                                            prioridade: prioridade,
+                                                                                    concluida: false
+                                                                                        });
+
+                                                                                            document.getElementById("titulo").value = "";
+
+                                                                                                listarTarefas();
+                                                                                                }
+
+                                                                                                function listarTarefas() {
+                                                                                                    let lista = document.getElementById("listaTarefas");
+
+                                                                                                        lista.innerHTML = "";
+
+                                                                                                            tarefas.forEach(function(tarefa, index) {
+                                                                                                                    let div = document.createElement("div");
+
+                                                                                                                            div.className = "tarefa";
+
+                                                                                                                                    if (tarefa.concluida) {
+                                                                                                                                                div.classList.add("concluida");
+                                                                                                                                                        }
+
+                                                                                                                                                                div.innerHTML = `
+                                                                                                                                                                            <strong>${tarefa.titulo}</strong>
+                                                                                                                                                                                        <p>Prioridade: ${tarefa.prioridade}</p>
+                                                                                                                                                                                                    <button onclick="concluirTarefa(${index})">Concluir</button>
+                                                                                                                                                                                                                <button onclick="alterarPrioridade(${index})">
+                                                                                                                                                                                                                                Alterar prioridade
+                                                                                                                                                                                                                                            </button>
+                                                                                                                                                                                                                                                    `;
+
+                                                                                                                                                                                                                                                            lista.appendChild(div);
+                                                                                                                                                                                                                                                                });
+                                                                                                                                                                                                                                                                }
+
+                                                                                                                                                                                                                                                                function concluirTarefa(index) {
+                                                                                                                                                                                                                                                                    tarefas[index].concluida = true;
+                                                                                                                                                                                                                                                                        listarTarefas();
+                                                                                                                                                                                                                                                                        }
+
+                                                                                                                                                                                                                                                                        function alterarPrioridade(index) {
+                                                                                                                                                                                                                                                                            let novaPrioridade = Number(
+                                                                                                                                                                                                                                                                                    prompt("Digite a nova prioridade: 1, 2 ou 3")
+                                                                                                                                                                                                                                                                                        );
+
+                                                                                                                                                                                                                                                                                            if (novaPrioridade < 1 || novaPrioridade > 3 || isNaN(novaPrioridade)) {
+                                                                                                                                                                                                                                                                                                    alert("Digite uma prioridade válida: 1, 2 ou 3!");
+                                                                                                                                                                                                                                                                                                            return;
+                                                                                                                                                                                                                                                                                                                }
+
+                                                                                                                                                                                                                                                                                                                    tarefas[index].prioridade = novaPrioridade;
+
+                                                                                                                                                                                                                                                                                                                        listarTarefas();
+                                                                                                                                                                                                                                                                                                                        }
+  <script src="script.js"></script>
   
 </body>
 </html>
