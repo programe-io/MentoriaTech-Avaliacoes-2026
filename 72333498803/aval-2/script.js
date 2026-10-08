@@ -1,28 +1,56 @@
+
 // Lista que armazenará as tarefas
 let tarefas = [];
 
 let proximoCodigo = 1;
 
+let codigoTarefaSelecionada = null;
 
-// Pegando os elementos do HTML
+
+// ELEMENTOS DO HTML
+
 const formulario = document.getElementById("formTarefa");
+
 const titulo = document.getElementById("titulo");
+
 const prioridade = document.getElementById("prioridade");
+
 const listaTarefas = document.getElementById("listaTarefas");
+
 const mensagem = document.getElementById("mensagem");
 
 
+// ELEMENTOS DO MODAL
+
+const modalPrioridade =
+    document.getElementById("modalPrioridade");
+
+const novaPrioridade =
+    document.getElementById("novaPrioridade");
+
+const fecharModal =
+    document.getElementById("fecharModal");
+
+const cancelarModal =
+    document.getElementById("cancelarModal");
+
+const salvarPrioridade =
+    document.getElementById("salvarPrioridade");
+
+
 // CADASTRAR TAREFA
+
 formulario.addEventListener("submit", function(event) {
 
-    // Impede a página de recarregar
     event.preventDefault();
 
     const tituloTexto = titulo.value.trim();
+
     const prioridadeValor = Number(prioridade.value);
 
 
-    // Verifica o tamanho do título
+    // Verifica o título
+
     if (tituloTexto.length < 5) {
 
         mensagem.textContent =
@@ -35,6 +63,7 @@ formulario.addEventListener("submit", function(event) {
 
 
     // Verifica a prioridade
+
     if (
         prioridade.value === "" ||
         prioridadeValor < 1 ||
@@ -50,7 +79,8 @@ formulario.addEventListener("submit", function(event) {
     }
 
 
-    // Cria uma nova tarefa
+    // Cria a tarefa
+
     const tarefa = {
 
         codigo: proximoCodigo,
@@ -63,31 +93,31 @@ formulario.addEventListener("submit", function(event) {
     };
 
 
-    // Coloca a tarefa na lista
     tarefas.push(tarefa);
 
     proximoCodigo++;
 
 
     // Limpa os campos
+
     titulo.value = "";
+
     prioridade.value = "";
 
 
-    // Mostra mensagem
     mensagem.textContent =
         "Tarefa cadastrada com sucesso!";
 
     mensagem.className = "sucesso";
 
 
-    // Atualiza a lista
     mostrarTarefas();
 
 });
 
 
 // MOSTRAR TAREFAS
+
 function mostrarTarefas() {
 
     listaTarefas.innerHTML = "";
@@ -110,34 +140,46 @@ function mostrarTarefas() {
 
 
         if (tarefa.concluida) {
+
             div.classList.add("concluida");
+
         }
 
 
         let nomePrioridade;
 
+
         if (tarefa.prioridade === 1) {
+
             nomePrioridade = "Alta";
-        } 
-        else if (tarefa.prioridade === 2) {
+
+        } else if (tarefa.prioridade === 2) {
+
             nomePrioridade = "Média";
-        } 
-        else {
+
+        } else {
+
             nomePrioridade = "Baixa";
+
         }
 
 
         let status;
 
+
         if (tarefa.concluida) {
+
             status = "Concluída";
-        } 
-        else {
+
+        } else {
+
             status = "Pendente";
+
         }
 
 
         div.innerHTML = `
+
             <h3>${tarefa.titulo}</h3>
 
             <p>
@@ -160,32 +202,40 @@ function mostrarTarefas() {
                 ${
                     !tarefa.concluida
                     ? `
-                    <button
-                        class="btn-concluir"
-                        onclick="concluirTarefa(${tarefa.codigo})">
-                        Concluir
-                    </button>
+                        <button
+                            class="btn-concluir"
+                            onclick="concluirTarefa(${tarefa.codigo})">
+
+                            Concluir
+
+                        </button>
                     `
                     : ""
                 }
 
+
                 <button
                     class="btn-prioridade"
                     onclick="alterarPrioridade(${tarefa.codigo})">
+
                     Alterar prioridade
+
                 </button>
 
             </div>
+
         `;
 
 
         listaTarefas.appendChild(div);
 
     });
+
 }
 
 
 // CONCLUIR TAREFA
+
 function concluirTarefa(codigo) {
 
     const tarefa = tarefas.find(function(tarefa) {
@@ -199,6 +249,13 @@ function concluirTarefa(codigo) {
 
         tarefa.concluida = true;
 
+
+        mensagem.textContent =
+            "Tarefa concluída com sucesso!";
+
+        mensagem.className = "sucesso";
+
+
         mostrarTarefas();
 
     }
@@ -206,7 +263,8 @@ function concluirTarefa(codigo) {
 }
 
 
-// ALTERAR PRIORIDADE
+// ABRIR MODAL
+
 function alterarPrioridade(codigo) {
 
     const tarefa = tarefas.find(function(tarefa) {
@@ -217,36 +275,105 @@ function alterarPrioridade(codigo) {
 
 
     if (!tarefa) {
+
         return;
+
     }
 
 
-    const novaPrioridade = prompt(
-        "Digite a nova prioridade:\n\n" +
-        "1 - Alta\n" +
-        "2 - Média\n" +
-        "3 - Baixa"
-    );
+    // Guarda qual tarefa será alterada
+
+    codigoTarefaSelecionada = codigo;
 
 
-    const valor = Number(novaPrioridade);
+    // Mostra a prioridade atual no select
+
+    novaPrioridade.value = tarefa.prioridade;
 
 
-    if (
-        novaPrioridade === null ||
-        valor < 1 ||
-        valor > 3 ||
-        !Number.isInteger(valor)
-    ) {
+    // Abre o modal
 
-        alert("Digite apenas 1, 2 ou 3.");
+    modalPrioridade.classList.add("ativo");
+
+}
+
+
+// SALVAR NOVA PRIORIDADE
+
+salvarPrioridade.addEventListener("click", function() {
+
+    const tarefa = tarefas.find(function(tarefa) {
+
+        return tarefa.codigo === codigoTarefaSelecionada;
+
+    });
+
+
+    if (!tarefa) {
 
         return;
+
     }
+
+
+    const valor = Number(novaPrioridade.value);
 
 
     tarefa.prioridade = valor;
 
+
+    mensagem.textContent =
+        "Prioridade alterada com sucesso!";
+
+    mensagem.className = "sucesso";
+
+
     mostrarTarefas();
 
+
+    fecharModalFuncao();
+
+});
+
+
+// FECHAR MODAL
+
+function fecharModalFuncao() {
+
+    modalPrioridade.classList.remove("ativo");
+
+    codigoTarefaSelecionada = null;
+
 }
+
+
+// BOTÃO X
+
+fecharModal.addEventListener("click", function() {
+
+    fecharModalFuncao();
+
+});
+
+
+// BOTÃO CANCELAR
+
+cancelarModal.addEventListener("click", function() {
+
+    fecharModalFuncao();
+
+});
+
+
+// FECHAR CLICANDO FORA DO MODAL
+
+modalPrioridade.addEventListener("click", function(event) {
+
+    if (event.target === modalPrioridade) {
+
+        fecharModalFuncao();
+
+    }
+
+});
+
