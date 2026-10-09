@@ -1,70 +1,62 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <link href="style.css" rel="stylesheet">
-</head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema de Estoque</title>
+  <link rel="stylesheet" href="style.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
 <body>
-  // Lista (Array) de Produtos
-let produtos = [];
+  <main class="container">
+    <h1>Sistema de Estoque</h1>
+    <p>Cadastre e controle seus produtos.</p>
 
-function validarProduto(descricao, quantidade, valor) {
-  if (descricao.length < 5) {
-    throw new Error("Descrição deve ter no mínimo cinco caracteres");
-  }
+    <form id="formProduto">
+      <input type="hidden" id="codigo">
 
-  if (quantidade < 1) {
-    throw new Error("Quantidade deve ser maior que zero");
-  }
+      <label for="nome">Nome do produto</label>
+      <input id="nome" type="text" placeholder="Ex.: Teclado" required minlength="3">
 
-  if (valor < 0) {
-    throw new Error("Valor deve ser maior ou igual a zero");
-  }
-}
+      <label for="quantidade">Quantidade</label>
+      <input id="quantidade" type="number" min="0" step="1" required>
 
-function cadastrarProduto(descricao, quantidade, valor) {
-  validarProduto(descricao, quantidade, valor);
+      <label for="preco">Preço (R$)</label>
+      <input id="preco" type="number" min="0.01" step="0.01" required>
 
-  let novoProduto = {
-    codigo: produtos.length + 1,
-    descricao: descricao,
-    quantidade: quantidade,
-    valor: valor
-  };
+      <button type="submit" id="btnSalvar">Cadastrar produto</button>
+      <button type="button" id="btnCancelar" hidden>Cancelar edição</button>
+    </form>
 
-  produtos.push(novoProduto);
-}
+    <p id="mensagem" role="status"></p>
 
-function listarProdutos() {
-  console.log(produtos);
-}
+    <h2>Produtos cadastrados</h2>
+    <p id="resumo"></p>
 
-function atualizarValor(codigoProduto, novoValor) {
-  if (novoValor < 0) {
-    throw new Error("Valor deve ser maior ou igual a zero");
-  }
+    <div class="tabela-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Código</th>
+            <th>Produto</th>
+            <th>Quantidade</th>
+            <th>Preço</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="listaProdutos"></tbody>
+      </table>
+    </div>
+  </main>
 
-  const produto = produtos.find(prod => prod.codigo === codigoProduto);
-
-  if (produto) {
-    produto.valor = novoValor;
-  } else {
-    throw new Error("Produto não encontrado");
-  }
-}
-
-
-// -----------------------------
-
-listarProdutos();
-
-cadastrarProduto("Cadeira Gamer", 12, 699.00);
-cadastrarProduto("Mouse Logi", 38, 99.00);
-
-listarProdutos();
-atualizarValor(2,97.00)
   <script src="script.js"></script>
   
-</body>
+<footer class="rodape">
+  <p>
+    © 2026 Sistema de Estoque.
+    Todos os direitos reservados.
+  </p>
+  <p>Desenvolvedor Juan V.</p>
+</footer>
+<script src="script.js"></script></body>
 </html>
