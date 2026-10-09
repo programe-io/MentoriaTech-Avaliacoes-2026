@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MATEUS MOTO PEÇAS | Motos Esportivas & Peças High Performance</title>
+    
+    <!-- Tailwind CSS CDN & Fonts -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300..900;1,300..900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Configuração Tailwind -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            dark: '#0A0A0E',
+                            card: '#13131A',
+                            border: '#232330',
+                            primary: '#FF2E00',
+                            secondary: '#FF3B00',
+                            cyan: '#00F0FF',
+                            accent: '#FFE600'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Montserrat', 'sans-serif'],
+                        display: ['Rajdhani', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'neon-red': '0 0 20px rgba(255, 46, 0, 0.4)',
+                        'neon-cyan': '0 0 20px rgba(0, 240, 255, 0.4)',
+                        'card-glow': '0 8px 32px 0 rgba(0, 0, 0, 0.37)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Folha de Estilos Externa -->
+    <link rel="stylesheet" href="styles.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"><link href="style.css" rel="stylesheet"></head>
+<body class="bg-brand-dark text-gray-200 antialiased selection:bg-brand-primary selection:text-white">
+
+    <!-- Container de Notificações Toast -->
+    <div id="toast-container"></div>
+
+    <!-- Header & Menu de Navegação -->
+    <header class="sticky top-0 z-40 bg-brand-dark/90 backdrop-blur-md border-b border-brand-border/60 transition-all">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            
+            <!-- Logo -->
+            <a href="#" class="flex items-center gap-3 group">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-brand-primary to-orange-500 flex items-center justify-center text-white text-2xl shadow-neon-red transform group-hover:scale-105 transition-transform duration-300">
+                    <i class="fa-solid font-bold fa-motorcycle"></i>
+                </div>
+                <div>
+                    <span class="text-2xl font-black font-display tracking-wider text-white flex items-center gap-1">
+                        MATEUS <span class="text-brand-primary">MOTO</span>
+                    </span>
+                    <span class="text-xs font-bold font-display tracking-widest text-gray-400 block -mt-1">
+                        PEÇAS & PERFORMANCE
+                    </span>
+                </div>
+            </a>
+
+            <!-- Menu Desktop -->
+            <nav class="hidden md:flex items-center space-x-8 font-medium text-sm tracking-wide">
+                <a href="#estoque" class="hover:text-brand-primary transition-colors flex items-center gap-1"><i class="fa-solid fa-gauge-high text-xs text-brand-primary"></i> ESTOQUE MOTOS</a>
+                <a href="#promocoes" class="hover:text-brand-primary transition-colors flex items-center gap-1"><i class="fa-solid fa-bolt text-xs text-brand-accent"></i> PROMOÇÕES</a>
+                <a href="#pecas" class="hover:text-brand-primary transition-colors">PEÇAS & EQUIPOS</a>
+                <a href="#diferenciais" class="hover:text-brand-primary transition-colors">SOBRE NÓS</a>
+                <a href="#contato" class="hover:text-brand-primary transition-colors">CONTATO</a>
+            </nav>
+
+            <!-- Ações -->
+            <div class="flex items-center gap-4">
+                <button id="cart-btn" class="relative p-3 rounded-xl bg-brand-card hover:bg-brand-border border border-brand-border text-white transition-all hover:shadow-neon-red group" aria-label="Abrir carrinho de compras">
+                    <i class="fa-solid fa-cart-shopping text-lg group-hover:text-brand-primary transition-colors"></i>
+                    <span id="cart-badge" class="absolute -top-2 -right-2 bg-brand-primary text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center hidden">
+                        0
+                    </span>
+                </button>
+
+                <button id="mobile-menu-btn" class="md:hidden p-3 rounded-xl bg-brand-card border border-brand-border text-white hover:text-brand-primary">
+                    <i class="fa-solid fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Menu Mobile -->
+        <div id="mobile-menu" class="hidden md:hidden bg-brand-card border-b border-brand-border px-6 py-4 space-y-3 font-medium">
+            <a href="#estoque" class="mobile-link block py-2 hover:text-brand-primary"><i class="fa-solid fa-gauge-high mr-2 text-brand-primary"></i> Estoque Motos</a>
+            <a href="#promocoes" class="mobile-link block py-2 hover:text-brand-primary"><i class="fa-solid fa-bolt mr-2 text-brand-accent"></i> Promoções</a>
+            <a href="#pecas" class="mobile-link block py-2 hover:text-brand-primary"><i class="fa-solid fa-wrench mr-2"></i> Peças & Acessórios</a>
+            <a href="#diferenciais" class="mobile-link block py-2 hover:text-brand-primary"><i class="fa-solid fa-shield-halved mr-2"></i> Sobre & Diferenciais</a>
+            <a href="#contato" class="mobile-link block py-2 hover:text-brand-primary"><i class="fa-solid fa-headset mr-2"></i> Contato</a>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative min-h-[85vh] flex items-center justify-center overflow-hidden py-12">
+        <div class="absolute inset-0 z-0">
+            <img src="https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?auto=format&fit=crop&q=80&w=2000" alt="Moto Esportiva Pista" class="w-full h-full object-cover opacity-25 filter brightness-75 contrast-125">
+            <div class="absolute inset-0 bg-gradient-to-t from-brand-dark via-brand-dark/70 to-transparent"></div>
+            <div class="absolute inset-0 bg-gradient-to-r from-brand-dark via-transparent to-brand-dark"></div>
+        </div>
+
+        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center md:text-left grid md:grid-cols-2 items-center gap-12">
+            <div>
+                <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-primary/10 border border-brand-primary/30 text-brand-primary font-bold text-xs uppercase tracking-widest mb-6 badge-glow">
+                    <i class="fa-solid fa-fire text-brand-primary"></i> Alta Performance & Adrenalina
+                </div>
+                <h1 class="text-4xl sm:text-6xl lg:text-7xl font-black font-display tracking-tight text-white leading-none mb-6">
+                    ACELERE SUA <br>
+                    <span class="text-gradient-red">PAIXÃO ESPORTIVA</span>
+                </h1>
+                <p class="text-gray-300 text-base sm:text-lg mb-8 max-w-xl font-light">
+                    As supermáquinas mais desejadas do planeta com garantia de procedência, acessórios de pista e peças de alta performance. Sinta o ronco do motor.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+                    <a href="#estoque" class="px-8 py-4 rounded-xl bg-gradient-to-r from-brand-primary to-orange-600 text-white font-bold font-display tracking-wider text-lg hover:shadow-neon-red transform hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-3">
+                        EXPLORAR ESTOQUE <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                    <a href="#promocoes" class="px-8 py-4 rounded-xl bg-brand-card hover:bg-brand-border border border-brand-border text-white font-bold font-display tracking-wider text-lg hover:border-brand-cyan transition-all flex items-center justify-center gap-3">
+                        <i class="fa-solid fa-tag text-brand-accent"></i> OFERTAS DO MÊS
+                    </a>
+                </div>
+
+                <div class="grid grid-cols-3 gap-4 mt-12 pt-8 border-t border-brand-border/80">
+                    <div>
+                        <p class="text-2xl lg:text-3xl font-black font-display text-white">100%</p>
+                        <p class="text-xs text-gray-400">Garantia & Procedência</p>
+                    </div>
+                    <div>
+                        <p class="text-2xl lg:text-3xl font-black font-display text-brand-cyan">+500</p>
+                        <p class="text-xs text-gray-400">Peças Esportivas</p>
+                    </div>
+                    <div>
+                        <p class="text-2xl lg:text-3xl font-black font-display text-brand-primary">24h</p>
+                        <p class="text-xs text-gray-400">Atendimento VIP</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="relative hidden md:block">
+                <div class="relative z-10 rounded-2xl overflow-hidden glass-card p-4 border border-brand-primary/30 shadow-2xl">
+                    <img src="https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&q=80&w=1000" alt="Ducati Panigale V4" class="w-full h-80 object-cover rounded-xl hover:scale-105 transition-transform duration-500">
+                    <div class="p-4 flex items-center justify-between">
+                        <div>
+                            <span class="text-xs text-brand-primary font-bold uppercase tracking-wider">Destaque da Semana</span>
+                            <h3 class="text-xl font-bold font-display text-white">DUCATI PANIGALE V4 S</h3>
+                        </div>
+                        <span class="text-2xl font-black font-display text-brand-accent">R$ 162.900</span>
+                    </div>
+                </div>
+                <div class="absolute -top-10 -right-10 w-72 h-72 bg-brand-primary/20 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="absolute -bottom-10 -left-10 w-72 h-72 bg-brand-cyan/20 rounded-full blur-3xl pointer-events-none"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seção de Estoque de Motos -->
+    <section id="estoque" class="py-20 bg-brand-dark/50 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-12">
+                <div>
+                    <div class="text-brand-primary font-bold text-sm uppercase tracking-widest flex items-center gap-2">
+                        <i class="fa-solid fa-flag-checkered"></i> Garagem de Alta Performance
+                    </div>
+                    <h2 class="text-3xl sm:text-5xl font-black font-display text-white mt-1">
+                        ESTOQUE DE <span class="text-gradient-red">MOTOS ESPORTIVAS</span>
+                    </h2>
+                </div>
+                <p class="text-gray-400 text-sm max-w-md mt-4 md:mt-0">
+                    Selecione sua superbike seminova ou zero km totalmente revisada, testada e pronta para voar no asfalto.
+                </p>
+            </div>
+
+            <!-- Filtros & Busca -->
+            <div class="glass-card p-4 rounded-2xl mb-10 flex flex-col md:flex-row gap-4 justify-between items-center">
+                <div class="relative w-full md:w-80">
+                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" id="search-input" placeholder="Buscar marca, modelo..." class="w-full bg-brand-dark border border-brand-border rounded-xl pl-11 pr-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-brand-primary transition-colors">
+                </div>
+
+                <div class="flex flex-wrap gap-2 w-full md:w-auto justify-start md:justify-end" id="brand-filters">
+                    <button data-brand="all" class="brand-btn active px-4 py-2 rounded-xl text-xs font-bold font-display uppercase tracking-wider bg-brand-primary text-white border border-brand-primary transition-all">Todas</button>
+                    <button data-brand="Kawasaki" class="brand-btn px-4 py-2 rounded-xl text-xs font-bold font-display uppercase tracking-wider bg-brand-dark text-gray-300 border border-brand-border hover:border-brand-primary transition-all">Kawasaki</button>
+                    <button data-brand="BMW" class="brand-btn px-4 py-2 rounded-xl text-xs font-bold font-display uppercase tracking-wider bg-brand-dark text-gray-300 border border-brand-border hover:border-brand-primary transition-all">BMW</button>
+                    <button data-brand="Yamaha" class="brand-btn px-4 py-2 rounded-xl text-xs font-bold font-display uppercase tracking-wider bg-brand-dark text-gray-300 border border-brand-border hover:border-brand-primary transition-all">Yamaha</button>
+                    <button data-brand="Ducati" class="brand-btn px-4 py-2 rounded-xl text-xs font-bold font-display uppercase tracking-wider bg-brand-dark text-gray-300 border border-brand-border hover:border-brand-primary transition-all">Ducati</button>
+                    <button data-brand="Honda" class="brand-btn px-4 py-2 rounded-xl text-xs font-bold font-display uppercase tracking-wider bg-brand-dark text-gray-300 border border-brand-border hover:border-brand-primary transition-all">Honda</button>
+                </div>
+            </div>
+
+            <!-- Grid de Motos -->
+            <div id="motos-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+        </div>
+    </section>
+
+    <!-- Seção de Promoções & Peças -->
+    <section id="promocoes" class="py-20 border-t border-brand-border/50 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-12">
+                <div>
+                    <div class="text-brand-accent font-bold text-sm uppercase tracking-widest flex items-center gap-2">
+                        <i class="fa-solid fa-bolt"></i> Preços Exclusivos
+                    </div>
+                    <h2 class="text-3xl sm:text-5xl font-black font-display text-white mt-1">
+                        PROMOÇÕES & <span class="text-gradient-cyan">PEÇAS ESPORTIVAS</span>
+                    </h2>
+                </div>
+                <div class="mt-4 md:mt-0 flex items-center gap-3 bg-brand-card p-3 rounded-xl border border-brand-border">
+                    <i class="fa-solid fa-clock text-brand-primary animate-pulse text-lg"></i>
+                    <span class="text-xs text-gray-300 font-semibold uppercase">Cupom de 10% OFF no Checkout: <strong class="text-brand-accent">ACELERA10</strong></span>
+                </div>
+            </div>
+
+            <div id="pecas" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"></div>
+        </div>
+    </section>
+
+    <!-- Diferenciais -->
+    <section id="diferenciais" class="py-20 bg-brand-card/40 border-y border-brand-border/60">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-brand-primary font-bold text-sm uppercase tracking-widest">Por que escolher a Mateus Moto Peças</span>
+                <h2 class="text-3xl sm:text-5xl font-black font-display text-white mt-2">ALTA PERFORMANCE COM TOTAL SEGURANÇA</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div class="p-6 rounded-2xl glass-card text-center hover:border-brand-primary transition-all">
+                    <div class="w-16 h-16 rounded-2xl bg-brand-primary/10 border border-brand-primary/30 flex items-center justify-center text-brand-primary text-3xl mx-auto mb-6">
+                        <i class="fa-solid fa-truck-fast"></i>
+                    </div>
+                    <h3 class="text-xl font-bold font-display text-white mb-2">Entrega Nacional</h3>
+                    <p class="text-sm text-gray-400">Transporte especializado para motos de alta cilindrada em todo o Brasil.</p>
+                </div>
+
+                <div class="p-6 rounded-2xl glass-card text-center hover:border-brand-cyan transition-all">
+                    <div class="w-16 h-16 rounded-2xl bg-brand-cyan/10 border border-brand-cyan/30 flex items-center justify-center text-brand-cyan text-3xl mx-auto mb-6">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <h3 class="text-xl font-bold font-display text-white mb-2">Garantia VIP</h3>
+                    <p class="text-sm text-gray-400">Motos 100% periciadas com garantia de motor e câmbio estendida.</p>
+                </div>
+
+                <div class="p-6 rounded-2xl glass-card text-center hover:border-brand-accent transition-all">
+                    <div class="w-16 h-16 rounded-2xl bg-brand-accent/10 border border-brand-accent/30 flex items-center justify-center text-brand-accent text-3xl mx-auto mb-6">
+                        <i class="fa-solid fa-credit-card"></i>
+                    </div>
+                    <h3 class="text-xl font-bold font-display text-white mb-2">Financiamento Fácil</h3>
+                    <p class="text-sm text-gray-400">As melhores taxas do mercado em até 48x ou 18x no cartão de crédito.</p>
+                </div>
+
+                <div class="p-6 rounded-2xl glass-card text-center hover:border-brand-primary transition-all">
+                    <div class="w-16 h-16 rounded-2xl bg-brand-primary/10 border border-brand-primary/30 flex items-center justify-center text-brand-primary text-3xl mx-auto mb-6">
+                        <i class="fa-solid fa-screwdriver-wrench"></i>
+                    </div>
+                    <h3 class="text-xl font-bold font-display text-white mb-2">Oficina Especializada</h3>
+                    <p class="text-sm text-gray-400">Mecânicos certificados para remap, suspensão e dinamômetro.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contato -->
+    <section id="contato" class="py-20 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div>
+                    <span class="text-brand-primary font-bold text-sm uppercase tracking-widest">Fale Conosco</span>
+                    <h2 class="text-3xl sm:text-5xl font-black font-display text-white mt-2 mb-6">
+                        PRONTO PARA PILOTAR <span class="text-gradient-red">SUA NOVA MOTO?</span>
+                    </h2>
+                    <p class="text-gray-400 text-base mb-8">
+                        Entre em contato diretamente com Mateus e nossa equipe de especialistas para agendar um test ride, negociar sua moto usada ou cotar peças esportivas.
+                    </p>
+
+                    <div class="space-y-6">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-brand-card border border-brand-border flex items-center justify-center text-brand-primary text-xl">
+                                <i class="fa-solid fa-location-dot"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-white font-bold font-display text-lg">Endereço da Loja</h4>
+                                <p class="text-sm text-gray-400">Av. das Nações Esportivas, 1500 - Centro, SP</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-brand-card border border-brand-border flex items-center justify-center text-brand-primary text-xl">
+                                <i class="fa-solid fa-phone"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-white font-bold font-display text-lg">Telefone & WhatsApp</h4>
+                                <p class="text-sm text-gray-400">(11) 99999-8888 / (11) 3333-2222</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-brand-card border border-brand-border flex items-center justify-center text-brand-primary text-xl">
+                                <i class="fa-solid fa-clock"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-white font-bold font-display text-lg">Horário de Atendimento</h4>
+                                <p class="text-sm text-gray-400">Segunda a Sexta: 08h às 19h | Sábado: 08h às 14h</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-8">
+                        <a href="https://wa.me/5511999998888?text=Olá,%20gostaria%20de%20saber%20mais%20sobre%20as%20motos%20da%20Mateus%20Moto%20Peças" target="_blank" class="inline-flex items-center gap-3 px-8 py-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold font-display tracking-wider text-lg shadow-lg hover:shadow-emerald-600/50 transition-all">
+                            <i class="fa-brands fa-whatsapp text-2xl"></i> CHAT DIRETO NO WHATSAPP
+                        </a>
+                    </div>
+                </div>
+
+                <div class="glass-card p-8 rounded-3xl border border-brand-border">
+                    <h3 class="text-2xl font-bold font-display text-white mb-6">ENVIE UMA MENSAGEM</h3>
+                    <form id="contact-form" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Seu Nome Completo</label>
+                            <input type="text" required placeholder="Ex: Lucas Silva" class="w-full bg-brand-dark border border-brand-border rounded-xl p-3 text-sm text-white focus:outline-none focus:border-brand-primary">
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-400 uppercase mb-2">E-mail</label>
+                                <input type="email" required placeholder="seu@email.com" class="w-full bg-brand-dark border border-brand-border rounded-xl p-3 text-sm text-white focus:outline-none focus:border-brand-primary">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Telefone/WhatsApp</label>
+                                <input type="tel" required placeholder="(00) 00000-0000" class="w-full bg-brand-dark border border-brand-border rounded-xl p-3 text-sm text-white focus:outline-none focus:border-brand-primary">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Interesse Principal</label>
+                            <select class="w-full bg-brand-dark border border-brand-border rounded-xl p-3 text-sm text-white focus:outline-none focus:border-brand-primary">
+                                <option value="Comprar Moto">Comprar Moto Esportiva</option>
+                                <option value="Vender/Trocar Moto">Quero Vender/Trocar minha Moto</option>
+                                <option value="Peças e Acessórios">Peças e Acessórios Esportivos</option>
+                                <option value="Oficina e Serviços">Serviços de Oficina / Remap</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Mensagem</label>
+                            <textarea rows="4" placeholder="Descreva o modelo de interesse ou sua dúvida..." class="w-full bg-brand-dark border border-brand-border rounded-xl p-3 text-sm text-white focus:outline-none focus:border-brand-primary"></textarea>
+                        </div>
+
+                        <button type="submit" class="w-full py-4 rounded-xl bg-brand-primary hover:bg-orange-600 text-white font-bold font-display tracking-wider text-base shadow-neon-red transition-all">
+                            ENVIAR MENSAGEM
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Rodapé -->
+    <footer class="bg-brand-dark border-t border-brand-border py-12 text-gray-400 text-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+            <div>
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-10 h-10 rounded-lg bg-brand-primary flex items-center justify-center text-white text-xl font-bold">
+                        <i class="fa-solid fa-motorcycle"></i>
+                    </div>
+                    <span class="text-xl font-black font-display text-white">MATEUS MOTO PEÇAS</span>
+                </div>
+                <p class="text-xs text-gray-400 leading-relaxed mb-4">
+                    Sua loja referência em motos esportivas de média e alta cilindrada, peças de performance e acessórios premium.
+                </p>
+                <div class="flex gap-4 text-lg">
+                    <a href="#" aria-label="Instagram da Mateus Moto Peças" class="w-9 h-9 rounded-lg bg-brand-card flex items-center justify-center text-gray-300 hover:text-brand-primary hover:border hover:border-brand-primary transition-all"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" aria-label="Facebook da Mateus Moto Peças" class="w-9 h-9 rounded-lg bg-brand-card flex items-center justify-center text-gray-300 hover:text-brand-primary hover:border hover:border-brand-primary transition-all"><i class="fa-brands fa-facebook"></i></a>
+                    <a href="#" aria-label="YouTube da Mateus Moto Peças" class="w-9 h-9 rounded-lg bg-brand-card flex items-center justify-center text-gray-300 hover:text-brand-primary hover:border hover:border-brand-primary transition-all"><i class="fa-brands fa-youtube"></i></a>
+                </div>
+            </div>
+
+            <div>
+                <h4 class="text-white font-bold font-display text-base mb-4 uppercase">Navegação Rápida</h4>
+                <ul class="space-y-2 text-xs">
+                    <li><a href="#estoque" class="hover:text-brand-primary transition-colors">Estoque de Motos</a></li>
+                    <li><a href="#promocoes" class="hover:text-brand-primary transition-colors">Promoções Especiais</a></li>
+                    <li><a href="#pecas" class="hover:text-brand-primary transition-colors">Acessórios & Capacetes</a></li>
+                    <li><a href="#diferenciais" class="hover:text-brand-primary transition-colors">Garantia & Financiamento</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="text-white font-bold font-display text-base mb-4 uppercase">Marcas em Destaque</h4>
+                <ul class="space-y-2 text-xs">
+                    <li><a href="#estoque" class="hover:text-brand-primary transition-colors">Kawasaki Ninja</a></li>
+                    <li><a href="#estoque" class="hover:text-brand-primary transition-colors">BMW Motorrad</a></li>
+                    <li><a href="#estoque" class="hover:text-brand-primary transition-colors">Yamaha R-Series</a></li>
+                    <li><a href="#estoque" class="hover:text-brand-primary transition-colors">Ducati Corse</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="text-white font-bold font-display text-base mb-4 uppercase">Formas de Pagamento</h4>
+                <p class="text-xs text-gray-400 mb-4">Aceitamos financiamento bancário, cartão em até 18x, PIX e carta de crédito contemplada.</p>
+                <div class="flex flex-wrap gap-2 text-2xl text-gray-400">
+                    <i class="fa-brands fa-cc-visa hover:text-white"></i>
+                    <i class="fa-brands fa-cc-mastercard hover:text-white"></i>
+                    <i class="fa-solid fa-pix hover:text-white"></i>
+                    <i class="fa-solid fa-barcode hover:text-white"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="border-t border-brand-border pt-8 text-center text-xs text-gray-500">
+            <p>&copy; 2026 MATEUS MOTO PEÇAS. Todos os direitos reservados. Projeto demonstrativo de alta performance.</p>
+        </div>
+    </footer>
+
+    <!-- Sidebar Carrinho de Compras -->
+    <div id="cart-drawer" class="fixed inset-y-0 right-0 w-full sm:w-96 bg-brand-card border-l border-brand-border z-50 transform translate-x-full transition-transform duration-300 flex flex-col shadow-2xl">
+        <div class="p-6 border-b border-brand-border flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <i class="fa-solid fa-cart-shopping text-brand-primary text-xl"></i>
+                <h3 class="text-xl font-bold font-display text-white">CARRINHO DE COMPRAS</h3>
+            </div>
+            <button id="close-cart-btn" class="p-2 text-gray-400 hover:text-white text-xl">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-4"></div>
+
+        <div class="p-6 border-t border-brand-border bg-brand-dark/50 space-y-4">
+            <div class="flex gap-2">
+                <input type="text" id="coupon-input" placeholder="Cupom (ex: ACELERA10)" class="bg-brand-dark border border-brand-border rounded-xl px-3 py-2 text-xs text-white uppercase focus:outline-none focus:border-brand-primary flex-1">
+                <button id="apply-coupon-btn" class="px-4 py-2 bg-brand-border hover:bg-brand-primary text-white font-bold font-display text-xs rounded-xl transition-colors">
+                    APLICAR
+                </button>
+            </div>
+
+            <div class="space-y-1 text-sm border-t border-brand-border pt-3">
+                <div class="flex justify-between text-gray-400">
+                    <span>Subtotal</span>
+                    <span id="cart-subtotal">R$ 0,00</span>
+                </div>
+                <div class="flex justify-between text-brand-accent text-xs hidden" id="discount-row">
+                    <span>Desconto (Cupom)</span>
+                    <span id="cart-discount">-R$ 0,00</span>
+                </div>
+                <div class="flex justify-between text-white font-bold text-lg pt-2 border-t border-brand-border/40">
+                    <span>TOTAL:</span>
+                    <span id="cart-total" class="text-brand-primary font-display">R$ 0,00</span>
+                </div>
+            </div>
+
+            <button id="checkout-btn" class="w-full py-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold font-display tracking-wider text-base shadow-lg transition-all flex items-center justify-center gap-2">
+                <i class="fa-brands fa-whatsapp text-xl"></i> FINALIZAR NO WHATSAPP
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal Ficha Técnica das Motos -->
+    <div id="moto-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-brand-card border border-brand-border rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 relative shadow-2xl">
+            <button id="close-modal-btn" class="absolute top-6 right-6 text-gray-400 hover:text-white text-2xl">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div id="modal-content"></div>
+        </div>
+    </div>
+
+    <!-- Script JS Externo -->
+    <script src="script.js"></script>
+<script src="script.js"></script></body>
+</html>
