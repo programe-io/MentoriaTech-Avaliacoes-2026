@@ -1,40 +1,51 @@
-// Selecionando os elementos do DOM
-const valorContador = document.getElementById('contador');
-const btnDiminuir = document.getElementById('btn-diminuir');
-const btnResetar = document.getElementById('btn-resetar');
-const btnAumentar = document.getElementById('btn-aumentar');
+document.addEventListener('DOMContentLoaded', () => {
+    const mundo = document.getElementById('mundo');
+    const slots = document.querySelectorAll('.slot');
+    
+    let blocoSelecionado = 'grama';
+    const iconesBlocos = {
+        grama: '🌿',
+        terra: '🟫',
+        pedra: '⬜',
+        madeira: '🪵'
+    };
 
-// Variável que guarda o estado do contador
-let contador = 0;
+    // Selecionar bloco na Hotbar
+    slots.forEach(slot => {
+        slot.addEventListener('click', () => {
+            slots.forEach(s => s.classList.remove('selecionado'));
+            slot.classList.add('selecionado');
+            blocoSelecionado = slot.getAttribute('data-bloco');
+        });
+    });
 
-// Função para atualizar a cor do texto baseado no valor
-function atualizarCor() {
-    if (contador > 0) {
-        valorContador.style.color = '#27ae60'; // Verde para positivo
-    } else if (contador < 0) {
-        valorContador.style.color = '#e74c3c'; // Vermelho para negativo
-    } else {
-        valorContador.style.color = '#2c3e50'; // Cor padrão para zero
+    // Criar o grid do mundo (8x5 = 40 blocos)
+    const totalBlocos = 40;
+    for (let i = 0; i < totalBlocos; i++) {
+        const divBloco = document.createElement('div');
+        divBloco.classList.add('bloco');
+        
+        // Define alguns blocos iniciais de grama na última linha
+        if (i >= 32) {
+            divBloco.textContent = iconesBlocos.grama;
+            divBloco.dataset.tipo = 'grama';
+        } else {
+            divBloco.textContent = '';
+            divBloco.dataset.tipo = 'vazio';
+        }
+
+        // Clicar no bloco para colocar ou remover
+        divBloco.addEventListener('click', () => {
+            if (divBloco.dataset.tipo === 'vazio') {
+                divBloco.textContent = iconesBlocos[blocoSelecionado];
+                divBloco.dataset.tipo = blocoSelecionado;
+            } else {
+                // Se já tem bloco, limpa
+                divBloco.textContent = '';
+                divBloco.dataset.tipo = 'vazio';
+            }
+        });
+
+        mundo.appendChild(divBloco);
     }
 }
-
-// Evento de clique para Aumentar
-btnAumentar.addEventListener('click', () => {
-    contador++;
-    valorContador.textContent = contador;
-    atualizarCor();
-});
-
-// Evento de clique para Diminuir
-btnDiminuir.addEventListener('click', () => {
-    contador--;
-    valorContador.textContent = contador;
-    atualizarCor();
-});
-
-// Evento de clique para Resetar
-btnResetar.addEventListener('click', () => {
-    contador = 0;
-    valorContador.textContent = contador;
-    atualizarCor();
-});
