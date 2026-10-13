@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Garagem 88 — blog de carros com testes, histórias, dicas de manutenção e novidades do mundo automotivo.">
+<title>Garagem 88 — Blog de Carros</title>
+<style>
+  :root{
+    --bg:#f4f6f9;
+    --surface:#ffffff;
+    --surface-2:#eef1f6;
+    --text:#12151b;
+    --muted:#5b6472;
+    --border:#e2e6ee;
+    --accent:#e63946;
+    --accent-soft:rgba(230,57,70,.12);
+    --radius:18px;
+    --shadow:0 8px 28px rgba(16,24,40,.08);
+  }
+  [data-theme="dark"]{
+    --bg:#0d1015;
+    --surface:#151a22;
+    --surface-2:#1c222c;
+    --text:#eef1f6;
+    --muted:#98a3b3;
+    --border:#252c38;
+    --accent:#ff5a67;
+    --accent-soft:rgba(255,90,103,.16);
+    --shadow:0 8px 28px rgba(0,0,0,.45);
+  }
+
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:"Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    line-height:1.65;
+    transition:background .3s ease,color .3s ease;
+  }
+  a{color:inherit;text-decoration:none}
+  button,input{font:inherit;color:inherit}
+  .container{width:min(1120px,92%);margin-inline:auto}
+
+  /* ---------- HEADER ---------- */
+  .site-header{
+    position:sticky;top:0;z-index:50;
+    background:var(--surface);
+    border-bottom:1px solid var(--border);
+    transition:background .3s ease,border-color .3s ease;
+  }
+  .header-inner{
+    display:flex;align-items:center;justify-content:space-between;
+    gap:16px;padding:14px 0;
+  }
+  .logo{
+    font-size:1.35rem;font-weight:800;letter-spacing:-.5px;
+    display:flex;align-items:center;gap:6px;
+  }
+  .logo span{color:var(--accent)}
+  .nav{display:flex;gap:26px;align-items:center}
+  .nav a{
+    font-size:.95rem;font-weight:600;color:var(--muted);
+    transition:color .2s ease;position:relative;
+  }
+  .nav a:hover{color:var(--accent)}
+  .theme-btn{
+    background:var(--surface-2);border:1px solid var(--border);
+    width:42px;height:42px;border-radius:50%;cursor:pointer;
+    font-size:1.05rem;display:grid;place-items:center;
+    transition:transform .2s ease,background .2s ease;
+  }
+  .theme-btn:hover{transform:rotate(-15deg) scale(1.08)}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    padding:78px 0 64px;
+    background:
+      radial-gradient(900px 340px at 12% -10%,var(--accent-soft),transparent 70%),
+      var(--bg);
+    border-bottom:1px solid var(--border);
+  }
+  .tag{
+    display:inline-block;font-size:.78rem;font-weight:700;
+    letter-spacing:1.6px;text-transform:uppercase;
+    color:var(--accent);background:var(--accent-soft);
+    padding:6px 14px;border-radius:999px;margin-bottom:20px;
+  }
+  .hero h1{
+    font-size:clamp(2rem,5vw,3.4rem);
+    line-height:1.12;letter-spacing:-1.4px;
+    max-width:16ch;font-weight:800;
+  }
+  .hero p.sub{
+    color:var(--muted);font-size:1.06rem;
+    max-width:60ch;margin-top:18px;
+  }
+  .hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
+  .btn{
+    display:inline-block;padding:12px 24px;border-radius:999px;
+    font-weight:700;font-size:.95rem;cursor:pointer;border:1px solid transparent;
+    transition:transform .18s ease,box-shadow .18s ease,background .18s ease;
+  }
+  .btn-primary{background:var(--accent);color:#fff;box-shadow:0 8px 20px rgba(230,57,70,.28)}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 26px rgba(230,57,70,.36)}
+  .btn-ghost{background:transparent;border-color:var(--border);color:var(--text)}
+  .btn-ghost:hover{background:var(--surface-2);transform:translateY(-2px)}
+
+  /* ---------- POSTS ---------- */
+  .secao{padding:64px 0}
+  .secao-topo{
+    display:flex;flex-wrap:wrap;gap:18px;
+    align-items:flex-end;justify-content:space-between;margin-bottom:28px;
+  }
+  .secao-topo h2{
+    font-size:clamp(1.5rem,3vw,2rem);letter-spacing:-.8px;font-weight:800;
+  }
+  .secao-topo p{color:var(--muted);font-size:.95rem}
+
+  .busca{
+    padding:11px 18px;border-radius:999px;min-width:250px;
+    border:1px solid var(--border);background:var(--surface);
+    outline:none;transition:border-color .2s ease,box-shadow .2s ease;
+  }
+  .busca:focus{border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
+
+  .chips{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:32px}
+  .chip{
+    padding:8px 18px;border-radius:999px;cursor:pointer;
+    border:1px solid var(--border);background:var(--surface);
+    font-size:.88rem;font-weight:600;color:var(--muted);
+    transition:all .2s ease;
+  }
+  .chip:hover{border-color:var(--accent);color:var(--accent)}
+  .chip.ativo{background:var(--accent);border-color:var(--accent);color:#fff}
+
+  .grid{
+    display:grid;gap:26px;
+    grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+  }
+  .card{
+    background:var(--surface);border:1px solid var(--border);
+    border-radius:var(--radius);overflow:hidden;cursor:pointer;
+    display:flex;flex-direction:column;
+    transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease;
+    animation:fadeUp .4s ease both;
+  }
+  .card:hover,.card:focus-visible{
+    transform:translateY(-6px);box-shadow:var(--shadow);
+    border-color:transparent;outline:none;
+  }
+  .card-img{
+    height:172px;display:grid;place-items:center;font-size:60px;
+    position:relative;overflow:hidden;
+  }
+  .card-img::after{
+    content:"";position:absolute;inset:0;
+    background:linear-gradient(180deg,transparent 55%,rgba(0,0,0,.18));
+  }
+  .card-img span{position:relative;z-index:1;filter:drop-shadow(0 6px 10px rgba(0,0,0,.25))}
+  .card-body{padding:20px 22px 24px;display:flex;flex-direction:column;gap:10px;flex:1}
+  .badge{
+    align-self:flex-start;font-size:.72rem;font-weight:800;
+    letter-spacing:1.1px;text-transform:uppercase;
+    color:var(--accent);background:var(--accent-soft);
+    padding:4px 12px;border-radius:999px;
+  }
+  .card h3{font-size:1.13rem;line-height:1.35;letter-spacing:-.4px;font-weight:700}
+  .card p{color:var(--muted);font-size:.92rem;flex:1}
+  .meta{
+    display:flex;flex-wrap:wrap;gap:6px;align-items:center;
+    font-size:.78rem;color:var(--muted);padding-top:8px;
+    border-top:1px solid var(--border);margin-top:4px;
+  }
+  .vazio{
+    grid-column:1/-1;text-align:center;padding:60px 20px;
+    color:var(--muted);font-size:1.02rem;
+  }
+
+  /* ---------- NEWSLETTER ---------- */
+  .newsletter{
+    background:var(--surface);border:1px solid var(--border);
+    border-radius:24px;padding:48px 40px;text-align:center;
+    box-shadow:var(--shadow);
+  }
+  .newsletter h2{font-size:clamp(1.4rem,3vw,1.9rem);letter-spacing:-.8px;margin-bottom:12px}
+  .newsletter p{color:var(--muted);max-width:52ch;margin:0 auto 26px}
+  .form{
+    display:flex;flex-wrap:wrap;gap:12px;justify-content:center;
+    max-width:520px;margin-inline:auto;
+  }
+  .form input{
+    flex:1 1 240px;padding:13px 20px;border-radius:999px;
+    border:1px solid var(--border);background:var(--bg);outline:none;
+    transition:border-color .2s ease,box-shadow .2s ease;
+  }
+  .form input:focus{border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
+  .msg{margin-top:16px;font-size:.9rem;font-weight:600;min-height:22px}
+  .msg.ok{color:#1a9e5c}
+  .msg.erro{color:var(--accent)}
+
+  /* ---------- FOOTER ---------- */
+  .site-footer{
+    border-top:1px solid var(--border);background:var(--surface);
+    padding:38px 0;margin-top:20px;
+  }
+  .footer-inner{
+    display:flex;flex-wrap:wrap;gap:16px;
+    justify-content:space-between;align-items:center;
+    color:var(--muted);font-size:.88rem;
+  }
+  .footer-links{display:flex;gap:20px}
+  .footer-links a:hover{color:var(--accent)}
+
+  /* ---------- MODAL ---------- */
+  .modal{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:20px}
+  .modal[hidden]{display:none}
+  .modal-overlay{position:absolute;inset:0;background:rgba(8,11,16,.68);backdrop-filter:blur(4px)}
+  .modal-box{
+    position:relative;background:var(--surface);color:var(--text);
+    border:1px solid var(--border);border-radius:22px;
+    width:100%;max-width:740px;max-height:86vh;overflow-y:auto;
+    padding:40px 38px;box-shadow:var(--shadow);
+    animation:pop .25s ease both;
+  }
+  .modal-box h2{font-size:clamp(1.3rem,3vw,1.8rem);letter-spacing:-.8px;margin-bottom:10px;line-height:1.25}
+  .modal-meta{font-size:.82rem;color:var(--muted);margin-bottom:22px}
+  .modal-box p{margin-bottom:16px;color:var(--muted)}
+  .modal-box p:first-of-type{color:var(--text);font-size:1.02rem}
+  .modal-close{
+    position:absolute;top:16px;right:16px;width:38px;height:38px;
+    border-radius:50%;border:1px solid var(--border);background:var(--surface-2);
+    cursor:pointer;font-size:1.1rem;display:grid;place-items:center;
+    transition:background .2s ease,transform .2s ease;
+  }
+  .modal-close:hover{background:var(--accent);color:#fff;transform:rotate(90deg)}
+
+  @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  @keyframes pop{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
+
+  @media (max-width:640px){
+    .nav{display:none}
+    .hero{padding:56px 0 46px}
+    .modal-box{padding:32px 22px}
+    .newsletter{padding:36px 22px}
+  }
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="logo" href="#topo">🏁 Garagem<span>88</span></a>
+    <nav class="nav">
+      <a href="#posts">Artigos</a>
+      <a href="#posts">Categorias</a>
+      <a href="#newsletter">Newsletter</a>
+    </nav>
+    <button class="theme-btn" id="themeBtn" aria-label="Alternar tema claro/escuro">🌙</button>
+  </div>
+</header>
+
+<main id="topo">
+
+  <section class="hero">
+    <div class="container">
+      <p class="tag">Blog de carros</p>
+      <h1>Histórias, testes e paixão sobre quatro rodas</h1>
+      <p class="sub">
+        Do Fusca ao elétrico mais recente: análises honestas, curiosidades,
+        dicas de manutenção e tudo o que move quem gosta de carro de verdade.
+      </p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#posts">Ler os artigos</a>
+        <a class="btn btn-ghost" href="#newsletter">Receber novidades</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="secao container" id="posts">
+    <div class="secao-topo">
+      <div>
+        <h2>Últimos artigos</h2>
+        <p id="contador">Carregando…</p>
+      </div>
+      <input class="busca" id="busca" type="search" placeholder="🔍 Buscar artigo…" aria-label="Buscar artigo">
+    </div>
+
+    <div class="chips" id="chips">
+      <button class="chip ativo" data-cat="Todos">Todos</button>
+      <button class="chip" data-cat="Clássicos">Clássicos</button>
+      <button class="chip" data-cat="Elétricos">Elétricos</button>
+      <button class="chip" data-cat="Esportivos">Esportivos</button>
+      <button class="chip" data-cat="Manutenção">Manutenção</button>
+      <button class="chip" data-cat="Lançamentos">Lançamentos</button>
+    </div>
+
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <section class="secao container" id="newsletter">
+    <div class="newsletter">
+      <h2>Receba o melhor da Garagem 88</h2>
+      <p>Uma vez por semana, sem spam: novidades, testes e dicas direto no seu e-mail.</p>
+      <form class="form" id="formNews" novalidate>
+        <input type="email" id="emailNews" placeholder="seu@email.com" aria-label="Seu e-mail" required>
+        <button class="btn btn-primary" type="submit">Inscrever</button>
+      </form>
+      <p class="msg" id="msgNews" role="status"></p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <p>© <span id="ano"></span> Garagem 88 — feito com paixão por carros.</p>
+    <div class="footer-links">
+      <a href="#topo">Topo</a>
+      <a href="#posts">Artigos</a>
+      <a href="#newsletter">Newsletter</a>
+    </div>
+  </div>
+</footer>
+
+<div class="modal" id="modal" hidden>
+  <div class="modal-overlay" data-fechar></div>
+  <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modalTitulo">
+    <button class="modal-close" data-fechar aria-label="Fechar">✕</button>
+    <h2 id="modalTitulo"></h2>
+    <p class="modal-meta" id="modalMeta"></p>
+    <div id="modalCorpo"></div>
+  </div>
+</div>
+
+<script>
+  /* ============ DADOS DOS POSTS ============ */
+  const posts = [
+    {
+      id: 1,
+      titulo: "Fusca: por que ele ainda conquista corações",
+      categoria: "Clássicos",
+      resumo: "Décadas depois do fim da produção, o besouro segue sendo um dos carros mais amados do Brasil.",
+      autor: "Marina Alves",
+      data: "12 de maio de 2025",
+      leitura: "6 min",
+      emoji: "🚗",
+      gradiente: "linear-gradient(135deg,#f4a261,#e76f51)",
+      conteudo: [
+        "Poucos carros têm uma história tão longa e tão ligada ao Brasil quanto o Fusca. Produzido por aqui até 1996, ele marcou gerações e virou patrimônio afetivo de milhões de famílias.",
+        "O segredo do charme está na simplicidade: mecânica fácil de entender, peças abundantes e um formato que nunca sai de moda. Para quem está começando no mundo dos clássicos, ele é quase sempre a primeira escolha.",
+        "Hoje, um Fusca bem cuidado vale muito mais do que a tabela sugere — e o mercado de restauração segue aquecido. Se você pensa em comprar um, priorize a saúde da carroceria: motor se refaz, ferrugem estrutural é outra história."
+      ]
+    },
+    {
+      id: 2,
+      titulo: "Carros elétricos no Brasil: vale a pena em 2025?",
+      categoria: "Elétricos",
+      resumo: "Preços caindo, mais modelos e uma rede de recarga em crescimento. Fizemos as contas.",
+      autor: "Rafael Prado",
+      data: "8 de maio de 2025",
+      leitura: "8 min",
+      emoji: "⚡",
+      gradiente: "linear-gradient(135deg,#4361ee,#4cc9f0)",
+      conteudo: [
+        "A conta do carro elétrico mudou bastante nos últimos dois anos. Com mais modelos disponíveis e incentivos em algumas cidades, o custo por quilômetro rodado pode ser até 70% menor que o de um carro a combustão.",
+        "O ponto de atenção continua sendo a infraestrutura. Para quem roda muito em rodovias ou mora em prédio sem tomada na garagem, o planejamento precisa ser mais cuidadoso.",
+        "Nossa recomendação: some o custo de instalação do carregador residencial, o seguro (ainda mais caro) e a desvalorização antes de decidir. Para uso urbano intenso, a matemática costuma fechar."
+      ]
+    },
+    {
+      id: 3,
+      titulo: "Hot hatch: a era de ouro dos compactos apimentados",
+      categoria: "Esportivos",
+      resumo: "GTI, Civic Si, Sandero RS e companhia: por que esses carros viraram lenda entre os entusiastas.",
+      autor: "Camila Souza",
+      data: "2 de maio de 2025",
+      leitura: "7 min",
+      emoji: "🏎️",
+      gradiente: "linear-gradient(135deg,#e63946,#8d0801)",
+      conteudo: [
+        "O hot hatch nasceu de uma ideia simples: pegar um carro pequeno e barato e colocar um motor grande e divertido. O resultado foi uma categoria que domina o imaginário dos apaixonados por direção.",
+        "No Brasil, modelos como o Gol GTI e o Sandero RS criaram uma legião de fãs. São carros leves, com câmbio manual e resposta imediata — características cada vez mais raras.",
+        "Com a eletrificação avançando, os hot hatches a combustão estão virando peças de coleção. Se você tem um bem cuidado na garagem, talvez esteja sentado em um futuro clássico."
+      ]
+    },
+    {
+      id: 4,
+      titulo: "Manutenção preventiva: o calendário que salva seu motor",
+      categoria: "Manutenção",
+      resumo: "Óleo, filtros, correia e freios: o guia prático para não gastar uma fortuna depois.",
+      autor: "Diego Martins",
+      data: "27 de abril de 2025",
+      leitura: "5 min",
+      emoji: "🔧",
+      gradiente: "linear-gradient(135deg,#2a9d8f,#264653)",
+      conteudo: [
+        "A regra é simples: manutenção preventiva é sempre mais barata que a corretiva. Um motor fundido custa, em média, dez vezes mais do que anos de trocas de óleo no prazo certo.",
+        "Confira sempre o manual do fabricante, mas alguns intervalos práticos ajudam: óleo a cada 10 mil km (ou 1 ano), filtro de ar a cada 20 mil km, velas a cada 40 mil km e correia dentada conforme a recomendação do modelo.",
+        "Freios merecem atenção especial: pastilhas com menos de 3 mm de espessura precisam ser trocadas imediatamente. Ruído metálico ao frear é sinal de que você já passou do ponto."
+      ]
+    },
+    {
+      id: 5,
+      titulo: "SUVs compactos: qual escolher sem se arrepender",
+      categoria: "Lançamentos",
+      resumo: "Comparamos espaço, consumo, custo de manutenção e comportamento dinâmico da categoria mais disputada.",
+      autor: "Marina Alves",
+      data: "20 de abril de 2025",
+      leitura: "9 min",
+      emoji: "🚙",
+      gradiente: "linear-gradient(135deg,#6a4c93,#b5179e)",
+      conteudo: [
+        "O SUV compacto virou o carro padrão das famílias brasileiras — e por bons motivos: posição de dirigir elevada, porta-malas generoso e boa versatilidade urbana.",
+        "Mas nem todo SUV é igual. Alguns são hatchbacks altos com aparência aventureira; outros têm suspensão de verdade e capacidade fora do asfalto. Entender a plataforma faz toda a diferença na escolha.",
+        "Nossa dica: avalie o custo total de propriedade (revisões, seguro, pneus e consumo), não apenas o preço da etiqueta. A diferença no bolso ao longo de cinco anos pode ser enorme."
+      ]
+    },
+    {
+      id: 6,
+      titulo: "Carros clássicos: como começar uma coleção sem falir",
+      categoria: "Clássicos",
+      resumo: "Documentação, peças e paciência: o roteiro realista para entrar no mundo dos antigos.",
+      autor: "Rafael Prado",
+      data: "14 de abril de 2025",
+      leitura: "6 min",
+      emoji: "🏁",
+      gradiente: "linear-gradient(135deg,#b08968,#7f5539)",
+      conteudo: [
+        "Colecionar carros antigos é menos sobre dinheiro e mais sobre paciência. O melhor caminho é escolher um modelo com boa oferta de peças e comunidade ativa.",
+        "Antes de comprar, verifique documentação, numeração do chassi e histórico de restauração. Um carro com procedência clara economiza meses de dor de cabeça.",
+        "Por fim: compre o melhor exemplar que o seu orçamento permitir. Restaurar sai caro e demora — dirigir desde o primeiro dia vale muito mais."
+      ]
+    },
+    {
+      id: 7,
+      titulo: "Híbridos plug-in: o melhor dos dois mundos?",
+      categoria: "Elétricos",
+      resumo: "Eles rodam no elétrico na cidade e usam gasolina na estrada. Entenda se fazem sentido para você.",
+      autor: "Camila Souza",
+      data: "6 de abril de 2025",
+      leitura: "7 min",
+      emoji: "🔌",
+      gradiente: "linear-gradient(135deg,#118ab2,#06d6a0)",
+      conteudo: [
+        "O híbrido plug-in tenta resolver dois problemas de uma vez: o consumo urbano e a ansiedade de autonomia em viagens longas.",
+        "Na prática, ele só entrega o melhor resultado se você tiver onde carregar todos os dias. Sem tomada, o peso extra das baterias acaba virando desvantagem.",
+        "Para quem roda menos de 50 km por dia e tem garagem com tomada, é provavelmente a transição mais confortável para o mundo elétrico."
+      ]
+    }
+  ];
+
+  /* ============ RENDERIZAÇÃO ============ */
+  const grid     = document.getElementById('grid');
+  const busca    = document.getElementById('busca');
+  const contador = document.getElementById('contador');
+  const chips    = document.querySelectorAll('.chip');
+  let categoriaAtiva = 'Todos';
+
+  function renderizar(){
+    const termo = busca.value.trim().toLowerCase();
+
+    const lista = posts.filter(p => {
+      const okCategoria = categoriaAtiva === 'Todos' || p.categoria === categoriaAtiva;
+      const texto = (p.titulo + ' ' + p.resumo + ' ' + p.categoria + ' ' + p.autor).toLowerCase();
+      const okBusca = termo === '' || texto.includes(termo);
+      return okCategoria && okBusca;
+    });
+
+    contador.textContent = lista.length === 1
+      ? '1 artigo encontrado'
+      : lista.length + ' artigos encontrados';
+
+    if (lista.length === 0){
+      grid.innerHTML = '<p class="vazio">Nenhum artigo encontrado. Tente outra busca. 🔍</p>';
+      return;
+    }
+
+    grid.innerHTML = lista.map(p => `
+      <article class="card" data-id="${p.id}" tabindex="0" role="button" aria-label="Ler artigo: ${p.titulo}">
+        <div class="card-img" style="background:${p.gradiente}"><span>${p.emoji}</span></div>
+        <div class="card-body">
+          <span class="badge">${p.categoria}</span>
+          <h3>${p.titulo}</h3>
+          <p>${p.resumo}</p>
+          <div class="meta">
+            <span>${p.autor}</span><span>•</span>
+            <span>${p.data}</span><span>•</span>
+            <span>${p.leitura} de leitura</span>
+          </div>
+        </div>
+      </article>
+    `).join('');
+  }
+
+  /* ============ FILTROS ============ */
+  chips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      chips.forEach(c => c.classList.remove('ativo'));
+      chip.classList.add('ativo');
+      categoriaAtiva = chip.dataset.cat;
+      renderizar();
+    });
+  });
+
+  busca.addEventListener('input', renderizar);
+
+  /* ============ MODAL ============ */
+  const modal       = document.getElementById('modal');
+  const modalTitulo = document.getElementById('modalTitulo');
+  const modalMeta   = document.getElementById('modalMeta');
+  const modalCorpo  = document.getElementById('modalCorpo');
+
+  function abrirModal(id){
+    const post = posts.find(p => p.id === id);
+    if (!post) return;
+
+    modalTitulo.textContent = post.titulo;
+    modalMeta.textContent = post.categoria + ' • ' + post.autor + ' • ' + post.data + ' • ' + post.leitura + ' de leitura';
+    modalCorpo.innerHTML = post.conteudo.map(paragrafo => `<p>${paragrafo}</p>`).join('');
+
+    modal.hidden = false;
+    document.body.style.overflow = 'hidden';
+    modal.querySelector('.modal-close').focus();
+  }
+
+  function fecharModal(){
+    modal.hidden = true;
+    document.body.style.overflow = '';
+  }
+
+  grid.addEventListener('click', e => {
+    const card = e.target.closest('.card');
+    if (card) abrirModal(Number(card.dataset.id));
+  });
+
+  grid.addEventListener('keydown', e => {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    const card = e.target.closest('.card');
+    if (card){
+      e.preventDefault();
+      abrirModal(Number(card.dataset.id));
+    }
+  });
+
+  modal.addEventListener('click', e => {
+    if (e.target.hasAttribute('data-fechar')) fecharModal();
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && !modal.hidden) fecharModal();
+  });
+
+  /* ============ TEMA ============ */
+  const themeBtn = document.getElementById('themeBtn');
+  const html = document.documentElement;
+
+  function aplicarTema(tema){
+    html.setAttribute('data-theme', tema);
+    themeBtn.textContent = tema === 'dark' ? '☀️' : '🌙';
+  }
+
+  let temaSalvo = 'light';
+  try { temaSalvo = localStorage.getItem('garagem88-tema') || 'light'; } catch (e) {}
+  aplicarTema(temaSalvo);
+
+  themeBtn.addEventListener('click', () => {
+    const novo = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    aplicarTema(novo);
+    try { localStorage.setItem('garagem88-tema', novo); } catch (e) {}
+  });
+
+  /* ============ NEWSLETTER ============ */
+  const formNews = document.getElementById('formNews');
+  const emailNews = document.getElementById('emailNews');
+  const msgNews = document.getElementById('msgNews');
+
+  formNews.addEventListener('submit', e => {
+    e.preventDefault();
+    const valor = emailNews.value.trim();
+    const valido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(valor);
+
+    if (!valido){
+      msgNews.textContent = '⚠️ Digite um e-mail válido, por favor.';
+      msgNews.className = 'msg erro';
+      emailNews.focus();
+      return;
+    }
+
+    msgNews.textContent = '✅ Inscrição confirmada! Bem-vindo à Garagem 88.';
+    msgNews.className = 'msg ok';
+    formNews.reset();
+  });
+
+  /* ============ ANO NO FOOTER ============ */
+  document.getElementById('ano').textContent = new Date().getFullYear();
+
+  /* ============ INICIALIZAÇÃO ============ */
+  renderizar();
+</script>
+
+</body>
+</html>
