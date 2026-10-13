@@ -1,0 +1,247 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GameZone - Mundo dos Jogos</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #100b20;
+    color: white;
+}
+
+header {
+    background: #1b1233;
+    padding: 22px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.logo {
+    font-size: 28px;
+    font-weight: bold;
+    color: #c084fc;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    margin: 10px;
+}
+
+nav a:hover {
+    color: #c084fc;
+}
+
+.hero {
+    text-align: center;
+    padding: 85px 20px;
+    background: linear-gradient(135deg, #581c87, #1e1b4b, #100b20);
+}
+
+.hero h1 {
+    font-size: clamp(35px, 6vw, 55px);
+    margin-bottom: 20px;
+}
+
+.hero p {
+    color: #ddd6fe;
+    font-size: 18px;
+}
+
+.botao {
+    background: #a855f7;
+    color: white;
+    border: none;
+    padding: 13px 22px;
+    margin-top: 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.botao:hover {
+    background: #7e22ce;
+}
+
+section {
+    padding: 55px 8%;
+    text-align: center;
+}
+
+h2 {
+    color: #c084fc;
+    margin-bottom: 25px;
+    font-size: 30px;
+}
+
+.jogos {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 22px;
+}
+
+.jogo {
+    background: #21183a;
+    border: 1px solid #493267;
+    border-radius: 15px;
+    padding: 28px;
+    width: 260px;
+    transition: 0.3s;
+}
+
+.jogo:hover {
+    transform: translateY(-8px);
+    border-color: #c084fc;
+}
+
+.icone {
+    font-size: 55px;
+    margin-bottom: 15px;
+}
+
+.jogo p {
+    color: #d1d5db;
+    margin-top: 10px;
+    line-height: 1.5;
+}
+
+#game {
+    background: #1b1233;
+}
+
+#numero {
+    font-size: 45px;
+    color: #c084fc;
+    margin: 20px;
+}
+
+#resultado {
+    margin-top: 18px;
+    color: #e9d5ff;
+    font-weight: bold;
+}
+
+footer {
+    text-align: center;
+    background: #090614;
+    color: #aaa;
+    padding: 25px;
+}
+
+@media (max-width: 600px) {
+    header {
+        justify-content: center;
+    }
+
+    nav {
+        text-align: center;
+    }
+}
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"><link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+<header>
+    <div class="logo">🎮 GameZone</div>
+    <nav>
+        <a href="#inicio">Início</a>
+        <a href="#jogos">Jogos</a>
+        <a href="#game">Minigame</a>
+    </nav>
+</header>
+
+<main>
+    <section class="hero" id="inicio">
+        <h1>Bem-vindo à GameZone!</h1>
+        <p>Seu universo de diversão começa aqui.</p>
+        <a href="#jogos" class="botao">Explorar jogos</a>
+    </section>
+
+    <section id="jogos">
+        <h2>🔥 Jogos populares</h2>
+
+        <div class="jogos">
+            <article class="jogo">
+                <div class="icone">⛏️</div>
+                <h3>Minecraft</h3>
+                <p>Explore mundos, construa casas e use sua criatividade.</p>
+            </article>
+
+            <article class="jogo">
+                <div class="icone">🚗</div>
+                <h3>Corrida Radical</h3>
+                <p>Acelere, vença desafios e chegue em primeiro lugar.</p>
+            </article>
+
+            <article class="jogo">
+                <div class="icone">🧠</div>
+                <h3>Desafio Mental</h3>
+                <p>Teste sua lógica e descubra se você consegue acertar.</p>
+            </article>
+        </div>
+    </section>
+
+    <section id="game">
+        <h2>🎯 Acerte o número!</h2>
+        <p>Escolha um número de 1 a 5 e tente acertar o número secreto.</p>
+
+        <div>
+            <button class="botao" onclick="jogar(1)">1</button>
+            <button class="botao" onclick="jogar(2)">2</button>
+            <button class="botao" onclick="jogar(3)">3</button>
+            <button class="botao" onclick="jogar(4)">4</button>
+            <button class="botao" onclick="jogar(5)">5</button>
+        </div>
+
+        <div id="numero">❓</div>
+        <p id="resultado" aria-live="polite">Faça sua escolha!</p>
+        <p>Pontuação: <strong id="pontos">0</strong></p>
+    </section>
+</main>
+
+<footer>
+    <p>🎮 GameZone — Projeto de HTML, CSS e JavaScript</p>
+    <p>© 2026 - Criado para fins educativos</p>
+</footer>
+
+<script>
+let pontos = 0;
+
+function jogar(escolha) {
+    const secreto = Math.floor(Math.random() * 5) + 1;
+
+    document.getElementById("numero").textContent = secreto;
+
+    if (escolha === secreto) {
+        pontos += 10;
+        document.getElementById("resultado").textContent =
+            "🎉 Acertou! Você ganhou 10 pontos!";
+    } else {
+        document.getElementById("resultado").textContent =
+            "😅 Não foi dessa vez! Tente novamente.";
+    }
+
+    document.getElementById("pontos").textContent = pontos;
+}
+</script>
+
+</body>
+</html>
