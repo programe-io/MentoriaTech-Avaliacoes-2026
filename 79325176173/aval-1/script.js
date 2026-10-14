@@ -1,7 +1,4 @@
-< header > 
-      < h1 > CETI Memória Viva < \ h1> 
- < nav > 
-< a href = “ #inicio “ > Início < \ a >| 
-< a href = “ #linha -do-tempo “> Linha do Tempo < \ a > | 
-< a href = “ #galeria” > Galeria < \ a > 
-< \ nav >
+< p >
+Este portal está sendo 
+desenvolvido pelos alunos do < strong > 1 Ano de Desenvolvimento de Sistemas <\ strong > da < strong > CETI Hesichia de Sousa Brito < \ strong > 
+< \ p >
