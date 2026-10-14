@@ -1,35 +1,39 @@
-<!DOCTYPE>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <title>CacheiaFeed</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
+function postar() {
+let texto = document.getElementById("texto");
+let feed = document.getElementById("feed");
 
-<header>CacheiaFeed | Yasmim Costa</header>
+if (texto.value.trim() === "") {
+    alert("Escreva algo antes de publicar!");
+    return;
+}
 
-<main>
-    <h1> Meu MiniFeed</h1>
+let post = document.createElement("div");
+post.className = "post";
 
-    <div class="criar">
-        <textarea id="texto" placeholder="O que você quer compartilhar?"></textarea>
-        <button onclick="postar()">Publicar</button>
-    </div>
+post.innerHTML = `
+    <b>Yasmim Costa</b>
+    <p></p>
+    <button onclick="curtir(this)">♡ 0</button>
+`;
 
-    <div id="feed">
+post.querySelector("p").textContent = texto.value;
+feed.prepend(post);
+texto.value = "";
 
-        <div class="post">
-            <b> Yasmim Costa</b>
-            <p>Hoje cuidei dos meus cachos! </p>
-            <img src="https://images.unsplash.com/photo-1580618672591-eb180b1a973f?auto=format&fit=crop&w=700&q=80">
-            <button onclick="curtir(this)"> 10</button>
-            <button> 2</button>
-        </div>
+}
 
-    </div>
-</main>
+function curtir(botao) {
+let curtidas = Number(botao.dataset.curtidas || 0);
 
-<script src="script.js"></script>
-</body>
-</html>
+if (botao.classList.contains("curtido")) {
+    curtidas--;
+    botao.classList.remove("curtido");
+} else {
+    curtidas++;
+    botao.classList.add("curtido");
+}
+
+botao.dataset.curtidas = curtidas;
+botao.textContent = "♥ " + curtidas;
+
+}
