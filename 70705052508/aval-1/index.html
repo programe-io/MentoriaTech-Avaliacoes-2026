@@ -1,0 +1,420 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Musicfy - Seu mundo musical</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #000;
+            color: white;
+        }
+
+        .container {
+            display: flex;
+            height: calc(100vh - 90px);
+            padding: 8px;
+            gap: 8px;
+        }
+
+        .sidebar {
+            width: 240px;
+            background: #121212;
+            border-radius: 10px;
+            padding: 25px 20px;
+            flex-shrink: 0;
+        }
+
+        .logo {
+            color: #1ed760;
+            font-size: 27px;
+            font-weight: bold;
+            margin-bottom: 35px;
+        }
+
+        .menu a {
+            display: block;
+            color: #b3b3b3;
+            text-decoration: none;
+            margin: 25px 0;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+
+        .menu a:hover {
+            color: white;
+        }
+
+        .main {
+            flex: 1;
+            background: linear-gradient(#252525, #121212 50%);
+            border-radius: 10px;
+            padding: 25px;
+            overflow-y: auto;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            gap: 10px;
+        }
+
+        .topbar button {
+            background: white;
+            color: black;
+            border: none;
+            border-radius: 25px;
+            padding: 12px 22px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 18px;
+            margin-bottom: 35px;
+        }
+
+        .card {
+            background: #181818;
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+            min-width: 0;
+        }
+
+        .card:hover {
+            background: #282828;
+            transform: translateY(-3px);
+        }
+
+        .cover {
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 55px;
+            margin-bottom: 15px;
+        }
+
+        .c1 { background: linear-gradient(135deg, #ee0979, #ff6a00); }
+        .c2 { background: linear-gradient(135deg, #654ea3, #eaafc8); }
+        .c3 { background: linear-gradient(135deg, #11998e, #38ef7d); }
+        .c4 { background: linear-gradient(135deg, #fc4a1a, #f7b733); }
+        .c5 { background: linear-gradient(135deg, #396afc, #2948ff); }
+        .c6 { background: linear-gradient(135deg, #232526, #414345); }
+
+        .card h3 {
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .card p {
+            font-size: 13px;
+            color: #b3b3b3;
+            line-height: 1.5;
+        }
+
+        .player {
+            height: 90px;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #181818;
+            border-top: 1px solid #282828;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 25px;
+            gap: 15px;
+        }
+
+        .song-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 30%;
+            min-width: 0;
+        }
+
+        .mini-cover {
+            width: 52px;
+            height: 52px;
+            background: linear-gradient(135deg, #11998e, #38ef7d);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 5px;
+            flex-shrink: 0;
+        }
+
+        .song-info h4 {
+            font-size: 14px;
+        }
+
+        .song-info p {
+            color: #b3b3b3;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .controls {
+            text-align: center;
+        }
+
+        .controls button {
+            border: none;
+            background: transparent;
+            color: white;
+            font-size: 25px;
+            cursor: pointer;
+        }
+
+        .controls button:hover {
+            color: #1ed760;
+        }
+
+        .progress {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 7px;
+            font-size: 11px;
+            color: #b3b3b3;
+        }
+
+        input[type="range"] {
+            accent-color: #1ed760;
+            cursor: pointer;
+            width: 250px;
+        }
+
+        .volume {
+            width: 20%;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        @media (max-width: 650px) {
+            .sidebar {
+                width: 65px;
+                padding: 20px 10px;
+            }
+
+            .logo {
+                font-size: 13px;
+                overflow-wrap: anywhere;
+            }
+
+            .menu a {
+                font-size: 12px;
+            }
+
+            .main {
+                padding: 15px;
+            }
+
+            .player {
+                padding: 10px;
+            }
+
+            .song-info {
+                width: 40%;
+            }
+
+            .song-info h4 {
+                font-size: 11px;
+            }
+
+            .progress input {
+                width: 90px;
+            }
+
+            .volume {
+                display: none;
+            }
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <aside class="sidebar">
+            <div class="logo">♫ Musicfy</div>
+
+            <nav class="menu">
+                <a href="#">🏠 Início</a>
+                <a href="#">🔍 Buscar</a>
+                <a href="#">📚 Sua biblioteca</a>
+                <a href="#">➕ Criar playlist</a>
+                <a href="#">❤️ Músicas curtidas</a>
+            </nav>
+        </aside>
+
+        <main class="main">
+
+            <header class="topbar">
+                <h2>Boa música para você 🎧</h2>
+                <button onclick="alert('Bem-vindo ao Musicfy!')">
+                    Explorar
+                </button>
+            </header>
+
+            <section>
+                <h2>Feito para você</h2>
+
+                <div class="cards">
+                    <div class="card" onclick="tocar('Hits do Momento', 'Artistas variados')">
+                        <div class="cover c1">🔥</div>
+                        <h3>Hits do Momento</h3>
+                        <p>As músicas mais populares.</p>
+                    </div>
+
+                    <div class="card" onclick="tocar('Pop Internacional', 'Pop Stars')">
+                        <div class="cover c2">🎤</div>
+                        <h3>Pop Internacional</h3>
+                        <p>Os maiores sucessos do pop.</p>
+                    </div>
+
+                    <div class="card" onclick="tocar('Relax', 'Musicfy')">
+                        <div class="cover c3">🌿</div>
+                        <h3>Relax</h3>
+                        <p>Relaxe ao som de boas músicas.</p>
+                    </div>
+
+                    <div class="card" onclick="tocar('Festa', 'DJ Musicfy')">
+                        <div class="cover c4">🎉</div>
+                        <h3>Festa</h3>
+                        <p>Prepare-se para dançar.</p>
+                    </div>
+
+                    <div class="card" onclick="tocar('Eletrônica', 'Electronic Mix')">
+                        <div class="cover c5">🎧</div>
+                        <h3>Eletrônica</h3>
+                        <p>Batidas para animar seu dia.</p>
+                    </div>
+
+                    <div class="card" onclick="tocar('Clássicos', 'Musicfy Classics')">
+                        <div class="cover c6">🎸</div>
+                        <h3>Clássicos</h3>
+                        <p>Músicas que nunca saem de moda.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                <h2>Suas playlists</h2>
+
+                <div class="cards">
+                    <div class="card" onclick="tocar('Minha Playlist', 'Você')">
+                        <div class="cover c3">💚</div>
+                        <h3>Minha Playlist</h3>
+                        <p>Suas músicas favoritas.</p>
+                    </div>
+
+                    <div class="card" onclick="tocar('Noite Tranquila', 'Musicfy')">
+                        <div class="cover c2">🌙</div>
+                        <h3>Noite Tranquila</h3>
+                        <p>O som perfeito para relaxar.</p>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <footer class="player">
+        <div class="song-info">
+            <div class="mini-cover">🎵</div>
+            <div>
+                <h4 id="song">Escolha uma música</h4>
+                <p id="artist">Musicfy</p>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button onclick="anterior()" title="Anterior">⏮</button>
+            <button id="play" onclick="alternar()" title="Reproduzir">▶</button>
+            <button onclick="proxima()" title="Próxima">⏭</button>
+
+            <div class="progress">
+                <span>0:00</span>
+                <input type="range" min="0" max="100" value="0">
+                <span>0:00</span>
+            </div>
+        </div>
+
+        <div class="volume">
+            🔊 <input type="range" min="0" max="100" value="70">
+        </div>
+    </footer>
+
+    <script>
+        const musicas = [
+            { nome: "Hits do Momento", artista: "Artistas variados" },
+            { nome: "Pop Internacional", artista: "Pop Stars" },
+            { nome: "Relax", artista: "Musicfy" },
+            { nome: "Festa", artista: "DJ Musicfy" },
+            { nome: "Eletrônica", artista: "Electronic Mix" },
+            { nome: "Clássicos", artista: "Musicfy Classics" }
+        ];
+
+        let indice = 0;
+        let tocando = false;
+
+        function tocar(nome, artista) {
+            document.getElementById("song").textContent = nome;
+            document.getElementById("artist").textContent = artista;
+            tocando = true;
+            document.getElementById("play").textContent = "⏸";
+        }
+
+        function alternar() {
+            tocando = !tocando;
+            document.getElementById("play").textContent =
+                tocando ? "⏸" : "▶";
+
+            if (tocando &&
+                document.getElementById("song").textContent ===
+                "Escolha uma música") {
+                tocar(musicas[0].nome, musicas[0].artista);
+            }
+        }
+
+        function proxima() {
+            indice = (indice + 1) % musicas.length;
+            tocar(musicas[indice].nome, musicas[indice].artista);
+        }
+
+        function anterior() {
+            indice = (indice - 1 + musicas.length) % musicas.length;
+            tocar(musicas[indice].nome, musicas[indice].artista);
+        }
+    </script>
+
+</body>
+</html>
