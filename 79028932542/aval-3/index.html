@@ -1,604 +1,304 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Site genérico completo com HTML, CSS e JavaScript integrados. Exemplo moderno e responsivo.">
-    <title>Site Genérico | Completo</title>
-    <!-- Font Awesome para ícones (opcional, mas útil) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        /* ===== RESET E ESTILOS GLOBAIS ===== */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background-color: #f9f9f9;
-            transition: background-color 0.3s, color 0.3s;
-        }
-
-        /* Modo escuro (alternado via JS) */
-        body.dark-mode {
-            background-color: #1a1a1a;
-            color: #f0f0f0;
-        }
-
-        body.dark-mode .card,
-        body.dark-mode header,
-        body.dark-mode footer,
-        body.dark-mode .btn {
-            background-color: #2c2c2c;
-            color: #f0f0f0;
-            border-color: #444;
-        }
-
-        body.dark-mode a {
-            color: #8ab4f8;
-        }
-
-        a {
-            text-decoration: none;
-            color: #0066cc;
-            transition: color 0.2s;
-        }
-
-        a:hover {
-            color: #004499;
-            text-decoration: underline;
-        }
-
-        img {
-            max-width: 100%;
-            height: auto;
-        }
-
-        /* ===== LAYOUT ===== */
-        .container {
-            width: 90%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 15px;
-        }
-
-        /* ===== CABEÇALHO ===== */
-        header {
-            background-color: #ffffff;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            padding: 1rem 0;
-            transition: background-color 0.3s;
-        }
-
-        .header-flex {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-
-        .logo h1 {
-            font-size: 1.8rem;
-            color: #0066cc;
-        }
-
-        .logo span {
-            color: #ff6600;
-        }
-
-        nav ul {
-            display: flex;
-            list-style: none;
-            gap: 1.5rem;
-            flex-wrap: wrap;
-        }
-
-        nav a {
-            font-weight: 500;
-            padding: 0.5rem 0;
-            border-bottom: 2px solid transparent;
-            transition: border-color 0.3s;
-        }
-
-        nav a:hover {
-            border-bottom-color: #0066cc;
-            text-decoration: none;
-        }
-
-        .theme-toggle {
-            background: none;
-            border: 2px solid #0066cc;
-            color: #0066cc;
-            padding: 0.4rem 1rem;
-            border-radius: 30px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s;
-        }
-
-        .theme-toggle:hover {
-            background-color: #0066cc;
-            color: white;
-        }
-
-        body.dark-mode .theme-toggle {
-            border-color: #8ab4f8;
-            color: #8ab4f8;
-        }
-
-        body.dark-mode .theme-toggle:hover {
-            background-color: #8ab4f8;
-            color: #1a1a1a;
-        }
-
-        /* ===== SEÇÃO HERO ===== */
-        .hero {
-            background: linear-gradient(135deg, #0066cc, #004499);
-            color: white;
-            padding: 4rem 0;
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .hero h2 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .hero p {
-            font-size: 1.2rem;
-            max-width: 700px;
-            margin: 0 auto 2rem;
-        }
-
-        .btn {
-            display: inline-block;
-            background-color: #ff6600;
-            color: white;
-            padding: 0.8rem 2rem;
-            border-radius: 40px;
-            font-weight: bold;
-            border: none;
-            cursor: pointer;
-            transition: background 0.3s, transform 0.2s;
-            font-size: 1rem;
-        }
-
-        .btn:hover {
-            background-color: #e65c00;
-            transform: scale(1.02);
-            text-decoration: none;
-            color: white;
-        }
-
-        .btn-outline {
-            background: transparent;
-            border: 2px solid white;
-            color: white;
-        }
-
-        .btn-outline:hover {
-            background: white;
-            color: #0066cc;
-        }
-
-        /* ===== CARDS ===== */
-        .section-title {
-            text-align: center;
-            margin: 2.5rem 0 1.5rem;
-            font-size: 2rem;
-            color: #0066cc;
-        }
-
-        body.dark-mode .section-title {
-            color: #8ab4f8;
-        }
-
-        .cards-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
-            margin: 2rem 0;
-        }
-
-        .card {
-            background-color: white;
-            border-radius: 12px;
-            padding: 1.8rem;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            transition: transform 0.2s, box-shadow 0.2s, background-color 0.3s;
-            border: 1px solid #eee;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-        }
-
-        .card i {
-            font-size: 2.5rem;
-            color: #0066cc;
-            margin-bottom: 1rem;
-        }
-
-        .card h3 {
-            margin-bottom: 0.8rem;
-        }
-
-        .card p {
-            flex-grow: 1;
-            margin-bottom: 1.2rem;
-            color: #555;
-        }
-
-        body.dark-mode .card p {
-            color: #ccc;
-        }
-
-        /* ===== FORMULÁRIO ===== */
-        .form-section {
-            background-color: #ffffff;
-            border-radius: 12px;
-            padding: 2rem;
-            margin: 3rem 0;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            border: 1px solid #eee;
-        }
-
-        body.dark-mode .form-section {
-            background-color: #2c2c2c;
-            border-color: #444;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-        }
-
-        input,
-        textarea {
-            width: 100%;
-            padding: 0.8rem;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            font-family: inherit;
-            font-size: 1rem;
-            transition: border-color 0.3s, background-color 0.3s;
-        }
-
-        body.dark-mode input,
-        body.dark-mode textarea {
-            background-color: #3a3a3a;
-            border-color: #555;
-            color: #f0f0f0;
-        }
-
-        input:focus,
-        textarea:focus {
-            outline: none;
-            border-color: #0066cc;
-            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.2);
-        }
-
-        /* ===== RODAPÉ ===== */
-        footer {
-            background-color: #1e1e1e;
-            color: #ccc;
-            padding: 2rem 0;
-            margin-top: 3rem;
-            transition: background-color 0.3s;
-        }
-
-        body.dark-mode footer {
-            background-color: #0d0d0d;
-        }
-
-        .footer-content {
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 2rem;
-        }
-
-        .footer-col p {
-            margin-bottom: 0.5rem;
-        }
-
-        .social-links {
-            display: flex;
-            gap: 1rem;
-            margin-top: 0.5rem;
-        }
-
-        .social-links a {
-            color: #ccc;
-            font-size: 1.5rem;
-            transition: color 0.2s;
-        }
-
-        .social-links a:hover {
-            color: #ff6600;
-        }
-
-        .copyright {
-            text-align: center;
-            margin-top: 2rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid #444;
-            font-size: 0.9rem;
-        }
-
-        /* ===== RESPONSIVIDADE ===== */
-        @media (max-width: 768px) {
-            .header-flex {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            nav ul {
-                justify-content: center;
-                gap: 1rem;
-            }
-
-            .hero h2 {
-                font-size: 2rem;
-            }
-
-            .hero p {
-                font-size: 1rem;
-            }
-
-            .footer-content {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .social-links {
-                justify-content: center;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .hero {
-                padding: 2.5rem 0;
-            }
-
-            .hero h2 {
-                font-size: 1.6rem;
-            }
-
-            .btn {
-                padding: 0.6rem 1.5rem;
-            }
-
-            .theme-toggle {
-                padding: 0.3rem 0.8rem;
-                font-size: 0.9rem;
-            }
-        }
-    </style>
-<script src="https://cdn.tailwindcss.com"></script>
+    <meta name="description" content="Site moderno, criativo e responsivo para apresentar projetos, serviços e ideias.">
+    <meta name="theme-color" content="#0b1020">
+    <title>NovaWeb | Seu espaço digital</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"></head>
+</head>
+
 <body>
-    <!-- CABEÇALHO -->
-    <header>
-        <div class="container header-flex">
-            <div class="logo">
-                <h1>Site<span>Genérico</span></h1>
-            </div>
-            <nav>
-                <ul>
-                    <li><a href="#inicio">Início</a></li>
-                    <li><a href="#servicos">Serviços</a></li>
-                    <li><a href="#sobre">Sobre</a></li>
-                    <li><a href="#contato">Contato</a></li>
-                </ul>
-            </nav>
-            <button class="theme-toggle" id="themeToggle" aria-label="Alternar modo escuro">
-                <i class="fas fa-moon"></i> Modo Escuro
+    <a class="pular" href="#inicio">Pular para o conteúdo</a>
+
+    <header class="cabecalho">
+        <nav class="navegacao container" aria-label="Navegação principal">
+            <a class="logo" href="#inicio">Nova<span>Web.</span></a>
+
+            <button class="menu-toggle" id="menuToggle"
+                aria-label="Abrir menu" aria-expanded="false"
+                aria-controls="menu">
+                <span></span><span></span><span></span>
             </button>
-        </div>
+
+            <ul class="menu" id="menu">
+                <li><a href="#inicio">Início</a></li>
+                <li><a href="#sobre">Sobre</a></li>
+                <li><a href="#servicos">Serviços</a></li>
+                <li><a href="#projetos">Projetos</a></li>
+                <li><a href="#contato">Contato</a></li>
+                <li>
+                    <button id="temaToggle" class="tema-toggle"
+                        aria-label="Ativar tema claro">☀️</button>
+                </li>
+            </ul>
+        </nav>
     </header>
 
-    <!-- CONTEÚDO PRINCIPAL -->
     <main>
-        <!-- HERO -->
-        <section id="inicio" class="hero">
+        <section class="hero container" id="inicio">
+            <div class="hero-texto reveal">
+                <span class="etiqueta">✨ IDEIAS QUE GANHAM VIDA</span>
+                <h1>Transforme suas ideias em algo <span>extraordinário.</span></h1>
+                <p>
+                    Um espaço digital para apresentar seus projetos,
+                    compartilhar criatividade e construir novas possibilidades.
+                </p>
+                <div class="hero-botoes">
+                    <a href="#projetos" class="botao primario">Explorar projetos ↗</a>
+                    <a href="#sobre" class="botao secundario">Conhecer mais</a>
+                </div>
+                <div class="hero-dados">
+                    <div><strong>100%</strong><span>Responsivo</span></div>
+                    <div><strong>∞</strong><span>Criatividade</span></div>
+                    <div><strong>24/7</strong><span>Disponível online</span></div>
+                </div>
+            </div>
+
+            <div class="hero-visual reveal">
+                <div class="orb orb-1"></div>
+                <div class="orb orb-2"></div>
+                <div class="janela">
+                    <div class="janela-topo">
+                        <span></span><span></span><span></span>
+                        <small>meu-projeto.dev</small>
+                    </div>
+                    <div class="janela-conteudo">
+                        <div class="mini-icone">✦</div>
+                        <h2>Crie. Explore.<br><span>Inspire.</span></h2>
+                        <p>O futuro começa com uma ideia.</p>
+                        <div class="barras">
+                            <i></i><i></i><i></i><i></i><i></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="flutuante">🚀 <span>Novas possibilidades</span></div>
+            </div>
+        </section>
+
+        <section class="faixa">
+            <div class="container faixa-conteudo">
+                <span>✦ Criatividade</span>
+                <span>✦ Tecnologia</span>
+                <span>✦ Inovação</span>
+                <span>✦ Experiências</span>
+            </div>
+        </section>
+
+        <section class="secao container" id="sobre">
+            <div class="titulo-secao reveal">
+                <span class="etiqueta">QUEM SOMOS</span>
+                <h2>Um espaço feito para <span>ir além.</span></h2>
+                <p>Um modelo de site que você pode personalizar para qualquer finalidade.</p>
+            </div>
+
+            <div class="sobre-grid">
+                <article class="sobre-card reveal">
+                    <div class="icone">🎯</div>
+                    <h3>Nosso objetivo</h3>
+                    <p>Apresentar ideias de forma clara, organizada e visualmente atraente.</p>
+                </article>
+                <article class="sobre-card reveal">
+                    <div class="icone">💡</div>
+                    <h3>Nossa criatividade</h3>
+                    <p>Combinar design, conteúdo e tecnologia em uma experiência única.</p>
+                </article>
+                <article class="sobre-card reveal">
+                    <div class="icone">🌎</div>
+                    <h3>Nosso alcance</h3>
+                    <p>Disponibilizar uma experiência acessível em diferentes dispositivos.</p>
+                </article>
+            </div>
+        </section>
+
+        <section class="secao secao-alternativa" id="servicos">
             <div class="container">
-                <h2>Bem-vindo ao Site Genérico</h2>
-                <p>Um exemplo completo, responsivo e moderno com HTML, CSS e JavaScript integrados. Explore os recursos e personalize conforme necessário.</p>
-                <a href="#servicos" class="btn">Saiba Mais</a>
-                <a href="#contato" class="btn btn-outline" style="margin-left: 1rem;">Fale Conosco</a>
+                <div class="titulo-secao reveal">
+                    <span class="etiqueta">O QUE OFERECEMOS</span>
+                    <h2>Recursos para <span>suas ideias.</span></h2>
+                    <p>Use estes cards para apresentar serviços, categorias ou funcionalidades.</p>
+                </div>
+
+                <div class="servicos-grid">
+                    <article class="servico-card reveal">
+                        <div class="icone">💻</div>
+                        <h3>Desenvolvimento</h3>
+                        <p>Páginas organizadas, interativas e preparadas para diferentes telas.</p>
+                        <a href="#contato">Saiba mais ↗</a>
+                    </article>
+                    <article class="servico-card reveal">
+                        <div class="icone">🎨</div>
+                        <h3>Design criativo</h3>
+                        <p>Uma identidade visual moderna com cores, efeitos e personalidade.</p>
+                        <a href="#contato">Saiba mais ↗</a>
+                    </article>
+                    <article class="servico-card reveal">
+                        <div class="icone">📱</div>
+                        <h3>Experiência móvel</h3>
+                        <p>Layout adaptável para celulares, tablets e computadores.</p>
+                        <a href="#contato">Saiba mais ↗</a>
+                    </article>
+                    <article class="servico-card reveal">
+                        <div class="icone">⚡</div>
+                        <h3>Interatividade</h3>
+                        <p>Botões, navegação suave, animações e elementos dinâmicos.</p>
+                        <a href="#contato">Saiba mais ↗</a>
+                    </article>
+                </div>
             </div>
         </section>
 
-        <!-- CARDS / SERVIÇOS -->
-        <section id="servicos" class="container">
-            <h2 class="section-title">Nossos Serviços</h2>
-            <div class="cards-grid">
-                <div class="card">
-                    <i class="fas fa-code"></i>
-                    <h3>Desenvolvimento Web</h3>
-                    <p>Criação de sites modernos, responsivos e otimizados para todos os dispositivos.</p>
-                    <a href="#" class="btn" style="align-self: flex-start;">Ver mais</a>
-                </div>
-                <div class="card">
-                    <i class="fas fa-mobile-alt"></i>
-                    <h3>Design Responsivo</h3>
-                    <p>Layouts que se adaptam perfeitamente a celulares, tablets e desktops.</p>
-                    <a href="#" class="btn" style="align-self: flex-start;">Ver mais</a>
-                </div>
-                <div class="card">
-                    <i class="fas fa-rocket"></i>
-                    <h3>Performance</h3>
-                    <p>Otimização de velocidade, acessibilidade e boas práticas de SEO.</p>
-                    <a href="#" class="btn" style="align-self: flex-start;">Ver mais</a>
-                </div>
+        <section class="secao container" id="projetos">
+            <div class="titulo-secao reveal">
+                <span class="etiqueta">PORTFÓLIO</span>
+                <h2>Explore nossos <span>projetos.</span></h2>
+                <p>Uma galeria de exemplo para você substituir pelas suas próprias imagens.</p>
+            </div>
+
+            <div class="filtros reveal" role="group" aria-label="Filtrar projetos">
+                <button class="filtro ativo" data-filtro="todos">Todos</button>
+                <button class="filtro" data-filtro="design">Design</button>
+                <button class="filtro" data-filtro="web">Web</button>
+                <button class="filtro" data-filtro="natureza">Natureza</button>
+            </div>
+
+            <div class="projetos-grid">
+                <article class="projeto reveal" data-categoria="design">
+                    <img src="https://images.unsplash.com/photo-1558655146-d09347e92766?auto=format&fit=crop&w=900&q=85"
+                        alt="Materiais de design gráfico" loading="lazy">
+                    <div class="projeto-info"><span>DESIGN</span><h3>Identidade criativa</h3><p>Visual e personalidade.</p></div>
+                </article>
+                <article class="projeto reveal" data-categoria="web">
+                    <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=900&q=85"
+                        alt="Análise de dados em uma tela" loading="lazy">
+                    <div class="projeto-info"><span>TECNOLOGIA</span><h3>Universo digital</h3><p>Ideias conectadas.</p></div>
+                </article>
+                <article class="projeto reveal" data-categoria="natureza">
+                    <img src="https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=900&q=85"
+                        alt="Montanhas e lago em meio à natureza" loading="lazy">
+                    <div class="projeto-info"><span>NATUREZA</span><h3>Novos horizontes</h3><p>Inspiração ao ar livre.</p></div>
+                </article>
+                <article class="projeto reveal" data-categoria="design">
+                    <img src="https://images.unsplash.com/photo-1494438639946-1ebd1d20bf85?auto=format&fit=crop&w=900&q=85"
+                        alt="Espaço de trabalho organizado" loading="lazy">
+                    <div class="projeto-info"><span>DESIGN</span><h3>Espaço criativo</h3><p>Organização e estilo.</p></div>
+                </article>
+                <article class="projeto reveal" data-categoria="web">
+                    <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=900&q=85"
+                        alt="Equipe trabalhando com tecnologia" loading="lazy">
+                    <div class="projeto-info"><span>WEB</span><h3>Conexões digitais</h3><p>Colaboração e inovação.</p></div>
+                </article>
+                <article class="projeto reveal" data-categoria="natureza">
+                    <img src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=900&q=85"
+                        alt="Luz do sol atravessando uma floresta" loading="lazy">
+                    <div class="projeto-info"><span>NATUREZA</span><h3>Verde infinito</h3><p>Beleza natural.</p></div>
+                </article>
             </div>
         </section>
 
-        <!-- SOBRE -->
-        <section id="sobre" class="container">
-            <h2 class="section-title">Sobre Nós</h2>
-            <div style="background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid #eee; margin-bottom: 2rem;">
-                <p>Este é um site genérico criado para demonstrar uma estrutura completa em HTML5, com estilos CSS modernos e interatividade via JavaScript. Ele inclui:</p>
-                <ul style="margin: 1rem 0 1rem 1.5rem;">
-                    <li>Layout responsivo com Flexbox e Grid</li>
-                    <li>Modo escuro/claro alternável</li>
-                    <li>Formulário de contato funcional (simulado)</li>
-                    <li>Navegação suave entre seções</li>
-                    <li>Design limpo e profissional</li>
-                </ul>
-                <p>Sinta-se à vontade para usar este código como base para seus projetos.</p>
+        <section class="destaque">
+            <div class="container destaque-conteudo reveal">
+                <span class="etiqueta">SEU PRÓXIMO PASSO</span>
+                <h2>Grandes projetos começam com <span>pequenas ideias.</span></h2>
+                <p>Personalize este espaço com uma mensagem importante para seus visitantes.</p>
+                <a href="#contato" class="botao primario">Vamos conversar ↗</a>
             </div>
         </section>
 
-        <!-- FORMULÁRIO DE CONTATO -->
-        <section id="contato" class="container">
-            <h2 class="section-title">Entre em Contato</h2>
-            <div class="form-section">
-                <form id="contactForm">
-                    <div class="form-group">
-                        <label for="nome">Nome:</label>
-                        <input type="text" id="nome" name="nome" placeholder="Digite seu nome" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="email">E-mail:</label>
-                        <input type="email" id="email" name="email" placeholder="Digite seu e-mail" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="mensagem">Mensagem:</label>
-                        <textarea id="mensagem" name="mensagem" rows="5" placeholder="Escreva sua mensagem" required></textarea>
-                    </div>
-                    <button type="submit" class="btn">Enviar Mensagem</button>
+        <section class="secao container" id="faq">
+            <div class="titulo-secao reveal">
+                <span class="etiqueta">DÚVIDAS FREQUENTES</span>
+                <h2>Perguntas e <span>respostas.</span></h2>
+            </div>
+
+            <div class="faq-lista reveal">
+                <details>
+                    <summary>Posso personalizar este site?</summary>
+                    <p>Sim! Você pode trocar textos, imagens, cores, links e seções.</p>
+                </details>
+                <details>
+                    <summary>O site funciona no celular?</summary>
+                    <p>Sim. O layout se adapta a diferentes tamanhos de tela.</p>
+                </details>
+                <details>
+                    <summary>Preciso instalar alguma biblioteca?</summary>
+                    <p>Não. O modelo usa HTML, CSS e JavaScript puros.</p>
+                </details>
+                <details>
+                    <summary>Como publico o site na internet?</summary>
+                    <p>Você pode hospedar os arquivos em um serviço de hospedagem estática.</p>
+                </details>
+            </div>
+        </section>
+
+        <section class="secao secao-alternativa" id="contato">
+            <div class="container contato-grid">
+                <div class="contato-texto reveal">
+                    <span class="etiqueta">FALE CONOSCO</span>
+                    <h2>Vamos criar algo <span>incrível?</span></h2>
+                    <p>Preencha o formulário de demonstração ao lado e personalize-o para seu projeto.</p>
+                    <div class="contato-item">✉️ <span>contato@exemplo.com</span></div>
+                    <div class="contato-item">📍 <span>Seu endereço ou cidade</span></div>
+                    <div class="contato-item">🕒 <span>Atendimento: seg. a sex.</span></div>
+                </div>
+
+                <form class="contato-form reveal" id="formContato">
+                    <label for="nome">Seu nome</label>
+                    <input id="nome" name="nome" type="text"
+                        placeholder="Digite seu nome" required maxlength="100">
+
+                    <label for="email">Seu e-mail</label>
+                    <input id="email" name="email" type="email"
+                        placeholder="voce@exemplo.com" required maxlength="150">
+
+                    <label for="assunto">Assunto</label>
+                    <select id="assunto" name="assunto" required>
+                        <option value="">Selecione um assunto</option>
+                        <option value="duvida">Dúvida</option>
+                        <option value="projeto">Novo projeto</option>
+                        <option value="sugestao">Sugestão</option>
+                        <option value="outro">Outro</option>
+                    </select>
+
+                    <label for="mensagem">Sua mensagem</label>
+                    <textarea id="mensagem" name="mensagem"
+                        placeholder="Escreva sua mensagem..." rows="5"
+                        required maxlength="2000"></textarea>
+
+                    <button type="submit" class="botao primario enviar">
+                        Enviar mensagem ↗
+                    </button>
+                    <p id="formStatus" class="form-status" role="status" aria-live="polite"></p>
+                    <small>Formulário demonstrativo: não envia dados para um servidor.</small>
                 </form>
-                <p id="formFeedback" style="margin-top: 1rem; font-weight: bold;"></p>
             </div>
         </section>
     </main>
 
-    <!-- RODAPÉ -->
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-col">
-                    <h4>Site Genérico</h4>
-                    <p>Um exemplo completo de site responsivo.</p>
-                    <p>&copy; 2025 Todos os direitos reservados.</p>
-                </div>
-                <div class="footer-col">
-                    <h4>Links Rápidos</h4>
-                    <p><a href="#inicio" style="color: #ccc;">Início</a></p>
-                    <p><a href="#servicos" style="color: #ccc;">Serviços</a></p>
-                    <p><a href="#contato" style="color: #ccc;">Contato</a></p>
-                </div>
-                <div class="footer-col">
-                    <h4>Redes Sociais</h4>
-                    <div class="social-links">
-                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
-                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                        <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
-                    </div>
-                </div>
+    <footer class="rodape">
+        <div class="container rodape-topo">
+            <div>
+                <a class="logo" href="#inicio">Nova<span>Web.</span></a>
+                <p>Ideias, criatividade e tecnologia em um só lugar.</p>
             </div>
-            <div class="copyright">
-                <p>Feito com <i class="fas fa-heart" style="color: #ff6600;"></i> para demonstração.</p>
+            <div class="rodape-links">
+                <a href="#inicio">Início</a>
+                <a href="#sobre">Sobre</a>
+                <a href="#projetos">Projetos</a>
+                <a href="#contato">Contato</a>
             </div>
+            <a href="#inicio" class="voltar-topo">↑ Voltar ao topo</a>
+        </div>
+        <div class="container rodape-final">
+            <p>© <span id="ano"></span> NovaWeb. Todos os direitos reservados.</p>
+            <p>Feito com 💙 e criatividade.</p>
         </div>
     </footer>
 
-    <!-- JAVASCRIPT -->
-    <script>
-        (function() {
-            'use strict';
-
-            // ===== ALTERNAR MODO ESCURO =====
-            const themeToggle = document.getElementById('themeToggle');
-            const body = document.body;
-
-            // Verifica preferência salva no localStorage
-            if (localStorage.getItem('darkMode') === 'enabled') {
-                body.classList.add('dark-mode');
-                themeToggle.innerHTML = '<i class="fas fa-sun"></i> Modo Claro';
-            }
-
-            themeToggle.addEventListener('click', function() {
-                body.classList.toggle('dark-mode');
-
-                if (body.classList.contains('dark-mode')) {
-                    localStorage.setItem('darkMode', 'enabled');
-                    themeToggle.innerHTML = '<i class="fas fa-sun"></i> Modo Claro';
-                } else {
-                    localStorage.setItem('darkMode', 'disabled');
-                    themeToggle.innerHTML = '<i class="fas fa-moon"></i> Modo Escuro';
-                }
-            });
-
-            // ===== FORMULÁRIO DE CONTATO (SIMULAÇÃO) =====
-            const contactForm = document.getElementById('contactForm');
-            const formFeedback = document.getElementById('formFeedback');
-
-            contactForm.addEventListener('submit', function(event) {
-                event.preventDefault(); // Impede envio real
-
-                const nome = document.getElementById('nome').value.trim();
-                const email = document.getElementById('email').value.trim();
-                const mensagem = document.getElementById('mensagem').value.trim();
-
-                if (!nome || !email || !mensagem) {
-                    formFeedback.textContent = 'Por favor, preencha todos os campos.';
-                    formFeedback.style.color = '#ff3333';
-                    return;
-                }
-
-                // Simula envio bem-sucedido
-                formFeedback.textContent = `Obrigado, ${nome}! Sua mensagem foi enviada com sucesso.`;
-                formFeedback.style.color = '#28a745';
-
-                // Limpa o formulário
-                contactForm.reset();
-
-                // Remove feedback após 5 segundos
-                setTimeout(function() {
-                    formFeedback.textContent = '';
-                }, 5000);
-            });
-
-            // ===== ROLAGEM SUAVE PARA ÂNCORAS (compatível com navegadores antigos) =====
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function(e) {
-                    const href = this.getAttribute('href');
-                    if (href === '#') return;
-
-                    const targetElement = document.querySelector(href);
-                    if (targetElement) {
-                        e.preventDefault();
-                        targetElement.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'start'
-                        });
-                    }
-                });
-            });
-
-        })();
-    </script>
+    <button id="botaoTopo" class="botao-topo" aria-label="Voltar ao topo">↑</button>
 </body>
 </html>
