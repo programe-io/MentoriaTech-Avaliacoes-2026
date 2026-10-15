@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0f172a">
+
+    <title>Meu Site | Página Inicial</title>
+
+    <style>
+        /* CONFIGURAÇÕES GERAIS */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        :root {
+            --fundo: #f1f5f9;
+            --cartao: #ffffff;
+            --texto: #0f172a;
+            --secundario: #64748b;
+            --primaria: #2563eb;
+            --borda: #e2e8f0;
+            --sombra: 0 10px 30px rgba(0, 0, 0, 0.07);
+        }
+
+        body.escuro {
+            --fundo: #0f172a;
+            --cartao: #1e293b;
+            --texto: #f8fafc;
+            --secundario: #cbd5e1;
+            --primaria: #60a5fa;
+            --borda: #334155;
+            --sombra: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: var(--fundo);
+            color: var(--texto);
+            line-height: 1.6;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button, input, textarea {
+            font: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        .container {
+            width: min(1100px, 92%);
+            margin: auto;
+        }
+
+        /* CABEÇALHO */
+        header {
+            background: var(--cartao);
+            border-bottom: 1px solid var(--borda);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar {
+            min-height: 75px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primaria);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 22px;
+            list-style: none;
+        }
+
+        .nav-links a:hover {
+            color: var(--primaria);
+        }
+
+        .acoes {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .botao-menu, .botao-tema {
+            border: 1px solid var(--borda);
+            background: var(--cartao);
+            color: var(--texto);
+            padding: 9px 12px;
+            border-radius: 10px;
+        }
+
+        .botao-menu {
+            display: none;
+        }
+
+        /* BOTÕES */
+        .botao {
+            display: inline-block;
+            background: var(--primaria);
+            color: white;
+            border: none;
+            padding: 12px 22px;
+            border-radius: 10px;
+            font-weight: bold;
+            transition: transform 0.2s, opacity 0.2s;
+        }
+
+        .botao:hover {
+            transform: translateY(-3px);
+            opacity: 0.9;
+        }
+
+        .botao-secundario {
+            background: transparent;
+            border: 1px solid var(--primaria);
+            color: var(--primaria);
+        }
+
+        /* APRESENTAÇÃO */
+        .hero {
+            padding: 100px 0;
+            background:
+                radial-gradient(circle at 85% 20%,
+                rgba(37, 99, 235, 0.18), transparent 35%);
+        }
+
+        .hero-conteudo {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 45px;
+            align-items: center;
+        }
+
+        .etiqueta {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 30px;
+            background: rgba(37, 99, 235, 0.12);
+            color: var(--primaria);
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.4rem, 6vw, 4rem);
+            line-height: 1.12;
+            margin-bottom: 22px;
+        }
+
+        .hero p {
+            color: var(--secundario);
+            margin-bottom: 28px;
+            max-width: 580px;
+        }
+
+        .hero-botoes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .ilustracao {
+            min-height: 300px;
+            border-radius: 30px;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            display: grid;
+            place-items: center;
+            box-shadow: var(--sombra);
+            overflow: hidden;
+        }
+
+        .ilustracao span {
+            font-size: clamp(7rem, 17vw, 12rem);
+            animation: flutuar 4s ease-in-out infinite;
+        }
+
+        @keyframes flutuar {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-18px); }
+        }
+
+        /* SEÇÕES */
+        section {
+            padding: 75px 0;
+            scroll-margin-top: 75px;
+        }
+
+        .titulo-secao {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .titulo-secao h2 {
+            font-size: clamp(1.8rem, 4vw, 2.6rem);
+            margin-bottom: 10px;
+        }
+
+        .titulo-secao p {
+            color: var(--secundario);
+        }
+
+        /* CARTÕES */
+        .grade {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 22px;
+        }
+
+        .cartao {
+            background: var(--cartao);
+            border: 1px solid var(--borda);
+            padding: 28px;
+            border-radius: 18px;
+            box-shadow: var(--sombra);
+            transition: transform 0.25s;
+        }
+
+        .cartao:hover {
+            transform: translateY(-6px);
+        }
+
+        .icone {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .cartao h3 {
+            margin-bottom: 10px;
+        }
+
+        .cartao p {
+            color: var(--secundario);
+        }
+
+        /* SOBRE */
+        .sobre {
+            background: var(--cartao);
+        }
+
+        .sobre-conteudo {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .sobre-conteudo h2 {
+            font-size: 2rem;
+            margin-bottom: 18px;
+        }
+
+        .sobre-conteudo p {
+            color: var(--secundario);
+            margin-bottom: 15px;
+        }
+
+        .lista {
+            list-style: none;
+            display: grid;
+            gap: 14px;
+        }
+
+        .lista li {
+            padding: 15px;
+            background: var(--fundo);
+            border-radius: 10px;
+        }
+
+        /* PESQUISA */
+        .pesquisa {
+            max-width: 500px;
+            width: 100%;
+            padding: 13px 15px;
+            border: 1px solid var(--borda);
+            background: var(--cartao);
+            color: var(--texto);
+            border-radius: 10px;
+            outline: none;
+        }
+
+        .pesquisa:focus, input:focus, textarea:focus {
+            border-color: var(--primaria);
+        }
+
+        .barra-pesquisa {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 28px;
+        }
+
+        .vazio {
+            grid-column: 1 / -1;
+            text-align: center;
+            color: var(--secundario);
+            padding: 20px;
+        }
+
+        /* CONTATO */
+        .contato-form {
+            max-width: 650px;
+            margin: auto;
+            background: var(--cartao);
+            border: 1px solid var(--borda);
+            border-radius: 18px;
+            padding: 30px;
+            box-shadow: var(--sombra);
+        }
+
+        .campo {
+            margin-bottom: 18px;
+        }
+
+        .campo label {
+            display: block;
+            margin-bottom: 7px;
+            font-weight: bold;
+        }
+
+        .campo input, .campo textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--borda);
+            border-radius: 10px;
+            background: var(--fundo);
+            color: var(--texto);
+        }
+
+        .campo textarea {
+            resize: vertical;
+            min-height: 130px;
+        }
+
+        .mensagem {
+            margin-top: 15px;
+            color: var(--primaria);
+            overflow-wrap: anywhere;
+        }
+
+        /* RODAPÉ */
+        footer {
+            padding: 30px 0;
+            background: var(--cartao);
+            border-top: 1px solid var(--borda);
+            text-align: center;
+        }
+
+        footer p {
+            color: var(--secundario);
+        }
+
+        .redes {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 18px;
+            margin: 15px 0;
+        }
+
+        .redes a:hover {
+            color: var(--primaria);
+        }
+
+        /* ANIMAÇÕES DE ENTRADA */
+        .revelar {
+            opacity: 0;
+            transform: translateY(25px);
+            transition: opacity 0.7s, transform 0.7s;
+        }
+
+        .revelar.visivel {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        #topo {
+            position: fixed;
+            bottom: 22px;
+            right: 22px;
+            width: 48px;
+            height: 48px;
+            border: none;
+            border-radius: 50%;
+            background: var(--primaria);
+            color: white;
+            font-size: 1.3rem;
+            box-shadow: var(--sombra);
+            display: none;
+            z-index: 900;
+        }
+
+        /* ACESSIBILIDADE */
+        a:focus-visible, button:focus-visible,
+        input:focus-visible, textarea:focus-visible {
+            outline: 3px solid #f59e0b;
+            outline-offset: 3px;
+        }
+
+        /* RESPONSIVIDADE */
+        @media (max-width: 800px) {
+            .hero-conteudo, .sobre-conteudo {
+                grid-template-columns: 1fr;
+            }
+
+            .grade {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .botao-menu {
+                display: inline-block;
+            }
+
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 75px;
+                left: 0;
+                right: 0;
+                background: var(--cartao);
+                border-bottom: 1px solid var(--borda);
+                padding: 20px 4%;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 18px;
+            }
+
+            .nav-links.aberto {
+                display: flex;
+            }
+
+            .hero {
+                padding: 65px 0;
+            }
+        }
+
+        @media (max-width: 520px) {
+            .grade {
+                grid-template-columns: 1fr;
+            }
+
+            .navbar {
+                gap: 8px;
+            }
+
+            .logo {
+                font-size: 1.2rem;
+            }
+
+            .acoes {
+                gap: 5px;
+            }
+
+            .botao-tema, .botao-menu {
+                padding: 8px;
+            }
+
+            .contato-form {
+                padding: 20px;
+            }
+
+            section {
+                padding: 55px 0;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                scroll-behavior: auto !important;
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+            }
+
+            .revelar {
+                opacity: 1;
+                transform: none;
+            }
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- CABEÇALHO -->
+    <header>
+        <div class="container navbar">
+            <a class="logo" href="#inicio">🚀 MeuSite</a>
+
+            <nav aria-label="Navegação principal">
+                <ul class="nav-links" id="menu">
+                    <li><a href="#inicio">Início</a></li>
+                    <li><a href="#servicos">Serviços</a></li>
+                    <li><a href="#sobre">Sobre</a></li>
+                    <li><a href="#projetos">Projetos</a></li>
+                    <li><a href="#contato">Contato</a></li>
+                </ul>
+            </nav>
+
+            <div class="acoes">
+                <button class="botao-tema" id="tema"
+                    type="button" aria-label="Ativar tema escuro"
+                    title="Alternar tema">🌙</button>
+
+                <button class="botao-menu" id="menuBotao"
+                    type="button" aria-label="Abrir menu"
+                    aria-expanded="false" aria-controls="menu">
+                    ☰
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- INÍCIO -->
+        <section class="hero" id="inicio">
+            <div class="container hero-conteudo">
+                <div class="revelar">
+                    <span class="etiqueta">✨ Bem-vindo ao meu site</span>
+
+                    <h1>Ideias que se transformam em grandes projetos.</h1>
+
+                    <p>
+                        Um espaço moderno para apresentar ideias,
+                        compartilhar informações e mostrar tudo aquilo
+                        que você deseja criar.
+                    </p>
+
+                    <div class="hero-botoes">
+                        <a class="botao" href="#projetos">
+                            Conhecer projetos
+                        </a>
+
+                        <a class="botao botao-secundario" href="#contato">
+                            Entrar em contato
+                        </a>
+                    </div>
+                </div>
+
+                <div class="ilustracao revelar" aria-label="Foguete ilustrativo">
+                    <span aria-hidden="true">🚀</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- SERVIÇOS -->
+        <section id="servicos">
+            <div class="container">
+                <div class="titulo-secao revelar">
+                    <h2>O que você encontra aqui</h2>
+                    <p>Um espaço para explorar diferentes possibilidades.</p>
+                </div>
+
+                <div class="grade">
+                    <article class="cartao revelar">
+                        <div class="icone" aria-hidden="true">💡</div>
+                        <h3>Ideias criativas</h3>
+                        <p>Apresente suas ideias de forma organizada,
+                            interessante e visualmente agradável.</p>
+                    </article>
+
+                    <article class="cartao revelar">
+                        <div class="icone" aria-hidden="true">💻</div>
+                        <h3>Tecnologia</h3>
+                        <p>Compartilhe conteúdos, projetos digitais
+                            e novidades do mundo tecnológico.</p>
+                    </article>
+
+                    <article class="cartao revelar">
+                        <div class="icone" aria-hidden="true">🎨</div>
+                        <h3>Criatividade</h3>
+                        <p>Explore cores, estilos, imagens e recursos
+                            para personalizar seu espaço.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- SOBRE -->
+        <section class="sobre" id="sobre">
+            <div class="container sobre-conteudo">
+                <div class="revelar">
+                    <span class="etiqueta">📌 Sobre o site</span>
+                    <h2>Um espaço feito para suas ideias.</h2>
+
+                    <p>
+                        Este modelo foi criado com HTML, CSS e JavaScript.
+                        Ele pode ser personalizado para diferentes temas,
+                        como portfólio, página pessoal, tecnologia,
+                        estudos ou apresentação de projetos.
+                    </p>
+
+                    <p>
+                        Edite os textos, mude as cores e adicione suas
+                        próprias imagens para deixar o site com a sua cara.
+                    </p>
+
+                    <a class="botao" href="#contato">Fale comigo</a>
+                </div>
+
+                <ul class="lista revelar">
+                    <li>✅ Layout organizado e moderno</li>
+                    <li>📱 Compatível com celulares e computadores</li>
+                    <li>🌙 Tema claro e escuro</li>
+                    <li>⚡ Animações e navegação interativa</li>
+                    <li>🔎 Pesquisa de projetos</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- PROJETOS -->
+        <section id="projetos">
+            <div class="container">
+                <div class="titulo-secao revelar">
+                    <h2>Meus projetos</h2>
+                    <p>Pesquise e conheça os exemplos abaixo.</p>
+                </div>
+
+                <div class="barra-pesquisa revelar">
+                    <input class="pesquisa" id="pesquisa"
+                        type="search"
+                        placeholder="Pesquisar projetos..."
+                        aria-label="Pesquisar projetos">
+                </div>
+
+                <div class="grade" id="listaProjetos">
+                    <article class="cartao revelar projeto"
+                        data-nome="site pessoal">
+                        <div class="icone" aria-hidden="true">🌐</div>
+                        <h3>Site pessoal</h3>
+                        <p>Uma página para apresentar você, suas ideias
+                            e seus interesses.</p>
+                    </article>
+
+                    <article class="cartao revelar projeto"
+                        data-nome="galeria de imagens">
+                        <div class="icone" aria-hidden="true">📸</div>
+                        <h3>Galeria de imagens</h3>
+                        <p>Um espaço para organizar e compartilhar
+                            fotografias e imagens.</p>
+                    </article>
+
+                    <article class="cartao revelar projeto"
+                        data-nome="projeto tecnologia">
+                        <div class="icone" aria-hidden="true">🖥️</div>
+                        <h3>Projeto de tecnologia</h3>
+                        <p>Uma apresentação de ideias e experiências
+                            no mundo digital.</p>
+                    </article>
+
+                    <p class="vazio" id="semResultados" hidden>
+                        Nenhum projeto encontrado.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CONTATO -->
+        <section class="sobre" id="contato">
+            <div class="container">
+                <div class="titulo-secao revelar">
+                    <h2>Entre em contato</h2>
+                    <p>Preencha os campos para preparar uma mensagem.</p>
+                </div>
+
+                <form class="contato-form revelar" id="formContato">
+                    <div class="campo">
+                        <label for="nome">Seu nome</label>
+                        <input id="nome" name="nome"
+                            type="text" maxlength="80"
+                            autocomplete="name" required
+                            placeholder="Digite seu nome">
+                    </div>
+
+                    <div class="campo">
+                        <label for="email">Seu e-mail</label>
+                        <input id="email" name="email"
+                            type="email" maxlength="120"
+                            autocomplete="email" required
+                            placeholder="voce@exemplo.com">
+                    </div>
+
+                    <div class="campo">
+                        <label for="assunto">Assunto</label>
+                        <input id="assunto" name="assunto"
+                            type="text" maxlength="100" required
+                            placeholder="Sobre o que deseja falar?">
+                    </div>
+
+                    <div class="campo">
+                        <label for="mensagem">Sua mensagem</label>
+                        <textarea id="mensagem" name="mensagem"
+                            maxlength="2000" required
+                            placeholder="Escreva sua mensagem..."></textarea>
+                    </div>
+
+                    <button class="botao" type="submit">
+                        Preparar mensagem
+                    </button>
+
+                    <p class="mensagem" id="resultado"
+                        role="status" aria-live="polite"></p>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <!-- RODAPÉ -->
+    <footer>
+        <div class="container">
+            <a class="logo" href="#inicio">🚀 MeuSite</a>
+
+            <div class="redes">
+                <a href="#inicio">Início</a>
+                <a href="#sobre">Sobre</a>
+                <a href="#projetos">Projetos</a>
+                <a href="#contato">Contato</a>
+            </div>
+
+            <p>
+                &copy; <span id="ano"></span> MeuSite.
+                Todos os direitos reservados.
+            </p>
+
+            <p>Feito com ❤️ usando HTML, CSS e JavaScript.</p>
+        </div>
+    </footer>
+
+    <button id="topo" type="button"
+        aria-label="Voltar ao topo" title="Voltar ao topo">
+        ↑
+    </button>
+
+    <script>
+        "use strict";
+
+        // ELEMENTOS
+        const corpo = document.body;
+        const botaoTema = document.getElementById("tema");
+        const menuBotao = document.getElementById("menuBotao");
+        const menu = document.getElementById("menu");
+        const botaoTopo = document.getElementById("topo");
+
+        // TEMA CLARO E ESCURO
+        function atualizarBotaoTema() {
+            const escuro = corpo.classList.contains("escuro");
+
+            botaoTema.textContent = escuro ? "☀️" : "🌙";
+            botaoTema.setAttribute(
+                "aria-label",
+                escuro ? "Ativar tema claro" : "Ativar tema escuro"
+            );
+        }
+
+        try {
+            if (localStorage.getItem("tema-site") === "escuro") {
+                corpo.classList.add("escuro");
+            }
+        } catch (erro) {
+            // O site continua funcionando se o armazenamento estiver bloqueado.
+        }
+
+        atualizarBotaoTema();
+
+        botaoTema.addEventListener("click", function () {
+            corpo.classList.toggle("escuro");
+            atualizarBotaoTema();
+
+            try {
+                localStorage.setItem(
+                    "tema-site",
+                    corpo.classList.contains("escuro") ? "escuro" : "claro"
+                );
+            } catch (erro) {
+                // O tema continua funcionando durante esta visita.
+            }
+        });
+
+        // MENU PARA CELULAR
+        menuBotao.addEventListener("click", function () {
+            const aberto = menu.classList.toggle("aberto");
+
+            menuBotao.setAttribute("aria-expanded", String(aberto));
+            menuBotao.setAttribute(
+                "aria-label",
+                aberto ? "Fechar menu" : "Abrir menu"
+            );
+            menuBotao.textContent = aberto ? "✕" : "☰";
+        });
+
+        menu.querySelectorAll("a").forEach(function (link) {
+            link.addEventListener("click", function () {
+                menu.classList.remove("aberto");
+                menuBotao.setAttribute("aria-expanded", "false");
+                menuBotao.setAttribute("aria-label", "Abrir menu");
+                menuBotao.textContent = "☰";
+            });
+        });
+
+        // ANIMAÇÕES AO ROLAR A PÁGINA
+        const elementos = document.querySelectorAll(".revelar");
+
+        if ("IntersectionObserver" in window) {
+            const observador = new IntersectionObserver(function (entradas) {
+                entradas.forEach(function (entrada) {
+                    if (entrada.isIntersecting) {
+                        entrada.target.classList.add("visivel");
+                        observador.unobserve(entrada.target);
+                    }
+                });
+            }, { threshold: 0.12 });
+
+            elementos.forEach(function (elemento) {
+                observador.observe(elemento);
+            });
+        } else {
+            elementos.forEach(function (elemento) {
+                elemento.classList.add("visivel");
+            });
+        }
+
+        // PESQUISA DE PROJETOS
+        const campoPesquisa = document.getElementById("pesquisa");
+        const projetos = document.querySelectorAll(".projeto");
+        const semResultados = document.getElementById("semResultados");
+
+        campoPesquisa.addEventListener("input", function () {
+            const termo = campoPesquisa.value
+                .trim()
+                .toLocaleLowerCase("pt-BR");
+
+            let encontrados = 0;
+
+            projetos.forEach(function (projeto) {
+                const nome = projeto.dataset.nome || "";
+                const texto = projeto.textContent.toLocaleLowerCase("pt-BR");
+                const corresponde =
+                    nome.includes(termo) || texto.includes(termo);
+
+                projeto.hidden = !corresponde;
+
+                if (corresponde) {
+                    encontrados++;
+                }
+            });
+
+            semResultados.hidden = encontrados !== 0;
+        });
+
+        // FORMULÁRIO DE CONTATO
+        const formulario = document.getElementById("formContato");
+        const resultado = document.getElementById("resultado");
+
+        formulario.addEventListener("submit", function (evento) {
+            evento.preventDefault();
+
+            if (!formulario.reportValidity()) {
+                return;
+            }
+
+            const dados = new FormData(formulario);
+            const nome = String(dados.get("nome") || "").trim();
+            const email = String(dados.get("email") || "").trim();
+            const assunto = String(dados.get("assunto") || "").trim();
+            const mensagem = String(dados.get("mensagem") || "").trim();
+
+            const corpoEmail =
+                "Nome: " + nome + "\n" +
+                "E-mail: " + email + "\n\n" +
+                mensagem;
+
+            const url =
+                "mailto:?subject=" + encodeURIComponent(assunto) +
+                "&body=" + encodeURIComponent(corpoEmail);
+
+            resultado.textContent =
+                "Sua mensagem está pronta. Escolha um aplicativo de e-mail " +
+                "se o dispositivo oferecer essa opção.";
+
+            const linkEmail = document.createElement("a");
+            linkEmail.href = url;
+            linkEmail.textContent = " Abrir aplicativo de e-mail";
+            linkEmail.className = "botao";
+            linkEmail.style.marginTop = "12px";
+            linkEmail.style.display = "inline-block";
+
+            resultado.appendChild(document.createElement("br"));
+            resultado.appendChild(linkEmail);
+        });
+
+        // BOTÃO VOLTAR AO TOPO
+        function atualizarBotaoTopo() {
+            botaoTopo.style.display =
+                window.scrollY > 400 ? "block" : "none";
+        }
+
+        window.addEventListener("scroll", atualizarBotaoTopo, {
+            passive: true
+        });
+
+        botaoTopo.addEventListener("click", function () {
+            window.scrollTo({
+                top: 0,
+                behavior: window.matchMedia(
+                    "(prefers-reduced-motion: reduce)"
+                ).matches ? "auto" : "smooth"
+            });
+        });
+
+        // ANO AUTOMÁTICO
+        document.getElementById("ano").textContent =
+            new Date().getFullYear();
+    </script>
+
+</body>
+</html>
