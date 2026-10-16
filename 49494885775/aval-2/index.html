@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desafio de Programação</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #101827;
+            color: white;
+            text-align: center;
+            padding: 30px 15px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: #1e293b;
+            padding: 25px;
+            border-radius: 15px;
+        }
+
+        h1 {
+            color: #38bdf8;
+        }
+
+        button {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 8px;
+            background: #334155;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background: #0284c7;
+        }
+
+        #resultado {
+            font-size: 18px;
+            margin-top: 20px;
+        }
+
+        #progresso {
+            color: #38bdf8;
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+<div class="container">
+    <h1>💻 Desafio de Programação</h1>
+    <p>Teste seus conhecimentos e ganhe pontos!</p>
+
+    <h3 id="progresso">Pergunta 1</h3>
+    <h2 id="pergunta"></h2>
+
+    <div id="opcoes"></div>
+
+    <p id="resultado"></p>
+    <h3 id="pontuacao">Pontos: 0</h3>
+
+    <button id="reiniciar" onclick="reiniciarJogo()" hidden>
+        Jogar novamente
+    </button>
+</div>
+
+<script>
+    const perguntas = [
+        {
+            pergunta: "Qual linguagem é usada para estruturar páginas web?",
+            opcoes: ["Python", "HTML", "Java"],
+            correta: 1
+        },
+        {
+            pergunta: "Qual linguagem adiciona interatividade a páginas web?",
+            opcoes: ["JavaScript", "CSS", "SQL"],
+            correta: 0
+        },
+        {
+            pergunta: "Qual comando mostra uma mensagem no console JavaScript?",
+            opcoes: ["print()", "echo()", "console.log()"],
+            correta: 2
+        },
+        {
+            pergunta: "Qual linguagem define o estilo de uma página?",
+            opcoes: ["CSS", "HTML", "C++"],
+            correta: 0
+        },
+        {
+            pergunta: "Qual estrutura repete um bloco de código?",
+            opcoes: ["if", "for", "const"],
+            correta: 1
+        }
+    ];
+
+    let indice = 0;
+    let pontos = 0;
+    let respondendo = false;
+
+    function mostrarPergunta() {
+        respondendo = false;
+
+        document.getElementById("resultado").textContent = "";
+        document.getElementById("progresso").textContent =
+            `Pergunta ${indice + 1} de ${perguntas.length}`;
+
+        document.getElementById("pergunta").textContent =
+            perguntas[indice].pergunta;
+
+        const opcoes = document.getElementById("opcoes");
+        opcoes.replaceChildren();
+
+        perguntas[indice].opcoes.forEach((opcao, i) => {
+            const botao = document.createElement("button");
+            botao.textContent = opcao;
+
+            botao.onclick = () => verificarResposta(i);
+            opcoes.appendChild(botao);
+        });
+    }
+
+    function verificarResposta(escolha) {
+        if (respondendo) return;
+        respondendo = true;
+
+        const correta = perguntas[indice].correta;
+        const resultado = document.getElementById("resultado");
+
+        if (escolha === correta) {
+            pontos += 10;
+            resultado.textContent = "✅ Resposta correta! +10 pontos";
+        } else {
+            resultado.textContent =
+                "❌ Resposta errada! Correta: " +
+                perguntas[indice].opcoes[correta];
+        }
+
+        document.getElementById("pontuacao").textContent =
+            `Pontos: ${pontos}`;
+
+        const botao = document.createElement("button");
+        botao.textContent = indice < perguntas.length - 1
+            ? "Próxima pergunta"
+            : "Ver resultado";
+
+        botao.onclick = proximaPergunta;
+        document.getElementById("opcoes").replaceChildren(botao);
+    }
+
+    function proximaPergunta() {
+        indice++;
+
+        if (indice < perguntas.length) {
+            mostrarPergunta();
+        } else {
+            finalizarJogo();
+        }
+    }
+
+    function finalizarJogo() {
+        document.getElementById("progresso").textContent =
+            "Desafio concluído!";
+        document.getElementById("pergunta").textContent =
+            `Você fez ${pontos} de 50 pontos!`;
+
+        document.getElementById("opcoes").replaceChildren();
+
+        document.getElementById("resultado").textContent =
+            pontos === 50
+                ? "🏆 Excelente! Você acertou tudo!"
+                : "👏 Parabéns por completar o desafio!";
+
+        document.getElementById("reiniciar").hidden = false;
+    }
+
+    function reiniciarJogo() {
+        indice = 0;
+        pontos = 0;
+
+        document.getElementById("pontuacao").textContent = "Pontos: 0";
+        document.getElementById("reiniciar").hidden = true;
+
+        mostrarPergunta();
+    }
+
+    mostrarPergunta();
+</script>
+
+<script src="script.js"></script></body>
+</html>
