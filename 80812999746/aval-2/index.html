@@ -1,0 +1,399 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connect - Rede Social</title>
+    <link rel="stylesheet" href="style.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+<header class="topbar">
+    <div class="logo">connect.</div>
+
+    <input class="search" id="search"
+        placeholder="🔎 Pesquisar publicações..."
+        aria-label="Pesquisar publicações">
+
+    <div class="profile-mini">
+        <img class="avatar" src="https://i.pravatar.cc/100?img=12" alt="Perfil">
+        <span>Alex</span>
+    </div>
+</header>
+
+<div class="layout">
+
+    <aside class="sidebar">
+        <div class="panel">
+            <button class="menu-item active" data-filter="all">🏠 Início</button>
+            <button class="menu-item" data-filter="mine">👤 Meu perfil</button>
+            <button class="menu-item" data-filter="liked">❤️ Curtidos</button>
+            <button class="menu-item" id="themeBtn">🌙 Mudar tema</button>
+            <button class="menu-item" id="clearSearch">🔄 Ver tudo</button>
+        </div>
+    </aside>
+
+    <main>
+        <section class="stories">
+            <div class="story" onclick="document.getElementById('postText').focus()">
+                <img src="https://i.pravatar.cc/100?img=12" alt="">
+                <p>Seu story +</p>
+            </div>
+            <div class="story">
+                <img src="https://i.pravatar.cc/100?img=47" alt="">
+                <p>Mariana</p>
+            </div>
+            <div class="story">
+                <img src="https://i.pravatar.cc/100?img=11" alt="">
+                <p>Lucas</p>
+            </div>
+            <div class="story">
+                <img src="https://i.pravatar.cc/100?img=32" alt="">
+                <p>Beatriz</p>
+            </div>
+            <div class="story">
+                <img src="https://i.pravatar.cc/100?img=59" alt="">
+                <p>Rafael</p>
+            </div>
+        </section>
+
+        <section class="panel create-post">
+            <div class="create-top">
+                <img class="avatar" src="https://i.pravatar.cc/100?img=12" alt="">
+                <input id="postText" maxlength="500"
+                    placeholder="O que você está pensando, Alex?">
+            </div>
+
+            <div class="create-actions">
+                <span class="notice">✨ Compartilhe uma ideia</span>
+                <button class="primary" id="publish">Publicar ＋</button>
+            </div>
+        </section>
+
+        <section id="feed"></section>
+
+        <div id="empty" class="panel empty hidden">
+            Nenhuma publicação encontrada.
+        </div>
+    </main>
+
+    <aside class="rightbar">
+        <section class="panel">
+            <h3>✨ Pessoas para seguir</h3>
+
+            <div class="friend">
+                <img class="avatar" src="https://i.pravatar.cc/100?img=47" alt="">
+                <div class="friend-info">
+                    <strong>Mariana Costa</strong>
+                    <small>Fotografia</small>
+                </div>
+                <button class="follow">Seguir</button>
+            </div>
+
+            <div class="friend">
+                <img class="avatar" src="https://i.pravatar.cc/100?img=11" alt="">
+                <div class="friend-info">
+                    <strong>Lucas Silva</strong>
+                    <small>Tecnologia</small>
+                </div>
+                <button class="follow">Seguir</button>
+            </div>
+
+            <div class="friend">
+                <img class="avatar" src="https://i.pravatar.cc/100?img=32" alt="">
+                <div class="friend-info">
+                    <strong>Beatriz Lima</strong>
+                    <small>Música</small>
+                </div>
+                <button class="follow">Seguir</button>
+            </div>
+        </section>
+
+        <section class="panel">
+            <h3>💜 Sobre o Connect</h3>
+            <p class="notice">
+                Uma rede social fictícia para compartilhar ideias,
+                conversar e interagir com publicações.
+            </p>
+            <p class="notice">
+                Projeto demonstrativo: os dados ficam neste navegador.
+            </p>
+        </section>
+    </aside>
+
+</div>
+
+<script>
+const avatarAlex = "https://i.pravatar.cc/100?img=12";
+
+const initialPosts = [
+    {
+        id: 1,
+        name: "Mariana Costa",
+        avatar: "https://i.pravatar.cc/100?img=47",
+        text: "Um dia bonito, uma boa música e muita coisa boa pela frente! ✨💜",
+        image: "https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?auto=format&fit=crop&w=1000&q=80",
+        likes: 12, liked: false, mine: false,
+        comments: ["Que foto linda! 💜"]
+    },
+    {
+        id: 2,
+        name: "Lucas Silva",
+        avatar: "https://i.pravatar.cc/100?img=11",
+        text: "Finalmente terminei meu primeiro projeto de programação! 💻🚀",
+        image: "",
+        likes: 8, liked: false, mine: false,
+        comments: ["Parabéns pelo projeto!"]
+    },
+    {
+        id: 3,
+        name: "Beatriz Lima",
+        avatar: "https://i.pravatar.cc/100?img=32",
+        text: "Nunca pare de aprender coisas novas. Cada passo conta! 🌟",
+        image: "https://images.unsplash.com/photo-1490730141103-6cac27aaab94?auto=format&fit=crop&w=1000&q=80",
+        likes: 21, liked: false, mine: false,
+        comments: []
+    }
+];
+
+function loadPosts() {
+    try {
+        return JSON.parse(localStorage.getItem("connect_posts")) || initialPosts;
+    } catch {
+        return initialPosts;
+    }
+}
+
+let posts = loadPosts();
+let filter = "all";
+let searchTerm = "";
+
+function savePosts() {
+    try {
+        localStorage.setItem("connect_posts", JSON.stringify(posts));
+    } catch {}
+}
+
+function escapeHTML(value) {
+    return String(value).replace(/[&<>"']/g, char => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;",
+        '"': "&quot;", "'": "&#39;"
+    })[char]);
+}
+
+function renderPosts() {
+    const feed = document.getElementById("feed");
+    feed.innerHTML = "";
+
+    const visible = posts.filter(post => {
+        const matchesSearch = (post.text + " " + post.name)
+            .toLowerCase().includes(searchTerm.toLowerCase());
+
+        const matchesFilter =
+            filter === "all" ||
+            (filter === "mine" && post.mine) ||
+            (filter === "liked" && post.liked);
+
+        return matchesSearch && matchesFilter;
+    });
+
+    document.getElementById("empty")
+        .classList.toggle("hidden", visible.length > 0);
+
+    visible.forEach(post => {
+        const article = document.createElement("article");
+        article.className = "panel post";
+
+        article.innerHTML = `
+            <div class="post-header">
+                <img class="avatar" src="${escapeHTML(post.avatar)}" alt="">
+                <div>
+                    <h3>${escapeHTML(post.name)}</h3>
+                    <small>${post.mine ? "Sua publicação" : "Membro do Connect"} · agora</small>
+                </div>
+                ${post.mine ? `<button class="more delete-post" data-id="${post.id}">🗑️</button>` : ""}
+            </div>
+
+            <p class="post-text">${escapeHTML(post.text)}</p>
+
+            ${post.image ? `<img class="post-image" src="${escapeHTML(post.image)}" alt="Imagem da publicação" loading="lazy">` : ""}
+
+            <div class="post-stats">
+                <span>❤️ ${post.likes} curtidas</span>
+                <span>${post.comments.length} comentários</span>
+            </div>
+
+            <div class="post-buttons">
+                <button class="${post.liked ? "liked" : ""} like-btn" data-id="${post.id}">
+                    ${post.liked ? "❤️ Curtido" : "🤍 Curtir"}
+                </button>
+                <button class="comment-focus" data-id="${post.id}">💬 Comentar</button>
+                <button class="share-btn" data-id="${post.id}">↗ Compartilhar</button>
+            </div>
+
+            <div class="comments">
+                ${post.comments.map(comment =>
+                    `<div class="comment"><strong>Visitante:</strong> ${escapeHTML(comment)}</div>`
+                ).join("")}
+            </div>
+
+            <form class="comment-box" data-id="${post.id}">
+                <input name="comment" maxlength="250"
+                    placeholder="Escreva um comentário..." required>
+                <button class="primary" type="submit">Enviar</button>
+            </form>
+        `;
+
+        feed.appendChild(article);
+    });
+}
+
+document.getElementById("publish").addEventListener("click", () => {
+    const input = document.getElementById("postText");
+    const text = input.value.trim();
+
+    if (!text) {
+        alert("Escreva algo antes de publicar!");
+        input.focus();
+        return;
+    }
+
+    posts.unshift({
+        id: Date.now(),
+        name: "Alex",
+        avatar: avatarAlex,
+        text,
+        image: "",
+        likes: 0,
+        liked: false,
+        mine: true,
+        comments: []
+    });
+
+    input.value = "";
+    filter = "all";
+    updateMenu();
+    savePosts();
+    renderPosts();
+});
+
+document.getElementById("postText").addEventListener("keydown", event => {
+    if (event.key === "Enter") {
+        event.preventDefault();
+        document.getElementById("publish").click();
+    }
+});
+
+document.getElementById("feed").addEventListener("click", event => {
+    const likeButton = event.target.closest(".like-btn");
+    const commentButton = event.target.closest(".comment-focus");
+    const shareButton = event.target.closest(".share-btn");
+    const deleteButton = event.target.closest(".delete-post");
+
+    if (likeButton) {
+        const post = posts.find(p => p.id == likeButton.dataset.id);
+        if (post) {
+            post.liked = !post.liked;
+            post.likes = Math.max(0, post.likes + (post.liked ? 1 : -1));
+            savePosts();
+            renderPosts();
+        }
+    }
+
+    if (commentButton) {
+        commentButton.closest(".post").querySelector("input[name=comment]").focus();
+    }
+
+    if (shareButton) {
+        const post = posts.find(p => p.id == shareButton.dataset.id);
+        if (post) {
+            const text = post.name + ": " + post.text;
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text)
+                    .then(() => alert("Texto copiado!"))
+                    .catch(() => prompt("Copie a publicação:", text));
+            } else {
+                prompt("Copie a publicação:", text);
+            }
+        }
+    }
+
+    if (deleteButton && confirm("Excluir sua publicação?")) {
+        posts = posts.filter(p => p.id !== Number(deleteButton.dataset.id));
+        savePosts();
+        renderPosts();
+    }
+});
+
+document.getElementById("feed").addEventListener("submit", event => {
+    if (!event.target.matches(".comment-box")) return;
+    event.preventDefault();
+
+    const post = posts.find(p => p.id === Number(event.target.dataset.id));
+    const text = event.target.elements.comment.value.trim();
+
+    if (post && text) {
+        post.comments.push(text);
+        savePosts();
+        renderPosts();
+    }
+});
+
+document.getElementById("search").addEventListener("input", event => {
+    searchTerm = event.target.value.trim();
+    renderPosts();
+});
+
+function updateMenu() {
+    document.querySelectorAll("[data-filter]").forEach(button => {
+        button.classList.toggle("active", button.dataset.filter === filter);
+    });
+}
+
+document.querySelectorAll("[data-filter]").forEach(button => {
+    button.addEventListener("click", () => {
+        filter = button.dataset.filter;
+        updateMenu();
+        renderPosts();
+    });
+});
+
+document.getElementById("clearSearch").addEventListener("click", () => {
+    filter = "all";
+    searchTerm = "";
+    document.getElementById("search").value = "";
+    updateMenu();
+    renderPosts();
+});
+
+document.getElementById("themeBtn").addEventListener("click", () => {
+    document.body.classList.toggle("dark");
+    try {
+        localStorage.setItem("connect_dark",
+            document.body.classList.contains("dark") ? "yes" : "no");
+    } catch {}
+});
+
+try {
+    if (localStorage.getItem("connect_dark") === "yes") {
+        document.body.classList.add("dark");
+    }
+} catch {}
+
+document.querySelectorAll(".follow").forEach(button => {
+    button.addEventListener("click", () => {
+        const following = button.dataset.following === "yes";
+        button.dataset.following = following ? "no" : "yes";
+        button.textContent = following ? "Seguir" : "Seguindo";
+        button.style.background = following ? "#eeeaff" : "#d9f7e7";
+        button.style.color = following ? "#6755e8" : "#16834a";
+    });
+});
+
+renderPosts();
+</script>
+
+</body>
+</html>
