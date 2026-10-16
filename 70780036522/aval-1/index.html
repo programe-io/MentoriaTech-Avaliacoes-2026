@@ -1,0 +1,372 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cadastro de Produtos</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #f1f5f9;
+    margin: 0;
+    padding: 20px;
+}
+.container {
+    max-width: 900px;
+    margin: auto;
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+}
+h1 {
+    text-align: center;
+    color: #1d4ed8;
+}
+input {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0 15px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    color: white;
+    margin: 3px;
+}
+.cadastrar { background: #2563eb; }
+.editar { background: #d97706; }
+.excluir { background: #dc2626; }
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+th, td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+}
+th {
+    background: #1d4ed8;
+    color: white;
+}
+.mensagem {
+    margin-top: 15px;
+    font-weight: bold;
+}
+.resumo {
+    background: #eff6ff;
+    padding: 15px;
+    margin-top: 20px;
+    border-radius: 8px;
+}
+.tabela {
+    overflow-x: auto;
+}
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+<div class="container">
+    <h1>Cadastro de Produtos</h1>
+
+    <form id="formProduto">
+        <label for="descricao">Descrição do produto</label>
+        <input id="descricao" type="text" minlength="5"
+               placeholder="Nome do produto" required>
+
+        <label for="quantidade">Quantidade</label>
+        <input id="quantidade" type="number" min="1" step="1"
+               placeholder="Quantidade" required>
+
+        <label for="valor">Valor unitário (R$)</label>
+        <input id="valor" type="number" min="0" step="0.01"
+               placeholder="Preço" required>
+
+        <button class="cadastrar" type="submit" id="btnSalvar">
+            Cadastrar produto
+        </button>
+        <button type="button" id="btnCancelar"
+                hidden>Cancelar edição</button>
+    </form>
+
+    <p id="mensagem" class="mensagem" role="status"></p>
+
+    <div class="resumo">
+        <p>Produtos cadastrados: <strong id="totalProdutos">0</strong></p>
+        <p>Unidades em estoque: <strong id="totalUnidades">0</strong></p>
+        <p>Valor total do estoque: <strong id="valorEstoque">R$ 0,00</strong></p>
+    </div>
+
+    <h2>Lista de produtos</h2>
+
+    <div class="tabela">
+        <table>
+            <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Descrição</th>
+                    <th>Quantidade</th>
+                    <th>Valor unitário</th>
+                    <th>Total</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="listaProdutos"></tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+"use strict";
+
+let produtos = [];
+let proximoCodigo = 1;
+let codigoEdicao = null;
+
+const form = document.getElementById("formProduto");
+const descricao = document.getElementById("descricao");
+const quantidade = document.getElementById("quantidade");
+const valor = document.getElementById("valor");
+const lista = document.getElementById("listaProdutos");
+const mensagem = document.getElementById("mensagem");
+
+const moeda = new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL"
+});
+
+function avisar(texto, erro = false) {
+    mensagem.textContent = texto;
+    mensagem.style.color = erro ? "#dc2626" : "#15803d";
+}
+
+function salvar() {
+    try {
+        localStorage.setItem("produtos", JSON.stringify(produtos));
+        localStorage.setItem("proximoCodigo", String(proximoCodigo));
+    } catch (e) {
+        avisar("Não foi possível salvar os dados no navegador.", true);
+    }
+}
+
+function carregar() {
+    try {
+        const dados = localStorage.getItem("produtos");
+        const codigoSalvo = Number(localStorage.getItem("proximoCodigo"));
+
+        if (dados !== null) {
+            const listaSalva = JSON.parse(dados);
+
+            if (!Array.isArray(listaSalva)) {
+                throw new Error("Dados inválidos");
+            }
+
+            for (const p of listaSalva) {
+                if (!p ||
+                    !Number.isSafeInteger(p.codigo) ||
+                    p.codigo < 1 ||
+                    typeof p.descricao !== "string" ||
+                    p.descricao.trim().length < 5 ||
+                    !Number.isSafeInteger(p.quantidade) ||
+                    p.quantidade < 1 ||
+                    typeof p.valor !== "number" ||
+                    !Number.isFinite(p.valor) ||
+                    p.valor < 0) {
+                    throw new Error("Produto inválido");
+                }
+            }
+
+            if (new Set(listaSalva.map(p => p.codigo)).size !== listaSalva.length) {
+                throw new Error("Códigos duplicados");
+            }
+
+            produtos = listaSalva;
+            const maiorCodigo = produtos.reduce(
+                (maior, p) => Math.max(maior, p.codigo), 0
+            );
+
+            proximoCodigo = Number.isSafeInteger(codigoSalvo) &&
+                codigoSalvo > maiorCodigo ? codigoSalvo : maiorCodigo + 1;
+        }
+    } catch (e) {
+        produtos = [];
+        proximoCodigo = 1;
+        avisar("Não foi possível ler os dados salvos.", true);
+    }
+}
+
+function validar(desc, qtd, preco) {
+    if (desc.trim().length < 5) {
+        throw new Error("A descrição deve ter pelo menos 5 caracteres.");
+    }
+
+    if (!Number.isSafeInteger(qtd) || qtd < 1) {
+        throw new Error("A quantidade deve ser um inteiro maior que zero.");
+    }
+
+    if (!Number.isFinite(preco) || preco < 0) {
+        throw new Error("O valor deve ser maior ou igual a zero.");
+    }
+}
+
+function limparFormulario() {
+    form.reset();
+    codigoEdicao = null;
+    document.getElementById("btnSalvar").textContent = "Cadastrar produto";
+    document.getElementById("btnCancelar").hidden = true;
+}
+
+function atualizarResumo() {
+    document.getElementById("totalProdutos").textContent = produtos.length;
+
+    document.getElementById("totalUnidades").textContent =
+        produtos.reduce((soma, p) => soma + p.quantidade, 0);
+
+    document.getElementById("valorEstoque").textContent = moeda.format(
+        produtos.reduce((soma, p) => soma + p.quantidade * p.valor, 0)
+    );
+}
+
+function listar() {
+    lista.replaceChildren();
+
+    if (produtos.length === 0) {
+        const tr = document.createElement("tr");
+        const td = document.createElement("td");
+        td.colSpan = 6;
+        td.textContent = "Nenhum produto cadastrado.";
+        tr.appendChild(td);
+        lista.appendChild(tr);
+        atualizarResumo();
+        return;
+    }
+
+    produtos.forEach(p => {
+        const tr = document.createElement("tr");
+
+        [p.codigo, p.descricao, p.quantidade, moeda.format(p.valor),
+         moeda.format(p.quantidade * p.valor)].forEach(item => {
+            const td = document.createElement("td");
+            td.textContent = item;
+            tr.appendChild(td);
+        });
+
+        const acoes = document.createElement("td");
+
+        const editar = document.createElement("button");
+        editar.textContent = "Editar";
+        editar.className = "editar";
+        editar.type = "button";
+        editar.onclick = () => editarProduto(p.codigo);
+
+        const excluir = document.createElement("button");
+        excluir.textContent = "Excluir";
+        excluir.className = "excluir";
+        excluir.type = "button";
+        excluir.onclick = () => excluirProduto(p.codigo);
+
+        acoes.append(editar, excluir);
+        tr.appendChild(acoes);
+        lista.appendChild(tr);
+    });
+
+    atualizarResumo();
+}
+
+form.addEventListener("submit", function(evento) {
+    evento.preventDefault();
+
+    try {
+        const desc = descricao.value.trim();
+        const qtd = Number(quantidade.value);
+        const preco = Number(valor.value);
+
+        if (quantidade.value === "" || valor.value === "") {
+            throw new Error("Preencha todos os campos.");
+        }
+
+        validar(desc, qtd, preco);
+
+        if (codigoEdicao === null) {
+            produtos.push({
+                codigo: proximoCodigo++,
+                descricao: desc,
+                quantidade: qtd,
+                valor: preco
+            });
+            avisar("Produto cadastrado com sucesso!");
+        } else {
+            const p = produtos.find(p => p.codigo === codigoEdicao);
+
+            if (!p) throw new Error("Produto não encontrado.");
+
+            p.descricao = desc;
+            p.quantidade = qtd;
+            p.valor = preco;
+            avisar("Produto atualizado com sucesso!");
+        }
+
+        salvar();
+        listar();
+        limparFormulario();
+    } catch (e) {
+        avisar(e.message, true);
+    }
+});
+
+function editarProduto(codigo) {
+    const p = produtos.find(p => p.codigo === codigo);
+
+    if (!p) {
+        avisar("Produto não encontrado.", true);
+        return;
+    }
+
+    codigoEdicao = codigo;
+    descricao.value = p.descricao;
+    quantidade.value = p.quantidade;
+    valor.value = p.valor;
+
+    document.getElementById("btnSalvar").textContent = "Salvar alterações";
+    document.getElementById("btnCancelar").hidden = false;
+    descricao.focus();
+}
+
+function excluirProduto(codigo) {
+    const p = produtos.find(p => p.codigo === codigo);
+
+    if (!p) {
+        avisar("Produto não encontrado.", true);
+        return;
+    }
+
+    if (!confirm("Deseja excluir o produto " + p.descricao + "?")) {
+        return;
+    }
+
+    produtos = produtos.filter(p => p.codigo !== codigo);
+
+    if (codigoEdicao === codigo) limparFormulario();
+
+    salvar();
+    listar();
+    avisar("Produto excluído com sucesso!");
+}
+
+document.getElementById("btnCancelar").addEventListener("click", limparFormulario);
+
+carregar();
+listar();
+</script>
+<script src="script.js"></script></body>
+</html>
