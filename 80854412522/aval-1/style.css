@@ -1,0 +1,861 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GreenSocial</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --fundo: #101510;
+    --painel: #19221b;
+    --verde: #35d879;
+    --texto: #f1f5f1;
+    --cinza: #a2afa4;
+    --borda: #2d3b30;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: var(--fundo);
+    color: var(--texto);
+}
+
+button, input {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+.layout {
+    display: grid;
+    grid-template-columns: 200px minmax(0, 700px) 250px;
+    gap: 22px;
+    max-width: 1250px;
+    margin: auto;
+    padding: 20px;
+}
+
+.sidebar {
+    position: sticky;
+    top: 15px;
+    height: calc(100vh - 30px);
+}
+
+.logo {
+    color: var(--verde);
+    margin: 15px 0 30px;
+    font-size: 26px;
+}
+
+.nav-btn {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    margin-bottom: 8px;
+    background: transparent;
+    border: none;
+    border-radius: 10px;
+    color: var(--texto);
+    text-align: left;
+    font-size: 15px;
+}
+
+.nav-btn:hover {
+    background: var(--painel);
+    color: var(--verde);
+}
+
+.profile {
+    background: var(--painel);
+    border: 1px solid var(--borda);
+    border-radius: 16px;
+    padding: 22px;
+}
+
+.profile-top {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.avatar {
+    width: 95px;
+    height: 95px;
+    border: 3px solid var(--verde);
+    border-radius: 50%;
+    background: #244b32;
+    display: grid;
+    place-items: center;
+    font-size: 48px;
+}
+
+.profile-info {
+    flex: 1;
+}
+
+.profile-info h1 {
+    font-size: 23px;
+    margin-bottom: 12px;
+}
+
+.btn {
+    border: none;
+    border-radius: 8px;
+    background: var(--verde);
+    color: #092013;
+    font-weight: bold;
+    padding: 10px 14px;
+    margin: 3px;
+}
+
+.btn.secondary {
+    background: #344338;
+    color: white;
+}
+
+.stats {
+    display: flex;
+    gap: 22px;
+    flex-wrap: wrap;
+    margin: 22px 0;
+    font-size: 14px;
+}
+
+.bio {
+    color: #d7e2d8;
+    line-height: 1.8;
+    font-size: 14px;
+}
+
+.bio strong {
+    color: var(--verde);
+}
+
+.highlights {
+    display: flex;
+    gap: 18px;
+    overflow-x: auto;
+    padding: 25px 5px;
+}
+
+.highlight {
+    text-align: center;
+    min-width: 65px;
+    font-size: 12px;
+}
+
+.highlight-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 2px solid var(--verde);
+    background: #223b29;
+    display: grid;
+    place-items: center;
+    font-size: 27px;
+    margin: 0 auto 8px;
+}
+
+.tabs {
+    display: flex;
+    justify-content: center;
+    gap: 35px;
+    border-top: 1px solid var(--borda);
+    border-bottom: 1px solid var(--borda);
+    padding: 15px;
+}
+
+.tab {
+    border: none;
+    background: none;
+    color: var(--cinza);
+}
+
+.tab.active {
+    color: var(--verde);
+}
+
+.posts {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 5px;
+    margin-top: 15px;
+}
+
+.post {
+    aspect-ratio: 1;
+    overflow: hidden;
+    position: relative;
+    background: var(--painel);
+    border: 1px solid var(--borda);
+    border-radius: 7px;
+    cursor: pointer;
+}
+
+.post-art {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    font-size: clamp(45px, 8vw, 85px);
+    background: radial-gradient(circle, #315a3a, #101a12);
+    transition: transform .2s;
+}
+
+.post:hover .post-art {
+    transform: scale(1.06);
+}
+
+.post-caption {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 10px 5px;
+    background: linear-gradient(transparent, #000c);
+    font-size: 12px;
+    overflow-wrap: anywhere;
+}
+
+.rightbar {
+    position: sticky;
+    top: 20px;
+    align-self: start;
+}
+
+.suggestion-box {
+    background: var(--painel);
+    border: 1px solid var(--borda);
+    padding: 16px;
+    border-radius: 14px;
+}
+
+.suggestion-box h3 {
+    font-size: 15px;
+    margin-bottom: 20px;
+}
+
+.suggestion {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 18px;
+}
+
+.mini-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #294b32;
+    display: grid;
+    place-items: center;
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.suggestion-text {
+    flex: 1;
+    min-width: 0;
+}
+
+.suggestion-text strong {
+    font-size: 11px;
+    overflow-wrap: anywhere;
+}
+
+.suggestion-text p {
+    color: var(--cinza);
+    font-size: 11px;
+    margin-top: 4px;
+}
+
+.follow {
+    background: none;
+    border: none;
+    color: var(--verde);
+    font-size: 11px;
+    font-weight: bold;
+}
+
+footer {
+    color: var(--cinza);
+    font-size: 12px;
+    line-height: 2;
+    padding: 20px 0;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 10;
+    background: #000b;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+}
+
+.modal.open {
+    display: flex;
+}
+
+.modal-box {
+    width: 100%;
+    max-width: 420px;
+    padding: 22px;
+    border-radius: 15px;
+    background: var(--painel);
+    border: 1px solid var(--borda);
+}
+
+.modal-box h2 {
+    margin-bottom: 18px;
+}
+
+.modal-box input {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0 15px;
+    border-radius: 8px;
+    background: var(--fundo);
+    border: 1px solid var(--borda);
+    color: white;
+}
+
+.close {
+    float: right;
+    color: white;
+    background: none;
+    border: none;
+    font-size: 24px;
+}
+
+.feed-card {
+    margin: 20px 0;
+    background: var(--painel);
+    border: 1px solid var(--borda);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.feed-head, .feed-caption, .feed-actions, .comments {
+    padding: 12px;
+}
+
+.feed-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.feed-art {
+    height: 300px;
+    display: grid;
+    place-items: center;
+    font-size: 100px;
+    background: radial-gradient(circle, #315a3a, #101a12);
+}
+
+.feed-actions button {
+    color: white;
+    background: none;
+    border: none;
+    font-size: 23px;
+    margin-right: 12px;
+}
+
+.feed-actions button.liked {
+    color: #ff6b83;
+}
+
+.feed-caption p {
+    margin-top: 7px;
+    font-size: 14px;
+}
+
+.comments {
+    font-size: 13px;
+}
+
+.comment-row {
+    margin: 8px 0;
+    overflow-wrap: anywhere;
+}
+
+.comment-form {
+    display: flex;
+    gap: 8px;
+    padding: 10px;
+    border-top: 1px solid var(--borda);
+}
+
+.comment-form input {
+    flex: 1;
+    min-width: 0;
+    padding: 10px;
+    background: var(--fundo);
+    border: 1px solid var(--borda);
+    color: white;
+    border-radius: 8px;
+}
+
+.comment-form button {
+    border: none;
+    background: none;
+    color: var(--verde);
+    font-weight: bold;
+}
+
+.empty {
+    grid-column: 1 / -1;
+    padding: 30px;
+    color: var(--cinza);
+    text-align: center;
+}
+
+@media (max-width: 1000px) {
+    .layout {
+        grid-template-columns: 160px minmax(0, 1fr);
+    }
+
+    .rightbar {
+        display: none;
+    }
+}
+
+@media (max-width: 600px) {
+    .layout {
+        display: block;
+        padding: 10px;
+        padding-bottom: 75px;
+    }
+
+    .sidebar {
+        position: fixed;
+        z-index: 5;
+        top: auto;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: auto;
+        display: flex;
+        justify-content: space-around;
+        background: #111a13;
+        border-top: 1px solid var(--borda);
+    }
+
+    .logo, .nav-btn:nth-of-type(2),
+    .nav-btn:nth-of-type(3), .nav-btn:nth-of-type(4),
+    .nav-btn:nth-of-type(5) {
+        display: none;
+    }
+
+    .nav-btn {
+        width: auto;
+        margin: 0;
+        padding: 13px;
+        font-size: 19px;
+    }
+
+    .profile {
+        padding: 15px;
+    }
+
+    .avatar {
+        width: 75px;
+        height: 75px;
+        font-size: 38px;
+    }
+
+    .profile-info h1 {
+        font-size: 18px;
+    }
+
+    .stats {
+        justify-content: space-between;
+        gap: 8px;
+        font-size: 12px;
+    }
+
+    .tabs {
+        gap: 22px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="layout">
+
+<aside class="sidebar">
+    <h1 class="logo">🌿 GreenSocial</h1>
+    <button class="nav-btn" onclick="topo()">🏠 Início</button>
+    <button class="nav-btn" onclick="pesquisar()">🔎 Pesquisar</button>
+    <button class="nav-btn" onclick="mostrarFeed()">🌎 Explorar</button>
+    <button class="nav-btn" onclick="mostrarFeed()">🎬 Vídeos</button>
+    <button class="nav-btn" onclick="alert('Mensagens de demonstração!')">💬 Mensagens</button>
+    <button class="nav-btn" onclick="abrirModal()">➕ Criar publicação</button>
+    <button class="nav-btn" onclick="topo()">👤 Perfil</button>
+</aside>
+
+<main>
+    <section class="profile" id="perfil">
+        <div class="profile-top">
+            <div class="avatar">😎</div>
+            <div class="profile-info">
+                <h1>fernando.dev</h1>
+                <button class="btn" id="seguirPerfil" onclick="seguirUsuario()">
+                    Seguir
+                </button>
+                <button class="btn secondary"
+                    onclick="alert('Esta é uma rede social fictícia!')">
+                    Mensagem
+                </button>
+            </div>
+        </div>
+
+        <div class="stats">
+            <span><strong id="totalPosts">9</strong> publicações</span>
+            <span><strong id="seguidores">1248</strong> seguidores</span>
+            <span><strong>367</strong> seguindo</span>
+        </div>
+
+        <div class="bio">
+            <strong>Fernando 🌿</strong><br>
+            🎮 Gamer | 💻 Estudante de Sistemas<br>
+            📍 Assunção do Piauí - PI<br>
+            ⭐ Pokémon • One Piece • Boku no Hero<br>
+            🧱 Roblox e Minecraft<br>
+            💚 Grandes sonhos exigem grandes esforços!
+        </div>
+    </section>
+
+    <div class="highlights">
+        <div class="highlight"><div class="highlight-icon">🎮</div>Jogos</div>
+        <div class="highlight"><div class="highlight-icon">💧</div>Pokémon</div>
+        <div class="highlight"><div class="highlight-icon">☠️</div>One Piece</div>
+        <div class="highlight"><div class="highlight-icon">🔥</div>Animes</div>
+        <div class="highlight"><div class="highlight-icon">💻</div>Estudos</div>
+        <div class="highlight"><div class="highlight-icon">🌿</div>Natureza</div>
+    </div>
+
+    <div class="tabs">
+        <button class="tab active" onclick="filtrar('todos',this)">▦ Posts</button>
+        <button class="tab" onclick="filtrar('videos',this)">▷ Vídeos</button>
+        <button class="tab" onclick="filtrar('curtidos',this)">♡ Curtidos</button>
+    </div>
+
+    <div class="posts" id="posts"></div>
+    <div id="feed"></div>
+</main>
+
+<aside class="rightbar">
+    <div class="suggestion-box">
+        <h3>🌱 Sugestões para você</h3>
+
+        <div class="suggestion">
+            <div class="mini-avatar">🏴‍☠️</div>
+            <div class="suggestion-text"><strong>luffy_fan</strong><p>One Piece</p></div>
+            <button class="follow" onclick="seguir(this)">Seguir</button>
+        </div>
+
+        <div class="suggestion">
+            <div class="mini-avatar">🔥</div>
+            <div class="suggestion-text"><strong>todoroki_fan</strong><p>Boku no Hero</p></div>
+            <button class="follow" onclick="seguir(this)">Seguir</button>
+        </div>
+
+        <div class="suggestion">
+            <div class="mini-avatar">💧</div>
+            <div class="suggestion-text"><strong>pokemon_world</strong><p>Pokémon</p></div>
+            <button class="follow" onclick="seguir(this)">Seguir</button>
+        </div>
+
+        <div class="suggestion">
+            <div class="mini-avatar">🧱</div>
+            <div class="suggestion-text"><strong>minecraft_br</strong><p>Minecraft</p></div>
+            <button class="follow" onclick="seguir(this)">Seguir</button>
+        </div>
+
+        <div class="suggestion">
+            <div class="mini-avatar">🎮</div>
+            <div class="suggestion-text"><strong>roblox_gamer</strong><p>Roblox</p></div>
+            <button class="follow" onclick="seguir(this)">Seguir</button>
+        </div>
+    </div>
+
+    <footer>
+        Sobre • Ajuda • Privacidade<br>
+        Termos • Comunidade • Idioma<br><br>
+        © 2026 GreenSocial<br>
+        Rede social fictícia.
+    </footer>
+</aside>
+
+</div>
+
+<div class="modal" id="modal">
+    <div class="modal-box">
+        <button class="close" onclick="fecharModal()">×</button>
+        <h2>🌿 Nova publicação</h2>
+
+        <label for="legenda">Escreva sua legenda:</label>
+        <input id="legenda" maxlength="250" placeholder="O que você está pensando?">
+
+        <label for="emoji">Escolha um emoji:</label>
+        <input id="emoji" maxlength="8" value="🌿">
+
+        <button class="btn" onclick="publicar()">Publicar</button>
+        <button class="btn secondary" onclick="fecharModal()">Cancelar</button>
+    </div>
+</div>
+
+<script>
+const publicacoes = [
+    {emoji:"🏴‍☠️",titulo:"Aventura com Luffy!",legenda:"Sonhe grande!",tipo:"foto",likes:128},
+    {emoji:"🧱",titulo:"Meu mundo Minecraft",legenda:"Construir, explorar e sobreviver!",tipo:"foto",likes:96},
+    {emoji:"💧",titulo:"Swampert!",legenda:"Meu Pokémon favorito!",tipo:"foto",likes:203},
+    {emoji:"🌊",titulo:"Jinbei",legenda:"Respeito e lealdade!",tipo:"foto",likes:84},
+    {emoji:"🔥",titulo:"Shoto Todoroki",legenda:"Gelo e fogo!",tipo:"foto",likes:174},
+    {emoji:"🐢",titulo:"Lord Bowser",legenda:"O rei dos Koopas!",tipo:"foto",likes:71},
+    {emoji:"🐉",titulo:"Garchomp",legenda:"Poder de dragão!",tipo:"foto",likes:155},
+    {emoji:"🎮",titulo:"Hora de jogar!",legenda:"Um pouco de Roblox!",tipo:"video",likes:63},
+    {emoji:"🌿",titulo:"Meu espaço",legenda:"Aprendendo programação!",tipo:"foto",likes:112}
+];
+
+let curtidos = new Set();
+let comentarios = {};
+let seguindoPerfil = false;
+let seguidores = 1248;
+let proximoId = 10;
+
+const postsEl = document.getElementById("posts");
+const feedEl = document.getElementById("feed");
+
+function desenharPosts(filtro="todos") {
+    postsEl.innerHTML = "";
+
+    publicacoes.forEach((p,id) => {
+        if (filtro==="videos" && p.tipo!=="video") return;
+        if (filtro==="curtidos" && !curtidos.has(id)) return;
+
+        const card = document.createElement("div");
+        card.className = "post";
+
+        const art = document.createElement("div");
+        art.className = "post-art";
+        art.textContent = p.emoji;
+
+        const caption = document.createElement("div");
+        caption.className = "post-caption";
+        caption.textContent = p.titulo;
+
+        card.append(art,caption);
+        card.onclick = () => abrirPost(id);
+        postsEl.appendChild(card);
+    });
+
+    if (!postsEl.children.length) {
+        const empty = document.createElement("div");
+        empty.className = "empty";
+        empty.textContent = "Nenhuma publicação nesta seção.";
+        postsEl.appendChild(empty);
+    }
+
+    document.getElementById("totalPosts").textContent = publicacoes.length;
+}
+
+function filtrar(tipo,botao) {
+    document.querySelectorAll(".tab").forEach(b=>b.classList.remove("active"));
+    botao.classList.add("active");
+    desenharPosts(tipo);
+    feedEl.innerHTML="";
+}
+
+function abrirPost(id) {
+    const p = publicacoes[id];
+    if (!p) return;
+
+    feedEl.innerHTML="";
+
+    const card = document.createElement("article");
+    card.className="feed-card";
+
+    const head=document.createElement("div");
+    head.className="feed-head";
+    head.innerHTML='<div class="mini-avatar">😎</div><strong>fernando.dev</strong>';
+
+    const art=document.createElement("div");
+    art.className="feed-art";
+    art.textContent=p.emoji;
+
+    const actions=document.createElement("div");
+    actions.className="feed-actions";
+
+    const like=document.createElement("button");
+    like.className=curtidos.has(id)?"liked":"";
+    like.textContent=curtidos.has(id)?"♥":"♡";
+    like.setAttribute("aria-label","Curtir");
+
+    const likes=document.createElement("strong");
+    likes.textContent=(p.likes+(curtidos.has(id)?1:0))+" curtidas";
+
+    like.onclick=()=>{
+        if(curtidos.has(id)) curtidos.delete(id);
+        else curtidos.add(id);
+        abrirPost(id);
+        desenharPosts(document.querySelector(".tab.active").textContent.includes("Curtidos")?"curtidos":"todos");
+    };
+
+    actions.append(like,likes);
+
+    const caption=document.createElement("div");
+    caption.className="feed-caption";
+    const title=document.createElement("strong");
+    title.textContent=p.titulo;
+    const desc=document.createElement("p");
+    desc.textContent=p.legenda;
+    caption.append(title,desc);
+
+    const commentList=document.createElement("div");
+    commentList.className="comments";
+
+    (comentarios[id]||[]).forEach(c=>{
+        const line=document.createElement("div");
+        line.className="comment-row";
+        const name=document.createElement("strong");
+        name.textContent=c.nome+" ";
+        const msg=document.createElement("span");
+        msg.textContent=c.texto;
+        line.append(name,msg);
+        commentList.appendChild(line);
+    });
+
+    const form=document.createElement("form");
+    form.className="comment-form";
+
+    const input=document.createElement("input");
+    input.placeholder="Adicione um comentário...";
+    input.maxLength=200;
+    input.required=true;
+
+    const send=document.createElement("button");
+    send.textContent="Enviar";
+    send.type="submit";
+
+    form.append(input,send);
+    form.onsubmit=e=>{
+        e.preventDefault();
+        const texto=input.value.trim();
+        if(!texto)return;
+        if(!comentarios[id])comentarios[id]=[];
+        comentarios[id].push({nome:"fernando.dev",texto});
+        abrirPost(id);
+    };
+
+    card.append(head,art,actions,caption,commentList,form);
+    feedEl.appendChild(card);
+    feedEl.scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+function seguir(botao) {
+    const estaSeguindo=botao.dataset.seguindo==="sim";
+    botao.dataset.seguindo=estaSeguindo?"nao":"sim";
+    botao.textContent=estaSeguindo?"Seguir":"Seguindo";
+}
+
+function seguirUsuario() {
+    seguindoPerfil=!seguindoPerfil;
+    seguidores+=seguindoPerfil?1:-1;
+    document.getElementById("seguidores").textContent=seguidores;
+    document.getElementById("seguirPerfil").textContent=
+        seguindoPerfil?"Seguindo ✓":"Seguir";
+}
+
+function abrirModal() {
+    document.getElementById("modal").classList.add("open");
+}
+
+function fecharModal() {
+    document.getElementById("modal").classList.remove("open");
+}
+
+function publicar() {
+    const legenda=document.getElementById("legenda").value.trim();
+    const emoji=document.getElementById("emoji").value.trim()||"🌿";
+
+    if(!legenda) {
+        alert("Escreva uma legenda!");
+        return;
+    }
+
+    publicacoes.unshift({
+        emoji,
+        titulo:legenda,
+        legenda,
+        tipo:"foto",
+        likes:0
+    });
+
+    fecharModal();
+    document.getElementById("legenda").value="";
+    document.getElementById("emoji").value="🌿";
+
+    desenharPosts();
+    document.querySelectorAll(".tab").forEach(b=>b.classList.remove("active"));
+    document.querySelector(".tab").classList.add("active");
+    feedEl.innerHTML="";
+    window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function pesquisar() {
+    const termo=prompt("Digite o nome de uma publicação:");
+    if(termo===null)return;
+
+    const busca=termo.trim().toLocaleLowerCase("pt-BR");
+    const id=publicacoes.findIndex(p=>
+        (p.titulo+" "+p.legenda).toLocaleLowerCase("pt-BR").includes(busca)
+    );
+
+    if(id<0) {
+        alert("Publicação não encontrada.");
+        return;
+    }
+
+    abrirPost(id);
+}
+
+function mostrarFeed() {
+    if(publicacoes.length)abrirPost(0);
+}
+
+function topo() {
+    document.getElementById("perfil").scrollIntoView({behavior:"smooth"});
+    feedEl.innerHTML="";
+}
+
+document.getElementById("modal").addEventListener("click",e=>{
+    if(e.target.id==="modal")fecharModal();
+});
+
+document.addEventListener("keydown",e=>{
+    if(e.key==="Escape")fecharModal();
+});
+
+desenharPosts();
+</script>
+
+</body>
+</html>
