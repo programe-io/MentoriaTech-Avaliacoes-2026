@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  
+</head>
+<body>
+  // Array para armazenar os produtos do estoque
+let produtos = [];
+
+// Função para cadastrar um novo produto
+function cadastrarProduto(descricao, quantidade, valor) {
+    if (descricao.length < 5) {
+        console.log("Erro: A descrição deve ter no mínimo 5 caracteres.");
+        return;
+    }
+
+    const novoProduto = {
+        codigo: produtos.length + 1,
+        descricao: descricao,
+        quantidade: quantidade,
+        valor: valor
+    };
+
+    produtos.push(novoProduto);
+    console.log(`Produto "${descricao}" cadastrado com sucesso! Código: ${novoProduto.codigo}`);
+}
+
+// Função para listar os produtos cadastrados
+function listarProdutos() {
+    if (produtos.length === 0) {
+        console.log("O estoque está vazio.");
+        return;
+    }
+
+    console.log("\n--- LISTA DE PRODUTOS NO ESTOQUE ---");
+    for (let produto of produtos) {
+        console.log(`Código: ${produto.codigo} | Descrição: ${produto.descricao} | Qtd: ${produto.quantidade} | Valor: R$ ${produto.valor.toFixed(2)}`);
+    }
+    console.log("------------------------------------\n");
+}
+
+// Função para alterar o valor de um produto
+function alterarValor(codigo, novoValor) {
+    let produto = produtos.find(p => p.codigo === codigo);
+
+    if (produto) {
+        produto.valor = novoValor;
+        console.log(`Valor do produto ${produto.descricao} atualizado para R$ ${novoValor.toFixed(2)}.`);
+    } else {
+        console.log("Erro: Produto não encontrado.");
+    }
+}
+
+// Função para alterar a quantidade de um produto (somando ao estoque existente)
+function alterarQuantidade(codigo, quantidadeAdicional) {
+    let produto = produtos.find(p => p.codigo === codigo);
+
+    if (produto) {
+        produto.quantidade += quantidadeAdicional;
+        console.log(`Quantidade do produto ${produto.descricao} atualizada. Novo total: ${produto.quantidade}`);
+    } else {
+        console.log("Erro: Produto não encontrado.");
+    }
+}
+
+// --- EXEMPLO DE USO ---
+
+// 1. Cadastrando produtos
+cadastrarProduto("Caderno Universitário", 10, 25.50);
+cadastrarProduto("Caneta Esferográfica Azul", 50, 3.20);
+
+// 2. Listando os produtos
+listarProdutos();
+
+// 3. Alterando o valor de um produto (Código 1)
+alterarValor(1, 28.00);
+
+// 4. Alterando a quantidade de um produto (Código 2 - adicionando mais 20 unidades)
+alterarQuantidade(2, 20);
+
+// 5. Listando novamente para conferir as alterações
+listarProdutos();
+  <script src="script.js"></script>
+  
+</body>
+</html>
