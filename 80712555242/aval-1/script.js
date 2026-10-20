@@ -1,0 +1,21 @@
+*1. Cola isso no HTML:*
+<h1>Tipos de Wi-Fi</h1>
+<h2>2.4 GHz vs 5 GHz</h2>
+<p>A banda de 2,4 GHz tem maior alcance, mas sofre interferência. A banda de 5 GHz é mais rápida para vídeos e jogos.</p>
+
+<div class="card">
+  <h3>Wi-Fi 6 - 802.11ax</h3>
+  <p>Melhor eficiência para muitos dispositivos conectados ao mesmo tempo.</p>
+  <button onclick="mostrar()">Ver vantagem</button>
+  <p id="resultado"></p>
+</div>
+*2. Cola isso no CSS:*
+body { font-family: Arial; background: #f0f0f0; padding: 20px; }
+h1 { color: #2e7d32; }
+.card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px #ccc; }
+button { background: #2e7d32; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer; }
+*3. Cola isso no JavaScript:*
+function mostrar() {
+  document.getElementById("resultado").innerText = "O Wi-Fi 6 usa OFDMA e MU-MIMO para atender vários aparelhos sem travar!";
+}
+Depois clica em *Pré-visualização* embaixo pra ver se apareceu, e depois em *Publicar*.
