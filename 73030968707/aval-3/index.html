@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exemplo Prático - Manipulação de DOM</title>
+    <style>
+        /* Tópico 8: Classes definidas em um arquivo CSS (simulado aqui) */
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f4f4f9;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #e0e0e0;
+        }
+        /* Classes que serão alternadas via JavaScript */
+        .destaque {
+            background-color: #fff9c4;
+            font-weight: bold;
+        }
+        .sucesso {
+            color: #2e7d32;
+        }
+        .pendente {
+            color: #c62828;
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+    <h1>Manipulação de Estilos e Classes</h1>
+    
+    <!-- Tópico 2 e 3: Estilização direta / CSS Inline original -->
+    <p id="meu-paragrafo" style="color: gray;">
+        Este parágrafo começará cinza (CSS inline) e mudará via JavaScript.
+    </p>
+    
+    <button id="btn-estilo">Mudar Estilo Direto</button>
+    <button id="btn-classe">Alternar Classe de Destaque</button>
+
+    <!-- Tópico 9: Exemplo prático com uma tabela de situações -->
+    <table>
+        <thead>
+            <tr>
+                <th>Tarefa</th>
+                <th>Situação</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="linha-tabela">
+                <td>Estudar JavaScript</td>
+                <td class="status">Concluído</td>
+            </tr>
+            <tr class="linha-tabela">
+                <td>Praticar CSS</td>
+                <td class="status">Pendente</td>
+            </tr>
+            <tr class="linha-tabela">
+                <td>Fazer o deploy do projeto</td>
+                <td class="status">Concluído</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <button id="btn-formatar-tabela" style="margin-top: 15px;">Formatar Tabela Condicionalmente</button>
+
+    <script>
+        // --- 1. ESTILIZAÇÃO DIRETA (Tópicos 2, 4 e 5) ---
+        const paragrafo = document.getElementById('meu-paragrafo');
+        const btnEstilo = document.getElementById('btn-estilo');
+
+        btnEstilo.addEventListener('click', () => {
+            // Aplicando propriedades CSS via JavaScript (style)
+            paragrafo.style.color = 'blue';
+            paragrafo.style.fontSize = '20px';
+        });
+
+        // --- 2. MANIPULANDO CLASSES COM classList (Tópicos 6 e 7) ---
+        const btnClasse = document.getElementById('btn-classe');
+        btnClasse.addEventListener('click', () => {
+            // O método 'toggle' adiciona a classe se ela não existir, ou remove se já existir
+            paragrafo.classList.toggle('destaque');
+        });
+
+        // --- 3. SELEÇÃO MÚLTIPLA E ESTILOS CONDICIONAIS (Tópicos 10 e 11) ---
+        const btnTabela = document.getElementById('btn-formatar-tabela');
+
+        btnTabela.addEventListener('click', () => {
+            // Selecionando vários elementos com getElementsByClassName
+            const linhas = document.getElementsByClassName('linha-tabela');
+            const statusCelulas = document.getElementsByClassName('status');
+
+            // Percorrendo elementos com um loop (for clássico devido ao HTMLCollection)
+            for (let i = 0; i < statusCelulas.length; i++) {
+                const textoStatus = statusCelulas[i].textContent;
+
+                // Aplicando estilos/classes de forma condicional
+                if (textoStatus === 'Concluído') {
+                    statusCelulas[i].classList.add('sucesso');
+                    linhas[i].style.backgroundColor = '#e8f5e9'; // Estilo direto na linha inteira
+                } else if (textoStatus === 'Pendente') {
+                    statusCelulas[i].classList.add('pendente');
+                    linhas[i].style.backgroundColor = '#ffebee';
+                }
+            }
+        });
+    </script>
+<script src="script.js"></script></body>
+</html>
