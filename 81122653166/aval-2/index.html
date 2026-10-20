@@ -1,269 +1,96 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Chamada</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="script.js" defer></script>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="style.css" rel="stylesheet"></head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet">
+</head>
 <body>
+  
+<div class="app">
+  <header class="hero">
+    <div class="logo">✦</div>
+    <p class="eyebrow">SEU DIA, DO SEU JEITO</p>
+    <h1>Meu <span>Universo</span> de Tarefas</h1>
+    <p class="subtitle">Pequenos passos, grandes conquistas! ✨</p>
+  </header>
 
-<header class="topo">
-    <div>
-        <p class="eyebrow">GESTÃO ESCOLAR</p>
-        <h1>Sistema de Chamada</h1>
-        <p>Presença, atividades e histórico de aulas.</p>
+  <section class="stats">
+    <div class="stat">
+      <span class="stat-icon">📋</span>
+      <strong id="total">0</strong>
+      <small>Total</small>
     </div>
-    <div class="icone">✓</div>
-</header>
+    <div class="stat">
+      <span class="stat-icon">⚡</span>
+      <strong id="pending">0</strong>
+      <small>Pendentes</small>
+    </div>
+    <div class="stat">
+      <span class="stat-icon">🏆</span>
+      <strong id="done">0</strong>
+      <small>Concluídas</small>
+    </div>
+  </section>
 
-<main class="container">
+  <section class="panel">
+    <h2>✨ Qual é a missão de hoje?</h2>
+    <p class="description">Anote sua próxima conquista abaixo.</p>
 
-    <nav class="abas">
-        <button class="aba ativa" data-tela="chamada">Fazer chamada</button>
-        <button class="aba" data-tela="alunos">Alunos</button>
-        <button class="aba" data-tela="historico">Chamadas salvas</button>
-        <button class="aba" data-tela="configuracoes">Configurações</button>
-    </nav>
+    <form id="taskForm">
+      <input
+        id="taskInput"
+        type="text"
+        placeholder="Ex.: Estudar para a prova..."
+        maxlength="100"
+        required
+      />
+      <button class="add-btn" type="submit">+ Adicionar</button>
+    </form>
 
-    <!-- TELA DE CHAMADA -->
-    <section id="tela-chamada" class="tela ativa">
+    <div class="progress-info">
+      <span>Seu progresso</span>
+      <strong id="progressText">0%</strong>
+    </div>
+    <div
+      class="progress-track"
+      role="progressbar"
+      aria-label="Progresso das tarefas"
+      aria-valuemin="0"
+      aria-valuemax="100"
+      aria-valuenow="0"
+      id="progressTrack"
+    >
+      <div id="progressBar"></div>
+    </div>
 
-        <div class="cartao">
-            <h2>Dados da aula</h2>
+    <div class="filters">
+      <button class="filter active" data-filter="all">Todas</button>
+      <button class="filter" data-filter="pending">Pendentes</button>
+      <button class="filter" data-filter="done">Concluídas</button>
+    </div>
 
-            <div class="grade campos">
-                <label>Data
-                    <input type="date" id="dataAula">
-                </label>
+    <ul id="taskList"></ul>
 
-                <label>Dia da semana
-                    <select id="diaSemana">
-                        <option value="segunda">Segunda-feira</option>
-                        <option value="terca">Terça-feira</option>
-                        <option value="quarta">Quarta-feira</option>
-                        <option value="quinta">Quinta-feira</option>
-                        <option value="sexta">Sexta-feira</option>
-                    </select>
-                </label>
+    <div id="empty" class="empty">
+      <div class="empty-icon">🌷</div>
+      <h3>Tudo começa com um sonho!</h3>
+      <p>Adicione sua primeira tarefa e comece a brilhar.</p>
+    </div>
 
-                <label>Aula
-                    <select id="numeroAula"></select>
-                </label>
+    <button id="clearButton" class="clear-btn" type="button">
+      Limpar tarefas concluídas
+    </button>
+  </section>
 
-                <label>Turma
-                    <input id="turma" placeholder="Ex.: 1º ano A">
-                </label>
-            </div>
+  <footer>
+    <p>Feito com 💜 por alguém que acredita nos seus sonhos.</p>
+    <span>UM DIA DE CADA VEZ · UMA CONQUISTA DE CADA VEZ</span>
+  </footer>
+</div>
 
-            <div class="linha-acoes">
-                <button id="btnCopiar" class="btn secundario">
-                    Copiar chamada anterior
-                </button>
-
-                <button id="btnSalvar" class="btn principal">
-                    Salvar chamada
-                </button>
-            </div>
-
-            <p id="avisoCopia" class="mensagem"></p>
-        </div>
-
-        <div class="resumo">
-            <div class="resumo-item">
-                <span>Alunos</span>
-                <strong id="totalAlunos">0</strong>
-            </div>
-
-            <div class="resumo-item">
-                <span>Presentes</span>
-                <strong id="totalPresentes">0</strong>
-            </div>
-
-            <div class="resumo-item">
-                <span>Ausentes</span>
-                <strong id="totalAusentes">0</strong>
-            </div>
-
-            <div class="resumo-item">
-                <span>Fizeram atividade</span>
-                <strong id="totalAtividades">0</strong>
-            </div>
-        </div>
-
-        <div class="cartao">
-            <div class="titulo-secao">
-                <div>
-                    <h2>Lista de alunos</h2>
-                    <p>Marque a presença e a realização da atividade.</p>
-                </div>
-
-                <input id="buscaAluno" type="search"
-                    placeholder="Buscar aluno...">
-            </div>
-
-            <div class="rolagem-tabela">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Nome do aluno</th>
-                            <th>Presença</th>
-                            <th>Fez a atividade?</th>
-                        </tr>
-                    </thead>
-                    <tbody id="corpoChamada"></tbody>
-                </table>
-            </div>
-
-            <p id="estadoVazio" class="vazio">
-                Nenhum aluno cadastrado. Acesse a aba Alunos.
-            </p>
-
-            <div class="linha-acoes">
-                <button id="btnTodosPresentes" class="btn secundario">
-                    Marcar todos presentes
-                </button>
-
-                <button id="btnLimpar" class="btn perigo">
-                    Limpar marcações
-                </button>
-
-                <button id="btnImprimir" class="btn principal">
-                    Imprimir / salvar em PDF
-                </button>
-            </div>
-        </div>
-    </section>
-
-    <!-- TELA DE ALUNOS -->
-    <section id="tela-alunos" class="tela">
-        <div class="cartao">
-            <h2>Cadastro de alunos</h2>
-
-            <form id="formAluno" class="form-aluno">
-                <label>Nome completo
-                    <input id="nomeAluno" type="text"
-                        placeholder="Digite o nome do aluno" required>
-                </label>
-
-                <button class="btn principal" type="submit">
-                    Adicionar aluno
-                </button>
-            </form>
-
-            <div class="linha-acoes">
-                <button id="btnExportarAlunos" class="btn secundario">
-                    Exportar lista CSV
-                </button>
-
-                <label class="btn secundario arquivo-label">
-                    Importar lista
-                    <input type="file" id="importarAlunos"
-                        accept=".csv,.txt" hidden>
-                </label>
-            </div>
-
-            <div class="rolagem-tabela">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Nome</th>
-                            <th>Ação</th>
-                        </tr>
-                    </thead>
-                    <tbody id="corpoAlunos"></tbody>
-                </table>
-            </div>
-
-            <p id="estadoAlunos" class="vazio">
-                Nenhum aluno cadastrado.
-            </p>
-        </div>
-    </section>
-
-    <!-- HISTÓRICO -->
-    <section id="tela-historico" class="tela">
-        <div class="cartao">
-            <h2>Chamadas salvas</h2>
-
-            <input id="filtroHistorico" type="search"
-                placeholder="Buscar por data, turma ou dia">
-
-            <div id="listaHistorico" class="lista-historico"></div>
-
-            <p id="historicoVazio" class="vazio">
-                Ainda não há chamadas salvas.
-            </p>
-        </div>
-    </section>
-
-    <!-- CONFIGURAÇÕES -->
-    <section id="tela-configuracoes" class="tela">
-        <div class="cartao">
-            <h2>Quantidade de aulas por dia</h2>
-
-            <form id="formConfiguracoes">
-                <div class="grade grade-config">
-                    <label>Segunda-feira
-                        <input type="number" min="0" max="20"
-                            id="cfg-segunda" required>
-                    </label>
-
-                    <label>Terça-feira
-                        <input type="number" min="0" max="20"
-                            id="cfg-terca" required>
-                    </label>
-
-                    <label>Quarta-feira
-                        <input type="number" min="0" max="20"
-                            id="cfg-quarta" required>
-                    </label>
-
-                    <label>Quinta-feira
-                        <input type="number" min="0" max="20"
-                            id="cfg-quinta" required>
-                    </label>
-
-                    <label>Sexta-feira
-                        <input type="number" min="0" max="20"
-                            id="cfg-sexta" required>
-                    </label>
-                </div>
-
-                <button class="btn principal" type="submit">
-                    Salvar configurações
-                </button>
-            </form>
-        </div>
-
-        <div class="cartao">
-            <h2>Backup dos dados</h2>
-            <p>Guarde uma cópia dos alunos e das chamadas.</p>
-
-            <div class="linha-acoes">
-                <button id="btnBackup" class="btn secundario">
-                    Baixar backup
-                </button>
-
-                <label class="btn secundario arquivo-label">
-                    Restaurar backup
-                    <input type="file" id="restaurarBackup"
-                        accept=".json" hidden>
-                </label>
-            </div>
-        </div>
-    </section>
-
-</main>
-
-<footer>
-    Sistema de Chamada Escolar
-</footer>
-
-<script src="script.js"></script></body>
+  <script src="script.js"></script>
+  
+</body>
 </html>
