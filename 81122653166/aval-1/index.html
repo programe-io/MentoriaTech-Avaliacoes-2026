@@ -1,0 +1,2279 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chamada Escolar</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+    background:#f1f5f9;
+    color:#1e293b;
+    min-height:100vh;
+}
+
+header{
+    background:#2563eb;
+    color:white;
+    padding:20px;
+    text-align:center;
+}
+
+header h1{
+    font-size:27px;
+    margin-bottom:5px;
+}
+
+.container{
+    max-width:1150px;
+    margin:auto;
+    padding:15px;
+}
+
+/* MENU */
+
+.menu{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:8px;
+    margin-bottom:15px;
+}
+
+.menu button{
+    border:0;
+    border-radius:9px;
+    padding:13px 8px;
+    background:white;
+    color:#1e293b;
+    font-weight:bold;
+    cursor:pointer;
+    box-shadow:0 2px 7px rgba(0,0,0,.08);
+}
+
+.menu button.ativo{
+    background:#2563eb;
+    color:white;
+}
+
+/* TELAS */
+
+.tela{
+    display:none;
+}
+
+.tela.ativa{
+    display:block;
+}
+
+/* CARDS */
+
+.card{
+    background:white;
+    border-radius:14px;
+    padding:20px;
+    margin-bottom:15px;
+    box-shadow:0 3px 12px rgba(0,0,0,.07);
+}
+
+.card h2{
+    margin-bottom:15px;
+}
+
+/* BOTÕES */
+
+button{
+    border:0;
+    border-radius:8px;
+    padding:11px 15px;
+    font-size:14px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.btn-azul{
+    background:#2563eb;
+    color:white;
+}
+
+.btn-verde{
+    background:#16a34a;
+    color:white;
+}
+
+.btn-vermelho{
+    background:#dc2626;
+    color:white;
+}
+
+.btn-amarelo{
+    background:#f59e0b;
+    color:white;
+}
+
+.btn-cinza{
+    background:#64748b;
+    color:white;
+}
+
+.btn-roxo{
+    background:#7c3aed;
+    color:white;
+}
+
+/* FORM */
+
+input,select{
+    width:100%;
+    padding:12px;
+    border:1px solid #cbd5e1;
+    border-radius:8px;
+    font-size:16px;
+    background:white;
+}
+
+label{
+    display:block;
+    margin-bottom:6px;
+    font-weight:bold;
+}
+
+.form-aluno{
+    display:flex;
+    gap:10px;
+}
+
+/* CONFIGURAÇÃO */
+
+.dias-aulas{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:12px;
+}
+
+.dia-aula{
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:10px;
+    padding:15px;
+    text-align:center;
+}
+
+.dia-aula h3{
+    color:#1d4ed8;
+    margin-bottom:10px;
+}
+
+/* LISTA ALUNOS */
+
+.aluno{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:12px 5px;
+    border-bottom:1px solid #e2e8f0;
+}
+
+.numero{
+    width:35px;
+    color:#64748b;
+}
+
+.nome{
+    flex:1;
+    font-weight:bold;
+}
+
+.acoes{
+    display:flex;
+    gap:5px;
+}
+
+/* CHAMADA */
+
+.topo-chamada{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:15px;
+}
+
+.info-aula{
+    margin-top:15px;
+    background:#eff6ff;
+    border:1px solid #bfdbfe;
+    padding:14px;
+    border-radius:10px;
+}
+
+.botoes-gerais{
+    display:flex;
+    gap:7px;
+    flex-wrap:wrap;
+    margin-bottom:15px;
+}
+
+/* RESUMO */
+
+.resumo{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:8px;
+    margin-bottom:15px;
+}
+
+.resumo div{
+    padding:12px;
+    border-radius:9px;
+    text-align:center;
+    font-weight:bold;
+}
+
+.total{
+    background:#e0e7ff;
+    color:#3730a3;
+}
+
+.total-presentes{
+    background:#dcfce7;
+    color:#166534;
+}
+
+.total-faltas{
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+.total-fez{
+    background:#dbeafe;
+    color:#1e40af;
+}
+
+.total-nao-fez{
+    background:#fef3c7;
+    color:#92400e;
+}
+
+/* CHAMADA */
+
+.cabecalho-chamada{
+    display:grid;
+    grid-template-columns:45px 1fr 230px 230px;
+    gap:10px;
+    padding:12px;
+    background:#f8fafc;
+    border-radius:8px;
+    font-weight:bold;
+}
+
+.chamada-aluno{
+    display:grid;
+    grid-template-columns:45px 1fr 230px 230px;
+    gap:10px;
+    align-items:center;
+    padding:12px;
+    border-bottom:1px solid #e2e8f0;
+}
+
+.chamada-nome{
+    font-weight:bold;
+}
+
+.presenca,.atividade{
+    display:flex;
+    gap:5px;
+}
+
+.presenca button,.atividade button{
+    flex:1;
+    padding:9px 5px;
+}
+
+.presente{
+    background:#dcfce7;
+    color:#166534;
+}
+
+.presente.selecionado{
+    background:#16a34a;
+    color:white;
+}
+
+.falta{
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+.falta.selecionado{
+    background:#dc2626;
+    color:white;
+}
+
+.fez{
+    background:#dbeafe;
+    color:#1e40af;
+}
+
+.fez.selecionado{
+    background:#2563eb;
+    color:white;
+}
+
+.nao-fez{
+    background:#fef3c7;
+    color:#92400e;
+}
+
+.nao-fez.selecionado{
+    background:#f59e0b;
+    color:white;
+}
+
+/* AULAS SALVAS */
+
+.filtro{
+    display:grid;
+    grid-template-columns:1fr 1fr auto;
+    gap:10px;
+    margin-bottom:15px;
+}
+
+.chamada-salva{
+    border:1px solid #e2e8f0;
+    border-radius:10px;
+    padding:15px;
+    margin-bottom:10px;
+    background:#f8fafc;
+}
+
+.chamada-salva h3{
+    color:#1d4ed8;
+    margin-bottom:7px;
+}
+
+.botoes-salva{
+    display:flex;
+    gap:7px;
+    flex-wrap:wrap;
+    margin-top:10px;
+}
+
+/* INÍCIO */
+
+.estatisticas{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+    margin-top:20px;
+}
+
+.estatistica{
+    background:#f8fafc;
+    border-radius:10px;
+    padding:18px;
+    text-align:center;
+}
+
+.numero-grande{
+    display:block;
+    font-size:30px;
+    color:#2563eb;
+    font-weight:bold;
+    margin-bottom:5px;
+}
+
+.vazio{
+    text-align:center;
+    color:#64748b;
+    padding:25px;
+}
+
+/* MODAL */
+
+.modal{
+    display:none;
+    position:fixed;
+    z-index:1000;
+    left:0;
+    top:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,.55);
+    padding:20px;
+    overflow:auto;
+}
+
+.modal-conteudo{
+    max-width:900px;
+    margin:30px auto;
+    background:white;
+    border-radius:14px;
+    padding:20px;
+}
+
+.modal-topo{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:15px;
+}
+
+/* CELULAR */
+
+@media(max-width:800px){
+
+    .menu{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .dias-aulas{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .topo-chamada{
+        grid-template-columns:1fr;
+    }
+
+    .form-aluno{
+        flex-direction:column;
+    }
+
+    .cabecalho-chamada{
+        display:none;
+    }
+
+    .chamada-aluno{
+        display:block;
+        padding:15px 5px;
+    }
+
+    .chamada-nome{
+        display:block;
+        margin-bottom:10px;
+    }
+
+    .presenca,.atividade{
+        margin-top:7px;
+    }
+
+    .resumo{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .estatisticas{
+        grid-template-columns:1fr;
+    }
+
+    .filtro{
+        grid-template-columns:1fr;
+    }
+
+}
+
+/* PDF */
+
+@media print{
+
+    body{
+        background:white;
+        color:black;
+    }
+
+    header,
+    .menu,
+    .nao-imprimir,
+    .botoes-gerais,
+    .presenca,
+    .atividade,
+    .acoes,
+    button{
+        display:none !important;
+    }
+
+    .container{
+        max-width:100%;
+        padding:0;
+    }
+
+    .tela{
+        display:none !important;
+    }
+
+    #telaChamada{
+        display:block !important;
+    }
+
+    .card{
+        box-shadow:none;
+        border-radius:0;
+        padding:0;
+    }
+
+    .cabecalho-chamada{
+        display:grid !important;
+        grid-template-columns:40px 1fr 150px !important;
+        border-bottom:2px solid #000;
+        background:white;
+    }
+
+    .cabecalho-chamada div:nth-child(3){
+        display:block !important;
+    }
+
+    .cabecalho-chamada div:nth-child(4){
+        display:block !important;
+    }
+
+    .chamada-aluno{
+        display:grid !important;
+        grid-template-columns:40px 1fr 150px 150px !important;
+        padding:8px;
+        border-bottom:1px solid #bbb;
+    }
+
+    .chamada-aluno.presente-pdf .chamada-nome{
+        color:#008000 !important;
+        font-weight:bold;
+    }
+
+    .chamada-aluno.falta-pdf .chamada-nome{
+        color:#cc0000 !important;
+        font-weight:bold;
+    }
+
+    .pdf-presenca{
+        display:block !important;
+    }
+
+    .pdf-atividade{
+        display:block !important;
+    }
+
+    .pdf-status{
+        font-weight:bold;
+    }
+
+    .pdf-presente{
+        color:#008000 !important;
+    }
+
+    .pdf-falta{
+        color:#cc0000 !important;
+    }
+
+    .pdf-fez{
+        color:#1d4ed8 !important;
+    }
+
+    .pdf-nao-fez{
+        color:#b45309 !important;
+    }
+
+    .info-aula{
+        background:white;
+        border:0;
+        padding:5px 0 15px;
+    }
+
+    .resumo{
+        display:none;
+    }
+
+}
+
+@page{
+    size:A4;
+    margin:12mm;
+}
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"></head>
+
+<body>
+
+<header>
+    <h1>📚 Chamada Escolar</h1>
+    <p>Controle de presença e atividades</p>
+</header>
+
+<div class="container">
+
+<!-- MENU -->
+
+<div class="menu">
+
+<button id="menuInicio"
+class="ativo"
+onclick="mostrarTela('inicio')">
+🏠 Início
+</button>
+
+<button id="menuConfig"
+onclick="mostrarTela('config')">
+⚙️ Aulas
+</button>
+
+<button id="menuAlunos"
+onclick="mostrarTela('alunos')">
+👨‍🎓 Alunos
+</button>
+
+<button id="menuChamada"
+onclick="mostrarTela('chamada')">
+📋 Chamada
+</button>
+
+<button id="menuSalvas"
+onclick="mostrarTela('salvas')">
+📚 Aulas Salvas
+</button>
+
+</div>
+
+
+<!-- INÍCIO -->
+
+<section id="telaInicio" class="tela ativa">
+
+<div class="card">
+
+<h2>👋 Bem-vindo!</h2>
+
+<p>
+Cadastre os alunos, configure a quantidade de aulas
+e faça suas chamadas.
+</p>
+
+<div class="estatisticas">
+
+<div class="estatistica">
+<span id="totalAlunos" class="numero-grande">0</span>
+Alunos
+</div>
+
+<div class="estatistica">
+<span id="totalChamadas" class="numero-grande">0</span>
+Aulas salvas
+</div>
+
+<div class="estatistica">
+<span id="totalAulasSemana" class="numero-grande">0</span>
+Aulas por semana
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- CONFIGURAÇÃO -->
+
+<section id="telaConfig" class="tela">
+
+<div class="card">
+
+<h2>⚙️ Quantidade de aulas por dia</h2>
+
+<p style="margin-bottom:15px;">
+Digite quantas aulas você possui em cada dia.
+</p>
+
+<div class="dias-aulas">
+
+<div class="dia-aula">
+<h3>Segunda</h3>
+<input type="number" id="segunda" min="0" max="20">
+</div>
+
+<div class="dia-aula">
+<h3>Terça</h3>
+<input type="number" id="terca" min="0" max="20">
+</div>
+
+<div class="dia-aula">
+<h3>Quarta</h3>
+<input type="number" id="quarta" min="0" max="20">
+</div>
+
+<div class="dia-aula">
+<h3>Quinta</h3>
+<input type="number" id="quinta" min="0" max="20">
+</div>
+
+<div class="dia-aula">
+<h3>Sexta</h3>
+<input type="number" id="sexta" min="0" max="20">
+</div>
+
+</div>
+
+<br>
+
+<button class="btn-azul" onclick="salvarConfiguracao()">
+💾 Salvar configuração
+</button>
+
+</div>
+
+<div class="card">
+
+<h2>📅 Configuração atual</h2>
+
+<div id="resumoAulas"></div>
+
+</div>
+
+</section>
+
+
+<!-- ALUNOS -->
+
+<section id="telaAlunos" class="tela">
+
+<div class="card">
+
+<h2>👨‍🎓 Cadastro dos alunos</h2>
+
+<div class="form-aluno">
+
+<input
+id="nomeAluno"
+type="text"
+placeholder="Digite o nome do aluno">
+
+<button class="btn-azul" onclick="adicionarAluno()">
++ Adicionar
+</button>
+
+</div>
+
+</div>
+
+<div class="card">
+
+<h2>📋 Lista da turma</h2>
+
+<div id="listaAlunos"></div>
+
+<br>
+
+<button class="btn-vermelho" onclick="limparAlunos()">
+🗑️ Excluir todos
+</button>
+
+</div>
+
+</section>
+
+
+<!-- CHAMADA -->
+
+<section id="telaChamada" class="tela">
+
+<div class="card">
+
+<h2>📋 Fazer chamada</h2>
+
+<div class="topo-chamada">
+
+<div>
+<label>📅 Data</label>
+<input type="date" id="dataChamada"
+onchange="atualizarDia()">
+</div>
+
+<div>
+<label>📚 Aula</label>
+<select id="aulaSelecionada"
+onchange="carregarChamada()"></select>
+</div>
+
+</div>
+
+<div class="info-aula" id="infoAula">
+Selecione uma data.
+</div>
+
+</div>
+
+
+<div class="card" id="areaChamada" style="display:none;">
+
+<div class="botoes-gerais">
+
+<button class="btn-verde"
+onclick="marcarTodosPresentes()">
+🟢 Todos presentes
+</button>
+
+<button class="btn-vermelho"
+onclick="marcarTodosFaltas()">
+🔴 Todos faltaram
+</button>
+
+<button class="btn-azul"
+onclick="marcarTodasAtividadesFeitas()">
+📝 Todos fizeram
+</button>
+
+<button class="btn-amarelo"
+onclick="marcarTodasAtividadesNaoFeitas()">
+❌ Ninguém fez
+</button>
+
+<button class="btn-cinza"
+onclick="limparMarcacoes()">
+↩️ Limpar
+</button>
+
+<button class="btn-roxo"
+onclick="copiarAulaAnterior()">
+📋 Copiar aula anterior
+</button>
+
+</div>
+
+<div class="resumo">
+
+<div class="total">
+Total<br>
+<span id="resumoTotal">0</span>
+</div>
+
+<div class="total-presentes">
+Presentes<br>
+<span id="resumoPresentes">0</span>
+</div>
+
+<div class="total-faltas">
+Faltas<br>
+<span id="resumoFaltas">0</span>
+</div>
+
+<div class="total-fez">
+Fizeram<br>
+<span id="resumoFez">0</span>
+</div>
+
+<div class="total-nao-fez">
+Não fizeram<br>
+<span id="resumoNaoFez">0</span>
+</div>
+
+</div>
+
+
+<div class="cabecalho-chamada">
+
+<div>Nº</div>
+<div>Aluno</div>
+<div>Presença</div>
+<div>Atividade</div>
+
+</div>
+
+<div id="listaChamada"></div>
+
+<br>
+
+<button class="btn-azul"
+onclick="salvarChamada()">
+💾 Salvar chamada
+</button>
+
+<button class="btn-verde"
+onclick="exportarPDF()">
+📄 Exportar PDF
+</button>
+
+</div>
+
+</section>
+
+
+<!-- AULAS SALVAS -->
+
+<section id="telaSalvas" class="tela">
+
+<div class="card">
+
+<h2>📚 Aulas salvas</h2>
+
+<div class="filtro">
+
+<input type="date"
+id="filtroData"
+onchange="mostrarChamadasSalvas()">
+
+<select id="filtroDia"
+onchange="mostrarChamadasSalvas()">
+
+<option value="">Todos os dias</option>
+<option value="Segunda-feira">Segunda-feira</option>
+<option value="Terça-feira">Terça-feira</option>
+<option value="Quarta-feira">Quarta-feira</option>
+<option value="Quinta-feira">Quinta-feira</option>
+<option value="Sexta-feira">Sexta-feira</option>
+
+</select>
+
+<button class="btn-cinza"
+onclick="limparFiltros()">
+Limpar
+</button>
+
+</div>
+
+<div id="listaChamadasSalvas"></div>
+
+</div>
+
+</section>
+
+</div>
+
+
+<!-- MODAL -->
+
+<div id="modalDetalhes" class="modal">
+
+<div class="modal-conteudo">
+
+<div class="modal-topo">
+
+<h2>📋 Detalhes da chamada</h2>
+
+<button class="btn-vermelho"
+onclick="fecharModal()">
+✕ Fechar
+</button>
+
+</div>
+
+<div id="conteudoDetalhes"></div>
+
+</div>
+
+</div>
+
+
+<script>
+
+/* ==========================================
+   DADOS
+========================================== */
+
+let alunos =
+JSON.parse(localStorage.getItem("alunos")) || [];
+
+let chamadas =
+JSON.parse(localStorage.getItem("chamadas")) || [];
+
+let configuracao =
+JSON.parse(localStorage.getItem("configuracaoAulas")) || {
+    segunda:0,
+    terca:5,
+    quarta:1,
+    quinta:3,
+    sexta:1
+};
+
+let presencas = {};
+let atividades = {};
+
+
+/* ==========================================
+   INICIALIZAÇÃO
+========================================== */
+
+window.addEventListener("load",function(){
+
+    carregarConfiguracao();
+    mostrarAlunos();
+    atualizarInicio();
+
+    document.getElementById("dataChamada").value =
+        dataHoje();
+
+});
+
+
+/* ==========================================
+   NAVEGAÇÃO
+========================================== */
+
+function mostrarTela(tela){
+
+    document.querySelectorAll(".tela").forEach(function(t){
+        t.classList.remove("ativa");
+    });
+
+    document.querySelectorAll(".menu button").forEach(function(b){
+        b.classList.remove("ativo");
+    });
+
+    const telaElemento =
+        document.getElementById("tela" +
+        tela.charAt(0).toUpperCase() +
+        tela.slice(1));
+
+    const menuElemento =
+        document.getElementById("menu" +
+        tela.charAt(0).toUpperCase() +
+        tela.slice(1));
+
+    if(telaElemento)
+        telaElemento.classList.add("ativa");
+
+    if(menuElemento)
+        menuElemento.classList.add("ativo");
+
+    if(tela === "alunos")
+        mostrarAlunos();
+
+    if(tela === "chamada")
+        atualizarDia();
+
+    if(tela === "salvas")
+        mostrarChamadasSalvas();
+
+}
+
+
+/* ==========================================
+   CONFIGURAÇÃO
+========================================== */
+
+function carregarConfiguracao(){
+
+    document.getElementById("segunda").value =
+        configuracao.segunda;
+
+    document.getElementById("terca").value =
+        configuracao.terca;
+
+    document.getElementById("quarta").value =
+        configuracao.quarta;
+
+    document.getElementById("quinta").value =
+        configuracao.quinta;
+
+    document.getElementById("sexta").value =
+        configuracao.sexta;
+
+    mostrarResumoAulas();
+    atualizarTotalAulas();
+
+}
+
+
+function salvarConfiguracao(){
+
+    configuracao = {
+
+        segunda:Number(document.getElementById("segunda").value),
+        terca:Number(document.getElementById("terca").value),
+        quarta:Number(document.getElementById("quarta").value),
+        quinta:Number(document.getElementById("quinta").value),
+        sexta:Number(document.getElementById("sexta").value)
+
+    };
+
+    localStorage.setItem(
+        "configuracaoAulas",
+        JSON.stringify(configuracao)
+    );
+
+    mostrarResumoAulas();
+    atualizarTotalAulas();
+
+    alert("✅ Configuração salva!");
+
+}
+
+
+function mostrarResumoAulas(){
+
+    document.getElementById("resumoAulas").innerHTML = `
+
+    <p>Segunda-feira:
+    <strong>${configuracao.segunda}</strong> aula(s)</p>
+
+    <p>Terça-feira:
+    <strong>${configuracao.terca}</strong> aula(s)</p>
+
+    <p>Quarta-feira:
+    <strong>${configuracao.quarta}</strong> aula(s)</p>
+
+    <p>Quinta-feira:
+    <strong>${configuracao.quinta}</strong> aula(s)</p>
+
+    <p>Sexta-feira:
+    <strong>${configuracao.sexta}</strong> aula(s)</p>
+
+    `;
+
+}
+
+
+function atualizarTotalAulas(){
+
+    const total =
+        configuracao.segunda +
+        configuracao.terca +
+        configuracao.quarta +
+        configuracao.quinta +
+        configuracao.sexta;
+
+    document.getElementById("totalAulasSemana").textContent =
+        total;
+
+}
+
+
+/* ==========================================
+   ALUNOS
+========================================== */
+
+function adicionarAluno(){
+
+    const campo =
+        document.getElementById("nomeAluno");
+
+    const nome =
+        campo.value.trim();
+
+    if(!nome){
+
+        alert("Digite o nome do aluno.");
+        return;
+
+    }
+
+    if(alunos.some(function(a){
+        return a.toLowerCase() === nome.toLowerCase();
+    })){
+
+        alert("Este aluno já está cadastrado.");
+        return;
+
+    }
+
+    alunos.push(nome);
+
+    salvarDados();
+
+    campo.value = "";
+    campo.focus();
+
+    mostrarAlunos();
+    atualizarInicio();
+
+}
+
+
+function mostrarAlunos(){
+
+    const lista =
+        document.getElementById("listaAlunos");
+
+    if(!alunos.length){
+
+        lista.innerHTML =
+        `<p class="vazio">Nenhum aluno cadastrado.</p>`;
+
+        return;
+
+    }
+
+    lista.innerHTML = "";
+
+    alunos.forEach(function(aluno,index){
+
+        const div =
+            document.createElement("div");
+
+        div.className = "aluno";
+
+        div.innerHTML = `
+
+        <span class="numero">${index+1}.</span>
+
+        <span class="nome">${escapeHTML(aluno)}</span>
+
+        <div class="acoes">
+
+        <button class="btn-amarelo"
+        onclick="editarAluno(${index})">
+        ✏️
+        </button>
+
+        <button class="btn-vermelho"
+        onclick="excluirAluno(${index})">
+        🗑️
+        </button>
+
+        </div>
+
+        `;
+
+        lista.appendChild(div);
+
+    });
+
+}
+
+
+function editarAluno(index){
+
+    const novo =
+        prompt("Digite o novo nome:",alunos[index]);
+
+    if(novo === null || !novo.trim())
+        return;
+
+    alunos[index] = novo.trim();
+
+    salvarDados();
+    mostrarAlunos();
+
+}
+
+
+function excluirAluno(index){
+
+    if(!confirm("Excluir este aluno?"))
+        return;
+
+    alunos.splice(index,1);
+
+    salvarDados();
+    mostrarAlunos();
+    atualizarInicio();
+
+}
+
+
+function limparAlunos(){
+
+    if(!confirm("Excluir TODOS os alunos?"))
+        return;
+
+    alunos = [];
+
+    salvarDados();
+    mostrarAlunos();
+    atualizarInicio();
+
+}
+
+
+/* ==========================================
+   DATA
+========================================== */
+
+function dataHoje(){
+
+    const d = new Date();
+
+    return d.getFullYear() + "-" +
+        String(d.getMonth()+1).padStart(2,"0") + "-" +
+        String(d.getDate()).padStart(2,"0");
+
+}
+
+
+function obterDiaSemana(data){
+
+    const partes = data.split("-");
+
+    const d =
+        new Date(
+            Number(partes[0]),
+            Number(partes[1])-1,
+            Number(partes[2])
+        );
+
+    return [
+        "Domingo",
+        "Segunda-feira",
+        "Terça-feira",
+        "Quarta-feira",
+        "Quinta-feira",
+        "Sexta-feira",
+        "Sábado"
+    ][d.getDay()];
+
+}
+
+
+function quantidadeDoDia(dia){
+
+    const mapa = {
+
+        "Segunda-feira":configuracao.segunda,
+        "Terça-feira":configuracao.terca,
+        "Quarta-feira":configuracao.quarta,
+        "Quinta-feira":configuracao.quinta,
+        "Sexta-feira":configuracao.sexta
+
+    };
+
+    return mapa[dia] || 0;
+
+}
+
+
+function formatarData(data){
+
+    const p = data.split("-");
+
+    return p[2] + "/" + p[1] + "/" + p[0];
+
+}
+
+
+/* ==========================================
+   CHAMADA
+========================================== */
+
+function atualizarDia(){
+
+    const data =
+        document.getElementById("dataChamada").value;
+
+    if(!data)
+        return;
+
+    const dia =
+        obterDiaSemana(data);
+
+    const quantidade =
+        quantidadeDoDia(dia);
+
+    const select =
+        document.getElementById("aulaSelecionada");
+
+    select.innerHTML = "";
+
+    if(quantidade === 0){
+
+        select.innerHTML =
+        `<option>Nenhuma aula configurada</option>`;
+
+        document.getElementById("infoAula").innerHTML = `
+        <strong>${dia}</strong><br><br>
+        Não há aulas configuradas para este dia.
+        `;
+
+        document.getElementById("areaChamada").style.display =
+            "none";
+
+        return;
+
+    }
+
+    for(let i=1;i<=quantidade;i++){
+
+        const option =
+            document.createElement("option");
+
+        option.value = i;
+        option.textContent = i + "ª aula";
+
+        select.appendChild(option);
+
+    }
+
+    carregarChamada();
+
+}
+
+
+function carregarChamada(){
+
+    if(!alunos.length){
+
+        document.getElementById("areaChamada").style.display =
+            "none";
+
+        return;
+
+    }
+
+    const data =
+        document.getElementById("dataChamada").value;
+
+    const aula =
+        Number(document.getElementById("aulaSelecionada").value);
+
+    if(!data || !aula)
+        return;
+
+    const dia =
+        obterDiaSemana(data);
+
+    const chave =
+        data + "_" + aula;
+
+    const salva =
+        chamadas.find(function(c){
+            return c.chave === chave;
+        });
+
+    if(salva){
+
+        presencas = {...salva.presencas};
+        atividades = {...salva.atividades};
+
+    }else{
+
+        presencas = {};
+        atividades = {};
+
+        alunos.forEach(function(aluno,index){
+
+            presencas[index] = null;
+            atividades[index] = null;
+
+        });
+
+    }
+
+    document.getElementById("infoAula").innerHTML = `
+    <strong>${dia}</strong><br>
+    Data: <strong>${formatarData(data)}</strong>
+    &nbsp; | &nbsp;
+    <strong>${aula}ª aula</strong>
+    `;
+
+    document.getElementById("areaChamada").style.display =
+        "block";
+
+    mostrarListaChamada();
+
+}
+
+
+/* ==========================================
+   LISTA DA CHAMADA
+========================================== */
+
+function mostrarListaChamada(){
+
+    const lista =
+        document.getElementById("listaChamada");
+
+    lista.innerHTML = "";
+
+    alunos.forEach(function(aluno,index){
+
+        const p = presencas[index];
+        const a = atividades[index];
+
+        const classe =
+            p === true
+            ? "presente-pdf"
+            : p === false
+            ? "falta-pdf"
+            : "";
+
+        const div =
+            document.createElement("div");
+
+        div.className =
+            "chamada-aluno " + classe;
+
+        div.innerHTML = `
+
+        <div class="numero">
+        ${index+1}
+        </div>
+
+        <div class="chamada-nome">
+        ${escapeHTML(aluno)}
+        </div>
+
+        <div>
+
+        <small><strong>PRESENÇA</strong></small>
+
+        <div class="presenca">
+
+        <button
+        class="presente ${p === true ? "selecionado":""}"
+        onclick="marcarPresenca(${index},true)">
+        🟢 Presente
+        </button>
+
+        <button
+        class="falta ${p === false ? "selecionado":""}"
+        onclick="marcarPresenca(${index},false)">
+        🔴 Falta
+        </button>
+
+        </div>
+
+        <div class="pdf-presenca pdf-status
+        ${p === true ? "pdf-presente":
+          p === false ? "pdf-falta":""}">
+        ${p === true ? "Presente":
+          p === false ? "Faltou":"Não marcado"}
+        </div>
+
+        </div>
+
+
+        <div>
+
+        <small><strong>ATIVIDADE</strong></small>
+
+        <div class="atividade">
+
+        <button
+        class="fez ${a === true ? "selecionado":""}"
+        onclick="marcarAtividade(${index},true)">
+        📝 Fez
+        </button>
+
+        <button
+        class="nao-fez ${a === false ? "selecionado":""}"
+        onclick="marcarAtividade(${index},false)">
+        ❌ Não fez
+        </button>
+
+        </div>
+
+        <div class="pdf-atividade pdf-status
+        ${a === true ? "pdf-fez":
+          a === false ? "pdf-nao-fez":""}">
+        ${a === true ? "Fez atividade":
+          a === false ? "Não fez atividade":
+          "Não marcado"}
+        </div>
+
+        </div>
+
+        `;
+
+        lista.appendChild(div);
+
+    });
+
+    atualizarResumo();
+
+}
+
+
+/* ==========================================
+   PRESENÇA
+========================================== */
+
+function marcarPresenca(index,valor){
+
+    presencas[index] = valor;
+
+    mostrarListaChamada();
+
+}
+
+
+function marcarTodosPresentes(){
+
+    alunos.forEach(function(aluno,index){
+        presencas[index] = true;
+    });
+
+    mostrarListaChamada();
+
+}
+
+
+function marcarTodosFaltas(){
+
+    alunos.forEach(function(aluno,index){
+        presencas[index] = false;
+    });
+
+    mostrarListaChamada();
+
+}
+
+
+/* ==========================================
+   ATIVIDADES
+========================================== */
+
+function marcarAtividade(index,valor){
+
+    atividades[index] = valor;
+
+    mostrarListaChamada();
+
+}
+
+
+function marcarTodasAtividadesFeitas(){
+
+    alunos.forEach(function(aluno,index){
+        atividades[index] = true;
+    });
+
+    mostrarListaChamada();
+
+}
+
+
+function marcarTodasAtividadesNaoFeitas(){
+
+    alunos.forEach(function(aluno,index){
+        atividades[index] = false;
+    });
+
+    mostrarListaChamada();
+
+}
+
+
+function limparMarcacoes(){
+
+    alunos.forEach(function(aluno,index){
+
+        presencas[index] = null;
+        atividades[index] = null;
+
+    });
+
+    mostrarListaChamada();
+
+}
+
+
+/* ==========================================
+   COPIAR AULA ANTERIOR
+========================================== */
+
+function copiarAulaAnterior(){
+
+    const data =
+        document.getElementById("dataChamada").value;
+
+    const aula =
+        Number(document.getElementById("aulaSelecionada").value);
+
+    if(!data || !aula || aula <= 1){
+
+        alert(
+            "A opção de copiar aula anterior funciona a partir da 2ª aula."
+        );
+
+        return;
+
+    }
+
+    const aulaAnterior = aula - 1;
+
+    const chaveAnterior =
+        data + "_" + aulaAnterior;
+
+    const anterior =
+        chamadas.find(function(c){
+            return c.chave === chaveAnterior;
+        });
+
+    if(!anterior){
+
+        alert(
+            "A aula anterior ainda não foi salva."
+        );
+
+        return;
+
+    }
+
+    presencas = {...anterior.presencas};
+    atividades = {...anterior.atividades};
+
+    mostrarListaChamada();
+
+    alert(
+        "✅ Presença e atividades da aula anterior foram copiadas!"
+    );
+
+}
+
+
+/* ==========================================
+   RESUMO
+========================================== */
+
+function atualizarResumo(){
+
+    let presentes = 0;
+    let faltas = 0;
+    let fez = 0;
+    let naoFez = 0;
+
+    Object.values(presencas).forEach(function(v){
+
+        if(v === true)
+            presentes++;
+
+        if(v === false)
+            faltas++;
+
+    });
+
+    Object.values(atividades).forEach(function(v){
+
+        if(v === true)
+            fez++;
+
+        if(v === false)
+            naoFez++;
+
+    });
+
+    document.getElementById("resumoTotal").textContent =
+        alunos.length;
+
+    document.getElementById("resumoPresentes").textContent =
+        presentes;
+
+    document.getElementById("resumoFaltas").textContent =
+        faltas;
+
+    document.getElementById("resumoFez").textContent =
+        fez;
+
+    document.getElementById("resumoNaoFez").textContent =
+        naoFez;
+
+}
+
+
+/* ==========================================
+   SALVAR CHAMADA
+========================================== */
+
+function salvarChamada(){
+
+    const data =
+        document.getElementById("dataChamada").value;
+
+    const aula =
+        Number(document.getElementById("aulaSelecionada").value);
+
+    if(!data || !aula){
+
+        alert("Selecione a data e a aula.");
+        return;
+
+    }
+
+    const chave =
+        data + "_" + aula;
+
+    const registro = {
+
+        chave:chave,
+        data:data,
+        dia:obterDiaSemana(data),
+        aula:aula,
+        presencas:{...presencas},
+        atividades:{...atividades}
+
+    };
+
+    const indice =
+        chamadas.findIndex(function(c){
+            return c.chave === chave;
+        });
+
+    if(indice >= 0)
+        chamadas[indice] = registro;
+    else
+        chamadas.push(registro);
+
+    salvarDados();
+
+    atualizarInicio();
+
+    alert("✅ Chamada salva com sucesso!");
+
+}
+
+
+/* ==========================================
+   AULAS SALVAS
+========================================== */
+
+function mostrarChamadasSalvas(){
+
+    const lista =
+        document.getElementById("listaChamadasSalvas");
+
+    const filtroData =
+        document.getElementById("filtroData").value;
+
+    const filtroDia =
+        document.getElementById("filtroDia").value;
+
+    let resultado =
+        [...chamadas];
+
+    if(filtroData){
+
+        resultado =
+            resultado.filter(function(c){
+                return c.data === filtroData;
+            });
+
+    }
+
+    if(filtroDia){
+
+        resultado =
+            resultado.filter(function(c){
+                return c.dia === filtroDia;
+            });
+
+    }
+
+    resultado.sort(function(a,b){
+
+        return (b.data + "_" + b.aula)
+        .localeCompare(a.data + "_" + a.aula);
+
+    });
+
+    if(!resultado.length){
+
+        lista.innerHTML =
+        `<p class="vazio">
+        Nenhuma aula salva encontrada.
+        </p>`;
+
+        return;
+
+    }
+
+    lista.innerHTML = "";
+
+    resultado.forEach(function(c){
+
+        let presentes = 0;
+        let faltas = 0;
+        let fez = 0;
+        let naoFez = 0;
+
+        Object.values(c.presencas).forEach(function(v){
+
+            if(v === true) presentes++;
+            if(v === false) faltas++;
+
+        });
+
+        Object.values(c.atividades).forEach(function(v){
+
+            if(v === true) fez++;
+            if(v === false) naoFez++;
+
+        });
+
+        const div =
+            document.createElement("div");
+
+        div.className =
+            "chamada-salva";
+
+        div.innerHTML = `
+
+        <h3>
+        📅 ${formatarData(c.data)}
+        — ${c.dia}
+        — ${c.aula}ª aula
+        </h3>
+
+        <p>
+        🟢 Presentes: <strong>${presentes}</strong>
+        &nbsp; | &nbsp;
+        🔴 Faltas: <strong>${faltas}</strong>
+        </p>
+
+        <p>
+        📝 Fizeram: <strong>${fez}</strong>
+        &nbsp; | &nbsp;
+        ❌ Não fizeram: <strong>${naoFez}</strong>
+        </p>
+
+        <div class="botoes-salva">
+
+        <button
+        class="btn-azul"
+        onclick="verChamada('${c.chave}')">
+        👁️ Ver
+        </button>
+
+        <button
+        class="btn-verde"
+        onclick="abrirChamadaSalva('${c.chave}')">
+        ✏️ Abrir
+        </button>
+
+        <button
+        class="btn-roxo"
+        onclick="usarComoModelo('${c.chave}')">
+        📋 Usar como modelo
+        </button>
+
+        <button
+        class="btn-amarelo"
+        onclick="exportarChamadaSalva('${c.chave}')">
+        📄 PDF
+        </button>
+
+        <button
+        class="btn-vermelho"
+        onclick="excluirChamada('${c.chave}')">
+        🗑️ Excluir
+        </button>
+
+        </div>
+
+        `;
+
+        lista.appendChild(div);
+
+    });
+
+}
+
+
+function limparFiltros(){
+
+    document.getElementById("filtroData").value = "";
+    document.getElementById("filtroDia").value = "";
+
+    mostrarChamadasSalvas();
+
+}
+
+
+/* ==========================================
+   VER CHAMADA
+========================================== */
+
+function verChamada(chave){
+
+    const c =
+        chamadas.find(function(item){
+            return item.chave === chave;
+        });
+
+    if(!c)
+        return;
+
+    let html = `
+
+    <h3>
+    ${formatarData(c.data)}
+    — ${c.dia}
+    — ${c.aula}ª aula
+    </h3>
+
+    <br>
+
+    <div class="cabecalho-chamada">
+
+    <div>Nº</div>
+    <div>Aluno</div>
+    <div>Presença</div>
+    <div>Atividade</div>
+
+    </div>
+
+    `;
+
+    alunos.forEach(function(aluno,index){
+
+        const p = c.presencas[index];
+        const a = c.atividades[index];
+
+        html += `
+
+        <div class="chamada-aluno">
+
+        <div>${index+1}</div>
+
+        <div class="chamada-nome">
+        ${escapeHTML(aluno)}
+        </div>
+
+        <div class="
+        ${p === true ? "pdf-presente":
+          p === false ? "pdf-falta":""}
+        ">
+
+        ${p === true ? "🟢 Presente":
+          p === false ? "🔴 Faltou":
+          "Não marcado"}
+
+        </div>
+
+        <div class="
+        ${a === true ? "pdf-fez":
+          a === false ? "pdf-nao-fez":""}
+        ">
+
+        ${a === true ? "📝 Fez":
+          a === false ? "❌ Não fez":
+          "Não marcado"}
+
+        </div>
+
+        </div>
+
+        `;
+
+    });
+
+    document.getElementById("conteudoDetalhes").innerHTML =
+        html;
+
+    document.getElementById("modalDetalhes").style.display =
+        "block";
+
+}
+
+
+function fecharModal(){
+
+    document.getElementById("modalDetalhes").style.display =
+        "none";
+
+}
+
+
+/* ==========================================
+   ABRIR CHAMADA SALVA
+========================================== */
+
+function abrirChamadaSalva(chave){
+
+    const c =
+        chamadas.find(function(item){
+            return item.chave === chave;
+        });
+
+    if(!c)
+        return;
+
+    document.getElementById("dataChamada").value =
+        c.data;
+
+    mostrarTela("chamada");
+
+    atualizarDia();
+
+    document.getElementById("aulaSelecionada").value =
+        c.aula;
+
+    carregarChamada();
+
+}
+
+
+/* ==========================================
+   USAR COMO MODELO
+========================================== */
+
+function usarComoModelo(chave){
+
+    const c =
+        chamadas.find(function(item){
+            return item.chave === chave;
+        });
+
+    if(!c)
+        return;
+
+    document.getElementById("dataChamada").value =
+        c.data;
+
+    mostrarTela("chamada");
+
+    atualizarDia();
+
+    let aulaDestino =
+        Number(document.getElementById("aulaSelecionada").value);
+
+    const quantidade =
+        quantidadeDoDia(c.dia);
+
+    if(c.aula < quantidade)
+        aulaDestino = c.aula + 1;
+
+    document.getElementById("aulaSelecionada").value =
+        aulaDestino;
+
+    presencas = {...c.presencas};
+    atividades = {...c.atividades};
+
+    mostrarListaChamada();
+
+    alert(
+        "📋 Modelo carregado. Confira a aula e depois salve."
+    );
+
+}
+
+
+/* ==========================================
+   EXCLUIR CHAMADA
+========================================== */
+
+function excluirChamada(chave){
+
+    if(!confirm("Excluir esta chamada salva?"))
+        return;
+
+    chamadas =
+        chamadas.filter(function(c){
+            return c.chave !== chave;
+        });
+
+    salvarDados();
+
+    mostrarChamadasSalvas();
+    atualizarInicio();
+
+}
+
+
+/* ==========================================
+   EXPORTAR PDF DA CHAMADA ATUAL
+========================================== */
+
+function exportarPDF(){
+
+    if(!alunos.length){
+
+        alert("Não há alunos cadastrados.");
+        return;
+
+    }
+
+    window.print();
+
+}
+
+
+/* ==========================================
+   EXPORTAR CHAMADA SALVA
+========================================== */
+
+function exportarChamadaSalva(chave){
+
+    const c =
+        chamadas.find(function(item){
+            return item.chave === chave;
+        });
+
+    if(!c)
+        return;
+
+    document.getElementById("dataChamada").value =
+        c.data;
+
+    mostrarTela("chamada");
+
+    atualizarDia();
+
+    document.getElementById("aulaSelecionada").value =
+        c.aula;
+
+    presencas = {...c.presencas};
+    atividades = {...c.atividades};
+
+    mostrarListaChamada();
+
+    setTimeout(function(){
+        window.print();
+    },300);
+
+}
+
+
+/* ==========================================
+   DADOS
+========================================== */
+
+function salvarDados(){
+
+    localStorage.setItem(
+        "alunos",
+        JSON.stringify(alunos)
+    );
+
+    localStorage.setItem(
+        "chamadas",
+        JSON.stringify(chamadas)
+    );
+
+}
+
+
+function atualizarInicio(){
+
+    document.getElementById("totalAlunos").textContent =
+        alunos.length;
+
+    document.getElementById("totalChamadas").textContent =
+        chamadas.length;
+
+    atualizarTotalAulas();
+
+}
+
+
+/* ==========================================
+   ENTER
+========================================== */
+
+document.getElementById("nomeAluno")
+.addEventListener("keypress",function(event){
+
+    if(event.key === "Enter")
+        adicionarAluno();
+
+});
+
+
+/* ==========================================
+   SEGURANÇA DE TEXTO
+========================================== */
+
+function escapeHTML(text){
+
+    return String(text)
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
+}
+
+</script>
+
+</body>
+</html>
