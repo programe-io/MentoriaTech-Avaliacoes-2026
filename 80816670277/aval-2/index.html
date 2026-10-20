@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>SocialFeed · feed de rede social</title>
+    <!-- Font Awesome 6 (ícones gratuitos) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- CSS externo -->
+    <link rel="stylesheet" href="style.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"><link href="style.css" rel="stylesheet"></head>
+<body>
+    <div class="feed-container">
+        <!-- cabeçalho -->
+        <div class="feed-header">
+            <h1><i class="fas fa-globe" style="background: none; color: #2a5298; font-size: 1.6rem; padding: 0; margin-right: 8px;"></i> SocialFeed</h1>
+            <i class="fas fa-bell"></i>
+        </div>
+
+        <!-- área de criação de post -->
+        <div class="new-post-card">
+            <img src="https://i.pravatar.cc/150?img=8" alt="Seu avatar" class="new-post-avatar">
+            <div class="new-post-input-area">
+                <textarea id="postTextarea" class="new-post-input" rows="2" placeholder="No que você está pensando, Alex?"></textarea>
+                <div class="new-post-actions">
+                    <button id="publishBtn" class="btn-post"><i class="fas fa-paper-plane"></i> Publicar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- lista de posts (feed) -->
+        <div id="postsList" class="posts-list">
+            <!-- posts são renderizados pelo JavaScript -->
+        </div>
+
+        <div class="feed-footer">
+            <i class="fas fa-code"></i> Feed demonstrativo · 100% funcional
+        </div>
+    </div>
+
+    <!-- botão flutuante para rolar ao topo -->
+    <button class="floating-btn" id="scrollTopBtn" title="Voltar ao topo">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- JavaScript embutido -->
+    <script>
+        (function() {
+            // ---------- DADOS INICIAIS ----------
+            const initialPosts = [
+                {
+                    id: 'p1',
+                    userName: 'Marina Silva',
+                    userHandle: '@marinasilva',
+                    avatar: 'https://i.pravatar.cc/150?img=5',
+                    verified: true,
+                    time: '12 min atrás',
+                    content: 'Acabei de finalizar o design do novo app! Que orgulho 🚀 Mal posso esperar para compartilhar com vocês. #design #ux',
+                    likes: 42,
+                    comments: 8,
+                    likedByUser: false,
+                },
+                {
+                    id: 'p2',
+                    userName: 'Carlos Andrade',
+                    userHandle: '@carlosdev',
+                    avatar: 'https://i.pravatar.cc/150?img=12',
+                    verified: false,
+                    time: '45 min atrás',
+                    content: 'Dica do dia: sempre use `console.log` com moderação, mas quando precisar, use `console.table` para arrays. 😉 #javascript #dev',
+                    likes: 128,
+                    comments: 23,
+                    likedByUser: true,
+                },
+                {
+                    id: 'p3',
+                    userName: 'Ana Beatriz',
+                    userHandle: '@anabeatriz',
+                    avatar: 'https://i.pravatar.cc/150?img=9',
+                    verified: true,
+                    time: '2 h atrás',
+                    content: 'Foto do pôr do sol de hoje! 🌅 A natureza é realmente incrível. Quem mais ama essa hora do dia?',
+                    likes: 356,
+                    comments: 47,
+                    likedByUser: false,
+                },
+                {
+                    id: 'p4',
+                    userName: 'Rafael Mendes',
+                    userHandle: '@rafamendes',
+                    avatar: 'https://i.pravatar.cc/150?img=15',
+                    verified: false,
+                    time: '5 h atrás',
+                    content: 'Alguém mais está animado para o lançamento do novo framework? Estou testando a beta e curtindo bastante! #frontend',
+                    likes: 89,
+                    comments: 15,
+                    likedByUser: false,
+                }
+            ];
+
+            // ---------- ESTADO ----------
+            let posts = [];
+
+            // elementos DOM
+            const postsListEl = document.getElementById('postsList');
+            const postTextarea = document.getElementById('postTextarea');
+            const publishBtn = document.getElementById('publishBtn');
+            const scrollTopBtn = document.getElementById('scrollTopBtn');
+
+            // avatar padrão do usuário atual (Alex)
+            const currentUserAvatar = 'https://i.pravatar.cc/150?img=8';
+            const currentUserName = 'Alex Oliveira';
+            const currentUserHandle = '@alexoliveira';
+
+            // ---------- FUNÇÕES AUXILIARES ----------
+
+            function formatNumber(num) {
+                if (num >= 1000) {
+                    return (num / 1000).toFixed(1).replace('.0', '') + 'k';
+                }
+                return num.toString();
+            }
+
+            function createPostElement(post) {
+                const card = document.createElement('div');
+                card.className = 'post-card';
+                card.dataset.postId = post.id;
+
+                const avatarImg = document.createElement('img');
+                avatarImg.src = post.avatar;
+                avatarImg.alt = `Avatar de ${post.userName}`;
+                avatarImg.className = 'post-avatar';
+                avatarImg.loading = 'lazy';
+
+                const header = document.createElement('div');
+                header.className = 'post-header';
+
+                const userInfo = document.createElement('div');
+                userInfo.className = 'post-user-info';
+
+                const nameSpan = document.createElement('span');
+                nameSpan.className = 'post-user-name';
+                nameSpan.textContent = post.userName;
+                if (post.verified) {
+                    const verifiedIcon = document.createElement('i');
+                    verifiedIcon.className = 'fas fa-circle-check';
+                    verifiedIcon.title = 'Conta verificada';
+                    nameSpan.appendChild(verifiedIcon);
+                }
+
+                const handleSpan = document.createElement('span');
+                handleSpan.style.fontSize = '0.8rem';
+                handleSpan.style.color = '#5f6b7a';
+                handleSpan.style.fontWeight = '400';
+                handleSpan.textContent = ' ' + post.userHandle;
+
+                const timeDiv = document.createElement('div');
+                timeDiv.className = 'post-time';
+                timeDiv.innerHTML = `<i class="far fa-clock"></i> ${post.time}`;
+
+                userInfo.appendChild(nameSpan);
+                userInfo.appendChild(handleSpan);
+                userInfo.appendChild(timeDiv);
+
+                header.appendChild(avatarImg);
+                header.appendChild(userInfo);
+
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'post-content';
+                contentDiv.textContent = post.content;
+
+                const statsDiv = document.createElement('div');
+                statsDiv.className = 'post-stats';
+                statsDiv.innerHTML = `
+                    <span class="stat-item"><i class="far fa-heart"></i> <span class="like-count">${formatNumber(post.likes)}</span></span>
+                    <span class="stat-item"><i class="far fa-comment"></i> <span class="comment-count">${formatNumber(post.comments)}</span></span>
+                `;
+
+                const actionsDiv = document.createElement('div');
+                actionsDiv.className = 'post-actions';
+
+                const likeBtn = document.createElement('button');
+                likeBtn.className = `action-btn ${post.likedByUser ? 'liked' : ''}`;
+                likeBtn.innerHTML = `<i class="${post.likedByUser ? 'fas' : 'far'} fa-heart"></i> <span>Curtir</span>`;
+                likeBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    toggleLike(post.id, likeBtn, statsDiv);
+                });
+
+                const commentBtn = document.createElement('button');
+                commentBtn.className = 'action-btn';
+                commentBtn.innerHTML = `<i class="far fa-comment"></i> <span>Comentar</span>`;
+                commentBtn.addEventListener('click', () => {
+                    alert('💬 Em breve: área de comentários!');
+                });
+
+                const shareBtn = document.createElement('button');
+                shareBtn.className = 'action-btn';
+                shareBtn.innerHTML = `<i class="fas fa-share-alt"></i> <span>Compartilhar</span>`;
+                shareBtn.addEventListener('click', () => {
+                    alert('🔗 Link do post copiado (simulação).');
+                });
+
+                actionsDiv.appendChild(likeBtn);
+                actionsDiv.appendChild(commentBtn);
+                actionsDiv.appendChild(shareBtn);
+
+                card.appendChild(header);
+                card.appendChild(contentDiv);
+                card.appendChild(statsDiv);
+                card.appendChild(actionsDiv);
+
+                return card;
+            }
+
+            function toggleLike(postId, likeBtn, statsDiv) {
+                const postIndex = posts.findIndex(p => p.id === postId);
+                if (postIndex === -1) return;
+
+                const post = posts[postIndex];
+                const isLiked = post.likedByUser;
+
+                post.likedByUser = !isLiked;
+                post.likes += isLiked ? -1 : 1;
+
+                if (post.likedByUser) {
+                    likeBtn.classList.add('liked');
+                    likeBtn.innerHTML = `<i class="fas fa-heart"></i> <span>Curtir</span>`;
+                } else {
+                    likeBtn.classList.remove('liked');
+                    likeBtn.innerHTML = `<i class="far fa-heart"></i> <span>Curtir</span>`;
+                }
+
+                const likeCountSpan = statsDiv.querySelector('.like-count');
+                if (likeCountSpan) {
+                    likeCountSpan.textContent = formatNumber(post.likes);
+                }
+            }
+
+            function renderPosts() {
+                postsListEl.innerHTML = '';
+                if (posts.length === 0) {
+                    const emptyMsg = document.createElement('div');
+                    emptyMsg.style.background = 'white';
+                    emptyMsg.style.borderRadius = '18px';
+                    emptyMsg.style.padding = '40px 20px';
+                    emptyMsg.style.textAlign = 'center';
+                    emptyMsg.style.color = '#5f6b7a';
+                    emptyMsg.innerHTML = '<i class="fas fa-inbox" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i> Nenhum post ainda. Seja o primeiro a publicar!';
+                    postsListEl.appendChild(emptyMsg);
+                    return;
+                }
+                posts.forEach(post => {
+                    postsListEl.appendChild(createPostElement(post));
+                });
+            }
+
+            function addNewPost(content) {
+                const newPost = {
+                    id: 'post_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6),
+                    userName: currentUserName,
+                    userHandle: currentUserHandle,
+                    avatar: currentUserAvatar,
+                    verified: false,
+                    time: 'agora mesmo',
+                    content: content.trim(),
+                    likes: 0,
+                    comments: 0,
+                    likedByUser: false,
+                };
+
+                posts.unshift(newPost);
+                renderPosts();
+
+                postTextarea.value = '';
+                postTextarea.focus();
+
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            function init() {
+                posts = initialPosts.map(p => ({ ...p }));
+                renderPosts();
+
+                publishBtn.addEventListener('click', () => {
+                    const content = postTextarea.value.trim();
+                    if (content === '') {
+                        alert('📝 Escreva algo antes de publicar!');
+                        return;
+                    }
+                    if (content.length > 500) {
+                        alert('O post é muito longo. Limite de 500 caracteres.');
+                        return;
+                    }
+                    addNewPost(content);
+                });
+
+                postTextarea.addEventListener('keydown', (e) => {
+                    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                        e.preventDefault();
+                        publishBtn.click();
+                    }
+                });
+
+                scrollTopBtn.addEventListener('click', () => {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+
+                window.addEventListener('scroll', () => {
+                    if (window.scrollY > 300) {
+                        scrollTopBtn.style.display = 'flex';
+                    } else {
+                        scrollTopBtn.style.display = 'flex';
+                    }
+                });
+
+                scrollTopBtn.style.display = 'flex';
+            }
+
+            init();
+        })();
+    </script>
+</body>
+</html>
