@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eventos no JavaScript - Aula Prática</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #f4f4f9;
+        }
+        section {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #333;
+            margin-top: 0;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .box-teste {
+            padding: 20px;
+            background-color: #e9ecef;
+            text-align: center;
+            border: 2px dashed #6c757d;
+            margin-top: 10px;
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+    <!-- SEÇÃO 1: EXEMPLO DE CLIQUE ÚNICO -->
+    <section>
+        <h2>1. Evento de Clique Único ({ once: true })</h2>
+        <p>Abra o console do navegador (F12) e clique no botão abaixo. Ele só funcionará na primeira vez.</p>
+        <button id="btn-acao">Acionar ação</button>
+    </section>
+
+    <!-- SEÇÃO 2: PROJETO PRÁTICO DE SOMA -->
+    <section>
+        <h2>2. Projeto Prático: Soma de Valores</h2>
+        <form id="form-soma">
+            <div class="form-group">
+                <label for="valor1">Primeiro Valor:</label>
+                <input type="text" id="valor1" placeholder="Digite um número">
+            </div>
+            
+            <div class="form-group">
+                <label for="valor2">Segundo Valor:</label>
+                <input type="text" id="valor2" placeholder="Digite outro número">
+            </div>
+
+            <button type="button" id="btn-somar">Somar valores</button>
+        </form>
+    </section>
+
+    <!-- SEÇÃO 3: OUTROS TIPOS DE EVENTOS -->
+    <section>
+        <h2>3. Demonstração de Outros Eventos</h2>
+        <p>Passe o mouse ou mude o valor do campo para ver os eventos rodando.</p>
+        
+        <div class="form-group">
+            <label for="input-change">Evento 'change' (digite e clique fora):</label>
+            <input type="text" id="input-change" placeholder="Mude o texto...">
+        </div>
+
+        <div id="area-mouse" class="box-teste">
+            Passe o mouse aqui (mouseover / mouseout)
+        </div>
+    </section>
+
+    <!-- JAVASCRIPT INTEGRADO -->
+    <script>
+        /* ------------------------------------------------------------------
+           1. CONFIGURAÇÃO DO BOTÃO DE CLIQUE ÚNICO (Tópicos 6 e 7)
+        ------------------------------------------------------------------ */
+        // Captura usando querySelector (precisa do # para indicar ID)
+        const botaoAcao = document.querySelector('#btn-acao');
+
+        botaoAcao.addEventListener('click', () => {
+            console.log('O botão foi acionado');
+            alert('Botão acionado! Esta mensagem só aparecerá uma vez.');
+        }, { once: true }); // A opção 'once: true' desativa o evento após rodar
+
+
+        /* ------------------------------------------------------------------
+           2. CONFIGURAÇÃO DO PROJETO DE SOMA (Tópicos 8, 9, 10 e 11)
+        ------------------------------------------------------------------ */
+        // Captura usando getElementById (NÃO precisa do #)
+        const input1 = document.getElementById('valor1');
+        const input2 = document.getElementById('valor2');
+        const btnSomar = document.getElementById('btn-somar');
+
+        btnSomar.addEventListener('click', () => {
+            // Acessando os valores com .value e convertendo para número com parseFloat
+            const n1 = parseFloat(input1.value);
+            const n2 = parseFloat(input2.value);
+
+            // Validação caso os campos estejam vazios ou não sejam números
+            if (isNaN(n1) || isNaN(n2)) {
+                alert('Por favor, digite valores numéricos válidos nos dois campos.');
+                return;
+            }
+
+            const resultado = n1 + n2;
+
+            // Saídas demonstradas na aula
+            console.log('Resultado da soma:', resultado);
+            alert('O resultado da soma é: ' + resultado);
+        });
+
+
+        /* ------------------------------------------------------------------
+           3. TESTE DE OUTROS EVENTOS (Tópico 12)
+        ------------------------------------------------------------------ */
+        // Evento 'change' - dispara quando o valor muda e o campo perde o foco
+        const inputChange = document.getElementById('input-change');
+        inputChange.addEventListener('change', () => {
+            console.log('O valor do campo mudou para: ' + inputChange.value);
+        });
+
+        // Eventos 'mouseover' e 'mouseout' - detectam o ponteiro do mouse
+        const areaMouse = document.getElementById('area-mouse');
+
+        areaMouse.addEventListener('mouseover', () => {
+            areaMouse.style.backgroundColor = '#badbcc';
+            areaMouse.textContent = 'O mouse entrou!';
+        });
+
+        areaMouse.addEventListener('mouseout', () => {
+            areaMouse.style.backgroundColor = '#e9ecef';
+            areaMouse.textContent = 'O mouse saiu!';
+        });
+
+        // Evento 'DOMContentLoaded' - avisa quando a estrutura da página carregou
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('A estrutura do DOM está totalmente carregada e pronta!');
+        });
+    </script>
+</body>
+</html>
