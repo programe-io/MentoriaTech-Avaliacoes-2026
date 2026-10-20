@@ -1,0 +1,618 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Blog | Mundo dos Livros</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --principal: #315c46;
+            --escuro: #203d30;
+            --fundo: #f5f5ef;
+            --texto: #26332b;
+            --branco: #ffffff;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: var(--fundo);
+            color: var(--texto);
+            line-height: 1.6;
+        }
+
+        header {
+            background: var(--principal);
+            color: white;
+            padding: 20px 8%;
+        }
+
+        .topo {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .logo {
+            font-size: 25px;
+            font-weight: bold;
+        }
+
+        nav {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        .destaque {
+            background: linear-gradient(135deg, #315c46, #719879);
+            color: white;
+            text-align: center;
+            padding: 75px 20px;
+        }
+
+        .destaque h1 {
+            font-size: clamp(30px, 5vw, 46px);
+            margin-bottom: 15px;
+        }
+
+        .destaque p {
+            max-width: 650px;
+            margin: auto;
+            font-size: 17px;
+        }
+
+        .botao {
+            display: inline-block;
+            background: #f1d9a7;
+            color: #26332b;
+            padding: 12px 22px;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 22px;
+        }
+
+        .botao:hover {
+            opacity: 0.85;
+        }
+
+        main {
+            max-width: 1150px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .titulo-secao {
+            font-size: 27px;
+            margin-bottom: 20px;
+        }
+
+        .pesquisa {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #d2d8d1;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+
+        .publicacoes {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 22px;
+        }
+
+        .post {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px #0000000b;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .capa {
+            min-height: 145px;
+            background: #dce8d9;
+            display: grid;
+            place-items: center;
+            font-size: 65px;
+        }
+
+        .post-conteudo {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            flex: 1;
+        }
+
+        .categoria {
+            color: var(--principal);
+            font-size: 13px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .post h3 {
+            margin: 8px 0;
+            font-size: 21px;
+        }
+
+        .post p {
+            margin-bottom: 15px;
+            overflow-wrap: anywhere;
+        }
+
+        .data {
+            color: #68736b;
+            font-size: 13px;
+            margin-top: auto;
+            margin-bottom: 12px;
+        }
+
+        .ler-mais {
+            color: var(--principal);
+            font-weight: bold;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 15px;
+            text-align: left;
+        }
+
+        .excluir {
+            color: #a42e2e;
+            border: none;
+            background: none;
+            cursor: pointer;
+            margin-top: 12px;
+        }
+
+        .formulario {
+            background: white;
+            padding: 28px;
+            border-radius: 12px;
+            margin-top: 55px;
+            box-shadow: 0 4px 15px #0000000b;
+        }
+
+        .formulario h2 {
+            margin-bottom: 20px;
+        }
+
+        .campo {
+            margin-bottom: 16px;
+        }
+
+        .campo label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+
+        .campo input,
+        .campo select,
+        .campo textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccd3cc;
+            border-radius: 7px;
+            font: inherit;
+        }
+
+        .campo textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .formulario .botao {
+            background: var(--principal);
+            color: white;
+            margin-top: 0;
+        }
+
+        #mensagem {
+            margin-top: 12px;
+            color: var(--principal);
+        }
+
+        .vazio {
+            grid-column: 1 / -1;
+            padding: 25px;
+            background: white;
+            border-radius: 8px;
+        }
+
+        footer {
+            background: var(--escuro);
+            color: white;
+            text-align: center;
+            padding: 25px 15px;
+            margin-top: 60px;
+        }
+
+        @media (max-width: 800px) {
+            .publicacoes {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .topo {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+
+        @media (max-width: 550px) {
+            .publicacoes {
+                grid-template-columns: 1fr;
+            }
+
+            .destaque {
+                padding: 50px 20px;
+            }
+
+            .formulario {
+                padding: 20px;
+            }
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body>
+
+    <header>
+        <div class="topo">
+            <div class="logo">📚 Mundo dos Livros</div>
+
+            <nav>
+                <a href="#inicio">Início</a>
+                <a href="#publicacoes">Publicações</a>
+                <a href="#adicionar">Criar postagem</a>
+            </nav>
+        </div>
+    </header>
+
+    <section class="destaque" id="inicio">
+        <h1>Histórias que transformam o mundo</h1>
+
+        <p>
+            Descubra livros, compartilhe conhecimentos e explore
+            novas ideias em nosso espaço dedicado à leitura.
+        </p>
+
+        <a href="#publicacoes" class="botao">Explorar publicações</a>
+    </section>
+
+    <main>
+        <section id="publicacoes">
+            <h2 class="titulo-secao">Últimas publicações</h2>
+
+            <input
+                type="search"
+                id="pesquisa"
+                class="pesquisa"
+                placeholder="🔎 Pesquisar por título, categoria ou conteúdo..."
+                aria-label="Pesquisar publicações"
+            >
+
+            <div class="publicacoes" id="listaPublicacoes"></div>
+        </section>
+
+        <section class="formulario" id="adicionar">
+            <h2>✍️ Criar nova publicação</h2>
+
+            <form id="formPost">
+                <div class="campo">
+                    <label for="titulo">Título da publicação</label>
+                    <input
+                        type="text"
+                        id="titulo"
+                        maxlength="100"
+                        placeholder="Digite o título"
+                        required
+                    >
+                </div>
+
+                <div class="campo">
+                    <label for="categoria">Categoria</label>
+                    <select id="categoria" required>
+                        <option value="Literatura">Literatura</option>
+                        <option value="Resenhas">Resenhas</option>
+                        <option value="Educação">Educação</option>
+                        <option value="Dicas de leitura">Dicas de leitura</option>
+                        <option value="Novidades">Novidades</option>
+                    </select>
+                </div>
+
+                <div class="campo">
+                    <label for="icone">Símbolo da publicação</label>
+                    <select id="icone">
+                        <option value="📚">📚 Livros</option>
+                        <option value="📖">📖 Livro aberto</option>
+                        <option value="✍️">✍️ Escrita</option>
+                        <option value="💡">💡 Ideias</option>
+                        <option value="🎓">🎓 Educação</option>
+                        <option value="🌟">🌟 Destaque</option>
+                    </select>
+                </div>
+
+                <div class="campo">
+                    <label for="resumo">Conteúdo da publicação</label>
+                    <textarea
+                        id="resumo"
+                        maxlength="5000"
+                        placeholder="Escreva sua publicação..."
+                        required
+                    ></textarea>
+                </div>
+
+                <button type="submit" class="botao">
+                    Publicar agora
+                </button>
+
+                <p id="mensagem" role="status"></p>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>📚 Mundo dos Livros — Compartilhando conhecimento.</p>
+        <p>© <span id="ano"></span> | Todos os direitos reservados.</p>
+    </footer>
+
+    <script>
+        const lista = document.getElementById("listaPublicacoes");
+        const formulario = document.getElementById("formPost");
+        const pesquisa = document.getElementById("pesquisa");
+        const mensagem = document.getElementById("mensagem");
+
+        document.getElementById("ano").textContent =
+            new Date().getFullYear();
+
+        const publicacoesIniciais = [
+            {
+                id: 1,
+                titulo: "A importância da leitura",
+                categoria: "Educação",
+                icone: "📖",
+                resumo: "A leitura amplia nosso vocabulário, estimula a criatividade e ajuda a compreender melhor o mundo. Ler alguns minutos por dia pode ser um ótimo começo para desenvolver esse hábito.",
+                data: "20/10/2026"
+            },
+            {
+                id: 2,
+                titulo: "Como escolher seu próximo livro",
+                categoria: "Dicas de leitura",
+                icone: "💡",
+                resumo: "Escolha um tema que desperte sua curiosidade. Leia a sinopse, conheça o autor e procure recomendações. O mais importante é encontrar uma história que você tenha vontade de continuar lendo.",
+                data: "20/10/2026"
+            },
+            {
+                id: 3,
+                titulo: "Compartilhar conhecimento",
+                categoria: "Literatura",
+                icone: "📚",
+                resumo: "Os livros permitem conhecer diferentes culturas, épocas e maneiras de pensar. Compartilhar uma boa leitura pode inspirar outras pessoas a descobrir o prazer de aprender.",
+                data: "20/10/2026"
+            }
+        ];
+
+        function carregarPublicacoes() {
+            try {
+                const dados = localStorage.getItem("blogPublicacoes");
+
+                if (dados === null) {
+                    return publicacoesIniciais;
+                }
+
+                const publicados = JSON.parse(dados);
+
+                return Array.isArray(publicados) ? publicados : publicacoesIniciais;
+            } catch (erro) {
+                return publicacoesIniciais;
+            }
+        }
+
+        let publicacoes = carregarPublicacoes();
+
+        function salvarPublicacoes() {
+            try {
+                localStorage.setItem(
+                    "blogPublicacoes",
+                    JSON.stringify(publicacoes)
+                );
+                return true;
+            } catch (erro) {
+                mensagem.textContent =
+                    "Não foi possível salvar. Verifique o armazenamento do navegador.";
+                return false;
+            }
+        }
+
+        function criarElemento(tag, classe, texto) {
+            const elemento = document.createElement(tag);
+
+            if (classe) elemento.className = classe;
+            if (texto !== undefined) elemento.textContent = texto;
+
+            return elemento;
+        }
+
+        function renderizarPublicacoes() {
+            const termo = pesquisa.value.trim().toLocaleLowerCase("pt-BR");
+
+            const filtradas = publicacoes.filter(post => {
+                const texto = [
+                    post.titulo,
+                    post.categoria,
+                    post.resumo
+                ].join(" ").toLocaleLowerCase("pt-BR");
+
+                return texto.includes(termo);
+            });
+
+            lista.replaceChildren();
+
+            if (filtradas.length === 0) {
+                lista.appendChild(
+                    criarElemento(
+                        "p",
+                        "vazio",
+                        "Nenhuma publicação encontrada."
+                    )
+                );
+                return;
+            }
+
+            filtradas.forEach(post => {
+                const cartao = criarElemento("article", "post");
+                const capa = criarElemento("div", "capa", post.icone);
+                const conteudo = criarElemento("div", "post-conteudo");
+
+                capa.setAttribute("aria-hidden", "true");
+
+                const categoria = criarElemento(
+                    "span", "categoria", post.categoria
+                );
+
+                const titulo = criarElemento("h3", "", post.titulo);
+
+                const resumo = criarElemento("p", "", post.resumo);
+
+                const data = criarElemento("span", "data", post.data);
+
+                const lerMais = criarElemento(
+                    "button", "ler-mais", "Ler publicação completa →"
+                );
+
+                lerMais.type = "button";
+                lerMais.setAttribute(
+                    "aria-expanded",
+                    "false"
+                );
+
+                resumo.hidden = true;
+
+                lerMais.addEventListener("click", () => {
+                    const vaiAbrir = resumo.hidden;
+                    resumo.hidden = !vaiAbrir;
+                    lerMais.textContent = vaiAbrir
+                        ? "Mostrar menos ↑"
+                        : "Ler publicação completa →";
+                    lerMais.setAttribute(
+                        "aria-expanded",
+                        String(vaiAbrir)
+                    );
+                });
+
+                conteudo.append(
+                    categoria,
+                    titulo,
+                    resumo,
+                    data,
+                    lerMais
+                );
+
+                // Publicações iniciais não exibem botão de exclusão.
+                if (post.id > 3) {
+                    const excluir = criarElemento(
+                        "button", "excluir", "Excluir publicação"
+                    );
+
+                    excluir.type = "button";
+
+                    excluir.addEventListener("click", () => {
+                        if (!confirm("Deseja excluir esta publicação?")) {
+                            return;
+                        }
+
+                        const anteriores = publicacoes;
+                        publicacoes = publicacoes.filter(
+                            item => item.id !== post.id
+                        );
+
+                        if (salvarPublicacoes()) {
+                            renderizarPublicacoes();
+                        } else {
+                            publicacoes = anteriores;
+                        }
+                    });
+
+                    conteudo.appendChild(excluir);
+                }
+
+                cartao.append(capa, conteudo);
+                lista.appendChild(cartao);
+            });
+        }
+
+        formulario.addEventListener("submit", evento => {
+            evento.preventDefault();
+
+            const titulo = document.getElementById("titulo").value.trim();
+            const categoria = document.getElementById("categoria").value;
+            const icone = document.getElementById("icone").value;
+            const resumo = document.getElementById("resumo").value.trim();
+
+            if (!titulo || !resumo) {
+                mensagem.textContent =
+                    "Preencha o título e o conteúdo da publicação.";
+                return;
+            }
+
+            const novaPublicacao = {
+                id: Date.now(),
+                titulo,
+                categoria,
+                icone,
+                resumo,
+                data: new Date().toLocaleDateString("pt-BR")
+            };
+
+            publicacoes.unshift(novaPublicacao);
+
+            if (!salvarPublicacoes()) {
+                publicacoes.shift();
+                return;
+            }
+
+            formulario.reset();
+            pesquisa.value = "";
+            mensagem.textContent = "Publicação adicionada com sucesso!";
+
+            renderizarPublicacoes();
+
+            document.getElementById("publicacoes").scrollIntoView({
+                behavior: "smooth"
+            });
+        });
+
+        pesquisa.addEventListener("input", renderizarPublicacoes);
+
+        renderizarPublicacoes();
+    </script>
+
+</body>
+</html>
