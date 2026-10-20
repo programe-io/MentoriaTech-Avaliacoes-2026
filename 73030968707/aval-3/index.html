@@ -3,118 +3,150 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Exemplo Prático - Manipulação de DOM</title>
+    <title>Manipulação de CSS com JavaScript</title>
     <style>
-        /* Tópico 8: Classes definidas em um arquivo CSS (simulado aqui) */
+        /* Estilos gerais do arquivo CSS externo/interno */
         body {
             font-family: Arial, sans-serif;
-            padding: 20px;
+            margin: 40px;
             background-color: #f4f4f9;
         }
+        h2 {
+            color: #333;
+        }
+        button {
+            padding: 10px 15px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        
+        /* Tabela de Situações (Item 9) */
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
+            margin-top: 10px;
+            background-color: #fff;
         }
         th, td {
-            border: 1px solid #ccc;
-            padding: 10px;
+            border: 1px solid #ddd;
+            padding: 12px;
             text-align: left;
         }
         th {
-            background-color: #e0e0e0;
+            background-color: #e2e2e2;
         }
-        /* Classes que serão alternadas via JavaScript */
-        .destaque {
-            background-color: #fff9c4;
+
+        /* Classes CSS para serem manipuladas via classList (Itens 6, 7 e 8) */
+        .situacao-aprovado {
+            background-color: #d4edda;
+            color: #155724;
             font-weight: bold;
         }
-        .sucesso {
-            color: #2e7d32;
+        .situacao-pendente {
+            background-color: #fff3cd;
+            color: #856404;
         }
-        .pendente {
-            color: #c62828;
+        .situacao-recusado {
+            background-color: #f8d7da;
+            color: #721c24;
+            font-weight: bold;
+        }
+        
+        /* Classe para o modo escuro */
+        .modo-escuro {
+            background-color: #222;
+            color: #fff;
+        }
+        .modo-escuro h2, .modo-escuro th {
+            color: #222;
         }
     </style>
 <script src="https://cdn.tailwindcss.com"></script>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="style.css" rel="stylesheet"></head>
 <body>
 
-    <h1>Manipulação de Estilos e Classes</h1>
+    <h2>Exemplo Prático: Tabela de Situações</h2>
     
-    <!-- Tópico 2 e 3: Estilização direta / CSS Inline original -->
-    <p id="meu-paragrafo" style="color: gray;">
-        Este parágrafo começará cinza (CSS inline) e mudará via JavaScript.
-    </p>
-    
-    <button id="btn-estilo">Mudar Estilo Direto</button>
-    <button id="btn-classe">Alternar Classe de Destaque</button>
+    <!-- Botão para demonstrar o método toggle (Item 7) -->
+    <button id="btnAlternarModo">Alternar Modo Escuro</button>
 
-    <!-- Tópico 9: Exemplo prático com uma tabela de situações -->
+    <!-- Caixa de texto para demonstrar estilização direta com .style (Item 2) -->
+    <div id="caixaDestaque" style="padding: 15px; margin-bottom: 20px; border: 1px solid #333;">
+        Este bloco será estilizado diretamente via propriedade <strong>style</strong> do JavaScript.
+    </div>
+    <button id="btnEstiloDireto">Aplicar Estilização Direta</button>
+
+    <!-- Tabela de Situações com getElementsByClassName (Item 10 e 11) -->
     <table>
         <thead>
             <tr>
-                <th>Tarefa</th>
+                <th>Aluno</th>
+                <th>Nota</th>
                 <th>Situação</th>
             </tr>
         </thead>
         <tbody>
-            <tr class="linha-tabela">
-                <td>Estudar JavaScript</td>
-                <td class="status">Concluído</td>
+            <tr>
+                <td>Ana Silva</td>
+                <td>8.5</td>
+                <td class="coluna-situacao">Aprovado</td>
             </tr>
-            <tr class="linha-tabela">
-                <td>Praticar CSS</td>
-                <td class="status">Pendente</td>
+            <tr>
+                <td>Carlos Souza</td>
+                <td>5.0</td>
+                <td class="coluna-situacao">Pendente</td>
             </tr>
-            <tr class="linha-tabela">
-                <td>Fazer o deploy do projeto</td>
-                <td class="status">Concluído</td>
+            <tr>
+                <td>Mariana Costa</td>
+                <td>3.0</td>
+                <td class="coluna-situacao">Recusado</td>
+            </tr>
+            <tr>
+                <td>João Pedro</td>
+                <td>9.0</td>
+                <td class="coluna-situacao">Aprovado</td>
             </tr>
         </tbody>
     </table>
 
-    <button id="btn-formatar-tabela" style="margin-top: 15px;">Formatar Tabela Condicionalmente</button>
-
     <script>
-        // --- 1. ESTILIZAÇÃO DIRETA (Tópicos 2, 4 e 5) ---
-        const paragrafo = document.getElementById('meu-paragrafo');
-        const btnEstilo = document.getElementById('btn-estilo');
+        // --- 1. Estilização direta com a propriedade .style (Itens 2, 4 e 5) ---
+        const btnEstiloDireto = document.getElementById('btnEstiloDireto');
+        const caixaDestaque = document.getElementById('caixaDestaque');
 
-        btnEstilo.addEventListener('click', () => {
-            // Aplicando propriedades CSS via JavaScript (style)
-            paragrafo.style.color = 'blue';
-            paragrafo.style.fontSize = '20px';
+        btnEstiloDireto.addEventListener('click', () => {
+            // Aplicando propriedades CSS diretamente (Atua como CSS Inline)
+            caixaDestaque.style.backgroundColor = '#007bff';
+            caixaDestaque.style.color = '#ffffff';
+            caixaDestaque.style.borderRadius = '8px';
         });
 
-        // --- 2. MANIPULANDO CLASSES COM classList (Tópicos 6 e 7) ---
-        const btnClasse = document.getElementById('btn-classe');
-        btnClasse.addEventListener('click', () => {
-            // O método 'toggle' adiciona a classe se ela não existir, ou remove se já existir
-            paragrafo.classList.toggle('destaque');
+        // --- 2. Alternando classes com classList e toggle (Item 6 e 7) ---
+        const btnAlternarModo = document.getElementById('btnAlternarModo');
+        
+        btnAlternarModo.addEventListener('click', () => {
+            // O método toggle adiciona a classe se ela não existir, ou remove se já existir
+            document.body.classList.toggle('modo-escuro');
         });
 
-        // --- 3. SELEÇÃO MÚLTIPLA E ESTILOS CONDICIONAIS (Tópicos 10 e 11) ---
-        const btnTabela = document.getElementById('btn-formatar-tabela');
+        // --- 3. Selecionando vários elementos e aplicando estilos condicionais (Item 10 e 11) ---
+        // Seleciona todos os elementos que possuem a classe 'coluna-situacao'
+        const celulasSituacao = document.getElementsByClassName('coluna-situacao');
 
-        btnTabela.addEventListener('click', () => {
-            // Selecionando vários elementos com getElementsByClassName
-            const linhas = document.getElementsByClassName('linha-tabela');
-            const statusCelulas = document.getElementsByClassName('status');
+        // Percorrendo a lista de elementos (HTMLCollection convertido em Array para usar forEach)
+        Array.from(celulasSituacao).forEach(celula => {
+            const texto = celula.textContent.trim().toLowerCase();
 
-            // Percorrendo elementos com um loop (for clássico devido ao HTMLCollection)
-            for (let i = 0; i < statusCelulas.length; i++) {
-                const textoStatus = statusCelulas[i].textContent;
-
-                // Aplicando estilos/classes de forma condicional
-                if (textoStatus === 'Concluído') {
-                    statusCelulas[i].classList.add('sucesso');
-                    linhas[i].style.backgroundColor = '#e8f5e9'; // Estilo direto na linha inteira
-                } else if (textoStatus === 'Pendente') {
-                    statusCelulas[i].classList.add('pendente');
-                    linhas[i].style.backgroundColor = '#ffebee';
-                }
+            // Aplica classes específicas de forma condicional usando classList.add (Item 7 e 8)
+            if (texto === 'aprovado') {
+                celula.classList.add('situacao-aprovado');
+            } else if (texto === 'pendente') {
+                celula.classList.add('situacao-pendente');
+            } else if (texto === 'recusado') {
+                celula.classList.add('situacao-recusado');
             }
         });
     </script>
