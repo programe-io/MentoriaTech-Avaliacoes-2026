@@ -1,0 +1,1493 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Futebol Total: história, regras, posições, competições, craques e quiz interativo sobre o esporte mais popular do mundo.">
+<title>Futebol Total — O Mundo do Futebol</title>
+<style>
+  /* ================= RESET & VARIÁVEIS ================= */
+  *,
+  *::before,
+  *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  :root {
+    --bg: #08110d;
+    --bg-2: #0d1a14;
+    --card: #12241c;
+    --borda: rgba(34, 197, 94, 0.18);
+    --verde: #22c55e;
+    --verde-escuro: #15803d;
+    --amarelo: #facc15;
+    --texto: #e6f2ea;
+    --texto-2: #9ab3a5;
+    --sombra: 0 14px 34px rgba(0, 0, 0, 0.45);
+    --raio: 16px;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 84px;
+  }
+
+  body {
+    font-family: "Segoe UI", system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif;
+    background:
+      radial-gradient(900px 500px at 80% -10%, rgba(34, 197, 94, 0.14), transparent 60%),
+      radial-gradient(700px 420px at 5% 20%, rgba(250, 204, 21, 0.07), transparent 60%),
+      var(--bg);
+    color: var(--texto);
+    line-height: 1.65;
+    overflow-x: hidden;
+  }
+
+  img { max-width: 100%; display: block; }
+  a { color: inherit; text-decoration: none; }
+  ul { list-style: none; }
+  button { font-family: inherit; }
+  [hidden] { display: none !important; }
+
+  /* ================= HEADER ================= */
+  .header {
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 100;
+    background: rgba(8, 17, 13, 0.88);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--borda);
+  }
+
+  .nav {
+    max-width: 1150px;
+    margin: 0 auto;
+    padding: 0 20px;
+    height: 68px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    white-space: nowrap;
+  }
+
+  .logo strong { color: var(--verde); }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .nav-links a {
+    display: block;
+    padding: 9px 14px;
+    border-radius: 10px;
+    font-size: 0.94rem;
+    color: var(--texto-2);
+    font-weight: 500;
+    transition: color 0.2s, background 0.2s;
+  }
+
+  .nav-links a:hover,
+  .nav-links a:focus-visible {
+    color: var(--verde);
+    background: rgba(34, 197, 94, 0.1);
+  }
+
+  .menu-btn {
+    display: none;
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--borda);
+    border-radius: 12px;
+    background: transparent;
+    cursor: pointer;
+    padding: 11px 10px;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .menu-btn span {
+    display: block;
+    height: 2px;
+    width: 100%;
+    background: var(--texto);
+    border-radius: 2px;
+    transition: transform 0.3s, opacity 0.3s;
+  }
+
+  .menu-btn.ativo span:nth-child(1) { transform: translateY(9px) rotate(45deg); }
+  .menu-btn.ativo span:nth-child(2) { opacity: 0; }
+  .menu-btn.ativo span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
+
+  /* ================= HERO ================= */
+  .hero {
+    min-height: 100vh;
+    max-width: 1150px;
+    margin: 0 auto;
+    padding: 130px 20px 80px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+
+  .hero-conteudo { flex: 1 1 420px; }
+
+  .hero-tag {
+    display: inline-block;
+    padding: 6px 16px;
+    margin-bottom: 20px;
+    border-radius: 999px;
+    border: 1px solid var(--borda);
+    background: rgba(34, 197, 94, 0.08);
+    color: var(--verde);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+  }
+
+  .hero h1 {
+    font-size: clamp(2.6rem, 7vw, 4.4rem);
+    line-height: 1.05;
+    letter-spacing: -1.5px;
+    margin-bottom: 20px;
+  }
+
+  .hero h1 span {
+    background: linear-gradient(100deg, var(--verde), var(--amarelo));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .hero-texto {
+    color: var(--texto-2);
+    font-size: 1.08rem;
+    max-width: 540px;
+    margin-bottom: 32px;
+  }
+
+  .hero-botoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border-radius: 12px;
+    font-size: 0.97rem;
+    font-weight: 600;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s, background 0.2s, border-color 0.2s;
+  }
+
+  .btn:hover { transform: translateY(-3px); }
+
+  .btn-primario {
+    background: linear-gradient(135deg, var(--verde), var(--verde-escuro));
+    color: #04210f;
+    box-shadow: 0 10px 26px rgba(34, 197, 94, 0.28);
+  }
+
+  .btn-primario:hover { box-shadow: 0 14px 34px rgba(34, 197, 94, 0.42); }
+
+  .btn-secundario {
+    background: transparent;
+    color: var(--texto);
+    border-color: rgba(255, 255, 255, 0.22);
+  }
+
+  .btn-secundario:hover {
+    border-color: var(--verde);
+    color: var(--verde);
+  }
+
+  .hero-bola {
+    flex: 0 0 auto;
+    font-size: clamp(7rem, 20vw, 15rem);
+    line-height: 1;
+    filter: drop-shadow(0 20px 45px rgba(34, 197, 94, 0.35));
+    animation: flutuar 4s ease-in-out infinite;
+    user-select: none;
+  }
+
+  @keyframes flutuar {
+    0%, 100% { transform: translateY(0) rotate(-8deg); }
+    50%      { transform: translateY(-26px) rotate(8deg); }
+  }
+
+  /* ================= SEÇÕES ================= */
+  .secao {
+    max-width: 1150px;
+    margin: 0 auto;
+    padding: 90px 20px;
+  }
+
+  .secao-topo {
+    max-width: 720px;
+    margin-bottom: 46px;
+  }
+
+  .secao-tag {
+    color: var(--verde);
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .secao h2 {
+    font-size: clamp(1.8rem, 4.2vw, 2.6rem);
+    line-height: 1.15;
+    letter-spacing: -0.8px;
+    margin-bottom: 14px;
+  }
+
+  .secao-topo p {
+    color: var(--texto-2);
+    font-size: 1.02rem;
+  }
+
+  /* ================= TIMELINE ================= */
+  .timeline {
+    position: relative;
+    padding-left: 36px;
+  }
+
+  .timeline::before {
+    content: "";
+    position: absolute;
+    top: 8px;
+    bottom: 8px;
+    left: 10px;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--verde), rgba(34, 197, 94, 0.08));
+  }
+
+  .timeline-item {
+    position: relative;
+    padding: 0 0 34px 4px;
+  }
+
+  .timeline-item:last-child { padding-bottom: 0; }
+
+  .timeline-item::before {
+    content: "";
+    position: absolute;
+    left: -33px;
+    top: 9px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 3px solid var(--verde);
+    box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.12);
+  }
+
+  .timeline-ano {
+    display: inline-block;
+    font-weight: 800;
+    color: var(--amarelo);
+    font-size: 0.95rem;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+  }
+
+  .timeline-item h3 {
+    font-size: 1.12rem;
+    margin-bottom: 6px;
+  }
+
+  .timeline-item p {
+    color: var(--texto-2);
+    font-size: 0.97rem;
+    max-width: 720px;
+  }
+
+  /* ================= CARDS ================= */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(255px, 1fr));
+    gap: 20px;
+  }
+
+  .card {
+    background: linear-gradient(160deg, var(--card), var(--bg-2));
+    border: 1px solid var(--borda);
+    border-radius: var(--raio);
+    padding: 26px 24px;
+    transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+  }
+
+  .card:hover {
+    transform: translateY(-6px);
+    border-color: rgba(34, 197, 94, 0.55);
+    box-shadow: var(--sombra);
+  }
+
+  .card-icone {
+    font-size: 1.9rem;
+    margin-bottom: 14px;
+    line-height: 1;
+  }
+
+  .card h3 {
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+  }
+
+  .card p {
+    color: var(--texto-2);
+    font-size: 0.95rem;
+  }
+
+  /* ================= CAMPO / POSIÇÕES ================= */
+  .posicoes-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 40px;
+    align-items: center;
+  }
+
+  .campo {
+    position: relative;
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto;
+    aspect-ratio: 2 / 3;
+    border-radius: 14px;
+    border: 3px solid rgba(255, 255, 255, 0.22);
+    background: repeating-linear-gradient(
+      to bottom,
+      #14532d 0 16.66%,
+      #166534 16.66% 33.32%
+    );
+    box-shadow: inset 0 0 70px rgba(0, 0, 0, 0.5), var(--sombra);
+    overflow: hidden;
+  }
+
+  .campo::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.22);
+    transform: translateY(-1px);
+  }
+
+  .campo-circulo {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 30%;
+    aspect-ratio: 1;
+    border: 2px solid rgba(255, 255, 255, 0.22);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .campo-area {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 56%;
+    height: 15%;
+    border: 2px solid rgba(255, 255, 255, 0.22);
+  }
+
+  .campo-area-topo { top: -2px; border-top: none; }
+  .campo-area-base { bottom: -2px; border-bottom: none; }
+
+  .ponto {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    width: 12%;
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    background: rgba(6, 15, 11, 0.88);
+    color: var(--texto);
+    font-size: 0.66rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    z-index: 2;
+    transition: transform 0.2s, background 0.2s, color 0.2s, box-shadow 0.2s;
+  }
+
+  .ponto:hover,
+  .ponto:focus-visible {
+    background: var(--verde);
+    color: #04210f;
+    outline: none;
+    transform: translate(-50%, -50%) scale(1.14);
+  }
+
+  .ponto.ativo {
+    background: var(--amarelo);
+    color: #241c00;
+    border-color: #fff;
+    box-shadow: 0 0 0 5px rgba(250, 204, 21, 0.25);
+    transform: translate(-50%, -50%) scale(1.14);
+  }
+
+  .posicao-info {
+    background: linear-gradient(160deg, var(--card), var(--bg-2));
+    border: 1px solid var(--borda);
+    border-radius: var(--raio);
+    padding: 30px 28px;
+    min-height: 190px;
+  }
+
+  .posicao-info h3 {
+    font-size: 1.3rem;
+    margin-bottom: 12px;
+    color: var(--verde);
+  }
+
+  .posicao-info p {
+    color: var(--texto-2);
+    font-size: 0.98rem;
+  }
+
+  /* ================= CRAQUES ================= */
+  .craque {
+    background: linear-gradient(160deg, var(--card), var(--bg-2));
+    border: 1px solid var(--borda);
+    border-radius: var(--raio);
+    padding: 24px;
+    transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+  }
+
+  .craque:hover {
+    transform: translateY(-6px);
+    border-color: rgba(250, 204, 21, 0.55);
+    box-shadow: var(--sombra);
+  }
+
+  .craque-topo {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+
+  .craque-emoji {
+    width: 52px;
+    height: 52px;
+    flex: 0 0 52px;
+    display: grid;
+    place-items: center;
+    font-size: 1.5rem;
+    border-radius: 14px;
+    background: rgba(34, 197, 94, 0.12);
+    border: 1px solid var(--borda);
+  }
+
+  .craque h3 {
+    font-size: 1.1rem;
+    line-height: 1.25;
+  }
+
+  .craque-pais {
+    color: var(--texto-2);
+    font-size: 0.85rem;
+  }
+
+  .craque-feito {
+    color: var(--texto-2);
+    font-size: 0.93rem;
+    margin-bottom: 16px;
+    min-height: 48px;
+  }
+
+  .craque-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .craque-tags span {
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    padding: 5px 11px;
+    border-radius: 999px;
+    background: rgba(34, 197, 94, 0.1);
+    border: 1px solid var(--borda);
+    color: var(--verde);
+  }
+
+  /* ================= NÚMEROS ================= */
+  .faixa-numeros {
+    border-top: 1px solid var(--borda);
+    border-bottom: 1px solid var(--borda);
+    background: rgba(18, 36, 28, 0.45);
+  }
+
+  .numeros-grid {
+    max-width: 1150px;
+    margin: 0 auto;
+    padding: 56px 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 28px;
+    text-align: center;
+  }
+
+  .numero-valor {
+    font-size: clamp(2rem, 5vw, 2.9rem);
+    font-weight: 800;
+    line-height: 1;
+    color: var(--amarelo);
+    letter-spacing: -1px;
+    margin-bottom: 8px;
+  }
+
+  .numero-label {
+    color: var(--texto-2);
+    font-size: 0.9rem;
+  }
+
+  /* ================= QUIZ ================= */
+  .quiz-box {
+    max-width: 720px;
+    margin: 0 auto;
+    background: linear-gradient(160deg, var(--card), var(--bg-2));
+    border: 1px solid var(--borda);
+    border-radius: 20px;
+    padding: 34px 30px;
+    box-shadow: var(--sombra);
+  }
+
+  .quiz-progresso {
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: var(--verde);
+    margin-bottom: 14px;
+  }
+
+  .quiz-pergunta {
+    font-size: 1.2rem;
+    font-weight: 700;
+    line-height: 1.4;
+    margin-bottom: 22px;
+  }
+
+  .quiz-opcao {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 14px 18px;
+    margin-bottom: 10px;
+    border-radius: 12px;
+    border: 1px solid var(--borda);
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--texto);
+    font-size: 0.97rem;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s, transform 0.15s;
+  }
+
+  .quiz-opcao:hover:not(:disabled) {
+    border-color: var(--verde);
+    background: rgba(34, 197, 94, 0.1);
+    transform: translateX(3px);
+  }
+
+  .quiz-opcao:disabled { cursor: default; }
+
+  .quiz-opcao.correta {
+    border-color: var(--verde);
+    background: rgba(34, 197, 94, 0.22);
+    color: #bdf7d1;
+    font-weight: 600;
+  }
+
+  .quiz-opcao.errada {
+    border-color: #ef4444;
+    background: rgba(239, 68, 68, 0.18);
+    color: #fecaca;
+  }
+
+  .quiz-feedback {
+    min-height: 26px;
+    margin: 8px 0 18px;
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+
+  .quiz-feedback.ok { color: var(--verde); }
+  .quiz-feedback.erro { color: #f87171; }
+
+  .quiz-resultado { text-align: center; }
+
+  .quiz-placar {
+    font-size: 2.8rem;
+    font-weight: 800;
+    color: var(--amarelo);
+    letter-spacing: -1px;
+    margin-bottom: 8px;
+  }
+
+  .quiz-resultado p { color: var(--texto-2); margin-bottom: 22px; }
+
+  /* ================= FOOTER ================= */
+  .footer {
+    border-top: 1px solid var(--borda);
+    background: rgba(8, 17, 13, 0.9);
+    padding: 46px 20px 28px;
+  }
+
+  .footer-conteudo {
+    max-width: 1150px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 30px;
+  }
+
+  .footer-marca { max-width: 320px; }
+
+  .footer-marca h3 {
+    font-size: 1.15rem;
+    margin-bottom: 10px;
+  }
+
+  .footer-marca h3 span { color: var(--verde); }
+
+  .footer-marca p {
+    color: var(--texto-2);
+    font-size: 0.92rem;
+  }
+
+  .footer-col h4 {
+    font-size: 0.82rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--verde);
+    margin-bottom: 12px;
+  }
+
+  .footer-col li { margin-bottom: 8px; }
+
+  .footer-col a {
+    color: var(--texto-2);
+    font-size: 0.92rem;
+    transition: color 0.2s;
+  }
+
+  .footer-col a:hover { color: var(--verde); }
+
+  .footer-base {
+    max-width: 1150px;
+    margin: 34px auto 0;
+    padding-top: 22px;
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
+    text-align: center;
+    color: var(--texto-2);
+    font-size: 0.85rem;
+  }
+
+  /* ================= ANIMAÇÃO DE ENTRADA ================= */
+  .js .reveal {
+    opacity: 0;
+    transform: translateY(26px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .js .reveal.visivel {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* ================= RESPONSIVO ================= */
+  @media (max-width: 900px) {
+    .posicoes-layout {
+      grid-template-columns: 1fr;
+      gap: 30px;
+    }
+  }
+
+  @media (max-width: 860px) {
+    .menu-btn { display: flex; }
+
+    .nav-links {
+      position: fixed;
+      top: 68px;
+      left: 0;
+      right: 0;
+      z-index: 90;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 2px;
+      padding: 14px 20px 22px;
+      background: #0a1711;
+      border-bottom: 1px solid var(--borda);
+      box-shadow: 0 18px 30px rgba(0, 0, 0, 0.5);
+      transform: translateY(-150%);
+      transition: transform 0.32s ease;
+    }
+
+    .nav-links.aberto { transform: translateY(0); }
+
+    .nav-links a { padding: 12px 14px; font-size: 1rem; }
+  }
+
+  @media (max-width: 620px) {
+    .hero { padding-top: 110px; text-align: center; }
+    .hero-botoes { justify-content: center; }
+    .hero-texto { margin-inline: auto; }
+    .hero-bola { font-size: 7.5rem; margin: 0 auto; }
+    .secao { padding: 64px 18px; }
+    .quiz-box { padding: 26px 20px; }
+    .ponto { font-size: 0.56rem; }
+    .timeline { padding-left: 28px; }
+    .timeline-item::before { left: -25px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<!-- ================= HEADER ================= -->
+<header class="header">
+  <nav class="nav" aria-label="Navegação principal">
+    <a href="#topo" class="logo">⚽ <span>Futebol<strong>Total</strong></span></a>
+
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#historia">História</a></li>
+      <li><a href="#regras">Regras</a></li>
+      <li><a href="#posicoes">Posições</a></li>
+      <li><a href="#competicoes">Competições</a></li>
+      <li><a href="#craques">Craques</a></li>
+      <li><a href="#quiz">Quiz</a></li>
+    </ul>
+
+    <button class="menu-btn" id="menuBtn" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="navLinks">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+</header>
+
+<main>
+
+  <!-- ================= HERO ================= -->
+  <section class="hero" id="topo">
+    <div class="hero-conteudo">
+      <p class="hero-tag">O esporte mais amado do planeta</p>
+      <h1>Futebol <span>Total</span></h1>
+      <p class="hero-texto">
+        História, regras, posições, competições, craques e um quiz para testar seus
+        conhecimentos. Tudo sobre o futebol reunido em um só lugar — do primeiro
+        chute em 1863 aos gramados da atualidade.
+      </p>
+      <div class="hero-botoes">
+        <a href="#historia" class="btn btn-primario">Começar a explorar</a>
+        <a href="#quiz" class="btn btn-secundario">Ir para o Quiz</a>
+      </div>
+    </div>
+    <div class="hero-bola" aria-hidden="true">⚽</div>
+  </section>
+
+  <!-- ================= HISTÓRIA ================= -->
+  <section class="secao reveal" id="historia">
+    <div class="secao-topo">
+      <p class="secao-tag">Linha do tempo</p>
+      <h2>Uma história que atravessa séculos</h2>
+      <p>Jogos com bola existem há milênios, mas o futebol moderno nasceu na Inglaterra do século XIX e se espalhou pelo mundo em velocidade recorde.</p>
+    </div>
+
+    <div class="timeline">
+      <article class="timeline-item">
+        <span class="timeline-ano">1863</span>
+        <h3>Nasce o futebol moderno</h3>
+        <p>A fundação da Football Association, em Londres, unificou as regras e separou oficialmente o futebol do rúgbi.</p>
+      </article>
+
+      <article class="timeline-item">
+        <span class="timeline-ano">1904</span>
+        <h3>Fundação da FIFA</h3>
+        <p>Sete países europeus criam a Federação Internacional de Futebol, responsável por organizar o esporte em escala mundial.</p>
+      </article>
+
+      <article class="timeline-item">
+        <span class="timeline-ano">1930</span>
+        <h3>A primeira Copa do Mundo</h3>
+        <p>O Uruguai sedia e vence o primeiro Mundial da história, batendo a Argentina na final por 4 a 2, em Montevidéu.</p>
+      </article>
+
+      <article class="timeline-item">
+        <span class="timeline-ano">1958</span>
+        <h3>O Brasil conquista sua primeira estrela</h3>
+        <p>Na Suécia, um garoto de 17 anos chamado Pelé encanta o mundo e o Brasil levanta sua primeira taça de campeão mundial.</p>
+      </article>
+
+      <article class="timeline-item">
+        <span class="timeline-ano">1991</span>
+        <h3>A Copa do Mundo Feminina</h3>
+        <p>A FIFA realiza na China a primeira edição do Mundial Feminino, marco do crescimento do futebol jogado por mulheres.</p>
+      </article>
+
+      <article class="timeline-item">
+        <span class="timeline-ano">Hoje</span>
+        <h3>Um esporte global</h3>
+        <p>Com mais de 200 seleções filiadas, o futebol movimenta bilhões em receita, une culturas e é praticado em todos os continentes.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ================= REGRAS ================= -->
+  <section class="secao reveal" id="regras">
+    <div class="secao-topo">
+      <p class="secao-tag">Como funciona</p>
+      <h2>As regras essenciais do jogo</h2>
+      <p>O futebol tem 17 regras oficiais. Estas são as que todo torcedor precisa conhecer para acompanhar qualquer partida.</p>
+    </div>
+
+    <div class="grid">
+      <article class="card">
+        <div class="card-icone" aria-hidden="true">👥</div>
+        <h3>11 jogadores por equipe</h3>
+        <p>Cada time entra em campo com 11 jogadores, incluindo o goleiro. São permitidas até 5 substituições por partida.</p>
+      </article>
+
+      <article class="card">
+        <div class="card-icone" aria-hidden="true">⏱️</div>
+        <h3>90 minutos de jogo</h3>
+        <p>A partida é dividida em dois tempos de 45 minutos. O árbitro acrescenta o tempo perdido em paralisações ao final de cada etapa.</p>
+      </article>
+
+      <article class="card">
+        <div class="card-icone" aria-hidden="true">🚩</div>
+        <h3>Impedimento</h3>
+        <p>Um jogador está impedido se, no momento do passe, estiver na metade ofensiva do campo e à frente do penúltimo defensor, participando da jogada.</p>
+      </article>
+
+      <article class="card">
+        <div class="card-icone" aria-hidden="true">🟨</div>
+        <h3>Cartões amarelo e vermelho</h3>
+        <p>O amarelo é uma advertência; dois amarelos na mesma partida resultam em vermelho. O cartão vermelho expulsa o jogador, que não pode ser substituído.</p>
+      </article>
+
+      <article class="card">
+        <div class="card-icone" aria-hidden="true">🎯</div>
+        <h3>Pênalti</h3>
+        <p>É marcado quando há falta dentro da área defendida. A cobrança é feita a 11 metros do gol, apenas com o goleiro e o batedor.</p>
+      </article>
+
+      <article class="card">
+        <div class="card-icone" aria-hidden="true">⚽</div>
+        <h3>Gol e reinício</h3>
+        <p>O gol só é válido se a bola ultrapassar completamente a linha de fundo entre as traves. O jogo recomeça com saída de bola no meio-campo.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ================= POSIÇÕES ================= -->
+  <section class="secao reveal" id="posicoes">
+    <div class="secao-topo">
+      <p class="secao-tag">Tática</p>
+      <h2>As posições dentro de campo</h2>
+      <p>Clique em um jogador no campo para descobrir a função de cada posição.</p>
+    </div>
+
+    <div class="posicoes-layout">
+      <div class="campo" aria-label="Campo de futebol com posições interativas">
+        <div class="campo-circulo"></div>
+        <div class="campo-area campo-area-topo"></div>
+        <div class="campo-area campo-area-base"></div>
+
+        <button type="button" class="ponto" data-pos="goleiro"   style="top:92%; left:50%;" aria-label="Goleiro">GOL</button>
+
+        <button type="button" class="ponto" data-pos="zagueiro"  style="top:76%; left:33%;" aria-label="Zagueiro">ZAG</button>
+        <button type="button" class="ponto" data-pos="zagueiro"  style="top:76%; left:67%;" aria-label="Zagueiro">ZAG</button>
+
+        <button type="button" class="ponto" data-pos="lateral"   style="top:72%; left:10%;" aria-label="Lateral">LAT</button>
+        <button type="button" class="ponto" data-pos="lateral"   style="top:72%; left:90%;" aria-label="Lateral">LAT</button>
+
+        <button type="button" class="ponto" data-pos="volante"   style="top:58%; left:50%;" aria-label="Volante">VOL</button>
+
+        <button type="button" class="ponto" data-pos="meia"      style="top:44%; left:27%;" aria-label="Meia">MEI</button>
+        <button type="button" class="ponto" data-pos="meia"      style="top:44%; left:73%;" aria-label="Meia">MEI</button>
+
+        <button type="button" class="ponto" data-pos="ponta"     style="top:24%; left:14%;" aria-label="Ponta">PON</button>
+        <button type="button" class="ponto" data-pos="ponta"     style="top:24%; left:86%;" aria-label="Ponta">PON</button>
+
+        <button type="button" class="ponto" data-pos="atacante"  style="top:14%; left:50%;" aria-label="Atacante">ATA</button>
+      </div>
+
+      <div class="posicao-info">
+        <h3 id="posicaoTitulo">Escolha uma posição</h3>
+        <p id="posicaoTexto">Toque em qualquer jogador do campo ao lado para ver a descrição da função, as características exigidas e exemplos de como ela funciona na tática.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= COMPETIÇÕES ================= -->
+  <section class="secao reveal" id="competicoes">
+    <div class="secao-topo">
+      <p class="secao-tag">Torneios</p>
+      <h2>As competições mais importantes</h2>
+      <p>Do Mundial de seleções à Champions League, estas são as competições que param o planeta.</p>
+    </div>
+
+    <div class="grid">
+      <article class="card">
+        <div class="card-icone" aria-hidden="true">🌍</div>
+        <h3>Copa do Mundo FIFA</h3>
+        <p>O maior torneio de seleções do planeta, disputado a cada quatro anos. O Brasil é o maior campeão, com cinco títulos.</p>
+      </article>
+
+      <article class="card">
+        <div class="card-icone" aria-hidden="true">🏆</div>
+        <h3>UEFA Champions League</h3>
+        <p>A competição de clubes mais valiosa da Europa, reunindo os melhores times do continente em um formato de mata-mata eletrizante.</p>
+      </article>
+
+      <article class="card">
+        <div class="card-icone" aria-hidden="true">🏅</div>
+        <h3>CONMEBOL Libertadores</h3>
+        <p>O torneio mais importante do futebol sul-americano, disputado desde 1960 e responsável por clássicos históricos entre gigantes do continente.</p>
+      </article>
+
+      <article class="card">
+        <div class="card-icone" aria-hidden="true">🇧🇷</div>
+        <h3>Brasileirão Série A</h3>
+        <p>A principal liga do Brasil, disputada em pontos corridos com 20 clubes. É conhecida pela competitividade e pelo equilíbrio entre as equipes.</p>
+      </article>
+
+      <article class="card">
+        <div class="card-icone" aria-hidden="true">🦁</div>
+        <h3>Premier League</h3>
+        <p>A liga inglesa é a mais assistida do mundo, com estádios lotados, ritmo intenso e transmissão para mais de 180 países.</p>
+      </article>
+
+      <article class="card">
+        <div class="card-icone" aria-hidden="true">🇪🇺</div>
+        <h3>Eurocopa</h3>
+        <p>O campeonato europeu de seleções, realizado a cada quatro anos, reúne potências como França, Alemanha, Espanha e Portugal.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ================= NÚMEROS ================= -->
+  <section class="faixa-numeros" aria-label="Números do futebol">
+    <div class="numeros-grid">
+      <div>
+        <p class="numero-valor" data-contador="211">0</p>
+        <p class="numero-label">seleções filiadas à FIFA</p>
+      </div>
+      <div>
+        <p class="numero-valor" data-contador="3.5" data-decimais="1">0</p>
+        <p class="numero-label">bilhões de torcedores no mundo</p>
+      </div>
+      <div>
+        <p class="numero-valor" data-contador="48">0</p>
+        <p class="numero-label">seleções na Copa de 2026</p>
+      </div>
+      <div>
+        <p class="numero-valor" data-contador="90">0</p>
+        <p class="numero-label">minutos de uma partida oficial</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CRAQUES ================= -->
+  <section class="secao reveal" id="craques">
+    <div class="secao-topo">
+      <p class="secao-tag">Lendas</p>
+      <h2>Craques que marcaram época</h2>
+      <p>Jogadores que transformaram o futebol em arte e ficaram para sempre na memória dos torcedores.</p>
+    </div>
+    <div class="grid" id="craquesGrid"></div>
+  </section>
+
+  <!-- ================= QUIZ ================= -->
+  <section class="secao reveal" id="quiz">
+    <div class="secao-topo">
+      <p class="secao-tag">Teste seus conhecimentos</p>
+      <h2>Quiz do Futebol</h2>
+      <p>Seis perguntas para descobrir se você é um verdadeiro especialista. Boa sorte!</p>
+    </div>
+
+    <div class="quiz-box">
+      <div id="quizCard">
+        <p class="quiz-progresso" id="quizProgresso">Pergunta 1 de 6</p>
+        <h3 class="quiz-pergunta" id="quizPergunta">Carregando…</h3>
+        <div id="quizOpcoes"></div>
+        <p class="quiz-feedback" id="quizFeedback"></p>
+        <button type="button" class="btn btn-primario" id="quizProxima" style="display:none;">Próxima pergunta</button>
+      </div>
+
+      <div class="quiz-resultado" id="quizResultado" hidden>
+        <p class="quiz-placar" id="quizPlacar">0 / 6</p>
+        <p id="quizMensagem"></p>
+        <button type="button" class="btn btn-primario" id="quizReiniciar">Jogar novamente</button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ================= FOOTER ================= -->
+<footer class="footer">
+  <div class="footer-conteudo">
+    <div class="footer-marca">
+      <h3>⚽ Futebol<span>Total</span></h3>
+      <p>Um site dedicado ao esporte que conecta culturas, gerações e paixões em todo o mundo.</p>
+    </div>
+
+    <div class="footer-col">
+      <h4>Conteúdo</h4>
+      <ul>
+        <li><a href="#historia">História</a></li>
+        <li><a href="#regras">Regras</a></li>
+        <li><a href="#posicoes">Posições</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Explore</h4>
+      <ul>
+        <li><a href="#competicoes">Competições</a></li>
+        <li><a href="#craques">Craques</a></li>
+        <li><a href="#quiz">Quiz</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <p class="footer-base">© 2025 Futebol Total — Conteúdo informativo e educativo. Todos os direitos reservados.</p>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  /* Marca que o JS está ativo (usado pelas animações de entrada) */
+  document.documentElement.classList.add("js");
+
+  /* ================= MENU MOBILE ================= */
+  var menuBtn = document.getElementById("menuBtn");
+  var navLinks = document.getElementById("navLinks");
+
+  function fecharMenu() {
+    navLinks.classList.remove("aberto");
+    menuBtn.classList.remove("ativo");
+    menuBtn.setAttribute("aria-expanded", "false");
+    menuBtn.setAttribute("aria-label", "Abrir menu");
+  }
+
+  menuBtn.addEventListener("click", function () {
+    var aberto = navLinks.classList.toggle("aberto");
+    menuBtn.classList.toggle("ativo", aberto);
+    menuBtn.setAttribute("aria-expanded", aberto ? "true" : "false");
+    menuBtn.setAttribute("aria-label", aberto ? "Fechar menu" : "Abrir menu");
+  });
+
+  navLinks.querySelectorAll("a").forEach(function (link) {
+    link.addEventListener("click", fecharMenu);
+  });
+
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") fecharMenu();
+  });
+
+  window.addEventListener("resize", function () {
+    if (window.innerWidth > 860) fecharMenu();
+  });
+
+  /* ================= POSIÇÕES ================= */
+  var posicoes = {
+    goleiro: {
+      nome: "Goleiro (GOL)",
+      texto: "Único jogador autorizado a usar as mãos dentro da própria área. Sua função é defender o gol, comandar a linha defensiva e iniciar as jogadas com os pés. Precisa de reflexos rápidos, boa leitura de jogo e coragem sob pressão."
+    },
+    zagueiro: {
+      nome: "Zagueiro (ZAG)",
+      texto: "O último homem da defesa. Marca os atacantes adversários, corta cruzamentos e organiza a linha de impedimento. Costuma ter boa estatura, força física e excelente senso de posicionamento."
+    },
+    lateral: {
+      nome: "Lateral (LAT)",
+      texto: "Atua pelas laterais do campo, com funções defensivas e ofensivas. Precisa de grande resistência física para subir e descer apoiando o ataque, além de qualidade nos cruzamentos."
+    },
+    volante: {
+      nome: "Volante (VOL)",
+      texto: "O primeiro homem de meio-campo, à frente da zaga. Protege a defesa, rouba bolas e faz a ligação com o ataque. É o equilíbrio tático do time, exigindo visão de jogo e disciplina."
+    },
+    meia: {
+      nome: "Meia (MEI)",
+      texto: "O cérebro criativo da equipe. Distribui passes, cria jogadas e alimenta os atacantes. Precisa de técnica refinada, visão de jogo apurada e capacidade de decidir sob pressão."
+    },
+    ponta: {
+      nome: "Ponta (PON)",
+      texto: "Jogador de velocidade pelos lados do campo. Busca o drible, o um contra um e os cruzamentos para a área. É imprevisível e costuma ser decisivo em jogadas individuais."
+    },
+    atacante: {
+      nome: "Atacante (ATA)",
+      texto: "O responsável por marcar os gols. Finaliza, ataca a última linha defensiva e transforma chances em gols. Vive de posicionamento, sangue-frio e instinto de artilheiro."
+    }
+  };
+
+  var pontos = document.querySelectorAll(".ponto");
+  var posicaoTitulo = document.getElementById("posicaoTitulo");
+  var posicaoTexto = document.getElementById("posicaoTexto");
+
+  pontos.forEach(function (ponto) {
+    ponto.addEventListener("click", function () {
+      var chave = ponto.getAttribute("data-pos");
+      var info = posicoes[chave];
+      if (!info) return;
+
+      pontos.forEach(function (p) { p.classList.remove("ativo"); });
+      ponto.classList.add("ativo");
+
+      posicaoTitulo.textContent = info.nome;
+      posicaoTexto.textContent = info.texto;
+    });
+  });
+
+  /* ================= CRAQUES ================= */
+  var craques = [
+    {
+      nome: "Pelé",
+      pais: "Brasil 🇧🇷",
+      pos: "Atacante",
+      periodo: "1956–1977",
+      feito: "Único jogador tricampeão mundial. Marcou mais de 1.000 gols na carreira.",
+      emoji: "👑"
+    },
+    {
+      nome: "Diego Maradona",
+      pais: "Argentina 🇦🇷",
+      pos: "Meia-atacante",
+      periodo: "1976–1997",
+      feito: "Campeão do mundo em 1986 e autor do 'Gol do Século' contra a Inglaterra.",
+      emoji: "🇦🇷"
+    },
+    {
+      nome: "Lionel Messi",
+      pais: "Argentina 🇦🇷",
+      pos: "Meia-atacante",
+      periodo: "2004–atual",
+      feito: "Bicampeão da Copa América, campeão do mundo em 2022 e recordista de Bolas de Ouro.",
+      emoji: "🐐"
+    },
+    {
+      nome: "Cristiano Ronaldo",
+      pais: "Portugal 🇵🇹",
+      pos: "Atacante",
+      periodo: "2002–atual",
+      feito: "Maior artilheiro da história das seleções e multicampeão por clubes na Europa.",
+      emoji: "💪"
+    },
+    {
+      nome: "Marta",
+      pais: "Brasil 🇧🇷",
+      pos: "Atacante",
+      periodo: "2000–atual",
+      feito: "Eleita seis vezes a melhor jogadora do mundo pela FIFA, um recorde absoluto.",
+      emoji: "🌟"
+    },
+    {
+      nome: "Ronaldinho Gaúcho",
+      pais: "Brasil 🇧🇷",
+      pos: "Meia-atacante",
+      periodo: "1998–2015",
+      feito: "Campeão do mundo em 2002 e vencedor da Bola de Ouro em 2005, mestre do drible.",
+      emoji: "🎩"
+    },
+    {
+      nome: "Zinedine Zidane",
+      pais: "França 🇫🇷",
+      pos: "Meia",
+      periodo: "1989–2006",
+      feito: "Campeão do mundo em 1998 e da Eurocopa em 2000, com técnica e elegância únicas.",
+      emoji: "✨"
+    },
+    {
+      nome: "Ronaldo Fenômeno",
+      pais: "Brasil 🇧🇷",
+      pos: "Atacante",
+      periodo: "1993–2011",
+      feito: "Bicampeão mundial (1994 e 2002) e maior artilheiro brasileiro em Copas, com 15 gols.",
+      emoji: "⚡"
+    }
+  ];
+
+  var craquesGrid = document.getElementById("craquesGrid");
+
+  craquesGrid.innerHTML = craques.map(function (c) {
+    return (
+      '<article class="craque">' +
+        '<div class="craque-topo">' +
+          '<span class="craque-emoji" aria-hidden="true">' + c.emoji + '</span>' +
+          '<div>' +
+            '<h3>' + c.nome + '</h3>' +
+            '<p class="craque-pais">' + c.pais + '</p>' +
+          '</div>' +
+        '</div>' +
+        '<p class="craque-feito">' + c.feito + '</p>' +
+        '<div class="craque-tags">' +
+          '<span>' + c.pos + '</span>' +
+          '<span>' + c.periodo + '</span>' +
+        '</div>' +
+      '</article>'
+    );
+  }).join("");
+
+  /* ================= CONTADORES ANIMADOS ================= */
+  function animarContador(el) {
+    var alvo = parseFloat(el.getAttribute("data-contador"));
+    var decimais = parseInt(el.getAttribute("data-decimais") || "0", 10);
+    var duracao = 1600;
+    var inicio = null;
+
+    function passo(agora) {
+      if (inicio === null) inicio = agora;
+      var progresso = Math.min((agora - inicio) / duracao, 1);
+      var suavizado = 1 - Math.pow(1 - progresso, 3);
+      var valor = alvo * suavizado;
+
+      el.textContent = valor.toLocaleString("pt-BR", {
+        minimumFractionDigits: decimais,
+        maximumFractionDigits: decimais
+      });
+
+      if (progresso < 1) {
+        requestAnimationFrame(passo);
+      } else {
+        el.textContent = alvo.toLocaleString("pt-BR", {
+          minimumFractionDigits: decimais,
+          maximumFractionDigits: decimais
+        });
+      }
+    }
+
+    requestAnimationFrame(passo);
+  }
+
+  var contadores = document.querySelectorAll("[data-contador]");
+
+  if ("IntersectionObserver" in window) {
+    var obsContador = new IntersectionObserver(function (entradas) {
+      entradas.forEach(function (entrada) {
+        if (entrada.isIntersecting) {
+          animarContador(entrada.target);
+          obsContador.unobserve(entrada.target);
+        }
+      });
+    }, { threshold: 0.4 });
+
+    contadores.forEach(function (c) { obsContador.observe(c); });
+  } else {
+    contadores.forEach(animarContador);
+  }
+
+  /* ================= ANIMAÇÃO DE ENTRADA ================= */
+  var reveals = document.querySelectorAll(".reveal");
+
+  if ("IntersectionObserver" in window) {
+    var obsReveal = new IntersectionObserver(function (entradas) {
+      entradas.forEach(function (entrada) {
+        if (entrada.isIntersecting) {
+          entrada.target.classList.add("visivel");
+          obsReveal.unobserve(entrada.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    reveals.forEach(function (el) { obsReveal.observe(el); });
+  } else {
+    reveals.forEach(function (el) { el.classList.add("visivel"); });
+  }
+
+  /* ================= QUIZ ================= */
+  var perguntas = [
+    {
+      q: "Quantos jogadores cada equipe tem em campo no início de uma partida?",
+      opcoes: ["9 jogadores", "10 jogadores", "11 jogadores", "12 jogadores"],
+      correta: 2
+    },
+    {
+      q: "Quanto tempo dura uma partida oficial, sem contar os acréscimos?",
+      opcoes: ["60 minutos", "80 minutos", "90 minutos", "100 minutos"],
+      correta: 2
+    },
+    {
+      q: "Qual seleção venceu a primeira Copa do Mundo, em 1930?",
+      opcoes: ["Brasil", "Uruguai", "Argentina", "Itália"],
+      correta: 1
+    },
+    {
+      q: "Quantos títulos mundiais a seleção brasileira masculina conquistou?",
+      opcoes: ["3 títulos", "4 títulos", "5 títulos", "6 títulos"],
+      correta: 2
+    },
+    {
+      q: "Qual é a competição de clubes mais importante da Europa?",
+      opcoes: ["Copa Libertadores", "Premier League", "UEFA Champions League", "Eurocopa"],
+      correta: 2
+    },
+    {
+      q: "O que acontece quando um jogador recebe dois cartões amarelos na mesma partida?",
+      opcoes: [
+        "Nada acontece",
+        "Ele é advertido verbalmente",
+        "Ele recebe cartão vermelho e é expulso",
+        "Ele é substituído automaticamente"
+      ],
+      correta: 2
+    }
+  ];
+
+  var quizCard = document.getElementById("quizCard");
+  var quizResultado = document.getElementById("quizResultado");
+  var quizProgresso = document.getElementById("quizProgresso");
+  var quizPergunta = document.getElementById("quizPergunta");
+  var quizOpcoes = document.getElementById("quizOpcoes");
+  var quizFeedback = document.getElementById("quizFeedback");
+  var quizProxima = document.getElementById("quizProxima");
+  var quizPlacar = document.getElementById("quizPlacar");
+  var quizMensagem = document.getElementById("quizMensagem");
+  var quizReiniciar = document.getElementById("quizReiniciar");
+
+  var indiceAtual = 0;
+  var pontuacao = 0;
+  var bloqueado = false;
+
+  function renderPergunta() {
+    bloqueado = false;
+    var pergunta = perguntas[indiceAtual];
+
+    quizProgresso.textContent = "Pergunta " + (indiceAtual + 1) + " de " + perguntas.length;
+    quizPergunta.textContent = pergunta.q;
+    quizFeedback.textContent = "";
+    quizFeedback.className = "quiz-feedback";
+    quizProxima.style.display = "none";
+    quizProxima.textContent = (indiceAtual === perguntas.length - 1)
+      ? "Ver resultado"
+      : "Próxima pergunta";
+
+    quizOpcoes.innerHTML = "";
+
+    pergunta.opcoes.forEach(function (texto, i) {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "quiz-opcao";
+      btn.textContent = texto;
+      btn.addEventListener("click", function () { responder(i, btn); });
+      quizOpcoes.appendChild(btn);
+    });
+  }
+
+  function responder(indice, botao) {
+    if (bloqueado) return;
+    bloqueado = true;
+
+    var pergunta = perguntas[indiceAtual];
+    var botoes = quizOpcoes.querySelectorAll(".quiz-opcao");
+
+    botoes.forEach(function (b, i) {
+      b.disabled = true;
+      if (i === pergunta.correta) b.classList.add("correta");
+    });
+
+    if (indice === pergunta.correta) {
+      pontuacao++;
+      quizFeedback.textContent = "✅ Acertou! Muito bem.";
+      quizFeedback.classList.add("ok");
+    } else {
+      botao.classList.add("errada");
+      quizFeedback.textContent = "❌ Errou! A resposta correta é: " + pergunta.opcoes[pergunta.correta];
+      quizFeedback.classList.add("erro");
+    }
+
+    quizProxima.style.display = "inline-block";
+  }
+
+  function mostrarResultado() {
+    quizCard.hidden = true;
+    quizResultado.hidden = false;
+
+    quizPlacar.textContent = pontuacao + " / " + perguntas.length;
+
+    var mensagem;
+    if (pontuacao === perguntas.length) {
+      mensagem = "Perfeito! Você é um verdadeiro especialista em futebol. 🏆";
+    } else if (pontuacao >= perguntas.length - 2) {
+      mensagem = "Excelente desempenho! Você entende muito de futebol. ⚽";
+    } else if (pontuacao >= perguntas.length / 2) {
+      mensagem = "Bom resultado! Que tal revisar as regras e tentar de novo? 📘";
+    } else {
+      mensagem = "Ainda dá para melhorar! Explore o site e tente novamente. 💪";
+    }
+    quizMensagem.textContent = mensagem;
+  }
+
+  function reiniciarQuiz() {
+    indiceAtual = 0;
+    pontuacao = 0;
+    bloqueado = false;
+    quizCard.hidden = false;
+    quizResultado.hidden = true;
+    renderPergunta();
+  }
+
+  quizProxima.addEventListener("click", function () {
+    indiceAtual++;
+    if (indiceAtual < perguntas.length) {
+      renderPergunta();
+    } else {
+      mostrarResultado();
+    }
+  });
+
+  quizReiniciar.addEventListener("click", reiniciarQuiz);
+
+  renderPergunta();
+})();
+</script>
+
+</body>
+</html>
