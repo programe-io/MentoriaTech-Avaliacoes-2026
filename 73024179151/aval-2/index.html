@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Revisão de JS - Sistema de Tarefas Completo</title>
+    
+    <!-- 🎨 ESTILOS CSS (O visual do app fica aqui) -->
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 40px;
+            background-color: #eef2f3;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 450px;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+        }
+
+        h2 {
+            color: #333;
+            margin-top: 0;
+            text-align: center;
+        }
+
+        .controles {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        input {
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input:focus {
+            border-color: #007bff;
+        }
+
+        .grupo-botoes {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        button {
+            padding: 10px;
+            font-size: 14px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+
+        .btn-add {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .btn-add:hover {
+            background-color: #0056b3;
+        }
+
+        .btn-del {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .btn-del:hover {
+            background-color: #bd2130;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin-top: 20px;
+        }
+
+        li {
+            padding: 12px;
+            background: #f8f9fa;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            border-left: 4px solid #007bff;
+            font-size: 15px;
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+    <!-- 🧱 ESTRUTURA HTML (Os blocos da página) -->
+    <div class="container">
+        <h2>Minha Lista de Tarefas</h2>
+        
+        <div class="controles">
+            <input type="text" id="inputTarefa" placeholder="Digite uma nova tarefa...">
+            
+            <div class="grupo-botoes">
+                <button onclick="adicionarTarefaFinal()" class="btn-add">Adicionar no Fim (push)</button>
+                <button onclick="adicionarTarefaInicio()" class="btn-add">Adicionar no Início (unshift)</button>
+                <button onclick="removerTarefaFinal()" class="btn-del">Remover do Fim (pop)</button>
+                <button onclick="removerTarefaInicio()" class="btn-del">Remover do Início (shift)</button>
+            </div>
+        </div>
+
+        <h3>Tarefas Atuais (<span id="totalTarefas">0</span>):</h3>
+        <ul id="listaTarefas"></ul>
+    </div>
+
+    <!-- 🛠️ LÓGICA JAVASCRIPT (Onde a mágica acontece) -->
+    <script>
+        // Array inicial de dados
+        let listaDeTarefas = ["Estudar escopo e hoisting", "Praticar arrays com HTML"];
+
+        // Função que desenha os itens na tela
+        const atualizarInterface = () => {
+            const ul = document.getElementById("listaTarefas");
+            const contador = document.getElementById("totalTarefas");
+            
+            ul.innerHTML = ""; // Limpa antes de recriar
+            contador.innerText = listaDeTarefas.length;
+
+            // Laço FOR para gerar a lista baseada no Array
+            for (let i = 0; i < listaDeTarefas.length; i++) {
+                const li = document.createElement("li");
+                li.innerText = `${i + 1}. ${listaDeTarefas[i]}`; 
+                ul.appendChild(li);
+            }
+        };
+
+        function adicionarTarefaFinal() {
+            const input = document.getElementById("inputTarefa");
+            if (input.value.trim() !== "") {
+                listaDeTarefas.push(input.value); // push adiciona no fim
+                input.value = ""; 
+                atualizarInterface(); 
+            }
+        }
+
+        const adicionarTarefaInicio = function() {
+            const input = document.getElementById("inputTarefa");
+            if (input.value.trim() !== "") {
+                listaDeTarefas.unshift(input.value); // unshift adiciona no início
+                input.value = "";
+                atualizarInterface();
+            }
+        };
+
+        const removerTarefaFinal = () => {
+            listaDeTarefas.pop(); // pop remove do fim
+            atualizarInterface();
+        };
+
+        const removerTarefaInicio = () => {
+            listaDeTarefas.shift(); // shift remove do início
+            atualizarInterface();
+        };
+
+        // Roda a primeira vez ao carregar a página
+        atualizarInterface();
+    </script>
+
+</body>
+</html>
