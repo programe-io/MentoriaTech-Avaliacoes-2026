@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="#1877f2" />
+<title>Socialize · Feed</title>
+<link rel="stylesheet" href="style.css" />
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+<!-- ===================== TOPBAR ===================== -->
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <div class="brand-mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+             stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9"></circle>
+          <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
+          <line x1="9" y1="9" x2="9.01" y2="9"></line>
+          <line x1="15" y1="9" x2="15.01" y2="9"></line>
+        </svg>
+      </div>
+      <span>Socialize</span>
+    </div>
+
+    <label class="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="7"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+      <input id="busca" type="search" placeholder="Buscar no feed..." aria-label="Buscar no feed" />
+    </label>
+  </div>
+</header>
+
+<!-- ===================== CONTEÚDO ===================== -->
+<main class="wrap">
+
+  <!-- STORIES -->
+  <section class="stories" aria-label="Stories">
+    <div class="story" data-story="1">
+      <div class="story-ring" style="background:#d1d5db">
+        <div class="story-inner" style="background:linear-gradient(135deg,#1877f2,#3b82f6)">+</div>
+      </div>
+      <small>Seu story</small>
+    </div>
+    <div class="story" data-story="2">
+      <div class="story-ring">
+        <div class="story-inner" style="background:linear-gradient(135deg,#f97316,#ec4899)">AS</div>
+      </div>
+      <small>Ana</small>
+    </div>
+    <div class="story" data-story="3">
+      <div class="story-ring">
+        <div class="story-inner" style="background:linear-gradient(135deg,#4facfe,#00f2fe)">BL</div>
+      </div>
+      <small>Bruno</small>
+    </div>
+    <div class="story" data-story="4">
+      <div class="story-ring">
+        <div class="story-inner" style="background:linear-gradient(135deg,#43e97b,#38f9d7)">CD</div>
+      </div>
+      <small>Carla</small>
+    </div>
+    <div class="story" data-story="5">
+      <div class="story-ring">
+        <div class="story-inner" style="background:linear-gradient(135deg,#8b5cf6,#3b82f6)">DM</div>
+      </div>
+      <small>Diego</small>
+    </div>
+    <div class="story" data-story="6">
+      <div class="story-ring">
+        <div class="story-inner" style="background:linear-gradient(135deg,#fa709a,#fee140)">JP</div>
+      </div>
+      <small>Juliana</small>
+    </div>
+  </section>
+
+  <!-- COMPOSER -->
+  <section class="composer" aria-label="Criar publicação">
+    <div class="composer-top">
+      <div class="avatar" style="background:linear-gradient(135deg,#8b5cf6,#3b82f6)">VC</div>
+      <textarea id="composer-text" rows="1" maxlength="500"
+                placeholder="No que você está pensando?" aria-label="Texto da publicação"></textarea>
+    </div>
+    <div class="composer-bar">
+      <div class="chips">
+        <button class="chip" type="button" data-chip="foto">🌄 Foto</button>
+        <button class="chip" type="button" data-chip="sentimento">😊 Sentimento</button>
+        <button class="chip" type="button" data-chip="local">📍 Local</button>
+      </div>
+      <button id="btn-publicar" class="btn-primary" type="button" disabled>Publicar</button>
+    </div>
+  </section>
+
+  <!-- FEED -->
+  <div id="feed" aria-live="polite"></div>
+
+</main>
+
+<!-- TOAST -->
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ============================================================
+     ÍCONES (SVG inline)
+  ============================================================ */
+  const ICON = {
+    heart:
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" ' +
+      'stroke-linecap="round" stroke-linejoin="round">' +
+      '<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.7-7.5 1.1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg>',
+    heartFill:
+      '<svg viewBox="0 0 24 24" fill="currentColor">' +
+      '<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.7-7.5 1.1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg>',
+    comment:
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" ' +
+      'stroke-linecap="round" stroke-linejoin="round">' +
+      '<path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8v.5z"/></svg>',
+    share:
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" ' +
+      'stroke-linecap="round" stroke-linejoin="round">' +
+      '<path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7"/>' +
+      '<polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>'
+  };
+
+  /* ============================================================
+     UTILITÁRIOS
+  ============================================================ */
+  const $ = (sel, ctx = document) => ctx.querySelector(sel);
+  const aleatorio = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+  function esc(str) {
+    return String(str).replace(/[&<>"']/g, (c) => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[c]));
+  }
+
+  function fmt(n) {
+    if (n >= 1000) {
+      return (n / 1000).toFixed(1).replace('.', ',').replace(',0', '') + ' mil';
+    }
+    return String(n);
+  }
+
+  const GRADIENTES = [
+    'linear-gradient(135deg,#667eea,#764ba2)',
+    'linear-gradient(135deg,#f093fb,#f5576c)',
+    'linear-gradient(135deg,#4facfe,#00f2fe)',
+    'linear-gradient(135deg,#43e97b,#38f9d7)',
+    'linear-gradient(135deg,#fa709a,#fee140)',
+    'linear-gradient(135deg,#30cfd0,#330867)',
+    'linear-gradient(135deg,#f97316,#ec4899)',
+    'linear-gradient(135deg,#8b5cf6,#3b82f6)'
+  ];
+  const EMOJIS = ['🌄', '🏖️', '🌃', '🍜', '🐶', '🎸', '📚', '⚽', '🎨', '☕'];
+
+  /* ============================================================
+     ESTADO
+  ============================================================ */
+  const ME = {
+    nome: 'Você',
+    usuario: '@voce',
+    iniciais: 'VC',
+    cor: 'linear-gradient(135deg,#8b5cf6,#3b82f6)'
+  };
+
+  const CORES_AVATAR = [
+    'linear-gradient(135deg,#f97316,#ec4899)',
+    'linear-gradient(135deg,#4facfe,#00f2fe)',
+    'linear-gradient(135deg,#43e97b,#38f9d7)',
+    'linear-gradient(135deg,#8b5cf6,#3b82f6)',
+    'linear-gradient(135deg,#fa709a,#fee140)'
+  ];
+
+  let proximoId = 100;
+
+  const posts = [
+    {
+      id: 1,
+      nome: 'Ana Souza',
+      usuario: '@anasouza',
+      iniciais: 'AS',
+      cor: CORES_AVATAR[0],
+      tempo: 'há 12 min',
+      texto: 'Acordar cedo, café fresquinho e um céu desses. Bom dia, pessoal! ☀️',
+      midia: { gradiente: 'linear-gradient(135deg,#fa709a,#fee140)', emoji: '🌅' },
+      likes: 128,
+      liked: false,
+      expandido: false,
+      comentarios: [
+        { nome: 'Bruno Lima', iniciais: 'BL', cor: CORES_AVATAR[1], texto: 'Que foto linda! 😍' },
+        { nome: 'Carla Dias', iniciais: 'CD', cor: CORES_AVATAR[2], texto: 'Dá até vontade de acordar cedo rs' },
+        { nome: 'Diego Martins', iniciais: 'DM', cor: CORES_AVATAR[3], texto: 'Bom dia, Ana! ☕' }
+      ]
+    },
+    {
+      id: 2,
+      nome: 'Bruno Lima',
+      usuario: '@brunolima',
+      iniciais: 'BL',
+      cor: CORES_AVATAR[1],
+      tempo: 'há 1 h',
+      texto: 'Terminei de montar meu setup novo. Achando que agora o home office vai render! 💻✨',
+      midia: { gradiente: 'linear-gradient(135deg,#30cfd0,#330867)', emoji: '🖥️' },
+      likes: 87,
+      liked: true,
+      expandido: false,
+      comentarios: [
+        { nome: 'Ana Souza', iniciais: 'AS', cor: CORES_AVATAR[0], texto: 'Ficou incrível! Quero um assim 😅' }
+      ]
+    },
+    {
+      id: 3,
+      nome: 'Carla Dias',
+      usuario: '@carladias',
+      iniciais: 'CD',
+      cor: CORES_AVATAR[2],
+      tempo: 'há 3 h',
+      texto: 'Dica do dia: aprender algo novo por 20 minutos todos os dias muda tudo. ' +
+             'Comecei a estudar programação há 3 meses e hoje fiz meu primeiro projeto sozinha! 🎉',
+      midia: null,
+      likes: 214,
+      liked: false,
+      expandido: false,
+      comentarios: [
+        { nome: 'Juliana Prado', iniciais: 'JP', cor: CORES_AVATAR[4], texto: 'Parabéns, Carla! Orgulho 💜' },
+        { nome: 'Bruno Lima', iniciais: 'BL', cor: CORES_AVATAR[1], texto: 'Isso é inspirador!' }
+      ]
+    },
+    {
+      id: 4,
+      nome: 'Diego Martins',
+      usuario: '@diegomartins',
+      iniciais: 'DM',
+      cor: CORES_AVATAR[3],
+      tempo: 'há 5 h',
+      texto: 'Alguém mais acha que café da tarde é o melhor momento do dia? ☕🍰',
+      midia: { gradiente: 'linear-gradient(135deg,#f093fb,#f5576c)', emoji: '☕' },
+      likes: 56,
+      liked: false,
+      expandido: false,
+      comentarios: []
+    }
+  ];
+
+  /* ============================================================
+     REFERÊNCIAS DOM
+  ============================================================ */
+  const feedEl = $('#feed');
+  const inputPost = $('#composer-text');
+  const btnPublicar = $('#btn-publicar');
+  const buscaEl = $('#busca');
+  const toastEl = $('#toast');
+
+  let midiaPendente = null;
+  let toastTimer = null;
+
+  /* ============================================================
+     TOAST
+  ============================================================ */
+  function mostrarToast(msg) {
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2200);
+  }
+
+  /* ============================================================
+     RENDERIZAÇÃO DE UM POST
+  ============================================================ */
+  function criarElementoPost(p) {
+    const el = document.createElement('article');
+    el.className = 'post';
+    el.dataset.id = String(p.id);
+
+    el.innerHTML =
+      '<div class="post-head">' +
+        '<div class="avatar" style="background:' + p.cor + '">' + esc(p.iniciais) + '</div>' +
+        '<div class="post-user">' +
+          '<strong>' + esc(p.nome) + '</strong>' +
+          '<span>' + esc(p.usuario) + ' · ' + esc(p.tempo) + '</span>' +
+        '</div>' +
+        '<button class="icon-btn" type="button" data-action="menu" aria-label="Mais opções">···</button>' +
+      '</div>' +
+      (p.texto ? '<p class="post-text">' + esc(p.texto) + '</p>' : '') +
+      (p.midia
+        ? '<div class="post-media" style="background:' + p.midia.gradiente + '">' +
+            '<span>' + p.midia.emoji + '</span>' +
+            '<div class="big-heart">❤</div>' +
+          '</div>'
+        : '') +
+      '<div class="post-stats">' +
+        '<span class="likes-info"><span class="like-bubble">♥</span>' +
+          '<span data-role="likes">' + fmt(p.likes) + '</span></span>' +
+        '<span data-role="comcont"></span>' +
+      '</div>' +
+      '<div class="post-actions">' +
+        '<button class="action" type="button" data-action="like">' +
+          '<span class="icon">' + ICON.heart + '</span>' +
+          '<span class="action-label">Curtir</span>' +
+        '</button>' +
+        '<button class="action" type="button" data-action="focus-comment">' +
+          '<span class="icon">' + ICON.comment + '</span>' +
+          '<span class="action-label">Comentar</span>' +
+        '</button>' +
+        '<button class="action" type="button" data-action="share">' +
+          '<span class="icon">' + ICON.share + '</span>' +
+          '<span class="action-label">Compartilhar</span>' +
+        '</button>' +
+      '</div>' +
+      '<div class="comments" data-role="comments"></div>' +
+      '<form class="comment-form" data-action="comment-form">' +
+        '<div class="avatar sm" style="background:' + ME.cor + '">' + ME.iniciais + '</div>' +
+        '<input type="text" name="comentario" placeholder="Escreva um comentário..." ' +
+               'autocomplete="off" maxlength="300" aria-label="Escreva um comentário" />' +
+        '<button type="submit">Enviar</button>' +
+      '</form>';
+
+    desenharComentarios(el, p);
+    atualizarEstadoLike(el, p);
+    return el;
+  }
+
+  function desenharComentarios(el, p) {
+    const box = el.querySelector('[data-role="comments"]');
+    if (!box) return;
+
+    const total = p.comentarios.length;
+    const mostrarTodos = p.expandido || total <= 2;
+    const visiveis = mostrarTodos ? p.comentarios : p.comentarios.slice(-2);
+
+    let html = '';
+    if (!mostrarTodos) {
+      html += '<button class="ver-todos" type="button" data-action="expandir">' +
+              'Ver todos os ' + total + ' comentários</button>';
+    }
+
+    html += visiveis.map(function (c) {
+      return '<div class="comment">' +
+               '<div class="avatar sm" style="background:' + c.cor + '">' + esc(c.iniciais) + '</div>' +
+               '<div class="comment-bubble">' +
+                 '<strong>' + esc(c.nome) + '</strong>' +
+                 '<p>' + esc(c.texto) + '</p>' +
+               '</div>' +
+             '</div>';
+    }).join('');
+
+    box.innerHTML = html;
+
+    const cont = el.querySelector('[data-role="comcont"]');
+    if (cont) {
+      cont.textContent = total + (total === 1 ? ' comentário' : ' comentários');
+    }
+  }
+
+  function atualizarEstadoLike(el, p) {
+    const btn = el.querySelector('[data-action="like"]');
+    if (!btn) return;
+
+    btn.classList.toggle('liked', p.liked);
+    btn.querySelector('.action-label').textContent = p.liked ? 'Curtido' : 'Curtir';
+    btn.querySelector('.icon').innerHTML = p.liked ? ICON.heartFill : ICON.heart;
+
+    const likesEl = el.querySelector('[data-role="likes"]');
+    if (likesEl) likesEl.textContent = fmt(p.likes);
+  }
+
+  function animarCoracao(el) {
+    const heart = el.querySelector('.big-heart');
+    if (!heart) return;
+    heart.classList.remove('show');
+    void heart.offsetWidth;
+    heart.classList.add('show');
+    setTimeout(function () { heart.classList.remove('show'); }, 880);
+  }
+
+  function alternarLike(p, el, apenasCurtir) {
+    if (apenasCurtir && p.liked) return;
+
+    p.liked = !p.liked;
+    p.likes = Math.max(0, p.likes + (p.liked ? 1 : -1));
+
+    atualizarEstadoLike(el, p);
+
+    const btn = el.querySelector('[data-action="like"]');
+    if (btn) {
+      btn.classList.remove('bump');
+      void btn.offsetWidth;
+      btn.classList.add('bump');
+      setTimeout(function () { btn.classList.remove('bump'); }, 400);
+    }
+
+    if (p.liked) animarCoracao(el);
+  }
+
+  /* ============================================================
+     RENDERIZAÇÃO DO FEED
+  ============================================================ */
+  function renderFeed() {
+    const q = buscaEl.value.trim().toLowerCase();
+
+    const lista = q
+      ? posts.filter(function (p) {
+          return (p.texto + ' ' + p.nome + ' ' + p.usuario).toLowerCase().indexOf(q) !== -1;
+        })
+      : posts;
+
+    feedEl.innerHTML = '';
+
+    if (!lista.length) {
+      const vazio = document.createElement('div');
+      vazio.className = 'vazio';
+      vazio.textContent = 'Nenhuma publicação encontrada 🔍';
+      feedEl.appendChild(vazio);
+      return;
+    }
+
+    lista.forEach(function (p) {
+      feedEl.appendChild(criarElementoPost(p));
+    });
+  }
+
+  /* ============================================================
+     EVENTOS DO FEED (delegação)
+  ============================================================ */
+  feedEl.addEventListener('click', function (e) {
+    const el = e.target.closest('.post');
+    if (!el) return;
+
+    const p = posts.find(function (x) { return x.id === Number(el.dataset.id); });
+    if (!p) return;
+
+    const alvo = e.target.closest('[data-action]');
+    if (!alvo) return;
+
+    const acao = alvo.dataset.action;
+
+    if (acao === 'like') {
+      alternarLike(p, el);
+    } else if (acao === 'focus-comment') {
+      const input = el.querySelector('.comment-form input');
+      if (input) input.focus();
+    } else if (acao === 'share') {
+      mostrarToast('Link da publicação copiado! 🔗');
+    } else if (acao === 'expandir') {
+      p.expandido = true;
+      desenharComentarios(el, p);
+    } else if (acao === 'menu') {
+      mostrarToast('Mais opções em breve 😉');
+    }
+  });
+
+  feedEl.addEventListener('dblclick', function (e) {
+    const media = e.target.closest('.post-media');
+    if (!media) return;
+
+    const el = media.closest('.post');
+    const p = posts.find(function (x) { return x.id === Number(el.dataset.id); });
+    if (p) alternarLike(p, el, true);
+  });
+
+  feedEl.addEventListener('submit', function (e) {
+    const form = e.target.closest('.comment-form');
+    if (!form) return;
+
+    e.preventDefault();
+
+    const el = form.closest('.post');
+    const p = posts.find(function (x) { return x.id === Number(el.dataset.id); });
+    if (!p) return;
+
+    const input = form.querySelector('input');
+    const texto = input.value.trim();
+    if (!texto) return;
+
+    p.comentarios.push({
+      nome: ME.nome,
+      iniciais: ME.iniciais,
+      cor: ME.cor,
+      texto: texto
+    });
+
+    p.expandido = true;
+    input.value = '';
+    desenharComentarios(el, p);
+  });
+
+  /* ============================================================
+     COMPOSER
+  ============================================================ */
+  function atualizarBotaoPublicar() {
+    btnPublicar.disabled = !(inputPost.value.trim() || midiaPendente);
+  }
+
+  inputPost.addEventListener('input', function () {
+    inputPost.style.height = 'auto';
+    inputPost.style.height = Math.min(inputPost.scrollHeight, 180) + 'px';
+    atualizarBotaoPublicar();
+  });
+
+  document.querySelectorAll('[data-chip]').forEach(function (chip) {
+    chip.addEventListener('click', function () {
+      const tipo = chip.dataset.chip;
+
+      if (tipo === 'foto') {
+        if (midiaPendente) {
+          midiaPendente = null;
+          chip.classList.remove('ativo');
+        } else {
+          midiaPendente = { gradiente: aleatorio(GRADIENTES), emoji: aleatorio(EMOJIS) };
+          chip.classList.add('ativo');
+        }
+        atualizarBotaoPublicar();
+      } else {
+        mostrarToast('Recurso em breve! 😉');
+      }
+    });
+  });
+
+  btnPublicar.addEventListener('click', function () {
+    const texto = inputPost.value.trim();
+    if (!texto && !midiaPendente) return;
+
+    posts.unshift({
+      id: ++proximoId,
+      nome: ME.nome,
+      usuario: ME.usuario,
+      iniciais: ME.iniciais,
+      cor: ME.cor,
+      tempo: 'agora mesmo',
+      texto: texto,
+      midia: midiaPendente,
+      likes: 0,
+      liked: false,
+      expandido: false,
+      comentarios: []
+    });
+
+    inputPost.value = '';
+    inputPost.style.height = 'auto';
+    midiaPendente = null;
+    document.querySelectorAll('[data-chip]').forEach(function (c) {
+      c.classList.remove('ativo');
+    });
+    atualizarBotaoPublicar();
+
+    renderFeed();
+    mostrarToast('Publicação criada! 🎉');
+  });
+
+  /* ============================================================
+     BUSCA
+  ============================================================ */
+  buscaEl.addEventListener('input', renderFeed);
+
+  /* ============================================================
+     STORIES
+  ============================================================ */
+  document.querySelectorAll('.story').forEach(function (story) {
+    story.addEventListener('click', function () {
+      const nome = story.querySelector('small').textContent;
+      mostrarToast('Abrindo story de ' + nome + '...');
+    });
+  });
+
+  /* ============================================================
+     INICIALIZAÇÃO
+  ============================================================ */
+  renderFeed();
+  atualizarBotaoPublicar();
+})();
+</script>
+</body>
+</html>
