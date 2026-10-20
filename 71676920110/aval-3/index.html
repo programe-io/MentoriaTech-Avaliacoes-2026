@@ -1,0 +1,313 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classes e Estilos via JavaScript</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f1f5f9;
+            color: #1e293b;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 650px;
+            background: white;
+            padding: 35px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 12px;
+            color: #7c3aed;
+        }
+
+        .description {
+            color: #64748b;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            padding: 25px;
+            margin-bottom: 25px;
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .card h2 {
+            margin-bottom: 12px;
+            font-size: 21px;
+        }
+
+        .card p {
+            line-height: 1.6;
+            color: #475569;
+        }
+
+        .buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        button {
+            padding: 12px 16px;
+            border: none;
+            border-radius: 9px;
+            background: #7c3aed;
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #6d28d9;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #475569;
+        }
+
+        .btn-secondary:hover {
+            background: #334155;
+        }
+
+        .btn-success {
+            background: #059669;
+        }
+
+        .btn-success:hover {
+            background: #047857;
+        }
+
+        .btn-danger {
+            background: #dc2626;
+        }
+
+        .btn-danger:hover {
+            background: #b91c1c;
+        }
+
+        .highlight {
+            background: #ede9fe;
+            border-color: #8b5cf6;
+            transform: scale(1.02);
+        }
+
+        .text-large {
+            font-size: 20px;
+        }
+
+        .dark-mode {
+            background: #0f172a;
+            color: #f8fafc;
+        }
+
+        .dark-mode .container {
+            background: #1e293b;
+        }
+
+        .dark-mode .description {
+            color: #cbd5e1;
+        }
+
+        .dark-mode .card {
+            background: #334155;
+            border-color: #475569;
+        }
+
+        .dark-mode .card p {
+            color: #cbd5e1;
+        }
+
+        .dark-mode h1 {
+            color: #c4b5fd;
+        }
+
+        .status {
+            padding: 15px;
+            border-radius: 10px;
+            background: #f1f5f9;
+            color: #334155;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .dark-mode .status {
+            background: #0f172a;
+            color: #e2e8f0;
+        }
+
+        @media (max-width: 500px) {
+            .container {
+                padding: 22px;
+            }
+
+            h1 {
+                font-size: 23px;
+            }
+
+            .buttons {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <main class="container">
+
+        <h1>Classes e Estilos via JavaScript</h1>
+
+        <p class="description">
+            Aprenda a modificar classes CSS e estilos de elementos
+            dinamicamente usando JavaScript.
+        </p>
+
+        <section class="card" id="card">
+            <h2 id="titulo">Minha caixa de demonstração</h2>
+
+            <p id="texto">
+                Clique nos botões abaixo para alterar as classes,
+                as cores, o tamanho do texto e a aparência desta página.
+            </p>
+        </section>
+
+        <div class="buttons">
+            <button onclick="alternarClasse()">
+                Alternar destaque
+            </button>
+
+            <button class="btn-secondary" onclick="alterarTexto()">
+                Alterar tamanho do texto
+            </button>
+
+            <button class="btn-success" onclick="alterarCor()">
+                Mudar cor
+            </button>
+
+            <button class="btn-secondary" onclick="alternarTema()">
+                Alternar tema
+            </button>
+
+            <button class="btn-danger" onclick="resetarEstilos()">
+                Restaurar estilos
+            </button>
+        </div>
+
+        <div class="status" id="status">
+            Status: pronto para começar. Experimente os botões!
+        </div>
+
+    </main>
+
+    <script>
+        const card = document.getElementById("card");
+        const texto = document.getElementById("texto");
+        const status = document.getElementById("status");
+
+        let textoGrande = false;
+        let corAlternada = false;
+
+        // Adiciona ou remove uma classe CSS
+        function alternarClasse() {
+            card.classList.toggle("highlight");
+
+            if (card.classList.contains("highlight")) {
+                status.textContent =
+                    "Status: classe 'highlight' adicionada!";
+            } else {
+                status.textContent =
+                    "Status: classe 'highlight' removida!";
+            }
+        }
+
+        // Altera o tamanho do texto
+        function alterarTexto() {
+            textoGrande = !textoGrande;
+            texto.classList.toggle("text-large", textoGrande);
+
+            status.textContent = textoGrande
+                ? "Status: texto ampliado!"
+                : "Status: tamanho original restaurado!";
+        }
+
+        // Altera estilos diretamente com JavaScript
+        function alterarCor() {
+            corAlternada = !corAlternada;
+
+            if (corAlternada) {
+                card.style.backgroundColor = "#dcfce7";
+                card.style.borderColor = "#16a34a";
+                status.textContent =
+                    "Status: estilos verdes aplicados!";
+            } else {
+                card.style.backgroundColor = "";
+                card.style.borderColor = "";
+                status.textContent =
+                    "Status: cores originais restauradas!";
+            }
+        }
+
+        // Alterna entre tema claro e escuro
+        function alternarTema() {
+            document.body.classList.toggle("dark-mode");
+
+            status.textContent =
+                document.body.classList.contains("dark-mode")
+                ? "Status: tema escuro ativado!"
+                : "Status: tema claro ativado!";
+        }
+
+        // Restaura os estilos e as classes iniciais
+        function resetarEstilos() {
+            card.classList.remove("highlight");
+            texto.classList.remove("text-large");
+
+            card.style.backgroundColor = "";
+            card.style.borderColor = "";
+
+            document.body.classList.remove("dark-mode");
+
+            textoGrande = false;
+            corAlternada = false;
+
+            status.textContent =
+                "Status: todos os estilos foram restaurados!";
+        }
+    </script>
+
+</body>
+</html>
