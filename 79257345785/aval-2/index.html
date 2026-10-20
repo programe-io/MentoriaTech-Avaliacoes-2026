@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link href="style.css" rel="stylesheet">
+</head>
+<body>
+  # Inicializa o tabuleiro 3x3
+tabuleiro = [[' ' for _ in range(3)] for _ in range(3)]
+
+def imprime_tabuleiro():
+  print('  0   1   2')
+  for i, linha in enumerate(tabuleiro):
+    print(f'{i} ' + ' | '.join(linha))
+    if i < 2:
+      print('  ---------')
+
+
+def verifica_vencedor(simbolo):
+  # Checa linhas e colunas
+  for i in range(3):
+    if all(tabuleiro[i][j] == simbolo for j in range(3)):
+      return True
+    if all(tabuleiro[j][i] == simbolo for j in range(3)):
+      return True
+  # Checa diagonais
+  if all(tabuleiro[i][i] == simbolo for i in range(3)):
+    return True
+  if all(tabuleiro[i][2 - i] == simbolo for i in range(3)):
+    return True
+  return False
+
+
+def jogo():
+  jogador_atual = 'X'
+  jogadas = 0
+
+  while jogadas < 9:
+    imprime_tabuleiro()
+    print(f'Vez do jogador {jogador_atual}')
+
+    try:
+      linha = int(input('Escolha a linha (0, 1, 2): '))
+      coluna = int(input('Escolha a coluna (0, 1, 2): '))
+    except ValueError:
+      print('Por favor, digite apenas números.')
+      continue
+
+    if linha not in range(3) or coluna not in range(3):
+      print('Coordenadas inválidas. Tente novamente.')
+      continue
+
+    if tabuleiro[linha][coluna] != ' ':
+      print('Essa posição já está ocupada. Tente outra.')
+      continue
+
+    tabuleiro[linha][coluna] = jogador_atual
+    jogadas += 1
+
+    if verifica_vencedor(jogador_atual):
+      imprime_tabuleiro()
+      print(f'Parabéns! O jogador {jogador_atual} venceu!')
+      return
+
+    jogador_atual = 'O' if jogador_atual == 'X' else 'X'
+
+  imprime_tabuleiro()
+  print('Deu velha! Empate!')
+
+
+if __name__ == '__main__':
+  jogo()
+
+  <script src="script.js"></script>
+  
+</body>
+</html>

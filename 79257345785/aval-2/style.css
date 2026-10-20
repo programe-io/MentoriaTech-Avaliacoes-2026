@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo de Damas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #333;
+            color: #fff;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 { margin-bottom: 10px; }
+        #status { font-size: 1.2rem; margin-bottom: 15px; font-weight: bold; }
+        #tabuleiro {
+            display: grid;
+            grid-template-columns: repeat(8, 60px);
+            grid-template-rows: repeat(8, 60px);
+            border: 4px solid #111;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+        .casa {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        .clara { background-color: #f0d9b5; }
+        .escura { background-color: #b58863; }
+        .peca {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: inset 0 0 8px rgba(0,0,0,0.6), 0 2px 4px rgba(0,0,0,0.4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 1.5rem;
+            user-select: none;
+        }
+        .branca { background-color: #f8f9fa; border: 2px solid #ccc; color: #333; }
+        .preta { background-color: #1a1a1a; border: 2px solid #000; color: #fff; }
+        .selecionada { outline: 3px solid #00ff00; }
+        .destino-valido { cursor: pointer; }
+        .destino-valido::after {
+            content: '';
+            width: 16px;
+            height: 16px;
+            background-color: rgba(0, 255, 0, 0.4);
+            border-radius: 50%;
+            position: absolute;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Jogo de Damas</h1>
+    <div id="status">Turno: Peças Brancas</div>
+    <div id="tabuleiro"></div>
+
+    <script>
+        const tabuleiroElemento = document.getElementById('tabuleiro');
+        const statusElemento = document.getElementById('status');
+        
+        let turno = 'branca'; // 'branca' inicia o jogo
+        let pecaSelecionada = null;
+        let jogadasValidas = [];
+
+        // Estrutura inicial do tabuleiro de 64 casas
+        // 0 = Vazio, 1 = Branca, 2 = Preta, 3 = Dama Branca, 4 = Dama Preta
+        let matrizTabuleiro = [
+            [0, 2, 0, 2, 0, 2, 0, 2],
+            [2, 0, 2, 0, 2, 0, 2, 0],
+            [0, 2, 0, 2, 0, 2, 0, 2],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [1, 0, 1, 0, 1, 0, 1, 0],
+            [0, 1, 0, 1, 0, 1, 0, 1],
+            [1, 0, 1, 0, 1, 0, 1, 0]
+        ];
+
+        function criarTabuleiro() {
+            tabuleiroElemento.innerHTML = '';
+            for (let l = 0; l < 8; l++) {
+                for (let c = 0; c < 8; c++) {
+                    const casa = document.createElement('div');
+                    casa.classList.add('casa');
+                    casa.dataset.linha = l;
+                    casa.dataset.coluna = c;
+
+                    // Define a cor xadrez das casas
+                    if ((l + c) % 2 === 0) {
+                        casa.classList.add('clara');
+                    } else {
+                        casa.classList.add('escura');
+                        const valorPeca = matrizTabuleiro[l][c];
+                        if (valorPeca !== 0) {
+                            const peca = document.createElement('div');
+                            peca.classList.add('peca');
+                            if (valorPeca === 1 || valorPeca === 3) peca.classList.add('branca');
+                            if (valorPeca === 2 || valorPeca === 4) peca.classList.add('preta');
+                            if (valorPeca === 3 || valorPeca === 4) peca.innerText = '★'; // Representação da Dama
+                            
+                            peca.addEventListener('click', (e) => {
+                                e.stopPropagation();
+                                gerenciarCliquePeca(l, c, valorPeca);
+                            });
+                            casa.appendChild(peca);
+                        }
+                    }
+                    tabuleiroElemento.appendChild(casa);
+                }
+            }
+        }
+
+        function gerenciarCliquePeca(linha, coluna, valor) {
+            // Verifica se a peça clicada pertence ao jogador do turno
+            if ((turno === 'branca' && (valor === 1 || valor === 3)) || 
+                (turno === 'preta' && (valor === 2 || valor === 4))) {
+                
+                // Remove seleções anteriores
+                document.querySelectorAll('.peca').forEach(p => p.classList.remove('selecionada'));
+                removerDestaquesDestino();
+
+                pecaSelecionada = { linha, coluna, valor };
+                const casaOcupada = tabuleiroElemento.children[linha * 8 + coluna].querySelector('.peca');
+                casaOcupada.classList.add('selecionada');
+
+                calcularMovimentosValidos(linha, coluna, valor);
+                mostrarDestinosValidos();
+            }
+        }
+
+        function calcularMovimentosValidos(l, c, valor) {
+            jogadasValidas = [];
+            const ehDama = (valor === 3 || valor === 4);
+            
+            // Definição de direções de movimento
+            let direcoes = [];
+            if (ehDama) {
+                direcoes = [[-1, -1], [-1, 1], [1, -1], [1, 1]]; // Dama move para qualquer lado
+            } else {
+                direcoes = (valor === 1) ? [[-1, -1], [-1, 1]] : [[1, -1], [1, 1]]; // Comuns andam só para frente
+            }
+
+            // Movimento simples de 1 casa
+            direcoes.forEach(([dl, dc]) => {
+                let nL = l + dl;
+                let nC = c + dc;
+                if (nL >= 0 && nL < 8 && nC >= 0 && nC < 8) {
+                    if (matrizTabuleiro[nL][nC] === 0) {
+                        jogadasValidas.push({ linha: nL, coluna: nC, captura: null });
+                    }
+                }
+            });
+
+            // Movimento de captura (Comer peça)
+            // Nota: Esta é uma IA/Lógica simplificada de varredura ao redor da peça
+            let direcoesCaptura = [[-1, -1], [-1, 1], [1, -1], [1, 1]]; // Qualquer peça come para trás ou para frente
+            direcoesCaptura.forEach(([dl, dc]) => {
+                let nL = l + dl;
+                let nC = c + dc;
+                let saltoL = l + (dl * 2);
+                let saltoC = c + (dc * 2);
+
+                if (saltoL >= 0 && saltoL < 8 && saltoC >= 0 && saltoC < 8) {
+                    let pecaAlvo = matrizTabuleiro[nL][nC];
+                    let espacoSalto = matrizTabuleiro[saltoL][saltoC];
+
+                    if (pecaAlvo !== 0 && espacoSalto === 0) {
+                        // Verifica se a peça alvo é do oponente
+                        let ehOponente = false;
+                        if (turno === 'branca' && (pecaAlvo === 2 || pecaAlvo === 4)) ehOponente = true;
+                        if (turno === 'preta' && (pecaAlvo === 1 || pecaAlvo === 3)) ehOponente = true;
+
+                        if (ehOponente) {
+                            jogadasValidas.push({ 
+                                linha: saltoL, 
+                                coluna: saltoC, 
+                                captura: { linha: nL, coluna: nC } 
+                            });
+                        }
+                    }
+                }
+            });
+        }
+
+        function mostrarDestinosValidos() {
+            jogadasValidas.forEach(jogada => {
+                const indice = jogada.linha * 8 + jogada.coluna;
+                const casa = tabuleiroElemento.children[indice];
+                casa.classList.add('destino-valido');
+                casa.addEventListener('click', executarMovimento);
+            });
+        }
+
+        function removerDestaquesDestino() {
+            for (let i = 0; i < tabuleiroElemento.children.length; i++) {
+                const casa = tabuleiroElemento.children[i];
+                casa.classList.remove('destino-valido');
+                casa.removeEventListener('click', executarMovimento);
+            }
+        }
+
+        function executarMovimento(e) {
+            const casaClicada = e.currentTarget;
+            const destLinha = parseInt(casaClicada.dataset.linha);
+            const destColuna = parseInt(casaClicada.dataset.coluna);
+
+            const jogada = jogadasValidas.find(j => j.linha === destLinha && j.coluna === destColuna);
+            if (!jogada) return;
+
+            // Atualiza a matriz movendo a peça
+            let pecaStatus = pecaSelecionada.valor;
+
+            // Promoção para Dama ao alcançar a última fileira
+            if (turno === 'branca' && destLinha === 0) pecaStatus = 3;
+            if (turno === 'preta' && destLinha === 7) pecaStatus = 4;
+
+            matrizTabuleiro[destLinha][destColuna] = pecaStatus;
+            matrizTabuleiro[pecaSelecionada.linha][pecaSelecionada.coluna] = 0;
+
+            // Remove a peça capturada se houver
+            if (jogada.captura) {
+                matrizTabuleiro[jogada.captura.linha][jogada.captura.coluna] = 0;
+            }
+
+            // Reseta seleções e passa o turno
+            pecaSelecionada = null;
+            jogadasValidas = [];
+            removerDestaquesDestino();
+            turno = (turno === 'branca') ? 'preta' : 'branca';
+            statusElemento.innerText = `Turno: Peças ${turno === 'branca' ? 'Brancas' : 'Pretas'}`;
+
+            criarTabuleiro();
+            verificarFimDeJogo();
+        }
+
