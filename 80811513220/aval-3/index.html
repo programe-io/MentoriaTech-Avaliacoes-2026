@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Site educativo sobre música: gêneros, história, instrumentos, piano virtual e quiz interativo.">
+<title>Mundo da Música — Gêneros, História e Diversão</title>
+<style>
+  /* ================= VARIÁVEIS DE TEMA ================= */
+  :root {
+    --bg: #f7f5f2;
+    --surface: #ffffff;
+    --text: #1c1b1a;
+    --muted: #5b5753;
+    --accent: #7c3aed;
+    --accent-2: #db2777;
+    --accent-soft: #ede9fe;
+    --border: #e3ded8;
+    --shadow: 0 10px 26px rgba(28, 27, 26, .08);
+  }
+
+  [data-theme="dark"] {
+    --bg: #12101a;
+    --surface: #1c1928;
+    --text: #f2eef9;
+    --muted: #a9a2bb;
+    --accent: #a78bfa;
+    --accent-2: #f472b6;
+    --accent-soft: #2a2140;
+    --border: #2e2a3f;
+    --shadow: 0 10px 26px rgba(0, 0, 0, .45);
+  }
+
+  /* ================= BASE ================= */
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.65;
+    transition: background-color .3s ease, color .3s ease;
+  }
+
+  h1, h2, h3 { line-height: 1.2; }
+
+  a { color: inherit; }
+
+  /* ================= CABEÇALHO ================= */
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: .7rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    flex-wrap: wrap;
+  }
+
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+    font-weight: 800;
+    font-size: 1.05rem;
+    text-decoration: none;
+    letter-spacing: .02em;
+  }
+
+  .nav-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .25rem;
+    margin: 0 0 0 auto;
+    padding: 0;
+    list-style: none;
+  }
+
+  .nav-links a {
+    display: inline-block;
+    padding: .4rem .7rem;
+    border-radius: 999px;
+    text-decoration: none;
+    font-size: .9rem;
+    color: var(--muted);
+    transition: background-color .2s ease, color .2s ease;
+  }
+
+  .nav-links a:hover,
+  .nav-links a.ativo {
+    background: var(--accent-soft);
+    color: var(--accent);
+  }
+
+  .theme-toggle {
+    width: 40px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    background: var(--bg);
+    color: var(--text);
+    cursor: pointer;
+    transition: transform .2s ease, border-color .2s ease;
+  }
+
+  .theme-toggle:hover { transform: rotate(-15deg) scale(1.06); border-color: var(--accent); }
+
+  /* ================= HERO ================= */
+  .hero {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 4.5rem 1.25rem 3.5rem;
+    text-align: center;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: .35rem .9rem;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: .8rem;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+  }
+
+  .hero h1 {
+    font-size: clamp(2rem, 6vw, 3.4rem);
+    margin: 1rem 0;
+  }
+
+  .hero p {
+    max-width: 620px;
+    margin: 0 auto 1.75rem;
+    color: var(--muted);
+    font-size: 1.05rem;
+  }
+
+  .hero-acoes {
+    display: flex;
+    gap: .75rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .gradient-text {
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  @supports not ((-webkit-background-clip: text) or (background-clip: text)) {
+    .gradient-text { color: var(--accent); }
+  }
+
+  /* ================= BOTÕES ================= */
+  .btn {
+    display: inline-block;
+    padding: .75rem 1.5rem;
+    border: none;
+    border-radius: 999px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    color: #fff;
+    font: inherit;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 12px 22px -10px var(--accent); }
+
+  .btn:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  /* ================= SEÇÕES ================= */
+  .section {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 3rem 1.25rem;
+  }
+
+  .section h2 {
+    font-size: clamp(1.5rem, 3.5vw, 2rem);
+    margin: 0 0 .4rem;
+  }
+
+  .subtitulo {
+    color: var(--muted);
+    margin: 0 0 2rem;
+  }
+
+  /* ================= CARDS DE GÊNEROS ================= */
+  .grade {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.25rem;
+    box-shadow: var(--shadow);
+    transition: transform .2s ease, border-color .2s ease;
+  }
+
+  .card:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent);
+  }
+
+  .card .icone { font-size: 1.8rem; line-height: 1; }
+  .card h3 { margin: .6rem 0 .35rem; font-size: 1.1rem; }
+  .card p { margin: 0; color: var(--muted); font-size: .93rem; }
+
+  /* ================= LINHA DO TEMPO ================= */
+  .linha-tempo {
+    list-style: none;
+    margin: 0;
+    padding: 0 0 0 1.5rem;
+    border-left: 2px solid var(--border);
+  }
+
+  .linha-tempo li {
+    position: relative;
+    padding: 0 0 1.75rem 1rem;
+  }
+
+  .linha-tempo li::before {
+    content: "";
+    position: absolute;
+    left: calc(-1.5rem - 10px);
+    top: .45rem;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 3px solid var(--bg);
+  }
+
+  .linha-tempo .ano {
+    display: block;
+    font-weight: 800;
+    font-size: .85rem;
+    letter-spacing: .06em;
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+
+  .linha-tempo p { margin: .15rem 0 0; color: var(--muted); }
+
+  /* ================= PIANO ================= */
+  .piano-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 1.25rem;
+    box-shadow: var(--shadow);
+  }
+
+  .piano {
+    display: flex;
+    gap: 6px;
+    padding: 12px;
+    border-radius: 14px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    overflow-x: auto;
+  }
+
+  .piano-key {
+    flex: 1 1 0;
+    min-width: 46px;
+    height: 170px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 12px;
+    border: 1px solid var(--border);
+    border-radius: 0 0 10px 10px;
+    background: linear-gradient(180deg, #ffffff, #e9e4f7);
+    color: #2a2440;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+    user-select: none;
+    transition: transform .08s ease, background .15s ease;
+  }
+
+  .piano-key:hover { background: linear-gradient(180deg, #ffffff, #ddd4f7); }
+
+  .piano-key:active,
+  .piano-key.active {
+    transform: translateY(4px);
+    background: linear-gradient(180deg, #d9cffa, #b9a6f5);
+  }
+
+  .piano-key:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .dica {
+    margin: 1rem 0 0;
+    font-size: .9rem;
+    color: var(--muted);
+  }
+
+  /* ================= QUIZ ================= */
+  .quiz {
+    max-width: 720px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+  }
+
+  .quiz-progresso {
+    margin: 0 0 .75rem;
+    font-size: .8rem;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .quiz-pergunta { margin: 0 0 1rem; font-size: 1.15rem; }
+
+  .quiz-opcoes {
+    display: grid;
+    gap: .6rem;
+    margin-bottom: 1rem;
+  }
+
+  .quiz-opcao {
+    text-align: left;
+    padding: .85rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--bg);
+    color: var(--text);
+    font: inherit;
+    cursor: pointer;
+    transition: border-color .15s ease, transform .15s ease, background-color .15s ease;
+  }
+
+  .quiz-opcao:hover:not(:disabled) {
+    border-color: var(--accent);
+    transform: translateX(3px);
+  }
+
+  .quiz-opcao:disabled { cursor: default; }
+
+  .quiz-opcao.correta {
+    background: #16a34a;
+    border-color: #16a34a;
+    color: #fff;
+  }
+
+  .quiz-opcao.errada {
+    background: #dc2626;
+    border-color: #dc2626;
+    color: #fff;
+  }
+
+  .quiz-feedback {
+    min-height: 1.5em;
+    margin: .5rem 0 1rem;
+    font-weight: 600;
+  }
+
+  .quiz-placar { margin: 0 0 .75rem; font-size: 1.05rem; }
+
+  /* ================= RODAPÉ ================= */
+  .site-footer {
+    margin-top: 3rem;
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+  }
+
+  .rodape {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2rem 1.25rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--muted);
+    font-size: .9rem;
+  }
+
+  .rodape p { margin: 0; }
+
+  /* ================= RESPONSIVO ================= */
+  @media (max-width: 640px) {
+    .nav-links a { padding: .35rem .55rem; font-size: .82rem; }
+    .hero { padding-top: 3rem; }
+    .piano-key { height: 130px; min-width: 38px; font-size: .8rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { transition: none !important; }
+  }
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="nav" aria-label="Navegação principal">
+    <a class="logo" href="#inicio">🎵 <span class="gradient-text">Mundo da Música</span></a>
+
+    <ul class="nav-links">
+      <li><a href="#inicio">Início</a></li>
+      <li><a href="#generos">Gêneros</a></li>
+      <li><a href="#historia">História</a></li>
+      <li><a href="#piano">Piano</a></li>
+      <li><a href="#quiz">Quiz</a></li>
+    </ul>
+
+    <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Alternar tema">🌙</button>
+  </nav>
+</header>
+
+<main>
+
+  <!-- ================= HERO ================= -->
+  <section class="hero" id="inicio">
+    <span class="badge">Bem-vindo</span>
+    <h1>A música é a <span class="gradient-text">linguagem universal</span></h1>
+    <p>
+      Explore gêneros, descubra a história dos sons que moldaram o mundo,
+      toque um piano virtual e teste seus conhecimentos no nosso quiz.
+    </p>
+    <div class="hero-acoes">
+      <a class="btn" href="#generos">Explorar gêneros</a>
+      <a class="btn" href="#piano">Tocar piano</a>
+    </div>
+  </section>
+
+  <!-- ================= GÊNEROS ================= -->
+  <section class="section" id="generos">
+    <h2>Gêneros musicais</h2>
+    <p class="subtitulo">Cada estilo carrega uma história, um ritmo e uma cultura.</p>
+
+    <div class="grade">
+      <article class="card">
+        <div class="icone">🎻</div>
+        <h3>Música Clássica</h3>
+        <p>Orquestras, sinfonias e compositores como Bach, Mozart e Beethoven.</p>
+      </article>
+
+      <article class="card">
+        <div class="icone">🎷</div>
+        <h3>Jazz</h3>
+        <p>Improvisação, swing e liberdade — nasceu nas comunidades afro-americanas.</p>
+      </article>
+
+      <article class="card">
+        <div class="icone">🎸</div>
+        <h3>Rock</h3>
+        <p>Guitarras elétricas, atitude e energia. Do rock'n'roll ao metal.</p>
+      </article>
+
+      <article class="card">
+        <div class="icone">🎤</div>
+        <h3>Pop</h3>
+        <p>Melodias cativantes e refrões que conquistam o mundo em segundos.</p>
+      </article>
+
+      <article class="card">
+        <div class="icone">🥁</div>
+        <h3>Hip-hop</h3>
+        <p>Ritmo, rima e poesia urbana. Uma das maiores culturas do século XXI.</p>
+      </article>
+
+      <article class="card">
+        <div class="icone">🎧</div>
+        <h3>Música Eletrônica</h3>
+        <p>Sintetizadores, batidas programadas e infinitas possibilidades sonoras.</p>
+      </article>
+
+      <article class="card">
+        <div class="icone">🪘</div>
+        <h3>Samba</h3>
+        <p>O coração do Brasil: percussão, alegria e tradição das escolas de samba.</p>
+      </article>
+
+      <article class="card">
+        <div class="icone">🎺</div>
+        <h3>MPB</h3>
+        <p>Poesia e sofisticação harmônica nas vozes de grandes nomes brasileiros.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ================= HISTÓRIA ================= -->
+  <section class="section" id="historia">
+    <h2>Uma breve linha do tempo</h2>
+    <p class="subtitulo">Da flauta de osso aos algoritmos de streaming.</p>
+
+    <ol class="linha-tempo">
+      <li>
+        <span class="ano">~40.000 a.C.</span>
+        <p>Os primeiros instrumentos musicais conhecidos: flautas feitas de ossos de aves.</p>
+      </li>
+      <li>
+        <span class="ano">Idade Média</span>
+        <p>O canto gregoriano domina as igrejas e lança as bases da notação musical.</p>
+      </li>
+      <li>
+        <span class="ano">1600</span>
+        <p>A ópera nasce na Itália, unindo música, teatro e narrativa.</p>
+      </li>
+      <li>
+        <span class="ano">Séculos XVII–XIX</span>
+        <p>Barroco, Classicismo e Romantismo: Bach, Mozart, Beethoven e Chopin.</p>
+      </li>
+      <li>
+        <span class="ano">Início do século XX</span>
+        <p>Jazz e blues surgem nos Estados Unidos e transformam a música popular.</p>
+      </li>
+      <li>
+        <span class="ano">1950</span>
+        <p>O rock'n'roll explode e a juventude encontra sua trilha sonora.</p>
+      </li>
+      <li>
+        <span class="ano">1970–1990</span>
+        <p>Hip-hop, disco e música eletrônica reinventam a forma de fazer e ouvir som.</p>
+      </li>
+      <li>
+        <span class="ano">Hoje</span>
+        <p>Streaming e inteligência artificial democratizam a criação musical.</p>
+      </li>
+    </ol>
+  </section>
+
+  <!-- ================= PIANO ================= -->
+  <section class="section" id="piano">
+    <h2>Piano virtual</h2>
+    <p class="subtitulo">Clique nas teclas ou use as letras A, S, D, F, G, H, J, K do teclado.</p>
+
+    <div class="piano-wrap">
+      <div class="piano" id="piano" role="group" aria-label="Teclado musical virtual">
+        <button type="button" class="piano-key" data-freq="261.63">Dó</button>
+        <button type="button" class="piano-key" data-freq="293.66">Ré</button>
+        <button type="button" class="piano-key" data-freq="329.63">Mi</button>
+        <button type="button" class="piano-key" data-freq="349.23">Fá</button>
+        <button type="button" class="piano-key" data-freq="392.00">Sol</button>
+        <button type="button" class="piano-key" data-freq="440.00">Lá</button>
+        <button type="button" class="piano-key" data-freq="493.88">Si</button>
+        <button type="button" class="piano-key" data-freq="523.25">Dó</button>
+      </div>
+      <p class="dica">🔊 O som é gerado no próprio navegador — nenhum arquivo externo é necessário.</p>
+    </div>
+  </section>
+
+  <!-- ================= QUIZ ================= -->
+  <section class="section" id="quiz">
+    <h2>Quiz musical</h2>
+    <p class="subtitulo">Será que você conhece mesmo o mundo da música?</p>
+
+    <div class="quiz" id="quiz-conteudo" aria-live="polite">
+      <!-- conteúdo gerado por JavaScript -->
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="rodape">
+    <p>🎶 <strong>Mundo da Música</strong> — projeto educativo feito com HTML, CSS e JavaScript puro.</p>
+    <p>&copy; <span id="ano-atual">2025</span> — Todos os direitos reservados.</p>
+  </div>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  /* =========================================================
+     1. TEMA CLARO / ESCURO
+     ========================================================= */
+  var root = document.documentElement;
+  var themeBtn = document.getElementById("theme-toggle");
+
+  function aplicarTema(tema) {
+    if (tema === "dark") {
+      root.setAttribute("data-theme", "dark");
+    } else {
+      root.removeAttribute("data-theme");
+    }
+    themeBtn.textContent = tema === "dark" ? "☀️" : "🌙";
+    themeBtn.setAttribute("aria-label",
+      tema === "dark" ? "Ativar tema claro" : "Ativar tema escuro");
+  }
+
+  var temaSalvo = null;
+  try {
+    temaSalvo = localStorage.getItem("tema-musica");
+  } catch (erro) {
+    temaSalvo = null;
+  }
+
+  if (temaSalvo !== "dark" && temaSalvo !== "light") {
+    var prefereEscuro = window.matchMedia &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches;
+    temaSalvo = prefereEscuro ? "dark" : "light";
+  }
+
+  aplicarTema(temaSalvo);
+
+  themeBtn.addEventListener("click", function () {
+    var atual = root.getAttribute("data-theme") === "dark" ? "dark" : "light";
+    var novo = atual === "dark" ? "light" : "dark";
+    aplicarTema(novo);
+    try {
+      localStorage.setItem("tema-musica", novo);
+    } catch (erro) {
+      /* armazenamento indisponível — ignorar */
+    }
+  });
+
+  /* =========================================================
+     2. PIANO VIRTUAL (Web Audio API)
+     ========================================================= */
+  var audioCtx = null;
+
+  function obterContexto() {
+    if (!audioCtx) {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) {
+        return null;
+      }
+      audioCtx = new AC();
+    }
+    if (audioCtx.state === "suspended") {
+      audioCtx.resume();
+    }
+    return audioCtx;
+  }
+
+  function tocarNota(frequencia) {
+    var ctx = obterContexto();
+    if (!ctx) {
+      return;
+    }
+
+    var agora = ctx.currentTime;
+    var volume = ctx.createGain();
+    volume.gain.setValueAtTime(0.0001, agora);
+    volume.gain.exponentialRampToValueAtTime(0.3, agora + 0.02);
+    volume.gain.exponentialRampToValueAtTime(0.0001, agora + 1.0);
+    volume.connect(ctx.destination);
+
+    var harmonicos = [
+      { multiplicador: 1, tipo: "triangle", peso: 1.0 },
+      { multiplicador: 2, tipo: "sine", peso: 0.25 }
+    ];
+
+    harmonicos.forEach(function (h) {
+      var osc = ctx.createOscillator();
+      var ganhoOsc = ctx.createGain();
+
+      osc.type = h.tipo;
+      osc.frequency.setValueAtTime(frequencia * h.multiplicador, agora);
+      ganhoOsc.gain.value = h.peso;
+
+      osc.connect(ganhoOsc);
+      ganhoOsc.connect(volume);
+
+      osc.start(agora);
+      osc.stop(agora + 1.05);
+    });
+  }
+
+  var teclas = Array.prototype.slice.call(document.querySelectorAll(".piano-key"));
+
+  function destacarTecla(elemento) {
+    elemento.classList.add("active");
+    window.setTimeout(function () {
+      elemento.classList.remove("active");
+    }, 160);
+  }
+
+  teclas.forEach(function (tecla) {
+    tecla.addEventListener("pointerdown", function (evento) {
+      evento.preventDefault();
+      tocarNota(parseFloat(tecla.getAttribute("data-freq")));
+      destacarTecla(tecla);
+    });
+  });
+
+  var mapaTeclado = { a: 0, s: 1, d: 2, f: 3, g: 4, h: 5, j: 6, k: 7 };
+
+  document.addEventListener("keydown", function (evento) {
+    if (evento.repeat || evento.ctrlKey || evento.metaKey || evento.altKey) {
+      return;
+    }
+    var indice = mapaTeclado[String(evento.key).toLowerCase()];
+    if (indice === undefined) {
+      return;
+    }
+    var tecla = teclas[indice];
+    if (!tecla) {
+      return;
+    }
+    tocarNota(parseFloat(tecla.getAttribute("data-freq")));
+    destacarTecla(tecla);
+  });
+
+  /* =========================================================
+     3. QUIZ
+     ========================================================= */
+  var perguntas = [
+    {
+      pergunta: "Qual destes instrumentos possui 88 teclas?",
+      opcoes: ["Violão", "Flauta", "Piano", "Bateria"],
+      correta: 2
+    },
+    {
+      pergunta: "Quem é conhecido como o \"Rei do Rock\"?",
+      opcoes: ["Bob Dylan", "Elvis Presley", "Michael Jackson", "Freddie Mercury"],
+      correta: 1
+    },
+    {
+      pergunta: "O samba é um gênero musical originado principalmente no:",
+      opcoes: ["México", "Brasil", "Estados Unidos", "Portugal"],
+      correta: 1
+    },
+    {
+      pergunta: "Quantas cordas tem um violão clássico tradicional?",
+      opcoes: ["4", "6", "7", "12"],
+      correta: 1
+    },
+    {
+      pergunta: "Qual família de instrumentos inclui o trompete e o trombone?",
+      opcoes: ["Cordas", "Madeiras", "Metais", "Percussão"],
+      correta: 2
+    }
+  ];
+
+  var quizEl = document.getElementById("quiz-conteudo");
+  var indiceAtual = 0;
+  var pontos = 0;
+  var respondida = false;
+
+  function renderizarPergunta() {
+    respondida = false;
+    var pergunta = perguntas[indiceAtual];
+
+    var html = "";
+    html += '<p class="quiz-progresso">Pergunta ' + (indiceAtual + 1) +
+            " de " + perguntas.length + " · Pontos: " + pontos + "</p>";
+    html += '<h3 class="quiz-pergunta">' + pergunta.pergunta + "</h3>";
+    html += '<div class="quiz-opcoes">';
+
+    pergunta.opcoes.forEach(function (opcao, indice) {
+      html += '<button type="button" class="quiz-opcao" data-indice="' + indice + '">' +
+              opcao + "</button>";
+    });
+
+    html += "</div>";
+    html += '<p class="quiz-feedback"></p>';
+
+    quizEl.innerHTML = html;
+
+    var botoes = quizEl.querySelectorAll(".quiz-opcao");
+    Array.prototype.forEach.call(botoes, function (botao) {
+      botao.addEventListener("click", function () {
+        responder(parseInt(botao.getAttribute("data-indice"), 10));
+      });
+    });
+  }
+
+  function responder(indiceEscolhido) {
+    if (respondida) {
+      return;
+    }
+    respondida = true;
+
+    var pergunta = perguntas[indiceAtual];
+    var botoes = quizEl.querySelectorAll(".quiz-opcao");
+    var feedback = quizEl.querySelector(".quiz-feedback");
+
+    Array.prototype.forEach.call(botoes, function (botao, indice) {
+      botao.disabled = true;
+      if (indice === pergunta.correta) {
+        botao.classList.add("correta");
+      }
+      if (indice === indiceEscolhido && indice !== pergunta.correta) {
+        botao.classList.add("errada");
+      }
+    });
+
+    if (indiceEscolhido === pergunta.correta) {
+      pontos += 1;
+      feedback.textContent = "✅ Acertou! Muito bem.";
+    } else {
+      feedback.textContent = "❌ Não foi dessa vez. Resposta correta: " +
+        pergunta.opcoes[pergunta.correta];
+    }
+
+    var progresso = quizEl.querySelector(".quiz-progresso");
+    progresso.textContent = "Pergunta " + (indiceAtual + 1) + " de " +
+      perguntas.length + " · Pontos: " + pontos;
+
+    var botaoProximo = document.createElement("button");
+    botaoProximo.type = "button";
+    botaoProximo.className = "btn";
+    botaoProximo.textContent = (indiceAtual === perguntas.length - 1)
+      ? "Ver resultado"
+      : "Próxima pergunta";
+
+    botaoProximo.addEventListener("click", function () {
+      if (indiceAtual === perguntas.length - 1) {
+        finalizarQuiz();
+      } else {
+        indiceAtual += 1;
+        renderizarPergunta();
+      }
+    });
+
+    quizEl.appendChild(botaoProximo);
+  }
+
+  function finalizarQuiz() {
+    var mensagem;
+    if (pontos === perguntas.length) {
+      mensagem = "🏆 Perfeito! Você é um verdadeiro maestro!";
+    } else if (pontos >= 3) {
+      mensagem = "🎶 Muito bem! Você entende bastante de música.";
+    } else {
+      mensagem = "🎧 Continue ouvindo e aprendendo — a música é infinita!";
+    }
+
+    quizEl.innerHTML =
+      '<h3 class="quiz-pergunta">Resultado final</h3>' +
+      '<p class="quiz-placar">Você acertou <strong>' + pontos + "</strong> de <strong>" +
+      perguntas.length + "</strong> perguntas.</p>" +
+      '<p class="quiz-feedback">' + mensagem + "</p>";
+
+    var botaoReiniciar = document.createElement("button");
+    botaoReiniciar.type = "button";
+    botaoReiniciar.className = "btn";
+    botaoReiniciar.textContent = "Jogar novamente";
+
+    botaoReiniciar.addEventListener("click", function () {
+      indiceAtual = 0;
+      pontos = 0;
+      renderizarPergunta();
+    });
+
+    quizEl.appendChild(botaoReiniciar);
+  }
+
+  renderizarPergunta();
+
+  /* =========================================================
+     4. DESTAQUE DO LINK ATIVO NO MENU
+     ========================================================= */
+  var secoes = document.querySelectorAll("main section[id]");
+  var linksMenu = document.querySelectorAll(".nav-links a");
+
+  if ("IntersectionObserver" in window && secoes.length > 0) {
+    var observador = new IntersectionObserver(function (entradas) {
+      entradas.forEach(function (entrada) {
+        if (entrada.isIntersecting) {
+          Array.prototype.forEach.call(linksMenu, function (link) {
+            var alvo = link.getAttribute("href");
+            link.classList.toggle("ativo", alvo === "#" + entrada.target.id);
+          });
+        }
+      });
+    }, { rootMargin: "-45% 0px -50% 0px" });
+
+    Array.prototype.forEach.call(secoes, function (secao) {
+      observador.observe(secao);
+    });
+  }
+
+  /* =========================================================
+     5. ANO ATUAL NO RODAPÉ
+     ========================================================= */
+  var anoEl = document.getElementById("ano-atual");
+  if (anoEl) {
+    anoEl.textContent = String(new Date().getFullYear());
+  }
+
+})();
+</script>
+
+</body>
+</html>
