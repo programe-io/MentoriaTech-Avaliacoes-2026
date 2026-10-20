@@ -1,52 +1,100 @@
 
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chuteiras FC</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <header>
-    <h1>⚽ Chuteiras FC</h1>
-    <p>Encontre a chuteira perfeita para o seu jogo!</p>
-    <input type="text" id="pesquisa"
-      placeholder="Pesquisar chuteira...">
-  </header>
+const chuteiras = [
+  {
+    nome: "Chuteira Velocidade",
+    marca: "Nike",
+    preco: 299.90,
+    imagem: "👟",
+    descricao: "Leve e ideal para arrancadas."
+  },
+  {
+    nome: "Chuteira Controle",
+    marca: "Adidas",
+    preco: 349.90,
+    imagem: "⚽",
+    descricao: "Conforto e controle de bola."
+  },
+  {
+    nome: "Chuteira Pro Campo",
+    marca: "Puma",
+    preco: 399.90,
+    imagem: "👟",
+    descricao: "Estabilidade para jogar no campo."
+  },
+  {
+    nome: "Chuteira Futsal",
+    marca: "Umbro",
+    preco: 219.90,
+    imagem: "⚽",
+    descricao: "Aderência para quadras indoor."
+  }
+];
 
-  <nav>
-    <a href="#inicio">Início</a>
-    <a href="#produtos">Chuteiras</a>
-    <a href="#sobre">Sobre</a>
-  </nav>
+const lista = document.getElementById("lista-chuteiras");
+const pesquisa = document.getElementById("pesquisa");
+const carrinhoTexto = document.getElementById("carrinho");
 
-  <main>
-    <section id="inicio" class="banner">
-      <h2>Entre em campo com estilo!</h2>
-      <p>Velocidade, conforto e controle em cada jogada.</p>
-      <a href="#produtos" class="botao">Ver chuteiras</a>
-    </section>
+let totalCarrinho = 0;
 
-    <section id="produtos">
-      <h2>Nossas chuteiras</h2>
-      <div id="lista-chuteiras" class="produtos"></div>
-    </section>
+function mostrarChuteiras(filtro = "") {
+  lista.innerHTML = "";
 
-    <section id="sobre">
-      <h2>Sobre a Chuteiras FC</h2>
-      <p>
-        Um catálogo para quem ama futebol e quer encontrar
-        o modelo ideal para jogar com confiança.
-      </p>
-    </section>
-  </main>
+  const encontradas = chuteiras.filter(chuteira =>
+    chuteira.nome.toLowerCase().includes(filtro.toLowerCase()) ||
+    chuteira.marca.toLowerCase().includes(filtro.toLowerCase())
+  );
 
-  <footer>
-    <p>© 2026 Chuteiras FC - Feito para quem ama futebol ⚽</p>
-    <p id="carrinho">🛒 Carrinho: 0 itens</p>
-  </footer>
+  if (encontradas.length === 0) {
+    lista.innerHTML = "<p>Nenhuma chuteira encontrada.</p>";
+    return;
+  }
 
-  <script src="script.js"></script>
-</body>
-</html>
+  encontradas.forEach(chuteira => {
+    const card = document.createElement("article");
+    card.className = "card";
+
+    const imagem = document.createElement("div");
+    imagem.className = "imagem";
+    imagem.textContent = chuteira.imagem;
+
+    const nome = document.createElement("h3");
+    nome.textContent = chuteira.nome;
+
+    const marca = document.createElement("p");
+    marca.textContent = chuteira.marca;
+
+    const descricao = document.createElement("p");
+    descricao.textContent = chuteira.descricao;
+
+    const preco = document.createElement("p");
+    preco.className = "preco";
+    preco.textContent = chuteira.preco.toLocaleString(
+      "pt-BR",
+      { style: "currency", currency: "BRL" }
+    );
+
+    const botao = document.createElement("button");
+    botao.textContent = "Adicionar ao carrinho";
+
+    botao.addEventListener("click", () => {
+      totalCarrinho++;
+      carrinhoTexto.textContent =
+        `🛒 Carrinho: ${totalCarrinho} itens`;
+
+      botao.textContent = "Adicionado! ✓";
+
+      setTimeout(() => {
+        botao.textContent = "Adicionar ao carrinho";
+      }, 1200);
+    });
+
+    card.append(imagem, nome, marca, descricao, preco, botao);
+    lista.appendChild(card);
+  });
+}
+
+pesquisa.addEventListener("input", () => {
+  mostrarChuteiras(pesquisa.value);
+});
+
+mostrarChuteiras();
