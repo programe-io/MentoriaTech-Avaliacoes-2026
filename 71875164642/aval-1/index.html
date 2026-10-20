@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet">
+</head>
+<body>
+  <!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciador de Produtos</title>
+    <style>
+        /* CSS - Estilização do Projeto */
+        :root {
+            --primary: #2563eb;
+            --success: #16a34a;
+            --danger: #dc2626;
+            --background: #f8fafc;
+            --surface: #ffffff;
+            --text: #1e293b;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: var(--surface);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+
+        h1, h2 {
+            color: #0f172a;
+            margin-top: 0;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            width: 100%;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .search-section {
+            background: #f1f5f9;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 25px 0;
+        }
+
+        .search-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .btn-update { background-color: var(--success); }
+        .btn-qty { background-color: #7c3aed; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        th {
+            background-color: #f1f5f9;
+            color: #475569;
+        }
+
+        .error-msg {
+            color: var(--danger);
+            font-size: 14px;
+            margin-top: 5px;
+            min-height: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- 1. Introdução / 2. Objetivo do projeto -->
+        <h1>Sistema de Gerenciamento de Produtos</h1>
+        <p>Cadastre, liste e gerencie os valores e quantidades do seu estoque.</p>
+
+        <!-- Formulário de Cadastro -->
+        <form id="productForm" onsubmit="event.preventDefault(); cadastrarProduto();">
+            <h2>Cadastrar Novo Produto</h2>
+            
+            <div class="form-group">
+                <label for="descricao">Descrição (Nome do Produto):</label>
+                <input type="text" id="descricao" placeholder="Ex: Teclado Mecânico">
+                <div id="errDescricao" class="error-msg"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="quantidade">Quantidade:</label>
+                <input type="number" id="quantidade" placeholder="Ex: 10">
+                <div id="errQuantidade" class="error-msg"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="valor">Valor Unitário (R$):</label>
+                <input type="number" step="0.01" id="valor" placeholder="Ex: 199.90">
+                <div id="errValor" class="error-msg"></div>
+            </div>
+
+            <button type="submit">Adicionar Produto</button>
+        </form>
+
+        <!-- 17. Busca de produto com find e Atualizações -->
+        <div class="search-section">
+            <h2>Buscar & Atualizar Produto</h2>
+            <div class="form-group">
+                <label for="searchId">Código do Produto (ID):</label>
+                <input type="number" id="searchId" placeholder="Digite o ID para buscar/atualizar">
+            </div>
+            <div class="search-actions">
+                <input type="number" step="0.01" id="updateValue" placeholder="Novo Valor ou Qtde">
+                <button class="btn-update" onclick="atualizarValorProduto()">Alterar Valor</button>
+                <button class="btn-qty" onclick="atualizarQuantidadeProduto()">Somar Estoque</button>
+            </div>
+            <div id="searchFeedback" style="margin-top: 10px; font-weight: bold;"></div>
+        </div>
+
+        <!-- 14. Função para listar produtos -->
+        <h2>Produtos Cadastrados</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Descrição</th>
+                    <th>Quantidade</th>
+                    <th>Valor Unitário</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody id="listaProdutos">
+                <!-- Preenchido via JavaScript -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- JAVASCRIPT - Lógica do Sistema -->
+    <script>
+        // 3. Estrutura dos dados do produto / 4. Criação da lista de produtos
+        // Inicializamos um array vazio para armazenar os produtos e um contador para o ID automático.
+        let produtos = [];
+        let proximoId = 1;
+
+        // 5. Organização do projeto em funções
+
+        // 6. Função para validar produto
+        function validarProduto(descricao, quantidade, valor) {
+            let resultado = true;
+            
+            // Limpa mensagens anteriores
+            document.getElementById('errDescricao').innerText = '';
+            document.getElementById('errQuantidade').innerText = '';
+            document.getElementById('errValor').innerText = '';
+
+            // 7. Validação da descrição
+            if (descricao.trim() === '') {
+                document.getElementById('errDescricao').innerText = 'A descrição do produto é obrigatória.';
+                resultado = false;
+            }
+
+            // 8. Validação da quantidade
+            if (quantidade === '' || isNaN(quantidade) || Number(quantidade) < 0) {
+                document.getElementById('errQuantidade').innerText = 'A quantidade deve ser um número maior ou igual a 0.';
+                resultado = false;
+            }
+
+            // 9. Validação do valor
+            if (valor === '' || isNaN(valor) || Number(valor) <= 0) {
+                document.getElementById('errValor').innerText = 'O valor deve ser um número maior que 0.';
+                resultado = false;
+            }
+
+            return resultado;
+        }
+
+        // 10. Função para cadastrar produto
+        function cadastrarProduto() {
+            const inputDescricao = document.getElementById('descricao').value;
+            const inputQuantidade = document.getElementById('quantidade').value;
+            const inputValor = document.getElementById('valor').value;
+
+            // Executa as validações antes de prosseguir
+            if (!validarProduto(inputDescricao, inputQuantidade, inputValor)) {
+                return; // Para a execução se houver erro
+            }
+
+            // 11. Criação do objeto produto & 12. Geração automática do código
+            const novoProduto = {
+                id: proximoId++, // Atribui o ID atual e incrementa para o próximo
+                descricao: inputDescricao.trim(),
+                quantidade: parseInt(inputQuantidade),
+                valor: parseFloat(inputValor)
+            };
+
+            // 13. Adição de produtos ao array
+            produtos.push(novoProduto);
+
+            // Limpa o formulário após o sucesso
+            document.getElementById('productForm').reset();
+
+            // 15. Testando o cadastro e a listagem (Atualiza a tabela visual)
+            listarProdutos();
+        }
+
+        // 14. Função para listar produtos
+        function listarProdutos() {
+            const tabelaBody = document.getElementById('listaProdutos');
+            tabelaBody.innerHTML = ''; // Reseta o HTML da tabela
+
+            produtos.forEach(produto => {
+                const linha = document.createElement('tr');
+                
+                const total = produto.quantidade * produto.valor;
+
+                linha.innerHTML = `
+                    <td><strong>#${produto.id}</strong></td>
+                    <td>${produto.descricao}</td>
+                    <td>${produto.quantidade}</td>
+                    <td>R$ ${produto.valor.toFixed(2)}</td>
+                    <td>R$ ${total.toFixed(2)}</td>
+                `;
+                
+                tabelaBody.appendChild(linha);
+            });
+        }
+
+        // 16. Função para atualizar o valor do produto
+        function atualizarValorProduto() {
+            const idBusca = parseInt(document.getElementById('searchId').value);
+            const novoValor = parseFloat(document.getElementById('updateValue').value);
+            const feedback = document.getElementById('searchFeedback');
+
+            // 17. Busca de produto com find
+            const produto = produtos.find(p => p.id === idBusca);
+
+            // 18. Tratamento de produto não encontrado
+            if (!produto) {
+                feedback.style.color = 'var(--danger)';
+                feedback.innerText = 'Produto não encontrado pelo ID informado.';
+                return;
+            }
+
+            if (isNaN(novoValor) || novoValor <= 0) {
+                feedback.style.color = 'var(--danger)';
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciador de Produtos</title>
+    <style>
+        /* CSS - Estilização do Projeto */
+        :root {
+            --primary: #2563eb;
+            --success: #16a34a;
+            --danger: #dc2626;
+            --background: #f8fafc;
+            --surface: #ffffff;
+            --text: #1e293b;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: var(--surface);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+
+        h1, h2 {
+            color: #0f172a;
+            margin-top: 0;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            width: 100%;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .search-section {
+            background: #f1f5f9;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 25px 0;
+        }
+
+        .search-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .btn-update { background-color: var(--success); }
+        .btn-qty { background-color: #7c3aed; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        th {
+            background-color: #f1f5f9;
+            color: #475569;
+        }
+
+        .error-msg {
+            color: var(--danger);
+            font-size: 14px;
+            margin-top: 5px;
+            min-height: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- 1. Introdução / 2. Objetivo do projeto -->
+        <h1>Sistema de Gerenciamento de Produtos</h1>
+        <p>Cadastre, liste e gerencie os valores e quantidades do seu estoque.</p>
+
+        <!-- Formulário de Cadastro -->
+        <form id="productForm" onsubmit="event.preventDefault(); cadastrarProduto();">
+            <h2>Cadastrar Novo Produto</h2>
+            
+            <div class="form-group">
+                <label for="descricao">Descrição (Nome do Produto):</label>
+                <input type="text" id="descricao" placeholder="Ex: Teclado Mecânico">
+                <div id="errDescricao" class="error-msg"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="quantidade">Quantidade:</label>
+                <input type="number" id="quantidade" placeholder="Ex: 10">
+                <div id="errQuantidade" class="error-msg"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="valor">Valor Unitário (R$):</label>
+                <input type="number" step="0.01" id="valor" placeholder="Ex: 199.90">
+                <div id="errValor" class="error-msg"></div>
+            </div>
+
+            <button type="submit">Adicionar Produto</button>
+        </form>
+
+        <!-- 17. Busca de produto com find e Atualizações -->
+        <div class="search-section">
+            <h2>Buscar & Atualizar Produto</h2>
+            <div class="form-group">
+                <label for="searchId">Código do Produto (ID):</label>
+                <input type="number" id="searchId" placeholder="Digite o ID para buscar/atualizar">
+            </div>
+            <div class="search-actions">
+                <input type="number" step="0.01" id="updateValue" placeholder="Novo Valor ou Qtde">
+                <button class="btn-update" onclick="atualizarValorProduto()">Alterar Valor</button>
+                <button class="btn-qty" onclick="atualizarQuantidadeProduto()">Somar Estoque</button>
+            </div>
+            <div id="searchFeedback" style="margin-top: 10px; font-weight: bold;"></div>
+        </div>
+
+        <!-- 14. Função para listar produtos -->
+        <h2>Produtos Cadastrados</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Descrição</th>
+                    <th>Quantidade</th>
+                    <th>Valor Unitário</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody id="listaProdutos">
+                <!-- Preenchido via JavaScript -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- JAVASCRIPT - Lógica do Sistema -->
+    <script>
+        // 3. Estrutura dos dados do produto / 4. Criação da lista de produtos
+        // Inicializamos um array vazio para armazenar os produtos e um contador para o ID automático.
+        let produtos = [];
+        let proximoId = 1;
+
+        // 5. Organização do projeto em funções
+
+        // 6. Função para validar produto
+        function validarProduto(descricao, quantidade, valor) {
+            let resultado = true;
+            
+            // Limpa mensagens anteriores
+            document.getElementById('errDescricao').innerText = '';
+            document.getElementById('errQuantidade').innerText = '';
+            document.getElementById('errValor').innerText = '';
+
+            // 7. Validação da descrição
+            if (descricao.trim() === '') {
+                document.getElementById('errDescricao').innerText = 'A descrição do produto é obrigatória.';
+                resultado = false;
+            }
+
+            // 8. Validação da quantidade
+            if (quantidade === '' || isNaN(quantidade) || Number(quantidade) < 0) {
+                document.getElementById('errQuantidade').innerText = 'A quantidade deve ser um número maior ou igual a 0.';
+                resultado = false;
+            }
+
+            // 9. Validação do valor
+            if (valor === '' || isNaN(valor) || Number(valor) <= 0) {
+                document.getElementById('errValor').innerText = 'O valor deve ser um número maior que 0.';
+                resultado = false;
+            }
+
+            return resultado;
+        }
+
+        // 10. Função para cadastrar produto
+        function cadastrarProduto() {
+            const inputDescricao = document.getElementById('descricao').value;
+            const inputQuantidade = document.getElementById('quantidade').value;
+            const inputValor = document.getElementById('valor').value;
+
+            // Executa as validações antes de prosseguir
+            if (!validarProduto(inputDescricao, inputQuantidade, inputValor)) {
+                return; // Para a execução se houver erro
+            }
+
+            // 11. Criação do objeto produto & 12. Geração automática do código
+            const novoProduto = {
+                id: proximoId++, // Atribui o ID atual e incrementa para o próximo
+                descricao: inputDescricao.trim(),
+                quantidade: parseInt(inputQuantidade),
+                valor: parseFloat(inputValor)
+            };
+
+            // 13. Adição de produtos ao array
+            produtos.push(novoProduto);
+
+            // Limpa o formulário após o sucesso
+            document.getElementById('productForm').reset();
+
+            // 15. Testando o cadastro e a listagem (Atualiza a tabela visual)
+            listarProdutos();
+        }
+
+        // 14. Função para listar produtos
+        function listarProdutos() {
+            const tabelaBody = document.getElementById('listaProdutos');
+            tabelaBody.innerHTML = ''; // Reseta o HTML da tabela
+
+            produtos.forEach(produto => {
+                const linha = document.createElement('tr');
+                
+                const total = produto.quantidade * produto.valor;
+
+                linha.innerHTML = `
+                    <td><strong>#${produto.id}</strong></td>
+                    <td>${produto.descricao}</td>
+                    <td>${produto.quantidade}</td>
+                    <td>R$ ${produto.valor.toFixed(2)}</td>
+                    <td>R$ ${total.toFixed(2)}</td>
+                `;
+                
+                tabelaBody.appendChild(linha);
+            });
+        }
+
+        // 16. Função para atualizar o valor do produto
+        function atualizarValorProduto() {
+            const idBusca = parseInt(document.getElementById('searchId').value);
+            const novoValor = parseFloat(document.getElementById('updateValue').value);
+            const feedback = document.getElementById('searchFeedback');
+
+            // 17. Busca de produto com find
+            const produto = produtos.find(p => p.id === idBusca);
+
+            // 18. Tratamento de produto não encontrado
+            if (!produto) {
+                feedback.style.color = 'var(--danger)';
+                feedback.innerText = 'Produto não encontrado pelo ID informado.';
+                return;
+            }
+
+            if (isNaN(novoValor) || novoValor <= 0) {
+                feedback.style.color = 'var(--danger)';
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciador de Produtos</title>
+    <style>
+        /* CSS - Estilização do Projeto */
+        :root {
+            --primary: #2563eb;
+            --success: #16a34a;
+            --danger: #dc2626;
+            --background: #f8fafc;
+            --surface: #ffffff;
+            --text: #1e293b;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: var(--surface);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+
+        h1, h2 {
+            color: #0f172a;
+            margin-top: 0;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            width: 100%;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .search-section {
+            background: #f1f5f9;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 25px 0;
+        }
+
+        .search-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .btn-update { background-color: var(--success); }
+        .btn-qty { background-color: #7c3aed; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        th {
+            background-color: #f1f5f9;
+            color: #475569;
+        }
+
+        .error-msg {
+            color: var(--danger);
+            font-size: 14px;
+            margin-top: 5px;
+            min-height: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- 1. Introdução / 2. Objetivo do projeto -->
+        <h1>Sistema de Gerenciamento de Produtos</h1>
+        <p>Cadastre, liste e gerencie os valores e quantidades do seu estoque.</p>
+
+        <!-- Formulário de Cadastro -->
+        <form id="productForm" onsubmit="event.preventDefault(); cadastrarProduto();">
+            <h2>Cadastrar Novo Produto</h2>
+            
+            <div class="form-group">
+                <label for="descricao">Descrição (Nome do Produto):</label>
+                <input type="text" id="descricao" placeholder="Ex: Teclado Mecânico">
+                <div id="errDescricao" class="error-msg"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="quantidade">Quantidade:</label>
+                <input type="number" id="quantidade" placeholder="Ex: 10">
+                <div id="errQuantidade" class="error-msg"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="valor">Valor Unitário (R$):</label>
+                <input type="number" step="0.01" id="valor" placeholder="Ex: 199.90">
+                <div id="errValor" class="error-msg"></div>
+            </div>
+
+            <button type="submit">Adicionar Produto</button>
+        </form>
+
+        <!-- 17. Busca de produto com find e Atualizações -->
+        <div class="search-section">
+            <h2>Buscar & Atualizar Produto</h2>
+            <div class="form-group">
+                <label for="searchId">Código do Produto (ID):</label>
+                <input type="number" id="searchId" placeholder="Digite o ID para buscar/atualizar">
+            </div>
+            <div class="search-actions">
+                <input type="number" step="0.01" id="updateValue" placeholder="Novo Valor ou Qtde">
+                <button class="btn-update" onclick="atualizarValorProduto()">Alterar Valor</button>
+                <button class="btn-qty" onclick="atualizarQuantidadeProduto()">Somar Estoque</button>
+            </div>
+            <div id="searchFeedback" style="margin-top: 10px; font-weight: bold;"></div>
+        </div>
+
+        <!-- 14. Função para listar produtos -->
+        <h2>Produtos Cadastrados</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Descrição</th>
+                    <th>Quantidade</th>
+                    <th>Valor Unitário</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody id="listaProdutos">
+                <!-- Preenchido via JavaScript -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- JAVASCRIPT - Lógica do Sistema -->
+    <script>
+        // 3. Estrutura dos dados do produto / 4. Criação da lista de produtos
+        // Inicializamos um array vazio para armazenar os produtos e um contador para o ID automático.
+        let produtos = [];
+        let proximoId = 1;
+
+        // 5. Organização do projeto em funções
+
+        // 6. Função para validar produto
+        function validarProduto(descricao, quantidade, valor) {
+            let resultado = true;
+            
+            // Limpa mensagens anteriores
+            document.getElementById('errDescricao').innerText = '';
+            document.getElementById('errQuantidade').innerText = '';
+            document.getElementById('errValor').innerText = '';
+
+            // 7. Validação da descrição
+            if (descricao.trim() === '') {
+                document.getElementById('errDescricao').innerText = 'A descrição do produto é obrigatória.';
+                resultado = false;
+            }
+
+            // 8. Validação da quantidade
+            if (quantidade === '' || isNaN(quantidade) || Number(quantidade) < 0) {
+                document.getElementById('errQuantidade').innerText = 'A quantidade deve ser um número maior ou igual a 0.';
+                resultado = false;
+            }
+
+            // 9. Validação do valor
+            if (valor === '' || isNaN(valor) || Number(valor) <= 0) {
+                document.getElementById('errValor').innerText = 'O valor deve ser um número maior que 0.';
+                resultado = false;
+            }
+
+            return resultado;
+        }
+
+        // 10. Função para cadastrar produto
+        function cadastrarProduto() {
+            const inputDescricao = document.getElementById('descricao').value;
+            const inputQuantidade = document.getElementById('quantidade').value;
+            const inputValor = document.getElementById('valor').value;
+
+            // Executa as validações antes de prosseguir
+            if (!validarProduto(inputDescricao, inputQuantidade, inputValor)) {
+                return; // Para a execução se houver erro
+            }
+
+            // 11. Criação do objeto produto & 12. Geração automática do código
+            const novoProduto = {
+                id: proximoId++, // Atribui o ID atual e incrementa para o próximo
+                descricao: inputDescricao.trim(),
+                quantidade: parseInt(inputQuantidade),
+                valor: parseFloat(inputValor)
+            };
+
+            // 13. Adição de produtos ao array
+            produtos.push(novoProduto);
+
+            // Limpa o formulário após o sucesso
+            document.getElementById('productForm').reset();
+
+            // 15. Testando o cadastro e a listagem (Atualiza a tabela visual)
+            listarProdutos();
+        }
+
+        // 14. Função para listar produtos
+        function listarProdutos() {
+            const tabelaBody = document.getElementById('listaProdutos');
+            tabelaBody.innerHTML = ''; // Reseta o HTML da tabela
+
+            produtos.forEach(produto => {
+                const linha = document.createElement('tr');
+                
+                const total = produto.quantidade * produto.valor;
+
+                linha.innerHTML = `
+                    <td><strong>#${produto.id}</strong></td>
+                    <td>${produto.descricao}</td>
+                    <td>${produto.quantidade}</td>
+                    <td>R$ ${produto.valor.toFixed(2)}</td>
+                    <td>R$ ${total.toFixed(2)}</td>
+                `;
+                
+                tabelaBody.appendChild(linha);
+            });
+        }
+
+        // 16. Função para atualizar o valor do produto
+        function atualizarValorProduto() {
+            const idBusca = parseInt(document.getElementById('searchId').value);
+            const novoValor = parseFloat(document.getElementById('updateValue').value);
+            const feedback = document.getElementById('searchFeedback');
+
+            // 17. Busca de produto com find
+            const produto = produtos.find(p => p.id === idBusca);
+
+            // 18. Tratamento de produto não encontrado
+            if (!produto) {
+                feedback.style.color = 'var(--danger)';
+                feedback.innerText = 'Produto não encontrado pelo ID informado.';
+                return;
+            }
+
+            if (isNaN(novoValor) || novoValor <= 0) {
+                feedback.style.color = 'var(--danger)';
+
+  <script src="script.js"></script>
+  
+</body>
+</html>
