@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projeto CRUD e Estoque em JavaScript</title>
+    <style>
+        /* ==========================================
+           ESTILIZAÇÃO GERAL (CSS)
+           ========================================== */
+        :root {
+            --primary: #4f46e5;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --background: #f3f4f6;
+            --surface: #ffffff;
+            --text: #1f2937;
+        }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            margin: 0;
+            padding: 2rem;
+        }
+        .container { max-width: 900px; margin: 0 auto; }
+        h1 { text-align: center; color: var(--primary); }
+        .card {
+            background: var(--surface);
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            margin-bottom: 1.5rem;
+        }
+        .form-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) auto;
+            gap: 1rem;
+            align-items: end;
+        }
+        input, button {
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+        button { color: white; font-weight: bold; cursor: pointer; border: none; }
+        .btn-add { background-color: var(--primary); }
+        table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+        th, td { padding: 0.75rem; text-align: left; border-bottom: 1px solid #e5e7eb; }
+        th { background-color: #f9fafb; }
+        .actions { display: flex; gap: 0.5rem; align-items: center; }
+        .actions input { width: 70px; padding: 0.4rem; }
+        .actions button { padding: 0.4rem 0.8rem; font-size: 0.9rem; }
+        .btn-qty { background-color: var(--success); }
+        .btn-val { background-color: var(--warning); }
+        .btn-del { background-color: var(--danger); }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+<div class="container">
+    <h1>📦 Projeto CRUD e Estoque (Em Ordem)</h1>
+
+    <!-- 10. Função para cadastrar produto (Interface Visual) -->
+    <div class="card">
+        <h3>10. Form de Cadastro de Produto</h3>
+        <div class="form-group">
+            <div>
+                <label>7. Descrição</label>
+                <input type="text" id="inputDesc" placeholder="Ex: Mouse Gamer" style="width: 90%;">
+            </div>
+            <div>
+                <label>8. Quantidade</label>
+                <input type="number" id="inputQtd" placeholder="0" min="0" style="width: 90%;">
+            </div>
+            <div>
+                <label>9. Valor (R\$)</label>
+                <input type="number" id="inputVal" placeholder="0.00" step="0.01" min="0.01" style="width: 90%;">
+            </div>
+            <button class="btn-add" onclick="gatilhoCadastroDoForm()">Cadastrar</button>
+        </div>
+    </div>
+
+    <!-- 14. Função para listar produtos (Interface Visual) -->
+    <div class="card">
+        <h3>14. Tabela de Listagem de Produtos</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>12. ID</th>
+                    <th>7. Descrição</th>
+                    <th>8. Qtd</th>
+                    <th>9. Valor</th>
+                    <th>Ações (16, 19, 21)</th>
+                </tr>
+            </thead>
+            <tbody id="tabelaProdutos">
+                <!-- Inserido dinamicamente via JavaScript -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    // ==========================================
+    // LÓGICA EM JAVASCRIPT EM ORDEM DO SUMÁRIO
+    // ==========================================
+
+    // 3. Estrutura dos dados do produto: id, descricao, quantidade, valor
+    // 4. Criação da lista de produtos (Array global)
+    const listaProdutos = [];
+    let proximoId = 1; // Controla o auto-incremento
+
+    // 5. Organização do projeto em funções
+    // 6. Função para validar produto
+    function validarProduto(descricao, quantidade, valor) {
+        // 7. Validação da descrição
+        if (typeof descricao !== 'string' || descricao.trim().length === 0) {
+            throw new Error("Descrição vazia ou inválida.");
+        }
+        // 8. Validação da quantidade
+        if (isNaN(quantidade) || quantidade < 0) {
+            throw new Error("Quantidade não pode ser negativa.");
+        }
+        // 9. Validação do valor
+        if (isNaN(valor) || valor <= 0) {
+            throw new Error("Valor deve ser maior que zero.");
+        }
+        return true;
+    }
+
+    // 10. Função para cadastrar produto
+    function cadastrarProduto(descricao, quantidade, valor) {
+        try {
+            // Executa as validações (6, 7, 8, 9)
+            validarProduto(descricao, quantidade, valor);
+
+            // 11. Criação do objeto produto
+            // 12. Geração automática do código do produto
+            const novoProduto = {
+                id: proximoId++, 
+                descricao: descricao.trim(),
+                quantidade: parseInt(quantidade),
+                valor: parseFloat(valor)
+            };
+
+            // 13. Adição de produtos ao array
+            listaProdutos.push(novoProduto);
+            
+            // Atualiza o documento visualmente
+            renderizarListaNaTela();
+        } catch (erro) {
+            // 18. Tratamento de erro (Se falhar a validação do cadastro)
+            alert(`❌ Erro: ${erro.message}`);
+        }
+    }
+
+    // 14. Função para listar produtos
+    function renderizarListaNaTela() {
+        const tbody = document.getElementById("tabelaProdutos");
+        tbody.innerHTML = "";
+
+        if (listaProdutos.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;">Estoque vazio.</td></tr>`;
+            return;
+        }
+
+        listaProdutos.forEach(produto => {
+            tbody.innerHTML += `
+                <tr>
+                    <td>${produto.id}</td>
+                    <td><strong>${produto.descricao}</strong></td>
+                    <td>${produto.quantidade} un</td>
+                    <td>R$ ${produto.valor.toFixed(2)}</td>
+                    <td class="actions">
+                        <!-- 19. Entrada para atualizar quantidade -->
+                        <input type="number" id="add-qtd-${produto.id}" placeholder="+ Qtd">
+                        <button class="btn-qty" onclick="atualizarQuantidade(${produto.id})">Somar</button>
+                        
+                        <!-- 16. Entrada para atualizar valor -->
+                        <input type="number" id="new-val-${produto.id}" placeholder="R$" step="0.01">
+                        <button class="btn-val" onclick="atualizarValor(${produto.id})">Preço</button>
+
+                        <!-- 21. Possibilidade de melhoria (Excluir) -->
+                        <button class="btn-del" onclick="deletarProduto(${produto.id})">Excluir</button>
+                    </td>
+                </tr>
+            `;
+        });
+    }
+
+    // 15. Testando o cadastro e a listagem (Carga automática de teste inicial)
+    cadastrarProduto("Notebook Air", 5, 3800.00);
+    cadastrarProduto("Teclado Bluetooth", 15, 190.00);
+
+    // 16. Função para atualizar o valor do produto
+    function atualizarValor(id) {
+        const input = document.getElementById(`new-val-${id}`);
+        const novoValor = parseFloat(input.value);
+
+        if (isNaN(novoValor) || novoValor <= 0) {
+            alert("❌ Digite um valor válido.");
+            return;
+        }
+
+        const produto = buscarProdutoPorId(id);
+        if (produto) {
+            produto.valor = novoValor; // Substitui o valor de forma direta (=)
+            renderizarListaNaTela();
+        }
+    }
+
+    // 17. Busca de produto com find
+    function buscarProdutoPorId(id) {
+        const produto = listaProdutos.find(p => p.id === id);
+        // 18. Tratamento de produto não encontrado
+        if (!produto) {
+            alert(`⚠️ Produto com ID ${id} não foi encontrado.`);
+            return null;
+        }
+        return produto;
+    }
+
+    // 19. Função para atualizar a quantidade do produto
+    function atualizarQuantidade(id) {
+        const input = document.getElementById(`add-qtd-${id}`);
+        const qtdParaSomar = parseInt(input.value);
+
+        if (isNaN(qtdParaSomar) || qtdParaSomar <= 0) {
+            alert("❌ Digite uma quantidade válida maior que zero.");
+            return;
+        }
+
+        const produto = buscarProdutoPorId(id);
+        if (produto) {
+            // 20. Diferença entre alterar valor (=) e somar quantidade (+= acumulador)
+            produto.quantidade += qtdParaSomar; 
+            renderizarListaNaTela();
+        }
+    }
+
+    // 21. Possibilidades de melhoria (Implementação da exclusão do CRUD)
+    function deletarProduto(id) {
+        const index = listaProdutos.findIndex(p => p.id === id);
+        if (index !== -1) {
+            listaProdutos.splice(index, 1);
+            renderizarListaNaTela();
+        }
+    }
+
+    // 22. Conclusão: Função de interface ligada ao botão principal HTML
+    function gatilhoCadastroDoForm() {
+        const desc = document.getElementById("inputDesc").value;
+        const qtd = document.getElementById("inputQtd").value;
+        const val = document.getElementById("inputVal").value;
+
+        cadastrarProduto(desc, qtd, val);
+
+        // Limpa as caixas do formulário
+        document.getElementById("inputDesc").value = "";
+        document.getElementById("inputQtd").value = "";
+        document.getElementById("inputVal").value = "";
+    }
+</script>
+<script src="script.js"></script></body>
+</html>
