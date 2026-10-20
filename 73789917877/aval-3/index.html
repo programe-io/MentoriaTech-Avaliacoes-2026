@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manipulação do DOM Dinâmica</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+        .buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        button {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            color: white;
+        }
+        .btn-add { background-color: #28a745; }
+        .btn-prepend { background-color: #007bff; }
+        .btn-remove { background-color: #dc3545; }
+        
+        .item-lista {
+            background-color: #e9ecef;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .btn-deletar-individual {
+            background-color: #dc3545;
+            padding: 2px 8px;
+            font-size: 12px;
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+    <div class="card">
+        <h3>Lista Dinâmica</h3>
+        
+        <!-- Botões de ação -->
+        <div class="buttons">
+            <button class="btn-add" id="addFinal">Append</button>
+            <button class="btn-prepend" id="addInicio">Prepend</button>
+        </div>
+        <button class="btn-remove" id="limparLista" style="width: 100%; margin-bottom: 15px;">Remove Container</button>
+
+        <!-- Container que receberá os elementos -->
+        <div id="listaContainer"></div>
+    </div>
+
+    <script>
+        // Selecionando os elementos que já existem no HTML
+        const container = document.getElementById('listaContainer');
+        const btnAppend = document.getElementById('addFinal');
+        const btnPrepend = document.getElementById('addInicio');
+        const btnRemoveContainer = document.getElementById('limparLista');
+        
+        let contador = 1;
+
+        // Função auxiliar para criar a estrutura do item na memória
+        function criarNovoItem() {
+            // 1. Cria a tag <div> (o elemento container do item)
+            const novoItem = document.createElement('div');
+            novoItem.classList.add('item-lista');
+
+            // 2. Cria o texto e o insere no container
+            const textoNode = document.createTextNode(`Item Número ${contador++}`);
+            novoItem.appendChild(textoNode);
+
+            // 3. Cria o botão de remoção individual (usa removeChild do elemento pai)
+            const btnDeletar = document.createElement('button');
+            btnDeletar.classList.add('btn-deletar-individual');
+            btnDeletar.textContent = 'X';
+            
+            // Evento para remover apenas este filho específico
+            btnDeletar.addEventListener('click', function() {
+                container.removeChild(novoItem);
+            });
+
+            // Insere o botão de deletar dentro da div do item
+            novoItem.appendChild(btnDeletar);
+
+            return novoItem;
+        }
+
+        // Aplicação do APPENDCHILD (Insere no final)
+        btnAppend.addEventListener('click', function() {
+            if (!document.getElementById('listaContainer')) return alert('O container foi removido da página!');
+            const item = criarNovoItem();
+            container.appendChild(item);
+        });
+
+        // Aplicação do PREPEND (Insere no início)
+        btnPrepend.addEventListener('click', function() {
+            if (!document.getElementById('listaContainer')) return alert('O container foi removido da página!');
+            const item = criarNovoItem();
+            container.prepend(item);
+        });
+
+        // Aplicação do REMOVE (Remove o próprio container inteiro e tudo dentro dele)
+        btnRemoveContainer.addEventListener('click', function() {
+            if (container) {
+                container.remove();
+                alert('O container inteiro da lista foi removido com o método .remove()!');
+            }
+        });
+    </script>
+
+</body>
+</html>
