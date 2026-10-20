@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema de Controle de Estoque</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --danger: #ef4444;
+      --success: #10b981;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    header {
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 1.8rem;
+      color: var(--primary);
+    }
+
+    .card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .card h2 {
+      font-size: 1.2rem;
+      margin-bottom: 16px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .form-field {
+      flex: 1;
+      min-width: 150px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    input {
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.95rem;
+    }
+
+    input:focus {
+      outline: 2px solid var(--primary);
+      border-color: transparent;
+    }
+
+    button {
+      padding: 10px 16px;
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    button:hover {
+      background-color: var(--primary-hover);
+    }
+
+    .btn-danger {
+      background-color: var(--danger);
+    }
+
+    .btn-danger:hover {
+      background-color: #dc2626;
+    }
+
+    .alert {
+      padding: 12px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      margin-bottom: 12px;
+      display: none;
+    }
+
+    .alert-error {
+      background-color: #fef2f2;
+      color: #991b1b;
+      border: 1px solid #fecaca;
+    }
+
+    .alert-success {
+      background-color: #ecfdf5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.9rem;
+    }
+
+    th {
+      background-color: #f1f5f9;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .actions-cell {
+      display: flex;
+      gap: 6px;
+    }
+
+    .actions-cell button {
+      padding: 6px 10px;
+      font-size: 0.8rem;
+    }
+
+    .empty-msg {
+      text-align: center;
+      color: var(--text-muted);
+      padding: 20px 0;
+    }
+  </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <h1>Controle de Estoque CRUD</h1>
+    </header>
+
+    <div id="alertBox" class="alert"></div>
+
+    <!-- Formulário de Cadastro -->
+    <div class="card">
+      <h2>Cadastrar Novo Produto</h2>
+      <form id="formCadastro" class="form-group">
+        <div class="form-field">
+          <label for="descricao">Descrição (mín. 5 caracteres)</label>
+          <input type="text" id="descricao" placeholder="Ex: Cadeira Gamer" required>
+        </div>
+        <div class="form-row">
+          <div class="form-field">
+            <label for="quantidade">Quantidade (mín. 1)</label>
+            <input type="number" id="quantidade" min="1" placeholder="10" required>
+          </div>
+          <div class="form-field">
+            <label for="valor">Valor Unitário (R$)</label>
+            <input type="number" id="valor" step="0.01" min="0" placeholder="150.00" required>
+          </div>
+        </div>
+        <button type="submit">Cadastrar Produto</button>
+      </form>
+    </div>
+
+    <!-- Tabela de Produtos -->
+    <div class="card">
+      <h2>Produtos em Estoque</h2>
+      <div style="overflow-x: auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Descrição</th>
+              <th>Qtd.</th>
+              <th>Valor (R$)</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="tabelaProdutos">
+            <!-- Os itens serão inseridos via JavaScript -->
+          </tbody>
+        </table>
+        <div id="mensagemVazia" class="empty-msg">Nenhum produto cadastrado.</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Estado da aplicação
+    let produtos = [];
+    let proximoCodigo = 1;
+
+    // Elementos DOM
+    const formCadastro = document.getElementById('formCadastro');
+    const descricaoInput = document.getElementById('descricao');
+    const quantidadeInput = document.getElementById('quantidade');
+    const valorInput = document.getElementById('valor');
+    const tabelaProdutos = document.getElementById('tabelaProdutos');
+    const mensagemVazia = document.getElementById('mensagemVazia');
+    const alertBox = document.getElementById('alertBox');
+
+    // Exibir mensagens de erro/sucesso
+    function exibirMensagem(texto, tipo = 'error') {
+      alertBox.textContent = texto;
+      alertBox.className = `alert alert-${tipo}`;
+      alertBox.style.display = 'block';
+      setTimeout(() => {
+        alertBox.style.display = 'none';
+      }, 4000);
+    }
+
+    // Validação de dados do produto
+    function validarProduto(descricao, quantidade, valor) {
+      if (!descricao || descricao.trim().length < 5) {
+        throw new Error("A descrição deve ter no mínimo 5 caracteres.");
+      }
+      if (isNaN(quantidade) || quantidade < 1) {
+        throw new Error("A quantidade inicial deve ser maior que zero.");
+      }
+      if (isNaN(valor) || valor < 0) {
+        throw new Error("O valor deve ser maior ou igual a zero.");
+      }
+    }
+
+    // Função para cadastrar produto
+    function cadastrarProduto(descricao, quantidade, valor) {
+      validarProduto(descricao, quantidade, valor);
+
+      const novoProduto = {
+        codigo: proximoCodigo++,
+        descricao: descricao.trim(),
+        quantidade: Number(quantidade),
+        valor: Number(valor)
+      };
+
+      produtos.push(novoProduto);
+      atualizarTabela();
+      exibirMensagem(`Produto "${novoProduto.descricao}" cadastrado com sucesso!`, 'success');
+    }
+
+    // Buscar produto por código
+    function buscarProdutoPorCodigo(codigo) {
+      return produtos.find((prod) => prod.codigo === codigo);
+    }
+
+    // Atualizar valor
+    function atualizarValor(codigo) {
+      const produto = buscarProdutoPorCodigo(codigo);
+      if (!produto) return;
+
+      const novoValorStr = prompt(`Informe o novo valor para "${produto.descricao}":`, produto.valor);
+      if (novoValorStr === null) return;
+
+      const novoValor = parseFloat(novoValorStr);
+      if (isNaN(novoValor) || novoValor < 0) {
+        exibirMensagem("Valor inválido! O preço deve ser maior ou igual a zero.");
+        return;
+      }
+
+      produto.valor = novoValor;
+      atualizarTabela();
+      exibirMensagem(`Valor do produto #${codigo} atualizado!`, 'success');
+    }
+
+    // Somar quantidade em estoque
+    function somarQuantidade(codigo) {
+      const produto = buscarProdutoPorCodigo(codigo);
+      if (!produto) return;
+
+      const quantidadeAdicionalStr = prompt(`Quantas unidades deseja adicionar ao estoque de "${produto.descricao}"?`, "1");
+      if (quantidadeAdicionalStr === null) return;
+
+      const quantidadeAdicional = parseInt(quantidadeAdicionalStr, 10);
+      if (isNaN(quantidadeAdicional) || quantidadeAdicional < 1) {
+        exibirMensagem("Quantidade inválida! Informe um valor maior que zero.");
+        return;
+      }
+
+      produto.quantidade += quantidadeAdicional;
+      atualizarTabela();
+      exibirMensagem(`Estoque do produto #${codigo} aumentado em +${quantidadeAdicional} unidade(s)!`, 'success');
+    }
+
+    // Excluir produto
+    function excluirProduto(codigo) {
+      const produto = buscarProdutoPorCodigo(codigo);
+      if (!produto) return;
+
+      if (confirm(`Tem certeza que deseja remover "${produto.descricao}" do estoque?`)) {
+        produtos = produtos.filter(p => p.codigo !== codigo);
+        atualizarTabela();
+        exibirMensagem(`Produto #${codigo} removido com sucesso.`, 'success');
+      }
+    }
+
+    // Renderizar a tabela
+    function atualizarTabela() {
+      tabelaProdutos.innerHTML = '';
+
+      if (produtos.length === 0) {
+        mensagemVazia.style.display = 'block';
+        return;
+      }
+
+      mensagemVazia.style.display = 'none';
+
+      produtos.forEach((prod) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>#${prod.codigo}</td>
+          <td>${prod.descricao}</td>
+          <td>${prod.quantidade}</td>
+          <td>R$ ${prod.valor.toFixed(2)}</td>
+          <td class="actions-cell">
+            <button onclick="atualizarValor(${prod.codigo})">Mudar Valor</button>
+            <button onclick="somarQuantidade(${prod.codigo})">+ Qtd</button>
+            <button class="btn-danger" onclick="excluirProduto(${prod.codigo})">Excluir</button>
+          </td>
+        `;
+        tabelaProdutos.appendChild(tr);
+      });
+    }
+
+    // Listener do Formulário
+    formCadastro.addEventListener('submit', (event) => {
+      event.preventDefault();
+      try {
+        const desc = descricaoInput.value;
+        const qtd = parseInt(quantidadeInput.value, 10);
+        const val = parseFloat(valorInput.value);
+
+        cadastrarProduto(desc, qtd, val);
+        formCadastro.reset();
+        descricaoInput.focus();
+      } catch (erro) {
+        exibirMensagem(erro.message, 'error');
+      }
+    });
+  </script>
+</body>
+</html>
