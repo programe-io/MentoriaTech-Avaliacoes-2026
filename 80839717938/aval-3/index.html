@@ -1,371 +1,1041 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Free Fire — Battle Royale Mobile</title>
-  <link rel="stylesheet" href="styles.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Fire — Guia Completo do Battle Royale</title>
+<style>
+  /* ===== RESET E VARIÁVEIS ===== */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --laranja: #ff6b00;
+    --laranja-claro: #ffa726;
+    --vermelho: #e63946;
+    --azul: #00d4ff;
+    --escuro: #0a0e17;
+    --card: #131a26;
+    --card-hover: #1c2635;
+    --texto: #e8ecf1;
+    --texto-suave: #93a1b5;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: var(--escuro);
+    color: var(--texto);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ===== NAVBAR ===== */
+  header {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    background: rgba(10, 14, 23, 0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255, 107, 0, 0.2);
+    transition: all 0.3s ease;
+  }
+
+  nav {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .logo {
+    font-size: 1.6rem;
+    font-weight: 900;
+    letter-spacing: 1px;
+    background: linear-gradient(90deg, var(--laranja), var(--laranja-claro));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    cursor: pointer;
+  }
+
+  .logo span { color: var(--azul); -webkit-text-fill-color: var(--azul); }
+
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    color: var(--texto-suave);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    position: relative;
+    transition: color 0.3s;
+  }
+
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -6px; left: 0;
+    width: 0; height: 2px;
+    background: var(--laranja);
+    transition: width 0.3s;
+  }
+
+  .nav-links a:hover { color: var(--laranja); }
+  .nav-links a:hover::after { width: 100%; }
+
+  .menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--laranja);
+    font-size: 1.8rem;
+    cursor: pointer;
+  }
+
+  /* ===== HERO ===== */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 8rem 2rem 4rem;
+    position: relative;
+    background:
+      radial-gradient(circle at 20% 30%, rgba(255, 107, 0, 0.25), transparent 50%),
+      radial-gradient(circle at 80% 70%, rgba(0, 212, 255, 0.15), transparent 50%),
+      linear-gradient(180deg, #0a0e17 0%, #131a26 100%);
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,107,0,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,107,0,0.05) 1px, transparent 1px);
+    background-size: 50px 50px;
+    animation: mover 20s linear infinite;
+  }
+
+  @keyframes mover {
+    from { transform: translate(0, 0); }
+    to { transform: translate(50px, 50px); }
+  }
+
+  .hero-content { position: relative; z-index: 1; max-width: 800px; }
+
+  .hero h1 {
+    font-size: clamp(2.5rem, 8vw, 5rem);
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+
+  .hero h1 .destaque {
+    background: linear-gradient(135deg, var(--laranja), var(--vermelho));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+    animation: brilho 3s ease-in-out infinite;
+  }
+
+  @keyframes brilho {
+    0%, 100% { filter: drop-shadow(0 0 10px rgba(255,107,0,0.5)); }
+    50% { filter: drop-shadow(0 0 30px rgba(255,107,0,0.9)); }
+  }
+
+  .hero p {
+    font-size: 1.15rem;
+    color: var(--texto-suave);
+    margin-bottom: 2.5rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .botoes { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+  .btn {
+    padding: 0.9rem 2.2rem;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 1rem;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    transition: all 0.3s ease;
+    display: inline-block;
+  }
+
+  .btn-primario {
+    background: linear-gradient(135deg, var(--laranja), var(--vermelho));
+    color: #fff;
+    box-shadow: 0 8px 25px rgba(255, 107, 0, 0.4);
+  }
+
+  .btn-primario:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 35px rgba(255, 107, 0, 0.6);
+  }
+
+  .btn-secundario {
+    background: transparent;
+    color: var(--texto);
+    border: 2px solid rgba(255, 107, 0, 0.5);
+  }
+
+  .btn-secundario:hover {
+    background: rgba(255, 107, 0, 0.1);
+    border-color: var(--laranja);
+  }
+
+  /* ===== SEÇÕES ===== */
+  section { padding: 5rem 2rem; }
+
+  .container { max-width: 1200px; margin: 0 auto; }
+
+  .titulo-secao {
+    text-align: center;
+    margin-bottom: 3.5rem;
+  }
+
+  .titulo-secao h2 {
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 0.8rem;
+  }
+
+  .titulo-secao h2::after {
+    content: '';
+    display: block;
+    width: 70px;
+    height: 4px;
+    margin: 1rem auto 0;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--laranja), var(--vermelho));
+  }
+
+  .titulo-secao p {
+    color: var(--texto-suave);
+    max-width: 600px;
+    margin: 0 auto;
+    font-size: 1.05rem;
+  }
+
+  /* ===== STATS ===== */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1.5rem;
+    padding: 2.5rem;
+    background: var(--card);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 107, 0, 0.15);
+    margin-top: -3rem;
+    position: relative;
+    z-index: 2;
+  }
+
+  .stat { text-align: center; }
+
+  .stat .numero {
+    font-size: 2.4rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--laranja), var(--laranja-claro));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .stat .rotulo {
+    color: var(--texto-suave);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  /* ===== SOBRE ===== */
+  .sobre-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: center;
+  }
+
+  .sobre-visual {
+    aspect-ratio: 1;
+    border-radius: 24px;
+    background:
+      radial-gradient(circle at 30% 30%, rgba(255,107,0,0.4), transparent 60%),
+      radial-gradient(circle at 70% 70%, rgba(0,212,255,0.3), transparent 60%),
+      linear-gradient(135deg, #1c2635, #0a0e17);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 8rem;
+    border: 2px solid rgba(255, 107, 0, 0.3);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .sobre-visual::after {
+    content: 'FREE FIRE';
+    position: absolute;
+    bottom: 1.5rem;
+    font-size: 1.2rem;
+    font-weight: 900;
+    letter-spacing: 6px;
+    color: rgba(255, 107, 0, 0.6);
+  }
+
+  .sobre-texto h3 {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    color: var(--laranja-claro);
+  }
+
+  .sobre-texto p {
+    color: var(--texto-suave);
+    margin-bottom: 1rem;
+  }
+
+  .lista-check { list-style: none; margin-top: 1.5rem; }
+
+  .lista-check li {
+    padding: 0.5rem 0 0.5rem 2rem;
+    position: relative;
+    color: var(--texto);
+  }
+
+  .lista-check li::before {
+    content: '✔';
+    position: absolute;
+    left: 0;
+    color: var(--laranja);
+    font-weight: 900;
+  }
+
+  /* ===== CARDS PERSONAGENS ===== */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .card-personagem {
+    background: var(--card);
+    border-radius: 18px;
+    padding: 2rem 1.5rem;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    transition: all 0.35s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card-personagem::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--laranja), var(--vermelho));
+    transform: scaleX(0);
+    transition: transform 0.35s ease;
+  }
+
+  .card-personagem:hover {
+    transform: translateY(-8px);
+    background: var(--card-hover);
+    border-color: rgba(255, 107, 0, 0.4);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+  }
+
+  .card-personagem:hover::before { transform: scaleX(1); }
+
+  .avatar {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    margin: 0 auto 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: #fff;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+  }
+
+  .card-personagem h3 {
+    font-size: 1.2rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .habilidade {
+    display: inline-block;
+    font-size: 0.75rem;
+    padding: 0.25rem 0.8rem;
+    border-radius: 50px;
+    background: rgba(255, 107, 0, 0.15);
+    color: var(--laranja-claro);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.8rem;
+  }
+
+  .card-personagem p {
+    font-size: 0.9rem;
+    color: var(--texto-suave);
+  }
+
+  /* ===== ARMAS ===== */
+  .filtros {
+    display: flex;
+    gap: 0.8rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 2.5rem;
+  }
+
+  .filtro-btn {
+    padding: 0.6rem 1.5rem;
+    border-radius: 50px;
+    background: var(--card);
+    color: var(--texto-suave);
+    border: 1px solid rgba(255,255,255,0.08);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: inherit;
+    font-size: 0.9rem;
+  }
+
+  .filtro-btn:hover { color: var(--texto); border-color: var(--laranja); }
+
+  .filtro-btn.ativo {
+    background: linear-gradient(135deg, var(--laranja), var(--vermelho));
+    color: #fff;
+    border-color: transparent;
+    box-shadow: 0 5px 20px rgba(255, 107, 0, 0.4);
+  }
+
+  .armas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.2rem;
+  }
+
+  .card-arma {
+    background: var(--card);
+    border-radius: 14px;
+    padding: 1.5rem;
+    border-left: 4px solid var(--laranja);
+    transition: all 0.3s ease;
+  }
+
+  .card-arma:hover {
+    background: var(--card-hover);
+    transform: translateX(6px);
+  }
+
+  .card-arma .topo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.6rem;
+  }
+
+  .card-arma h4 { font-size: 1.15rem; }
+
+  .tag-tipo {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--texto-suave);
+    background: rgba(255,255,255,0.06);
+    padding: 0.2rem 0.7rem;
+    border-radius: 4px;
+  }
+
+  .card-arma p {
+    font-size: 0.9rem;
+    color: var(--texto-suave);
+  }
+
+  /* ===== MODOS ===== */
+  .modos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .card-modo {
+    background: linear-gradient(160deg, var(--card), #0d121b);
+    border-radius: 18px;
+    padding: 2rem;
+    border: 1px solid rgba(255,255,255,0.06);
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card-modo:hover {
+    border-color: rgba(255,107,0,0.5);
+    transform: translateY(-6px);
+  }
+
+  .icone-modo {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .card-modo h3 { margin-bottom: 0.6rem; }
+
+  .card-modo p { color: var(--texto-suave); font-size: 0.95rem; }
+
+  /* ===== DICAS ===== */
+  .dicas-lista {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.2rem;
+  }
+
+  .dica {
+    display: flex;
+    gap: 1.2rem;
+    background: var(--card);
+    padding: 1.5rem;
+    border-radius: 14px;
+    transition: all 0.3s;
+    border: 1px solid transparent;
+  }
+
+  .dica:hover {
+    background: var(--card-hover);
+    border-color: rgba(255,107,0,0.3);
+  }
+
+  .dica .num {
+    flex-shrink: 0;
+    width: 45px;
+    height: 45px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--laranja), var(--vermelho));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 1.2rem;
+  }
+
+  .dica h4 { margin-bottom: 0.3rem; }
+  .dica p { font-size: 0.9rem; color: var(--texto-suave); }
+
+  /* ===== CTA ===== */
+  .cta {
+    background:
+      radial-gradient(circle at 50% 50%, rgba(255,107,0,0.2), transparent 70%),
+      var(--card);
+    border-radius: 24px;
+    padding: 4rem 2rem;
+    text-align: center;
+    border: 1px solid rgba(255, 107, 0, 0.25);
+  }
+
+  .cta h2 { font-size: clamp(1.8rem, 4vw, 2.5rem); margin-bottom: 1rem; }
+  .cta p { color: var(--texto-suave); margin-bottom: 2rem; }
+
+  /* ===== FOOTER ===== */
+  footer {
+    background: #060a10;
+    padding: 3rem 2rem 2rem;
+    border-top: 1px solid rgba(255, 107, 0, 0.15);
+    text-align: center;
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+  }
+
+  .footer-links a {
+    color: var(--texto-suave);
+    text-decoration: none;
+    transition: color 0.3s;
+    font-size: 0.95rem;
+  }
+
+  .footer-links a:hover { color: var(--laranja); }
+
+  footer p {
+    color: #5a6675;
+    font-size: 0.85rem;
+  }
+
+  /* ===== ANIMAÇÃO SCROLL ===== */
+  .revelar {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .revelar.visivel {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ===== RESPONSIVO ===== */
+  @media (max-width: 900px) {
+    .sobre-grid { grid-template-columns: 1fr; }
+    .sobre-visual { max-width: 400px; margin: 0 auto; }
+  }
+
+  @media (max-width: 768px) {
+    .nav-links {
+      position: absolute;
+      top: 100%; left: 0; right: 0;
+      background: rgba(10, 14, 23, 0.98);
+      flex-direction: column;
+      padding: 1.5rem 2rem;
+      gap: 1.2rem;
+      border-bottom: 1px solid rgba(255,107,0,0.2);
+      display: none;
+    }
+    .nav-links.aberto { display: flex; }
+    .menu-toggle { display: block; }
+    .stats { margin-top: 0; }
+    section { padding: 3.5rem 1.2rem; }
+  }
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
 
-<!-- ================= HEADER ================= -->
-<header class="header">
-  <div class="container header-inner">
-    <a href="#home" class="logo">
-      <span class="logo-icon">🔥</span>
-      <span class="logo-text">FREE FIRE</span>
-    </a>
-
-    <nav class="nav" id="nav">
-      <a href="#home" class="nav-link active">Início</a>
-      <a href="#sobre" class="nav-link">Sobre</a>
-      <a href="#personagens" class="nav-link">Personagens</a>
-      <a href="#modos" class="nav-link">Modos</a>
-      <a href="#mapas" class="nav-link">Mapas</a>
-      <a href="#download" class="nav-link cta-nav">Baixar</a>
-    </nav>
-
-    <button class="menu-toggle" id="menuToggle" aria-label="Abrir menu">
-      <span></span><span></span><span></span>
-    </button>
-  </div>
+<!-- ===== NAVBAR ===== -->
+<header>
+  <nav>
+    <div class="logo">FREE<span>FIRE</span></div>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#inicio">Início</a></li>
+      <li><a href="#sobre">Sobre</a></li>
+      <li><a href="#personagens">Personagens</a></li>
+      <li><a href="#armas">Armas</a></li>
+      <li><a href="#modos">Modos</a></li>
+      <li><a href="#dicas">Dicas</a></li>
+    </ul>
+    <button class="menu-toggle" id="menuToggle">☰</button>
+  </nav>
 </header>
 
-<!-- ================= HERO ================= -->
-<section class="hero" id="home">
-  <div class="hero-bg"></div>
-  <div class="container hero-content">
-    <div class="hero-text">
-      <span class="badge">🎮 Battle Royale Mobile</span>
-      <h1>Entre na batalha.<br><span class="highlight">Seja a lenda.</span></h1>
-      <p>50 jogadores. 1 sobrevivente. Escolha seu personagem, salte na ilha e lute pela vitória em Free Fire, o battle royale mais jogado do mundo.</p>
-
-      <div class="hero-buttons">
-        <a href="#download" class="btn btn-primary">🔽 Baixar Grátis</a>
-        <a href="#sobre" class="btn btn-outline">▶ Saiba Mais</a>
-      </div>
-
-      <div class="hero-stats">
-        <div class="stat"><strong>+80M</strong><span>Jogadores ativos</span></div>
-        <div class="stat"><strong>4</strong><span>Mapas épicos</span></div>
-        <div class="stat"><strong>+40</strong><span>Personagens</span></div>
-      </div>
-    </div>
-
-    <div class="hero-visual">
-      <div class="hero-ring"></div>
-      <div class="hero-ring ring-2"></div>
-      <div class="hero-target">🎯</div>
+<!-- ===== HERO ===== -->
+<section class="hero" id="inicio">
+  <div class="hero-content">
+    <h1>Bem-vindo ao <span class="destaque">Free Fire</span></h1>
+    <p>O battle royale mobile mais jogado do mundo. 50 jogadores, uma ilha, e apenas um sobrevivente. Você está pronto para o desafio?</p>
+    <div class="botoes">
+      <a href="#sobre" class="btn btn-primario">Explorar o Jogo</a>
+      <a href="#dicas" class="btn btn-secundario">Ver Dicas</a>
     </div>
   </div>
 </section>
 
-<!-- ================= SOBRE ================= -->
-<section class="section" id="sobre">
+<!-- ===== STATS ===== -->
+<div class="container">
+  <div class="stats revelar">
+    <div class="stat">
+      <div class="numero">50</div>
+      <div class="rotulo">Jogadores por Partida</div>
+    </div>
+    <div class="stat">
+      <div class="numero">10min</div>
+      <div class="rotulo">Duração Média</div>
+    </div>
+    <div class="stat">
+      <div class="numero">40+</div>
+      <div class="rotulo">Personagens</div>
+    </div>
+    <div class="stat">
+      <div class="numero">1B+</div>
+      <div class="rotulo">Downloads</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SOBRE ===== -->
+<section id="sobre">
   <div class="container">
-    <div class="section-head">
-      <span class="section-tag">Sobre o jogo</span>
-      <h2>O que é Free Fire?</h2>
-      <p>Um battle royale de ritmo acelerado onde apenas o mais estratégico sobrevive.</p>
+    <div class="titulo-secao revelar">
+      <h2>Sobre o Jogo</h2>
+      <p>Conheça o universo do battle royale que conquistou o mundo</p>
     </div>
 
-    <div class="features">
-      <div class="feature">
-        <div class="feature-icon">⚡</div>
-        <h3>Partidas de 10 minutos</h3>
-        <p>Rápido, intenso e viciante. Entre em partidas curtas e viva a adrenalina total.</p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon">🧠</div>
-        <h3>Estratégia real</h3>
-        <p>Escolha onde cair, monte seu loadout e domine o mapa com seu esquadrão.</p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon">🦸</div>
-        <h3>Personagens únicos</h3>
-        <p>Cada personagem tem uma habilidade especial. Combine e domine a arena.</p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon">🤝</div>
-        <h3>Jogue com amigos</h3>
-        <p>Forme seu esquadrão e lute pela Booyah em partidas multiplayer online.</p>
+    <div class="sobre-grid">
+      <div class="sobre-visual revelar">🔥</div>
+      <div class="sobre-texto revelar">
+        <h3>O que é Free Fire?</h3>
+        <p>Free Fire é um jogo battle royale desenvolvido pela 101XP e publicado pela Garena. Lançado em 2017, ele foi projetado especialmente para dispositivos móveis, com partidas rápidas de aproximadamente 10 minutos.</p>
+        <p>Em cada partida, 50 jogadores são lançados em uma ilha remota e precisam lutar para ser o último sobrevivente, coletando armas, itens e usando as habilidades únicas de cada personagem.</p>
+        <ul class="lista-check">
+          <li>Partidas rápidas e intensas de até 10 minutos</li>
+          <li>Sistema único de personagens com habilidades especiais</li>
+          <li>Modos solo, dupla e esquadrão (4 jogadores)</li>
+          <li>Atualizações constantes com novos eventos e temporadas</li>
+          <li>Otimizado para rodar em celulares mais simples</li>
+        </ul>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ================= PERSONAGENS ================= -->
-<section class="section section-dark" id="personagens">
+<!-- ===== PERSONAGENS ===== -->
+<section id="personagens" style="background: linear-gradient(180deg, transparent, rgba(19,26,38,0.5), transparent);">
   <div class="container">
-    <div class="section-head">
-      <span class="section-tag">Personagens</span>
-      <h2>Escolha seu herói</h2>
-      <p>Habilidades que mudam o rumo da batalha.</p>
+    <div class="titulo-secao revelar">
+      <h2>Personagens Icônicos</h2>
+      <p>Cada personagem possui uma habilidade única que pode mudar o rumo da partida</p>
     </div>
 
     <div class="cards-grid">
-      <div class="char-card" style="--char-grad: linear-gradient(135deg, #8e2de2, #4a00e0);">
-        <div class="char-emoji">🎧</div>
-        <div class="char-info">
-          <span class="char-role">DJ</span>
-          <h3>Alok</h3>
-          <p>Aumenta a velocidade de movimento e recupera HP em área.</p>
-        </div>
+      <div class="card-personagem revelar">
+        <div class="avatar" style="background: linear-gradient(135deg, #ff6b00, #e63946);">A</div>
+        <span class="habilidade">Passiva</span>
+        <h3>Alok</h3>
+        <p>Cria uma aura que aumenta a velocidade de movimento e recupera HP dos aliados próximos.</p>
       </div>
 
-      <div class="char-card" style="--char-grad: linear-gradient(135deg, #1e3c72, #2a5298);">
-        <div class="char-emoji">⏱️</div>
-        <div class="char-info">
-          <span class="char-role">Guardião</span>
-          <h3>Chrono</h3>
-          <p>Cria um escudo protetor que bloqueia todo o dano por alguns segundos.</p>
-        </div>
+      <div class="card-personagem revelar">
+        <div class="avatar" style="background: linear-gradient(135deg, #00d4ff, #0077b6);">C</div>
+        <span class="habilidade">Ativa</span>
+        <h3>Chrono</h3>
+        <p>Cria um escudo de força que bloqueia dano de inimigos por um curto período de tempo.</p>
       </div>
 
-      <div class="char-card" style="--char-grad: linear-gradient(135deg, #f12711, #f5af19);">
-        <div class="char-emoji">👟</div>
-        <div class="char-info">
-          <span class="char-role">Atiradora</span>
-          <h3>Kelly</h3>
-          <p>Corre mais rápido que qualquer outro personagem da arena.</p>
-        </div>
+      <div class="card-personagem revelar">
+        <div class="avatar" style="background: linear-gradient(135deg, #9d4edd, #5a189a);">K</div>
+        <span class="habilidade">Ativa</span>
+        <h3>Kelly</h3>
+        <p>Aumenta a velocidade de corrida, permitindo avançar rapidamente ou fugir de combates.</p>
       </div>
 
-      <div class="char-card" style="--char-grad: linear-gradient(135deg, #11998e, #38ef7d);">
-        <div class="char-emoji">🐒</div>
-        <div class="char-info">
-          <span class="char-role">Transformista</span>
-          <h3>Wukong</h3>
-          <p>Transforma-se em um arbusto e engana os inimigos no combate.</p>
-        </div>
+      <div class="card-personagem revelar">
+        <div class="avatar" style="background: linear-gradient(135deg, #2a9d8f, #1d7874);">A</div>
+        <span class="habilidade">Ativa</span>
+        <h3>Alvaro</h3>
+        <p>Aumenta o dano explosivo e o alcance de armas como lança-granadas e bazucas.</p>
       </div>
 
-      <div class="char-card" style="--char-grad: linear-gradient(135deg, #c31432, #240b36);">
-        <div class="char-emoji">⚔️</div>
-        <div class="char-info">
-          <span class="char-role">Samurai</span>
-          <h3>Hayato</h3>
-          <p>Aumenta a penetração de armadura dos ataques quando o HP cai.</p>
-        </div>
+      <div class="card-personagem revelar">
+        <div class="avatar" style="background: linear-gradient(135deg, #f4a261, #e76f51);">W</div>
+        <span class="habilidade">Ativa</span>
+        <h3>Wukong</h3>
+        <p>Transforma-se em um arbusto, ficando quase invisível para se esconder ou emboscar.</p>
       </div>
 
-      <div class="char-card" style="--char-grad: linear-gradient(135deg, #00b4db, #0083b0);">
-        <div class="char-emoji">💊</div>
-        <div class="char-info">
-          <span class="char-role">Suporte</span>
-          <h3>Dimitri</h3>
-          <p>Cria uma zona de cura que regenera o HP de todo o esquadrão.</p>
-        </div>
+      <div class="card-personagem revelar">
+        <div class="avatar" style="background: linear-gradient(135deg, #ff006e, #8338ec);">D</div>
+        <span class="habilidade">Ativa</span>
+        <h3>Dimitri</h3>
+        <p>Permite reviver a si mesmo ou aliados com mais rapidez, essencial em combates intensos.</p>
+      </div>
+
+      <div class="card-personagem revelar">
+        <div class="avatar" style="background: linear-gradient(135deg, #fb8500, #ffb703);">N</div>
+        <span class="habilidade">Ativa</span>
+        <h3>Naruto</h3>
+        <p>Colaboração especial com habilidades de fumaça, clones e ataques especiais.</p>
+      </div>
+
+      <div class="card-personagem revelar">
+        <div class="avatar" style="background: linear-gradient(135deg, #06d6a0, #118ab2);">H</div>
+        <span class="habilidade">Ativa</span>
+        <h3>Hayato</h3>
+        <p>Aumenta a perfuração de armadura conforme o HP diminui, ficando mais forte em combate.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ================= MODOS ================= -->
-<section class="section" id="modos">
+<!-- ===== ARMAS ===== -->
+<section id="armas">
   <div class="container">
-    <div class="section-head">
-      <span class="section-tag">Modos de jogo</span>
-      <h2>Escolha sua batalha</h2>
-      <p>Do clássico Battle Royale aos modos competitivos mais intensos.</p>
+    <div class="titulo-secao revelar">
+      <h2>Arsenal de Armas</h2>
+      <p>Conheça as principais categorias de armas disponíveis na ilha</p>
     </div>
 
-    <div class="modes-grid">
-      <div class="mode-card">
-        <div class="mode-icon">🏆</div>
-        <h3>Battle Royale</h3>
-        <p>Solo, Duo ou Squad. 50 jogadores saltam na ilha e apenas um sai vitorioso.</p>
-        <span class="mode-tag">Clássico</span>
-      </div>
+    <div class="filtros revelar">
+      <button class="filtro-btn ativo" data-filtro="todas">Todas</button>
+      <button class="filtro-btn" data-filtro="rifle">Rifles</button>
+      <button class="filtro-btn" data-filtro="smg">SMGs</button>
+      <button class="filtro-btn" data-filtro="sniper">Snipers</button>
+      <button class="filtro-btn" data-filtro="shotgun">Escopetas</button>
+    </div>
 
-      <div class="mode-card">
-        <div class="mode-icon">🛡️</div>
-        <h3>Contra Squad</h3>
-        <p>4 contra 4 com economia e rounds. Compre armas e domine o adversário.</p>
-        <span class="mode-tag">Competitivo</span>
+    <div class="armas-grid" id="armasGrid">
+      <div class="card-arma" data-tipo="rifle">
+        <div class="topo"><h4>AK-47</h4><span class="tag-tipo">Rifle</span></div>
+        <p>Alto dano por tiro, ideal para médias e longas distâncias. Recuo elevado exige controle.</p>
       </div>
-
-      <div class="mode-card">
-        <div class="mode-icon">🐺</div>
-        <h3>Lone Wolf</h3>
-        <p>Duelos 1v1 rápidos. Só você e o oponente. Mostre quem manda.</p>
-        <span class="mode-tag">Duelo</span>
+      <div class="card-arma" data-tipo="rifle">
+        <div class="topo"><h4>M4A1</h4><span class="tag-tipo">Rifle</span></div>
+        <p>Arma versátil e equilibrada, com recuo baixo. Ótima para iniciantes e combates variados.</p>
       </div>
-
-      <div class="mode-card">
-        <div class="mode-icon">💥</div>
-        <h3>Clash Squad</h3>
-        <p>Rodadas 4v4 com compra de armas. Ação frenética até 4 vitórias.</p>
-        <span class="mode-tag">Ação</span>
+      <div class="card-arma" data-tipo="rifle">
+        <div class="topo"><h4>SCAR</h4><span class="tag-tipo">Rifle</span></div>
+        <p>Bom dano e precisão. Excelente para combates de média distância com boa cadência.</p>
+      </div>
+      <div class="card-arma" data-tipo="smg">
+        <div class="topo"><h4>MP40</h4><span class="tag-tipo">SMG</span></div>
+        <p>Cadência altíssima e recuo baixo. Dominante em combates de curta distância.</p>
+      </div>
+      <div class="card-arma" data-tipo="smg">
+        <div class="topo"><h4>UMP</h4><span class="tag-tipo">SMG</span></div>
+        <p>Equilíbrio entre dano e cadência. Boa escolha para combates próximos e médios.</p>
+      </div>
+      <div class="card-arma" data-tipo="smg">
+        <div class="topo"><h4>Thompson</h4><span class="tag-tipo">SMG</span></div>
+        <p>Capacidade de munição elevada e dano consistente. Ótima para sprays controlados.</p>
+      </div>
+      <div class="card-arma" data-tipo="sniper">
+        <div class="topo"><h4>AWM</h4><span class="tag-tipo">Sniper</span></div>
+        <p>Dano devastador em longas distâncias. Um tiro bem posicionado pode decidir a partida.</p>
+      </div>
+      <div class="card-arma" data-tipo="sniper">
+        <div class="topo"><h4>Kar98k</h4><span class="tag-tipo">Sniper</span></div>
+        <p>Sniper de ferrolho com alto dano. Requer mira precisa e paciência para acertar.</p>
+      </div>
+      <div class="card-arma" data-tipo="shotgun">
+        <div class="topo"><h4>M1014</h4><span class="tag-tipo">Escopeta</span></div>
+        <p>Dano altíssimo de perto. Perfeita para emboscadas em ambientes fechados.</p>
+      </div>
+      <div class="card-arma" data-tipo="shotgun">
+        <div class="topo"><h4>M1887</h4><span class="tag-tipo">Escopeta</span></div>
+        <p>Dois tiros poderosos. Letal em curta distância, mas exige recarga frequente.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ================= MAPAS ================= -->
-<section class="section section-dark" id="mapas">
+<!-- ===== MODOS ===== -->
+<section id="modos" style="background: linear-gradient(180deg, transparent, rgba(19,26,38,0.5), transparent);">
   <div class="container">
-    <div class="section-head">
-      <span class="section-tag">Mapas</span>
-      <h2>Explore o campo de batalha</h2>
-      <p>Cada mapa tem seu próprio estilo, terreno e estratégia.</p>
+    <div class="titulo-secao revelar">
+      <h2>Modos de Jogo</h2>
+      <p>Diversas formas de jogar para todos os estilos de jogador</p>
     </div>
 
-    <div class="maps-grid">
-      <div class="map-card" style="--map-grad: linear-gradient(135deg, #2bc0e4, #eaecc6);">
-        <div class="map-emoji">🌴</div>
-        <div class="map-info">
-          <span>Ilha tropical</span>
-          <h3>Bermuda</h3>
-        </div>
+    <div class="modos-grid">
+      <div class="card-modo revelar">
+        <div class="icone-modo">🎯</div>
+        <h3>Battle Royale Clássico</h3>
+        <p>50 jogadores caem na ilha. Colete armas, sobreviva à zona e seja o último em pé. Disponível em solo, dupla e esquadrão.</p>
       </div>
 
-      <div class="map-card" style="--map-grad: linear-gradient(135deg, #4b6cb7, #182848);">
-        <div class="map-emoji">🏭</div>
-        <div class="map-info">
-          <span>Zona industrial</span>
-          <h3>Purgatório</h3>
-        </div>
+      <div class="card-modo revelar">
+        <div class="icone-modo">⚡</div>
+        <h3>Contra Esquadrão</h3>
+        <p>Partidas 4x4 em ritmo acelerado. Compre armas e equipamentos com moedas e vença rodadas eliminando o time inimigo.</p>
       </div>
 
-      <div class="map-card" style="--map-grad: linear-gradient(135deg, #f7b733, #fc4a1a);">
-        <div class="map-emoji">🏜️</div>
-        <div class="map-info">
-          <span>Deserto escaldante</span>
-          <h3>Kalahari</h3>
-        </div>
+      <div class="card-modo revelar">
+        <div class="icone-modo">🏆</div>
+        <h3>Ranqueada</h3>
+        <p>Suba de patente de Bronze até Mestre e Grão-Mestre. Enfrente os melhores jogadores e prove seu nível competitivo.</p>
       </div>
 
-      <div class="map-card" style="--map-grad: linear-gradient(135deg, #83a4d4, #b6fbff);">
-        <div class="map-emoji">🏔️</div>
-        <div class="map-info">
-          <span>Montanhas geladas</span>
-          <h3>Alpine</h3>
-        </div>
+      <div class="card-modo revelar">
+        <div class="icone-modo">👥</div>
+        <h3>Esquadrão</h3>
+        <p>Jogue em equipe de até 4 jogadores. Coordene estratégias, reviva aliados e domine a ilha em conjunto.</p>
+      </div>
+
+      <div class="card-modo revelar">
+        <div class="icone-modo">🎮</div>
+        <h3>Modos Especiais</h3>
+        <p>Eventos temporários e modos limitados que aparecem a cada temporada, com regras e mecânicas únicas.</p>
+      </div>
+
+      <div class="card-modo revelar">
+        <div class="icone-modo">🛠️</div>
+        <h3>Treino</h3>
+        <p>Ambiente livre para testar armas, treinar mira, conhecer o mapa e dominar as habilidades dos personagens.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ================= DOWNLOAD ================= -->
-<section class="section download" id="download">
+<!-- ===== DICAS ===== -->
+<section id="dicas">
   <div class="container">
-    <div class="download-box">
-      <div class="download-content">
-        <span class="section-tag">Jogue agora</span>
-        <h2>Pronto para a batalha?</h2>
-        <p>Baixe Free Fire gratuitamente e entre na arena. Disponível para Android e iOS.</p>
+    <div class="titulo-secao revelar">
+      <h2>Dicas para Vencer</h2>
+      <p>Aprimore suas habilidades e aumente suas chances de Booyah!</p>
+    </div>
 
-        <div class="download-buttons">
-          <a href="#" class="store-btn">
-            <span class="store-icon">▶</span>
-            <span class="store-text">
-              <small>Disponível no</small>
-              <strong>Google Play</strong>
-            </span>
-          </a>
-          <a href="#" class="store-btn">
-            <span class="store-icon">🍎</span>
-            <span class="store-text">
-              <small>Baixar na</small>
-              <strong>App Store</strong>
-            </span>
-          </a>
+    <div class="dicas-lista">
+      <div class="dica revelar">
+        <div class="num">1</div>
+        <div>
+          <h4>Escolha bem o local de queda</h4>
+          <p>Evite áreas superlotadas no início se você é iniciante. Quedas em locais mais tranquilos permitem um loot seguro.</p>
         </div>
       </div>
 
-      <div class="download-visual">
-        <div class="download-emoji">🔥</div>
+      <div class="dica revelar">
+        <div class="num">2</div>
+        <div>
+          <h4>Domine o "giroscópio" e a sensibilidade</h4>
+          <p>Ajuste a sensibilidade da mira e do giroscópio ao seu estilo. Isso melhora drasticamente sua precisão em combate.</p>
+        </div>
+      </div>
+
+      <div class="dica revelar">
+        <div class="num">3</div>
+        <div>
+          <h4>Aprenda a usar as habilidades</h4>
+          <p>Combine personagens com habilidades complementares. Alok + Chrono, por exemplo, oferece velocidade e escudo.</p>
+        </div>
+      </div>
+
+      <div class="dica revelar">
+        <div class="num">4</div>
+        <div>
+          <h4>Gerencie o inventário</h4>
+          <p>Carregue sempre kits médicos, granadas e munição extra. Cura e utilidades ganham partidas tanto quanto armas.</p>
+        </div>
+      </div>
+
+      <div class="dica revelar">
+        <div class="num">5</div>
+        <div>
+          <h4>Fique atento à zona</h4>
+          <p>Nunca deixe para correr da zona em cima da hora. Posicione-se com antecedência e evite ficar preso em campo aberto.</p>
+        </div>
+      </div>
+
+      <div class="dica revelar">
+        <div class="num">6</div>
+        <div>
+          <h4>Comunique-se com o time</h4>
+          <p>Em esquadrão, use o chat de voz e marcadores. Informação é vantagem: inimigos, loot e posições salvam vidas.</p>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ================= FOOTER ================= -->
-<footer class="footer">
-  <div class="container footer-inner">
-    <div class="footer-brand">
-      <a href="#home" class="logo">
-        <span class="logo-icon">🔥</span>
-        <span class="logo-text">FREE FIRE</span>
-      </a>
-      <p>O battle royale mobile mais jogado do mundo.</p>
-    </div>
-
-    <div class="footer-links">
-      <div class="footer-col">
-        <h4>Jogo</h4>
-        <a href="#sobre">Sobre</a>
-        <a href="#personagens">Personagens</a>
-        <a href="#modos">Modos</a>
-        <a href="#mapas">Mapas</a>
-      </div>
-      <div class="footer-col">
-        <h4>Comunidade</h4>
-        <a href="#">Discord</a>
-        <a href="#">YouTube</a>
-        <a href="#">Instagram</a>
-        <a href="#">Twitter</a>
-      </div>
-      <div class="footer-col">
-        <h4>Suporte</h4>
-        <a href="#">Central de ajuda</a>
-        <a href="#">Contato</a>
-        <a href="#">Termos de uso</a>
-        <a href="#">Privacidade</a>
-      </div>
+<!-- ===== CTA ===== -->
+<section>
+  <div class="container">
+    <div class="cta revelar">
+      <h2>Pronto para o Booyah? 🔥</h2>
+      <p>Baixe Free Fire gratuitamente e entre na batalha. A ilha está esperando por você!</p>
+      <a href="https://ff.garena.com" target="_blank" rel="noopener" class="btn btn-primario">Jogar Agora</a>
     </div>
   </div>
+</section>
 
-  <div class="footer-bottom">
-    <div class="container">
-      <p>© 2026 Free Fire Fan Site. Projeto não oficial feito por fãs.</p>
-    </div>
+<!-- ===== FOOTER ===== -->
+<footer>
+  <div class="footer-links">
+    <a href="#inicio">Início</a>
+    <a href="#sobre">Sobre</a>
+    <a href="#personagens">Personagens</a>
+    <a href="#armas">Armas</a>
+    <a href="#modos">Modos</a>
+    <a href="#dicas">Dicas</a>
   </div>
+  <p>© 2025 Site Fan de Free Fire. Todos os direitos sobre Free Fire pertencem à Garena.</p>
+  <p style="margin-top:0.5rem;">Este é um site informativo criado por fãs, sem vínculo oficial com a Garena.</p>
 </footer>
 
 <script>
-(function () {
-  "use strict";
+  // ===== MENU MOBILE =====
+  const menuToggle = document.getElementById('menuToggle');
+  const navLinks = document.getElementById('navLinks');
 
-  const menuToggle = document.getElementById("menuToggle");
-  const nav = document.getElementById("nav");
-
-  menuToggle.addEventListener("click", function () {
-    nav.classList.toggle("open");
-    menuToggle.classList.toggle("active");
+  menuToggle.addEventListener('click', () => {
+    navLinks.classList.toggle('aberto');
   });
 
-  document.querySelectorAll(".nav-link").forEach(function (link) {
-    link.addEventListener("click", function () {
-      nav.classList.remove("open");
-      menuToggle.classList.remove("active");
+  document.querySelectorAll('.nav-links a').forEach(link => {
+    link.addEventListener('click', () => navLinks.classList.remove('aberto'));
+  });
+
+  // ===== FILTRO DE ARMAS =====
+  const botoesFiltro = document.querySelectorAll('.filtro-btn');
+  const armas = document.querySelectorAll('.card-arma');
+
+  botoesFiltro.forEach(botao => {
+    botao.addEventListener('click', () => {
+      botoesFiltro.forEach(b => b.classList.remove('ativo'));
+      botao.classList.add('ativo');
+
+      const filtro = botao.dataset.filtro;
+
+      armas.forEach(arma => {
+        const tipo = arma.dataset.tipo;
+        if (filtro === 'todas' || tipo === filtro) {
+          arma.style.display = 'block';
+          arma.style.animation = 'none';
+          void arma.offsetWidth;
+          arma.style.animation = 'aparecer 0.4s ease';
+        } else {
+          arma.style.display = 'none';
+        }
+      });
     });
   });
 
-  const sections = document.querySelectorAll("section[id]");
-  const navLinks = document.querySelectorAll(".nav-link");
+  // Animação de aparecimento
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes aparecer {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+  `;
+  document.head.appendChild(style);
 
-  function updateActiveNav() {
-    let current = "";
-    sections.forEach(function (section) {
-      const top = section.offsetTop - 100;
-      if (window.scrollY >= top) {
-        current = section.getAttribute("id");
+  // ===== REVELAR AO ROLAR =====
+  const observador = new IntersectionObserver((entradas) => {
+    entradas.forEach(entrada => {
+      if (entrada.isIntersecting) {
+        entrada.target.classList.add('visivel');
       }
     });
-    navLinks.forEach(function (link) {
-      link.classList.remove("active");
-      if (link.getAttribute("href") === "#" + current) {
-        link.classList.add("active");
-      }
-    });
-  }
+  }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
 
-  window.addEventListener("scroll", updateActiveNav, { passive: true });
-  updateActiveNav();
-})();
+  document.querySelectorAll('.revelar').forEach(el => observador.observe(el));
+
+  // ===== NAVBAR COM FUNDO AO ROLAR =====
+  const header = document.querySelector('header');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 50) {
+      header.style.background = 'rgba(10, 14, 23, 0.98)';
+      header.style.boxShadow = '0 5px 25px rgba(0,0,0,0.5)';
+    } else {
+      header.style.background = 'rgba(10, 14, 23, 0.85)';
+      header.style.boxShadow = 'none';
+    }
+  });
 </script>
 
 </body>
