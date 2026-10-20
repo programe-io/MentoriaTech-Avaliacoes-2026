@@ -1,5 +1,5 @@
-preco = 100
-porcentagem = 10
+# Criando uma visualização com cores na tabela usando pandas styling
+tabela_colorida = df_analise[['Produto', 'Código', 'Preço', 'Porcentagem (%)']].style.background_gradient(cmap='viridis', subset=['Porcentagem (%)'])
 
-resultado = preco * porcentagem / 100
-print(f"{resultado:.2f}%")
+# Exibindo a tabela estilizada
+display(tabela_colorida)
