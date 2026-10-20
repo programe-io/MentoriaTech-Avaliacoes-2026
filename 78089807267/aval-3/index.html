@@ -1,0 +1,697 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Estuda+ | Plataforma de Estudos</title>
+
+<style>
+:root {
+    --verde-escuro: #075b3a;
+    --verde: #0b7a4b;
+    --verde-claro: #eaf7f0;
+    --branco: #ffffff;
+    --texto: #20352b;
+    --cinza: #f5f7f6;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: var(--cinza);
+    color: var(--texto);
+}
+
+header {
+    background: var(--branco);
+    padding: 18px 7%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 15px;
+    border-bottom: 3px solid var(--verde);
+}
+
+.logo {
+    font-size: 28px;
+    font-weight: bold;
+    color: var(--verde-escuro);
+}
+
+.logo span {
+    color: #d6b85a;
+}
+
+nav {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+nav button {
+    border: none;
+    background: transparent;
+    padding: 10px;
+    color: var(--texto);
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 8px;
+}
+
+nav button:hover,
+nav button.ativo {
+    background: var(--verde-claro);
+    color: var(--verde);
+}
+
+main {
+    width: 90%;
+    max-width: 1200px;
+    margin: 30px auto;
+}
+
+.pagina {
+    display: none;
+}
+
+.pagina.ativa {
+    display: block;
+}
+
+.hero {
+    background: linear-gradient(120deg, #075b3a, #13a366);
+    color: white;
+    padding: 45px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 25px;
+    flex-wrap: wrap;
+}
+
+.hero h1 {
+    font-size: clamp(28px, 4vw, 42px);
+    margin-bottom: 15px;
+}
+
+.hero p {
+    line-height: 1.7;
+    max-width: 580px;
+}
+
+.hero-icone {
+    font-size: 90px;
+}
+
+.botao {
+    background: #d6b85a;
+    color: #20352b;
+    border: none;
+    padding: 13px 22px;
+    border-radius: 10px;
+    margin-top: 20px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.botao:hover {
+    opacity: 0.85;
+}
+
+.secao {
+    margin-top: 35px;
+}
+
+.secao h2,
+.titulo-pagina {
+    color: var(--verde-escuro);
+    margin-bottom: 18px;
+}
+
+.grade {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.cartao {
+    background: white;
+    padding: 23px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px #17352a0b;
+    border: 1px solid #e4ece7;
+}
+
+.cartao h3 {
+    margin: 12px 0;
+    color: var(--verde-escuro);
+}
+
+.cartao p {
+    line-height: 1.6;
+    color: #607168;
+}
+
+.icone {
+    font-size: 35px;
+}
+
+.link-botao {
+    margin-top: 15px;
+    background: var(--verde-claro);
+    color: var(--verde-escuro);
+    border: none;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.estatisticas {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin-top: 25px;
+}
+
+.numero {
+    color: var(--verde);
+    font-size: 30px;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.barra {
+    background: #e4ece7;
+    height: 12px;
+    border-radius: 20px;
+    overflow: hidden;
+    margin: 15px 0;
+}
+
+.barra-preenchida {
+    height: 100%;
+    width: 0;
+    background: var(--verde);
+    transition: width 0.3s;
+}
+
+input, select, textarea {
+    width: 100%;
+    padding: 13px;
+    margin: 8px 0 15px;
+    border: 1px solid #cddbd2;
+    border-radius: 9px;
+    font-size: 15px;
+    font-family: inherit;
+}
+
+label {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.formulario {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.atividade {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 15px 0;
+    border-bottom: 1px solid #e4ece7;
+}
+
+.atividade input {
+    width: 20px;
+    margin: 0;
+    accent-color: var(--verde);
+}
+
+.atividade label {
+    font-weight: normal;
+    line-height: 1.5;
+}
+
+.aviso {
+    background: var(--verde-claro);
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 15px;
+    line-height: 1.6;
+}
+
+footer {
+    background: var(--verde-escuro);
+    color: white;
+    text-align: center;
+    padding: 25px;
+    margin-top: 50px;
+    line-height: 1.8;
+}
+
+#mensagem {
+    margin-top: 15px;
+    color: var(--verde);
+    font-weight: bold;
+}
+
+@media (max-width: 800px) {
+    .grade {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .estatisticas {
+        grid-template-columns: 1fr;
+    }
+
+    header {
+        justify-content: center;
+    }
+
+    nav {
+        justify-content: center;
+    }
+
+    .hero {
+        padding: 30px;
+    }
+}
+
+@media (max-width: 520px) {
+    .grade {
+        grid-template-columns: 1fr;
+    }
+
+    main {
+        width: 92%;
+    }
+
+    .hero-icone {
+        font-size: 60px;
+    }
+}
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"></head>
+
+<body>
+
+<header>
+    <div class="logo">Estuda<span>+</span> 📚</div>
+
+    <nav>
+        <button class="ativo" onclick="abrirPagina('inicio', this)">Início</button>
+        <button onclick="abrirPagina('materias', this)">Matérias</button>
+        <button onclick="abrirPagina('atividades', this)">Atividades</button>
+        <button onclick="abrirPagina('progresso', this)">Meu progresso</button>
+        <button onclick="abrirPagina('aluno', this)">Área do aluno</button>
+    </nav>
+</header>
+
+<main>
+
+    <!-- PÁGINA INICIAL -->
+    <section id="inicio" class="pagina ativa">
+        <div class="hero">
+            <div>
+                <h1 id="saudacao">Bem-vindo(a) ao Estuda+!</h1>
+                <p>
+                    Aprender hoje, transformar o amanhã.
+                    Organize seus estudos, descubra novos conhecimentos
+                    e alcance seus objetivos escolares!
+                </p>
+                <button class="botao" onclick="abrirPagina('materias')">
+                    Explorar matérias →
+                </button>
+            </div>
+            <div class="hero-icone">🎓📖</div>
+        </div>
+
+        <div class="estatisticas">
+            <div class="cartao">
+                <div class="numero" id="totalMaterias">6</div>
+                <p>Matérias disponíveis</p>
+            </div>
+            <div class="cartao">
+                <div class="numero" id="totalAtividades">0</div>
+                <p>Atividades concluídas</p>
+            </div>
+            <div class="cartao">
+                <div class="numero" id="percentual">0%</div>
+                <p>Progresso das atividades</p>
+            </div>
+        </div>
+
+        <div class="secao">
+            <h2>📚 Suas matérias</h2>
+            <div class="grade" id="materiasInicio"></div>
+        </div>
+
+        <div class="secao">
+            <div class="cartao">
+                <h2>💡 Dica de estudo</h2>
+                <p>
+                    Estude um pouco todos os dias, faça anotações
+                    e pratique com exercícios. Pequenos passos
+                    ajudam você a aprender cada vez mais!
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- PÁGINA DE MATÉRIAS -->
+    <section id="materias" class="pagina">
+        <h1 class="titulo-pagina">📚 Biblioteca de matérias</h1>
+        <p>Escolha uma disciplina para começar seus estudos.</p>
+
+        <input id="busca" type="search"
+               placeholder="Pesquisar matéria..."
+               oninput="mostrarMaterias()">
+
+        <div class="grade" id="listaMaterias"></div>
+
+        <div class="aviso">
+            As matérias apresentam sugestões de conteúdos.
+            Você pode adicionar seus próprios materiais e links de aulas.
+        </div>
+    </section>
+
+    <!-- PÁGINA DE ATIVIDADES -->
+    <section id="atividades" class="pagina">
+        <h1 class="titulo-pagina">✏️ Minhas atividades</h1>
+        <p>Marque as tarefas que você já concluiu.</p>
+
+        <div class="cartao secao">
+            <div id="listaAtividades"></div>
+
+            <div class="barra">
+                <div class="barra-preenchida" id="barraAtividades"></div>
+            </div>
+
+            <p id="textoProgresso">Você concluiu 0 de 6 atividades.</p>
+        </div>
+
+        <div class="cartao secao">
+            <h3>➕ Adicionar atividade</h3>
+            <form id="formAtividade">
+                <label for="novaAtividade">Nome da atividade</label>
+                <input id="novaAtividade" required
+                       placeholder="Ex.: Revisar o conteúdo de Matemática">
+
+                <button class="link-botao" type="submit">
+                    Adicionar tarefa
+                </button>
+            </form>
+            <p id="mensagem"></p>
+        </div>
+    </section>
+
+    <!-- PÁGINA DE PROGRESSO -->
+    <section id="progresso" class="pagina">
+        <h1 class="titulo-pagina">📈 Meu progresso</h1>
+
+        <div class="cartao">
+            <h3>Seu desempenho nos estudos</h3>
+            <p id="resumoProgresso">
+                Comece a concluir atividades para acompanhar seu progresso.
+            </p>
+
+            <div class="barra">
+                <div class="barra-preenchida" id="barraGeral"></div>
+            </div>
+
+            <p id="textoGeral">0% das atividades concluídas</p>
+        </div>
+
+        <div class="secao grade">
+            <div class="cartao">
+                <div class="icone">🎯</div>
+                <h3>Meta de hoje</h3>
+                <p>Conclua pelo menos uma atividade escolar.</p>
+            </div>
+
+            <div class="cartao">
+                <div class="icone">⏰</div>
+                <h3>Organização</h3>
+                <p>Separe um horário para estudar sem distrações.</p>
+            </div>
+
+            <div class="cartao">
+                <div class="icone">🌟</div>
+                <h3>Continue aprendendo</h3>
+                <p>Cada conteúdo aprendido é uma nova conquista.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ÁREA DO ALUNO -->
+    <section id="aluno" class="pagina">
+        <h1 class="titulo-pagina">👨‍🎓 Área do aluno</h1>
+
+        <div class="cartao formulario">
+            <h2>Seja bem-vindo(a), aluno(a)!</h2>
+            <p>Preencha seus dados para personalizar sua página.</p>
+
+            <form id="formAluno">
+                <label for="nome">Nome do aluno</label>
+                <input id="nome" required
+                       placeholder="Digite seu nome">
+
+                <label for="serie">Série / ano escolar</label>
+                <select id="serie" required>
+                    <option value="">Selecione sua série</option>
+                    <option>1º ano</option>
+                    <option>2º ano</option>
+                    <option>3º ano</option>
+                    <option>Outra série</option>
+                </select>
+
+                <label for="curso">Curso</label>
+                <input id="curso" required
+                       placeholder="Digite seu curso">
+
+                <button class="botao" type="submit">
+                    Salvar meus dados
+                </button>
+            </form>
+
+            <p id="mensagemAluno"></p>
+        </div>
+    </section>
+
+</main>
+
+<footer>
+    <h2>Estuda+ 📚</h2>
+    <p>Aprender hoje, transformar o amanhã.</p>
+    <p>Plataforma de apoio aos estudos.</p>
+    <p>© 2026 Estuda+ — Projeto educacional.</p>
+</footer>
+
+<script>
+const materias = [
+    {
+        nome: "Matemática",
+        icone: "📐",
+        descricao: "Números, equações, geometria e resolução de problemas.",
+        conteudo: "Comece revisando operações básicas, frações e equações."
+    },
+    {
+        nome: "Português",
+        icone: "📖",
+        descricao: "Gramática, interpretação de textos e literatura.",
+        conteudo: "Pratique a interpretação de textos e revise as classes gramaticais."
+    },
+    {
+        nome: "História",
+        icone: "🏛️",
+        descricao: "Conheça acontecimentos e sociedades de diferentes épocas.",
+        conteudo: "Monte uma linha do tempo para organizar os acontecimentos históricos."
+    },
+    {
+        nome: "Geografia",
+        icone: "🌎",
+        descricao: "Estude os territórios, os mapas e o meio ambiente.",
+        conteudo: "Revise os mapas, as regiões brasileiras e as características do clima."
+    },
+    {
+        nome: "Ciências",
+        icone: "🔬",
+        descricao: "Explore a natureza, os seres vivos e o universo.",
+        conteudo: "Estude os ecossistemas, a matéria e os fenômenos naturais."
+    },
+    {
+        nome: "Inglês",
+        icone: "🌐",
+        descricao: "Aprenda vocabulário, leitura e expressões em inglês.",
+        conteudo: "Pratique palavras novas e expressões usadas no dia a dia."
+    }
+];
+
+let atividades = [
+    { nome: "Revisar o conteúdo de Matemática", feita: false },
+    { nome: "Ler um texto de Português", feita: false },
+    { nome: "Estudar um capítulo de História", feita: false },
+    { nome: "Revisar os mapas de Geografia", feita: false },
+    { nome: "Fazer uma revisão de Ciências", feita: false },
+    { nome: "Praticar vocabulário de Inglês", feita: false }
+];
+
+function abrirPagina(id, botao) {
+    document.querySelectorAll(".pagina").forEach(p => {
+        p.classList.remove("ativa");
+    });
+
+    document.getElementById(id).classList.add("ativa");
+
+    document.querySelectorAll("nav button").forEach(b => {
+        b.classList.remove("ativo");
+    });
+
+    if (botao) botao.classList.add("ativo");
+
+    if (id === "progresso") atualizarProgresso();
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function criarCartao(materia) {
+    return `
+        <article class="cartao">
+            <div class="icone">${materia.icone}</div>
+            <h3>${materia.nome}</h3>
+            <p>${materia.descricao}</p>
+            <button class="link-botao"
+                onclick="verConteudo('${materia.nome}')">
+                Estudar matéria →
+            </button>
+        </article>
+    `;
+}
+
+function mostrarMaterias() {
+    const busca = document.getElementById("busca");
+    const termo = busca ? busca.value.toLowerCase() : "";
+
+    const filtradas = materias.filter(m =>
+        m.nome.toLowerCase().includes(termo)
+    );
+
+    document.getElementById("listaMaterias").innerHTML =
+        filtradas.map(criarCartao).join("");
+
+    document.getElementById("materiasInicio").innerHTML =
+        materias.slice(0, 3).map(criarCartao).join("");
+}
+
+function verConteudo(nome) {
+    const materia = materias.find(m => m.nome === nome);
+
+    if (materia) {
+        alert(
+            "📚 " + materia.nome +
+            "\n\nSugestão de estudo:\n" + materia.conteudo +
+            "\n\nAdicione seus materiais e links de aulas para ampliar esta seção."
+        );
+    }
+}
+
+function mostrarAtividades() {
+    const lista = document.getElementById("listaAtividades");
+
+    lista.innerHTML = atividades.map((a, i) => `
+        <div class="atividade">
+            <input type="checkbox" id="tarefa${i}"
+                ${a.feita ? "checked" : ""}
+                onchange="marcarAtividade(${i}, this.checked)">
+            <label for="tarefa${i}">${a.nome}</label>
+        </div>
+    `).join("");
+
+    atualizarProgresso();
+}
+
+function marcarAtividade(indice, marcada) {
+    atividades[indice].feita = marcada;
+    atualizarProgresso();
+}
+
+function atualizarProgresso() {
+    const total = atividades.length;
+    const feitas = atividades.filter(a => a.feita).length;
+    const porcentagem = total ? Math.round(feitas / total * 100) : 0;
+
+    document.getElementById("totalAtividades").textContent = feitas;
+    document.getElementById("percentual").textContent = porcentagem + "%";
+
+    document.getElementById("barraAtividades").style.width =
+        porcentagem + "%";
+
+    document.getElementById("textoProgresso").textContent =
+        `Você concluiu ${feitas} de ${total} atividades.`;
+
+    document.getElementById("barraGeral").style.width =
+        porcentagem + "%";
+
+    document.getElementById("textoGeral").textContent =
+        porcentagem + "% das atividades concluídas";
+
+    document.getElementById("resumoProgresso").textContent =
+        total
+        ? `Você já concluiu ${feitas} de ${total} atividades. Continue assim!`
+        : "Adicione atividades para acompanhar seu progresso.";
+}
+
+document.getElementById("formAtividade").addEventListener("submit", e => {
+    e.preventDefault();
+
+    const campo = document.getElementById("novaAtividade");
+    const nome = campo.value.trim();
+
+    if (!nome) return;
+
+    atividades.push({ nome: nome, feita: false });
+    campo.value = "";
+
+    mostrarAtividades();
+
+    document.getElementById("mensagem").textContent =
+        "Atividade adicionada com sucesso!";
+});
+
+document.getElementById("formAluno").addEventListener("submit", e => {
+    e.preventDefault();
+
+    const nome = document.getElementById("nome").value.trim();
+    const serie = document.getElementById("serie").value;
+    const curso = document.getElementById("curso").value.trim();
+
+    if (!nome || !serie || !curso) return;
+
+    document.getElementById("saudacao").textContent =
+        "Olá, " + nome + "! 👋";
+
+    document.getElementById("mensagemAluno").textContent =
+        "Dados preenchidos! Série: " + serie + " | Curso: " + curso;
+
+    abrirPagina("inicio");
+});
+
+mostrarMaterias();
+mostrarAtividades();
+</script>
+
+</body>
+</html>
