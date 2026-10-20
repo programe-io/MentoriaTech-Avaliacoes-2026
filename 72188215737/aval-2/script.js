@@ -1,4 +1,5 @@
-// Lista de tarefas
+
+ // Lista de tarefas
 let tarefas = JSON.parse(localStorage.getItem("tarefas")) || [];
 
 // Elementos do HTML
@@ -12,7 +13,6 @@ const prioridadeErro = document.getElementById("prioridadeErro");
 
 const listaTarefas = document.getElementById("listaTarefas");
 const contador = document.getElementById("contador");
-
 
 // ===============================
 // CADASTRAR TAREFA
@@ -29,6 +29,12 @@ form.addEventListener("submit", function (event) {
 
     let valido = true;
 
+    // Validação do código
+    if (codigo.length === 0) {
+        alert("Informe o código da tarefa.");
+        return;
+    }
+
     // Validação do título
     if (titulo.length < 5) {
         tituloErro.textContent =
@@ -38,7 +44,11 @@ form.addEventListener("submit", function (event) {
     }
 
     // Validação da prioridade
-    if (prioridade < 1 || prioridade > 3 || !prioridade) {
+    if (
+        !Number.isInteger(prioridade) ||
+        prioridade < 1 ||
+        prioridade > 3
+    ) {
         prioridadeErro.textContent =
             "A prioridade deve estar entre 1 e 3.";
 
@@ -51,7 +61,8 @@ form.addEventListener("submit", function (event) {
 
     // Verifica se o código já existe
     const codigoExiste = tarefas.some(
-        tarefa => tarefa.codigo.toLowerCase() === codigo.toLowerCase()
+        tarefa =>
+            tarefa.codigo.toLowerCase() === codigo.toLowerCase()
     );
 
     if (codigoExiste) {
@@ -77,13 +88,11 @@ form.addEventListener("submit", function (event) {
     renderizarTarefas();
 });
 
-
 // ===============================
 // RENDERIZAR TAREFAS
 // ===============================
 
 function renderizarTarefas() {
-
     listaTarefas.innerHTML = "";
 
     if (tarefas.length === 0) {
@@ -98,7 +107,6 @@ function renderizarTarefas() {
     }
 
     tarefas.forEach(tarefa => {
-
         const elemento = document.createElement("div");
 
         elemento.className = "tarefa";
@@ -113,7 +121,7 @@ function renderizarTarefas() {
 
         elemento.innerHTML = `
             <div class="codigo">
-                ${tarefa.codigo}
+                ${escaparHTML(tarefa.codigo)}
             </div>
 
             <div>
@@ -122,7 +130,6 @@ function renderizarTarefas() {
                 </div>
 
                 <div class="info">
-
                     <span class="badge prioridade-${tarefa.prioridade}">
                         Prioridade ${tarefa.prioridade} - ${prioridadeTexto}
                     </span>
@@ -136,18 +143,17 @@ function renderizarTarefas() {
                                 : "Pendente"
                         }
                     </span>
-
                 </div>
             </div>
 
             <div class="acoes">
-
                 ${
                     !tarefa.concluida
                         ? `
                             <button
                                 class="btn-success"
-                                onclick="concluirTarefa(${tarefa.id})"
+                                data-acao="concluir"
+                                data-id="${tarefa.id}"
                             >
                                 Concluir
                             </button>
@@ -157,11 +163,11 @@ function renderizarTarefas() {
 
                 <button
                     class="btn-secondary"
-                    onclick="alterarPrioridade(${tarefa.id})"
+                    data-acao="prioridade"
+                    data-id="${tarefa.id}"
                 >
                     Alterar prioridade
                 </button>
-
             </div>
         `;
 
@@ -171,13 +177,34 @@ function renderizarTarefas() {
     atualizarContador();
 }
 
+// ===============================
+// EVENTOS DOS BOTÕES
+// ===============================
+
+listaTarefas.addEventListener("click", function (event) {
+    const botao = event.target.closest("button");
+
+    if (!botao) {
+        return;
+    }
+
+    const id = Number(botao.dataset.id);
+    const acao = botao.dataset.acao;
+
+    if (acao === "concluir") {
+        concluirTarefa(id);
+    }
+
+    if (acao === "prioridade") {
+        alterarPrioridade(id);
+    }
+});
 
 // ===============================
 // CONCLUIR TAREFA
 // ===============================
 
 function concluirTarefa(id) {
-
     const tarefa = tarefas.find(
         tarefa => tarefa.id === id
     );
@@ -193,13 +220,11 @@ function concluirTarefa(id) {
     renderizarTarefas();
 }
 
-
 // ===============================
 // ALTERAR PRIORIDADE
 // ===============================
 
 function alterarPrioridade(id) {
-
     const tarefa = tarefas.find(
         tarefa => tarefa.id === id
     );
@@ -220,32 +245,26 @@ function alterarPrioridade(id) {
         return;
     }
 
-    novaPrioridade = Number(novaPrioridade);
+    novaPrioridade = novaPrioridade.trim();
 
-    if (
-        !Number.isInteger(novaPrioridade) ||
-        novaPrioridade < 1 ||
-        novaPrioridade > 3
-    ) {
+    if (!["1", "2", "3"].includes(novaPrioridade)) {
         alert("A prioridade deve ser 1, 2 ou 3.");
         return;
     }
 
-    tarefa.prioridade = novaPrioridade;
+    tarefa.prioridade = Number(novaPrioridade);
 
     salvarTarefas();
 
     renderizarTarefas();
 }
 
-
 // ===============================
 // FUNÇÕES AUXILIARES
 // ===============================
 
 function obterPrioridadeTexto(prioridade) {
-
-    switch (prioridade) {
+    switch (Number(prioridade)) {
         case 1:
             return "Alta";
 
@@ -256,16 +275,14 @@ function obterPrioridadeTexto(prioridade) {
             return "Baixa";
 
         default:
-            return "";
+            return "Não definida";
     }
 }
-
 
 function limparErros() {
     tituloErro.textContent = "";
     prioridadeErro.textContent = "";
 }
-
 
 function salvarTarefas() {
     localStorage.setItem(
@@ -274,30 +291,27 @@ function salvarTarefas() {
     );
 }
 
-
 function atualizarContador() {
-
     const quantidade = tarefas.length;
 
     if (quantidade === 1) {
         contador.textContent = "1 tarefa";
     } else {
-        contador.textContent = ${quantidade} tarefas;
+        contador.textContent = `${quantidade} tarefas`;
     }
 }
 
-
-// Evita que um título inserido pelo usuário
-// seja interpretado como HTML.
+// Evita interpretar texto do usuário como HTML
 function escaparHTML(texto) {
-
     const div = document.createElement("div");
 
-    div.textContent = texto;
+    div.textContent = String(texto);
 
     return div.innerHTML;
 }
 
+// ===============================
+// RENDERIZAÇÃO INICIAL
+// ===============================
 
-// Renderização inicial
 renderizarTarefas();
