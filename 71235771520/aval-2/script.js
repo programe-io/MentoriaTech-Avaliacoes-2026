@@ -1,137 +1,156 @@
-class TaskManager {
-    constructor() {
-        this.tasks = [];
-        this.nextCode = 1;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+// Classe que representa a Tarefa
+class Tarefa {
+    private int codigo;
+    private String titulo;
+    private int prioridade; // 1 (Alta), 2 (Média), 3 (Baixa)
+    private boolean concluida;
+
+    public Tarefa(int codigo, String titulo, int prioridade) {
+        this.codigo = codigo;
+        this.titulo = titulo;
+        this.prioridade = prioridade;
+        this.concluida = false;
     }
 
-    // Método para cadastrar nova tarefa com validações
-    addTask(title, priority) {
-        const trimmedTitle = title ? title.trim() : '';
-        const parsedPriority = parseInt(priority, 10);
-
-        // Validação do título: mínimo de 5 caracteres[cite: 1]
-        if (trimmedTitle.length < 5) {
-            throw new Error('O título deve ter no mínimo 5 caracteres.');
-        }
-
-        // Validação da prioridade: valor entre 1 (alta) e 3 (baixa)[cite: 1]
-        if (isNaN(parsedPriority) || parsedPriority < 1 || parsedPriority > 3) {
-            throw new Error('A prioridade deve ser um valor entre 1 (alta) e 3 (baixa).');
-        }
-
-        const newTask = {
-            codigo: this.nextCode++,
-            titulo: trimmedTitle,
-            prioridade: parsedPriority,
-            concluida: false
-        };
-
-        this.tasks.push(newTask);
-        return newTask;
+    public int getCodigo() {
+        return codigo;
     }
 
-    // Método para listar todas as tarefas cadastradas[cite: 1]
-    getTasks() {
-        return this.tasks;
+    public String getTitulo() {
+        return titulo;
     }
 
-    // Método para marcar uma tarefa como concluída ou pendente[cite: 1]
-    toggleTaskStatus(code) {
-        const task = this.tasks.find(t => t.codigo === code);
-        if (task) {
-            task.concluida = !task.concluida;
-            return true;
-        }
-        return false;
+    public int getPrioridade() {
+        return prioridade;
     }
 
-    // Método para alterar a prioridade de uma tarefa[cite: 1]
-    updateTaskPriority(code, newPriority) {
-        const parsedPriority = parseInt(newPriority, 10);
-        if (isNaN(parsedPriority) || parsedPriority < 1 || parsedPriority > 3) {
-            throw new Error('A nova prioridade deve ser entre 1 e 3.');
-        }
+    public void setPrioridade(int prioridade) {
+        this.prioridade = prioridade;
+    }
 
-        const task = this.tasks.find(t => t.codigo === code);
-        if (task) {
-            task.prioridade = parsedPriority;
-            return true;
-        }
-        return false;
+    public boolean isConcluida() {
+        return concluida;
+    }
+
+    public void setConcluida(boolean concluida) {
+        this.concluida = concluida;
+    }
+
+    @Override
+    public String toString() {
+        String statusStr = concluida ? "Concluída" : "Pendente";
+        String prioStr;
+        if (prioridade == 1) prioStr = "1 (Alta)";
+        else if (prioridade == 2) prioStr = "2 (Média)";
+        else prioStr = "3 (Baixa)";
+
+        return String.format("Código: #%d | Título: %s | Prioridade: %s | Status: %s", 
+                codigo, titulo, prioStr, statusStr);
     }
 }
 
-// --- Exemplo de Integração com a Interface (DOM) ---
+// Classe Principal do Sistema
+public class GerenciadorDeTarefas {
+    private static List<Tarefa> tarefas = new ArrayList<>();
+    private static int contadorCodigo = 101;
 
-const manager = new TaskManager();
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int opcao;
 
-const form = document.getElementById('taskForm');
-const titleInput = document.getElementById('title');
-const priorityInput = document.getElementById('priority');
-const taskList = document.getElementById('taskList');
+        do {
+            System.out.println("\n=== SISTEMA DE GERENCIAMENTO DE TAREFAS ===");
+            System.out.println("1. Cadastrar uma nova tarefa");
+            System.out.println("2. Listar as tarefas cadastradas");
+            System.out.println("3. Marcar uma tarefa como concluída");
+            System.out.println("4. Alterar a prioridade de uma tarefa");
+            System.out.println("0. Sair");
+            System.out.print("Escolha uma opção: ");
 
-function updateUI() {
-    taskList.innerHTML = '';
-    const allTasks = manager.getTasks();
+            while (!scanner.hasNextInt()) {
+                System.out.print("Por favor, digite um número válido: ");
+                scanner.next();
+            }
+            opcao = scanner.nextInt();
+            scanner.nextLine(); // Consumir quebra de linha
 
-    if (allTasks.length === 0) {
-        taskList.innerHTML = '<tr><td colspan="5" style="text-align: center;">Nenhuma tarefa registada.</td></tr>';
-        return;
+            switch (opcao) {
+                case 1:
+                    cadastrarTarefa(scanner);
+                    break;
+                case 2:
+                    listarTarefas();
+                    break;
+                case 3:
+                    marcarConcluida(scanner);
+                    break;
+                case 4:
+                    alterarPrioridade(scanner);
+                    break;
+                case 0:
+                    System.out.println("A encerra o programa. Até logo!");
+                    break;
+                default:
+                    System.out.println("Opção inválida! Tente novamente.");
+            }
+        } while (opcao != 0);
+
+        scanner.close();
     }
 
-    allTasks.forEach(task => {
-        const tr = document.createElement('tr');
-        
-        tr.innerHTML = `
-            <td>#${task.codigo}</td>
-            <td style="${task.concluida ? 'text-decoration: line-through; color: #888;' : ''}">${task.titulo}</td>
-            <td>
-                <select onchange="handlePriorityChange(${task.codigo}, this.value)">
-                    <option value="1" ${task.prioridade === 1 ? 'selected' : ''}>1 (Alta)</option>
-                    <option value="2" ${task.prioridade === 2 ? 'selected' : ''}>2 (Média)</option>
-                    <option value="3" ${task.prioridade === 3 ? 'selected' : ''}>3 (Baixa)</option>
-                </select>
-            </td>
-            <td>${task.concluida ? 'Concluída' : 'Pendente'}</td>
-            <td>
-                <button type="button" onclick="handleToggleStatus(${task.codigo})">
-                    ${task.concluida ? 'Desfazer' : 'Concluir'}
-                </button>
-            </td>
-        `;
-        taskList.appendChild(tr);
-    });
-}
+    // Cadastrar nova tarefa com regras de validação[cite: 1]
+    private static void cadastrarTarefa(Scanner scanner) {
+        System.out.print("Digite o título da tarefa (mínimo 5 caracteres): ");
+        String titulo = scanner.nextLine();
 
-// Evento de submissão do formulário
-if (form) {
-    form.addEventListener('submit', (e) => {
-        e.preventDefault();
-        try {
-            manager.addTask(titleInput.value, priorityInput.value);
-            titleInput.value = '';
-            priorityInput.value = '';
-            updateUI();
-        } catch (error) {
-            alert(error.message);
+        // Validação do título: mínimo 5 caracteres[cite: 1]
+        if (titulo == null || titulo.trim().length() < 5) {
+            System.out.println("[Erro] O título deve ter no mínimo 5 caracteres!");
+            return;
         }
-    });
-}
 
-// Funções globais auxiliares para os eventos do HTML gerado dinamicamente
-window.handleToggleStatus = function(code) {
-    manager.toggleTaskStatus(code);
-    updateUI();
-};
+        System.out.print("Digite a prioridade (1 - Alta, 2 - Média, 3 - Baixa): ");
+        while (!scanner.hasNextInt()) {
+            System.out.print("[Erro] Digite um número válido para a prioridade (1 a 3): ");
+            scanner.next();
+        }
+        int prioridade = scanner.nextInt();
+        scanner.nextLine();
 
-window.handlePriorityChange = function(code, newPriority) {
-    try {
-        manager.updateTaskPriority(code, newPriority);
-        updateUI();
-    } catch (error) {
-        alert(error.message);
+        // Validação da prioridade: valor entre 1 e 3[cite: 1]
+        if (prioridade < 1 || prioridade > 3) {
+            System.out.println("[Erro] A prioridade deve ser um valor entre 1 (alta) e 3 (baixa)!");
+            return;
+        }
+
+        Tarefa novaTarefa = new Tarefa(contadorCodigo++, titulo.trim(), prioridade);
+        tarefas.add(novaTarefa);
+        System.out.println("[Sucesso] Tarefa cadastrada com o código #" + novaTarefa.getCodigo() + "!");
     }
-};
 
-// Renderização inicial
-updateUI();
+    // Listar as tarefas cadastradas[cite: 1]
+    private static void listarTarefas() {
+        System.out.println("\n--- LISTA DE TAREFAS ---");
+        if (tarefas.isEmpty()) {
+            System.out.println("Nenhuma tarefa cadastrada até o momento.");
+            return;
+        }
+
+        for (Tarefa t : tarefas) {
+            System.out.println(t);
+        }
+    }
+
+    // Marcar uma tarefa como concluída[cite: 1]
+    private static void marcarConcluida(Scanner scanner) {
+        if (tarefas.isEmpty()) {
+            System.out.println("Não há tarefas para atualizar.");
+            return;
+        }
+
+        System.out.print("Digite o código da tarefa que deseja marcar como concluída: ");
+        int codigo = scanner

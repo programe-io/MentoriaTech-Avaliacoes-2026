@@ -1,324 +1,307 @@
 <!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet">
+</head>
+<body>
+  <!DOCTYPE html>
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Gerenciamento de Tarefas</title>
+    <title>Gerenciador de Tarefas</title>
     <style>
+        :root {
+            --bg-primary: #0f172a;
+            --bg-card: #1e293b;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --accent-blue: #38bdf8;
+            --accent-green: #4ade80;
+            --accent-red: #f87171;
+            --accent-yellow: #facc15;
+            --border-color: #334155;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
 
         body {
-            background-color: #f4f7f6;
-            color: #333;
-            padding: 20px;
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 2rem 1rem;
             display: flex;
             justify-content: center;
         }
 
-        .container {
+        main-container {
             width: 100%;
-            max-width: 800px;
-            background: #ffffff;
-            padding: 25px;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            max-width: 650px;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        header {
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1rem;
         }
 
         h1 {
-            color: #1a365d;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #e2e8f0;
-            padding-bottom: 10px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-blue);
         }
 
-        .form-group {
-            margin-bottom: 15px;
+        /* Formulário de Cadastro */
+        .card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
         }
 
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 600;
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 140px;
+            gap: 10px;
+            margin-top: 1rem;
         }
 
-        input[type="text"], select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #cbd5e0;
-            border-radius: 5px;
-            font-size: 14px;
+        input, select, button {
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.75rem;
+            font-size: 0.9rem;
+            outline: none;
         }
 
-        button {
-            background-color: #2b6cb0;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 5px;
+        input:focus, select:focus {
+            border-color: var(--accent-blue);
+        }
+
+        .btn-add {
+            grid-column: span 2;
+            background-color: var(--accent-blue);
+            color: #0f172a;
+            font-weight: 700;
             cursor: pointer;
-            font-size: 14px;
-            transition: background-color 0.2s;
+            border: none;
+            transition: opacity 0.2s;
         }
 
-        button:hover {
-            background-color: #2c5282;
+        .btn-add:hover {
+            opacity: 0.9;
         }
 
-        .error-message {
-            color: #e53e3e;
-            font-size: 13px;
-            margin-top: 5px;
+        /* Mensagem de Erro */
+        .error-alert {
+            background-color: rgba(248, 113, 113, 0.1);
+            border: 1px solid var(--accent-red);
+            color: var(--accent-red);
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
             display: none;
         }
 
-        .list-header {
-            margin-top: 30px;
-            margin-bottom: 15px;
+        /* Lista de Tarefas */
+        .task-list {
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .task-item {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 1rem;
+            display: flex;
             align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            transition: border-color 0.2s;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
+        .task-item.completed {
+            opacity: 0.6;
+            border-color: transparent;
         }
 
-        th, td {
-            text-align: left;
-            padding: 12px;
-            border-bottom: 1px solid #e2e8f0;
+        .task-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            flex-grow: 1;
         }
 
-        th {
-            background-color: #edf2f7;
-            color: #4a5568;
+        .task-code {
+            font-size: 0.75rem;
+            color: var(--text-sub);
+            font-weight: 600;
         }
 
-        .status-completed {
+        .task-title {
+            font-size: 0.95rem;
+            word-break: break-word;
+        }
+
+        .task-item.completed .task-title {
             text-decoration: line-through;
-            color: #a0aec0;
         }
 
-        .badge {
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: bold;
+        .task-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
-        .prio-1 { background-color: #fed7d7; color: #9b2c2c; } /* Alta */
-        .prio-2 { background-color: #feebc8; color: #9c4221; } /* Média */
-        .prio-3 { background-color: #c6f6d5; color: #22543d; } /* Baixa */
-
-        .btn-action {
-            padding: 5px 10px;
-            font-size: 12px;
-            margin-right: 5px;
+        .prio-select {
+            padding: 0.4rem;
+            font-size: 0.8rem;
         }
 
-        .btn-toggle {
-            background-color: #38a169;
+        .btn-status {
+            background: transparent;
+            border: 1px solid var(--accent-green);
+            color: var(--accent-green);
+            cursor: pointer;
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+            border-radius: 6px;
         }
 
-        .btn-toggle:hover {
-            background-color: #2f855a;
+        .task-item.completed .btn-status {
+            border-color: var(--text-sub);
+            color: var(--text-sub);
         }
 
-        .select-prio {
-            padding: 4px;
-            font-size: 12px;
-            width: auto;
+        .empty-state {
+            text-align: center;
+            color: var(--text-sub);
+            font-size: 0.9rem;
+            padding: 2rem 0;
         }
     </style>
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="style.css" rel="stylesheet"></head>
+</head>
 <body>
 
-<div class="container">
-    <h1>PROJETO - Gerenciador de Tarefas</h1>
+    <main-container>
+        <header>
+            <h1>SISTEMA DE TAREFAS</h1>
+        </header>
 
-    <!-- Formulário de Cadastro -->
-    <div class="form-container">
-        <h2>Cadastrar Nova Tarefa</h2>
-        <form id="taskForm">
-            <div class="form-group">
-                <label for="title">Título da Tarefa:</label>
-                <input type="text" id="title" placeholder="Ex: Estudar JavaScript">
-                <div id="titleError" class="error-message">O título deve ter no mínimo 5 caracteres.</div>
-            </div>
+        <!-- Formulário com Alertas de Validação -->
+        <section class="card">
+            <div id="errorBox" class="error-alert"></div>
 
-            <div class="form-group">
-                <label for="priority">Prioridade:</label>
-                <select id="priority">
-                    <option value="">Selecione...</option>
-                    <option value="1">1 - Alta</option>
-                    <option value="2">2 - Média</option>
-                    <option value="3">3 - Baixa</option>
-                </select>
-                <div id="priorityError" class="error-message">Selecione uma prioridade válida (entre 1 e 3).</div>
-            </div>
-
-            <button type="submit">Cadastrar Tarefa</button>
-        </form>
-    </div>
-
-    <!-- Listagem das Tarefas -->
-    <div class="list-header">
-        <h2>Tarefas Cadastradas</h2>
-    </div>
-
-    <table>
-        <thead>
-            <tr>
-                <th>Código</th>
-                <th>Título</th>
-                <th>Prioridade</th>
-                <th>Status</th>
-                <th>Ações</th>
-            </tr>
-        </thead>
-        <tbody id="taskList">
-            <!-- As tarefas serão inseridas aqui via JS -->
-        </tbody>
-    </table>
-</div>
-
-<script>
-    // Estrutura para armazenar as tarefas
-    let tasks = [];
-    let nextCode = 1;
-
-    // Elementos do DOM
-    const taskForm = document.getElementById('taskForm');
-    const titleInput = document.getElementById('title');
-    const priorityInput = document.getElementById('priority');
-    const titleError = document.getElementById('titleError');
-    const priorityError = document.getElementById('priorityError');
-    const taskList = document.getElementById('taskList');
-
-    // Regras de validação
-    function validateForm(title, priority) {
-        let isValid = true;
-
-        // Validação do título: mínimo 5 caracteres
-        if (!title || title.trim().length < 5) {
-            titleError.style.display = 'block';
-            isValid = false;
-        } else {
-            titleError.style.display = 'none';
-        }
-
-        // Validação da prioridade: valor entre 1 (alta) e 3 (baixa)
-        const prioVal = parseInt(priority, 10);
-        if (isNaN(prioVal) || prioVal < 1 || prioVal > 3) {
-            priorityError.style.display = 'block';
-            isValid = false;
-        } else {
-            priorityError.style.display = 'none';
-        }
-
-        return isValid;
-    }
-
-    // Função para Cadastrar Nova Tarefa
-    taskForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-
-        const title = titleInput.value;
-        const priority = priorityInput.value;
-
-        if (validateForm(title, priority)) {
-            const newTask = {
-                codigo: nextCode++,
-                titulo: title.trim(),
-                prioridade: parseInt(priority, 10),
-                concluida: false
-            };
-
-            tasks.push(newTask);
-            
-            // Resetar formulário
-            titleInput.value = '';
-            priorityInput.value = '';
-
-            // Atualizar listagem
-            renderTasks();
-        }
-    });
-
-    // Função para Alterar a Prioridade da Tarefa
-    function changePriority(code, newPriority) {
-        const task = tasks.find(t => t.codigo === code);
-        if (task) {
-            task.prioridade = parseInt(newPriority, 10);
-            renderTasks();
-        }
-    }
-
-    // Função para Marcar Tarefa como Concluída/Pendente
-    function toggleStatus(code) {
-        const task = tasks.find(t => t.codigo === code);
-        if (task) {
-            task.concluida = !task.concluida;
-            renderTasks();
-        }
-    }
-
-    // Função para Listar as Tarefas Cadastradas[cite: 1]
-    function renderTasks() {
-        taskList.innerHTML = '';
-
-        if (tasks.length === 0) {
-            taskList.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #718096;">Nenhuma tarefa cadastrada.</td></tr>';
-            return;
-        }
-
-        tasks.forEach(task => {
-            const row = document.createElement('tr');
-
-            // Formatação do Rótulo de Prioridade
-            let prioLabel = '';
-            if (task.prioridade === 1) prioLabel = '1 (Alta)';
-            else if (task.prioridade === 2) prioLabel = '2 (Média)';
-            else if (task.prioridade === 3) prioLabel = '3 (Baixa)';
-
-            row.innerHTML = `
-                <td>#${task.codigo}</td>
-                <td class="${task.concluida ? 'status-completed' : ''}">${task.titulo}</td>
-                <td>
-                    <select class="select-prio" onchange="changePriority(${task.codigo}, this.value)">
-                        <option value="1" ${task.prioridade === 1 ? 'selected' : ''}>1 (Alta)</option>
-                        <option value="2" ${task.prioridade === 2 ? 'selected' : ''}>2 (Média)</option>
-                        <option value="3" ${task.prioridade === 3 ? 'selected' : ''}>3 (Baixa)</option>
+            <form id="createTaskForm">
+                <div class="form-grid">
+                    <input type="text" id="taskTitle" placeholder="Título da tarefa (mín. 5 caracteres)..." required>
+                    
+                    <select id="taskPriority" required>
+                        <option value="1">1 - Alta</option>
+                        <option value="2" selected>2 - Média</option>
+                        <option value="3">3 - Baixa</option>
                     </select>
-                </td>
-                <td>
-                    <span class="badge ${task.concluida ? 'prio-3' : 'prio-1'}">
-                        ${task.concluida ? 'Concluída' : 'Pendente'}
-                    </span>
-                </td>
-                <td>
-                    <button class="btn-action btn-toggle" onclick="toggleStatus(${task.codigo})">
-                        ${task.concluida ? 'Refazer' : 'Concluir'}
-                    </button>
-                </td>
-            `;
 
-            taskList.appendChild(row);
+                    <button type="submit" class="btn-add">+ Criar Tarefa</button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Container da Lista -->
+        <section>
+            <h2>Tarefas Registadas</h2>
+            <div id="taskListContainer" class="task-list">
+                <!-- Inserido dinamicamente via JS -->
+            </div>
+        </section>
+    </main-container>
+
+    <script>
+        /**
+         * LÓGICA DO ALGORITMO COM PROGRAMAÇÃO REATIVA / MAP
+         */
+        
+        // Estado da aplicação
+        const state = {
+            tasks: new Map(), // Uso de Map em vez de Array
+            counter: 1001
+        };
+
+        // Elementos do DOM
+        const form = document.getElementById('createTaskForm');
+        const inputTitle = document.getElementById('taskTitle');
+        const selectPriority = document.getElementById('taskPriority');
+        const errorBox = document.getElementById('errorBox');
+        const container = document.getElementById('taskListContainer');
+
+        // Função de Validação[cite: 1]
+        function validateInputs(title, priority) {
+            const cleanTitle = title.trim();
+            const prioNum = Number(priority);
+
+            if (cleanTitle.length < 5) {
+                return 'O título da tarefa deve conter no mínimo 5 caracteres.';[cite: 1]
+            }
+
+            if (![1, 2, 3].includes(prioNum)) {
+                return 'Selecione uma prioridade válida entre 1 (alta) e 3 (baixa).';[cite: 1]
+            }
+
+            return null;
+        }
+
+        // Adicionar Tarefa[cite: 1]
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const title = inputTitle.value;
+            const priority = selectPriority.value;
+
+            const error = validateInputs(title, priority);
+
+            if (error) {
+                errorBox.textContent = error;
+                errorBox.style.display = 'block';
+                return;
+            }
+
+            errorBox.style.display = 'none';
+
+            // Criar objeto da tarefa
+            const code = state.counter++;
+            state.tasks.set(code, {
+                codigo: code,
+                titulo: title.trim(),
+                prioridade: Number(priority),
+                concluida: false
+            });
+
+            // Limpar formulário
+            inputTitle.value = '';
+            selectPriority.value = '2';
+
+            render();
         });
-    }
 
-    // Renderização inicial
-    renderTasks();
-</script>
-
-<script src="script.js"></script></body>
+        //
+  <script src="script.js"></script>
+  
+</body>
 </html>
