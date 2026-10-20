@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Revisão de JavaScript - Parte 1</title>
+    <style>
+        :root {
+            --primary: #f7df1e;
+            --dark: #222;
+            --light: #f4f4f9;
+            --text: #333;
+            --card-bg: #fff;
+            --border: #ddd;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background-color: var(--light);
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        header {
+            text-align: center;
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        h1 { margin: 0; color: var(--dark); }
+        h2 { color: var(--dark); border-left: 5px solid var(--primary); padding-left: 10px; margin-top: 30px; }
+        h3 { color: #444; }
+        ul { padding-left: 20px; }
+        li { margin-bottom: 8px; }
+        code { background: #eee; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 0.9em; }
+        .alert { background: #fff3cd; border-left: 5px solid #ffc107; padding: 15px; border-radius: 4px; margin: 20px 0; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { border: 1px solid var(--border); padding: 12px; text-align: left; }
+        th { background-color: #f8f9fa; }
+        @media (max-width: 600px) {
+            body { padding: 10px; }
+            .container { padding: 15px; }
+            table, thead, tbody, th, td, tr { display: block; }
+            th { text-align: right; }
+            td { text-align: right; position: relative; padding-left: 50px; }
+            td::before { content: attr(data-label); position: absolute; left: 10px; font-weight: bold; text-align: left; }
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>📝 Revisão de JavaScript (Parte 1)</h1>
+        <p>Resumo estruturado dos fundamentos essenciais</p>
+    </header>
+
+    <h2>1. Tipos de Dados e <code>typeof</code></h2>
+    <p>O JavaScript possui tipos dinâmicos para representar diferentes categorias de informação:</p>
+    <ul>
+        <li><strong>String:</strong> Textos delimitados por aspas simples, duplas ou crase.</li>
+        <li><strong>Number:</strong> Representa números inteiros (ex: <code>10</code>) e reais/decimais (ex: <code>10.5</code>) dentro da mesma categoria.</li>
+        <li><strong>Boolean:</strong> Valores lógicos: <code>true</code> (verdadeiro) ou <code>false</code> (falso).</li>
+        <li><strong>Undefined:</strong> Variável declarada, mas que ainda não recebeu nenhum valor.</li>
+        <li><strong>Null:</strong> Ausência intencional de valor. <em>(Nota: <code>typeof null</code> retorna <code>"object"</code> por motivos históricos).</em></li>
+        <li><strong>NaN (Not a Number):</strong> Uma condição do tipo número que ocorre quando uma operação matemática falha em gerar um número válido.</li>
+        <li><strong><code>typeof</code>:</strong> Operador usado para verificar o tipo de dado de uma variável ou valor.</li>
+    </ul>
+
+    <h2>2. Strings e Interpolação</h2>
+    <ul>
+        <li><strong>Crase (``):</strong> Permite a criação de <em>Template Strings</em>.</li>
+        <li><strong>Interpolação:</strong> A sintaxe <code>${variavel}</code> dentro de strings com crase insere dinamicamente o valor no texto. Se usada com aspas simples ou duplas, a sintaxe é lida apenas como texto literal.</li>
+    </ul>
+
+    <h2>3. Variáveis e Escopo (<code>var</code>, <code>let</code>, <code>const</code>)</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Modo</th>
+                <th>Escopo</th>
+                <th>Reatribuição</th>
+                <th>Comportamento / Recomendação</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td data-label="Modo"><strong><code>var</code></strong></td>
+                <td data-label="Escopo">Global/Função</td>
+                <td data-label="Reatribuição">Permitida</td>
+                <td data-label="Comportamento">Sofre içamento (hoisting) e foge de blocos. <strong>Evitar o uso.</strong></td>
+            </tr>
+            <tr>
+                <td data-label="Modo"><strong><code>let</code></strong></td>
+                <td data-label="Escopo">Bloco <code>{ }</code></td>
+                <td data-label="Reatribuição">Permitida</td>
+                <td data-label="Comportamento">Ideal para valores que precisam mudar. <strong>Recomendado.</strong></td>
+            </tr>
+            <tr>
+                <td data-label="Modo"><strong><code>const</code></strong></td>
+                <td data-label="Escopo">Bloco <code>{ }</code></td>
+                <td data-label="Reatribuição">Proibida</td>
+                <td data-label="Comportamento">Ideal para valores fixos (gera erro se reatribuída). <strong>Recomendado.</strong></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="alert">
+        <strong>⚠️ Aviso importante:</strong> Criar variáveis sem declarar <code>var</code>, <code>let</code> ou <code>const</code> é considerado uma prática inadequada.
+    </div>
+
+    <h2>4. Categorias de Operadores</h2>
+
+    <h3>Aritméticos (Cálculos)</h3>
+    <ul>
+        <li><strong>Básicos:</strong> Adição (<code>+</code>), Subtração (<code>-</code>), Multiplicação (<code>*</code>), Divisão (<code>/</code>).</li>
+        <li><strong>Avançados:</strong> Exponenciação (<code>**</code>) e Resto da divisão (<code>%</code>).</li>
+        <li><strong>Precedência:</strong> Multiplicações/divisões ocorrem antes de adições/subtrações. Use parênteses <code>( )</code> para modificar a ordem.</li>
+        <li><strong>Incremento (<code>++</code>) e Decremento (<code>--</code>):</strong> O pré-incremento altera o valor antes de ler a linha; o pós-incremento altera o valor após a leitura da linha.</li>
+    </ul>
+
+    <h3>Relacionais (Comparações)</h3>
+    <ul>
+        <li>Retornam sempre um valor booleano (<code>true</code> ou <code>false</code>).</li>
+        <li><strong>Igualdade Ampla (<code>==</code>):</strong> Compara apenas o valor (ex: <code>10 == "10"</code> é <code>true</code>).</li>
+        <li><strong>Igualdade Estrita (<code>===</code>):</strong> Compara o valor e o tipo de dado (ex: <code>10 === "10"</code> é <code>false</code>). <strong>Mais seguro e recomendado.</strong></td>
+        <li><strong>Outros:</strong> Diferença (<code>!=</code> e <code>!==</code>), Maior que (<code>&gt;</code>), Menor que (<code>&lt;</code>), Maior ou igual (<code>&gt;=</code>), Menor ou igual (<code>&lt;=</code>).</li>
+    </ul>
+
+    <h3>Lógicos (Combinações)</h3>
+    <ul>
+        <li><strong>E lógico (<code>&&</code>):</strong> Retorna verdadeiro apenas se todas as condições forem verdadeiras.</li>
+        <li><strong>OU lógico (<code>||</code>):</strong> Retorna verdadeiro se pelo menos uma condição for verdadeira.</li>
+        <li><strong>NOT lógico (<code>!</code>):</strong> Inverte o valor lógico atual.</li>
+    </ul>
+
+    <h2>5. Estruturas de Controle (Seleção)</h2>
+
+    <h3>Estrutura <code>if</code>, <code>else if</code> e <code>else</code></h3>
+    <p>Trabalha avaliando condições lógicas:</p>
+    <ul>
+        <li><strong><code>if</code>:</strong> Executa o bloco se a condição for verdadeira.</li>
+        <li><strong><code>else if</code>:</strong> Introduz uma nova condição caso as anteriores tenham falhado.</li>
+        <li><strong><code>else</code>:</strong> Bloco de escape executado apenas se nenhuma condição anterior for atendida.</li>
+    </ul>
+
+    <h3>Estrutura <code>switch case</code></h3>
+    <p>Trabalha comparando o valor exato de uma variável com múltiplos casos fixos:</p>
+    <ul>
+        <li><strong><code>case</code>:</strong> Cada um dos valores possíveis testados.</li>
+        <li><strong><code>break</code>:</strong> Comando obrigatório para impedir que o código continue executando os casos abaixo de forma involuntária.</li>
+        <li><strong><code>default</code>:</strong> Executado se o valor não corresponder a nenhum caso. O <code>break</code> aqui é opcional se colocado ao final.</li>
+    </ul>
+</div>
+
+</body>
+</html>
