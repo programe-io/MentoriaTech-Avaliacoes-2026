@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aura Verde | Sua energia em harmonia com a natureza</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2d5a27;
+            --secondary: #87a96b;
+            --light: #f4f7f2;
+            --dark: #1b2e18;
+            --accent: #d4af37;
+            --white: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: var(--white);
+            padding: 1.2rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: -0.5px;
+        }
+
+        .logo span {
+            color: var(--secondary);
+        }
+
+        .cart-btn {
+            background-color: var(--primary);
+            color: var(--white);
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.3s;
+        }
+
+        .cart-btn:hover {
+            background-color: var(--dark);
+        }
+
+        .hero {
+            background: linear-gradient(rgba(27, 46, 24, 0.6), rgba(27, 46, 24, 0.6)), url('https://images.unsplash.com/photo-1545241047-6083a3684587?auto=format&fit=crop&w=1200&q=80') no-repeat center center/cover;
+            color: var(--white);
+            text-align: center;
+            padding: 5rem 1rem;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto 2rem auto;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 3rem auto;
+            padding: 0 5%;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 2rem;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .product-card {
+            background: var(--white);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: transform 0.3s;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .product-img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+        }
+
+        .product-info {
+            padding: 1.5rem;
+        }
+
+        .product-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+
+        .product-desc {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        .product-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 1.5rem 1.5rem 1.5rem;
+        }
+
+        .product-price {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .btn-add {
+            background-color: var(--secondary);
+            color: var(--white);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .btn-add:hover {
+            background-color: var(--primary);
+        }
+
+        /* Modal do Carrinho / Checkout */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: var(--white);
+            width: 90%;
+            max-width: 500px;
+            padding: 2rem;
+            border-radius: 12px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #888;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .cart-total {
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-align: right;
+            margin: 1.5rem 0;
+            color: var(--primary);
+        }
+
+        .checkout-form input {
+            width: 100%;
+            padding: 0.8rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+        }
+
+        .btn-checkout {
+            width: 100%;
+            background-color: var(--primary);
+            color: var(--white);
+            border: none;
+            padding: 0.9rem;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-checkout:hover {
+            background-color: var(--dark);
+        }
+
+        footer {
+            background-color: var(--dark);
+            color: var(--white);
+            text-align: center;
+            padding: 2rem;
+            margin-top: 4rem;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+    <header>
+        <div class="logo">Aura <span>Verde</span></div>
+        <button class="cart-btn" onclick="openModal()">
+            🛒 Carrinho (<span id="cart-count">0</span>)
+        </button>
+    </header>
+
+    <section class="hero">
+        <h1>Sua energia em harmonia com a natureza</h1>
+        <p>Descubra plantas selecionadas, vasos artesanais e elementos vivos para transformar o seu lar em um verdadeiro refúgio verde.</p>
+    </section>
+
+    <div class="container">
+        <h2 class="section-title">Nossos Destaques</h2>
+        
+        <div class="products-grid">
+            <!-- Produto 1 -->
+            <div class="product-card">
+                <img src="https://images.unsplash.com/photo-1512428559087-560fa5ceab42?auto=format&fit=crop&w=500&q=80" alt="Kit Urban Jungle" class="product-img">
+                <div class="product-info">
+                    <h3 class="product-title">Kit Urban Jungle em Casa</h3>
+                    <p class="product-desc">Vaso de cerâmica sálvia, substrato orgânico, borrifador dourado e muda purificadora.</p>
+                </div>
+                <div class="product-footer">
+                    <span class="product-price">R$ 149,90</span>
+                    <button class="btn-add" onclick="addToCart('Kit Urban Jungle em Casa', 149.90)">Adicionar</button>
+                </div>
+            </div>
+
+            <!-- Produto 2 -->
+            <div class="product-card">
+                <img src="https://images.unsplash.com/photo-1599813898517-578f564758b2?auto=format&fit=crop&w=500&q=80" alt="Costela-de-Adão" class="product-img">
+                <div class="product-info">
+                    <h3 class="product-title">Costela-de-Adão (Monstera)</h3>
+                    <p class="product-desc">Planta de grande porte com folhas recortadas marcantes. Perfeita para cantos iluminados.</p>
+                </div>
+                <div class="product-footer">
+                    <span class="product-price">R$ 89,90</span>
+                    <button class="btn-add" onclick="addToCart('Costela-de-Adão (Monstera)', 89.90)">Adicionar</button>
+                </div>
+            </div>
+
+            <!-- Produto 3 -->
+            <div class="product-card">
+                <img src="https://images.unsplash.com/photo-1614594975525-e45190c55d0b?auto=format&fit=crop&w=500&q=80" alt="Vaso Artesanal Terracota" class="product-img">
+                <div class="product-info">
+                    <h3 class="product-title">Vaso Cônico Terracota</h3>
+                    <p class="product-desc">Feito à mão por artesãos locais com argila natural texturizada e excelente drenagem.</p>
+                </div>
+                <div class="product-footer">
+                    <span class="product-price">R$ 65,00</span>
+                    <button class="btn-add" onclick="addToCart('Vaso Cônico Terracota', 65.00)">Adicionar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal do Carrinho / Checkout -->
+    <div class="modal" id="cartModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <h2 style="color: var(--primary); margin-bottom: 1rem;">Seu Carrinho</h2>
+            
+            <div id="cart-items-container">
+                <p style="color: #666; text-align: center; padding: 1rem 0;">Seu carrinho está vazio.</p>
+            </div>
+
+            <div class="cart-total" id="cart-total-display" style="display: none;">
+                Total: R$ 0,00
+            </div>
+
+            <div id="checkout-section" style="display: none;">
+                <h3 style="margin: 1.5rem 0 1rem 0; font-size: 1.1rem; color: var(--dark);">Dados para Entrega</h3>
+                <div class="checkout-form">
+                    <input type="text" id="name" placeholder="Nome Completo">
+                    <input type="text" id="address" placeholder="Endereço de Entrega (Rua, Número, Bairro)">
+                    <input type="text" id="cep" placeholder="CEP">
+                    <button class="btn-checkout" onclick="finalizeOrder()">Finalizar Compra via PIX/Cartão</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Aura Verde. Todos os direitos reservados. Feito com 🌱 para amantes da natureza.</p>
+    </footer>
+
+    <script>
+        let cart = [];
+
+        function openModal() {
+            document.getElementById('cartModal').style.display = 'flex';
+            renderCart();
+        }
+
+        function closeModal() {
+            document.getElementById('cartModal').style.display = 'none';
+        }
+
+        function addToCart(name, price) {
+            const existingItem = cart.find(item => item.name === name);
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({ name, price, quantity: 1 });
+            }
+            updateCartCount();
+            alert(`${name} adicionado ao carrinho!`);
+        }
+
+        function updateCartCount() {
+            const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+            document.getElementById('cart-count').innerText = totalCount;
+        }
+
+        function renderCart() {
+            const container = document.getElementById('cart-items-container');
+            const totalDisplay = document.getElementById('cart-total-display');
+            const checkoutSection = document.getElementById('checkout-section');
+
+            if (cart.length === 0) {
+                container.innerHTML = '<p style="color: #666; text-align: center; padding: 1rem 0;">Seu carrinho está vazio.</p>';
+                totalDisplay.style.display = 'none';
+                checkoutSection.style.display = 'none';
+                return;
+            }
+
+            let html = '';
+            let total = 0;
+
+            cart.forEach((item, index) => {
+                let subtotal = item.price * item.quantity;
+                total += subtotal;
+                html += `
+                    <div class="cart-item">
+                        <div>
+                            <strong>${item.name}</strong><br>
+                            <small>Qtd: ${item.quantity} x R$ ${item.price.toFixed(2).replace('.', ',')}</small>
+                        </div>
+                        <div>
+                            <span>R$ ${subtotal.toFixed(2).replace('.', ',')}</span>
+                            <button onclick="removeItem(${index})" style="background: none; border: none; color: #cc0000; cursor: pointer; margin-left: 10px;">Remover</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+            totalDisplay.innerText = `Total: R$ ${total.toFixed(2).replace('.', ',')}`;
+            totalDisplay.style.display = 'block';
+            checkoutSection.style.display = 'block';
+        }
+
+        function removeItem(index) {
+            cart.splice(index, 1);
+            updateCartCount();
+            renderCart();
+        }
+
+        function finalizeOrder() {
+            const name = document.getElementById('name').value;
+            const address = document.getElementById('address').value;
+            const cep = document.getElementById('cep').value;
+
+            if (!name || !address || !cep) {
+                alert('Por favor, preencha todos os campos de entrega para finalizar a compra.');
+                return;
+            }
+
+            alert(`Parabéns, ${name}! Sua compra na Aura Verde foi realizada com sucesso. Os detalhes do pedido e o código PIX foram enviados para o seu fluxo de atendimento.`);
+            cart = [];
+            updateCartCount();
+            closeModal();
+        }
+    </script>
+<script src="script.js"></script></body>
+</html>
