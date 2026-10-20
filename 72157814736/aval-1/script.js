@@ -1,161 +1,233 @@
-// ==========================================
-// 3 e 4. Estrutura dos dados e Lista de Produtos
-// ==========================================
-// O array que vai armazenar todos os nossos objetos de produto
+/* ==========================================================================
+   3. Estrutura dos dados do produto & 4. Criação da lista de produtos (Array)
+   ========================================================================== */
+// Array global que armazenará todos os objetos de produtos
 const listaProdutos = [];
 
-// ==========================================
-// 6, 7, 8 e 9. Funções para Validar Produto
-// ==========================================
+// Controle de autoincremento para o ID (12. Geração automática do código)
+let proximoCodigo = 1001;
+
+
+/* ==========================================================================
+   5. Organização do projeto em funções: 
+   6. Função para validar produto (7, 8 e 9)
+   ========================================================================== */
+
+/**
+ * 7. Validação da descrição
+ * @param {string} descricao - Nome/descrição do produto
+ * @returns {boolean} - Retorna true se for válida (mínimo 3 caracteres não vazios)
+ */
 function validarDescricao(descricao) {
-    // Verifica se a descrição existe e se não está vazia (removendo espaços em branco)
-    return typeof descricao === 'string' && descricao.trim().length > 0;
+    return typeof descricao === 'string' && descricao.trim().length >= 3;
 }
 
+/**
+ * 8. Validação da quantidade
+ * @param {number} quantidade - Quantidade em estoque
+ * @returns {boolean} - Retorna true se for um número inteiro maior ou igual a zero
+ */
 function validarQuantidade(quantidade) {
-    // Verifica se é um número, se é inteiro e se é maior ou igual a zero
-    return typeof quantidade === 'number' && Number.isInteger(quantidade) && quantidade >= 0;
+    const qtdNum = Number(quantidade);
+    return !isNaN(qtdNum) && Number.isInteger(qtdNum) && qtdNum >= 0;
 }
 
+/**
+ * 9. Validação do valor
+ * @param {number} valor - Preço unitário do produto
+ * @returns {boolean} - Retorna true se for um número válido e maior que zero
+ */
 function validarValor(valor) {
-    // Verifica se é um número e se é maior que zero
-    return typeof valor === 'number' && valor > 0;
+    const valorNum = Number(valor);
+    return !isNaN(valorNum) && valorNum > 0;
 }
 
-function validarProduto(descricao, quantidade, valor) {
-    if (!validarDescricao(descricao)) {
-        console.error("Erro: Descrição inválida. Não pode ser vazia.");
-        return false;
-    }
-    if (!validarQuantidade(quantidade)) {
-        console.error("Erro: Quantidade inválida. Deve ser um número inteiro maior ou igual a zero.");
-        return false;
-    }
-    if (!validarValor(valor)) {
-        console.error("Erro: Valor inválido. Deve ser maior que zero.");
-        return false;
-    }
-    return true;
+/**
+ * 6. Função agregadora para validar o produto completo
+ */
+function validarProdutoCompleto(descricao, quantidade, valor) {
+    const erros = [];
+
+    if (!validarDescricao(descricao)) erros.push("Descrição inválida (mínimo 3 caracteres).");
+    if (!validarQuantidade(quantidade)) erros.push("Quantidade inválida (deve ser um número inteiro maior ou igual a zero).");
+    if (!validarValor(valor)) erros.push("Valor inválida (deve ser maior que zero).");
+
+    return {
+        valido: erros.length === 0,
+        erros: erros
+    };
 }
 
-// ==========================================
-// 12. Geração automática do código do produto
-// ==========================================
-function gerarCodigoProduto() {
-    // Gera um ID simples baseado no tamanho atual da lista + 1
-    return listaProdutos.length + 1;
-}
 
-// ==========================================
-// 10, 11 e 13. Função para Cadastrar Produto
-// ==========================================
+/* ==========================================================================
+   10. Função para cadastrar produto (11, 12 e 13)
+   ========================================================================== */
+
+/**
+ * Cadastra um novo produto na lista após passar pelas validações
+ */
 function cadastrarProduto(descricao, quantidade, valor) {
-    // Valida os dados antes de prosseguir
-    if (!validarProduto(descricao, quantidade, valor)) {
-        return null; 
+    // Executa as validações do produto
+    const validacao = validarProdutoCompleto(descricao, quantidade, valor);
+
+    if (!validacao.valido) {
+        console.error("⚠️ Erro no cadastro:", validacao.erros.join(" | "));
+        return { sucesso: false, erros: validacao.erros };
     }
 
-    // 11. Criação do objeto produto
+    // 11. Criação do objeto produto & 12. Geração automática do código do produto
     const novoProduto = {
-        codigo: gerarCodigoProduto(),
+        codigo: proximoCodigo++, // Atribui o código atual e incrementa para o próximo
         descricao: descricao.trim(),
-        quantidade: quantidade,
-        valor: valor
+        quantidade: parseInt(quantidade),
+        valor: parseFloat(valor)
     };
 
     // 13. Adição de produtos ao array
     listaProdutos.push(novoProduto);
-    console.log(`Sucesso: Produto "${novoProduto.descricao}" cadastrado com ID ${novoProduto.codigo}.`);
-    return novoProduto;
+    
+    console.log(`✅ Produto "#${novoProduto.codigo} - ${novoProduto.descricao}" cadastrado com sucesso!`);
+    return { sucesso: true, produto: novoProduto };
 }
 
-// ==========================================
-// 14. Função para Listar Produtos
-// ==========================================
+
+/* ==========================================================================
+   14. Função para listar produtos
+   ========================================================================== */
+
+/**
+ * Exibe todos os produtos cadastrados de forma organizada
+ */
 function listarProdutos() {
+    console.log("\n=================== 14. LISTA DE PRODUTOS ===================");
+    
     if (listaProdutos.length === 0) {
-        console.log("A lista de produtos está vazia.");
+        console.log("Nenhum produto cadastrado no sistema.");
+        console.log("=============================================================");
         return;
     }
-    
-    console.log("--- LISTA DE PRODUTOS ---");
-    listaProdutos.forEach(prod => {
-        console.log(`ID: ${prod.codigo} | ${prod.descricao} | Qtd: ${prod.quantidade} | Preço: R$ ${prod.valor.toFixed(2)}`);
+
+    listaProdutos.forEach(produto => {
+        const totalEstoque = (produto.quantidade * produto.valor).toFixed(2);
+        console.log(
+            `Cód: #${produto.codigo} | ` +
+            `Prod: ${produto.descricao.padEnd(20, ' ')} | ` +
+            `Qtd: ${String(produto.quantidade).padStart(4, ' ')} | ` +
+            `Preço: R$ ${produto.valor.toFixed(2).padStart(8, ' ')} | ` +
+            `Total: R$ ${totalEstoque}`
+        );
     });
+    console.log("=============================================================");
 }
 
-// ==========================================
-// 17 e 18. Busca de produto com find e Tratamento
-// ==========================================
-function buscarProdutoPorId(id) {
-    // Procura o produto que possui o código correspondente
-    const produtoEncontrado = listaProdutos.find(prod => prod.codigo === id);
+
+/* ==========================================================================
+   17. Busca de produto com find & 18. Tratamento de produto não encontrado
+   ========================================================================== */
+
+/**
+ * Busca um produto específico utilizando o método find do Array
+ * @param {number} codigo - Código gerado automaticamente
+ */
+function buscarProdutoPorCodigo(codigo) {
+    const codProcurado = parseInt(codigo);
+    
+    // 17. Busca de produto com find
+    const produtoEncontrado = listaProdutos.find(p => p.codigo === codProcurado);
 
     // 18. Tratamento de produto não encontrado
     if (!produtoEncontrado) {
-        console.warn(`Aviso: Produto com ID ${id} não foi encontrado.`);
+        console.warn(`❌ Erro: Produto com o código #${codigo} não foi encontrado.`);
         return null;
     }
 
     return produtoEncontrado;
 }
 
-// ==========================================
-// 16. Função para atualizar o valor do produto
-// ==========================================
-function atualizarValorProduto(id, novoValor) {
-    const produto = buscarProdutoPorId(id);
+
+/* ==========================================================================
+   16, 19 e 20. Funções de Atualização e Diferenças de Lógica
+   ========================================================================== */
+
+/**
+ * 16. Função para atualizar o valor do produto
+ * Regra: Substitui completamente o valor antigo pelo novo.
+ */
+function atualizarValorProduto(codigo, novoValor) {
+    if (!validarValor(novoValor)) {
+        console.error("⚠️ Erro: Novo preço inválido.");
+        return false;
+    }
+
+    const produto = buscarProdutoPorCodigo(codigo);
     
     if (produto) {
-        if (validarValor(novoValor)) {
-            produto.valor = novoValor;
-            console.log(`Sucesso: Preço do produto ID ${id} atualizado para R$ ${novoValor.toFixed(2)}.`);
-        } else {
-            console.error("Erro: Novo valor inválido.");
-        }
+        const valorAntigo = produto.valor;
+        // 20. Diferença: Aqui ocorre uma ATRIBUIÇÃO DIRETA (substituição)
+        produto.valor = parseFloat(novoValor); 
+        console.log(`🔄 Preço atualizado (#${codigo}): De R$ ${valorAntigo.toFixed(2)} para R$ ${produto.valor.toFixed(2)}`);
+        return true;
     }
+    return false;
 }
 
-// ==========================================
-// 19 e 20. Atualizar quantidade (Somar quantidade)
-// ==========================================
-// Diferença: Alterar o valor substitui o preço antigo. 
-// Somar a quantidade adiciona novos itens ao estoque atual (estoque antigo + entrada).
-function somarQuantidadeProduto(id, quantidadeParaAdicionar) {
-    const produto = buscarProdutoPorId(id);
+/**
+ * 19. Função para atualizar a quantidade do produto
+ * Regra: Soma uma nova quantidade ao estoque já existente.
+ */
+function somarQuantidadeEstoque(codigo, quantidadeParaAdicionar) {
+    const qtdSoma = parseInt(quantidadeParaAdicionar);
     
-    if (produto) {
-        if (typeof quantidadeParaAdicionar === 'number' && Number.isInteger(quantidadeParaAdicionar) && quantidadeParaAdicionar > 0) {
-            produto.quantidade += quantidadeParaAdicionar;
-            console.log(`Sucesso: Foram adicionadas ${quantidadeParaAdicionar} unidades ao produto ID ${id}. Nova quantidade: ${produto.quantidade}.`);
-        } else {
-            console.error("Erro: Quantidade a ser adicionada deve ser um número inteiro positivo.");
-        }
+    if (isNaN(qtdSoma) || qtdSoma <= 0) {
+        console.error("⚠️ Erro: A quantidade para somar deve ser um número inteiro positivo.");
+        return false;
     }
+
+    const produto = buscarProdutoPorCodigo(codigo);
+
+    if (produto) {
+        const qtdAntiga = produto.quantidade;
+        // 20. Diferença: Aqui ocorre uma OPERAÇÃO ADITIVA (+=), preservando e somando ao estoque antigo
+        produto.quantidade += qtdSoma; 
+        console.log(`📦 Estoque atualizado (#${codigo}): Adicionado +${qtdSoma}. Total foi de ${qtdAntiga} para ${produto.quantidade} unidades.`);
+        return true;
+    }
+    return false;
 }
 
-// ==========================================
-// 15. Testando o cadastro e a listagem (Console)
-// ==========================================
-console.log("--- INICIANDO TESTES ---");
 
-// Cadastros válidos
-cadastrarProduto("Teclado Mecânico", 10, 250.00);
-cadastrarProduto("Mouse Gamer", 15, 120.50);
-cadastrarProduto("Monitor 24' IPS", 5, 899.90);
+/* ==========================================================================
+   15. Testando o cadastro e a listagem (Ambiente de Testes)
+   ========================================================================== */
+function executarTestesDoSistema() {
+    console.log("🚀 Iniciando testes do sistema de produtos...");
 
-// Tentativa de cadastro inválido (vai falhar na validação)
-cadastrarProduto("", 5, 50); // Descrição vazia
+    // 1. Testando Cadastros Válidos
+    cadastrarProduto("Notebook Pro 15", 10, 4500.00);
+    cadastrarProduto("Mouse Sem Fio", 50, 89.90);
+    cadastrarProduto("Monitor UltraWide", 5, 1299.00);
 
-// Listando após cadastros
-listarProdutos();
+    // 2. Testando Validações (Devem falhar e disparar erros controlados)
+    cadastrarProduto("Ab", 5, 10.00);        // Descrição curta demais (Erro tópico 7)
+    cadastrarProduto("Teclado", -2, 150.00);  // Quantidade negativa (Erro tópico 8)
+    cadastrarProduto("Webcam", 10, 0);        // Preço zero (Erro tópico 9)
 
-// Testando atualizações
-atualizarValorProduto(1, 230.00); // Muda o valor de 250 para 230
-somarQuantidadeProduto(2, 5);     // Soma 5 unidades ao mouse (15 + 5 = 20)
+    // 3. Listagem Inicial
+    listarProdutos();
 
-// Buscando um produto inexistente para testar o tratamento de erro
-buscarProdutoPorId(99);
+    // 4. Testando Busca com Find bem-sucedida e Tratamento de Erro
+    console.log("\n🔍 Testando buscas:");
+    const prodExistente = buscarProdutoPorCodigo(1001); // Deve achar o Notebook
+    const prodInexistente = buscarProdutoPorCodigo(9999); // Não deve achar nada
 
-// Listando o resultado final para conferir as alterações
-listarProdutos();
+    // 5. Testando Atualizações (Demonstrando a diferença do Tópico 20)
+    console.log("\n⚡ Testando atualizações:");
+    atualizarValorProduto(1001, 4299.90);      // Altera o preço de 4500.00 para 4299.90
+    somarQuantidadeEstoque(1001, 5);           // Soma +5 às 10 unidades existentes (Total = 15)
+
+    // 6. Listagem Final com dados modificados
+    listarProdutos();
+}
+
+// Executa a rotina automática de testes ao carregar o script
+executarTestesDoSistema();

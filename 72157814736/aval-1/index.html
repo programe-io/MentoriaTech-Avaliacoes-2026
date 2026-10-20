@@ -8,90 +8,303 @@
 <link href="style.css" rel="stylesheet">
 </head>
 <body>
-  /* Configurações Globais */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
+  <!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciador de Produtos</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --background: #f3f4f6;
+            --surface: #ffffff;
+            --text: #1f2937;
+            --border: #e5e7eb;
+            --error: #ef4444;
+        }
 
-body {
-    background-color: #f4f7f6;
-    color: #333;
-    padding: 40px 20px;
-    display: flex;
-    justify-content: center;
-}
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+        }
 
-/* Container do Cronograma */
-.roadmap-container {
-    max-width: 800px;
-    width: 100%;
-    background: #ffffff;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-}
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
 
-.roadmap-title {
-    font-size: 24px;
-    color: #1a365d;
-    margin-bottom: 25px;
-    border-bottom: 2px solid #e2e8f0;
-    padding-bottom: 10px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
 
-/* Lista de Tópicos */
-.roadmap-list {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
 
-/* Item Individual */
-.roadmap-item {
-    display: flex;
-    align-items: center;
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-left: 5px solid #3182ce; /* Detalhe azul na lateral esquerda */
-    border-radius: 6px;
-    padding: 14px 18px;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
+        @media (max-width: 768px) {
+            .grid { grid-template-columns: 1fr; }
+        }
 
-/* Efeito ao passar o mouse */
-.roadmap-item:hover {
-    transform: translateX(5px);
-    box-shadow: 0 4px 10px rgba(49, 130, 206, 0.1);
-    background: #fff;
-}
+        .card {
+            background: var(--surface);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
 
-/* Número do Módulo */
-.roadmap-number {
-    background: #ebf8ff;
-    color: #2b6cb0;
-    font-weight: bold;
-    min-width: 35px;
-    height: 35px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    margin-right: 15px;
-    font-size: 14px;
-}
+        h2 {
+            margin-top: 0;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 10px;
+            font-size: 1.25rem;
+        }
 
-/* Texto do Tópico */
-.roadmap-text {
-    font-size: 16px;
-    font-weight: 500;
-    color: #2d3748;
-}
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-secundario {
+            background-color: #6b7280;
+            margin-top: 5px;
+        }
+        .btn-secundario:hover { background-color: #4b5563; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th { background-color: #f9fafb; }
+
+        .error-msg {
+            color: var(--error);
+            font-size: 0.85rem;
+            margin-top: 5px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Sistema de Gestão de Produtos</h1>
+        <p>Projeto Estruturado em Funções e Validações</p>
+    </header>
+
+    <div class="grid">
+        <!-- 10. Função para cadastrar produto -->
+        <div class="card">
+            <h2>Cadastro de Produto</h2>
+            <form id="formCadastro">
+                <div class="form-group">
+                    <label for="desc">Descrição do Produto</label>
+                    <input type="text" id="desc" placeholder="Ex: Teclado Mecânico">
+                    <div id="err-desc" class="error-msg">Descrição inválida (mínimo 3 caracteres).</div>
+                </div>
+                <div class="form-group">
+                    <label for="qtd">Quantidade</label>
+                    <input type="number" id="qtd" placeholder="Ex: 10" min="0">
+                    <div id="err-qtd" class="error-msg">Quantidade deve ser um número maior que zero.</div>
+                </div>
+                <div class="form-group">
+                    <label for="valor">Valor Unitário (R$)</label>
+                    <input type="number" id="valor" placeholder="Ex: 250.00" step="0.01" min="0">
+                    <div id="err-valor" class="error-msg">Valor deve ser maior que zero.</div>
+                </div>
+                <button type="submit">Cadastrar Produto</button>
+            </form>
+        </div>
+
+        <!-- 17. Busca e Atualização -->
+        <div class="card">
+            <h2>Operações e Consultas</h2>
+            <div class="form-group">
+                <label for="buscaCodigo">Código do Produto</label>
+                <input type="number" id="buscaCodigo" placeholder="Digite o código para buscar/atualizar">
+            </div>
+            <button onclick="buscarEExibir()" class="btn-secundario">Buscar com Find</button>
+            
+            <div id="areaAtualizacao" style="margin-top: 20px; display: none; padding-top: 15px; border-top: 1px dashed var(--border);">
+                <p><strong>Produto Encontrado: <span id="nomeProdEncontrado"></span></strong></p>
+                <div class="form-group">
+                    <label for="novoValor">16. Atualizar Valor (Substitui o antigo)</label>
+                    <input type="number" id="novoValor" step="0.01" placeholder="Novo preço">
+                    <button onclick="atualizarPreco()" style="margin-top: 5px;">Atualizar Preço</button>
+                </div>
+                <div class="form-group">
+                    <label for="somarQtd">19. Somar Quantidade (Adiciona ao estoque)</label>
+                    <input type="number" id="somarQtd" placeholder="Quantidade a adicionar">
+                    <button onclick="atualizarEstoque()" style="margin-top: 5px;">Somar Estoque</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 14. Função para listar produtos -->
+    <div class="card" style="margin-top: 20px;">
+        <h2>14. Listagem de Produtos</h2>
+        <div style="overflow-x: auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Descrição</th>
+                        <th>Qtd. Estoque</th>
+                        <th>Valor Unitário</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody id="tabelaProdutos">
+                    <!-- Inserção automática via JS -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 3. Estrutura dos dados & 4. Criação da lista de produtos (Array)
+    let listaProdutos = [];
+    let proximoCodigo = 1001; // 12. Geração automática do código
+
+    // 5. Organização do projeto em funções
+    
+    // 6. Funções para validar produto (7, 8 e 9)
+    function validarDescricao(desc) {
+        return desc.trim().length >= 3;
+    }
+
+    function validarQuantidade(qtd) {
+        return !isNaN(qtd) && idNumeroInteiro(qtd) && Number(qtd) > 0;
+    }
+
+    function idNumeroInteiro(n) {
+        return Number(n) % 1 === 0;
+    }
+
+    function validarValor(valor) {
+        return !isNaN(valor) && Number(valor) > 0;
+    }
+
+    // 10. Função para cadastrar produto
+    document.getElementById('formCadastro').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const descInput = document.getElementById('desc').value;
+        const qtdInput = document.getElementById('qtd').value;
+        const valorInput = document.getElementById('valor').value;
+
+        // Resetar erros visuais
+        document.querySelectorAll('.error-msg').forEach(el => el.style.display = 'none');
+
+        // Executar validações
+        let valido = true;
+        if (!validarDescricao(descInput)) { document.getElementById('err-desc').style.display = 'block'; valido = false; }
+        if (!validarQuantidade(qtdInput)) { document.getElementById('err-qtd').style.display = 'block'; valido = false; }
+        if (!validarValor(valorInput)) { document.getElementById('err-valor').style.display = 'block'; valido = false; }
+
+        if (!valido) return;
+
+        // 11. Criação do objeto produto & 12. Código automático
+        const novoProduto = {
+            codigo: proximoCodigo++,
+            descricao: descInput,
+            quantidade: parseInt(qtdInput),
+            valor: parseFloat(valorInput)
+        };
+
+        // 13. Adição de produtos ao array
+        listaProdutos.push(novoProduto);
+        
+        // Limpar formulário e atualizar tela
+        document.getElementById('formCadastro').reset();
+        listarProdutos();
+        alert('Produto cadastrado com sucesso!');
+    });
+
+    // 14. Função para listar produtos
+    function listarProdutos() {
+        const tbody = document.getElementById('tabelaProdutos');
+        tbody.innerHTML = '';
+
+        if (listaProdutos.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Nenhum produto cadastrado.</td></tr>';
+            return;
+        }
+
+        listaProdutos.forEach(prod => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><strong>#${prod.codigo}</strong></td>
+                <td>${prod.descricao}</td>
+                <td>${prod.quantidade}</td>
+                <td>R$ ${prod.valor.toFixed(2)}</td>
+                <td>R$ ${(prod.quantidade * prod.valor).toFixed(2)}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    // 17. Busca de produto com find
+    function buscarEExibir() {
+        const codigoBusca = parseInt(document.getElementById('buscaCodigo').value);
+        
+        // Método find para buscar no array
+        const produto = listaProdutos.find(p => p.codigo === codigoBusca);
+
+        // 18. Tratamento de produto não encontrado
+        if (!produto) {
+            alert('Erro: Produto não encontrado com o código fornecido!');
+            document.getElementById('areaAtualizacao').style.display = 'none';
+            return;
+        }
+
+        // Se encontrado, exibe a área de edição
 
   <script src="script.js"></script>
   
