@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manipulação do DOM - Exemplo Prático</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #f4f4f9;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            max-width: 500px;
+        }
+        .botoes {
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 10px 15px;
+            margin-right: 5px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .btn-add { background-color: #28a745; color: white; }
+        .btn-pre { background-color: #17a2b8; color: white; }
+        .btn-rem { background-color: #dc3545; color: white; }
+        
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            background: #e9ecef;
+            padding: 10px;
+            margin-bottom: 5px;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .btn-excluir {
+            background: #ffc107;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+    <div class="container">
+        <h2>Lista de Tarefas Dinâmica</h2>
+        
+        <div class="botoes">
+            <!-- Tópicos 3, 4, 5 e 7 -->
+            <button class="btn-add" onclick="adicionarNoFinal()">AppendChild (Final)</button>
+            <button class="btn-pre" onclick="adicionarNoInicio()">Prepend (Início)</button>
+            <!-- Tópico 8 -->
+            <button class="btn-rem" onclick="removerUltimoFilho()">RemoveChild (Último)</button>
+        </div>
+
+        <ul id="lista-tarefas">
+            <li>Item Base Original</li>
+        </ul>
+    </div>
+
+    <script>
+        let contador = 1;
+
+        // Função auxiliar para criar a estrutura (Tópicos 3, 4 e 6)
+        function criarNovoItem() {
+            // Tópico 3: Criando o elemento <li>
+            const novoItem = document.createElement("li"); 
+            
+            // Tópico 4: Criando o texto interno do item
+            const textoItem = document.createTextNode(`Tarefa Dinâmica #${contador++}`); 
+            novoItem.appendChild(textoItem);
+
+            // Tópico 6 e 9: Criando um botão dentro do <li> para remover o próprio elemento
+            const botaoExcluir = document.createElement("button");
+            botaoExcluir.innerText = "Remover (remove)";
+            botaoExcluir.className = "btn-excluir";
+            
+            // Tópico 9: Método .remove() faz o elemento apagar a si mesmo
+            botaoExcluir.onclick = function() {
+                novoItem.remove(); 
+            };
+
+            novoItem.appendChild(botaoExcluir);
+            return novoItem;
+        }
+
+        // Tópico 5: Adiciona o elemento no final da lista
+        function adicionarNoFinal() {
+            const lista = document.getElementById("lista-tarefas");
+            const novoElemento = criarNovoItem();
+            lista.appendChild(novoElemento); 
+        }
+
+        // Tópico 7: Adiciona o elemento no início da lista (Diferença para o appendChild)
+        function adicionarNoInicio() {
+            const lista = document.getElementById("lista-tarefas");
+            const novoElemento = criarNovoItem();
+            lista.prepend(novoElemento); 
+        }
+
+        // Tópico 8 e 10: Remove um nó específico a partir do elemento pai
+        function removerUltimoFilho() {
+            const lista = document.getElementById("lista-tarefas");
+            
+            // Verifica se a lista tem filhos antes de tentar remover
+            if (lista.lastElementChild) {
+                lista.removeChild(lista.lastElementChild); 
+            } else {
+                alert("Não há mais itens para remover com removeChild!");
+            }
+        }
+    </script>
+
+<script src="script.js"></script></body>
+</html>
