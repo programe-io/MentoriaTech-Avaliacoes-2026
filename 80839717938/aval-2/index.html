@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Conecta — Feed</title>
+<link rel="stylesheet" href="styles.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+<!-- ============ BARRA SUPERIOR ============ -->
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="logo" href="#">Conecta</a>
+    <input class="search" type="search" placeholder="Pesquisar no Conecta..." aria-label="Pesquisar">
+    <div class="topbar-right">
+      <div class="avatar" style="width:36px;height:36px;font-size:14px;background:#1877f2">VC</div>
+    </div>
+  </div>
+</header>
+
+<!-- ============ LAYOUT ============ -->
+<main class="layout">
+
+  <!-- Sidebar esquerda -->
+  <aside class="sidebar">
+    <nav class="nav">
+      <a class="nav-item active" href="#"><span class="ico">🏠</span><span>Início</span></a>
+      <a class="nav-item" href="#"><span class="ico">🔍</span><span>Explorar</span></a>
+      <a class="nav-item" href="#"><span class="ico">🔔</span><span>Notificações</span></a>
+      <a class="nav-item" href="#"><span class="ico">✉️</span><span>Mensagens</span></a>
+      <a class="nav-item" href="#"><span class="ico">🔖</span><span>Salvos</span></a>
+      <a class="nav-item" href="#"><span class="ico">👤</span><span>Meu perfil</span></a>
+    </nav>
+  </aside>
+
+  <!-- Feed -->
+  <section class="feed-col">
+
+    <!-- Composer -->
+    <div class="card composer">
+      <div class="composer-top">
+        <div class="avatar" style="width:44px;height:44px;font-size:16px;background:#1877f2">VC</div>
+        <textarea id="composer-input" rows="1" placeholder="No que você está pensando?" aria-label="Escreva uma publicação"></textarea>
+      </div>
+      <div class="composer-actions">
+        <div class="composer-tools">
+          <button type="button" class="tool" data-tool="foto">📷 Foto</button>
+          <button type="button" class="tool" data-tool="sentimento">😊 Sentimento</button>
+        </div>
+        <button type="button" id="publish" class="btn-primary" disabled>Publicar</button>
+      </div>
+    </div>
+
+    <!-- Posts -->
+    <div id="feed" class="feed"></div>
+  </section>
+
+  <!-- Sidebar direita -->
+  <aside class="rightbar">
+    <div class="card side-card">
+      <h2>Sugestões para você</h2>
+      <ul class="people">
+        <li class="person">
+          <div class="avatar" style="width:38px;height:38px;font-size:14px;background:#00b894">JS</div>
+          <div class="person-info">
+            <span class="person-name">Julia Souza</span>
+            <span class="person-sub">12 amigos em comum</span>
+          </div>
+          <button type="button" class="btn-follow">Seguir</button>
+        </li>
+        <li class="person">
+          <div class="avatar" style="width:38px;height:38px;font-size:14px;background:#e17055">TM</div>
+          <div class="person-info">
+            <span class="person-name">Thiago Martins</span>
+            <span class="person-sub">8 amigos em comum</span>
+          </div>
+          <button type="button" class="btn-follow">Seguir</button>
+        </li>
+        <li class="person">
+          <div class="avatar" style="width:38px;height:38px;font-size:14px;background:#8e44ad">CA</div>
+          <div class="person-info">
+            <span class="person-name">Camila Andrade</span>
+            <span class="person-sub">5 amigos em comum</span>
+          </div>
+          <button type="button" class="btn-follow">Seguir</button>
+        </li>
+      </ul>
+    </div>
+
+    <div class="card side-card">
+      <h2>Assuntos do momento</h2>
+      <ul class="trends">
+        <li><a class="trend" href="#"><span class="trend-tag">#JavaScript</span><span class="trend-count">12,4 mil publicações</span></a></li>
+        <li><a class="trend" href="#"><span class="trend-tag">#CaféDaManhã</span><span class="trend-count">8,1 mil publicações</span></a></li>
+        <li><a class="trend" href="#"><span class="trend-tag">#FrontEnd</span><span class="trend-count">5,7 mil publicações</span></a></li>
+        <li><a class="trend" href="#"><span class="trend-tag">#Viagem</span><span class="trend-count">3,2 mil publicações</span></a></li>
+      </ul>
+    </div>
+  </aside>
+
+</main>
+
+<!-- Toast -->
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* =========================================================
+     DADOS
+     ========================================================= */
+  let nextId = 100;
+
+  const posts = [
+    {
+      id: 1,
+      author: { name: "Marina Costa", handle: "@marinacosta", color: "#6c5ce7" },
+      time: "há 12 min",
+      text: "Finalmente terminei o redesign do app da equipe! 🎉\nForam 3 semanas de muito café, protótipos e testes com usuários. O resultado ficou acima do que eu esperava.",
+      photo: null,
+      likes: 128,
+      liked: false,
+      comments: [
+        { author: "Lucas Almeida", color: "#00b894", text: "Parabéns, Marina! Ficou incrível 👏" },
+        { author: "Beatriz Rocha", color: "#e17055", text: "Manda o link que eu quero testar!" }
+      ]
+    },
+    {
+      id: 2,
+      author: { name: "Rafael Lima", handle: "@rafalima", color: "#0984e3" },
+      time: "há 1 h",
+      text: "Fim de semana na serra. Não precisava de mais nada além disso aqui. 🏔️",
+      photo: { gradient: "linear-gradient(135deg,#ff9a56,#ff6b6b)", emoji: "🏔️", label: "Serra da Mantiqueira" },
+      likes: 342,
+      liked: true,
+      comments: [
+        { author: "Marina Costa", color: "#6c5ce7", text: "Que vista, hein! 😍" }
+      ]
+    },
+    {
+      id: 3,
+      author: { name: "Ana Beatriz", handle: "@anabeatriz", color: "#e84393" },
+      time: "há 3 h",
+      text: "Dica do dia: antes de otimizar qualquer coisa, meça.\n\nPassei a tarde inteira refatorando um trecho de código que, no fim, representava menos de 2% do tempo de execução. Lição aprendida. 😅",
+      photo: null,
+      likes: 89,
+      liked: false,
+      comments: []
+    },
+    {
+      id: 4,
+      author: { name: "Pedro Santos", handle: "@pedrosantos", color: "#00b894" },
+      time: "há 5 h",
+      text: "O ritual sagrado da manhã. ☕ Bom dia, pessoal!",
+      photo: { gradient: "linear-gradient(135deg,#3a1c71,#d76d77,#ffaf7b)", emoji: "☕", label: "Café coado, do jeito certo" },
+      likes: 210,
+      liked: false,
+      comments: [
+        { author: "Ana Beatriz", color: "#e84393", text: "Sem café não existo ☕" },
+        { author: "Thiago Martins", color: "#e17055", text: "Esse método é o melhor mesmo." },
+        { author: "Julia Souza", color: "#00b894", text: "Bom dia! 🙌" }
+      ]
+    }
+  ];
+
+  /* =========================================================
+     UTILITÁRIOS
+     ========================================================= */
+  const feedEl = document.getElementById("feed");
+  const toastEl = document.getElementById("toast");
+
+  function escapeHtml(str) {
+    return String(str).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
+  function initialsOf(name) {
+    const parts = String(name).trim().split(/\s+/).filter(Boolean);
+    if (parts.length === 0) return "?";
+    if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  }
+
+  function avatarHtml(name, color, size) {
+    return '<div class="avatar" style="width:' + size + "px;height:" + size +
+      "px;font-size:" + Math.round(size * 0.4) + "px;background:" + color + '">' +
+      escapeHtml(initialsOf(name)) + "</div>";
+  }
+
+  let toastTimer = null;
+  function toast(message) {
+    toastEl.textContent = message;
+    toastEl.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () {
+      toastEl.classList.remove("show");
+    }, 2200);
+  }
+
+  function commentsHtml(post) {
+    return post.comments.map(function (c) {
+      return '<li class="comment">' +
+        avatarHtml(c.author, c.color || "#888", 32) +
+        '<div class="comment-bubble">' +
+          '<span class="comment-author">' + escapeHtml(c.author) + "</span>" +
+          '<span class="comment-text">' + escapeHtml(c.text) + "</span>" +
+        "</div></li>";
+    }).join("");
+  }
+
+  function commentsLabel(n) {
+    return n + (n === 1 ? " comentário" : " comentários");
+  }
+
+  function likesLabel(n) {
+    return n + (n === 1 ? " curtida" : " curtidas");
+  }
+
+  /* =========================================================
+     RENDERIZAÇÃO
+     ========================================================= */
+  function renderPost(post) {
+    return (
+      '<article class="card post" data-id="' + post.id + '">' +
+        '<div class="post-head">' +
+          avatarHtml(post.author.name, post.author.color, 44) +
+          '<div class="post-meta">' +
+            '<span class="post-name">' + escapeHtml(post.author.name) + "</span>" +
+            '<span class="post-sub">' + escapeHtml(post.author.handle) + " · " + escapeHtml(post.time) + "</span>" +
+          "</div>" +
+          '<button type="button" class="more-btn" data-act="more" aria-label="Mais opções">⋯</button>' +
+        "</div>" +
+
+        (post.text ? '<p class="post-text">' + escapeHtml(post.text) + "</p>" : "") +
+
+        (post.photo
+          ? '<div class="post-photo" style="background:' + post.photo.gradient + '">' +
+              "<span>" + post.photo.emoji + "</span>" +
+              "<em>" + escapeHtml(post.photo.label) + "</em>" +
+            "</div>"
+          : "") +
+
+        '<div class="post-stats">' +
+          '<span class="stat-likes">' + likesLabel(post.likes) + "</span>" +
+          '<span class="dot">·</span>' +
+          '<span class="stat-comments">' + commentsLabel(post.comments.length) + "</span>" +
+        "</div>" +
+
+        '<div class="post-actions">' +
+          '<button type="button" data-act="like" class="' + (post.liked ? "active" : "") + '">' +
+            '<span class="ico">' + (post.liked ? "❤️" : "👍") + "</span>" +
+            '<span class="label">' + (post.liked ? "Curtido" : "Curtir") + "</span>" +
+          "</button>" +
+          '<button type="button" data-act="comment">' +
+            '<span class="ico">💬</span><span class="label">Comentar</span>' +
+          "</button>" +
+          '<button type="button" data-act="share">' +
+            '<span class="ico">↗️</span><span class="label">Compartilhar</span>' +
+          "</button>" +
+        "</div>" +
+
+        '<div class="comments">' +
+          '<ul class="comment-list">' + commentsHtml(post) + "</ul>" +
+          '<form class="comment-form">' +
+            avatarHtml("Você", "#1877f2", 32) +
+            '<input type="text" placeholder="Escreva um comentário..." autocomplete="off" aria-label="Comentário">' +
+            '<button type="submit" class="btn-send" aria-label="Enviar comentário">➤</button>' +
+          "</form>" +
+        "</div>" +
+      "</article>"
+    );
+  }
+
+  function renderFeed() {
+    feedEl.innerHTML = posts.map(renderPost).join("");
+  }
+
+  function getPostFromEl(el) {
+    const article = el.closest(".post");
+    if (!article) return null;
+    const id = Number(article.dataset.id);
+    const post = posts.find(function (p) { return p.id === id; });
+    return post ? { post: post, article: article } : null;
+  }
+
+  /* =========================================================
+     AÇÕES
+     ========================================================= */
+  function toggleLike(post, article) {
+    post.liked = !post.liked;
+    post.likes += post.liked ? 1 : -1;
+    if (post.likes < 0) post.likes = 0;
+
+    const btn = article.querySelector('[data-act="like"]');
+    btn.classList.toggle("active", post.liked);
+    btn.querySelector(".ico").textContent = post.liked ? "❤️" : "👍";
+    btn.querySelector(".label").textContent = post.liked ? "Curtido" : "Curtir";
+    article.querySelector(".stat-likes").textContent = likesLabel(post.likes);
+  }
+
+  function toggleComments(article) {
+    const box = article.querySelector(".comments");
+    box.classList.toggle("open");
+    if (box.classList.contains("open")) {
+      const input = box.querySelector("input");
+      if (input) input.focus();
+    }
+  }
+
+  function addComment(post, article, text) {
+    post.comments.push({ author: "Você", color: "#1877f2", text: text });
+
+    const list = article.querySelector(".comment-list");
+    list.insertAdjacentHTML("beforeend",
+      '<li class="comment">' +
+        avatarHtml("Você", "#1877f2", 32) +
+        '<div class="comment-bubble">' +
+          '<span class="comment-author">Você</span>' +
+          '<span class="comment-text">' + escapeHtml(text) + "</span>" +
+        "</div></li>"
+    );
+
+    article.querySelector(".stat-comments").textContent = commentsLabel(post.comments.length);
+    list.lastElementChild.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+
+  /* =========================================================
+     EVENTOS — FEED (delegação)
+     ========================================================= */
+  feedEl.addEventListener("click", function (e) {
+    const btn = e.target.closest("[data-act]");
+    if (!btn) return;
+
+    const ctx = getPostFromEl(btn);
+    if (!ctx) return;
+
+    const act = btn.dataset.act;
+
+    if (act === "like") {
+      toggleLike(ctx.post, ctx.article);
+    } else if (act === "comment") {
+      toggleComments(ctx.article);
+    } else if (act === "share") {
+      const url = location.href;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url)
+          .then(function () { toast("Link copiado para a área de transferência! 🔗"); })
+          .catch(function () { toast("Compartilhado! 🔗"); });
+      } else {
+        toast("Compartilhado! 🔗");
+      }
+    } else if (act === "more") {
+      toast("Mais opções em breve 🙂");
+    }
+  });
+
+  feedEl.addEventListener("submit", function (e) {
+    const form = e.target.closest(".comment-form");
+    if (!form) return;
+    e.preventDefault();
+
+    const ctx = getPostFromEl(form);
+    if (!ctx) return;
+
+    const input = form.querySelector("input");
+    const text = input.value.trim();
+    if (!text) {
+      input.focus();
+      return;
+    }
+
+    addComment(ctx.post, ctx.article, text);
+    input.value = "";
+    input.focus();
+  });
+
+  /* =========================================================
+     EVENTOS — COMPOSER
+     ========================================================= */
+  const composerInput = document.getElementById("composer-input");
+  const publishBtn = document.getElementById("publish");
+
+  function autoGrow() {
+    composerInput.style.height = "auto";
+    composerInput.style.height = Math.min(composerInput.scrollHeight, 220) + "px";
+  }
+
+  function updatePublishState() {
+    publishBtn.disabled = composerInput.value.trim().length === 0;
+  }
+
+  composerInput.addEventListener("input", function () {
+    autoGrow();
+    updatePublishState();
+  });
+
+  composerInput.addEventListener("keydown", function (e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+      e.preventDefault();
+      publish();
+    }
+  });
+
+  function publish() {
+    const text = composerInput.value.trim();
+    if (!text) return;
+
+    const newPost = {
+      id: ++nextId,
+      author: { name: "Você", handle: "@voce", color: "#1877f2" },
+      time: "agora mesmo",
+      text: text,
+      photo: null,
+      likes: 0,
+      liked: false,
+      comments: []
+    };
+
+    posts.unshift(newPost);
+    feedEl.insertAdjacentHTML("afterbegin", renderPost(newPost));
+
+    composerInput.value = "";
+    autoGrow();
+    updatePublishState();
+    composerInput.blur();
+
+    toast("Publicação criada com sucesso! ✅");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  publishBtn.addEventListener("click", publish);
+
+  document.querySelectorAll(".tool").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      toast("Recurso \"" + btn.textContent.trim() + "\" em breve 🙂");
+    });
+  });
+
+  /* =========================================================
+     EVENTOS — SIDEBAR DIREITA
+     ========================================================= */
+  document.querySelectorAll(".btn-follow").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      const following = btn.classList.toggle("seguindo");
+      btn.textContent = following ? "Seguindo" : "Seguir";
+    });
+  });
+
+  document.querySelectorAll(".nav-item").forEach(function (item) {
+    item.addEventListener("click", function (e) {
+      e.preventDefault();
+      document.querySelectorAll(".nav-item").forEach(function (i) {
+        i.classList.remove("active");
+      });
+      item.classList.add("active");
+    });
+  });
+
+  /* =========================================================
+     INICIALIZAÇÃO
+     ========================================================= */
+  renderFeed();
+  autoGrow();
+  updatePublishState();
+})();
+</script>
+</body>
+</html>
