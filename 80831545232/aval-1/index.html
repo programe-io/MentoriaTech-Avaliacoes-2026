@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bola em Jogo — Blog de Futebol</title>
+<meta name="description" content="Notícias, análises e curiosidades do mundo do futebol.">
+<style>
+  /* ===== Reset ===== */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --verde: #0b6e4f;
+    --verde-escuro: #084c37;
+    --amarelo: #f2c14e;
+    --cinza-bg: #f4f6f5;
+    --cinza-texto: #3d4a45;
+    --branco: #ffffff;
+    --sombra: 0 4px 16px rgba(0,0,0,.08);
+    --radius: 12px;
+  }
+
+  body {
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background: var(--cinza-bg);
+    color: var(--cinza-texto);
+    line-height: 1.6;
+  }
+
+  a { color: inherit; text-decoration: none; }
+  img { max-width: 100%; display: block; }
+
+  /* ===== Header ===== */
+  header {
+    background: var(--verde);
+    color: var(--branco);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 10px rgba(0,0,0,.15);
+  }
+
+  .topo {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .logo {
+    font-size: 1.6rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+  }
+  .logo span { color: var(--amarelo); }
+
+  nav ul {
+    display: flex;
+    gap: 1.5rem;
+    list-style: none;
+  }
+  nav a {
+    font-weight: 600;
+    font-size: .95rem;
+    padding: .4rem 0;
+    border-bottom: 2px solid transparent;
+    transition: border-color .25s, color .25s;
+  }
+  nav a:hover { border-color: var(--amarelo); color: var(--amarelo); }
+
+  .menu-toggle {
+    display: none;
+    background: none;
+    border: 2px solid rgba(255,255,255,.6);
+    color: var(--branco);
+    font-size: 1.4rem;
+    border-radius: 8px;
+    padding: .15rem .6rem;
+    cursor: pointer;
+  }
+
+  /* ===== Hero ===== */
+  .hero {
+    background: linear-gradient(135deg, var(--verde-escuro), var(--verde) 70%);
+    color: var(--branco);
+    padding: 4rem 1.5rem;
+    text-align: center;
+  }
+  .hero h1 {
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    font-weight: 800;
+    margin-bottom: 1rem;
+    line-height: 1.2;
+  }
+  .hero p {
+    font-size: 1.1rem;
+    max-width: 640px;
+    margin: 0 auto 1.8rem;
+    opacity: .92;
+  }
+  .btn {
+    display: inline-block;
+    background: var(--amarelo);
+    color: #2b2b2b;
+    font-weight: 700;
+    padding: .8rem 1.8rem;
+    border-radius: 999px;
+    transition: transform .2s, box-shadow .2s;
+  }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,.25); }
+
+  /* ===== Layout ===== */
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem;
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 2.5rem;
+    align-items: start;
+  }
+
+  .secao-titulo {
+    font-size: 1.5rem;
+    color: var(--verde-escuro);
+    margin-bottom: 1.2rem;
+    padding-left: .75rem;
+    border-left: 5px solid var(--amarelo);
+    line-height: 1.2;
+  }
+
+  /* ===== Cards ===== */
+  .posts {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .card {
+    background: var(--branco);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--sombra);
+    display: flex;
+    flex-direction: column;
+    transition: transform .25s, box-shadow .25s;
+  }
+  .card:hover { transform: translateY(-5px); box-shadow: 0 12px 26px rgba(0,0,0,.14); }
+
+  .card-thumb {
+    height: 160px;
+    background: linear-gradient(135deg, #157a58, #0b6e4f);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    color: rgba(255,255,255,.9);
+  }
+  .card-thumb.amarelo { background: linear-gradient(135deg, #e8b13a, #c9962a); }
+  .card-thumb.azul   { background: linear-gradient(135deg, #2b6cb0, #1a4d80); }
+  .card-thumb.roxo   { background: linear-gradient(135deg, #6b46c1, #4c2f8f); }
+
+  .card-corpo { padding: 1.2rem 1.3rem 1.5rem; display: flex; flex-direction: column; flex: 1; }
+
+  .tag {
+    align-self: flex-start;
+    background: #e6f2ee;
+    color: var(--verde);
+    font-size: .72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    padding: .25rem .6rem;
+    border-radius: 999px;
+    margin-bottom: .7rem;
+  }
+
+  .card h3 {
+    font-size: 1.15rem;
+    color: var(--verde-escuro);
+    margin-bottom: .5rem;
+    line-height: 1.35;
+  }
+  .card p { font-size: .92rem; margin-bottom: 1rem; flex: 1; }
+  .card .meta { font-size: .8rem; color: #7b8a84; }
+
+  /* ===== Sidebar ===== */
+  aside { display: flex; flex-direction: column; gap: 1.5rem; }
+
+  .widget {
+    background: var(--branco);
+    border-radius: var(--radius);
+    padding: 1.4rem;
+    box-shadow: var(--sombra);
+  }
+  .widget h3 {
+    font-size: 1.05rem;
+    color: var(--verde-escuro);
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+  }
+
+  .tabela { width: 100%; border-collapse: collapse; font-size: .9rem; }
+  .tabela th, .tabela td { padding: .5rem .3rem; text-align: left; }
+  .tabela th { font-size: .75rem; text-transform: uppercase; color: #7b8a84; border-bottom: 2px solid #e8ecea; }
+  .tabela tbody tr { border-bottom: 1px solid #eef1f0; }
+  .tabela tbody tr:last-child { border-bottom: none; }
+  .tabela td:not(:first-child) { text-align: center; }
+  .pts { font-weight: 700; color: var(--verde); }
+
+  .noticias-lista { list-style: none; display: flex; flex-direction: column; gap: .9rem; }
+  .noticias-lista li { font-size: .9rem; padding-left: 1.1rem; position: relative; }
+  .noticias-lista li::before {
+    content: "⚽";
+    position: absolute;
+    left: 0;
+    font-size: .75rem;
+    top: .15rem;
+  }
+  .noticias-lista a:hover { color: var(--verde); text-decoration: underline; }
+
+  .newsletter input {
+    width: 100%;
+    padding: .7rem .9rem;
+    border: 2px solid #dfe5e2;
+    border-radius: 8px;
+    font-size: .95rem;
+    margin-bottom: .7rem;
+    font-family: inherit;
+  }
+  .newsletter input:focus { outline: none; border-color: var(--verde); }
+  .newsletter button {
+    width: 100%;
+    background: var(--verde);
+    color: var(--branco);
+    border: none;
+    padding: .75rem;
+    border-radius: 8px;
+    font-size: .95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background .2s;
+    font-family: inherit;
+  }
+  .newsletter button:hover { background: var(--verde-escuro); }
+  .msg { font-size: .85rem; margin-top: .6rem; color: var(--verde); font-weight: 600; min-height: 1.2em; }
+
+  /* ===== Footer ===== */
+  footer {
+    background: #0a2e24;
+    color: #cdd9d4;
+    padding: 2.5rem 1.5rem 1.5rem;
+    margin-top: 1rem;
+  }
+  .rodape-conteudo {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+  }
+  .rodape-conteudo h4 { color: var(--branco); margin-bottom: .8rem; font-size: 1rem; }
+  .rodape-conteudo ul { list-style: none; display: flex; flex-direction: column; gap: .45rem; font-size: .9rem; }
+  .rodape-conteudo a:hover { color: var(--amarelo); }
+  .copyright {
+    text-align: center;
+    font-size: .85rem;
+    margin-top: 2rem;
+    padding-top: 1.2rem;
+    border-top: 1px solid rgba(255,255,255,.1);
+    color: #93a8a0;
+  }
+
+  /* ===== Responsivo ===== */
+  @media (max-width: 900px) {
+    .container { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 700px) {
+    .menu-toggle { display: block; }
+    nav {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: var(--verde-escuro);
+      padding: 1rem 1.5rem;
+    }
+    nav.aberto { display: block; }
+    nav ul { flex-direction: column; gap: .8rem; }
+    .hero { padding: 3rem 1.2rem; }
+  }
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<header>
+  <div class="topo">
+    <div class="logo">⚽ Bola <span>em Jogo</span></div>
+    <button class="menu-toggle" id="menuToggle" aria-label="Abrir menu">☰</button>
+    <nav id="menu">
+      <ul>
+        <li><a href="#noticias">Notícias</a></li>
+        <li><a href="#analises">Análises</a></li>
+        <li><a href="#tabela">Tabela</a></li>
+        <li><a href="#contato">Contato</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <h1>O futebol como você nunca viu</h1>
+  <p>Notícias, análises táticas e histórias que marcaram gerações — tudo em um só lugar.</p>
+  <a href="#noticias" class="btn">Ler matérias</a>
+</section>
+
+<main class="container">
+
+  <!-- Conteúdo principal -->
+  <div>
+    <h2 class="secao-titulo" id="noticias">Últimas do futebol</h2>
+
+    <div class="posts">
+
+      <article class="card">
+        <div class="card-thumb">🏆</div>
+        <div class="card-corpo">
+          <span class="tag">Campeonato</span>
+          <h3>Final emocionante decide o título nos pênaltis</h3>
+          <p>Depois de um empate em 2 a 2 no tempo normal, a decisão foi para as penalidades e o goleiro virou herói da equipe.</p>
+          <p class="meta">Por Ana Ribeiro • 12 de maio de 2025</p>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-thumb azul" id="analises">📊</div>
+        <div class="card-corpo">
+          <span class="tag">Tática</span>
+          <h3>Como o 3-5-2 voltou a dominar o futebol moderno</h3>
+          <p>Entenda por que cada vez mais treinadores apostam na formação com três zagueiros e alas avançados.</p>
+          <p class="meta">Por Carlos Menezes • 10 de maio de 2025</p>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-thumb amarelo">🌟</div>
+        <div class="card-corpo">
+          <span class="tag">Craques</span>
+          <h3>O jovem que está chamando atenção na Europa</h3>
+          <p>Com apenas 19 anos, o meio-campista já soma 15 participações em gols na temporada e desperta interesse de gigantes.</p>
+          <p class="meta">Por Juliana Prado • 8 de maio de 2025</p>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-thumb roxo">📚</div>
+        <div class="card-corpo">
+          <span class="tag">História</span>
+          <h3>As maiores viradas da história das Copas</h3>
+          <p>Relembre partidas improváveis que ficaram marcadas na memória dos torcedores ao redor do mundo.</p>
+          <p class="meta">Por Rafael Duarte • 5 de maio de 2025</p>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-thumb">🩹</div>
+        <div class="card-corpo">
+          <span class="tag">Medicina</span>
+          <h3>Prevenção de lesões: o que os clubes fazem de novo</h3>
+          <p>Protocolos de recuperação e monitoramento de carga viraram parte essencial do dia a dia dos departamentos médicos.</p>
+          <p class="meta">Por Dra. Helena Castro • 3 de maio de 2025</p>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-thumb amarelo">🎽</div>
+        <div class="card-corpo">
+          <span class="tag">Curiosidades</span>
+          <h3>Por que as camisas de goleiro são diferentes?</h3>
+          <p>Uma regra antiga explica a tradição — e as cores chamativas que todo goleiro carrega até hoje.</p>
+          <p class="meta">Por Marcelo Lins • 1 de maio de 2025</p>
+        </div>
+      </article>
+
+    </div>
+
+    <h2 class="secao-titulo" id="tabela">Classificação</h2>
+    <div class="widget">
+      <table class="tabela">
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>P</th>
+            <th>J</th>
+            <th>V</th>
+            <th>SG</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Verdão FC</td><td class="pts">32</td><td>15</td><td>10</td><td>+18</td></tr>
+          <tr><td>Alviceleste</td><td class="pts">29</td><td>15</td><td>9</td><td>+12</td></tr>
+          <tr><td>Real Aurora</td><td class="pts">27</td><td>15</td><td>8</td><td>+9</td></tr>
+          <tr><td>Atlético Sul</td><td class="pts">24</td><td>15</td><td>7</td><td>+5</td></tr>
+          <tr><td>Sportivo Norte</td><td class="pts">21</td><td>15</td><td>6</td><td>+2</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Sidebar -->
+  <aside>
+    <div class="widget">
+      <h3>Em alta</h3>
+      <ul class="noticias-lista">
+        <li><a href="#">Goleiro quebra recorde de defesas em uma só partida</a></li>
+        <li><a href="#">Clube anuncia novo técnico para a próxima temporada</a></li>
+        <li><a href="#">Estádio receberá final continental em 2026</a></li>
+        <li><a href="#">Seleção convoca 26 jogadores para amistosos</a></li>
+      </ul>
+    </div>
+
+    <div class="widget newsletter">
+      <h3>Receba as notícias</h3>
+      <form id="formNews" novalidate>
+        <input type="email" id="email" placeholder="Seu e-mail" aria-label="Seu e-mail" required>
+        <button type="submit">Quero assinar</button>
+        <p class="msg" id="msg" aria-live="polite"></p>
+      </form>
+    </div>
+
+    <div class="widget" id="contato">
+      <h3>Contato</h3>
+      <p style="font-size:.9rem; margin-bottom:.5rem;">📧 contato@bolaemjogo.com</p>
+      <p style="font-size:.9rem;">📍 São Paulo — Brasil</p>
+    </div>
+  </aside>
+
+</main>
+
+<footer>
+  <div class="rodape-conteudo">
+    <div>
+      <h4>⚽ Bola em Jogo</h4>
+      <p style="font-size:.9rem;">O blog feito por quem ama futebol, para quem vive futebol.</p>
+    </div>
+    <div>
+      <h4>Seções</h4>
+      <ul>
+        <li><a href="#noticias">Notícias</a></li>
+        <li><a href="#analises">Análises</a></li>
+        <li><a href="#tabela">Tabela</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Redes</h4>
+      <ul>
+        <li><a href="#">Instagram</a></li>
+        <li><a href="#">X (Twitter)</a></li>
+        <li><a href="#">YouTube</a></li>
+      </ul>
+    </div>
+  </div>
+  <p class="copyright">© 2025 Bola em Jogo. Todos os direitos reservados.</p>
+</footer>
+
+<script>
+  // Menu mobile
+  const toggle = document.getElementById('menuToggle');
+  const menu = document.getElementById('menu');
+
+  toggle.addEventListener('click', () => {
+    menu.classList.toggle('aberto');
+    toggle.textContent = menu.classList.contains('aberto') ? '✕' : '☰';
+  });
+
+  // Fecha o menu ao clicar em um link
+  menu.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      menu.classList.remove('aberto');
+      toggle.textContent = '☰';
+    });
+  });
+
+  // Newsletter
+  const form = document.getElementById('formNews');
+  const emailInput = document.getElementById('email');
+  const msg = document.getElementById('msg');
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const email = emailInput.value.trim();
+    const valido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+    if (!valido) {
+      msg.style.color = '#c0392b';
+      msg.textContent = 'Digite um e-mail válido.';
+      return;
+    }
+
+    msg.style.color = '#0b6e4f';
+    msg.textContent = '✅ Inscrição realizada com sucesso!';
+    emailInput.value = '';
+    setTimeout(() => { msg.textContent = ''; }, 4000);
+  });
+</script>
+
+</body>
+</html>
