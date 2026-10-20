@@ -1,120 +1,137 @@
-// Estrutura para armazenar as tarefas
-let tasks = [];
-let nextCode = 1;
-
-// Elementos do DOM
-const taskForm = document.getElementById('taskForm');
-const titleInput = document.getElementById('title');
-const priorityInput = document.getElementById('priority');
-const titleError = document.getElementById('titleError');
-const priorityError = document.getElementById('priorityError');
-const taskList = document.getElementById('taskList');
-
-// Regras de validação
-function validateForm(title, priority) {
-    let isValid = true;
-
-    // Validação do título: mínimo 5 caracteres[cite: 1]
-    if (!title || title.trim().length < 5) {
-        titleError.style.display = 'block';
-        isValid = false;
-    } else {
-        titleError.style.display = 'none';
+class TaskManager {
+    constructor() {
+        this.tasks = [];
+        this.nextCode = 1;
     }
 
-    // Validação da prioridade: valor entre 1 (alta) e 3 (baixa)[cite: 1]
-    const prioVal = parseInt(priority, 10);
-    if (isNaN(prioVal) || prioVal < 1 || prioVal > 3) {
-        priorityError.style.display = 'block';
-        isValid = false;
-    } else {
-        priorityError.style.display = 'none';
-    }
+    // Método para cadastrar nova tarefa com validações
+    addTask(title, priority) {
+        const trimmedTitle = title ? title.trim() : '';
+        const parsedPriority = parseInt(priority, 10);
 
-    return isValid;
-}
+        // Validação do título: mínimo de 5 caracteres[cite: 1]
+        if (trimmedTitle.length < 5) {
+            throw new Error('O título deve ter no mínimo 5 caracteres.');
+        }
 
-// Função para Cadastrar Nova Tarefa[cite: 1]
-taskForm.addEventListener('submit', function(e) {
-    e.preventDefault();
+        // Validação da prioridade: valor entre 1 (alta) e 3 (baixa)[cite: 1]
+        if (isNaN(parsedPriority) || parsedPriority < 1 || parsedPriority > 3) {
+            throw new Error('A prioridade deve ser um valor entre 1 (alta) e 3 (baixa).');
+        }
 
-    const title = titleInput.value;
-    const priority = priorityInput.value;
-
-    if (validateForm(title, priority)) {
         const newTask = {
-            codigo: nextCode++,
-            titulo: title.trim(),
-            prioridade: parseInt(priority, 10),
+            codigo: this.nextCode++,
+            titulo: trimmedTitle,
+            prioridade: parsedPriority,
             concluida: false
         };
 
-        tasks.push(newTask);
-        
-        // Resetar formulário
-        titleInput.value = '';
-        priorityInput.value = '';
-
-        // Atualizar listagem
-        renderTasks();
+        this.tasks.push(newTask);
+        return newTask;
     }
-});
 
-// Função para Alterar a Prioridade da Tarefa[cite: 1]
-function changePriority(code, newPriority) {
-    const task = tasks.find(t => t.codigo === code);
-    if (task) {
-        task.prioridade = parseInt(newPriority, 10);
-        renderTasks();
+    // Método para listar todas as tarefas cadastradas[cite: 1]
+    getTasks() {
+        return this.tasks;
+    }
+
+    // Método para marcar uma tarefa como concluída ou pendente[cite: 1]
+    toggleTaskStatus(code) {
+        const task = this.tasks.find(t => t.codigo === code);
+        if (task) {
+            task.concluida = !task.concluida;
+            return true;
+        }
+        return false;
+    }
+
+    // Método para alterar a prioridade de uma tarefa[cite: 1]
+    updateTaskPriority(code, newPriority) {
+        const parsedPriority = parseInt(newPriority, 10);
+        if (isNaN(parsedPriority) || parsedPriority < 1 || parsedPriority > 3) {
+            throw new Error('A nova prioridade deve ser entre 1 e 3.');
+        }
+
+        const task = this.tasks.find(t => t.codigo === code);
+        if (task) {
+            task.prioridade = parsedPriority;
+            return true;
+        }
+        return false;
     }
 }
 
-// Função para Marcar Tarefa como Concluída/Pendente[cite: 1]
-function toggleStatus(code) {
-    const task = tasks.find(t => t.codigo === code);
-    if (task) {
-        task.concluida = !task.concluida;
-        renderTasks();
-    }
-}
+// --- Exemplo de Integração com a Interface (DOM) ---
 
-// Função para Listar as Tarefas Cadastradas[cite: 1]
-function renderTasks() {
+const manager = new TaskManager();
+
+const form = document.getElementById('taskForm');
+const titleInput = document.getElementById('title');
+const priorityInput = document.getElementById('priority');
+const taskList = document.getElementById('taskList');
+
+function updateUI() {
     taskList.innerHTML = '';
+    const allTasks = manager.getTasks();
 
-    if (tasks.length === 0) {
-        taskList.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #718096;">Nenhuma tarefa cadastrada.</td></tr>';
+    if (allTasks.length === 0) {
+        taskList.innerHTML = '<tr><td colspan="5" style="text-align: center;">Nenhuma tarefa registada.</td></tr>';
         return;
     }
 
-    tasks.forEach(task => {
-        const row = document.createElement('tr');
-
-        row.innerHTML = `
+    allTasks.forEach(task => {
+        const tr = document.createElement('tr');
+        
+        tr.innerHTML = `
             <td>#${task.codigo}</td>
-            <td class="${task.concluida ? 'status-completed' : ''}">${task.titulo}</td>
+            <td style="${task.concluida ? 'text-decoration: line-through; color: #888;' : ''}">${task.titulo}</td>
             <td>
-                <select class="select-prio" onchange="changePriority(${task.codigo}, this.value)">
+                <select onchange="handlePriorityChange(${task.codigo}, this.value)">
                     <option value="1" ${task.prioridade === 1 ? 'selected' : ''}>1 (Alta)</option>
                     <option value="2" ${task.prioridade === 2 ? 'selected' : ''}>2 (Média)</option>
                     <option value="3" ${task.prioridade === 3 ? 'selected' : ''}>3 (Baixa)</option>
                 </select>
             </td>
+            <td>${task.concluida ? 'Concluída' : 'Pendente'}</td>
             <td>
-                <span class="badge ${task.concluida ? 'prio-3' : 'prio-1'}">
-                    ${task.concluida ? 'Concluída' : 'Pendente'}
-                </span>
-            </td>
-            <td>
-                <button class="btn-action btn-toggle" onclick="toggleStatus(${task.codigo})">
-                    ${task.concluida ? 'Refazer' : 'Concluir'}
+                <button type="button" onclick="handleToggleStatus(${task.codigo})">
+                    ${task.concluida ? 'Desfazer' : 'Concluir'}
                 </button>
             </td>
         `;
-
-        taskList.appendChild(row);
+        taskList.appendChild(tr);
     });
 }
 
+// Evento de submissão do formulário
+if (form) {
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        try {
+            manager.addTask(titleInput.value, priorityInput.value);
+            titleInput.value = '';
+            priorityInput.value = '';
+            updateUI();
+        } catch (error) {
+            alert(error.message);
+        }
+    });
+}
+
+// Funções globais auxiliares para os eventos do HTML gerado dinamicamente
+window.handleToggleStatus = function(code) {
+    manager.toggleTaskStatus(code);
+    updateUI();
+};
+
+window.handlePriorityChange = function(code, newPriority) {
+    try {
+        manager.updateTaskPriority(code, newPriority);
+        updateUI();
+    } catch (error) {
+        alert(error.message);
+    }
+};
+
 // Renderização inicial
-renderTasks();
+updateUI();
