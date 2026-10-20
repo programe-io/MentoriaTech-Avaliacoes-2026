@@ -1,77 +1,188 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle de Estoque Simples</title>
+    <style>
+        * { box-sizing: border-box; font-family: Arial, sans-serif; margin: 0; padding: 0; }
+        body { background-color: #f4f6f9; padding: 20px; color: #333; }
+        .container { max-width: 900px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h1, h2 { margin-bottom: 20px; text-align: center; color: #2c3e50; }
+        .grid-forms { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px; }
+        .card { background: #f8f9fa; padding: 15px; border-radius: 6px; border: 1px solid #e9ecef; }
+        .form-group { margin-bottom: 12px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px; }
+        input, select { width: 100%; padding: 8px; border: 1px solid #ced4da; border-radius: 4px; }
+        button { width: 100%; padding: 10px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        button:hover { background: #218838; }
+        button.btn-movimentar { background: #007bff; }
+        button.btn-movimentar:hover { background: #0069d9; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { padding: 10px; border: 1px solid #dee2e6; text-align: left; }
+        th { background-color: #e9ecef; }
+        .btn-delete { background: #dc3545; padding: 4px 8px; font-size: 12px; }
+        .btn-delete:hover { background: #bd2130; }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-  # Dicionário para armazenar o estoque: { 'codigo': {'nome': '...', 'qtd': 0, 'preco': 0.0} }
-estoque = {}
 
-def cadastrar_produto():
-    codigo = input("Digite o código do produto: ")
-    if codigo in estoque:
-        print("Produto já cadastrado!")
-        return
-    nome = input("Nome do produto: ")
-    qtd = int(input("Quantidade inicial: "))
-    preco = float(input("Preço unitário (R$): "))
-    estoque[codigo] = {"nome": nome, "qtd": qtd, "preco": preco}
-    print("Produto cadastrado com sucesso!")
+<div class="container">
+    <h1>Controle de Estoque</h1>
 
-def registrar_movimentacao(tipo):
-    codigo = input("Digite o código do produto: ")
-    if codigo not in estoque:
-        print("Produto não encontrado!")
-        return
-    qtd = int(input(f"Quantidade para {'entrada' if tipo == 'e' else 'saída'}: "))
-    
-    if tipo == 'e':
-        estoque[codigo]["qtd"] += qtd
-        print("Entrada registrada!")
-    elif tipo == 's':
-        if qtd > estoque[codigo]["qtd"]:
-            print("Estoque insuficiente!")
-        else:
-            estoque[codigo]["qtd"] -= qtd
-            print("Saída registrada!")
+    <div class="grid-forms">
+        <!-- Formulário de Cadastro -->
+        <div class="card">
+            <h2>Cadastrar Produto</h2>
+            <form id="form-cadastro">
+                <div class="form-group">
+                    <label>Código/SKU:</label>
+                    <input type="text" id="cad-codigo" required>
+                </div>
+                <div class="form-group">
+                    <label>Nome do Produto:</label>
+                    <input type="text" id="cad-nome" required>
+                </div>
+                <div class="form-group">
+                    <label>Qtd Inicial:</label>
+                    <input type="number" id="cad-qtd" min="0" required>
+                </div>
+                <button type="submit">Cadastrar</button>
+            </form>
+        </div>
 
-def listar_estoque():
-    print("\n--- ESTOQUE ATUAL ---")
-    if not estoque:
-        print("Nenhum produto cadastrado.")
-    for codigo, dados in estoque.items():
-        print(f"Cód: {codigo} | Produto: {dados['nome']} | Qtd: {dados['qtd']} | Preço: R$ {dados['preco']:.2f}")
-    print("-" * 25)
+        <!-- Formulário de Movimentação -->
+        <div class="card">
+            <h2>Entrada / Saída</h2>
+            <form id="form-movimentacao">
+                <div class="form-group">
+                    <label>Produto:</label>
+                    <select id="mov-produto" required>
+                        <option value="">Selecione um produto...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Tipo de Operação:</label>
+                    <select id="mov-tipo" required>
+                        <option value="entrada">Entrada (+)</option>
+                        <option value="saida">Saída (-)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Quantidade:</label>
+                    <input type="number" id="mov-qtd" min="1" required>
+                </div>
+                <button type="submit" class="btn-movimentar">Confirmar Movimentação</button>
+            </form>
+        </div>
+    </div>
 
-def main():
-    while True:
-        print("\n1. Cadastrar produto")
-        print("2. Registrar entrada")
-        print("3. Registrar saída")
-        print("4. Listar estoque")
-        print("5. Sair")
-        opcao = input("Escolha uma opção: ")
+    <!-- Tabela de Estoque -->
+    <h2>Estoque Atual</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Código</th>
+                <th>Produto</th>
+                <th>Quantidade</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody id="tabela-estoque">
+            <!-- Os produtos cadastrados aparecerão aqui -->
+        </tbody>
+    </table>
+</div>
+
+<script>
+    // Recupera os dados salvos ou inicia um objeto vazio
+    let estoque = JSON.parse(localStorage.getItem('estoque_html')) || {};
+
+    const formCadastro = document.getElementById('form-cadastro');
+    const formMovimentacao = document.getElementById('form-movimentacao');
+    const selectProduto = document.getElementById('mov-produto');
+    const tabelaEstoque = document.getElementById('tabela-estoque');
+
+    // Salva no LocalStorage e atualiza a tela
+    function atualizarInterface() {
+        localStorage.setItem('estoque_html', JSON.stringify(estoque));
         
-        if opcao == "1":
-            cadastrar_produto()
-        elif opcao == "2":
-            registrar_movimentacao('e')
-        elif opcao == "3":
-            registrar_movimentacao('s')
-        elif opcao == "4":
-            listar_estoque()
-        elif opcao == "5":
-            print("Saindo...")
-            break
-        else:
-            print("Opção inválida!")
+        // Limpar tabela e select
+        tabelaEstoque.innerHTML = '';
+        selectProduto.innerHTML = '<option value="">Selecione um produto...</option>';
 
-if __name__ == "__main__":
-    main()
+        // Renderizar linhas e opções do select
+        for (let codigo in estoque) {
+            let produto = estoque[codigo];
 
-  
-  
+            // Adiciona na tabela
+            let linha = `<tr>
+                <td>${codigo}</td>
+                <td>${produto.nome}</td>
+                <td><b>${produto.quantidade}</b></td>
+                <td><button class="btn-delete" onclick="deletarProduto('${codigo}')">Excluir</button></td>
+            </tr>`;
+            tabelaEstoque.innerHTML += linha;
+
+            // Adiciona no campo de seleção (Select)
+            let opcao = `<option value="${codigo}">${produto.nome} (${codigo})</option>`;
+            selectProduto.innerHTML += opcao;
+        }
+    }
+
+    // Ação: Cadastrar Produto
+    formCadastro.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const codigo = document.getElementById('cad-codigo').value.trim();
+        const nome = document.getElementById('cad-nome').value.trim();
+        const quantidade = parseInt(document.getElementById('cad-qtd').value);
+
+        if (estoque[codigo]) {
+            alert('Este código de produto já está cadastrado!');
+            return;
+        }
+
+        estoque[codigo] = { nome: nome, quantidade: quantidade };
+        formCadastro.reset();
+        atualizarInterface();
+    });
+
+    // Ação: Registrar Entrada ou Saída
+    formMovimentacao.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const codigo = selectProduto.value;
+        const tipo = document.getElementById('mov-tipo').value;
+        const quantidade = parseInt(document.getElementById('mov-qtd').value);
+
+        if (!estoque[codigo]) return;
+
+        if (tipo === 'entrada') {
+            estoque[codigo].quantidade += quantidade;
+        } else if (tipo === 'saida') {
+            if (quantidade > estoque[codigo].quantidade) {
+                alert('Quantidade insuficiente em estoque!');
+                return;
+            }
+            estoque[codigo].quantidade -= quantidade;
+        }
+
+        formMovimentacao.reset();
+        atualizarInterface();
+    });
+
+    // Ação: Excluir Produto
+    function deletarProduto(codigo) {
+        if (confirm('Deseja realmente remover este produto do estoque?')) {
+            delete estoque[codigo];
+            atualizarInterface();
+        }
+    }
+
+    // Inicializa a página carregando os dados existentes
+    atualizarInterface();
+</script>
+
 </body>
 </html>
