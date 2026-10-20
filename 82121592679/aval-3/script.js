@@ -1,0 +1,72 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat do Creme</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="chat">
+        <header>
+            🍦 Chat do Creme
+        </header>
+
+        <div class="mensagens" id="mensagens">
+            <div class="bot">
+                Olá! Bem-vindo ao Chat do Creme! 🍨
+                Como posso ajudar?
+            </div>
+        </div>
+
+        <div class="entrada">
+            <input
+                type="text"
+                id="mensagem"
+                placeholder="Digite sua mensagem..."
+            >
+            <button onclick="enviarMensagem()">Enviar</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat do Creme</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="chat">
+        <header>
+            🍦 Chat do Creme
+        </header>
+
+        <div class="mensagens" id="mensagens">
+            <div class="bot">
+                Olá! Bem-vindo ao Chat do Creme! 🍨
+                Como posso ajudar?
+            </div>
+        </div>
+
+        <div class="entrada">
+            <input
+                type="text"
+                id="mensagem"
+                placeholder="Digite sua mensagem..."
+            >
+            <button onclick="enviarMensagem()">Enviar</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
