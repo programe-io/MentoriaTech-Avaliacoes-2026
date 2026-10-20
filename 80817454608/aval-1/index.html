@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Glow Diário — Blog de Maquiagem</title>
+<meta name="description" content="Blog de maquiagem com tutoriais, dicas de skincare, truques de base, olhos e lábios para todos os tons de pele.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#fdf7f6;
+    --surface:#ffffff;
+    --ink:#2c2328;
+    --muted:#756a70;
+    --accent:#b4557f;
+    --accent-dark:#8e3f63;
+    --accent-soft:#f7e3ea;
+    --line:#efdfe3;
+    --radius:18px;
+    --shadow:0 10px 30px rgba(120,70,90,.10);
+    --font-title:"Playfair Display",Georgia,"Times New Roman",serif;
+    --font-body:"Poppins",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  }
+
+  *,*::before,*::after{box-sizing:border-box;}
+  [hidden]{display:none !important;}
+
+  html{
+    scroll-behavior:smooth;
+    scroll-padding-top:90px;
+  }
+
+  body{
+    margin:0;
+    font-family:var(--font-body);
+    font-weight:400;
+    font-size:1rem;
+    line-height:1.7;
+    color:var(--ink);
+    background:var(--bg);
+    -webkit-font-smoothing:antialiased;
+  }
+
+  h1,h2,h3{
+    font-family:var(--font-title);
+    line-height:1.25;
+    margin:0 0 .6rem;
+    color:var(--ink);
+  }
+
+  h1{font-size:clamp(2rem,5vw,3.4rem);}
+  h2{font-size:clamp(1.25rem,2.4vw,1.6rem);}
+  h3{font-size:1.15rem;}
+
+  p{margin:0 0 1rem;}
+  a{color:var(--accent-dark);text-decoration:none;}
+  a:hover{text-decoration:underline;}
+
+  .container{
+    width:100%;
+    max-width:1120px;
+    margin:0 auto;
+    padding:0 1.25rem;
+  }
+
+  /* ---------- Cabeçalho ---------- */
+  .site-header{
+    position:sticky;
+    top:0;
+    z-index:50;
+    background:rgba(253,247,246,.92);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+
+  .header-inner{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:1rem;
+    padding:.9rem 0;
+  }
+
+  .logo{
+    font-family:var(--font-title);
+    font-size:1.4rem;
+    font-weight:700;
+    color:var(--ink);
+    letter-spacing:.5px;
+  }
+  .logo span{color:var(--accent);}
+  .logo:hover{text-decoration:none;}
+
+  .nav ul{
+    display:flex;
+    gap:1.6rem;
+    list-style:none;
+    margin:0;
+    padding:0;
+  }
+
+  .nav a{
+    font-size:.92rem;
+    font-weight:500;
+    color:var(--muted);
+    transition:color .2s ease;
+  }
+  .nav a:hover{color:var(--accent);text-decoration:none;}
+
+  .nav-toggle{
+    display:none;
+    align-items:center;
+    gap:.5rem;
+    font-family:var(--font-body);
+    font-size:.9rem;
+    font-weight:500;
+    color:var(--accent-dark);
+    background:var(--accent-soft);
+    border:1px solid var(--line);
+    border-radius:999px;
+    padding:.5rem 1rem;
+    cursor:pointer;
+  }
+
+  /* ---------- Hero ---------- */
+  .hero{
+    background:
+      radial-gradient(circle at 15% 20%,#fbe4ec 0%,transparent 55%),
+      radial-gradient(circle at 85% 10%,#f6e7d6 0%,transparent 50%),
+      linear-gradient(180deg,#fff9f8 0%,var(--bg) 100%);
+    padding:4.5rem 0 4rem;
+    text-align:center;
+    border-bottom:1px solid var(--line);
+  }
+
+  .eyebrow{
+    display:inline-block;
+    font-size:.78rem;
+    font-weight:600;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color:var(--accent);
+    background:var(--accent-soft);
+    padding:.4rem 1rem;
+    border-radius:999px;
+    margin-bottom:1.2rem;
+  }
+
+  .hero h1{margin-bottom:1rem;}
+
+  .lead{
+    max-width:620px;
+    margin:0 auto 2rem;
+    color:var(--muted);
+    font-weight:300;
+    font-size:1.05rem;
+  }
+
+  .btn{
+    display:inline-block;
+    font-family:var(--font-body);
+    font-size:.95rem;
+    font-weight:500;
+    color:#fff;
+    background:linear-gradient(135deg,var(--accent) 0%,var(--accent-dark) 100%);
+    border:none;
+    border-radius:999px;
+    padding:.85rem 2rem;
+    cursor:pointer;
+    box-shadow:0 8px 20px rgba(180,85,127,.28);
+    transition:transform .2s ease, box-shadow .2s ease;
+  }
+  .btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 12px 26px rgba(180,85,127,.35);
+    text-decoration:none;
+  }
+  .btn:active{transform:translateY(0);}
+
+  /* ---------- Seções ---------- */
+  section{padding:3.5rem 0;}
+
+  .section-head{
+    text-align:center;
+    max-width:640px;
+    margin:0 auto 2.5rem;
+  }
+  .section-head p{color:var(--muted);font-weight:300;margin:0;}
+
+  /* ---------- Posts ---------- */
+  .posts-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(290px,1fr));
+    gap:1.75rem;
+  }
+
+  .post{
+    display:flex;
+    flex-direction:column;
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    overflow:hidden;
+    box-shadow:var(--shadow);
+    transition:transform .25s ease, box-shadow .25s ease;
+  }
+  .post:hover{
+    transform:translateY(-4px);
+    box-shadow:0 16px 38px rgba(120,70,90,.16);
+  }
+
+  .thumb{
+    height:150px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:3rem;
+    line-height:1;
+  }
+  .thumb-1{background:linear-gradient(135deg,#f9dbe6,#e9b7c9);}
+  .thumb-2{background:linear-gradient(135deg,#fcecd8,#efc9a4);}
+  .thumb-3{background:linear-gradient(135deg,#e9ddf7,#c9b3e8);}
+  .thumb-4{background:linear-gradient(135deg,#fbdcd6,#f0a79f);}
+  .thumb-5{background:linear-gradient(135deg,#dceff9,#a9cee8);}
+  .thumb-6{background:linear-gradient(135deg,#e6efdb,#b9d3a3);}
+
+  .post-body{
+    display:flex;
+    flex-direction:column;
+    flex:1;
+    padding:1.4rem 1.5rem 1.6rem;
+  }
+
+  .tag{
+    align-self:flex-start;
+    font-size:.7rem;
+    font-weight:600;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:var(--accent-dark);
+    background:var(--accent-soft);
+    padding:.3rem .75rem;
+    border-radius:999px;
+    margin-bottom:.9rem;
+  }
+
+  .excerpt{
+    color:var(--muted);
+    font-weight:300;
+    font-size:.95rem;
+  }
+
+  .post-more{
+    font-size:.94rem;
+    color:var(--muted);
+    font-weight:300;
+    border-left:3px solid var(--accent-soft);
+    padding-left:.9rem;
+    margin-bottom:1rem;
+  }
+  .post-more p:last-child{margin-bottom:0;}
+
+  .read-more{
+    margin-top:auto;
+    align-self:flex-start;
+    font-family:var(--font-body);
+    font-size:.85rem;
+    font-weight:600;
+    letter-spacing:.05em;
+    text-transform:uppercase;
+    color:var(--accent);
+    background:none;
+    border:none;
+    border-bottom:1px solid var(--accent-soft);
+    padding:.25rem 0;
+    cursor:pointer;
+    transition:color .2s ease, border-color .2s ease;
+  }
+  .read-more:hover{
+    color:var(--accent-dark);
+    border-color:var(--accent);
+  }
+
+  /* ---------- Dicas ---------- */
+  .tips{
+    background:linear-gradient(180deg,#fff9f8,#fdf1f4);
+    border-top:1px solid var(--line);
+    border-bottom:1px solid var(--line);
+  }
+
+  .tips-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:1.5rem;
+  }
+
+  .tip{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:1.6rem 1.5rem;
+    box-shadow:var(--shadow);
+  }
+
+  .tip-number{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:38px;
+    height:38px;
+    border-radius:50%;
+    background:var(--accent-soft);
+    color:var(--accent-dark);
+    font-weight:600;
+    font-size:.95rem;
+    margin-bottom:.9rem;
+  }
+
+  .tip p{
+    margin:0;
+    font-size:.94rem;
+    font-weight:300;
+    color:var(--muted);
+  }
+
+  /* ---------- Sobre ---------- */
+  .about-inner{
+    display:grid;
+    grid-template-columns:1.1fr .9fr;
+    gap:2.5rem;
+    align-items:center;
+  }
+
+  .about-inner p{color:var(--muted);font-weight:300;}
+
+  .about-stats{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:1rem;
+  }
+
+  .stat{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:1.3rem 1rem;
+    text-align:center;
+    box-shadow:var(--shadow);
+  }
+
+  .stat strong{
+    display:block;
+    font-family:var(--font-title);
+    font-size:1.7rem;
+    color:var(--accent);
+    line-height:1.2;
+  }
+
+  .stat span{
+    font-size:.8rem;
+    color:var(--muted);
+    letter-spacing:.04em;
+  }
+
+  /* ---------- Newsletter ---------- */
+  .newsletter{
+    background:linear-gradient(135deg,#b4557f 0%,#8e3f63 100%);
+    color:#fff;
+    text-align:center;
+  }
+  .newsletter h2{color:#fff;}
+  .newsletter p{
+    color:rgba(255,255,255,.85);
+    font-weight:300;
+    max-width:520px;
+    margin:0 auto 2rem;
+  }
+
+  .newsletter-form{
+    display:flex;
+    flex-wrap:wrap;
+    gap:.75rem;
+    justify-content:center;
+    max-width:520px;
+    margin:0 auto;
+  }
+
+  .newsletter-form input[type="email"]{
+    flex:1 1 260px;
+    min-width:0;
+    font-family:var(--font-body);
+    font-size:.95rem;
+    color:var(--ink);
+    background:#fff;
+    border:2px solid transparent;
+    border-radius:999px;
+    padding:.85rem 1.3rem;
+    outline:none;
+    transition:border-color .2s ease;
+  }
+  .newsletter-form input[type="email"]:focus{
+    border-color:#f3c4d6;
+  }
+
+  .newsletter-form .btn{
+    background:#fff;
+    color:var(--accent-dark);
+    box-shadow:none;
+  }
+  .newsletter-form .btn:hover{
+    background:var(--accent-soft);
+    box-shadow:0 8px 20px rgba(0,0,0,.15);
+  }
+
+  .form-msg{
+    margin:1.2rem 0 0;
+    font-size:.9rem;
+    font-weight:500;
+    color:#fff;
+    min-height:1.4em;
+  }
+
+  /* ---------- Rodapé ---------- */
+  .site-footer{
+    background:#2c2328;
+    color:#cbbec4;
+    padding:2.8rem 0 2rem;
+    font-size:.9rem;
+  }
+
+  .footer-inner{
+    display:flex;
+    flex-wrap:wrap;
+    gap:1.5rem;
+    justify-content:space-between;
+    align-items:center;
+  }
+
+  .site-footer .logo{color:#fff;font-size:1.25rem;}
+  .site-footer .logo span{color:#e58faf;}
+
+  .footer-links{
+    display:flex;
+    gap:1.4rem;
+    list-style:none;
+    margin:0;
+    padding:0;
+  }
+  .footer-links a{color:#cbbec4;font-size:.88rem;}
+  .footer-links a:hover{color:#fff;text-decoration:none;}
+
+  .copyright{
+    width:100%;
+    margin:1.5rem 0 0;
+    padding-top:1.5rem;
+    border-top:1px solid rgba(255,255,255,.1);
+    text-align:center;
+    font-size:.82rem;
+    color:#9c8f95;
+  }
+
+  /* ---------- Foco visível ---------- */
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible{
+    outline:3px solid #e58faf;
+    outline-offset:3px;
+    border-radius:6px;
+  }
+
+  /* ---------- Responsivo ---------- */
+  @media (max-width:820px){
+    .about-inner{grid-template-columns:1fr;}
+  }
+
+  @media (max-width:720px){
+    .nav-toggle{display:inline-flex;}
+    .nav{display:none;width:100%;}
+    .nav.is-open{display:block;}
+    .nav ul{
+      flex-direction:column;
+      gap:.2rem;
+      padding:.75rem 0 .25rem;
+      border-top:1px solid var(--line);
+      margin-top:.75rem;
+    }
+    .nav a{display:block;padding:.55rem 0;}
+    .header-inner{flex-wrap:wrap;}
+    .hero{padding:3.2rem 0 3rem;}
+    section{padding:2.8rem 0;}
+    .footer-inner{flex-direction:column;text-align:center;}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto;}
+    *{transition:none !important;animation:none !important;}
+  }
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="logo" href="#topo">Glow<span>Diário</span></a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="menu">
+      ☰ Menu
+    </button>
+
+    <nav class="nav" id="menu" aria-label="Menu principal">
+      <ul>
+        <li><a href="#posts">Posts</a></li>
+        <li><a href="#dicas">Dicas</a></li>
+        <li><a href="#sobre">Sobre</a></li>
+        <li><a href="#contato">Newsletter</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <!-- HERO -->
+  <section class="hero" id="topo">
+    <div class="container">
+      <p class="eyebrow">Beleza real, dicas práticas</p>
+      <h1>Maquiagem que valoriza<br>quem você já é</h1>
+      <p class="lead">
+        Tutoriais, tendências e truques de pele para todos os tons e todas as rotinas —
+        do look de cinco minutos à produção da festa.
+      </p>
+      <a class="btn" href="#posts">Ver os posts</a>
+    </div>
+  </section>
+
+  <!-- POSTS -->
+  <section id="posts">
+    <div class="container">
+      <div class="section-head">
+        <h2>Últimos posts</h2>
+        <p>Conteúdo novo toda semana, escrito por quem testa antes de indicar.</p>
+      </div>
+
+      <div class="posts-grid">
+
+        <article class="post">
+          <div class="thumb thumb-1" aria-hidden="true"><span>🧴</span></div>
+          <div class="post-body">
+            <span class="tag">Skincare</span>
+            <h2>Preparação de pele: o segredo da make que dura</h2>
+            <p class="excerpt">
+              Antes do primeiro pincel, a pele precisa de atenção. Veja a rotina que faz
+              a maquiagem durar o dia inteiro sem craquelar.
+            </p>
+            <div class="post-more" id="more-1" hidden>
+              <p><strong>1. Limpeza:</strong> sabonete adequado ao seu tipo de pele e água micelar para remover resíduos.</p>
+              <p><strong>2. Hidratação:</strong> creme leve para pele oleosa, mais nutritivo para pele seca. Espere 3 minutos antes do próximo passo.</p>
+              <p><strong>3. Primer:</strong> use só na zona T se tiver oleosidade, ou um iluminador de base em todo o rosto se a pele for seca.</p>
+              <p><strong>4. Proteção solar:</strong> nunca pule. Prefira versões com acabamento invisível para não interferir na base.</p>
+            </div>
+            <button class="read-more" type="button" aria-expanded="false" aria-controls="more-1">Ler mais</button>
+          </div>
+        </article>
+
+        <article class="post">
+          <div class="thumb thumb-2" aria-hidden="true"><span>💧</span></div>
+          <div class="post-body">
+            <span class="tag">Base</span>
+            <h2>Base perfeita: como escolher tom e cobertura</h2>
+            <p class="excerpt">
+              O segredo não está na marca, e sim no subtom e na textura certos para a sua pele.
+              Aprenda a testar do jeito correto.
+            </p>
+            <div class="post-more" id="more-2" hidden>
+              <p><strong>Teste no maxilar,</strong> nunca no pulso: o tom precisa desaparecer entre o rosto e o pescoço.</p>
+              <p><strong>Luz natural é obrigatória.</strong> A iluminação da loja engana muito — vá até a vitrine antes de decidir.</p>
+              <p><strong>Cobertura:</strong> leve para o dia a dia, média para eventos, alta apenas onde há manchas. Camadas finas sempre vencem.</p>
+              <p><strong>Subtom:</strong> dourado/amarelado = quente, rosado/azulado = frio, misto = neutro.</p>
+            </div>
+            <button class="read-more" type="button" aria-expanded="false" aria-controls="more-2">Ler mais</button>
+          </div>
+        </article>
+
+        <article class="post">
+          <div class="thumb thumb-3" aria-hidden="true"><span>👁️</span></div>
+          <div class="post-body">
+            <span class="tag">Olhos</span>
+            <h2>Olho esfumado para iniciantes em 5 passos</h2>
+            <p class="excerpt">
+              Esqueça a ideia de que esfumado é coisa de expert. Com três tons e um pincel
+              fofo você chega lá.
+            </p>
+            <div class="post-more" id="more-3" hidden>
+              <p><strong>Passo 1:</strong> aplique um tom médio no côncavo com movimentos de vaivém.</p>
+              <p><strong>Passo 2:</strong> escureça o canto externo em forma de "V" invertido.</p>
+              <p><strong>Passo 3:</strong> esfume as bordas com pincel limpo — essa etapa faz toda a diferença.</p>
+              <p><strong>Passo 4:</strong> ilumine o centro da pálpebra e o canto interno.</p>
+              <p><strong>Passo 5:</strong> delineado fino + máscara de cílios para finalizar.</p>
+            </div>
+            <button class="read-more" type="button" aria-expanded="false" aria-controls="more-3">Ler mais</button>
+          </div>
+        </article>
+
+        <article class="post">
+          <div class="thumb thumb-4" aria-hidden="true"><span>💄</span></div>
+          <div class="post-body">
+            <span class="tag">Lábios</span>
+            <h2>Batons que valorizam cada tom de pele</h2>
+            <p class="excerpt">
+              Nudes, vermelhos e vinhos: descubra quais subtons iluminam o seu rosto
+              em vez de apagá-lo.
+            </p>
+            <div class="post-more" id="more-4" hidden>
+              <p><strong>Peles mais claras:</strong> rosados, nudes com fundo rosa e vermelhos cereja.</p>
+              <p><strong>Peles médias:</strong> terracota, coral queimado e vermelhos quentes ficam incríveis.</p>
+              <p><strong>Peles retintas:</strong> vinhos, ameixas, marrons intensos e vermelhos profundos.</p>
+              <p><strong>Dica universal:</strong> o batom deve conversar com o subtom da sua pele — quente com quente, frio com frio.</p>
+            </div>
+            <button class="read-more" type="button" aria-expanded="false" aria-controls="more-4">Ler mais</button>
+          </div>
+        </article>
+
+        <article class="post">
+          <div class="thumb thumb-5" aria-hidden="true"><span>✨</span></div>
+          <div class="post-body">
+            <span class="tag">Tendências</span>
+            <h2>Pele glow: o brilho saudável que veio para ficar</h2>
+            <p class="excerpt">
+              O visual "pele de vidro" continua em alta — e o melhor é que ele funciona
+              em todos os tons.
+            </p>
+            <div class="post-more" id="more-5" hidden>
+              <p>Comece com hidratante iluminador e misture uma gota de óleo facial à base.</p>
+              <p>Aplique o iluminador em pó apenas nos pontos altos: maçãs do rosto, arco da sobrancelha e ponta do nariz.</p>
+              <p>Evite o brilho excessivo na zona T se a pele for oleosa — foque no efeito úmido nas bochechas.</p>
+              <p>Finalize com bruma fixadora para derreter o produto na pele.</p>
+            </div>
+            <button class="read-more" type="button" aria-expanded="false" aria-controls="more-5">Ler mais</button>
+          </div>
+        </article>
+
+        <article class="post">
+          <div class="thumb thumb-6" aria-hidden="true"><span>⏱️</span></div>
+          <div class="post-body">
+            <span class="tag">Rotina</span>
+            <h2>Maquiagem para o dia a dia em 10 minutos</h2>
+            <p class="excerpt">
+              Uma rotina enxuta, com cinco produtos, para quem precisa sair de casa
+              com a pele bonita e o tempo curto.
+            </p>
+            <div class="post-more" id="more-6" hidden>
+              <p><strong>Minuto 1–2:</strong> protetor solar com cor ou BB cream aplicado com os dedos.</p>
+              <p><strong>Minuto 3–5:</strong> corretivo só onde precisa (olheiras e vermelhidão).</p>
+              <p><strong>Minuto 6–7:</strong> blush cremoso nas maçãs do rosto, espalhado com a mão.</p>
+              <p><strong>Minuto 8–9:</strong> máscara de cílios e sobrancelhas preenchidas.</p>
+              <p><strong>Minuto 10:</strong> balm labial colorido e pronto.</p>
+            </div>
+            <button class="read-more" type="button" aria-expanded="false" aria-controls="more-6">Ler mais</button>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- DICAS -->
+  <section class="tips" id="dicas">
+    <div class="container">
+      <div class="section-head">
+        <h2>Três dicas que mudam tudo</h2>
+        <p>Pequenos ajustes com grande impacto no resultado final.</p>
+      </div>
+
+      <div class="tips-grid">
+        <div class="tip">
+          <span class="tip-number">1</span>
+          <h3>Menos produto, mais camadas</h3>
+          <p>Camadas finas de base e corretivo cobrem melhor e duram mais do que uma aplicação generosa de uma vez.</p>
+        </div>
+        <div class="tip">
+          <span class="tip-number">2</span>
+          <h3>Pincéis limpos</h3>
+          <p>Lave os pincéis a cada duas semanas. Além de evitar acne, a aplicação fica muito mais uniforme.</p>
+        </div>
+        <div class="tip">
+          <span class="tip-number">3</span>
+          <h3>Luz natural para conferir</h3>
+          <p>Antes de sair, olhe-se em um espelho perto da janela. É ali que você percebe se algo está exagerado.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SOBRE -->
+  <section id="sobre">
+    <div class="container">
+      <div class="about-inner">
+        <div>
+          <p class="eyebrow">Sobre o blog</p>
+          <h2>Beleza sem regras rígidas</h2>
+          <p>
+            O <strong>Glow Diário</strong> nasceu da vontade de falar de maquiagem de forma
+            leve e honesta. Aqui você não encontra promessas milagrosas: encontra testes
+            reais, comparações sinceras e truques que cabem na rotina de verdade.
+          </p>
+          <p>
+            Acreditamos que maquiagem é ferramenta de expressão — não de correção.
+            Cada tom de pele, cada textura e cada estilo têm espaço por aqui.
+          </p>
+        </div>
+
+        <div class="about-stats">
+          <div class="stat"><strong>+120</strong><span>posts publicados</span></div>
+          <div class="stat"><strong>6</strong><span>categorias</span></div>
+          <div class="stat"><strong>100%</strong><span>produtos testados</span></div>
+          <div class="stat"><strong>0</strong><span>conteúdo patrocinado oculto</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NEWSLETTER -->
+  <section class="newsletter" id="contato">
+    <div class="container">
+      <h2>Receba as dicas no seu e-mail</h2>
+      <p>Uma newsletter por semana, com tutoriais curtos e novidades que realmente valem a pena.</p>
+
+      <form class="newsletter-form" id="newsletter" novalidate>
+        <label for="email" class="visually-hidden" hidden>Seu e-mail</label>
+        <input type="email" id="email" name="email" placeholder="seu@email.com" required autocomplete="email">
+        <button class="btn" type="submit">Quero receber</button>
+      </form>
+
+      <p class="form-msg" id="form-msg" role="status" aria-live="polite"></p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <a class="logo" href="#topo">Glow<span>Diário</span></a>
+
+    <ul class="footer-links">
+      <li><a href="#posts">Posts</a></li>
+      <li><a href="#dicas">Dicas</a></li>
+      <li><a href="#sobre">Sobre</a></li>
+      <li><a href="#contato">Contato</a></li>
+    </ul>
+
+    <p class="copyright">© <span id="ano"></span> Glow Diário — Todos os direitos reservados.</p>
+  </div>
+</footer>
+
+<script>
+  /* Ano automático no rodapé */
+  document.getElementById('ano').textContent = new Date().getFullYear();
+
+  /* Menu mobile */
+  var navToggle = document.querySelector('.nav-toggle');
+  var menu = document.getElementById('menu');
+
+  navToggle.addEventListener('click', function () {
+    var aberto = menu.classList.toggle('is-open');
+    navToggle.setAttribute('aria-expanded', String(aberto));
+  });
+
+  menu.querySelectorAll('a').forEach(function (link) {
+    link.addEventListener('click', function () {
+      menu.classList.remove('is-open');
+      navToggle.setAttribute('aria-expanded', 'false');
+    });
+  });
+
+  /* Botões "Ler mais" */
+  document.querySelectorAll('.read-more').forEach(function (botao) {
+    botao.addEventListener('click', function () {
+      var alvo = document.getElementById(botao.getAttribute('aria-controls'));
+      if (!alvo) return;
+
+      var expandido = botao.getAttribute('aria-expanded') === 'true';
+      botao.setAttribute('aria-expanded', String(!expandido));
+      alvo.hidden = expandido;
+      botao.textContent = expandido ? 'Ler mais' : 'Ler menos';
+    });
+  });
+
+  /* Formulário da newsletter */
+  var form = document.getElementById('newsletter');
+  var mensagem = document.getElementById('form-msg');
+  var campoEmail = document.getElementById('email');
+
+  form.addEventListener('submit', function (evento) {
+    evento.preventDefault();
+
+    if (!campoEmail.value || campoEmail.validity.typeMismatch) {
+      mensagem.textContent = 'Por favor, digite um e-mail válido. 💌';
+      campoEmail.focus();
+      return;
+    }
+
+    mensagem.textContent = 'Pronto! Você vai receber nossas dicas de maquiagem em breve. 💄';
+    form.reset();
+  });
+</script>
+
+</body>
+</html>
