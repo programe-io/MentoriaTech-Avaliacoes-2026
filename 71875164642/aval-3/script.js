@@ -1,66 +1,55 @@
 /**
  * ==========================================================================
- * FUNÇÃO PRINCIPAL: ANALISAR E COLORIR PRIORIDADES
- * Executa o loop para aplicar classes condicionais baseadas no texto (Item 11)
+ * SCRIPT DE MANIPULAÇÃO DO DOM E ESTILOS
+ * Baseado no sumário de estilização direta vs. manipulação de classes
  * ==========================================================================
  */
-function colorirPrioridades() {
-    // 1. SELECIONANDO VÁRIOS ELEMENTOS (Item 10)
-    // getElementsByClassName nos devolve uma lista viva (HTMLCollection) com as etiquetas
-    const badges = document.getElementsByClassName('badge-prioridade');
 
-    // 2. PERCORRENDO OS ELEMENTOS COM UM LAÇO DE REPETIÇÃO (Item 11)
-    for (let i = 0; i < badges.length; i++) {
-        // Captura o elemento atual baseado na posição do contador [i]
-        let elementoAtual = badges[i];
-        
-        // Extrai o texto interno da tag, remove espaços vazios e joga para minúsculo
-        let textoPrioridade = elementoAtual.textContent.trim().toLowerCase();
-
-        // 3. MANIPULANDO CLASSES COM CLASSLIST (Item 6 e 7)
-        // Primeiro, adicionamos a classe base compartilhada por todas as etiquetas (.badge)
-        elementoAtual.classList.add('badge');
-
-        // Aplicamos a condição para decidir qual classe o elemento vai ganhar (Item 11)
-        if (textoPrioridade === 'urgente') {
-            elementoAtual.classList.add('urgente');
-        } else if (textoPrioridade === 'moderado') {
-            elementoAtual.classList.add('moderado');
-        } else if (textoPrioridade === 'normal') {
-            elementoAtual.classList.add('normal');
-        }
-    }
-
-    // 4. EXEMPLO DE ESTILIZAÇÃO DIRETA VIA PROPRIEDADE .style (Item 2 e 5)
-    // Desativando o botão após o clique para que a análise ocorra apenas uma vez
-    const botao = document.querySelector('.btn-analise');
-    botao.textContent = "Lista Analisada!";
-    botao.disabled = true;
+// --- 2 e 4. APLICANDO PROPRIEDADES CSS VIA JAVASCRIPT (Estilização Direta) ---
+// Nota (Item 3 e 5): Isto altera o atributo 'style' do elemento (CSS inline).
+// Tem como limitação a baixa reutilização e alta precedência sobre o CSS externo.
+function alterarEstiloDireto() {
+    const texto = document.getElementById('texto-introducao');
     
-    // Injetando CSS inline direto no botão (Limitação do Item 5: isso se sobrepõe ao arquivo CSS)
-    botao.style.backgroundColor = "#2c3e50"; 
-    botao.style.cursor = "not-allowed";
+    if (texto) {
+        // Aplica os estilos diretamente no nó do HTML
+        texto.style.color = '#007bff';
+        texto.style.fontSize = '18px';
+        texto.style.fontWeight = 'bold';
+    }
 }
 
+// --- 6 e 7. MANIPULANDO CLASSES COM classList (add, remove e toggle) ---
+// Boa prática (Item 8): O JavaScript apenas gerencia o estado (adiciona/remove a classe),
+// enquanto o design visual fica isolado dentro do arquivo CSS externo.
+function alternarClasse() {
+    const elemento = document.getElementById('texto-classe');
+    
+    if (elemento) {
+        // O método .toggle() adiciona a classe se ela não existir, ou remove se já existir
+        elemento.classList.toggle('destaque');
+    }
+}
 
-/**
- * ==========================================================================
- * FUNÇÃO EXTRA: MÉTODO TOGGLE PARA MARCAR COMO CONCLUÍDO (Item 7)
- * Adiciona interatividade para que o usuário possa riscar tarefas ao clicar
- * ==========================================================================
- */
-// Aguarda o HTML carregar completamente na página antes de rodar as escutas de evento
-document.addEventListener('DOMContentLoaded', () => {
-    // Seleciona todas as linhas de tarefa (tags <li>) dentro da nossa lista
-    const itensLista = document.querySelectorAll('#lista-tarefas li');
-
-    // Percorre cada linha adicionando um detector de clique (Event Listener)
-    itensLista.forEach(item => {
-        item.style.cursor = "pointer"; // Estilização direta de usabilidade (Item 4)
+// --- 10 e 11. SELECIONANDO VÁRIOS ELEMENTOS E APLICANDO ESTILOS CONDICIONAIS ---
+// 9. Exemplo prático aplicado sobre uma tabela de situações
+function formatarTabela() {
+    // 10. Seleciona uma coleção de elementos HTML através da classe em comum
+    const situacoes = document.getElementsByClassName('coluna-situacao');
+    
+    // 11. Percorrendo a lista de elementos (HTMLCollection) com uma estrutura de repetição
+    for (let i = 0; i < situacoes.length; i++) {
+        // Obtém e limpa o texto interno de cada célula para evitar espaços em branco
+        const textoSituacao = situacoes[i].innerText.trim();
         
-        item.addEventListener('click', function() {
-            // Usa o .toggle() para ligar/desligar a classe de riscado (Item 7)
-            this.classList.toggle('concluido');
-        });
-    });
-});
+        // Aplicação das regras condicionais baseadas no conteúdo de texto
+        if (textoSituacao === 'Aprovado') {
+            // 7. Método .add() injeta a classe sem interferir em outras existentes
+            situacoes[i].classList.add('sucesso');
+            situacoes[i].classList.remove('pendente'); // Garante que não haverá conflito de cor
+        } else if (textoSituacao === 'Pendente') {
+            situacoes[i].classList.add('pendente');
+            situacoes[i].classList.remove('sucesso');
+        }
+    }
+}
