@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classes e Estilos via JavaScript</title>
+    <style>
+        /* Estilos base */
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 200px auto;
+            padding: 20px;
+            background-color: #f4f4f9;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        button {
+            padding: 10px 15px;
+            margin: 5px;
+            font-size: 14px;
+            cursor: pointer;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #eef;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            background-color: #ddd;
+        }
+
+        /* Classes que serão manipuladas via JavaScript (Tópico 8) */
+        .caixa-destaque {
+            background-color: #fff3cd;
+            border: 20px solid #ffeeba;
+            color: #856404;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 4px;
+        }
+        .texto-grande {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        /* Estilos para a tabela de situações (Tópico 9) */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        /* Classes condicionais para as linhas (Tópico 11) */
+        .aprovado {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .reprovado {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+    <div class="container">
+        <h1>Classes e Estilos via JavaScript</h1>
+        
+        <!-- Elemento de teste para estilização direta (Tópicos 2, 3 e 4) -->
+        <p id="paragrafo-estilo">Este parágrafo será alterado usando a propriedade <strong>style</strong> direta.</p>
+        
+        <!-- Elemento de teste para classes (Tópicos 6, 7 e 8) -->
+        <div id="caixa-exemplo">
+            Este bloco vai receber classes usando o <strong>classList</strong>.
+        </div>
+
+        <div style="margin-top: 15px;">
+            <h3>Controles JavaScript</h3>
+            <!-- Botões para acionar as funções JS -->
+            <button onclick="alterarEstiloDireto()">Mudar Cor (style.color)</button>
+            <button onclick="adicionarClasse()">Adicionar Destaque (add)</button>
+            <button onclick="removerClasse()">Remover Destaque (remove)</button>
+            <button onclick="alternarTextoGrande()">Alternar Tamanho (toggle)</button>
+        </div>
+
+        <!-- Tabela de Situações (Tópico 9 e 11) -->
+        <h3>Tabela de Situações</h3>
+        <p>Clique no botão abaixo para percorrer as linhas e aplicar estilos condicionais baseado no texto da situação.</p>
+        <button onclick="analisarSituacoes()">Aplicar Estilos na Tabela</button>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Aluno</th>
+                    <th>Nota</th>
+                    <th>Situação</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Linhas que usam a mesma classe para seleção em lote (Tópico 10) -->
+                <tr class="linha-aluno">
+                    <td>Ana Silva</td>
+                    <td>8.5</td>
+                    <td>Aprovado</td>
+                </tr>
+                <tr class="linha-aluno">
+                    <td>Carlos Souza</td>
+                    <td>4.2</td>
+                    <td>Reprovado</td>
+                </tr>
+                <tr class="linha-aluno">
+                    <td>Mariana Costa</td>
+                    <td>9.0</td>
+                    <td>Aprovado</td>
+                </tr>
+                <tr class="linha-aluno">
+                    <td>João Santos</td>
+                    <td>5.0</td>
+                    <td>Reprovado</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- JavaScript para manipulação dos elementos (Tópicos do sumário) -->
+    <script>
+        // 1. Estilização direta com a propriedade style (Tópicos 2 e 4)
+        function alterarEstiloDireto() {
+            const p = document.getElementById('paragrafo-estilo');
+            // Altera diretamente o CSS inline do elemento
+            p.style.color = 'blue';
+            p.style.fontWeight = 'bold';
+        }
+
+        // 2. Manipulando classes com classList (Tópicos 6, 7 e 8)
+        const caixa = document.getElementById('caixa-exemplo');
+
+        function adicionarClasse() {
+            // Método add: adiciona a classe se ela não existir
+            caixa.classList.add('caixa-destaque');
+        }
+
+        function removerClasse() {
+            // Método remove: remove a classe se ela existir
+            caixa.classList.remove('caixa-destaque');
+        }
+
+        function alternarTextoGrande() {
+            // Método toggle: adiciona se não tiver, remove se tiver
+            caixa.classList.toggle('texto-grande');
+        }
+
+        // 3. Selecionando vários elementos e aplicando estilos condicionais (Tópicos 10 e 11)
+        function analisarSituacoes() {
+            // Seleciona todas as linhas da tabela que possuem a classe informada
+            const linhas = document.getElementsByClassName('linha-aluno');
+            
+            // Percorrendo a coleção de elementos (HTMLCollection)
+            for (let i = 0; i < linhas.length; i++) {
+                const linha = linhas[i];
+                // Pega o texto da terceira célula (coluna Situação)
+                const situacao = linha.cells[2].innerText;
+                
+                // Estrutura condicional para aplicar as classes corretas
+                if (situacao === 'Aprovado') {
+                    linha.classList.add('aprovado');
+                    linha.classList.remove('reprovado'); // Garante que limpa a oposta
+                } else if (situacao === 'Reprovado') {
+                    linha.classList.add('reprovado');
+                    linha.classList.remove('aprovado');
+                }
+            }
+        }
+    </script>
+<script src="script.js"></script></body>
+</html>
