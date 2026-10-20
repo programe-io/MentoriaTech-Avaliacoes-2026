@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema de Gestão de Produtos</title>
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #1e293b;
+      --border: #e2e8f0;
+      --error: #ef4444;
+      --success: #22c55e;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    h1, h2 {
+      color: #0f172a;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    @media (min-width: 768px) {
+      .grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .card {
+      background: var(--card-bg);
+      padding: 20px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      box-sizing: border-box;
+      font-size: 14px;
+    }
+
+    input:focus, select:focus {
+      outline: 2px solid var(--primary);
+    }
+
+    button {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 500;
+      width: 100%;
+      font-size: 14px;
+    }
+
+    button:hover {
+      background-color: var(--primary-hover);
+    }
+
+    .btn-secondary {
+      background-color: #64748b;
+    }
+    .btn-secondary:hover {
+      background-color: #475569;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      background-color: #f1f5f9;
+      font-weight: 600;
+    }
+
+    .empty-state {
+      text-align: center;
+      color: #64748b;
+      padding: 20px;
+    }
+  </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+<div class="container">
+  <h1>Gerenciador de Produtos</h1>
+  
+  <div class="grid">
+    <!-- Formidável de Cadastro -->
+    <div class="card">
+      <h2>Cadastrar Produto</h2>
+      <form id="form-cadastro">
+        <div class="form-group">
+          <label for="descricao">Descrição do Produto</label>
+          <input type="text" id="descricao" required placeholder="Ex: Notebook Dell">
+        </div>
+        <div class="form-group">
+          <label for="quantidade">Quantidade Inicial</label>
+          <input type="number" id="quantidade" min="0" required placeholder="Ex: 10">
+        </div>
+        <div class="form-group">
+          <label for="valor">Valor Unitário (R\$)</label>
+          <input type="number" id="valor" step="0.01" min="0.01" required placeholder="Ex: 4500.00">
+        </div>
+        <button type="submit">Cadastrar Produto</button>
+      </form>
+    </div>
+
+    <!-- Painel de Atualizações -->
+    <div class="card">
+      <h2>Atualizar Estoque / Preço</h2>
+      <form id="form-atualizacao">
+        <div class="form-group">
+          <label for="select-produto">Selecionar Produto</label>
+          <select id="select-produto" required>
+            <option value="">Selecione um produto...</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="tipo-operacao">Operação</label>
+          <select id="tipo-operacao" required>
+            <option value="valor">Alterar Valor (Novo Preço)</option>
+            <option value="quantidade">Somar Quantidade (Entrada de Estoque)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="valor-operacao">Novo Valor ou Qtd a Somar</label>
+          <input type="number" id="valor-operacao" step="0.01" min="0.01" required placeholder="Digite o número">
+        </div>
+        <button type="submit" class="btn-secondary">Aplicar Atualização</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Lista de Produtos -->
+  <div class="card">
+    <h2>Produtos Cadastrados</h2>
+    <div id="tabela-container">
+      <p class="empty-state">Nenhum produto cadastrado até o momento.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  // --- Estado da Aplicação ---
+  const listaProdutos = [];
+  let proximoId = 1;
+
+  // --- Seletores do DOM ---
+  const formCadastro = document.getElementById('form-cadastro');
+  const formAtualizacao = document.getElementById('form-atualizacao');
+  const selectProduto = document.getElementById('select-produto');
+  const tabelaContainer = document.getElementById('tabela-container');
+
+  // --- Funções Principais ---
+
+  function validarProduto(descricao, quantidade, valor) {
+    if (!descricao || descricao.trim() === "") {
+      alert("Erro: Descrição inválida.");
+      return false;
+    }
+    if (isNaN(quantidade) || quantidade < 0) {
+      alert("Erro: Quantidade deve ser igual ou maior que zero.");
+      return false;
+    }
+    if (isNaN(valor) || valor <= 0) {
+      alert("Erro: Valor deve ser maior que zero.");
+      return false;
+    }
+    return true;
+  }
+
+  function cadastrarProduto(descricao, quantidade, valor) {
+    if (!validarProduto(descricao, quantidade, valor)) return;
+
+    const novoProduto = {
+      id: proximoId++,
+      descricao: descricao.trim(),
+      quantidade: parseInt(quantidade),
+      valor: parseFloat(valor)
+    };
+
+    listaProdutos.push(novoProduto);
+    atualizarInterface();
+    formCadastro.reset();
+  }
+
+  function aplicarAtualizacao(id, tipo, valorOperacao) {
+    const produto = listaProdutos.find(prod => prod.id === id);
+    if (!produto) {
+      alert("Erro: Produto não encontrado.");
+      return;
+    }
+
+    if (tipo === "valor") {
+      if (valorOperacao <= 0) return alert("O valor deve ser maior que zero.");
+      produto.valor = parseFloat(valorOperacao);
+    } else if (tipo === "quantidade") {
+      if (valorOperacao <= 0) return alert("A quantidade a somar deve ser maior que zero.");
+      produto.quantidade += parseInt(valorOperacao);
+    }
+
+    atualizarInterface();
+    formAtualizacao.reset();
+  }
+
+  // --- Renderização da Interface ---
+
+  function atualizarInterface() {
+    atualizarTabela();
+    atualizarSelect();
+  }
+
+  function atualizarTabela() {
+    if (listaProdutos.length === 0) {
+      tabelaContainer.innerHTML = '<p class="empty-state">Nenhum produto cadastrado até o momento.</p>';
+      return;
+    }
+
+    let html = `
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Descrição</th>
+            <th>Quantidade</th>
+            <th>Preço Unitário</th>
+            <th>Total em Estoque</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
+
+    listaProdutos.forEach(prod => {
+      const total = prod.quantidade * prod.valor;
+      html += `
+        <tr>
+          <td><strong>#${prod.id}</strong></td>
+          <td>${prod.descricao}</td>
+          <td>${prod.quantidade} un</td>
+          <td>R$ ${prod.valor.toFixed(2)}</td>
+          <td>R$ ${total.toFixed(2)}</td>
+        </tr>
+      `;
+    });
+
+    html += '</tbody></table>';
+    tabelaContainer.innerHTML = html;
+  }
+
+  function atualizarSelect() {
+    // Mantém apenas a primeira opção padrão
+    selectProduto.innerHTML = '<option value="">Selecione um produto...</option>';
+    
+    listaProdutos.forEach(prod => {
+      const opt = document.createElement('option');
+      opt.value = prod.id;
+      opt.textContent = `#${prod.id} - ${prod.descricao}`;
+      selectProduto.appendChild(opt);
+    });
+  }
+
+  // --- Event Listeners (Eventos) ---
+
+  formCadastro.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const desc = document.getElementById('descricao').value;
+    const qtd = document.getElementById('quantidade').value;
+    const val = document.getElementById('valor').value;
+    
+    cadastrarProduto(desc, qtd, val);
+  });
+
+  formAtualizacao.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const id = parseInt(selectProduto.value);
+    const tipo = document.getElementById('tipo-operacao').value;
+    const valorOp = parseFloat(document.getElementById('valor-operacao').value);
+
+    aplicarAtualizacao(id, tipo, valorOp);
+  });
+
+  // Opcional: Altera o placeholder do input de atualização dinamicamente
+  document.getElementById('tipo-operacao').addEventListener('change', function(e) {
+    const inputVal = document.getElementById('valor-operacao');
+    if (e.target.value === 'quantidade') {
+      inputVal.placeholder = "Ex: 5 (adicionar ao estoque)";
+      inputVal.step = "1";
+    } else {
+      inputVal.placeholder = "Ex: 4299.99 (novo preço)";
+      inputVal.step = "0.01";
+    }
+  });
+
+</script>
+<script src="script.js"></script></body>
+</html>
