@@ -1,0 +1,1 @@
+function mostrarMensagem() { document.getElementById("mensagem").textContent = "As empresas são fundamentais para gerar empregos, criar produtos e serviços e promover o desenvolvimento econômico!"; }
