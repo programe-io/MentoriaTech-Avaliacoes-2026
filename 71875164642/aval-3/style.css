@@ -1,96 +1,126 @@
 /* ==========================================================================
-   1. ESTILOS GERAIS DA PÁGINA (Base para o projeto)
+   1. ESTRUTURA VISUAL E LAYOUT (Estilos Base)
    ========================================================================== */
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f8f9fa;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background-color: #f4f7f6;
     color: #333333;
-    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px;
 }
 
-h1 {
-    color: #2c3e50;
-    border-bottom: 2px solid #dee2e6;
-    padding-bottom: 10px;
-}
-
-/* Item 9: Estilização da Tabela de Situações */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 20px 0;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+/* Container principal da lista (Item 9) */
+.container {
     background-color: #ffffff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    width: 400px;
 }
 
-th, td {
-    padding: 12px 15px;
-    text-align: left;
-    border-bottom: 1px solid #dee2e6;
+h2 {
+    margin-top: 0;
+    color: #2c3e50;
+    font-size: 22px;
 }
 
-th {
-    background-color: #2c3e50;
-    color: #ffffff;
-    text-transform: uppercase;
+p {
+    color: #666666;
     font-size: 14px;
+    margin-bottom: 20px;
 }
 
-button {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    font-size: 16px;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background 0.3s ease;
+/* Elementos da Lista */
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0;
 }
 
-button:hover {
-    background-color: #0056b3;
+li {
+    padding: 14px 8px;
+    border-bottom: 1px solid #edf2f7;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 15px;
+    transition: background-color 0.2s ease;
+}
+
+/* Efeito visual ao passar o mouse na linha da tarefa */
+li:hover {
+    background-color: #f8fafc;
 }
 
 
 /* ==========================================================================
-   2. CLASSES DEFINIDAS EM ARQUIVO CSS EXTERNO (Item 8)
-   Essas classes serão injetadas dinamicamente pelo JavaScript usando classList
+   2. BOTÃO DE COMPORTAMENTO
+   ========================================================================== */
+.btn-analise {
+    width: 100%;
+    background-color: #8e44ad;
+    color: #ffffff;
+    border: none;
+    padding: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(142, 68, 173, 0.2);
+    transition: all 0.2s ease;
+}
+
+.btn-analise:hover {
+    background-color: #71338c;
+    box-shadow: 0 4px 6px rgba(142, 68, 173, 0.3);
+}
+
+
+/* ==========================================================================
+   3. CLASSES UTILITÁRIAS PARA MANIPULAÇÃO VIA JAVASCRIPT (Item 6, 7 e 8)
+   Essas regras só mudam o visual da tela quando o loop do JS ativa as classes
    ========================================================================== */
 
-/* Item 7: Classes de situação para usar com classList.add() */
-.situacao-aprovado {
-    background-color: #d4edda !important; /* Verde claro */
-    color: #155724 !important;
+/* Estilo base da etiqueta de prioridade (Injetado via classList.add) */
+.badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
     font-weight: bold;
+    text-transform: uppercase;
+    color: #ffffff;
+    letter-spacing: 0.5px;
+    min-width: 65px;
+    text-align: center;
 }
 
-.situacao-pendente {
-    background-color: #fff3cd !important; /* Amarelo claro */
-    color: #856404 !important;
-    font-weight: bold;
+/* Subclasses condicionais injetadas com base no texto do elemento (Item 11) */
+.urgente {
+    background-color: #e74c3c; /* Vermelho vibrante */
+    box-shadow: 0 2px 5px rgba(231, 76, 60, 0.3);
 }
 
-.situacao-reprovado {
-    background-color: #f8d7da !important; /* Vermelho claro */
-    color: #721c24 !important;
-    font-weight: bold;
+.moderado {
+    background-color: #f39c12; /* Laranja de atenção */
+    box-shadow: 0 2px 5px rgba(243, 156, 18, 0.3);
 }
 
-/* Item 7: Classe de efeito para usar com classList.toggle() */
-.destaque-tabela {
-    outline: 4px solid #007bff;
-    transform: scale(1.01);
-    transition: all 0.2s ease-in-out;
+.normal {
+    background-color: #2ecc71; /* Verde de sucesso */
+    box-shadow: 0 2px 5px rgba(46, 204, 113, 0.3);
 }
 
 
 /* ==========================================================================
-   3. NOTA IMPORTANTE SOBRE ESTILIZAÇÃO DIRETA (Item 3 e 5)
-   ========================================================================== 
-   Quando o JavaScript usa a propriedade ".style", ele cria um "CSS inline" 
-   diretamente na tag HTML (ex: <div style="color: red;">).
-   
-   O CSS inline tem PRIORIDADE Máxima sobre este arquivo CSS. 
-   Por isso, usamos o "!important" nas classes acima para garantir que o CSS 
-   consiga vencer ou interagir bem com manipulações diretas de script.
+   4. RELAÇÃO COM ESTILIZAÇÃO DIRETA (Item 5)
+   ==========================================================================
+   Se você quiser riscar e apagar visualmente uma tarefa quando ela for 
+   concluída, você pode disparar esta classe usando o .toggle() no JavaScript.
 */
+.concluido {
+    text-decoration: line-through;
+    color: #a0aec0;
+    opacity: 0.6;
+}

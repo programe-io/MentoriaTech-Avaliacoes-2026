@@ -3,115 +3,169 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Exemplo Prático - Manipulação de Estilos</title>
+    <title>Exemplo 3 - Lista de Prioridades</title>
     <style>
-        /* CSS Externo/Interno (Item 8) */
+        /* --- ESTILOS GERAIS (Item 8) --- */
         body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
-            background-color: #f4f4f9;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
+
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            width: 400px;
         }
-        th, td {
-            border: 1px solid #ddd;
+
+        h2 {
+            margin-top: 0;
+            color: #333;
+        }
+
+        /* Estrutura da Lista */
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 20px 0;
+        }
+
+        li {
             padding: 12px;
-            text-align: left;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        th {
-            background-color: #333;
-            color: white;
-        }
-        /* Classes que serão aplicadas via JavaScript (Item 6 e 7) */
-        .situacao-aprovado {
-            background-color: #d4edda;
-            color: #155724;
+
+        /* Estilo base das etiquetas (Badges) */
+        .badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
             font-weight: bold;
+            text-transform: uppercase;
+            color: white;
+            background-color: #95a5a6; /* Cor padrão cinza */
         }
-        .situacao-pendente {
-            background-color: #fff3cd;
-            color: #856404;
+
+        /* --- CLASSES QUE O JAVASCRIPT VAI INJETAR (Item 6 e 7) --- */
+        .urgente {
+            background-color: #e74c3c; /* Vermelho */
         }
-        .situacao-reprovado {
-            background-color: #f8d7da;
-            color: #721c24;
+
+        .moderado {
+            background-color: #f39c12; /* Laranja */
         }
-        .destaque {
-            border: 3px solid #0056b3 !important;
+
+        .normal {
+            background-color: #2ecc71; /* Verde */
+        }
+
+        .concluido {
+            text-decoration: line-through;
+            color: #bbb;
+        }
+
+        /* Botão */
+        .btn-analise {
+            width: 100%;
+            background-color: #8e44ad;
+            color: white;
+            border: none;
+            padding: 12px;
+            font-size: 15px;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-analise:hover {
+            background-color: #71338c;
         }
     </style>
 <script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="style.css" rel="stylesheet"></head>
 <body>
 
-    <h1>Painel de Alunos</h1>
-    <p>Os estilos abaixo foram aplicados dinamicamente usando JavaScript.</p>
+    <div class="container">
+        <h2>Minhas Tarefas</h2>
+        <p>Clique no botão abaixo para o JavaScript analisar as prioridades da lista.</p>
 
-    <!-- Tabela de Situações (Item 9) -->
-    <table>
-        <thead>
-            <tr>
-                <th>Aluno</th>
-                <th>Nota</th>
-                <th>Situação</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Ana Silva</td>
-                <td>8.5</td>
-                <!-- Adicionamos uma classe comum para selecionar depois -->
-                <td class="status">Aprovado</td>
-            </tr>
-            <tr>
-                <td>Bruno Costa</td>
-                <td>5.0</td>
-                <td class="status">Pendente</td>
-            </tr>
-            <tr>
-                <td>Carlos Souza</td>
-                <td>4.5</td>
-                <td class="status">Reprovado</td>
-            </tr>
-        </tbody>
-    </table>
+        <!-- Lista de Itens (Item 9) -->
+        <ul id="lista-tarefas">
+            <li>
+                <span>Enviar relatório mensal</span>
+                <span class="badge-prioridade">Urgente</span>
+            </li>
+            <li>
+                <span>Responder e-mails de clientes</span>
+                <span class="badge-prioridade">Normal</span>
+            </li>
+            <li>
+                <span>Reunião de alinhamento de equipe</span>
+                <span class="badge-prioridade">Moderado</span>
+            </li>
+            <li>
+                <span>Atualizar planilhas de gastos</span>
+                <span class="badge-prioridade">Urgente</span>
+            </li>
+            <li>
+                <span>Organizar mesa de trabalho</span>
+                <span class="badge-prioridade">Normal</span>
+            </li>
+        </ul>
 
-    <br>
-    <!-- Botão para demonstrar o método toggle (Item 7) -->
-    <button onclick="alternarDestaque()">Alternar Destaque da Tabela</button>
+        <button class="btn-analise" onclick="colorirPrioridades()">Analisar e Colorir Lista</button>
+    </div>
 
     <script>
-        // 1. Selecionando vários elementos com getElementsByClassName (Item 10)
-        const listaStatus = document.getElementsByClassName('status');
+        function colorirPrioridades() {
+            // ==========================================================================
+            // 1. SELECIONANDO VÁRIOS ELEMENTOS COM getElementsByClassName (Item 10)
+            // ==========================================================================
+            // Isso nos retorna uma coleção (HTMLCollection) com todas as etiquetas
+            const badges = document.getElementsByClassName('badge-prioridade');
 
-        // 2. Percorrendo elementos e aplicando estilos condicionais (Item 11)
-        for (let i = 0; i < listaStatus.length; i++) {
-            let elemento = listaStatus[i];
-            let textoStatus = elemento.textContent.trim();
+            // ==========================================================================
+            // 2. PERCORRENDO ELEMENTOS E APLICANDO ESTILOS CONDICIONAIS (Item 11)
+            // ==========================================================================
+            // Usamos o laço "for" para caminhar por cada um dos elementos encontrados
+            for (let i = 0; i < badges.length; i++) {
+                
+                let elementoAtual = badges[i];
+                
+                // Pegamos o texto de dentro da tag (tirando espaços extras)
+                let textoPrioridade = elementoAtual.textContent.trim().toLowerCase();
 
-            // Manipulando classes com classList.add (Item 6 e 7)
-            if (textoStatus === 'Aprovado') {
-                elemento.classList.add('situacao-aprovado');
-            } else if (textoStatus === 'Pendente') {
-                elemento.classList.add('situacao-pendente');
-            } else if (textoStatus === 'Reprovado') {
-                elemento.classList.add('situacao-reprovado');
+                // Primeiro, adicionamos a classe base visual '.badge' usando classList (Item 6)
+                elementoAtual.classList.add('badge');
+
+                // Aplicamos a condição: dependendo do texto, injetamos uma classe diferente (Item 7)
+                if (textoPrioridade === 'urgente') {
+                    elementoAtual.classList.add('urgente');
+                } else if (textoPrioridade === 'moderado') {
+                    elementoAtual.classList.add('moderado');
+                } else if (textoPrioridade === 'normal') {
+                    elementoAtual.classList.add('normal');
+                }
             }
-        }
 
-        // 3. Exemplo de Estilização Direta com a propriedade .style (Item 2 e 4)
-        // Modificando o título diretamente via JavaScript
-        const titulo = document.querySelector('h1');
-        titulo.style.color = '#0056b3';
-        titulo.style.textDecoration = 'underline';
-
-        // 4. Função para demonstrar o método .toggle (Item 7)
-        function alternarDestaque() {
-            const tabela = document.querySelector('table');
-            tabela.classList.toggle('destaque');
+            // ==========================================================================
+            // EXTRA: Demonstrando uma limitação/uso do .style (Item 2 e 5)
+            // Alterando o botão após o clique para indicar que foi concluído
+            const botao = document.querySelector('.btn-analise');
+            botao.textContent = "Lista Analisada!";
+            botao.disabled = true;
+            botao.style.backgroundColor = "#2c3e50"; // Estilização direta via JS
+            botao.style.cursor = "not-allowed";
         }
     </script>
 <script src="script.js"></script></body>

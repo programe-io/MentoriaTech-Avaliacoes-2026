@@ -1,58 +1,66 @@
-/* ==========================================================================
-   1. SELEÇÃO DE ELEMENTOS (Item 10)
-   ========================================================================== */
-// Selecionando os botões e elementos que vão sofrer alterações
-const btnTema = document.getElementById('btn-tema');
-const card = document.querySelector('.card-produto');
-const precoElemento = document.querySelector('.preco');
+/**
+ * ==========================================================================
+ * FUNÇÃO PRINCIPAL: ANALISAR E COLORIR PRIORIDADES
+ * Executa o loop para aplicar classes condicionais baseadas no texto (Item 11)
+ * ==========================================================================
+ */
+function colorirPrioridades() {
+    // 1. SELECIONANDO VÁRIOS ELEMENTOS (Item 10)
+    // getElementsByClassName nos devolve uma lista viva (HTMLCollection) com as etiquetas
+    const badges = document.getElementsByClassName('badge-prioridade');
 
-/* ==========================================================================
-   2. MANIPULANDO CLASSES COM CLASSLIST (Item 6 e 7)
-   Esta é a abordagem recomendada (Item 8 - usando CSS externo)
-   ========================================================================== */
+    // 2. PERCORRENDO OS ELEMENTOS COM UM LAÇO DE REPETIÇÃO (Item 11)
+    for (let i = 0; i < badges.length; i++) {
+        // Captura o elemento atual baseado na posição do contador [i]
+        let elementoAtual = badges[i];
+        
+        // Extrai o texto interno da tag, remove espaços vazios e joga para minúsculo
+        let textoPrioridade = elementoAtual.textContent.trim().toLowerCase();
 
-// Exemplo de .toggle() -> Adiciona a classe se não existir; remove se já existir.
-btnTema.addEventListener('click', () => {
-    // Alterna a classe 'tema-escuro' no corpo da página e no card
-    document.body.classList.toggle('tema-escuro');
-    card.classList.toggle('tema-escuro');
+        // 3. MANIPULANDO CLASSES COM CLASSLIST (Item 6 e 7)
+        // Primeiro, adicionamos a classe base compartilhada por todas as etiquetas (.badge)
+        elementoAtual.classList.add('badge');
+
+        // Aplicamos a condição para decidir qual classe o elemento vai ganhar (Item 11)
+        if (textoPrioridade === 'urgente') {
+            elementoAtual.classList.add('urgente');
+        } else if (textoPrioridade === 'moderado') {
+            elementoAtual.classList.add('moderado');
+        } else if (textoPrioridade === 'normal') {
+            elementoAtual.classList.add('normal');
+        }
+    }
+
+    // 4. EXEMPLO DE ESTILIZAÇÃO DIRETA VIA PROPRIEDADE .style (Item 2 e 5)
+    // Desativando o botão após o clique para que a análise ocorra apenas uma vez
+    const botao = document.querySelector('.btn-analise');
+    botao.textContent = "Lista Analisada!";
+    botao.disabled = true;
+    
+    // Injetando CSS inline direto no botão (Limitação do Item 5: isso se sobrepõe ao arquivo CSS)
+    botao.style.backgroundColor = "#2c3e50"; 
+    botao.style.cursor = "not-allowed";
+}
+
+
+/**
+ * ==========================================================================
+ * FUNÇÃO EXTRA: MÉTODO TOGGLE PARA MARCAR COMO CONCLUÍDO (Item 7)
+ * Adiciona interatividade para que o usuário possa riscar tarefas ao clicar
+ * ==========================================================================
+ */
+// Aguarda o HTML carregar completamente na página antes de rodar as escutas de evento
+document.addEventListener('DOMContentLoaded', () => {
+    // Seleciona todas as linhas de tarefa (tags <li>) dentro da nossa lista
+    const itensLista = document.querySelectorAll('#lista-tarefas li');
+
+    // Percorre cada linha adicionando um detector de clique (Event Listener)
+    itensLista.forEach(item => {
+        item.style.cursor = "pointer"; // Estilização direta de usabilidade (Item 4)
+        
+        item.addEventListener('click', function() {
+            // Usa o .toggle() para ligar/desligar a classe de riscado (Item 7)
+            this.classList.toggle('concluido');
+        });
+    });
 });
-
-// Exemplo de .add() -> Adiciona uma ou mais classes ao elemento
-function marcarEsgotado() {
-    // Injeta a classe que criamos no arquivo CSS externo
-    card.classList.add('produto-esgotado');
-    
-    // Você também poderia usar .remove() se quisesse tirar uma classe:
-    // card.classList.remove('classe-antiga');
-}
-
-/* ==========================================================================
-   3. ESTILIZAÇÃO DIRETA COM A PROPRIEDADE .style (Item 2, 3 e 4)
-   ========================================================================== */
-function aplicarDesconto() {
-    // Altera o conteúdo de texto do preço
-    precoElemento.textContent = "R\$ 3.999,00";
-    
-    // Aplica o estilo diretamente na tag HTML (Gera um CSS Inline)
-    precoElemento.style.color = "#e74c3c";       // Altera a cor para vermelho
-    precoElemento.style.fontSize = "30px";        // Aumenta o tamanho da fonte
-    precoElemento.style.fontWeight = "bold";      // Deixa em negrito
-}
-
-
-/* ==========================================================================
-   4. LIMITAÇÕES DA ESTILIZAÇÃO DIRETA (Item 5 do Sumário)
-   ==========================================================================
-   Por que o item 5 do seu sumário alerta sobre as "Limitações"?
-   
-   Quando rodamos a função `aplicarDesconto()` acima, o JavaScript injeta o 
-   estilo direto no HTML, ficando assim: <p class="preco" style="color: rgb(231, 76, 60); font-size: 30px;">
-   
-   O problema: O CSS Inline criado pelo `.style` tem prioridade quase absoluta. 
-   Se você ativar o Modo Noturno depois disso, o preço CONTINUARÁ vermelho e grande, 
-   ignorando qualquer regra de cor que você tenha planejado para o tema escuro no CSS.
-   
-   Conclusão do Guia: Prefira SEMPRE o `classList.add()` ou `.toggle()` em vez de 
-   ficar alterando propriedades pelo `.style` diretamente!
-*/
