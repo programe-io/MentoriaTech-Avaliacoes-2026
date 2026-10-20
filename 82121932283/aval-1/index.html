@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aurae — Sua pele em seu estado mais leve</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        sand: '#EFECE6',
+                        'sand-light': '#F7F5F0',
+                        'warm-beige': '#E5DEC9',
+                        'olive-soft': '#6E7A60',
+                        'olive-dark': '#4A5340',
+                        'off-white': '#FAF9F6',
+                        'text-dark': '#2C3028',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <style>
+        /* Glassmorphism Styles */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.45);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+        .glass-nav {
+            background: rgba(247, 245, 240, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(229, 222, 201, 0.4);
+        }
+        .glass-pill {
+            background: rgba(239, 236, 230, 0.7);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-sand-light text-text-dark font-sans antialiased selection:bg-olive-soft selection:text-white">
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 ease-in-out pointer-events-none">
+        <div class="glass-card bg-white/90 text-text-dark px-6 py-4 rounded-2xl shadow-xl flex items-center gap-3 border border-olive-soft/20">
+            <svg class="w-6 h-6 text-olive-soft flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            <span id="toast-message" class="text-sm font-medium">Item adicionado com sucesso!</span>
+        </div>
+    </div>
+
+    <!-- Navigation Header -->
+    <header class="fixed top-0 left-0 w-full z-40 glass-nav transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-6 lg:px-12 h-20 flex items-center justify-between">
+            <!-- Brand Logo -->
+            <a href="#" class="font-serif text-3xl tracking-wide font-normal text-olive-dark flex items-center gap-2">
+                Aurae
+                <span class="w-2 h-2 rounded-full bg-olive-soft inline-block"></span>
+            </a>
+
+            <!-- Desktop Nav Links -->
+            <nav class="hidden md:flex items-center space-x-10 text-sm font-medium tracking-wide text-text-dark/80">
+                <a href="#conceito" class="hover:text-olive-soft transition-colors">Conceito</a>
+                <a href="#beneficios" class="hover:text-olive-soft transition-colors">Benefícios</a>
+                <a href="#produto" class="hover:text-olive-soft transition-colors">Hydra Dew</a>
+                <a href="#depoimentos" class="hover:text-olive-soft transition-colors">Depoimentos</a>
+            </nav>
+
+            <!-- Actions -->
+            <div class="hidden md:flex items-center space-x-6">
+                <button onclick="openCartModal()" class="relative p-2 text-text-dark hover:text-olive-soft transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                    </svg>
+                    <span id="cart-badge" class="absolute -top-1 -right-1 bg-olive-soft text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold opacity-0 transition-opacity">0</span>
+                </button>
+                <a href="#produto" class="glass-pill px-5 py-2.5 rounded-full text-xs font-semibold tracking-wider uppercase text-olive-dark hover:bg-olive-soft hover:text-white transition-all shadow-sm">
+                    Comprar
+                </a>
+            </div>
+
+            <!-- Mobile Menu Toggle -->
+            <button id="mobile-menu-btn" class="md:hidden text-text-dark p-2 focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path id="menu-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobile-menu" class="hidden md:hidden glass-card border-t border-sand px-6 py-6 space-y-4">
+            <a href="#conceito" class="block text-base font-medium text-text-dark hover:text-olive-soft">Conceito</a>
+            <a href="#beneficios" class="block text-base font-medium text-text-dark hover:text-olive-soft">Benefícios</a>
+            <a href="#produto" class="block text-base font-medium text-text-dark hover:text-olive-soft">Hydra Dew</a>
+            <a href="#depoimentos" class="block text-base font-medium text-text-dark hover:text-olive-soft">Depoimentos</a>
+            <div class="pt-4 border-t border-sand/50 flex items-center justify-between">
+                <button onclick="openCartModal()" class="flex items-center gap-2 text-sm font-medium text-text-dark">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                    </svg>
+                    Sacola (<span id="cart-count-mobile">0</span>)
+                </button>
+                <a href="#produto" class="bg-olive-dark text-white px-5 py-2 rounded-full text-xs uppercase tracking-wider font-medium">Adquirir</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="conceito" class="pt-32 pb-20 md:pt-40 md:pb-28 px-6 lg:px-12 max-w-7xl mx-auto min-h-screen flex items-center">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center w-full">
+            
+            <!-- Left Text Content -->
+            <div class="lg:col-span-7 space-y-8">
+                <div class="inline-flex items-center gap-2 glass-pill px-4 py-2 rounded-full text-xs uppercase tracking-widest text-olive-dark">
+                    <span class="w-2 h-2 rounded-full bg-olive-soft animate-pulse"></span>
+                    Cosmética Limpa & Botânica
+                </div>
+                
+                <h1 class="font-serif text-5xl sm:text-6xl lg:text-7xl font-normal leading-[1.1] text-text-dark tracking-tight">
+                    Sua pele em seu estado <span class="italic font-normal text-olive-soft">mais leve.</span>
+                </h1>
+                
+                <p class="text-lg text-text-dark/70 font-light max-w-xl leading-relaxed">
+                    Séruns e cuidados ultraleves com ativos vegetais de alta performance. Formulações minimalistas criadas para devolver a vitalidade e o brilho natural à sua pele.
+                </p>
+
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-2">
+                    <a href="#produto" class="bg-olive-dark hover:bg-olive-soft text-off-white px-8 py-4 rounded-full text-sm font-medium tracking-wider uppercase text-center transition-all shadow-md hover:shadow-lg">
+                        Conhecer Hydra Dew
+                    </a>
+                    <a href="#beneficios" class="glass-card hover:bg-white/60 px-8 py-4 rounded-full text-sm font-medium text-text-dark text-center transition-all">
+                        Descobrir Fórmula
+                    </a>
+                </div>
+
+                <!-- Stats / Trust Badges -->
+                <div class="pt-8 border-t border-sand/80 grid grid-cols-3 gap-4 max-w-md">
+                    <div>
+                        <p class="font-serif text-2xl text-olive-dark">100%</p>
+                        <p class="text-xs text-text-dark/60">Vegano e Cruelty-free</p>
+                    </div>
+                    <div>
+                        <p class="font-serif text-2xl text-olive-dark">0%</p>
+                        <p class="text-xs text-text-dark/60">Sintéticos Nocivos</p>
+                    </div>
+                    <div>
+                        <p class="font-serif text-2xl text-olive-dark">98%</p>
+                        <p class="text-xs text-text-dark/60">Origem Orgânica</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Visual / Product Card -->
+            <div class="lg:col-span-5 relative flex justify-center">
+                <div class="absolute -top-8 -left-8 w-64 h-64 bg-warm-beige/40 rounded-full blur-3xl -z-10"></div>
+                <div class="absolute -bottom-8 -right-8 w-64 h-64 bg-olive-soft/20 rounded-full blur-3xl -z-10"></div>
+
+                <div class="glass-card rounded-3xl p-6 sm:p-8 w-full max-w-md shadow-2xl relative">
+                    <div class="relative aspect-[4/5] rounded-2xl overflow-hidden bg-sand mb-6">
+                        <img src="https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=800&q=80" 
+                             alt="Aurae Hydra Dew Bottle" 
+                             class="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700">
+                        <div class="absolute top-4 right-4 glass-pill px-3 py-1 rounded-full text-[11px] font-semibold text-olive-dark uppercase">
+                            Edição Limitada
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="font-serif text-2xl text-text-dark">Aurae Hydra Dew</h3>
+                        <span class="text-lg font-medium text-olive-dark">R$ 189</span>
+                    </div>
+                    <p class="text-xs text-text-dark/60 mb-6">Sérum Hidratante Iluminador Botânico • 30ml</p>
+
+                    <button onclick="addToCart('Aurae Hydra Dew', 189)" class="w-full bg-olive-soft hover:bg-olive-dark text-white py-3.5 rounded-xl font-medium text-sm transition-all shadow-sm flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                        </svg>
+                        Adicionar à Sacola
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section id="beneficios" class="py-24 px-6 lg:px-12 bg-sand/50">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center max-w-2xl mx-auto mb-16">
+                <h2 class="font-serif text-3xl sm:text-4xl text-text-dark mb-4">Cuidado consciente para sua pele</h2>
+                <p class="text-sm sm:text-base text-text-dark/70">Combinamos a sabedoria botânica com a ciência de absorção ultraleve para proporcionar resultados visíveis sem carregar os poros.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Benefit Item 1 -->
+                <div class="glass-card p-8 rounded-2xl hover:-translate-y-1 transition-transform duration-300">
+                    <div class="w-12 h-12 rounded-xl bg-warm-beige/50 flex items-center justify-center text-olive-dark mb-6">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="font-serif text-xl text-text-dark mb-2">Fórmula Clean & Vegana</h3>
+                    <p class="text-xs text-text-dark/70 leading-relaxed">Livre de parabenos, fragrâncias sintéticas, sulfatos e parabenos. Apenas o essencial para a sua pele.</p>
+                </div>
+
+                <!-- Benefit Item 2 -->
+                <div class="glass-card p-8 rounded-2xl hover:-translate-y-1 transition-transform duration-300">
+                    <div class="w-12 h-12 rounded-xl bg-warm-beige/50 flex items-center justify-center text-olive-dark mb-6">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                        </svg>
+                    </div>
+                    <h3 class="font-serif text-xl text-text-dark mb-2">Embalagem Sustentável</h3>
+                    <p class="text-xs text-text-dark/70 leading-relaxed">Frascos de vidro 100% recicláveis com tampas em madeira certificada de manejo sustentável.</p>
+                </div>
+
+                <!-- Benefit Item 3 -->
+                <div class="glass-card p-8 rounded-2xl hover:-translate-y-1 transition-transform duration-300">
+                    <div class="w-12 h-12 rounded-xl bg-warm-beige/50 flex items-center justify-center text-olive-dark mb-6">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="font-serif text-xl text-text-dark mb-2">Textura Ultraleve</h3>
+                    <p class="text-xs text-text-dark/70 leading-relaxed">Toque seco e rápida absorção. Não deixa resíduos oleosos e prepara a pele perfeitamente para a maquiagem.</p>
+                </div>
+
+                <!-- Benefit Item 4 -->
+                <div class="glass-card p-8 rounded-2xl hover:-translate-y-1 transition-transform duration-300">
+                    <div class="w-12 h-12 rounded-xl bg-warm-beige/50 flex items-center justify-center text-olive-dark mb-6">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="font-serif text-xl text-text-dark mb-2">Glow Natural</h3>
+                    <p class="text-xs text-text-dark/70 leading-relaxed">Devolve o brilho saudável e a elasticidade com hidratação profunda em múltiplas camadas.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Product Spotlight Section -->
+    <section id="produto" class="py-24 px-6 lg:px-12 max-w-7xl mx-auto">
+        <div class="glass-card rounded-3xl p-8 sm:p-12 lg:p-16 border border-white/60 shadow-xl">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                
+                <!-- Gallery Display -->
+                <div class="space-y-4">
+                    <div class="aspect-square rounded-2xl overflow-hidden bg-sand/60">
+                        <img id="main-product-img" src="https://images.unsplash.com/photo-1608248597261-e4d090df9ed8?auto=format&fit=crop&w=800&q=80" 
+                             alt="Aurae Hydra Dew Serum Detail" 
+                             class="w-full h-full object-cover">
+                    </div>
+                    <div class="grid grid-cols-3 gap-3">
+                        <button onclick="changeProductImage('https://images.unsplash.com/photo-1608248597261-e4d090df9ed8?auto=format&fit=crop&w=800&q=80')" 
+                                class="aspect-square rounded-xl overflow-hidden border-2 border-olive-soft focus:outline-none">
+                            <img src="https://images.unsplash.com/photo-1608248597261-e4d090df9ed8?auto=format&fit=crop&w=300&q=80" class="w-full h-full object-cover">
+                        </button>
+                        <button onclick="changeProductImage('https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=800&q=80')" 
+                                class="aspect-square rounded-xl overflow-hidden border-2 border-transparent hover:border-olive-soft focus:outline-none">
+                            <img src="https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=300&q=80" class="w-full h-full object-cover">
+                        </button>
+                        <button onclick="changeProductImage('https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=800&q=80')" 
+                                class="aspect-square rounded-xl overflow-hidden border-2 border-transparent hover:border-olive-soft focus:outline-none">
+                            <img src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=300&q=80" class="w-full h-full object-cover">
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Product Details -->
+                <div class="space-y-6">
+                    <div>
+                        <div class="glass-pill inline-block px-3 py-1 rounded-full text-xs font-semibold uppercase text-olive-dark mb-3">
+                            Destaque de Lançamento
+                        </div>
+                        <h2 class="font-serif text-4xl text-text-dark">Aurae Hydra Dew</h2>
+                        <p class="text-2xl font-serif text-olive-dark mt-2">R$ 189,00 <span class="text-xs text-text-dark/50 font-sans">em até 3x sem juros</span></p>
+                    </div>
+
+                    <p class="text-sm text-text-dark/80 leading-relaxed">
+                        Um sérum facial revolucionário formulado com água botânica de flor de laranjeira, ácido hialurônico vegetal e extrato de chá verde. Penetra instantaneamente na pele fornecendo hidratação profunda e iluminação natural.
+                    </p>
+
+                    <!-- Key Botanical Ingredients -->
+                    <div class="border-t border-b border-sand-dark/20 py-4 space-y-3">
+                        <p class="text-xs font-semibold text-olive-dark uppercase tracking-wider">Ingredientes-Chave:</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs text-text-dark/70">
+                            <div class="flex items-center gap-1.5">
+                                <span class="w-1.5 h-1.5 rounded-full bg-olive-soft"></span>
+                                Flor de Laranjeira
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <span class="w-1.5 h-1.5 rounded-full bg-olive-soft"></span>
+                                Ácido Hialurônico
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <span class="w-1.5 h-1.5 rounded-full bg-olive-soft"></span>
+                                Extrato de Chá Verde
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quantity & Purchase CTA -->
+                    <div class="space-y-4 pt-2">
+                        <div class="flex items-center gap-4">
+                            <div class="flex items-center border border-sand-dark/40 rounded-xl bg-white/50 px-3 py-2">
+                                <button onclick="updateQty(-1)" class="text-text-dark/60 hover:text-text-dark px-2 font-bold">-</button>
+                                <span id="product-qty" class="px-4 text-sm font-medium">1</span>
+                                <button onclick="updateQty(1)" class="text-text-dark/60 hover:text-text-dark px-2 font-bold">+</button>
+                            </div>
+                            <button onclick="addMainProductToCart()" class="flex-1 bg-olive-dark hover:bg-olive-soft text-white py-3.5 rounded-xl text-sm font-medium uppercase tracking-wider transition-all shadow-md">
+                                Adicionar à Sacola
+                            </button>
+                        </div>
+                        <p class="text-[11px] text-text-dark/50 text-center flex items-center justify-center gap-1">
+                            <svg class="w-3.5 h-3.5 text-olive-soft" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            Frete grátis para todo o Brasil em compras acima de R$ 250
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials / Reviews -->
+    <section id="depoimentos" class="py-24 px-6 lg:px-12 bg-sand/30">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center max-w-xl mx-auto mb-16">
+                <h2 class="font-serif text-3xl sm:text-4xl text-text-dark mb-3">Quem usa, sente a leveza</h2>
+                <p class="text-sm text-text-dark/60">Experiências reais de clientes com o ritual Aurae.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Review 1 -->
+                <div class="glass-card p-8 rounded-2xl relative">
+                    <div class="flex text-warm-beige mb-4 text-xs">★★★★★</div>
+                    <p class="text-sm text-text-dark/80 italic mb-6">"O Hydra Dew mudou completamente a textura da minha pele. A absorção é inacreditável e não deixa sensação melecada no calor."</p>
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-full bg-olive-soft/20 text-olive-dark flex items-center justify-center font-serif text-sm">MC</div>
+                        <div>
+                            <h4 class="text-xs font-semibold text-text-dark">Mariana Costa</h4>
+                            <p class="text-[10px] text-text-dark/50">Cliente Verificada</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Review 2 -->
+                <div class="glass-card p-8 rounded-2xl relative">
+                    <div class="flex text-warm-beige mb-4 text-xs">★★★★★</div>
+                    <p class="text-sm text-text-dark/80 italic mb-6">"Procurava uma marca vegana que realmente entregasse hidratação sem perfumes fortes. A Aurae superou todas as expectativas."</p>
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-full bg-olive-soft/20 text-olive-dark flex items-center justify-center font-serif text-sm">BS</div>
+                        <div>
+                            <h4 class="text-xs font-semibold text-text-dark">Beatriz Silva</h4>
+                            <p class="text-[10px] text-text-dark/50">Cliente Verificada</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Review 3 -->
+                <div class="glass-card p-8 rounded-2xl relative">
+                    <div class="flex text-warm-beige mb-4 text-xs">★★★★★</div>
+                    <p class="text-sm text-text-dark/80 italic mb-6">"Minha pele é sensível e o extrato de chá verde acalmou muito a vermelhidão. O frasco em vidro fosco é lindo demais!"</p>
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-full bg-olive-soft/20 text-olive-dark flex items-center justify-center font-serif text-sm">LR</div>
+                        <div>
+                            <h4 class="text-xs font-semibold text-text-dark">Luisa Rocha</h4>
+                            <p class="text-[10px] text-text-dark/50">Cliente Verificada</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter Section -->
+    <section class="py-20 px-6 lg:px-12 max-w-4xl mx-auto text-center">
+        <div class="glass-card rounded-3xl p-10 sm:p-16 border border-white/80">
+            <h2 class="font-serif text-3xl sm:text-4xl text-text-dark mb-3">Receba o ritual Aurae</h2>
+            <p class="text-sm text-text-dark/70 mb-8 max-w-md mx-auto">Inscreva-se para receber novidades sobre nossos lançamentos botânicos e ganhe 10% de desconto na primeira compra.</p>
+
+            <form onsubmit="handleNewsletterSubmit(event)" class="flex flex-col sm:flex-row items-center gap-3 max-w-md mx-auto">
+                <input type="email" 
+                       id="newsletter-email" 
+                       placeholder="Seu e-mail preferido" 
+                       required 
+                       class="w-full px-5 py-3.5 rounded-xl bg-white/70 border border-sand-dark/30 text-sm text-text-dark placeholder-text-dark/40 focus:outline-none focus:border-olive-soft transition-colors">
+                <button type="submit" class="w-full sm:w-auto bg-olive-dark hover:bg-olive-soft text-white px-7 py-3.5 rounded-xl text-sm font-medium tracking-wider uppercase transition-colors whitespace-nowrap">
+                    Inscrever
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-sand border-t border-sand-dark/20 pt-16 pb-12 px-6 lg:px-12 text-xs text-text-dark/60">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
+            <div class="space-y-3">
+                <a href="#" class="font-serif text-2xl text-olive-dark">Aurae</a>
+                <p class="text-text-dark/60 leading-relaxed">Sua pele em seu estado mais leve. Cosméticos limpos, sustentáveis e minimalistas.</p>
+            </div>
+            <div>
+                <h4 class="font-semibold text-text-dark uppercase tracking-wider mb-3">Navegação</h4>
+                <ul class="space-y-2">
+                    <li><a href="#conceito" class="hover:text-olive-soft">Conceito</a></li>
+                    <li><a href="#beneficios" class="hover:text-olive-soft">Benefícios</a></li>
+                    <li><a href="#produto" class="hover:text-olive-soft">Hydra Dew</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-semibold text-text-dark uppercase tracking-wider mb-3">Suporte</h4>
+                <ul class="space-y-2">
+                    <li><a href="#" class="hover:text-olive-soft">Atendimento ao Cliente</a></li>
+                    <li><a href="#" class="hover:text-olive-soft">Política de Frete</a></li>
+                    <li><a href="#" class="hover:text-olive-soft">Trocas e Devoluções</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-semibold text-text-dark uppercase tracking-wider mb-3">Redes Sociais</h4>
+                <p class="mb-3">Acompanhe nossa rotina de cuidados no Instagram e TikTok.</p>
+                <div class="flex space-x-4 text-olive-dark">
+                    <a href="#" class="hover:text-olive-soft">@aurae.skincare</a>
+                </div>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto border-t border-sand-dark/20 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p>© 2026 Aurae Skincare. Todos os direitos reservados.</p>
+            <p class="text-[10px]">Desenvolvido com foco em sustentabilidade e cosmética limpa.</p>
+        </div>
+    </footer>
+
+    <!-- Shopping Cart Slide-over Modal -->
+    <div id="cart-modal" class="fixed inset-0 z-50 overflow-hidden pointer-events-none transition-opacity duration-300 opacity-0">
+        <!-- Backdrop -->
+        <div id="cart-backdrop" onclick="closeCartModal()" class="absolute inset-0 bg-text-dark/30 backdrop-blur-sm transition-opacity"></div>
+
+        <div class="fixed inset-y-0 right-0 max-w-full flex pl-10">
+            <div id="cart-panel" class="w-screen max-w-md bg-sand-light shadow-2xl p-6 flex flex-col justify-between transform translate-x-full transition-transform duration-300 ease-in-out pointer-events-auto">
+                
+                <div>
+                    <div class="flex items-center justify-between pb-6 border-b border-sand-dark/20">
+                        <h2 class="font-serif text-2xl text-text-dark">Sua Sacola</h2>
+                        <button onclick="closeCartModal()" class="p-2 text-text-dark/60 hover:text-text-dark">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </button>
+                    </div>
+
+                    <!-- Cart Items Container -->
+                    <div id="cart-items" class="py-6 space-y-4 max-h-[60vh] overflow-y-auto">
+                        <p id="empty-cart-msg" class="text-sm text-text-dark/50 text-center py-8">Sua sacola está vazia no momento.</p>
+                    </div>
+                </div>
+
+                <!-- Cart Footer / Checkout -->
+                <div class="border-t border-sand-dark/20 pt-6 space-y-4">
+                    <div class="flex items-center justify-between text-sm font-medium">
+                        <span>Total:</span>
+                        <span id="cart-total" class="text-xl font-serif text-olive-dark">R$ 0,00</span>
+                    </div>
+                    <button onclick="checkout()" class="w-full bg-olive-dark hover:bg-olive-soft text-white py-4 rounded-xl text-sm font-medium uppercase tracking-wider transition-colors shadow-md">
+                        Finalizar Compra
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // State
+        let cart = [];
+        let currentQty = 1;
+
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Quantity Selector
+        function updateQty(change) {
+            currentQty = Math.max(1, currentQty + change);
+            document.getElementById('product-qty').textContent = currentQty;
+        }
+
+        // Product Gallery Handler
+        function changeProductImage(src) {
+            document.getElementById('main-product-img').src = src;
+        }
+
+        // Add Main Product with selected quantity
+        function addMainProductToCart() {
+            for (let i = 0; i < currentQty; i++) {
+                addToCart('Aurae Hydra Dew', 189);
+            }
+        }
+
+        // Cart Logic
+        function addToCart(name, price) {
+            const existingItem = cart.find(item => item.name === name);
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({ name, price, quantity: 1 });
+            }
+            updateCartUI();
+            showToast(`${name} adicionado à sacola!`);
+        }
+
+        function updateCartUI() {
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+            // Update Badges
+            const badge = document.getElementById('cart-badge');
+            badge.textContent = totalItems;
+            badge.style.opacity = totalItems > 0 ? '1' : '0';
+            document.getElementById('cart-count-mobile').textContent = totalItems;
+
+            // Update Cart Items List
+            const itemsContainer = document.getElementById('cart-items');
+            const emptyMsg = document.getElementById('empty-cart-msg');
+
+            if (cart.length === 0) {
+                emptyMsg.classList.remove('hidden');
+                itemsContainer.innerHTML = '<p id="empty-cart-msg" class="text-sm text-text-dark/50 text-center py-8">Sua sacola está vazia no momento.</p>';
+            } else {
+                itemsContainer.innerHTML = '';
+                cart.forEach(item => {
+                    const itemEl = document.createElement('div');
+                    itemEl.className = 'flex items-center justify-between glass-card p-4 rounded-xl';
+                    itemEl.innerHTML = `
+                        <div>
+                            <h4 class="text-sm font-medium text-text-dark">${item.name}</h4>
+                            <p class="text-xs text-text-dark/60">Qtd: ${item.quantity} × R$ ${item.price}</p>
+                        </div>
+                        <span class="text-sm font-serif text-olive-dark">R$ ${item.price * item.quantity}</span>
+                    `;
+                    itemsContainer.appendChild(itemEl);
+                });
+            }
+
+            document.getElementById('cart-total').textContent = `R$ ${totalPrice.toFixed(2).replace('.', ',')}`;
+        }
+
+        // Modal Controls
+        function openCartModal() {
+            const modal = document.getElementById('cart-modal');
+            const panel = document.getElementById('cart-panel');
+            modal.classList.remove('pointer-events-none', 'opacity-0');
+            modal.classList.add('opacity-100');
+            panel.classList.remove('translate-x-full');
+        }
+
+        function closeCartModal() {
+            const modal = document.getElementById('cart-modal');
+            const panel = document.getElementById('cart-panel');
+            panel.classList.add('translate-x-full');
+            modal.classList.remove('opacity-100');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        // Newsletter Form
+        function handleNewsletterSubmit(event) {
+            event.preventDefault();
+            const emailInput = document.getElementById('newsletter-email');
+            showToast('Obrigado por se inscrever no ritual Aurae!');
+            emailInput.value = '';
+        }
+
+        // Checkout Action
+        function checkout() {
+            if (cart.length === 0) {
+                showToast('Sua sacola está vazia!');
+                return;
+            }
+            showToast('Pedido iniciado! Redirecionando...');
+            setTimeout(() => {
+                cart = []; updateCartUI();
+                closeCartModal();
+            }, 1500);
+        }
+
+        // Toast Notification System
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toast-message');
+            toastMsg.textContent = message;
+
+            toast.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
