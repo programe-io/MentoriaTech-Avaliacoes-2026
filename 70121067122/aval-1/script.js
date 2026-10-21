@@ -1,124 +1,150 @@
 
-let carroX;
-let carroY;
-let obstaculos = [];
-let linhas = [];
-let pontos = 0;
-let velocidade = 5;
-let perdeu = false;
+let produtos = [];
 
-function setup() {
-  createCanvas(400, 600);
-  carroX = width / 2;
-  carroY = height - 100;
+const formulario = document.getElementById("formProduto");
+const listaProdutos = document.getElementById("listaProdutos");
+const mensagem = document.getElementById("mensagem");
 
-  for (let i = 0; i < 8; i++) {
-    linhas.push(i * 100);
-  }
+// Cadastrar um novo produto
+formulario.addEventListener("submit", function(event) {
+    event.preventDefault();
 
-  for (let i = 0; i < 3; i++) {
-    obstaculos.push({
-      x: random(100, 280),
-      y: -i * 220
+    const codigo = document.getElementById("codigo").value.trim();
+    const descricao = document.getElementById("descricao").value.trim();
+    const quantidade = Number(document.getElementById("quantidade").value);
+    const valor = Number(document.getElementById("valor").value);
+
+    if (!codigo || !descricao || quantidade < 0 ||
+        !Number.isInteger(quantidade) || valor < 0 ||
+        !Number.isFinite(valor)) {
+        mostrarMensagem("Preencha os campos corretamente.");
+        return;
+    }
+
+    // Verificar se o código já existe
+    const existe = produtos.some(
+        produto => produto.codigo.toLowerCase() === codigo.toLowerCase()
+    );
+
+    if (existe) {
+        mostrarMensagem("Já existe um produto com esse código.");
+        return;
+    }
+
+    const produto = {
+        codigo: codigo,
+        descricao: descricao,
+        quantidade: quantidade,
+        valor: valor
+    };
+
+    produtos.push(produto);
+
+    formulario.reset();
+    listarProdutos();
+    mostrarMensagem("Produto cadastrado com sucesso!");
+});
+
+// Listar todos os produtos
+function listarProdutos() {
+    listaProdutos.replaceChildren();
+
+    produtos.forEach(function(produto) {
+        const linha = document.createElement("tr");
+
+        adicionarCelula(linha, produto.codigo);
+        adicionarCelula(linha, produto.descricao);
+        adicionarCelula(linha, produto.quantidade);
+        adicionarCelula(
+            linha,
+            produto.valor.toLocaleString("pt-BR", {
+                style: "currency",
+                currency: "BRL"
+            })
+        );
+
+        const celulaAcoes = document.createElement("td");
+
+        const botaoValor = document.createElement("button");
+        botaoValor.textContent = "Alterar valor";
+        botaoValor.className = "editar";
+        botaoValor.addEventListener("click", function() {
+            alterarValor(produto.codigo);
+        });
+
+        const botaoQuantidade = document.createElement("button");
+        botaoQuantidade.textContent = "Alterar quantidade";
+        botaoQuantidade.addEventListener("click", function() {
+            alterarQuantidade(produto.codigo);
+        });
+
+        celulaAcoes.append(botaoValor, botaoQuantidade);
+        linha.appendChild(celulaAcoes);
+        listaProdutos.appendChild(linha);
     });
-  }
 }
 
-function draw() {
-  background(35, 120, 55);
-
-  // Pista
-  fill(55);
-  rect(60, 0, 280, height);
-
-  // Bordas da pista
-  stroke(255);
-  strokeWeight(4);
-  line(65, 0, 65, height);
-  line(335, 0, 335, height);
-  noStroke();
-
-  // Linhas da pista
-  fill(255, 220, 0);
-  for (let i = 0; i < linhas.length; i++) {
-    rect(195, linhas[i], 10, 50);
-    linhas[i] += velocidade;
-
-    if (linhas[i] > height) {
-      linhas[i] = -50;
-    }
-  }
-
-  if (!perdeu) {
-    // Movimento do carro
-    if (keyIsDown(LEFT_ARROW)) carroX -= 5;
-    if (keyIsDown(RIGHT_ARROW)) carroX += 5;
-
-    carroX = constrain(carroX, 85, 315);
-
-    // Desenhar obstáculos
-    for (let o of obstaculos) {
-      o.y += velocidade;
-
-      fill(30, 100, 255);
-      rect(o.x, o.y, 35, 55, 6);
-
-      // Colisão
-      if (
-        carroX + 20 > o.x &&
-        carroX - 20 < o.x + 35 &&
-        carroY + 30 > o.y &&
-        carroY - 30 < o.y + 55
-      ) {
-        perdeu = true;
-      }
-
-      if (o.y > height) {
-        o.y = -random(150, 350);
-        o.x = random(85, 280);
-        pontos++;
-        velocidade += 0.1;
-      }
-    }
-
-    // Carro do jogador
-    fill(220, 20, 40);
-    rect(carroX - 17, carroY - 30, 34, 60, 8);
-
-    fill(120, 220, 255);
-    rect(carroX - 12, carroY - 20, 24, 15, 4);
-
-    fill(20);
-    rect(carroX - 22, carroY - 20, 6, 17);
-    rect(carroX + 16, carroY - 20, 6, 17);
-    rect(carroX - 22, carroY + 10, 6, 17);
-    rect(carroX + 16, carroY + 10, 6, 17);
-
-    // Pontuação
-    fill(255);
-    textSize(20);
-    text("Pontos: " + pontos, 15, 30);
-  } else {
-    fill(255);
-    textAlign(CENTER);
-    textSize(32);
-    text("FIM DE JOGO", width / 2, height / 2);
-    textSize(18);
-    text("Pontos: " + pontos, width / 2, height / 2 + 35);
-    text("Pressione ESPAÇO para reiniciar", width / 2, height / 2 + 75);
-    textAlign(LEFT);
-  }
+// Criar células da tabela com segurança
+function adicionarCelula(linha, conteudo) {
+    const celula = document.createElement("td");
+    celula.textContent = conteudo;
+    linha.appendChild(celula);
 }
 
-function keyPressed() {
-  if (key === " " && perdeu) {
-    pontos = 0;
-    velocidade = 5;
-    perdeu = false;
+// Alterar o preço de um produto
+function alterarValor(codigo) {
+    const produto = produtos.find(p => p.codigo === codigo);
 
-    for (let i = 0; i < obstaculos.length; i++) {
-      obstaculos[i].y = -200 * (i + 1);
-      obstaculos[i].x = random(100, 280);
+    const novoValor = prompt(
+        "Digite o novo valor do produto (R$):",
+        produto.valor
+    );
+
+    if (novoValor === null || novoValor.trim() === "") {
+        return;
     }
-  }
+
+    const valor = Number(novoValor);
+
+    if (!Number.isFinite(valor) || valor < 0) {
+        mostrarMensagem("Digite um valor válido.");
+        return;
+    }
+
+    produto.valor = valor;
+    listarProdutos();
+    mostrarMensagem("Valor alterado com sucesso!");
 }
+
+// Alterar a quantidade em estoque
+function alterarQuantidade(codigo) {
+    const produto = produtos.find(p => p.codigo === codigo);
+
+    const novaQuantidade = prompt(
+        "Digite a nova quantidade em estoque:",
+        produto.quantidade
+    );
+
+    if (novaQuantidade === null || novaQuantidade.trim() === "") {
+        return;
+    }
+
+    const quantidade = Number(novaQuantidade);
+
+    if (!Number.isInteger(quantidade) || quantidade < 0) {
+        mostrarMensagem("Digite uma quantidade inteira válida.");
+        return;
+    }
+
+    produto.quantidade = quantidade;
+    listarProdutos();
+    mostrarMensagem("Quantidade alterada com sucesso!");
+}
+
+// Exibir mensagens para o usuário
+function mostrarMensagem(texto) {
+    mensagem.textContent = texto;
+}
+
+// Mostrar a lista inicial
+listarProdutos();
