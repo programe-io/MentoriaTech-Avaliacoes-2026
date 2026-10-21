@@ -2,389 +2,62 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gerenciador de Tarefas</title>
-
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: Arial, sans-serif;
-      background: #f0f2f5;
-      margin: 0;
-      padding: 30px 15px;
-      color: #222;
-    }
-
-    .container {
-      max-width: 650px;
-      margin: auto;
-      background: white;
-      padding: 25px;
-      border-radius: 15px;
-      box-shadow: 0 5px 20px #00000012;
-    }
-
-    h1 {
-      text-align: center;
-      color: #4f46e5;
-    }
-
-    .formulario {
-      display: grid;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-
-    input, select, button {
-      padding: 12px;
-      border-radius: 8px;
-      border: 1px solid #ddd;
-      font-size: 15px;
-    }
-
-    button {
-      cursor: pointer;
-      border: none;
-      background: #4f46e5;
-      color: white;
-      font-weight: bold;
-    }
-
-    button:hover {
-      opacity: 0.85;
-    }
-
-    .resumo {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      margin: 20px 0;
-      background: #f5f5ff;
-      padding: 15px;
-      border-radius: 10px;
-    }
-
-    .tarefa {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 15px 0;
-      border-bottom: 1px solid #eee;
-    }
-
-    .info {
-      flex: 1;
-      overflow-wrap: anywhere;
-    }
-
-    .info p {
-      margin: 6px 0;
-      color: #666;
-      font-size: 13px;
-    }
-
-    .concluida {
-      text-decoration: line-through;
-      color: #999;
-    }
-
-    .prioridade {
-      font-size: 12px;
-      font-weight: bold;
-    }
-
-    .alta { color: #dc2626; }
-    .media { color: #d97706; }
-    .baixa { color: #16a34a; }
-
-    .acoes {
-      display: flex;
-      gap: 6px;
-    }
-
-    .acoes button {
-      padding: 8px;
-      font-size: 12px;
-    }
-
-    .excluir {
-      background: #dc2626;
-    }
-
-    .concluir {
-      background: #16a34a;
-    }
-
-    #mensagem {
-      color: #dc2626;
-      font-size: 14px;
-    }
-
-    .vazio {
-      text-align: center;
-      color: #888;
-      padding: 20px 0;
-    }
-
-    @media (max-width: 480px) {
-      .container { padding: 18px; }
-      .tarefa { align-items: flex-start; }
-      .acoes { flex-direction: column; }
-      .resumo { font-size: 13px; }
-    }
-  </style>
-<script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minhas Tarefas 💗</title>
+    <link rel="stylesheet" href="style.css">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="style.css" rel="stylesheet"></head>
-
 <body>
-  <main class="container">
-    <h1>📝 Minhas Tarefas</h1>
-    <p>Organize suas atividades de forma simples.</p>
 
-    <form class="formulario" id="formTarefa">
-      <input
-        type="text"
-        id="titulo"
-        placeholder="Digite uma tarefa..."
-        maxlength="120"
-        required
-      >
+    <header>
+        <h1>💗 Minhas Tarefas</h1>
+        <p>Organize suas tarefas com carinho!</p>
+    </header>
 
-      <select id="prioridade">
-        <option value="baixa">Prioridade baixa</option>
-        <option value="media" selected>Prioridade média</option>
-        <option value="alta">Prioridade alta</option>
-      </select>
+    <main>
+        <section class="container">
+            <h2>Cadastrar tarefa</h2>
 
-      <button type="submit">+ Adicionar tarefa</button>
-      <span id="mensagem" role="status"></span>
-    </form>
+            <input type="number" id="codigo" placeholder="Código da tarefa">
+            <input type="text" id="titulo" placeholder="Título (mínimo 5 caracteres)">
 
-    <input
-      type="search"
-      id="pesquisa"
-      placeholder="🔎 Pesquisar tarefa..."
-      aria-label="Pesquisar tarefas"
-      style="width: 100%"
-    >
+            <label for="prioridade">Prioridade:</label>
+            <select id="prioridade">
+                <option value="1">1 - Alta</option>
+                <option value="2">2 - Média</option>
+                <option value="3">3 - Baixa</option>
+            </select>
 
-    <div class="resumo">
-      <span>Total: <strong id="total">0</strong></span>
-      <span>Pendentes: <strong id="pendentes">0</strong></span>
-      <span>Concluídas: <strong id="concluidas">0</strong></span>
-    </div>
+            <button onclick="cadastrarTarefa()">Cadastrar tarefa</button>
+            <p id="mensagem"></p>
+        </section>
 
-    <section id="listaTarefas" aria-live="polite">
-      <p class="vazio">Nenhuma tarefa cadastrada.</p>
-    </section>
-  </main>
+        <section class="container">
+            <h2>Gerenciar tarefas</h2>
 
-  <script>
-    // Array que armazena as tarefas
-    const tarefas = [];
+            <input type="number" id="codigoAlterar" placeholder="Código da tarefa">
 
-    // Função para cadastrar uma tarefa
-    function adicionarTarefa(titulo, prioridade) {
-      if (!titulo.trim()) {
-        throw new Error("Digite o nome da tarefa.");
-      }
+            <label for="novaPrioridade">Nova prioridade:</label>
+            <select id="novaPrioridade">
+                <option value="1">1 - Alta</option>
+                <option value="2">2 - Média</option>
+                <option value="3">3 - Baixa</option>
+            </select>
 
-      const tarefa = {
-        id: Date.now() + Math.random(),
-        titulo: titulo.trim(),
-        prioridade: prioridade,
-        concluida: false
-      };
+            <button onclick="alterarPrioridade()">Alterar prioridade</button>
+            <button onclick="concluirTarefa()">Marcar como concluída</button>
+        </section>
 
-      tarefas.push(tarefa);
-      return tarefa;
-    }
+        <section class="container">
+            <h2>Lista de tarefas 📋</h2>
+            <button onclick="listarTarefas()">Atualizar lista</button>
+            <div id="listaTarefas"></div>
+        </section>
+    </main>
 
-    // Localiza uma tarefa usando o método find()
-    function buscarTarefa(id) {
-      return tarefas.find(tarefa => tarefa.id === id);
-    }
+    <footer>Feito com 💗</footer>
 
-    // Marca uma tarefa como concluída ou pendente
-    function alternarConclusao(id) {
-      const tarefa = buscarTarefa(id);
-
-      if (!tarefa) {
-        throw new Error("Tarefa não encontrada.");
-      }
-
-      tarefa.concluida = !tarefa.concluida;
-      renderizarTarefas();
-    }
-
-    // Atualiza a prioridade da tarefa
-    function alterarPrioridade(id, prioridade) {
-      const tarefa = buscarTarefa(id);
-
-      if (!tarefa) {
-        throw new Error("Tarefa não encontrada.");
-      }
-
-      tarefa.prioridade = prioridade;
-      renderizarTarefas();
-    }
-
-    // Exclui uma tarefa do array
-    function excluirTarefa(id) {
-      const indice = tarefas.findIndex(
-        tarefa => tarefa.id === id
-      );
-
-      if (indice === -1) {
-        throw new Error("Tarefa não encontrada.");
-      }
-
-      tarefas.splice(indice, 1);
-      renderizarTarefas();
-    }
-
-    // Cria os elementos da interface
-    function renderizarTarefas() {
-      const lista = document.getElementById("listaTarefas");
-      const busca = document.getElementById("pesquisa")
-        .value.toLowerCase().trim();
-
-      const filtradas = tarefas.filter(tarefa =>
-        tarefa.titulo.toLowerCase().includes(busca)
-      );
-
-      lista.replaceChildren();
-
-      document.getElementById("total").textContent =
-        tarefas.length;
-
-      document.getElementById("pendentes").textContent =
-        tarefas.filter(t => !t.concluida).length;
-
-      document.getElementById("concluidas").textContent =
-        tarefas.filter(t => t.concluida).length;
-
-      if (filtradas.length === 0) {
-        const vazio = document.createElement("p");
-        vazio.className = "vazio";
-        vazio.textContent = tarefas.length
-          ? "Nenhuma tarefa encontrada."
-          : "Nenhuma tarefa cadastrada.";
-        lista.appendChild(vazio);
-        return;
-      }
-
-      filtradas.forEach(tarefa => {
-        const item = document.createElement("article");
-        item.className = "tarefa";
-
-        const info = document.createElement("div");
-        info.className = "info";
-
-        const titulo = document.createElement("strong");
-        titulo.textContent = tarefa.titulo;
-
-        if (tarefa.concluida) {
-          titulo.classList.add("concluida");
-        }
-
-        const detalhe = document.createElement("p");
-        detalhe.textContent = "Prioridade: ";
-
-        const nivel = document.createElement("span");
-        nivel.className = "prioridade " + tarefa.prioridade;
-        nivel.textContent = {
-          alta: "Alta",
-          media: "Média",
-          baixa: "Baixa"
-        }[tarefa.prioridade];
-
-        detalhe.appendChild(nivel);
-        info.append(titulo, detalhe);
-
-        const seletor = document.createElement("select");
-        seletor.setAttribute(
-          "aria-label",
-          "Alterar prioridade de " + tarefa.titulo
-        );
-
-        [
-          ["baixa", "Baixa"],
-          ["media", "Média"],
-          ["alta", "Alta"]
-        ].forEach(([valor, texto]) => {
-          const opcao = document.createElement("option");
-          opcao.value = valor;
-          opcao.textContent = texto;
-          seletor.appendChild(opcao);
-        });
-
-        seletor.value = tarefa.prioridade;
-        seletor.addEventListener("change", () => {
-          alterarPrioridade(tarefa.id, seletor.value);
-        });
-
-        const acoes = document.createElement("div");
-        acoes.className = "acoes";
-
-        const botaoConcluir = document.createElement("button");
-        botaoConcluir.className = "concluir";
-        botaoConcluir.textContent = tarefa.concluida
-          ? "Reabrir"
-          : "Concluir";
-
-        botaoConcluir.addEventListener("click", () => {
-          alternarConclusao(tarefa.id);
-        });
-
-        const botaoExcluir = document.createElement("button");
-        botaoExcluir.className = "excluir";
-        botaoExcluir.textContent = "Excluir";
-
-        botaoExcluir.addEventListener("click", () => {
-          excluirTarefa(tarefa.id);
-        });
-
-        acoes.append(seletor, botaoConcluir, botaoExcluir);
-        item.append(info, acoes);
-        lista.appendChild(item);
-      });
-    }
-
-    // Evento de cadastro
-    document.getElementById("formTarefa")
-      .addEventListener("submit", function(event) {
-        event.preventDefault();
-
-        const titulo = document.getElementById("titulo").value;
-        const prioridade =
-          document.getElementById("prioridade").value;
-        const mensagem = document.getElementById("mensagem");
-
-        try {
-          adicionarTarefa(titulo, prioridade);
-          mensagem.textContent = "";
-          this.reset();
-          document.getElementById("prioridade").value = "media";
-          document.getElementById("titulo").focus();
-          renderizarTarefas();
-        } catch (erro) {
-          mensagem.textContent = erro.message;
-        }
-      });
-
-    // Evento de pesquisa
-    document.getElementById("pesquisa")
-      .addEventListener("input", renderizarTarefas);
-
-    // Exibe a tela inicial
-    renderizarTarefas();
-  </script>
+    <script src="script.js"></script>
 <script src="script.js"></script></body>
 </html>

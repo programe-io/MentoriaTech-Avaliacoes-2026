@@ -1,108 +1,153 @@
-import java.util.ArrayList;
-import java.util.List;
 
-public class GerenciadorTarefas {
+let tarefas = [];
 
-    static class Tarefa {
-        int id;
-        String titulo;
-        String prioridade;
-        boolean concluida;
+function cadastrarTarefa() {
+    const codigoTexto = document.getElementById("codigo").value;
+    const titulo = document.getElementById("titulo").value.trim();
+    const prioridade = Number(
+        document.getElementById("prioridade").value
+    );
+    const mensagem = document.getElementById("mensagem");
 
-        Tarefa(int id, String titulo, String prioridade) {
-            this.id = id;
-            this.titulo = titulo;
-            this.prioridade = prioridade;
-            this.concluida = false;
+    // Validar os campos
+    if (codigoTexto === "" || titulo === "") {
+        mensagem.textContent = "Preencha todos os campos!";
+        return;
+    }
+
+    const codigo = Number(codigoTexto);
+
+    if (!Number.isInteger(codigo) || codigo <= 0) {
+        mensagem.textContent = "O código deve ser um número inteiro positivo!";
+        return;
+    }
+
+    if (titulo.length < 5) {
+        mensagem.textContent =
+            "O título deve ter no mínimo 5 caracteres!";
+        return;
+    }
+
+    if (![1, 2, 3].includes(prioridade)) {
+        mensagem.textContent =
+            "A prioridade deve ser 1, 2 ou 3!";
+        return;
+    }
+
+    // Verificar se o código já existe
+    if (tarefas.some(tarefa => tarefa.codigo === codigo)) {
+        mensagem.textContent = "Esse código já está cadastrado!";
+        return;
+    }
+
+    // Criar e cadastrar a tarefa
+    const tarefa = {
+        codigo: codigo,
+        titulo: titulo,
+        prioridade: prioridade,
+        concluida: false
+    };
+
+    tarefas.push(tarefa);
+
+    mensagem.textContent = "Tarefa cadastrada com sucesso! 💗";
+
+    document.getElementById("codigo").value = "";
+    document.getElementById("titulo").value = "";
+
+    listarTarefas();
+}
+
+function listarTarefas() {
+    const lista = document.getElementById("listaTarefas");
+    lista.replaceChildren();
+
+    if (tarefas.length === 0) {
+        lista.textContent = "Nenhuma tarefa cadastrada.";
+        return;
+    }
+
+    for (const tarefa of tarefas) {
+        const item = document.createElement("div");
+        item.className = "tarefa";
+
+        if (tarefa.concluida) {
+            item.classList.add("concluida");
         }
+
+        const titulo = document.createElement("h3");
+        titulo.textContent = tarefa.titulo;
+
+        const codigo = document.createElement("p");
+        codigo.textContent = "Código: " + tarefa.codigo;
+
+        const prioridade = document.createElement("p");
+        prioridade.textContent =
+            "Prioridade: " + tarefa.prioridade + " - " +
+            (tarefa.prioridade === 1 ? "Alta" :
+             tarefa.prioridade === 2 ? "Média" : "Baixa");
+
+        const status = document.createElement("p");
+        status.textContent = tarefa.concluida
+            ? "Status: Concluída ✅"
+            : "Status: Pendente ⏳";
+
+        item.append(titulo, codigo, prioridade, status);
+        lista.appendChild(item);
+    }
+}
+
+function concluirTarefa() {
+    const codigoTexto =
+        document.getElementById("codigoAlterar").value;
+
+    if (codigoTexto === "") {
+        alert("Informe o código da tarefa!");
+        return;
     }
 
-    private final List<Tarefa> tarefas = new ArrayList<>();
-    private int proximoId = 1;
+    const codigo = Number(codigoTexto);
+    const tarefa = tarefas.find(t => t.codigo === codigo);
 
-    public void adicionar(String titulo, String prioridade) {
-        if (titulo == null || titulo.trim().isEmpty()) {
-            throw new IllegalArgumentException(
-                "Digite o nome da tarefa."
-            );
-        }
-
-        tarefas.add(new Tarefa(
-            proximoId++, titulo.trim(), prioridade
-        ));
+    if (!tarefa) {
+        alert("Tarefa não encontrada!");
+        return;
     }
 
-    public Tarefa buscar(int id) {
-        for (Tarefa tarefa : tarefas) {
-            if (tarefa.id == id) {
-                return tarefa;
-            }
-        }
-        return null;
+    tarefa.concluida = true;
+
+    alert("Tarefa marcada como concluída! ✅");
+    listarTarefas();
+}
+
+function alterarPrioridade() {
+    const codigoTexto =
+        document.getElementById("codigoAlterar").value;
+
+    const prioridade = Number(
+        document.getElementById("novaPrioridade").value
+    );
+
+    if (codigoTexto === "") {
+        alert("Informe o código da tarefa!");
+        return;
     }
 
-    public void concluir(int id) {
-        Tarefa tarefa = buscar(id);
-
-        if (tarefa == null) {
-            throw new IllegalArgumentException(
-                "Tarefa não encontrada."
-            );
-        }
-
-        tarefa.concluida = !tarefa.concluida;
+    if (![1, 2, 3].includes(prioridade)) {
+        alert("Prioridade inválida! Use 1, 2 ou 3.");
+        return;
     }
 
-    public void alterarPrioridade(int id, String prioridade) {
-        Tarefa tarefa = buscar(id);
+    const codigo = Number(codigoTexto);
+    const tarefa = tarefas.find(t => t.codigo === codigo);
 
-        if (tarefa == null) {
-            throw new IllegalArgumentException(
-                "Tarefa não encontrada."
-            );
-        }
-
-        tarefa.prioridade = prioridade;
+    if (!tarefa) {
+        alert("Tarefa não encontrada!");
+        return;
     }
 
-    public void excluir(int id) {
-        Tarefa tarefa = buscar(id);
+    tarefa.prioridade = prioridade;
 
-        if (tarefa == null) {
-            throw new IllegalArgumentException(
-                "Tarefa não encontrada."
-            );
-        }
-
-        tarefas.remove(tarefa);
-    }
-
-    public List<Tarefa> listar() {
-        return new ArrayList<>(tarefas);
-    }
-
-    public static void main(String[] args) {
-        GerenciadorTarefas gerenciador =
-            new GerenciadorTarefas();
-
-        gerenciador.adicionar(
-            "Estudar Java", "Alta"
-        );
-
-        gerenciador.adicionar(
-            "Fazer atividade", "Média"
-        );
-
-        gerenciador.concluir(1);
-
-        for (Tarefa tarefa : gerenciador.listar()) {
-            System.out.println(
-                tarefa.id + " - " +
-                tarefa.titulo + " - " +
-                tarefa.prioridade + " - " +
-                (tarefa.concluida
-                    ? "Concluída" : "Pendente")
-            );
-        }
-    }
+    alert("Prioridade alterada com sucesso! 💗");
+    listarTarefas();
 }
