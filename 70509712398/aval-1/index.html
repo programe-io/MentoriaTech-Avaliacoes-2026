@@ -4,100 +4,46 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
+<link href="style.css" rel="stylesheet">
 </head>
 <body>
   
-let produtos = [];
+<div class="app">
+  <header>
+      <h1>BLACK<span>STOCK</span></h1>
+          <p>SISTEMA DE CONTROLE DE ESTOQUE</p>
+            </header>
 
-function cadastrarProduto() {
-    let codigo = Number(prompt("Digite o código do produto:"));
+              <section class="resumo">
+                  <div class="card">
+                        <p>PRODUTOS</p>
+                              <h2 id="total">0</h2>
+                                  </div>
+                                      <div class="card">
+                                            <p>VALOR DO ESTOQUE</p>
+                                                  <h2 id="valor">R$ 0,00</h2>
+                                                      </div>
+                                                        </section>
 
-        if (produtos.some(p => p.codigo === codigo)) {
-                alert("Esse código já está cadastrado!");
-                        return;
-                            }
+                                                          <section class="painel">
+                                                              <h2>Novo produto</h2>
+                                                                  <input id="codigo" type="number" placeholder="Código do produto">
+                                                                      <input id="nome" type="text" placeholder="Nome do produto">
+                                                                          <input id="quantidade" type="number" placeholder="Quantidade">
+                                                                              <input id="preco" type="number" step="0.01" placeholder="Preço unitário">
+                                                                                  <button onclick="cadastrar()">+ Cadastrar produto</button>
+                                                                                    </section>
 
-                                let descricao = prompt("Digite a descrição do produto:");
-                                    let quantidade = Number(prompt("Digite a quantidade:"));
-                                        let valor = Number(prompt("Digite o valor do produto:"));
+                                                                                      <section class="painel">
+                                                                                          <h2>Estoque</h2>
+                                                                                              <input id="busca" type="text" placeholder="Pesquisar produto..." oninput="listar()">
+                                                                                                  <div id="lista"></div>
+                                                                                                    </section>
 
-                                            produtos.push({ codigo, descricao, quantidade, valor });
-
-                                                alert("Produto cadastrado com sucesso!");
-                                                }
-
-                                                function listarProdutos() {
-                                                    if (produtos.length === 0) {
-                                                            alert("Nenhum produto cadastrado!");
-                                                                    return;
-                                                                        }
-
-                                                                            let lista = produtos.map(p =>
-                                                                                    `Código: ${p.codigo}\nDescrição: ${p.descricao}\nQuantidade: ${p.quantidade}\nValor: R$ ${p.valor.toFixed(2)}`
-                                                                                        ).join("\n\n");
-
-                                                                                            alert(lista);
-                                                                                            }
-
-                                                                                            function alterarValor() {
-                                                                                                let codigo = Number(prompt("Digite o código do produto:"));
-                                                                                                    let produto = produtos.find(p => p.codigo === codigo);
-
-                                                                                                        if (produto) {
-                                                                                                                produto.valor = Number(prompt("Digite o novo valor:"));
-                                                                                                                        alert("Valor alterado com sucesso!");
-                                                                                                                            } else {
-                                                                                                                                    alert("Produto não encontrado!");
-                                                                                                                                        }
-                                                                                                                                        }
-
-                                                                                                                                        function alterarQuantidade() {
-                                                                                                                                            let codigo = Number(prompt("Digite o código do produto:"));
-                                                                                                                                                let produto = produtos.find(p => p.codigo === codigo);
-
-                                                                                                                                                    if (produto) {
-                                                                                                                                                            produto.quantidade = Number(prompt("Digite a nova quantidade:"));
-                                                                                                                                                                    alert("Quantidade alterada com sucesso!");
-                                                                                                                                                                        } else {
-                                                                                                                                                                                alert("Produto não encontrado!");
-                                                                                                                                                                                    }
-                                                                                                                                                                                    }
-
-                                                                                                                                                                                    let opcao;
-
-                                                                                                                                                                                    do {
-                                                                                                                                                                                        opcao = prompt(
-                                                                                                                                                                                                "SISTEMA DE ESTOQUE\n" +
-                                                                                                                                                                                                        "1 - Cadastrar produto\n" +
-                                                                                                                                                                                                                "2 - Listar produtos\n" +
-                                                                                                                                                                                                                        "3 - Alterar valor\n" +
-                                                                                                                                                                                                                                "4 - Alterar quantidade\n" +
-                                                                                                                                                                                                                                        "0 - Sair"
-                                                                                                                                                                                                                                            );
-
-                                                                                                                                                                                                                                                switch (opcao) {
-                                                                                                                                                                                                                                                        case "1":
-                                                                                                                                                                                                                                                                    cadastrarProduto();
-                                                                                                                                                                                                                                                                                break;
-                                                                                                                                                                                                                                                                                        case "2":
-                                                                                                                                                                                                                                                                                                    listarProdutos();
-                                                                                                                                                                                                                                                                                                                break;
-                                                                                                                                                                                                                                                                                                                        case "3":
-                                                                                                                                                                                                                                                                                                                                    alterarValor();
-                                                                                                                                                                                                                                                                                                                                                break;
-                                                                                                                                                                                                                                                                                                                                                        case "4":
-                                                                                                                                                                                                                                                                                                                                                                    alterarQuantidade();
-                                                                                                                                                                                                                                                                                                                                                                                break;
-                                                                                                                                                                                                                                                                                                                                                                                        case "0":
-                                                                                                                                                                                                                                                                                                                                                                                                    alert("Sistema encerrado!");
-                                                                                                                                                                                                                                                                                                                                                                                                                break;
-                                                                                                                                                                                                                                                                                                                                                                                                                        default:
-                                                                                                                                                                                                                                                                                                                                                                                                                                    alert("Opção inválida!");
-                                                                                                                                                                                                                                                                                                                                                                                                                                        }
-                                                                                                                                                                                                                                                                                                                                                                                                                                        } while (opcao !== "0");
-                                                                                                                                                                                                                                                                                                                                                                                                                                        
-  
+                                                                                                      <footer>BLACKSTOCK • ORGANIZAÇÃO E CONTROLE</footer>
+                                                                                                      </div>
+                                                                                                      
+  <script src="script.js"></script>
   
 </body>
 </html>
