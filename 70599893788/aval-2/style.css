@@ -1,48 +1,139 @@
 
-/* Estilo do jogo de corrida */
-html, body {
-  margin: 0;
-  padding: 0;
-  background: linear-gradient(135deg, #101820, #263746);
-  font-family: Arial, sans-serif;
-  color: white;
-  text-align: center;
+/* Configuração geral */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 body {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+    font-family: Arial, sans-serif;
+    background: #eef2f7;
+    color: #333;
+    padding: 20px;
 }
 
-canvas {
-  display: block;
-  margin: 20px auto;
-  border: 4px solid #00e676;
-  border-radius: 12px;
-  box-shadow: 0 0 25px rgba(0, 230, 118, 0.4);
+/* Área principal */
+.container {
+    max-width: 800px;
+    margin: 30px auto;
+    padding: 25px;
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
+/* Títulos */
 h1 {
-  color: #00e676;
-  text-transform: uppercase;
-  letter-spacing: 3px;
+    text-align: center;
+    color: #174ea6;
+    margin-bottom: 25px;
 }
 
+h2 {
+    color: #174ea6;
+    margin: 20px 0 12px;
+}
+
+/* Campos de entrada */
+input {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+    outline: none;
+}
+
+input:focus {
+    border-color: #174ea6;
+    box-shadow: 0 0 5px #174ea6;
+}
+
+/* Botões */
 button {
-  background-color: #00e676;
-  color: #101820;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: bold;
-  cursor: pointer;
+    width: 100%;
+    padding: 12px;
+    margin: 6px 0;
+    border: none;
+    border-radius: 8px;
+    background: #174ea6;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
 }
 
 button:hover {
-  background-color: #69f0ae;
-  transform: scale(1.05);
+    background: #103875;
+    transform: translateY(-2px);
+}
+
+/* Lista de produtos */
+#lista {
+    margin-top: 15px;
+}
+
+.produto {
+    background: #f8fafc;
+    border: 1px solid #dce3ed;
+    border-left: 5px solid #174ea6;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 15px;
+    overflow-wrap: anywhere;
+}
+
+.produto h3 {
+    color: #174ea6;
+    margin-bottom: 10px;
+}
+
+.produto p {
+    line-height: 1.6;
+    margin-bottom: 10px;
+}
+
+/* Botões de alteração */
+.produto button {
+    background: #16834a;
+}
+
+.produto button:hover {
+    background: #106637;
+}
+
+/* Mensagens */
+#mensagem {
+    text-align: center;
+    color: #16834a;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+/* Adaptação para celulares */
+@media (max-width: 600px) {
+    body {
+        padding: 10px;
+    }
+
+    .container {
+        margin: 10px auto;
+        padding: 15px;
+    }
+
+    h1 {
+        font-size: 24px;
+    }
+
+    h2 {
+        font-size: 20px;
+    }
+
+    input, button {
+        font-size: 15px;
+    }
 }
