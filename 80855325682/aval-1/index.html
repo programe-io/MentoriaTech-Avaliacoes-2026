@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>O Mentalista - Jogo de Adivinhação</title>
+    <!-- Ligação com o arquivo CSS separado -->
+    <link rel="stylesheet" href="style.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+    <div class="game-container">
+        <h1>🔮 O Mentalista</h1>
+        <p class="description">Eu pensei em um número entre <b>1 e 100</b>. Será que você consegue adivinhar qual é?</p>
+        
+        <div class="input-section">
+            <input type="number" id="guessInput" min="1" max="100" placeholder="Digite seu palpite...">
+            <button id="guessButton" onclick="makeGuess()">Chutar</button>
+        </div>
+
+        <p id="feedbackMessage" class="message"></p>
+        <p id="attemptsMessage" class="attempts">Tentativas restantes: <span id="attemptsCount">10</span></p>
+        
+        <button id="restartButton" class="restart-btn hidden" onclick="restartGame()">Jogar Novamente 🔄</button>
+    </div>
+
+    <!-- Lógica do Jogo -->
+    <script>
+        let secretNumber;
+        let attemptsLeft;
+        const maxAttempts = 10;
+
+        const guessInput = document.getElementById('guessInput');
+        const feedbackMessage = document.getElementById('feedbackMessage');
+        const attemptsCount = document.getElementById('attemptsCount');
+        const restartButton = document.getElementById('restartButton');
+        const guessButton = document.getElementById('guessButton');
+
+        function initGame() {
+            secretNumber = Math.floor(Math.random() * 100) + 1;
+            attemptsLeft = maxAttempts;
+            attemptsCount.textContent = attemptsLeft;
+            feedbackMessage.textContent = '';
+            feedbackMessage.className = 'message';
+            guessInput.value = '';
+            guessInput.disabled = false;
+            guessButton.disabled = false;
+            restartButton.classList.add('hidden');
+        }
+
+        function makeGuess() {
+            const userGuess = parseInt(guessInput.value);
+
+            if (isNaN(userGuess) || userGuess < 1 || userGuess > 100) {
+                feedbackMessage.textContent = '⚠️ Por favor, insira un número válido entre 1 e 100.';
+                feedbackMessage.className = 'message warning';
+                return;
+            }
+
+            attemptsLeft--;
+            attemptsCount.textContent = attemptsLeft;
+
+            if (userGuess === secretNumber) {
+                feedbackMessage.textContent = `🎉 Parabéns! Você acertou! O número era ${secretNumber}.`;
+                feedbackMessage.className = 'message success';
+                endGame();
+            } else if (attemptsLeft === 0) {
+                feedbackMessage.textContent = `💥 Fim de jogo! Suas tentativas acabaram. O número era ${secretNumber}.`;
+                feedbackMessage.className = 'message error';
+                endGame();
+            } else if (userGuess < secretNumber) {
+                feedbackMessage.textContent = '📈 O número secreto é MAIOR!';
+                feedbackMessage.className = 'message info';
+            } else {
+                feedbackMessage.textContent = '📉 O número secreto é MENOR!';
+                feedbackMessage.className = 'message info';
+            }
+
+            guessInput.value = '';
+            guessInput.focus();
+        }
+
+        function endGame() {
+            guessInput.disabled = true;
+            guessButton.disabled = true;
+            restartButton.classList.remove('hidden');
+        }
+
+        function restartGame() {
+            initGame();
+        }
+
+        // Permite apertar "Enter" para enviar o palpite
+        guessInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                makeGuess();
+            }
+        });
+
+        // Inicia o jogo assim que a página carrega
+        window.onload = initGame;
+    </script>
+</body>
+</html>
