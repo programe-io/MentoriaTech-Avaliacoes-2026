@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FakeSocial - Minha Rede</title>
+    <!-- Ligação com o arquivo CSS separado -->
+    <link rel="stylesheet" href="style.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+    <!-- Barra de Navegação Superior -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo">🚀 FakeSocial</a>
+            <div class="user-profile-nav">
+                <img src="https://unsplash.com" alt="Sua Foto" class="avatar-small">
+                <span class="nav-username">@voce_tech</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Conteúdo Principal -->
+    <main class="main-container">
+        
+        <!-- Caixa para Criar Novo Post -->
+        <section class="create-post-box">
+            <div class="box-header">
+                <img src="https://unsplash.com" alt="Sua Foto" class="avatar">
+                <textarea id="postTextArea" placeholder="O que está acontecendo no mundo da tecnologia hoje?"></textarea>
+            </div>
+            <div class="box-footer">
+                <span class="char-count" id="charCount">0 / 280</span>
+                <button id="publishButton" onclick="createNewPost()">Publicar ✨</button>
+            </div>
+        </section>
+
+        <!-- Feed de Notícias (Onde ficam os posts) -->
+        <section class="feed" id="newsFeed">
+            
+            <!-- Post Fake 1 -->
+            <article class="post-card">
+                <div class="post-header">
+                    <img src="https://unsplash.com" alt="Foto de Alex" class="avatar">
+                    <div class="post-user-info">
+                        <h3 class="user-name">Alex Silva</h3>
+                        <span class="user-handle">@alex_dev · 2h</span>
+                    </div>
+                </div>
+                <div class="post-content">
+                    <p>Acabei de separar o HTML do CSS no meu projeto novo e o código ficou limpo demais! Organização é tudo. Quem mais prefere assim? 💻🚀 #webdev #frontend</p>
+                </div>
+                <div class="post-actions">
+                    <button class="action-btn" onclick="toggleLike(this)">❤️ <span class="like-count">14</span></button>
+                    <button class="action-btn">💬 3</button>
+                    <button class="action-btn">🔄 1</button>
+                </div>
+            </article>
+
+            <!-- Post Fake 2 -->
+            <article class="post-card">
+                <div class="post-header">
+                    <img src="https://unsplash.com" alt="Foto de Beatriz" class="avatar">
+                    <div class="post-user-info">
+                        <h3 class="user-name">Beatriz Costa</h3>
+                        <span class="user-handle">@biacode · 5h</span>
+                    </div>
+                </div>
+                <div class="post-content">
+                    <p>Café gelado + CSS Grid salvando a minha tarde inteira de layouts responsivos. ☕✨</p>
+                </div>
+                <div class="post-actions">
+                    <button class="action-btn" onclick="toggleLike(this)">❤️ <span class="like-count">42</span></button>
+                    <button class="action-btn">💬 8</button>
+                    <button class="action-btn">🔄 5</button>
+                </div>
+            </article>
+
+        </section>
+    </main>
+
+    <!-- Lógica Interativa Fake -->
+    <script>
+        const postTextArea = document.getElementById('postTextArea');
+        const charCount = document.getElementById('charCount');
+        const newsFeed = document.getElementById('newsFeed');
+
+        // Atualiza o contador de caracteres digitados
+        postTextArea.addEventListener('input', () => {
+            const count = postTextArea.value.length;
+            charCount.textContent = `${count} / 280`;
+            if (count > 280) {
+                charCount.style.color = '#f72585';
+            } else {
+                charCount.style.color = '#c8b6ff';
+            }
+        });
+
+        // Função para simular a criação de um post real na tela
+        function createNewPost() {
+            const text = postTextArea.value.trim();
+            
+            if (text === '') {
+                alert('Digite alguma coisa antes de publicar!');
+                return;
+            }
+            if (text.length > 280) {
+                alert('Seu texto ultrapassou o limite de caracteres!');
+                return;
+            }
+
+            // Cria a estrutura do novo post dinamicamente
+            const newPost = document.createElement('article');
+            newPost.className = 'post-card new-post-animation';
+            newPost.innerHTML = `
+                <div class="post-header">
+                    <img src="https://unsplash.com" alt="Sua Foto" class="avatar">
+                    <div class="post-user-info">
+                        <h3 class="user-name">Você</h3>
+                        <span class="user-handle">@voce_tech · Agora mesmo</span>
+                    </div>
+                </div>
+                <div class="post-content">
+                    <p>${text.replace(/\n/g, '<br>')}</p>
+                </div>
+                <div class="post-actions">
+                    <button class="action-btn" onclick="toggleLike(this)">❤️ <span class="like-count">0</span></button>
+                    <button class="action-btn">💬 0</button>
+                    <button class="action-btn">🔄 0</button>
+                </div>
+            `;
+
+            // Coloca o novo post no topo do feed
+            newsFeed.insertBefore(newPost, newsFeed.firstChild);
+
+            // Limpa o campo
+            postTextArea.value = '';
+            charCount.textContent = '0 / 280';
+        }
+
+        // Função para simular o botão de curtir
+        function toggleLike(button) {
+            button.classList.toggle('liked');
+            const countSpan = button.querySelector('.like-count');
+            let currentLikes = parseInt(countSpan.textContent);
+            
+            if (button.classList.contains('liked')) {
+                countSpan.textContent = currentLikes + 1;
+            } else {
+                countSpan.textContent = currentLikes - 1;
+            }
+        }
+    </script>
+</body>
+</html>
