@@ -1,119 +1,127 @@
-// Estrutura para armazenar a lista de tarefas
-const tarefas = [];
-let proximoCodigo = 1;
-
-/**
- * 1. Cadastrar uma nova tarefa
- * @param {string} titulo - Título da tarefa (mínimo 5 caracteres)
- * @param {number} prioridade - Prioridade entre 1 (alta) e 3 (baixa)
- */
-function cadastrarTarefa(titulo, prioridade) {
-  // Regra de Validação: Título deve ter no mínimo 5 caracteres
-  if (!titulo || titulo.trim().length < 5) {
-    console.error("❌ Erro: O título deve ter no mínimo 5 caracteres.");
-    return;
-  }
-
-  // Regra de Validação: Prioridade deve ser entre 1 (alta) e 3 (baixa)
-  if (![1, 2, 3].includes(prioridade)) {
-    console.error("❌ Erro: A prioridade deve ser um valor entre 1 (alta) e 3 (baixa).");
-    return;
-  }
-
-  const novaTarefa = {
-    codigo: proximoCodigo++,
-    titulo: titulo.trim(),
-    prioridade: prioridade,
-    concluida: false
-  };
-
-  tarefas.push(novaTarefa);
-  console.log(`✅ Tarefa "${novaTarefa.titulo}" cadastrada com sucesso! (Código: ${novaTarefa.codigo})`);
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-/**
- * 2. Listar as tarefas cadastradas
- */
-function listarTarefas() {
-  console.log("\n--- LISTA DE TAREFAS ---");
-  if (tarefas.length === 0) {
-    console.log("Nenhuma tarefa cadastrada.");
-    return;
-  }
-
-  const textoPrioridade = { 1: "1 (Alta)", 2: "2 (Média)", 3: "3 (Baixa)" };
-
-  tarefas.forEach((tarefa) => {
-    const status = tarefa.concluida ? "[✔] Concluída" : "[ ] Pendente";
-    console.log(
-      `ID: ${tarefa.codigo} | Título: ${tarefa.titulo} | Prioridade: ${textoPrioridade[tarefa.prioridade]} | Status: ${status}`
-    );
-  });
-  console.log("------------------------\n");
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f1f5f9;
+    color: #1e293b;
+    padding: 30px 15px;
 }
 
-/**
- * 3. Marcar uma tarefa como concluída
- * @param {number} codigo - Código da tarefa a ser concluída
- */
-function marcarComoConcluida(codigo) {
-  const tarefa = tarefas.find((t) => t.codigo === codigo);
-
-  if (!tarefa) {
-    console.error(`❌ Erro: Tarefa com código ${codigo} não foi encontrada.`);
-    return;
-  }
-
-  tarefa.concluida = true;
-  console.log(`✅ Tarefa ID ${codigo} ("${tarefa.titulo}") marcada como concluída!`);
+.container {
+    max-width: 700px;
+    margin: 0 auto;
+    background-color: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
 }
 
-/**
- * 4. Alterar a prioridade de uma tarefa
- * @param {number} codigo - Código da tarefa
- * @param {number} novaPrioridade - Nova prioridade entre 1 e 3
- */
-function alterarPrioridade(codigo, novaPrioridade) {
-  const tarefa = tarefas.find((t) => t.codigo === codigo);
-
-  if (!tarefa) {
-    console.error(`❌ Erro: Tarefa com código ${codigo} não foi encontrada.`);
-    return;
-  }
-
-  // Regra de Validação
-  if (![1, 2, 3].includes(novaPrioridade)) {
-    console.error("❌ Erro: A prioridade deve ser um valor entre 1 (alta) e 3 (baixa).");
-    return;
-  }
-
-  tarefa.prioridade = novaPrioridade;
-  console.log(`✅ Prioridade da tarefa ID ${codigo} alterada para ${novaPrioridade}!`);
+h1 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #2563eb;
 }
 
-// ===================================================
-// DEMONSTRAÇÃO / TESTES DAS FUNCIONALIDADES E REGRAS
-// ===================================================
+h2 {
+    margin: 25px 0 15px;
+}
 
-console.log("=== EXECUTANDO TESTES DO GERENCIADOR DE TAREFAS ===\n");
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
 
-// 1. Testando Validações de Cadastro
-cadastrarTarefa("Ler", 1);           // Falha: Título < 5 caracteres
-cadastrarTarefa("Estudar JS", 5);     // Falha: Prioridade inválida
+label {
+    font-weight: bold;
+}
 
-// Cadastros válidos
-cadastrarTarefa("Estudar JavaScript", 1);
-cadastrarTarefa("Praticar Exercícios", 2);
-cadastrarTarefa("Revisar Código", 3);
+input, select {
+    padding: 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 16px;
+}
 
-// 2. Listar tarefas
-listarTarefas();
+button {
+    padding: 11px;
+    border: none;
+    border-radius: 6px;
+    background-color: #2563eb;
+    color: white;
+    font-size: 15px;
+    cursor: pointer;
+    margin-top: 5px;
+}
 
-// 3. Marcar tarefa como concluída
-marcarComoConcluida(1);
+button:hover {
+    background-color: #1d4ed8;
+}
 
-// 4. Alterar prioridade da tarefa
-alterarPrioridade(3, 1);
+#mensagem {
+    margin-top: 15px;
+    font-weight: bold;
+}
 
-// Listar novamente para ver o resultado final
-listarTarefas();
+.tarefa {
+    border: 1px solid #cbd5e1;
+    border-left: 5px solid #2563eb;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 12px;
+    overflow-wrap: anywhere;
+}
+
+.tarefa h3 {
+    margin-bottom: 8px;
+}
+
+.tarefa p {
+    margin-bottom: 8px;
+}
+
+.acoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.acoes button {
+    margin-top: 0;
+}
+
+.btn-concluir {
+    background-color: #16a34a;
+}
+
+.btn-concluir:hover {
+    background-color: #15803d;
+}
+
+.btn-prioridade {
+    background-color: #64748b;
+}
+
+.btn-prioridade:hover {
+    background-color: #475569;
+}
+
+.concluida {
+    opacity: 0.7;
+    border-left-color: #16a34a;
+}
+
+.concluida h3 {
+    text-decoration: line-through;
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 20px;
+    }
+}
