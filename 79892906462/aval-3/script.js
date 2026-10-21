@@ -1,108 +1,109 @@
 
-// Pesquisa de artigos
-const pesquisa = document.getElementById("pesquisa");
-const cartoes = [...document.querySelectorAll(".cartao-artigo")];
-const contador = document.getElementById("contador");
-const semResultados = document.getElementById("semResultados");
+// Pesquisa os cartões de interesses conforme o texto digitado.
+const siteSearch = document.getElementById('siteSearch');
+const interestCards = [...document.querySelectorAll('.interest-card')];
+const searchFeedback = document.getElementById('searchFeedback');
+const emptyState = document.getElementById('emptyState');
 
-pesquisa.addEventListener("input", () => {
-  const termo = pesquisa.value.toLocaleLowerCase("pt-BR").trim();
-  let encontrados = 0;
+siteSearch.addEventListener('input', () => {
+  const term = siteSearch.value.trim().toLocaleLowerCase('pt-BR');
+  let visibleCount = 0;
 
-  cartoes.forEach(cartao => {
-    const corresponde = cartao.innerText
-      .toLocaleLowerCase("pt-BR")
-      .includes(termo);
+  interestCards.forEach(card => {
+    const searchableText =
+      `${card.innerText} ${card.dataset.searchable}`
+        .toLocaleLowerCase('pt-BR');
 
-    cartao.hidden = !corresponde;
-    if (corresponde) encontrados++;
+    const matches = searchableText.includes(term);
+    card.hidden = !matches;
+
+    if (matches) visibleCount++;
   });
 
-  contador.textContent = `${encontrados} artigos`;
-  semResultados.hidden = encontrados !== 0;
+  emptyState.hidden = visibleCount !== 0;
+  searchFeedback.textContent = term
+    ? `${visibleCount} interesse(s) encontrado(s).`
+    : '';
 });
 
-// Alternar modo escuro e claro
-const temaBotao = document.getElementById("temaBotao");
+// Alterna o tema e guarda a preferência neste navegador.
+const themeToggle = document.getElementById('themeToggle');
 
-if (localStorage.getItem("tema-pedro") === "claro") {
-  document.body.classList.add("claro");
+if (localStorage.getItem('pedro-theme') === 'light') {
+  document.body.classList.add('light');
 }
 
-function atualizarTema() {
-  temaBotao.textContent =
-    document.body.classList.contains("claro") ? "☀" : "☾";
+function updateThemeControl() {
+  const isLight = document.body.classList.contains('light');
+
+  themeToggle.textContent = isLight ? '☀' : '☾';
+  themeToggle.setAttribute(
+    'aria-label',
+    isLight ? 'Ativar modo escuro' : 'Ativar modo claro'
+  );
 }
 
-atualizarTema();
+updateThemeControl();
 
-temaBotao.addEventListener("click", () => {
-  document.body.classList.toggle("claro");
+themeToggle.addEventListener('click', () => {
+  document.body.classList.toggle('light');
 
   localStorage.setItem(
-    "tema-pedro",
-    document.body.classList.contains("claro") ? "claro" : "escuro"
+    'pedro-theme',
+    document.body.classList.contains('light') ? 'light' : 'dark'
   );
 
-  atualizarTema();
+  updateThemeControl();
 });
 
-// Menu para celulares
-const menuBotao = document.getElementById("menuBotao");
-const menu = document.getElementById("menu");
+// Menu responsivo para celulares.
+const menuToggle = document.getElementById('menuToggle');
+const nav = document.getElementById('nav');
 
-menuBotao.addEventListener("click", () => {
-  menu.classList.toggle("aberto");
+menuToggle.addEventListener('click', () => {
+  const isOpen = nav.classList.toggle('open');
+
+  menuToggle.setAttribute('aria-expanded', String(isOpen));
+  menuToggle.textContent = isOpen ? '×' : '☰';
 });
 
-// Fecha o menu após clicar em uma página
-menu.querySelectorAll("a").forEach(link => {
-  link.addEventListener("click", () => {
-    menu.classList.remove("aberto");
+nav.querySelectorAll('a').forEach(link => {
+  link.addEventListener('click', () => {
+    nav.classList.remove('open');
+    menuToggle.setAttribute('aria-expanded', 'false');
+    menuToggle.textContent = '☰';
+
+    nav.querySelectorAll('a').forEach(item =>
+      item.classList.remove('active')
+    );
+
+    link.classList.add('active');
   });
 });
 
-// Abrir os artigos em uma janela
-const modal = document.getElementById("modalArtigo");
+// Formulário demonstrativo: valida os campos, mas não envia a um servidor.
+document.getElementById('contactForm').addEventListener('submit', event => {
+  event.preventDefault();
 
-document.querySelectorAll(".ler-mais").forEach(botao => {
-  botao.addEventListener("click", () => {
-    document.getElementById("modalTitulo").textContent =
-      botao.dataset.titulo;
+  const name = document.getElementById('contactName').value.trim();
+  const email = document.getElementById('contactEmail').value.trim();
+  const subject = document.getElementById('contactSubject').value;
+  const message = document.getElementById('contactMessage').value.trim();
+  const feedback = document.getElementById('formFeedback');
 
-    document.getElementById("modalTexto").textContent =
-      botao.dataset.texto;
+  if (!name || !email || !message) {
+    feedback.textContent =
+      'Preencha os campos obrigatórios antes de continuar.';
+    return;
+  }
 
-    modal.showModal();
-  });
+  feedback.textContent =
+    `Obrigado, ${name}! A demonstração validou sua mensagem sobre ` +
+    `“${subject}”. Para enviar de verdade, conecte um serviço de formulário.`;
+
+  event.currentTarget.reset();
 });
 
-document.getElementById("fecharModal")
-  .addEventListener("click", () => modal.close());
-
-document.getElementById("okModal")
-  .addEventListener("click", () => modal.close());
-
-// Formulário de contato
-document.getElementById("formContato")
-  .addEventListener("submit", event => {
-    event.preventDefault();
-
-    const nome = document.getElementById("nome").value.trim();
-    const email = document.getElementById("email").value.trim();
-    const mensagem = document.getElementById("mensagem").value.trim();
-
-    const corpo =
-      `Nome: ${nome}\nE-mail: ${email}\n\n${mensagem}`;
-
-    document.getElementById("feedback").textContent =
-      "Abrindo seu aplicativo de e-mail para preparar a mensagem.";
-
-    window.location.href =
-      `mailto:?subject=${encodeURIComponent("Contato pelo blog")}` +
-      `&body=${encodeURIComponent(corpo)}`;
-  });
-
-// Atualizar ano automaticamente
-document.getElementById("ano").textContent =
+// Atualiza automaticamente o ano no rodapé.
+document.getElementById('currentYear').textContent =
   new Date().getFullYear();
