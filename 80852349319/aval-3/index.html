@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="MotoPrime — compra e venda de motos novas e seminovas com garantia e procedência.">
+<title>MotoPrime — Motos Novas e Seminovas</title>
+<style>
+  :root{
+    --bg:#0e0f12;
+    --bg-soft:#15171c;
+    --card:#1a1d24;
+    --border:#282c36;
+    --text:#e8eaed;
+    --muted:#9aa1ae;
+    --accent:#ff6b1a;
+    --accent-soft:#ffa94d;
+    --radius:16px;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  img,svg{display:block;max-width:100%}
+  button{font:inherit;color:inherit;cursor:pointer;border:none;background:none}
+  a{color:inherit;text-decoration:none}
+  [hidden]{display:none !important}
+
+  .container{width:min(1200px,100% - 2.5rem);margin-inline:auto}
+
+  /* ---------- Header ---------- */
+  .header{
+    position:sticky;top:0;z-index:50;
+    background:rgba(14,15,18,.86);
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--border);
+  }
+  .header-inner{
+    display:flex;align-items:center;justify-content:space-between;
+    gap:1rem;height:68px;
+  }
+  .logo{display:flex;align-items:center;gap:.6rem;font-size:1.15rem;font-weight:600;letter-spacing:-.02em}
+  .logo-mark{
+    display:grid;place-items:center;
+    width:34px;height:34px;border-radius:10px;
+    background:linear-gradient(135deg,var(--accent),var(--accent-soft));
+    color:#12141a;font-weight:800;font-size:1.05rem;
+  }
+  .logo strong{color:var(--accent)}
+
+  .nav{display:flex;gap:1.75rem;font-size:.94rem;color:var(--muted)}
+  .nav a{transition:color .2s}
+  .nav a:hover{color:var(--text)}
+
+  .fav-btn{
+    display:inline-flex;align-items:center;gap:.45rem;
+    padding:.5rem .95rem;border-radius:999px;
+    border:1px solid var(--border);background:var(--bg-soft);
+    font-size:.9rem;font-weight:600;transition:.2s;
+  }
+  .fav-btn:hover{border-color:var(--accent);color:var(--accent-soft)}
+  .fav-btn.active{background:var(--accent);border-color:var(--accent);color:#12141a}
+  .fav-btn .heart-icon{font-size:1rem}
+
+  /* ---------- Hero ---------- */
+  .hero{
+    position:relative;overflow:hidden;
+    padding:4.5rem 0 4rem;
+    border-bottom:1px solid var(--border);
+    background:linear-gradient(180deg,#101216 0%,var(--bg) 100%);
+  }
+  .hero::before{
+    content:"";position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(720px 420px at 78% -10%,rgba(255,107,26,.22),transparent 70%);
+  }
+  .hero-grid{
+    position:relative;
+    display:grid;grid-template-columns:1.05fr .95fr;
+    align-items:center;gap:3rem;
+  }
+  .eyebrow{
+    display:inline-block;margin-bottom:1rem;
+    padding:.35rem .85rem;border-radius:999px;
+    border:1px solid rgba(255,107,26,.4);
+    background:rgba(255,107,26,.12);
+    color:var(--accent-soft);font-size:.78rem;font-weight:700;
+    letter-spacing:.08em;text-transform:uppercase;
+  }
+  .hero h1{
+    font-size:clamp(2rem,4.6vw,3.4rem);
+    line-height:1.08;letter-spacing:-.03em;font-weight:800;
+    margin-bottom:1.1rem;
+  }
+  .hero h1 span{color:var(--accent)}
+  .hero p{color:var(--muted);font-size:1.06rem;max-width:46ch;margin-bottom:1.9rem}
+  .hero-actions{display:flex;flex-wrap:wrap;gap:.85rem}
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:.5rem;
+    padding:.85rem 1.6rem;border-radius:12px;
+    font-weight:700;font-size:.95rem;transition:transform .15s,box-shadow .2s,background .2s;
+  }
+  .btn:active{transform:translateY(1px)}
+  .btn-primary{
+    background:linear-gradient(135deg,var(--accent),var(--accent-soft));
+    color:#12141a;box-shadow:0 10px 26px -12px rgba(255,107,26,.9);
+  }
+  .btn-primary:hover{box-shadow:0 14px 32px -10px rgba(255,107,26,.95)}
+  .btn-ghost{border:1px solid var(--border);background:var(--bg-soft);color:var(--text)}
+  .btn-ghost:hover{border-color:var(--accent);color:var(--accent-soft)}
+
+  .hero-art{position:relative;filter:drop-shadow(0 26px 40px rgba(0,0,0,.55))}
+
+  .stats{
+    position:relative;
+    display:grid;grid-template-columns:repeat(3,1fr);
+    gap:1rem;margin-top:3.5rem;
+  }
+  .stat{
+    padding:1.15rem 1.25rem;border-radius:var(--radius);
+    border:1px solid var(--border);background:var(--card);
+  }
+  .stat b{display:block;font-size:1.5rem;letter-spacing:-.02em;color:var(--accent-soft)}
+  .stat span{font-size:.84rem;color:var(--muted)}
+
+  /* ---------- Filtros ---------- */
+  .estoque{padding:3.5rem 0 5rem}
+  .section-head{margin-bottom:1.9rem}
+  .section-head h2{
+    font-size:clamp(1.5rem,3vw,2.1rem);
+    letter-spacing:-.025em;font-weight:800;margin-bottom:.35rem;
+  }
+  .section-head p{color:var(--muted);font-size:.96rem}
+
+  .filters{
+    display:flex;flex-wrap:wrap;align-items:center;gap:1rem;
+    padding:1rem;margin-bottom:1.9rem;
+    border:1px solid var(--border);border-radius:var(--radius);
+    background:var(--card);
+  }
+  .search{
+    position:relative;flex:1 1 260px;min-width:200px;
+  }
+  .search input{
+    width:100%;padding:.7rem .9rem .7rem 2.4rem;
+    border-radius:10px;border:1px solid var(--border);
+    background:var(--bg);color:var(--text);
+    font-size:.92rem;outline:none;transition:border-color .2s;
+  }
+  .search input::placeholder{color:#68707e}
+  .search input:focus{border-color:var(--accent)}
+  .search .icon{
+    position:absolute;left:.85rem;top:50%;transform:translateY(-50%);
+    color:var(--muted);font-size:.95rem;pointer-events:none;
+  }
+
+  .chips{display:flex;flex-wrap:wrap;gap:.5rem}
+  .chip{
+    padding:.5rem .95rem;border-radius:999px;
+    border:1px solid var(--border);background:var(--bg);
+    font-size:.85rem;font-weight:600;color:var(--muted);
+    transition:.18s;
+  }
+  .chip:hover{border-color:#3a4150;color:var(--text)}
+  .chip.active{background:var(--accent);border-color:var(--accent);color:#12141a}
+
+  .sort{
+    padding:.68rem .9rem;border-radius:10px;
+    border:1px solid var(--border);background:var(--bg);
+    color:var(--text);font-size:.88rem;font-weight:600;outline:none;
+    cursor:pointer;
+  }
+  .sort:focus{border-color:var(--accent)}
+
+  .result-count{font-size:.85rem;color:var(--muted);margin-bottom:1.25rem}
+
+  /* ---------- Grade de cards ---------- */
+  .grid{
+    display:grid;gap:1.5rem;
+    grid-template-columns:repeat(auto-fill,minmax(290px,1fr));
+  }
+
+  .card{
+    display:flex;flex-direction:column;
+    border:1px solid var(--border);border-radius:var(--radius);
+    background:var(--card);overflow:hidden;
+    transition:transform .22s,border-color .22s,box-shadow .22s;
+    animation:fadeUp .35s ease both;
+  }
+  .card:hover{
+    transform:translateY(-5px);
+    border-color:rgba(255,107,26,.55);
+    box-shadow:0 22px 40px -24px rgba(0,0,0,.95);
+  }
+
+  .card-media{
+    position:relative;padding:1.1rem .9rem .4rem;
+    border-bottom:1px solid var(--border);
+  }
+  .card-media svg{width:100%;height:auto}
+
+  .badge{
+    position:absolute;top:.85rem;left:.85rem;
+    padding:.28rem .7rem;border-radius:999px;
+    background:linear-gradient(135deg,var(--accent),var(--accent-soft));
+    color:#12141a;font-size:.68rem;font-weight:800;
+    letter-spacing:.06em;text-transform:uppercase;
+  }
+
+  .heart{
+    position:absolute;top:.7rem;right:.7rem;
+    width:36px;height:36px;border-radius:50%;
+    display:grid;place-items:center;
+    background:rgba(14,15,18,.7);
+    border:1px solid var(--border);
+    color:#5f6775;font-size:1rem;
+    transition:.2s;
+  }
+  .heart:hover{color:#ff5c7a;border-color:#ff5c7a}
+  .heart.on{color:#ff5c7a;border-color:#ff5c7a;background:rgba(255,92,122,.14)}
+
+  .card-body{display:flex;flex-direction:column;flex:1;padding:1.1rem 1.15rem 1.25rem}
+  .tag{
+    align-self:flex-start;margin-bottom:.55rem;
+    padding:.22rem .6rem;border-radius:6px;
+    background:rgba(255,107,26,.12);
+    border:1px solid rgba(255,107,26,.3);
+    color:var(--accent-soft);
+    font-size:.7rem;font-weight:700;
+    letter-spacing:.06em;text-transform:uppercase;
+  }
+  .card-body h3{font-size:1.08rem;font-weight:700;letter-spacing:-.01em;margin-bottom:.6rem}
+
+  .specs{
+    list-style:none;display:flex;flex-wrap:wrap;gap:.4rem;
+    margin-bottom:1.1rem;
+  }
+  .specs li{
+    padding:.22rem .6rem;border-radius:6px;
+    background:var(--bg);border:1px solid var(--border);
+    font-size:.76rem;color:var(--muted);
+  }
+
+  .card-foot{
+    margin-top:auto;
+    display:flex;align-items:center;justify-content:space-between;gap:.75rem;
+  }
+  .price{font-size:1.2rem;font-weight:800;letter-spacing:-.02em;color:var(--accent-soft)}
+  .btn-detail{
+    padding:.55rem .95rem;border-radius:9px;
+    background:var(--bg);border:1px solid var(--border);
+    font-size:.83rem;font-weight:700;transition:.2s;
+  }
+  .btn-detail:hover{background:var(--accent);border-color:var(--accent);color:#12141a}
+
+  .empty{
+    padding:4rem 1rem;text-align:center;
+    border:1px dashed var(--border);border-radius:var(--radius);
+    color:var(--muted);
+  }
+  .empty strong{display:block;color:var(--text);font-size:1.1rem;margin-bottom:.35rem}
+
+  /* ---------- Modal ---------- */
+  .modal{
+    position:fixed;inset:0;z-index:100;
+    display:none;padding:1.25rem;
+    background:rgba(0,0,0,.78);
+    backdrop-filter:blur(6px);
+    -webkit-backdrop-filter:blur(6px);
+    overflow-y:auto;
+  }
+  .modal.open{display:flex}
+  .modal-card{
+    position:relative;margin:auto;
+    width:100%;max-width:840px;
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:18px;overflow:hidden;
+    animation:pop .25s ease;
+  }
+  .modal-close{
+    position:absolute;top:.85rem;right:.85rem;z-index:2;
+    width:38px;height:38px;border-radius:50%;
+    display:grid;place-items:center;
+    background:rgba(14,15,18,.8);
+    border:1px solid var(--border);
+    font-size:1.15rem;line-height:1;color:var(--muted);
+    transition:.2s;
+  }
+  .modal-close:hover{color:var(--text);border-color:var(--accent)}
+
+  .modal-grid{display:grid;grid-template-columns:1fr 1fr}
+  .modal-media{
+    display:grid;place-items:center;padding:1.5rem;
+    border-right:1px solid var(--border);
+  }
+  .modal-info{padding:1.9rem 1.75rem}
+  .modal-info h3{font-size:1.5rem;letter-spacing:-.025em;font-weight:800;margin:.5rem 0 .35rem}
+  .modal-info .price{font-size:1.65rem;margin-bottom:1.1rem}
+  .modal-desc{color:var(--muted);font-size:.92rem;margin-bottom:1.3rem}
+
+  .spec-table{width:100%;border-collapse:collapse;font-size:.88rem;margin-bottom:1.5rem}
+  .spec-table th,.spec-table td{padding:.55rem 0;text-align:left;border-bottom:1px solid var(--border)}
+  .spec-table th{color:var(--muted);font-weight:600;width:45%}
+  .spec-table td{font-weight:600;text-align:right}
+
+  .modal-actions{display:flex;flex-wrap:wrap;gap:.65rem}
+  .modal-actions .btn{flex:1 1 auto;padding:.75rem 1.1rem;font-size:.9rem}
+
+  /* ---------- Sobre / Contato / Footer ---------- */
+  .sobre{
+    padding:4rem 0;border-top:1px solid var(--border);
+    background:var(--bg-soft);
+  }
+  .sobre-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:2rem}
+  .feature{
+    padding:1.6rem 1.5rem;border-radius:var(--radius);
+    border:1px solid var(--border);background:var(--card);
+  }
+  .feature .ico{
+    display:grid;place-items:center;
+    width:44px;height:44px;border-radius:12px;margin-bottom:1rem;
+    background:rgba(255,107,26,.12);
+    border:1px solid rgba(255,107,26,.3);
+    font-size:1.25rem;
+  }
+  .feature h4{font-size:1.02rem;margin-bottom:.4rem;letter-spacing:-.01em}
+  .feature p{font-size:.88rem;color:var(--muted)}
+
+  .footer{
+    padding:2.5rem 0;
+    border-top:1px solid var(--border);
+    background:var(--bg);
+  }
+  .footer-inner{
+    display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;
+    gap:1rem;font-size:.85rem;color:var(--muted);
+  }
+  .footer-inner a:hover{color:var(--accent-soft)}
+
+  /* ---------- Animações ---------- */
+  @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  @keyframes pop{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:none}}
+
+  /* ---------- Responsivo ---------- */
+  @media (max-width:900px){
+    .hero-grid{grid-template-columns:1fr;gap:2rem}
+    .hero-art{max-width:460px;margin-inline:auto}
+    .sobre-grid{grid-template-columns:1fr}
+    .modal-grid{grid-template-columns:1fr}
+    .modal-media{border-right:none;border-bottom:1px solid var(--border)}
+  }
+  @media (max-width:680px){
+    .nav{display:none}
+    .stats{grid-template-columns:1fr}
+    .hero{padding:3rem 0 3rem}
+    .filters{padding:.85rem}
+    .modal-info{padding:1.4rem 1.25rem}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none !important;transition:none !important}
+    html{scroll-behavior:auto}
+  }
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<!-- ================= HEADER ================= -->
+<header class="header">
+  <div class="container header-inner">
+    <a href="#top" class="logo">
+      <span class="logo-mark">M</span>
+      <span>Moto<strong>Prime</strong></span>
+    </a>
+
+    <nav class="nav">
+      <a href="#estoque">Estoque</a>
+      <a href="#sobre">Por que nós</a>
+      <a href="#contato">Contato</a>
+    </nav>
+
+    <button class="fav-btn" id="favBtn" type="button" aria-pressed="false">
+      <span class="heart-icon" aria-hidden="true">♥</span>
+      Favoritos (<span id="favCount">0</span>)
+    </button>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ================= HERO ================= -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-grid">
+        <div class="hero-text">
+          <span class="eyebrow">Loja oficial • desde 2010</span>
+          <h1>Sua próxima moto está <span>aqui</span>.</h1>
+          <p>
+            Motos novas e seminovas com procedência garantida, laudo cautelar
+            completo e financiamento em até 48x. Escolha a sua e saia rodando hoje.
+          </p>
+          <div class="hero-actions">
+            <a href="#estoque" class="btn btn-primary">Ver estoque completo</a>
+            <a href="#contato" class="btn btn-ghost">Falar com um consultor</a>
+          </div>
+        </div>
+
+        <div class="hero-art" id="heroArt" aria-hidden="true"></div>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><b>+1.200</b><span>clientes atendidos</span></div>
+        <div class="stat"><b>15 anos</b><span>de mercado</span></div>
+        <div class="stat"><b>3 meses</b><span>de garantia inclusa</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= ESTOQUE ================= -->
+  <section class="estoque" id="estoque">
+    <div class="container">
+      <div class="section-head">
+        <h2>Estoque disponível</h2>
+        <p>Use os filtros para encontrar a moto ideal para o seu perfil.</p>
+      </div>
+
+      <div class="filters">
+        <div class="search">
+          <span class="icon" aria-hidden="true">🔍</span>
+          <input
+            type="search"
+            id="search"
+            placeholder="Buscar por modelo ou marca..."
+            aria-label="Buscar por modelo ou marca"
+            autocomplete="off">
+        </div>
+
+        <div class="chips" id="chips" role="group" aria-label="Filtrar por categoria">
+          <button class="chip active" type="button" data-cat="todas">Todas</button>
+          <button class="chip" type="button" data-cat="street">Street</button>
+          <button class="chip" type="button" data-cat="naked">Naked</button>
+          <button class="chip" type="button" data-cat="esportiva">Esportiva</button>
+          <button class="chip" type="button" data-cat="trail">Trail</button>
+          <button class="chip" type="button" data-cat="custom">Custom</button>
+        </div>
+
+        <select class="sort" id="sort" aria-label="Ordenar resultados">
+          <option value="relevancia">Relevância</option>
+          <option value="menor">Menor preço</option>
+          <option value="maior">Maior preço</option>
+          <option value="ano">Mais recentes</option>
+        </select>
+      </div>
+
+      <p class="result-count" id="resultCount"></p>
+
+      <div class="grid" id="grid"></div>
+
+      <div class="empty" id="empty" hidden>
+        <strong>Nenhuma moto encontrada</strong>
+        Tente ajustar a busca ou selecionar outra categoria.
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SOBRE ================= -->
+  <section class="sobre" id="sobre">
+    <div class="container">
+      <div class="section-head">
+        <h2>Por que comprar na MotoPrime</h2>
+        <p>Transparência em cada etapa da negociação.</p>
+      </div>
+
+      <div class="sobre-grid">
+        <div class="feature">
+          <div class="ico" aria-hidden="true">🛡️</div>
+          <h4>Procedência garantida</h4>
+          <p>Todas as motos passam por laudo cautelar e revisão mecânica completa antes de entrar no estoque.</p>
+        </div>
+        <div class="feature">
+          <div class="ico" aria-hidden="true">💳</div>
+          <h4>Financiamento facilitado</h4>
+          <p>Parceria com os principais bancos: entrada a partir de 20% e parcelas em até 48 vezes.</p>
+        </div>
+        <div class="feature">
+          <div class="ico" aria-hidden="true">🔧</div>
+          <h4>Garantia de 3 meses</h4>
+          <p>Motor e câmbio cobertos por 90 dias, além de uma revisão gratuita após os primeiros 1.000 km.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ================= FOOTER ================= -->
+<footer class="footer" id="contato">
+  <div class="container footer-inner">
+    <div>
+      <strong>MotoPrime</strong> — Av. das Motos, 1000 • São Paulo/SP<br>
+      (11) 99999-9999 • contato@motoprime.com.br
+    </div>
+    <div>
+      <a href="#estoque">Estoque</a> &nbsp;•&nbsp;
+      <a href="#sobre">Sobre</a> &nbsp;•&nbsp;
+      <a href="#top">Voltar ao topo</a>
+    </div>
+  </div>
+</footer>
+
+<!-- ================= MODAL ================= -->
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal-card">
+    <button class="modal-close" id="modalClose" type="button" aria-label="Fechar detalhes">✕</button>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ============================================================
+     DADOS DO ESTOQUE
+     ============================================================ */
+  const MOTOS = [
+    {
+      id: 1, nome: 'Honda CG 160 Fan', marca: 'Honda', categoria: 'street',
+      ano: 2023, km: 0, cilindrada: 160, preco: 16900, cor: '#e63946',
+      tint: 'rgba(230,57,70,.22)', destaque: true,
+      desc: 'A líder absoluta de vendas no Brasil. Econômica, confiável e com peças de reposição em qualquer lugar do país. Ideal para o dia a dia na cidade.'
+    },
+    {
+      id: 2, nome: 'Yamaha Fazer FZ25', marca: 'Yamaha', categoria: 'street',
+      ano: 2022, km: 12400, cilindrada: 250, preco: 24500, cor: '#3d6fd6',
+      tint: 'rgba(61,111,214,.22)', destaque: false,
+      desc: 'Motor de 250cc com injeção eletrônica, excelente consumo e posição de pilotagem confortável. Perfeita para quem enfrenta o trânsito todos os dias.'
+    },
+    {
+      id: 3, nome: 'Honda CB 650R', marca: 'Honda', categoria: 'naked',
+      ano: 2024, km: 0, cilindrada: 650, preco: 52900, cor: '#d62b2b',
+      tint: 'rgba(214,43,43,.22)', destaque: true,
+      desc: 'Quatro cilindros em linha, 88 cavalos e um visual neo-sports café impecável. Uma naked de verdade para quem gosta de desempenho e presença.'
+    },
+    {
+      id: 4, nome: 'Yamaha MT-03', marca: 'Yamaha', categoria: 'naked',
+      ano: 2023, km: 6800, cilindrada: 321, preco: 32900, cor: '#2b6cd6',
+      tint: 'rgba(43,108,214,.22)', destaque: false,
+      desc: 'Bicilíndrica de 321cc com visual Dark Side of Japan. Ótima relação peso-potência e suspensão invertida de série.'
+    },
+    {
+      id: 5, nome: 'Honda XRE 300 Sahara', marca: 'Honda', categoria: 'trail',
+      ano: 2023, km: 3100, cilindrada: 291, preco: 29900, cor: '#c0392b',
+      tint: 'rgba(192,57,43,.22)', destaque: true,
+      desc: 'A trail mais versátil do mercado brasileiro. Suspensão de longo curso, rodas raiadas e posição de pilotagem ereta para encarar qualquer terreno.'
+    },
+    {
+      id: 6, nome: 'Yamaha XTZ 250 Lander', marca: 'Yamaha', categoria: 'trail',
+      ano: 2022, km: 18900, cilindrada: 249, preco: 21900, cor: '#1f8a70',
+      tint: 'rgba(31,138,112,.22)', destaque: false,
+      desc: 'Tanque de 15 litros, autonomia acima de 400 km e manutenção acessível. A companheira certa para viagens e estradas de terra.'
+    },
+    {
+      id: 7, nome: 'Harley-Davidson Iron 883', marca: 'Harley-Davidson', categoria: 'custom',
+      ano: 2021, km: 9800, cilindrada: 883, preco: 62000, cor: '#2c2c2c',
+      tint: 'rgba(120,120,120,.2)', destaque: false,
+      desc: 'Ícone do estilo custom com motor Evolution V-Twin de 883cc. Acabamento escurecido, som marcante e presença inconfundível.'
+    },
+    {
+      id: 8, nome: 'Royal Enfield Classic 350', marca: 'Royal Enfield', categoria: 'custom',
+      ano: 2024, km: 0, cilindrada: 349, preco: 26500, cor: '#4f7a4a',
+      tint: 'rgba(79,122,74,.22)', destaque: true,
+      desc: 'Estilo retrô britânico com engenharia moderna. Monocilíndrica suave, ABS de série e um charme que nenhuma outra moto entrega por esse preço.'
+    },
+    {
+      id: 9, nome: 'Kawasaki Ninja 400', marca: 'Kawasaki', categoria: 'esportiva',
+      ano: 2023, km: 5200, cilindrada: 399, preco: 39900, cor: '#3fbf3f',
+      tint: 'rgba(63,191,63,.22)', destaque: false,
+      desc: 'A porta de entrada perfeita para o mundo esportivo. Motor bicilíndrico de 45 cv, embreagem assistida e chassi leve e ágil.'
+    },
+    {
+      id: 10, nome: 'BMW G 310 GS', marca: 'BMW', categoria: 'trail',
+      ano: 2024, km: 0, cilindrada: 313, preco: 37500, cor: '#1c6fb8',
+      tint: 'rgba(28,111,184,.22)', destaque: false,
+      desc: 'A GS de entrada da BMW. Ciclística equilibrada, painel digital, ABS e a tradição aventureira da marca alemã em um pacote acessível.'
+    },
+    {
+      id: 11, nome: 'Honda Biz 125', marca: 'Honda', categoria: 'street',
+      ano: 2023, km: 7400, cilindrada: 125, preco: 12400, cor: '#e0861a',
+      tint: 'rgba(224,134,26,.22)', destaque: false,
+      desc: 'A scooter mais vendida do Brasil. Câmbio semiautomático, baixo consumo e espaço generoso sob o banco. Imbatível na cidade.'
+    },
+    {
+      id: 12, nome: 'Suzuki V-Strom 650', marca: 'Suzuki', categoria: 'trail',
+      ano: 2022, km: 14200, cilindrada: 645, preco: 48900, cor: '#e0a91a',
+      tint: 'rgba(224,169,26,.22)', destaque: false,
+      desc: 'Big trail bicilíndrica V-Twin reconhecida pela robustez. Ideal para longas viagens, com conforto para piloto e garupa e controle de tração.'
+    }
+  ];
+
+  const ROTULOS = {
+    street: 'Street', naked: 'Naked', esportiva: 'Esportiva',
+    trail: 'Trail', custom: 'Custom'
+  };
+
+  /* ============================================================
+     ESTADO
+     ============================================================ */
+  const estado = {
+    categoria: 'todas',
+    busca: '',
+    ordenacao: 'relevancia',
+    somenteFavoritos: false,
+    favoritos: new Set()
+  };
+
+  /* ============================================================
+     ELEMENTOS
+     ============================================================ */
+  const grid         = document.getElementById('grid');
+  const empty        = document.getElementById('empty');
+  const resultCount  = document.getElementById('resultCount');
+  const searchInput  = document.getElementById('search');
+  const chipsBox     = document.getElementById('chips');
+  const sortSelect   = document.getElementById('sort');
+  const favBtn       = document.getElementById('favBtn');
+  const favCount     = document.getElementById('favCount');
+  const modal        = document.getElementById('modal');
+  const modalBody    = document.getElementById('modalBody');
+  const modalClose   = document.getElementById('modalClose');
+  const heroArt      = document.getElementById('heroArt');
+
+  /* ============================================================
+     HELPERS
+     ============================================================ */
+  const brl = (valor) =>
+    valor.toLocaleString('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    });
+
+  const kmFmt = (km) =>
+    km === 0 ? '0 km' : km.toLocaleString('pt-BR') + ' km';
+
+  /* Ilustração vetorial de moto (sem imagens externas) */
+  function motoSVG(cor) {
+    return `
+    <svg viewBox="0 0 240 150" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+      <ellipse cx="120" cy="138" rx="96" ry="8" fill="rgba(0,0,0,.45)"/>
+
+      <!-- rodas -->
+      <circle cx="55" cy="100" r="31" fill="none" stroke="#2b2f38" stroke-width="9"/>
+      <circle cx="55" cy="100" r="31" fill="none" stroke="#4a505d" stroke-width="2"/>
+      <circle cx="55" cy="100" r="11" fill="none" stroke="#5c6474" stroke-width="4"/>
+
+      <circle cx="185" cy="100" r="31" fill="none" stroke="#2b2f38" stroke-width="9"/>
+      <circle cx="185" cy="100" r="31" fill="none" stroke="#4a505d" stroke-width="2"/>
+      <circle cx="185" cy="100" r="11" fill="none" stroke="#5c6474" stroke-width="4"/>
+
+      <!-- balança -->
+      <line x1="55" y1="100" x2="105" y2="90" stroke="#5c6474" stroke-width="7" stroke-linecap="round"/>
+
+      <!-- quadro -->
+      <path d="M105 90 L96 58 L150 50 L185 100"
+            fill="none" stroke="#6b7385" stroke-width="7"
+            stroke-linejoin="round" stroke-linecap="round"/>
+
+      <!-- garfo -->
+      <line x1="185" y1="100" x2="158" y2="42" stroke="#8b93a5" stroke-width="7" stroke-linecap="round"/>
+
+      <!-- guidão -->
+      <line x1="158" y1="42" x2="136" y2="30" stroke="#3a3f4b" stroke-width="6" stroke-linecap="round"/>
+
+      <!-- escapamento -->
+      <line x1="100" y1="92" x2="48" y2="98" stroke="#7b8497" stroke-width="8" stroke-linecap="round"/>
+
+      <!-- motor -->
+      <rect x="104" y="66" width="32" height="26" rx="6" fill="#3a3f4b"/>
+
+      <!-- tanque -->
+      <path d="M96 58 Q108 34 140 42 L150 52 Q126 66 98 62 Z" fill="${cor}"/>
+
+      <!-- banco -->
+      <path d="M62 58 Q82 44 98 50 L96 62 Q78 64 60 62 Z" fill="#2b2f38"/>
+
+      <!-- farol -->
+      <circle cx="163" cy="44" r="8" fill="#ffd166"/>
+    </svg>`;
+  }
+
+  /* ============================================================
+     FILTRAGEM / ORDENAÇÃO
+     ============================================================ */
+  function filtrar() {
+    const termo = estado.busca.trim().toLowerCase();
+
+    let lista = MOTOS.filter(function (m) {
+      const okCategoria = estado.categoria === 'todas' || m.categoria === estado.categoria;
+      const okBusca = termo === '' ||
+        m.nome.toLowerCase().includes(termo) ||
+        m.marca.toLowerCase().includes(termo);
+      const okFavorito = !estado.somenteFavoritos || estado.favoritos.has(m.id);
+      return okCategoria && okBusca && okFavorito;
+    });
+
+    if (estado.ordenacao === 'menor') {
+      lista.sort(function (a, b) { return a.preco - b.preco; });
+    } else if (estado.ordenacao === 'maior') {
+      lista.sort(function (a, b) { return b.preco - a.preco; });
+    } else if (estado.ordenacao === 'ano') {
+      lista.sort(function (a, b) { return b.ano - a.ano; });
+    }
+
+    return lista;
+  }
+
+  /* ============================================================
+     RENDERIZAÇÃO
+     ============================================================ */
+  function cardHTML(moto) {
+    const favorito = estado.favoritos.has(moto.id);
+
+    return `
+    <article class="card" data-id="${moto.id}" tabindex="0" role="button"
+             aria-label="Ver detalhes de ${moto.nome}">
+      <div class="card-media" style="background:linear-gradient(160deg, ${moto.tint} 0%, #12141a 88%)">
+        ${moto.destaque ? '<span class="badge">Destaque</span>' : ''}
+        <button class="heart ${favorito ? 'on' : ''}" type="button"
+                data-fav="${moto.id}"
+                aria-label="${favorito ? 'Remover' : 'Adicionar'} ${moto.nome} dos favoritos"
+                aria-pressed="${favorito}">♥</button>
+        ${motoSVG(moto.cor)}
+      </div>
+
+      <div class="card-body">
+        <span class="tag">${ROTULOS[moto.categoria]}</span>
+        <h3>${moto.nome}</h3>
+
+        <ul class="specs">
+          <li>${moto.ano}</li>
+          <li>${moto.cilindrada} cc</li>
+          <li>${kmFmt(moto.km)}</li>
+        </ul>
+
+        <div class="card-foot">
+          <div class="price">${brl(moto.preco)}</div>
+          <button class="btn-detail" type="button" data-detail="${moto.id}">Ver detalhes</button>
+        </div>
+      </div>
+    </article>`;
+  }
+
+  function render() {
+    const lista = filtrar();
+
+    grid.innerHTML = lista.map(cardHTML).join('');
+    empty.hidden = lista.length > 0;
+
+    resultCount.textContent = lista.length === 1
+      ? '1 moto encontrada'
+      : lista.length + ' motos encontradas';
+
+    favCount.textContent = String(estado.favoritos.size);
+  }
+
+  /* ============================================================
+     MODAL
+     ============================================================ */
+  function abrirModal(id) {
+    const moto = MOTOS.find(function (m) { return m.id === id; });
+    if (!moto) return;
+
+    const mensagem = encodeURIComponent(
+      'Olá! Tenho interesse na ' + moto.nome + ' (' + moto.ano + ') por ' + brl(moto.preco) + '.'
+    );
+
+    modalBody.innerHTML = `
+      <div class="modal-grid">
+        <div class="modal-media"
+             style="background:linear-gradient(160deg, ${moto.tint} 0%, #12141a 88%)">
+          ${motoSVG(moto.cor)}
+        </div>
+
+        <div class="modal-info">
+          <span class="tag">${ROTULOS[moto.categoria]}</span>
+          <h3 id="modalTitle">${moto.nome}</h3>
+          <div class="price">${brl(moto.preco)}</div>
+
+          <p class="modal-desc">${moto.desc}</p>
+
+          <table class="spec-table">
+            <tbody>
+              <tr><th>Marca</th><td>${moto.marca}</td></tr>
+              <tr><th>Ano</th><td>${moto.ano}</td></tr>
+              <tr><th>Cilindrada</th><td>${moto.cilindrada} cc</td></tr>
+              <tr><th>Quilometragem</th><td>${kmFmt(moto.km)}</td></tr>
+              <tr><th>Categoria</th><td>${ROTULOS[moto.categoria]}</td></tr>
+            </tbody>
+          </table>
+
+          <div class="modal-actions">
+            <a class="btn btn-primary"
+               href="https://wa.me/5511999999999?text=${mensagem}"
+               target="_blank" rel="noopener noreferrer">Falar no WhatsApp</a>
+            <button class="btn btn-ghost" type="button" data-close-modal>Fechar</button>
+          </div>
+        </div>
+      </div>`;
+
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    modalClose.focus();
+  }
+
+  function fecharModal() {
+    modal.classList.remove('open');
+    modalBody.innerHTML = '';
+    document.body.style.overflow = '';
+  }
+
+  /* ============================================================
+     EVENTOS
+     ============================================================ */
+  // Busca
+  searchInput.addEventListener('input', function (e) {
+    estado.busca = e.target.value;
+    render();
+  });
+
+  // Categorias
+  chipsBox.addEventListener('click', function (e) {
+    const chip = e.target.closest('[data-cat]');
+    if (!chip) return;
+
+    estado.categoria = chip.dataset.cat;
+
+    Array.prototype.forEach.call(
+      chipsBox.querySelectorAll('.chip'),
+      function (c) { c.classList.toggle('active', c === chip); }
+    );
+
+    render();
+  });
+
+  // Ordenação
+  sortSelect.addEventListener('change', function (e) {
+    estado.ordenacao = e.target.value;
+    render();
+  });
+
+  // Favoritos (contador + filtro)
+  favBtn.addEventListener('click', function () {
+    estado.somenteFavoritos = !estado.somenteFavoritos;
+    favBtn.classList.toggle('active', estado.somenteFavoritos);
+    favBtn.setAttribute('aria-pressed', String(estado.somenteFavoritos));
+    render();
+  });
+
+  // Cliques na grade
+  grid.addEventListener('click', function (e) {
+    const favButton = e.target.closest('[data-fav]');
+
+    if (favButton) {
+      e.stopPropagation();
+      const id = Number(favButton.dataset.fav);
+      if (estado.favoritos.has(id)) {
+        estado.favoritos.delete(id);
+      } else {
+        estado.favoritos.add(id);
+      }
+      render();
+      return;
+    }
+
+    const card = e.target.closest('.card');
+    if (card) abrirModal(Number(card.dataset.id));
+  });
+
+  // Acessibilidade: abrir card com Enter/Espaço
+  grid.addEventListener('keydown', function (e) {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    const card = e.target.closest('.card');
+    if (!card) return;
+    e.preventDefault();
+    abrirModal(Number(card.dataset.id));
+  });
+
+  // Fechar modal
+  modalClose.addEventListener('click', fecharModal);
+
+  modal.addEventListener('click', function (e) {
+    if (e.target === modal || e.target.closest('[data-close-modal]')) {
+      fecharModal();
+    }
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && modal.classList.contains('open')) {
+      fecharModal();
+    }
+  });
+
+  /* ============================================================
+     INICIALIZAÇÃO
+     ============================================================ */
+  heroArt.innerHTML = motoSVG('#ff6b1a');
+  render();
+})();
+</script>
+</body>
+</html>
