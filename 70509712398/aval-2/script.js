@@ -1,13 +1,14 @@
 
-function saudar() {
-  let nome = document.getElementById("nome").value;
+function mostrarMensagem() {
+    const nome = document.getElementById("nome").value.trim();
+        const resultado = document.getElementById("resultado");
 
-    if (nome.trim() === "") {
-        document.getElementById("resultado").textContent =
-              "Por favor, digite seu nome!";
-                } else {
-                    document.getElementById("resultado").textContent =
-                          "Olá, " + nome + "! Vamos aprender JavaScript!";
-                            }
-                            }
-                            
+            if (nome === "") {
+                    resultado.textContent = "Digite seu nome primeiro!";
+                        } else {
+                                resultado.textContent =
+                                            "Olá, " + nome +
+                                                        "! Seja bem-vindo(a) ao mundo da programação!";
+                                                            }
+                                                            }
+                                                            
