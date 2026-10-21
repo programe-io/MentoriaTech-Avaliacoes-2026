@@ -1,0 +1,291 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabela de IMC</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f1f5f9;
+            padding: 30px;
+            color: #1e293b;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: auto;
+            padding: 25px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px #00000015;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2563eb;
+        }
+
+        form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        input, button {
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 15px;
+        }
+
+        input {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        button {
+            background: #2563eb;
+            color: white;
+            cursor: pointer;
+            border: none;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #cbd5e1;
+        }
+
+        th {
+            background: #1e40af;
+            color: white;
+        }
+
+        /* Classes utilizadas pelo classList */
+        .abaixo {
+            background: #dbeafe;
+            color: #1d4ed8;
+            font-weight: bold;
+        }
+
+        .normal {
+            background: #dcfce7;
+            color: #166534;
+            font-weight: bold;
+        }
+
+        .sobrepeso {
+            background: #fef3c7;
+            color: #92400e;
+            font-weight: bold;
+        }
+
+        .obesidade {
+            background: #fee2e2;
+            color: #b91c1c;
+            font-weight: bold;
+        }
+
+        .legenda {
+            margin-top: 20px;
+            line-height: 2;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                padding: 12px;
+                overflow-x: auto;
+            }
+
+            th, td {
+                padding: 8px;
+                font-size: 13px;
+            }
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+    <div class="container">
+        <h1>Calculadora de IMC</h1>
+
+        <p>Cadastre uma pessoa para calcular seu IMC.</p>
+
+        <form id="formulario">
+            <input
+                type="text"
+                id="nome"
+                placeholder="Nome"
+                required
+            >
+
+            <input
+                type="number"
+                id="peso"
+                placeholder="Peso (kg)"
+                min="1"
+                step="0.1"
+                required
+            >
+
+            <input
+                type="number"
+                id="altura"
+                placeholder="Altura (m)"
+                min="0.5"
+                max="2.8"
+                step="0.01"
+                required
+            >
+
+            <button type="submit">Calcular IMC</button>
+        </form>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Peso (kg)</th>
+                    <th>Altura (m)</th>
+                    <th>IMC</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+
+            <tbody id="tabela">
+                <!-- Os dados serão adicionados pelo JavaScript -->
+            </tbody>
+        </table>
+
+        <div class="legenda">
+            <strong>Legenda das cores:</strong><br>
+            <span class="abaixo">Azul: Abaixo do peso</span><br>
+            <span class="normal">Verde: Peso adequado</span><br>
+            <span class="sobrepeso">Amarelo: Sobrepeso</span><br>
+            <span class="obesidade">Vermelho: Obesidade</span>
+        </div>
+    </div>
+
+    <script>
+        const formulario = document.getElementById("formulario");
+        const tabela = document.getElementById("tabela");
+
+        // Remove as classes de classificação anteriores
+        function limparClasses(elemento) {
+            elemento.classList.remove(
+                "abaixo",
+                "normal",
+                "sobrepeso",
+                "obesidade"
+            );
+        }
+
+        // Determina a classificação do IMC
+        function classificarIMC(imc) {
+            if (imc < 18.5) {
+                return {
+                    status: "Abaixo do peso",
+                    classe: "abaixo"
+                };
+            } else if (imc < 25) {
+                return {
+                    status: "Peso adequado",
+                    classe: "normal"
+                };
+            } else if (imc < 30) {
+                return {
+                    status: "Sobrepeso",
+                    classe: "sobrepeso"
+                };
+            } else {
+                return {
+                    status: "Obesidade",
+                    classe: "obesidade"
+                };
+            }
+        }
+
+        // Cadastra a pessoa e calcula o IMC
+        formulario.addEventListener("submit", function(evento) {
+            evento.preventDefault();
+
+            const nome = document.getElementById("nome").value.trim();
+            const peso = Number(document.getElementById("peso").value);
+            const altura = Number(document.getElementById("altura").value);
+
+            if (nome.length === 0 || peso <= 0 || altura <= 0) {
+                alert("Preencha os dados corretamente.");
+                return;
+            }
+
+            const imc = peso / (altura * altura);
+            const resultado = classificarIMC(imc);
+
+            const linha = document.createElement("tr");
+
+            const dados = [
+                nome,
+                peso.toFixed(1),
+                altura.toFixed(2),
+                imc.toFixed(2),
+                resultado.status
+            ];
+
+            dados.forEach(function(valor) {
+                const celula = document.createElement("td");
+                celula.textContent = valor;
+                linha.appendChild(celula);
+            });
+
+            const celulaStatus = linha.lastElementChild;
+
+            // classList.add(): adiciona a cor da classificação
+            celulaStatus.classList.add(resultado.classe);
+
+            tabela.appendChild(linha);
+
+            formulario.reset();
+        });
+
+        // Exemplo de classList.toggle()
+        // Clique em uma linha para destacar ou remover o destaque.
+        tabela.addEventListener("click", function(evento) {
+            const linha = evento.target.closest("tr");
+
+            if (!linha || !tabela.contains(linha)) {
+                return;
+            }
+
+            // Ignora a linha do cabeçalho, que não fica no tbody.
+            linha.classList.toggle("selecionada");
+        });
+    </script>
+
+    <style>
+        .selecionada {
+            outline: 3px solid #64748b;
+            outline-offset: -3px;
+        }
+    </style>
+<script src="script.js"></script></body>
+</html>
