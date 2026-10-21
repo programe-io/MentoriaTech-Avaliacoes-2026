@@ -1,0 +1,160 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SpiderFeed 🕷️</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="topo">
+    <h1>🕷️ SpiderFeed</h1>
+    <p>Seu bairro amigável da internet!</p>
+  </header>
+
+  <main class="feed">
+
+    <section class="perfil">
+      <div class="avatar">🕸️</div>
+      <div>
+        <h2>Peter Parker</h2>
+        <p>@spiderman · Nova York</p>
+      </div>
+    </section>
+
+    <article class="post">
+      <div class="post-user">
+        <div class="mini-avatar">🕷️</div>
+        <div>
+          <strong>Homem-Aranha</strong>
+          <p>@spiderman · há 5 min</p>
+        </div>
+        <span class="pontos">•••</span>
+      </div>
+
+      <div class="post-img imagem1">
+        <span>🕷️</span>
+        <h2>YOUR FRIENDLY<br>NEIGHBORHOOD</h2>
+        <p>SPIDER-MAN</p>
+      </div>
+
+      <div class="acoes">
+        <button class="curtir" onclick="curtir(this)">
+          ♡ Curtir <span>124</span>
+        </button>
+        <button onclick="comentar(this)">💬 Comentar</button>
+        <button onclick="compartilhar()">↗ Compartilhar</button>
+      </div>
+
+      <div class="legenda">
+        <strong>@spiderman</strong>
+        Mais um dia salvando a cidade! 🕸️
+        <p class="comentarios"></p>
+        <div class="novo-comentario"></div>
+      </div>
+    </article>
+
+    <article class="post">
+      <div class="post-user">
+        <div class="mini-avatar">🕸️</div>
+        <div>
+          <strong>Peter Parker</strong>
+          <p>@peterparker · há 20 min</p>
+        </div>
+        <span class="pontos">•••</span>
+      </div>
+
+      <div class="post-img imagem2">
+        <span>🕷️</span>
+        <h2>WITH GREAT<br>POWER...</h2>
+        <p>GREAT RESPONSIBILITY.</p>
+      </div>
+
+      <div class="acoes">
+        <button class="curtir" onclick="curtir(this)">
+          ♡ Curtir <span>256</span>
+        </button>
+        <button onclick="comentar(this)">💬 Comentar</button>
+        <button onclick="compartilhar()">↗ Compartilhar</button>
+      </div>
+
+      <div class="legenda">
+        <strong>@peterparker</strong>
+        Nunca desista de fazer o bem. ❤️💙
+        <p class="comentarios"></p>
+        <div class="novo-comentario"></div>
+      </div>
+    </article>
+
+    <footer>
+      <p>🕷️ Feito por um fã do Homem-Aranha.</p>
+      <p>Com grandes poderes vêm grandes responsabilidades.</p>
+    </footer>
+
+  </main>
+
+  <script>
+    function curtir(botao) {
+      const numero = botao.querySelector("span");
+      const ativo = botao.classList.toggle("ativo");
+      let total = Number(numero.textContent);
+
+      numero.textContent = ativo ? total + 1 : total - 1;
+      botao.firstChild.textContent = ativo ? "♥ Curtido " : "♡ Curtir ";
+    }
+
+    function comentar(botao) {
+      const post = botao.closest(".post");
+      const area = post.querySelector(".novo-comentario");
+
+      if (area.querySelector("form")) {
+        area.querySelector("input").focus();
+        return;
+      }
+
+      area.innerHTML = `
+        <form onsubmit="enviarComentario(event, this)">
+          <input placeholder="Escreva um comentário..." required maxlength="200">
+          <button type="submit">Enviar</button>
+        </form>
+      `;
+
+      area.querySelector("input").focus();
+    }
+
+    function enviarComentario(event, form) {
+      event.preventDefault();
+
+      const texto = form.querySelector("input").value.trim();
+      if (!texto) return;
+
+      const lista = form.closest(".post").querySelector(".comentarios");
+      const comentario = document.createElement("p");
+      const nome = document.createElement("strong");
+
+      nome.textContent = "Você: ";
+      comentario.append(nome, document.createTextNode(texto));
+      lista.appendChild(comentario);
+      form.remove();
+    }
+
+    function compartilhar() {
+      if (navigator.share) {
+        navigator.share({
+          title: "SpiderFeed",
+          text: "Confira meu mini feed do Homem-Aranha!"
+        }).catch(() => {});
+      } else if (navigator.clipboard) {
+        navigator.clipboard.writeText(location.href)
+          .then(() => alert("Link copiado! 🕷️"))
+          .catch(() => alert("Copie o endereço do site para compartilhar."));
+      } else {
+        alert("Copie o endereço do site para compartilhar!");
+      }
+    }
+  </script>
+
+</body>
+</html>
