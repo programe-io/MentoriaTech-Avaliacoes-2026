@@ -1,0 +1,1 @@
+// Removed unused timer script to avoid errors and reduce overhead.
