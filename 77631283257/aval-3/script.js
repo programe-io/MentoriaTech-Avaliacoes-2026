@@ -43,3 +43,4 @@ function enviar(numero) {
   document.getElementById("preenchimento").style.width =
     (enviadas.length / 3 * 100) + "%";
 }
+
