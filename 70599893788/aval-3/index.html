@@ -1,137 +1,60 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <link href="style.css" rel="stylesheet">
-</head>
-<body>
-  
-let carroX;
-let carroY;
-let obstaculos = [];
-let linhas = [];
-let pontos = 0;
-let velocidade = 5;
-let perdeu = false;
+    <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Calculadora de IMC</title>
+                <link rel="stylesheet" href="style.css">
+                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+                <body>
 
-function setup() {
-  createCanvas(400, 600);
-  carroX = width / 2;
-  carroY = height - 100;
+                    <div class="container">
+                            <h1>Calculadora de IMC</h1>
 
-  for (let i = 0; i < 8; i++) {
-    linhas.push(i * 100);
-  }
+                                    <form id="formulario">
+                                                <input type="text" id="nome"
+                                                                placeholder="Nome da pessoa" required>
 
-  for (let i = 0; i < 3; i++) {
-    obstaculos.push({
-      x: random(100, 280),
-      y: -i * 220
-    });
-  }
-}
+                                                                            <input type="number" id="peso"
+                                                                                            placeholder="Peso em kg" min="0.1" step="0.1" required>
 
-function draw() {
-  background(35, 120, 55);
+                                                                                                        <input type="number" id="altura"
+                                                                                                                        placeholder="Altura em metros" min="0.1" step="0.01" required>
 
-  // Pista
-  fill(55);
-  rect(60, 0, 280, height);
+                                                                                                                                    <button type="submit">Calcular IMC</button>
+                                                                                                                                            </form>
 
-  // Bordas da pista
-  stroke(255);
-  strokeWeight(4);
-  line(65, 0, 65, height);
-  line(335, 0, 335, height);
-  noStroke();
+                                                                                                                                                    <button id="modoBtn" type="button">
+                                                                                                                                                                Alternar modo escuro
+                                                                                                                                                                        </button>
 
-  // Linhas da pista
-  fill(255, 220, 0);
-  for (let i = 0; i < linhas.length; i++) {
-    rect(195, linhas[i], 10, 50);
-    linhas[i] += velocidade;
+                                                                                                                                                                                <h2>Resultados</h2>
 
-    if (linhas[i] > height) {
-      linhas[i] = -50;
-    }
-  }
+                                                                                                                                                                                        <div class="tabela-container">
+                                                                                                                                                                                                    <table>
+                                                                                                                                                                                                                    <thead>
+                                                                                                                                                                                                                                        <tr>
+                                                                                                                                                                                                                                                                <th>Nome</th>
+                                                                                                                                                                                                                                                                                        <th>Peso</th>
+                                                                                                                                                                                                                                                                                                                <th>Altura</th>
+                                                                                                                                                                                                                                                                                                                                        <th>IMC</th>
+                                                                                                                                                                                                                                                                                                                                                                <th>Status</th>
+                                                                                                                                                                                                                                                                                                                                                                                    </tr>
+                                                                                                                                                                                                                                                                                                                                                                                                    </thead>
+                                                                                                                                                                                                                                                                                                                                                                                                                    <tbody id="resultados"></tbody>
+                                                                                                                                                                                                                                                                                                                                                                                                                                </table>
+                                                                                                                                                                                                                                                                                                                                                                                                                                        </div>
 
-  if (!perdeu) {
-    // Movimento do carro
-    if (keyIsDown(LEFT_ARROW)) carroX -= 5;
-    if (keyIsDown(RIGHT_ARROW)) carroX += 5;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                <p class="aviso">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                            O IMC é um indicador geral. Para crianças e adolescentes,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                        sua interpretação depende da idade e do sexo, e deve ser
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    feita com orientação de um profissional de saúde.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            </p>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </div>
 
-    carroX = constrain(carroX, 85, 315);
-
-    // Desenhar obstáculos
-    for (let o of obstaculos) {
-      o.y += velocidade;
-
-      fill(30, 100, 255);
-      rect(o.x, o.y, 35, 55, 6);
-
-      // Colisão
-      if (
-        carroX + 20 > o.x &&
-        carroX - 20 < o.x + 35 &&
-        carroY + 30 > o.y &&
-        carroY - 30 < o.y + 55
-      ) {
-        perdeu = true;
-      }
-
-      if (o.y > height) {
-        o.y = -random(150, 350);
-        o.x = random(85, 280);
-        pontos++;
-        velocidade += 0.1;
-      }
-    }
-
-    // Carro do jogador
-    fill(220, 20, 40);
-    rect(carroX - 17, carroY - 30, 34, 60, 8);
-
-    fill(120, 220, 255);
-    rect(carroX - 12, carroY - 20, 24, 15, 4);
-
-    fill(20);
-    rect(carroX - 22, carroY - 20, 6, 17);
-    rect(carroX + 16, carroY - 20, 6, 17);
-    rect(carroX - 22, carroY + 10, 6, 17);
-    rect(carroX + 16, carroY + 10, 6, 17);
-
-    // Pontuação
-    fill(255);
-    textSize(20);
-    text("Pontos: " + pontos, 15, 30);
-  } else {
-    fill(255);
-    textAlign(CENTER);
-    textSize(32);
-    text("FIM DE JOGO", width / 2, height / 2);
-    textSize(18);
-    text("Pontos: " + pontos, width / 2, height / 2 + 35);
-    text("Pressione ESPAÇO para reiniciar", width / 2, height / 2 + 75);
-    textAlign(LEFT);
-  }
-}
-
-function keyPressed() {
-  if (key === " " && perdeu) {
-    pontos = 0;
-    velocidade = 5;
-    perdeu = false;
-
-    for (let i = 0; i < obstaculos.length; i++) {
-      obstaculos[i].y = -200 * (i + 1);
-      obstaculos[i].x = random(100, 280);
-    }
-  }
-}
-
-  <script src="script.js"></script>
-  
-</body>
-</html>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <script src="script.js"></script>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <script src="script.js"></script></body>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </html>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    

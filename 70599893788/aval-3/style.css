@@ -1,124 +1,141 @@
 
-let carroX;
-let carroY;
-let obstaculos = [];
-let linhas = [];
-let pontos = 0;
-let velocidade = 5;
-let perdeu = false;
+* {
+    box-sizing: border-box;
+        margin: 0;
+            padding: 0;
+            }
 
-function setup() {
-  createCanvas(400, 600);
-  carroX = width / 2;
-  carroY = height - 100;
+            body {
+                font-family: Arial, sans-serif;
+                    background: #eef2f7;
+                        color: #333;
+                            padding: 20px;
+                                transition: 0.3s;
+                                }
 
-  for (let i = 0; i < 8; i++) {
-    linhas.push(i * 100);
-  }
+                                .container {
+                                    max-width: 950px;
+                                        margin: 20px auto;
+                                            padding: 25px;
+                                                background: white;
+                                                    border-radius: 12px;
+                                                        box-shadow: 0 4px 12px #ccc;
+                                                        }
 
-  for (let i = 0; i < 3; i++) {
-    obstaculos.push({
-      x: random(100, 280),
-      y: -i * 220
-    });
-  }
-}
+                                                        h1, h2 {
+                                                            text-align: center;
+                                                                color: #174ea6;
+                                                                    margin-bottom: 20px;
+                                                                    }
 
-function draw() {
-  background(35, 120, 55);
+                                                                    input, button {
+                                                                        width: 100%;
+                                                                            padding: 12px;
+                                                                                margin-bottom: 10px;
+                                                                                    border-radius: 6px;
+                                                                                        font-size: 16px;
+                                                                                        }
 
-  // Pista
-  fill(55);
-  rect(60, 0, 280, height);
+                                                                                        input {
+                                                                                            border: 1px solid #bbb;
+                                                                                            }
 
-  // Bordas da pista
-  stroke(255);
-  strokeWeight(4);
-  line(65, 0, 65, height);
-  line(335, 0, 335, height);
-  noStroke();
+                                                                                            button {
+                                                                                                background: #174ea6;
+                                                                                                    color: white;
+                                                                                                        border: none;
+                                                                                                            cursor: pointer;
+                                                                                                            }
 
-  // Linhas da pista
-  fill(255, 220, 0);
-  for (let i = 0; i < linhas.length; i++) {
-    rect(195, linhas[i], 10, 50);
-    linhas[i] += velocidade;
+                                                                                                            button:hover {
+                                                                                                                background: #103875;
+                                                                                                                }
 
-    if (linhas[i] > height) {
-      linhas[i] = -50;
-    }
-  }
+                                                                                                                .tabela-container {
+                                                                                                                    overflow-x: auto;
+                                                                                                                    }
 
-  if (!perdeu) {
-    // Movimento do carro
-    if (keyIsDown(LEFT_ARROW)) carroX -= 5;
-    if (keyIsDown(RIGHT_ARROW)) carroX += 5;
+                                                                                                                    table {
+                                                                                                                        width: 100%;
+                                                                                                                            border-collapse: collapse;
+                                                                                                                                margin-top: 15px;
+                                                                                                                                }
 
-    carroX = constrain(carroX, 85, 315);
+                                                                                                                                th, td {
+                                                                                                                                    border: 1px solid #ddd;
+                                                                                                                                        padding: 12px;
+                                                                                                                                            text-align: center;
+                                                                                                                                            }
 
-    // Desenhar obstáculos
-    for (let o of obstaculos) {
-      o.y += velocidade;
+                                                                                                                                            th {
+                                                                                                                                                background: #174ea6;
+                                                                                                                                                    color: white;
+                                                                                                                                                    }
 
-      fill(30, 100, 255);
-      rect(o.x, o.y, 35, 55, 6);
+                                                                                                                                                    /* Cores dos resultados */
+                                                                                                                                                    .abaixo {
+                                                                                                                                                        background: #dbeafe;
+                                                                                                                                                            color: #1d4ed8;
+                                                                                                                                                            }
 
-      // Colisão
-      if (
-        carroX + 20 > o.x &&
-        carroX - 20 < o.x + 35 &&
-        carroY + 30 > o.y &&
-        carroY - 30 < o.y + 55
-      ) {
-        perdeu = true;
-      }
+                                                                                                                                                            .normal {
+                                                                                                                                                                background: #dcfce7;
+                                                                                                                                                                    color: #166534;
+                                                                                                                                                                    }
 
-      if (o.y > height) {
-        o.y = -random(150, 350);
-        o.x = random(85, 280);
-        pontos++;
-        velocidade += 0.1;
-      }
-    }
+                                                                                                                                                                    .acima {
+                                                                                                                                                                        background: #fef3c7;
+                                                                                                                                                                            color: #92400e;
+                                                                                                                                                                            }
 
-    // Carro do jogador
-    fill(220, 20, 40);
-    rect(carroX - 17, carroY - 30, 34, 60, 8);
+                                                                                                                                                                            .obesidade {
+                                                                                                                                                                                background: #fee2e2;
+                                                                                                                                                                                    color: #991b1b;
+                                                                                                                                                                                    }
 
-    fill(120, 220, 255);
-    rect(carroX - 12, carroY - 20, 24, 15, 4);
+                                                                                                                                                                                    .status {
+                                                                                                                                                                                        font-weight: bold;
+                                                                                                                                                                                        }
 
-    fill(20);
-    rect(carroX - 22, carroY - 20, 6, 17);
-    rect(carroX + 16, carroY - 20, 6, 17);
-    rect(carroX - 22, carroY + 10, 6, 17);
-    rect(carroX + 16, carroY + 10, 6, 17);
+                                                                                                                                                                                        .aviso {
+                                                                                                                                                                                            margin-top: 20px;
+                                                                                                                                                                                                font-size: 13px;
+                                                                                                                                                                                                    line-height: 1.5;
+                                                                                                                                                                                                    }
 
-    // Pontuação
-    fill(255);
-    textSize(20);
-    text("Pontos: " + pontos, 15, 30);
-  } else {
-    fill(255);
-    textAlign(CENTER);
-    textSize(32);
-    text("FIM DE JOGO", width / 2, height / 2);
-    textSize(18);
-    text("Pontos: " + pontos, width / 2, height / 2 + 35);
-    text("Pressione ESPAÇO para reiniciar", width / 2, height / 2 + 75);
-    textAlign(LEFT);
-  }
-}
+                                                                                                                                                                                                    /* Modo escuro */
+                                                                                                                                                                                                    body.escuro {
+                                                                                                                                                                                                        background: #181818;
+                                                                                                                                                                                                            color: #f5f5f5;
+                                                                                                                                                                                                            }
 
-function keyPressed() {
-  if (key === " " && perdeu) {
-    pontos = 0;
-    velocidade = 5;
-    perdeu = false;
+                                                                                                                                                                                                            body.escuro .container {
+                                                                                                                                                                                                                background: #292929;
+                                                                                                                                                                                                                }
 
-    for (let i = 0; i < obstaculos.length; i++) {
-      obstaculos[i].y = -200 * (i + 1);
-      obstaculos[i].x = random(100, 280);
-    }
-  }
-}
+                                                                                                                                                                                                                body.escuro h1,
+                                                                                                                                                                                                                body.escuro h2 {
+                                                                                                                                                                                                                    color: #90baff;
+                                                                                                                                                                                                                    }
+
+                                                                                                                                                                                                                    body.escuro td {
+                                                                                                                                                                                                                        border-color: #555;
+                                                                                                                                                                                                                        }
+
+                                                                                                                                                                                                                        body.escuro input {
+                                                                                                                                                                                                                            background: #383838;
+                                                                                                                                                                                                                                color: white;
+                                                                                                                                                                                                                                    border-color: #666;
+                                                                                                                                                                                                                                    }
+
+                                                                                                                                                                                                                                    @media (max-width: 600px) {
+                                                                                                                                                                                                                                        .container {
+                                                                                                                                                                                                                                                padding: 12px;
+                                                                                                                                                                                                                                                    }
+
+                                                                                                                                                                                                                                                        th, td {
+                                                                                                                                                                                                                                                                padding: 8px;
+                                                                                                                                                                                                                                                                        font-size: 13px;
+                                                                                                                                                                                                                                                                            }
+                                                                                                                                                                                                                                                                            }
+                                                                                                                                                                                                                                                                            
