@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JavaScript Ultimate Masterclass & Reference Guide</title>
+  
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root {
+      --bg-main: #0f172a;
+      --bg-card: #1e293b;
+      --bg-sidebar: #0b1121;
+      --border-color: #334155;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent-js: #f7df1e;
+      --accent-blue: #38bdf8;
+      --accent-green: #4ade80;
+      --accent-purple: #c084fc;
+      --font-sans: 'Inter', sans-serif;
+      --font-mono: 'Fira Code', monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Layout */
+    .sidebar {
+      width: 280px;
+      background-color: var(--bg-sidebar);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      z-index: 10;
+    }
+
+    .header {
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .header i { color: var(--accent-js); font-size: 1.5rem; }
+    .header h1 { font-size: 1.1rem; font-weight: 700; }
+
+    .nav-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .nav-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      text-align: left;
+      padding: 0.75rem 1rem;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-btn:hover { background: var(--bg-card); color: var(--text-main); }
+    .nav-btn.active { 
+      background: rgba(247, 223, 30, 0.1); 
+      color: var(--accent-js); 
+      border-left: 3px solid var(--accent-js);
+    }
+
+    .main-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .content-area {
+      flex: 1;
+      padding: 2rem;
+      overflow-y: auto;
+      height: calc(100vh - 250px);
+    }
+
+    .tab-pane { display: none; animation: fadeIn 0.3s ease; }
+    .tab-pane.active { display: block; }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* Cards & Code */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .card h2 { font-size: 1.2rem; color: var(--accent-blue); margin-bottom: 1rem; display: flex; align-items: center; gap: 8px;}
+
+    pre {
+      background: #000;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: #e2e8f0;
+      overflow-x: auto;
+      margin-bottom: 1rem;
+      border: 1px solid #1e293b;
+    }
+
+    .keyword { color: var(--accent-purple); }
+    .string { color: var(--accent-green); }
+    .function { color: var(--accent-blue); }
+    .comment { color: #64748b; font-style: italic; }
+
+    button.run-btn {
+      background: var(--accent-blue);
+      color: #0f172a;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: background 0.2s;
+    }
+    button.run-btn:hover { background: #7dd3fc; }
+
+    /* Virtual Console */
+    .console-wrapper {
+      height: 250px;
+      background: #000;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+    }
+    .console-header {
+      padding: 0.5rem 1rem;
+      background: #1e293b;
+      font-size: 0.8rem;
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      color: var(--text-muted);
+    }
+    .console-clear { cursor: pointer; color: var(--accent-blue); }
+    .console-clear:hover { color: #fff; }
+    #virtual-console {
+      flex: 1;
+      padding: 1rem;
+      overflow-y: auto;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: #a3be8c;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .log-line { border-bottom: 1px solid #1e293b; padding-bottom: 4px; }
+    .log-error { color: #bf616a; }
+    
+    /* Interactive Elements */
+    canvas { background: #111; border-radius: 8px; border: 1px solid var(--border-color); margin-top: 1rem; }
+  </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"></head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="header">
+      <i class="fa-brands fa-square-js"></i>
+      <h1>JS Masterclass</h1>
+    </div>
+    <nav class="nav-list">
+      <button class="nav-btn active" onclick="switchTab('tab-es6')"><i class="fa-solid fa-bolt"></i> ES6+ & Basics</button>
+      <button class="nav-btn" onclick="switchTab('tab-ds')"><i class="fa-solid fa-layer-group"></i> Data Structures</button>
+      <button class="nav-btn" onclick="switchTab('tab-closures')"><i class="fa-solid fa-box-archive"></i> Closures & Funcs</button>
+      <button class="nav-btn" onclick="switchTab('tab-oop')"><i class="fa-solid fa-cubes"></i> Classes & OOP</button>
+      <button class="nav-btn" onclick="switchTab('tab-async')"><i class="fa-solid fa-clock-rotate-left"></i> Async / Fetch</button>
+      <button class="nav-btn" onclick="switchTab('tab-adv')"><i class="fa-solid fa-wand-magic-sparkles"></i> Advanced (Proxies)</button>
+      <button class="nav-btn" onclick="switchTab('tab-api')"><i class="fa-solid fa-gears"></i> Web APIs & DOM</button>
+      <button class="nav-btn" onclick="switchTab('tab-worker')"><i class="fa-solid fa-microchip"></i> Workers & Canvas</button>
+    </nav>
+  </aside>
+
+  <!-- Main Area -->
+  <main class="main-area">
+    
+    <div class="content-area">
+      
+      <!-- TAB 1: ES6 -->
+      <div id="tab-es6" class="tab-pane active">
+        <div class="card">
+          <h2><i class="fa-solid fa-bolt"></i> Destructuring, Rest/Spread, Arrow Functions</h2>
+          <pre>
+<span class="keyword">const</span> user = { name: <span class="string">'Alice'</span>, age: 25, role: <span class="string">'Admin'</span> };
+<span class="comment">// Destructuring</span>
+<span class="keyword">const</span> { name, age } = user;
+
+<span class="comment">// Spread & Rest</span>
+<span class="keyword">const</span> updatedUser = { ...user, location: <span class="string">'Earth'</span> };
+<span class="keyword">const</span> sumArgs = (<span class="keyword">...</span>args) => args.reduce((a, b) => a + b, 0);
+
+console.log(<span class="string">`Hello ${name}, total is ${sumArgs(1, 2, 3)}`</span>);
+          </pre>
+          <button class="run-btn" onclick="runDemo('es6')"><i class="fa-solid fa-play"></i> Run Code</button>
+        </div>
+      </div>
+
+      <!-- TAB 2: Data Structures -->
+      <div id="tab-ds" class="tab-pane">
+        <div class="card">
+          <h2><i class="fa-solid fa-layer-group"></i> Maps, Sets & Higher-Order Array Methods</h2>
+          <pre>
+<span class="keyword">const</span> uniqueNums = <span class="keyword">new</span> Set([1, 1, 2, 3, 3, 4]);
+<span class="keyword">const</span> mapData = <span class="keyword">new</span> Map([ [<span class="string">'key1'</span>, <span class="string">'value1'</span>] ]);
+
+<span class="keyword">const</span> arr = [1, 2, 3, 4, 5];
+<span class="keyword">const</span> processed = arr
+  .filter(n => n % 2 !== 0)
+  .map(n => n * 2);
+
+console.log(<span class="string">'Set size:'</span>, uniqueNums.size);
+console.log(<span class="string">'Processed Array:'</span>, processed);
+          </pre>
+          <button class="run-btn" onclick="runDemo('ds')"><i class="fa-solid fa-play"></i> Run Code</button>
+        </div>
+      </div>
+
+      <!-- TAB 3: Closures -->
+      <div id="tab-closures" class="tab-pane">
+        <div class="card">
+          <h2><i class="fa-solid fa-box-archive"></i> Closures & IIFEs</h2>
+          <pre>
+<span class="keyword">function</span> <span class="function">createCounter</span>() {
+  <span class="keyword">let</span> count = 0; <span class="comment">// Encapsulated state</span>
+  <span class="keyword">return function</span>() {
+    <span class="keyword">return</span> ++count;
+  };
+}
+<span class="keyword">const</span> counter = createCounter();
+console.log(counter());
+console.log(counter());
+          </pre>
+          <button class="run-btn" onclick="runDemo('closures')"><i class="fa-solid fa-play"></i> Run Code</button>
+        </div>
+      </div>
+
+      <!-- TAB 4: Classes -->
+      <div id="tab-oop" class="tab-pane">
+        <div class="card">
+          <h2><i class="fa-solid fa-cubes"></i> ES6 Classes & Inheritance</h2>
+          <pre>
+<span class="keyword">class</span> Animal {
+  <span class="keyword">constructor</span>(name) { <span class="keyword">this</span>.name = name; }
+  speak() { console.log(<span class="keyword">this</span>.name + <span class="string">' makes a noise.'</span>); }
+}
+
+<span class="keyword">class</span> Dog <span class="keyword">extends</span> Animal {
+  speak() { console.log(<span class="keyword">this</span>.name + <span class="string">' barks!'</span>); }
+}
+<span class="keyword">const</span> d = <span class="keyword">new</span> Dog(<span class="string">'Rex'</span>);
+d.speak();
+          </pre>
+          <button class="run-btn" onclick="runDemo('oop')"><i class="fa-solid fa-play"></i> Run Code</button>
+        </div>
+      </div>
+
+      <!-- TAB 5: Async -->
+      <div id="tab-async" class="tab-pane">
+        <div class="card">
+          <h2><i class="fa-solid fa-clock-rotate-left"></i> Promises & Async/Await with Fetch</h2>
+          <pre>
+<span class="keyword">async function</span> <span class="function">fetchData</span>() {
+  <span class="keyword">try</span> {
+    console.log(<span class="string">'Fetching...'</span>);
+    <span class="keyword">const</span> res = <span class="keyword">await</span> fetch(<span class="string">'https://jsonplaceholder.typicode.com/todos/1'</span>);
+    <span class="keyword">const</span> data = <span class="keyword">await</span> res.json();
+    console.log(<span class="string">'Data received:'</span>, data.title);
+  } <span class="keyword">catch</span> (err) {
+    console.error(<span class="string">'Error:'</span>, err);
+  }
+}
+fetchData();
+          </pre>
+          <button class="run-btn" onclick="runDemo('async')"><i class="fa-solid fa-play"></i> Run Code</button>
+        </div>
+      </div>
+
+      <!-- TAB 6: Advanced -->
+      <div id="tab-adv" class="tab-pane">
+        <div class="card">
+          <h2><i class="fa-solid fa-wand-magic-sparkles"></i> Generators & Proxies</h2>
+          <pre>
+<span class="comment">// Generator</span>
+<span class="keyword">function*</span> <span class="function">idMaker</span>() {
+  <span class="keyword">let</span> index = 0;
+  <span class="keyword">while</span>(index < 3) <span class="keyword">yield</span> index++;
+}
+<span class="keyword">const</span> gen = idMaker();
+console.log(gen.next().value); <span class="comment">// 0</span>
+
+<span class="comment">// Proxy</span>
+<span class="keyword">const</span> handler = {
+  <span class="function">get</span>: (target, prop) => prop <span class="keyword">in</span> target ? target[prop] : 42
+};
+<span class="keyword">const</span> proxyObj = <span class="keyword">new</span> Proxy({}, handler);
+console.log(<span class="string">'Proxy default value:'</span>, proxyObj.missingKey);
+          </pre>
+          <button class="run-btn" onclick="runDemo('adv')"><i class="fa-solid fa-play"></i> Run Code</button>
+        </div>
+      </div>
+      
+      <!-- TAB 7: APIs -->
+      <div id="tab-api" class="tab-pane">
+        <div class="card">
+          <h2><i class="fa-solid fa-gears"></i> LocalStorage & DOM Events</h2>
+          <pre>
+<span class="comment">// Local Storage</span>
+localStorage.setItem(<span class="string">'secret'</span>, <span class="string">'JavaScript is awesome!'</span>);
+console.log(<span class="string">'From Storage:'</span>, localStorage.getItem(<span class="string">'secret'</span>));
+
+<span class="comment">// DOM Creation</span>
+<span class="keyword">const</span> el = document.createElement(<span class="string">'div'</span>);
+el.textContent = <span class="string">'Injected via JS!'</span>;
+el.style.color = <span class="string">'#4ade80'</span>;
+document.getElementById(<span class="string">'api-target'</span>).appendChild(el);
+          </pre>
+          <button class="run-btn" onclick="runDemo('api')"><i class="fa-solid fa-play"></i> Run Code</button>
+          <div id="api-target" style="margin-top: 15px; padding: 10px; border: 1px dashed #334155;">Target Div</div>
+        </div>
+      </div>
+
+      <!-- TAB 8: Workers & Canvas -->
+      <div id="tab-worker" class="tab-pane">
+        <div class="card">
+          <h2><i class="fa-solid fa-microchip"></i> Web Workers (Blob) & Canvas API</h2>
+          <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom:10px;">Clicking run will spawn a background thread and draw to the canvas.</p>
+          <button class="run-btn" onclick="runDemo('worker')"><i class="fa-solid fa-play"></i> Run Worker & Draw</button>
+          <br>
+          <canvas id="myCanvas" width="400" height="150"></canvas>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Virtual Console Bottom Bar -->
+    <div class="console-wrapper">
+      <div class="console-header">
+        <span><i class="fa-solid fa-terminal"></i> Virtual Console</span>
+        <span class="console-clear" onclick="clearConsole()"><i class="fa-solid fa-trash"></i> Clear</span>
+      </div>
+      <div id="virtual-console"></div>
+    </div>
+
+  </main>
+
+  <script>
+    // --- UI Logic ---
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      event.currentTarget.classList.add('active');
+    }
+
+    // --- Virtual Console Interceptor ---
+    const consoleEl = document.getElementById('virtual-console');
+    
+    function logToScreen(isError, ...args) {
+      const msg = args.map(arg => {
+        if (typeof arg === 'object') return JSON.stringify(arg, null, 2);
+        return String(arg);
+      }).join(' ');
+      
+      const line = document.createElement('div');
+      line.className = 'log-line ' + (isError ? 'log-error' : '');
+      line.innerText = `> ${msg}`;
+      consoleEl.appendChild(line);
+      consoleEl.scrollTop = consoleEl.scrollHeight;
+    }
+
+    // Override console for the demo
+    const origLog = console.log;
+    const origErr = console.error;
+    
+    console.log = (...args) => { origLog(...args); logToScreen(false, ...args); };
+    console.error = (...args) => { origErr(...args); logToScreen(true, ...args); };
+
+    function clearConsole() {
+      consoleEl.innerHTML = '';
+    }
+
+    // --- Executable Demos ---
+    const demos = {
+      es6: () => {
+        const user = { name: 'Alice', age: 25, role: 'Admin' };
+        const { name, age } = user;
+        const sumArgs = (...args) => args.reduce((a, b) => a + b, 0);
+        console.log(`Hello ${name}, total is ${sumArgs(1, 2, 3)}`);
+      },
+      ds: () => {
+        const uniqueNums = new Set([1, 1, 2, 3, 3, 4]);
+        const arr = [1, 2, 3, 4, 5];
+        const processed = arr.filter(n => n % 2 !== 0).map(n => n * 2);
+        console.log('Set size:', uniqueNums.size);
+        console.log('Processed Array (odds * 2):', processed);
+      },
+      closures: () => {
+        function createCounter() {
+          let count = 0; 
+          return () => ++count;
+        }
+        const counter = createCounter();
+        console.log('Closure Counter:', counter());
+        console.log('Closure Counter:', counter());
+      },
+      oop: () => {
+        class Animal {
+          constructor(name) { this.name = name; }
+          speak() { console.log(this.name + ' makes a noise.'); }
+        }
+        class Dog extends Animal {
+          speak() { console.log(this.name + ' barks!'); }
+        }
+        const d = new Dog('Rex');
+        d.speak();
+      },
+      async: async () => {
+        try {
+          console.log('Fetching from API...');
+          const res = await fetch('https://jsonplaceholder.typicode.com/todos/1');
+          const data = await res.json();
+          console.log('Data received:', data.title);
+        } catch (err) {
+          console.error('Error fetching data', err);
+        }
+      },
+      adv: () => {
+        function* idMaker() {
+          let index = 0;
+          while(index < 3) yield index++;
+        }
+        const gen = idMaker();
+        console.log('Generator yield 1:', gen.next().value);
+        console.log('Generator yield 2:', gen.next().value);
+
+        const handler = { get: (target, prop) => prop in target ? target[prop] : 42 };
+        const proxyObj = new Proxy({ a: 1 }, handler);
+        console.log('Proxy known key (a):', proxyObj.a);
+        console.log('Proxy missing key:', proxyObj.missingKey);
+      },
+      api: () => {
+        localStorage.setItem('secret', 'JS is awesome! ' + Math.random().toFixed(2));
+        console.log('From Storage:', localStorage.getItem('secret'));
+        const el = document.createElement('div');
+        el.textContent = 'Injected Element ' + new Date().toLocaleTimeString();
+        el.style.color = '#4ade80';
+        document.getElementById('api-target').appendChild(el);
+      },
+      worker: () => {
+        // Web Worker via Blob
+        const workerCode = `
+          self.onmessage = function(e) {
+            postMessage('Thread processed: ' + e.data + ' (simulating heavy work)');
+          };
+        `;
+        const blob = new Blob([workerCode], { type: 'text/javascript' });
+        const worker = new Worker(URL.createObjectURL(blob));
+        
+        worker.onmessage = (e) => {
+          console.log('[Worker Msg]:', e.data);
+          worker.terminate();
+        };
+        worker.postMessage('Hello parallel universe');
+
+        // Canvas API
+        const canvas = document.getElementById('myCanvas');
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0,0, canvas.width, canvas.height);
+        
+        // Draw shapes
+        ctx.fillStyle = '#f7df1e';
+        ctx.fillRect(20, 20, 50, 50);
+        
+        ctx.beginPath();
+        ctx.arc(150, 45, 25, 0, Math.PI * 2);
+        ctx.fillStyle = '#c084fc';
+        ctx.fill();
+
+        ctx.font = '16px monospace';
+        ctx.fillStyle = '#4ade80';
+        ctx.fillText('Canvas Rendered!', 210, 50);
+        console.log('Canvas drawn.');
+      }
+    };
+
+    function runDemo(demoKey) {
+      console.log(`--- Running demo: ${demoKey} ---`);
+      try {
+        demos[demoKey]();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    // Initial greeting
+    console.log("Welcome to the Interactive JS Console. Click 'Run Code' on any tab.");
+  </script>
+</body>
+</html>
