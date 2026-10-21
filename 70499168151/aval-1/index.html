@@ -1,0 +1,468 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gerenciamento de Projetos</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f1f5f9;
+    color: #1e293b;
+}
+
+header {
+    background: #1e3a8a;
+    color: white;
+    padding: 24px;
+    text-align: center;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 25px auto;
+    padding: 0 16px;
+}
+
+.resumo {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.card, .painel {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px #0000000d;
+}
+
+.card h3 {
+    margin: 0;
+    font-size: 15px;
+    color: #64748b;
+}
+
+.card p {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 0;
+}
+
+.paineis {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+h2 {
+    font-size: 20px;
+    margin-top: 0;
+}
+
+input, select, button {
+    width: 100%;
+    padding: 11px;
+    margin: 7px 0;
+    border-radius: 7px;
+    border: 1px solid #cbd5e1;
+    font-size: 14px;
+}
+
+button {
+    background: #2563eb;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+button:hover {
+    background: #1d4ed8;
+}
+
+.projeto {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin-top: 15px;
+    box-shadow: 0 2px 8px #0000000d;
+}
+
+.projeto-topo {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: center;
+}
+
+.projeto-topo h3 {
+    margin-top: 0;
+}
+
+.progresso {
+    height: 10px;
+    background: #e2e8f0;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progresso div {
+    height: 100%;
+    background: #22c55e;
+    transition: width .3s;
+}
+
+.tarefa {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    border-top: 1px solid #e2e8f0;
+    padding: 12px 0;
+}
+
+.tarefa select {
+    width: auto;
+    max-width: 145px;
+}
+
+.tarefa small {
+    display: block;
+    color: #64748b;
+    margin-top: 5px;
+}
+
+.excluir {
+    background: #dc2626;
+    width: auto;
+    padding: 8px 12px;
+}
+
+.excluir:hover {
+    background: #b91c1c;
+}
+
+.vazio {
+    color: #64748b;
+    text-align: center;
+    padding: 25px;
+}
+
+@media (max-width: 480px) {
+    .projeto-topo, .tarefa {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .tarefa select {
+        width: 100%;
+        max-width: none;
+    }
+}
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+<header>
+    <h1>Gerenciamento de Projetos</h1>
+    <p>Organize projetos, tarefas e prazos em um só lugar.</p>
+</header>
+
+<main class="container">
+
+    <section class="resumo">
+        <div class="card">
+            <h3>Total de projetos</h3>
+            <p id="totalProjetos">0</p>
+        </div>
+
+        <div class="card">
+            <h3>Total de tarefas</h3>
+            <p id="totalTarefas">0</p>
+        </div>
+
+        <div class="card">
+            <h3>Tarefas concluídas</h3>
+            <p id="tarefasConcluidas">0</p>
+        </div>
+
+        <div class="card">
+            <h3>Progresso geral</h3>
+            <p id="progressoGeral">0%</p>
+        </div>
+    </section>
+
+    <section class="paineis">
+        <div class="painel">
+            <h2>Novo projeto</h2>
+
+            <form id="formProjeto">
+                <input id="nomeProjeto"
+                    placeholder="Nome do projeto" required>
+
+                <input id="responsavelProjeto"
+                    placeholder="Responsável" required>
+
+                <label for="prazoProjeto">Prazo final</label>
+                <input id="prazoProjeto" type="date" required>
+
+                <button type="submit">Cadastrar projeto</button>
+            </form>
+        </div>
+
+        <div class="painel">
+            <h2>Nova tarefa</h2>
+
+            <form id="formTarefa">
+                <select id="projetoTarefa" required>
+                    <option value="">Selecione um projeto</option>
+                </select>
+
+                <input id="nomeTarefa"
+                    placeholder="Descrição da tarefa" required>
+
+                <input id="responsavelTarefa"
+                    placeholder="Responsável pela tarefa" required>
+
+                <label for="prazoTarefa">Prazo da tarefa</label>
+                <input id="prazoTarefa" type="date" required>
+
+                <button type="submit">Adicionar tarefa</button>
+            </form>
+        </div>
+    </section>
+
+    <section style="margin-top:30px">
+        <h2>Meus projetos</h2>
+        <div id="listaProjetos"></div>
+    </section>
+
+</main>
+
+<script>
+const CHAVE = "gerenciadorProjetosV1";
+
+let projetos = [];
+
+try {
+    projetos = JSON.parse(localStorage.getItem(CHAVE) || "[]");
+
+    if (!Array.isArray(projetos)) projetos = [];
+} catch {
+    projetos = [];
+}
+
+function salvar() {
+    localStorage.setItem(CHAVE, JSON.stringify(projetos));
+}
+
+function elemento(tag, texto, classe) {
+    const el = document.createElement(tag);
+    if (texto !== undefined) el.textContent = texto;
+    if (classe) el.className = classe;
+    return el;
+}
+
+function dataValida(valor) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(valor)) return false;
+
+    const [ano, mes, dia] = valor.split("-").map(Number);
+    const data = new Date(ano, mes - 1, dia);
+
+    return data.getFullYear() === ano &&
+        data.getMonth() === mes - 1 &&
+        data.getDate() === dia;
+}
+
+function formatarData(valor) {
+    if (!valor) return "Sem prazo";
+    const [ano, mes, dia] = valor.split("-");
+    return `${dia}/${mes}/${ano}`;
+}
+
+document.getElementById("formProjeto")
+.addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    const nome = document.getElementById("nomeProjeto").value.trim();
+    const responsavel = document.getElementById("responsavelProjeto").value.trim();
+    const prazo = document.getElementById("prazoProjeto").value;
+
+    if (!nome || !responsavel || !dataValida(prazo)) {
+        alert("Preencha todos os campos corretamente.");
+        return;
+    }
+
+    projetos.push({
+        id: crypto.randomUUID(),
+        nome,
+        responsavel,
+        prazo,
+        tarefas: []
+    });
+
+    salvar();
+    this.reset();
+    renderizar();
+});
+
+document.getElementById("formTarefa")
+.addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    const id = document.getElementById("projetoTarefa").value;
+    const projeto = projetos.find(p => p.id === id);
+    const nome = document.getElementById("nomeTarefa").value.trim();
+    const responsavel = document.getElementById("responsavelTarefa").value.trim();
+    const prazo = document.getElementById("prazoTarefa").value;
+
+    if (!projeto || !nome || !responsavel || !dataValida(prazo)) {
+        alert("Preencha os dados da tarefa corretamente.");
+        return;
+    }
+
+    projeto.tarefas.push({
+        id: crypto.randomUUID(),
+        nome,
+        responsavel,
+        prazo,
+        status: "Pendente"
+    });
+
+    salvar();
+    this.reset();
+    renderizar();
+});
+
+function renderizar() {
+    const lista = document.getElementById("listaProjetos");
+    const seletor = document.getElementById("projetoTarefa");
+
+    lista.replaceChildren();
+    seletor.replaceChildren();
+
+    seletor.add(new Option("Selecione um projeto", ""));
+
+    projetos.forEach(p => {
+        seletor.add(new Option(p.nome, p.id));
+    });
+
+    const tarefas = projetos.flatMap(p => p.tarefas);
+    const concluidas = tarefas.filter(t => t.status === "Concluída").length;
+    const percentual = tarefas.length
+        ? Math.round(concluidas / tarefas.length * 100)
+        : 0;
+
+    document.getElementById("totalProjetos").textContent = projetos.length;
+    document.getElementById("totalTarefas").textContent = tarefas.length;
+    document.getElementById("tarefasConcluidas").textContent = concluidas;
+    document.getElementById("progressoGeral").textContent = percentual + "%";
+
+    if (!projetos.length) {
+        lista.append(elemento("p", "Nenhum projeto cadastrado.", "vazio"));
+        return;
+    }
+
+    projetos.forEach(p => {
+        const concluidasProjeto = p.tarefas.filter(
+            t => t.status === "Concluída"
+        ).length;
+
+        const progresso = p.tarefas.length
+            ? Math.round(concluidasProjeto / p.tarefas.length * 100)
+            : 0;
+
+        const card = elemento("article", undefined, "projeto");
+        const topo = elemento("div", undefined, "projeto-topo");
+
+        const titulo = elemento("h3", p.nome);
+        const excluir = elemento("button", "Excluir projeto", "excluir");
+        excluir.type = "button";
+
+        excluir.addEventListener("click", () => {
+            if (confirm(`Excluir o projeto "${p.nome}" e todas as suas tarefas?`)) {
+                projetos = projetos.filter(item => item.id !== p.id);
+                salvar();
+                renderizar();
+            }
+        });
+
+        topo.append(titulo, excluir);
+        card.append(topo);
+
+        card.append(elemento("p", `Responsável: ${p.responsavel}`));
+        card.append(elemento("p", `Prazo final: ${formatarData(p.prazo)}`));
+        card.append(elemento("p", `Progresso: ${progresso}%`));
+
+        const barra = elemento("div", undefined, "progresso");
+        const preenchimento = elemento("div");
+        preenchimento.style.width = progresso + "%";
+        barra.append(preenchimento);
+        card.append(barra);
+
+        card.append(elemento("h4", "Tarefas"));
+
+        if (!p.tarefas.length) {
+            card.append(elemento("p", "Nenhuma tarefa cadastrada."));
+        }
+
+        p.tarefas.forEach(t => {
+            const linha = elemento("div", undefined, "tarefa");
+            const detalhes = elemento("div");
+            const nome = elemento("strong", t.nome);
+
+            detalhes.append(nome);
+            detalhes.append(elemento("small",
+                `${t.responsavel} • Prazo: ${formatarData(t.prazo)}`
+            ));
+
+            const controles = elemento("div");
+            const status = document.createElement("select");
+
+            ["Pendente", "Em andamento", "Concluída"].forEach(opcao => {
+                status.add(new Option(opcao, opcao));
+            });
+
+            status.value = t.status;
+
+            status.addEventListener("change", () => {
+                t.status = status.value;
+                salvar();
+                renderizar();
+            });
+
+            const remover = elemento("button", "Excluir", "excluir");
+            remover.type = "button";
+
+            remover.addEventListener("click", () => {
+                p.tarefas = p.tarefas.filter(item => item.id !== t.id);
+                salvar();
+                renderizar();
+            });
+
+            controles.append(status, remover);
+            linha.append(detalhes, controles);
+            card.append(linha);
+        });
+
+        lista.append(card);
+    });
+}
+
+renderizar();
+</script>
+
+<script src="script.js"></script></body>
+</html>
