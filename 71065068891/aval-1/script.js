@@ -1,60 +1,49 @@
-let tarefas = [];
-let geradorCodigo = 0;
+let produtos = [];
 
-function validarDadosTarefa(titulo, prioridade){
-    if(titulo.length < 5){
-        throw new Error('O titulo deve ter no minimo 5 caracteres');
+function validarProduto(descricao,quantidade,valor){ 
+    if(descricao.length < 5){
+        throw new Error("Descricao deve ter no minimo cinco caracteres");
     }
-    if(prioridade < 1 || prioridade > 3){
-        throw new Error('Informe uma prioridade entre 1 e 3');
+    if(quantidade < 1){
+        throw new Error("Valor deve ser maiora que zero");
+    }
+    if(valor < 0){
+        throw new Error("Valor deve ser maior igual a zero");
     }
 }
 
-function buscarTarefa(){
-
-}
-
-function cadastrarTarefa(titulo, prioridade){
-    validarDadosTarefa(titulo, prioridade);
-
-    let tarefa = {
-        'codigo': ++geradorCodigo,
-        'titulo': titulo,
-        'prioridade': prioridade,
-        'status': true
-      }
-
-      tarefas.push(tarefa);
-}
-function listarTarefas(){
-    return tarefas;
-}
-
-
-function concluirTarefa(codigo){
-    let tarefa = buscarTarefa(codigo);
-
-    if(tarefa.status === false){
-        throw new Error('Tarefa ja estava como concluida');
+function cadastrarProduto(descricao,quantidade,valor){
+    validarProduto(descricao,quantidade,valor);
+    let novoProduto = {
+        "codigo": produtos.length + 1,
+        "descricao": descricao,
+        "quantidade": quantidade,
+        "valor": valor,
     }
-    tarefa.status = false;
-} 
-
-function alterarPrioridade(codigo, novaPrioridade){
-    let tarefa = buscarTarefa(codigo);
-    validarDadosTarefa(tarefa.titulo, prioridade);
-
-    tarefa.prioridade = novaPrioridade;
+    produtos.push (novoProduto);
 }
+ 
+ function listarProdutos(){
+    console.log(produtos);
+ }
+
+function atualizarValor(codigoProduto,novoValor){
+    if(novoValor < 0){
+        throw new Error("Valor deve maior igual a zero");
+    }
+    const produto = produtos.find(prod => prod.codigo === codigoProduto);
+
+    if(produto){
+      produto.valor = novoValor  
+    }
+   
+    }
 
 
 
 
 
-cadastrarTarefa('Cadastrar Clientes', 1);
-console.log(listarTarefas());
-
-
-alterarPrioridade(1,2);
-
-console.log(listarTarefas());
+listarProdutos();
+cadastrarProduto("Cadeira Gamer",12,699.00);
+cadastrarProduto("Mouse logi",38,99.00);
+listarProdutos();
