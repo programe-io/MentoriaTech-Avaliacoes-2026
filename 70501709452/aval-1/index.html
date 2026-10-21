@@ -4,106 +4,139 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gerenciamento de Projetos</title>
+  <title>GestorPro | Projetos</title>
   <link rel="stylesheet" href="style.css">
   <script src="script.js" defer></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="style.css" rel="stylesheet"></head>
 <body>
   <aside class="sidebar">
-    <h2>ProjectFlow</h2>
-    <nav>
-      <a href="#dashboard">📊 Dashboard</a>
-      <a href="#projetos">📁 Projetos</a>
-      <a href="#cadastro">➕ Novo projeto</a>
-    </nav>
-    <p class="sidebar-footer">Gestão de projetos</p>
+    <h2>Gestor<span>Pro</span></h2>
+    <p class="menu-label">MENU PRINCIPAL</p>
+    <a href="#inicio" class="active">▦ Visão geral</a>
+    <a href="#projetos">▤ Projetos</a>
+    <a href="#equipe">♙ Equipe</a>
+    <div class="sidebar-bottom">Sistema de Gestão v2.0</div>
   </aside>
 
-  <main class="main-content" id="dashboard">
-    <header class="topbar">
+  <main class="content" id="inicio">
+    <header class="header">
       <div>
-        <h1>Gerenciamento de Projetos</h1>
-        <p>Acompanhe seus projetos e tarefas.</p>
+        <h1>Visão geral</h1>
+        <p>Bem-vindo ao seu painel de projetos.</p>
       </div>
-      <button onclick="abrirFormulario()">
-        + Novo projeto
-      </button>
+      <button id="novoProjeto">+ Criar projeto</button>
     </header>
 
-    <section class="stats">
-      <article class="stat-card">
-        <span>Total de projetos</span>
-        <h2 id="totalProjetos">0</h2>
+    <section class="summary">
+      <article class="summary-card">
+        <div class="summary-icon purple">▤</div>
+        <p>Total de projetos</p>
+        <h2 id="total">0</h2>
       </article>
-      <article class="stat-card">
-        <span>Em andamento</span>
-        <h2 id="emAndamento">0</h2>
+      <article class="summary-card">
+        <div class="summary-icon blue">◷</div>
+        <p>Em andamento</p>
+        <h2 id="andamento">0</h2>
       </article>
-      <article class="stat-card">
-        <span>Concluídos</span>
+      <article class="summary-card">
+        <div class="summary-icon green">✓</div>
+        <p>Concluídos</p>
         <h2 id="concluidos">0</h2>
       </article>
-      <article class="stat-card">
-        <span>Tarefas pendentes</span>
-        <h2 id="pendentes">0</h2>
+      <article class="summary-card">
+        <div class="summary-icon orange">!</div>
+        <p>Atrasados</p>
+        <h2 id="atrasados">0</h2>
       </article>
-    </section>
-
-    <section id="cadastro" class="panel hidden">
-      <h2 id="tituloFormulario">Novo projeto</h2>
-      <form id="formProjeto">
-        <input type="hidden" id="projetoId">
-
-        <label for="nome">Nome do projeto</label>
-        <input id="nome" required
-          placeholder="Ex.: Sistema de vendas">
-
-        <label for="responsavel">Responsável</label>
-        <input id="responsavel" required
-          placeholder="Nome do responsável">
-
-        <label for="descricao">Descrição</label>
-        <textarea id="descricao"
-          placeholder="Descreva o projeto"></textarea>
-
-        <label for="prazo">Prazo final</label>
-        <input type="date" id="prazo" required>
-
-        <div class="form-actions">
-          <button type="submit">Salvar projeto</button>
-          <button type="button" class="secondary"
-            onclick="fecharFormulario()">Cancelar</button>
-        </div>
-      </form>
     </section>
 
     <section class="panel" id="projetos">
-      <div class="section-heading">
+      <div class="panel-header">
         <div>
-          <h2>Meus projetos</h2>
-          <p>Consulte e atualize seus projetos.</p>
+          <h2>Projetos cadastrados</h2>
+          <p>Gerencie os projetos da sua organização.</p>
         </div>
-        <input id="busca" placeholder="Buscar projeto..."
-          aria-label="Buscar projeto">
+        <input id="pesquisa" type="search"
+          placeholder="Pesquisar projeto...">
       </div>
-      <div id="listaProjetos" class="project-grid"></div>
+
+      <div class="filters">
+        <label for="filtroStatus">Status:</label>
+        <select id="filtroStatus">
+          <option value="todos">Todos os projetos</option>
+          <option value="Planejamento">Planejamento</option>
+          <option value="Em andamento">Em andamento</option>
+          <option value="Concluído">Concluído</option>
+        </select>
+      </div>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>PROJETO</th>
+              <th>RESPONSÁVEL</th>
+              <th>PRAZO</th>
+              <th>PRIORIDADE</th>
+              <th>STATUS</th>
+              <th>AÇÕES</th>
+            </tr>
+          </thead>
+          <tbody id="tabelaProjetos"></tbody>
+        </table>
+      </div>
+      <p id="mensagem" class="message"></p>
+    </section>
+
+    <section class="panel" id="equipe">
+      <h2>Equipe e produtividade</h2>
+      <p>Resumo dos responsáveis pelos projetos cadastrados.</p>
+      <div id="equipeLista" class="team-list"></div>
     </section>
   </main>
 
-  <dialog id="dialogTarefas">
-    <div class="dialog-header">
-      <h2 id="tituloTarefas">Tarefas</h2>
-      <button class="secondary" onclick="fecharTarefas()">
-        Fechar
-      </button>
-    </div>
-    <form id="formTarefa">
-      <input id="tarefaNome" required
-        placeholder="Nome da nova tarefa">
-      <button type="submit">Adicionar tarefa</button>
+  <dialog id="modal">
+    <form id="formProjeto">
+      <h2 id="tituloModal">Cadastrar projeto</h2>
+      <input type="hidden" id="id">
+
+      <label for="nome">Nome do projeto</label>
+      <input id="nome" required maxlength="100"
+        placeholder="Ex.: Aplicativo empresarial">
+
+      <label for="responsavel">Responsável</label>
+      <input id="responsavel" required maxlength="80"
+        placeholder="Nome do responsável">
+
+      <label for="prazo">Prazo de entrega</label>
+      <input id="prazo" type="date" required>
+
+      <label for="prioridade">Prioridade</label>
+      <select id="prioridade">
+        <option>Baixa</option>
+        <option selected>Média</option>
+        <option>Alta</option>
+      </select>
+
+      <label for="status">Status</label>
+      <select id="status">
+        <option>Planejamento</option>
+        <option>Em andamento</option>
+        <option>Concluído</option>
+      </select>
+
+      <label for="descricao">Descrição</label>
+      <textarea id="descricao" maxlength="500"
+        placeholder="Detalhes do projeto"></textarea>
+
+      <div class="modal-actions">
+        <button type="button" id="cancelar" class="btn-light">
+          Cancelar
+        </button>
+        <button type="submit">Salvar projeto</button>
+      </div>
     </form>
-    <div id="listaTarefas"></div>
   </dialog>
 <script src="script.js"></script></body>
 </html>

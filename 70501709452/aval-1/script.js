@@ -1,308 +1,217 @@
-const CHAVE = "projectflow_dados_v1";
 
-let projetos = carregarProjetos();
-let projetoAtualId = null;
+const STORAGE_KEY = "gestorpro_projetos_v2";
 
-function carregarProjetos() {
+const $ = id => document.getElementById(id);
+
+let projetos = carregar();
+let editandoId = null;
+
+function carregar() {
   try {
-    const dados = JSON.parse(localStorage.getItem(CHAVE) || "[]");
+    const dados = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
     return Array.isArray(dados) ? dados : [];
   } catch {
     return [];
   }
 }
 
-function salvarDados() {
-  localStorage.setItem(CHAVE, JSON.stringify(projetos));
+function salvar() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(projetos));
 }
 
-function criarId() {
+function novoId() {
   return crypto.randomUUID
     ? crypto.randomUUID()
-    : `${Date.now()}-${Math.random()}`;
+    : String(Date.now()) + Math.random();
 }
 
-// Evita inserir conteúdo digitado como HTML.
-function elemento(tag, classe, texto) {
+function criarElemento(tag, texto = "", classe = "") {
   const el = document.createElement(tag);
-  if (classe) el.className = classe;
-  if (texto !== undefined) el.textContent = texto;
+  el.textContent = texto;
+  el.className = classe;
   return el;
 }
 
-function abrirFormulario(projeto = null) {
-  document.getElementById("formProjeto").reset();
-
-  document.getElementById("projetoId").value =
-    projeto ? projeto.id : "";
-
-  document.getElementById("nome").value =
-    projeto ? projeto.nome : "";
-
-  document.getElementById("responsavel").value =
-    projeto ? projeto.responsavel : "";
-
-  document.getElementById("descricao").value =
-    projeto ? projeto.descricao : "";
-
-  document.getElementById("prazo").value =
-    projeto ? projeto.prazo : "";
-
-  document.getElementById("tituloFormulario").textContent =
-    projeto ? "Editar projeto" : "Novo projeto";
-
-  document.getElementById("cadastro").classList.remove("hidden");
-  document.getElementById("nome").focus();
+function atrasado(p) {
+  return p.status !== "Concluído" &&
+    p.prazo < new Date().toLocaleDateString("sv-SE");
 }
 
-function fecharFormulario() {
-  document.getElementById("cadastro").classList.add("hidden");
+function abrirModal(projeto = null) {
+  editandoId = projeto ? projeto.id : null;
+  $("formProjeto").reset();
+
+  $("tituloModal").textContent =
+    projeto ? "Editar projeto" : "Cadastrar projeto";
+
+  $("id").value = projeto ? projeto.id : "";
+  $("nome").value = projeto ? projeto.nome : "";
+  $("responsavel").value = projeto ? projeto.responsavel : "";
+  $("prazo").value = projeto ? projeto.prazo : "";
+  $("prioridade").value = projeto ? projeto.prioridade : "Média";
+  $("status").value = projeto ? projeto.status : "Planejamento";
+  $("descricao").value = projeto ? projeto.descricao : "";
+
+  $("modal").showModal();
 }
 
-document.getElementById("formProjeto").addEventListener(
-  "submit", function (evento) {
-    evento.preventDefault();
+$("novoProjeto").addEventListener("click", () => abrirModal());
 
-    const id = document.getElementById("projetoId").value;
+$("cancelar").addEventListener("click", () => {
+  $("modal").close();
+});
 
-    const dados = {
-      nome: document.getElementById("nome").value.trim(),
-      responsavel: document.getElementById("responsavel").value.trim(),
-      descricao: document.getElementById("descricao").value.trim(),
-      prazo: document.getElementById("prazo").value
-    };
+$("formProjeto").addEventListener("submit", evento => {
+  evento.preventDefault();
 
-    if (!dados.nome || !dados.responsavel || !dados.prazo) {
-      alert("Preencha os campos obrigatórios.");
-      return;
-    }
+  const dados = {
+    nome: $("nome").value.trim(),
+    responsavel: $("responsavel").value.trim(),
+    prazo: $("prazo").value,
+    prioridade: $("prioridade").value,
+    status: $("status").value,
+    descricao: $("descricao").value.trim()
+  };
 
-    if (id) {
-      const projeto = projetos.find(p => p.id === id);
-      if (projeto) Object.assign(projeto, dados);
-    } else {
-      projetos.push({
-        id: criarId(),
-        ...dados,
-        tarefas: []
-      });
-    }
-
-    salvarDados();
-    fecharFormulario();
-    renderizar();
+  if (!dados.nome || !dados.responsavel || !dados.prazo) {
+    alert("Preencha os campos obrigatórios.");
+    return;
   }
-);
+
+  if (editandoId) {
+    const projeto = projetos.find(p => p.id === editandoId);
+    if (projeto) Object.assign(projeto, dados);
+  } else {
+    projetos.push({ id: novoId(), ...dados });
+  }
+
+  salvar();
+  $("modal").close();
+  renderizar();
+});
 
 function excluirProjeto(id) {
   const projeto = projetos.find(p => p.id === id);
   if (!projeto) return;
 
-  if (!confirm(`Excluir o projeto "${projeto.nome}"?`)) return;
+  if (!confirm(`Deseja excluir "${projeto.nome}"?`)) return;
 
   projetos = projetos.filter(p => p.id !== id);
-  salvarDados();
+  salvar();
   renderizar();
 }
 
-function adicionarBotao(container, texto, classe, acao) {
-  const botao = elemento("button", classe, texto);
-  botao.type = "button";
-  botao.addEventListener("click", acao);
-  container.appendChild(botao);
-  return botao;
+function botao(texto, classe, acao) {
+  const el = criarElemento("button", texto, classe);
+  el.type = "button";
+  el.addEventListener("click", acao);
+  return el;
 }
 
 function renderizar() {
-  const busca = document.getElementById("busca")
-    .value.trim().toLocaleLowerCase("pt-BR");
+  const busca = $("pesquisa").value.trim().toLowerCase();
+  const filtro = $("filtroStatus").value;
+  const tabela = $("tabelaProjetos");
 
-  const lista = document.getElementById("listaProjetos");
+  tabela.replaceChildren();
+
+  $("total").textContent = projetos.length;
+  $("andamento").textContent =
+    projetos.filter(p => p.status === "Em andamento").length;
+  $("concluidos").textContent =
+    projetos.filter(p => p.status === "Concluído").length;
+  $("atrasados").textContent = projetos.filter(atrasado).length;
+
+  const filtrados = projetos.filter(p => {
+    const correspondeBusca =
+      `${p.nome} ${p.responsavel} ${p.descricao || ""}`
+        .toLowerCase().includes(busca);
+
+    const correspondeStatus =
+      filtro === "todos" || p.status === filtro;
+
+    return correspondeBusca && correspondeStatus;
+  });
+
+  $("mensagem").textContent = filtrados.length
+    ? `${filtrados.length} projeto(s) encontrado(s).`
+    : "Nenhum projeto encontrado.";
+
+  filtrados.forEach(p => {
+    const linha = document.createElement("tr");
+
+    const nome = criarElemento("td", p.nome, "project-name");
+    nome.title = p.descricao || p.nome;
+
+    const responsavel = criarElemento("td", p.responsavel);
+    const prazo = criarElemento(
+      "td", p.prazo.split("-").reverse().join("/")
+    );
+
+    const prioridade = criarElemento(
+      "td", p.prioridade, `priority-${p.prioridade}`
+    );
+
+    const status = criarElemento(
+      "span", p.status, `badge ${p.status.replace(" ", "-")}`
+    );
+
+    const celulaStatus = document.createElement("td");
+    celulaStatus.appendChild(status);
+
+    const acoes = criarElemento("td", "", "actions");
+
+    acoes.appendChild(botao("Editar", "btn-light", () => {
+      abrirModal(p);
+    }));
+
+    acoes.appendChild(botao("Excluir", "btn-delete", () => {
+      excluirProjeto(p.id);
+    }));
+
+    [nome, responsavel, prazo, prioridade, celulaStatus, acoes]
+      .forEach(celula => linha.appendChild(celula));
+
+    tabela.appendChild(linha);
+  });
+
+  renderizarEquipe();
+}
+
+function renderizarEquipe() {
+  const lista = $("equipeLista");
   lista.replaceChildren();
 
-  const concluidos = projetos.filter(p =>
-    p.tarefas.length > 0 &&
-    p.tarefas.every(t => t.concluida)
-  ).length;
+  const equipe = {};
 
-  const emAndamento = projetos.filter(p =>
-    p.tarefas.some(t => t.concluida) &&
-    !p.tarefas.every(t => t.concluida)
-  ).length;
+  projetos.forEach(p => {
+    equipe[p.responsavel] = (equipe[p.responsavel] || 0) + 1;
+  });
 
-  const pendentes = projetos.reduce((total, p) =>
-    total + p.tarefas.filter(t => !t.concluida).length, 0
-  );
+  const nomes = Object.keys(equipe);
 
-  document.getElementById("totalProjetos").textContent = projetos.length;
-  document.getElementById("emAndamento").textContent = emAndamento;
-  document.getElementById("concluidos").textContent = concluidos;
-  document.getElementById("pendentes").textContent = pendentes;
-
-  const filtrados = projetos.filter(p =>
-    `${p.nome} ${p.responsavel} ${p.descricao}`
-      .toLocaleLowerCase("pt-BR").includes(busca)
-  );
-
-  if (filtrados.length === 0) {
-    lista.appendChild(elemento(
-      "p", "empty",
-      projetos.length
-        ? "Nenhum projeto encontrado."
-        : "Nenhum projeto cadastrado. Clique em Novo projeto para começar."
+  if (!nomes.length) {
+    lista.appendChild(criarElemento(
+      "p", "Cadastre projetos para visualizar a equipe."
     ));
     return;
   }
 
-  filtrados.forEach(projeto => {
-    const card = elemento("article", "project-card");
-    const total = projeto.tarefas.length;
-    const feitas = projeto.tarefas.filter(t => t.concluida).length;
-    const progresso = total ? Math.round(feitas / total * 100) : 0;
+  nomes.forEach(nome => {
+    const card = criarElemento("div", "", "team-card");
+    card.appendChild(criarElemento("strong", nome));
 
-    const finalizado = total > 0 && feitas === total;
-    const status = elemento(
-      "span", "status",
-      finalizado ? "Concluído" :
-      feitas > 0 ? "Em andamento" : "Pendente"
-    );
-
-    card.appendChild(status);
-    card.appendChild(elemento("h3", "", projeto.nome));
-    card.appendChild(elemento(
-      "p", "", `Responsável: ${projeto.responsavel}`
-    ));
-    card.appendChild(elemento(
-      "p", "", projeto.descricao || "Sem descrição."
+    const quantidade = equipe[nome];
+    card.appendChild(criarElemento(
+      "span",
+      `${quantidade} projeto(s) atribuído(s)`
     ));
 
-    const prazo = projeto.prazo
-      ? projeto.prazo.split("-").reverse().join("/")
-      : "Não definido";
-
-    card.appendChild(elemento("p", "", `Prazo: ${prazo}`));
-    card.appendChild(elemento(
-      "p", "", `Progresso: ${progresso}% (${feitas}/${total} tarefas)`
-    ));
-
-    const trilho = elemento("div", "progress-track");
-    const barra = elemento("div", "progress-bar");
-    barra.style.width = `${progresso}%`;
-    trilho.appendChild(barra);
-    card.appendChild(trilho);
-
-    const acoes = elemento("div", "card-actions");
-
-    adicionarBotao(acoes, "Tarefas", "", () =>
-      abrirTarefas(projeto.id)
-    );
-
-    adicionarBotao(acoes, "Editar", "secondary", () =>
-      abrirFormulario(projeto)
-    );
-
-    adicionarBotao(acoes, "Excluir", "danger", () =>
-      excluirProjeto(projeto.id)
-    );
-
-    card.appendChild(acoes);
     lista.appendChild(card);
   });
 }
 
-function abrirTarefas(id) {
-  projetoAtualId = id;
-  const projeto = projetos.find(p => p.id === id);
-  if (!projeto) return;
-
-  document.getElementById("tituloTarefas").textContent =
-    `Tarefas: ${projeto.nome}`;
-
-  document.getElementById("formTarefa").reset();
-  renderizarTarefas();
-
-  document.getElementById("dialogTarefas").showModal();
-}
-
-function fecharTarefas() {
-  document.getElementById("dialogTarefas").close();
-  projetoAtualId = null;
-}
-
-document.getElementById("formTarefa").addEventListener(
-  "submit", function (evento) {
-    evento.preventDefault();
-
-    const projeto = projetos.find(p => p.id === projetoAtualId);
-    const campo = document.getElementById("tarefaNome");
-    const nome = campo.value.trim();
-
-    if (!projeto || !nome) return;
-
-    projeto.tarefas.push({
-      id: criarId(),
-      nome,
-      concluida: false
-    });
-
-    salvarDados();
-    campo.value = "";
-    renderizarTarefas();
-    renderizar();
-    campo.focus();
-  }
-);
-
-function renderizarTarefas() {
-  const lista = document.getElementById("listaTarefas");
-  lista.replaceChildren();
-
-  const projeto = projetos.find(p => p.id === projetoAtualId);
-  if (!projeto) return;
-
-  if (projeto.tarefas.length === 0) {
-    lista.appendChild(elemento(
-      "p", "empty", "Nenhuma tarefa cadastrada."
-    ));
-  }
-
-  projeto.tarefas.forEach(tarefa => {
-    const linha = elemento("div", "task-item");
-    const checkbox = elemento("input");
-    checkbox.type = "checkbox";
-    checkbox.checked = tarefa.concluida;
-    checkbox.setAttribute(
-      "aria-label", `Concluir tarefa ${tarefa.nome}`
-    );
-
-    const nome = elemento(
-      "span", tarefa.concluida ? "done" : "", tarefa.nome
-    );
-
-    checkbox.addEventListener("change", () => {
-      tarefa.concluida = checkbox.checked;
-      salvarDados();
-      renderizarTarefas();
-      renderizar();
-    });
-
-    adicionarBotao(linha, "Excluir", "danger", () => {
-      projeto.tarefas = projeto.tarefas.filter(
-        t => t.id !== tarefa.id
-      );
-      salvarDados();
-      renderizarTarefas();
-      renderizar();
-    });
-
-    linha.prepend(nome);
-    linha.prepend(checkbox);
-    lista.appendChild(linha);
-  });
-}
-
-document.getElementById("busca").addEventListener(
-  "input", renderizar
-);
+$("pesquisa").addEventListener("input", renderizar);
+$("filtroStatus").addEventListener("change", renderizar);
 
 renderizar();
