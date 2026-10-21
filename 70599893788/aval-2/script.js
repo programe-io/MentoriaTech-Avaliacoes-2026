@@ -1,139 +1,145 @@
 
-/* Configuração geral */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+let tarefas = [];
+let proximoCodigo = 1;
 
-body {
-    font-family: Arial, sans-serif;
-    background: #eef2f7;
-    color: #333;
-    padding: 20px;
-}
+const formulario = document.getElementById("formTarefa");
 
-/* Área principal */
-.container {
-    max-width: 800px;
-    margin: 30px auto;
-    padding: 25px;
-    background: #fff;
-    border-radius: 15px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-}
+formulario.addEventListener("submit", function(event) {
+    event.preventDefault();
 
-/* Títulos */
-h1 {
-    text-align: center;
-    color: #174ea6;
-    margin-bottom: 25px;
-}
+        const titulo = document.getElementById("titulo").value.trim();
+            const prioridade = Number(
+                    document.getElementById("prioridade").value
+                        );
 
-h2 {
-    color: #174ea6;
-    margin: 20px 0 12px;
-}
+                            // Validar título
+                                if (titulo.length < 5) {
+                                        alert("O título deve ter no mínimo 5 caracteres!");
+                                                return;
+                                                    }
 
-/* Campos de entrada */
-input {
-    display: block;
-    width: 100%;
-    padding: 12px;
-    margin: 10px 0;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    font-size: 16px;
-    outline: none;
-}
+                                                        // Validar prioridade
+                                                            if (![1, 2, 3].includes(prioridade)) {
+                                                                    alert("A prioridade deve ser 1, 2 ou 3!");
+                                                                            return;
+                                                                                }
 
-input:focus {
-    border-color: #174ea6;
-    box-shadow: 0 0 5px #174ea6;
-}
+                                                                                    // Cadastrar tarefa
+                                                                                        const tarefa = {
+                                                                                                codigo: proximoCodigo++,
+                                                                                                        titulo: titulo,
+                                                                                                                prioridade: prioridade,
+                                                                                                                        concluida: false
+                                                                                                                            };
 
-/* Botões */
-button {
-    width: 100%;
-    padding: 12px;
-    margin: 6px 0;
-    border: none;
-    border-radius: 8px;
-    background: #174ea6;
-    color: white;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: 0.3s;
-}
+                                                                                                                                tarefas.push(tarefa);
 
-button:hover {
-    background: #103875;
-    transform: translateY(-2px);
-}
+                                                                                                                                    formulario.reset();
+                                                                                                                                        listarTarefas();
+                                                                                                                                        });
 
-/* Lista de produtos */
-#lista {
-    margin-top: 15px;
-}
+                                                                                                                                        function listarTarefas() {
+                                                                                                                                            const lista = document.getElementById("listaTarefas");
+                                                                                                                                                lista.innerHTML = "";
 
-.produto {
-    background: #f8fafc;
-    border: 1px solid #dce3ed;
-    border-left: 5px solid #174ea6;
-    border-radius: 10px;
-    padding: 15px;
-    margin-bottom: 15px;
-    overflow-wrap: anywhere;
-}
+                                                                                                                                                    if (tarefas.length === 0) {
+                                                                                                                                                            lista.textContent = "Nenhuma tarefa cadastrada.";
+                                                                                                                                                                    return;
+                                                                                                                                                                        }
 
-.produto h3 {
-    color: #174ea6;
-    margin-bottom: 10px;
-}
+                                                                                                                                                                            tarefas.forEach(function(tarefa) {
+                                                                                                                                                                                    const div = document.createElement("div");
+                                                                                                                                                                                            div.className = "tarefa";
 
-.produto p {
-    line-height: 1.6;
-    margin-bottom: 10px;
-}
+                                                                                                                                                                                                    if (tarefa.concluida) {
+                                                                                                                                                                                                                div.classList.add("concluida");
+                                                                                                                                                                                                                        }
 
-/* Botões de alteração */
-.produto button {
-    background: #16834a;
-}
+                                                                                                                                                                                                                                const titulo = document.createElement("h3");
+                                                                                                                                                                                                                                        titulo.textContent = tarefa.titulo;
 
-.produto button:hover {
-    background: #106637;
-}
+                                                                                                                                                                                                                                                const codigo = document.createElement("p");
+                                                                                                                                                                                                                                                        codigo.textContent = "Código: " + tarefa.codigo;
 
-/* Mensagens */
-#mensagem {
-    text-align: center;
-    color: #16834a;
-    font-weight: bold;
-    margin-top: 10px;
-}
+                                                                                                                                                                                                                                                                const prioridade = document.createElement("p");
+                                                                                                                                                                                                                                                                        prioridade.textContent =
+                                                                                                                                                                                                                                                                                    "Prioridade: " +
+                                                                                                                                                                                                                                                                                                tarefa.prioridade + " - " +
+                                                                                                                                                                                                                                                                                                            obterPrioridade(tarefa.prioridade);
 
-/* Adaptação para celulares */
-@media (max-width: 600px) {
-    body {
-        padding: 10px;
-    }
+                                                                                                                                                                                                                                                                                                                    prioridade.className =
+                                                                                                                                                                                                                                                                                                                                tarefa.prioridade === 1 ? "alta" :
+                                                                                                                                                                                                                                                                                                                                            tarefa.prioridade === 2 ? "media" : "baixa";
 
-    .container {
-        margin: 10px auto;
-        padding: 15px;
-    }
+                                                                                                                                                                                                                                                                                                                                                    const status = document.createElement("p");
+                                                                                                                                                                                                                                                                                                                                                            status.textContent = tarefa.concluida
+                                                                                                                                                                                                                                                                                                                                                                        ? "Status: Concluída"
+                                                                                                                                                                                                                                                                                                                                                                                    : "Status: Pendente";
 
-    h1 {
-        font-size: 24px;
-    }
+                                                                                                                                                                                                                                                                                                                                                                                            div.append(titulo, codigo, prioridade, status);
 
-    h2 {
-        font-size: 20px;
-    }
+                                                                                                                                                                                                                                                                                                                                                                                                    // Botão para concluir tarefa
+                                                                                                                                                                                                                                                                                                                                                                                                            if (!tarefa.concluida) {
+                                                                                                                                                                                                                                                                                                                                                                                                                        const botaoConcluir = document.createElement("button");
+                                                                                                                                                                                                                                                                                                                                                                                                                                    botaoConcluir.textContent = "Marcar como Concluída";
+                                                                                                                                                                                                                                                                                                                                                                                                                                                botaoConcluir.onclick = function() {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                concluirTarefa(tarefa.codigo);
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                            };
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        div.appendChild(botaoConcluir);
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                }
 
-    input, button {
-        font-size: 15px;
-    }
-}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        // Botão para alterar prioridade
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                const botaoPrioridade = document.createElement("button");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        botaoPrioridade.textContent = "Alterar Prioridade";
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                botaoPrioridade.onclick = function() {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            alterarPrioridade(tarefa.codigo);
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    };
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            div.appendChild(botaoPrioridade);
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    lista.appendChild(div);
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        });
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        }
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        function obterPrioridade(valor) {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            if (valor === 1) return "Alta";
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                if (valor === 2) return "Média";
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    return "Baixa";
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    }
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    function concluirTarefa(codigo) {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        const tarefa = tarefas.find(t => t.codigo === codigo);
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            if (tarefa) {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    tarefa.concluida = true;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            listarTarefas();
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                }
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                function alterarPrioridade(codigo) {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    const tarefa = tarefas.find(t => t.codigo === codigo);
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        if (!tarefa) return;
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            const novaPrioridade = prompt(
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    "Digite a nova prioridade:\n1 - Alta\n2 - Média\n3 - Baixa"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        );
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            if (novaPrioridade === null || novaPrioridade.trim() === "") {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    return;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        }
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            const prioridade = Number(novaPrioridade);
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                if (![1, 2, 3].includes(prioridade)) {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        alert("Prioridade inválida! Escolha 1, 2 ou 3.");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                return;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    }
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        tarefa.prioridade = prioridade;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            listarTarefas();
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                alert("Prioridade alterada com sucesso!");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                }
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                listarTarefas();
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
