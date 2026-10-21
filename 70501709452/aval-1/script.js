@@ -1,217 +1,158 @@
 
-const STORAGE_KEY = "gestorpro_projetos_v2";
+let produtos = [];
 
-const $ = id => document.getElementById(id);
+function cadastrarProduto() {
+    const codigo = Number(document.getElementById("codigo").value);
+    const descricao = document.getElementById("descricao").value.trim();
+    const quantidadeTexto = document.getElementById("quantidade").value;
+    const valorTexto = document.getElementById("valor").value;
+    const mensagem = document.getElementById("mensagem");
 
-let projetos = carregar();
-let editandoId = null;
+    if (
+        document.getElementById("codigo").value === "" ||
+        descricao === "" ||
+        quantidadeTexto === "" ||
+        valorTexto === ""
+    ) {
+        mensagem.textContent = "Preencha todos os campos!";
+        return;
+    }
 
-function carregar() {
-  try {
-    const dados = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-    return Array.isArray(dados) ? dados : [];
-  } catch {
-    return [];
-  }
+    const quantidade = Number(quantidadeTexto);
+    const valor = Number(valorTexto);
+
+    if (
+        !Number.isInteger(codigo) || codigo <= 0 ||
+        !Number.isInteger(quantidade) || quantidade < 0 ||
+        !Number.isFinite(valor) || valor < 0
+    ) {
+        mensagem.textContent = "Confira os valores informados!";
+        return;
+    }
+
+    const existe = produtos.some(p => p.codigo === codigo);
+
+    if (existe) {
+        mensagem.textContent = "Este código já está cadastrado!";
+        return;
+    }
+
+    const produto = {
+        codigo: codigo,
+        descricao: descricao,
+        quantidade: quantidade,
+        valor: valor
+    };
+
+    produtos.push(produto);
+
+    mensagem.textContent = "Produto cadastrado com sucesso! 💗";
+
+    document.getElementById("codigo").value = "";
+    document.getElementById("descricao").value = "";
+    document.getElementById("quantidade").value = "";
+    document.getElementById("valor").value = "";
+
+    listarProdutos();
 }
 
-function salvar() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(projetos));
+function listarProdutos() {
+    const lista = document.getElementById("listaProdutos");
+    lista.replaceChildren();
+
+    if (produtos.length === 0) {
+        lista.textContent = "Nenhum produto cadastrado.";
+        return;
+    }
+
+    for (const produto of produtos) {
+        const item = document.createElement("div");
+        item.className = "produto";
+
+        const descricao = document.createElement("p");
+        descricao.textContent = "Código: " + produto.codigo;
+
+        const nome = document.createElement("p");
+        nome.textContent = "Descrição: " + produto.descricao;
+
+        const quantidade = document.createElement("p");
+        quantidade.textContent = "Quantidade: " + produto.quantidade;
+
+        const valor = document.createElement("p");
+        valor.textContent = "Valor: " +
+            produto.valor.toLocaleString("pt-BR", {
+                style: "currency",
+                currency: "BRL"
+            });
+
+        item.append(descricao, nome, quantidade, valor);
+        lista.appendChild(item);
+    }
 }
 
-function novoId() {
-  return crypto.randomUUID
-    ? crypto.randomUUID()
-    : String(Date.now()) + Math.random();
-}
-
-function criarElemento(tag, texto = "", classe = "") {
-  const el = document.createElement(tag);
-  el.textContent = texto;
-  el.className = classe;
-  return el;
-}
-
-function atrasado(p) {
-  return p.status !== "Concluído" &&
-    p.prazo < new Date().toLocaleDateString("sv-SE");
-}
-
-function abrirModal(projeto = null) {
-  editandoId = projeto ? projeto.id : null;
-  $("formProjeto").reset();
-
-  $("tituloModal").textContent =
-    projeto ? "Editar projeto" : "Cadastrar projeto";
-
-  $("id").value = projeto ? projeto.id : "";
-  $("nome").value = projeto ? projeto.nome : "";
-  $("responsavel").value = projeto ? projeto.responsavel : "";
-  $("prazo").value = projeto ? projeto.prazo : "";
-  $("prioridade").value = projeto ? projeto.prioridade : "Média";
-  $("status").value = projeto ? projeto.status : "Planejamento";
-  $("descricao").value = projeto ? projeto.descricao : "";
-
-  $("modal").showModal();
-}
-
-$("novoProjeto").addEventListener("click", () => abrirModal());
-
-$("cancelar").addEventListener("click", () => {
-  $("modal").close();
-});
-
-$("formProjeto").addEventListener("submit", evento => {
-  evento.preventDefault();
-
-  const dados = {
-    nome: $("nome").value.trim(),
-    responsavel: $("responsavel").value.trim(),
-    prazo: $("prazo").value,
-    prioridade: $("prioridade").value,
-    status: $("status").value,
-    descricao: $("descricao").value.trim()
-  };
-
-  if (!dados.nome || !dados.responsavel || !dados.prazo) {
-    alert("Preencha os campos obrigatórios.");
-    return;
-  }
-
-  if (editandoId) {
-    const projeto = projetos.find(p => p.id === editandoId);
-    if (projeto) Object.assign(projeto, dados);
-  } else {
-    projetos.push({ id: novoId(), ...dados });
-  }
-
-  salvar();
-  $("modal").close();
-  renderizar();
-});
-
-function excluirProjeto(id) {
-  const projeto = projetos.find(p => p.id === id);
-  if (!projeto) return;
-
-  if (!confirm(`Deseja excluir "${projeto.nome}"?`)) return;
-
-  projetos = projetos.filter(p => p.id !== id);
-  salvar();
-  renderizar();
-}
-
-function botao(texto, classe, acao) {
-  const el = criarElemento("button", texto, classe);
-  el.type = "button";
-  el.addEventListener("click", acao);
-  return el;
-}
-
-function renderizar() {
-  const busca = $("pesquisa").value.trim().toLowerCase();
-  const filtro = $("filtroStatus").value;
-  const tabela = $("tabelaProjetos");
-
-  tabela.replaceChildren();
-
-  $("total").textContent = projetos.length;
-  $("andamento").textContent =
-    projetos.filter(p => p.status === "Em andamento").length;
-  $("concluidos").textContent =
-    projetos.filter(p => p.status === "Concluído").length;
-  $("atrasados").textContent = projetos.filter(atrasado).length;
-
-  const filtrados = projetos.filter(p => {
-    const correspondeBusca =
-      `${p.nome} ${p.responsavel} ${p.descricao || ""}`
-        .toLowerCase().includes(busca);
-
-    const correspondeStatus =
-      filtro === "todos" || p.status === filtro;
-
-    return correspondeBusca && correspondeStatus;
-  });
-
-  $("mensagem").textContent = filtrados.length
-    ? `${filtrados.length} projeto(s) encontrado(s).`
-    : "Nenhum projeto encontrado.";
-
-  filtrados.forEach(p => {
-    const linha = document.createElement("tr");
-
-    const nome = criarElemento("td", p.nome, "project-name");
-    nome.title = p.descricao || p.nome;
-
-    const responsavel = criarElemento("td", p.responsavel);
-    const prazo = criarElemento(
-      "td", p.prazo.split("-").reverse().join("/")
+function alterarValor() {
+    const codigo = Number(
+        document.getElementById("codigoAlterar").value
     );
+    const novoValorTexto = document.getElementById("novoValor").value;
 
-    const prioridade = criarElemento(
-      "td", p.prioridade, `priority-${p.prioridade}`
-    );
+    if (
+        document.getElementById("codigoAlterar").value === "" ||
+        novoValorTexto === ""
+    ) {
+        alert("Informe o código e o novo valor!");
+        return;
+    }
 
-    const status = criarElemento(
-      "span", p.status, `badge ${p.status.replace(" ", "-")}`
-    );
+    const produto = produtos.find(p => p.codigo === codigo);
+    const novoValor = Number(novoValorTexto);
 
-    const celulaStatus = document.createElement("td");
-    celulaStatus.appendChild(status);
+    if (!produto) {
+        alert("Produto não encontrado!");
+        return;
+    }
 
-    const acoes = criarElemento("td", "", "actions");
+    if (!Number.isFinite(novoValor) || novoValor < 0) {
+        alert("Informe um valor válido!");
+        return;
+    }
 
-    acoes.appendChild(botao("Editar", "btn-light", () => {
-      abrirModal(p);
-    }));
+    produto.valor = novoValor;
 
-    acoes.appendChild(botao("Excluir", "btn-delete", () => {
-      excluirProjeto(p.id);
-    }));
-
-    [nome, responsavel, prazo, prioridade, celulaStatus, acoes]
-      .forEach(celula => linha.appendChild(celula));
-
-    tabela.appendChild(linha);
-  });
-
-  renderizarEquipe();
+    alert("Valor alterado com sucesso! 💗");
+    listarProdutos();
 }
 
-function renderizarEquipe() {
-  const lista = $("equipeLista");
-  lista.replaceChildren();
+function alterarQuantidade() {
+    const codigo = Number(
+        document.getElementById("codigoAlterar").value
+    );
+    const novaQuantidadeTexto =
+        document.getElementById("novaQuantidade").value;
 
-  const equipe = {};
+    if (
+        document.getElementById("codigoAlterar").value === "" ||
+        novaQuantidadeTexto === ""
+    ) {
+        alert("Informe o código e a nova quantidade!");
+        return;
+    }
 
-  projetos.forEach(p => {
-    equipe[p.responsavel] = (equipe[p.responsavel] || 0) + 1;
-  });
+    const produto = produtos.find(p => p.codigo === codigo);
+    const novaQuantidade = Number(novaQuantidadeTexto);
 
-  const nomes = Object.keys(equipe);
+    if (!produto) {
+        alert("Produto não encontrado!");
+        return;
+    }
 
-  if (!nomes.length) {
-    lista.appendChild(criarElemento(
-      "p", "Cadastre projetos para visualizar a equipe."
-    ));
-    return;
-  }
+    if (!Number.isInteger(novaQuantidade) || novaQuantidade < 0) {
+        alert("Informe uma quantidade inteira válida!");
+        return;
+    }
 
-  nomes.forEach(nome => {
-    const card = criarElemento("div", "", "team-card");
-    card.appendChild(criarElemento("strong", nome));
+    produto.quantidade = novaQuantidade;
 
-    const quantidade = equipe[nome];
-    card.appendChild(criarElemento(
-      "span",
-      `${quantidade} projeto(s) atribuído(s)`
-    ));
-
-    lista.appendChild(card);
-  });
+    alert("Quantidade alterada com sucesso! 💗");
+    listarProdutos();
 }
-
-$("pesquisa").addEventListener("input", renderizar);
-$("filtroStatus").addEventListener("change", renderizar);
-
-renderizar();

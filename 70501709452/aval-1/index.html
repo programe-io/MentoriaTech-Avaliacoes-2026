@@ -2,141 +2,47 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GestorPro | Projetos</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="script.js" defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estoque Rosa 💗</title>
+    <link rel="stylesheet" href="style.css">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="style.css" rel="stylesheet"></head>
 <body>
-  <aside class="sidebar">
-    <h2>Gestor<span>Pro</span></h2>
-    <p class="menu-label">MENU PRINCIPAL</p>
-    <a href="#inicio" class="active">▦ Visão geral</a>
-    <a href="#projetos">▤ Projetos</a>
-    <a href="#equipe">♙ Equipe</a>
-    <div class="sidebar-bottom">Sistema de Gestão v2.0</div>
-  </aside>
 
-  <main class="content" id="inicio">
-    <header class="header">
-      <div>
-        <h1>Visão geral</h1>
-        <p>Bem-vindo ao seu painel de projetos.</p>
-      </div>
-      <button id="novoProjeto">+ Criar projeto</button>
-    </header>
+    <h1>💗 Sistema de Estoque</h1>
 
-    <section class="summary">
-      <article class="summary-card">
-        <div class="summary-icon purple">▤</div>
-        <p>Total de projetos</p>
-        <h2 id="total">0</h2>
-      </article>
-      <article class="summary-card">
-        <div class="summary-icon blue">◷</div>
-        <p>Em andamento</p>
-        <h2 id="andamento">0</h2>
-      </article>
-      <article class="summary-card">
-        <div class="summary-icon green">✓</div>
-        <p>Concluídos</p>
-        <h2 id="concluidos">0</h2>
-      </article>
-      <article class="summary-card">
-        <div class="summary-icon orange">!</div>
-        <p>Atrasados</p>
-        <h2 id="atrasados">0</h2>
-      </article>
-    </section>
+    <div class="container">
+        <h2>Cadastrar produto</h2>
 
-    <section class="panel" id="projetos">
-      <div class="panel-header">
-        <div>
-          <h2>Projetos cadastrados</h2>
-          <p>Gerencie os projetos da sua organização.</p>
-        </div>
-        <input id="pesquisa" type="search"
-          placeholder="Pesquisar projeto...">
-      </div>
+        <input type="number" id="codigo" placeholder="Código do produto">
+        <input type="text" id="descricao" placeholder="Descrição do produto">
+        <input type="number" id="quantidade" placeholder="Quantidade" min="0">
+        <input type="number" id="valor" placeholder="Valor (R$)" min="0" step="0.01">
 
-      <div class="filters">
-        <label for="filtroStatus">Status:</label>
-        <select id="filtroStatus">
-          <option value="todos">Todos os projetos</option>
-          <option value="Planejamento">Planejamento</option>
-          <option value="Em andamento">Em andamento</option>
-          <option value="Concluído">Concluído</option>
-        </select>
-      </div>
+        <button onclick="cadastrarProduto()">Cadastrar produto</button>
 
-      <div class="table-wrapper">
-        <table>
-          <thead>
-            <tr>
-              <th>PROJETO</th>
-              <th>RESPONSÁVEL</th>
-              <th>PRAZO</th>
-              <th>PRIORIDADE</th>
-              <th>STATUS</th>
-              <th>AÇÕES</th>
-            </tr>
-          </thead>
-          <tbody id="tabelaProjetos"></tbody>
-        </table>
-      </div>
-      <p id="mensagem" class="message"></p>
-    </section>
+        <p id="mensagem"></p>
+    </div>
 
-    <section class="panel" id="equipe">
-      <h2>Equipe e produtividade</h2>
-      <p>Resumo dos responsáveis pelos projetos cadastrados.</p>
-      <div id="equipeLista" class="team-list"></div>
-    </section>
-  </main>
+    <div class="container">
+        <h2>Alterar produto</h2>
 
-  <dialog id="modal">
-    <form id="formProjeto">
-      <h2 id="tituloModal">Cadastrar projeto</h2>
-      <input type="hidden" id="id">
+        <input type="number" id="codigoAlterar" placeholder="Código do produto">
+        <input type="number" id="novoValor" placeholder="Novo valor (R$)" min="0" step="0.01">
+        <button onclick="alterarValor()">Alterar valor</button>
 
-      <label for="nome">Nome do projeto</label>
-      <input id="nome" required maxlength="100"
-        placeholder="Ex.: Aplicativo empresarial">
+        <input type="number" id="novaQuantidade" placeholder="Nova quantidade" min="0">
+        <button onclick="alterarQuantidade()">Alterar quantidade</button>
+    </div>
 
-      <label for="responsavel">Responsável</label>
-      <input id="responsavel" required maxlength="80"
-        placeholder="Nome do responsável">
+    <div class="container">
+        <h2>Produtos cadastrados</h2>
+        <button onclick="listarProdutos()">Atualizar lista</button>
 
-      <label for="prazo">Prazo de entrega</label>
-      <input id="prazo" type="date" required>
+        <div id="listaProdutos"></div>
+    </div>
 
-      <label for="prioridade">Prioridade</label>
-      <select id="prioridade">
-        <option>Baixa</option>
-        <option selected>Média</option>
-        <option>Alta</option>
-      </select>
-
-      <label for="status">Status</label>
-      <select id="status">
-        <option>Planejamento</option>
-        <option>Em andamento</option>
-        <option>Concluído</option>
-      </select>
-
-      <label for="descricao">Descrição</label>
-      <textarea id="descricao" maxlength="500"
-        placeholder="Detalhes do projeto"></textarea>
-
-      <div class="modal-actions">
-        <button type="button" id="cancelar" class="btn-light">
-          Cancelar
-        </button>
-        <button type="submit">Salvar projeto</button>
-      </div>
-    </form>
-  </dialog>
+    <script src="script.js"></script>
 <script src="script.js"></script></body>
 </html>
