@@ -1,0 +1,50 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Ataque Zumbi</title>
+                <link rel="stylesheet" href="style.css">
+                </head>
+                <body>
+                    <header>
+                            <h1>🧟 ATAQUE ZUMBI</h1>
+                                    <p>O apocalipse começou. Sobreviva!</p>
+                                        </header>
+
+                                            <section class="painel">
+                                                    <span>🎯 Pontos: <b id="pontos">0</b></span>
+                                                            <span>🔫 Munição: <b id="municao">20</b></span>
+                                                                    <span>❤️ Vida: <b id="vida">100</b></span>
+                                                                        </section>
+
+                                                                            <main>
+                                                                                    <canvas id="jogo" width="800" height="450"></canvas>
+
+                                                                                            <div id="mensagem">
+                                                                                                        <h2 id="titulo">O ATAQUE COMEÇOU!</h2>
+                                                                                                                    <p id="descricao">Prepare-se para enfrentar a horda.</p>
+                                                                                                                                <button id="iniciar">INICIAR JOGO</button>
+                                                                                                                                        </div>
+                                                                                                                                            </main>
+
+                                                                                                                                                <div class="controles">
+                                                                                                                                                        <button id="esquerda">◀</button>
+                                                                                                                                                                <button id="cima">▲</button>
+                                                                                                                                                                        <button id="baixo">▼</button>
+                                                                                                                                                                                <button id="direita">▶</button>
+                                                                                                                                                                                        <button id="atirar">🔫 ATIRAR</button>
+                                                                                                                                                                                            </div>
+
+                                                                                                                                                                                                <p class="instrucoes">
+                                                                                                                                                                                                        Computador: use WASD ou as setas para andar e clique para atirar.
+                                                                                                                                                                                                                <br>
+                                                                                                                                                                                                                        Celular: use os botões para se mover e atirar.
+                                                                                                                                                                                                                            </p>
+
+                                                                                                                                                                                                                                <script src="script.js"></script>
+                                                                                                                                                                                                                                </body>
+                                                                                                                                                                                                                                </html>
+
+                                                                                                                                                                                                                                
