@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberSound - Loja Oficial</title>
+    <!-- Ligação com o arquivo CSS separado -->
+    <link rel="stylesheet" href="style.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+    <!-- Cabeçalho / Menu -->
+    <header class="header">
+        <div class="container header-container">
+            <a href="#" class="logo">⚡ CyberSound</a>
+            <nav class="nav-menu">
+                <a href="#produto">Produto</a>
+                <a href="#beneficios">Benefícios</a>
+                <a href="#comprar">Comprar</a>
+            </nav>
+            <div class="cart-icon-container" onclick="toggleCartModal()">
+                <span class="cart-icon">🛒</span>
+                <span id="cartCount" class="cart-badge">0</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Seção Principal (Hero) e Produto -->
+    <main class="container">
+        <section id="produto" class="product-hero">
+            <div class="product-image-side">
+                <img src="https://unsplash.com" alt="CyberSound Headphone Pro" class="product-main-img">
+            </div>
+            <div class="product-info-side">
+                <span class="tag-new">LANÇAMENTO 2026</span>
+                <h1>CyberSound Pro X</h1>
+                <p class="subtitle">O headphone com cancelamento de ruído neural e bateria inteligente de 80 horas.</p>
+                
+                <div class="price-container">
+                    <span class="price-old">R\$ 1.299,00</span>
+                    <span class="price-current">R\$ 799,90</span>
+                    <span class="price-installment">ou 10x de R\$ 79,99 sem juros</span>
+                </div>
+
+                <button class="buy-now-btn" onclick="addToCart('CyberSound Pro X', 799.90)">
+                    Adicionar ao Carrinho 🛍️
+                </button>
+            </div>
+        </section>
+
+        <!-- Seção de Diferenciais/Benefícios -->
+        <section id="beneficios" class="features-section">
+            <h2 class="section-title">Por que escolher o CyberSound?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🧠</div>
+                    <h3>Áudio Neural</h3>
+                    <p>O som se adapta perfeitamente ao formato do seu ouvido em tempo real.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔋</div>
+                    <h3>80h de Bateria</h3>
+                    <p>Esqueça os cabos. Uma única carga dura mais de duas semanas de uso intenso.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🛡️</div>
+                    <h3>Garantia Blindada</h3>
+                    <p>2 anos de garantia total contra qualquer defeito com troca expressa.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Janela de Carrinho Flutuante (Modal) -->
+    <div id="cartModal" class="cart-modal hidden">
+        <div class="cart-modal-content">
+            <div class="cart-header">
+                <h2>Seu Carrinho</h2>
+                <button class="close-btn" onclick="toggleCartModal()">✕</button>
+            </div>
+            <div id="cartItemsList" class="cart-items-list">
+                <p class="empty-message">Seu carrinho está vazio.</p>
+            </div>
+            <div class="cart-footer">
+                <div class="total-row">
+                    <span>Total:</span>
+                    <span id="cartTotalValue">R\$ 0,00</span>
+                </div>
+                <button class="checkout-btn" onclick="finishOrder()">Finalizar Compra 🚀</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rodapé -->
+    <footer class="footer">
+        <p>&copy; 2026 CyberSound Technologies. Todos os direitos reservados.</p>
+    </footer>
+
+    <!-- Lógica de Negócio Dinâmica -->
+    <script>
+        let cart = [];
+
+        function toggleCartModal() {
+            const modal = document.getElementById('cartModal');
+            modal.classList.toggle('hidden');
+        }
+
+        function addToCart(name, price) {
+            cart.push({ name, price });
+            updateCartUI();
+            
+            // Abre o carrinho para dar feedback visual de que funcionou
+            const modal = document.getElementById('cartModal');
+            modal.classList.remove('hidden');
+        }
+
+        function updateCartUI() {
+            const cartCount = document.getElementById('cartCount');
+            const cartItemsList = document.getElementById('cartItemsList');
+            const cartTotalValue = document.getElementById('cartTotalValue');
+
+            // Atualiza quantidade no ícone
+            cartCount.textContent = cart.length;
+
+            if (cart.length === 0) {
+                cartItemsList.innerHTML = '<p class="empty-message">Seu carrinho está vazio.</p>';
+                cartTotalValue.textContent = 'R\$ 0,00';
+                return;
+            }
+
+            // Renderiza itens
+            cartItemsList.innerHTML = '';
+            let total = 0;
+            
+            cart.forEach((item, index) => {
+                total += item.price;
+                const itemRow = document.createElement('div');
+                itemRow.className = 'cart-item';
+                itemRow.innerHTML = `
+                    <div>
+                        <h4>${item.name}</h4>
+                        <span>R$ ${item.price.toFixed(2).replace('.', ',')}</span>
+                    </div>
+                    <button class="remove-item-btn" onclick="removeFromCart(${index})">Remover</button>
+                `;
+                cartItemsList.appendChild(itemRow);
+            });
+
+            cartTotalValue.textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartUI();
+        }
+
+        function finishOrder() {
+            if (cart.length === 0) {
+                alert('Seu carrinho está vazio! Adicione o produto primeiro.');
+                return;
+            }
+            alert('🎉 Compra simulada com sucesso! Obrigado por comprar na CyberSound.');
+            cart = [];
+            updateCartUI();
+            toggleCartModal();
+        }
+    </script>
+</body>
+</html>
