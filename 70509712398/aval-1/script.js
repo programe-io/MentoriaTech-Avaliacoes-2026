@@ -1,103 +1,77 @@
 
 let produtos = [];
 
-function cadastrar() {
-  const codigo = Number(document.getElementById("codigo").value);
-    const nome = document.getElementById("nome").value.trim();
-      const quantidade = Number(document.getElementById("quantidade").value);
-        const preco = Number(document.getElementById("preco").value);
+function adicionarProduto() {
+  const nome = document.getElementById("nome").value.trim();
+    const quantidade = Number(document.getElementById("quantidade").value);
+      const preco = Number(document.getElementById("preco").value);
 
-          if (
-              !document.getElementById("codigo").value ||
-                  !nome ||
-                      document.getElementById("quantidade").value === "" ||
-                          document.getElementById("preco").value === "" ||
-                              !Number.isInteger(codigo) ||
-                                  codigo <= 0 ||
-                                      !Number.isInteger(quantidade) ||
-                                          quantidade < 0 ||
-                                              !Number.isFinite(preco) ||
-                                                  preco < 0
-                                                    ) {
-                                                        alert("Preencha todos os campos corretamente!");
-                                                            return;
-                                                              }
+        if (!nome || !Number.isInteger(quantidade) || quantidade < 1 ||
+              !Number.isFinite(preco) || preco < 0 ||
+                    document.getElementById("preco").value === "") {
+                        alert("Preencha os dados corretamente!");
+                            return;
+                              }
 
-                                                                if (produtos.some(p => p.codigo === codigo)) {
-                                                                    alert("Esse código já existe!");
-                                                                        return;
-                                                                          }
+                                produtos.push({
+                                    id: Date.now() + Math.random(),
+                                        nome,
+                                            quantidade,
+                                                preco
+                                                  });
 
-                                                                            produtos.push({ codigo, nome, quantidade, preco });
+                                                    document.getElementById("nome").value = "";
+                                                      document.getElementById("quantidade").value = "";
+                                                        document.getElementById("preco").value = "";
 
-                                                                              document.getElementById("codigo").value = "";
-                                                                                document.getElementById("nome").value = "";
-                                                                                  document.getElementById("quantidade").value = "";
-                                                                                    document.getElementById("preco").value = "";
+                                                          mostrarProdutos();
+                                                          }
 
-                                                                                      listar();
-                                                                                        alert("Produto cadastrado com sucesso!");
-                                                                                        }
+                                                          function mostrarProdutos() {
+                                                            const lista = document.getElementById("lista");
+                                                              const pesquisa = document.getElementById("pesquisa").value.toLowerCase();
 
-                                                                                        function listar() {
-                                                                                          const busca = document.getElementById("busca").value.toLowerCase();
+                                                                lista.innerHTML = "";
 
-                                                                                            const filtrados = produtos.filter(p =>
-                                                                                                p.nome.toLowerCase().includes(busca) ||
-                                                                                                    String(p.codigo).includes(busca)
-                                                                                                      );
+                                                                  const filtrados = produtos.filter(produto =>
+                                                                      produto.nome.toLowerCase().includes(pesquisa)
+                                                                        );
 
-                                                                                                        document.getElementById("total").textContent = produtos.length;
+                                                                          filtrados.forEach(produto => {
+                                                                              const item = document.createElement("div");
+                                                                                  item.className = "produto";
 
-                                                                                                          const valorTotal = produtos.reduce(
-                                                                                                              (soma, p) => soma + p.quantidade * p.preco, 0
-                                                                                                                );
+                                                                                      const nome = document.createElement("strong");
+                                                                                          nome.textContent = produto.nome;
 
-                                                                                                                  document.getElementById("valor").textContent =
-                                                                                                                      valorTotal.toLocaleString("pt-BR", {
-                                                                                                                            style: "currency",
-                                                                                                                                  currency: "BRL"
-                                                                                                                                      });
+                                                                                              const detalhes = document.createElement("p");
+                                                                                                  detalhes.textContent =
+                                                                                                        `Quantidade: ${produto.quantidade} | Preço: ${produto.preco.toLocaleString("pt-BR", {style:"currency",currency:"BRL"})}`;
 
-                                                                                                                                        const lista = document.getElementById("lista");
-                                                                                                                                          lista.innerHTML = "";
+                                                                                                            const subtotal = document.createElement("p");
+                                                                                                                subtotal.textContent =
+                                                                                                                      "Subtotal: " + (produto.quantidade * produto.preco).toLocaleString(
+                                                                                                                              "pt-BR", {style:"currency",currency:"BRL"}
+                                                                                                                                    );
 
-                                                                                                                                            if (filtrados.length === 0) {
-                                                                                                                                                lista.textContent = "Nenhum produto encontrado.";
-                                                                                                                                                    return;
-                                                                                                                                                      }
+                                                                                                                                        const excluir = document.createElement("button");
+                                                                                                                                            excluir.textContent = "Excluir produto";
+                                                                                                                                                excluir.onclick = () => {
+                                                                                                                                                      produtos = produtos.filter(p => p.id !== produto.id);
+                                                                                                                                                            mostrarProdutos();
+                                                                                                                                                                };
 
-                                                                                                                                                        filtrados.forEach(p => {
-                                                                                                                                                            const item = document.createElement("div");
-                                                                                                                                                                item.className = "produto";
+                                                                                                                                                                    item.append(nome, detalhes, subtotal, excluir);
+                                                                                                                                                                        lista.appendChild(item);
+                                                                                                                                                                          });
 
-                                                                                                                                                                    const nome = document.createElement("strong");
-                                                                                                                                                                        nome.textContent = p.nome;
+                                                                                                                                                                            const total = produtos.reduce(
+                                                                                                                                                                                (soma, produto) => soma + produto.quantidade * produto.preco, 0
+                                                                                                                                                                                  );
 
-                                                                                                                                                                            const info = document.createElement("p");
-                                                                                                                                                                                info.textContent =
-                                                                                                                                                                                      "Código: " + p.codigo +
-                                                                                                                                                                                            " | Quantidade: " + p.quantidade +
-                                                                                                                                                                                                  " | Preço: " +
-                                                                                                                                                                                                        p.preco.toLocaleString("pt-BR", {
-                                                                                                                                                                                                                style: "currency",
-                                                                                                                                                                                                                        currency: "BRL"
-                                                                                                                                                                                                                              });
-
-                                                                                                                                                                                                                                  const excluir = document.createElement("button");
-                                                                                                                                                                                                                                      excluir.className = "excluir";
-                                                                                                                                                                                                                                          excluir.textContent = "Excluir produto";
-                                                                                                                                                                                                                                              excluir.onclick = function() {
-                                                                                                                                                                                                                                                    produtos = produtos.filter(x => x.codigo !== p.codigo);
-                                                                                                                                                                                                                                                          listar();
-                                                                                                                                                                                                                                                              };
-
-                                                                                                                                                                                                                                                                  item.appendChild(nome);
-                                                                                                                                                                                                                                                                      item.appendChild(info);
-                                                                                                                                                                                                                                                                          item.appendChild(excluir);
-                                                                                                                                                                                                                                                                              lista.appendChild(item);
-                                                                                                                                                                                                                                                                                });
-                                                                                                                                                                                                                                                                                }
-
-                                                                                                                                                                                                                                                                                listar();
-                                                                                                                                                                                                                                                                                
+                                                                                                                                                                                    document.getElementById("total").textContent =
+                                                                                                                                                                                        "Valor total: " + total.toLocaleString(
+                                                                                                                                                                                              "pt-BR", {style:"currency",currency:"BRL"}
+                                                                                                                                                                                                  );
+                                                                                                                                                                                                  }
+                                                                                                                                                                                                  
