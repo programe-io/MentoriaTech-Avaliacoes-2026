@@ -1,49 +1,61 @@
 
-let jogador = {
-    nome: "Guerreiro",
-        vida: 100,
-            ataque: 20
-            };
+import java.util.Scanner;
 
-            let monstro = {
-                nome: "Dragão",
-                    vida: 100,
-                        ataque: 15
-                        };
+public class Guerreiro {
+    public static void main(String[] args) {
+            Scanner entrada = new Scanner(System.in);
 
-                        console.log("🐉 UM DRAGÃO APARECEU!");
-                        console.log("Sua vida: " + jogador.vida);
-                        console.log("Vida do dragão: " + monstro.vida);
+                    int vidaGuerreiro = 100;
+                            int vidaMonstro = 60;
 
-                        while (jogador.vida > 0 && monstro.vida > 0) {
+                                    System.out.println("=== GUERREIRO DA FLORESTA ===");
+                                            System.out.println("Você é um guerreiro!");
+                                                    System.out.println("Você encontrou um monstro na floresta.");
 
-                            // O jogador ataca
-                                monstro.vida -= jogador.ataque;
+                                                            while (vidaGuerreiro > 0 && vidaMonstro > 0) {
+                                                                        System.out.println("\nSua vida: " + vidaGuerreiro);
+                                                                                    System.out.println("Vida do monstro: " + vidaMonstro);
 
-                                    if (monstro.vida < 0) {
-                                            monstro.vida = 0;
-                                                }
+                                                                                                System.out.println("\nO que você deseja fazer?");
+                                                                                                            System.out.println("1 - Atacar o monstro");
+                                                                                                                        System.out.println("2 - Fugir do monstro");
+                                                                                                                                    System.out.println("3 - Defender-se");
+                                                                                                                                                System.out.print("Escolha: ");
 
-                                                    console.log("⚔️ Você atacou o dragão!");
-                                                        console.log("Vida do dragão: " + monstro.vida);
+                                                                                                                                                            int escolha = entrada.nextInt();
 
-                                                            if (monstro.vida === 0) {
-                                                                    console.log("🏆 VOCÊ VENCEU!");
-                                                                            break;
-                                                                                }
+                                                                                                                                                                        if (escolha == 1) {
+                                                                                                                                                                                        vidaMonstro -= 25;
+                                                                                                                                                                                                        System.out.println("⚔️ Você atacou o monstro!");
 
-                                                                                    // O dragão contra-ataca
-                                                                                        jogador.vida -= monstro.ataque;
+                                                                                                                                                                                                                        if (vidaMonstro <= 0) {
+                                                                                                                                                                                                                                            System.out.println("🏆 Você venceu!");
+                                                                                                                                                                                                                                                                break;
+                                                                                                                                                                                                                                                                                }
 
-                                                                                            if (jogador.vida < 0) {
-                                                                                                    jogador.vida = 0;
-                                                                                                        }
+                                                                                                                                                                                                                                                                                                vidaGuerreiro -= 15;
+                                                                                                                                                                                                                                                                                                                System.out.println("👹 O monstro contra-atacou!");
 
-                                                                                                            console.log("🔥 O dragão contra-atacou!");
-                                                                                                                console.log("Sua vida: " + jogador.vida);
+                                                                                                                                                                                                                                                                                                                            } else if (escolha == 2) {
+                                                                                                                                                                                                                                                                                                                                            System.out.println("🏃 Você fugiu pela floresta!");
+                                                                                                                                                                                                                                                                                                                                                            break;
 
-                                                                                                                    if (jogador.vida === 0) {
-                                                                                                                            console.log("💀 VOCÊ PERDEU!");
-                                                                                                                                }
-                                                                                                                                }
-                                                                                                                                
+                                                                                                                                                                                                                                                                                                                                                                        } else if (escolha == 3) {
+                                                                                                                                                                                                                                                                                                                                                                                        vidaGuerreiro -= 5;
+                                                                                                                                                                                                                                                                                                                                                                                                        System.out.println("🛡️ Você bloqueou parte do ataque!");
+                                                                                                                                                                                                                                                                                                                                                                                                                        System.out.println("O monstro causou apenas 5 de dano.");
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                    } else {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                    System.out.println("Escolha inválida!");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                }
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                            if (vidaGuerreiro <= 0) {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            System.out.println("💀 Você foi derrotado!");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                }
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        System.out.println("\nFim da aventura!");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                entrada.close();
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
