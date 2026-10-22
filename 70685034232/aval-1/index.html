@@ -1,0 +1,154 @@
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Produtos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+            background: #f2f2f2;
+        }
+        input, button {
+            margin: 5px;
+            padding: 10px;
+        }
+        button {
+            cursor: pointer;
+        }
+        li {
+            margin: 10px;
+        }
+    </style>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+    <h1>Cadastro de Produtos</h1>
+
+    <input id="descricao" placeholder="Descrição do produto">
+    <input id="quantidade" type="number" placeholder="Quantidade">
+    <input id="valor" type="number" step="0.01" placeholder="Valor">
+    <button onclick="cadastrarProduto()">Cadastrar</button>
+
+    <h2>Atualizar Produto</h2>
+    <input id="codigo" type="number" placeholder="Código do produto">
+    <input id="novoValor" type="number" step="0.01" placeholder="Novo valor">
+    <button onclick="atualizarValor()">Atualizar valor</button>
+
+    <input id="novaQuantidade" type="number" placeholder="Nova quantidade">
+    <button onclick="atualizarQuantidade()">Atualizar quantidade</button>
+
+    <h2>Produtos cadastrados</h2>
+    <button onclick="listarProdutos()">Listar produtos</button>
+    <ul id="lista"></ul>
+
+    <script>
+        // Lista (Array) de produtos
+        let produtos = [];
+
+        function validarProduto(descricao, quantidade, valor) {
+            if (descricao.length < 5) {
+                throw new Error("Descrição deve ter no mínimo cinco caracteres");
+            }
+            if (quantidade <= 0) {
+                throw new Error("Quantidade deve ser maior que zero");
+            }
+            if (valor <= 0) {
+                throw new Error("Valor deve ser maior que zero");
+            }
+        }
+
+        function cadastrarProduto() {
+            try {
+                let descricao = document.getElementById("descricao").value.trim();
+                let quantidade = Number(document.getElementById("quantidade").value);
+                let valor = Number(document.getElementById("valor").value);
+
+                validarProduto(descricao, quantidade, valor);
+
+                let novoProduto = {
+                    codigo: produtos.length + 1,
+                    descricao: descricao,
+                    quantidade: quantidade,
+                    valor: valor
+                };
+
+                produtos.push(novoProduto);
+                alert("Produto cadastrado com sucesso!");
+                listarProdutos();
+            } catch (erro) {
+                alert(erro.message);
+            }
+        }
+
+        function listarProdutos() {
+            let lista = document.getElementById("lista");
+            lista.innerHTML = "";
+
+            produtos.forEach(function(produto) {
+                let item = document.createElement("li");
+                item.textContent =
+                    "Código: " + produto.codigo +
+                    " | Produto: " + produto.descricao +
+                    " | Quantidade: " + produto.quantidade +
+                    " | Valor: R$ " + produto.valor.toFixed(2);
+
+                lista.appendChild(item);
+            });
+        }
+
+        function atualizarValor() {
+            try {
+                let codigo = Number(document.getElementById("codigo").value);
+                let novoValor = Number(document.getElementById("novoValor").value);
+
+                if (novoValor <= 0) {
+                    throw new Error("Valor deve ser maior que zero");
+                }
+
+                let produto = produtos.find(p => p.codigo === codigo);
+
+                if (!produto) {
+                    throw new Error("Produto não encontrado");
+                }
+
+                produto.valor = novoValor;
+                alert("Valor atualizado com sucesso!");
+                listarProdutos();
+            } catch (erro) {
+                alert(erro.message);
+            }
+        }
+
+        function atualizarQuantidade() {
+            try {
+                let codigo = Number(document.getElementById("codigo").value);
+                let novaQuantidade = Number(
+                    document.getElementById("novaQuantidade").value
+                );
+
+                if (novaQuantidade <= 0) {
+                    throw new Error("Quantidade deve ser maior que zero");
+                }
+
+                let produto = produtos.find(p => p.codigo === codigo);
+
+                if (!produto) {
+                    throw new Error("Produto não encontrado");
+                }
+
+                produto.quantidade = novaQuantidade;
+                alert("Quantidade atualizada com sucesso!");
+                listarProdutos();
+            } catch (erro) {
+                alert(erro.message);
+            }
+        }
+    </script>
+
+<script src="script.js"></script></body>
+</html>
+```
