@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Jogo da Velha</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 50px;
+  }
+  h1 {
+    margin-bottom: 10px;
+  }
+  #game {
+    display: grid;
+    grid-template-columns: repeat(3, 100px);
+    grid-template-rows: repeat(3, 100px);
+    gap: 5px;
+  }
+  .cell {
+    background: #f0f0f0;
+    border: 2px solid #444;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 48px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .cell:hover {
+    background: #ddd;
+  }
+  #status {
+    margin-top: 20px;
+    font-size: 20px;
+    min-height: 24px;
+  }
+  button {
+    margin-top: 15px;
+    padding: 6px 12px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+  <h1>Jogo da Velha</h1>
+  <div id="game">
+    <div class="cell" data-index="0"></div>
+    <div class="cell" data-index="1"></div>
+    <div class="cell" data-index="2"></div>
+    <div class="cell" data-index="3"></div>
+    <div class="cell" data-index="4"></div>
+    <div class="cell" data-index="5"></div>
+    <div class="cell" data-index="6"></div>
+    <div class="cell" data-index="7"></div>
+    <div class="cell" data-index="8"></div>
+  </div>
+  <div id="status"></div>
+  <button onclick="resetGame()">Recomeçar</button>
+  <script>
+    const cells = document.querySelectorAll('.cell');
+    const status = document.getElementById('status');
+    let board = ['', '', '', '', '', '', '', '', ''];
+    let currentPlayer = 'X';
+    let gameActive = true;
+    const winningConditions = [
+      [0,1,2],[3,4,5],[6,7,8],  // linhas
+      [0,3,6],[1,4,7],[2,5,8],  // colunas
+      [0,4,8],[2,4,6]           // diagonais
+    ];
+    function handleCellClick(e) {
+      const cell = e.target;
+      const index = cell.getAttribute('data-index');
+      if (board[index] !== '' || !gameActive) {
+        return;
+      }
+      updateCell(cell, index);
+      checkResult();
+    }
+    function updateCell(cell, index) {
+      board[index] = currentPlayer;
+      cell.textContent = currentPlayer;
+    }
+    function changePlayer() {
+      currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+      status.textContent = `É a vez do jogador ${currentPlayer}`;
+    }
+    function checkResult() {
+      let roundWon = false;
+      for (let condition of winningConditions) {
+        const [a, b, c] = condition;
+        if (board[a] && board[a] === board[b] && board[b] === board[c]) {
+          roundWon = true;
+          break;
+        }
+      }
+      if (roundWon) {
+        status.textContent = `Jogador ${currentPlayer} venceu!`;
+        gameActive = false;
+        return;
+      }
+      if (!board.includes('')) {
+        status.textContent = 'Empate!';
+        gameActive = false;
+        return;
+      }
+      changePlayer();
+    }
+    function resetGame() {
+      board.fill('');
+      cells.forEach(cell => (cell.textContent = ''));
+      currentPlayer = 'X';
+      gameActive = true;
+      status.textContent = `É a vez do jogador ${currentPlayer}`;
+    }
+    cells.forEach(cell => cell.addEventListener('click', handleCellClick));
+    resetGame();
+  </script>
+</body>
+</html>
