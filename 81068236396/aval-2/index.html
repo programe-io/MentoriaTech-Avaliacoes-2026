@@ -1,553 +1,131 @@
-!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Penso, Logo Farmo Aura</title>
-    <style>
-      :root {
-        font-family: Inter, "Segoe UI", Arial, sans-serif;
-        color-scheme: dark;
-        --bg: #050505;
-        --bg-2: #0b0b0b;
-        --panel: rgba(16, 16, 18, 0.9);
-        --panel-2: rgba(24, 24, 28, 0.95);
-        --text: #f4f4f5;
-        --muted: #a1a1aa;
-        --accent: #8b5cf6;
-        --accent-2: #3b82f6;
-        --border: rgba(255, 255, 255, 0.08);
-        --glow: 0 0 30px rgba(139, 92, 246, 0.22);
-        --success: #22c55e;
-        --danger: #ef4444;
-      }
-
-      * {
-        box-sizing: border-box;
-      }
-
-      html, body {
-        margin: 0;
-        min-height: 100%;
-      }
-
-      body {
-        min-height: 100vh;
-        display: grid;
-        place-items: center;
-        padding: 24px;
-        color: var(--text);
-        background:
-          radial-gradient(circle at 20% 20%, rgba(139, 92, 246, 0.18), transparent 28%),
-          radial-gradient(circle at 80% 80%, rgba(59, 130, 246, 0.14), transparent 24%),
-          linear-gradient(180deg, #050505 0%, #070707 50%, #030303 100%);
-        overflow-x: hidden;
-      }
-
-      .card {
-        width: min(860px, 100%);
-        background:
-          linear-gradient(180deg, rgba(255,255,255,0.06), transparent 22%),
-          linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)),
-          var(--panel);
-        border: 1px solid var(--border);
-        border-radius: 28px;
-        padding: 30px;
-        box-shadow:
-          0 30px 90px rgba(0, 0, 0, 0.6),
-          inset 0 1px 0 rgba(255,255,255,0.04);
-        backdrop-filter: blur(14px);
-      }
-
-      .screen {
-        display: none;
-      }
-
-      .screen.active {
-        display: block;
-      }
-
-      .cover-title {
-        margin: 0;
-        font-size: clamp(2.2rem, 4vw, 3.5rem);
-        line-height: 1.05;
-        letter-spacing: 0.4px;
-        text-shadow: 0 0 24px rgba(139, 92, 246, 0.28);
-      }
-
-      .cover-subtitle,
-      .info {
-        color: var(--muted);
-        line-height: 1.6;
-      }
-
-      .cover-subtitle {
-        margin: 12px 0 0;
-        max-width: 62ch;
-      }
-
-      .info {
-        margin: 0 0 16px;
-      }
-
-      .cover-actions {
-        display: flex;
-        flex-direction: column;
-        gap: 14px;
-        margin-top: 24px;
-        width: min(320px, 100%);
-      }
-
-      button {
-        appearance: none;
-        border: 0;
-        cursor: pointer;
-        font-weight: 800;
-        letter-spacing: 0.2px;
-        transition: 0.22s ease;
-        border-radius: 16px;
-      }
-
-      .cover-actions button,
-      .game-actions button {
-        min-height: 54px;
-        padding: 14px 18px;
-        font-size: 1.05rem;
-      }
-
-      #playBtn {
-        background: linear-gradient(135deg, var(--accent), var(--accent-2));
-        color: white;
-        box-shadow: 0 14px 30px rgba(59, 130, 246, 0.18), var(--glow);
-      }
-
-      #recordBtn,
-      #skipBtn,
-      #backBtn {
-        background: #171717;
-        color: var(--text);
-        border: 1px solid var(--border);
-      }
-
-      #startBtn {
-        background: linear-gradient(135deg, #f59e0b, #ef4444);
-        color: white;
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        min-height: 64px;
-        padding: 18px 24px;
-        font-size: 1.18rem;
-        box-shadow: 0 18px 36px rgba(239, 68, 68, 0.22), 0 0 24px rgba(245, 158, 11, 0.18);
-        flex: 1 1 100%;
-      }
-
-      #submitAns {
-        background: linear-gradient(135deg, var(--accent), var(--accent-2));
-        color: white;
-        box-shadow: 0 14px 30px rgba(59, 130, 246, 0.16);
-      }
-
-      #playBtn:hover,
-      #recordBtn:hover,
-      #skipBtn:hover,
-      #backBtn:hover,
-      #startBtn:hover,
-      #submitAns:hover {
-        transform: translateY(-2px);
-        filter: brightness(1.06);
-      }
-
-      .record-box,
-      .stats-pill,
-      .question,
-      .game-panel {
-        background: var(--panel-2);
-        border: 1px solid var(--border);
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
-      }
-
-      .record-box {
-        margin-top: 16px;
-        padding: 14px 16px;
-        border-radius: 18px;
-        width: fit-content;
-      }
-
-      .credit {
-        margin-top: 18px;
-        color: var(--muted);
-        font-size: 0.95rem;
-      }
-
-      .game-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: end;
-        gap: 16px;
-        flex-wrap: wrap;
-        margin-bottom: 18px;
-      }
-
-      .game-header h1 {
-        margin: 0;
-        font-size: clamp(1.8rem, 3vw, 2.5rem);
-      }
-
-      .stats {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 12px;
-        margin: 10px 0 18px;
-      }
-
-      .stats-pill {
-        padding: 12px 14px;
-        border-radius: 16px;
-        min-width: 120px;
-      }
-
-      .stats-pill strong {
-        display: block;
-        margin-top: 4px;
-        font-size: 1.15rem;
-      }
-
-      .question {
-        margin: 16px 0;
-        padding: 20px;
-        border-radius: 20px;
-        font-size: clamp(1.5rem, 3vw, 2rem);
-        font-weight: 900;
-        text-align: center;
-        box-shadow: var(--glow);
-      }
-
-      .game-panel {
-        padding: 18px;
-        border-radius: 22px;
-      }
-
-      input[type="number"] {
-        width: 100%;
-        padding: 15px 16px;
-        border-radius: 16px;
-        border: 1px solid var(--border);
-        background: #0a0a0a;
-        color: var(--text);
-        outline: none;
-        font-size: 1rem;
-        transition: 0.2s ease;
-        margin-bottom: 12px;
-      }
-
-      input[type="number"]:focus {
-        border-color: var(--accent);
-        box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.16);
-      }
-
-      .game-actions {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-      }
-
-      .game-actions button {
-        background: #171717;
-        color: var(--text);
-        border: 1px solid var(--border);
-      }
-
-      .resultado {
-        min-height: 24px;
-        margin: 14px 0 0;
-        font-weight: 800;
-      }
-
-      .sr-only {
-        position: absolute;
-        left: -9999px;
-      }
-
-      .muted-line {
-        color: var(--muted);
-        margin-top: 10px;
-      }
-
-      .row-top {
-        display: flex;
-        justify-content: space-between;
-        gap: 16px;
-        flex-wrap: wrap;
-      }
-
-      @media (max-width: 640px) {
-        .card {
-          padding: 20px;
-          border-radius: 22px;
-        }
-
-        .cover-actions {
-          width: 100%;
-        }
-
-        .stats-pill {
-          flex: 1 1 120px;
-        }
-
-        #startBtn {
-          min-height: 70px;
-        }
-      }
-    </style>
+    <meta name="theme-color" content="#f4f5f7" />
+    <title>Conecta — seu espaço social</title>
+    <link rel="stylesheet" href="styles.css" />
   <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="style.css" rel="stylesheet"></head>
   <body>
-    <div class="card">
-      <div id="coverScreen" class="screen active">
-        <div class="row-top">
-          <div>
-            <h1 class="cover-title">Penso, Logo Farmo Aura</h1>
-            <p class="cover-subtitle">
-              Um quiz rápido, elegante e competitivo. Teste sua mente, acumule pontos e busque o melhor recorde.
-            </p>
+    <header class="topbar">
+      <a class="brand" href="#inicio" aria-label="Conecta início"><span class="brand-mark">✳</span> conecta</a>
+      <label class="search-box" aria-label="Buscar">
+        <span>⌕</span><input id="searchInput" type="search" placeholder="Buscar pessoas, assuntos..." />
+        <kbd>⌘ K</kbd>
+      </label>
+      <nav class="top-actions" aria-label="Atalhos">
+        <button class="icon-button active" aria-label="Início">⌂</button>
+        <button class="icon-button" aria-label="Mensagens">▤<i class="notification-dot"></i></button>
+        <button class="icon-button" aria-label="Notificações">♧<i class="notification-dot"></i></button>
+        <button class="profile-mini" aria-label="Seu perfil">MA</button>
+      </nav>
+    </header>
+
+    <main class="layout" id="inicio">
+      <aside class="left-sidebar">
+        <section class="profile-card panel">
+          <div class="cover"></div>
+          <div class="profile-content">
+            <div class="avatar avatar-main">MA</div>
+            <h2>Marina Alves</h2>
+            <p class="muted">Explorando ideias e lugares ✨</p>
+            <div class="profile-stats"><span><strong>248</strong> seguindo</span><span><strong>1,8 mil</strong> seguidores</span></div>
           </div>
-        </div>
+        </section>
+        <nav class="side-nav panel" aria-label="Menu principal">
+          <a class="selected" href="#inicio"><span>⌂</span> Feed <b>›</b></a>
+          <a href="#descobrir"><span>◈</span> Descobrir</a>
+          <a href="#salvos"><span>▱</span> Itens salvos</a>
+          <a href="#eventos"><span>▦</span> Eventos</a>
+          <a href="#grupos"><span>♧</span> Grupos</a>
+        </nav>
+        <section class="topics panel" id="descobrir">
+          <div class="section-heading"><h3>Seus interesses</h3><button class="text-button">Editar</button></div>
+          <div class="tag-list"><span># fotografia</span><span># viagens</span><span># tecnologia</span><span># bem-estar</span><span># design</span></div>
+        </section>
+        <p class="sidebar-footer">Sobre · Privacidade · Termos<br />© 2025 Conecta</p>
+      </aside>
 
-        <div class="cover-actions">
-          <button id="playBtn" type="button">Jogar</button>
-          <button id="recordBtn" type="button">Recorde</button>
-        </div>
-
-        <div id="recordBox" class="record-box" style="display: none;">
-          <strong>Recorde atual:</strong> <span id="recordValue">0</span>
-        </div>
-
-        <p class="credit">Feito por Kevin e Ronaldo 1B D.S</p>
-      </div>
-
-      <div id="gameScreen" class="screen">
-        <div class="game-header">
-          <div>
-            <h1>Penso, Logo Farmo Aura</h1>
-            <p class="info">Responda o máximo de questões em 60 segundos. Acertos aumentam a pontuação e a dificuldade.</p>
+      <section class="feed-column" aria-label="Feed de publicações">
+        <div class="welcome-row"><div><p class="eyebrow">QUARTA-FEIRA, 18 DE JUNHO</p><h1>Seu feed <span>✦</span></h1></div><button class="filter-button">☷ <span>Personalizado</span>⌄</button></div>
+        <section class="stories panel" aria-label="Stories">
+          <div class="stories-heading"><h2>Stories</h2><button class="text-button">Ver todos <span>→</span></button></div>
+          <div class="story-list">
+            <button class="story add-story"><span class="story-ring"><span class="avatar story-avatar add-avatar">＋</span></span><span>Seu story</span></button>
+            <button class="story"><span class="story-ring ring-orange"><span class="avatar story-avatar">LC</span></span><span>Lucas Costa</span></button>
+            <button class="story"><span class="story-ring ring-purple"><span class="avatar story-avatar">BF</span></span><span>Beatriz F.</span></button>
+            <button class="story"><span class="story-ring ring-green"><span class="avatar story-avatar">RM</span></span><span>Rafa Moreira</span></button>
+            <button class="story"><span class="story-ring ring-pink"><span class="avatar story-avatar">JS</span></span><span>Júlia Santos</span></button>
+            <button class="story"><span class="story-ring ring-blue"><span class="avatar story-avatar">TG</span></span><span>Tiago Gomes</span></button>
           </div>
+        </section>
+
+        <section class="composer panel" aria-label="Criar publicação">
+          <div class="composer-top"><div class="avatar avatar-main small-avatar">MA</div><input id="postInput" type="text" placeholder="O que está acontecendo, Marina?" maxlength="220" /></div>
+          <div class="composer-bottom"><div class="composer-options"><button data-type="Foto">▧ <span>Foto</span></button><button data-type="Vídeo">▷ <span>Vídeo</span></button><button data-type="Sentimento">☺ <span>Sentimento</span></button></div><button class="publish-button" id="publishButton">Publicar <span>↗</span></button></div>
+        </section>
+
+        <div class="feed-toolbar"><h2>Para você</h2><button class="sort-button">Mais recentes⌄</button></div>
+        <div id="posts">
+          <article class="post panel" data-search="luiza costa viagem natureza trilha montanha fotografia">
+            <div class="post-header"><div class="avatar avatar-luiza">LC</div><div class="post-author"><h3>Luiza Costa <span class="verified">✓</span></h3><p>@luizacosta · 24 min · <span>◎</span></p></div><button class="more-button" aria-label="Mais opções">···</button></div>
+            <p class="post-copy">Às vezes tudo o que a gente precisa é de uma trilha nova e um pouquinho de silêncio. 🌿⛰️ A natureza sempre encontra um jeito de colocar tudo no lugar.</p>
+            <div class="photo-card mountain-photo" role="img" aria-label="Paisagem de montanhas ao pôr do sol"><span class="photo-sun"></span><span class="mountain-shape back-mountain"></span><span class="mountain-shape front-mountain"></span><span class="photo-caption">respira fundo <span>↗</span></span></div>
+            <div class="post-meta"><span>💜 <b class="like-count">128</b></span><span>24 comentários · 8 compartilhamentos</span></div>
+            <div class="post-actions"><button class="like-button">♡ <span>Curtir</span></button><button class="comment-button">▢ <span>Comentar</span></button><button class="share-button">↗ <span>Compartilhar</span></button></div>
+            <div class="comment-area"><input type="text" placeholder="Escreva um comentário..." /><button>Enviar</button></div>
+          </article>
+
+          <article class="post panel" data-search="pedro nunes tecnologia inteligência artificial design produto trabalho criatividade">
+            <div class="post-header"><div class="avatar avatar-pedro">PN</div><div class="post-author"><h3>Pedro Nunes <span class="verified">✓</span></h3><p>@pedronunes · 1 h · <span>◎</span></p></div><button class="more-button" aria-label="Mais opções">···</button></div>
+            <p class="post-copy">Pequena reflexão de hoje: tecnologia boa não é a que faz mais barulho — é a que deixa a gente fazer coisas incríveis com menos esforço. No que vocês estão trabalhando? 💡</p>
+            <div class="link-preview"><div class="link-art"><span>✳</span><small>IDEIAS<br />EM MOVIMENTO</small></div><div class="link-info"><span>DESIGN & TECNOLOGIA</span><h4>Construindo produtos mais humanos</h4><p>Um guia prático para criar experiências digitais que fazem sentido.</p><a href="#artigo">ler no caderno.digital ↗</a></div></div>
+            <div class="post-meta"><span>💙 <b class="like-count">86</b></span><span>17 comentários · 12 compartilhamentos</span></div>
+            <div class="post-actions"><button class="like-button">♡ <span>Curtir</span></button><button class="comment-button">▢ <span>Comentar</span></button><button class="share-button">↗ <span>Compartilhar</span></button></div>
+            <div class="comment-area"><input type="text" placeholder="Escreva um comentário..." /><button>Enviar</button></div>
+          </article>
+
+          <article class="post panel" data-search="bia ferreira receita comida brunch café domingo culinária">
+            <div class="post-header"><div class="avatar avatar-bia">BF</div><div class="post-author"><h3>Bia Ferreira</h3><p>@biacozinha · 2 h · <span>◎</span></p></div><button class="more-button" aria-label="Mais opções">···</button></div>
+            <p class="post-copy">Brunch de domingo aprovado por unanimidade aqui em casa 🥑🍳 Torrada de fermentação natural, ovos cremosos e aquele café passado na hora. Receita nos comentários! ☕</p>
+            <div class="food-card" role="img" aria-label="Ilustração de um brunch com ovos, torrada e abacate"><div class="plate"><span class="toast"></span><span class="egg"><i></i></span><span class="avo">◒</span><span class="tomato">● ●</span></div><span class="food-label">slow sunday<br /><small>feito com carinho</small></span><span class="coffee-cup">☕</span></div>
+            <div class="post-meta"><span>❤️ <b class="like-count">214</b></span><span>39 comentários · 16 compartilhamentos</span></div>
+            <div class="post-actions"><button class="like-button">♡ <span>Curtir</span></button><button class="comment-button">▢ <span>Comentar</span></button><button class="share-button">↗ <span>Compartilhar</span></button></div>
+            <div class="comment-area"><input type="text" placeholder="Escreva um comentário..." /><button>Enviar</button></div>
+          </article>
+
+          <article class="post panel" data-search="rafa moreira música playlist música indie artistas cultura">
+            <div class="post-header"><div class="avatar avatar-rafa">RM</div><div class="post-author"><h3>Rafa Moreira</h3><p>@rafamoreira · 3 h · <span>◎</span></p></div><button class="more-button" aria-label="Mais opções">···</button></div>
+            <p class="post-copy">Montei uma playlist para acompanhar aquela caminhada sem pressa de sábado. Tem indie brasileiro, clássicos que abraçam e algumas descobertas. O que não pode faltar na sua? 🎧</p>
+            <div class="music-card"><div class="album-art"><span>◖</span><i>sons<br />de fora</i></div><div class="music-info"><span>PLAYLIST · 42 MÚSICAS</span><h4>passos tranquilos ☀️</h4><p>Rafa Moreira · 2h 38min</p><div class="music-progress"><span></span></div><div class="music-controls"><span>⇄</span><span>◁</span><button class="play-button" aria-label="Reproduzir playlist">▶</button><span>▷</span><span>↻</span></div></div></div>
+            <div class="post-meta"><span>💜 <b class="like-count">57</b></span><span>9 comentários · 5 compartilhamentos</span></div>
+            <div class="post-actions"><button class="like-button">♡ <span>Curtir</span></button><button class="comment-button">▢ <span>Comentar</span></button><button class="share-button">↗ <span>Compartilhar</span></button></div>
+            <div class="comment-area"><input type="text" placeholder="Escreva um comentário..." /><button>Enviar</button></div>
+          </article>
+
+          <article class="post panel" data-search="julia santos comunidade pergunta livros leitura clube livro">
+            <div class="post-header"><div class="avatar avatar-julia">JS</div><div class="post-author"><h3>Júlia Santos</h3><p>@juliasantos · 4 h · <span>◎</span></p></div><button class="more-button" aria-label="Mais opções">···</button></div>
+            <p class="post-copy">Clube do livro de junho 📚 Estamos lendo histórias que fazem a gente olhar o cotidiano com outros olhos. Deixo aqui a enquete: qual foi o livro que mais ficou com você depois da última página?</p>
+            <div class="poll-card"><div class="poll-heading"><span>ENQUETE DA COMUNIDADE</span><b>◷ 2 dias restantes</b></div><button class="poll-option">Uma vida pequena <span>38%</span><i style="width:38%"></i></button><button class="poll-option">Torto arado <span>32%</span><i style="width:32%"></i></button><button class="poll-option">A ridícula ideia de nunca mais te ver <span>20%</span><i style="width:20%"></i></button><button class="poll-option">Outro! Conta nos comentários <span>10%</span><i style="width:10%"></i></button><p>342 votos · Você pode escolher uma opção</p></div>
+            <div class="post-meta"><span>💜 <b class="like-count">43</b></span><span>28 comentários · 4 compartilhamentos</span></div>
+            <div class="post-actions"><button class="like-button">♡ <span>Curtir</span></button><button class="comment-button">▢ <span>Comentar</span></button><button class="share-button">↗ <span>Compartilhar</span></button></div>
+            <div class="comment-area"><input type="text" placeholder="Escreva um comentário..." /><button>Enviar</button></div>
+          </article>
+          <p class="empty-state" id="emptyState">Nenhuma publicação encontrada. Tente outra busca.</p>
         </div>
+      </section>
 
-        <div class="stats">
-          <div class="stats-pill">Tempo<strong id="tempo">60s</strong></div>
-          <div class="stats-pill">Pontos<strong id="pontos">0</strong></div>
-          <div class="stats-pill">Nível<strong id="nivel">1</strong></div>
-          <div class="stats-pill">Recorde<strong id="highscore">0</strong></div>
-        </div>
-
-        <div class="game-panel">
-          <div class="question" id="pergunta">Pressione Iniciar para começar</div>
-
-          <form id="gameForm" class="answer-form" autocomplete="off">
-            <label for="resposta" class="sr-only">Sua resposta</label>
-            <input id="resposta" name="resposta" type="number" inputmode="numeric" placeholder="Digite a resposta" />
-            <div class="game-actions">
-              <button id="submitAns" type="submit">Enviar</button>
-              <button id="skipBtn" type="button">Pular</button>
-              <button id="startBtn" type="button">Iniciar</button>
-              <button id="backBtn" type="button">Voltar</button>
-            </div>
-          </form>
-
-          <p class="resultado" id="resultado" aria-live="polite"></p>
-          <p class="muted-line">Feito por Kevin e Ronaldo 1B D.S</p>
-        </div>
-      </div>
-    </div>
-
-    <script>
-      const el = {
-        coverScreen: document.getElementById("coverScreen"),
-        gameScreen: document.getElementById("gameScreen"),
-        playBtn: document.getElementById("playBtn"),
-        recordBtn: document.getElementById("recordBtn"),
-        recordBox: document.getElementById("recordBox"),
-        recordValue: document.getElementById("recordValue"),
-        tempo: document.getElementById("tempo"),
-        pontos: document.getElementById("pontos"),
-        nivel: document.getElementById("nivel"),
-        pergunta: document.getElementById("pergunta"),
-        resposta: document.getElementById("resposta"),
-        resultado: document.getElementById("resultado"),
-        startBtn: document.getElementById("startBtn"),
-        skipBtn: document.getElementById("skipBtn"),
-        backBtn: document.getElementById("backBtn"),
-        gameForm: document.getElementById("gameForm"),
-        highscore: document.getElementById("highscore"),
-      };
-
-      let state = {
-        timeLeft: 60,
-        score: 0,
-        level: 1,
-        current: null,
-        timerId: null,
-        running: false,
-      };
-
-      const HS_KEY = "math_game_highscore_v1";
-      const savedRecord = localStorage.getItem(HS_KEY) || "0";
-      el.highscore.textContent = savedRecord;
-      el.recordValue.textContent = savedRecord;
-
-      function showScreen(screen) {
-        el.coverScreen.classList.remove("active");
-        el.gameScreen.classList.remove("active");
-        screen.classList.add("active");
-      }
-
-      function randInt(min, max) {
-        return Math.floor(Math.random() * (max - min + 1)) + min;
-      }
-
-      function checkAnswer(answer) {
-        const cur = state.current || {};
-        if (cur.a === undefined) return false;
-
-        const { a, b, op } = cur;
-        const correct =
-          op === "+"
-            ? a + b
-            : op === "-"
-            ? a - b
-            : op === "*"
-            ? a * b
-            : op === "/"
-            ? a / b
-            : null;
-
-        return Number(answer) === correct;
-      }
-
-      function nextQuestion() {
-        const difficulty = Math.min(1 + Math.floor(state.score / 5), 6);
-        state.level = difficulty;
-        el.nivel.textContent = state.level;
-
-        const ops = ["+", "-", "*", "/"];
-        const op = ops[Math.floor(Math.random() * Math.min(ops.length, 2 + difficulty))];
-
-        const max = 5 + difficulty * 5;
-        let a = randInt(1, max);
-        let b = randInt(1, max);
-
-        if (op === "/") {
-          b = randInt(1, Math.max(1, Math.floor(max / 2)));
-          a = b * randInt(1, Math.max(1, Math.floor(max / 2)));
-        }
-
-        state.current = { a, b, op };
-        el.pergunta.textContent = `Quanto é ${a} ${op} ${b}?`;
-        el.resposta.value = "";
-        el.resposta.focus();
-      }
-
-      function updateRecord(score) {
-        const prev = parseInt(localStorage.getItem(HS_KEY) || "0", 10);
-        if (score > prev) localStorage.setItem(HS_KEY, String(score));
-        const current = localStorage.getItem(HS_KEY) || "0";
-        el.highscore.textContent = current;
-        el.recordValue.textContent = current;
-      }
-
-      function endGame() {
-        state.running = false;
-        clearInterval(state.timerId);
-        el.pergunta.textContent = "Tempo esgotado!";
-        el.resultado.textContent = `Fim de jogo — sua pontuação: ${state.score}`;
-        updateRecord(state.score);
-      }
-
-      function startGame() {
-        state.timeLeft = 60;
-        state.score = 0;
-        state.level = 1;
-        state.running = true;
-
-        el.pontos.textContent = state.score;
-        el.nivel.textContent = state.level;
-        el.tempo.textContent = `${state.timeLeft}s`;
-        el.resultado.textContent = "";
-        el.resposta.value = "";
-
-        showScreen(el.gameScreen);
-        nextQuestion();
-
-        if (state.timerId) clearInterval(state.timerId);
-        state.timerId = setInterval(() => {
-          state.timeLeft -= 1;
-          el.tempo.textContent = `${state.timeLeft}s`;
-          if (state.timeLeft <= 0) endGame();
-        }, 1000);
-      }
-
-      el.gameForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-        if (!state.running) return;
-
-        const ans = el.resposta.value.trim();
-        if (ans === "") {
-          el.resultado.textContent = "Digite uma resposta.";
-          return;
-        }
-
-        if (checkAnswer(ans)) {
-          state.score += 1 + Math.floor(state.level / 2);
-          state.timeLeft += 2;
-          el.resultado.textContent = "Correto!";
-        } else {
-          state.timeLeft = Math.max(0, state.timeLeft - 4);
-          el.resultado.textContent = "Errado.";
-        }
-
-        el.pontos.textContent = state.score;
-        el.tempo.textContent = `${state.timeLeft}s`;
-        updateRecord(state.score);
-
-        if (state.timeLeft <= 0) {
-          endGame();
-          return;
-        }
-
-        nextQuestion();
-      });
-
-      el.playBtn.addEventListener("click", startGame);
-      el.startBtn.addEventListener("click", startGame);
-
-      el.recordBtn.addEventListener("click", () => {
-        el.recordBox.style.display = "block";
-        el.recordValue.textContent = localStorage.getItem(HS_KEY) || "0";
-      });
-
-      el.backBtn.addEventListener("click", () => {
-        state.running = false;
-        clearInterval(state.timerId);
-        showScreen(el.coverScreen);
-      });
-
-      el.skipBtn.addEventListener("click", () => {
-        if (!state.running) return;
-        state.timeLeft = Math.max(0, state.timeLeft - 6);
-        el.tempo.textContent = `${state.timeLeft}s`;
-        el.resultado.textContent = "Pulou.";
-
-        if (state.timeLeft <= 0) {
-          endGame();
-          return;
-        }
-
-        nextQuestion();
-      });
-
-      document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape") el.resposta.value = "";
-      });
-    </script>
+      <aside class="right-sidebar">
+        <section class="trending panel"><div class="section-heading"><h2>Em alta agora</h2><button class="more-button" aria-label="Mais opções">···</button></div><a class="trend" href="#conversa"><span>TECNOLOGIA · EM ALTA</span><strong>#inteligenciaartificial</strong><small>2,4 mil publicações</small></a><a class="trend" href="#conversa"><span>VIAGEM · POPULAR</span><strong>#brasilsemdestino</strong><small>1.829 publicações</small></a><a class="trend" href="#conversa"><span>CULTURA · AGORA</span><strong>#clubedolivro</strong><small>864 publicações</small></a><a class="show-more" href="#explorar">Ver mais assuntos ↗</a></section>
+        <section class="people panel"><div class="section-heading"><h2>Talvez conheça</h2><button class="text-button">Ver todos</button></div><div class="person"><div class="avatar avatar-tiago">TG</div><div><strong>Tiago Gomes</strong><span>Fotógrafo · São Paulo</span></div><button class="follow-button">+</button></div><div class="person"><div class="avatar avatar-lena">LM</div><div><strong>Lena Martins</strong><span>Designer · Curitiba</span></div><button class="follow-button">+</button></div><div class="person"><div class="avatar avatar-caio">CF</div><div><strong>Caio Freitas</strong><span>Viajante · Recife</span></div><button class="follow-button">+</button></div></section>
+        <section class="event-card"><div class="event-date"><b>21</b><span>JUN</span></div><div><span>ENCONTRO DA COMUNIDADE</span><h3>Manhã criativa ☕</h3><p>Um café, boas ideias e novas conexões.</p><button id="eventButton">Tenho interesse <span>→</span></button></div></section>
+        <div class="right-footer">Sobre · Ajuda · Diretrizes<br />Privacidade · Cookies · Mais<br /><span>© 2025 Conecta — feito para aproximar.</span></div>
+      </aside>
+    </main>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="script.js"></script>
   <script src="script.js"></script></body>
 </html>
