@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html  lang="pt-br">
+<head>
+    <meta  charset="UTF-8">
+    <meta  name="viewport"  content="width=device-width"
+    <title>pagina carlos 1jd</title>
+</head>
+<boad>
+
+    <header>
+
+       <h1>
+         um popuco sobre mim
+       </h1>
+         
+    </header>
+
+    <main>
+
+    <h2>ola, eu sou o</h2>
+    <h3>]carlin</h3>
+
+    <img src="https://br.pinterest.com/gimnosperm666/shitpost/" alt="imagem de perfil de carlin" width="200px">
+
+    <h4>analista de sistema</h4>
+
+    <p>
+         gosto muito de criar solucoes que melhorem
+         a vida das pessoas e facam 
+         a diferenca no mundo. no meu tempo livre
+         gosto de joga video game assistir bons
+         filmes.
+    </p>
+
+       <section>
+
+          
+
+       </section>
+     
+</main>
+
+</boad>
+</html>
