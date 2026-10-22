@@ -1,0 +1,406 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meu Miniblog</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6fb;
+      color: #25283d;
+      line-height: 1.6;
+    }
+
+    header {
+      background: linear-gradient(135deg, #6558f5, #9c55e8);
+      color: white;
+      padding: 35px 20px;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 2.2rem;
+      margin-bottom: 8px;
+    }
+
+    header p {
+      opacity: 0.9;
+    }
+
+    .container {
+      width: min(900px, 92%);
+      margin: 30px auto;
+    }
+
+    .painel {
+      background: white;
+      padding: 25px;
+      border-radius: 16px;
+      box-shadow: 0 5px 20px #2020400d;
+      margin-bottom: 25px;
+    }
+
+    h2 {
+      margin-bottom: 18px;
+      color: #5145cd;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 13px;
+      margin-bottom: 14px;
+      border: 1px solid #dce0ec;
+      border-radius: 9px;
+      font: inherit;
+      outline: none;
+    }
+
+    input:focus, textarea:focus {
+      border-color: #7667f5;
+      box-shadow: 0 0 0 3px #7667f522;
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    button {
+      border: none;
+      border-radius: 9px;
+      padding: 11px 17px;
+      font-size: 0.95rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      filter: brightness(0.96);
+    }
+
+    .btn-publicar {
+      background: #6558f5;
+      color: white;
+      width: 100%;
+    }
+
+    .busca {
+      margin-bottom: 22px;
+    }
+
+    .post {
+      background: white;
+      padding: 24px;
+      border-radius: 14px;
+      margin-bottom: 18px;
+      box-shadow: 0 4px 18px #2020400b;
+      border-left: 4px solid #7969f7;
+      overflow-wrap: anywhere;
+    }
+
+    .post h3 {
+      font-size: 1.35rem;
+      margin-bottom: 8px;
+    }
+
+    .meta {
+      color: #85899c;
+      font-size: 0.88rem;
+      margin-bottom: 15px;
+    }
+
+    .conteudo {
+      white-space: pre-wrap;
+      margin-bottom: 18px;
+    }
+
+    .acoes {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      border-top: 1px solid #eeeef5;
+      padding-top: 15px;
+    }
+
+    .btn-curtir {
+      background: #fff0f3;
+      color: #d6335c;
+    }
+
+    .btn-excluir {
+      background: #f1f2f7;
+      color: #55596b;
+    }
+
+    .vazio {
+      text-align: center;
+      padding: 35px 15px;
+      color: #85899c;
+      background: white;
+      border-radius: 14px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 25px;
+      color: #85899c;
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 600px) {
+      header h1 {
+        font-size: 1.8rem;
+      }
+
+      .painel, .post {
+        padding: 18px;
+      }
+    }
+  </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+  <header>
+    <h1>✍️ Meu Miniblog</h1>
+    <p>Compartilhe suas ideias com o mundo!</p>
+  </header>
+
+  <main class="container">
+
+    <section class="painel">
+      <h2>Nova publicação</h2>
+
+      <form id="formPost">
+        <input
+          type="text"
+          id="autor"
+          placeholder="Seu nome"
+          maxlength="60"
+          required
+        >
+
+        <input
+          type="text"
+          id="titulo"
+          placeholder="Título da publicação"
+          maxlength="120"
+          required
+        >
+
+        <textarea
+          id="conteudo"
+          placeholder="O que você gostaria de compartilhar?"
+          maxlength="5000"
+          required
+        ></textarea>
+
+        <button class="btn-publicar" type="submit">
+          Publicar post +
+        </button>
+      </form>
+    </section>
+
+    <section>
+      <h2>Últimas publicações</h2>
+
+      <input
+        type="search"
+        id="pesquisa"
+        class="busca"
+        placeholder="🔎 Pesquisar publicações..."
+        aria-label="Pesquisar publicações"
+      >
+
+      <div id="listaPosts" aria-live="polite"></div>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>© 2026 Meu Miniblog · Feito com ❤️</p>
+  </footer>
+
+  <script>
+    const form = document.getElementById("formPost");
+    const listaPosts = document.getElementById("listaPosts");
+    const campoPesquisa = document.getElementById("pesquisa");
+
+    // Carrega os posts salvos no navegador.
+    function carregarPosts() {
+      try {
+        return JSON.parse(
+          localStorage.getItem("meuMiniblogPosts")
+        ) || [];
+      } catch {
+        return [];
+      }
+    }
+
+    let posts = carregarPosts();
+
+    function salvarPosts() {
+      try {
+        localStorage.setItem(
+          "meuMiniblogPosts",
+          JSON.stringify(posts)
+        );
+      } catch {
+        alert("Não foi possível salvar os posts neste navegador.");
+      }
+    }
+
+    // Cria elementos de texto sem interpretar HTML inserido pelo usuário.
+    function criarTexto(tag, texto, classe) {
+      const elemento = document.createElement(tag);
+      elemento.textContent = texto;
+
+      if (classe) {
+        elemento.className = classe;
+      }
+
+      return elemento;
+    }
+
+    function renderizarPosts() {
+      listaPosts.replaceChildren();
+
+      const termo = campoPesquisa.value
+        .trim()
+        .toLocaleLowerCase("pt-BR");
+
+      const filtrados = posts.filter(post =>
+        [post.titulo, post.conteudo, post.autor]
+          .some(texto =>
+            texto.toLocaleLowerCase("pt-BR").includes(termo)
+          )
+      );
+
+      if (filtrados.length === 0) {
+        const mensagem = termo
+          ? "Nenhuma publicação encontrada."
+          : "Ainda não há publicações. Seja o primeiro a postar!";
+
+        listaPosts.appendChild(
+          criarTexto("p", mensagem, "vazio")
+        );
+        return;
+      }
+
+      filtrados.forEach(post => {
+        const artigo = document.createElement("article");
+        artigo.className = "post";
+
+        artigo.appendChild(
+          criarTexto("h3", post.titulo)
+        );
+
+        const data = new Date(post.data).toLocaleString("pt-BR", {
+          dateStyle: "short",
+          timeStyle: "short"
+        });
+
+        artigo.appendChild(
+          criarTexto(
+            "p",
+            `Por ${post.autor} · ${data}`,
+            "meta"
+          )
+        );
+
+        artigo.appendChild(
+          criarTexto("p", post.conteudo, "conteudo")
+        );
+
+        const acoes = document.createElement("div");
+        acoes.className = "acoes";
+
+        const curtir = document.createElement("button");
+        curtir.className = "btn-curtir";
+        curtir.textContent =
+          `${post.curtido ? "❤️" : "🤍"} Curtir (${post.curtidas})`;
+
+        curtir.setAttribute(
+          "aria-pressed",
+          String(post.curtido)
+        );
+
+        curtir.addEventListener("click", () => {
+          post.curtidas += post.curtido ? -1 : 1;
+          post.curtido = !post.curtido;
+          salvarPosts();
+          renderizarPosts();
+        });
+
+        const excluir = document.createElement("button");
+        excluir.className = "btn-excluir";
+        excluir.textContent = "🗑️ Excluir";
+
+        excluir.addEventListener("click", () => {
+          if (confirm("Deseja excluir esta publicação?")) {
+            posts = posts.filter(item => item.id !== post.id);
+            salvarPosts();
+            renderizarPosts();
+          }
+        });
+
+        acoes.append(curtir, excluir);
+        artigo.appendChild(acoes);
+        listaPosts.appendChild(artigo);
+      });
+    }
+
+    form.addEventListener("submit", event => {
+      event.preventDefault();
+
+      const autor = document.getElementById("autor")
+        .value.trim();
+
+      const titulo = document.getElementById("titulo")
+        .value.trim();
+
+      const conteudo = document.getElementById("conteudo")
+        .value.trim();
+
+      if (!autor || !titulo || !conteudo) {
+        alert("Preencha todos os campos!");
+        return;
+      }
+
+      posts.unshift({
+        id: crypto.randomUUID(),
+        autor,
+        titulo,
+        conteudo,
+        data: new Date().toISOString(),
+        curtidas: 0,
+        curtido: false
+      });
+
+      salvarPosts();
+      form.reset();
+      campoPesquisa.value = "";
+      renderizarPosts();
+    });
+
+    campoPesquisa.addEventListener("input", renderizarPosts);
+
+    // Mostra os posts ao abrir a página.
+    renderizarPosts();
+  </script>
+
+<script src="script.js"></script></body>
+</html>
