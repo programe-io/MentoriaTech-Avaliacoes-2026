@@ -1,0 +1,77 @@
+
+const carro = document.getElementById("carro");
+const pista = document.getElementById("pista");
+const pontosTexto = document.getElementById("pontos");
+
+let pontos = 0;
+let posicao = 150;
+let jogoAtivo = true;
+
+document.addEventListener("keydown", function(event) {
+    if (!jogoAtivo) return;
+
+    if (event.key === "ArrowLeft" && posicao > 0) {
+        posicao -= 20;
+    }
+
+    if (event.key === "ArrowRight" && posicao < 280) {
+        posicao += 20;
+    }
+
+    carro.style.left = posicao + "px";
+});
+
+function criarObstaculo() {
+    if (!jogoAtivo) return;
+
+    const obstaculo = document.createElement("div");
+    obstaculo.classList.add("obstaculo");
+
+    obstaculo.style.left = Math.floor(Math.random() * 280) + "px";
+    obstaculo.style.top = "-60px";
+
+    pista.appendChild(obstaculo);
+
+    let posicaoY = -60;
+
+    const movimento = setInterval(function() {
+        if (!jogoAtivo) {
+            clearInterval(movimento);
+            obstaculo.remove();
+            return;
+        }
+
+        posicaoY += 5;
+        obstaculo.style.top = posicaoY + "px";
+
+        const carroRect = carro.getBoundingClientRect();
+        const obstaculoRect = obstaculo.getBoundingClientRect();
+
+        // Verifica colisão entre os carros
+        if (
+            carroRect.left < obstaculoRect.right &&
+            carroRect.right > obstaculoRect.left &&
+            carroRect.top < obstaculoRect.bottom &&
+            carroRect.bottom > obstaculoRect.top
+        ) {
+            jogoAtivo = false;
+            alert("Fim de jogo! Pontuação: " + pontos);
+            clearInterval(movimento);
+            return;
+        }
+
+        // Conta pontos quando o obstáculo passa
+        if (posicaoY > pista.clientHeight) {
+            pontos++;
+            pontosTexto.textContent = pontos;
+            obstaculo.remove();
+            clearInterval(movimento);
+        }
+    }, 30);
+}
+
+setInterval(function() {
+    if (jogoAtivo) {
+        criarObstaculo();
+    }
+}, 1200);
