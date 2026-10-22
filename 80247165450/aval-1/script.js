@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<!-- saved from url=(0050)file:///C:/Users/Cliente/Desktop/trb/MiniFeed.html -->
-<html lang="pt=br"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        
+<html lang="pt=br">
+    <head>
+        <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>MiniFeed</title>
-        <link rel="stylesheet" href="./MiniFeed 2_files/style.css">
+        <link rel="stylesheet" href="style.css">
     </head>
     <body>
 
@@ -15,8 +15,8 @@
                 <h1>MiniFeed</h1>
 
                 <nav>
-                    <a href="file:///C:/Users/Cliente/Documents/AulaLogin/index.html#">Inicio</a>
-                    <a href="file:///C:/Users/Cliente/Documents/AulaLogin/index.html#">Perfil</a>
+                    <a href="#">Inicio</a>
+                    <a href="#">Perfil</a>
                 </nav>
 
             </div>
@@ -65,7 +65,7 @@
                    top,to feliz :D 
                 </div>
 
-                <img src="./MiniFeed 2_files/photo-1635805737707-575885ab0820" alt="Imagem do homem aranha ">
+                <img src="https://images.unsplash.com/photo-1635805737707-575885ab0820" alt="Imagem do homem aranha ">
 
                 <div class="post-actions">
 
@@ -98,7 +98,7 @@
                    top,to feliz :D 
                 </div>
 
-                <img src="./MiniFeed 2_files/photo-1635805737707-575885ab0820" alt="Imagem do homem aranha ">
+                <img src="https://images.unsplash.com/photo-1635805737707-575885ab0820" alt="Imagem do homem aranha ">
 
                 <div class="post-actions">
 
@@ -117,5 +117,4 @@
             <p>MiniFeed - Todos os Direitos Reervados - 2026</p>
         </footer>
     
-    
-</body></html>
+    </body>
