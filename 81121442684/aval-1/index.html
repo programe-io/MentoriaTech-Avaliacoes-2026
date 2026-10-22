@@ -1,0 +1,275 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Camisas Store</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #f3f4f6;
+      color: #222;
+    }
+
+    header {
+      background: #111827;
+      color: white;
+      padding: 22px;
+      text-align: center;
+    }
+
+    header h1 {
+      color: #38bdf8;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 30px auto;
+      padding: 15px;
+    }
+
+    .produtos {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+    }
+
+    .produto {
+      background: white;
+      padding: 20px;
+      text-align: center;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px #0001;
+    }
+
+    .camisa {
+      font-size: 75px;
+      margin: 15px;
+    }
+
+    .produto h2 {
+      margin-bottom: 10px;
+    }
+
+    .preco {
+      color: #0284c7;
+      font-size: 22px;
+      font-weight: bold;
+      margin: 12px;
+    }
+
+    button {
+      background: #0284c7;
+      color: white;
+      border: none;
+      padding: 12px 18px;
+      border-radius: 7px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background: #0369a1;
+    }
+
+    .chat {
+      background: white;
+      margin-top: 35px;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px #0001;
+    }
+
+    #mensagens {
+      height: 200px;
+      overflow-y: auto;
+      border: 1px solid #ddd;
+      padding: 12px;
+      margin: 15px 0;
+      border-radius: 8px;
+    }
+
+    .mensagem {
+      margin: 10px 0;
+      padding: 10px;
+      background: #e0f2fe;
+      border-radius: 8px;
+    }
+
+    .entrada {
+      display: flex;
+      gap: 8px;
+    }
+
+    input {
+      flex: 1;
+      min-width: 0;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 7px;
+    }
+  </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+  <header>
+    <h1>👕 Camisas Store</h1>
+    <p>Encontre sua camisa favorita!</p>
+  </header>
+
+  <main class="container">
+    <h2>Nossas camisas</h2>
+    <br>
+
+    <div class="produtos">
+      <div class="produto">
+        <div class="camisa">👕</div>
+        <h2>Camisa Básica</h2>
+        <p>Confortável para o dia a dia.</p>
+        <div class="preco">R$ 49,90</div>
+        <button onclick="comprar('Camisa Básica', 49.90)">
+          Comprar
+        </button>
+      </div>
+
+      <div class="produto">
+        <div class="camisa">👔</div>
+        <h2>Camisa Social</h2>
+        <p>Elegância para qualquer ocasião.</p>
+        <div class="preco">R$ 89,90</div>
+        <button onclick="comprar('Camisa Social', 89.90)">
+          Comprar
+        </button>
+      </div>
+
+      <div class="produto">
+        <div class="camisa">👕</div>
+        <h2>Camisa Premium</h2>
+        <p>Estilo e qualidade em uma só peça.</p>
+        <div class="preco">R$ 69,90</div>
+        <button onclick="comprar('Camisa Premium', 69.90)">
+          Comprar
+        </button>
+      </div>
+    </div>
+
+    <section class="chat">
+      <h2>💬 Chat de atendimento</h2>
+      <p>Fale com nossa loja!</p>
+
+      <div id="mensagens">
+        <div class="mensagem">
+          <strong>Loja:</strong> Olá! 👋
+          Como podemos ajudar você?
+        </div>
+      </div>
+
+      <div class="entrada">
+        <input
+          type="text"
+          id="texto"
+          placeholder="Digite sua mensagem..."
+          onkeydown="if(event.key==='Enter') enviar()"
+        >
+        <button onclick="enviar()">Enviar</button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    function comprar(nome, preco) {
+      const valor = preco.toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL"
+      });
+
+      adicionarMensagem(
+        "Loja",
+        `Você escolheu ${nome}, por ${valor}.`
+      );
+
+      adicionarMensagem(
+        "Loja",
+        "Para continuar, informe seu tamanho: P, M, G ou GG."
+      );
+
+      document.getElementById("texto").focus();
+    }
+
+    function adicionarMensagem(remetente, texto) {
+      const mensagens = document.getElementById("mensagens");
+      const mensagem = document.createElement("div");
+
+      mensagem.className = "mensagem";
+
+      const nome = document.createElement("strong");
+      nome.textContent = remetente + ": ";
+
+      mensagem.appendChild(nome);
+      mensagem.appendChild(document.createTextNode(texto));
+
+      mensagens.appendChild(mensagem);
+      mensagens.scrollTop = mensagens.scrollHeight;
+    }
+
+    function enviar() {
+      const campo = document.getElementById("texto");
+      const texto = campo.value.trim();
+
+      if (!texto) return;
+
+      adicionarMensagem("Você", texto);
+      campo.value = "";
+
+      const resposta = texto.toLowerCase();
+
+      if (resposta.includes("preço") || resposta.includes("preco")) {
+        adicionarMensagem(
+          "Loja",
+          "Temos camisas a partir de R$ 49,90!"
+        );
+      } else if (
+        resposta === "p" || resposta === "m" ||
+        resposta === "g" || resposta === "gg"
+      ) {
+        adicionarMensagem(
+          "Loja",
+          "Tamanho anotado! Entre em contato com nossa equipe para confirmar o pedido e o pagamento."
+        );
+      } else if (
+        resposta.includes("entrega") ||
+        resposta.includes("frete")
+      ) {
+        adicionarMensagem(
+          "Loja",
+          "Informe seu CEP para consultar as opções de entrega com nossa equipe."
+        );
+      } else if (
+        resposta.includes("oi") ||
+        resposta.includes("olá") ||
+        resposta.includes("ola")
+      ) {
+        adicionarMensagem(
+          "Loja",
+          "Olá! 😊 Quer conhecer nossas camisas?"
+        );
+      } else {
+        adicionarMensagem(
+          "Loja",
+          "Obrigado pela mensagem! Pergunte sobre preços, tamanhos ou entrega."
+        );
+      }
+    }
+  </script>
+
+<script src="script.js"></script></body>
+</html>
