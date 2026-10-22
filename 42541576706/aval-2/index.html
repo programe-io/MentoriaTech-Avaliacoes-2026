@@ -1,0 +1,291 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MiniFeed ✨</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f0f2f5;
+    color: #222;
+}
+
+header {
+    background: #6c5ce7;
+    color: white;
+    padding: 18px;
+    text-align: center;
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.container {
+    max-width: 600px;
+    margin: 25px auto;
+    padding: 10px;
+}
+
+.card {
+    background: white;
+    padding: 18px;
+    margin-bottom: 18px;
+    border-radius: 15px;
+    box-shadow: 0 3px 10px #00000010;
+}
+
+.perfil {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.avatar {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: #dcd6ff;
+    display: grid;
+    place-items: center;
+    font-size: 23px;
+}
+
+textarea, input {
+    width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 10px;
+    font: inherit;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+button {
+    border: none;
+    padding: 10px 15px;
+    border-radius: 9px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.publicar {
+    background: #6c5ce7;
+    color: white;
+    width: 100%;
+}
+
+.acoes {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    flex-wrap: wrap;
+}
+
+.curtir {
+    background: #ffe5eb;
+    color: #d63052;
+}
+
+.comentar {
+    background: #e8e5ff;
+    color: #5543c5;
+}
+
+.post-texto {
+    margin: 10px 0;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.contador {
+    color: #777;
+    font-size: 13px;
+    margin-top: 12px;
+}
+
+.comentarios {
+    margin-top: 12px;
+    font-size: 14px;
+}
+
+.comentario-item {
+    padding: 8px;
+    background: #f5f5fa;
+    border-radius: 8px;
+    margin-top: 6px;
+    overflow-wrap: anywhere;
+}
+
+footer {
+    text-align: center;
+    padding: 20px;
+    color: #888;
+}
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+<header>✨ MiniFeed</header>
+
+<div class="container">
+
+    <div class="card">
+        <div class="perfil">
+            <div class="avatar">😎</div>
+            <div>
+                <strong>Meu perfil</strong>
+                <p style="color:#888;font-size:13px">
+                    Compartilhe seus momentos!
+                </p>
+            </div>
+        </div>
+
+        <input id="nome" placeholder="Seu nome">
+        <textarea id="texto"
+            placeholder="O que você está pensando? 💭"></textarea>
+
+        <button class="publicar" onclick="publicar()">
+            ➕ Publicar
+        </button>
+    </div>
+
+    <div id="feed"></div>
+
+</div>
+
+<footer>Feito com 💜 por você</footer>
+
+<script>
+let posts = [
+    {
+        nome: "Ana Silva",
+        emoji: "🌸",
+        texto: "Começando meu mini feed! Que venham momentos incríveis ✨",
+        curtidas: 2,
+        gostei: false,
+        comentarios: []
+    },
+    {
+        nome: "Lucas",
+        emoji: "😎",
+        texto: "A vida fica melhor quando a gente valoriza as pequenas coisas! 💜",
+        curtidas: 5,
+        gostei: false,
+        comentarios: []
+    }
+];
+
+function mostrarFeed() {
+    const feed = document.getElementById("feed");
+    feed.innerHTML = "";
+
+    posts.forEach((post, i) => {
+        const card = document.createElement("div");
+        card.className = "card";
+
+        const perfil = document.createElement("div");
+        perfil.className = "perfil";
+
+        const avatar = document.createElement("div");
+        avatar.className = "avatar";
+        avatar.textContent = post.emoji;
+
+        const nome = document.createElement("strong");
+        nome.textContent = post.nome;
+
+        perfil.append(avatar, nome);
+
+        const texto = document.createElement("p");
+        texto.className = "post-texto";
+        texto.textContent = post.texto;
+
+        const contador = document.createElement("p");
+        contador.className = "contador";
+        contador.textContent = post.curtidas + " curtidas";
+
+        const acoes = document.createElement("div");
+        acoes.className = "acoes";
+
+        const like = document.createElement("button");
+        like.className = "curtir";
+        like.textContent = post.gostei ? "❤️ Curtido" : "🤍 Curtir";
+        like.onclick = () => {
+            post.curtidas += post.gostei ? -1 : 1;
+            post.gostei = !post.gostei;
+            mostrarFeed();
+        };
+
+        const commentButton = document.createElement("button");
+        commentButton.className = "comentar";
+        commentButton.textContent = "💬 Comentar";
+        commentButton.onclick = () => {
+            const comentario = prompt("Escreva seu comentário:");
+            if (comentario && comentario.trim()) {
+                post.comentarios.push(comentario.trim());
+                mostrarFeed();
+            }
+        };
+
+        acoes.append(like, commentButton);
+
+        const comentarios = document.createElement("div");
+        comentarios.className = "comentarios";
+
+        post.comentarios.forEach(c => {
+            const item = document.createElement("div");
+            item.className = "comentario-item";
+            item.textContent = "💬 " + c;
+            comentarios.appendChild(item);
+        });
+
+        card.append(perfil, texto, contador, acoes, comentarios);
+        feed.appendChild(card);
+    });
+}
+
+function publicar() {
+    const nomeInput = document.getElementById("nome");
+    const textoInput = document.getElementById("texto");
+
+    const nome = nomeInput.value.trim() || "Visitante";
+    const texto = textoInput.value.trim();
+
+    if (!texto) {
+        alert("Escreva alguma coisa antes de publicar! 😊");
+        return;
+    }
+
+    posts.unshift({
+        nome: nome,
+        emoji: "😎",
+        texto: texto,
+        curtidas: 0,
+        gostei: false,
+        comentarios: []
+    });
+
+    textoInput.value = "";
+    mostrarFeed();
+}
+
+mostrarFeed();
+</script>
+
+</body>
+</html>
