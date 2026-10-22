@@ -1,27 +1,256 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="style.css" rel="stylesheet">
-</head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moto Rider - Arcade Game</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        \}
+        body {
+            background-color: #222;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            color: #fff;
+            overflow: hidden;
+        \}
+        h1 {
+            margin-bottom: 10px;
+            color: #ffcc00;
+            text-shadow: 2px 2px #000;
+        \}
+        .game-container {
+            position: relative;
+            border: 4px solid #fff;
+            box-shadow: 0 0 20px rgba(255, 204, 0, 0.5);
+        \}
+        canvas {
+            background-color: #333;
+            display: block;
+        \}
+        .instructions {
+            margin-top: 15px;
+            text-align: center;
+            font-size: 14px;
+            color: #aaa;
+        \}
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
 <body>
-  <div class="social-container">
-  <header class="social-header">
-    <h1>MiniRede</h1>
-  </header>
-  
-  <div class="post-creator">
-    <textarea id="post-input" placeholder="O que você está pensando agora?"></textarea>
-    <button id="post-btn">Publicar</button>
-  </div>
-  
-  <div id="feed" class="social-feed">
-    <!-- As postagens aparecerão aqui -->
-  </div>
-</div>$0
-  
-  
+
+    <h1>MOTO RIDER</h1>
+    
+    <div class="game-container">
+        <canvas id="gameCanvas" width="400" height="500"></canvas>
+    </div>
+
+    <div class="instructions">
+        <p>Use as setas <strong>ESQUERDA (←)</strong> e <strong>DIREITA (→)</strong> para desviar.</p>
+        <p>Pressione <strong>F5</strong> para reiniciar se bater!</p>
+    </div>
+
+    <script>
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+
+        // Configurações do Jogo
+        let score = 0;
+        let gameOver = false;
+        let gameSpeed = 5;
+
+        // Configurações da Moto do Jogador
+        const player = {
+            x: 185,
+            y: 400,
+            width: 30,
+            height: 60,
+            speed: 6,
+            movingLeft: false,
+            movingRight: false
+        \};
+
+        // Lista de Obstáculos (Outros carros/motos)
+        const obstacles = [];
+        const obstacleColors = ["#ff3333", "#3333ff", "#33ff33", "#ff00ff"];
+
+        // Linhas da Estrada (Efeito de Movimento)
+        const roadLines =;
+
+        // Captura de Teclado
+        window.addEventListener("keydown", (e) => {
+            if (e.key === "ArrowLeft") player.movingLeft = true;
+            if (e.key === "ArrowRight") player.movingRight = true;
+        \});
+
+        window.addEventListener("keyup", (e) => {
+            if (e.key === "ArrowLeft") player.movingLeft = false;
+            if (e.key === "ArrowRight") player.movingRight = false;
+        \});
+
+        // Função para gerar obstáculos aleatórios
+        function spawnObstacle() {
+            if (Math.random() < 0.02 && obstacles.length < 4) {
+                // Sorteia uma das 3 pistas fictícias (Esquerda, Centro, Direita)
+                const lanes =;
+                const randomLane = lanes[Math.floor(Math.random() * lanes.length)];
+                
+                // Evita criar no mesmo lugar imediatamente se já houver um perto
+                const itemProximo = obstacles.some(obs => obs.x === randomLane && obs.y < 150);
+                
+                if (!itemProximo) {
+                    obstacles.push({
+                        x: randomLane,
+                        y: -70,
+                        width: 30,
+                        height: 60,
+                        color: obstacleColors[Math.floor(Math.random() * obstacleColors.length)]
+                    \});
+                \}
+            \}
+        \}
+
+        // Desenha o cenário de fundo (Estrada)
+        function drawRoad() {
+            // Grama/Laterais
+            ctx.fillStyle = "#2ecc71";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Pista Cinza
+            ctx.fillStyle = "#555";
+            ctx.fillRect(50, 0, 300, canvas.height);
+
+            // Linhas Laterais Brancas
+            ctx.fillStyle = "#fff";
+            ctx.fillRect(50, 0, 5, canvas.height);
+            ctx.fillRect(345, 0, 5, canvas.height);
+
+            // Linhas tracejadas no centro em movimento
+            ctx.fillStyle = "#ffff00";
+            for (let i = 0; i < roadLines.length; i++) {
+                roadLines[i] += gameSpeed;
+                if (roadLines[i] > canvas.height) {
+                    roadLines[i] = -40;
+                \}
+                ctx.fillRect(145, roadLines[i], 6, 40);
+                ctx.fillRect(245, roadLines[i], 6, 40);
+            \}
+        \}
+
+        // Desenha a Moto do Jogador (Representação vetorial simples)
+        function drawPlayer() {
+            // Corpo da Moto
+            ctx.fillStyle = "#ffcc00";
+            ctx.fillRect(player.x + 8, player.y, 14, player.height);
+            
+            // Pneus (Preto)
+            ctx.fillStyle = "#000";
+            ctx.fillRect(player.x + 11, player.y - 5, 8, 12); // Frontal
+            ctx.fillRect(player.x + 11, player.y + 50, 8, 15); // Traseiro
+
+            // Guidão / Piloto
+            ctx.fillStyle = "#111";
+            ctx.fillRect(player.x, player.y + 15, 30, 6); // Guidão
+            ctx.fillStyle = "#00ffff"; 
+            ctx.fillRect(player.x + 7, player.y + 20, 16, 16); // Capacete azul
+        \}
+
+        // Atualiza as posições e verifica colisões
+        function update() {
+            if (gameOver) return;
+
+            // Movimento do Jogador com limites de pista
+            if (player.movingLeft && player.x > 55) {
+                player.x -= player.speed;
+            \}
+            if (player.movingRight && player.x < 315) {
+                player.x += player.speed;
+            \}
+
+            // Atualiza e desenha obstáculos
+            for (let i = obstacles.length - 1; i >= 0; i--) {
+                const obs = obstacles[i];
+                obs.y += gameSpeed;
+
+                // Desenha obstáculo (Outros veículos)
+                ctx.fillStyle = obs.color;
+                ctx.fillRect(obs.x + 5, obs.y, obs.width, obs.height);
+                // Rodas dos obstáculos
+                ctx.fillStyle = "#000";
+                ctx.fillRect(obs.x, obs.y + 5, 5, 12);
+                ctx.fillRect(obs.x + 30, obs.y + 5, 5, 12);
+                ctx.fillRect(obs.x, obs.y + 45, 5, 12);
+                ctx.fillRect(obs.x + 30, obs.y + 45, 5, 12);
+
+                // Checa Colisão (AABB Collision)
+                if (
+                    player.x < obs.x + obs.width &&
+                    player.x + player.width > obs.x &&
+                    player.y < obs.y + obs.height &&
+                    player.y + player.height > obs.y
+                ) {
+                    gameOver = true;
+                \}
+
+                // Remove obstáculos que saíram da tela e soma pontuação
+                if (obs.y > canvas.height) {
+                    obstacles.splice(i, 1);
+                    score += 10;
+                    // Aumenta a velocidade progressivamente
+                    if (score % 50 === 0) {
+                        gameSpeed += 0.5;
+                    \}
+                \}
+            \}
+
+            spawnObstacle();
+        \}
+
+        // Mostra o placar ou tela de Game Over
+        function drawUI() {
+            ctx.fillStyle = "#fff";
+            ctx.font = "20px 'Courier New'";
+            ctx.fillText(`Pontos: \${score\}`, 65, 30);
+
+            if (gameOver) {
+                ctx.fillStyle = "rgba(0, 0, 0, 0.8)";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                ctx.fillStyle = "#ff3333";
+                ctx.font = "bold 30px 'Courier New'";
+                ctx.textAlign = "center";
+                ctx.fillText("BATEU! GAME OVER", canvas.width / 2, canvas.height / 2 - 20);
+                
+                ctx.fillStyle = "#fff";
+                ctx.font = "16px 'Courier New'";
+                ctx.fillText(`Pontuação Final: \${score\}`, canvas.width / 2, canvas.height / 2 + 20);
+                ctx.fillText("Pressione F5 para recomeçar", canvas.width / 2, canvas.height / 2 + 60);
+                ctx.textAlign = "left"; // Reseta o alinhamento
+            \}
+        \}
+
+        // Loop principal do jogo
+        function gameLoop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            drawRoad();
+            drawPlayer();
+            update();
+            drawUI();
+
+            requestAnimationFrame(gameLoop);
+        \}
+
+        // Inicia o Loop
+        gameLoop();
+    </script>
 </body>
-</html>
+</html>$0
