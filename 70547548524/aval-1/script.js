@@ -1,18 +1,27 @@
 
- // Linguagem de Programação - JavaScript
+document.body.innerHTML = `
+    <h1>Bem-vindo à minha página!</h1>
 
- alert("Bem-vindo ao mundo da programação!");
+    <p>Este é um exemplo de página criada com JavaScript.</p>
 
- let nome = prompt("Qual é o seu nome?");
+    <p>O título está centralizado e na cor azul.</p>
+`;
 
- console.log("Olá, " + nome + "!");
+document.body.style.fontFamily = "Arial, sans-serif";
+document.body.style.backgroundColor = "#f0f0f0";
+document.body.style.color = "#333";
+document.body.style.margin = "0";
+document.body.style.padding = "20px";
 
- let idade = Number(prompt("Qual é a sua idade?"));
+const titulo = document.querySelector("h1");
 
- if (idade >= 18) {
-     alert("Você é maior de idade.");
- } else {
-     alert("Você é menor de idade.");
- }
+titulo.style.color = "#007bff";
+titulo.style.textAlign = "center";
+titulo.style.fontSize = "32px";
 
- alert("A programação permite criar sites, jogos e aplicativos!");
+const paragrafos = document.querySelectorAll("p");
+
+paragrafos.forEach((paragrafo) => {
+    paragrafo.style.fontSize = "18px";
+    paragrafo.style.lineHeight = "1.6";
+});
