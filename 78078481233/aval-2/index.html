@@ -1,0 +1,2346 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Biblioteca Virtual | Conhecimento Livre</title>
+
+    <meta name="description"
+          content="Explore livros, descubra histórias e organize sua biblioteca virtual.">
+
+    <style>
+        /* =========================
+           1. CONFIGURAÇÕES GERAIS
+        ========================== */
+
+        :root {
+            --azul: #14213d;
+            --azul-claro: #284b83;
+            --laranja: #fca311;
+            --fundo: #f4f6fb;
+            --branco: #ffffff;
+            --texto: #252b36;
+            --cinza: #687386;
+            --borda: #e2e7ef;
+            --sombra: 0 8px 25px rgba(20, 33, 61, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 90px;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: var(--fundo);
+            color: var(--texto);
+            line-height: 1.6;
+        }
+
+        button,
+        input,
+        select,
+        textarea {
+            font: inherit;
+        }
+
+        button,
+        a {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        img {
+            max-width: 100%;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .secao {
+            padding: 65px 0;
+        }
+
+        .titulo-secao {
+            font-size: 30px;
+            color: var(--azul);
+            margin-bottom: 10px;
+        }
+
+        .subtitulo {
+            color: var(--cinza);
+            margin-bottom: 28px;
+        }
+
+        .botao {
+            display: inline-block;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 20px;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .botao:hover {
+            transform: translateY(-2px);
+            filter: brightness(0.96);
+        }
+
+        .botao-principal {
+            background: var(--laranja);
+            color: var(--azul);
+        }
+
+        .botao-azul {
+            background: var(--azul);
+            color: white;
+        }
+
+        .botao-claro {
+            background: #eaf0fa;
+            color: var(--azul);
+        }
+
+        .botao-perigo {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .campo {
+            width: 100%;
+            padding: 13px 14px;
+            border: 1px solid var(--borda);
+            border-radius: 8px;
+            outline: none;
+            background: white;
+        }
+
+        .campo:focus {
+            border-color: var(--azul-claro);
+            box-shadow: 0 0 0 3px rgba(40, 75, 131, 0.1);
+        }
+
+        /* =========================
+           2. CABEÇALHO
+        ========================== */
+
+        .topo {
+            background: var(--azul);
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 3px 15px #00000015;
+        }
+
+        .barra {
+            min-height: 76px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .logo span {
+            color: var(--laranja);
+        }
+
+        .menu {
+            display: flex;
+            align-items: center;
+            gap: 23px;
+        }
+
+        .menu a {
+            color: #e7edf8;
+            font-size: 14px;
+        }
+
+        .menu a:hover {
+            color: var(--laranja);
+        }
+
+        .menu-botao {
+            display: none;
+            background: transparent;
+            color: white;
+            border: 1px solid #ffffff55;
+            padding: 8px 12px;
+            border-radius: 7px;
+        }
+
+        /* =========================
+           3. APRESENTAÇÃO
+        ========================== */
+
+        .hero {
+            background:
+                radial-gradient(circle at 90% 10%, #456ca4 0, transparent 35%),
+                linear-gradient(120deg, var(--azul), #243f6c);
+            color: white;
+            padding: 85px 0;
+            overflow: hidden;
+        }
+
+        .hero-conteudo {
+            display: grid;
+            grid-template-columns: 1.3fr 0.7fr;
+            align-items: center;
+            gap: 40px;
+        }
+
+        .etiqueta {
+            display: inline-block;
+            color: var(--laranja);
+            background: #ffffff12;
+            padding: 7px 13px;
+            border-radius: 30px;
+            margin-bottom: 18px;
+            font-size: 13px;
+        }
+
+        .hero h1 {
+            font-size: clamp(34px, 5vw, 55px);
+            line-height: 1.12;
+            margin-bottom: 20px;
+        }
+
+        .hero h1 span {
+            color: var(--laranja);
+        }
+
+        .hero p {
+            max-width: 560px;
+            color: #d8e2f2;
+            margin-bottom: 28px;
+        }
+
+        .hero-acoes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .hero-ilustracao {
+            background: #ffffff0d;
+            border: 1px solid #ffffff20;
+            border-radius: 25px;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .hero-livro {
+            font-size: 110px;
+            line-height: 1.5;
+        }
+
+        .hero-ilustracao h3 {
+            font-size: 23px;
+            margin-bottom: 8px;
+        }
+
+        .hero-ilustracao p {
+            margin: 0 auto;
+            font-size: 14px;
+        }
+
+        /* =========================
+           4. ESTATÍSTICAS
+        ========================== */
+
+        .estatisticas {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: -28px;
+            position: relative;
+        }
+
+        .estatistica {
+            padding: 25px;
+            border-radius: 13px;
+            background: white;
+            box-shadow: var(--sombra);
+            text-align: center;
+        }
+
+        .estatistica strong {
+            display: block;
+            color: var(--azul);
+            font-size: 29px;
+        }
+
+        .estatistica span {
+            color: var(--cinza);
+            font-size: 14px;
+        }
+
+        /* =========================
+           5. CATEGORIAS
+        ========================== */
+
+        .categorias {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        .categoria {
+            background: white;
+            border: 1px solid var(--borda);
+            border-radius: 12px;
+            padding: 22px;
+            text-align: center;
+            transition: 0.2s;
+        }
+
+        .categoria:hover {
+            border-color: var(--laranja);
+            transform: translateY(-4px);
+        }
+
+        .categoria .icone {
+            font-size: 35px;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .categoria h3 {
+            color: var(--azul);
+            font-size: 16px;
+        }
+
+        .categoria p {
+            font-size: 13px;
+            color: var(--cinza);
+        }
+
+        /* =========================
+           6. CATÁLOGO DE LIVROS
+        ========================== */
+
+        .catalogo-topo {
+            display: flex;
+            justify-content: space-between;
+            align-items: end;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+        }
+
+        .catalogo-topo .subtitulo {
+            margin-bottom: 0;
+        }
+
+        .filtros {
+            display: grid;
+            grid-template-columns: 1fr 190px 170px;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+
+        .grade-livros {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 22px;
+        }
+
+        .livro {
+            background: white;
+            border: 1px solid var(--borda);
+            border-radius: 13px;
+            padding: 15px;
+            box-shadow: 0 3px 12px #00000004;
+            transition: 0.2s;
+            min-width: 0;
+        }
+
+        .livro:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--sombra);
+        }
+
+        .capa {
+            height: 190px;
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 10px;
+            color: white;
+            margin-bottom: 16px;
+            text-align: center;
+            padding: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .capa .emoji {
+            font-size: 53px;
+        }
+
+        .capa strong {
+            font-size: 16px;
+            line-height: 1.3;
+        }
+
+        .capa small {
+            font-size: 11px;
+            opacity: 0.85;
+        }
+
+        .capa-azul {
+            background: linear-gradient(145deg, #14213d, #456ca4);
+        }
+
+        .capa-laranja {
+            background: linear-gradient(145deg, #b85d16, #fca311);
+        }
+
+        .capa-verde {
+            background: linear-gradient(145deg, #165b50, #49a58c);
+        }
+
+        .capa-roxa {
+            background: linear-gradient(145deg, #4b267b, #9270cf);
+        }
+
+        .capa-vermelha {
+            background: linear-gradient(145deg, #872d3b, #d96871);
+        }
+
+        .capa-marrom {
+            background: linear-gradient(145deg, #52351f, #a17a50);
+        }
+
+        .livro-categoria {
+            color: #536b93;
+            background: #edf2fb;
+            display: inline-block;
+            font-size: 11px;
+            padding: 5px 8px;
+            border-radius: 5px;
+            margin-bottom: 9px;
+        }
+
+        .livro h3 {
+            color: var(--azul);
+            font-size: 17px;
+            line-height: 1.4;
+            margin-bottom: 6px;
+            overflow-wrap: anywhere;
+        }
+
+        .livro-autor {
+            color: var(--cinza);
+            font-size: 13px;
+            margin-bottom: 15px;
+            overflow-wrap: anywhere;
+        }
+
+        .livro-acoes {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .livro-acoes .botao {
+            padding: 9px 11px;
+            font-size: 12px;
+        }
+
+        .favorito {
+            width: 38px;
+            height: 38px;
+            flex-shrink: 0;
+            border: 1px solid var(--borda);
+            border-radius: 7px;
+            background: white;
+            font-size: 19px;
+        }
+
+        .favorito.ativo {
+            color: #dc3545;
+            background: #fff0f2;
+        }
+
+        .vazio {
+            grid-column: 1 / -1;
+            padding: 40px 20px;
+            text-align: center;
+            color: var(--cinza);
+            background: white;
+            border-radius: 12px;
+        }
+
+        .paginacao-info {
+            color: var(--cinza);
+            font-size: 14px;
+            margin-top: 22px;
+        }
+
+        /* =========================
+           7. LIVROS EM DESTAQUE
+        ========================== */
+
+        .destaques {
+            background: #eaf0fa;
+        }
+
+        .destaque-card {
+            display: grid;
+            grid-template-columns: 140px 1fr;
+            gap: 25px;
+            align-items: center;
+            background: white;
+            padding: 25px;
+            border-radius: 14px;
+            margin-top: 25px;
+        }
+
+        .destaque-icone {
+            height: 160px;
+            display: grid;
+            place-items: center;
+            background: linear-gradient(145deg, #14213d, #456ca4);
+            color: white;
+            border-radius: 10px;
+            font-size: 70px;
+        }
+
+        .destaque-card h3 {
+            color: var(--azul);
+            font-size: 23px;
+            margin-bottom: 8px;
+        }
+
+        .destaque-card p {
+            color: var(--cinza);
+            margin-bottom: 15px;
+        }
+
+        /* =========================
+           8. FAVORITOS
+        ========================== */
+
+        .favoritos-area {
+            background: white;
+        }
+
+        /* =========================
+           9. CADASTRO DE LIVROS
+        ========================== */
+
+        .cadastro-layout {
+            display: grid;
+            grid-template-columns: 0.8fr 1.2fr;
+            gap: 35px;
+            align-items: start;
+        }
+
+        .cadastro-info {
+            background: var(--azul);
+            color: white;
+            padding: 30px;
+            border-radius: 14px;
+        }
+
+        .cadastro-info .icone-grande {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .cadastro-info h3 {
+            font-size: 25px;
+            margin-bottom: 12px;
+        }
+
+        .cadastro-info p {
+            color: #d8e2f2;
+            margin-bottom: 18px;
+        }
+
+        .cadastro-info ul {
+            list-style-position: inside;
+            color: #e0e8f5;
+        }
+
+        .formulario {
+            background: white;
+            padding: 28px;
+            border-radius: 14px;
+            box-shadow: var(--sombra);
+        }
+
+        .formulario h3 {
+            font-size: 22px;
+            color: var(--azul);
+            margin-bottom: 20px;
+        }
+
+        .campo-grupo {
+            margin-bottom: 17px;
+        }
+
+        .campo-grupo label {
+            display: block;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 7px;
+        }
+
+        textarea.campo {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .formulario .botao {
+            width: 100%;
+        }
+
+        .aviso {
+            margin-top: 12px;
+            color: var(--cinza);
+            font-size: 12px;
+        }
+
+        /* =========================
+           10. SOBRE A BIBLIOTECA
+        ========================== */
+
+        .sobre {
+            background: white;
+        }
+
+        .sobre-grade {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .sobre-card {
+            padding: 25px;
+            border: 1px solid var(--borda);
+            border-radius: 12px;
+        }
+
+        .sobre-card .icone {
+            font-size: 35px;
+            margin-bottom: 12px;
+        }
+
+        .sobre-card h3 {
+            color: var(--azul);
+            margin-bottom: 8px;
+        }
+
+        .sobre-card p {
+            color: var(--cinza);
+            font-size: 14px;
+        }
+
+        /* =========================
+           11. RODAPÉ
+        ========================== */
+
+        .rodape {
+            background: #101b32;
+            color: white;
+            padding: 45px 0 20px;
+        }
+
+        .rodape-grade {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .rodape h3 {
+            margin-bottom: 12px;
+            color: var(--laranja);
+        }
+
+        .rodape p,
+        .rodape a {
+            color: #c9d3e3;
+            font-size: 14px;
+        }
+
+        .rodape-links {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .rodape a:hover {
+            color: var(--laranja);
+        }
+
+        .rodape-final {
+            border-top: 1px solid #ffffff20;
+            padding-top: 18px;
+            text-align: center;
+            color: #c9d3e3;
+            font-size: 13px;
+        }
+
+        /* =========================
+           12. MODAL DE DETALHES
+        ========================== */
+
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: #00000099;
+            z-index: 200;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal.aberto {
+            display: flex;
+        }
+
+        .modal-conteudo {
+            background: white;
+            width: 100%;
+            max-width: 520px;
+            padding: 28px;
+            border-radius: 15px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-topo {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 18px;
+        }
+
+        .modal-topo h2 {
+            color: var(--azul);
+            font-size: 23px;
+        }
+
+        .fechar-modal {
+            background: #edf0f5;
+            border: none;
+            border-radius: 7px;
+            width: 38px;
+            height: 38px;
+            font-size: 22px;
+        }
+
+        .modal-conteudo p {
+            margin-bottom: 12px;
+            overflow-wrap: anywhere;
+        }
+
+        .modal-botoes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        /* =========================
+           13. NOTIFICAÇÕES
+        ========================== */
+
+        .notificacao {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            z-index: 300;
+            background: var(--azul);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 9px;
+            box-shadow: var(--sombra);
+            max-width: calc(100% - 40px);
+            display: none;
+        }
+
+        .notificacao.visivel {
+            display: block;
+        }
+
+        /* =========================
+           14. ACESSIBILIDADE
+        ========================== */
+
+        .somente-leitor {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* =========================
+           15. RESPONSIVIDADE
+        ========================== */
+
+        @media (max-width: 1000px) {
+            .grade-livros {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+
+            .categorias {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .hero-conteudo {
+                grid-template-columns: 1fr 0.7fr;
+            }
+        }
+
+        @media (max-width: 760px) {
+            .barra {
+                flex-wrap: wrap;
+                padding: 15px 0;
+            }
+
+            .menu-botao {
+                display: block;
+            }
+
+            .menu {
+                display: none;
+                width: 100%;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0;
+            }
+
+            .menu.aberto {
+                display: flex;
+            }
+
+            .menu a {
+                padding: 12px 0;
+                border-top: 1px solid #ffffff20;
+            }
+
+            .hero {
+                padding: 60px 0;
+            }
+
+            .hero-conteudo {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-ilustracao {
+                display: none;
+            }
+
+            .estatisticas {
+                grid-template-columns: 1fr;
+                margin-top: 20px;
+            }
+
+            .filtros {
+                grid-template-columns: 1fr;
+            }
+
+            .grade-livros {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 13px;
+            }
+
+            .capa {
+                height: 160px;
+            }
+
+            .cadastro-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .sobre-grade {
+                grid-template-columns: 1fr;
+            }
+
+            .rodape-grade {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .container {
+                width: 94%;
+            }
+
+            .titulo-secao {
+                font-size: 25px;
+            }
+
+            .grade-livros {
+                grid-template-columns: 1fr;
+            }
+
+            .capa {
+                height: 200px;
+            }
+
+            .destaque-card {
+                grid-template-columns: 1fr;
+            }
+
+            .destaque-icone {
+                height: 120px;
+            }
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+    <!-- CABEÇALHO -->
+
+    <header class="topo">
+        <div class="container barra">
+
+            <a href="#inicio" class="logo">
+                📚 Biblioteca<span>Virtual</span>
+            </a>
+
+            <button
+                class="menu-botao"
+                id="menuBotao"
+                aria-expanded="false"
+                aria-controls="menu"
+                aria-label="Abrir menu">
+                ☰ Menu
+            </button>
+
+            <nav class="menu" id="menu">
+                <a href="#inicio">Início</a>
+                <a href="#categorias">Categorias</a>
+                <a href="#catalogo">Catálogo</a>
+                <a href="#favoritos">Favoritos</a>
+                <a href="#cadastro">Cadastrar livro</a>
+                <a href="#sobre">Sobre</a>
+            </nav>
+
+        </div>
+    </header>
+
+    <!-- APRESENTAÇÃO -->
+
+    <section class="hero" id="inicio">
+        <div class="container hero-conteudo">
+
+            <div>
+                <span class="etiqueta">
+                    ✨ Seu próximo livro está aqui
+                </span>
+
+                <h1>
+                    Conhecimento que
+                    <span>transforma</span>
+                    o mundo.
+                </h1>
+
+                <p>
+                    Explore histórias, descubra novos autores e amplie
+                    seus conhecimentos com nossa biblioteca virtual.
+                    Um espaço para quem ama aprender.
+                </p>
+
+                <div class="hero-acoes">
+                    <a href="#catalogo" class="botao botao-principal">
+                        Explorar livros →
+                    </a>
+
+                    <a href="#cadastro" class="botao botao-claro">
+                        + Cadastrar livro
+                    </a>
+                </div>
+            </div>
+
+            <div class="hero-ilustracao">
+                <div class="hero-livro">📚</div>
+                <h3>Leia. Aprenda. Descubra.</h3>
+                <p>
+                    Cada página é uma nova oportunidade
+                    de conhecer o mundo.
+                </p>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ESTATÍSTICAS -->
+
+    <section class="container estatisticas"
+             aria-label="Estatísticas da biblioteca">
+
+        <div class="estatistica">
+            <strong id="totalLivros">0</strong>
+            <span>Livros cadastrados</span>
+        </div>
+
+        <div class="estatistica">
+            <strong id="totalCategorias">0</strong>
+            <span>Categorias disponíveis</span>
+        </div>
+
+        <div class="estatistica">
+            <strong id="totalFavoritos">0</strong>
+            <span>Livros favoritos</span>
+        </div>
+
+    </section>
+
+    <!-- CATEGORIAS -->
+
+    <section class="secao container" id="categorias">
+
+        <h2 class="titulo-secao">Explore por categoria</h2>
+
+        <p class="subtitulo">
+            Encontre o tipo de leitura que combina com você.
+        </p>
+
+        <div class="categorias">
+
+            <a href="#catalogo"
+               class="categoria"
+               data-filtro="Literatura">
+                <span class="icone">📖</span>
+                <h3>Literatura</h3>
+                <p>Romances e clássicos</p>
+            </a>
+
+            <a href="#catalogo"
+               class="categoria"
+               data-filtro="Educação">
+                <span class="icone">🎓</span>
+                <h3>Educação</h3>
+                <p>Aprendizagem e estudos</p>
+            </a>
+
+            <a href="#catalogo"
+               class="categoria"
+               data-filtro="Tecnologia">
+                <span class="icone">💻</span>
+                <h3>Tecnologia</h3>
+                <p>Programação e inovação</p>
+            </a>
+
+            <a href="#catalogo"
+               class="categoria"
+               data-filtro="Ficção">
+                <span class="icone">🚀</span>
+                <h3>Ficção</h3>
+                <p>Aventura e imaginação</p>
+            </a>
+
+        </div>
+    </section>
+
+    <!-- CATÁLOGO -->
+
+    <section class="secao container" id="catalogo">
+
+        <div class="catalogo-topo">
+            <div>
+                <h2 class="titulo-secao">Nosso catálogo</h2>
+                <p class="subtitulo">
+                    Pesquise, descubra e organize suas leituras.
+                </p>
+            </div>
+
+            <a href="#cadastro" class="botao botao-azul">
+                + Novo livro
+            </a>
+        </div>
+
+        <div class="filtros">
+
+            <div>
+                <label class="somente-leitor" for="pesquisa">
+                    Pesquisar livros
+                </label>
+                <input
+                    class="campo"
+                    type="search"
+                    id="pesquisa"
+                    placeholder="🔎 Pesquisar título ou autor..."
+                >
+            </div>
+
+            <div>
+                <label class="somente-leitor" for="filtroCategoria">
+                    Filtrar categoria
+                </label>
+                <select class="campo" id="filtroCategoria">
+                    <option value="">Todas as categorias</option>
+                    <option value="Literatura">Literatura</option>
+                    <option value="Educação">Educação</option>
+                    <option value="Tecnologia">Tecnologia</option>
+                    <option value="Ficção">Ficção</option>
+                    <option value="História">História</option>
+                    <option value="Ciências">Ciências</option>
+                    <option value="Outros">Outros</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="somente-leitor" for="ordenacao">
+                    Ordenar livros
+                </label>
+                <select class="campo" id="ordenacao">
+                    <option value="recentes">Mais recentes</option>
+                    <option value="titulo">Ordem alfabética</option>
+                    <option value="autor">Por autor</option>
+                </select>
+            </div>
+
+        </div>
+
+        <div class="grade-livros" id="listaLivros"></div>
+
+        <p class="paginacao-info" id="resultadoPesquisa"
+           aria-live="polite"></p>
+
+    </section>
+
+    <!-- DESTAQUE -->
+
+    <section class="secao destaques">
+        <div class="container">
+
+            <h2 class="titulo-secao">Leitura em destaque</h2>
+
+            <p class="subtitulo">
+                Uma sugestão para inspirar sua próxima leitura.
+            </p>
+
+            <div class="destaque-card">
+
+                <div class="destaque-icone">📘</div>
+
+                <div>
+                    <span class="livro-categoria">Literatura</span>
+
+                    <h3>O Pequeno Príncipe</h3>
+
+                    <p>
+                        Uma obra conhecida por suas reflexões sobre
+                        amizade, imaginação e a maneira como
+                        compreendemos o mundo.
+                    </p>
+
+                    <button
+                        class="botao botao-principal"
+                        id="botaoDestaque">
+                        Conhecer o livro →
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- FAVORITOS -->
+
+    <section class="secao favoritos-area" id="favoritos">
+        <div class="container">
+
+            <h2 class="titulo-secao">❤️ Meus favoritos</h2>
+
+            <p class="subtitulo">
+                Guarde aqui os livros que você deseja encontrar facilmente.
+            </p>
+
+            <div class="grade-livros" id="listaFavoritos"></div>
+
+        </div>
+    </section>
+
+    <!-- CADASTRO -->
+
+    <section class="secao container" id="cadastro">
+
+        <h2 class="titulo-secao">Adicionar novo livro</h2>
+
+        <p class="subtitulo">
+            Preencha os dados abaixo para incluir uma publicação.
+        </p>
+
+        <div class="cadastro-layout">
+
+            <aside class="cadastro-info">
+
+                <div class="icone-grande">📚</div>
+
+                <h3>Compartilhe conhecimento</h3>
+
+                <p>
+                    Organize sua coleção e facilite a localização
+                    dos livros disponíveis no catálogo.
+                </p>
+
+                <ul>
+                    <li>Cadastro de título e autor</li>
+                    <li>Organização por categoria</li>
+                    <li>Link para acessar a publicação</li>
+                    <li>Pesquisa e favoritos</li>
+                </ul>
+
+            </aside>
+
+            <form class="formulario" id="formLivro">
+
+                <h3>Dados da publicação</h3>
+
+                <div class="campo-grupo">
+                    <label for="titulo">Título do livro *</label>
+                    <input
+                        class="campo"
+                        id="titulo"
+                        name="titulo"
+                        maxlength="150"
+                        required
+                        placeholder="Ex.: Dom Casmurro"
+                    >
+                </div>
+
+                <div class="campo-grupo">
+                    <label for="autor">Autor *</label>
+                    <input
+                        class="campo"
+                        id="autor"
+                        name="autor"
+                        maxlength="120"
+                        required
+                        placeholder="Ex.: Machado de Assis"
+                    >
+                </div>
+
+                <div class="campo-grupo">
+                    <label for="categoria">Categoria *</label>
+                    <select class="campo" id="categoria" required>
+                        <option value="">Selecione uma categoria</option>
+                        <option value="Literatura">Literatura</option>
+                        <option value="Educação">Educação</option>
+                        <option value="Tecnologia">Tecnologia</option>
+                        <option value="Ficção">Ficção</option>
+                        <option value="História">História</option>
+                        <option value="Ciências">Ciências</option>
+                        <option value="Outros">Outros</option>
+                    </select>
+                </div>
+
+                <div class="campo-grupo">
+                    <label for="descricao">Descrição</label>
+                    <textarea
+                        class="campo"
+                        id="descricao"
+                        maxlength="1000"
+                        placeholder="Escreva um pequeno resumo..."
+                    ></textarea>
+                </div>
+
+                <div class="campo-grupo">
+                    <label for="linkLivro">
+                        Link para leitura ou PDF
+                    </label>
+                    <input
+                        class="campo"
+                        type="url"
+                        id="linkLivro"
+                        placeholder="https://exemplo.com/livro.pdf"
+                    >
+                </div>
+
+                <div class="campo-grupo">
+                    <label for="codigoLivro">Código ou ISBN (opcional)</label>
+                    <input
+                        class="campo"
+                        id="codigoLivro"
+                        maxlength="40"
+                        placeholder="Código de identificação"
+                    >
+                </div>
+
+                <button type="submit" class="botao botao-principal">
+                    + Adicionar ao catálogo
+                </button>
+
+                <p class="aviso">
+                    * Campos obrigatórios. Os dados desta versão
+                    são guardados localmente neste navegador.
+                </p>
+
+            </form>
+        </div>
+    </section>
+
+    <!-- SOBRE -->
+
+    <section class="secao sobre" id="sobre">
+        <div class="container">
+
+            <h2 class="titulo-secao">Sobre nossa biblioteca</h2>
+
+            <p class="subtitulo">
+                Um espaço dedicado à leitura, à pesquisa e à educação.
+            </p>
+
+            <div class="sobre-grade">
+
+                <article class="sobre-card">
+                    <div class="icone">🎯</div>
+                    <h3>Nossa missão</h3>
+                    <p>
+                        Incentivar a leitura e facilitar a organização
+                        do conhecimento em um ambiente digital simples.
+                    </p>
+                </article>
+
+                <article class="sobre-card">
+                    <div class="icone">📚</div>
+                    <h3>Nosso catálogo</h3>
+                    <p>
+                        Reunir referências de livros de diferentes
+                        assuntos para ajudar os leitores a encontrar
+                        suas próximas leituras.
+                    </p>
+                </article>
+
+                <article class="sobre-card">
+                    <div class="icone">💡</div>
+                    <h3>Aprendizado</h3>
+                    <p>
+                        Estimular a curiosidade, os estudos,
+                        a criatividade e o hábito de aprender sempre.
+                    </p>
+                </article>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- RODAPÉ -->
+
+    <footer class="rodape">
+        <div class="container">
+
+            <div class="rodape-grade">
+
+                <div>
+                    <h3>📚 Biblioteca Virtual</h3>
+                    <p>
+                        Um projeto para organizar livros,
+                        descobrir histórias e compartilhar conhecimento.
+                    </p>
+                </div>
+
+                <div>
+                    <h3>Navegação</h3>
+                    <div class="rodape-links">
+                        <a href="#inicio">Página inicial</a>
+                        <a href="#catalogo">Catálogo</a>
+                        <a href="#favoritos">Favoritos</a>
+                        <a href="#cadastro">Adicionar livro</a>
+                    </div>
+                </div>
+
+                <div>
+                    <h3>Explore</h3>
+                    <div class="rodape-links">
+                        <a href="#categorias">Categorias</a>
+                        <a href="#sobre">Sobre a biblioteca</a>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="rodape-final">
+                <p>
+                    © <span id="anoAtual"></span> Biblioteca Virtual.
+                    Projeto educacional.
+                </p>
+            </div>
+
+        </div>
+    </footer>
+
+    <!-- JANELA DE DETALHES -->
+
+    <div
+        class="modal"
+        id="modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modalTitulo"
+        aria-hidden="true">
+
+        <div class="modal-conteudo">
+
+            <div class="modal-topo">
+                <h2 id="modalTitulo">Detalhes do livro</h2>
+
+                <button
+                    class="fechar-modal"
+                    id="fecharModal"
+                    aria-label="Fechar janela">
+                    ×
+                </button>
+            </div>
+
+            <div id="modalDetalhes"></div>
+
+            <div class="modal-botoes" id="modalBotoes"></div>
+
+        </div>
+    </div>
+
+    <!-- NOTIFICAÇÕES -->
+
+    <div
+        class="notificacao"
+        id="notificacao"
+        role="status"
+        aria-live="polite">
+    </div>
+
+    <script>
+        /* ==================================
+           1. DADOS INICIAIS
+        =================================== */
+
+        const livrosIniciais = [
+            {
+                id: "ex-1",
+                titulo: "Dom Casmurro",
+                autor: "Machado de Assis",
+                categoria: "Literatura",
+                descricao:
+                    "Romance clássico da literatura brasileira " +
+                    "que aborda memória, relacionamentos e dúvidas.",
+                link: "",
+                codigo: "LIT001",
+                cor: "capa-azul",
+                emoji: "📕",
+                favorito: false
+            },
+            {
+                id: "ex-2",
+                titulo: "O Pequeno Príncipe",
+                autor: "Antoine de Saint-Exupéry",
+                categoria: "Literatura",
+                descricao:
+                    "Uma história sobre amizade, imaginação e " +
+                    "as relações humanas.",
+                link: "",
+                codigo: "LIT002",
+                cor: "capa-laranja",
+                emoji: "📘",
+                favorito: false
+            },
+            {
+                id: "ex-3",
+                titulo: "A Moreninha",
+                autor: "Joaquim Manuel de Macedo",
+                categoria: "Literatura",
+                descricao:
+                    "Romance brasileiro publicado no século XIX.",
+                link: "",
+                codigo: "LIT003",
+                cor: "capa-verde",
+                emoji: "📗",
+                favorito: false
+            },
+            {
+                id: "ex-4",
+                titulo: "Introdução à Programação",
+                autor: "Equipe editorial",
+                categoria: "Tecnologia",
+                descricao:
+                    "Material introdutório para aprender lógica " +
+                    "e os fundamentos da programação.",
+                link: "",
+                codigo: "TEC001",
+                cor: "capa-roxa",
+                emoji: "💻",
+                favorito: false
+            },
+            {
+                id: "ex-5",
+                titulo: "Viagem ao Centro da Terra",
+                autor: "Júlio Verne",
+                categoria: "Ficção",
+                descricao:
+                    "Uma aventura literária que explora o mundo " +
+                    "subterrâneo por meio da imaginação científica.",
+                link: "",
+                codigo: "FIC001",
+                cor: "capa-vermelha",
+                emoji: "🌋",
+                favorito: false
+            },
+            {
+                id: "ex-6",
+                titulo: "História do Brasil",
+                autor: "Coleção de estudos",
+                categoria: "História",
+                descricao:
+                    "Uma introdução a acontecimentos e períodos " +
+                    "importantes da história brasileira.",
+                link: "",
+                codigo: "HIS001",
+                cor: "capa-verde",
+                emoji: "🏛️",
+                favorito: false
+            },
+            {
+                id: "ex-7",
+                titulo: "O Mundo das Ciências",
+                autor: "Coleção educativa",
+                categoria: "Ciências",
+                descricao:
+                    "Introdução a conceitos científicos e à " +
+                    "observação do mundo natural.",
+                link: "",
+                codigo: "CIE001",
+                cor: "capa-azul",
+                emoji: "🔬",
+                favorito: false
+            },
+            {
+                id: "ex-8",
+                titulo: "Aprender Sempre",
+                autor: "Equipe pedagógica",
+                categoria: "Educação",
+                descricao:
+                    "Sugestões para desenvolver hábitos de estudo, " +
+                    "organização e aprendizagem.",
+                link: "",
+                codigo: "EDU001",
+                cor: "capa-marrom",
+                emoji: "🎓",
+                favorito: false
+            }
+        ];
+
+        /* ==================================
+           2. ARMAZENAMENTO
+        =================================== */
+
+        const CHAVE_LIVROS = "bibliotecaVirtualLivrosV2";
+        const CHAVE_FAVORITOS = "bibliotecaVirtualFavoritosV2";
+
+        function carregarDados(chave, padrao) {
+            try {
+                const valor = localStorage.getItem(chave);
+
+                return valor === null
+                    ? padrao
+                    : JSON.parse(valor);
+            } catch (erro) {
+                return padrao;
+            }
+        }
+
+        let livros = carregarDados(
+            CHAVE_LIVROS,
+            livrosIniciais
+        );
+
+        let favoritosSalvos = carregarDados(
+            CHAVE_FAVORITOS,
+            []
+        );
+
+        if (!Array.isArray(livros)) {
+            livros = livrosIniciais;
+        }
+
+        if (!Array.isArray(favoritosSalvos)) {
+            favoritosSalvos = [];
+        }
+
+        let somenteFavoritos = false;
+
+        function salvarLivros() {
+            try {
+                localStorage.setItem(
+                    CHAVE_LIVROS,
+                    JSON.stringify(livros)
+                );
+
+                localStorage.setItem(
+                    CHAVE_FAVORITOS,
+                    JSON.stringify(favoritosSalvos)
+                );
+
+                return true;
+            } catch (erro) {
+                notificar(
+                    "Não foi possível salvar. Verifique o espaço disponível."
+                );
+
+                return false;
+            }
+        }
+
+        /* ==================================
+           3. ELEMENTOS DA PÁGINA
+        =================================== */
+
+        const listaLivros =
+            document.getElementById("listaLivros");
+
+        const listaFavoritos =
+            document.getElementById("listaFavoritos");
+
+        const pesquisa =
+            document.getElementById("pesquisa");
+
+        const filtroCategoria =
+            document.getElementById("filtroCategoria");
+
+        const ordenacao =
+            document.getElementById("ordenacao");
+
+        const formLivro =
+            document.getElementById("formLivro");
+
+        const modal =
+            document.getElementById("modal");
+
+        const modalDetalhes =
+            document.getElementById("modalDetalhes");
+
+        const modalBotoes =
+            document.getElementById("modalBotoes");
+
+        const notificacao =
+            document.getElementById("notificacao");
+
+        /* ==================================
+           4. FUNÇÕES AUXILIARES
+        =================================== */
+
+        function escaparHTML(valor) {
+            return String(valor ?? "").replace(
+                /[&<>"']/g,
+                function (caractere) {
+                    const mapa = {
+                        "&": "&amp;",
+                        "<": "&lt;",
+                        ">": "&gt;",
+                        '"': "&quot;",
+                        "'": "&#39;"
+                    };
+
+                    return mapa[caractere];
+                }
+            );
+        }
+
+        function notificar(mensagem) {
+            notificacao.textContent = mensagem;
+            notificacao.classList.add("visivel");
+
+            setTimeout(function () {
+                notificacao.classList.remove("visivel");
+            }, 3000);
+        }
+
+        function criarId() {
+            if (
+                typeof crypto !== "undefined" &&
+                typeof crypto.randomUUID === "function"
+            ) {
+                return crypto.randomUUID();
+            }
+
+            return "livro-" + Date.now() + "-" +
+                Math.random().toString(36).slice(2, 9);
+        }
+
+        function linkSeguro(link) {
+            try {
+                const url = new URL(link);
+
+                if (
+                    url.protocol === "https:" ||
+                    url.protocol === "http:"
+                ) {
+                    return url.href;
+                }
+            } catch (erro) {
+                return "";
+            }
+
+            return "";
+        }
+
+        /* ==================================
+           5. CRIAR CARTÃO DE LIVRO
+        =================================== */
+
+        function criarCartao(livro) {
+            const artigo = document.createElement("article");
+
+            artigo.className = "livro";
+
+            const ehFavorito =
+                favoritosSalvos.includes(livro.id);
+
+            const cor = [
+                "capa-azul",
+                "capa-laranja",
+                "capa-verde",
+                "capa-roxa",
+                "capa-vermelha",
+                "capa-marrom"
+            ].includes(livro.cor)
+                ? livro.cor
+                : "capa-azul";
+
+            artigo.innerHTML = `
+                <div class="capa ${cor}">
+                    <span class="emoji">
+                        ${escaparHTML(livro.emoji || "📚")}
+                    </span>
+
+                    <strong>
+                        ${escaparHTML(livro.titulo)}
+                    </strong>
+
+                    <small>
+                        ${escaparHTML(livro.autor)}
+                    </small>
+                </div>
+
+                <span class="livro-categoria">
+                    ${escaparHTML(livro.categoria)}
+                </span>
+
+                <h3>${escaparHTML(livro.titulo)}</h3>
+
+                <p class="livro-autor">
+                    ${escaparHTML(livro.autor)}
+                </p>
+
+                <div class="livro-acoes">
+
+                    <button
+                        class="botao botao-azul"
+                        data-acao="detalhes"
+                        data-id="${escaparHTML(livro.id)}">
+                        Ver detalhes
+                    </button>
+
+                    <button
+                        class="favorito ${ehFavorito ? "ativo" : ""}"
+                        data-acao="favorito"
+                        data-id="${escaparHTML(livro.id)}"
+                        aria-label="${ehFavorito
+                            ? "Remover dos favoritos"
+                            : "Adicionar aos favoritos"}">
+                        ${ehFavorito ? "♥" : "♡"}
+                    </button>
+
+                </div>
+            `;
+
+            return artigo;
+        }
+
+        /* ==================================
+           6. PESQUISA, FILTROS E ORDENAÇÃO
+        =================================== */
+
+        function obterLivrosFiltrados() {
+            let resultado = [...livros];
+
+            const termo = pesquisa.value
+                .trim()
+                .toLocaleLowerCase("pt-BR");
+
+            const categoria = filtroCategoria.value;
+
+            if (termo) {
+                resultado = resultado.filter(function (livro) {
+                    const texto = [
+                        livro.titulo,
+                        livro.autor,
+                        livro.categoria,
+                        livro.codigo,
+                        livro.descricao
+                    ].join(" ").toLocaleLowerCase("pt-BR");
+
+                    return texto.includes(termo);
+                });
+            }
+
+            if (categoria) {
+                resultado = resultado.filter(function (livro) {
+                    return livro.categoria === categoria;
+                });
+            }
+
+            if (somenteFavoritos) {
+                resultado = resultado.filter(function (livro) {
+                    return favoritosSalvos.includes(livro.id);
+                });
+            }
+
+            if (ordenacao.value === "titulo") {
+                resultado.sort(function (a, b) {
+                    return a.titulo.localeCompare(
+                        b.titulo,
+                        "pt-BR"
+                    );
+                });
+            }
+
+            if (ordenacao.value === "autor") {
+                resultado.sort(function (a, b) {
+                    return a.autor.localeCompare(
+                        b.autor,
+                        "pt-BR"
+                    );
+                });
+            }
+
+            if (ordenacao.value === "recentes") {
+                resultado.sort(function (a, b) {
+                    return (b.criadoEm || 0) - (a.criadoEm || 0);
+                });
+            }
+
+            return resultado;
+        }
+
+        function renderizarLivros() {
+            const resultado = obterLivrosFiltrados();
+
+            listaLivros.replaceChildren();
+
+            if (resultado.length === 0) {
+                listaLivros.innerHTML = `
+                    <div class="vazio">
+                        <h3>📚 Nenhum livro encontrado</h3>
+                        <p>
+                            Experimente mudar a pesquisa ou
+                            escolher outra categoria.
+                        </p>
+                    </div>
+                `;
+            } else {
+                resultado.forEach(function (livro) {
+                    listaLivros.appendChild(
+                        criarCartao(livro)
+                    );
+                });
+            }
+
+            document.getElementById(
+                "resultadoPesquisa"
+            ).textContent =
+                resultado.length + " livro(s) encontrado(s).";
+
+            renderizarFavoritos();
+            atualizarEstatisticas();
+        }
+
+        /* ==================================
+           7. LISTA DE FAVORITOS
+        =================================== */
+
+        function renderizarFavoritos() {
+            listaFavoritos.replaceChildren();
+
+            const favoritos = livros.filter(function (livro) {
+                return favoritosSalvos.includes(livro.id);
+            });
+
+            if (favoritos.length === 0) {
+                listaFavoritos.innerHTML = `
+                    <div class="vazio">
+                        <h3>♡ Sua lista está vazia</h3>
+                        <p>
+                            Clique no coração de um livro
+                            para adicioná-lo aos favoritos.
+                        </p>
+                    </div>
+                `;
+
+                return;
+            }
+
+            favoritos.forEach(function (livro) {
+                listaFavoritos.appendChild(
+                    criarCartao(livro)
+                );
+            });
+        }
+
+        function alternarFavorito(id) {
+            const existe = favoritosSalvos.includes(id);
+
+            if (existe) {
+                favoritosSalvos =
+                    favoritosSalvos.filter(function (item) {
+                        return item !== id;
+                    });
+
+                notificar("Livro removido dos favoritos.");
+            } else {
+                favoritosSalvos.push(id);
+                notificar("Livro adicionado aos favoritos.");
+            }
+
+            salvarLivros();
+            renderizarLivros();
+        }
+
+        /* ==================================
+           8. DETALHES DO LIVRO
+        =================================== */
+
+        function abrirDetalhes(id) {
+            const livro = livros.find(function (item) {
+                return item.id === id;
+            });
+
+            if (!livro) return;
+
+            document.getElementById(
+                "modalTitulo"
+            ).textContent = livro.titulo;
+
+            modalDetalhes.innerHTML = `
+                <p>
+                    <strong>Autor:</strong>
+                    ${escaparHTML(livro.autor)}
+                </p>
+
+                <p>
+                    <strong>Categoria:</strong>
+                    ${escaparHTML(livro.categoria)}
+                </p>
+
+                <p>
+                    <strong>Código:</strong>
+                    ${escaparHTML(livro.codigo || "Não informado")}
+                </p>
+
+                <p>
+                    <strong>Descrição:</strong>
+                    ${escaparHTML(
+                        livro.descricao || "Sem descrição cadastrada."
+                    )}
+                </p>
+            `;
+
+            modalBotoes.replaceChildren();
+
+            if (livro.link) {
+                const link = linkSeguro(livro.link);
+
+                if (link) {
+                    const botaoAbrir =
+                        document.createElement("a");
+
+                    botaoAbrir.className =
+                        "botao botao-principal";
+
+                    botaoAbrir.textContent =
+                        "Abrir publicação ↗";
+
+                    botaoAbrir.href = link;
+                    botaoAbrir.target = "_blank";
+                    botaoAbrir.rel = "noopener noreferrer";
+
+                    modalBotoes.appendChild(botaoAbrir);
+                }
+            }
+
+            const botaoFavorito =
+                document.createElement("button");
+
+            botaoFavorito.className =
+                "botao botao-claro";
+
+            botaoFavorito.textContent =
+                favoritosSalvos.includes(id)
+                    ? "♥ Remover favorito"
+                    : "♡ Adicionar favorito";
+
+            botaoFavorito.addEventListener("click", function () {
+                alternarFavorito(id);
+                abrirDetalhes(id);
+            });
+
+            modalBotoes.appendChild(botaoFavorito);
+
+            if (livro.personalizado) {
+                const botaoExcluir =
+                    document.createElement("button");
+
+                botaoExcluir.className =
+                    "botao botao-perigo";
+
+                botaoExcluir.textContent = "Excluir livro";
+
+                botaoExcluir.addEventListener("click", function () {
+                    excluirLivro(id);
+                });
+
+                modalBotoes.appendChild(botaoExcluir);
+            }
+
+            modal.classList.add("aberto");
+            modal.setAttribute("aria-hidden", "false");
+
+            document.getElementById("fecharModal").focus();
+        }
+
+        function fecharModal() {
+            modal.classList.remove("aberto");
+            modal.setAttribute("aria-hidden", "true");
+        }
+
+        /* ==================================
+           9. EXCLUIR LIVROS CADASTRADOS
+        =================================== */
+
+        function excluirLivro(id) {
+            const livro = livros.find(function (item) {
+                return item.id === id;
+            });
+
+            if (!livro || !livro.personalizado) {
+                notificar("Este livro de exemplo não pode ser excluído.");
+                return;
+            }
+
+            const confirmar = window.confirm(
+                'Deseja excluir "' + livro.titulo + '"?'
+            );
+
+            if (!confirmar) return;
+
+            livros = livros.filter(function (item) {
+                return item.id !== id;
+            });
+
+            favoritosSalvos =
+                favoritosSalvos.filter(function (item) {
+                    return item !== id;
+                });
+
+            salvarLivros();
+            fecharModal();
+            renderizarLivros();
+
+            notificar("Livro excluído do catálogo.");
+        }
+
+        /* ==================================
+           10. CADASTRAR LIVROS
+        =================================== */
+
+        formLivro.addEventListener("submit", function (evento) {
+            evento.preventDefault();
+
+            const titulo =
+                document.getElementById("titulo").value.trim();
+
+            const autor =
+                document.getElementById("autor").value.trim();
+
+            const categoria =
+                document.getElementById("categoria").value;
+
+            const descricao =
+                document.getElementById("descricao").value.trim();
+
+            const link =
+                document.getElementById("linkLivro").value.trim();
+
+            const codigo =
+                document.getElementById("codigoLivro").value.trim();
+
+            if (!titulo || !autor || !categoria) {
+                notificar("Preencha todos os campos obrigatórios.");
+                return;
+            }
+
+            if (link && !linkSeguro(link)) {
+                notificar("Informe um link HTTP ou HTTPS válido.");
+                return;
+            }
+
+            const livro = {
+                id: criarId(),
+                titulo: titulo,
+                autor: autor,
+                categoria: categoria,
+                descricao: descricao,
+                link: link,
+                codigo: codigo,
+                cor: [
+                    "capa-azul",
+                    "capa-laranja",
+                    "capa-verde",
+                    "capa-roxa",
+                    "capa-vermelha",
+                    "capa-marrom"
+                ][Math.floor(Math.random() * 6)],
+                emoji: "📚",
+                favorito: false,
+                personalizado: true,
+                criadoEm: Date.now()
+            };
+
+            livros.push(livro);
+
+            if (!salvarLivros()) {
+                livros = livros.filter(function (item) {
+                    return item.id !== livro.id;
+                });
+
+                return;
+            }
+
+            formLivro.reset();
+
+            pesquisa.value = "";
+            filtroCategoria.value = "";
+            ordenacao.value = "recentes";
+            somenteFavoritos = false;
+
+            renderizarLivros();
+
+            notificar("Livro cadastrado e salvo no navegador!");
+
+            document.getElementById("catalogo").scrollIntoView({
+                behavior: "smooth"
+            });
+        });
+
+        /* ==================================
+           11. EVENTOS DE PESQUISA
+        =================================== */
+
+        pesquisa.addEventListener(
+            "input",
+            renderizarLivros
+        );
+
+        filtroCategoria.addEventListener(
+            "change",
+            renderizarLivros
+        );
+
+        ordenacao.addEventListener(
+            "change",
+            renderizarLivros
+        );
+
+        /* ==================================
+           12. CLIQUES NOS LIVROS
+        =================================== */
+
+        document.addEventListener("click", function (evento) {
+            const botao = evento.target.closest("[data-acao]");
+
+            if (botao) {
+                const acao = botao.dataset.acao;
+                const id = botao.dataset.id;
+
+                if (acao === "detalhes") {
+                    abrirDetalhes(id);
+                }
+
+                if (acao === "favorito") {
+                    alternarFavorito(id);
+                }
+            }
+        });
+
+        /* ==================================
+           13. FILTRO POR CATEGORIA
+        =================================== */
+
+        document.querySelectorAll("[data-filtro]").forEach(
+            function (categoria) {
+                categoria.addEventListener("click", function () {
+                    filtroCategoria.value =
+                        categoria.dataset.filtro;
+
+                    somenteFavoritos = false;
+
+                    renderizarLivros();
+                });
+            }
+        );
+
+        /* ==================================
+           14. BOTÃO DO LIVRO EM DESTAQUE
+        =================================== */
+
+        document.getElementById(
+            "botaoDestaque"
+        ).addEventListener("click", function () {
+            const livro = livros.find(function (item) {
+                return item.titulo.toLowerCase() ===
+                    "o pequeno príncipe".toLowerCase();
+            });
+
+            if (livro) {
+                abrirDetalhes(livro.id);
+            } else {
+                notificar(
+                    "Esse livro não está cadastrado no catálogo."
+                );
+            }
+        });
+
+        /* ==================================
+           15. MENU PARA CELULAR
+        =================================== */
+
+        const menuBotao =
+            document.getElementById("menuBotao");
+
+        const menu =
+            document.getElementById("menu");
+
+        menuBotao.addEventListener("click", function () {
+            const aberto = menu.classList.toggle("aberto");
+
+            menuBotao.setAttribute(
+                "aria-expanded",
+                String(aberto)
+            );
+        });
+
+        menu.querySelectorAll("a").forEach(function (link) {
+            link.addEventListener("click", function () {
+                menu.classList.remove("aberto");
+
+                menuBotao.setAttribute(
+                    "aria-expanded",
+                    "false"
+                );
+            });
+        });
+
+        /* ==================================
+           16. CONTROLES DO MODAL
+        =================================== */
+
+        document.getElementById(
+            "fecharModal"
+        ).addEventListener("click", fecharModal);
+
+        modal.addEventListener("click", function (evento) {
+            if (evento.target === modal) {
+                fecharModal();
+            }
+        });
+
+        document.addEventListener("keydown", function (evento) {
+            if (evento.key === "Escape") {
+                fecharModal();
+            }
+        });
+
+        /* ==================================
+           17. ESTATÍSTICAS
+        =================================== */
+
+        function atualizarEstatisticas() {
+            document.getElementById(
+                "totalLivros"
+            ).textContent = livros.length;
+
+            const categorias = new Set(
+                livros.map(function (livro) {
+                    return livro.categoria;
+                })
+            );
+
+            document.getElementById(
+                "totalCategorias"
+            ).textContent = categorias.size;
+
+            document.getElementById(
+                "totalFavoritos"
+            ).textContent = favoritosSalvos.filter(
+                function (id) {
+                    return livros.some(function (livro) {
+                        return livro.id === id;
+                    });
+                }
+            ).length;
+        }
+
+        /* ==================================
+           18. ANO AUTOMÁTICO
+        =================================== */
+
+        document.getElementById(
+            "anoAtual"
+        ).textContent = new Date().getFullYear();
+
+        /* ==================================
+           19. INICIAR O SITE
+        =================================== */
+
+        renderizarLivros();
+
+    </script>
+
+</body>
+</html>
+

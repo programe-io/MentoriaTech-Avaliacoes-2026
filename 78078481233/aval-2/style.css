@@ -1,0 +1,346 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biblioteca Virtual</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6fb;
+            color: #222;
+        }
+
+        header {
+            background: #14213d;
+            color: white;
+            padding: 25px 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        header h1 {
+            color: #fca311;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 18px;
+        }
+
+        .hero {
+            background: linear-gradient(120deg, #14213d, #284b83);
+            color: white;
+            text-align: center;
+            padding: 75px 20px;
+        }
+
+        .hero h2 {
+            font-size: 36px;
+            margin-bottom: 15px;
+        }
+
+        .hero p {
+            margin-bottom: 25px;
+        }
+
+        .hero input {
+            width: min(450px, 90%);
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+        }
+
+        main {
+            width: 85%;
+            max-width: 1100px;
+            margin: 40px auto;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+        }
+
+        .livros {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 20px;
+        }
+
+        .livro {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px #00000010;
+        }
+
+        .capa {
+            background: #e5eaf5;
+            height: 130px;
+            display: grid;
+            place-items: center;
+            font-size: 48px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .livro h3 {
+            margin-bottom: 10px;
+        }
+
+        .livro p {
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        button {
+            background: #fca311;
+            color: #14213d;
+            border: none;
+            padding: 11px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: #e89500;
+        }
+
+        .cadastro {
+            background: white;
+            padding: 25px;
+            margin-top: 40px;
+            border-radius: 12px;
+        }
+
+        .cadastro input {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin: 12px 0;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        footer {
+            text-align: center;
+            background: #14213d;
+            color: white;
+            padding: 25px;
+            margin-top: 50px;
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            nav a {
+                display: inline-block;
+                margin: 8px;
+            }
+
+            .hero h2 {
+                font-size: 28px;
+            }
+
+            main {
+                width: 92%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>📚 Biblioteca Virtual</h1>
+
+        <nav>
+            <a href="#inicio">Início</a>
+            <a href="#catalogo">Livros</a>
+            <a href="#cadastro">Adicionar livro</a>
+        </nav>
+    </header>
+
+    <section class="hero" id="inicio">
+        <h2>Descubra um mundo de histórias</h2>
+        <p>Explore livros, encontre novas ideias e aprenda todos os dias.</p>
+
+        <input
+            type="search"
+            id="pesquisa"
+            placeholder="Pesquisar por título ou autor..."
+            aria-label="Pesquisar livros"
+        >
+    </section>
+
+    <main>
+        <section id="catalogo">
+            <h2>📖 Nosso catálogo</h2>
+
+            <div class="livros" id="listaLivros">
+
+                <article class="livro"
+                    data-titulo="Dom Casmurro"
+                    data-autor="Machado de Assis">
+                    <div class="capa">📕</div>
+                    <h3>Dom Casmurro</h3>
+                    <p>Autor: Machado de Assis</p>
+                    <button onclick="verLivro(this)">Ver detalhes</button>
+                </article>
+
+                <article class="livro"
+                    data-titulo="O Pequeno Príncipe"
+                    data-autor="Antoine de Saint-Exupéry">
+                    <div class="capa">📘</div>
+                    <h3>O Pequeno Príncipe</h3>
+                    <p>Autor: Antoine de Saint-Exupéry</p>
+                    <button onclick="verLivro(this)">Ver detalhes</button>
+                </article>
+
+                <article class="livro"
+                    data-titulo="A Moreninha"
+                    data-autor="Joaquim Manuel de Macedo">
+                    <div class="capa">📗</div>
+                    <h3>A Moreninha</h3>
+                    <p>Autor: Joaquim Manuel de Macedo</p>
+                    <button onclick="verLivro(this)">Ver detalhes</button>
+                </article>
+
+            </div>
+
+            <p id="mensagem" style="margin-top: 20px;"></p>
+        </section>
+
+        <section class="cadastro" id="cadastro">
+            <h2>➕ Adicionar um livro</h2>
+            <p>Cadastre novos livros no catálogo.</p>
+
+            <form id="formLivro">
+                <input
+                    type="text"
+                    id="titulo"
+                    placeholder="Título do livro"
+                    required
+                >
+
+                <input
+                    type="text"
+                    id="autor"
+                    placeholder="Nome do autor"
+                    required
+                >
+
+                <input
+                    type="url"
+                    id="link"
+                    placeholder="Link do livro (opcional)"
+                >
+
+                <button type="submit">Adicionar livro</button>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2026 Biblioteca Virtual | Conhecimento para todos.</p>
+    </footer>
+
+    <script>
+        const lista = document.getElementById("listaLivros");
+        const pesquisa = document.getElementById("pesquisa");
+        const mensagem = document.getElementById("mensagem");
+        const form = document.getElementById("formLivro");
+
+        // Pesquisar livros por título ou autor
+        pesquisa.addEventListener("input", function () {
+            const termo = pesquisa.value.toLowerCase();
+            let encontrados = 0;
+
+            document.querySelectorAll(".livro").forEach(function (livro) {
+                const texto = livro.innerText.toLowerCase();
+                const corresponde = texto.includes(termo);
+
+                livro.style.display = corresponde ? "" : "none";
+
+                if (corresponde) encontrados++;
+            });
+
+            mensagem.textContent = encontrados === 0
+                ? "Nenhum livro encontrado."
+                : "";
+        });
+
+        // Adicionar um livro ao catálogo
+        form.addEventListener("submit", function (evento) {
+            evento.preventDefault();
+
+            const titulo = document.getElementById("titulo").value.trim();
+            const autor = document.getElementById("autor").value.trim();
+            const link = document.getElementById("link").value.trim();
+
+            if (!titulo || !autor) return;
+
+            const artigo = document.createElement("article");
+            artigo.className = "livro";
+            artigo.dataset.titulo = titulo;
+            artigo.dataset.autor = autor;
+
+            const capa = document.createElement("div");
+            capa.className = "capa";
+            capa.textContent = "📚";
+
+            const nome = document.createElement("h3");
+            nome.textContent = titulo;
+
+            const nomeAutor = document.createElement("p");
+            nomeAutor.textContent = "Autor: " + autor;
+
+            const botao = document.createElement("button");
+            botao.textContent = "Ver detalhes";
+
+            botao.addEventListener("click", function () {
+                if (link) {
+                    window.open(link, "_blank", "noopener,noreferrer");
+                } else {
+                    alert("Livro: " + titulo + "\nAutor: " + autor);
+                }
+            });
+
+            artigo.append(capa, nome, nomeAutor, botao);
+            lista.appendChild(artigo);
+
+            form.reset();
+            pesquisa.dispatchEvent(new Event("input"));
+
+            alert("Livro adicionado com sucesso!");
+        });
+
+        // Mostrar detalhes dos livros de exemplo
+        function verLivro(botao) {
+            const livro = botao.closest(".livro");
+
+            alert(
+                "Título: " + livro.dataset.titulo +
+                "\nAutor: " + livro.dataset.autor
+            );
+        }
+    </script>
+
+</body>
+</html>
