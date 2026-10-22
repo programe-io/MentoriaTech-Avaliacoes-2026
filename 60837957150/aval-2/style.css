@@ -1,18 +1,24 @@
-@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700;800&display=swap');
 
-/* =========================================
-   FLAMENGO | TIE-DYE PRETO E VERMELHO
-========================================= */
 
 :root {
     --red: #ed001b;
-    --red-light: #ff263f;
-    --red-dark: #72000b;
+    --red-dark: #8b0010;
+    --red-light: #ff3048;
     --black: #050505;
-    --card: #101010;
+    --black-soft: #101010;
+    --black-card: #151515;
     --white: #ffffff;
-    --gray: #d0d0d0;
+    --white-soft: #e8e8e8;
+    --gray: #a5a5a5;
+
+    --shadow-red: 0 0 25px rgba(237, 0, 27, 0.28);
+    --shadow-dark: 0 12px 35px rgba(0, 0, 0, 0.55);
+
+    --radius: 16px;
+    --transition: 0.35s ease;
 }
+
+/* ==================== RESET ==================== */
 
 * {
     margin: 0;
@@ -21,400 +27,630 @@
     scroll-behavior: smooth;
 }
 
+html {
+    scroll-padding-top: 100px;
+}
+
 body {
     font-family: 'Poppins', sans-serif;
     color: var(--white);
-    line-height: 1.7;
-    overflow-x: hidden;
     background-color: var(--black);
 
-    /* Fundo tie-dye */
+    /* FUNDO TIE-DYE RUBRO-NEGRO */
     background-image:
-        radial-gradient(ellipse at 10% 10%, #65000b 0%, transparent 35%),
-        radial-gradient(ellipse at 90% 20%, #400008 0%, transparent 35%),
-        radial-gradient(ellipse at 40% 50%, #250006 0%, transparent 40%),
-        radial-gradient(ellipse at 90% 80%, #65000b 0%, transparent 35%),
-        repeating-radial-gradient(
-            ellipse at 50% 50%,
-            #080808 0px,
-            #160307 8px,
-            #300008 13px,
-            #090909 21px,
-            #090909 28px
+        radial-gradient(
+            ellipse at 10% 10%,
+            rgba(237, 0, 27, 0.23),
+            transparent 35%
+        ),
+        radial-gradient(
+            ellipse at 90% 25%,
+            rgba(255, 0, 30, 0.15),
+            transparent 32%
+        ),
+        radial-gradient(
+            ellipse at 50% 70%,
+            rgba(139, 0, 16, 0.19),
+            transparent 42%
+        ),
+        radial-gradient(
+            ellipse at 15% 95%,
+            rgba(237, 0, 27, 0.15),
+            transparent 30%
+        ),
+        repeating-linear-gradient(
+            135deg,
+            #050505 0px,
+            #090909 35px,
+            #170307 70px,
+            #090909 110px,
+            #050505 145px
         );
 
     background-attachment: fixed;
+    line-height: 1.8;
+    overflow-x: hidden;
+}
+
+/* TEXTURA DECORATIVA */
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: -1;
+
+    background:
+        radial-gradient(
+            circle at 20% 30%,
+            rgba(255, 255, 255, 0.035) 1px,
+            transparent 2px
+        ),
+        radial-gradient(
+            circle at 80% 60%,
+            rgba(255, 0, 30, 0.07) 1px,
+            transparent 3px
+        );
+
+    background-size: 35px 35px, 55px 55px;
 }
 
 ::selection {
     background: var(--red);
-    color: white;
+    color: var(--white);
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
 }
 
 img {
+    display: block;
     max-width: 100%;
 }
 
-/* =========================================
-   CABEÇALHO
-========================================= */
+/* ==================== CABEÇALHO ==================== */
 
 header {
     position: relative;
     isolation: isolate;
     overflow: hidden;
     text-align: center;
-    padding: 65px 20px 55px;
+    padding: 85px 25px 75px;
 
     background:
-        radial-gradient(ellipse at center, rgba(237, 0, 27, .30), transparent 70%),
-        linear-gradient(135deg, #030303, #330008, #080808, #250005, #030303);
+        radial-gradient(
+            ellipse at 50% 120%,
+            rgba(237, 0, 27, 0.55),
+            transparent 60%
+        ),
+        linear-gradient(
+            135deg,
+            #080808 0%,
+            #230008 48%,
+            #080808 100%
+        );
 
-    border-bottom: 4px solid var(--red);
-    box-shadow: 0 8px 30px rgba(237, 0, 27, .3);
+    border-bottom: 3px solid var(--red);
+    box-shadow: 0 10px 35px rgba(237, 0, 27, 0.15);
 }
+
+/* EFEITO TIE-DYE NO CABEÇALHO */
 
 header::before {
     content: "";
     position: absolute;
+    inset: -50%;
     z-index: -1;
-    inset: 0;
-    pointer-events: none;
 
     background:
         repeating-radial-gradient(
-            circle at 20% 50%,
-            transparent 0 12px,
-            rgba(255, 0, 35, .09) 14px 17px,
-            transparent 19px 30px
+            ellipse at center,
+            transparent 0,
+            transparent 35px,
+            rgba(237, 0, 27, 0.13) 37px,
+            transparent 42px
         );
-    opacity: .8;
+
+    transform: rotate(-15deg);
+    animation: tieDye 25s linear infinite;
+}
+
+header::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    width: min(350px, 75%);
+    height: 2px;
+    transform: translateX(-50%);
+
+    background: linear-gradient(
+        90deg,
+        transparent,
+        var(--white),
+        var(--red),
+        var(--white),
+        transparent
+    );
+
+    box-shadow: 0 0 18px var(--red);
 }
 
 header h1 {
     font-family: 'Oswald', sans-serif;
-    font-size: clamp(2rem, 5vw, 4rem);
-    line-height: 1.2;
+    font-size: clamp(2.1rem, 5vw, 4.5rem);
     font-weight: 700;
+    line-height: 1.2;
     text-transform: uppercase;
     letter-spacing: 2px;
-    text-shadow: 3px 3px 0 #71000b, 0 0 25px rgba(255, 0, 30, .5);
-    animation: fadeIn 1s ease;
-}
 
-header h1::first-letter {
-    color: var(--red-light);
+    color: var(--white);
+
+    text-shadow:
+        0 0 10px rgba(237, 0, 27, 0.65),
+        3px 3px 0 rgba(237, 0, 27, 0.45);
+
+    animation: fadeDown 0.9s ease both;
 }
 
 header p {
-    margin: 18px auto 0;
     max-width: 750px;
-    color: #eeeeee;
-    font-size: clamp(.9rem, 2vw, 1.15rem);
+    margin: 22px auto 0;
+
+    color: var(--white-soft);
+    font-size: clamp(0.9rem, 2vw, 1.15rem);
     font-weight: 300;
-    font-style: italic;
-    letter-spacing: .5px;
+    letter-spacing: 1px;
+
+    animation: fadeUp 1s ease both;
 }
 
-/* =========================================
-   MENU DE NAVEGAÇÃO
-========================================= */
+/* ==================== MENU DE NAVEGAÇÃO ==================== */
 
 nav {
     position: sticky;
     top: 0;
-    z-index: 1000;
+    z-index: 100;
 
     display: flex;
     justify-content: center;
     align-items: center;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 10px;
 
-    padding: 13px 15px;
-    background: rgba(5, 5, 5, .96);
-    border-bottom: 2px solid var(--red);
-    box-shadow: 0 5px 20px rgba(0, 0, 0, .6);
-    backdrop-filter: blur(12px);
+    padding: 15px 20px;
+
+    background: rgba(5, 5, 5, 0.94);
+    border-bottom: 1px solid rgba(237, 0, 27, 0.55);
+
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
 }
 
 nav a {
     position: relative;
-    color: var(--white);
-    text-decoration: none;
-    text-transform: uppercase;
-    font-size: .9rem;
+    display: inline-block;
+
+    padding: 9px 22px;
+    border: 1px solid transparent;
+    border-radius: 30px;
+
+    color: var(--white-soft);
+    font-size: 0.9rem;
     font-weight: 600;
-    letter-spacing: .5px;
-    padding: 10px 20px;
-    border-radius: 5px;
-    transition: .3s ease;
+    letter-spacing: 0.5px;
+
+    transition: var(--transition);
 }
 
-nav a::after {
+nav a::before {
     content: "";
     position: absolute;
-    bottom: 3px;
     left: 50%;
+    bottom: 4px;
+
     width: 0;
     height: 2px;
-    background: var(--red-light);
+
+    background: var(--white);
     transform: translateX(-50%);
-    transition: width .3s ease;
+    transition: width var(--transition);
 }
 
 nav a:hover {
-    color: var(--red-light);
-    background: rgba(237, 0, 27, .1);
+    color: var(--white);
+    background: linear-gradient(
+        135deg,
+        var(--red),
+        var(--red-dark)
+    );
+
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: var(--shadow-red);
     transform: translateY(-2px);
 }
 
-nav a:hover::after {
-    width: 65%;
+nav a:hover::before {
+    width: 35%;
 }
 
-/* =========================================
-   ESTRUTURA PRINCIPAL
-========================================= */
+/* ==================== ÁREA PRINCIPAL ==================== */
 
 #row {
     display: flex;
     align-items: flex-start;
-    gap: 25px;
+    gap: 30px;
 
-    width: min(1400px, 94%);
-    margin: 35px auto;
+    width: min(1400px, 100%);
+    margin: 45px auto;
+    padding: 0 25px;
 }
 
-/* =========================================
-   BARRA LATERAL
-========================================= */
+/* ==================== BARRA LATERAL ==================== */
 
 aside {
-    flex: 0 0 28%;
+    flex: 0 0 310px;
     min-width: 0;
-    padding: 25px 22px;
+    padding: 27px;
 
     background:
-        linear-gradient(145deg, rgba(20, 20, 20, .98), rgba(4, 4, 4, .98));
+        radial-gradient(
+            ellipse at top left,
+            rgba(237, 0, 27, 0.17),
+            transparent 65%
+        ),
+        linear-gradient(
+            160deg,
+            rgba(25, 25, 25, 0.97),
+            rgba(8, 8, 8, 0.98)
+        );
 
-    border: 1px solid rgba(237, 0, 27, .65);
-    border-radius: 12px;
-    box-shadow: 0 0 25px rgba(237, 0, 27, .12);
+    border: 1px solid rgba(237, 0, 27, 0.35);
+    border-top: 3px solid var(--red);
+    border-radius: var(--radius);
+
+    box-shadow: var(--shadow-dark);
 }
 
 aside h2,
 aside h3 {
+    position: relative;
+    margin: 0 0 15px;
+    padding-bottom: 10px;
+
     font-family: 'Oswald', sans-serif;
-    color: var(--red-light);
-    font-size: 1.8rem;
+    font-size: 1.6rem;
     text-transform: uppercase;
-    line-height: 1.3;
-    margin-bottom: 8px;
+    letter-spacing: 1.5px;
 }
 
 aside h2::after,
 aside h3::after {
     content: "";
-    display: block;
-    width: 65px;
-    height: 4px;
-    margin-top: 6px;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+
+    width: 55px;
+    height: 3px;
+
+    background: linear-gradient(
+        90deg,
+        var(--red),
+        var(--white)
+    );
+
     border-radius: 5px;
-    background: linear-gradient(90deg, var(--red), transparent);
 }
 
 aside h5 {
-    color: #eeeeee;
-    font-size: .95rem;
+    margin-bottom: 17px;
+    color: var(--red-light);
+    font-size: 0.8rem;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 1px;
-    margin: 10px 0 15px;
+    letter-spacing: 2px;
 }
 
 aside p {
-    color: var(--gray);
-    font-size: .92rem;
-    text-align: justify;
-    margin: 15px 0 25px;
+    margin: 18px 0 28px;
+    color: #d0d0d0;
+    font-size: 0.9rem;
+    line-height: 1.9;
 }
 
 aside h3 {
-    margin-top: 25px;
+    margin-top: 30px;
 }
 
-/* =========================================
-   GALERIA LATERAL
-========================================= */
+/* ==================== GALERIA LATERAL ==================== */
 
 .fakeimage {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    width: 100%;
-    min-height: 100px;
-    margin: 14px 0;
-    padding: 8px;
-
-    background: linear-gradient(145deg, #1c1c1c, #080808);
-    border: 1px solid rgba(237, 0, 27, .6);
-    border-radius: 9px;
+    position: relative;
     overflow: hidden;
-    transition: .35s ease;
-}
 
-.fakeimage:hover {
-    transform: translateY(-4px);
-    border-color: var(--red-light);
-    box-shadow: 0 0 20px rgba(237, 0, 27, .3);
+    margin: 17px 0;
+    padding: 5px;
+
+    background: linear-gradient(
+        135deg,
+        var(--red),
+        #1a1a1a,
+        var(--white),
+        var(--red-dark)
+    );
+
+    border-radius: 12px;
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.4);
+
+    transition:
+        transform var(--transition),
+        box-shadow var(--transition);
 }
 
 .fakeimage img {
-    display: block;
     width: 100%;
-    height: 150px;
-    object-fit: contain;
-    border-radius: 5px;
-    transition: transform .4s ease;
+    height: 175px;
+    object-fit: cover;
+
+    border-radius: 8px;
+    background: var(--black-soft);
+
+    transition:
+        transform 0.6s ease,
+        filter 0.6s ease;
+}
+
+.fakeimage:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 28px rgba(237, 0, 27, 0.28);
 }
 
 .fakeimage:hover img {
-    transform: scale(1.05);
+    transform: scale(1.06);
+    filter: contrast(1.08) saturate(1.15);
 }
 
-/* =========================================
-   CONTEÚDO PRINCIPAL
-========================================= */
+/* ==================== CONTEÚDO PRINCIPAL ==================== */
 
 main {
     flex: 1;
     min-width: 0;
-    padding: 15px 25px;
-
-    background: rgba(5, 5, 5, .94);
-    border: 1px solid rgba(237, 0, 27, .65);
-    border-radius: 12px;
-    box-shadow: 0 0 28px rgba(237, 0, 27, .12);
 }
-
-/* =========================================
-   ARTIGOS
-========================================= */
 
 article {
-    padding: 25px 0 30px;
-    border-bottom: 2px solid rgba(237, 0, 27, .7);
-    scroll-margin-top: 85px;
+    position: relative;
+    overflow: hidden;
+
+    margin-bottom: 32px;
+    padding: 32px;
+
+    background:
+        radial-gradient(
+            ellipse at top right,
+            rgba(237, 0, 27, 0.12),
+            transparent 45%
+        ),
+        linear-gradient(
+            145deg,
+            rgba(24, 24, 24, 0.97),
+            rgba(9, 9, 9, 0.98)
+        );
+
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-left: 4px solid var(--red);
+    border-radius: var(--radius);
+
+    box-shadow: var(--shadow-dark);
+
+    transition:
+        border-color var(--transition),
+        transform var(--transition),
+        box-shadow var(--transition);
+
+    animation: fadeUp 0.8s ease both;
 }
 
-article:first-child {
-    padding-top: 10px;
+article::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+
+    width: 150px;
+    height: 150px;
+
+    background: radial-gradient(
+        circle at top right,
+        rgba(237, 0, 27, 0.13),
+        transparent 70%
+    );
+
+    pointer-events: none;
 }
 
-article:last-child {
-    border-bottom: none;
-    padding-bottom: 10px;
+article:hover {
+    border-color: rgba(237, 0, 27, 0.45);
+    border-left-color: var(--red-light);
+
+    box-shadow:
+        0 15px 38px rgba(0, 0, 0, 0.5),
+        -4px 0 20px rgba(237, 0, 27, 0.1);
+
+    transform: translateY(-4px);
 }
+
+/* ==================== TÍTULOS DOS ARTIGOS ==================== */
 
 article h2 {
+    position: relative;
+    z-index: 1;
+
+    margin-bottom: 10px;
+
     font-family: 'Oswald', sans-serif;
-    color: var(--red-light);
-    font-size: clamp(1.5rem, 3vw, 2.1rem);
+    font-size: clamp(1.55rem, 3vw, 2.2rem);
     font-weight: 600;
+
+    line-height: 1.35;
     text-transform: uppercase;
-    line-height: 1.3;
-    margin-bottom: 8px;
-    text-shadow: 0 0 12px rgba(237, 0, 27, .2);
+    letter-spacing: 1px;
+
+    color: var(--white);
 }
 
 article h2::after {
     content: "";
     display: block;
+
     width: 75px;
     height: 4px;
-    background: linear-gradient(90deg, var(--red), transparent);
-    margin-top: 8px;
-    border-radius: 5px;
+
+    margin-top: 13px;
+
+    background: linear-gradient(
+        90deg,
+        var(--red),
+        var(--red-light),
+        transparent
+    );
+
+    border-radius: 10px;
 }
 
 article h5 {
-    display: inline-block;
-    color: #eeeeee;
-    font-size: .9rem;
-    font-weight: 500;
-    margin: 8px 0 14px;
-    padding: 5px 12px;
-    background: rgba(237, 0, 27, .12);
-    border-left: 3px solid var(--red);
-    border-radius: 0 5px 5px 0;
+    margin: 15px 0 20px;
+
+    color: var(--red-light);
+    font-size: 0.78rem;
+    font-weight: 600;
+
+    text-transform: uppercase;
+    letter-spacing: 2px;
 }
 
-article p {
-    color: #d4d4d4;
-    font-size: .96rem;
-    line-height: 1.9;
-    margin-top: 12px;
-    text-align: justify;
-}
-
-/* IMAGENS DOS ARTIGOS */
+/* ==================== IMAGENS DOS ARTIGOS ==================== */
 
 article img {
-    display: block;
     width: 100%;
-    max-width: 500px;
-    height: 260px;
+    max-height: 430px;
     object-fit: cover;
-    margin: 12px 0 18px;
 
-    border: 1px solid rgba(237, 0, 27, .65);
-    border-radius: 9px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, .45);
-    transition: .35s ease;
+    margin: 22px 0;
+
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 12px;
+
+    background: var(--black-soft);
+
+    box-shadow:
+        0 8px 25px rgba(0, 0, 0, 0.4),
+        0 0 0 3px rgba(237, 0, 27, 0.06);
+
+    transition:
+        transform 0.5s ease,
+        filter 0.5s ease,
+        box-shadow 0.5s ease;
 }
 
 article img:hover {
-    border-color: var(--red-light);
-    box-shadow: 0 0 22px rgba(237, 0, 27, .25);
-    transform: scale(1.01);
+    transform: scale(1.015);
+    filter: saturate(1.12) contrast(1.04);
+
+    box-shadow:
+        0 12px 35px rgba(0, 0, 0, 0.5),
+        0 0 18px rgba(237, 0, 27, 0.2);
 }
 
-/* =========================================
-   RODAPÉ
-========================================= */
+/* ==================== TEXTO ==================== */
+
+article p {
+    position: relative;
+    z-index: 1;
+
+    margin-top: 18px;
+
+    color: #d7d7d7;
+    font-size: 0.97rem;
+    font-weight: 300;
+    line-height: 2;
+
+    text-align: justify;
+    overflow-wrap: anywhere;
+}
+
+article p::first-letter {
+    color: var(--red-light);
+    font-size: 1.45em;
+    font-weight: 700;
+}
+
+/* ==================== RODAPÉ ==================== */
 
 footer {
     position: relative;
+    overflow: hidden;
+
+    margin-top: 65px;
+    padding: 35px 20px;
+
     text-align: center;
-    padding: 28px 20px;
 
     background:
-        radial-gradient(ellipse at center, rgba(150, 0, 15, .25), transparent 75%),
-        linear-gradient(90deg, #050505, #240005, #050505);
+        radial-gradient(
+            ellipse at center top,
+            rgba(237, 0, 27, 0.19),
+            transparent 70%
+        ),
+        #050505;
 
-    border-top: 3px solid var(--red);
-    box-shadow: 0 -5px 25px rgba(237, 0, 27, .15);
+    border-top: 2px solid var(--red);
+}
+
+footer::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+
+    width: min(250px, 70%);
+    height: 1px;
+
+    background: var(--white);
+    box-shadow: 0 0 15px var(--red);
+
+    transform: translateX(-50%);
 }
 
 footer p {
-    color: #dedede;
-    font-size: .85rem;
-    letter-spacing: .4px;
+    color: #bcbcbc;
+    font-size: 0.83rem;
+    letter-spacing: 0.5px;
 }
 
 footer p::first-letter {
     color: var(--red-light);
 }
 
-/* =========================================
-   ANIMAÇÕES
-========================================= */
+/* ==================== ANIMAÇÕES ==================== */
 
-@keyframes fadeIn {
+@keyframes tieDye {
+    from {
+        transform: rotate(-15deg) scale(1);
+    }
+
+    to {
+        transform: rotate(345deg) scale(1);
+    }
+}
+
+@keyframes fadeUp {
     from {
         opacity: 0;
-        transform: translateY(15px);
+        transform: translateY(22px);
     }
 
     to {
@@ -423,157 +659,151 @@ footer p::first-letter {
     }
 }
 
-/* =========================================
-   TABLETS
-========================================= */
-
-@media screen and (max-width: 900px) {
-    #row {
-        width: 94%;
-        gap: 18px;
+@keyframes fadeDown {
+    from {
+        opacity: 0;
+        transform: translateY(-22px);
     }
 
-    aside {
-        flex-basis: 32%;
-        padding: 20px 15px;
-    }
-
-    main {
-        padding: 15px 20px;
-    }
-
-    nav a {
-        padding: 9px 13px;
-        font-size: .82rem;
-    }
-
-    article img {
-        height: 220px;
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
 
-/* =========================================
-   CELULARES
-========================================= */
+/* ==================== TABLETS ==================== */
 
-@media screen and (max-width: 650px) {
-    body {
-        background-attachment: scroll;
+@media (max-width: 1000px) {
+    #row {
+        gap: 22px;
+        padding: 0 20px;
     }
 
+    aside {
+        flex-basis: 260px;
+        padding: 22px;
+    }
+
+    article {
+        padding: 26px;
+    }
+
+    .fakeimage img {
+        height: 155px;
+    }
+}
+
+/* ==================== CELULARES ==================== */
+
+@media (max-width: 700px) {
     header {
-        padding: 45px 15px 38px;
+        padding: 65px 18px 55px;
     }
 
     header h1 {
-        font-size: 2rem;
         letter-spacing: 1px;
     }
 
     header p {
-        font-size: .88rem;
         line-height: 1.8;
     }
 
     nav {
-        position: relative;
-        gap: 4px;
-        padding: 10px 6px;
+        gap: 6px;
+        padding: 12px 8px;
     }
 
     nav a {
-        font-size: .75rem;
-        padding: 9px 10px;
+        padding: 8px 12px;
+        font-size: 0.78rem;
     }
 
     #row {
         flex-direction: column;
-        width: 92%;
-        margin: 22px auto;
-        gap: 20px;
+        gap: 25px;
+
+        margin: 28px auto;
+        padding: 0 15px;
     }
 
-    aside,
+    aside {
+        flex: auto;
+        width: 100%;
+        padding: 22px;
+    }
+
     main {
         width: 100%;
-        flex: auto;
-        padding: 20px;
-    }
-
-    aside h2,
-    aside h3 {
-        font-size: 1.6rem;
-    }
-
-    .fakeimage img {
-        height: 180px;
     }
 
     article {
-        padding: 22px 0;
-        scroll-margin-top: 15px;
+        padding: 23px 19px;
+        margin-bottom: 23px;
     }
 
     article h2 {
-        font-size: 1.55rem;
+        font-size: 1.65rem;
     }
 
     article p {
-        font-size: .9rem;
-        line-height: 1.85;
+        font-size: 0.91rem;
+        line-height: 1.9;
     }
 
     article img {
-        width: 100%;
+        max-height: 300px;
+        margin: 18px 0;
+    }
+
+    .fakeimage img {
         height: 210px;
-        object-fit: cover;
     }
 
     footer {
-        padding: 22px 12px;
+        margin-top: 40px;
+        padding: 28px 15px;
     }
 
     footer p {
-        font-size: .75rem;
+        font-size: 0.75rem;
+        line-height: 1.8;
     }
 }
 
-/* =========================================
-   CELULARES PEQUENOS
-========================================= */
+/* ==================== CELULARES PEQUENOS ==================== */
 
-@media screen and (max-width: 380px) {
+@media (max-width: 380px) {
     header h1 {
-        font-size: 1.7rem;
+        font-size: 1.8rem;
     }
 
     nav a {
-        font-size: .7rem;
-        padding: 8px;
+        padding: 7px 9px;
+        font-size: 0.72rem;
     }
 
-    aside,
-    main {
-        padding: 15px;
+    article {
+        padding: 19px 15px;
     }
 
     article h2 {
-        font-size: 1.35rem;
+        font-size: 1.4rem;
     }
 
-    article img {
+    .fakeimage img {
         height: 175px;
     }
 }
 
-/* REDUZ ANIMAÇÕES SE O USUÁRIO PREFERIR */
+/* ==================== ACESSIBILIDADE ==================== */
 
 @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
     *::after {
         scroll-behavior: auto !important;
-        animation: none !important;
-        transition: none !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
     }
 }
