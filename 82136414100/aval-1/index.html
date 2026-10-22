@@ -1,0 +1,332 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HorseVendas - Chat de Cavalos</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f1eee8;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+}
+
+.chat {
+    width: 100%;
+    max-width: 430px;
+    height: 650px;
+    background: white;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 8px 30px #0002;
+    display: flex;
+    flex-direction: column;
+}
+
+.header {
+    background: #244b35;
+    color: white;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo {
+    font-size: 35px;
+}
+
+.header h2 {
+    font-size: 20px;
+}
+
+.header p {
+    font-size: 12px;
+    margin-top: 5px;
+    color: #d8e8d9;
+}
+
+.status {
+    color: #a8f0b5;
+}
+
+.produtos {
+    display: flex;
+    gap: 8px;
+    padding: 12px;
+    overflow-x: auto;
+    background: #f8f8f5;
+}
+
+.produto {
+    min-width: 125px;
+    padding: 12px 8px;
+    border: 1px solid #deded5;
+    border-radius: 10px;
+    background: white;
+    text-align: center;
+    cursor: pointer;
+}
+
+.produto:hover {
+    border-color: #244b35;
+    background: #edf5ee;
+}
+
+.produto .cavalo {
+    font-size: 30px;
+}
+
+.produto h4 {
+    margin: 5px 0;
+    color: #244b35;
+}
+
+.produto p {
+    font-size: 12px;
+    color: #555;
+}
+
+.mensagens {
+    flex: 1;
+    padding: 16px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: #fff;
+}
+
+.msg {
+    max-width: 85%;
+    padding: 12px;
+    border-radius: 12px;
+    font-size: 14px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.bot {
+    background: #edf0eb;
+    align-self: flex-start;
+    color: #222;
+    border-bottom-left-radius: 3px;
+}
+
+.usuario {
+    background: #244b35;
+    color: white;
+    align-self: flex-end;
+    border-bottom-right-radius: 3px;
+}
+
+.botoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 10px 12px;
+    border-top: 1px solid #eee;
+}
+
+.botoes button {
+    background: white;
+    border: 1px solid #244b35;
+    color: #244b35;
+    border-radius: 20px;
+    padding: 8px 10px;
+    cursor: pointer;
+}
+
+.botoes button:hover {
+    background: #244b35;
+    color: white;
+}
+
+.formulario {
+    display: flex;
+    gap: 8px;
+    padding: 12px;
+    border-top: 1px solid #eee;
+}
+
+.formulario input {
+    flex: 1;
+    min-width: 0;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 25px;
+    outline: none;
+}
+
+.formulario input:focus {
+    border-color: #244b35;
+}
+
+.formulario button {
+    border: none;
+    background: #244b35;
+    color: white;
+    padding: 0 18px;
+    border-radius: 25px;
+    cursor: pointer;
+}
+
+.rodape {
+    text-align: center;
+    color: #777;
+    font-size: 11px;
+    padding: 8px;
+    background: #fafaf8;
+}
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+<div class="chat">
+
+    <header class="header">
+        <div class="logo">🐎</div>
+        <div>
+            <h2>HorseVendas</h2>
+            <p><span class="status">●</span> Atendimento de vendas</p>
+        </div>
+    </header>
+
+    <div class="produtos">
+        <div class="produto" onclick="escolherCavalo('Quarto de Milha')">
+            <div class="cavalo">🐎</div>
+            <h4>Quarto de Milha</h4>
+            <p>Consultar preço</p>
+        </div>
+
+        <div class="produto" onclick="escolherCavalo('Mangalarga Marchador')">
+            <div class="cavalo">🐴</div>
+            <h4>Mangalarga</h4>
+            <p>Consultar preço</p>
+        </div>
+
+        <div class="produto" onclick="escolherCavalo('Pônei')">
+            <div class="cavalo">🐎</div>
+            <h4>Pônei</h4>
+            <p>Consultar preço</p>
+        </div>
+    </div>
+
+    <div class="mensagens" id="mensagens">
+        <div class="msg bot">
+            Olá! Seja bem-vindo à HorseVendas! 🐎<br><br>
+            Aqui você pode encontrar seu próximo cavalo.
+            Como posso ajudar?
+        </div>
+    </div>
+
+    <div class="botoes">
+        <button onclick="respostaRapida('Quero comprar um cavalo')">
+            🐎 Comprar
+        </button>
+        <button onclick="respostaRapida('Quero vender meu cavalo')">
+            💰 Vender
+        </button>
+        <button onclick="respostaRapida('Quais são os preços?')">
+            💵 Preços
+        </button>
+    </div>
+
+    <form class="formulario" id="formulario">
+        <input
+            type="text"
+            id="entrada"
+            placeholder="Digite sua mensagem..."
+            autocomplete="off"
+            required
+        >
+        <button type="submit">Enviar</button>
+    </form>
+
+    <div class="rodape">
+        HorseVendas © 2026 — Conectando você ao mundo dos cavalos
+    </div>
+
+</div>
+
+<script>
+const mensagens = document.getElementById("mensagens");
+const formulario = document.getElementById("formulario");
+const entrada = document.getElementById("entrada");
+
+function adicionarMensagem(texto, tipo) {
+    const mensagem = document.createElement("div");
+    mensagem.className = "msg " + tipo;
+    mensagem.textContent = texto;
+    mensagens.appendChild(mensagem);
+    mensagens.scrollTop = mensagens.scrollHeight;
+}
+
+function escolherCavalo(nome) {
+    entrada.value = "Quero saber mais sobre " + nome;
+    enviarMensagem();
+}
+
+function respostaRapida(texto) {
+    entrada.value = texto;
+    enviarMensagem();
+}
+
+formulario.addEventListener("submit", function(evento) {
+    evento.preventDefault();
+    enviarMensagem();
+});
+
+function enviarMensagem() {
+    const texto = entrada.value.trim();
+
+    if (!texto) return;
+
+    adicionarMensagem(texto, "usuario");
+    entrada.value = "";
+
+    const pergunta = texto.toLowerCase();
+    let resposta = "";
+
+    if (pergunta.includes("comprar")) {
+        resposta = "Ótimo! 🐎 Qual raça você procura? Temos opções como Quarto de Milha, Mangalarga Marchador e pôneis. Qual é a sua preferência?";
+    } else if (pergunta.includes("vender")) {
+        resposta = "Você pode anunciar seu cavalo conosco! Informe a raça, idade, cidade e preço desejado para começar a preparar o anúncio.";
+    } else if (pergunta.includes("preço") || pergunta.includes("precos")) {
+        resposta = "O preço depende da raça, idade, treinamento, saúde e linhagem do animal. Qual raça você gostaria de consultar?";
+    } else if (pergunta.includes("quarto de milha")) {
+        resposta = "O Quarto de Milha é muito procurado para trabalho no campo e esportes equestres. 🐎 Entre em contato com o vendedor para consultar preço, idade e documentação.";
+    } else if (pergunta.includes("mangalarga")) {
+        resposta = "O Mangalarga Marchador é conhecido por sua marcha confortável. Quer consultar animais disponíveis? Informe sua cidade e faixa de preço.";
+    } else if (pergunta.includes("pônei") || pergunta.includes("ponei")) {
+        resposta = "Os pôneis podem ser uma opção para diferentes finalidades, dependendo do animal e da experiência do comprador. Você procura um pônei para companhia ou outra finalidade?";
+    } else if (pergunta.includes("cidade") || pergunta.includes("local")) {
+        resposta = "Em qual cidade ou estado você está procurando cavalos? Assim você poderá encontrar vendedores da sua região.";
+    } else if (pergunta.includes("olá") || pergunta.includes("ola") || pergunta.includes("oi")) {
+        resposta = "Olá! 👋 Você deseja comprar um cavalo, anunciar um animal ou consultar preços?";
+    } else {
+        resposta = "Obrigado pela mensagem! 🐴 Para ajudar melhor, diga se você quer comprar, vender, conhecer as raças ou consultar preços.";
+    }
+
+    setTimeout(function() {
+        adicionarMensagem(resposta, "bot");
+    }, 400);
+}
+</script>
+
+<script src="script.js"></script></body>
+</html>
