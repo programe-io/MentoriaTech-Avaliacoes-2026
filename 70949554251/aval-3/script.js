@@ -1,5 +1,4 @@
 
-
 document.addEventListener("DOMContentLoaded", () => {
     const cards = document.querySelectorAll(".moto-card");
     const searchInput = document.getElementById("searchInput");
