@@ -1,0 +1,57 @@
+*{
+        margin: 0;
+        }
+
+        header{
+            background-color: rgb(184, 1, 1);
+                padding: 40px;
+                    text-align: center;
+                    }
+
+                    h2{
+                        color:red;
+                            font-size: 3em; 
+                            }
+
+                            h1{
+                                color: aliceblue;
+                                    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+                                        font-size: 5em;
+                                        }
+
+                                        p{
+                                            font-size:2em ;
+
+                                            }
+
+                                            main{
+                                                width: 70%;
+                                                    background-color: rgb(255, 255, 255);
+                                                        margin: auto;
+                                                            border-radius: 20px;
+                                                                padding: 30px;
+
+                                                                }
+
+                                                                div{
+                                                                    display: flex;
+                                                                    }
+
+                                                                    img{
+                                                                        margin: 10px;
+                                                                            margin-left: 150px;
+                                                                            }
+
+                                                                            footer{
+                                                                                background-color: red;
+                                                                                    text-align: center;
+                                                                                    }
+
+                                                                                    footer p{
+                                                                                        color: aliceblue;
+                                                                                        }
+
+                                                                                        footer a{
+                                                                                            color: aliceblue;
+                                                                                            }
+}
