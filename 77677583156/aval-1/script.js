@@ -1,1 +1,4 @@
-<script src="script.js"></script>
+function mostrarMensagem() {
+  document.getElementById("mensagem").textContent =
+    "Parabéns! Você está aprendendo programação!";
+}
