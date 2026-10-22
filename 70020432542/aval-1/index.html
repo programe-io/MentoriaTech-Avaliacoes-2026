@@ -1,144 +1,116 @@
 
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StockFlow | Gerenciador de Estoque</title>
+    <title>TaskUp - Gerenciador de Tarefas</title>
     <link rel="stylesheet" href="style.css">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="style.css" rel="stylesheet"></head>
 <body>
 
-    <aside class="sidebar">
-        <h2>📦 StockFlow</h2>
-        <p class="menu-title">MENU PRINCIPAL</p>
-        <a href="#inicio" class="menu active">▦ Visão geral</a>
-        <a href="#cadastro" class="menu">＋ Cadastrar produto</a>
-        <a href="#estoque" class="menu">☷ Estoque</a>
-        <div class="sidebar-footer">Sistema de estoque<br>Versão 1.0</div>
-    </aside>
+    <header class="topo">
+        <div class="logo">Task<span>Up.</span></div>
+        <span class="etiqueta">ORGANIZE SEU DIA</span>
+    </header>
 
-    <main class="content" id="inicio">
-        <header>
+    <main class="container">
+        <section class="boas-vindas">
             <div>
-                <p class="subtitle">PAINEL DE CONTROLE</p>
-                <h1>Gerenciador de Estoque</h1>
-                <p class="description">
-                    Controle seus produtos de forma simples e organizada.
+                <p class="subtitulo">SEU ESPAÇO DE PRODUTIVIDADE</p>
+                <h1>Organize suas tarefas.</h1>
+                <p class="descricao">
+                    Planeje suas atividades e acompanhe seu progresso.
                 </p>
             </div>
-            <span class="status">● Sistema ativo</span>
-        </header>
+            <div class="icone-principal">✓</div>
+        </section>
 
-        <section class="cards">
-            <div class="card">
-                <p>Produtos cadastrados</p>
-                <h2 id="totalProdutos">0</h2>
-                <span>Total de itens diferentes</span>
+        <section class="resumo">
+            <div class="resumo-card">
+                <span>Total de tarefas</span>
+                <strong id="totalTarefas">0</strong>
             </div>
-
-            <div class="card">
-                <p>Unidades em estoque</p>
-                <h2 id="totalUnidades">0</h2>
-                <span>Quantidade disponível</span>
+            <div class="resumo-card">
+                <span>Pendentes</span>
+                <strong id="totalPendentes">0</strong>
             </div>
-
-            <div class="card">
-                <p>Valor do estoque</p>
-                <h2 id="valorEstoque">R$ 0,00</h2>
-                <span>Valor total dos produtos</span>
+            <div class="resumo-card">
+                <span>Concluídas</span>
+                <strong id="totalConcluidas">0</strong>
             </div>
         </section>
 
-        <section class="panel" id="cadastro">
-            <div class="panel-header">
+        <section class="painel">
+            <div class="titulo-secao">
                 <div>
-                    <h2>Novo produto</h2>
-                    <p>Preencha os dados para cadastrar um item.</p>
+                    <h2>Nova tarefa</h2>
+                    <p>Adicione uma atividade à sua lista.</p>
                 </div>
-                <span class="number">01</span>
+                <span class="numero">01</span>
             </div>
 
-            <form id="formProduto">
-                <div class="form-grid">
-                    <div class="field description-field">
-                        <label for="descricao">Nome do produto</label>
-                        <input
-                            type="text"
-                            id="descricao"
-                            placeholder="Ex.: Teclado mecânico"
-                            required
-                        >
-                    </div>
-
-                    <div class="field">
-                        <label for="quantidade">Quantidade</label>
-                        <input
-                            type="number"
-                            id="quantidade"
-                            min="1"
-                            step="1"
-                            placeholder="Ex.: 10"
-                            required
-                        >
-                    </div>
-
-                    <div class="field">
-                        <label for="valor">Preço unitário (R$)</label>
-                        <input
-                            type="number"
-                            id="valor"
-                            min="0"
-                            step="0.01"
-                            placeholder="Ex.: 149,90"
-                            required
-                        >
-                    </div>
+            <form id="formTarefa">
+                <div class="campo">
+                    <label for="titulo">Título da tarefa</label>
+                    <input
+                        type="text"
+                        id="titulo"
+                        placeholder="Ex.: Estudar JavaScript"
+                        required
+                    >
                 </div>
 
-                <button type="submit" class="btn-primary">
-                    + Cadastrar produto
+                <div class="campo">
+                    <label for="prioridade">Nível de prioridade</label>
+                    <select id="prioridade" required>
+                        <option value="1">1 - Alta</option>
+                        <option value="2" selected>2 - Média</option>
+                        <option value="3">3 - Baixa</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="botao-principal">
+                    + Adicionar tarefa
                 </button>
             </form>
+
+            <p id="mensagem" role="status"></p>
         </section>
 
-        <section class="panel" id="estoque">
-            <div class="panel-header">
+        <section class="painel lista-painel">
+            <div class="titulo-secao">
                 <div>
-                    <h2>Produtos em estoque</h2>
-                    <p>Consulte e atualize seus produtos cadastrados.</p>
+                    <h2>Minhas tarefas</h2>
+                    <p>Gerencie suas atividades abaixo.</p>
                 </div>
-                <span class="number">02</span>
+                <span class="numero">02</span>
             </div>
 
-            <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>CÓDIGO</th>
-                            <th>PRODUTO</th>
-                            <th>QUANTIDADE</th>
-                            <th>PREÇO</th>
-                            <th>VALOR TOTAL</th>
-                            <th>AÇÕES</th>
-                        </tr>
-                    </thead>
-                    <tbody id="listaProdutos">
-                        <tr>
-                            <td colspan="6" class="empty">
-                                Nenhum produto cadastrado.
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div class="filtros">
+                <button type="button" class="filtro ativo" data-filtro="todas">
+                    Todas
+                </button>
+                <button type="button" class="filtro" data-filtro="pendentes">
+                    Pendentes
+                </button>
+                <button type="button" class="filtro" data-filtro="concluidas">
+                    Concluídas
+                </button>
             </div>
-            <p id="mensagem" class="message" role="status"></p>
+
+            <div id="listaTarefas" class="lista-tarefas">
+                <div class="vazio">
+                    <div class="vazio-icone">☰</div>
+                    <p>Nenhuma tarefa cadastrada.</p>
+                    <span>Adicione sua primeira atividade acima.</span>
+                </div>
+            </div>
         </section>
 
         <footer>
-            StockFlow © 2026 — Gerenciamento de produtos
+            TaskUp © 2026 · Feito para organizar sua rotina
         </footer>
     </main>
 
