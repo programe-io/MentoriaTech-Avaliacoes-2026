@@ -1,0 +1,216 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>FinanSmart - Controle Financeiro</title>
+
+  <!-- Arquivo CSS separado -->
+  <link rel="stylesheet" href="style.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+  <header>
+    <div class="logo">FinanSmart.</div>
+    <div class="perfil">Minha conta</div>
+  </header>
+
+  <main>
+    <section class="boas-vindas">
+      <div>
+        <h1>Visão geral financeira</h1>
+        <p class="subtitulo">
+          Acompanhe suas receitas, despesas e seu saldo.
+        </p>
+      </div>
+
+      <a href="#novo-lancamento" class="botao">
+        + Novo lançamento
+      </a>
+    </section>
+
+    <section class="resumo">
+      <div class="cartao saldo">
+        <p>Saldo atual</p>
+        <h2 id="saldo">R$ 0,00</h2>
+      </div>
+
+      <div class="cartao receitas">
+        <p>Receitas</p>
+        <h2 class="verde" id="receitas">R$ 0,00</h2>
+      </div>
+
+      <div class="cartao despesas">
+        <p>Despesas</p>
+        <h2 class="vermelho" id="despesas">R$ 0,00</h2>
+      </div>
+    </section>
+
+    <section class="conteudo">
+      <div class="cartao" id="novo-lancamento">
+        <h2 class="secao-titulo">Novo lançamento</h2>
+
+        <form id="formulario">
+          <div class="campo">
+            <label for="descricao">Descrição</label>
+            <input
+              type="text"
+              id="descricao"
+              placeholder="Ex.: Salário, aluguel..."
+              required
+            >
+          </div>
+
+          <div class="campo">
+            <label for="valor">Valor (R$)</label>
+            <input
+              type="number"
+              id="valor"
+              placeholder="0,00"
+              min="0.01"
+              step="0.01"
+              required
+            >
+          </div>
+
+          <div class="campo">
+            <label for="tipo">Tipo de lançamento</label>
+            <select id="tipo">
+              <option value="receita">Receita</option>
+              <option value="despesa">Despesa</option>
+            </select>
+          </div>
+
+          <div class="campo">
+            <label for="categoria">Categoria</label>
+            <select id="categoria">
+              <option>Salário</option>
+              <option>Vendas</option>
+              <option>Alimentação</option>
+              <option>Moradia</option>
+              <option>Transporte</option>
+              <option>Lazer</option>
+              <option>Saúde</option>
+              <option>Outros</option>
+            </select>
+          </div>
+
+          <button type="submit" class="botao-enviar">
+            Adicionar lançamento
+          </button>
+        </form>
+      </div>
+
+      <div class="cartao">
+        <h2 class="secao-titulo">Últimos lançamentos</h2>
+        <div id="lista">
+          <p class="vazio">Nenhum lançamento cadastrado.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    FinanSmart © 2026 — Seu dinheiro, sob controle.
+  </footer>
+
+  <script>
+    const formulario = document.getElementById("formulario");
+    const lista = document.getElementById("lista");
+
+    let lancamentos = [];
+
+    const moeda = valor =>
+      valor.toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL"
+      });
+
+    function atualizarPainel() {
+      const receitas = lancamentos
+        .filter(item => item.tipo === "receita")
+        .reduce((total, item) => total + item.valor, 0);
+
+      const despesas = lancamentos
+        .filter(item => item.tipo === "despesa")
+        .reduce((total, item) => total + item.valor, 0);
+
+      document.getElementById("saldo").textContent =
+        moeda(receitas - despesas);
+
+      document.getElementById("receitas").textContent =
+        moeda(receitas);
+
+      document.getElementById("despesas").textContent =
+        moeda(despesas);
+
+      lista.replaceChildren();
+
+      if (lancamentos.length === 0) {
+        const vazio = document.createElement("p");
+        vazio.className = "vazio";
+        vazio.textContent = "Nenhum lançamento cadastrado.";
+        lista.appendChild(vazio);
+        return;
+      }
+
+      [...lancamentos].reverse().forEach(item => {
+        const linha = document.createElement("div");
+        linha.className = "transacao";
+
+        const info = document.createElement("div");
+        const nome = document.createElement("strong");
+        nome.textContent = item.descricao;
+
+        const detalhe = document.createElement("small");
+        detalhe.textContent = item.categoria;
+
+        info.append(nome, detalhe);
+
+        const ladoDireito = document.createElement("div");
+        ladoDireito.className = "valor";
+
+        const valor = document.createElement("div");
+        valor.className =
+          item.tipo === "receita" ? "verde" : "vermelho";
+
+        valor.textContent =
+          (item.tipo === "receita" ? "+ " : "- ") +
+          moeda(item.valor);
+
+        ladoDireito.appendChild(valor);
+        linha.append(info, ladoDireito);
+        lista.appendChild(linha);
+      });
+    }
+
+    formulario.addEventListener("submit", evento => {
+      evento.preventDefault();
+
+      const descricao =
+        document.getElementById("descricao").value.trim();
+
+      const valor =
+        Number(document.getElementById("valor").value);
+
+      const tipo = document.getElementById("tipo").value;
+      const categoria = document.getElementById("categoria").value;
+
+      if (!descricao || !Number.isFinite(valor) || valor <= 0) {
+        alert("Informe uma descrição e um valor válido.");
+        return;
+      }
+
+      lancamentos.push({ descricao, valor, tipo, categoria });
+
+      atualizarPainel();
+      formulario.reset();
+    });
+
+    atualizarPainel();
+  </script>
+</body>
+</html>
