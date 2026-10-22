@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet">
+</head>
+<body>
+  
+"use strict";
+
+/* ========================================
+   ESTOQUEPRO - JAVASCRIPT
+   Cadastro, estoque, movimentações e relatórios
+   ======================================== */
+
+const STORAGE_PRODUTOS = "estoquepro_produtos_v1";
+const STORAGE_MOVIMENTOS = "estoquepro_movimentos_v1";
+
+let produtos = carregarDados(STORAGE_PRODUTOS);
+let movimentos = carregarDados(STORAGE_MOVIMENTOS);
+
+// ---------- ARMAZENAMENTO ----------
+
+function carregarDados(chave) {
+  try {
+    const dados = JSON.parse(localStorage.getItem(chave) || "[]");
+    return Array.isArray(dados) ? dados : [];
+  } catch {
+    return [];
+  }
+}
+
+function salvarDados() {
+  try {
+    localStorage.setItem(STORAGE_PRODUTOS, JSON.stringify(produtos));
+    localStorage.setItem(STORAGE_MOVIMENTOS, JSON.stringify(movimentos));
+    return true;
+  } catch (erro) {
+    alert("Erro ao salvar. Verifique o armazenamento do navegador.");
+    console.error(erro);
+    return false;
+  }
+}
+
+function gerarId() {
+  return crypto.randomUUID
+    ? crypto.randomUUID()
+    : Date.now().toString(36) + Math.random().toString(36).slice(2);
+}
+
+// ---------- UTILITÁRIOS ----------
+
+function formatarMoeda(valor) {
+  return Number(valor).toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL"
+  });
+}
+
+function formatarData(data) {
+  return new Date(data).toLocaleString("pt-BR");
+}
+
+function escaparHTML(valor) {
+  return String(valor ?? "").replace(/[&<>"']/g, caractere => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[caractere]);
+}
+
+function obterProduto(id) {
+  return produtos.find(produto => produto.id === id);
+}
+
+function obterStatus(produto) {
+  if (produto.quantidade === 0) {
+    return '<span class="badge out">Sem estoque</span>';
+  }
+
+  if (produto.quantidade <= produto.minimo) {
+    return '<span class="badge low">Estoque baixo</span>';
+  }
+
+  return '<span class="badge ok">Normal</span>';
+}
+
+// ---------- NAVEGAÇÃO ----------
+
+function mostrarPagina(pagina) {
+  document.querySelectorAll(".page").forEach(secao => {
+    secao.classList.add("hidden");
+  });
+
+  const destino = document.getElementById("page-" + pagina);
+
+  if (!destino) return;
+
+  destino.classList.remove("hidden");
+
+  document.querySelectorAll("nav button").forEach(botao => {
+    botao.classList.toggle(
+      "active",
+      botao.dataset.page === pagina
+    );
+  });
+
+  if (pagina === "produtos") renderizarProdutos();
+  if (pagina === "historico") renderizarHistorico();
+}
+
+document.querySelectorAll("nav button").forEach(botao => {
+  botao.addEventListener("click", () => {
+    mostrarPagina(botao.dataset.page);
+  });
+});
+
+// ---------- DASHBOARD ----------
+
+function renderizarDashboard() {
+  const totalProdutos = produtos.length;
+
+  const totalUnidades = produtos.reduce(
+    (total, produto) => total + produto.quantidade,
+    0
+  );
+
+  const valorTotal = produtos.reduce(
+    (total, produto) =>
+      total + produto.quantidade * produto.preco,
+    0
+  );
+
+  const estoqueBaixo = produtos.filter(
+    produto => produto.quantidade <= produto.minimo
+  );
+
+  document.getElementById("totalProdutos").textContent =
+    totalProdutos;
+
+  document.getElementById("totalUnidades").textContent =
+    totalUnidades.toLocaleString("pt-BR");
+
+  document.getElementById("valorEstoque").textContent =
+    formatarMoeda(valorTotal);
+
+  document.getElementById("totalBaixo").textContent =
+    estoqueBaixo.length;
+
+  document.getElementById("alertas").innerHTML =
+    estoqueBaixo.length
+      ? `<p>⚠️ ${estoqueBaixo.length} produto(s) precisam de reposição.</p>`
+      : "<p>✅ Nenhum produto abaixo do estoque mínimo.</p>";
+
+  document.getElementById("tabelaAlertas").innerHTML =
+    estoqueBaixo.map(produto => `
+      <tr>
+        <td>${escaparHTML(produto.nome)}</td>
+        <td>${escaparHTML(produto.categoria || "Sem categoria")}</td>
+        <td>${produto.quantidade}</td>
+        <td>${produto.minimo}</td>
+        <td>${obterStatus(produto)}</td>
+      </tr>
+    `).join("") ||
+    '<tr><td colspan="5" class="empty">Nenhum alerta.</td></tr>';
+}
+
+// ---------- PRODUTOS ----------
+
+function renderizarProdutos() {
+  const campoBusca = document.getElementById("busca");
+  const termo = campoBusca.value.trim().toLowerCase();
+
+  const lista = produtos.filter(produto =>
+    [produto.nome, produto.sku, produto.categoria].some(valor =>
+      String(valor || "").toLowerCase().includes(termo)
+    )
+  );
+
+  document.getElementById("tabelaProdutos").innerHTML =
+    lista.map(produto => `
+      <tr>
+        <td>${escaparHTML(produto.nome)}</td>
+        <td>${escaparHTML(produto.sku)}</td>
+        <td>${escaparHTML(produto.categoria || "—")}</td>
+        <td>${formatarMoeda(produto.preco)}</td>
+        <td>${produto.quantidade}</td>
+        <td>${formatarMoeda(produto.preco * produto.quantidade)}</td>
+        <td>${obterStatus(produto)}</td>
+        <td>
+          <button class="secondary"
+            onclick="editarProduto('${produto.id}')">
+            Editar
+          </button>
+          <button class="danger"
+            onclick="excluirProduto('${produto.id}')">
+            Excluir
+          </button>
+        </td>
+      </tr>
+    `).join("") ||
+    '<tr><td colspan="8" class="empty">Nenhum produto encontrado.</td></tr>';
+
+  document.getElementById("contadorProdutos").textContent =
+    `${lista.length} produto(s) exibido(s) de ${produtos.length}.`;
+}
+
+document.getElementById("busca").addEventListener(
+  "input",
+  renderizarProdutos
+);
+
+function limparFormulario() {
+  const formulario = document.getElementById("formProduto");
+
+  formulario.reset();
+
+  document.getElementById("produtoId").value = "";
+  document.getElementById("quantidade").disabled = false;
+  document.getElementById("minimo").value = 5;
+  document.getElementById("tituloFormulario").textContent =
+    "Cadastrar produto";
+}
+
+function editarProduto(id) {
+  const produto = obterProduto(id);
+
+  if (!produto) return;
+
+  document.getElementById("produtoId").value = produto.id;
+  document.getElementById("nome").value = produto.nome;
+  document.getElementById("sku").value = produto.sku;
+  document.getElementById("categoria").value =
+    produto.categoria || "";
+  document.getElementById("preco").value = produto.preco;
+  document.getElementById("quantidade").value =
+    produto.quantidade;
+  document.getElementById("quantidade").disabled = true;
+  document.getElementById("minimo").value = produto.minimo;
+
+  document.getElementById("tituloFormulario").textContent =
+    "Editar produto";
+
+  mostrarPagina("produtos");
+  document.getElementById("nome").focus();
+}
+
+function excluirProduto(id) {
+  const produto = obterProduto(id);
+
+  if (!produto) return;
+
+  if (movimentos.some(movimento => movimento.produtoId === id)) {
+    alert(
+      "Este produto possui movimentações no histórico e não pode ser excluído."
+    );
+    return;
+  }
+
+  if (!confirm(`Excluir o produto "${produto.nome}"?`)) return;
+
+  const produtosAnteriores = [...produtos];
+
+  produtos = produtos.filter(item => item.id !== id);
+
+  if (!salvarDados()) {
+    produtos = produtosAnteriores;
+    return;
+  }
+
+  atualizarSistema();
+}
+
+document.getElementById("formProduto").addEventListener(
+  "reset",
+  () => {
+    document.getElementById("quantidade").disabled = false;
+  }
+);
+
+document.getElementById("formProduto").addEventListener(
+  "submit",
+  event => {
+    event.preventDefault();
+
+    const id = document.getElementById("produtoId").value;
+    const nome = document.getElementById("nome").value.trim();
+    const sku = document.getElementById("sku").value.trim();
+    const categoria =
+      document.getElementById("categoria").value.trim();
+
+    const preco = Number(document.getElementById("preco").value);
+    const quantidade =
+      Number(document.getElementById("quantidade").value);
+    const minimo = Number(document.getElementById("minimo").value);
+
+    if (
+      !nome ||
+      !sku ||
+      !Number.isFinite(preco) ||
+      preco < 0 ||
+      !Number.isSafeInteger(quantidade) ||
+      quantidade < 0 ||
+      !Number.isSafeInteger(minimo) ||
+      minimo < 0
+    ) {
+      alert("Preencha os campos com valores válidos.");
+      return;
+    }
+
+    const skuExiste = produtos.some(produto =>
+      produto.sku.toLowerCase() === sku.toLowerCase() &&
+      produto.id !== id
+    );
+
+    if (skuExiste) {
+      alert("Este código SKU já está cadastrado.");
+      return;
+    }
+
+    const produtosAnteriores = [...produtos];
+
+    if (id) {
+      const indice = produtos.findIndex(
+        produto => produto.id === id
+      );
+
+      if (indice === -1) {
+        alert("Produto não encontrado.");
+        return;
+      }
+
+      produtos[indice] = {
+        ...produtos[indice],
+        nome,
+        sku,
+        categoria,
+        preco,
+        minimo
+      };
+    } else {
+      produtos.push({
+        id: gerarId(),
+        nome,
+        sku,
+        categoria,
+        preco,
+        quantidade,
+        minimo
+      });
+    }
+
+    if (!salvarDados()) {
+      produtos = produtosAnteriores;
+      return;
+    }
+
+    limparFormulario();
+    atualizarSistema();
+
+    alert(id ? "Produto atualizado!" : "Produto cadastrado!");
+  }
+);
+
+// ---------- SELEÇÃO DE PRODUTOS ----------
+
+function renderizarSelecaoProdutos() {
+  const select = document.getElementById("movProduto");
+  const valorAnterior = select.value;
+
+  select.innerHTML =
+    '<option value="">Selecione um produto</option>' +
+    produtos.map(produto => `
+      <option value="${produto.id}">
+        ${escaparHTML(produto.nome)}
+        (${escaparHTML(produto.sku)})
+        — Estoque: ${produto.quantidade}
+      </option>
+    `).join("");
+
+  if (produtos.some(p => p.id === valorAnterior)) {
+    select.value = valorAnterior;
+  }
+}
+
+// ---------- ENTRADAS E SAÍDAS ----------
+
+document.getElementById("formMovimento").addEventListener(
+  "submit",
+  event => {
+    event.preventDefault();
+
+    const idProduto =
+      document.getElementById("movProduto").value;
+
+    const tipo =
+      document.getElementById("tipoMovimento").value;
+
+    const quantidade =
+      Number(document.getElementById("qtdMovimento").value);
+
+    const motivo =
+      document.getElementById("motivo").value.trim();
+
+    const produto = obterProduto(idProduto);
+
+    if (!produto) {
+      alert("Selecione um produto.");
+      return;
+    }
+
+    if (!Number.isSafeInteger(quantidade) || quantidade < 1) {
+      alert("Informe uma quantidade inteira maior que zero.");
+      return;
+    }
+
+    if (tipo === "saida" && quantidade > produto.quantidade) {
+      alert(
+        `Estoque insuficiente. Quantidade disponível: ${produto.quantidade}.`
+      );
+      return;
+    }
+
+    const saldoAnterior = produto.quantidade;
+
+    const saldoNovo = tipo === "entrada"
+      ? saldoAnterior + quantidade
+      : saldoAnterior - quantidade;
+
+    if (!Number.isSafeInteger(saldoNovo)) {
+      alert("A quantidade informada ultrapassa o limite permitido.");
+      return;
+    }
+
+    const movimento = {
+      id: gerarId(),
+      produtoId: produto.id,
+      nome: produto.nome,
+      sku: produto.sku,
+      tipo,
+      quantidade,
+      motivo,
+      saldo: saldoNovo,
+      data: new Date().toISOString()
+    };
+
+    produto.quantidade = saldoNovo;
+    movimentos.push(movimento);
+
+    if (!salvarDados()) {
+      produto.quantidade = saldoAnterior;
+      movimentos.pop();
+      return;
+    }
+
+    document.getElementById("formMovimento").reset();
+
+    atualizarSistema();
+
+    alert("Movimentação registrada com sucesso!");
+  }
+);
+
+// ---------- HISTÓRICO ----------
+
+function renderizarHistorico() {
+  const lista = [...movimentos].sort(
+    (a, b) => b.data.localeCompare(a.data)
+  );
+
+  document.getElementById("tabelaHistorico").innerHTML =
+    lista.map(movimento => `
+      <tr>
+        <td>${formatarData(movimento.data)}</td>
+        <td>${escaparHTML(movimento.nome)}</td>
+        <td>${escaparHTML(movimento.sku)}</td>
+        <td>
+          ${movimento.tipo === "entrada" ? "Entrada" : "Saída"}
+        </td>
+        <td>
+          ${movimento.tipo === "entrada" ? "+" : "−"}
+          ${movimento.quantidade}
+        </td>
+        <td>${escaparHTML(movimento.motivo || "—")}</td>
+        <td>${movimento.saldo}</td>
+      </tr>
+    `).join("") ||
+    '<tr><td colspan="7" class="empty">Nenhuma movimentação registrada.</td></tr>';
+}
+
+// ---------- EXPORTAÇÃO CSV ----------
+
+function baixarCSV(nomeArquivo, linhas) {
+  const conteudo = "\uFEFF" + linhas.map(linha =>
+    linha.map(valor =>
+      `"${String(valor ?? "").replace(/"/g, '""')}"`
+    ).join(";")
+  ).join("\r\n");
+
+  const arquivo = new Blob([conteudo], {
+    type: "text/csv;charset=utf-8;"
+  });
+
+  const url = URL.createObjectURL(arquivo);
+  const link = document.createElement("a");
+
+  link.href = url;
+  link.download = nomeArquivo;
+  link.click();
+
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+function exportarCSV() {
+  baixarCSV("produtos-estoque.csv", [
+    [
+      "Nome", "SKU", "Categoria", "Preço",
+      "Quantidade", "Estoque mínimo", "Valor total"
+    ],
+    ...produtos.map(produto => [
+      produto.nome,
+      produto.sku,
+      produto.categoria,
+      produto.preco,
+      produto.quantidade,
+      produto.minimo,
+      produto.preco * produto.quantidade
+    ])
+  ]);
+}
+
+function exportarHistorico() {
+  baixarCSV("historico-estoque.csv", [
+    [
+      "Data", "Produto", "SKU", "Tipo",
+      "Quantidade", "Motivo", "Saldo"
+    ],
+    ...movimentos.map(movimento => [
+      formatarData(movimento.data),
+      movimento.nome,
+      movimento.sku,
+      movimento.tipo,
+      movimento.quantidade,
+      movimento.motivo,
+      movimento.saldo
+    ])
+  ]);
+}
+
+// ---------- INICIALIZAÇÃO ----------
+
+function atualizarSistema() {
+  renderizarDashboard();
+  renderizarProdutos();
+  renderizarSelecaoProdutos();
+  renderizarHistorico();
+}
+
+atualizarSistema();
+  <script src="script.js"></script>
+  
+</body>
+</html>
