@@ -1,0 +1,643 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Meu blog pessoal: histórias, experiências e pensamentos.">
+  <title>Meu Cantinho | Blog Pessoal</title>
+
+  <style>
+    /* CONFIGURAÇÕES GERAIS */
+    :root {
+      --fundo: #f7f5f2;
+      --cartao: #ffffff;
+      --texto: #292827;
+      --secundario: #77716d;
+      --destaque: #8064a8;
+      --borda: #e8e2ec;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: var(--fundo);
+      color: var(--texto);
+      line-height: 1.7;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    body.escuro {
+      --fundo: #1e1c24;
+      --cartao: #2b2833;
+      --texto: #f5f1f8;
+      --secundario: #c0b7c8;
+      --destaque: #c4a4f2;
+      --borda: #494151;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button, input, textarea {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    /* CABEÇALHO */
+    header {
+      background: var(--cartao);
+      border-bottom: 1px solid var(--borda);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    nav {
+      max-width: 1000px;
+      margin: auto;
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .logo {
+      font-size: 1.4rem;
+      font-weight: bold;
+      color: var(--destaque);
+    }
+
+    .links {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    .links a:hover {
+      color: var(--destaque);
+    }
+
+    .tema {
+      background: var(--fundo);
+      color: var(--texto);
+      border: 1px solid var(--borda);
+      padding: 7px 12px;
+      border-radius: 20px;
+    }
+
+    /* CONTEÚDO PRINCIPAL */
+    main {
+      max-width: 850px;
+      margin: auto;
+      padding: 35px 20px 60px;
+    }
+
+    .hero {
+      background: var(--cartao);
+      border: 1px solid var(--borda);
+      border-radius: 20px;
+      padding: 45px 30px;
+      text-align: center;
+      margin-bottom: 35px;
+    }
+
+    .avatar {
+      width: 95px;
+      height: 95px;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 18px;
+      background: #eee5f7;
+      border-radius: 50%;
+      font-size: 3rem;
+    }
+
+    .hero h1 {
+      font-size: clamp(1.8rem, 5vw, 2.7rem);
+      line-height: 1.2;
+      margin-bottom: 15px;
+    }
+
+    .hero p {
+      color: var(--secundario);
+      max-width: 550px;
+      margin: 0 auto 22px;
+    }
+
+    .botao {
+      display: inline-block;
+      background: var(--destaque);
+      color: white;
+      border: none;
+      border-radius: 9px;
+      padding: 11px 20px;
+      font-weight: bold;
+      transition: opacity 0.2s;
+    }
+
+    .botao:hover {
+      opacity: 0.82;
+    }
+
+    /* SEÇÕES */
+    section {
+      margin-bottom: 40px;
+      scroll-margin-top: 90px;
+    }
+
+    .titulo-secao {
+      font-size: 1.6rem;
+      margin-bottom: 18px;
+    }
+
+    .sobre, .editor {
+      background: var(--cartao);
+      border: 1px solid var(--borda);
+      border-radius: 15px;
+      padding: 25px;
+    }
+
+    .sobre p + p {
+      margin-top: 12px;
+    }
+
+    /* FORMULÁRIO */
+    form {
+      display: grid;
+      gap: 14px;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    input, textarea {
+      width: 100%;
+      background: var(--fundo);
+      color: var(--texto);
+      border: 1px solid var(--borda);
+      border-radius: 8px;
+      padding: 12px;
+      outline: none;
+    }
+
+    input:focus, textarea:focus {
+      border-color: var(--destaque);
+    }
+
+    textarea {
+      min-height: 130px;
+      resize: vertical;
+    }
+
+    .aviso {
+      color: var(--secundario);
+      font-size: 0.85rem;
+    }
+
+    /* PUBLICAÇÕES */
+    .publicacoes {
+      display: grid;
+      gap: 18px;
+    }
+
+    .post {
+      background: var(--cartao);
+      border: 1px solid var(--borda);
+      border-radius: 15px;
+      padding: 23px;
+      overflow-wrap: anywhere;
+    }
+
+    .post-data {
+      color: var(--secundario);
+      font-size: 0.85rem;
+      margin-bottom: 7px;
+    }
+
+    .post h3 {
+      font-size: 1.3rem;
+      margin-bottom: 10px;
+    }
+
+    .post-texto {
+      white-space: pre-wrap;
+    }
+
+    .post-acoes {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-top: 17px;
+      flex-wrap: wrap;
+    }
+
+    .curtir, .excluir {
+      border: none;
+      background: transparent;
+      color: var(--destaque);
+      font-weight: bold;
+    }
+
+    .excluir {
+      color: #d65b65;
+    }
+
+    .vazio {
+      color: var(--secundario);
+      padding: 20px 0;
+    }
+
+    /* RODAPÉ */
+    footer {
+      text-align: center;
+      color: var(--secundario);
+      border-top: 1px solid var(--borda);
+      padding: 25px 15px;
+    }
+
+    @media (max-width: 600px) {
+      nav {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .links {
+        gap: 12px;
+        font-size: 0.9rem;
+      }
+
+      main {
+        padding: 22px 14px 40px;
+      }
+
+      .hero {
+        padding: 35px 18px;
+      }
+
+      .sobre, .editor, .post {
+        padding: 19px;
+      }
+    }
+  </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+  <!-- CABEÇALHO -->
+  <header>
+    <nav>
+      <a href="#inicio" class="logo">Meu Cantinho ✨</a>
+
+      <div class="links">
+        <a href="#inicio">Início</a>
+        <a href="#sobre">Sobre mim</a>
+        <a href="#escrever">Escrever</a>
+        <a href="#posts">Blog</a>
+        <button class="tema" id="botaoTema"
+          aria-label="Alternar tema">🌙 Tema</button>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <!-- APRESENTAÇÃO -->
+    <section class="hero" id="inicio">
+      <div class="avatar">😊</div>
+
+      <h1>Olá, eu sou <span id="nomeHero">Seu Nome</span>!</h1>
+
+      <p>
+        Seja bem-vindo(a) ao meu cantinho na internet.
+        Aqui compartilho minhas experiências, pensamentos,
+        sonhos e momentos especiais da vida.
+      </p>
+
+      <a href="#posts" class="botao">Conheça minhas histórias ↓</a>
+    </section>
+
+    <!-- SOBRE MIM -->
+    <section id="sobre">
+      <h2 class="titulo-secao">🌻 Sobre mim</h2>
+
+      <div class="sobre">
+        <p>
+          Oi! Meu nome é <strong id="nomeSobre">Seu Nome</strong>
+          e este é o meu espaço pessoal.
+        </p>
+
+        <p id="biografia">
+          Sou uma pessoa que gosta de aprender, descobrir coisas novas
+          e guardar boas lembranças. Criei este blog para compartilhar
+          um pouco de quem sou e das experiências que fazem parte da
+          minha história.
+        </p>
+
+        <p>
+          Acredito que cada experiência nos ensina alguma coisa.
+          Obrigado por estar aqui e conhecer um pouco do meu mundo! 💜
+        </p>
+      </div>
+    </section>
+
+    <!-- FORMULÁRIO DE PUBLICAÇÃO -->
+    <section id="escrever">
+      <h2 class="titulo-secao">✍️ Escreva sua história</h2>
+
+      <div class="editor">
+        <form id="formPost">
+          <div>
+            <label for="nome">Seu nome</label>
+            <input id="nome" type="text"
+              placeholder="Como você gostaria de ser chamado?"
+              maxlength="50" required>
+          </div>
+
+          <div>
+            <label for="bio">Uma breve apresentação</label>
+            <textarea id="bio"
+              placeholder="Conte um pouco sobre você..."
+              maxlength="500" required></textarea>
+          </div>
+
+          <div>
+            <label for="titulo">Título da publicação</label>
+            <input id="titulo" type="text"
+              placeholder="Ex.: Um dia inesquecível"
+              maxlength="100" required>
+          </div>
+
+          <div>
+            <label for="conteudo">Sua experiência</label>
+            <textarea id="conteudo"
+              placeholder="Escreva aqui seus pensamentos, histórias e experiências..."
+              maxlength="5000" required></textarea>
+          </div>
+
+          <button class="botao" type="submit">
+            Publicar no meu blog ✨
+          </button>
+
+          <p class="aviso">
+            Suas publicações ficam salvas neste navegador.
+            Para publicar na internet para outras pessoas, será
+            necessário hospedar o site.
+          </p>
+        </form>
+      </div>
+    </section>
+
+    <!-- LISTA DE PUBLICAÇÕES -->
+    <section id="posts">
+      <h2 class="titulo-secao">📖 Minhas experiências</h2>
+
+      <div class="publicacoes" id="listaPosts">
+        <p class="vazio">Carregando histórias...</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>Feito com carinho por <span id="nomeFooter">Seu Nome</span> 💜</p>
+    <p>© <span id="ano"></span> — Meu Cantinho</p>
+  </footer>
+
+  <script>
+    // ELEMENTOS DA PÁGINA
+    const form = document.getElementById("formPost");
+    const listaPosts = document.getElementById("listaPosts");
+    const botaoTema = document.getElementById("botaoTema");
+
+    // DADOS SALVOS NO NAVEGADOR
+    function carregar(chave, padrao) {
+      try {
+        const valor = localStorage.getItem(chave);
+        return valor === null ? padrao : JSON.parse(valor);
+      } catch {
+        return padrao;
+      }
+    }
+
+    let posts = carregar("meuBlogPosts", []);
+    let curtidas = carregar("meuBlogCurtidas", []);
+    let nomeSalvo = carregar("meuBlogNome", "Seu Nome");
+    let bioSalva = carregar(
+      "meuBlogBio",
+      "Sou uma pessoa que gosta de aprender, descobrir coisas novas e guardar boas lembranças. Criei este blog para compartilhar um pouco de quem sou e das experiências que fazem parte da minha história."
+    );
+
+    function salvar(chave, valor) {
+      try {
+        localStorage.setItem(chave, JSON.stringify(valor));
+        return true;
+      } catch {
+        alert("Não foi possível salvar. Verifique o espaço disponível no navegador.");
+        return false;
+      }
+    }
+
+    // ATUALIZA A APRESENTAÇÃO
+    function atualizarPerfil() {
+      document.getElementById("nomeHero").textContent = nomeSalvo;
+      document.getElementById("nomeSobre").textContent = nomeSalvo;
+      document.getElementById("nomeFooter").textContent = nomeSalvo;
+      document.getElementById("biografia").textContent = bioSalva;
+    }
+
+    atualizarPerfil();
+    document.getElementById("ano").textContent = new Date().getFullYear();
+
+    // FORMATA A DATA
+    function formatarData(data) {
+      return new Date(data).toLocaleDateString("pt-BR", {
+        day: "2-digit",
+        month: "long",
+        year: "numeric"
+      });
+    }
+
+    // CRIA UM ELEMENTO DE TEXTO COM SEGURANÇA
+    function criarElemento(tag, classe, texto) {
+      const elemento = document.createElement(tag);
+      if (classe) elemento.className = classe;
+      elemento.textContent = texto;
+      return elemento;
+    }
+
+    // MOSTRA AS PUBLICAÇÕES
+    function renderizarPosts() {
+      listaPosts.replaceChildren();
+
+      if (posts.length === 0) {
+        listaPosts.appendChild(
+          criarElemento(
+            "p",
+            "vazio",
+            "Ainda não há publicações. Que tal compartilhar sua primeira história? 💜"
+          )
+        );
+        return;
+      }
+
+      posts.forEach((post) => {
+        const cartao = criarElemento("article", "post", "");
+        const data = criarElemento(
+          "p", "post-data", formatarData(post.data)
+        );
+        const titulo = criarElemento("h3", "", post.titulo);
+        const texto = criarElemento(
+          "p", "post-texto", post.conteudo
+        );
+
+        const acoes = criarElemento("div", "post-acoes", "");
+        const botaoCurtir = criarElemento(
+          "button",
+          "curtir",
+          (curtidas.includes(post.id) ? "❤️" : "🤍") +
+          " Curtir (" + (post.curtidas || 0) + ")"
+        );
+
+        botaoCurtir.type = "button";
+        botaoCurtir.setAttribute(
+          "aria-pressed",
+          String(curtidas.includes(post.id))
+        );
+
+        botaoCurtir.addEventListener("click", () => {
+          if (curtidas.includes(post.id)) {
+            curtidas = curtidas.filter(id => id !== post.id);
+            post.curtidas = Math.max(0, (post.curtidas || 0) - 1);
+          } else {
+            curtidas.push(post.id);
+            post.curtidas = (post.curtidas || 0) + 1;
+          }
+
+          salvar("meuBlogCurtidas", curtidas);
+          salvar("meuBlogPosts", posts);
+          renderizarPosts();
+        });
+
+        const botaoExcluir = criarElemento(
+          "button", "excluir", "Excluir publicação"
+        );
+        botaoExcluir.type = "button";
+
+        botaoExcluir.addEventListener("click", () => {
+          const confirmar = confirm(
+            "Tem certeza de que deseja excluir esta publicação?"
+          );
+
+          if (!confirmar) return;
+
+          posts = posts.filter(item => item.id !== post.id);
+          curtidas = curtidas.filter(id => id !== post.id);
+
+          salvar("meuBlogPosts", posts);
+          salvar("meuBlogCurtidas", curtidas);
+          renderizarPosts();
+        });
+
+        acoes.append(botaoCurtir, botaoExcluir);
+        cartao.append(data, titulo, texto, acoes);
+        listaPosts.appendChild(cartao);
+      });
+    }
+
+    // PUBLICA UMA NOVA HISTÓRIA
+    form.addEventListener("submit", (evento) => {
+      evento.preventDefault();
+
+      const nome = document.getElementById("nome").value.trim();
+      const bio = document.getElementById("bio").value.trim();
+      const titulo = document.getElementById("titulo").value.trim();
+      const conteudo = document.getElementById("conteudo").value.trim();
+
+      if (!nome || !bio || !titulo || !conteudo) {
+        alert("Preencha todos os campos antes de publicar.");
+        return;
+      }
+
+      const postNovo = {
+        id: Date.now().toString() + Math.random().toString(36).slice(2),
+        titulo,
+        conteudo,
+        data: new Date().toISOString(),
+        curtidas: 0
+      };
+
+      const postsAnteriores = posts;
+      posts = [postNovo, ...posts];
+
+      const nomeAnterior = nomeSalvo;
+      const bioAnterior = bioSalva;
+
+      nomeSalvo = nome;
+      bioSalva = bio;
+
+      if (
+        !salvar("meuBlogPosts", posts) ||
+        !salvar("meuBlogNome", nomeSalvo) ||
+        !salvar("meuBlogBio", bioSalva)
+      ) {
+        posts = postsAnteriores;
+        nomeSalvo = nomeAnterior;
+        bioSalva = bioAnterior;
+        return;
+      }
+
+      atualizarPerfil();
+      renderizarPosts();
+      form.reset();
+
+      alert("Sua história foi publicada neste navegador! 🎉");
+
+      document.getElementById("posts").scrollIntoView({
+        behavior: "smooth"
+      });
+    });
+
+    // TEMA CLARO E ESCURO
+    let temaEscuro = carregar("meuBlogTema", false);
+
+    function atualizarTema() {
+      document.body.classList.toggle("escuro", temaEscuro);
+      botaoTema.textContent = temaEscuro ? "☀️ Tema" : "🌙 Tema";
+      botaoTema.setAttribute(
+        "aria-pressed",
+        String(temaEscuro)
+      );
+    }
+
+    botaoTema.addEventListener("click", () => {
+      temaEscuro = !temaEscuro;
+      salvar("meuBlogTema", temaEscuro);
+      atualizarTema();
+    });
+
+    atualizarTema();
+    renderizarPosts();
+  </script>
+
+<script src="script.js"></script></body>
+</html>
