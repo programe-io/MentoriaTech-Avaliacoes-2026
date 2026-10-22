@@ -1,0 +1,136 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avaliação | Mentoria Tech</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f1f5f9;
+            margin: 0;
+            padding: 30px 15px;
+        }
+
+        .container {
+            max-width: 650px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px #0001;
+        }
+
+        h1 {
+            color: #2563eb;
+            text-align: center;
+        }
+
+        .questao {
+            margin: 25px 0;
+        }
+
+        label {
+            display: block;
+            margin: 10px 0;
+            cursor: pointer;
+        }
+
+        button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+        }
+
+        #resultado {
+            margin-top: 20px;
+            font-weight: bold;
+            text-align: center;
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+    <div class="container">
+        <h1>Mentoria Tech</h1>
+        <p>Teste seus conhecimentos em tecnologia!</p>
+
+        <form id="prova">
+            <label>Nome do aluno:
+                <input type="text" id="nome" required>
+            </label>
+
+            <div class="questao">
+                <p><strong>1. O que significa HTML?</strong></p>
+                <label><input type="radio" name="q1" value="a" required>
+                    Linguagem de marcação de hipertexto</label>
+                <label><input type="radio" name="q1" value="b">
+                    Linguagem de programação de imagens</label>
+                <label><input type="radio" name="q1" value="c">
+                    Sistema operacional</label>
+            </div>
+
+            <div class="questao">
+                <p><strong>2. Qual tag cria um título principal?</strong></p>
+                <label><input type="radio" name="q2" value="a" required>
+                    &lt;p&gt;</label>
+                <label><input type="radio" name="q2" value="b">
+                    &lt;h1&gt;</label>
+                <label><input type="radio" name="q2" value="c">
+                    &lt;img&gt;</label>
+            </div>
+
+            <div class="questao">
+                <p><strong>3. Qual linguagem estiliza uma página web?</strong></p>
+                <label><input type="radio" name="q3" value="a" required>
+                    HTML</label>
+                <label><input type="radio" name="q3" value="b">
+                    CSS</label>
+                <label><input type="radio" name="q3" value="c">
+                    SQL</label>
+            </div>
+
+            <button type="submit">Finalizar avaliação</button>
+        </form>
+
+        <div id="resultado" aria-live="polite"></div>
+    </div>
+
+    <script>
+        document.getElementById("prova").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            const nome = document.getElementById("nome").value;
+            const respostas = {
+                q1: "a",
+                q2: "b",
+                q3: "b"
+            };
+
+            let pontos = 0;
+
+            for (const pergunta in respostas) {
+                const marcada = document.querySelector(
+                    `input[name="${pergunta}"]:checked`
+                );
+
+                if (marcada && marcada.value === respostas[pergunta]) {
+                    pontos++;
+                }
+            }
+
+            const nota = (pontos / 3) * 10;
+
+            document.getElementById("resultado").textContent =
+                `${nome}, você acertou ${pontos} de 3 questões. Nota: ${nota.toFixed(1)}/10.`;
+        });
+    </script>
+<script src="script.js"></script></body>
+</html>
