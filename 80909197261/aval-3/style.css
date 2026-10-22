@@ -1,0 +1,34 @@
+
+function iniciarCorrida() {
+    const status = document.getElementById("status");
+    const botao = document.querySelector("button");
+
+    // Evita iniciar várias contagens ao mesmo tempo
+    if (botao.disabled) {
+        return;
+    }
+
+    botao.disabled = true;
+    botao.textContent = "🏁 CORRIDA EM ANDAMENTO";
+
+    let contagem = 3;
+
+    status.textContent = "🚦 Largada em " + contagem + "...";
+    status.style.color = "#ffff00";
+
+    const intervalo = setInterval(function() {
+        contagem--;
+
+        if (contagem > 0) {
+            status.textContent = "🚦 Largada em " + contagem + "...";
+        } else {
+            clearInterval(intervalo);
+
+            status.textContent = "🏎️ CORRIDA INICIADA! Boa sorte!";
+            status.style.color = "#00ff66";
+
+            botao.disabled = false;
+            botao.textContent = "🔄 NOVA CORRIDA";
+        }
+    }, 1000);
+}
