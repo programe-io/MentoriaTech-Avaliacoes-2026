@@ -1,0 +1,1472 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta name="description"
+    content="Blog de tecnologia, programação, hardware, Windows, games e informática.">
+
+  <title>BYTE LAB | Tecnologia sem limites</title>
+
+  <style>
+    /* =====================================
+       1. CONFIGURAÇÕES GERAIS
+    ===================================== */
+
+    :root {
+      --bg: #080d18;
+      --surface: #101a2c;
+      --surface2: #15233a;
+      --blue: #38bdf8;
+      --purple: #8b5cf6;
+      --green: #4ade80;
+      --text: #f1f5f9;
+      --muted: #9caec5;
+      --border: rgba(148, 163, 184, .16);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 90px;
+    }
+
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    img {
+      display: block;
+      width: 100%;
+      object-fit: cover;
+    }
+
+    button, input {
+      font: inherit;
+    }
+
+    button, a {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .container {
+      width: min(1160px, 92%);
+      margin: auto;
+    }
+
+    .section {
+      padding: 85px 0;
+    }
+
+    .section-heading {
+      margin-bottom: 30px;
+    }
+
+    .eyebrow {
+      color: var(--blue);
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      font-size: .75rem;
+      font-weight: 800;
+    }
+
+    h2 {
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
+      line-height: 1.2;
+      margin: 8px 0 12px;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .gradient-text {
+      background: linear-gradient(100deg, var(--blue), var(--purple));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    /* =====================================
+       2. MENU SUPERIOR
+    ===================================== */
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(8, 13, 24, .88);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .navbar {
+      min-height: 76px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .logo {
+      font-size: 1.45rem;
+      font-weight: 900;
+      letter-spacing: -1px;
+      white-space: nowrap;
+    }
+
+    .logo span {
+      color: var(--blue);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: .88rem;
+      color: var(--muted);
+      transition: .2s;
+    }
+
+    .nav-links a:hover {
+      color: var(--blue);
+    }
+
+    .menu-toggle {
+      display: none;
+      background: var(--surface);
+      color: white;
+      border: 1px solid var(--border);
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    /* =====================================
+       3. TELA INICIAL E ANIMAÇÃO DO PC
+    ===================================== */
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      min-height: 620px;
+      display: flex;
+      align-items: center;
+      background:
+        radial-gradient(ellipse at 75% 45%,
+          rgba(56, 189, 248, .12), transparent 45%),
+        radial-gradient(ellipse at 20% 10%,
+          rgba(139, 92, 246, .12), transparent 40%);
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.05fr .95fr;
+      align-items: center;
+      gap: 35px;
+      padding: 65px 0;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.7rem, 6vw, 4.6rem);
+      line-height: 1.06;
+      letter-spacing: -2px;
+      margin: 18px 0;
+    }
+
+    .hero p {
+      max-width: 540px;
+      color: var(--muted);
+      font-size: 1.04rem;
+    }
+
+    .hero-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 28px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 19px;
+      border-radius: 9px;
+      border: 1px solid var(--border);
+      font-weight: 750;
+      cursor: pointer;
+      transition: transform .2s, box-shadow .2s;
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+    }
+
+    .btn-primary {
+      color: #04121c;
+      background: linear-gradient(100deg, var(--blue), #818cf8);
+      border: none;
+      box-shadow: 0 0 25px rgba(56, 189, 248, .16);
+    }
+
+    .btn-secondary {
+      background: var(--surface);
+      color: white;
+    }
+
+    /* Computador construído com CSS */
+
+    .pc-scene {
+      min-height: 370px;
+      display: grid;
+      place-items: center;
+      perspective: 900px;
+      position: relative;
+    }
+
+    .pc {
+      width: min(410px, 100%);
+      animation: float-pc 4s ease-in-out infinite;
+      filter: drop-shadow(0 20px 45px rgba(56, 189, 248, .12));
+    }
+
+    .monitor {
+      position: relative;
+      height: 235px;
+      padding: 10px;
+      border: 3px solid #39475c;
+      border-radius: 15px;
+      background: #020617;
+      box-shadow: inset 0 0 20px #000;
+    }
+
+    .screen {
+      height: 100%;
+      overflow: hidden;
+      border-radius: 5px;
+      background:
+        radial-gradient(circle at center,
+          #153a5c, #071324 65%);
+      position: relative;
+      padding: 22px 18px;
+    }
+
+    .screen::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        transparent 0px,
+        transparent 3px,
+        rgba(255,255,255,.025) 4px
+      );
+      pointer-events: none;
+    }
+
+    .code-line {
+      font-family: Consolas, monospace;
+      font-size: clamp(10px, 1.4vw, 14px);
+      color: #7dd3fc;
+      white-space: nowrap;
+      margin: 5px 0;
+      opacity: 0;
+      animation: type-in .6s forwards;
+    }
+
+    .code-line:nth-child(2) { animation-delay: .3s; }
+    .code-line:nth-child(3) { animation-delay: .6s; }
+    .code-line:nth-child(4) { animation-delay: .9s; }
+    .code-line:nth-child(5) { animation-delay: 1.2s; }
+    .code-line:nth-child(6) { animation-delay: 1.5s; }
+
+    .code-purple { color: #c4b5fd; }
+    .code-green { color: #86efac; }
+
+    .monitor-neck {
+      width: 65px;
+      height: 30px;
+      margin: auto;
+      background: linear-gradient(90deg, #202b3d, #56657a, #202b3d);
+    }
+
+    .monitor-base {
+      width: 140px;
+      height: 12px;
+      border-radius: 50%;
+      margin: 0 auto;
+      background: linear-gradient(#64748b, #202b3d);
+    }
+
+    .pc-light {
+      position: absolute;
+      top: 25px;
+      right: 25px;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 12px var(--green);
+      animation: blink 1.5s infinite;
+    }
+
+    .keyboard {
+      width: 230px;
+      height: 13px;
+      border-radius: 4px 4px 10px 10px;
+      margin: 17px auto 0;
+      background: repeating-linear-gradient(
+        90deg, #334155 0 12px, #0f172a 12px 15px
+      );
+      transform: perspective(100px) rotateX(8deg);
+    }
+
+    .floating-chip {
+      position: absolute;
+      right: 0;
+      top: 20px;
+      padding: 10px 14px;
+      border: 1px solid rgba(56, 189, 248, .3);
+      border-radius: 10px;
+      background: rgba(16, 26, 44, .9);
+      color: var(--blue);
+      font-size: .8rem;
+      animation: float-pc 3s ease-in-out infinite reverse;
+    }
+
+    .floating-chip.bottom {
+      left: 0;
+      right: auto;
+      top: auto;
+      bottom: 20px;
+      color: var(--green);
+    }
+
+    @keyframes float-pc {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-12px); }
+    }
+
+    @keyframes blink {
+      50% { opacity: .3; }
+    }
+
+    @keyframes type-in {
+      to { opacity: 1; }
+    }
+
+    /* =====================================
+       4. BARRA DE CATEGORIAS
+    ===================================== */
+
+    .category-strip {
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background: #0b1220;
+    }
+
+    .category-list {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      padding: 20px 0;
+    }
+
+    .category-btn {
+      padding: 9px 15px;
+      color: var(--muted);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 30px;
+      cursor: pointer;
+      transition: .2s;
+    }
+
+    .category-btn:hover,
+    .category-btn.active {
+      color: var(--blue);
+      border-color: var(--blue);
+      background: rgba(56, 189, 248, .08);
+    }
+
+    /* =====================================
+       5. PESQUISA
+    ===================================== */
+
+    .search-box {
+      display: flex;
+      gap: 10px;
+      max-width: 550px;
+      margin: 24px 0;
+    }
+
+    .search-box input {
+      width: 100%;
+      min-width: 0;
+      padding: 13px 15px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      outline: none;
+      color: white;
+    }
+
+    .search-box input:focus {
+      border-color: var(--blue);
+    }
+
+    .search-box button {
+      padding: 0 18px;
+      background: var(--blue);
+      color: #07111d;
+      border: 0;
+      border-radius: 9px;
+      cursor: pointer;
+      font-weight: 800;
+    }
+
+    /* =====================================
+       6. CARTOES DE ARTIGOS
+    ===================================== */
+
+    .articles-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 22px;
+    }
+
+    .article-card {
+      overflow: hidden;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      transition: transform .25s, border-color .25s;
+    }
+
+    .article-card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(56, 189, 248, .5);
+    }
+
+    .article-image {
+      height: 190px;
+      background: var(--surface2);
+      overflow: hidden;
+    }
+
+    .article-image img {
+      height: 100%;
+      transition: transform .4s;
+    }
+
+    .article-card:hover img {
+      transform: scale(1.06);
+    }
+
+    .article-content {
+      padding: 21px;
+    }
+
+    .tag {
+      display: inline-block;
+      font-size: .72rem;
+      color: var(--blue);
+      background: rgba(56, 189, 248, .09);
+      padding: 4px 9px;
+      border-radius: 5px;
+      margin-bottom: 12px;
+    }
+
+    .article-content h3 {
+      font-size: 1.12rem;
+      line-height: 1.4;
+      margin-bottom: 10px;
+    }
+
+    .article-content p {
+      color: var(--muted);
+      font-size: .9rem;
+    }
+
+    .read-more {
+      display: inline-block;
+      margin-top: 17px;
+      color: var(--blue);
+      font-weight: 700;
+      font-size: .9rem;
+    }
+
+    .read-more:hover {
+      text-decoration: underline;
+    }
+
+    .empty-state {
+      color: var(--muted);
+      padding: 25px 0;
+      grid-column: 1 / -1;
+    }
+
+    /* =====================================
+       7. SECOES DE CONTEUDO
+    ===================================== */
+
+    .alt-section {
+      background: #0b1220;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .topics-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 17px;
+    }
+
+    .topic {
+      padding: 24px 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      transition: .25s;
+    }
+
+    .topic:hover {
+      border-color: var(--purple);
+      transform: translateY(-4px);
+    }
+
+    .topic-icon {
+      font-size: 2rem;
+      margin-bottom: 12px;
+    }
+
+    .topic h3 {
+      font-size: 1.05rem;
+      margin-bottom: 8px;
+    }
+
+    .topic p {
+      color: var(--muted);
+      font-size: .87rem;
+    }
+
+    .topic a {
+      display: inline-block;
+      margin-top: 12px;
+      color: var(--blue);
+      font-size: .88rem;
+      font-weight: 700;
+    }
+
+    /* =====================================
+       8. AREA DE APRENDIZADO
+    ===================================== */
+
+    .learning-panel {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 35px;
+      align-items: center;
+      padding: 35px;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background:
+        radial-gradient(circle at top right,
+          rgba(139, 92, 246, .14), transparent 50%),
+        var(--surface);
+    }
+
+    .learning-panel img {
+      height: 300px;
+      border-radius: 12px;
+    }
+
+    .learning-panel ul {
+      padding-left: 20px;
+      margin: 17px 0 24px;
+      color: var(--muted);
+    }
+
+    .learning-panel li {
+      margin: 7px 0;
+    }
+
+    /* =====================================
+       9. NEWSLETTER
+    ===================================== */
+
+    .newsletter {
+      text-align: center;
+      padding: 55px 25px;
+      background:
+        radial-gradient(circle at center,
+          rgba(56, 189, 248, .11), transparent 65%),
+        var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+    }
+
+    .newsletter p {
+      color: var(--muted);
+      margin: 12px auto 22px;
+      max-width: 550px;
+    }
+
+    /* =====================================
+       10. RODAPE
+    ===================================== */
+
+    footer {
+      padding: 40px 0 20px;
+      background: #060a12;
+      border-top: 1px solid var(--border);
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 30px;
+      padding-bottom: 30px;
+    }
+
+    .footer-grid p {
+      color: var(--muted);
+      font-size: .9rem;
+      margin-top: 10px;
+      max-width: 400px;
+    }
+
+    .footer-grid h3 {
+      margin-bottom: 12px;
+    }
+
+    .footer-links {
+      list-style: none;
+    }
+
+    .footer-links li {
+      margin: 7px 0;
+      color: var(--muted);
+      font-size: .9rem;
+    }
+
+    .footer-links a:hover {
+      color: var(--blue);
+    }
+
+    .copyright {
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: .8rem;
+      text-align: center;
+    }
+
+    /* =====================================
+       11. ACESSIBILIDADE E CELULARES
+    ===================================== */
+
+    a:focus-visible,
+    button:focus-visible,
+    input:focus-visible {
+      outline: 2px solid var(--blue);
+      outline-offset: 4px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .hero-grid {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+
+      .hero p {
+        margin: auto;
+      }
+
+      .hero-buttons {
+        justify-content: center;
+      }
+
+      .pc-scene {
+        min-height: 320px;
+      }
+
+      .articles-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .topics-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .floating-chip {
+        right: 4%;
+      }
+
+      .floating-chip.bottom {
+        left: 4%;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .navbar {
+        min-height: 68px;
+      }
+
+      .menu-toggle {
+        display: block;
+      }
+
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 68px;
+        left: 0;
+        right: 0;
+        padding: 20px 4%;
+        background: #0b1220;
+        border-bottom: 1px solid var(--border);
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+      }
+
+      .nav-links.open {
+        display: flex;
+      }
+
+      .nav-links a {
+        display: block;
+        padding: 5px;
+      }
+
+      .hero {
+        min-height: auto;
+      }
+
+      .hero-grid {
+        padding: 55px 0 35px;
+      }
+
+      .hero h1 {
+        letter-spacing: -1px;
+      }
+
+      .pc-scene {
+        min-height: 270px;
+      }
+
+      .monitor {
+        height: 190px;
+      }
+
+      .floating-chip {
+        font-size: .68rem;
+      }
+
+      .section {
+        padding: 60px 0;
+      }
+
+      .articles-grid,
+      .topics-grid,
+      .learning-panel,
+      .footer-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .article-image {
+        height: 210px;
+      }
+
+      .learning-panel {
+        padding: 20px;
+      }
+
+      .learning-panel img {
+        height: 220px;
+      }
+
+      .search-box {
+        flex-wrap: wrap;
+      }
+
+      .search-box button {
+        min-height: 44px;
+      }
+    }
+  </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+  <!-- MENU PRINCIPAL -->
+
+  <header>
+    <div class="container navbar">
+      <a href="#inicio" class="logo">
+        BYTE<span>LAB</span>.
+      </a>
+
+      <button
+        class="menu-toggle"
+        id="menuToggle"
+        aria-label="Abrir menu"
+        aria-expanded="false"
+        aria-controls="navLinks">
+        ☰ Menu
+      </button>
+
+      <nav aria-label="Menu principal">
+        <ul class="nav-links" id="navLinks">
+          <li><a href="#inicio">Início</a></li>
+          <li><a href="#artigos">Artigos</a></li>
+          <li><a href="#categorias">Categorias</a></li>
+          <li><a href="#aprenda">Aprenda</a></li>
+          <li><a href="#sobre">Sobre</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- TELA INICIAL -->
+
+    <section class="hero" id="inicio">
+      <div class="container hero-grid">
+
+        <div>
+          <span class="eyebrow">Seu universo digital</span>
+
+          <h1>
+            Explore o mundo da
+            <span class="gradient-text">tecnologia.</span>
+          </h1>
+
+          <p>
+            Tutoriais, programação, montagem de computadores,
+            hardware, Windows, segurança digital e games.
+            Aprenda tecnologia de um jeito simples e prático.
+          </p>
+
+          <div class="hero-buttons">
+            <a href="#artigos" class="btn btn-primary">
+              Explorar artigos ↗
+            </a>
+
+            <a href="#categorias" class="btn btn-secondary">
+              Ver categorias
+            </a>
+          </div>
+        </div>
+
+        <!-- COMPUTADOR ANIMADO FEITO EM CSS -->
+
+        <div class="pc-scene" aria-label="Ilustração animada de computador">
+          <div class="floating-chip">⚡ PERFORMANCE</div>
+
+          <div class="pc">
+            <div class="monitor">
+              <div class="screen">
+                <div class="pc-light"></div>
+
+                <div class="code-line">
+                  <span class="code-purple">const</span> tecnologia = {
+                </div>
+
+                <div class="code-line">
+                  &nbsp;&nbsp;programacao:
+                  <span class="code-green">"JavaScript"</span>,
+                </div>
+
+                <div class="code-line">
+                  &nbsp;&nbsp;hardware:
+                  <span class="code-green">"PC Gamer"</span>,
+                </div>
+
+                <div class="code-line">
+                  &nbsp;&nbsp;criatividade:
+                  <span class="code-green">true</span>
+                </div>
+
+                <div class="code-line">};</div>
+              </div>
+            </div>
+
+            <div class="monitor-neck"></div>
+            <div class="monitor-base"></div>
+            <div class="keyboard"></div>
+          </div>
+
+          <div class="floating-chip bottom">● SISTEMA ONLINE</div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- CATEGORIAS RAPIDAS -->
+
+    <div class="category-strip">
+      <div class="container category-list">
+        <a href="#programacao" class="category-btn">💻 Programação</a>
+        <a href="#hardware" class="category-btn">🖥️ Hardware</a>
+        <a href="#windows" class="category-btn">⚙️ Windows</a>
+        <a href="#games" class="category-btn">🎮 Games</a>
+        <a href="#redes" class="category-btn">🌐 Redes</a>
+        <a href="#seguranca" class="category-btn">🔒 Segurança</a>
+      </div>
+    </div>
+
+    <!-- ARTIGOS -->
+
+    <section class="section" id="artigos">
+      <div class="container">
+
+        <div class="section-heading">
+          <span class="eyebrow">Conhecimento em destaque</span>
+          <h2>Explore nossos <span class="gradient-text">artigos</span></h2>
+          <p class="muted">
+            Conteúdos para quem está começando ou quer aprofundar seus conhecimentos.
+          </p>
+        </div>
+
+        <form class="search-box" id="searchForm" role="search">
+          <input
+            type="search"
+            id="searchInput"
+            placeholder="Pesquisar programação, PC, Windows..."
+            aria-label="Pesquisar artigos">
+
+          <button type="submit">Pesquisar</button>
+        </form>
+
+        <div class="articles-grid" id="articlesGrid">
+
+          <article class="article-card"
+            data-category="programacao"
+            data-search="html css javascript criar site programação iniciante">
+
+            <a href="#programacao" class="article-image">
+              <img
+                src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=900&q=80"
+                alt="Código de programação em uma tela"
+                loading="lazy">
+            </a>
+
+            <div class="article-content">
+              <span class="tag">Programação</span>
+              <h3>Como começar a programar do zero</h3>
+              <p>
+                Conheça HTML, CSS e JavaScript e descubra como
+                criar seus primeiros sites.
+              </p>
+              <a href="#programacao" class="read-more">Aprender agora →</a>
+            </div>
+          </article>
+
+          <article class="article-card"
+            data-category="hardware"
+            data-search="processador placa de video memoria ram ssd computador pc gamer">
+
+            <a href="#hardware" class="article-image">
+              <img
+                src="https://images.unsplash.com/photo-1587202372775-e229f172b9d7?auto=format&fit=crop&w=900&q=80"
+                alt="Componentes e montagem de computador"
+                loading="lazy">
+            </a>
+
+            <div class="article-content">
+              <span class="tag">Hardware</span>
+              <h3>Entenda as peças de um computador</h3>
+              <p>
+                Aprenda o papel do processador, da memória RAM,
+                do SSD e da placa de vídeo.
+              </p>
+              <a href="#hardware" class="read-more">Conhecer as peças →</a>
+            </div>
+          </article>
+
+          <article class="article-card"
+            data-category="windows"
+            data-search="windows computador desempenho sistema operacional manutenção">
+
+            <a href="#windows" class="article-image">
+              <img
+                src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=900&q=80"
+                alt="Placa eletrônica e componentes"
+                loading="lazy">
+            </a>
+
+            <div class="article-content">
+              <span class="tag">Windows</span>
+              <h3>Como cuidar e otimizar seu PC</h3>
+              <p>
+                Aprenda boas práticas de manutenção, atualizações
+                e organização do sistema.
+              </p>
+              <a href="#windows" class="read-more">Ver dicas →</a>
+            </div>
+          </article>
+
+          <article class="article-card"
+            data-category="games"
+            data-search="games jogos pc gamer fps placa de video desempenho">
+
+            <a href="#games" class="article-image">
+              <img
+                src="https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=900&q=80"
+                alt="Ambiente de jogos e computadores"
+                loading="lazy">
+            </a>
+
+            <div class="article-content">
+              <span class="tag">Games</span>
+              <h3>Como entender o desempenho nos jogos</h3>
+              <p>
+                Descubra o que são FPS, resolução, qualidade gráfica
+                e gargalos de hardware.
+              </p>
+              <a href="#games" class="read-more">Explorar games →</a>
+            </div>
+          </article>
+
+          <article class="article-card"
+            data-category="redes"
+            data-search="internet rede wifi roteador ethernet conexão">
+
+            <a href="#redes" class="article-image">
+              <img
+                src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=900&q=80"
+                alt="Equipamentos de rede e servidores"
+                loading="lazy">
+            </a>
+
+            <div class="article-content">
+              <span class="tag">Redes</span>
+              <h3>Como funciona uma rede de computadores</h3>
+              <p>
+                Entenda Wi-Fi, Ethernet, roteadores, endereços IP
+                e conexão com a internet.
+              </p>
+              <a href="#redes" class="read-more">Aprender redes →</a>
+            </div>
+          </article>
+
+          <article class="article-card"
+            data-category="seguranca"
+            data-search="segurança digital senha phishing privacidade vírus proteção">
+
+            <a href="#seguranca" class="article-image">
+              <img
+                src="https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fit=crop&w=900&q=80"
+                alt="Segurança digital e proteção de dados"
+                loading="lazy">
+            </a>
+
+            <div class="article-content">
+              <span class="tag">Segurança</span>
+              <h3>Proteja seus dados na internet</h3>
+              <p>
+                Aprenda sobre senhas fortes, autenticação em duas etapas,
+                golpes digitais e atualizações.
+              </p>
+              <a href="#seguranca" class="read-more">Ver orientações →</a>
+            </div>
+          </article>
+
+          <p class="empty-state" id="emptyState" hidden>
+            Nenhum artigo encontrado. Tente outra palavra.
+          </p>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- CATEGORIAS DETALHADAS -->
+
+    <section class="section alt-section" id="categorias">
+      <div class="container">
+
+        <div class="section-heading">
+          <span class="eyebrow">Aprenda por assunto</span>
+          <h2>Todos os setores da tecnologia</h2>
+          <p class="muted">
+            Escolha uma área e descubra os principais conceitos.
+          </p>
+        </div>
+
+        <div class="topics-grid">
+
+          <div class="topic" id="programacao">
+            <div class="topic-icon">💻</div>
+            <h3>Programação</h3>
+            <p>
+              HTML para estruturar páginas, CSS para estilizar,
+              JavaScript para interatividade e Python para automação.
+            </p>
+            <a href="https://developer.mozilla.org/pt-BR/docs/Web"
+              target="_blank" rel="noopener noreferrer">
+              Documentação web ↗
+            </a>
+          </div>
+
+          <div class="topic" id="hardware">
+            <div class="topic-icon">🖥️</div>
+            <h3>Hardware e PCs</h3>
+            <p>
+              Processadores, placas-mãe, memória RAM, placas de vídeo,
+              fontes, SSDs, refrigeração e montagem.
+            </p>
+            <a href="https://www.kingston.com/br"
+              target="_blank" rel="noopener noreferrer">
+              Conhecer componentes ↗
+            </a>
+          </div>
+
+          <div class="topic" id="windows">
+            <div class="topic-icon">⚙️</div>
+            <h3>Windows e sistemas</h3>
+            <p>
+              Instalação, drivers, atualizações, gerenciamento
+              de arquivos, desempenho e solução de problemas.
+            </p>
+            <a href="https://support.microsoft.com/pt-br/windows"
+              target="_blank" rel="noopener noreferrer">
+              Suporte Windows ↗
+            </a>
+          </div>
+
+          <div class="topic" id="games">
+            <div class="topic-icon">🎮</div>
+            <h3>Games e desempenho</h3>
+            <p>
+              FPS, resolução, configurações gráficas, drivers,
+              compatibilidade e tecnologias de upscaling.
+            </p>
+            <a href="https://www.nvidia.com/pt-br/geforce/"
+              target="_blank" rel="noopener noreferrer">
+              Tecnologia gráfica ↗
+            </a>
+          </div>
+
+          <div class="topic" id="redes">
+            <div class="topic-icon">🌐</div>
+            <h3>Redes e internet</h3>
+            <p>
+              Wi-Fi, cabos de rede, roteadores, DNS, endereços IP,
+              latência e diagnóstico de conexão.
+            </p>
+            <a href="https://www.cloudflare.com/pt-br/learning/"
+              target="_blank" rel="noopener noreferrer">
+              Aprender sobre redes ↗
+            </a>
+          </div>
+
+          <div class="topic" id="seguranca">
+            <div class="topic-icon">🔐</div>
+            <h3>Segurança digital</h3>
+            <p>
+              Privacidade, antivírus, cópias de segurança,
+              autenticação multifator e prevenção de golpes.
+            </p>
+            <a href="https://www.cert.br/"
+              target="_blank" rel="noopener noreferrer">
+              Segurança na internet ↗
+            </a>
+          </div>
+
+          <div class="topic" id="bancos">
+            <div class="topic-icon">🗄️</div>
+            <h3>Banco de dados</h3>
+            <p>
+              Armazenamento de informações, tabelas, SQL,
+              consultas e organização de dados.
+            </p>
+            <a href="https://www.postgresql.org/docs/"
+              target="_blank" rel="noopener noreferrer">
+              Documentação SQL ↗
+            </a>
+          </div>
+
+          <div class="topic" id="ia">
+            <div class="topic-icon">🤖</div>
+            <h3>Inteligência artificial</h3>
+            <p>
+              Conceitos de IA, modelos de linguagem,
+              aprendizado de máquina e automação.
+            </p>
+            <a href="https://www.ibm.com/br-pt/think/topics/artificial-intelligence"
+              target="_blank" rel="noopener noreferrer">
+              Explorar inteligência artificial ↗
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- AREA DE APRENDIZADO -->
+
+    <section class="section" id="aprenda">
+      <div class="container">
+
+        <div class="learning-panel">
+          <div>
+            <span class="eyebrow">Sua jornada começa aqui</span>
+            <h2>Aprenda a criar seus próprios projetos</h2>
+
+            <p class="muted">
+              Você não precisa saber tudo para começar.
+              Aprenda um conceito de cada vez e pratique
+              criando projetos reais.
+            </p>
+
+            <ul>
+              <li>Crie páginas com HTML.</li>
+              <li>Desenvolva interfaces com CSS.</li>
+              <li>Adicione funções com JavaScript.</li>
+              <li>Publique seus projetos na internet.</li>
+            </ul>
+
+            <a
+              href="https://developer.mozilla.org/pt-BR/docs/Learn_web_development"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn btn-primary">
+              Começar a estudar ↗
+            </a>
+          </div>
+
+          <img
+            src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1000&q=80"
+            alt="Pessoa estudando e trabalhando com tecnologia"
+            loading="lazy">
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SOBRE O BLOG -->
+
+    <section class="section alt-section" id="sobre">
+      <div class="container">
+        <div class="section-heading">
+          <span class="eyebrow">Sobre o BYTE LAB</span>
+          <h2>Tecnologia explicada de forma simples</h2>
+          <p class="muted">
+            O BYTE LAB é um projeto de blog dedicado a compartilhar
+            conhecimento sobre computadores, programação, sistemas,
+            jogos, internet e inovação. A proposta é reunir
+            conteúdos para iniciantes e entusiastas em um único lugar.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- NEWSLETTER DEMONSTRATIVA -->
+
+    <section class="section">
+      <div class="container">
+        <div class="newsletter">
+          <span class="eyebrow">Fique por dentro</span>
+          <h2>O futuro da tecnologia começa com você.</h2>
+          <p>
+            Explore novos assuntos, pratique e transforme
+            suas ideias em projetos.
+          </p>
+          <a href="#artigos" class="btn btn-primary">
+            Explorar conteúdos →
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- RODAPE -->
+
+  <footer>
+    <div class="container">
+
+      <div class="footer-grid">
+        <div>
+          <a href="#inicio" class="logo">
+            BYTE<span>LAB</span>.
+          </a>
+          <p>
+            Um espaço para descobrir, aprender e explorar
+            o universo da tecnologia.
+          </p>
+        </div>
+
+        <div>
+          <h3>Navegação</h3>
+          <ul class="footer-links">
+            <li><a href="#inicio">Início</a></li>
+            <li><a href="#artigos">Artigos</a></li>
+            <li><a href="#categorias">Categorias</a></li>
+            <li><a href="#sobre">Sobre</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h3>Aprendizado</h3>
+          <ul class="footer-links">
+            <li><a href="#programacao">Programação</a></li>
+            <li><a href="#hardware">Hardware</a></li>
+            <li><a href="#windows">Windows</a></li>
+            <li><a href="#seguranca">Segurança</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="copyright">
+        © <span id="year"></span> BYTE LAB.
+        Projeto educacional de tecnologia.
+      </div>
+
+    </div>
+  </footer>
+
+  <script>
+    /* =====================================
+       1. MENU PARA CELULAR
+    ===================================== */
+
+    const menuToggle = document.getElementById("menuToggle");
+    const navLinks = document.getElementById("navLinks");
+
+    menuToggle.addEventListener("click", () => {
+      const isOpen = navLinks.classList.toggle("open");
+
+      menuToggle.setAttribute("aria-expanded", String(isOpen));
+      menuToggle.setAttribute(
+        "aria-label",
+        isOpen ? "Fechar menu" : "Abrir menu"
+      );
+      menuToggle.textContent = isOpen ? "✕ Fechar" : "☰ Menu";
+    });
+
+    navLinks.querySelectorAll("a").forEach(link => {
+      link.addEventListener("click", () => {
+        navLinks.classList.remove("open");
+        menuToggle.setAttribute("aria-expanded", "false");
+        menuToggle.setAttribute("aria-label", "Abrir menu");
+        menuToggle.textContent = "☰ Menu";
+      });
+    });
+
+    /* =====================================
+       2. PESQUISA E FILTRO DE ARTIGOS
+    ===================================== */
+
+    const searchForm = document.getElementById("searchForm");
+    const searchInput = document.getElementById("searchInput");
+    const articleCards = [...document.querySelectorAll(".article-card")];
+    const emptyState = document.getElementById("emptyState");
+    const categoryButtons = document.querySelectorAll(".category-btn");
+
+    let selectedCategory = "todos";
+
+    function filterArticles() {
+      const query = searchInput.value
+        .trim()
+        .toLocaleLowerCase("pt-BR");
+
+      let visibleCount = 0;
+
+      articleCards.forEach(card => {
+        const searchableText = (
+          card.innerText + " " + card.dataset.search
+        ).toLocaleLowerCase("pt-BR");
+
+        const categoryMatches =
+          selectedCategory === "todos" ||
+          card.dataset.category === selectedCategory;
+
+        const textMatches = searchableText.includes(query);
+        const visible = categoryMatches && textMatches;
+
+        card.hidden = !visible;
+
+        if (visible) visibleCount++;
+      });
+
+      emptyState.hidden = visibleCount > 0;
+    }
+
+    searchForm.addEventListener("submit", event => {
+      event.preventDefault();
+      filterArticles();
+    });
+
+    searchInput.addEventListener("input", filterArticles);
+
+    /* Os atalhos selecionam a categoria correspondente. */
+
+    const categoryMap = {
+      "programacao": "programacao",
+      "hardware": "hardware",
+      "windows": "windows",
+      "games": "games",
+      "redes": "redes",
+      "seguranca": "seguranca"
+    };
+
+    categoryButtons.forEach(button => {
+      button.addEventListener("click", event => {
+        const link = button.getAttribute("href");
+        const sectionId = link.slice(1);
+
+        if (categoryMap[sectionId]) {
+          selectedCategory = categoryMap[sectionId];
+
+          searchInput.value = "";
+          filterArticles();
+        }
+      });
+    });
+
+    /* =====================================
+       3. ANO AUTOMATICO NO RODAPE
+    ===================================== */
+
+    document.getElementById("year").textContent =
+      new Date().getFullYear();
+  </script>
+
+<script src="script.js"></script></body>
+</html>
