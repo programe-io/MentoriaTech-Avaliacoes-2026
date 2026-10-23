@@ -2,419 +2,286 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quiz Básico</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Blog | Edimar Filipe</title>
 
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    body {
-      font-family: Arial, sans-serif;
-      background: #f5f5f2;
-      color: #222;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
+        body {
+            font-family: Arial, sans-serif;
+            background: #f1f5f9;
+            color: #1e293b;
+            line-height: 1.6;
+        }
 
-    .container {
-      background: #fff;
-      width: 100%;
-      max-width: 520px;
-      padding: 35px;
-      border-radius: 18px;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
-    }
+        header {
+            background: #0f172a;
+            color: white;
+            padding: 25px 8%;
+            text-align: center;
+        }
 
-    .tag {
-      color: #777;
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      margin-bottom: 15px;
-    }
+        header h1 {
+            font-size: 36px;
+            color: #38bdf8;
+        }
 
-    h1 {
-      font-size: 30px;
-      margin-bottom: 10px;
-    }
+        header p {
+            color: #cbd5e1;
+        }
 
-    .description {
-      color: #777;
-      line-height: 1.6;
-      margin-bottom: 25px;
-    }
+        nav {
+            background: #1e293b;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 25px;
+            padding: 15px;
+        }
 
-    .progress-info {
-      display: flex;
-      justify-content: space-between;
-      color: #777;
-      font-size: 13px;
-      margin-bottom: 10px;
-    }
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
 
-    .progress-bar {
-      height: 5px;
-      background: #eee;
-      border-radius: 10px;
-      overflow: hidden;
-      margin-bottom: 28px;
-    }
+        nav a:hover {
+            color: #38bdf8;
+        }
 
-    .progress {
-      height: 100%;
-      width: 0%;
-      background: #222;
-      transition: width 0.3s ease;
-    }
+        .banner {
+            padding: 60px 20px;
+            text-align: center;
+            color: white;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+        }
 
-    h2 {
-      font-size: 21px;
-      line-height: 1.5;
-      margin-bottom: 22px;
-    }
+        .banner h2 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
 
-    .options {
-      display: grid;
-      gap: 12px;
-    }
+        .container {
+            max-width: 1100px;
+            margin: 35px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 25px;
+        }
 
-    .option {
-      width: 100%;
-      padding: 15px;
-      text-align: left;
-      background: #fff;
-      border: 1px solid #ddd;
-      border-radius: 10px;
-      font-size: 15px;
-      cursor: pointer;
-      transition: 0.2s;
-      color: #222;
-    }
+        .post, .sidebar {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px #0000000d;
+        }
 
-    .option:hover:not(:disabled) {
-      border-color: #222;
-      background: #fafafa;
-    }
+        .post h2 {
+            color: #2563eb;
+            margin-bottom: 10px;
+        }
 
-    .option.correct {
-      background: #e5f5e9;
-      border-color: #29834b;
-    }
+        .post p {
+            margin: 12px 0;
+        }
 
-    .option.wrong {
-      background: #fff0ef;
-      border-color: #d9534f;
-    }
+        .post .data {
+            color: #64748b;
+            font-size: 14px;
+        }
 
-    .option:disabled {
-      cursor: default;
-    }
+        .post a {
+            display: inline-block;
+            margin-top: 10px;
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: bold;
+        }
 
-    .feedback {
-      min-height: 25px;
-      margin-top: 18px;
-      font-size: 14px;
-      line-height: 1.5;
-    }
+        .post a:hover {
+            text-decoration: underline;
+        }
 
-    .actions {
-      display: flex;
-      justify-content: flex-end;
-      margin-top: 15px;
-    }
+        .sidebar h3 {
+            margin-bottom: 12px;
+            color: #0f172a;
+        }
 
-    .primary {
-      border: none;
-      background: #222;
-      color: #fff;
-      border-radius: 9px;
-      padding: 14px 22px;
-      font-size: 14px;
-      cursor: pointer;
-      transition: 0.2s;
-    }
+        .sidebar ul {
+            list-style: none;
+        }
 
-    .primary:hover {
-      background: #444;
-    }
+        .sidebar li {
+            padding: 8px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
 
-    .primary:focus-visible,
-    .option:focus-visible {
-      outline: 3px solid #999;
-      outline-offset: 3px;
-    }
+        .sidebar a {
+            color: #334155;
+            text-decoration: none;
+        }
 
-    .hidden {
-      display: none;
-    }
+        .sidebar a:hover {
+            color: #2563eb;
+        }
 
-    .result {
-      text-align: center;
-    }
+        .pesquisa {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 15px;
+        }
 
-    .result .emoji {
-      font-size: 48px;
-      margin: 15px 0;
-    }
+        footer {
+            text-align: center;
+            background: #0f172a;
+            color: white;
+            padding: 25px;
+            margin-top: 30px;
+        }
 
-    .result h2 {
-      font-size: 26px;
-      margin-bottom: 12px;
-    }
+        @media (max-width: 700px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
 
-    .score {
-      font-size: 42px;
-      font-weight: bold;
-      margin: 20px 0;
-    }
+            header h1 {
+                font-size: 28px;
+            }
 
-    .result p {
-      color: #777;
-      line-height: 1.7;
-      margin-bottom: 20px;
-    }
-
-    .result .primary {
-      width: 100%;
-    }
-
-    @media (max-width: 480px) {
-      .container {
-        padding: 25px 20px;
-      }
-
-      h1 {
-        font-size: 26px;
-      }
-
-      h2 {
-        font-size: 19px;
-      }
-    }
-  </style>
+            .banner h2 {
+                font-size: 25px;
+            }
+        }
+    </style>
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="style.css" rel="stylesheet"></head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"><link href="style.css" rel="stylesheet"></head>
 
 <body>
-  <main class="container">
-    <section id="quiz">
-      <p class="tag">Conhecimentos gerais</p>
-      <h1>Quiz Básico</h1>
-      <p class="description">
-        Responda às perguntas e descubra quantas você consegue acertar.
-      </p>
 
-      <div class="progress-info">
-        <span id="questionCount">Pergunta 1 de 5</span>
-        <span id="scoreLabel">Pontos: 0</span>
-      </div>
+    <header>
+        <h1>Mundo Digital</h1>
+        <p>Ideias, conhecimento e inspiração para você.</p>
+    </header>
 
-      <div
-        class="progress-bar"
-        role="progressbar"
-        aria-label="Progresso do quiz"
-        aria-valuemin="0"
-        aria-valuemax="5"
-        aria-valuenow="0"
-        id="progressBar"
-      >
-        <div class="progress" id="progress"></div>
-      </div>
+    <nav>
+        <a href="#">Início</a>
+        <a href="#artigos">Artigos</a>
+        <a href="#categorias">Categorias</a>
+        <a href="#sobre">Sobre</a>
+        <a href="#contato">Contato</a>
+    </nav>
 
-      <h2 id="question">Carregando pergunta...</h2>
-
-      <div class="options" id="options"></div>
-
-      <p class="feedback" id="feedback" aria-live="polite"></p>
-
-      <div class="actions">
-        <button class="primary hidden" id="nextButton">
-          Próxima pergunta →
-        </button>
-      </div>
+    <section class="banner">
+        <h2>Bem-vindo ao meu blog!</h2>
+        <p>Descubra novidades, dicas e conteúdos interessantes.</p>
     </section>
 
-    <section id="result" class="result hidden" aria-live="polite">
-      <p class="tag">Quiz finalizado</p>
-      <div class="emoji" id="resultEmoji">🎉</div>
-      <h2 id="resultTitle">Muito bem!</h2>
-      <div class="score" id="finalScore">0/5</div>
-      <p id="resultMessage"></p>
-      <button class="primary" id="restartButton">
-        Jogar novamente
-      </button>
-    </section>
-  </main>
+    <div class="container">
 
-  <script>
-    const questions = [
-      {
-        question: "Qual é a capital do Brasil?",
-        options: ["São Paulo", "Brasília", "Rio de Janeiro", "Salvador"],
-        answer: 1
-      },
-      {
-        question: "Quanto é 5 + 7?",
-        options: ["10", "11", "12", "13"],
-        answer: 2
-      },
-      {
-        question: "Qual planeta é conhecido como Planeta Vermelho?",
-        options: ["Vênus", "Marte", "Júpiter", "Saturno"],
-        answer: 1
-      },
-      {
-        question: "Quantos dias tem uma semana?",
-        options: ["5 dias", "6 dias", "7 dias", "8 dias"],
-        answer: 2
-      },
-      {
-        question: "Qual animal é conhecido como rei da selva?",
-        options: ["Tigre", "Elefante", "Leão", "Lobo"],
-        answer: 2
-      }
-    ];
+        <main id="artigos">
 
-    let currentQuestion = 0;
-    let score = 0;
-    let answered = false;
+            <article class="post">
+                <p class="data">23 de outubro de 2026 · Tecnologia</p>
+                <h2>O futuro da tecnologia</h2>
+                <p>
+                    A tecnologia está transformando o mundo.
+                    Novas ferramentas digitais ajudam a conectar
+                    pessoas, facilitar tarefas e criar oportunidades.
+                </p>
+                <a href="#sobre">Leia mais →</a>
+            </article>
 
-    const quiz = document.getElementById("quiz");
-    const result = document.getElementById("result");
-    const questionElement = document.getElementById("question");
-    const optionsElement = document.getElementById("options");
-    const feedbackElement = document.getElementById("feedback");
-    const nextButton = document.getElementById("nextButton");
-    const progress = document.getElementById("progress");
-    const progressBar = document.getElementById("progressBar");
+            <article class="post">
+                <p class="data">20 de outubro de 2026 · Estudos</p>
+                <h2>Como aprender algo novo</h2>
+                <p>
+                    Aprender exige prática, curiosidade e dedicação.
+                    Reserve alguns minutos por dia para estudar,
+                    testar ideias e desenvolver suas habilidades.
+                </p>
+                <a href="#sobre">Leia mais →</a>
+            </article>
 
-    function showQuestion() {
-      answered = false;
+            <article class="post">
+                <p class="data">15 de outubro de 2026 · Dicas</p>
+                <h2>5 hábitos para melhorar seu dia</h2>
+                <p>
+                    Organize suas tarefas, beba água, faça pausas,
+                    cuide do sono e reserve um tempo para aquilo
+                    que você gosta.
+                </p>
+                <a href="#sobre">Leia mais →</a>
+            </article>
 
-      const q = questions[currentQuestion];
+        </main>
 
-      document.getElementById("questionCount").textContent =
-        `Pergunta ${currentQuestion + 1} de ${questions.length}`;
+        <aside>
 
-      document.getElementById("scoreLabel").textContent =
-        `Pontos: ${score}`;
+            <div class="sidebar">
+                <h3>Pesquisar no blog</h3>
+                <input
+                    class="pesquisa"
+                    type="search"
+                    id="pesquisa"
+                    placeholder="Digite uma palavra..."
+                    aria-label="Pesquisar artigos"
+                >
+            </div>
 
-      questionElement.textContent = q.question;
-      optionsElement.replaceChildren();
-      feedbackElement.textContent = "";
-      nextButton.classList.add("hidden");
+            <div class="sidebar" id="categorias">
+                <h3>Categorias</h3>
+                <ul>
+                    <li><a href="#artigos">Tecnologia</a></li>
+                    <li><a href="#artigos">Educação</a></li>
+                    <li><a href="#artigos">Curiosidades</a></li>
+                    <li><a href="#artigos">Dicas</a></li>
+                </ul>
+            </div>
 
-      progress.style.width =
-        `${(currentQuestion / questions.length) * 100}%`;
+            <div class="sidebar" id="sobre">
+                <h3>Sobre o blog</h3>
+                <p>
+                    Este é um espaço para compartilhar ideias,
+                    conhecimentos e novidades com os leitores.
+                </p>
+            </div>
 
-      progressBar.setAttribute("aria-valuenow", currentQuestion);
+        </aside>
+    </div>
 
-      q.options.forEach((option, index) => {
-        const button = document.createElement("button");
+    <footer id="contato">
+        <p>&copy; 2026 Mundo Digital. Todos os direitos reservados.</p>
+        <p>Feito com HTML e CSS ♥</p>
+    </footer>
 
-        button.className = "option";
-        button.textContent = option;
-        button.addEventListener("click", () => selectAnswer(index));
+    <script>
+        const pesquisa = document.getElementById("pesquisa");
+        const artigos = document.querySelectorAll(".post");
 
-        optionsElement.appendChild(button);
-      });
-    }
+        pesquisa.addEventListener("input", () => {
+            const termo = pesquisa.value.toLowerCase();
 
-    function selectAnswer(index) {
-      if (answered) return;
+            artigos.forEach((artigo) => {
+                const conteudo = artigo.textContent.toLowerCase();
 
-      answered = true;
+                artigo.style.display = conteudo.includes(termo)
+                    ? "block"
+                    : "none";
+            });
+        });
+    </script>
 
-      const q = questions[currentQuestion];
-      const buttons = optionsElement.querySelectorAll(".option");
-
-      buttons.forEach((button, i) => {
-        button.disabled = true;
-
-        if (i === q.answer) {
-          button.classList.add("correct");
-        }
-
-        if (i === index && index !== q.answer) {
-          button.classList.add("wrong");
-        }
-      });
-
-      if (index === q.answer) {
-        score++;
-        feedbackElement.textContent = "Correto! Muito bem.";
-      } else {
-        feedbackElement.textContent =
-          `Resposta incorreta. A resposta certa é: ${q.options[q.answer]}.`;
-      }
-
-      document.getElementById("scoreLabel").textContent =
-        `Pontos: ${score}`;
-
-      nextButton.textContent =
-        currentQuestion === questions.length - 1
-          ? "Ver resultado →"
-          : "Próxima pergunta →";
-
-      nextButton.classList.remove("hidden");
-    }
-
-    function showResult() {
-      quiz.classList.add("hidden");
-      result.classList.remove("hidden");
-
-      const percentage = Math.round((score / questions.length) * 100);
-
-      document.getElementById("finalScore").textContent =
-        `${score}/${questions.length}`;
-
-      document.getElementById("resultEmoji").textContent =
-        percentage === 100 ? "🏆" :
-        percentage >= 60 ? "🎉" : "💪";
-
-      document.getElementById("resultTitle").textContent =
-        percentage === 100 ? "Perfeito!" :
-        percentage >= 60 ? "Muito bem!" : "Continue praticando!";
-
-      document.getElementById("resultMessage").textContent =
-        `Você acertou ${score} de ${questions.length} perguntas, ` +
-        `alcançando ${percentage}% de aproveitamento.`;
-    }
-
-    nextButton.addEventListener("click", () => {
-      if (!answered) return;
-
-      currentQuestion++;
-
-      if (currentQuestion < questions.length) {
-        showQuestion();
-      } else {
-        progress.style.width = "100%";
-        progressBar.setAttribute("aria-valuenow", questions.length);
-        showResult();
-      }
-    });
-
-    document.getElementById("restartButton").addEventListener("click", () => {
-      currentQuestion = 0;
-      score = 0;
-
-      result.classList.add("hidden");
-      quiz.classList.remove("hidden");
-
-      showQuestion();
-    });
-
-    showQuestion();
-  </script>
 <script src="script.js"></script></body>
 </html>
