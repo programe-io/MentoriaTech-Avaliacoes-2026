@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ProductivityHub — Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <link href="https://cdn.boxicons.com/3.0.8/fonts/basic/boxicons.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body class="min-h-screen bg-slate-950 text-slate-50">
+  <div class="app-shell">
+    <header class="topbar">
+      <button class="icon-button mobile-menu" id="menuToggle" aria-label="Abrir menu" aria-expanded="false">
+        <i class="bx bx-menu"></i>
+      </button>
+      <div class="brand">
+        <div>
+          <h1>ProductivityHub</h1>
+          <p>Dashboard de Produtividade</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="icon-button notification-button" id="notificationButton" aria-label="Notificações">
+          <i class="bx bx-bell"></i><span class="notification-dot"></span>
+        </button>
+        <button class="profile-button" id="profileButton">
+          <span class="avatar"><i class="bx bx-user"></i></span>
+          <span>Aluno</span>
+        </button>
+      </div>
+    </header>
+
+    <div class="page-layout">
+      <aside class="sidebar" id="sidebar">
+        <p class="sidebar-label">MENU PRINCIPAL</p>
+        <nav class="sidebar-nav" aria-label="Menu principal">
+          <button class="nav-item active" data-view="overview"><i class="bx bx-grid-alt"></i><span>Visão Geral</span><span class="nav-indicator"></span></button>
+          <button class="nav-item" data-view="tasks"><i class="bx bx-checkbox-square"></i><span>Tarefas</span><span class="nav-count" id="taskNavCount">3</span></button>
+          <button class="nav-item" data-view="projects"><i class="bx bx-folder"></i><span>Projetos</span></button>
+        </nav>
+        <div class="sidebar-bottom">
+          <button class="nav-item" id="settingsButton"><i class="bx bx-cog"></i><span>Configurações</span></button>
+        </div>
+      </aside>
+      <button class="sidebar-backdrop" id="sidebarBackdrop" aria-label="Fechar menu"></button>
+
+      <main class="main-content" id="mainContent">
+        <section class="welcome-section">
+          <div>
+            <p class="eyebrow">SEU ESPAÇO DE TRABALHO</p>
+            <h2 id="pageTitle">Visão Geral</h2>
+            <p class="muted">Acompanhe seu progresso e mantenha o foco no que importa.</p>
+          </div>
+          <button class="primary-button" id="newTaskTop"><i class="bx bx-plus"></i> Nova Tarefa</button>
+        </section>
+
+        <section class="stats-section" aria-labelledby="statsTitle">
+          <div class="section-heading"><h3 id="statsTitle">Estatísticas da Semana</h3><span class="muted small">Atualizado agora</span></div>
+          <div class="stats-grid">
+            <article class="stat-card">
+              <div class="stat-top"><span class="stat-icon purple"><i class="bx bx-check-circle"></i></span><span class="trend">↗ +12%</span></div>
+              <p class="stat-number" id="completedCount">128</p><p class="stat-label">Tarefas Concluídas</p>
+            </article>
+            <article class="stat-card">
+              <div class="stat-top"><span class="stat-icon orange"><i class="bx bx-time-five"></i></span><span class="trend orange-text">Em andamento</span></div>
+              <p class="stat-number" id="pendingCount">12</p><p class="stat-label">Tarefas Pendentes</p>
+            </article>
+            <article class="stat-card">
+              <div class="stat-top"><span class="stat-icon teal"><i class="bx bx-folder-open"></i></span><span class="trend">↗ +2</span></div>
+              <p class="stat-number">4</p><p class="stat-label">Projetos Ativos</p>
+            </article>
+          </div>
+        </section>
+
+        <div class="dashboard-grid">
+          <div class="primary-column">
+            <section class="panel tasks-panel" id="tasksPanel">
+              <div class="panel-heading"><h3>Tarefas Pendentes</h3><button class="text-button" id="viewAllTasks">Ver todas</button></div>
+              <div class="task-list" id="taskList">
+                <label class="task-row">
+                  <input type="checkbox" class="task-check">
+                  <span class="task-checkmark"></span>
+                  <span class="task-copy"><strong>Revisar projeto de layout</strong><span class="task-meta"><span><i class="bx bx-calendar"></i> Hoje</span><span class="priority high">Alta</span></span></span>
+                  <button class="more-button" aria-label="Opções da tarefa"><i class="bx bx-dots-horizontal-rounded"></i></button>
+                </label>
+                <label class="task-row">
+                  <input type="checkbox" class="task-check">
+                  <span class="task-checkmark"></span>
+                  <span class="task-copy"><strong>Finalizar documentação</strong><span class="task-meta"><span><i class="bx bx-calendar"></i> Amanhã</span><span class="priority medium">Média</span></span></span>
+                  <button class="more-button" aria-label="Opções da tarefa"><i class="bx bx-dots-horizontal-rounded"></i></button>
+                </label>
+                <label class="task-row">
+                  <input type="checkbox" class="task-check">
+                  <span class="task-checkmark"></span>
+                  <span class="task-copy"><strong>Estudar Tailwind CSS</strong><span class="task-meta"><span><i class="bx bx-calendar"></i> Esta semana</span><span class="priority low">Baixa</span></span></span>
+                  <button class="more-button" aria-label="Opções da tarefa"><i class="bx bx-dots-horizontal-rounded"></i></button>
+                </label>
+              </div>
+              <p class="empty-state hidden" id="emptyTasks">Nenhuma tarefa pendente. Bom trabalho!</p>
+            </section>
+
+            <section class="panel projects-panel" id="projectsPanel">
+              <div class="panel-heading"><h3>Projetos Ativos</h3><button class="text-button" id="newProjectButton">Novo projeto</button></div>
+              <article class="project-card">
+                <div class="project-main">
+                  <span class="project-icon"><i class="bx bx-folder"></i></span>
+                  <div><h4>Layout com Flexbox e Grid</h4><p>Aprender alinhamento e distribuição</p></div>
+                </div>
+                <div class="progress-label"><span>Progresso</span><strong>85%</strong></div>
+                <div class="progress-track"><span style="width:85%"></span></div>
+                <div class="project-meta"><span><i class="bx bx-group"></i> 4 membros</span><span>3 dias</span></div>
+              </article>
+            </section>
+          </div>
+
+          <div class="secondary-column">
+            <section class="panel quick-actions">
+              <h3>Ações Rápidas</h3>
+              <button class="primary-button full-button" id="newTaskSide"><i class="bx bx-plus"></i> Nova Tarefa</button>
+              <button class="secondary-button full-button" id="focusButton"><i class="bx bx-timer"></i> Modo foco</button>
+            </section>
+            <section class="panel activity-panel">
+              <h3>Atividade Recente</h3>
+              <div class="activity-item">
+                <span class="activity-icon"><i class="bx bx-check-circle"></i></span>
+                <div><p><strong>Você</strong> concluiu a tarefa <strong>Estudar Tailwind CSS</strong></p><span class="muted small">2 min atrás</span></div>
+              </div>
+              <div class="activity-item">
+                <span class="activity-icon blue"><i class="bx bx-folder"></i></span>
+                <div><p>Projeto <strong>Layout completo</strong> atualizado</p><span class="muted small">Há 1 hora</span></div>
+              </div>
+            </section>
+          </div>
+        </div>
+        <footer class="page-footer">ProductivityHub <span>•</span> Organize suas tarefas, alcance seus objetivos.</footer>
+      </main>
+    </div>
+  </div>
+
+  <dialog class="task-dialog" id="taskDialog">
+    <form id="taskForm" method="dialog">
+      <div class="dialog-heading"><div><p class="eyebrow">ORGANIZAÇÃO</p><h2>Nova tarefa</h2></div><button type="button" class="icon-button" id="closeDialog" aria-label="Fechar"><i class="bx bx-x"></i></button></div>
+      <label class="form-label" for="taskName">Nome da tarefa</label>
+      <input id="taskName" name="taskName" class="form-input" placeholder="Ex.: Estudar JavaScript" required maxlength="90">
+      <label class="form-label" for="taskPriority">Prioridade</label>
+      <select id="taskPriority" class="form-input"><option value="high">Alta</option><option value="medium" selected>Média</option><option value="low">Baixa</option></select>
+      <div class="dialog-actions"><button type="button" class="secondary-button" id="cancelDialog">Cancelar</button><button class="primary-button" type="submit">Adicionar tarefa</button></div>
+    </form>
+  </dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="script.js"></script></body>
+</html>
