@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GTA Chronicle - O Guia Supremo da Franquia</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,700;0,900;1,900&family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* PALETA E ESTÉTIKA GTA NEON / URBAN */
+    :root {
+      --bg-dark: #0a0812;
+      --card-bg: #131021;
+      --card-border: #261f3d;
+      --neon-pink: #ff2a85;
+      --neon-purple: #9d4edd;
+      --neon-cyan: #00f0ff;
+      --gold-accent: #ffb703;
+      --text-main: #f1f0f7;
+      --text-muted: #9993b3;
+      --header-bg: rgba(10, 8, 18, 0.92);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      line-height: 1.6;
+    }
+
+    h1, h2, h3, .brand-font {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* HEADER */
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background-color: var(--header-bg);
+      backdrop-filter: blur(10px);
+      border-bottom: 2px solid var(--card-border);
+      z-index: 1000;
+      padding: 1.2rem 2rem;
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nav-logo {
+      font-size: 1.5rem;
+      color: var(--text-main);
+      letter-spacing: -1px;
+    }
+
+    .nav-logo span {
+      color: var(--neon-pink);
+    }
+
+    .nav-menu {
+      display: flex;
+      gap: 1.8rem;
+      list-style: none;
+    }
+
+    .nav-link {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      transition: color 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .nav-link:hover {
+      color: var(--neon-cyan);
+    }
+
+    /* HERO */
+    .hero {
+      min-height: 90vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8rem 2rem 4rem;
+      background: linear-gradient(180deg, rgba(10, 8, 18, 0.6) 0%, rgba(10, 8, 18, 1) 100%),
+                  url('https://images.unsplash.com/photo-1514565131-fce0801e5785?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;
+      text-align: center;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      padding: 0.4rem 1.2rem;
+      background-color: rgba(255, 42, 133, 0.15);
+      border: 1px solid var(--neon-pink);
+      color: var(--neon-pink);
+      font-size: 0.75rem;
+      font-weight: 800;
+      border-radius: 4px;
+      margin-bottom: 1.5rem;
+      letter-spacing: 2px;
+    }
+
+    .hero-title {
+      font-size: 4rem;
+      line-height: 1;
+      margin-bottom: 1rem;
+      text-shadow: 0 0 20px rgba(255, 42, 133, 0.4);
+      font-style: italic;
+    }
+
+    .hero-subtitle {
+      font-size: 1.2rem;
+      color: var(--text-muted);
+      margin-bottom: 2.5rem;
+      max-width: 750px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 0.9rem 2rem;
+      font-weight: 900;
+      font-size: 0.85rem;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(45deg, var(--neon-pink), var(--neon-purple));
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 20px rgba(255, 42, 133, 0.4);
+    }
+
+    .btn-outline {
+      border: 1px solid var(--card-border);
+      color: var(--text-main);
+      background-color: rgba(19, 16, 33, 0.8);
+      margin-left: 1rem;
+    }
+
+    .btn-outline:hover {
+      border-color: var(--neon-cyan);
+      color: var(--neon-cyan);
+      transform: translateY(-3px);
+    }
+
+    /* BANNERS */
+    .stats-banner {
+      background-color: var(--card-bg);
+      border-y: 2px solid var(--card-border);
+      padding: 1.5rem 0;
+    }
+
+    .banner-grid {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      text-align: center;
+    }
+
+    .banner-val {
+      font-size: 1.8rem;
+      font-weight: 900;
+      color: var(--gold-accent);
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    .banner-lbl {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    /* MAIN CONTAINER */
+    .main-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 5rem 2rem;
+    }
+
+    .section {
+      margin-bottom: 6rem;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 3.5rem;
+    }
+
+    .section-tag {
+      font-size: 0.8rem;
+      font-weight: 800;
+      color: var(--neon-cyan);
+      letter-spacing: 2px;
+    }
+
+    .section-title {
+      font-size: 2.5rem;
+      margin-top: 0.3rem;
+    }
+
+    .divider {
+      width: 60px;
+      height: 4px;
+      background: linear-gradient(90deg, var(--neon-pink), var(--neon-cyan));
+      margin: 1rem auto 0;
+    }
+
+    /* GRID & CARDS */
+    .grid {
+      display: grid;
+      gap: 2rem;
+    }
+
+    .grid-2 { grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+    .grid-3 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+
+    .card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 2rem;
+      transition: all 0.3s ease;
+    }
+
+    .card:hover {
+      border-color: var(--neon-pink);
+      transform: translateY(-5px);
+    }
+
+    .card-img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      border-radius: 6px;
+      margin-bottom: 1.5rem;
+      filter: saturate(1.2);
+    }
+
+    .card-title {
+      font-size: 1.2rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .card-desc {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    /* Destaque GTA VI */
+    .gta6-container {
+      background: linear-gradient(135deg, #1f0c29 0%, #080b1e 100%);
+      border: 2px solid var(--neon-pink);
+      border-radius: 12px;
+      padding: 3.5rem 2.5rem;
+      text-align: center;
+      box-shadow: 0 0 30px rgba(255, 42, 133, 0.2);
+    }
+
+    .gta6-badge {
+      background-color: var(--neon-pink);
+      color: #fff;
+      font-weight: 900;
+      padding: 0.3rem 1rem;
+      font-size: 0.8rem;
+      border-radius: 3px;
+      display: inline-block;
+      margin-bottom: 1rem;
+    }
+
+    /* FOOTER */
+    .footer {
+      border-top: 1px solid var(--card-border);
+      padding: 3rem 2rem;
+      text-align: center;
+      background-color: #06050b;
+    }
+
+    .footer p {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    /* RESPONSIVIDADE */
+    @media (max-width: 768px) {
+      .nav-menu { display: none; }
+      .hero-title { font-size: 2.5rem; }
+      .btn-outline { margin-left: 0; margin-top: 0.8rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <div class="nav-container">
+      <a href="#inicio" class="nav-logo brand-font">GTA <span>CHRONICLE</span></a>
+      <nav>
+        <ul class="nav-menu">
+          <li><a href="#inicio" class="nav-link">Início</a></li>
+          <li><a href="#jogos" class="nav-link">Jogos Históricos</a></li>
+          <li><a href="#gta6" class="nav-link">GTA VI</a></li>
+          <li><a href="#cidades" class="nav-link">Cidades</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <section id="inicio" class="hero">
+    <div>
+      <span class="hero-badge">ROCKSTAR GAMES ★ MUNDO ABERTO</span>
+      <h1 class="hero-title">GRAND THEFT AUTO</h1>
+      <p class="hero-subtitle">
+        A franquia revolucionária de ação, crime e sátira social que redefiniu a indústria dos videogames para sempre.
+      </p>
+      <div>
+        <a href="#jogos" class="btn btn-primary">VER JOGOS</a>
+        <a href="#gta6" class="btn btn-outline">O FUTURO: GTA VI</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="stats-banner">
+    <div class="banner-grid">
+      <div>
+        <span class="banner-val">420M+</span>
+        <span class="banner-lbl">Jogos Vendidos</span>
+      </div>
+      <div>
+        <span class="banner-val">$8B+</span>
+        <span class="banner-lbl">Receita de GTA V</span>
+      </div>
+      <div>
+        <span class="banner-val">25+ ANOS</span>
+        <span class="banner-lbl">De História</span>
+      </div>
+    </div>
+  </div>
+
+  <main class="main-container">
+
+    <section id="jogos" class="section">
+      <div class="section-header">
+        <span class="section-tag">OS CLÁSSICOS</span>
+        <h2 class="section-title">JOGOS QUE MARCARAM ÉPOCA</h2>
+        <div class="divider"></div>
+      </div>
+
+      <div class="grid grid-3">
+        <div class="card">
+          <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=800&q=80" alt="GTA San Andreas" class="card-img">
+          <h3 class="card-title brand-font">GTA: San Andreas (2004)</h3>
+          <p class="card-desc">
+            A jornada de CJ em Los Santos é considerada um dos marcos culturais mais influentes dos videogames.
+          </p>
+        </div>
+
+        <div class="card">
+          <img src="https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=800&q=80" alt="GTA Vice City" class="card-img">
+          <h3 class="card-title brand-font">GTA: Vice City (2002)</h3>
+          <p class="card-desc">
+            Tommy Vercetti na atmosfera frenética, neon e oitentista de uma Miami fictícia cheia de estilo.
+          </p>
+        </div>
+
+        <div class="card">
+          <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=800&q=80" alt="GTA V" class="card-img">
+          <h3 class="card-title brand-font">GTA V (2013)</h3>
+          <p class="card-desc">
+            Três protagonistas interligados em uma gigantesca Los Santos, tornando-se o 2º produto cultural mais vendido da história.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="gta6" class="section">
+      <div class="gta6-container">
+        <span class="gta6-badge brand-font">RETORNO A VICE CITY</span>
+        <h2 class="section-title brand-font" style="color: #fff;">GTA VI — A NOVA ERA</h2>
+        <p style="color: var(--text-muted); max-width: 750px; margin: 1rem auto 2rem;">
+          Protagonizado pela dupla Lucia e Jason, o próximo capítulo da franquia promete revolucionar novamente os mundos abertos com um nível sem precedentes de realismo, física e detalhes no estado de Leonida.
+        </p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <p>© 2026 Blog não-oficial de fã. Grand Theft Auto e Rockstar Games são marcas registradas da Take-Two Interactive.</p>
+  </footer>
+
+</body>
+</html>
