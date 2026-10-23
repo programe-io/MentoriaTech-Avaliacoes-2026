@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EducaPainel | Gestão Escolar</title>
+
+  <!-- Tailwind CSS via CDN, conforme a proposta dos slides -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Ícones Lucide via CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ink: '#101828',
+            brand: '#6558f5',
+            canvas: '#f5f6fb'
+          },
+          boxShadow: {
+            soft: '0 8px 28px rgba(16, 24, 40, .06)'
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="style.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body class="min-h-screen bg-canvas text-slate-800">
+  <!-- HEADER -->
+  <header class="sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur">
+    <div class="flex h-[72px] items-center justify-between gap-4 px-4 md:px-8">
+      <div class="flex items-center gap-3">
+        <button id="mobileMenuButton" class="rounded-xl p-2 hover:bg-slate-100 lg:hidden" aria-label="Abrir menu">
+          <i data-lucide="menu" class="h-5 w-5"></i>
+        </button>
+        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-brand text-white">
+          <i data-lucide="graduation-cap" class="h-6 w-6"></i>
+        </div>
+        <div>
+          <p class="text-lg font-bold tracking-tight text-ink">Educa<span class="text-brand">Painel</span></p>
+          <p class="hidden text-xs text-slate-500 sm:block">Gestão escolar simplificada</p>
+        </div>
+      </div>
+
+      <div class="hidden max-w-md flex-1 md:block">
+        <label class="relative block">
+          <i data-lucide="search" class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"></i>
+          <input id="globalSearch" type="search" placeholder="Buscar alunos, cursos ou atividades..."
+            class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-10 pr-4 text-sm outline-none transition focus:border-brand focus:bg-white focus:ring-4 focus:ring-violet-100">
+        </label>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <button id="notificationButton" class="relative rounded-xl border border-slate-200 p-2.5 hover:bg-slate-50" aria-label="Notificações">
+          <i data-lucide="bell" class="h-5 w-5"></i>
+          <span class="absolute right-2 top-2 h-2 w-2 rounded-full bg-rose-500 ring-2 ring-white"></span>
+        </button>
+        <div class="hidden items-center gap-3 sm:flex">
+          <div class="text-right">
+            <p class="text-sm font-semibold text-ink">Mariana Costa</p>
+            <p class="text-xs text-slate-500">Administradora</p>
+          </div>
+          <div class="flex h-10 w-10 items-center justify-center rounded-full bg-violet-100 text-sm font-bold text-violet-700">MC</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONTEÚDO PRINCIPAL: ASIDE + MAIN -->
+  <div class="relative flex min-h-[calc(100vh-72px)]">
+    <!-- ASIDE: barra lateral -->
+    <div id="sidebarOverlay" class="fixed inset-0 z-30 hidden bg-slate-950/30 lg:hidden"></div>
+    <aside id="sidebar" class="fixed bottom-0 left-0 top-[72px] z-40 w-64 -translate-x-full border-r border-slate-200 bg-white p-4 transition-transform duration-300 lg:sticky lg:top-[72px] lg:h-[calc(100vh-72px)] lg:translate-x-0">
+      <div class="mb-3 px-3 pt-3 text-[11px] font-bold uppercase tracking-[.16em] text-slate-400">Menu principal</div>
+      <nav class="space-y-1">
+        <a href="#inicio" class="nav-link active flex items-center gap-3 rounded-xl px-3 py-3 text-sm" data-nav="inicio"><i data-lucide="layout-dashboard" class="h-5 w-5"></i> Visão geral</a>
+        <a href="#alunos" class="nav-link flex items-center gap-3 rounded-xl px-3 py-3 text-sm text-slate-600" data-nav="alunos"><i data-lucide="users" class="h-5 w-5"></i> Alunos <span class="ml-auto rounded-full bg-slate-100 px-2 py-0.5 text-xs">128</span></a>
+        <a href="#cursos" class="nav-link flex items-center gap-3 rounded-xl px-3 py-3 text-sm text-slate-600" data-nav="cursos"><i data-lucide="book-open" class="h-5 w-5"></i> Cursos</a>
+        <a href="#professores" class="nav-link flex items-center gap-3 rounded-xl px-3 py-3 text-sm text-slate-600" data-nav="professores"><i data-lucide="graduation-cap" class="h-5 w-5"></i> Professores</a>
+        <a href="#calendario" class="nav-link flex items-center gap-3 rounded-xl px-3 py-3 text-sm text-slate-600" data-nav="calendario"><i data-lucide="calendar-days" class="h-5 w-5"></i> Calendário</a>
+        <a href="#relatorios" class="nav-link flex items-center gap-3 rounded-xl px-3 py-3 text-sm text-slate-600" data-nav="relatorios"><i data-lucide="chart-no-axes-combined" class="h-5 w-5"></i> Relatórios</a>
+      </nav>
+
+      <div class="mb-3 mt-9 px-3 text-[11px] font-bold uppercase tracking-[.16em] text-slate-400">Preferências</div>
+      <nav class="space-y-1">
+        <a href="#configuracoes" class="nav-link flex items-center gap-3 rounded-xl px-3 py-3 text-sm text-slate-600" data-nav="configuracoes"><i data-lucide="settings" class="h-5 w-5"></i> Configurações</a>
+        <button id="helpButton" class="nav-link flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-sm text-slate-600"><i data-lucide="circle-help" class="h-5 w-5"></i> Ajuda e suporte</button>
+      </nav>
+
+      <div class="absolute bottom-4 left-4 right-4 rounded-2xl bg-slate-50 p-4">
+        <div class="mb-2 flex h-9 w-9 items-center justify-center rounded-xl bg-violet-100 text-brand"><i data-lucide="lightbulb" class="h-5 w-5"></i></div>
+        <p class="text-sm font-semibold text-ink">Dica do dia</p>
+        <p class="mt-1 text-xs leading-5 text-slate-500">Acompanhe a frequência para identificar alunos que precisam de apoio.</p>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main id="inicio" class="min-w-0 flex-1 p-4 md:p-8">
+      <!-- SECTION: título e ações -->
+      <section class="mb-7 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+        <div>
+          <p class="mb-2 text-sm font-medium text-brand">SEXTA-FEIRA, 23 DE OUTUBRO</p>
+          <h1 class="text-2xl font-bold tracking-tight text-ink md:text-3xl">Visão geral</h1>
+          <p class="mt-2 text-sm text-slate-500">Olá, Mariana! Veja o resumo da sua instituição hoje.</p>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <button id="exportButton" class="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold shadow-sm hover:bg-slate-50"><i data-lucide="download" class="h-4 w-4"></i> Exportar</button>
+          <button id="addStudentButton" class="flex items-center gap-2 rounded-xl bg-brand px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-violet-700"><i data-lucide="plus" class="h-4 w-4"></i> Novo aluno</button>
+        </div>
+      </section>
+
+      <!-- DIV: cartões de indicadores -->
+      <div class="mb-7 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <article class="rounded-2xl border border-slate-100 bg-white p-5 shadow-soft">
+          <div class="flex items-center justify-between"><span class="text-sm font-medium text-slate-500">Alunos matriculados</span><span class="rounded-xl bg-violet-50 p-2.5 text-brand"><i data-lucide="users" class="h-5 w-5"></i></span></div>
+          <div class="mt-4 flex items-end justify-between"><div><p id="studentCount" class="text-3xl font-bold tracking-tight text-ink">128</p><p class="mt-1 text-xs text-emerald-600">↑ 8,2% <span class="text-slate-400">vs. mês passado</span></p></div><div class="flex h-10 items-end gap-1"><span class="bar h-4 w-1.5 rounded bg-violet-200"></span><span class="bar h-6 w-1.5 rounded bg-violet-300"></span><span class="bar h-5 w-1.5 rounded bg-violet-300"></span><span class="bar h-8 w-1.5 rounded bg-violet-400"></span><span class="bar h-7 w-1.5 rounded bg-brand"></span></div></div>
+        </article>
+        <article class="rounded-2xl border border-slate-100 bg-white p-5 shadow-soft">
+          <div class="flex items-center justify-between"><span class="text-sm font-medium text-slate-500">Cursos ativos</span><span class="rounded-xl bg-sky-50 p-2.5 text-sky-600"><i data-lucide="book-open" class="h-5 w-5"></i></span></div>
+          <div class="mt-4 flex items-end justify-between"><div><p class="text-3xl font-bold tracking-tight text-ink">12</p><p class="mt-1 text-xs text-slate-500">Em 4 áreas de ensino</p></div><div class="flex h-10 items-end gap-1"><span class="bar h-5 w-1.5 rounded bg-sky-200"></span><span class="bar h-7 w-1.5 rounded bg-sky-300"></span><span class="bar h-6 w-1.5 rounded bg-sky-300"></span><span class="bar h-9 w-1.5 rounded bg-sky-400"></span><span class="bar h-8 w-1.5 rounded bg-sky-600"></span></div></div>
+        </article>
+        <article class="rounded-2xl border border-slate-100 bg-white p-5 shadow-soft">
+          <div class="flex items-center justify-between"><span class="text-sm font-medium text-slate-500">Professores</span><span class="rounded-xl bg-amber-50 p-2.5 text-amber-600"><i data-lucide="presentation" class="h-5 w-5"></i></span></div>
+          <div class="mt-4 flex items-end justify-between"><div><p class="text-3xl font-bold tracking-tight text-ink">18</p><p class="mt-1 text-xs text-slate-500">16 em atividade hoje</p></div><div class="flex h-10 items-end gap-1"><span class="bar h-7 w-1.5 rounded bg-amber-200"></span><span class="bar h-5 w-1.5 rounded bg-amber-300"></span><span class="bar h-8 w-1.5 rounded bg-amber-300"></span><span class="bar h-6 w-1.5 rounded bg-amber-400"></span><span class="bar h-9 w-1.5 rounded bg-amber-500"></span></div></div>
+        </article>
+        <article class="rounded-2xl border border-slate-100 bg-white p-5 shadow-soft">
+          <div class="flex items-center justify-between"><span class="text-sm font-medium text-slate-500">Frequência média</span><span class="rounded-xl bg-emerald-50 p-2.5 text-emerald-600"><i data-lucide="chart-no-axes-combined" class="h-5 w-5"></i></span></div>
+          <div class="mt-4 flex items-end justify-between"><div><p class="text-3xl font-bold tracking-tight text-ink">92,4%</p><p class="mt-1 text-xs text-emerald-600">↑ 2,4% <span class="text-slate-400">neste bimestre</span></p></div><div class="flex h-10 items-end gap-1"><span class="bar h-5 w-1.5 rounded bg-emerald-200"></span><span class="bar h-6 w-1.5 rounded bg-emerald-300"></span><span class="bar h-7 w-1.5 rounded bg-emerald-300"></span><span class="bar h-8 w-1.5 rounded bg-emerald-400"></span><span class="bar h-9 w-1.5 rounded bg-emerald-500"></span></div></div>
+        </article>
+      </div>
+
+      <!-- SECTION + DIV com duas DIVs internas -->
+      <section class="mb-7 grid grid-cols-1 gap-5 xl:grid-cols-3">
+        <!-- Primeira DIV: gráfico de frequência -->
+        <div id="relatorios" class="rounded-2xl border border-slate-100 bg-white p-5 shadow-soft xl:col-span-2">
+          <div class="flex flex-wrap items-start justify-between gap-3">
+            <div><h2 class="font-bold text-ink">Frequência dos alunos</h2><p class="mt-1 text-sm text-slate-500">Acompanhamento ao longo da semana</p></div>
+            <select id="periodSelect" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-brand"><option value="semana">Esta semana</option><option value="mes">Este mês</option></select>
+          </div>
+          <div class="mt-7 flex h-52">
+            <div class="flex flex-col justify-between pb-7 pr-3 text-xs text-slate-400"><span>100%</span><span>75%</span><span>50%</span><span>25%</span><span>0%</span></div>
+            <div class="relative flex flex-1 items-end justify-around border-b border-l border-slate-100 px-3 pb-0">
+              <div class="pointer-events-none absolute inset-0 flex flex-col justify-between"><div class="border-t border-dashed border-slate-100"></div><div class="border-t border-dashed border-slate-100"></div><div class="border-t border-dashed border-slate-100"></div><div class="border-t border-dashed border-slate-100"></div><div></div></div>
+              <div class="z-10 flex h-full w-10 flex-col justify-end gap-2"><div class="bar rounded-t-lg bg-violet-300" style="height:78%"></div><span class="pb-2 text-center text-xs text-slate-500">Seg</span></div>
+              <div class="z-10 flex h-full w-10 flex-col justify-end gap-2"><div class="bar rounded-t-lg bg-violet-400" style="height:88%"></div><span class="pb-2 text-center text-xs text-slate-500">Ter</span></div>
+              <div class="z-10 flex h-full w-10 flex-col justify-end gap-2"><div class="bar rounded-t-lg bg-brand" style="height:83%"></div><span class="pb-2 text-center text-xs text-slate-500">Qua</span></div>
+              <div class="z-10 flex h-full w-10 flex-col justify-end gap-2"><div class="bar rounded-t-lg bg-violet-400" style="height:94%"></div><span class="pb-2 text-center text-xs text-slate-500">Qui</span></div>
+              <div class="z-10 flex h-full w-10 flex-col justify-end gap-2"><div class="bar rounded-t-lg bg-violet-300" style="height:90%"></div><span class="pb-2 text-center text-xs text-slate-500">Sex</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Segunda DIV: tarefas pendentes -->
+        <div class="rounded-2xl border border-slate-100 bg-white p-5 shadow-soft">
+          <div class="flex items-center justify-between"><div><h2 class="font-bold text-ink">Tarefas pendentes</h2><p class="mt-1 text-sm text-slate-500">O que precisa de atenção</p></div><span id="taskCounter" class="rounded-full bg-rose-50 px-2.5 py-1 text-xs font-semibold text-rose-600">3 tarefas</span></div>
+          <div id="taskList" class="mt-5 space-y-4">
+            <label class="flex cursor-pointer items-start gap-3"><input type="checkbox" class="task-check mt-1 h-4 w-4 accent-violet-600"><span class="flex-1"><span class="block text-sm font-medium text-slate-700">Revisar matrículas novas</span><span class="mt-1 block text-xs text-slate-400">Hoje · Secretaria</span></span><span class="rounded-md bg-rose-50 px-2 py-1 text-[11px] font-medium text-rose-600">Urgente</span></label>
+            <label class="flex cursor-pointer items-start gap-3"><input type="checkbox" class="task-check mt-1 h-4 w-4 accent-violet-600"><span class="flex-1"><span class="block text-sm font-medium text-slate-700">Lançar notas do bimestre</span><span class="mt-1 block text-xs text-slate-400">Amanhã · Professores</span></span></label>
+            <label class="flex cursor-pointer items-start gap-3"><input type="checkbox" class="task-check mt-1 h-4 w-4 accent-violet-600"><span class="flex-1"><span class="block text-sm font-medium text-slate-700">Confirmar reunião pedagógica</span><span class="mt-1 block text-xs text-slate-400">26 out · Coordenação</span></span></label>
+          </div>
+          <button id="addTaskButton" class="mt-5 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-slate-300 py-2.5 text-sm font-semibold text-slate-600 hover:border-brand hover:text-brand"><i data-lucide="plus" class="h-4 w-4"></i> Adicionar tarefa</button>
+        </div>
+      </section>
+
+      <!-- SECTION: atividades e cursos -->
+      <section class="grid grid-cols-1 gap-5 xl:grid-cols-3">
+        <div id="alunos" class="rounded-2xl border border-slate-100 bg-white p-5 shadow-soft xl:col-span-2">
+          <div class="mb-5 flex items-center justify-between gap-3"><div><h2 class="font-bold text-ink">Alunos recentes</h2><p class="mt-1 text-sm text-slate-500">Últimas matrículas registradas</p></div><button id="viewStudentsButton" class="text-sm font-semibold text-brand hover:text-violet-700">Ver todos</button></div>
+          <div class="overflow-x-auto">
+            <table class="w-full min-w-[520px] text-left text-sm">
+              <thead><tr class="border-b border-slate-100 text-xs uppercase tracking-wide text-slate-400"><th class="pb-3 font-medium">Aluno</th><th class="pb-3 font-medium">Curso</th><th class="pb-3 font-medium">Status</th><th class="pb-3 text-right font-medium">Matrícula</th></tr></thead>
+              <tbody id="studentTable">
+                <tr class="border-b border-slate-50"><td class="py-4"><div class="flex items-center gap-3"><span class="flex h-9 w-9 items-center justify-center rounded-full bg-sky-100 text-xs font-bold text-sky-700">AL</span><span><span class="block font-semibold text-slate-700">Ana Lima</span><span class="text-xs text-slate-400">ana.lima@email.com</span></span></div></td><td class="py-4 text-slate-500">Desenvolvimento Web</td><td class="py-4"><span class="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700">Ativo</span></td><td class="py-4 text-right text-slate-500">23/10/2026</td></tr>
+                <tr class="border-b border-slate-50"><td class="py-4"><div class="flex items-center gap-3"><span class="flex h-9 w-9 items-center justify-center rounded-full bg-amber-100 text-xs font-bold text-amber-700">BS</span><span><span class="block font-semibold text-slate-700">Bruno Santos</span><span class="text-xs text-slate-400">bruno.s@email.com</span></span></div></td><td class="py-4 text-slate-500">Redes de Computadores</td><td class="py-4"><span class="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700">Ativo</span></td><td class="py-4 text-right text-slate-500">22/10/2026</td></tr>
+                <tr><td class="py-4"><div class="flex items-center gap-3"><span class="flex h-9 w-9 items-center justify-center rounded-full bg-rose-100 text-xs font-bold text-rose-700">CM</span><span><span class="block font-semibold text-slate-700">Camila Mendes</span><span class="text-xs text-slate-400">camila.m@email.com</span></span></div></td><td class="py-4 text-slate-500">Design Gráfico</td><td class="py-4"><span class="rounded-full bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-700">Pendente</span></td><td class="py-4 text-right text-slate-500">21/10/2026</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="cursos" class="rounded-2xl border border-slate-100 bg-white p-5 shadow-soft">
+          <div class="mb-5 flex items-center justify-between"><div><h2 class="font-bold text-ink">Cursos populares</h2><p class="mt-1 text-sm text-slate-500">Por número de matrículas</p></div><i data-lucide="trending-up" class="h-5 w-5 text-emerald-500"></i></div>
+          <div class="space-y-5">
+            <div><div class="mb-2 flex justify-between gap-3 text-sm"><span class="font-medium text-slate-700">Desenvolvimento Web</span><span class="text-slate-500">42 alunos</span></div><div class="h-2 overflow-hidden rounded-full bg-slate-100"><div class="h-full w-[82%] rounded-full bg-brand"></div></div></div>
+            <div><div class="mb-2 flex justify-between gap-3 text-sm"><span class="font-medium text-slate-700">Redes de Computadores</span><span class="text-slate-500">31 alunos</span></div><div class="h-2 overflow-hidden rounded-full bg-slate-100"><div class="h-full w-[64%] rounded-full bg-sky-500"></div></div></div>
+            <div><div class="mb-2 flex justify-between gap-3 text-sm"><span class="font-medium text-slate-700">Design Gráfico</span><span class="text-slate-500">26 alunos</span></div><div class="h-2 overflow-hidden rounded-full bg-slate-100"><div class="h-full w-[51%] rounded-full bg-amber-500"></div></div></div>
+            <div><div class="mb-2 flex justify-between gap-3 text-sm"><span class="font-medium text-slate-700">Banco de Dados</span><span class="text-slate-500">19 alunos</span></div><div class="h-2 overflow-hidden rounded-full bg-slate-100"><div class="h-full w-[38%] rounded-full bg-emerald-500"></div></div></div>
+          </div>
+          <button id="coursesButton" class="mt-6 w-full rounded-xl bg-violet-50 py-2.5 text-sm font-semibold text-brand hover:bg-violet-100">Gerenciar cursos</button>
+        </div>
+      </section>
+
+      <footer class="mt-8 flex flex-col justify-between gap-2 border-t border-slate-200 pt-5 text-xs text-slate-400 sm:flex-row"><span>© 2026 EducaPainel · Projeto acadêmico demonstrativo</span><span>Feito para praticar HTML + Tailwind CSS</span></footer>
+    </main>
+  </div>
+
+  <!-- Modal simples para demonstrar interação -->
+  <div id="modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/40 p-4">
+    <div class="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
+      <div class="mb-4 flex items-center justify-between"><h2 id="modalTitle" class="text-lg font-bold text-ink">Novo aluno</h2><button id="closeModal" class="rounded-lg p-2 text-slate-400 hover:bg-slate-100" aria-label="Fechar"><i data-lucide="x" class="h-5 w-5"></i></button></div>
+      <form id="studentForm" class="space-y-4">
+        <div><label for="studentName" class="mb-1 block text-sm font-medium">Nome do aluno</label><input id="studentName" required class="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm outline-none focus:border-brand focus:ring-4 focus:ring-violet-100" placeholder="Ex.: João Silva"></div>
+        <div><label for="studentEmail" class="mb-1 block text-sm font-medium">E-mail</label><input id="studentEmail" type="email" required class="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm outline-none focus:border-brand focus:ring-4 focus:ring-violet-100" placeholder="joao@email.com"></div>
+        <div><label for="studentCourse" class="mb-1 block text-sm font-medium">Curso</label><select id="studentCourse" class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none focus:border-brand"><option>Desenvolvimento Web</option><option>Redes de Computadores</option><option>Design Gráfico</option><option>Banco de Dados</option></select></div>
+        <div class="flex justify-end gap-2 pt-2"><button type="button" id="cancelModal" class="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold hover:bg-slate-50">Cancelar</button><button type="submit" class="rounded-xl bg-brand px-4 py-2.5 text-sm font-semibold text-white hover:bg-violet-700">Cadastrar aluno</button></div>
+      </form>
+    </div>
+  </div>
+
+  <div id="toast" class="fixed bottom-5 right-5 z-[60] hidden max-w-sm rounded-xl bg-slate-900 px-4 py-3 text-sm text-white shadow-xl"></div>
+
+  <script src="script.js" defer></script>
+<script src="script.js"></script></body>
+</html>
