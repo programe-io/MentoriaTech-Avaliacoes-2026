@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Homem-Aranha 2 (2004) — O Clássico do Cinema de Heróis</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,700;0,900;1,900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    /* PALETA TEMÁTICA HOMEM-ARANHA (SPIDER RED, NAVY BLUE & WEB GOLD) */
+    :root {
+      --bg-dark: #0a0b10;
+      --card-bg: #121520;
+      --card-hover: #1b2030;
+      --border-color: #252d42;
+      --spider-red: #e62429;
+      --spider-red-hover: #ff3b41;
+      --spider-blue: #0055ff;
+      --web-gold: #ffb703;
+      --text-main: #ffffff;
+      --text-muted: #9aa3b8;
+      --header-bg: rgba(10, 11, 16, 0.95);
+    }
+
+    /* RESET GLOBAL */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      line-height: 1.7;
+    }
+
+    h1, h2, h3, h4, .brand-font {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* HEADER FIXO */
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background-color: var(--header-bg);
+      backdrop-filter: blur(10px);
+      border-bottom: 2px solid var(--spider-red);
+      z-index: 1000;
+      padding: 1.2rem 2rem;
+    }
+
+    .nav-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nav-logo {
+      font-size: 1.3rem;
+      letter-spacing: 1.5px;
+      color: var(--text-main);
+    }
+
+    .nav-logo span {
+      color: var(--spider-red);
+    }
+
+    .nav-menu {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-link {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+    }
+
+    .nav-link:hover {
+      color: var(--spider-red);
+    }
+
+    /* HERO SECTION */
+    .hero {
+      padding: 10rem 2rem 5rem;
+      max-width: 1100px;
+      margin: 0 auto;
+      text-align: center;
+      background: radial-gradient(circle at center, rgba(230, 36, 41, 0.15) 0%, transparent 70%);
+    }
+
+    .hero-badge {
+      display: inline-block;
+      padding: 0.5rem 1.5rem;
+      background-color: rgba(230, 36, 41, 0.15);
+      border: 1px solid var(--spider-red);
+      color: var(--spider-red);
+      font-size: 0.75rem;
+      font-weight: 800;
+      border-radius: 50px;
+      margin-bottom: 1.8rem;
+      letter-spacing: 2px;
+    }
+
+    .hero-title {
+      font-size: 3.8rem;
+      line-height: 1.1;
+      margin-bottom: 1.2rem;
+      font-weight: 900;
+      text-shadow: 0 0 20px rgba(230, 36, 41, 0.4);
+    }
+
+    .hero-subtitle {
+      font-size: 1.2rem;
+      color: var(--text-muted);
+      max-width: 750px;
+      margin: 0 auto 2.5rem;
+      font-weight: 300;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 0.9rem 2.2rem;
+      font-weight: 800;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .btn-primary {
+      background-color: var(--spider-red);
+      color: #fff;
+      box-shadow: 0 4px 15px rgba(230, 36, 41, 0.4);
+    }
+
+    .btn-primary:hover {
+      background-color: var(--spider-red-hover);
+      transform: translateY(-2px);
+    }
+
+    .btn-outline {
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      background-color: rgba(18, 21, 32, 0.8);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--spider-red);
+      color: var(--spider-red);
+      transform: translateY(-2px);
+    }
+
+    /* FAIXA DE ESTATÍSTICAS */
+    .strip-banner {
+      background-color: var(--card-bg);
+      border-top: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+      padding: 1.5rem 0;
+    }
+
+    .strip-content {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      text-align: center;
+    }
+
+    .stat-val {
+      font-size: 1.8rem;
+      font-weight: 900;
+      color: var(--web-gold);
+    }
+
+    .stat-lbl {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    /* CONTAINER PRINCIPAL */
+    .main-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 5rem 2rem;
+    }
+
+    .section {
+      margin-bottom: 6rem;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 3.5rem;
+    }
+
+    .section-tag {
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: var(--spider-red);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      display: block;
+    }
+
+    .section-title {
+      font-size: 2.2rem;
+      margin-top: 0.3rem;
+    }
+
+    .divider {
+      width: 50px;
+      height: 4px;
+      background-color: var(--spider-red);
+      margin: 1rem auto 0;
+    }
+
+    /* GRID & CARDS */
+    .grid {
+      display: grid;
+      gap: 2rem;
+    }
+
+    .grid-2 { grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+    .grid-3 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+
+    .card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 2rem;
+      transition: all 0.3s ease;
+    }
+
+    .card:hover {
+      background-color: var(--card-hover);
+      border-color: var(--spider-red);
+      transform: translateY(-4px);
+    }
+
+    .card-meta {
+      font-size: 0.8rem;
+      color: var(--web-gold);
+      margin-bottom: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 700;
+    }
+
+    .card-title {
+      font-size: 1.3rem;
+      margin-bottom: 0.8rem;
+      line-height: 1.3;
+    }
+
+    .card-desc {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    /* HIGHLIGHT DO VILÃO / DOCTO OCK */
+    .villain-box {
+      background: linear-gradient(135deg, #180a0e 0%, #0d121c 100%);
+      border: 2px solid var(--spider-red);
+      border-radius: 12px;
+      padding: 3.5rem 2.5rem;
+      text-align: center;
+      box-shadow: 0 0 30px rgba(230, 36, 41, 0.2);
+    }
+
+    .villain-badge {
+      background-color: var(--spider-red);
+      color: #fff;
+      font-weight: 900;
+      padding: 0.3rem 1rem;
+      font-size: 0.8rem;
+      border-radius: 3px;
+      display: inline-block;
+      margin-bottom: 1rem;
+    }
+
+    /* FOOTER */
+    .footer {
+      border-top: 1px solid var(--border-color);
+      padding: 3.5rem 2rem;
+      text-align: center;
+      background-color: #06070a;
+    }
+
+    .footer p {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    /* RESPONSIVIDADE */
+    @media (max-width: 768px) {
+      .nav-menu { display: none; }
+      .hero-title { font-size: 2.4rem; }
+      .strip-content { gap: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="nav-container">
+      <a href="#inicio" class="nav-logo brand-font">HOMEM-ARANHA <span>2</span></a>
+      <nav>
+        <ul class="nav-menu">
+          <li><a href="#inicio" class="nav-link">Início</a></li>
+          <li><a href="#sinopse" class="nav-link">Enredo</a></li>
+          <li><a href="#vilao" class="nav-link">Dr. Octopus</a></li>
+          <li><a href="#cenas" class="nav-link">Cenas Antológicas</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section id="inicio" class="hero">
+    <span class="hero-badge">DIRIGIDO POR SAM RAIMI ★ 2004</span>
+    <h1 class="hero-title">HOMEM-ARANHA 2</h1>
+    <p class="hero-subtitle">
+      A maior obra-prima do cinema de super-heróis. A jornada emocional de Peter Parker lidando com o fardo da responsabilidade, o amor e a perda de seus poderes.
+    </p>
+    <div class="hero-buttons">
+      <a href="#sinopse" class="btn btn-primary">Conhecer a História</a>
+      <a href="#cenas" class="btn btn-outline">A Cena do Trem</a>
+    </div>
+  </section>
+
+  <!-- FAIXA DE ESTATÍSTICAS E PRÊMIOS -->
+  <div class="strip-banner">
+    <div class="strip-content">
+      <div>
+        <span class="stat-val">🏆 OSCAR</span>
+        <span class="stat-lbl">Melhores Efeitos Visuais</span>
+      </div>
+      <div>
+        <span class="stat-val">$788M+</span>
+        <span class="stat-lbl">Bilheteria Mundial</span>
+      </div>
+      <div>
+        <span class="stat-val">93%</span>
+        <span class="stat-lbl">Rotten Tomatoes</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTEÚDO PRINCIPAL -->
+  <main class="main-container">
+
+    <!-- SEÇÃO SINOPSE / ENREDO -->
+    <section id="sinopse" class="section">
+      <div class="section-header">
+        <span class="section-tag">O DILEMA HUMANO</span>
+        <h2 class="section-title">A HISTÓRIA DE PETER PARKER</h2>
+        <div class="divider"></div>
+      </div>
+
+      <div class="grid grid-2">
+        <div class="card">
+          <div class="card-meta">O CONFLITO INTERNO</div>
+          <h3 class="card-title brand-font">Spider-Man No More</h3>
+          <p class="card-desc">
+            Anos após assumir o manto do Herói do Pedaço, Peter Parker enfrenta graves dificuldades financeiras, notas baixas na faculdade e o distanciamento de Mary Jane e Harry Osborn. O estresse acumulado faz com que ele perca temporariamente seus poderes.
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="card-meta">A LIÇÃO ETERNA</div>
+          <h3 class="card-title brand-font">Grandes Poderes, Grandes Responsabilidades</h3>
+          <p class="card-desc">
+            Com conselhos marcantes da Tia May, Peter compreende que ser um herói exige sacrificar seus desejos pessoais pelo bem maior, decidindo aceitar seu destino e retornar à luta pelo povo de Nova York.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SEÇÃO VILÃO -->
+    <section id="vilao" class="section">
+      <div class="villain-box">
+        <span class="villain-badge brand-font">O ANTAGONISTA TRÁGICO</span>
+        <h2 class="section-title brand-font" style="color: #fff;">DOCTOR OCTOPUS (DR. OTTO OCTAVIUS)</h2>
+        <p style="color: var(--text-muted); max-width: 750px; margin: 1rem auto 1.5rem;">
+          Interpretado magistralmente por Alfred Molina, Dr. Otto Octavius é um brilhante cientista que busca criar uma fonte inesgotável de energia de fusão. Após um grave acidente em seu experimento que vitimou sua esposa, ele é manipulado pela inteligência artificial de quatro braços mecânicos acoplados à sua espinha.
+        </p>
+      </div>
+    </section>
+
+    <!-- SEÇÃO CENAS MARCANTES -->
+    <section id="cenas" class="section">
+      <div class="section-header">
+        <span class="section-tag">CINEMA EM ESTADO PURO</span>
+        <h2 class="section-title">CENAS ICÔNICAS</h2>
+        <div class="divider"></div>
+      </div>
+
+      <div class="grid grid-3">
+        <div class="card">
+          <div class="card-meta">AÇÃO LENDÁRIA</div>
+          <h3 class="card-title brand-font">A Batalha do Trem</h3>
+          <p class="card-desc">
+            Uma das sequências de ação mais aclamadas da história do cinema, onde Peter esgota todas as suas forças para parar um trem descontrolado e salvar centenas de passageiros.
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="card-meta">EFEITOS PRÁTICOS</div>
+          <h3 class="card-title brand-font">O Acordar dos Braços no Hospital</h3>
+          <p class="card-desc">
+            Com forte influência do diretor Sam Raimi em filmes de terror, a cena em que os braços robóticos ganham consciência própria no hospital é inesquecível.
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="card-meta">EMOÇÃO PURA</div>
+          <h3 class="card-title brand-font">O Povo de Nova York</h3>
+          <p class="card-desc">
+            A cena emblemática em que os passageiros do trem carregam o Homem-Aranha exausto, prometendo guardar sua identidade em segredo em um gesto de eterna gratidão.
+          </p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- RODAPÉ -->
+  <footer class="footer">
+    <p>© 2026 Blog de Fã — Homenagem ao filme Homem-Aranha 2 (2004) de Sam Raimi. Marvel & Sony Pictures.</p>
+  </footer>
+
+</body>
+</html>
