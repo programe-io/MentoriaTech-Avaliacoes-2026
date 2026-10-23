@@ -1,0 +1,274 @@
+/**
+ * PROJETO: Gerenciador de Tarefas
+ * ARQUIVO: style.css
+ * DESCRIÇÃO: Estilização completa da interface (Design Escuro Minimalista).
+ */
+
+/* ============================================================================
+   1. VARIÁVEIS DE COR E CONFIGURAÇÕES GERAIS
+   ============================================================================ */
+:root {
+    --bg-main: #0f172a;       /* Fundo principal da página */
+    --bg-card: #1e293b;       /* Fundo dos cartões e painéis */
+    --border-color: #334155;  /* Cor das bordas e divisas */
+    --text-main: #f8fafc;     /* Texto principal (claro) */
+    --text-muted: #94a3b8;    /* Texto secundário/desfocado */
+    --accent: #6366f1;        /* Cor de destaque (Indigo) */
+    --accent-hover: #4f46e5;  /* Destaque ao passar o rato */
+    --danger: #f43f5e;        /* Cor para erros e Prioridade 1 */
+    --warning: #f59e0b;       /* Cor para Prioridade 2 */
+    --success: #10b981;       /* Cor para conclusão e Prioridade 3 */
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+body {
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    padding: 3rem 1.5rem;
+    display: flex;
+    justify-content: center;
+}
+
+/* ============================================================================
+   2. ESTRUTURA E LAYOUT DO PAINEL
+   ============================================================================ */
+.workspace {
+    width: 100%;
+    max-width: 680px;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2.5rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 1.5rem;
+}
+
+header h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    letter-spacing: -0.05em;
+}
+
+.contador-badge {
+    background-color: var(--border-color);
+    color: var(--text-main);
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+/* ============================================================================
+   3. PAINEL DE ENTRADA E FORMULÁRIO (INPUT)
+   ============================================================================ */
+.input-panel {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.input-row {
+    display: flex;
+    gap: 0.75rem;
+    width: 100%;
+}
+
+.input-principal {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--text-main);
+    font-size: 1.1rem;
+    outline: none;
+    padding: 0.5rem 0.25rem;
+}
+
+.input-principal::placeholder {
+    color: var(--text-muted);
+}
+
+.controls-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #2d3748;
+    padding-top: 0.75rem;
+}
+
+/* Elementos de Formulário Customizados */
+.select-custom {
+    background-color: #0f172a;
+    color: var(--text-muted);
+    border: 1px solid var(--border-color);
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+}
+
+.select-custom:focus {
+    border-color: var(--accent);
+    color: var(--text-main);
+}
+
+.btn-submit {
+    background-color: var(--accent);
+    color: white;
+    border: none;
+    padding: 0.5rem 1.25rem;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-submit:hover {
+    background-color: var(--accent-hover);
+}
+
+/* Mensagem de Feedback de Erro */
+.alert-box {
+    color: var(--danger);
+    font-size: 0.85rem;
+    display: none; /* Ativado via JS */
+    font-weight: 500;
+    background: rgba(244, 63, 94, 0.1);
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    border: 1px solid rgba(244, 63, 94, 0.2);
+}
+
+/* ============================================================================
+   4. LISTA E CARTÕES DE TAREFAS
+   ============================================================================ */
+.task-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.task-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: border-color 0.2s, opacity 0.2s, background-color 0.2s;
+}
+
+.task-card:hover {
+    border-color: #475569;
+}
+
+/* Estado Concluído */
+.task-card.done {
+    opacity: 0.4;
+    background-color: rgba(30, 41, 59, 0.5);
+}
+
+.task-card.done .task-title {
+    text-decoration: line-through;
+    color: var(--text-muted);
+}
+
+/* Estrutura Interna do Cartão */
+.task-left {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+.task-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.task-title {
+    font-size: 1rem;
+    font-weight: 500;
+    word-break: break-word;
+}
+
+.task-details {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.task-right {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* ============================================================================
+   5. INDICADORES VISUAIS (CHECKBOX E BADGES)
+   ============================================================================ */
+.checkbox-trigger {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--border-color);
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 0.15rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.task-card.done .checkbox-trigger {
+    background-color: var(--success);
+    border-color: var(--success);
+}
+
+.task-card.done .checkbox-trigger::after {
+    content: "✓";
+    color: white;
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+
+/* Círculos Indicadores de Prioridade */
+.prio-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.dot-1 { background-color: var(--danger); }  /* Alta */
+.dot-2 { background-color: var(--warning); } /* Média */
+.dot-3 { background-color: var(--success); } /* Baixa */
+
+/* Estado Vazio (Sem itens) */
+.empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: var(--text-muted);
+    border: 1px dashed var(--border-color);
+    border-radius: 8px;
+    font-size: 0.95rem;
+}

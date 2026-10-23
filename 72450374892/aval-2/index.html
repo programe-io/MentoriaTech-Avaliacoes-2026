@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Fluxo</title>
+    <link rel="stylesheet" href="style.css"> 
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+    <div class="workspace">
+        <header>
+            <h1>Painel de Fluxo</h1>
+            <span id="contador" class="contador-badge">0 tarefas</span>
+        </header>
+
+        <div class="input-panel">
+            <div class="input-row">
+                <input type="text" id="task-title" class="input-principal" placeholder="O que precisa ser feito hoje?" autocomplete="off">
+            </div>
+            <div id="alert-msg" class="alert-box"></div>
+            <div class="controls-row">
+                <select id="task-prio" class="select-custom">
+                    <option value="1">Prio: Alta</option>
+                    <option value="2" selected>Prio: Média</option>
+                    <option value="3">Prio: Baixa</option>
+                </select>
+                <button class="btn-submit" onclick="executarCadastro()">Adicionar</button>
+            </div>
+        </div>
+
+        <div id="task-stack" class="task-stack"></div>
+    </div>
+
+    <script>
+        // ============================================================================
+        // LÓGICA DO MOTOR CENTRAL (ANTIGO APP.JS INJETADO DIRETAMENTE AQUI)
+        // ============================================================================
+        const tarefas = [];
+        let proximoCodigo = 1; 
+
+        function validarDadosTarefa(titulo, prioridade) {
+            if (!titulo || titulo.trim().length < 5) {
+                throw new Error("O título da tarefa deve possuir no mínimo 5 caracteres.");
+            }
+            if (prioridade < 1 || prioridade > 3) {
+                throw new Error("A prioridade deve estar entre 1 (Alta) e 3 (Baixa).");
+            }
+        }
+
+        function buscarTarefa(codigo) {
+            const tarefaEncontrada = tarefas.find(tarefa => tarefa.codigo === codigo);
+            if (!tarefaEncontrada) {
+                throw new Error(`Código de identificação #${codigo} não foi encontrado.`);
+            }
+            return tarefaEncontrada;
+        }
+
+        function cadastrarTarefa(titulo, prioridade) {
+            const prioridadeInteira = parseInt(prioridade);
+            validarDadosTarefa(titulo, prioridadeInteira);
+
+            const novaTarefa = {
+                codigo: proximoCodigo,
+                titulo: titulo.trim(),
+                prioridade: prioridadeInteira,
+                status: true 
+            };
+
+            proximoCodigo++;
+            tarefas.push(novaTarefa);
+            return novaTarefa;
+        }
+
+        function listarTarefas() {
+            return tarefas;
+        }
+
+        function concluirTarefa(codigo) {
+            const tarefa = buscarTarefa(codigo);
+            if (tarefa.status === false) {
+                throw new Error(`A tarefa #${codigo} já se encontra concluída.`);
+            }
+            tarefa.status = false;
+            return tarefa;
+        }
+
+        function alterarPrioridade(codigo, novaPrioridade) {
+            const prioridadeInteira = parseInt(novaPrioridade);
+            const tarefa = buscarTarefa(codigo);
+            validarDadosTarefa(tarefa.titulo, prioridadeInteira);
+            tarefa.prioridade = prioridadeInteira;
+            return tarefa;
+        }
+
+        // ============================================================================
+        // MANIPULAÇÃO VISUAL E EVENTOS DA TELA
+        // ============================================================================
+        function atualizarUI() {
+            const stack = document.getElementById("task-stack");
+            const contador = document.getElementById("contador");
+            stack.innerHTML = "";
+
+            const lista = listarTarefas();
+            contador.innerText = `${lista.length} ${lista.length === 1 ? 'tarefa' : 'tarefas'}`;
+
+            if (lista.length === 0) {
+                stack.innerHTML = '<div class="empty-state">Sem pendências ou tarefas criadas.</div>';
+                return;
+            }
+
+            lista.forEach(t => {
+                const card = document.createElement("div");
+                card.className = `task-card ${!t.status ? 'done' : ''}`;
+                const textoPrio = t.prioridade === 1 ? 'Alta' : t.prioridade === 2 ? 'Média' : 'Baixa';
+
+                card.innerHTML = `
+                    <div class="task-left">
+                        <div class="checkbox-trigger" onclick="${t.status ? `executarConclusao(${t.codigo})` : ''}"></div>
+                        <div class="task-content">
+                            <div class="task-title">${t.titulo}</div>
+                            <div class="task-details">
+                                <span class="prio-dot dot-${t.prioridade}"></span>
+                                <span>Prio: ${textoPrio}</span>
+                                <span>•</span>
+                                <span>Ref: #${t.codigo}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="task-right">
+                        ${t.status ? `
+                            <select class="select-custom" onchange="executarTrocaPrio(${t.codigo}, this.value)">
+                                <option value="" disabled selected>Mudar...</option>
+                                <option value="1">Alta</option>
+                                <option value="2">Média</option>
+                                <option value="3">Baixa</option>
+                            </select>
+                        ` : ''}
+                    </div>
+                `;
+                stack.appendChild(card);
+            });
+        }
+
+        function ejecutarCadastro() { // Mantida a assinatura para o HTML anterior ou atual
+            executarCadastro();
+        }
+
+        function executarCadastro() {
+            const inputTitle = document.getElementById("task-title");
+            const inputPrio = document.getElementById("task-prio");
+            const alertMsg = document.getElementById("alert-msg");
+            alertMsg.style.display = "none";
+
+            try {
+                cadastrarTarefa(inputTitle.value.trim(), inputPrio.value);
+                inputTitle.value = "";
+                inputPrio.value = "2";
+                atualizarUI();
+            } catch (err) {
+                alertMsg.innerText = err.message;
+                alertMsg.style.display = "block";
+            }
+        }
+
+        function executarConclusao(codigo) {
+            try { 
+                concluirTarefa(codigo); 
+                atualizarUI(); 
+            } catch (err) { 
+                alert(err.message); 
+            }
+        }
+
+        function executarTrocaPrio(codigo, novaPrio) {
+            try { 
+                alterarPrioridade(codigo, novaPrio); 
+                atualizarUI(); 
+            } catch (err) { 
+                alert(err.message); 
+            }
+        }
+
+        atualizarUI();
+    </script>
+<script src="script.js"></script></body>
+</html>
