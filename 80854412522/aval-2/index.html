@@ -1,0 +1,506 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>InstaFake</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #fafafa;
+    color: #262626;
+}
+
+header {
+    background: white;
+    padding: 15px 8%;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+}
+
+.logo {
+    font-size: 27px;
+    font-weight: bold;
+    color: #d62976;
+}
+
+header input {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.container {
+    max-width: 650px;
+    margin: 25px auto;
+    padding: 0 12px;
+}
+
+.stories {
+    display: flex;
+    gap: 18px;
+    padding: 18px;
+    overflow-x: auto;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    margin-bottom: 25px;
+}
+
+.story {
+    min-width: 65px;
+    text-align: center;
+    font-size: 12px;
+}
+
+.story img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    padding: 3px;
+    border: 3px solid #d62976;
+    margin-bottom: 5px;
+}
+
+.create {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 25px;
+}
+
+.create h3 {
+    margin-bottom: 12px;
+}
+
+.create input,
+.create textarea {
+    display: block;
+    width: 100%;
+    padding: 11px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 7px;
+    font: inherit;
+}
+
+.create button {
+    background: #d62976;
+    color: white;
+    padding: 11px;
+    border: none;
+    border-radius: 7px;
+    width: 100%;
+    cursor: pointer;
+}
+
+.post {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    margin-bottom: 25px;
+    overflow: hidden;
+}
+
+.post-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px;
+    font-weight: bold;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.post-image {
+    display: block;
+    width: 100%;
+    max-height: 550px;
+    object-fit: cover;
+}
+
+.actions {
+    display: flex;
+    gap: 15px;
+    padding: 12px 15px 5px;
+}
+
+.actions button {
+    border: none;
+    background: none;
+    font-size: 27px;
+    cursor: pointer;
+}
+
+.likes,
+.caption {
+    padding: 5px 15px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.comment-list p {
+    padding: 5px 15px;
+    font-size: 14px;
+}
+
+.comment-form {
+    display: flex;
+    border-top: 1px solid #eee;
+    margin-top: 10px;
+}
+
+.comment-form input {
+    flex: 1;
+    min-width: 0;
+    padding: 13px;
+    border: none;
+    outline: none;
+}
+
+.comment-form button {
+    border: none;
+    background: white;
+    color: #0095f6;
+    font-weight: bold;
+    padding: 10px;
+    cursor: pointer;
+}
+
+footer {
+    text-align: center;
+    color: #888;
+    padding: 25px;
+}
+
+@media (max-width: 500px) {
+    header {
+        padding: 12px;
+    }
+
+    .logo {
+        font-size: 21px;
+    }
+
+    header input {
+        width: 130px;
+    }
+}
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+<header>
+    <div class="logo">📸 InstaFake</div>
+    <input id="search" type="search"
+           placeholder="Pesquisar..."
+           aria-label="Pesquisar publicações">
+</header>
+
+<main class="container">
+
+    <section class="stories">
+        <div class="story">
+            <img src="https://i.pravatar.cc/100?img=12" alt="Ana">
+            <p>Ana</p>
+        </div>
+        <div class="story">
+            <img src="https://i.pravatar.cc/100?img=33" alt="Lucas">
+            <p>Lucas</p>
+        </div>
+        <div class="story">
+            <img src="https://i.pravatar.cc/100?img=47" alt="Maria">
+            <p>Maria</p>
+        </div>
+        <div class="story">
+            <img src="https://i.pravatar.cc/100?img=15" alt="Pedro">
+            <p>Pedro</p>
+        </div>
+        <div class="story">
+            <img src="https://i.pravatar.cc/100?img=25" alt="Julia">
+            <p>Julia</p>
+        </div>
+    </section>
+
+    <section class="create">
+        <h3>➕ Criar publicação</h3>
+        <form id="postForm">
+            <input id="username" placeholder="Seu nome" required>
+            <input id="imageUrl" type="url"
+                   placeholder="Link da imagem (opcional)">
+            <textarea id="caption" placeholder="Escreva uma legenda..."
+                      required></textarea>
+            <button type="submit">Publicar</button>
+        </form>
+    </section>
+
+    <section id="feed">
+
+        <article class="post">
+            <div class="post-header">
+                <img class="avatar"
+                     src="https://i.pravatar.cc/100?img=12" alt="Ana">
+                ana_silva
+            </div>
+            <img class="post-image"
+                 src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80"
+                 alt="Paisagem natural">
+            <div class="actions">
+                <button class="like" aria-label="Curtir">♡</button>
+                <button class="comment-focus" aria-label="Comentar">💬</button>
+                <button class="share" aria-label="Compartilhar">➤</button>
+            </div>
+            <p class="likes"><strong>128 curtidas</strong></p>
+            <p class="caption"><strong>ana_silva</strong> Curtindo a natureza! 🌿</p>
+            <div class="comment-list"></div>
+            <form class="comment-form">
+                <input placeholder="Adicione um comentário..." required>
+                <button>Publicar</button>
+            </form>
+        </article>
+
+        <article class="post">
+            <div class="post-header">
+                <img class="avatar"
+                     src="https://i.pravatar.cc/100?img=33" alt="Lucas">
+                lucas_gamer
+            </div>
+            <img class="post-image"
+                 src="https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=900&q=80"
+                 alt="Computador para jogos">
+            <div class="actions">
+                <button class="like" aria-label="Curtir">♡</button>
+                <button class="comment-focus" aria-label="Comentar">💬</button>
+                <button class="share" aria-label="Compartilhar">➤</button>
+            </div>
+            <p class="likes"><strong>256 curtidas</strong></p>
+            <p class="caption"><strong>lucas_gamer</strong> Hora de jogar! 🎮</p>
+            <div class="comment-list"></div>
+            <form class="comment-form">
+                <input placeholder="Adicione um comentário..." required>
+                <button>Publicar</button>
+            </form>
+        </article>
+
+        <article class="post">
+            <div class="post-header">
+                <img class="avatar"
+                     src="https://i.pravatar.cc/100?img=47" alt="Maria">
+                maria_fotos
+            </div>
+            <img class="post-image"
+                 src="https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=900&q=80"
+                 alt="Flores coloridas">
+            <div class="actions">
+                <button class="like" aria-label="Curtir">♡</button>
+                <button class="comment-focus" aria-label="Comentar">💬</button>
+                <button class="share" aria-label="Compartilhar">➤</button>
+            </div>
+            <p class="likes"><strong>94 curtidas</strong></p>
+            <p class="caption"><strong>maria_fotos</strong> Flores para alegrar o dia! 🌸</p>
+            <div class="comment-list"></div>
+            <form class="comment-form">
+                <input placeholder="Adicione um comentário..." required>
+                <button>Publicar</button>
+            </form>
+        </article>
+
+    </section>
+
+    <p id="empty" hidden>Nenhuma publicação encontrada.</p>
+
+</main>
+
+<footer>
+    InstaFake © 2026 — Projeto fictício para estudos.
+</footer>
+
+<script>
+const feed = document.getElementById("feed");
+
+// Curtidas, comentários e compartilhamento
+feed.addEventListener("click", function(event) {
+    const button = event.target.closest("button");
+    if (!button) return;
+
+    const post = button.closest(".post");
+    if (!post) return;
+
+    if (button.classList.contains("like")) {
+        const likes = post.querySelector(".likes strong");
+        let total = parseInt(likes.textContent, 10) || 0;
+        const liked = button.dataset.liked === "true";
+
+        total += liked ? -1 : 1;
+        likes.textContent = total + " curtidas";
+        button.dataset.liked = String(!liked);
+        button.textContent = liked ? "♡" : "♥";
+        button.style.color = liked ? "" : "#e1306c";
+    }
+
+    if (button.classList.contains("comment-focus")) {
+        post.querySelector(".comment-form input").focus();
+    }
+
+    if (button.classList.contains("share")) {
+        const text = post.querySelector(".caption").textContent;
+
+        if (navigator.share) {
+            navigator.share({
+                title: "InstaFake",
+                text: text
+            }).catch(() => {});
+        } else {
+            alert("Publicação: " + text);
+        }
+    }
+});
+
+// Publicar comentários
+feed.addEventListener("submit", function(event) {
+    if (!event.target.matches(".comment-form")) return;
+    event.preventDefault();
+
+    const input = event.target.querySelector("input");
+    const value = input.value.trim();
+    if (!value) return;
+
+    const p = document.createElement("p");
+    const user = document.createElement("strong");
+    user.textContent = "voce: ";
+    p.append(user, document.createTextNode(value));
+
+    event.target.closest(".post")
+        .querySelector(".comment-list").appendChild(p);
+
+    input.value = "";
+});
+
+// Criar publicações
+document.getElementById("postForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    const username = document.getElementById("username").value.trim();
+    const imageUrl = document.getElementById("imageUrl").value.trim();
+    const caption = document.getElementById("caption").value.trim();
+
+    if (!username || !caption) return;
+
+    if (imageUrl && !/^https?:\/\//i.test(imageUrl)) {
+        alert("O link da imagem deve começar com http:// ou https://");
+        return;
+    }
+
+    const post = document.createElement("article");
+    post.className = "post";
+
+    const header = document.createElement("div");
+    header.className = "post-header";
+
+    const avatar = document.createElement("img");
+    avatar.className = "avatar";
+    avatar.src = "https://i.pravatar.cc/100?img=11";
+    avatar.alt = "Perfil";
+
+    header.append(avatar, document.createTextNode(username));
+    post.appendChild(header);
+
+    if (imageUrl) {
+        const image = document.createElement("img");
+        image.className = "post-image";
+        image.src = imageUrl;
+        image.alt = "Imagem publicada";
+        post.appendChild(image);
+    }
+
+    const actions = document.createElement("div");
+    actions.className = "actions";
+
+    [
+        ["like", "♡", "Curtir"],
+        ["comment-focus", "💬", "Comentar"],
+        ["share", "➤", "Compartilhar"]
+    ].forEach(function(item) {
+        const button = document.createElement("button");
+        button.className = item[0];
+        button.textContent = item[1];
+        button.setAttribute("aria-label", item[2]);
+        actions.appendChild(button);
+    });
+
+    post.appendChild(actions);
+
+    const likes = document.createElement("p");
+    likes.className = "likes";
+    const strong = document.createElement("strong");
+    strong.textContent = "0 curtidas";
+    likes.appendChild(strong);
+    post.appendChild(likes);
+
+    const description = document.createElement("p");
+    description.className = "caption";
+    const strongUser = document.createElement("strong");
+    strongUser.textContent = username + " ";
+    description.append(strongUser, document.createTextNode(caption));
+    post.appendChild(description);
+
+    const commentList = document.createElement("div");
+    commentList.className = "comment-list";
+    post.appendChild(commentList);
+
+    const form = document.createElement("form");
+    form.className = "comment-form";
+
+    const input = document.createElement("input");
+    input.placeholder = "Adicione um comentário...";
+    input.required = true;
+
+    const submit = document.createElement("button");
+    submit.textContent = "Publicar";
+
+    form.append(input, submit);
+    post.appendChild(form);
+
+    feed.prepend(post);
+    this.reset();
+});
+
+// Pesquisar publicações
+document.getElementById("search").addEventListener("input", function() {
+    const term = this.value.toLowerCase().trim();
+    let visible = 0;
+
+    feed.querySelectorAll(".post").forEach(function(post) {
+        const matches = post.textContent.toLowerCase().includes(term);
+        post.hidden = !matches;
+        if (matches) visible++;
+    });
+
+    document.getElementById("empty").hidden = visible > 0;
+});
+</script>
+
+</body>
+</html>
