@@ -1,0 +1,5 @@
+ padding: 25px;
+}
+.title {
+	color: #5C6AC4;
+}
