@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manipulação de Estilos e Classes com JavaScript</title>
+  <style>
+    /* --- CSS Geral para Organização da Página --- */
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background-color: #f4f7f6;
+      padding: 30px;
+      color: #333;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: white;
+      padding: 25px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    /* Seção 8: Classe definida para simular um arquivo CSS externo */
+    .formatacao {
+      font-size: 18px;
+      font-weight: bold;
+      color: #2c3e50;
+      background-color: #e8f4fd;
+      border-left: 5px solid #3498db;
+    }
+
+    /* Estilização básica da tabela (Seção 9) */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 25px;
+      margin-bottom: 15px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      text-align: left;
+    }
+    th {
+      background-color: #34495e;
+      color: white;
+    }
+
+    /* Estilos dos botões de controle */
+    button {
+      padding: 10px 15px;
+      cursor: pointer;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-weight: bold;
+      margin-right: 5px;
+    }
+    button:hover { background-color: #2980b9; }
+    .btn-acao { background-color: #2ecc71; }
+    .btn-acao:hover { background-color: #27ae60; }
+  </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+  <div class="container">
+    <!-- Seção 2: Elemento h3 que receberá o identificador meu-titulo -->
+    <h3 id="meu-titulo">Tabela de Situações (IMC)</h3>
+    
+    <!-- Seção 8: Parágrafo criado para demonstrar o uso do classList -->
+    <p id="meu-paragrafo" style="padding: 10px; margin: 15px 0; border: 1px dashed #ccc;">
+      Este texto mudará de aparência dinamicamente usando classList.
+    </p>
+    
+    <!-- Botões para interagir com o parágrafo (Seção 7) -->
+    <div style="margin-bottom: 20px;">
+      <button onclick="adicionarClasse()">Adicionar Classe</button>
+      <button onclick="removerClasse()">Remover Classe</button>
+      <button onclick="alternarClasse()">Alternar (Toggle)</button>
+    </div>
+
+    <!-- Seção 9: Exemplo prático com uma tabela de situações -->
+    <table>
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>IMC</th>
+          <th>Situação</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Ana Souza</td>
+          <td>22.4</td>
+          <!-- Células recebem a classe 'situacao' para serem capturadas pelo JS -->
+          <td class="situacao">normal</td>
+        </tr>
+        <tr>
+          <td>Carlos Lima</td>
+          <td>28.1</td>
+          <td class="situacao">sobrepeso</td>
+        </tr>
+        <tr>
+          <td>Bruna Costa</td>
+          <td>21.7</td>
+          <td class="situacao">normal</td>
+        </tr>
+        <tr>
+          <td>Ricardo Alves</td>
+          <td>31.2</td>
+          <td class="situacao">sobrepeso</td>
+        </tr>
+      </tbody>
+    </table>
+    
+    <!-- Botão para disparar a verificação condicional (Seção 11) -->
+    <button class="btn-acao" onclick="aplicarEstilosCondicionais()">
+      Aplicar Cores Condicionais na Tabela
+    </button>
+  </div>
+
+  <!-- --- JAVASCRIPT --- -->
+  <script>
+    // --- Seções 2, 3 e 4: Estilização direta com a propriedade style ---
+    // Localizando o elemento h3 pelo identificador
+    const titulo = document.querySelector("#meu-titulo");
+    
+    // Aplicando propriedades CSS via JavaScript (com padrão camelCase)
+    titulo.style.color = "#fff";
+    titulo.style.backgroundColor = "#2c3e50"; // background-color vira backgroundColor
+    titulo.style.padding = "12px";
+    titulo.style.borderRadius = "4px";
+    titulo.style.textAlign = "center";
+
+
+    // --- Seções 6, 7 e 8: Manipulando classes com classList ---
+    const paragrafo = document.querySelector("#meu-paragrafo");
+
+    function adicionarClasse() {
+      // Adiciona a classe .formatacao ao elemento
+      paragrafo.classList.add("formatacao");
+    }
+
+    function removerClasse() {
+      // Remove a classe .formatacao do elemento
+      paragrafo.classList.remove("formatacao");
+    }
+
+    function alternarClasse() {
+      // Seção 7: Se a classe não estiver aplicada, toggle adiciona. Se estiver, remove.
+      paragrafo.classList.toggle("formatacao");
+    }
+
+
+    // --- Seções 10 e 11: Selecionando vários elementos e aplicando estilos condicionais ---
+    function aplicarEstilosCondicionais() {
+      // Seção 10: Seleciona todos os elementos da coluna situação (retorna uma HTMLCollection)
+      const elementosSituacao = document.getElementsByClassName("situacao");
+      
+      // Exibe a coleção gerada no painel de inspeção (Console) do navegador
+      console.log("Elementos encontrados:", elementosSituacao);
+
+      // Seção 11: Percorrendo a coleção de elementos com a estrutura for...of
+      for (const situacao of elementosSituacao) {
+        // Obtém o conteúdo de texto da célula de tabela
+        const texto = situacao.textContent.trim();
+        
+        // Estrutura condicional baseada no texto lido
+        if (texto === "normal") {
+          situacao.style.color = "green";
+          situacao.style.fontWeight = "bold";
+        } else if (texto === "sobrepeso") {
+          situacao.style.color = "red";
+          situacao.style.fontWeight = "bold";
+        }
+      }
+    }
+  </script>
+<script src="script.js"></script></body>
+</html>
