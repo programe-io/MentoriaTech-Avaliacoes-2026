@@ -1,0 +1,116 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diário de uma Paixão | Feed</title>
+    <link rel="stylesheet" href="style.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+    <header>
+        <h1>Diário de uma Paixão</h1>
+        <p>Uma história de amor que o tempo não apagou 💙</p>
+    </header>
+
+    <main class="container">
+
+        <section class="post">
+            <div class="usuario">
+                <div class="avatar">N</div>
+                <strong>Noah & Allie</strong>
+            </div>
+
+            <img src="https://s2-quem.glbimg.com/tg5LWXns2zBH_jYa5egPPWe-bK8=/0x0:2048x1365/984x0/smart/filters:strip_icc()/i.s3.glbimg.com/v1/AUTH_b0f0e84207c948ab8b8777be5a6a4395/internal_photos/bs/2024/z/B/BnN3aJSOS4rTUsUfL5jw/diario-de-uma-paixao-2.jpg"
+                 alt="Diário de uma Paixão">
+
+            <div class="conteudo">
+                <div class="acoes">
+                    <button onclick="curtir(this)">♡ Curtir</button>
+                    <button onclick="comentar(this)">💬 Comentar</button>
+                </div>
+
+                <p><strong>Noah & Allie</strong> Algumas histórias de amor nunca terminam. 💙</p>
+                <p class="contador">0 curtidas</p>
+
+                <div class="comentario">
+                    <input type="text" placeholder="Escreva um comentário...">
+                    <button onclick="publicar(this)">Enviar</button>
+                </div>
+
+                <div class="lista-comentarios"></div>
+            </div>
+        </section>
+
+        <section class="post">
+            <div class="usuario">
+                <div class="avatar">A</div>
+                <strong>Momentos inesquecíveis</strong>
+            </div>
+
+            <img src="https://image.tmdb.org/t/p/w780/qom1SZSENdmHFNZBXbtJAU0WTlC.jpg"
+                 alt="Cena romântica de filme">
+
+            <div class="conteudo">
+                <div class="acoes">
+                    <button onclick="curtir(this)">♡ Curtir</button>
+                    <button onclick="comentar(this)">💬 Comentar</button>
+                </div>
+
+                <p><strong>Diário de uma Paixão</strong> O amor verdadeiro vive nas pequenas lembranças. ✨</p>
+                <p class="contador">0 curtidas</p>
+
+                <div class="comentario">
+                    <input type="text" placeholder="Escreva um comentário...">
+                    <button onclick="publicar(this)">Enviar</button>
+                </div>
+
+                <div class="lista-comentarios"></div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>Feito com amor para os apaixonados por cinema 💙</p>
+    </footer>
+
+    <script>
+        function curtir(botao) {
+            const post = botao.closest(".post");
+            const contador = post.querySelector(".contador");
+            let total = Number(contador.dataset.total || 0);
+            const ativo = botao.dataset.ativo === "true";
+
+            total += ativo ? -1 : 1;
+            botao.dataset.ativo = String(!ativo);
+            botao.textContent = ativo ? "♡ Curtir" : "♥ Curtido";
+            contador.dataset.total = total;
+            contador.textContent = total +
+                (total === 1 ? " curtida" : " curtidas");
+        }
+
+        function comentar(botao) {
+            botao.closest(".post").querySelector("input").focus();
+        }
+
+        function publicar(botao) {
+            const post = botao.closest(".post");
+            const input = post.querySelector("input");
+            const texto = input.value.trim();
+
+            if (!texto) return;
+
+            const comentario = document.createElement("p");
+            comentario.textContent = "Você: " + texto;
+            post.querySelector(".lista-comentarios")
+                .appendChild(comentario);
+
+            input.value = "";
+        }
+    </script>
+
+</body>
+</html>
