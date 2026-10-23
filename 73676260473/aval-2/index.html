@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciador de Tarefas Autónomo</title>
+    <style>
+        /* CSS EMBUTIDO - Design Clean e Responsivo */
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --background: #f8fafc;
+            --surface: #ffffff;
+            --text: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --success: #16a34a;
+            --success-bg: #f0fdf4;
+            --success-border: #bbf7d0;
+            --danger: #dc2626;
+            --warning: #ea580c;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            padding: 24px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 750px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--surface);
+            padding: 24px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        h2 { font-size: 1.2rem; margin-bottom: 16px; font-weight: 700; }
+
+        .form-group { margin-bottom: 16px; }
+
+        label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.9rem; }
+
+        input[type="text"], select {
+            width: 100%; padding: 10px; border: 1px solid var(--border);
+            border-radius: 6px; font-size: 0.95rem; background: var(--surface);
+        }
+
+        input[type="text"]:focus, select:focus {
+            outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+        }
+
+        button {
+            background: var(--primary); color: white; border: none; padding: 12px;
+            border-radius: 6px; cursor: pointer; font-weight: 600; width: 100%; font-size: 0.95rem;
+        }
+
+        button:hover { background: var(--primary-hover); }
+
+        .btn-action { background: var(--success); width: auto; padding: 6px 12px; font-size: 0.85rem; }
+        .btn-action:hover { background: #15803d; }
+
+        .error-message {
+            background: #fef2f2; border: 1px solid #fca5a5; color: var(--danger);
+            padding: 12px; border-radius: 6px; font-weight: 500; display: none;
+            margin-bottom: 16px;
+        }
+
+        .task-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+
+        .task-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 16px; border: 1px solid var(--border); border-radius: 8px; background: #ffffff;
+        }
+
+        .task-item.completed { background: var(--success-bg); border-color: var(--success-border); }
+        .task-item.completed .task-title { text-decoration: line-through; color: var(--text-muted); }
+
+        .task-info { display: flex; flex-direction: column; gap: 4px; }
+        .task-title { font-weight: 600; }
+        
+        .task-meta { font-size: 0.8rem; color: var(--text-muted); display: flex; gap: 12px; }
+
+        .badge { padding: 2px 6px; border-radius: 4px; font-weight: 700; font-size: 0.7rem; }
+        .badge-1 { background: #fef2f2; color: var(--danger); }
+        .badge-2 { background: #fff7ed; color: var(--warning); }
+        .badge-3 { background: #eff6ff; color: var(--primary); }
+
+        .task-actions { display: flex; gap: 8px; align-items: center; }
+        .select-inline { width: auto; padding: 4px; font-size: 0.8rem; }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+<div class="container">
+    <!-- Feedback de Erro Dinâmico -->
+    <div id="errorBox" class="error-message"></div>
+
+    <!-- Formulário do Projeto -->
+    <div class="card">
+        <h2>Cadastrar Nova Tarefa</h2>
+        <form id="taskForm">
+            <div class="form-group">
+                <label for="taskTitle">Título da Tarefa</label>
+                <input type="text" id="taskTitle" placeholder="Mínimo de 5 caracteres..." required>
+            </div>
+            <div class="form-group">
+                <label for="taskPriority">Prioridade do Sistema</label>
+                <select id="taskPriority">
+                    <option value="1">1 - Alta</option>
+                    <option value="2">2 - Média</option>
+                    <option value="3">3 - Baixa</option>
+                </select>
+            </div>
+            <button type="submit">Gravar Tarefa</button>
+        </form>
+    </div>
+
+    <!-- Lista Alvo -->
+    <div class="card">
+        <h2>Painel de Tarefas</h2>
+        <ul id="taskList" class="task-list"></ul>
+    </div>
+</div>
+
+<script>
+    /* JAVASCRIPT CORRIGIDO - Lógica e Regras de Negócio do Sumário */
+    
+    // 3. Coleção Central
+    const tarefas = [];
+    // 7. Sequência Incremental Isolada
+    let idAtual = 1;
+
+    // 5. Validação com Interrupção de Erro
+    function validarDados(titulo, prioridade) {
+        if (!titulo || titulo.trim().length < 5) {
+            throw new Error("Erro: O título precisa de ter pelo menos 5 caracteres.");
+        }
+        const p = Number(prioridade);
+        if (p < 1 || p > 3) {
+            throw new Error("Erro: A prioridade tem de ser 1, 2 ou 3.");
+        }
+    }
+
+    // 9. Localização de Objetos com find
+    function buscarTarefa(codigo) {
+        const item = tarefas.find(t => t.codigo === Number(codigo));
+        if (!item) {
+            throw new Error(`Erro: Código #${codigo} não existe.`);
+        }
+        return item;
+    }
+
+    // 6. Modelagem e Cadastro
+    function cadastrarTarefa(titulo, prioridade) {
+        validarDados(titulo, prioridade); // Valida primeiro
+
+        const novaTarefa = {
+            codigo: idAtual,
+            titulo: titulo.trim(),
+            prioridade: Number(prioridade),
+            status: true // true = Em Execução
+        };
+
+        idAtual++;
+        tarefas.push(novaTarefa);
+    }
+
+    // 8. Retorno da Lista de Dados
+    function listarTarefas() {
+        return tarefas;
+    }
+
+    // 10. Processo de Conclusão Única
+    function concluirTarefa(codigo) {
+        const tarefa = buscarTarefa(codigo);
+        if (!tarefa.status) {
+            throw new Error(`Erro: A tarefa #${codigo} já foi finalizada.`);
+        }
+        tarefa.status = false;
+    }
+
+    // 11. Mudança de Prioridade Reaproveitando Regras
+    function alterarPrioridade(codigo, novaPrioridade) {
+        const tarefa = buscarTarefa(codigo);
+        validarDados(tarefa.titulo, novaPrioridade); // Reaproveita validação
+        tarefa.prioridade = Number(novaPrioridade);
+    }
+
+    /* CONTROLO VISUAL DO ECRA */
+    const form = document.getElementById('taskForm');
+    const inputTitle = document.getElementById('taskTitle');
+    const inputPriority = document.getElementById('taskPriority');
+    const listContainer = document.getElementById('taskList');
+    const errorBox = document.getElementById('errorBox');
+
+    function gerirFluxo(callback) {
+        try {
+            errorBox.style.display = 'none';
+            callback();
+            atualizarInterface();
+        } catch (err) {
+            errorBox.innerText = err.message;
+            errorBox.style.display = 'block';
+        }
+    }
+
+    function atualizarInterface() {
+        listContainer.innerHTML = '';
+        const dadosAtuais = listarTarefas(); // ERRO CORRIGIDO AQUI: Removido o espaço de "dados Atuais"
+
+        if (dadosAtuais.length === 0) {
+            listContainer.innerHTML = '<li style="color: var(--text-muted); text-align: center; font-size: 0.9rem;">Sem tarefas para mostrar.</li>';
+            return;
+        }
+
+        dadosAtuais.forEach(t => {
+            const li = document.createElement('li');
+            li.className = `task-item ${!t.status ? 'completed' : ''}`;
+            
+            const labels = { 1: 'Alta', 2: 'Média', 3: 'Baixa' };
+
+            li.innerHTML = `
+                <div class="task-info">
+                    <span class="task-title">${t.titulo}</span>
+                    <div class="task-meta">
+                        <span>ID: #${t.codigo}</span>
+                        <span>Prioridade: <span class="badge badge-${t.prioridade}">${labels[t.prioridade]}</span></span>
+                    </div>
+                </div>
+                <div class="task-actions">
+                    ${t.status ? `
+                        <select class="select-inline" onchange="gerirFluxo(() => alterarPrioridade(${t.codigo}, this.value))">
+                            <option value="1" ${t.prioridade === 1 ? 'selected' : ''}>Alta</option>
+                            <option value="2" ${t.prioridade === 2 ? 'selected' : ''}>Média</option>
+                            <option value="3" ${t.prioridade === 3 ? 'selected' : ''}>Baixa</option>
+                        </select>
+                        <button class="btn-action" onclick="gerirFluxo(() => concluirTarefa(${t.codigo}))">Concluir</button>
+                    ` : '<span style="color: var(--success); font-weight: 700; font-size: 0.85rem;">✓ Concluída</span>'}
+                </div>
+            `;
+            listContainer.appendChild(li);
+        });
+    }
+
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        gerirFluxo(() => {
+            cadastrarTarefa(inputTitle.value, inputPriority.value);
+            form.reset();
+        });
+    });
+
+    // Inicia a aplicação exibindo a lista vazia
+    atualizarInterface();
+</script>
+<script src="script.js"></script></body>
+</html>
