@@ -1,0 +1,175 @@
+onst ataskList = document.querySelector("#taskList");
+const taskModal = document.querySelector("#taskModal");
+const taskForm = document.querySelector("#taskForm");
+const taskName = document.querySelector("#taskName");
+const taskDate = document.querySelector("#taskDate");
+const taskPriority = document.querySelector("#taskPriority");
+const toast = document.querySelector("#toast");
+
+let completedExtraTasks = 0;
+let toastTimeout;
+
+function showToast(message) {
+  toast.textContent = message;
+  toast.classList.add("show");
+  clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => toast.classList.remove("show"), 2600);
+}
+
+function updateTaskCounters() {
+  const items = [...taskList.querySelectorAll(".task-item")];
+  const pending = items.filter(item => !item.classList.contains("completed")).length;
+  const completed = items.length - pending;
+  document.querySelector("#pendingCount").textContent = pending;
+  document.querySelector("#taskNavCount").textContent = pending;
+  document.querySelector("#completedCount").textContent = 12 + completed;
+}
+
+function priorityLabel(value) {
+  return ({ high: "alta", medium: "média", low: "baixa" })[value] || "média";
+}
+
+function formatDate(value) {
+  if (!value) return "Sem prazo";
+  const date = new Date(`${value}T12:00:00`);
+  return date.toLocaleDateString("pt-BR", { day: "2-digit", month: "short" }).replace(".", "");
+}
+
+function createTask(name, date, priority) {
+  const item = document.createElement("div");
+  item.className = "task-item";
+
+  const check = document.createElement("button");
+  check.className = "task-check";
+  check.type = "button";
+  check.setAttribute("aria-label", "Concluir tarefa");
+
+  const info = document.createElement("div");
+  info.className = "task-info";
+  const title = document.createElement("p");
+  title.textContent = name;
+
+  const meta = document.createElement("div");
+  meta.className = "task-meta";
+  const due = document.createElement("span");
+  const dueIcon = document.createElement("i");
+  dueIcon.className = "bx bx-calendar";
+  due.append(dueIcon, document.createTextNode(` ${formatDate(date)}`));
+
+  const priorityTag = document.createElement("span");
+  priorityTag.className = `priority ${priority}`;
+  const flag = document.createElement("i");
+  flag.className = "bx bx-flag";
+  priorityTag.append(flag, document.createTextNode(` ${priorityLabel(priority)}`));
+  meta.append(due, priorityTag);
+  info.append(title, meta);
+
+  const more = document.createElement("button");
+  more.className = "more-button";
+  more.type = "button";
+  more.setAttribute("aria-label", "Remover tarefa");
+  more.textContent = "···";
+  more.addEventListener("click", () => {
+    item.remove();
+    updateTaskCounters();
+    showToast("Tarefa removida.");
+  });
+
+  check.addEventListener("click", () => {
+    item.classList.toggle("completed");
+    check.setAttribute("aria-label", item.classList.contains("completed") ? "Reabrir tarefa" : "Concluir tarefa");
+    updateTaskCounters();
+    showToast(item.classList.contains("completed") ? "Tarefa concluída!" : "Tarefa reaberta.");
+  });
+
+  item.append(check, info, more);
+  return item;
+}
+
+// Habilita concluir as tarefas que já vêm no HTML.
+taskList.querySelectorAll(".task-item").forEach(item => {
+  const check = item.querySelector(".task-check");
+  const more = item.querySelector(".more-button");
+  check.addEventListener("click", () => {
+    item.classList.toggle("completed");
+    check.setAttribute("aria-label", item.classList.contains("completed") ? "Reabrir tarefa" : "Concluir tarefa");
+    updateTaskCounters();
+    showToast(item.classList.contains("completed") ? "Tarefa concluída!" : "Tarefa reaberta.");
+  });
+  more.addEventListener("click", () => {
+    item.remove();
+    updateTaskCounters();
+    showToast("Tarefa removida.");
+  });
+});
+
+function openModal() {
+  taskModal.hidden = false;
+  taskName.focus();
+}
+function closeModal() {
+  taskModal.hidden = true;
+  taskForm.reset();
+}
+
+document.querySelector("#newTaskButton").addEventListener("click", openModal);
+document.querySelector("#closeModal").addEventListener("click", closeModal);
+document.querySelector("#cancelModal").addEventListener("click", closeModal);
+
+taskModal.addEventListener("click", event => {
+  if (event.target === taskModal) closeModal();
+});
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape" && !taskModal.hidden) closeModal();
+});
+
+taskForm.addEventListener("submit", event => {
+  event.preventDefault();
+  const name = taskName.value.trim();
+  if (!name) {
+    taskName.focus();
+    return;
+  }
+  taskList.append(createTask(name, taskDate.value, taskPriority.value));
+  updateTaskCounters();
+  closeModal();
+  showToast("Nova tarefa adicionada!");
+});
+
+document.querySelector("#showAllTasks").addEventListener("click", () => {
+  taskList.querySelectorAll(".task-item").forEach(item => item.hidden = false);
+  showToast("Exibindo todas as tarefas.");
+});
+
+document.querySelectorAll("[data-view]").forEach(button => {
+  button.addEventListener("click", () => {
+    document.querySelectorAll(".nav-link[data-view]").forEach(link => link.classList.remove("active"));
+    const matchingNav = document.querySelector(`.nav-link[data-view="${button.dataset.view}"]`);
+    if (matchingNav) matchingNav.classList.add("active");
+
+    const titles = {
+      visao: "Visão Geral",
+      tarefas: "Tarefas",
+      projetos: "Projetos",
+      calendario: "Calendário"
+    };
+    document.querySelector("#pageTitle").textContent = titles[button.dataset.view] || "Visão Geral";
+    if (button.dataset.view === "tarefas") {
+      taskList.querySelectorAll(".task-item.completed").forEach(item => item.hidden = true);
+      taskList.querySelectorAll(".task-item:not(.completed)").forEach(item => item.hidden = false);
+      showToast("Mostrando tarefas pendentes.");
+    } else {
+      taskList.querySelectorAll(".task-item").forEach(item => item.hidden = false);
+      if (button.dataset.view !== "visao") showToast(`Área "${titles[button.dataset.view]}" selecionada.`);
+    }
+  });
+});
+
+document.querySelector("#profileButton").addEventListener("click", () => {
+  showToast("Perfil do aluno.");
+});
+document.querySelector("#settingsButton").addEventListener("click", () => {
+  showToast("Configurações: personalize seu painel em uma próxima etapa.");
+});
+
+updateTaskCounters();
