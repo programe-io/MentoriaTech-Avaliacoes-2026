@@ -1,0 +1,2544 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Agenda das Fofoqueiras</title>
+
+    <style>
+        /* =====================================================
+           CONFIGURAÇÕES GERAIS
+        ===================================================== */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: #f5faff;
+            color: #17324d;
+            line-height: 1.6;
+        }
+
+        button,
+        input,
+        select {
+            font-family: inherit;
+        }
+
+        /* =====================================================
+           CORES
+        ===================================================== */
+
+        :root {
+            --azul: #1976d2;
+            --azul-escuro: #07549b;
+            --azul-claro: #e8f4ff;
+            --azul-medio: #4da3e8;
+            --branco: #ffffff;
+            --texto: #17324d;
+            --cinza: #6b7c8f;
+            --verde: #19a974;
+            --vermelho: #e53935;
+            --sombra: 0 10px 30px rgba(25, 118, 210, 0.12);
+        }
+
+        /* =====================================================
+           CABEÇALHO
+        ===================================================== */
+
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #dcecff;
+        }
+
+        .navbar {
+            max-width: 1200px;
+            margin: auto;
+            min-height: 75px;
+            padding: 12px 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--azul-escuro);
+            font-weight: 800;
+            font-size: 1.25rem;
+        }
+
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, var(--azul), var(--azul-escuro));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            box-shadow: 0 6px 15px rgba(25, 118, 210, .25);
+        }
+
+        nav {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--texto);
+            padding: 9px 13px;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: .25s;
+        }
+
+        nav a:hover {
+            color: var(--azul);
+            background: var(--azul-claro);
+            transform: translateY(-2px);
+        }
+
+        .menu-btn {
+            display: none;
+            border: none;
+            background: var(--azul);
+            color: white;
+            padding: 10px 13px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        /* =====================================================
+           SEÇÕES
+        ===================================================== */
+
+        section {
+            padding: 85px 20px;
+        }
+
+        .container {
+            max-width: 1150px;
+            margin: auto;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 45px;
+        }
+
+        .section-title span {
+            display: inline-block;
+            background: var(--azul-claro);
+            color: var(--azul);
+            padding: 6px 15px;
+            border-radius: 50px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            font-size: .9rem;
+        }
+
+        .section-title h2 {
+            font-size: 2.2rem;
+            color: var(--azul-escuro);
+            margin-bottom: 8px;
+        }
+
+        .section-title p {
+            color: var(--cinza);
+        }
+
+        /* =====================================================
+           HERO
+        ===================================================== */
+
+        .hero {
+            min-height: 650px;
+            display: flex;
+            align-items: center;
+            background:
+                radial-gradient(circle at 85% 20%, #dff1ff 0, transparent 30%),
+                linear-gradient(135deg, #ffffff, #edf7ff);
+            overflow: hidden;
+        }
+
+        .hero-content {
+            max-width: 1150px;
+            margin: auto;
+            padding: 40px 20px;
+            display: grid;
+            grid-template-columns: 1.15fr .85fr;
+            gap: 50px;
+            align-items: center;
+        }
+
+        .hero-text h1 {
+            color: var(--azul-escuro);
+            font-size: clamp(2.5rem, 6vw, 4.8rem);
+            line-height: 1;
+            margin-bottom: 22px;
+        }
+
+        .hero-text h1 span {
+            color: var(--azul);
+        }
+
+        .hero-text p {
+            max-width: 600px;
+            color: #587087;
+            font-size: 1.12rem;
+            margin-bottom: 30px;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 13px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            border: none;
+            padding: 14px 22px;
+            border-radius: 13px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 800;
+            transition: .3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--azul), var(--azul-escuro));
+            color: white;
+            box-shadow: 0 8px 20px rgba(25,118,210,.25);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 25px rgba(25,118,210,.35);
+        }
+
+        .btn-outline {
+            color: var(--azul);
+            background: white;
+            border: 2px solid #b8ddfa;
+        }
+
+        .btn-outline:hover {
+            background: var(--azul-claro);
+            transform: translateY(-3px);
+        }
+
+        .hero-card {
+            min-height: 370px;
+            border-radius: 35px;
+            background: white;
+            box-shadow: var(--sombra);
+            border: 1px solid #dceeff;
+            padding: 35px;
+            position: relative;
+            overflow: hidden;
+            animation: floating 4s ease-in-out infinite;
+        }
+
+        .hero-card::before {
+            content: "";
+            position: absolute;
+            width: 180px;
+            height: 180px;
+            background: #dff2ff;
+            border-radius: 50%;
+            right: -60px;
+            top: -60px;
+        }
+
+        .calendar-icon {
+            width: 110px;
+            height: 110px;
+            margin: 30px auto;
+            border-radius: 28px;
+            background: linear-gradient(135deg, #5bb5f3, #1268b7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 55px;
+            box-shadow: 0 15px 30px rgba(25,118,210,.25);
+        }
+
+        .hero-card h3 {
+            text-align: center;
+            color: var(--azul-escuro);
+            font-size: 1.5rem;
+        }
+
+        .hero-card p {
+            text-align: center;
+            color: var(--cinza);
+            margin-top: 8px;
+        }
+
+        @keyframes floating {
+            0%, 100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        /* =====================================================
+           PROCEDIMENTOS
+        ===================================================== */
+
+        #procedimentos {
+            background: white;
+        }
+
+        .procedure-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 22px;
+        }
+
+        .procedure-card {
+            background: #fff;
+            border: 1px solid #dcecff;
+            border-radius: 22px;
+            padding: 28px;
+            transition: .3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .procedure-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--sombra);
+            border-color: #a8d5f7;
+        }
+
+        .procedure-icon {
+            width: 58px;
+            height: 58px;
+            background: var(--azul-claro);
+            border-radius: 17px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 27px;
+            margin-bottom: 18px;
+        }
+
+        .procedure-card h3 {
+            color: var(--azul-escuro);
+            margin-bottom: 10px;
+        }
+
+        .procedure-card p {
+            color: var(--cinza);
+            font-size: .95rem;
+        }
+
+        .professionals {
+            margin-top: 15px;
+            color: var(--azul);
+            font-weight: 700;
+            font-size: .9rem;
+        }
+
+        /* =====================================================
+           AGENDAMENTO
+        ===================================================== */
+
+        #agendamento {
+            background: #eef8ff;
+        }
+
+        .booking-box {
+            background: white;
+            padding: 35px;
+            border-radius: 25px;
+            box-shadow: var(--sombra);
+            border: 1px solid #d7ecff;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 22px;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .field label {
+            font-weight: 800;
+            color: var(--azul-escuro);
+        }
+
+        .field select,
+        .field input {
+            width: 100%;
+            border: 2px solid #dbeafa;
+            border-radius: 12px;
+            padding: 13px 14px;
+            background: white;
+            color: var(--texto);
+            outline: none;
+            transition: .25s;
+        }
+
+        .field select:focus,
+        .field input:focus {
+            border-color: var(--azul);
+            box-shadow: 0 0 0 4px rgba(25,118,210,.08);
+        }
+
+        .days {
+            margin-top: 25px;
+        }
+
+        .days-title,
+        .hours-title {
+            font-weight: 800;
+            color: var(--azul-escuro);
+            margin-bottom: 12px;
+        }
+
+        .day-buttons {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+        }
+
+        .day-btn {
+            border: 2px solid #d9ebfb;
+            background: white;
+            color: var(--azul-escuro);
+            padding: 12px 8px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: .25s;
+        }
+
+        .day-btn:hover {
+            border-color: var(--azul);
+            transform: translateY(-2px);
+        }
+
+        .day-btn.active {
+            color: white;
+            border-color: var(--azul);
+            background: var(--azul);
+        }
+
+        .date-box {
+            margin-top: 22px;
+        }
+
+        .date-box input {
+            max-width: 350px;
+        }
+
+        .hours {
+            margin-top: 25px;
+        }
+
+        .period {
+            margin-bottom: 22px;
+        }
+
+        .period-name {
+            font-size: .95rem;
+            color: var(--cinza);
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .hours-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .hour-btn {
+            border: 2px solid #d9ebfb;
+            background: white;
+            padding: 12px 7px;
+            border-radius: 12px;
+            color: var(--azul-escuro);
+            font-weight: 700;
+            cursor: pointer;
+            transition: .25s;
+        }
+
+        .hour-btn:hover:not(.unavailable) {
+            border-color: var(--azul);
+            background: var(--azul-claro);
+            transform: scale(1.03);
+        }
+
+        .hour-btn.selected {
+            color: white;
+            background: var(--azul);
+            border-color: var(--azul);
+        }
+
+        .hour-btn.unavailable {
+            background: #edf0f3;
+            color: #9ba7b2;
+            text-decoration: line-through;
+            cursor: not-allowed;
+            opacity: .7;
+        }
+
+        .booking-actions {
+            margin-top: 30px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        /* =====================================================
+           MEUS AGENDAMENTOS
+        ===================================================== */
+
+        #meus-agendamentos {
+            background: white;
+        }
+
+        .appointments {
+            display: grid;
+            gap: 16px;
+        }
+
+        .appointment {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            padding: 22px;
+            border-radius: 17px;
+            border: 1px solid #d9ebfb;
+            background: #fafdff;
+            transition: .25s;
+        }
+
+        .appointment:hover {
+            box-shadow: var(--sombra);
+            transform: translateY(-2px);
+        }
+
+        .appointment-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .appointment-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 15px;
+            background: var(--azul-claro);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 23px;
+        }
+
+        .appointment h4 {
+            color: var(--azul-escuro);
+            margin-bottom: 4px;
+        }
+
+        .appointment p {
+            color: var(--cinza);
+            font-size: .9rem;
+        }
+
+        .cancel-btn {
+            border: none;
+            background: #fff0f0;
+            color: var(--vermelho);
+            padding: 10px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: .2s;
+        }
+
+        .cancel-btn:hover {
+            background: var(--vermelho);
+            color: white;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 40px;
+            border: 2px dashed #d7eafa;
+            border-radius: 18px;
+            color: var(--cinza);
+        }
+
+        /* =====================================================
+           CONTATO
+        ===================================================== */
+
+        #contato {
+            background: #eef8ff;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+        }
+
+        .contact-card {
+            background: white;
+            border: 1px solid #d9ebfb;
+            border-radius: 18px;
+            padding: 25px 18px;
+            text-align: center;
+            transition: .3s;
+        }
+
+        .contact-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--sombra);
+        }
+
+        .contact-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .contact-card h3 {
+            color: var(--azul-escuro);
+            font-size: 1rem;
+            margin-bottom: 5px;
+        }
+
+        .contact-card p,
+        .contact-card a {
+            color: var(--cinza);
+            text-decoration: none;
+            font-size: .9rem;
+            word-break: break-word;
+        }
+
+        .contact-card a:hover {
+            color: var(--azul);
+        }
+
+        /* =====================================================
+           RODAPÉ
+        ===================================================== */
+
+        footer {
+            background: #063e73;
+            color: white;
+            padding: 40px 20px 25px;
+        }
+
+        .footer-content {
+            max-width: 1150px;
+            margin: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .footer-brand h3 {
+            margin-bottom: 7px;
+        }
+
+        .footer-brand p {
+            color: #c6e3fa;
+            font-size: .9rem;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 18px;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 25px;
+            transition: .25s;
+        }
+
+        .footer-links a:hover {
+            transform: translateY(-3px);
+            color: #9bd5ff;
+        }
+
+        .copyright {
+            text-align: center;
+            border-top: 1px solid rgba(255,255,255,.15);
+            margin-top: 30px;
+            padding-top: 20px;
+            color: #b9d7ed;
+            font-size: .85rem;
+        }
+
+        /* =====================================================
+           MODAL DE CONFIRMAÇÃO
+        ===================================================== */
+
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(4, 38, 69, .65);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 3000;
+        }
+
+        .modal.show {
+            display: flex;
+            animation: fadeIn .3s ease;
+        }
+
+        .confirmation {
+            background: white;
+            width: min(520px, 100%);
+            border-radius: 27px;
+            padding: 38px;
+            text-align: center;
+            box-shadow: 0 25px 70px rgba(0,0,0,.25);
+            animation: pop .45s cubic-bezier(.2, 1.5, .5, 1);
+        }
+
+        .success-icon {
+            width: 85px;
+            height: 85px;
+            border-radius: 50%;
+            background: #e5fff4;
+            color: var(--verde);
+            font-size: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            animation: pulse 1.2s infinite;
+        }
+
+        .confirmation h2 {
+            color: var(--azul-escuro);
+            margin-bottom: 8px;
+        }
+
+        .confirmation > p {
+            color: var(--cinza);
+            margin-bottom: 20px;
+        }
+
+        .confirmation-data {
+            background: var(--azul-claro);
+            border-radius: 16px;
+            padding: 18px;
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .confirmation-data p {
+            padding: 5px 0;
+            color: var(--texto);
+        }
+
+        .confirmation-data strong {
+            color: var(--azul-escuro);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes pop {
+            from {
+                transform: scale(.75);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.08);
+            }
+        }
+
+        /* =====================================================
+           TOAST
+        ===================================================== */
+
+        .toast {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background: #083f70;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 13px;
+            box-shadow: 0 10px 30px rgba(0,0,0,.2);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: .35s;
+            z-index: 5000;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* =====================================================
+           RESPONSIVIDADE
+        ===================================================== */
+
+        @media (max-width: 900px) {
+            .hero-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .hero-text p {
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .buttons {
+                justify-content: center;
+            }
+
+            .procedure-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .contact-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 700px) {
+            .menu-btn {
+                display: block;
+            }
+
+            nav {
+                display: none;
+                position: absolute;
+                top: 75px;
+                left: 0;
+                right: 0;
+                background: white;
+                padding: 15px 20px;
+                flex-direction: column;
+                box-shadow: 0 10px 20px rgba(0,0,0,.08);
+            }
+
+            nav.open {
+                display: flex;
+            }
+
+            nav a {
+                width: 100%;
+                text-align: center;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .day-buttons {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .hours-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .appointment {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .appointment-info {
+                align-items: flex-start;
+            }
+
+            .cancel-btn {
+                width: 100%;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 550px) {
+            section {
+                padding: 65px 15px;
+            }
+
+            .booking-box {
+                padding: 22px;
+            }
+
+            .procedure-grid,
+            .contact-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-card {
+                min-height: 300px;
+            }
+
+            .hero-text h1 {
+                font-size: 2.7rem;
+            }
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"></head>
+
+<body>
+
+    <!-- =====================================================
+         CABEÇALHO
+    ====================================================== -->
+
+    <header>
+        <div class="navbar">
+
+            <a href="#inicio" class="logo">
+                <div class="logo-icon">💙</div>
+                <span>Agenda das Fofoqueiras</span>
+            </a>
+
+            <button class="menu-btn" onclick="toggleMenu()">☰</button>
+
+            <nav id="menu">
+                <a href="#inicio">Início</a>
+                <a href="#procedimentos">Procedimentos</a>
+                <a href="#agendamento">Agendar</a>
+                <a href="#meus-agendamentos">Meus agendamentos</a>
+                <a href="#contato">Contato</a>
+            </nav>
+
+        </div>
+    </header>
+
+
+    <!-- =====================================================
+         INÍCIO
+    ====================================================== -->
+
+    <section class="hero" id="inicio">
+
+        <div class="hero-content">
+
+            <div class="hero-text">
+
+                <h1>
+                    Sua beleza,<br>
+                    <span>seu horário.</span> 💙
+                </h1>
+
+                <p>
+                    Bem-vinda à Agenda das Fofoqueiras! 
+                    Escolha seu procedimento, sua profissional,
+                    o dia e o horário que combina com você.
+                </p>
+
+                <div class="buttons">
+                    <a href="#agendamento" class="btn btn-primary">
+                        📅 Fazer agendamento
+                    </a>
+
+                    <a href="#procedimentos" class="btn btn-outline">
+                        ✨ Ver procedimentos
+                    </a>
+                </div>
+
+            </div>
+
+
+            <div class="hero-card">
+
+                <div class="calendar-icon">
+                    📅
+                </div>
+
+                <h3>Agenda organizada e fácil!</h3>
+
+                <p>
+                    Escolha, marque e pronto!
+                    Seu horário ficará reservado para você.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         PROCEDIMENTOS
+    ====================================================== -->
+
+    <section id="procedimentos">
+
+        <div class="container">
+
+            <div class="section-title">
+
+                <span>✨ Nossos serviços</span>
+
+                <h2>Procedimentos</h2>
+
+                <p>
+                    Escolha o seu momento de beleza.
+                </p>
+
+            </div>
+
+
+            <div class="procedure-grid">
+
+                <div class="procedure-card">
+                    <div class="procedure-icon">💇‍♀️</div>
+
+                    <h3>Cabelo</h3>
+
+                    <p>
+                        Cuide dos seus cabelos com nossas profissionais.
+                    </p>
+
+                    <div class="professionals">
+                        Clarinha • Suyane • Nicolly • Duda
+                    </div>
+                </div>
+
+
+                <div class="procedure-card">
+                    <div class="procedure-icon">💄</div>
+
+                    <h3>Maquiagem</h3>
+
+                    <p>
+                        Produção completa para você arrasar.
+                    </p>
+
+                    <div class="professionals">
+                        Nicolly • Duda
+                    </div>
+                </div>
+
+
+                <div class="procedure-card">
+                    <div class="procedure-icon">👁️</div>
+
+                    <h3>Cílios</h3>
+
+                    <p>
+                        Destaque seu olhar com um acabamento incrível.
+                    </p>
+
+                    <div class="professionals">
+                        Nicolly • Hayla
+                    </div>
+                </div>
+
+
+                <div class="procedure-card">
+                    <div class="procedure-icon">💅</div>
+
+                    <h3>Unhas</h3>
+
+                    <p>
+                        Unhas lindas, cuidadas e do seu jeitinho.
+                    </p>
+
+                    <div class="professionals">
+                        Manu • Hayla • Duda
+                    </div>
+                </div>
+
+
+                <div class="procedure-card">
+                    <div class="procedure-icon">💆‍♀️</div>
+
+                    <h3>Massagem</h3>
+
+                    <p>
+                        Relaxe e aproveite um momento só seu.
+                    </p>
+
+                    <div class="professionals">
+                        Mayelle • Nicolly • Maria Cecilia • Clarinha
+                    </div>
+                </div>
+
+
+                <div class="procedure-card">
+                    <div class="procedure-icon">✨</div>
+
+                    <h3>Procedimentos estéticos</h3>
+
+                    <p>
+                        Cuidados especiais para realçar sua beleza.
+                    </p>
+
+                    <div class="professionals">
+                        Camilly • Duda • Nicolly
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         AGENDAMENTO
+    ====================================================== -->
+
+    <section id="agendamento">
+
+        <div class="container">
+
+            <div class="section-title">
+
+                <span>💙 Reserve seu momento</span>
+
+                <h2>Faça seu agendamento</h2>
+
+                <p>
+                    Escolha todas as informações abaixo.
+                </p>
+
+            </div>
+
+
+            <div class="booking-box">
+
+                <div class="form-grid">
+
+                    <div class="field">
+
+                        <label for="procedure">
+                            Procedimento
+                        </label>
+
+                        <select id="procedure">
+                            <option value="">
+                                Selecione um procedimento
+                            </option>
+
+                            <option value="Cabelo">
+                                💇‍♀️ Cabelo
+                            </option>
+
+                            <option value="Maquiagem">
+                                💄 Maquiagem
+                            </option>
+
+                            <option value="Cílios">
+                                👁️ Cílios
+                            </option>
+
+                            <option value="Unhas">
+                                💅 Unhas
+                            </option>
+
+                            <option value="Massagem">
+                                💆‍♀️ Massagem
+                            </option>
+
+                            <option value="Procedimentos estéticos">
+                                ✨ Procedimentos estéticos
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label for="professional">
+                            Profissional
+                        </label>
+
+                        <select id="professional" disabled>
+
+                            <option value="">
+                                Primeiro escolha o procedimento
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                <!-- DIAS DA SEMANA -->
+
+                <div class="days">
+
+                    <div class="days-title">
+                        📆 Escolha o dia da semana
+                    </div>
+
+                    <div class="day-buttons">
+
+                        <button class="day-btn" data-day="1">
+                            Segunda
+                        </button>
+
+                        <button class="day-btn" data-day="2">
+                            Terça
+                        </button>
+
+                        <button class="day-btn" data-day="3">
+                            Quarta
+                        </button>
+
+                        <button class="day-btn" data-day="4">
+                            Quinta
+                        </button>
+
+                        <button class="day-btn" data-day="5">
+                            Sexta
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- DATA -->
+
+                <div class="date-box field">
+
+                    <label for="date">
+                        📅 Escolha a data
+                    </label>
+
+                    <input
+                        type="date"
+                        id="date"
+                    >
+
+                </div>
+
+
+                <!-- HORÁRIOS -->
+
+                <div class="hours">
+
+                    <div class="hours-title">
+                        🕐 Horários disponíveis
+                    </div>
+
+
+                    <div class="period">
+
+                        <div class="period-name">
+                            Manhã
+                        </div>
+
+                        <div class="hours-grid">
+
+                            <button class="hour-btn" data-time="09:30">
+                                09:30
+                            </button>
+
+                            <button class="hour-btn" data-time="09:40">
+                                09:40
+                            </button>
+
+                            <button class="hour-btn" data-time="09:50">
+                                09:50
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="period">
+
+                        <div class="period-name">
+                            Tarde
+                        </div>
+
+                        <div class="hours-grid">
+
+                            <button class="hour-btn" data-time="12:00">
+                                12:00
+                            </button>
+
+                            <button class="hour-btn" data-time="12:20">
+                                12:20
+                            </button>
+
+                            <button class="hour-btn" data-time="12:40">
+                                12:40
+                            </button>
+
+                            <button class="hour-btn" data-time="13:00">
+                                13:00
+                            </button>
+
+                            <button class="hour-btn" data-time="13:20">
+                                13:20
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="period">
+
+                        <div class="period-name">
+                            Final da tarde
+                        </div>
+
+                        <div class="hours-grid">
+
+                            <button class="hour-btn" data-time="15:00">
+                                15:00
+                            </button>
+
+                            <button class="hour-btn" data-time="15:15">
+                                15:15
+                            </button>
+
+                            <button class="hour-btn" data-time="15:30">
+                                15:30
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="booking-actions">
+
+                    <button
+                        class="btn btn-primary"
+                        onclick="confirmAppointment()"
+                    >
+                        💙 Confirmar agendamento
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         MEUS AGENDAMENTOS
+    ====================================================== -->
+
+    <section id="meus-agendamentos">
+
+        <div class="container">
+
+            <div class="section-title">
+
+                <span>📋 Seus horários</span>
+
+                <h2>Meus agendamentos</h2>
+
+                <p>
+                    Confira os horários que você já reservou.
+                </p>
+
+            </div>
+
+            <div
+                class="appointments"
+                id="appointmentsList"
+            ></div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         CONTATO
+    ====================================================== -->
+
+    <section id="contato">
+
+        <div class="container">
+
+            <div class="section-title">
+
+                <span>💬 Fale com a gente</span>
+
+                <h2>Contato</h2>
+
+                <p>
+                    Ficou com alguma dúvida? Estamos aqui!
+                </p>
+
+            </div>
+
+
+            <div class="contact-grid">
+
+                <div class="contact-card">
+
+                    <div class="contact-icon">
+                        📱
+                    </div>
+
+                    <h3>WhatsApp</h3>
+
+                    <a
+                        href="https://wa.me/5586999991234"
+                        target="_blank"
+                    >
+                        (86) 99999-1234
+                    </a>
+
+                </div>
+
+
+                <div class="contact-card">
+
+                    <div class="contact-icon">
+                        📸
+                    </div>
+
+                    <h3>Instagram</h3>
+
+                    <a
+                        href="https://instagram.com/agendadasfofoqueiras"
+                        target="_blank"
+                    >
+                        @agendadasfofoqueiras
+                    </a>
+
+                </div>
+
+
+                <div class="contact-card">
+
+                    <div class="contact-icon">
+                        📧
+                    </div>
+
+                    <h3>E-mail</h3>
+
+                    <a
+                        href="mailto:contato_agendadasfofoqueiras@gmail.com"
+                    >
+                        contato_agendadasfofoqueiras@gmail.com
+                    </a>
+
+                </div>
+
+
+                <div class="contact-card">
+
+                    <div class="contact-icon">
+                        📍
+                    </div>
+
+                    <h3>Local</h3>
+
+                    <p>
+                        Sala do 1° Desenvolvimento
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         RODAPÉ
+    ====================================================== -->
+
+    <footer>
+
+        <div class="footer-content">
+
+            <div class="footer-brand">
+
+                <h3>
+                    💙 Agenda das Fofoqueiras
+                </h3>
+
+                <p>
+                    Beleza, organização e muita fofoca! ✨
+                </p>
+
+            </div>
+
+
+            <div class="footer-links">
+
+                <a
+                    href="https://wa.me/5586999991234"
+                    target="_blank"
+                    title="WhatsApp"
+                >
+                    📱
+                </a>
+
+                <a
+                    href="https://instagram.com/agendadasfofoqueiras"
+                    target="_blank"
+                    title="Instagram"
+                >
+                    📸
+                </a>
+
+                <a
+                    href="mailto:contato_agendadasfofoqueiras@gmail.com"
+                    title="E-mail"
+                >
+                    📧
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <div class="copyright">
+            ©️ 2026 Agenda das Fofoqueiras — Todos os direitos reservados.
+        </div>
+
+    </footer>
+
+
+    <!-- =====================================================
+         MODAL DE CONFIRMAÇÃO
+    ====================================================== -->
+
+    <div
+        class="modal"
+        id="confirmationModal"
+    >
+
+        <div class="confirmation">
+
+            <div class="success-icon">
+                ✓
+            </div>
+
+            <h2>
+                Agendamento confirmado! 🎉
+            </h2>
+
+            <p>
+                Seu horário foi reservado com sucesso.
+            </p>
+
+            <div
+                class="confirmation-data"
+                id="confirmationData"
+            ></div>
+
+            <button
+                class="btn btn-primary"
+                onclick="closeModal()"
+            >
+                💙 Fechar
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- TOAST -->
+
+    <div
+        class="toast"
+        id="toast"
+    ></div>
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+    ====================================================== -->
+
+    <script>
+
+        /* =====================================================
+           DADOS DOS PROCEDIMENTOS E PROFISSIONAIS
+        ===================================================== */
+
+        const professionals = {
+
+            "Cabelo": [
+                "Clarinha",
+                "Suyane",
+                "Nicolly",
+                "Duda"
+            ],
+
+            "Maquiagem": [
+                "Nicolly",
+                "Duda"
+            ],
+
+            "Cílios": [
+                "Nicolly",
+                "Hayla"
+            ],
+
+            "Unhas": [
+                "Manu",
+                "Hayla",
+                "Duda"
+            ],
+
+            "Massagem": [
+                "Mayelle",
+                "Nicolly",
+                "Maria Cecilia",
+                "Clarinha"
+            ],
+
+            "Procedimentos estéticos": [
+                "Camilly",
+                "Duda",
+                "Nicolly"
+            ]
+
+        };
+
+
+        /* =====================================================
+           ELEMENTOS
+        ===================================================== */
+
+        const procedureSelect =
+            document.getElementById("procedure");
+
+        const professionalSelect =
+            document.getElementById("professional");
+
+        const dateInput =
+            document.getElementById("date");
+
+        const hourButtons =
+            document.querySelectorAll(".hour-btn");
+
+        const dayButtons =
+            document.querySelectorAll(".day-btn");
+
+
+        /* =====================================================
+           ARMAZENAMENTO
+        ===================================================== */
+
+        let appointments =
+            JSON.parse(
+                localStorage.getItem("fofoqueirasAppointments")
+            ) || [];
+
+        let selectedDay = null;
+        let selectedHour = null;
+
+
+        /* =====================================================
+           DEFINIR DATA MÍNIMA
+        ===================================================== */
+
+        function setMinDate() {
+
+            const today = new Date();
+
+            const year =
+                today.getFullYear();
+
+            const month =
+                String(today.getMonth() + 1)
+                .padStart(2, "0");
+
+            const day =
+                String(today.getDate())
+                .padStart(2, "0");
+
+            dateInput.min =
+                ${year}-${month}-${day};
+        }
+
+        setMinDate();
+
+
+        /* =====================================================
+           ATUALIZAR PROFISSIONAIS
+        ===================================================== */
+
+        procedureSelect.addEventListener(
+            "change",
+            function () {
+
+                const procedure =
+                    this.value;
+
+                professionalSelect.innerHTML = "";
+
+                if (!procedure) {
+
+                    professionalSelect.disabled = true;
+
+                    const option =
+                        document.createElement("option");
+
+                    option.textContent =
+                        "Primeiro escolha o procedimento";
+
+                    option.value = "";
+
+                    professionalSelect.appendChild(option);
+
+                    return;
+                }
+
+                professionalSelect.disabled = false;
+
+                const firstOption =
+                    document.createElement("option");
+
+                firstOption.textContent =
+                    "Selecione a profissional";
+
+                firstOption.value = "";
+
+                professionalSelect.appendChild(
+                    firstOption
+                );
+
+
+                professionals[procedure].forEach(
+                    professional => {
+
+                        const option =
+                            document.createElement("option");
+
+                        option.value =
+                            professional;
+
+                        option.textContent =
+                            professional;
+
+                        professionalSelect.appendChild(
+                            option
+                        );
+
+                    }
+                );
+
+                updateHours();
+
+            }
+        );
+
+
+        /* =====================================================
+           SELEÇÃO DO DIA DA SEMANA
+        ===================================================== */
+
+        dayButtons.forEach(button => {
+
+            button.addEventListener(
+                "click",
+                function () {
+
+                    dayButtons.forEach(btn =>
+                        btn.classList.remove("active")
+                    );
+
+                    this.classList.add("active");
+
+                    selectedDay =
+                        Number(this.dataset.day);
+
+                    updateDateLimits();
+
+                    updateHours();
+
+                }
+            );
+
+        });
+
+
+        /* =====================================================
+           LIMITAR DATA CONFORME DIA DA SEMANA
+        ===================================================== */
+
+        function updateDateLimits() {
+
+            if (!selectedDay) return;
+
+            dateInput.value = "";
+
+            dateInput.removeAttribute("max");
+
+            dateInput.setCustomValidity("");
+
+        }
+
+
+        /* =====================================================
+           VERIFICAR DIA DA SEMANA
+        ===================================================== */
+
+        dateInput.addEventListener(
+            "change",
+            function () {
+
+                if (!this.value) return;
+
+                const date =
+                    new Date(
+                        this.value + "T00:00:00"
+                    );
+
+                const weekday =
+                    date.getDay();
+
+                /*
+                    JavaScript:
+                    Domingo = 0
+                    Segunda = 1
+                    ...
+                    Sexta = 5
+                    Sábado = 6
+                */
+
+                if (
+                    weekday === 0 ||
+                    weekday === 6
+                ) {
+
+                    showToast(
+                        "Escolha uma data de segunda a sexta-feira."
+                    );
+
+                    this.value = "";
+
+                    return;
+                }
+
+
+                if (
+                    selectedDay &&
+                    weekday !== selectedDay
+                ) {
+
+                    showToast(
+                        "A data escolhida não corresponde ao dia selecionado."
+                    );
+
+                    this.value = "";
+
+                    return;
+                }
+
+                updateHours();
+
+            }
+        );
+
+
+        /* =====================================================
+           SELEÇÃO DOS HORÁRIOS
+        ===================================================== */
+
+        hourButtons.forEach(button => {
+
+            button.addEventListener(
+                "click",
+                function () {
+
+                    if (
+                        this.classList.contains(
+                            "unavailable"
+                        )
+                    ) {
+                        return;
+                    }
+
+                    hourButtons.forEach(btn =>
+                        btn.classList.remove("selected")
+                    );
+
+                    this.classList.add("selected");
+
+                    selectedHour =
+                        this.dataset.time;
+
+                }
+            );
+
+        });
+
+
+        /* =====================================================
+           VERIFICAR SE HORÁRIO ESTÁ OCUPADO
+        ===================================================== */
+
+        function isUnavailable(time) {
+
+            const procedure =
+                procedureSelect.value;
+
+            const professional =
+                professionalSelect.value;
+
+            const date =
+                dateInput.value;
+
+            if (
+                !procedure ||
+                !professional ||
+                !date
+            ) {
+                return false;
+            }
+
+            return appointments.some(
+                appointment =>
+                    appointment.date === date &&
+                    appointment.time === time &&
+                    appointment.professional === professional
+            );
+
+        }
+
+
+        /* =====================================================
+           ATUALIZAR HORÁRIOS
+        ===================================================== */
+
+        function updateHours() {
+
+            hourButtons.forEach(button => {
+
+                const unavailable =
+                    isUnavailable(
+                        button.dataset.time
+                    );
+
+                button.classList.remove(
+                    "unavailable"
+                );
+
+                button.classList.remove(
+                    "selected"
+                );
+
+                if (unavailable) {
+
+                    button.classList.add(
+                        "unavailable"
+                    );
+
+                    button.title =
+                        "Horário indisponível";
+
+                } else {
+
+                    button.title =
+                        "Selecionar horário";
+
+                }
+
+            });
+
+            selectedHour = null;
+
+        }
+
+
+        /* =====================================================
+           ATUALIZAR HORÁRIOS AO MUDAR DATA/PROFISSIONAL
+        ===================================================== */
+
+        professionalSelect.addEventListener(
+            "change",
+            updateHours
+        );
+
+        dateInput.addEventListener(
+            "change",
+            updateHours
+        );
+
+
+        /* =====================================================
+           CONFIRMAR AGENDAMENTO
+        ===================================================== */
+
+        function confirmAppointment() {
+
+            const procedure =
+                procedureSelect.value;
+
+            const professional =
+                professionalSelect.value;
+
+            const date =
+                dateInput.value;
+
+            const time =
+                selectedHour;
+
+
+            if (!procedure) {
+
+                showToast(
+                    "Escolha um procedimento."
+                );
+
+                procedureSelect.focus();
+
+                return;
+            }
+
+
+            if (!professional) {
+
+                showToast(
+                    "Escolha uma profissional."
+                );
+
+                professionalSelect.focus();
+
+                return;
+            }
+
+
+            if (!date) {
+
+                showToast(
+                    "Escolha uma data."
+                );
+
+                dateInput.focus();
+
+                return;
+            }
+
+
+            if (!time) {
+
+                showToast(
+                    "Escolha um horário disponível."
+                );
+
+                return;
+            }
+
+
+            if (isUnavailable(time)) {
+
+                showToast(
+                    "Esse horário acabou de ser reservado."
+                );
+
+                updateHours();
+
+                return;
+            }
+
+
+            const appointment = {
+
+                id:
+                    Date.now(),
+
+                procedure:
+                    procedure,
+
+                professional:
+                    professional,
+
+                date:
+                    date,
+
+                time:
+                    time
+
+            };
+
+
+            appointments.push(
+                appointment
+            );
+
+
+            localStorage.setItem(
+                "fofoqueirasAppointments",
+                JSON.stringify(appointments)
+            );
+
+
+            showConfirmation(
+                appointment
+            );
+
+            renderAppointments();
+
+            updateHours();
+
+        }
+
+
+        /* =====================================================
+           FORMATAR DATA
+        ===================================================== */
+
+        function formatDate(dateString) {
+
+            const date =
+                new Date(
+                    dateString + "T00:00:00"
+                );
+
+            return date.toLocaleDateString(
+                "pt-BR",
+                {
+                    weekday: "long",
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric"
+                }
+            );
+
+        }
+
+
+        /* =====================================================
+           MOSTRAR CONFIRMAÇÃO
+        ===================================================== */
+
+        function showConfirmation(
+            appointment
+        ) {
+
+            const data =
+                document.getElementById(
+                    "confirmationData"
+                );
+
+            data.innerHTML = `
+
+                <p>
+                    💇‍♀️ <strong>Procedimento:</strong>
+                    ${appointment.procedure}
+                </p>
+
+                <p>
+                    👩‍💼 <strong>Profissional:</strong>
+                    ${appointment.professional}
+                </p>
+
+                <p>
+                    📅 <strong>Data:</strong>
+                    ${formatDate(appointment.date)}
+                </p>
+
+                <p>
+                    🕐 <strong>Horário:</strong>
+                    ${appointment.time}
+                </p>
+
+            `;
+
+            document
+                .getElementById(
+                    "confirmationModal"
+                )
+                .classList.add("show");
+
+        }
+
+
+        /* =====================================================
+           FECHAR MODAL
+        ===================================================== */
+
+        function closeModal() {
+
+            document
+                .getElementById(
+                    "confirmationModal"
+                )
+                .classList.remove("show");
+
+            document
+                .getElementById(
+                    "agendamento"
+                )
+                .scrollIntoView({
+                    behavior: "smooth"
+                });
+
+        }
+
+
+        /* =====================================================
+           LISTAR AGENDAMENTOS
+        ===================================================== */
+
+        function renderAppointments() {
+
+            const list =
+                document.getElementById(
+                    "appointmentsList"
+                );
+
+            if (appointments.length === 0) {
+
+                list.innerHTML = `
+
+                    <div class="empty">
+
+                        <div style="font-size:40px;">
+                            📅
+                        </div>
+
+                        <h3>
+                            Você ainda não possui agendamentos.
+                        </h3>
+
+                        <p>
+                            Que tal marcar seu primeiro horário? 💙
+                        </p>
+
+                    </div>
+
+                `;
+
+                return;
+            }
+
+
+            /*
+                Organiza os agendamentos pela data
+                e depois pelo horário.
+            */
+
+            const sorted =
+                [...appointments].sort(
+                    (a, b) => {
+
+                        const first =
+                            ${a.date} ${a.time};
+
+                        const second =
+                            ${b.date} ${b.time};
+
+                        return first.localeCompare(
+                            second
+                        );
+
+                    }
+                );
+
+
+            list.innerHTML =
+                sorted.map(
+                    appointment => `
+
+                    <div
+                        class="appointment"
+                        data-id="${appointment.id}"
+                    >
+
+                        <div class="appointment-info">
+
+                            <div class="appointment-icon">
+                                ${getProcedureIcon(
+                                    appointment.procedure
+                                )}
+                            </div>
+
+                            <div>
+
+                                <h4>
+                                    ${appointment.procedure}
+                                </h4>
+
+                                <p>
+                                    👩‍💼 ${appointment.professional}
+                                </p>
+
+                                <p>
+                                    📅 ${formatDate(
+                                        appointment.date
+                                    )}
+                                    • 🕐 ${appointment.time}
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <button
+                            class="cancel-btn"
+                            onclick="cancelAppointment(${appointment.id})"
+                        >
+                            ✕ Cancelar
+                        </button>
+
+                    </div>
+
+                `
+                )
+                .join("");
+
+        }
+
+
+        /* =====================================================
+           ÍCONE DOS PROCEDIMENTOS
+        ===================================================== */
+
+        function getProcedureIcon(
+            procedure
+        ) {
+
+            const icons = {
+
+                "Cabelo": "💇‍♀️",
+
+                "Maquiagem": "💄",
+
+                "Cílios": "👁️",
+
+                "Unhas": "💅",
+
+                "Massagem": "💆‍♀️",
+
+                "Procedimentos estéticos": "✨"
+
+            };
+
+            return icons[procedure] || "💙";
+
+        }
+
+
+        /* =====================================================
+           CANCELAR AGENDAMENTO
+        ===================================================== */
+
+        function cancelAppointment(id) {
+
+            const appointment =
+                appointments.find(
+                    item => item.id === id
+                );
+
+            if (!appointment) return;
+
+
+            const confirmed =
+                confirm(
+                    Deseja cancelar o agendamento de ${appointment.procedure} com ${appointment.professional} às ${appointment.time}?
+                );
+
+
+            if (!confirmed) return;
+
+
+            appointments =
+                appointments.filter(
+                    item => item.id !== id
+                );
+
+
+            localStorage.setItem(
+                "fofoqueirasAppointments",
+                JSON.stringify(appointments)
+            );
+
+
+            renderAppointments();
+
+            updateHours();
+
+            showToast(
+                "Agendamento cancelado com sucesso."
+            );
+
+        }
+
+
+        /* =====================================================
+           TOAST
+        ===================================================== */
+
+        function showToast(message) {
+
+            const toast =
+                document.getElementById(
+                    "toast"
+                );
+
+            toast.textContent =
+                message;
+
+            toast.classList.add(
+                "show"
+            );
+
+
+            setTimeout(
+                () => {
+
+                    toast.classList.remove(
+                        "show"
+                    );
+
+                },
+                3000
+            );
+
+        }
+
+
+        /* =====================================================
+           MENU MOBILE
+        ===================================================== */
+
+        function toggleMenu() {
+
+            document
+                .getElementById("menu")
+                .classList.toggle("open");
+
+        }
+
+
+        /* Fecha o menu quando clicar em algum link */
+
+        document
+            .querySelectorAll("nav a")
+            .forEach(link => {
+
+                link.addEventListener(
+                    "click",
+                    () => {
+
+                        document
+                            .getElementById("menu")
+                            .classList.remove(
+                                "open"
+                            );
+
+                    }
+                );
+
+            });
+
+
+        /* =====================================================
+           FECHAR MODAL CLICANDO FORA
+        ===================================================== */
+
+        document
+            .getElementById(
+                "confirmationModal"
+            )
+            .addEventListener(
+                "click",
+                function(event) {
+
+                    if (
+                        event.target === this
+                    ) {
+
+                        closeModal();
+
+                    }
+
+                }
+            );
+
+
+        /* =====================================================
+           CARREGAR AGENDAMENTOS AO ABRIR O SITE
+        ===================================================== */
+
+        renderAppointments();
+
+    </script>
+
+</body>
+</html>
