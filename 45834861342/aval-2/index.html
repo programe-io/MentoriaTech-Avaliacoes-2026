@@ -1,0 +1,327 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meu Feed Social</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f2f5;
+      color: #222;
+    }
+
+    header {
+      background: #1877f2;
+      color: white;
+      padding: 18px;
+      text-align: center;
+      font-size: 25px;
+      font-weight: bold;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 25px auto;
+      padding: 0 12px;
+    }
+
+    .criar-post, .post {
+      background: white;
+      padding: 18px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px #00000010;
+    }
+
+    textarea, input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      font-size: 15px;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    button {
+      border: none;
+      border-radius: 8px;
+      padding: 10px 15px;
+      background: #1877f2;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      opacity: 0.85;
+    }
+
+    .usuario {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      font-weight: bold;
+    }
+
+    .avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: #dbeafe;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 23px;
+    }
+
+    .texto-post {
+      margin: 12px 0;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+    }
+
+    .imagem-post {
+      width: 100%;
+      max-height: 400px;
+      object-fit: cover;
+      border-radius: 10px;
+      margin: 8px 0;
+    }
+
+    .acoes {
+      display: flex;
+      gap: 10px;
+      margin-top: 12px;
+      border-top: 1px solid #eee;
+      padding-top: 12px;
+    }
+
+    .curtir {
+      background: #f0f2f5;
+      color: #333;
+      flex: 1;
+    }
+
+    .curtir.ativo {
+      color: #1877f2;
+    }
+
+    .compartilhar {
+      background: #e8f5e9;
+      color: #218838;
+      flex: 1;
+    }
+
+    .comentarios {
+      margin-top: 12px;
+    }
+
+    .comentario {
+      background: #f0f2f5;
+      padding: 9px;
+      border-radius: 8px;
+      margin-top: 7px;
+      overflow-wrap: anywhere;
+    }
+
+    .excluir {
+      background: #e53935;
+      margin-top: 10px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      color: #777;
+    }
+  </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+  <header>🌐 Meu Feed Social</header>
+
+  <main class="container">
+
+    <section class="criar-post">
+      <h2>O que você está pensando?</h2>
+      <br>
+
+      <input id="nome" placeholder="Seu nome">
+
+      <textarea id="texto" placeholder="Escreva uma publicação..."></textarea>
+
+      <input id="imagem" placeholder="Link de uma imagem (opcional)">
+
+      <button onclick="publicar()">Publicar 🚀</button>
+    </section>
+
+    <section id="feed">
+
+      <article class="post">
+        <div class="usuario">
+          <div class="avatar">😎</div>
+          <span>Vitin</span>
+        </div>
+
+        <p class="texto-post">
+          Bem-vindo ao meu feed! 🚀🔥
+          Aqui você pode compartilhar suas ideias.
+        </p>
+
+        <div class="acoes">
+          <button class="curtir" onclick="curtir(this)">
+            ❤️ Curtir <span>0</span>
+          </button>
+          <button class="compartilhar"
+            onclick="compartilhar('Bem-vindo ao meu feed! 🚀🔥')">
+            ↗ Compartilhar
+          </button>
+        </div>
+      </article>
+
+    </section>
+  </main>
+
+  <footer>Meu Feed Social © 2026</footer>
+
+  <script>
+    function publicar() {
+      const nome = document.getElementById("nome").value.trim();
+      const texto = document.getElementById("texto").value.trim();
+      const imagem = document.getElementById("imagem").value.trim();
+
+      if (!nome || !texto) {
+        alert("Digite seu nome e escreva uma publicação!");
+        return;
+      }
+
+      // Aceita apenas links de imagens HTTP ou HTTPS.
+      let linkImagem = "";
+      try {
+        const url = new URL(imagem);
+        if (imagem && ["http:", "https:"].includes(url.protocol)) {
+          linkImagem = url.href;
+        }
+      } catch (e) {
+        linkImagem = "";
+      }
+
+      const post = document.createElement("article");
+      post.className = "post";
+
+      const usuario = document.createElement("div");
+      usuario.className = "usuario";
+
+      const avatar = document.createElement("div");
+      avatar.className = "avatar";
+      avatar.textContent = "😊";
+
+      const nomeUsuario = document.createElement("span");
+      nomeUsuario.textContent = nome;
+
+      usuario.append(avatar, nomeUsuario);
+
+      const paragrafo = document.createElement("p");
+      paragrafo.className = "texto-post";
+      paragrafo.textContent = texto;
+
+      post.append(usuario, paragrafo);
+
+      if (linkImagem) {
+        const img = document.createElement("img");
+        img.className = "imagem-post";
+        img.src = linkImagem;
+        img.alt = "Imagem da publicação";
+        img.referrerPolicy = "no-referrer";
+        post.appendChild(img);
+      }
+
+      const acoes = document.createElement("div");
+      acoes.className = "acoes";
+
+      const botaoCurtir = document.createElement("button");
+      botaoCurtir.className = "curtir";
+      botaoCurtir.innerHTML = "❤️ Curtir <span>0</span>";
+      botaoCurtir.onclick = function () {
+        curtir(botaoCurtir);
+      };
+
+      const botaoCompartilhar = document.createElement("button");
+      botaoCompartilhar.className = "compartilhar";
+      botaoCompartilhar.textContent = "↗ Compartilhar";
+      botaoCompartilhar.onclick = function () {
+        compartilhar(texto);
+      };
+
+      acoes.append(botaoCurtir, botaoCompartilhar);
+      post.appendChild(acoes);
+
+      const botaoExcluir = document.createElement("button");
+      botaoExcluir.className = "excluir";
+      botaoExcluir.textContent = "Excluir publicação";
+      botaoExcluir.onclick = function () {
+        post.remove();
+      };
+      post.appendChild(botaoExcluir);
+
+      const feed = document.getElementById("feed");
+      feed.prepend(post);
+
+      document.getElementById("texto").value = "";
+      document.getElementById("imagem").value = "";
+    }
+
+    function curtir(botao) {
+      const contador = botao.querySelector("span");
+      let total = Number(contador.textContent);
+
+      if (botao.classList.contains("ativo")) {
+        total--;
+        botao.classList.remove("ativo");
+      } else {
+        total++;
+        botao.classList.add("ativo");
+      }
+
+      contador.textContent = total;
+    }
+
+    async function compartilhar(texto) {
+      try {
+        if (navigator.share) {
+          await navigator.share({
+            title: "Meu Feed Social",
+            text: texto
+          });
+        } else {
+          await navigator.clipboard.writeText(texto);
+          alert("Texto copiado para compartilhar!");
+        }
+      } catch (erro) {
+        if (erro.name !== "AbortError") {
+          alert("Não foi possível compartilhar agora.");
+        }
+      }
+    }
+  </script>
+
+<script src="script.js"></script></body>
+</html>
