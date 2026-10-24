@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gerenciador de Tarefas</title>
+  <style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: #ffffff;
+  color: #2f3e4e;
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 32px 16px;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 24px;
+  color: #0f8a5f;
+}
+
+h2 {
+  margin-bottom: 16px;
+  font-size: 1.15rem;
+}
+
+/* ===== Abas ===== */
+.abas {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  border-bottom: 2px solid #e1e8f0;
+}
+
+.aba {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 8px 8px 0 0;
+  background: #f1f5f9;
+  color: #66798c;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.aba:hover { background: #e6edf4; }
+
+.aba.ativa {
+  background: #6ee0b8;
+  color: #06231a;
+}
+
+.conteudo-aba { display: none; }
+.conteudo-aba.ativa { display: block; }
+
+/* ===== Layout ===== */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.card {
+  background: #f8fafc;
+  border: 1px solid #e6edf4;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 14px rgba(20, 40, 70, 0.05);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.9rem;
+}
+
+input,
+select {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #e1e8f0;
+  background: #ffffff;
+  color: #2f3e4e;
+  font-size: 1rem;
+}
+
+input:focus,
+select:focus { outline: 2px solid #6ee0b8; }
+
+.form button {
+  padding: 11px;
+  border: none;
+  border-radius: 8px;
+  background: #6ee0b8;
+  color: #06231a;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: filter 0.2s;
+}
+
+.form button:hover { filter: brightness(1.1); }
+
+.mensagem {
+  min-height: 24px;
+  margin-bottom: 12px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.mensagem.sucesso { color: #0f8a5f; }
+.mensagem.erro { color: #d93a3a; }
+
+/* ===== Tabela ===== */
+.tabela-wrapper { overflow-x: auto; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 1px solid #e1e8f0;
+  vertical-align: middle;
+}
+
+th {
+  color: #0f8a5f;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+}
+
+tbody tr:hover { background: #f1f6fb; }
+
+.vazio {
+  text-align: center;
+  padding: 16px;
+  color: #6b7d90;
+}
+
+.tag {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+.tag.p1 { background: #fee2e2; color: #b91c1c; }
+.tag.p2 { background: #fef3c7; color: #b45309; }
+.tag.p3 { background: #dcfce7; color: #15803d; }
+
+.status-pendente { color: #c26a00; font-weight: 700; }
+.status-concluida { color: #0f8a5f; font-weight: 700; }
+
+tr.concluida .titulo-tarefa {
+  text-decoration: line-through;
+  color: #9aa8b6;
+}
+
+.btn-concluir {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 8px;
+  background: #6ee0b8;
+  color: #06231a;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: filter 0.2s;
+}
+
+.btn-concluir:hover { filter: brightness(1.1); }
+
+/* ===== Resumo ===== */
+.indicadores {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.indicador {
+  background: #f8fafc;
+  border: 1px solid #e6edf4;
+  border-radius: 12px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: center;
+  box-shadow: 0 4px 14px rgba(20, 40, 70, 0.05);
+}
+
+.indicador.destaque {
+  background: #6ee0b8;
+  color: #06231a;
+}
+
+.indicador .numero {
+  font-size: 1.8rem;
+  font-weight: 800;
+}
+
+.indicador .rotulo {
+  font-size: 0.85rem;
+  opacity: 0.85;
+}
+
+.historico {
+  list-style: none;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.historico li {
+  padding: 10px 12px;
+  border-bottom: 1px solid #e1e8f0;
+  font-size: 0.92rem;
+}
+
+.historico .hora {
+  color: #6b7d90;
+  font-size: 0.8rem;
+  margin-right: 8px;
+}
+
+button.secundario {
+  margin-top: 12px;
+  padding: 9px 16px;
+  border: 1px solid #d93a3a;
+  border-radius: 8px;
+  background: transparent;
+  color: #d93a3a;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+button.secundario:hover {
+  background: #d93a3a;
+  color: #ffffff;
+}
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+  <main class="container">
+    <h1>✅ Gerenciador de Tarefas</h1>
+
+    <!-- Abas -->
+    <nav class="abas">
+      <button type="button" class="aba ativa" data-aba="tarefas">➕ Tarefas</button>
+      <button type="button" class="aba" data-aba="resumo">📊 Resumo</button>
+    </nav>
+
+    <p id="mensagem" class="mensagem" role="status"></p>
+
+    <!-- ABA 1: Tarefas -->
+    <div id="aba-tarefas" class="conteudo-aba ativa">
+      <div class="grid">
+        <section class="card">
+          <h2>Cadastrar tarefa</h2>
+          <div class="form" id="form-cadastro">
+            <label>Nome do usuário
+              <input type="text" id="usuario" placeholder="Ex.: Maria" autocomplete="off">
+            </label>
+            <label>Título da tarefa
+              <input type="text" id="titulo" placeholder="Ex.: Cadastrar Clientes" autocomplete="off">
+            </label>
+            <label>Prioridade
+              <select id="prioridade">
+                <option value="">Selecione...</option>
+                <option value="1">1 - Alta</option>
+                <option value="2">2 - Média</option>
+                <option value="3">3 - Baixa</option>
+              </select>
+            </label>
+            <button type="button" id="btn-cadastrar">Cadastrar</button>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2>Alterar prioridade</h2>
+          <div class="form" id="form-alterar">
+            <label>Código da tarefa
+              <input type="number" id="alt-codigo" min="1">
+            </label>
+            <label>Nova prioridade
+              <select id="alt-prioridade">
+                <option value="">Selecione...</option>
+                <option value="1">1 - Alta</option>
+                <option value="2">2 - Média</option>
+                <option value="3">3 - Baixa</option>
+              </select>
+            </label>
+            <button type="button" id="btn-alterar">Alterar</button>
+          </div>
+        </section>
+      </div>
+
+      <section class="card">
+        <h2>Tarefas cadastradas <span id="contador-lista"></span></h2>
+        <div class="tabela-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Código</th>
+                <th>Usuário</th>
+                <th>Título</th>
+                <th>Prioridade</th>
+                <th>Status</th>
+                <th>Ação</th>
+              </tr>
+            </thead>
+            <tbody id="lista"></tbody>
+          </table>
+        </div>
+        <p id="vazio" class="vazio">Nenhuma tarefa cadastrada.</p>
+      </section>
+    </div>
+
+    <!-- ABA 2: Resumo -->
+    <div id="aba-resumo" class="conteudo-aba">
+      <div class="indicadores">
+        <div class="indicador">
+          <span class="numero" id="ind-total">0</span>
+          <span class="rotulo">Tarefas cadastradas</span>
+        </div>
+        <div class="indicador">
+          <span class="numero" id="ind-pendentes">0</span>
+          <span class="rotulo">Pendentes</span>
+        </div>
+        <div class="indicador destaque">
+          <span class="numero" id="ind-concluidas">0</span>
+          <span class="rotulo">Concluídas</span>
+        </div>
+        <div class="indicador">
+          <span class="numero" id="ind-alta">0</span>
+          <span class="rotulo">Pendentes de prioridade Alta</span>
+        </div>
+        <div class="indicador">
+          <span class="numero" id="ind-media">0</span>
+          <span class="rotulo">Pendentes de prioridade Média</span>
+        </div>
+        <div class="indicador">
+          <span class="numero" id="ind-baixa">0</span>
+          <span class="rotulo">Pendentes de prioridade Baixa</span>
+        </div>
+        <div class="indicador">
+          <span class="numero" id="ind-alt-prio">0</span>
+          <span class="rotulo">Alterações de prioridade</span>
+        </div>
+      </div>
+
+      <section class="card">
+        <h2>Histórico</h2>
+        <ul id="historico" class="historico"></ul>
+        <p id="historico-vazio" class="vazio">Nada feito ainda.</p>
+        <button type="button" id="btn-limpar" class="secundario">Limpar tudo</button>
+      </section>
+    </div>
+  </main>
+
+  <script>
+// ===== Armazenamento seguro =====
+// Se o navegador bloquear o localStorage, o sistema continua funcionando
+// (só não guarda os dados ao recarregar a página).
+const memoria = {};
+function lerSalvo(chave) {
+  try {
+    const texto = localStorage.getItem(chave);
+    return texto ? JSON.parse(texto) : null;
+  } catch (erro) {
+    return memoria[chave] ? JSON.parse(memoria[chave]) : null;
+  }
+}
+function gravarSalvo(chave, valor) {
+  const texto = JSON.stringify(valor);
+  memoria[chave] = texto;
+  try {
+    localStorage.setItem(chave, texto);
+  } catch (erro) {
+    /* sem localStorage: fica só na memória */
+  }
+}
+
+// ===== Estado =====
+/* Array que vai guardar o conjunto de todas as tarefas */
+let tarefas = lerSalvo("tarefas") || [];
+let geradorCodigo = lerSalvo("geradorCodigo") || 0;
+let estatisticas = lerSalvo("estatisticasTarefas") || {
+  altPrioridade: 0,
+  historico: [],
+};
+
+// ===== Elementos e utilidades =====
+const $ = (id) => document.getElementById(id);
+const mensagem = $("mensagem");
+const nomesPrioridade = { 1: "Alta", 2: "Média", 3: "Baixa" };
+
+function salvar() {
+  gravarSalvo("tarefas", tarefas);
+  gravarSalvo("geradorCodigo", geradorCodigo);
+  gravarSalvo("estatisticasTarefas", estatisticas);
+}
+
+function mostrarMensagem(texto, tipo) {
+  mensagem.textContent = texto;
+  mensagem.className = "mensagem " + tipo;
+}
+
+function registrarHistorico(texto) {
+  estatisticas.historico.unshift({
+    texto,
+    hora: new Date().toLocaleString("pt-BR"),
+  });
+}
+
+// ===== Regras (suas funções) =====
+function validarDadosTarefa(titulo, prioridade) {
+  if (titulo.length < 5) {
+    throw new Error("O título deve ter no mínimo 5 caracteres");
+  }
+
+  if (!prioridade || prioridade < 1 || prioridade > 3) {
+    throw new Error("Informe uma prioridade entre 1 e 3");
+  }
+}
+
+function buscarTarefa(codigoTarefa) {
+  const tarefaBuscada = tarefas.find((t) => t.codigo === codigoTarefa);
+
+  if (!tarefaBuscada) {
+    throw new Error("Código de tarefa não encontrado");
+  }
+
+  return tarefaBuscada;
+}
+
+function cadastrarTarefa(titulo, prioridade, usuario) {
+  if (!usuario || usuario.length < 3) {
+    throw new Error("Informe o nome do usuário (mínimo 3 caracteres)");
+  }
+
+  validarDadosTarefa(titulo, prioridade);
+
+  let tarefa = {
+    codigo: ++geradorCodigo,
+    usuario: usuario,
+    titulo: titulo,
+    prioridade: prioridade,
+    status: true, // true = pendente, false = concluída
+  };
+
+  tarefas.push(tarefa);
+  registrarHistorico(
+    `Cadastrou "${titulo}" (código ${tarefa.codigo}, prioridade ${nomesPrioridade[prioridade]}) para ${usuario}`
+  );
+  salvar();
+}
+
+function listarTarefas() {
+  return tarefas;
+}
+
+function concluirTarefa(codigo) {
+  let tarefa = buscarTarefa(codigo);
+
+  if (tarefa.status === false) {
+    throw new Error("Tarefa já estava como concluída");
+  }
+
+  tarefa.status = false;
+  registrarHistorico(`Concluiu "${tarefa.titulo}" (código ${codigo})`);
+  salvar();
+}
+
+function alterarPrioridade(codigo, novaPrioridade) {
+  let tarefa = buscarTarefa(codigo);
+
+  validarDadosTarefa(tarefa.titulo, novaPrioridade);
+
+  const antiga = tarefa.prioridade;
+  tarefa.prioridade = novaPrioridade;
+  estatisticas.altPrioridade++;
+  registrarHistorico(
+    `Prioridade de "${tarefa.titulo}": ${nomesPrioridade[antiga]} → ${nomesPrioridade[novaPrioridade]}`
+  );
+  salvar();
+}
+
+// ===== Mostrar a lista de tarefas =====
+function renderizarLista() {
+  const lista = $("lista");
+  lista.innerHTML = "";
+
+  // Ordena por nível de prioridade (1 = Alta primeiro) e, no empate, pelo código
+  const ordenadas = listarTarefas()
+    .slice()
+    .sort((a, b) => a.prioridade - b.prioridade || a.codigo - b.codigo);
+
+  $("vazio").style.display = ordenadas.length ? "none" : "block";
+  $("contador-lista").textContent = ordenadas.length ? `(${ordenadas.length})` : "";
+
+  ordenadas.forEach((t) => {
+    const tr = document.createElement("tr");
+    if (!t.status) tr.classList.add("concluida");
+
+    const tdCodigo = document.createElement("td");
+    tdCodigo.textContent = t.codigo;
+
+    const tdUsuario = document.createElement("td");
+    tdUsuario.textContent = t.usuario;
+
+    const tdTitulo = document.createElement("td");
+    tdTitulo.className = "titulo-tarefa";
+    tdTitulo.textContent = t.titulo;
+
+    const tdPrioridade = document.createElement("td");
+    const tag = document.createElement("span");
+    tag.className = "tag p" + t.prioridade;
+    tag.textContent = nomesPrioridade[t.prioridade];
+    tdPrioridade.appendChild(tag);
+
+    const tdStatus = document.createElement("td");
+    const st = document.createElement("span");
+    st.className = t.status ? "status-pendente" : "status-concluida";
+    st.textContent = t.status ? "Pendente" : "Concluída";
+    tdStatus.appendChild(st);
+
+    const tdAcao = document.createElement("td");
+    if (t.status) {
+      const botao = document.createElement("button");
+      botao.type = "button";
+      botao.className = "btn-concluir";
+      botao.textContent = "Concluir";
+      botao.dataset.codigo = t.codigo;
+      tdAcao.appendChild(botao);
+    } else {
+      tdAcao.textContent = "✔";
+    }
+
+    [tdCodigo, tdUsuario, tdTitulo, tdPrioridade, tdStatus, tdAcao].forEach((td) =>
+      tr.appendChild(td)
+    );
+    lista.appendChild(tr);
+  });
+}
+
+// ===== Resumo (aba 2) =====
+function atualizarResumo() {
+  const pendentes = tarefas.filter((t) => t.status);
+  const concluidas = tarefas.filter((t) => !t.status);
+  const pendentesDa = (n) => pendentes.filter((t) => t.prioridade === n).length;
+
+  $("ind-total").textContent = tarefas.length;
+  $("ind-pendentes").textContent = pendentes.length;
+  $("ind-concluidas").textContent = concluidas.length;
+  $("ind-alta").textContent = pendentesDa(1);
+  $("ind-media").textContent = pendentesDa(2);
+  $("ind-baixa").textContent = pendentesDa(3);
+  $("ind-alt-prio").textContent = estatisticas.altPrioridade;
+
+  const ul = $("historico");
+  ul.innerHTML = "";
+  $("historico-vazio").style.display = estatisticas.historico.length ? "none" : "block";
+  estatisticas.historico.forEach((h) => {
+    const li = document.createElement("li");
+    const hora = document.createElement("span");
+    hora.className = "hora";
+    hora.textContent = h.hora;
+    li.appendChild(hora);
+    li.appendChild(document.createTextNode(h.texto));
+    ul.appendChild(li);
+  });
+}
+
+function atualizarTudo() {
+  renderizarLista();
+  atualizarResumo();
+}
+
+// ===== Ações dos botões =====
+function aoCadastrar() {
+  try {
+    cadastrarTarefa(
+      $("titulo").value.trim(),
+      Number($("prioridade").value),
+      $("usuario").value.trim()
+    );
+  } catch (erro) {
+    mostrarMensagem(erro.message, "erro");
+    return;
+  }
+
+  mostrarMensagem("Tarefa cadastrada com sucesso!", "sucesso");
+  ["titulo", "prioridade"].forEach((id) => {
+    $(id).value = "";
+  });
+  atualizarTudo(); // manda direto para a lista (e para o resumo)
+  $("titulo").focus();
+}
+
+function aoAlterar() {
+  const codigo = Number($("alt-codigo").value);
+  const nova = Number($("alt-prioridade").value);
+
+  try {
+    alterarPrioridade(codigo, nova);
+  } catch (erro) {
+    mostrarMensagem(erro.message, "erro");
+    return;
+  }
+
+  mostrarMensagem("Prioridade alterada com sucesso!", "sucesso");
+  $("alt-codigo").value = "";
+  $("alt-prioridade").value = "";
+  atualizarTudo();
+}
+
+function aoClicarNaLista(evento) {
+  const botao = evento.target.closest(".btn-concluir");
+  if (!botao) return;
+
+  try {
+    concluirTarefa(Number(botao.dataset.codigo));
+  } catch (erro) {
+    mostrarMensagem(erro.message, "erro");
+    return;
+  }
+
+  mostrarMensagem("Tarefa concluída!", "sucesso");
+  atualizarTudo();
+}
+
+function aoLimpar() {
+  if (!confirm("Apagar todas as tarefas e zerar os contadores?")) return;
+  tarefas = [];
+  geradorCodigo = 0;
+  estatisticas = { altPrioridade: 0, historico: [] };
+  salvar();
+  atualizarTudo();
+  mostrarMensagem("Tudo foi apagado.", "sucesso");
+}
+
+// ===== Ligar os eventos =====
+$("btn-cadastrar").addEventListener("click", aoCadastrar);
+$("btn-alterar").addEventListener("click", aoAlterar);
+$("btn-limpar").addEventListener("click", aoLimpar);
+$("lista").addEventListener("click", aoClicarNaLista);
+
+// Enter nos campos também cadastra / altera
+["usuario", "titulo"].forEach((id) => {
+  $(id).addEventListener("keydown", (e) => {
+    if (e.key === "Enter") aoCadastrar();
+  });
+});
+$("alt-codigo").addEventListener("keydown", (e) => {
+  if (e.key === "Enter") aoAlterar();
+});
+
+// Abas
+document.querySelectorAll(".aba").forEach((botao) => {
+  botao.addEventListener("click", () => {
+    document.querySelectorAll(".aba").forEach((b) => b.classList.remove("ativa"));
+    document
+      .querySelectorAll(".conteudo-aba")
+      .forEach((c) => c.classList.remove("ativa"));
+    botao.classList.add("ativa");
+    $("aba-" + botao.dataset.aba).classList.add("ativa");
+    mensagem.textContent = "";
+    atualizarTudo();
+  });
+});
+
+// Mostra na própria página qualquer erro inesperado
+window.addEventListener("error", (e) => {
+  mostrarMensagem("Erro: " + e.message, "erro");
+});
+
+// ===== Início =====
+atualizarTudo();
+
+</script>
+<script src="script.js"></script></body>
+</html>
