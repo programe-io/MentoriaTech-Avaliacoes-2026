@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema de Estoque</title>
+  <style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: #f3f6fa;
+  color: #1b2a3a;
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 32px 16px;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 24px;
+  color: #0f8a5f;
+}
+
+h2 {
+  margin-bottom: 16px;
+  font-size: 1.15rem;
+}
+
+/* ===== Abas ===== */
+.abas {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  border-bottom: 2px solid #d5dee8;
+}
+
+.aba {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 8px 8px 0 0;
+  background: #e3eaf2;
+  color: #5b6f84;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.aba:hover {
+  background: #d3dde9;
+}
+
+.aba.ativa {
+  background: #1fc58e;
+  color: #06231a;
+}
+
+.conteudo-aba {
+  display: none;
+}
+
+.conteudo-aba.ativa {
+  display: block;
+}
+
+/* ===== Layout ===== */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 14px rgba(20, 40, 70, 0.12);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.9rem;
+}
+
+input,
+select {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #d5dee8;
+  background: #ffffff;
+  color: #1b2a3a;
+  font-size: 1rem;
+}
+
+input:focus,
+select:focus {
+  outline: 2px solid #1fc58e;
+}
+
+.form button {
+  padding: 11px;
+  border: none;
+  border-radius: 8px;
+  background: #1fc58e;
+  color: #06231a;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: filter 0.2s;
+}
+
+.form button:hover {
+  filter: brightness(1.1);
+}
+
+.mensagem {
+  min-height: 24px;
+  margin-bottom: 12px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.mensagem.sucesso { color: #0f8a5f; }
+.mensagem.erro { color: #d93a3a; }
+
+/* ===== Tabela ===== */
+.tabela-wrapper {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 1px solid #d5dee8;
+}
+
+th {
+  color: #0f8a5f;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+}
+
+tbody tr:hover {
+  background: #eef3f8;
+}
+
+.vazio {
+  text-align: center;
+  padding: 16px;
+  color: #6b7d90;
+}
+
+.baixo {
+  color: #c26a00;
+  font-weight: 700;
+}
+
+/* ===== Resumo ===== */
+.indicadores {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.indicador {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: center;
+  box-shadow: 0 4px 14px rgba(20, 40, 70, 0.12);
+}
+
+.indicador.destaque {
+  background: #1fc58e;
+  color: #06231a;
+}
+
+.indicador .numero {
+  font-size: 1.8rem;
+  font-weight: 800;
+}
+
+.indicador .rotulo {
+  font-size: 0.85rem;
+  opacity: 0.85;
+}
+
+.historico {
+  list-style: none;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.historico li {
+  padding: 10px 12px;
+  border-bottom: 1px solid #d5dee8;
+  font-size: 0.92rem;
+}
+
+.historico .hora {
+  color: #6b7d90;
+  font-size: 0.8rem;
+  margin-right: 8px;
+}
+
+button.secundario {
+  margin-top: 12px;
+  padding: 9px 16px;
+  border: 1px solid #d93a3a;
+  border-radius: 8px;
+  background: transparent;
+  color: #d93a3a;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+button.secundario:hover {
+  background: #d93a3a;
+  color: #ffffff;
+}
+
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+  <main class="container">
+    <h1>📦 Sistema de Estoque</h1>
+
+    <!-- Abas -->
+    <nav class="abas">
+      <button type="button" class="aba ativa" data-aba="produtos">➕ Produtos</button>
+      <button type="button" class="aba" data-aba="resumo">📊 Resumo</button>
+    </nav>
+
+    <p id="mensagem" class="mensagem" role="status"></p>
+
+    <!-- ABA 1: Produtos -->
+    <div id="aba-produtos" class="conteudo-aba ativa">
+      <div class="grid">
+        <section class="card">
+          <h2>Cadastrar produto</h2>
+          <div class="form" id="form-cadastro">
+            <label>Código
+              <input type="number" id="codigo" min="1">
+            </label>
+            <label>Descrição
+              <input type="text" id="descricao">
+            </label>
+            <label>Quantidade
+              <input type="number" id="quantidade" min="0" step="1">
+            </label>
+            <label>Valor (R$)
+              <input type="number" id="valor" min="0" step="0.01">
+            </label>
+            <button type="button" id="btn-cadastrar">Cadastrar</button>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2>Alterar produto</h2>
+          <div class="form" id="form-alterar">
+            <label>Código do produto
+              <input type="number" id="alt-codigo" min="1">
+            </label>
+            <label>O que deseja alterar?
+              <select id="alt-campo">
+                <option value="valor">Valor</option>
+                <option value="quantidade">Quantidade</option>
+              </select>
+            </label>
+            <label><span id="alt-rotulo">Novo valor (R$)</span>
+              <input type="number" id="alt-novo" min="0" step="0.01">
+            </label>
+            <button type="button" id="btn-alterar">Alterar</button>
+          </div>
+        </section>
+      </div>
+
+      <section class="card">
+        <h2>Produtos cadastrados <span id="contador-lista"></span></h2>
+        <div class="tabela-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Código</th>
+                <th>Descrição</th>
+                <th>Quantidade</th>
+                <th>Valor</th>
+                <th>Total em estoque</th>
+              </tr>
+            </thead>
+            <tbody id="lista"></tbody>
+          </table>
+        </div>
+        <p id="vazio" class="vazio">Nenhum produto cadastrado.</p>
+      </section>
+    </div>
+
+    <!-- ABA 2: Resumo -->
+    <div id="aba-resumo" class="conteudo-aba">
+      <div class="indicadores">
+        <div class="indicador">
+          <span class="numero" id="ind-produtos">0</span>
+          <span class="rotulo">Produtos cadastrados</span>
+        </div>
+        <div class="indicador">
+          <span class="numero" id="ind-itens">0</span>
+          <span class="rotulo">Itens em estoque</span>
+        </div>
+        <div class="indicador">
+          <span class="numero" id="ind-valor-total">R$ 0,00</span>
+          <span class="rotulo">Valor total do estoque</span>
+        </div>
+        <div class="indicador">
+          <span class="numero" id="ind-cadastros">0</span>
+          <span class="rotulo">Cadastros realizados</span>
+        </div>
+        <div class="indicador">
+          <span class="numero" id="ind-alt-valor">0</span>
+          <span class="rotulo">Alterações de valor</span>
+        </div>
+        <div class="indicador">
+          <span class="numero" id="ind-alt-qtd">0</span>
+          <span class="rotulo">Alterações de quantidade</span>
+        </div>
+        <div class="indicador destaque">
+          <span class="numero" id="ind-alt-total">0</span>
+          <span class="rotulo">Total de alterações</span>
+        </div>
+      </div>
+
+      <section class="card">
+        <h2>Histórico</h2>
+        <ul id="historico" class="historico"></ul>
+        <p id="historico-vazio" class="vazio">Nada feito ainda.</p>
+        <button type="button" id="btn-limpar" class="secundario">Limpar tudo</button>
+      </section>
+    </div>
+  </main>
+
+  <script>
+// ===== Armazenamento seguro =====
+// Se o navegador bloquear o localStorage, o sistema continua funcionando
+// (só não guarda os dados ao recarregar a página).
+const memoria = {};
+function lerSalvo(chave) {
+  try {
+    const texto = localStorage.getItem(chave);
+    return texto ? JSON.parse(texto) : null;
+  } catch (erro) {
+    return memoria[chave] ? JSON.parse(memoria[chave]) : null;
+  }
+}
+function gravarSalvo(chave, valor) {
+  const texto = JSON.stringify(valor);
+  memoria[chave] = texto;
+  try {
+    localStorage.setItem(chave, texto);
+  } catch (erro) {
+    /* sem localStorage: fica só na memória */
+  }
+}
+
+// ===== Estado =====
+let produtos = lerSalvo("estoque") || [];
+let estatisticas = lerSalvo("estatisticas") || {
+  cadastros: 0,
+  altValor: 0,
+  altQtd: 0,
+  historico: [],
+};
+
+// ===== Elementos =====
+const $ = (id) => document.getElementById(id);
+const mensagem = $("mensagem");
+
+// ===== Utilidades =====
+const moeda = (n) =>
+  n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+
+function salvar() {
+  gravarSalvo("estoque", produtos);
+  gravarSalvo("estatisticas", estatisticas);
+}
+
+function mostrarMensagem(texto, tipo) {
+  mensagem.textContent = texto;
+  mensagem.className = "mensagem " + tipo;
+}
+
+function buscarProduto(codigo) {
+  return produtos.find((p) => p.codigo === codigo);
+}
+
+function registrarHistorico(texto) {
+  estatisticas.historico.unshift({
+    texto,
+    hora: new Date().toLocaleString("pt-BR"),
+  });
+}
+
+// Aceita vírgula ou ponto nos números (ex.: 49,90)
+function lerNumero(id) {
+  const texto = $(id).value.replace(",", ".").trim();
+  return texto === "" ? NaN : Number(texto);
+}
+
+// ===== Cadastrar um novo produto =====
+function cadastrarProduto(codigo, descricao, quantidade, valor) {
+  if (buscarProduto(codigo)) {
+    return { ok: false, msg: "Já existe um produto com esse código." };
+  }
+  produtos.push({ codigo, descricao, quantidade, valor });
+  estatisticas.cadastros++;
+  registrarHistorico(`Cadastrou "${descricao}" (código ${codigo})`);
+  salvar();
+  return { ok: true, msg: "Produto cadastrado com sucesso!" };
+}
+
+// ===== Alterar o valor de um produto =====
+function alterarValor(codigo, novoValor) {
+  const produto = buscarProduto(codigo);
+  if (!produto) return { ok: false, msg: "Produto não encontrado." };
+  const antigo = produto.valor;
+  produto.valor = novoValor;
+  estatisticas.altValor++;
+  registrarHistorico(
+    `Valor de "${produto.descricao}": ${moeda(antigo)} → ${moeda(novoValor)}`
+  );
+  salvar();
+  return { ok: true, msg: "Valor alterado com sucesso!" };
+}
+
+// ===== Alterar a quantidade de um produto =====
+function alterarQuantidade(codigo, novaQuantidade) {
+  const produto = buscarProduto(codigo);
+  if (!produto) return { ok: false, msg: "Produto não encontrado." };
+  const antiga = produto.quantidade;
+  produto.quantidade = novaQuantidade;
+  estatisticas.altQtd++;
+  registrarHistorico(
+    `Quantidade de "${produto.descricao}": ${antiga} → ${novaQuantidade}`
+  );
+  salvar();
+  return { ok: true, msg: "Quantidade alterada com sucesso!" };
+}
+
+// ===== Listar os produtos cadastrados =====
+function listarProdutos() {
+  const lista = $("lista");
+  lista.innerHTML = "";
+  $("vazio").style.display = produtos.length ? "none" : "block";
+  $("contador-lista").textContent = produtos.length ? `(${produtos.length})` : "";
+
+  produtos
+    .slice()
+    .sort((a, b) => a.codigo - b.codigo)
+    .forEach((p) => {
+      const tr = document.createElement("tr");
+      const celulas = [
+        p.codigo,
+        p.descricao,
+        p.quantidade,
+        moeda(p.valor),
+        moeda(p.valor * p.quantidade),
+      ];
+      celulas.forEach((texto, i) => {
+        const td = document.createElement("td");
+        td.textContent = texto;
+        if (i === 2 && p.quantidade <= 5) td.classList.add("baixo");
+        tr.appendChild(td);
+      });
+      lista.appendChild(tr);
+    });
+}
+
+// ===== Resumo (aba 2) =====
+function atualizarResumo() {
+  const itens = produtos.reduce((soma, p) => soma + p.quantidade, 0);
+  const valorTotal = produtos.reduce((soma, p) => soma + p.quantidade * p.valor, 0);
+
+  $("ind-produtos").textContent = produtos.length;
+  $("ind-itens").textContent = itens;
+  $("ind-valor-total").textContent = moeda(valorTotal);
+  $("ind-cadastros").textContent = estatisticas.cadastros;
+  $("ind-alt-valor").textContent = estatisticas.altValor;
+  $("ind-alt-qtd").textContent = estatisticas.altQtd;
+  $("ind-alt-total").textContent = estatisticas.altValor + estatisticas.altQtd;
+
+  const ul = $("historico");
+  ul.innerHTML = "";
+  $("historico-vazio").style.display = estatisticas.historico.length ? "none" : "block";
+  estatisticas.historico.forEach((h) => {
+    const li = document.createElement("li");
+    const hora = document.createElement("span");
+    hora.className = "hora";
+    hora.textContent = h.hora;
+    li.appendChild(hora);
+    li.appendChild(document.createTextNode(h.texto));
+    ul.appendChild(li);
+  });
+}
+
+function atualizarTudo() {
+  listarProdutos();
+  atualizarResumo();
+}
+
+// ===== Ações dos botões =====
+function aoCadastrar() {
+  const codigo = lerNumero("codigo");
+  const descricao = $("descricao").value.trim();
+  const quantidade = lerNumero("quantidade");
+  const valor = lerNumero("valor");
+
+  if (isNaN(codigo) || codigo < 1) {
+    mostrarMensagem("Digite o código do produto.", "erro");
+    return;
+  }
+  if (!descricao) {
+    mostrarMensagem("Digite a descrição do produto.", "erro");
+    return;
+  }
+  if (isNaN(quantidade) || quantidade < 0) {
+    mostrarMensagem("Digite a quantidade.", "erro");
+    return;
+  }
+  if (isNaN(valor) || valor < 0) {
+    mostrarMensagem("Digite o valor.", "erro");
+    return;
+  }
+
+  const r = cadastrarProduto(
+    Math.floor(codigo),
+    descricao,
+    Math.floor(quantidade),
+    valor
+  );
+  mostrarMensagem(r.msg, r.ok ? "sucesso" : "erro");
+
+  if (r.ok) {
+    ["codigo", "descricao", "quantidade", "valor"].forEach((id) => {
+      $(id).value = "";
+    });
+    atualizarTudo(); // manda para a lista e para o resumo
+    $("codigo").focus();
+  }
+}
+
+function aoAlterar() {
+  const codigo = lerNumero("alt-codigo");
+  const novo = lerNumero("alt-novo");
+  const campo = $("alt-campo").value;
+
+  if (isNaN(codigo) || isNaN(novo) || novo < 0) {
+    mostrarMensagem("Informe o código e o novo número.", "erro");
+    return;
+  }
+
+  const r =
+    campo === "valor"
+      ? alterarValor(Math.floor(codigo), novo)
+      : alterarQuantidade(Math.floor(codigo), Math.floor(novo));
+
+  mostrarMensagem(r.msg, r.ok ? "sucesso" : "erro");
+  if (r.ok) {
+    $("alt-codigo").value = "";
+    $("alt-novo").value = "";
+    atualizarTudo();
+  }
+}
+
+function aoLimpar() {
+  if (!confirm("Apagar todos os produtos e zerar os contadores?")) return;
+  produtos = [];
+  estatisticas = { cadastros: 0, altValor: 0, altQtd: 0, historico: [] };
+  salvar();
+  atualizarTudo();
+  mostrarMensagem("Tudo foi apagado.", "sucesso");
+}
+
+// ===== Ligar os eventos =====
+$("btn-cadastrar").addEventListener("click", aoCadastrar);
+$("btn-alterar").addEventListener("click", aoAlterar);
+$("btn-limpar").addEventListener("click", aoLimpar);
+
+// Enter nos campos também cadastra / altera
+["codigo", "descricao", "quantidade", "valor"].forEach((id) => {
+  $(id).addEventListener("keydown", (e) => {
+    if (e.key === "Enter") aoCadastrar();
+  });
+});
+["alt-codigo", "alt-novo"].forEach((id) => {
+  $(id).addEventListener("keydown", (e) => {
+    if (e.key === "Enter") aoAlterar();
+  });
+});
+
+// Ajusta o rótulo e o passo do campo conforme o que será alterado
+$("alt-campo").addEventListener("change", () => {
+  const ehValor = $("alt-campo").value === "valor";
+  $("alt-novo").step = ehValor ? "0.01" : "1";
+  $("alt-rotulo").textContent = ehValor ? "Novo valor (R$)" : "Nova quantidade";
+});
+
+// Abas
+document.querySelectorAll(".aba").forEach((botao) => {
+  botao.addEventListener("click", () => {
+    document.querySelectorAll(".aba").forEach((b) => b.classList.remove("ativa"));
+    document
+      .querySelectorAll(".conteudo-aba")
+      .forEach((c) => c.classList.remove("ativa"));
+    botao.classList.add("ativa");
+    $("aba-" + botao.dataset.aba).classList.add("ativa");
+    mensagem.textContent = "";
+    atualizarTudo();
+  });
+});
+
+// Mostra na própria página qualquer erro inesperado
+window.addEventListener("error", (e) => {
+  mostrarMensagem("Erro: " + e.message, "erro");
+});
+
+// ===== Início =====
+atualizarTudo();
+
+</script>
+<script src="script.js"></script></body>
+</html>
