@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link href="style.css" rel="stylesheet">
+</head>
+<body>
+  // Mentoria Tech 2 — Aula 2.03
+// Projeto: Gerenciador de Tarefas
+
+// Array que guarda todas as tarefas cadastradas.
+let tarefas = [];
+
+// Gerador de códigos únicos para as tarefas.
+let geradorCodigo = 0;
+
+// Valida o título e a prioridade da tarefa.
+function validarDadosTarefa(titulo, prioridade) {
+  if (titulo.length < 5) {
+    throw new Error("O título deve ter no mínimo 5 caracteres");
+  }
+
+  if (prioridade < 1 || prioridade > 3) {
+    throw new Error("Informe uma prioridade entre 1 e 3");
+  }
+}
+
+// Cadastra uma nova tarefa.
+function cadastrarTarefa(titulo, prioridade) {
+  validarDadosTarefa(titulo, prioridade);
+
+  const tarefa = {
+    codigo: ++geradorCodigo,
+    titulo: titulo,
+    prioridade: prioridade,
+    status: true // true = em execução; false = concluída
+  };
+
+  tarefas.push(tarefa);
+}
+
+// Retorna todas as tarefas cadastradas.
+function listarTarefas() {
+  return tarefas;
+}
+
+// Procura uma tarefa pelo código.
+function buscarTarefa(codigo) {
+  const tarefaEncontrada = tarefas.find(
+    tarefa => tarefa.codigo === codigo
+  );
+
+  if (!tarefaEncontrada) {
+    throw new Error("Código de tarefa não encontrado");
+  }
+
+  return tarefaEncontrada;
+}
+
+// Marca uma tarefa como concluída.
+function concluirTarefa(codigo) {
+  const tarefa = buscarTarefa(codigo);
+
+  if (tarefa.status === false) {
+    throw new Error("Tarefa já estava como concluída");
+  }
+
+  tarefa.status = false;
+}
+
+// Altera a prioridade de uma tarefa.
+function alterarPrioridade(codigo, novaPrioridade) {
+  const tarefa = buscarTarefa(codigo);
+
+  validarDadosTarefa(tarefa.titulo, novaPrioridade);
+  tarefa.prioridade = novaPrioridade;
+}
+
+// Testes do projeto.
+cadastrarTarefa("Cadastrar Clientes", 1);
+cadastrarTarefa("Limpar banco de dados", 3);
+
+console.log("Lista inicial:");
+console.log(listarTarefas());
+
+alterarPrioridade(1, 2);
+concluirTarefa(2);
+
+console.log("Lista atualizada:");
+console.log(listarTarefas());
+
+
+
+  <script src="script.js"></script>
+  
+</body>
+</html>
