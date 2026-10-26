@@ -1,0 +1,260 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Produtos</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+            background-color: #f2f2f2;
+        }
+
+        h1, h2 {
+            color: #333;
+        }
+
+        input, button {
+            padding: 10px;
+            margin: 5px;
+        }
+
+        button {
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: white;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+    <h1>Cadastro de Produtos</h1>
+
+    <h2>Cadastrar produto</h2>
+
+    <form id="formProduto">
+        <input type="text" id="descricao"
+            placeholder="Descrição do produto" required>
+
+        <input type="number" id="quantidade"
+            placeholder="Quantidade" min="1" required>
+
+        <input type="number" id="valor"
+            placeholder="Valor (R$)" min="0" step="0.01" required>
+
+        <button type="submit">Cadastrar</button>
+    </form>
+
+    <h2>Produtos cadastrados</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Código</th>
+                <th>Descrição</th>
+                <th>Quantidade</th>
+                <th>Valor</th>
+            </tr>
+        </thead>
+
+        <tbody id="listaProdutos">
+        </tbody>
+    </table>
+
+    <h2>Atualizar valor</h2>
+
+    <input type="number" id="codigoValor"
+        placeholder="Código do produto" min="1">
+
+    <input type="number" id="novoValor"
+        placeholder="Novo valor" min="0" step="0.01">
+
+    <button onclick="atualizarvalor()">
+        Atualizar valor
+    </button>
+
+    <h2>Adicionar quantidade</h2>
+
+    <input type="number" id="codigoQuantidade"
+        placeholder="Código do produto" min="1">
+
+    <input type="number" id="novaQuantidade"
+        placeholder="Quantidade a adicionar" min="1">
+
+    <button onclick="atualizarquantidade()">
+        Adicionar quantidade
+    </button>
+
+    <script>
+        let produtos = [];
+        let proximoCodigo = 1;
+
+        function validarproduto(descricao, quantidade, valor) {
+            if (descricao.trim().length < 5) {
+                throw new Error(
+                    "Descrição deve ter no mínimo cinco caracteres"
+                );
+            }
+
+            if (quantidade < 1) {
+                throw new Error(
+                    "Quantidade deve ser maior que zero"
+                );
+            }
+
+            if (valor < 0) {
+                throw new Error(
+                    "Valor deve ser maior ou igual a zero"
+                );
+            }
+        }
+
+        function cadastrarproduto(descricao, quantidade, valor) {
+            validarproduto(descricao, quantidade, valor);
+
+            let novoproduto = {
+                codigo: proximoCodigo++,
+                descricao: descricao,
+                quantidade: quantidade,
+                valor: valor
+            };
+
+            produtos.push(novoproduto);
+            listarprodutos();
+        }
+
+        function listarprodutos() {
+            const lista = document.getElementById("listaProdutos");
+            lista.innerHTML = "";
+
+            produtos.forEach(produto => {
+                const linha = document.createElement("tr");
+
+                [
+                    produto.codigo,
+                    produto.descricao,
+                    produto.quantidade,
+                    produto.valor.toLocaleString("pt-BR", {
+                        style: "currency",
+                        currency: "BRL"
+                    })
+                ].forEach(valor => {
+                    const coluna = document.createElement("td");
+                    coluna.textContent = valor;
+                    linha.appendChild(coluna);
+                });
+
+                lista.appendChild(linha);
+            });
+        }
+
+        function atualizarvalor() {
+            const codigo = Number(
+                document.getElementById("codigoValor").value
+            );
+            const novoValor = Number(
+                document.getElementById("novoValor").value
+            );
+
+            if (
+                !codigo ||
+                document.getElementById("novoValor").value === "" ||
+                novoValor < 0
+            ) {
+                alert("Informe um código e um valor válido.");
+                return;
+            }
+
+            const produto = produtos.find(
+                prod => prod.codigo === codigo
+            );
+
+            if (produto) {
+                produto.valor = novoValor;
+                listarprodutos();
+                alert("Valor atualizado com sucesso!");
+            } else {
+                alert("Produto não encontrado.");
+            }
+        }
+
+        function atualizarquantidade() {
+            const codigo = Number(
+                document.getElementById("codigoQuantidade").value
+            );
+            const campoQuantidade =
+                document.getElementById("novaQuantidade");
+            const novaQuantidade = Number(campoQuantidade.value);
+
+            if (
+                !codigo ||
+                campoQuantidade.value === "" ||
+                novaQuantidade < 1 ||
+                !Number.isInteger(novaQuantidade)
+            ) {
+                alert("Informe um código e uma quantidade válida.");
+                return;
+            }
+
+            const produto = produtos.find(
+                prod => prod.codigo === codigo
+            );
+
+            if (produto) {
+                produto.quantidade += novaQuantidade;
+                listarprodutos();
+                alert("Quantidade atualizada com sucesso!");
+            } else {
+                alert("Produto não encontrado.");
+            }
+        }
+
+        document.getElementById("formProduto")
+            .addEventListener("submit", function(event) {
+                event.preventDefault();
+
+                const descricao =
+                    document.getElementById("descricao").value;
+                const quantidade =
+                    Number(document.getElementById("quantidade").value);
+                const valor =
+                    Number(document.getElementById("valor").value);
+
+                try {
+                    cadastrarproduto(descricao, quantidade, valor);
+                    this.reset();
+                    alert("Produto cadastrado com sucesso!");
+                } catch (erro) {
+                    alert(erro.message);
+                }
+            });
+    </script>
+
+<script src="script.js"></script></body>
+</html>
