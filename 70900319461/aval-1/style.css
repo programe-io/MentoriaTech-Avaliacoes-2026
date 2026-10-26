@@ -1,0 +1,148 @@
+let estoque = [];
+
+function cadastrarProduto() {
+    let nome = prompt("Nome do produto:");
+    if (!nome || nome.trim() === "") {
+        alert("Digite um nome válido!");
+        return;
+    }
+
+    nome = nome.trim();
+
+    if (estoque.some(p => p.nome.toLowerCase() === nome.toLowerCase())) {
+        alert("Produto já cadastrado!");
+        return;
+    }
+
+    let quantidade = Number(prompt("Quantidade inicial:"));
+    let preco = Number(prompt("Preço unitário (R$):"));
+
+    if (
+        !Number.isInteger(quantidade) ||
+        quantidade < 0 ||
+        !Number.isFinite(preco) ||
+        preco < 0 ||
+        preco === Infinity
+    ) {
+        alert("Digite uma quantidade inteira e um preço válido!");
+        return;
+    }
+
+    estoque.push({ nome, quantidade, preco });
+    alert("Produto cadastrado com sucesso!");
+}
+
+function entradaEstoque() {
+    let nome = prompt("Nome do produto:");
+    let produto = estoque.find(
+        p => p.nome.toLowerCase() === (nome || "").trim().toLowerCase()
+    );
+
+    if (!produto) {
+        alert("Produto não encontrado!");
+        return;
+    }
+
+    let quantidade = Number(prompt("Quantidade de entrada:"));
+
+    if (!Number.isInteger(quantidade) || quantidade <= 0) {
+        alert("Digite uma quantidade inteira positiva!");
+        return;
+    }
+
+    produto.quantidade += quantidade;
+    alert("Entrada registrada com sucesso!");
+}
+
+function saidaEstoque() {
+    let nome = prompt("Nome do produto:");
+    let produto = estoque.find(
+        p => p.nome.toLowerCase() === (nome || "").trim().toLowerCase()
+    );
+
+    if (!produto) {
+        alert("Produto não encontrado!");
+        return;
+    }
+
+    let quantidade = Number(prompt("Quantidade de saída:"));
+
+    if (!Number.isInteger(quantidade) || quantidade <= 0) {
+        alert("Digite uma quantidade inteira positiva!");
+        return;
+    }
+
+    if (quantidade > produto.quantidade) {
+        alert("Estoque insuficiente!");
+        return;
+    }
+
+    produto.quantidade -= quantidade;
+    alert("Saída registrada com sucesso!");
+}
+
+function listarEstoque() {
+    if (estoque.length === 0) {
+        alert("Estoque vazio!");
+        return;
+    }
+
+    let relatorio = "=== RELATÓRIO DE ESTOQUE ===\n\n";
+    let valorTotal = 0;
+
+    estoque.forEach(produto => {
+        let valor = produto.quantidade * produto.preco;
+        valorTotal += valor;
+
+        relatorio += `Produto: ${produto.nome}\n`;
+        relatorio += `Quantidade: ${produto.quantidade}\n`;
+        relatorio += `Preço: R$ ${produto.preco.toFixed(2)}\n`;
+        relatorio += `Valor total: R$ ${valor.toFixed(2)}\n`;
+
+        if (produto.quantidade <= 5) {
+            relatorio += "ALERTA: Estoque baixo!\n";
+        }
+
+        relatorio += "\n";
+    });
+
+    relatorio += `Valor total do estoque: R$ ${valorTotal.toFixed(2)}`;
+    alert(relatorio);
+}
+
+let opcao;
+
+do {
+    opcao = prompt(
+        "=== CONTROLE DE ESTOQUE ===\n" +
+        "1 - Cadastrar produto\n" +
+        "2 - Registrar entrada\n" +
+        "3 - Registrar saída\n" +
+        "4 - Listar estoque\n" +
+        "5 - Sair\n\n" +
+        "Escolha uma opção:"
+    );
+
+    switch (opcao) {
+        case "1":
+            cadastrarProduto();
+            break;
+        case "2":
+            entradaEstoque();
+            break;
+        case "3":
+            saidaEstoque();
+            break;
+        case "4":
+            listarEstoque();
+            break;
+        case "5":
+            alert("Programa encerrado!");
+            break;
+        case null:
+            opcao = "5";
+            break;
+        default:
+            alert("Opção inválida!");
+    }
+} while (opcao !== "5");
