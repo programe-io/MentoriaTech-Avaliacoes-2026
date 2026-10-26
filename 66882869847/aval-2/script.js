@@ -1,5 +1,5 @@
 
-// Elementos HTML
+// Elementos da página
 const formTarefa = document.getElementById("formTarefa");
 const campoTitulo = document.getElementById("titulo");
 const campoPrioridade = document.getElementById("prioridade");
@@ -9,7 +9,7 @@ const totalTarefas = document.getElementById("totalTarefas");
 const mensagem = document.getElementById("mensagem");
 const filtroStatus = document.getElementById("filtroStatus");
 
-// Lista que armazena as tarefas cadastradas
+// Lista de tarefas
 let tarefas = [];
 let proximoId = 1;
 
@@ -19,7 +19,7 @@ const nomesPrioridade = {
     3: "Baixa"
 };
 
-// Cadastrar uma nova tarefa
+// Cadastrar tarefa
 formTarefa.addEventListener("submit", function(evento) {
     evento.preventDefault();
 
@@ -38,7 +38,7 @@ formTarefa.addEventListener("submit", function(evento) {
         return;
     }
 
-    // Validar a prioridade entre 1 e 3
+    // Validar a prioridade
     if (
         !Number.isInteger(prioridade) ||
         prioridade < 1 ||
@@ -53,17 +53,20 @@ formTarefa.addEventListener("submit", function(evento) {
         return;
     }
 
+    // Criar a tarefa
     const novaTarefa = {
-        id: proximoId++,
+        id: proximoId,
         titulo: titulo,
         prioridade: prioridade,
         concluida: status === "concluida"
     };
 
+    proximoId++;
+
     tarefas.push(novaTarefa);
 
+    // Limpar o formulário
     formTarefa.reset();
-
     campoPrioridade.value = "2";
     campoStatus.value = "pendente";
 
@@ -76,13 +79,13 @@ formTarefa.addEventListener("submit", function(evento) {
     campoTitulo.focus();
 });
 
-// Mensagens de sucesso e erro
+// Exibir mensagens
 function mostrarMensagem(texto, tipo) {
     mensagem.textContent = texto;
     mensagem.className = "mensagem " + tipo;
 }
 
-// Listar as tarefas
+// Listar tarefas
 function renderizarTarefas() {
     listaTarefas.innerHTML = "";
 
@@ -90,6 +93,7 @@ function renderizarTarefas() {
 
     const filtro = filtroStatus.value;
 
+    // Filtrar tarefas pelo status
     let tarefasFiltradas = tarefas.filter(function(tarefa) {
         if (filtro === "pendente") {
             return !tarefa.concluida;
@@ -102,21 +106,24 @@ function renderizarTarefas() {
         return true;
     });
 
-    // Prioridades mais altas aparecem primeiro
+    // Ordenar por prioridade: 1, 2 e 3
     tarefasFiltradas.sort(function(a, b) {
         return a.prioridade - b.prioridade;
     });
 
+    // Mensagem quando não existem tarefas
     if (tarefasFiltradas.length === 0) {
         const vazio = document.createElement("div");
         vazio.className = "vazio";
 
         const tituloVazio = document.createElement("h3");
+
         tituloVazio.textContent = tarefas.length === 0
             ? "Nenhuma tarefa cadastrada"
             : "Nenhuma tarefa neste filtro";
 
         const descricao = document.createElement("p");
+
         descricao.textContent = tarefas.length === 0
             ? "Adicione sua primeira tarefa usando o formulário acima."
             : "Escolha outro filtro para ver suas tarefas.";
@@ -127,16 +134,16 @@ function renderizarTarefas() {
         return;
     }
 
+    // Criar os elementos de cada tarefa
     tarefasFiltradas.forEach(function(tarefa) {
         const item = document.createElement("article");
-
         item.className = "tarefa";
 
         if (tarefa.concluida) {
             item.classList.add("concluida");
         }
 
-        // Checkbox para concluir ou reabrir a tarefa
+        // Checkbox de conclusão
         const checkbox = document.createElement("input");
 
         checkbox.type = "checkbox";
@@ -144,14 +151,14 @@ function renderizarTarefas() {
         checkbox.checked = tarefa.concluida;
         checkbox.setAttribute(
             "aria-label",
-            "Marcar tarefa como concluída"
+            "Marcar " + tarefa.titulo + " como concluída"
         );
 
         checkbox.addEventListener("change", function() {
             alternarConclusao(tarefa.id);
         });
 
-        // Conteúdo da tarefa
+        // Título e informações
         const conteudo = document.createElement("div");
 
         const titulo = document.createElement("h3");
@@ -187,7 +194,7 @@ function renderizarTarefas() {
 
         conteudo.append(titulo, metadados);
 
-        // Ações da tarefa
+        // Área dos botões
         const acoes = document.createElement("div");
         acoes.className = "acoes";
 
@@ -196,13 +203,13 @@ function renderizarTarefas() {
 
         seletorPrioridade.setAttribute(
             "aria-label",
-            "Alterar prioridade da tarefa"
+            "Alterar prioridade de " + tarefa.titulo
         );
 
         [1, 2, 3].forEach(function(valor) {
             const opcao = document.createElement("option");
 
-            opcao.value = valor;
+            opcao.value = String(valor);
             opcao.textContent = "Prioridade " + valor;
             opcao.selected = tarefa.prioridade === valor;
 
@@ -235,13 +242,15 @@ function renderizarTarefas() {
     });
 }
 
-// Marcar tarefa como concluída ou pendente
+// Marcar como concluída ou voltar para pendente
 function alternarConclusao(id) {
     const tarefa = tarefas.find(function(item) {
         return item.id === id;
     });
 
-    if (!tarefa) return;
+    if (!tarefa) {
+        return;
+    }
 
     tarefa.concluida = !tarefa.concluida;
 
@@ -255,7 +264,7 @@ function alternarConclusao(id) {
     renderizarTarefas();
 }
 
-// Alterar a prioridade de uma tarefa
+// Alterar a prioridade
 function alterarPrioridade(id, novaPrioridade) {
     if (
         !Number.isInteger(novaPrioridade) ||
@@ -274,19 +283,21 @@ function alterarPrioridade(id, novaPrioridade) {
         return item.id === id;
     });
 
-    if (!tarefa) return;
+    if (!tarefa) {
+        return;
+    }
 
     tarefa.prioridade = novaPrioridade;
 
     mostrarMensagem(
-        "Prioridade atualizada com sucesso!",
+        "Prioridade alterada com sucesso!",
         "sucesso"
     );
 
     renderizarTarefas();
 }
 
-// Excluir uma tarefa da lista
+// Excluir tarefa
 function excluirTarefa(id) {
     tarefas = tarefas.filter(function(tarefa) {
         return tarefa.id !== id;
@@ -300,8 +311,10 @@ function excluirTarefa(id) {
     renderizarTarefas();
 }
 
-// Filtrar tarefas por status
-filtroStatus.addEventListener("change", renderizarTarefas);
+// Filtrar tarefas
+filtroStatus.addEventListener("change", function() {
+    renderizarTarefas();
+});
 
-// Exibir a lista inicial
+// Mostrar a lista inicial
 renderizarTarefas();
