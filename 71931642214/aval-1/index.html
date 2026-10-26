@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link href="style.css" rel="stylesheet">
+</head>
+<body>
+  // Lista (Array) de Produtos (não há produtos)
+let produtos = [];
+//validar produtos
+function validarProduto(descricao, quantidade, valor){
+    //quantos caracteres exixtem na descrição do produto
+  if(descricao.length < 5){
+    //interrompe a execução da função e informa que ocorreu um erro
+    throw new Error("Descricao deve ter no minimo cinco caracteres");
+ }
+ //verifica se a quantidade em estoque é menor que 1
+  if(quantidade < 1){
+    throw new Error("Quantidade deve ser maior que zero");
+ }
+ //verifica se o preço é negativo
+  if(valor <0){
+    throw new Error("Valor deve maior igual a zero");
+ }
+}
+//serve para cadastrar um novo produto
+function cadastrarProduto(descricao, quantidade, valor){
+  validarProduto (descricao, quantidade, valor);
+  let novoProduto = {
+    //cria o codigo do produto e informa quantos produtos existem atualmente
+   "codigo": produtos.length + 1,
+   //guarda a descrição recebida da função
+   "descricao": descricao,
+   //quantidade de produtos
+   "quantidade": quantidade,
+   //guarda o preço do produto
+   "valor": valor
+ }
+ //adiciona um elemento ao final de um array
+  produtos.push(novoProduto);
+}
+function listarProdutos(){
+  console.log(produtos);
+}
+//altera o preço de um produto
+function atualizarValor (codigoProduto, novovalor){
+  if(novovalor < 0) {
+   throw new Error("Valor deve maior igual a zero");
+ }
+ //procura um elemento dentro do array
+  const produto = produtos.find(prod => prod.codigo === codigoProduto);
+  if(produto) {
+    produto.valor = novovalor;
+ }
+ //se não existe o produto procurado, será lançado um erro
+  else{
+   throw new Error("Produto não encontrado");
+ }
+}
+//altera a quantidade de produtos
+function atualizarQuantidade(codigoProduto, novaQuantidade){
+  if(novaQuantidade < 1){
+    //se a quantidade for 0 ou negativa, o programa gera erro
+   throw new Error("Quantidade deve ser maior que zero");
+ }
+  const produto = produtos.find(prod => prod.codigo === codigoProduto);
+  if(produto) {
+    //substitui a quantidade antiga pela nova
+    produto.quantidade = novaQuantidade;
+ }
+  else{
+    throw new Error("Produto não encontrado");
+ }
+}
+
+
+listarProdutos();
+cadastrarProduto("Cadeira Gamer", 12, 699.00);
+cadastrarProduto("Mouse Logi", 38, 99.00);
+cadastrarProduto("Caixinha de som", 5, 500.00);
+ listarProdutos();
+ atualizarValor(2, 97.00);
+listarProdutos();
+
+
+atualizarQuantidade (1, 3);
+listarProdutos();
+
+  <script src="script.js"></script>
+  
+</body>
+</html>
