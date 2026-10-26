@@ -1,151 +1,166 @@
 
 "use strict";
 
-// BLOCKVERSE 3D
-// Compatível com Three.js r128
+// ======================================
+// VIDACITY 3D - MOTOR DO JOGO
+// ======================================
 
-const THREE3D = window.THREE;
+const $ = id => document.getElementById(id);
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const random = (a, b) => a + Math.random() * (b - a);
 
-const container = document.getElementById("mundo3D");
-const menu = document.getElementById("menuInicial");
-const hud = document.getElementById("interface");
+let scene, camera, renderer, clock;
+let player, playerBody, playerHead;
+let sun, ambientLight;
+let running = false;
+let paused = false;
+let worldReady = false;
+let currentTarget = null;
 
-const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x8fd3ff);
-scene.fog = new THREE.FogExp2(0x8fd3ff, 0.008);
+const keys = {};
+const colliders = [];
+const interactables = [];
+const npcs = [];
+const trees = [];
 
-const camera = new THREE.PerspectiveCamera(
-  70, innerWidth / innerHeight, 0.1, 600
-);
+const state = {
+  name: "Meu Personagem",
+  money: 1000,
+  level: 1,
+  day: 1,
+  minutes: 480,
+  hunger: 85,
+  energy: 90,
+  fun: 80,
+  hygiene: 85,
+  clothing: "#4488ff",
+  mission: 0,
+  missionCount: 0,
+  visited: [],
+  inventory: [],
+  homeLevel: 0
+};
 
-const renderer = new THREE.WebGLRenderer({
-  antialias: true
-});
+const missions = [
+  {
+    text: "Conheça 3 vizinhos pela cidade!",
+    goal: 3
+  },
+  {
+    text: "Trabalhe 2 vezes para ganhar dinheiro!",
+    goal: 2
+  },
+  {
+    text: "Compre 2 itens na loja!",
+    goal: 2
+  },
+  {
+    text: "Divirta-se 3 vezes!",
+    goal: 3
+  },
+  {
+    text: "Visite 3 lugares diferentes!",
+    goal: 3
+  }
+];
 
-renderer.setSize(innerWidth, innerHeight);
-renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-renderer.outputEncoding = THREE.sRGBEncoding;
-renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.15;
+const materials = {
+  grass: 0x7dc979,
+  road: 0x444d62,
+  sidewalk: 0xd8dce4,
+  wood: 0xa87552,
+  roof: 0xf16f70,
+  window: 0x8fe6ff,
+  leaves: 0x39a96b
+};
 
-container.appendChild(renderer.domElement);
+// ======================================
+// INICIALIZAÇÃO DO THREE.JS
+// ======================================
 
-// ILUMINAÇÃO
+function initWorld() {
+  if (worldReady) return;
 
-scene.add(new THREE.HemisphereLight(
-  0xc9eaff, 0x46613e, 0.85
-));
+  scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x91d8ff);
+  scene.fog = new THREE.Fog(0x91d8ff, 65, 160);
 
-const sun = new THREE.DirectionalLight(
-  0xffe7b5, 1.7
-);
+  camera = new THREE.PerspectiveCamera(
+    65,
+    innerWidth / innerHeight,
+    0.1,
+    250
+  );
 
-sun.position.set(60, 90, 35);
-sun.castShadow = true;
-sun.shadow.mapSize.set(2048, 2048);
-sun.shadow.camera.left = -100;
-sun.shadow.camera.right = 100;
-sun.shadow.camera.top = 100;
-sun.shadow.camera.bottom = -100;
-sun.shadow.camera.near = 1;
-sun.shadow.camera.far = 250;
-sun.shadow.bias = -0.0003;
-scene.add(sun);
-
-// MATERIAIS
-
-const mat = (color, extra = {}) =>
-  new THREE.MeshStandardMaterial({
-    color,
-    roughness: 0.85,
-    ...extra
+  renderer = new THREE.WebGLRenderer({
+    antialias: true,
+    powerPreference: "high-performance"
   });
 
-const grass = mat(0x4d9e5b);
-const grassLight = mat(0x73b96b);
-const stone = mat(0x77878e);
-const bark = mat(0x79513b);
-const leaves = mat(0x26875b);
-const leavesLight = mat(0x46a878);
-const wood = mat(0xb98a56);
-const skin = mat(0xf0ba91);
-const shirt = mat(0x28bfa5);
-const pants = mat(0x273f68);
-const dark = mat(0x263343);
-const crystalMat = mat(0x57e9ff, {
-  metalness: 0.2,
-  emissive: 0x087f9c,
-  emissiveIntensity: 0.4
-});
-
-// TERRENO PROCEDURAL
-
-const WORLD = 180;
-const terrainSegments = 110;
-
-function heightAt(x, z) {
-  return (
-    Math.sin(x * 0.045) * 4 +
-    Math.cos(z * 0.052) * 3 +
-    Math.sin((x + z) * 0.025) * 5 +
-    Math.sin(x * 0.12) *
-    Math.cos(z * 0.11) * 1.3
+  renderer.setSize(innerWidth, innerHeight);
+  renderer.setPixelRatio(
+    Math.min(devicePixelRatio, 2)
   );
+
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.outputEncoding = THREE.sRGBEncoding;
+
+  $("gameCanvas").appendChild(renderer.domElement);
+
+  clock = new THREE.Clock();
+
+  ambientLight = new THREE.HemisphereLight(
+    0xffffff,
+    0x657a92,
+    0.85
+  );
+  scene.add(ambientLight);
+
+  sun = new THREE.DirectionalLight(
+    0xfff1d2,
+    1.3
+  );
+
+  sun.position.set(30, 55, 25);
+  sun.castShadow = true;
+  sun.shadow.mapSize.set(2048, 2048);
+  sun.shadow.camera.left = -75;
+  sun.shadow.camera.right = 75;
+  sun.shadow.camera.top = 75;
+  sun.shadow.camera.bottom = -75;
+  scene.add(sun);
+
+  createCity();
+  createPlayer();
+  createNPCs();
+  createClouds();
+
+  camera.position.set(0, 9, 13);
+  camera.lookAt(0, 1, 0);
+
+  worldReady = true;
+  animate();
 }
 
-const terrainGeo = new THREE.PlaneGeometry(
-  WORLD, WORLD,
-  terrainSegments, terrainSegments
-);
+// ======================================
+// OBJETOS 3D
+// ======================================
 
-terrainGeo.rotateX(-Math.PI / 2);
-
-const pos = terrainGeo.attributes.position;
-const colors = [];
-
-const c1 = new THREE.Color(0x367d54);
-const c2 = new THREE.Color(0x89b875);
-const c3 = new THREE.Color(0x8b9793);
-
-for (let i = 0; i < pos.count; i++) {
-  const x = pos.getX(i);
-  const z = pos.getZ(i);
-  const h = heightAt(x, z);
-
-  pos.setY(i, h);
-
-  const color = h > 7 ? c3 : h > 0 ? c2 : c1;
-  colors.push(color.r, color.g, color.b);
+function material(color, extra = {}) {
+  return new THREE.MeshStandardMaterial({
+    color,
+    roughness: 0.82,
+    ...extra
+  });
 }
 
-terrainGeo.setAttribute(
-  "color",
-  new THREE.Float32BufferAttribute(colors, 3)
-);
+function box(w, h, d, color, x, y, z, parent = scene) {
+  const mesh = new THREE.Mesh(
+    new THREE.BoxGeometry(w, h, d),
+    material(color)
+  );
 
-terrainGeo.computeVertexNormals();
-
-const terrain = new THREE.Mesh(
-  terrainGeo,
-  new THREE.MeshStandardMaterial({
-    vertexColors: true,
-    roughness: 0.95,
-    flatShading: false
-  })
-);
-
-terrain.receiveShadow = true;
-scene.add(terrain);
-
-// OBJETOS E RECURSOS
-
-const resources = [];
-const obstacles = [];
-
-function addMesh(parent, geometry, material, x, y, z) {
-  const mesh = new THREE.Mesh(geometry, material);
   mesh.position.set(x, y, z);
   mesh.castShadow = true;
   mesh.receiveShadow = true;
@@ -153,516 +168,1189 @@ function addMesh(parent, geometry, material, x, y, z) {
   return mesh;
 }
 
-function addTree(x, z) {
-  const y = heightAt(x, z);
-  const group = new THREE.Group();
-  group.position.set(x, y, z);
-
-  addMesh(
-    group,
-    new THREE.CylinderGeometry(0.35, 0.55, 4, 8),
-    bark, 0, 2, 0
+function sphere(r, color, x, y, z, parent = scene) {
+  const mesh = new THREE.Mesh(
+    new THREE.SphereGeometry(r, 16, 12),
+    material(color)
   );
 
-  for (let i = 0; i < 3; i++) {
-    addMesh(
-      group,
-      new THREE.ConeGeometry(2.6 - i * 0.4, 3.2, 8),
-      i % 2 ? leavesLight : leaves,
-      0, 4 + i * 1.45, 0
+  mesh.position.set(x, y, z);
+  mesh.castShadow = true;
+  parent.add(mesh);
+  return mesh;
+}
+
+function cylinder(rt, rb, h, color, x, y, z, parent = scene) {
+  const mesh = new THREE.Mesh(
+    new THREE.CylinderGeometry(rt, rb, h, 10),
+    material(color)
+  );
+
+  mesh.position.set(x, y, z);
+  mesh.castShadow = true;
+  parent.add(mesh);
+  return mesh;
+}
+
+function addCollider(x, z, w, d) {
+  colliders.push({
+    x, z,
+    w: w / 2,
+    d: d / 2
+  });
+}
+
+function blocked(x, z) {
+  if (Math.abs(x) > 73 || Math.abs(z) > 73) {
+    return true;
+  }
+
+  return colliders.some(c =>
+    Math.abs(x - c.x) < c.w + 0.38 &&
+    Math.abs(z - c.z) < c.d + 0.38
+  );
+}
+
+// ======================================
+// CIDADE
+// ======================================
+
+function createCity() {
+  box(160, 0.25, 160, materials.grass, 0, -0.2, 0);
+
+  // Ruas principais
+  [-40, 0, 40].forEach(p => {
+    box(160, 0.04, 9, materials.road, 0, 0, p);
+    box(9, 0.04, 160, materials.road, p, 0, 0);
+
+    box(160, 0.07, 1.3, materials.sidewalk, 0, 0, p - 5.2);
+    box(160, 0.07, 1.3, materials.sidewalk, 0, 0, p + 5.2);
+    box(1.3, 0.07, 160, materials.sidewalk, p - 5.2, 0, 0);
+    box(1.3, 0.07, 160, materials.sidewalk, p + 5.2, 0);
+  });
+
+  // Faixas nas ruas
+  for (let i = -72; i < 75; i += 8) {
+    [-40, 0, 40].forEach(p => {
+      box(3, 0.055, 0.18, 0xffe7a0, i, 0.04, p);
+      box(0.18, 0.055, 3, 0xffe7a0, p, 0.04, i);
+    });
+  }
+
+  // Casas e estabelecimentos
+  createHouse(-20, -20, 0xffd5b8, "Minha Casa", "home");
+  createHouse(20, -20, 0xb8ddff, "Casa da Luna", "neighbor");
+  createHouse(-20, 20, 0xffc8db, "Casa do Leo", "neighbor");
+  createHouse(20, 20, 0xd5c4ff, "Casa da Bia", "neighbor");
+
+  createBuilding(-60, -20, 0xffbb66, "Mercado", "market");
+  createBuilding(60, -20, 0x85d8ff, "Café", "cafe");
+  createBuilding(-60, 20, 0xc4a2ff, "Loja", "shop");
+  createBuilding(60, 20, 0xff9ba9, "Trabalho", "work");
+
+  createPark(-20, 60);
+  createPark(20, 60);
+
+  // Árvores e decoração
+  for (let x = -68; x <= 68; x += 12) {
+    for (let z = -68; z <= 68; z += 12) {
+      const nearRoad = [-40, 0, 40].some(
+        p => Math.abs(x - p) < 8 || Math.abs(z - p) < 8
+      );
+
+      const nearBuilding = interactables.some(
+        a => Math.abs(x - a.x) < 10 &&
+             Math.abs(z - a.z) < 10
+      );
+
+      if (!nearRoad && !nearBuilding && Math.random() > 0.45) {
+        createTree(x + random(-2, 2), z + random(-2, 2));
+      }
+    }
+  }
+
+  // Postes de iluminação
+  for (let x = -60; x <= 60; x += 20) {
+    createLamp(x, -6.5);
+    createLamp(x, 6.5);
+  }
+
+  // Fonte na praça
+  cylinder(3.3, 3.5, 0.6, 0xd9e4ee, 0, 0.3, 60);
+  cylinder(2.8, 2.8, 0.12, 0x55c8f5, 0, 0.68, 60);
+  cylinder(0.4, 0.6, 2, 0xd9e4ee, 0, 1.6, 60);
+
+  addInteractable("Fonte da Praça", 0, 57, "fun");
+}
+
+function createHouse(x, z, color, name, type) {
+  const group = new THREE.Group();
+  group.position.set(x, 0, z);
+  scene.add(group);
+
+  box(9, 5, 8, color, 0, 2.5, 0, group);
+
+  // Telhado inclinado
+  const roof = new THREE.Mesh(
+    new THREE.ConeGeometry(7.2, 3.1, 4),
+    material(materials.roof)
+  );
+  roof.rotation.y = Math.PI / 4;
+  roof.position.y = 6.5;
+  roof.castShadow = true;
+  group.add(roof);
+
+  // Porta
+  box(1.7, 3, 0.16, 0x765344, 0, 1.5, 4.08, group);
+  sphere(0.12, 0xffd75b, 0.58, 1.45, 4.2, group);
+
+  // Janelas
+  [-2.8, 2.8].forEach(px => {
+    box(1.8, 1.8, 0.15, 0xffffff, px, 3, 4.1, group);
+    box(1.5, 1.5, 0.18, materials.window, px, 3, 4.2, group);
+    box(0.12, 1.5, 0.2, 0xffffff, px, 3, 4.31, group);
+    box(1.5, 0.12, 0.2, 0xffffff, px, 3, 4.31, group);
+  });
+
+  // Caminho da entrada
+  box(2.2, 0.07, 3.5, 0xe6d5bb, x, 0.02, z + 5.7);
+
+  addCollider(x, z, 9, 8);
+  addInteractable(name, x, z + 6.4, type);
+}
+
+function createBuilding(x, z, color, name, type) {
+  const group = new THREE.Group();
+  group.position.set(x, 0, z);
+  scene.add(group);
+
+  box(12, 7, 10, color, 0, 3.5, 0, group);
+  box(13, 0.6, 11, 0xffffff, 0, 7.2, 0, group);
+
+  // Fachada
+  box(4, 4.2, 0.2, 0x5c9dc4, 0, 2.1, 5.12, group);
+
+  [-4.3, 4.3].forEach(px => {
+    box(2.4, 3, 0.18, 0x9be7ff, px, 3, 5.12, group);
+  });
+
+  // Letreiro
+  box(7, 1.1, 0.35, 0x37345f, 0, 6.1, 5.35, group);
+
+  addCollider(x, z, 12, 10);
+  addInteractable(name, x, z + 7.1, type);
+}
+
+function createTree(x, z) {
+  const group = new THREE.Group();
+  group.position.set(x, 0, z);
+  scene.add(group);
+
+  cylinder(0.3, 0.45, 2.6, 0x89603f, 0, 1.3, 0, group);
+  sphere(1.8, 0x3eae69, 0, 3.3, 0, group);
+  sphere(1.3, 0x57c97c, -0.8, 3.6, 0, group);
+  sphere(1.2, 0x329b5b, 0.8, 3.5, 0, group);
+
+  trees.push(group);
+}
+
+function createLamp(x, z) {
+  cylinder(0.12, 0.2, 5, 0x434c66, x, 2.5, z);
+  sphere(0.45, 0xffefae, x, 5.1, z);
+}
+
+function createPark(x, z) {
+  box(22, 0.04, 22, 0x6cce83, x, 0.02, z);
+
+  for (let i = 0; i < 5; i++) {
+    createTree(
+      x + random(-9, 9),
+      z + random(-9, 9)
     );
   }
 
-  scene.add(group);
-  resources.push({
-    type: "wood",
-    object: group,
-    x, z
+  // Bancos
+  [-5, 5].forEach(px => {
+    box(3, 0.25, 0.9, 0x9a6748, x + px, 1, z);
+    box(3, 1.2, 0.2, 0x9a6748, x + px, 1.5, z - 0.5);
+    box(0.2, 1, 0.2, 0x555555, x + px - 1, 0.5, z);
+    box(0.2, 1, 0.2, 0x555555, x + px + 1, 0.5, z);
   });
-  obstacles.push({ x, z, radius: 0.7 });
 }
 
-function addRock(x, z) {
-  const y = heightAt(x, z);
-  const group = new THREE.Group();
-  group.position.set(x, y, z);
+function createClouds() {
+  for (let i = 0; i < 18; i++) {
+    const group = new THREE.Group();
 
-  const rock = addMesh(
-    group,
-    new THREE.DodecahedronGeometry(1.3, 0),
-    stone, 0, 0.7, 0
+    for (let j = 0; j < 4; j++) {
+      sphere(
+        random(2, 4),
+        0xffffff,
+        j * 2.5,
+        random(-0.5, 0.5),
+        0,
+        group
+      );
+    }
+
+    group.position.set(
+      random(-85, 85),
+      random(24, 35),
+      random(-85, 85)
+    );
+
+    group.userData.cloud = true;
+    scene.add(group);
+  }
+}
+
+// ======================================
+// PERSONAGEM 3D
+// ======================================
+
+function createPerson(color = "#4488ff") {
+  const group = new THREE.Group();
+
+  // Pernas
+  box(0.42, 1.1, 0.5, 0x303a66, -0.3, 0.55, 0, group);
+  box(0.42, 1.1, 0.5, 0x303a66, 0.3, 0.55, 0, group);
+
+  // Sapatos
+  box(0.5, 0.25, 0.75, 0xffffff, -0.3, 0.13, 0.15, group);
+  box(0.5, 0.25, 0.75, 0xffffff, 0.3, 0.13, 0.15, group);
+
+  // Tronco
+  const body = box(1.1, 1.4, 0.65, color, 0, 1.8, 0, group);
+
+  // Braços
+  box(0.3, 1.2, 0.4, color, -0.75, 1.8, 0, group);
+  box(0.3, 1.2, 0.4, color, 0.75, 1.8, 0, group);
+
+  // Cabeça
+  const head = sphere(0.58, 0xf3bf94, 0, 2.95, 0, group);
+
+  // Cabelo
+  sphere(0.58, 0x3a2630, 0, 3.22, -0.12, group);
+
+  // Olhos
+  sphere(0.075, 0x222233, -0.2, 3, 0.52, group);
+  sphere(0.075, 0x222233, 0.2, 3, 0.52, group);
+
+  // Sorriso
+  box(0.22, 0.035, 0.04, 0xa65c5c, 0, 2.77, 0.57, group);
+
+  group.userData.body = body;
+  group.userData.head = head;
+
+  return group;
+}
+
+function createPlayer() {
+  player = createPerson(state.clothing);
+  player.position.set(0, 0, 10);
+  scene.add(player);
+
+  playerBody = player.userData.body;
+  playerHead = player.userData.head;
+}
+
+// ======================================
+// VIZINHOS
+// ======================================
+
+function createNPCs() {
+  const data = [
+    ["Luna", -14, -11, "#ff76b5"],
+    ["Leo", -25, 12, "#5bc7ff"],
+    ["Bia", 24, 12, "#bc83ff"],
+    ["Rafa", 13, -13, "#ffbd57"],
+    ["Nina", -52, 12, "#66d6a2"],
+    ["Davi", 52, -12, "#ff8866"],
+    ["Mia", 13, 53, "#ee77cc"],
+    ["Theo", -14, 52, "#66aaff"]
+  ];
+
+  data.forEach(([name, x, z, color]) => {
+    const npc = createPerson(color);
+    npc.position.set(x, 0, z);
+    npc.userData.name = name;
+    npc.userData.origin = new THREE.Vector3(x, 0, z);
+    npc.userData.target = new THREE.Vector3(x, 0, z);
+    npc.userData.speed = random(0.6, 1.3);
+    npc.userData.wait = 0;
+
+    scene.add(npc);
+    npcs.push(npc);
+  });
+}
+
+function updateNPCs(dt) {
+  npcs.forEach(npc => {
+    npc.userData.wait -= dt;
+
+    if (npc.userData.wait <= 0) {
+      npc.userData.target.set(
+        npc.userData.origin.x + random(-5, 5),
+        0,
+        npc.userData.origin.z + random(-5, 5)
+      );
+      npc.userData.wait = random(3, 8);
+    }
+
+    const direction = npc.userData.target.clone()
+      .sub(npc.position);
+
+    direction.y = 0;
+
+    if (direction.length() > 0.3) {
+      direction.normalize();
+
+      const nx = npc.position.x +
+        direction.x * npc.userData.speed * dt;
+      const nz = npc.position.z +
+        direction.z * npc.userData.speed * dt;
+
+      if (!blocked(nx, nz)) {
+        npc.position.x = nx;
+        npc.position.z = nz;
+        npc.rotation.y = Math.atan2(
+          direction.x,
+          direction.z
+        );
+      }
+    }
+
+    npc.userData.body.rotation.z =
+      Math.sin(state.minutes + npc.position.x) * 0.02;
+  });
+}
+
+// ======================================
+// INTERAÇÕES
+// ======================================
+
+function addInteractable(name, x, z, type) {
+  interactables.push({ name, x, z, type });
+}
+
+function findNearest() {
+  let nearest = null;
+  let distance = 3.5;
+
+  interactables.forEach(item => {
+    const d = Math.hypot(
+      player.position.x - item.x,
+      player.position.z - item.z
+    );
+
+    if (d < distance) {
+      nearest = item;
+      distance = d;
+    }
+  });
+
+  npcs.forEach(npc => {
+    const d = player.position.distanceTo(npc.position);
+
+    if (d < distance) {
+      nearest = {
+        type: "npc",
+        name: npc.userData.name,
+        npc
+      };
+      distance = d;
+    }
+  });
+
+  return nearest;
+}
+
+function updateInteraction() {
+  currentTarget = findNearest();
+
+  if (currentTarget) {
+    $("interactionBox").classList.remove("hidden");
+    $("interactionText").textContent =
+      "Pressione E: " + currentTarget.name;
+  } else {
+    $("interactionBox").classList.add("hidden");
+  }
+}
+
+function interact() {
+  if (!running || paused || !currentTarget) return;
+
+  const item = currentTarget;
+
+  switch (item.type) {
+    case "npc":
+      talkToNPC(item.name);
+      break;
+
+    case "home":
+      state.energy = clamp(state.energy + 35, 0, 100);
+      state.hygiene = clamp(state.hygiene + 25, 0, 100);
+      notify("🏠 Você descansou e tomou banho!");
+      break;
+
+    case "market":
+      state.hunger = clamp(state.hunger + 40, 0, 100);
+      spendMoney(25);
+      notify("🍔 Você fez uma refeição!");
+      break;
+
+    case "cafe":
+      if (spendMoney(15)) {
+        state.fun = clamp(state.fun + 20, 0, 100);
+        state.hunger = clamp(state.hunger + 15, 0, 100);
+        notify("☕ Que lanche delicioso!");
+      }
+      break;
+
+    case "shop":
+      openModal("shopModal");
+      break;
+
+    case "work":
+      openModal("jobsModal");
+      break;
+
+    case "neighbor":
+      notify("🏡 Você visitou " + item.name);
+      state.fun = clamp(state.fun + 10, 0, 100);
+      break;
+
+    case "fun":
+      state.fun = clamp(state.fun + 30, 0, 100);
+      progressMission(3);
+      notify("🎉 Você se divertiu na praça!");
+      break;
+  }
+
+  if (item.type !== "npc") {
+    visitPlace(item.name);
+  }
+
+  updateHUD();
+}
+
+function talkToNPC(name) {
+  const messages = [
+    "Que dia bonito para passear!",
+    "Você já visitou o parque?",
+    "Adoro morar nesta cidade!",
+    "Vamos explorar a cidade!",
+    "Ouvi dizer que tem novidades na loja!",
+    "Você parece ser uma pessoa divertida!"
+  ];
+
+  const message = messages[
+    Math.floor(Math.random() * messages.length)
+  ];
+
+  notify("💬 " + name + ": " + message);
+  state.fun = clamp(state.fun + 8, 0, 100);
+
+  const key = "npc:" + name;
+
+  if (!state.visited.includes(key)) {
+    state.visited.push(key);
+    progressMission(0);
+  }
+}
+
+function visitPlace(name) {
+  const key = "place:" + name;
+
+  if (!state.visited.includes(key)) {
+    state.visited.push(key);
+    progressMission(4);
+  }
+}
+
+function spendMoney(amount) {
+  if (state.money < amount) {
+    notify("💰 Você não tem dinheiro suficiente!");
+    return false;
+  }
+
+  state.money -= amount;
+  return true;
+}
+
+// ======================================
+// MISSÕES
+// ======================================
+
+function progressMission(index) {
+  if (state.mission !== index) return;
+
+  state.missionCount++;
+
+  const mission = missions[state.mission];
+
+  if (state.missionCount >= mission.goal) {
+    state.money += 200;
+    state.level++;
+    state.mission++;
+    state.missionCount = 0;
+
+    notify("🏆 MISSÃO COMPLETA! +200 moedas!");
+
+    if (state.mission >= missions.length) {
+      state.mission = 0;
+      state.visited = [];
+    }
+  }
+
+  updateHUD();
+}
+
+// ======================================
+// LOJA E TRABALHOS
+// ======================================
+
+const shopItems = [
+  { name: "🍕 Pizza", price: 30, type: "food" },
+  { name: "🎮 Videogame", price: 150, type: "fun" },
+  { name: "🛋️ Sofá novo", price: 250, type: "furniture" },
+  { name: "🛏️ Cama confortável", price: 350, type: "furniture" },
+  { name: "🚲 Bicicleta", price: 450, type: "furniture" },
+  { name: "🏠 Reforma da casa", price: 600, type: "home" }
+];
+
+const jobs = [
+  { name: "☕ Atendente", salary: 80 },
+  { name: "🍕 Entregador", salary: 120 },
+  { name: "🎨 Artista", salary: 150 },
+  { name: "💻 Programador", salary: 200 }
+];
+
+function setupShop() {
+  $("shopItems").innerHTML = "";
+
+  shopItems.forEach(item => {
+    const div = document.createElement("div");
+    div.className = "shop-item";
+
+    const label = document.createElement("span");
+    label.textContent = item.name + " - 💰 " + item.price;
+
+    const button = document.createElement("button");
+    button.textContent = "Comprar";
+
+    button.onclick = () => {
+      if (!spendMoney(item.price)) return;
+
+      state.inventory.push(item.name);
+
+      if (item.type === "food") {
+        state.hunger = clamp(state.hunger + 35, 0, 100);
+      }
+
+      if (item.type === "fun") {
+        state.fun = clamp(state.fun + 40, 0, 100);
+      }
+
+      if (item.type === "home") {
+        state.homeLevel++;
+      }
+
+      progressMission(2);
+      notify("🛍️ Comprou: " + item.name);
+      updateHUD();
+    };
+
+    div.append(label, button);
+    $("shopItems").appendChild(div);
+  });
+}
+
+function setupJobs() {
+  $("jobsList").innerHTML = "";
+
+  jobs.forEach(job => {
+    const div = document.createElement("div");
+    div.className = "job-item";
+
+    const label = document.createElement("span");
+    label.textContent =
+      job.name + " - 💰 " + job.salary;
+
+    const button = document.createElement("button");
+    button.textContent = "Trabalhar";
+
+    button.onclick = () => {
+      if (state.energy < 15) {
+        notify("😴 Você precisa descansar!");
+        return;
+      }
+
+      state.money += job.salary;
+      state.energy = clamp(state.energy - 15, 0, 100);
+      state.fun = clamp(state.fun - 8, 0, 100);
+      state.minutes += 60;
+
+      progressMission(1);
+      notify("💼 Trabalho concluído! +" + job.salary);
+      updateHUD();
+    };
+
+    div.append(label, button);
+    $("jobsList").appendChild(div);
+  });
+}
+
+// ======================================
+// HUD
+// ======================================
+
+function updateHUD() {
+  $("playerName").textContent = state.name;
+  $("playerLevel").textContent = "⭐ Nível " + state.level;
+  $("money").textContent = state.money;
+
+  const hours = Math.floor(state.minutes / 60) % 24;
+  const mins = Math.floor(state.minutes % 60);
+
+  $("gameTime").textContent =
+    String(hours).padStart(2, "0") + ":" +
+    String(mins).padStart(2, "0");
+
+  $("gameDay").textContent = "Dia " + state.day;
+
+  const needs = {
+    hungerBar: state.hunger,
+    energyBar: state.energy,
+    funBar: state.fun,
+    hygieneBar: state.hygiene
+  };
+
+  Object.entries(needs).forEach(([id, value]) => {
+    $(id).style.width = clamp(value, 0, 100) + "%";
+  });
+
+  const mission = missions[state.mission];
+  $("missionText").textContent = mission.text;
+  $("missionProgress").textContent =
+    state.missionCount + "/" + mission.goal;
+}
+
+function notify(message) {
+  const element = document.createElement("div");
+  element.className = "notification";
+  element.textContent = message;
+
+  $("notifications").appendChild(element);
+
+  setTimeout(() => element.remove(), 3500);
+}
+
+// ======================================
+// DIA E NOITE
+// ======================================
+
+function updateDayNight() {
+  const hour = (state.minutes / 60) % 24;
+
+  const daylight = clamp(
+    Math.sin((hour - 6) / 12 * Math.PI),
+    0.08,
+    1
   );
 
-  rock.scale.set(1.2, 0.7, 0.9);
+  sun.intensity = daylight * 1.4;
+  ambientLight.intensity = 0.3 + daylight * 0.65;
 
-  scene.add(group);
-  resources.push({
-    type: "stone",
-    object: group,
-    x, z
-  });
-  obstacles.push({ x, z, radius: 1 });
+  const night = new THREE.Color(0x101b44);
+  const day = new THREE.Color(0x91d8ff);
+
+  scene.background = night.clone().lerp(day, daylight);
+  scene.fog.color.copy(scene.background);
 }
 
-function addCrystal(x, z) {
-  const y = heightAt(x, z);
-  const group = new THREE.Group();
-  group.position.set(x, y, z);
+// ======================================
+// MOVIMENTAÇÃO E CÂMERA
+// ======================================
 
-  addMesh(
-    group,
-    new THREE.OctahedronGeometry(1.1),
-    crystalMat, 0, 1.2, 0
-  );
+let cameraAngle = 0;
+let cameraDistance = 11;
+let cameraHeight = 7;
+let walkingTime = 0;
 
-  scene.add(group);
-  resources.push({
-    type: "crystal",
-    object: group,
-    x, z
-  });
-}
+function updatePlayer(dt) {
+  let dx = 0;
+  let dz = 0;
 
-function randomPosition() {
-  return (Math.random() - 0.5) * (WORLD - 15);
-}
+  if (keys["w"] || keys["arrowup"]) dz -= 1;
+  if (keys["s"] || keys["arrowdown"]) dz += 1;
+  if (keys["a"] || keys["arrowleft"]) dx -= 1;
+  if (keys["d"] || keys["arrowright"]) dx += 1;
 
-for (let i = 0; i < 115; i++) {
-  const x = randomPosition();
-  const z = randomPosition();
+  if (dx !== 0 || dz !== 0) {
+    const length = Math.hypot(dx, dz);
+    dx /= length;
+    dz /= length;
 
-  if (Math.hypot(x, z) < 10) continue;
+    const speed = keys["shift"] ? 9 : 5.5;
 
-  if (i % 9 === 0) addCrystal(x, z);
-  else if (i % 4 === 0) addRock(x, z);
-  else addTree(x, z);
-}
+    const moveX =
+      dx * Math.cos(cameraAngle) -
+      dz * Math.sin(cameraAngle);
 
-// PERSONAGEM ORIGINAL
+    const moveZ =
+      dx * Math.sin(cameraAngle) +
+      dz * Math.cos(cameraAngle);
 
-const player = new THREE.Group();
-scene.add(player);
+    const nx = player.position.x + moveX * speed * dt;
+    const nz = player.position.z + moveZ * speed * dt;
 
-addMesh(
-  player,
-  new THREE.CapsuleGeometry(0.48, 0.85, 5, 10),
-  shirt, 0, 1.35, 0
-);
+    if (!blocked(nx, player.position.z)) {
+      player.position.x = nx;
+    }
 
-addMesh(
-  player,
-  new THREE.SphereGeometry(0.43, 16, 12),
-  skin, 0, 2.45, 0
-);
+    if (!blocked(player.position.x, nz)) {
+      player.position.z = nz;
+    }
 
-addMesh(
-  player,
-  new THREE.SphereGeometry(0.44, 16, 10),
-  dark, 0, 2.68, 0
-).scale.set(1, 0.45, 1);
+    player.rotation.y = Math.atan2(moveX, moveZ);
 
-const leftLeg = addMesh(
-  player,
-  new THREE.CapsuleGeometry(0.17, 0.55, 4, 8),
-  pants, -0.24, 0.48, 0
-);
+    walkingTime += dt * 12;
+    player.position.y =
+      Math.abs(Math.sin(walkingTime)) * 0.08;
 
-const rightLeg = addMesh(
-  player,
-  new THREE.CapsuleGeometry(0.17, 0.55, 4, 8),
-  pants, 0.24, 0.48, 0
-);
-
-const leftArm = addMesh(
-  player,
-  new THREE.CapsuleGeometry(0.15, 0.65, 4, 8),
-  shirt, -0.65, 1.55, 0
-);
-
-const rightArm = addMesh(
-  player,
-  new THREE.CapsuleGeometry(0.15, 0.65, 4, 8),
-  shirt, 0.65, 1.55, 0
-);
-
-player.position.set(0, heightAt(0, 0), 0);
-
-// MOVIMENTAÇÃO
-
-const keys = {};
-let playing = false;
-let yaw = 0;
-let pitch = 0.2;
-let velocityY = 0;
-let jumping = false;
-let stamina = 100;
-let health = 100;
-let selectedSlot = 1;
-let elapsed = 0;
-
-const inventory = {
-  wood: 0,
-  stone: 0,
-  crystal: 0
-};
-
-document.addEventListener("keydown", e => {
-  keys[e.code] = true;
-
-  if (["Space", "ArrowUp", "ArrowDown"].includes(e.code)) {
-    e.preventDefault();
+    playerBody.rotation.z =
+      Math.sin(walkingTime) * 0.035;
+  } else {
+    player.position.y = 0;
+    playerBody.rotation.z = 0;
   }
+}
 
-  if (e.code.startsWith("Digit")) {
-    const number = Number(e.code.replace("Digit", ""));
-    if (number >= 1 && number <= 6) selectSlot(number);
-  }
-
-  if (e.code === "KeyE" && playing) collectResource();
-});
-
-document.addEventListener("keyup", e => {
-  keys[e.code] = false;
-});
-
-// CÂMERA COM MOUSE
-
-document.addEventListener("mousemove", e => {
-  if (!playing || document.pointerLockElement !== renderer.domElement) {
-    return;
-  }
-
-  yaw -= e.movementX * 0.0025;
-  pitch += e.movementY * 0.002;
-
-  pitch = THREE.MathUtils.clamp(pitch, -0.4, 1.0);
-});
-
-function updateCamera() {
-  const distance = 8;
-  const horizontal = Math.cos(pitch) * distance;
-
+function updateCamera(dt) {
   const target = new THREE.Vector3(
+    player.position.x +
+      Math.sin(cameraAngle) * cameraDistance,
+    player.position.y + cameraHeight,
+    player.position.z +
+      Math.cos(cameraAngle) * cameraDistance
+  );
+
+  camera.position.lerp(target, Math.min(1, dt * 5));
+
+  camera.lookAt(
     player.position.x,
     player.position.y + 1.8,
     player.position.z
   );
-
-  const desired = new THREE.Vector3(
-    target.x + Math.sin(yaw) * horizontal,
-    target.y + Math.sin(pitch) * distance + 2,
-    target.z + Math.cos(yaw) * horizontal
-  );
-
-  camera.position.lerp(desired, 0.12);
-  camera.lookAt(target);
 }
 
-// COLISÕES SIMPLES
+let dragging = false;
+let previousMouseX = 0;
 
-function canMove(x, z) {
-  const limit = WORLD / 2 - 2;
+function setupCameraControls() {
+  const canvas = renderer.domElement;
 
-  if (Math.abs(x) > limit || Math.abs(z) > limit) {
-    return false;
-  }
-
-  for (const obstacle of obstacles) {
-    if (Math.hypot(
-      x - obstacle.x,
-      z - obstacle.z
-    ) < obstacle.radius + 0.45) {
-      return false;
-    }
-  }
-
-  return true;
-}
-
-function updatePlayer(dt) {
-  const forward = Number(!!keys.KeyW) - Number(!!keys.KeyS);
-  const side = Number(!!keys.KeyD) - Number(!!keys.KeyA);
-
-  const moving = forward !== 0 || side !== 0;
-  const running = moving &&
-    (keys.ShiftLeft || keys.ShiftRight) &&
-    stamina > 0;
-
-  const speed = running ? 11 : 6;
-
-  if (running) {
-    stamina = Math.max(0, stamina - 22 * dt);
-  } else {
-    stamina = Math.min(100, stamina + 14 * dt);
-  }
-
-  if (moving) {
-    const angle = Math.atan2(side, forward) + yaw;
-    const dx = -Math.sin(angle) * speed * dt;
-    const dz = -Math.cos(angle) * speed * dt;
-
-    if (canMove(player.position.x + dx, player.position.z)) {
-      player.position.x += dx;
-      player.position.z += dz;
-    }
-
-    player.rotation.y = angle;
-  }
-
-  const ground = heightAt(
-    player.position.x,
-    player.position.z
-  );
-
-  if (keys.Space && !jumping) {
-    velocityY = 8;
-    jumping = true;
-  }
-
-  velocityY -= 22 * dt;
-  player.position.y += velocityY * dt;
-
-  if (player.position.y <= ground) {
-    player.position.y = ground;
-    velocityY = 0;
-    jumping = false;
-  }
-
-  const animation = moving && !jumping
-    ? Math.sin(elapsed * (running ? 17 : 11)) * 0.55
-    : 0;
-
-  leftLeg.rotation.x = animation;
-  rightLeg.rotation.x = -animation;
-  leftArm.rotation.x = -animation * 0.7;
-  rightArm.rotation.x = animation * 0.7;
-
-  document.getElementById("barraEnergia").style.width =
-    stamina + "%";
-
-  document.getElementById("barraVida").style.width =
-    health + "%";
-}
-
-// COLETA
-
-let messageTimeout;
-
-function showMessage(text) {
-  const element = document.getElementById("mensagemJogo");
-  element.textContent = text;
-
-  clearTimeout(messageTimeout);
-
-  messageTimeout = setTimeout(() => {
-    element.textContent = "";
-  }, 2000);
-}
-
-function collectResource() {
-  let nearest = null;
-  let minDistance = 4;
-
-  for (const resource of resources) {
-    const distance = Math.hypot(
-      player.position.x - resource.x,
-      player.position.z - resource.z
-    );
-
-    if (distance < minDistance) {
-      minDistance = distance;
-      nearest = resource;
-    }
-  }
-
-  if (!nearest) {
-    showMessage("Aproxime-se de um recurso!");
-    return;
-  }
-
-  inventory[nearest.type]++;
-  scene.remove(nearest.object);
-
-  const index = resources.indexOf(nearest);
-  resources.splice(index, 1);
-
-  const obstacleIndex = obstacles.findIndex(
-    item => item.x === nearest.x && item.z === nearest.z
-  );
-
-  if (obstacleIndex !== -1) {
-    obstacles.splice(obstacleIndex, 1);
-  }
-
-  showMessage("Recurso coletado: " + nearest.type);
-}
-
-// INVENTÁRIO
-
-function selectSlot(number) {
-  selectedSlot = number;
-
-  document.querySelectorAll(".slot").forEach(slot => {
-    slot.classList.toggle(
-      "selecionado",
-      Number(slot.dataset.slot) === number
-    );
+  canvas.addEventListener("pointerdown", e => {
+    dragging = true;
+    previousMouseX = e.clientX;
   });
-}
 
-document.querySelectorAll(".slot").forEach(slot => {
-  slot.addEventListener("click", () => {
-    selectSlot(Number(slot.dataset.slot));
+  window.addEventListener("pointerup", () => {
+    dragging = false;
   });
-});
 
-// CONSTRUÇÃO
+  window.addEventListener("pointermove", e => {
+    if (!dragging) return;
 
-const buildings = [];
+    cameraAngle -= (e.clientX - previousMouseX) * 0.005;
+    previousMouseX = e.clientX;
+  });
 
-function build() {
-  const materialType =
-    selectedSlot === 2 ? "wood" :
-    selectedSlot === 3 ? "stone" : null;
-
-  if (!materialType) {
-    showMessage("Selecione madeira (2) ou pedra (3)!");
-    return;
-  }
-
-  if (inventory[materialType] <= 0) {
-    showMessage("Colete mais recursos primeiro!");
-    return;
-  }
-
-  const x = player.position.x -
-    Math.sin(player.rotation.y) * 3;
-
-  const z = player.position.z -
-    Math.cos(player.rotation.y) * 3;
-
-  if (!canMove(x, z)) {
-    showMessage("Não é possível construir aqui!");
-    return;
-  }
-
-  const y = heightAt(x, z);
-
-  const mesh = new THREE.Mesh(
-    new THREE.BoxGeometry(2, 2, 2),
-    materialType === "wood" ? wood : stone
-  );
-
-  mesh.position.set(x, y + 1, z);
-  mesh.castShadow = true;
-  mesh.receiveShadow = true;
-
-  scene.add(mesh);
-  buildings.push(mesh);
-  obstacles.push({ x, z, radius: 1.3 });
-
-  inventory[materialType]--;
-  showMessage("Estrutura construída!");
+  canvas.addEventListener("wheel", e => {
+    cameraDistance = clamp(
+      cameraDistance + e.deltaY * 0.01,
+      5,
+      20
+    );
+  }, { passive: true });
 }
 
-renderer.domElement.addEventListener("mousedown", e => {
-  if (!playing) return;
+// ======================================
+// MINIMAPA
+// ======================================
 
-  if (document.pointerLockElement !== renderer.domElement) {
-    renderer.domElement.requestPointerLock?.();
-    return;
-  }
+function drawMinimap() {
+  const canvas = $("minimapCanvas");
+  const ctx = canvas.getContext("2d");
+  const w = canvas.width;
+  const h = canvas.height;
 
-  if (e.button === 0) build();
-});
+  ctx.fillStyle = "#78c783";
+  ctx.fillRect(0, 0, w, h);
 
-// MENU
+  const scale = w / 160;
+  const pos = (x, z) => ({
+    x: (x + 80) * scale,
+    y: (z + 80) * scale
+  });
 
-document.getElementById("btnJogar").addEventListener(
-  "click",
-  () => {
-    menu.classList.add("oculto");
-    hud.classList.remove("oculto");
-    playing = true;
-    renderer.domElement.requestPointerLock?.();
-    showMessage("Bem-vindo ao BLOCKVERSE!");
-  }
-);
+  ctx.fillStyle = "#626a7c";
 
-document.getElementById("btnControles").addEventListener(
-  "click",
-  () => {
-    document.getElementById("instrucoes")
-      .classList.toggle("oculto");
-  }
-);
+  [-40, 0, 40].forEach(p => {
+    ctx.fillRect(0, (p + 75.5) * scale, w, 9 * scale);
+    ctx.fillRect((p + 75.5) * scale, 0, 9 * scale, h);
+  });
 
-// CICLO DIA E NOITE
+  interactables.forEach(item => {
+    const p = pos(item.x, item.z);
+    ctx.fillStyle = "#fff3b0";
+    ctx.fillRect(p.x - 3, p.y - 3, 6, 6);
+  });
 
-function updateDayNight() {
-  const cycle = elapsed * 0.025;
-  const daylight = (Math.sin(cycle) + 1) / 2;
+  npcs.forEach(npc => {
+    const p = pos(npc.position.x, npc.position.z);
+    ctx.fillStyle = "#ff79b7";
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
+    ctx.fill();
+  });
 
-  sun.intensity = 0.2 + daylight * 1.5;
+  const p = pos(player.position.x, player.position.z);
 
-  const dayColor = new THREE.Color(0x8fd3ff);
-  const nightColor = new THREE.Color(0x101b42);
+  ctx.fillStyle = "#2477ff";
+  ctx.beginPath();
+  ctx.arc(p.x, p.y, 5, 0, Math.PI * 2);
+  ctx.fill();
 
-  const sky = nightColor.clone().lerp(
-    dayColor, daylight
-  );
-
-  scene.background = sky;
-  scene.fog.color.copy(sky);
-
-  document.getElementById("horario").textContent =
-    daylight > 0.4 ? "☀️ Dia" : "🌙 Noite";
+  ctx.strokeStyle = "white";
+  ctx.lineWidth = 2;
+  ctx.stroke();
 }
 
+// ======================================
+// TEMPO E NECESSIDADES
+// ======================================
+
+let hudTimer = 0;
+
+function updateSimulation(dt) {
+  state.minutes += dt * 1.5;
+
+  if (state.minutes >= 1440) {
+    state.minutes -= 1440;
+    state.day++;
+    notify("🌅 Um novo dia começou!");
+    saveGame();
+  }
+
+  state.hunger = clamp(
+    state.hunger - dt * 0.018, 0, 100
+  );
+
+  state.energy = clamp(
+    state.energy - dt * 0.012, 0, 100
+  );
+
+  state.fun = clamp(
+    state.fun - dt * 0.01, 0, 100
+  );
+
+  state.hygiene = clamp(
+    state.hygiene - dt * 0.008, 0, 100
+  );
+
+  hudTimer += dt;
+
+  if (hudTimer >= 0.25) {
+    updateHUD();
+    drawMinimap();
+    updateDayNight();
+    hudTimer = 0;
+  }
+}
+
+// ======================================
 // LOOP PRINCIPAL
-
-const clock = new THREE.Clock();
-let frameCount = 0;
-let fpsTimer = 0;
+// ======================================
 
 function animate() {
   requestAnimationFrame(animate);
 
   const dt = Math.min(clock.getDelta(), 0.05);
 
-  if (playing) {
-    elapsed += dt;
+  if (running && !paused) {
     updatePlayer(dt);
-    updateDayNight();
-  }
-
-  updateCamera();
-
-  // Animar cristais
-  for (const resource of resources) {
-    if (resource.type === "crystal") {
-      resource.object.rotation.y += dt * 0.7;
-    }
+    updateNPCs(dt);
+    updateCamera(dt);
+    updateSimulation(dt);
+    updateInteraction();
   }
 
   renderer.render(scene, camera);
+}
 
-  frameCount++;
-  fpsTimer += dt;
+// ======================================
+// SALVAR E CARREGAR
+// ======================================
 
-  if (fpsTimer >= 1) {
-    document.getElementById("fps").textContent =
-      "FPS: " + Math.round(frameCount / fpsTimer);
+function saveGame() {
+  if (!player) return;
 
-    frameCount = 0;
-    fpsTimer = 0;
+  const data = {
+    state,
+    position: {
+      x: player.position.x,
+      z: player.position.z
+    }
+  };
+
+  localStorage.setItem(
+    "vidacity3d-save",
+    JSON.stringify(data)
+  );
+
+  notify("💾 Jogo salvo!");
+}
+
+function loadGame() {
+  const raw = localStorage.getItem("vidacity3d-save");
+
+  if (!raw) {
+    notify("Nenhum jogo salvo encontrado!");
+    return false;
+  }
+
+  try {
+    const data = JSON.parse(raw);
+    Object.assign(state, data.state);
+
+    if (player && data.position) {
+      player.position.set(
+        data.position.x,
+        0,
+        data.position.z
+      );
+    }
+
+    updateClothing();
+    updateHUD();
+    return true;
+  } catch (error) {
+    notify("Não foi possível carregar o jogo.");
+    return false;
   }
 }
 
-window.addEventListener("resize", () => {
-  camera.aspect = innerWidth / innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(innerWidth, innerHeight);
-});
+function updateClothing() {
+  if (!player) return;
 
-animate();
+  playerBody.material.color.set(state.clothing);
+}
+
+// ======================================
+// MENUS
+// ======================================
+
+function openModal(id) {
+  paused = true;
+  $(id).classList.remove("hidden");
+}
+
+function closeModals() {
+  document.querySelectorAll(".modal").forEach(el => {
+    el.classList.add("hidden");
+  });
+
+  paused = false;
+}
+
+function togglePause() {
+  if (!running) return;
+
+  if (!$("pauseMenu").classList.contains("hidden")) {
+    closeModals();
+  } else {
+    openModal("pauseMenu");
+  }
+}
+
+function startGame(load = false) {
+  $("mainMenu").classList.add("hidden");
+  $("gameContainer").classList.remove("hidden");
+
+  initWorld();
+
+  if (load) loadGame();
+
+  running = true;
+  paused = false;
+
+  clock.getDelta();
+  updateHUD();
+  setupCameraControls();
+  notify("🌆 Bem-vindo ao VidaCity 3D!");
+}
+
+// ======================================
+// EVENTOS DOS BOTÕES
+// ======================================
+
+function setupEvents() {
+  $("playBtn").onclick = () => startGame(false);
+  $("continueBtn").onclick = () => startGame(true);
+
+  $("settingsBtn").onclick = () => {
+    openModal("settingsModal");
+  };
+
+  $("shopBtn").onclick = () => openModal("shopModal");
+  $("jobsBtn").onclick = () => openModal("jobsModal");
+  $("characterBtn").onclick = () => openModal("characterModal");
+
+  $("houseBtn").onclick = () => {
+    notify("🏠 Sua casa está marcada no minimapa!");
+  };
+
+  $("mapBtn").onclick = () => {
+    notify("🗺️ Explore os pontos amarelos no minimapa!");
+  };
+
+  $("phoneBtn").onclick = () => {
+    notify("📱 Novas aventuras estão esperando por você!");
+  };
+
+  $("pauseBtn").onclick = togglePause;
+  $("resumeBtn").onclick = closeModals;
+
+  $("saveBtn").onclick = saveGame;
+
+  $("exitBtn").onclick = () => {
+    saveGame();
+    running = false;
+    closeModals();
+
+    $("gameContainer").classList.add("hidden");
+    $("mainMenu").classList.remove("hidden");
+  };
+
+  $("interactBtn").onclick = interact;
+  $("mobileInteract").onclick = interact;
+
+  $("saveCharacterBtn").onclick = () => {
+    const name = $("nameInput").value.trim();
+
+    if (name) {
+      state.name = name;
+    }
+
+    updateHUD();
+    closeModals();
+    notify("👕 Personagem atualizado!");
+  };
+
+  document.querySelectorAll("#clothingColors button")
+    .forEach(button => {
+      button.onclick = () => {
+        state.clothing = button.dataset.color;
+        updateClothing();
+      };
+    });
+
+  document.querySelectorAll(".close-modal")
+    .forEach(button => {
+      button.onclick = closeModals;
+    });
+
+  window.addEventListener("keydown", e => {
+    const key = e.key.toLowerCase();
+
+    if (["arrowup", "arrowdown", "arrowleft", "arrowright", " "].includes(key)) {
+      e.preventDefault();
+    }
+
+    if (e.target.matches("input, textarea, select")) {
+      return;
+    }
+
+    keys[key] = true;
+
+    if (key === "e" && !e.repeat) interact();
+    if (key === "escape" && !e.repeat) togglePause();
+  });
+
+  window.addEventListener("keyup", e => {
+    keys[e.key.toLowerCase()] = false;
+  });
+
+  window.addEventListener("blur", () => {
+    Object.keys(keys).forEach(key => keys[key] = false);
+  });
+
+  const mobileKeys = {
+    moveUp: "w",
+    moveDown: "s",
+    moveLeft: "a",
+    moveRight: "d"
+  };
+
+  Object.entries(mobileKeys).forEach(([id, key]) => {
+    const button = $(id);
+
+    button.addEventListener("pointerdown", e => {
+      e.preventDefault();
+      keys[key] = true;
+      button.setPointerCapture(e.pointerId);
+    });
+
+    const release = () => {
+      keys[key] = false;
+    };
+
+    button.addEventListener("pointerup", release);
+    button.addEventListener("pointercancel", release);
+    button.addEventListener("lostpointercapture", release);
+  });
+
+  window.addEventListener("resize", () => {
+    if (!camera || !renderer) return;
+
+    camera.aspect = innerWidth / innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(innerWidth, innerHeight);
+  });
+
+  $("graphicsQuality").onchange = e => {
+    if (!renderer) return;
+
+    const quality = e.target.value;
+
+    renderer.setPixelRatio(
+      quality === "low" ? 1 :
+      quality === "medium" ? 1.5 :
+      Math.min(devicePixelRatio, 2)
+    );
+
+    renderer.shadowMap.enabled = quality !== "low";
+  };
+}
+
+// ======================================
+// INICIAR INTERFACE
+// ======================================
+
+function boot() {
+  setupEvents();
+  setupShop();
+  setupJobs();
+  updateHUD();
+
+  const progress = document.querySelector(".loading-progress");
+  progress.style.width = "100%";
+
+  setTimeout(() => {
+    $("loadingScreen").classList.add("hidden");
+  }, 700);
+}
+
+window.addEventListener("DOMContentLoaded", boot);

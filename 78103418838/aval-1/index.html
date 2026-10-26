@@ -6,148 +6,238 @@
   <meta name="viewport"
         content="width=device-width, initial-scale=1.0">
 
-  <title>BLOCKVERSE 3D | Aventura</title>
+  <title>VidaCity 3D - Simulador de Vida</title>
 
   <link rel="stylesheet" href="style.css">
+
+  <!-- Biblioteca para gráficos 3D -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <link href="style.css" rel="stylesheet"></head>
 
 <body>
 
-  <!-- TELA INICIAL -->
-  <div id="menuInicial" class="menu-inicial">
-    <div class="menu-conteudo">
-
-      <h1>🌍 BLOCKVERSE 3D</h1>
-
-      <p>
-        Explore um universo cheio de aventuras,
-        descubra recursos e construa seu mundo!
-      </p>
-
-      <button id="btnJogar">
-        ▶ INICIAR AVENTURA
-      </button>
-
-      <button id="btnControles">
-        🎮 COMO JOGAR
-      </button>
-
-      <div id="instrucoes" class="oculto">
-        <h3>Controles</h3>
-        <p>W A S D — Movimentar</p>
-        <p>Mouse — Movimentar câmera</p>
-        <p>Espaço — Pular</p>
-        <p>Shift — Correr</p>
-        <p>E — Interagir</p>
-        <p>1 a 6 — Selecionar item</p>
-        <p>ESC — Liberar mouse</p>
-      </div>
-
+  <!-- TELA DE CARREGAMENTO -->
+  <div id="loadingScreen">
+    <h1>🌆 VidaCity 3D</h1>
+    <p>Preparando sua nova aventura...</p>
+    <div class="loading-bar">
+      <div class="loading-progress"></div>
     </div>
   </div>
 
-  <!-- JOGO 3D -->
-  <main id="jogo">
+  <!-- MENU PRINCIPAL -->
+  <div id="mainMenu" class="menu-screen">
+    <div class="menu-content">
+      <h1>🌆 VidaCity 3D</h1>
+      <p>Crie sua história. Explore seu mundo!</p>
 
-    <div id="mundo3D"></div>
+      <button id="playBtn">▶ JOGAR</button>
+      <button id="continueBtn">💾 CONTINUAR</button>
+      <button id="settingsBtn">⚙️ CONFIGURAÇÕES</button>
 
-    <!-- INTERFACE -->
-    <div id="interface" class="oculto">
+      <p class="version">Versão 1.0</p>
+    </div>
+  </div>
 
-      <!-- INFORMAÇÕES -->
-      <header class="hud-superior">
+  <!-- ÁREA PRINCIPAL DO JOGO -->
+  <main id="gameContainer" class="hidden">
 
-        <div class="logo">
-          🌍 BLOCKVERSE
+    <!-- O JavaScript criará o mundo 3D aqui -->
+    <div id="gameCanvas"></div>
+
+    <!-- INFORMAÇÕES DO JOGADOR -->
+    <header id="gameHUD">
+
+      <div class="player-info">
+        <div class="player-avatar">😎</div>
+
+        <div>
+          <h3 id="playerName">Meu Personagem</h3>
+          <span id="playerLevel">⭐ Nível 1</span>
         </div>
-
-        <div class="informacoes">
-          <span id="bioma">🌳 Vale Verde</span>
-          <span id="horario">☀️ Dia</span>
-          <span id="fps">FPS: --</span>
-        </div>
-
-      </header>
-
-      <!-- VIDA E ENERGIA -->
-      <section class="status-jogador">
-
-        <div class="status">
-          <span>❤️ VIDA</span>
-          <div class="barra">
-            <div id="barraVida"
-                 class="preenchimento vida"></div>
-          </div>
-        </div>
-
-        <div class="status">
-          <span>⚡ ENERGIA</span>
-          <div class="barra">
-            <div id="barraEnergia"
-                 class="preenchimento energia"></div>
-          </div>
-        </div>
-
-      </section>
-
-      <!-- MIRA -->
-      <div id="mira">+</div>
-
-      <!-- MENSAGENS -->
-      <div id="mensagemJogo"></div>
-
-      <!-- INVENTÁRIO -->
-      <div class="inventario">
-
-        <div class="slot selecionado"
-             data-slot="1">
-          <span>🪓</span>
-          <small>1</small>
-        </div>
-
-        <div class="slot" data-slot="2">
-          <span>🪵</span>
-          <small>2</small>
-        </div>
-
-        <div class="slot" data-slot="3">
-          <span>🪨</span>
-          <small>3</small>
-        </div>
-
-        <div class="slot" data-slot="4">
-          <span>🌿</span>
-          <small>4</small>
-        </div>
-
-        <div class="slot" data-slot="5">
-          <span>🔨</span>
-          <small>5</small>
-        </div>
-
-        <div class="slot" data-slot="6">
-          <span>✨</span>
-          <small>6</small>
-        </div>
-
       </div>
 
-      <!-- AJUDA -->
-      <div class="ajuda">
-        WASD: mover | ESPAÇO: pular |
-        SHIFT: correr | E: interagir
+      <div class="game-resources">
+        <div class="money-display">
+          💰 <span id="money">1000</span>
+        </div>
+
+        <div class="time-display">
+          🕒 <span id="gameTime">08:00</span>
+        </div>
+
+        <div class="day-display">
+          ☀️ <span id="gameDay">Dia 1</span>
+        </div>
       </div>
 
+    </header>
+
+    <!-- NECESSIDADES DO PERSONAGEM -->
+    <section id="needsPanel">
+      <h3>❤️ Necessidades</h3>
+
+      <div class="need">
+        <span>🍔 Fome</span>
+        <div class="progress-bar">
+          <div id="hungerBar" class="progress-fill"></div>
+        </div>
+      </div>
+
+      <div class="need">
+        <span>⚡ Energia</span>
+        <div class="progress-bar">
+          <div id="energyBar" class="progress-fill"></div>
+        </div>
+      </div>
+
+      <div class="need">
+        <span>🎮 Diversão</span>
+        <div class="progress-bar">
+          <div id="funBar" class="progress-fill"></div>
+        </div>
+      </div>
+
+      <div class="need">
+        <span>🧼 Higiene</span>
+        <div class="progress-bar">
+          <div id="hygieneBar" class="progress-fill"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MISSÕES -->
+    <section id="missionsPanel">
+      <h3>🎯 Missão atual</h3>
+      <p id="missionText">
+        Explore a cidade e conheça seus vizinhos!
+      </p>
+      <div id="missionProgress">0/3</div>
+    </section>
+
+    <!-- INTERAÇÃO COM OBJETOS E PERSONAGENS -->
+    <div id="interactionBox" class="hidden">
+      <p id="interactionText">Pressione E para interagir</p>
+      <button id="interactBtn">Interagir</button>
+    </div>
+
+    <!-- NOTIFICAÇÕES -->
+    <div id="notifications"></div>
+
+    <!-- MENU DE AÇÕES -->
+    <nav id="actionMenu">
+      <button id="phoneBtn" title="Celular">📱</button>
+      <button id="houseBtn" title="Minha casa">🏠</button>
+      <button id="shopBtn" title="Loja">🛍️</button>
+      <button id="jobsBtn" title="Trabalhos">💼</button>
+      <button id="mapBtn" title="Mapa">🗺️</button>
+      <button id="characterBtn" title="Personagem">👕</button>
+      <button id="pauseBtn" title="Pausar">⏸️</button>
+    </nav>
+
+    <!-- MINIMAPA -->
+    <div id="minimap">
+      <h4>🗺️ Cidade</h4>
+      <canvas id="minimapCanvas"
+              width="180" height="180"></canvas>
+    </div>
+
+    <!-- CONTROLES PARA CELULAR -->
+    <div id="mobileControls">
+      <div class="direction-controls">
+        <button id="moveUp">▲</button>
+
+        <div>
+          <button id="moveLeft">◀</button>
+          <button id="moveDown">▼</button>
+          <button id="moveRight">▶</button>
+        </div>
+      </div>
+
+      <button id="mobileInteract">✋</button>
     </div>
 
   </main>
 
-  <!-- BIBLIOTECA THREE.JS -->
-  <script
-    src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js">
-  </script>
+  <!-- JANELA DE LOJA -->
+  <div id="shopModal" class="modal hidden">
+    <div class="modal-content">
+      <button class="close-modal">✖</button>
+      <h2>🛍️ Loja VidaCity</h2>
+      <div id="shopItems"></div>
+    </div>
+  </div>
 
-  <!-- PROGRAMAÇÃO DO JOGO -->
+  <!-- JANELA DE TRABALHOS -->
+  <div id="jobsModal" class="modal hidden">
+    <div class="modal-content">
+      <button class="close-modal">✖</button>
+      <h2>💼 Trabalhos</h2>
+      <div id="jobsList"></div>
+    </div>
+  </div>
+
+  <!-- JANELA DO PERSONAGEM -->
+  <div id="characterModal" class="modal hidden">
+    <div class="modal-content">
+      <button class="close-modal">✖</button>
+      <h2>👕 Personalizar Personagem</h2>
+
+      <label for="nameInput">Nome:</label>
+      <input id="nameInput" type="text"
+             maxlength="20"
+             placeholder="Nome do personagem">
+
+      <h3>Escolha uma cor de roupa</h3>
+      <div id="clothingColors">
+        <button data-color="#ff5555">🔴</button>
+        <button data-color="#4488ff">🔵</button>
+        <button data-color="#44cc88">🟢</button>
+        <button data-color="#ffcc33">🟡</button>
+      </div>
+
+      <button id="saveCharacterBtn">Salvar</button>
+    </div>
+  </div>
+
+  <!-- JANELA DE PAUSA -->
+  <div id="pauseMenu" class="modal hidden">
+    <div class="modal-content">
+      <h2>⏸️ Jogo Pausado</h2>
+      <button id="resumeBtn">▶ Continuar</button>
+      <button id="saveBtn">💾 Salvar Jogo</button>
+      <button id="exitBtn">🏠 Menu Principal</button>
+    </div>
+  </div>
+
+  <!-- CONFIGURAÇÕES -->
+  <div id="settingsModal" class="modal hidden">
+    <div class="modal-content">
+      <button class="close-modal">✖</button>
+      <h2>⚙️ Configurações</h2>
+
+      <label for="graphicsQuality">Qualidade gráfica</label>
+      <select id="graphicsQuality">
+        <option value="low">Baixa</option>
+        <option value="medium">Média</option>
+        <option value="high" selected>Alta</option>
+      </select>
+
+      <label for="soundVolume">Volume</label>
+      <input id="soundVolume" type="range"
+             min="0" max="100" value="70">
+    </div>
+  </div>
+
+  <!-- INSTRUÇÕES -->
+  <div id="controlsHelp" class="hidden">
+    <p>W A S D - Movimentar</p>
+    <p>Mouse - Girar câmera</p>
+    <p>E - Interagir</p>
+    <p>ESC - Pausar</p>
+  </div>
+
+  <!-- CÓDIGO DO JOGO -->
   <script src="script.js"></script>
 
 <script src="script.js"></script></body>
