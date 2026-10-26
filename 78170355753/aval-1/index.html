@@ -1,31 +1,319 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <link href="style.css" rel="stylesheet">
-</head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Última Muralha — Arena de Titãs</title>
+<style>
+:root{--gold:#ffc857;--red:#e84855;--blue:#62d6ff;--panel:#111827}
+*{box-sizing:border-box}
+body{margin:0;background:#090d16;color:#f7f3e8;font-family:system-ui,Segoe UI,Arial,sans-serif;display:flex;justify-content:center;min-height:100vh}
+main{width:min(100%,1050px);padding:18px}
+h1{margin:0;color:var(--gold);letter-spacing:2px;text-transform:uppercase;font-size:clamp(1.6rem,4vw,2.5rem)}
+.subtitle{color:#b9c4d5;margin:4px 0 14px}
+.hud{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;margin-bottom:10px}
+.fighter-name{font-weight:800;font-size:.9rem;margin-bottom:5px}
+.health{height:18px;background:#3b1720;border:2px solid #e7d8b0;padding:2px;transform:skewX(-8deg)}
+.health span{display:block;height:100%;width:100%;background:linear-gradient(90deg,#e84855,#ff8b5e);transition:width .15s}
+.enemy .health span{background:linear-gradient(90deg,#329ac4,#62d6ff);margin-left:auto}
+.vs{font-weight:900;color:var(--gold);font-size:1.2rem}
+canvas{display:block;width:100%;height:auto;border:2px solid #a68b55;border-radius:8px;background:#182331;box-shadow:0 10px 35px #0008;touch-action:manipulation}
+.controls{display:grid;grid-template-columns:1.2fr 1fr;gap:12px;margin-top:12px}
+.panel{background:var(--panel);border:1px solid #344055;border-radius:8px;padding:12px}
+.panel h2{font-size:1rem;margin:0 0 7px;color:var(--gold)}
+.panel p{margin:5px 0;color:#d5deeb;font-size:.9rem;line-height:1.45}
+.keys{display:flex;gap:6px;flex-wrap:wrap}
+kbd{background:#263246;border:1px solid #62718a;border-bottom-width:3px;border-radius:5px;padding:3px 7px;color:#fff;font-weight:700}
+button{background:var(--gold);border:0;border-radius:6px;padding:10px 14px;font-weight:900;cursor:pointer;color:#21180a}
+button:hover{filter:brightness(1.1)}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:9px}
+#message{min-height:24px;color:var(--gold);font-weight:800;margin-top:8px}
+.mobile{display:none;gap:8px;margin-top:10px;flex-wrap:wrap}
+.mobile button{flex:1;min-width:70px;background:#25334a;color:white;border:1px solid #62718a}
+@media(max-width:650px){.controls{grid-template-columns:1fr}.mobile{display:flex}.hud{gap:7px}.fighter-name{font-size:.75rem}.health{height:15px}}
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="style.css" rel="stylesheet"></head>
 <body>
-  <head>
-<h1>RPG</h1>
-</head>
-<body class="bg color">
-<header><h4>ideias de sistma de RPG's para se diverir com amigos</h4></header>
-<main class="bg color">
-    <h2>ordem paranormal</h2>
-    <h4>o tipo de sistema facil de aprenderque mistura terror, açao e investigaçao.
-    <aside>neste mundo vc trabalha em uma organizaçao que investiga e combate o paranormal para manter a paz e a sanidade do nosso lado. </aside>
-    <aside>e um sistema simples mas com uma ampla variedade de classes, poderes, inimigos que tornam a experiencia tanto de jogar como de mestrar divertida e envolvente para todos</h4></aside>
-<h4>criado pelo criador de conteudos cellbit, o ordem paranormal posui tambem um canal oficial com diveras temporadas para vc mergurlhar direto nesse universo</h4><a ="https://www.youtube.com/@OrdemParanormal"></a>
-    <header><H2>D&D</H2></header>
-<h4>D&D  e um sistma mais complexo e com uma variedade extemamente maior, porem tambem e mais dificil de se aprender.
-<aside>Focado em aventuras medievais e fantasticas, mas com a variedade de conteudos a variedade de aventura fica para a imaginaçao</aside>
-<aside></aside>
+<main>
+  <h1>Última Muralha</h1>
+  <p class="subtitle">Arena de Titãs — luta 2D original inspirada em anime de ação e jogos clássicos de combate.</p>
+  <div class="hud">
+    <div><div class="fighter-name">KAI • BATEDOR</div><div class="health"><span id="pHealth"></span></div></div>
+    <div class="vs">VS</div>
+    <div class="enemy"><div class="fighter-name" style="text-align:right">BRUTUS • TITÃ</div><div class="health"><span id="eHealth"></span></div></div>
+  </div>
+  <canvas id="game" width="960" height="440" aria-label="Arena de luta"></canvas>
+  <div id="message" role="status">Prepare-se! Derrote o Titã para defender a muralha.</div>
+  <div class="mobile">
+    <button data-act="left">◀ Mover</button><button data-act="right">Mover ▶</button>
+    <button data-act="jump">Pular</button><button data-act="attack">Golpe</button><button data-act="special">Especial</button>
+  </div>
+  <div class="controls">
+    <section class="panel">
+      <h2>Controles</h2>
+      <p class="keys"><kbd>A</kbd><kbd>D</kbd> mover <kbd>W</kbd> pular <kbd>J</kbd> atacar <kbd>K</kbd> especial</p>
+      <p>Chegue perto do Titã para acertar golpes. O especial causa mais dano, mas precisa recarregar. Use os pulos para evitar os ataques!</p>
+      <div class="actions"><button id="restart">Reiniciar luta</button></div>
+    </section>
+    <section class="panel">
+      <h2>Como vencer</h2>
+      <p><strong>Kai:</strong> um batedor veloz com lâminas de aço e equipamento de mobilidade.</p>
+      <p><strong>Brutus:</strong> um titã poderoso que avança e ataca quando chega perto. Reduza a barra dele a zero antes que a sua acabe.</p>
+      <p>Este é um protótipo original de navegador: sem downloads adicionais, violência gráfica ou personagens oficiais.</p>
+    </section>
+  </div>
 </main>
+<script>
+(() => {
+const canvas=document.getElementById('game'),ctx=canvas.getContext('2d');
+const pBar=document.getElementById('pHealth'),eBar=document.getElementById('eHealth'),message=document.getElementById('message');
+const keys={}; let particles=[],last=0,gameOver=false,shake=0;
+const floor=365;
+let player,enemy;
 
+function reset(){
+ player={x:175,y:floor,w:42,h:82,hp:100,max:100,vx:0,vy:0,face:1,ground:true,attack:0,special:0,inv:0,cool:0};
+ enemy={x:730,y:floor,w:76,h:128,hp:100,max:100,vx:0,vy:0,face:-1,ground:true,attack:0,cool:70,flash:0};
+ particles=[];gameOver=false;
+ message.textContent='Prepare-se! Derrote o Titã para defender a muralha.';
+ updateHud();
+}
+function updateHud(){
+ pBar.style.width=Math.max(0,player.hp)+'%';
+ eBar.style.width=Math.max(0,enemy.hp)+'%';
+}
+function burst(x,y,color,n=10){
+ for(let i=0;i<n;i++)particles.push({
+ x,y,vx:(Math.random()-.5)*7,vy:(Math.random()-.8)*7,
+ life:20+Math.random()*15,color
+ });
+}
+function hit(target,dmg,knock){
+ target.hp=Math.max(0,target.hp-dmg);
+ target.vx=knock;target.flash=8;
+ burst(target.x+target.w/2,target.y-target.h*.55,'#ffc857',12);
+ shake=7;updateHud();
+}
+function pressAction(a){
+ if(gameOver)return;
+ if(a==='left')keys.a=true;
+ if(a==='right')keys.d=true;
+ if(a==='jump'&&player.ground){
+ player.vy=-13;player.ground=false;
+ burst(player.x+20,floor,'#b9d8e8',4);
+ }
+ if(a==='attack'&&player.cool<=0){
+ player.attack=12;player.cool=22;
+ }
+ if(a==='special'&&player.special<=0){
+ player.special=95;player.attack=22;player.cool=32;
+ burst(player.x+player.w/2,player.y-player.h/2,'#62d6ff',18);
+ }
+}
+window.addEventListener('keydown',e=>{
+ let k=e.key.toLowerCase();keys[k]=true;
+ if([' ','arrowup','arrowleft','arrowright'].includes(k))e.preventDefault();
+ if(k==='j')pressAction('attack');
+ if(k==='k')pressAction('special');
+ if(k==='w'&&player.ground)pressAction('jump');
+});
+window.addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);
 
-</body>
-  <script src="script.js"></script>
-  
-</body>
+document.querySelectorAll('[data-act]').forEach(b=>{
+ const a=b.dataset.act;
+ b.addEventListener('pointerdown',e=>{
+ e.preventDefault();
+ if(a==='left')keys.a=true;
+ else if(a==='right')keys.d=true;
+ else pressAction(a);
+ });
+ b.addEventListener('pointerup',()=>{
+ if(a==='left')keys.a=false;
+ if(a==='right')keys.d=false;
+ });
+ b.addEventListener('pointerleave',()=>{
+ if(a==='left')keys.a=false;
+ if(a==='right')keys.d=false;
+ });
+});
+document.getElementById('restart').addEventListener('click',reset);
+
+function drawBackground(){
+ const g=ctx.createLinearGradient(0,0,0,440);
+ g.addColorStop(0,'#101b2c');
+ g.addColorStop(.65,'#384b5b');
+ g.addColorStop(1,'#8a6b54');
+ ctx.fillStyle=g;ctx.fillRect(0,0,960,440);
+ ctx.fillStyle='#d9c58b';
+ ctx.beginPath();ctx.arc(790,76,32,0,Math.PI*2);ctx.fill();
+
+ ctx.fillStyle='#273644';ctx.fillRect(0,210,960,90);
+ for(let i=0;i<960;i+=85){
+ ctx.fillStyle=i%170?'#334450':'#3d4c56';
+ ctx.fillRect(i,178+(i%3)*10,65,122);
+ ctx.beginPath();
+ ctx.moveTo(i-8,178+(i%3)*10);
+ ctx.lineTo(i+32,150+(i%3)*10);
+ ctx.lineTo(i+73,178+(i%3)*10);
+ ctx.fill();
+ }
+ ctx.fillStyle='#18212a';ctx.fillRect(0,floor,960,75);
+ ctx.fillStyle='#4c5150';
+ for(let i=0;i<960;i+=55){
+ ctx.fillRect(i,floor+8,35,3);
+ ctx.fillRect(i+20,floor+32,25,2);
+ }
+ ctx.strokeStyle='#d8b56a';ctx.lineWidth=3;
+ ctx.beginPath();ctx.moveTo(0,floor);ctx.lineTo(960,floor);ctx.stroke();
+}
+function drawPlayer(){
+ let x=player.x,y=player.y;
+ ctx.save();
+ ctx.translate(x+player.w/2,y-player.h/2);
+ ctx.scale(player.face,1);
+
+ ctx.fillStyle='#a63f43';
+ ctx.beginPath();ctx.moveTo(-13,-25);ctx.lineTo(-35,22);
+ ctx.lineTo(-8,12);ctx.lineTo(2,-19);ctx.fill();
+
+ ctx.fillStyle='#25374b';
+ ctx.fillRect(-12,10,10,28);ctx.fillRect(3,10,10,28);
+ ctx.fillStyle='#d8dfdf';
+ ctx.fillRect(-14,34,14,6);ctx.fillRect(2,34,14,6);
+
+ ctx.fillStyle=player.inv>0?'#fff':'#c9bda2';
+ ctx.fillRect(-16,-25,32,39);
+ ctx.strokeStyle='#536b7b';ctx.lineWidth=4;
+ ctx.beginPath();ctx.moveTo(-13,-19);ctx.lineTo(12,8);
+ ctx.moveTo(13,-19);ctx.lineTo(-12,8);ctx.stroke();
+
+ ctx.fillStyle='#e0b28b';
+ ctx.beginPath();ctx.arc(0,-37,13,0,Math.PI*2);ctx.fill();
+ ctx.fillStyle='#332a2b';
+ ctx.beginPath();ctx.moveTo(-13,-39);ctx.lineTo(-7,-53);
+ ctx.lineTo(10,-49);ctx.lineTo(13,-38);
+ ctx.lineTo(3,-43);ctx.lineTo(-5,-39);ctx.fill();
+
+ if(player.attack>0){
+ ctx.strokeStyle=player.special>0?'#62d6ff':'#edf7ff';
+ ctx.lineWidth=player.special>0?7:4;
+ ctx.beginPath();ctx.moveTo(13,-12);ctx.lineTo(52,-30);ctx.stroke();
+ ctx.fillStyle='#fff';ctx.fillRect(13,-14,10,4);
+ }
+ ctx.restore();
+}
+function drawEnemy(){
+ let x=enemy.x,y=enemy.y;
+ ctx.save();
+ ctx.translate(x+enemy.w/2,y-enemy.h/2);
+ ctx.scale(enemy.face,1);
+ ctx.fillStyle=enemy.flash>0?'#ffe3bd':'#a85e51';
+
+ ctx.fillRect(-28,-22,18,62);ctx.fillRect(10,-22,18,62);
+ ctx.fillStyle='#75433f';
+ ctx.fillRect(-23,36,20,27);ctx.fillRect(5,36,20,27);
+
+ ctx.fillStyle=enemy.flash>0?'#fff1dd':'#b76d5d';
+ ctx.beginPath();ctx.roundRect(-31,-48,62,84,15);ctx.fill();
+
+ ctx.fillStyle='#d98d75';
+ ctx.beginPath();ctx.ellipse(0,-62,25,29,0,0,Math.PI*2);ctx.fill();
+ ctx.fillStyle='#50362f';
+ ctx.beginPath();ctx.moveTo(-26,-68);ctx.lineTo(-22,-88);
+ ctx.lineTo(-6,-93);ctx.lineTo(2,-82);ctx.lineTo(20,-88);
+ ctx.lineTo(27,-64);ctx.lineTo(13,-72);ctx.lineTo(-2,-69);ctx.fill();
+
+ ctx.fillStyle='#301e1c';
+ ctx.fillRect(-14,-62,8,4);ctx.fillRect(7,-62,8,4);
+ ctx.strokeStyle='#5a2727';ctx.lineWidth=3;
+ ctx.beginPath();ctx.moveTo(-9,-48);ctx.lineTo(10,-48);ctx.stroke();
+
+ if(enemy.attack>0){
+ ctx.fillStyle='#d98d75';
+ ctx.beginPath();ctx.ellipse(39,-8,22,14,-.25,0,Math.PI*2);ctx.fill();
+ }
+ ctx.restore();
+}
+function update(dt){
+ if(gameOver)return;
+ const p=player,e=enemy;
+ p.cool=Math.max(0,p.cool-dt);
+ p.special=Math.max(0,p.special-dt);
+ p.attack=Math.max(0,p.attack-dt);
+ p.inv=Math.max(0,p.inv-dt);
+ e.cool-=dt;e.attack=Math.max(0,e.attack-dt);
+ e.flash=Math.max(0,e.flash-dt);
+
+ p.vx=0;
+ if(keys.a){p.vx=-4.2;p.face=-1;}
+ if(keys.d){p.vx=4.2;p.face=1;}
+ p.x=Math.max(10,Math.min(900-p.w,p.x+p.vx*dt));
+ p.vy+=.65*dt;p.y+=p.vy*dt;
+ if(p.y>=floor){p.y=floor;p.vy=0;p.ground=true;}
+
+ e.face=e.x>p.x?-1:1;
+ let distance=Math.abs((e.x+e.w/2)-(p.x+p.w/2));
+ if(distance>88)e.x-=Math.sign(e.x-p.x)*1.25*dt;
+ e.x=Math.max(5,Math.min(880,e.x+e.vx*dt));
+ e.vx*=Math.pow(.82,dt);
+
+ if(e.cool<=0&&distance<115){
+ e.attack=20;e.cool=78;
+ if(p.inv<=0&&p.y>=floor-4){
+ hit(p,9,e.face===-1?-5:5);
+ p.inv=18;
+ message.textContent='O Titã acertou! Pule para escapar dos ataques.';
+ }
+ }
+ if(p.attack>0&&p.attack>8&&distance<125&&e.flash<=0){
+ hit(e,p.special>0?1:0,0);
+ e.flash=5;
+ }
+ if(p.attack>0&&p.attack<=11&&p.attack>8&&distance<120&&!p._hit){
+ hit(e,p.special>0?24:12,p.face*5);
+ p._hit=true;
+ }
+ if(p.attack<=0)p._hit=false;
+
+ if(e.hp<=0){
+ gameOver=true;
+ message.textContent='VITÓRIA! A muralha está salva. Aperte “Reiniciar luta” para jogar novamente.';
+ }
+ if(p.hp<=0){
+ gameOver=true;
+ message.textContent='DERROTA! O Titã rompeu a defesa. Tente outra estratégia!';
+ }
+ if(shake>0)shake-=dt;
+}
+function draw(){
+ ctx.save();
+ if(shake>0)ctx.translate((Math.random()-.5)*shake,(Math.random()-.5)*shake);
+ drawBackground();
+ particles.forEach(q=>{
+ ctx.globalAlpha=Math.max(0,q.life/30);
+ ctx.fillStyle=q.color;ctx.fillRect(q.x,q.y,4,4);
+ });
+ ctx.globalAlpha=1;
+ drawPlayer();drawEnemy();
+ if(!gameOver){
+ ctx.fillStyle='#ffffffb8';ctx.font='bold 13px system-ui';
+ ctx.fillText('ARENA DA MURALHA',20,28);
+ }
+ ctx.restore();
+}
+function loop(t){
+ let dt=Math.min(2,(t-last)/16.67||1);
+ last=t;update(dt);draw();
+ particles=particles.filter(q=>q.life>0);
+ particles.forEach(q=>{
+ q.x+=q.vx;q.y+=q.vy;q.vy+=.15;q.life-=dt;
+ });
+ requestAnimationFrame(loop);
+}
+reset();requestAnimationFrame(loop);
+})();
+</script>
+<script src="script.js"></script></body>
 </html>
