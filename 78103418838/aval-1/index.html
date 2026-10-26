@@ -1,14 +1,320 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <script src="https://cdn.tailwindcss.com"></script>
-<link href="style.css" rel="stylesheet">
-</head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mini The Sims 2D</title>
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: #dceef7;
+  font-family: Arial, sans-serif;
+  text-align: center;
+  color: #263348;
+}
+header {
+  background: #6555c9;
+  color: white;
+  padding: 12px;
+}
+h1 { margin: 0; font-size: 25px; }
+p { margin: 7px; }
+#status {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 12px;
+}
+.stat {
+  background: white;
+  padding: 9px;
+  border-radius: 10px;
+  width: 150px;
+}
+progress { width: 100%; accent-color: #62b979; }
+canvas {
+  display: block;
+  width: min(96vw, 800px);
+  height: auto;
+  margin: auto;
+  background: #b4e5a0;
+  border: 5px solid #5144a1;
+  border-radius: 12px;
+}
+button {
+  border: none;
+  background: #6555c9;
+  color: white;
+  padding: 12px 16px;
+  margin: 5px;
+  border-radius: 9px;
+  cursor: pointer;
+  font-weight: bold;
+}
+button:hover { background: #4736ad; }
+#message { min-height: 24px; font-weight: bold; }
+.controls { margin: 12px auto; }
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="style.css" rel="stylesheet"></head>
 <body>
-  <figure clas ="md:flex bg-slate-100rounded-x p-8 md:p-0 dar
-  <script src="script.js"></script>
-  
-</body>
+
+<header>
+<h1>🏡 Mini The Sims 2D</h1>
+<p>Cuide do seu personagem e explore a casa!</p>
+</header>
+
+<div id="status">
+  <div class="stat">🍔 Fome
+    <progress id="fome" max="100"></progress>
+  </div>
+  <div class="stat">⚡ Energia
+    <progress id="energia" max="100"></progress>
+  </div>
+  <div class="stat">🧼 Higiene
+    <progress id="higiene" max="100"></progress>
+  </div>
+  <div class="stat">🎮 Diversão
+    <progress id="diversao" max="100"></progress>
+  </div>
+</div>
+
+<canvas id="game" width="800" height="500"></canvas>
+
+<p id="message">Use WASD ou as setas para andar.</p>
+
+<div>
+<button onclick="interagir()">✨ Interagir (E)</button>
+<button onclick="trocarCor()">👕 Trocar roupa</button>
+<button onclick="reiniciar()">🔄 Reiniciar</button>
+</div>
+
+<div class="controls">
+  <div><button onpointerdown="mover(0,-15)">⬆️</button></div>
+  <div>
+    <button onpointerdown="mover(-15,0)">⬅️</button>
+    <button onpointerdown="mover(0,15)">⬇️</button>
+    <button onpointerdown="mover(15,0)">➡️</button>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+
+const player = {
+  x: 390,
+  y: 300,
+  cor: "#4e7be9",
+  fome: 100,
+  energia: 100,
+  higiene: 100,
+  diversao: 100
+};
+
+const moveis = [
+  { x: 75, y: 75, w: 110, h: 75,
+    cor: "#8d64cf", nome: "Cama", tipo: "energia", emoji: "🛏️" },
+  { x: 255, y: 85, w: 100, h: 70,
+    cor: "#e9a24d", nome: "Geladeira", tipo: "fome", emoji: "🍔" },
+  { x: 500, y: 80, w: 130, h: 70,
+    cor: "#5a9dd6", nome: "Chuveiro", tipo: "higiene", emoji: "🚿" },
+  { x: 520, y: 305, w: 125, h: 75,
+    cor: "#d76fa8", nome: "TV", tipo: "diversao", emoji: "📺" },
+  { x: 120, y: 325, w: 110, h: 65,
+    cor: "#bc8256", nome: "Sofá", tipo: "diversao", emoji: "🛋️" }
+];
+
+const teclas = {};
+const limite = (v) => Math.max(0, Math.min(100, v));
+
+function desenhar() {
+  ctx.clearRect(0, 0, 800, 500);
+
+  // Jardim
+  ctx.fillStyle = "#a4d88d";
+  ctx.fillRect(0, 0, 800, 500);
+
+  // Piso da casa
+  ctx.fillStyle = "#f5dfb9";
+  ctx.fillRect(35, 35, 730, 430);
+
+  // Linhas do piso
+  ctx.strokeStyle = "#e4cda7";
+  ctx.lineWidth = 1;
+  for (let x = 35; x < 765; x += 40) {
+    ctx.beginPath();
+    ctx.moveTo(x,35);
+    ctx.lineTo(x,465);
+    ctx.stroke();
+  }
+  for (let y = 35; y < 465; y += 40) {
+    ctx.beginPath();
+    ctx.moveTo(35,y);
+    ctx.lineTo(765,y);
+    ctx.stroke();
+  }
+
+  // Paredes
+  ctx.strokeStyle = "#83664d";
+  ctx.lineWidth = 12;
+  ctx.strokeRect(35,35,730,430);
+
+  // Tapete
+  ctx.fillStyle = "#e8b8d7";
+  ctx.fillRect(305,250,180,120);
+
+  // Móveis
+  for (const m of moveis) {
+    ctx.fillStyle = "#0002";
+    ctx.fillRect(m.x+5,m.y+6,m.w,m.h);
+    ctx.fillStyle = m.cor;
+    ctx.fillRect(m.x,m.y,m.w,m.h);
+    ctx.strokeStyle = "#ffffff";
+    ctx.lineWidth = 3;
+    ctx.strokeRect(m.x,m.y,m.w,m.h);
+    ctx.font = "30px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText(m.emoji,m.x+m.w/2,m.y+42);
+    ctx.fillStyle = "#222";
+    ctx.font = "13px Arial";
+    ctx.fillText(m.nome,m.x+m.w/2,m.y+m.h-9);
+  }
+
+  // Sombra
+  ctx.fillStyle = "#0003";
+  ctx.beginPath();
+  ctx.ellipse(player.x,player.y+17,16,6,0,0,Math.PI*2);
+  ctx.fill();
+
+  // Corpo do personagem
+  ctx.fillStyle = player.cor;
+  ctx.fillRect(player.x-11,player.y-2,22,22);
+
+  // Cabeça
+  ctx.fillStyle = "#e8ac7b";
+  ctx.beginPath();
+  ctx.arc(player.x,player.y-12,13,0,Math.PI*2);
+  ctx.fill();
+
+  // Cabelo
+  ctx.fillStyle = "#503022";
+  ctx.beginPath();
+  ctx.arc(player.x,player.y-17,13,Math.PI,Math.PI*2);
+  ctx.fill();
+
+  // Olhos
+  ctx.fillStyle = "#222";
+  ctx.fillRect(player.x-6,player.y-12,3,3);
+  ctx.fillRect(player.x+4,player.y-12,3,3);
+
+  // Nome
+  ctx.font = "bold 14px Arial";
+  ctx.textAlign = "center";
+  ctx.fillStyle = "#222";
+  ctx.fillText("Meu Sim",player.x,player.y-35);
+}
+
+function mover(dx,dy) {
+  if (player.energia <= 0) {
+    mensagem("Seu Sim está cansado! Vá até a cama.");
+    return;
+  }
+  player.x = Math.max(55,Math.min(745,player.x+dx));
+  player.y = Math.max(65,Math.min(440,player.y+dy));
+  player.energia = limite(player.energia-0.03);
+  atualizarStatus();
+}
+
+function mensagem(t) {
+  document.getElementById("message").textContent = t;
+}
+
+function interagir() {
+  let perto = null;
+  let menor = Infinity;
+
+  for (const m of moveis) {
+    const cx = Math.max(m.x,Math.min(player.x,m.x+m.w));
+    const cy = Math.max(m.y,Math.min(player.y,m.y+m.h));
+    const distancia = Math.hypot(player.x-cx,player.y-cy);
+    if (distancia < 55 && distancia < menor) {
+      perto = m;
+      menor = distancia;
+    }
+  }
+
+  if (!perto) {
+    mensagem("Aproxime-se de um móvel para interagir!");
+    return;
+  }
+
+  player[perto.tipo] = limite(player[perto.tipo]+35);
+  mensagem("Você usou: " + perto.nome + "! ✨");
+  atualizarStatus();
+}
+
+function atualizarStatus() {
+  for (const tipo of ["fome","energia","higiene","diversao"]) {
+    document.getElementById(tipo).value = player[tipo];
+  }
+}
+
+function trocarCor() {
+  const cores = ["#4e7be9","#e85a9c","#55ad77","#e7a52b","#9c6ade"];
+  player.cor = cores[Math.floor(Math.random()*cores.length)];
+  mensagem("Roupa trocada!");
+}
+
+function reiniciar() {
+  player.x = 390;
+  player.y = 300;
+  for (const tipo of ["fome","energia","higiene","diversao"]) {
+    player[tipo] = 100;
+  }
+  atualizarStatus();
+  mensagem("Novo dia no Mini The Sims!");
+}
+
+document.addEventListener("keydown", e => {
+  const k = e.key.toLowerCase();
+  if (["arrowup","arrowdown","arrowleft","arrowright"," "].includes(k)) {
+    e.preventDefault();
+  }
+  teclas[k] = true;
+  if (k === "e" && !e.repeat) interagir();
+});
+
+document.addEventListener("keyup", e => {
+  teclas[e.key.toLowerCase()] = false;
+});
+
+function loop() {
+  let dx = 0, dy = 0;
+  if (teclas["w"] || teclas["arrowup"]) dy -= 3;
+  if (teclas["s"] || teclas["arrowdown"]) dy += 3;
+  if (teclas["a"] || teclas["arrowleft"]) dx -= 3;
+  if (teclas["d"] || teclas["arrowright"]) dx += 3;
+
+  if (dx || dy) mover(dx,dy);
+  desenhar();
+  requestAnimationFrame(loop);
+}
+
+// As necessidades diminuem com o tempo
+setInterval(() => {
+  player.fome = limite(player.fome-1);
+  player.higiene = limite(player.higiene-0.5);
+  player.diversao = limite(player.diversao-0.7);
+  player.energia = limite(player.energia-0.4);
+  atualizarStatus();
+},3000);
+
+atualizarStatus();
+loop();
+</script>
+<script src="script.js"></script></body>
 </html>
