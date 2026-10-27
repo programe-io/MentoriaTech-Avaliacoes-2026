@@ -6,88 +6,43 @@
   <link href="style.css" rel="stylesheet">
 </head>
 <body>
-  let tarefas = [];
-let geradorCodigo = 0;
+  <h1>📋 Gerenciador de Tarefas</h1>
+<p>Cadastre, organize e acompanhe suas tarefas.</p>
 
+<div class="resumo">
+  <div>Total de tarefas: <strong id="total">4</strong></div>
+  <div>Pendentes: <strong id="pendentes">3</strong></div>
+  <div>Concluídas: <strong id="concluidas">1</strong></div>
+</div>
 
-function validarDadosTarefa(titulo, prioridade){
-   
-    if (!titulo || titulo.length < 5){
-        throw new Error('O título deve ter no mínimo 5 caracteres');
-    }
-    if (prioridade < 1 || prioridade > 3){
-        throw new Error('Informe uma prioridade entre 1 e 3');
-    }
-}
+<h2>Cadastrar nova tarefa</h2>
 
+<div class="formulario">
+  <input id="titulo" type="text" placeholder="Digite o título da tarefa">
+  <select id="prioridade">
+    <option value="1">1 - Alta</option>
+    <option value="2" selected>2 - Média</option>
+    <option value="3">3 - Baixa</option>
+  </select>
+  <button id="adicionar">Cadastrar tarefa</button>
+</div>
 
-function buscarTarefa(codigoTarefa){
-    const tarefaBuscada = tarefas.find(t => t.codigo === codigoTarefa);
-    
-    if (!tarefaBuscada){
-        throw new Error('Código de tarefa não encontrado');
-    }
-    return tarefaBuscada;
-}
+<p id="mensagem"></p>
 
+<h2>Lista de tarefas</h2>
 
-function cadastrarTarefa(titulo, prioridade){
-    validarDadosTarefa(titulo, prioridade);
-    
-    let tarefa = {
-        'codigo': ++geradorCodigo, 
-        'titulo': titulo,
-        'prioridade': prioridade,
-        'status': true
-    };
-    
-    tarefas.push(tarefa);
-}
-
-
-function listarTarefas(){
-    return tarefas;
-}
-
-
-function concluirTarefa(codigo){
-    let tarefa = buscarTarefa(codigo);
-    
-    if (tarefa.status === false){
-        throw new Error('Tarefa já estava como concluída');
-    }
-    tarefa.status = false;
-}
-
-
-function alterarPrioridade(codigo, novaPrioridade){
-    let tarefa = buscarTarefa(codigo);
-    
-   
-    validarDadosTarefa(tarefa.titulo, novaPrioridade);
-    
-    tarefa.prioridade = novaPrioridade;
-}
-
-
-try {
-    console.log("--- Executando testes do sistema ---");
-    
-   
-    cadastrarTarefa('Cadastrar Clientes', 1);
-    console.log("Após cadastro:", listarTarefas());
-    
-    
-    alterarPrioridade(1, 2);
-    console.log("Após alteração de prioridade:", listarTarefas());
-    
-    
-    concluirTarefa(1);
-    console.log("Após conclusão da tarefa:", listarTarefas());
-
-} catch (error) {
-    console.error("Erro capturado:", error.message); 
-}
+<table>
+  <thead>
+    <tr>
+      <th>Código</th>
+      <th>Título</th>
+      <th>Prioridade</th>
+      <th>Status</th>
+      <th>Ações</th>
+    </tr>
+  </thead>
+  <tbody id="lista"></tbody>
+</table>
   <script src="script.js"></script>
   
 </body>

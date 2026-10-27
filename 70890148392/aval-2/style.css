@@ -1,82 +1,127 @@
-let tarefas = [];
-let geradorCodigo = 0;
-
-
-function validarDadosTarefa(titulo, prioridade){
-   
-    if (!titulo || titulo.length < 5){
-        throw new Error('O título deve ter no mínimo 5 caracteres');
-    }
-    if (prioridade < 1 || prioridade > 3){
-        throw new Error('Informe uma prioridade entre 1 e 3');
-    }
+body {
+  font-family: Arial, sans-serif;
+  background: #f3f4f6;
+  color: #222;
+  padding: 25px;
+  margin: 0;
 }
 
-
-function buscarTarefa(codigoTarefa){
-    const tarefaBuscada = tarefas.find(t => t.codigo === codigoTarefa);
-    
-    if (!tarefaBuscada){
-        throw new Error('Código de tarefa não encontrado');
-    }
-    return tarefaBuscada;
+h1 {
+  text-align: center;
+  color: #4f46e5;
 }
 
-
-function cadastrarTarefa(titulo, prioridade){
-    validarDadosTarefa(titulo, prioridade);
-    
-    let tarefa = {
-        'codigo': ++geradorCodigo, 
-        'titulo': titulo,
-        'prioridade': prioridade,
-        'status': true
-    };
-    
-    tarefas.push(tarefa);
+h2 {
+  margin-top: 30px;
+  color: #333;
 }
 
-
-function listarTarefas(){
-    return tarefas;
+.resumo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin: 25px 0;
 }
 
-
-function concluirTarefa(codigo){
-    let tarefa = buscarTarefa(codigo);
-    
-    if (tarefa.status === false){
-        throw new Error('Tarefa já estava como concluída');
-    }
-    tarefa.status = false;
+.resumo div {
+  flex: 1;
+  min-width: 130px;
+  background: white;
+  padding: 18px;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px #ddd;
 }
 
-
-function alterarPrioridade(codigo, novaPrioridade){
-    let tarefa = buscarTarefa(codigo);
-    
-   
-    validarDadosTarefa(tarefa.titulo, novaPrioridade);
-    
-    tarefa.prioridade = novaPrioridade;
+.resumo strong {
+  display: block;
+  font-size: 25px;
+  color: #4f46e5;
+  margin-top: 8px;
 }
 
+.formulario {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
 
-try {
-    console.log("--- Executando testes do sistema ---");
-    
-   
-    cadastrarTarefa('Cadastrar Clientes', 1);
-    console.log("Após cadastro:", listarTarefas());
-    
-    
-    alterarPrioridade(1, 2);
-    console.log("Após alteração de prioridade:", listarTarefas());
-    
-    
-    concluirTarefa(1);
-    console.log("Após conclusão da tarefa:", listarTarefas());
+input, select, button {
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
 
-} catch (error) {
-    console.error("Erro capturado:", error.message); 
+input {
+  flex: 1;
+  min-width: 180px;
+}
+
+button {
+  background: #4f46e5;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #3730a3;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  margin-top: 15px;
+}
+
+th, td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+th {
+  background: #4f46e5;
+  color: white;
+}
+
+.status-pendente {
+  color: #b45309;
+  font-weight: bold;
+}
+
+.status-concluida {
+  color: #15803d;
+  font-weight: bold;
+}
+
+.acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.acoes button {
+  padding: 8px;
+  font-size: 12px;
+}
+
+#mensagem {
+  font-weight: bold;
+  color: #4f46e5;
+}
+
+@media (max-width: 650px) {
+  body {
+    padding: 10px;
+  }
+
+  table {
+    font-size: 12px;
+  }
+
+  th, td {
+    padding: 7px;
+  }
 }
