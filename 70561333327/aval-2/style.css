@@ -1,232 +1,466 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Slide - Operadores Aritméticos</title>
 
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-        body {
-            background: #111827;
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
+:root {
+    --primary: #6558d3;
+    --primary-dark: #4c3fba;
+    --background: #f5f6fc;
+    --text: #20243a;
+    --muted: #7b8198;
+    --border: #e6e8f0;
+}
 
-        .slide {
-            width: 1280px;
-            height: 720px;
-            background: white;
-            padding: 55px 75px;
-            position: relative;
-            overflow: hidden;
-        }
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: var(--background);
+    color: var(--text);
+}
 
-        h1 {
-            color: #0891b2;
-            font-size: 50px;
-            margin-bottom: 12px;
-        }
+.sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    width: 240px;
+    padding: 28px 18px;
+    background: #242341;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
 
-        .subtitulo {
-            color: #4b5563;
-            font-size: 22px;
-            margin-bottom: 35px;
-        }
+.sidebar h2 {
+    font-size: 24px;
+    margin-bottom: 28px;
+}
 
-        .conteudo {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 25px;
-        }
+.menu-label {
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: #aaa9c5;
+    margin-bottom: 5px;
+}
 
-        .card {
-            background: #ecfeff;
-            border-left: 6px solid #0891b2;
-            padding: 22px;
-            border-radius: 10px;
-        }
+.sidebar a {
+    color: #d0cfe2;
+    text-decoration: none;
+    padding: 13px;
+    border-radius: 8px;
+    font-size: 14px;
+}
 
-        .card h2 {
-            color: #0e7490;
-            font-size: 25px;
-            margin-bottom: 14px;
-        }
+.sidebar a:hover,
+.sidebar a.active {
+    background: #403d69;
+    color: white;
+}
 
-        .card p,
-        .card li {
-            color: #374151;
-            font-size: 18px;
-            line-height: 1.5;
-        }
+.sidebar-footer {
+    margin-top: auto;
+    color: #aaa9c5;
+    font-size: 12px;
+    line-height: 1.8;
+}
 
-        ul {
-            padding-left: 22px;
-        }
+.main {
+    margin-left: 240px;
+    padding: 30px;
+    max-width: 1800px;
+}
 
-        .operadores {
-            grid-column: span 2;
-            background: #f0fdfa;
-            border-left-color: #16a34a;
-        }
+.topbar,
+.task-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+}
 
-        .tabela {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 8px;
-        }
+.topbar {
+    margin-bottom: 28px;
+}
 
-        .tabela th {
-            background: #0891b2;
-            color: white;
-            padding: 10px;
-            font-size: 18px;
-        }
+h1 {
+    font-size: 28px;
+    margin-bottom: 8px;
+}
 
-        .tabela td {
-            padding: 9px;
-            text-align: center;
-            border-bottom: 1px solid #cbd5e1;
-            font-size: 17px;
-            color: #374151;
-        }
+.topbar p,
+.task-header p {
+    font-size: 14px;
+    color: var(--muted);
+}
 
-        .simbolo {
-            font-size: 24px;
-            font-weight: bold;
-            color: #0e7490;
-        }
+.today {
+    color: var(--primary);
+    background: #eeecff;
+    padding: 10px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    white-space: nowrap;
+}
 
-        .exemplo {
-            margin-top: 22px;
-            text-align: center;
-            font-size: 25px;
-            color: #1f2937;
-        }
+.stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+    margin-bottom: 25px;
+}
 
-        .codigo {
-            display: inline-block;
-            margin-top: 10px;
-            background: #1f2937;
-            color: #67e8f9;
-            padding: 12px 30px;
-            border-radius: 8px;
-            font-family: monospace;
-            font-size: 22px;
-        }
+.stat-card,
+.panel {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 22px;
+    box-shadow: 0 4px 15px #24234108;
+}
 
-        .rodape {
-            position: absolute;
-            bottom: 22px;
-            right: 45px;
-            color: #9ca3af;
-            font-size: 14px;
-        }
-    </style>
-</head>
+.stat-card span {
+    font-size: 13px;
+    color: var(--muted);
+}
 
-<body>
+.stat-card h2 {
+    font-size: 29px;
+    margin-top: 18px;
+    color: var(--primary);
+}
 
-    <div class="slide">
+.panel {
+    margin-bottom: 25px;
+    scroll-margin-top: 20px;
+}
 
-        <h1>OPERADORES ARITMÉTICOS</h1>
+.panel h2 {
+    font-size: 19px;
+    margin-bottom: 20px;
+}
 
-        <p class="subtitulo">
-            Símbolos utilizados para realizar operações matemáticas em programas.
-        </p>
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    margin-bottom: 20px;
+}
 
-        <div class="conteudo">
+.form-grid .full {
+    grid-column: 1 / -1;
+}
 
-            <div class="card">
-                <h2>🔹 O que são?</h2>
-                <p>
-                    São operadores utilizados para realizar cálculos
-                    matemáticos com valores e variáveis, como soma,
-                    subtração, multiplicação e divisão.
-                </p>
-            </div>
+label {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: bold;
+}
 
-            <div class="card">
-                <h2>🔹 Principais operadores</h2>
-                <ul>
-                    <li><strong>+</strong> Soma</li>
-                    <li><strong>-</strong> Subtração</li>
-                    <li><strong>*</strong> Multiplicação</li>
-                    <li><strong>/</strong> Divisão</li>
-                    <li><strong>%</strong> Resto da divisão</li>
-                </ul>
-            </div>
+input,
+textarea,
+select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #d8dbea;
+    border-radius: 7px;
+    background: white;
+    color: var(--text);
+    font: inherit;
+    font-size: 14px;
+    min-width: 0;
+}
 
-            <div class="card operadores">
-                <h2>📊 Exemplos</h2>
+textarea {
+    resize: vertical;
+}
 
-                <table class="tabela">
-                    <tr>
-                        <th>Operador</th>
-                        <th>Operação</th>
-                        <th>Exemplo</th>
-                        <th>Resultado</th>
-                    </tr>
+input:focus,
+textarea:focus,
+select:focus {
+    outline: 2px solid #d9d5ff;
+    border-color: var(--primary);
+}
 
-                    <tr>
-                        <td class="simbolo">+</td>
-                        <td>Soma</td>
-                        <td>10 + 5</td>
-                        <td>15</td>
-                    </tr>
+button {
+    padding: 11px 16px;
+    border: none;
+    border-radius: 7px;
+    background: var(--primary);
+    color: white;
+    font-weight: bold;
+    font-size: 13px;
+    cursor: pointer;
+}
 
-                    <tr>
-                        <td class="simbolo">-</td>
-                        <td>Subtração</td>
-                        <td>10 - 5</td>
-                        <td>5</td>
-                    </tr>
+button:hover {
+    filter: brightness(.94);
+}
 
-                    <tr>
-                        <td class="simbolo">*</td>
-                        <td>Multiplicação</td>
-                        <td>10 * 5</td>
-                        <td>50</td>
-                    </tr>
+.form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
 
-                    <tr>
-                        <td class="simbolo">/</td>
-                        <td>Divisão</td>
-                        <td>10 / 5</td>
-                        <td>2</td>
-                    </tr>
+.btn-secondary {
+    background: #e8e9f2;
+    color: var(--text);
+}
 
-                    <tr>
-                        <td class="simbolo">%</td>
-                        <td>Resto</td>
-                        <td>10 % 3</td>
-                        <td>1</td>
-                    </tr>
-                </table>
-            </div>
+.task-header {
+    margin-bottom: 22px;
+}
 
-        </div>
+.task-header h2 {
+    margin-bottom: 6px;
+}
 
-        <div class="exemplo">
-            <strong>Exemplo em programação:</strong>
-            <div class="codigo">
-                resultado = 10 + 5 * 2;
-            </div>
-        </div>
+.task-header input {
+    max-width: 270px;
+}
 
-        <div class="rodape">
-            Programação — Operadores Aritméticos
-        </div>
+.filters {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
 
-    </div>
+.filter {
+    background: #f0f1f8;
+    color: #666b82;
+}
 
-</body>
-</html>
+.filter.active {
+    background: var(--primary);
+    color: white;
+}
+
+.task-list {
+    display: grid;
+    gap: 12px;
+}
+
+.task-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 13px;
+    padding: 17px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    min-width: 0;
+}
+
+.task-card.done {
+    background: #fafbfe;
+}
+
+.task-check {
+    width: 19px;
+    height: 19px;
+    margin-top: 3px;
+    accent-color: var(--primary);
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.task-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.task-info h3 {
+    font-size: 15px;
+    margin-bottom: 7px;
+    overflow-wrap: anywhere;
+}
+
+.task-info p {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 10px;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.done .task-info h3 {
+    text-decoration: line-through;
+    color: var(--muted);
+}
+
+.task-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.tag {
+    padding: 5px 8px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.priority-baixa {
+    background: #e0f2fe;
+    color: #075985;
+}
+
+.priority-media {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.priority-alta {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.deadline {
+    font-size: 11px;
+    color: var(--muted);
+}
+
+.deadline.overdue {
+    color: #b91c1c;
+    font-weight: bold;
+}
+
+.task-actions {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.task-actions button {
+    padding: 8px 10px;
+}
+
+.btn-edit {
+    background: #e5e7ff;
+    color: #4940a8;
+}
+
+.btn-delete {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.empty-message {
+    text-align: center;
+    color: var(--muted);
+    padding: 28px 10px;
+    font-size: 14px;
+}
+
+.progress-area {
+    margin-top: 26px;
+}
+
+.progress-text {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    margin-bottom: 10px;
+}
+
+.progress-bar {
+    height: 9px;
+    border-radius: 20px;
+    background: #ececf5;
+    overflow: hidden;
+}
+
+#barraProgresso {
+    height: 100%;
+    width: 0;
+    background: var(--primary);
+    border-radius: 20px;
+    transition: width .3s;
+}
+
+footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: 12px;
+    padding: 18px;
+}
+
+[hidden] {
+    display: none !important;
+}
+
+@media (max-width: 1100px) {
+    .stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 700px) {
+    .sidebar {
+        position: static;
+        width: 100%;
+        padding: 18px;
+    }
+
+    .sidebar h2 {
+        margin-bottom: 8px;
+    }
+
+    .sidebar-footer {
+        display: none;
+    }
+
+    .main {
+        margin-left: 0;
+        padding: 18px 12px;
+    }
+
+    .topbar,
+    .task-header {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    h1 {
+        font-size: 24px;
+    }
+
+    .stats {
+        gap: 10px;
+    }
+
+    .stat-card,
+    .panel {
+        padding: 15px;
+    }
+
+    .stat-card h2 {
+        font-size: 24px;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-grid .full {
+        grid-column: auto;
+    }
+
+    .task-header input {
+        max-width: none;
+    }
+
+    .task-card {
+        flex-wrap: wrap;
+    }
+
+    .task-actions {
+        width: 100%;
+        padding-left: 31px;
+    }
+}
