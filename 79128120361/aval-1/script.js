@@ -1,13 +1,13 @@
-document.querySelectorAll("button").forEach(function(botao) {
-    botao.onclick = function() {
-        if (botao.innerText === "Curtir") {
-            botao.innerText = "❤️ Curtido";
-        } else if (botao.innerText === "Comentar") {
-            alert("Você clicou em comentar!");
-        } else if (botao.innerText === "Publicar") {
-            alert("Publicação realizada!");
-        } else {
-            botao.innerText = "Curtir";
-        }
-    };
+
+document.querySelectorAll('a[href^="#"]').forEach(function (link) {
+  link.addEventListener("click", function (evento) {
+    const id = link.getAttribute("href").slice(1);
+    const destino = document.getElementById(id);
+
+    if (destino && destino.classList.contains("extra")) {
+      evento.preventDefault();
+      destino.hidden = !destino.hidden;
+      link.textContent = destino.hidden ? "Leia mais" : "Leia menos";
+    }
+  });
 });
