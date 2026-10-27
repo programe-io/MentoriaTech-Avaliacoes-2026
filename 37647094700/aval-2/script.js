@@ -1,0 +1,70 @@
+
+let tarefas = [];
+let geradorCodigo = 0;
+
+function validarDadosTarefas(titulo, prioridade) {
+    if (titulo.length < 5) {
+        throw new Error('O título deve ter no mínimo 5 caracteres');
+    }
+
+    if (prioridade < 1 || prioridade > 3) {
+        throw new Error('Informe uma prioridade entre 1 e 3');
+    }
+}
+
+function cadastrarTarefa(titulo, prioridade) {
+    validarDadosTarefas(titulo, prioridade);
+
+    let tarefa = {
+        codigo: ++geradorCodigo,
+        titulo: titulo,
+        prioridade: prioridade,
+        status: true
+    };
+
+    tarefas.push(tarefa);
+    return tarefa;
+}
+
+function listarTarefas() {
+    return tarefas;
+}
+
+function buscarTarefa(codigo) {
+    let tarefa = tarefas.find(t => t.codigo === codigo);
+
+    if (!tarefa) {
+        throw new Error('Tarefa não encontrada');
+    }
+
+    return tarefa;
+}
+
+function concluirTarefa(codigo) {
+    let tarefa = buscarTarefa(codigo);
+
+    if (tarefa.status === false) {
+        throw new Error('Tarefa já estava concluída');
+    }
+
+    tarefa.status = false;
+}
+
+function alterarPrioridade(codigo, novaPrioridade) {
+    let tarefa = buscarTarefa(codigo);
+
+    if (novaPrioridade < 1 || novaPrioridade > 3) {
+        throw new Error('Informe uma prioridade entre 1 e 3');
+    }
+
+    tarefa.prioridade = novaPrioridade;
+}
+
+// Testes
+cadastrarTarefa('Cadastrar Clientes', 1);
+
+console.log(listarTarefas());
+
+alterarPrioridade(1, 2);
+
+console.log(listarTarefas());
