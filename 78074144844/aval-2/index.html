@@ -1,0 +1,289 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agenda de Beleza</title>
+  <link rel="stylesheet" href="style.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"><link href="style.css" rel="stylesheet"></head>
+<body>
+
+<header>
+  <div class="logo">Agenda de Beleza ✿</div>
+  <nav>
+    <a href="#inicio">Início</a>
+    <a href="#servicos">Serviços</a>
+    <a href="#agendar">Agendar</a>
+    <a href="#meus">Meus horários</a>
+  </nav>
+</header>
+
+<section class="hero" id="inicio">
+  <h1>Seu momento de beleza! 💗</h1>
+  <p>Agende seus serviços favoritos de forma rápida e fácil.</p>
+  <a class="botao" href="#agendar">Agendar agora</a>
+</section>
+
+<section id="servicos">
+  <h2>Nossos serviços ✨</h2>
+  <div class="grid" id="lista-servicos"></div>
+</section>
+
+<section id="agendar" class="fundo-lilas">
+  <h2>Faça seu agendamento</h2>
+  <form id="form">
+    <label for="nome">Nome completo</label>
+    <input id="nome" required maxlength="100" placeholder="Seu nome">
+
+    <label for="telefone">Telefone</label>
+    <input id="telefone" type="tel" required maxlength="20" placeholder="Seu telefone">
+
+    <label for="email">E-mail</label>
+    <input id="email" type="email" required maxlength="150" placeholder="Seu e-mail">
+
+    <label for="servico">Serviço</label>
+    <select id="servico" required>
+      <option value="">Selecione um serviço</option>
+    </select>
+
+    <label for="profissional">Profissional</label>
+    <select id="profissional" required>
+      <option value="">Selecione</option>
+      <option>Ana</option>
+      <option>Beatriz</option>
+      <option>Camila</option>
+    </select>
+
+    <label for="data">Data</label>
+    <input type="date" id="data" required>
+
+    <label for="horario">Horário</label>
+    <select id="horario" required>
+      <option value="">Escolha uma data</option>
+    </select>
+
+    <button type="submit">Confirmar agendamento 💕</button>
+  </form>
+  <p id="mensagem" role="status"></p>
+</section>
+
+<section id="meus">
+  <h2>Meus agendamentos 📅</h2>
+  <div class="grid" id="agendamentos"></div>
+</section>
+
+<footer>Agenda de Beleza © 2026 — Feito com carinho 💗</footer>
+
+<script>
+const servicos = [
+  {nome:"Manicure", icone:"💅", preco:30},
+  {nome:"Pedicure", icone:"🦶", preco:35},
+  {nome:"Maquiagem", icone:"💄", preco:100},
+  {nome:"Sobrancelhas", icone:"✨", preco:35},
+  {nome:"Penteado", icone:"💇‍♀️", preco:80},
+  {nome:"Hidratação capilar", icone:"🧴", preco:60}
+];
+
+const horarios = ["08:00","09:00","10:00","11:00","13:00","14:00","15:00","16:00","17:00"];
+const chave = "agendaBeleza";
+const $ = id => document.getElementById(id);
+const moeda = n => Number(n).toLocaleString("pt-BR", {
+  style:"currency", currency:"BRL"
+});
+
+function hoje() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+}
+
+$("data").min = hoje();
+
+let lista = [];
+try {
+  const dados = JSON.parse(localStorage.getItem(chave) || "[]");
+  if (Array.isArray(dados)) {
+    lista = dados.filter(a => a && typeof a.id === "string" &&
+      typeof a.data === "string" && typeof a.horario === "string" &&
+      typeof a.profissional === "string" && typeof a.nome === "string" &&
+      servicos.some(s => s.nome === a.servico));
+  }
+} catch (e) {
+  lista = [];
+}
+
+function salvar() {
+  try {
+    localStorage.setItem(chave, JSON.stringify(lista));
+    return true;
+  } catch (e) {
+    $("mensagem").textContent = "Não foi possível salvar os dados.";
+    return false;
+  }
+}
+
+// Exibe os serviços e cria as opções do formulário.
+servicos.forEach(s => {
+  const card = document.createElement("article");
+  card.className = "card";
+
+  const titulo = document.createElement("h3");
+  titulo.textContent = `${s.icone} ${s.nome}`;
+
+  const preco = document.createElement("p");
+  preco.textContent = moeda(s.preco);
+
+  const botao = document.createElement("button");
+  botao.type = "button";
+  botao.textContent = "Agendar";
+  botao.onclick = () => {
+    $("servico").value = s.nome;
+    $("agendar").scrollIntoView({behavior:"smooth"});
+  };
+
+  card.append(titulo, preco, botao);
+  $("lista-servicos").append(card);
+  $("servico").add(new Option(`${s.nome} - ${moeda(s.preco)}`, s.nome));
+});
+
+// Atualiza os horários disponíveis.
+function atualizarHorarios() {
+  const data = $("data").value;
+  const profissional = $("profissional").value;
+  const select = $("horario");
+
+  select.replaceChildren(new Option("Selecione um horário", ""));
+
+  horarios.forEach(h => {
+    const ocupado = lista.some(a =>
+      a.data === data && a.horario === h &&
+      a.profissional === profissional
+    );
+
+    const passou = data === hoje() &&
+      h <= new Date().toTimeString().slice(0,5);
+
+    if (data >= hoje() && !ocupado && !passou) {
+      select.add(new Option(h, h));
+    }
+  });
+
+  if (select.options.length === 1) {
+    select.options[0].textContent = data
+      ? "Nenhum horário disponível" : "Escolha uma data";
+  }
+}
+
+$("data").addEventListener("change", atualizarHorarios);
+$("profissional").addEventListener("change", atualizarHorarios);
+
+// Salva um novo agendamento.
+$("form").addEventListener("submit", e => {
+  e.preventDefault();
+
+  const data = $("data").value;
+  const horario = $("horario").value;
+  const profissional = $("profissional").value;
+  const servico = servicos.find(s => s.nome === $("servico").value);
+
+  if (!servico || data < hoje() || !horario) {
+    $("mensagem").textContent = "Confira os dados e escolha um horário válido.";
+    return;
+  }
+
+  if (lista.some(a => a.data === data && a.horario === horario &&
+      a.profissional === profissional)) {
+    atualizarHorarios();
+    $("mensagem").textContent = "Horário ocupado. Escolha outro.";
+    return;
+  }
+
+  const item = {
+    id: Date.now().toString() + Math.random().toString(36).slice(2),
+    nome: $("nome").value.trim(),
+    telefone: $("telefone").value.trim(),
+    email: $("email").value.trim(),
+    servico: servico.nome,
+    preco: servico.preco,
+    profissional,
+    data,
+    horario
+  };
+
+  if (!item.nome || !item.telefone || !item.email) return;
+
+  lista.push(item);
+  if (!salvar()) {
+    lista.pop();
+    return;
+  }
+
+  $("form").reset();
+  $("data").min = hoje();
+  atualizarHorarios();
+  renderizar();
+  $("mensagem").textContent = "Agendamento realizado com sucesso! 💗";
+});
+
+// Exibe os agendamentos e permite cancelar.
+function renderizar() {
+  const area = $("agendamentos");
+  area.replaceChildren();
+
+  if (!lista.length) {
+    const vazio = document.createElement("p");
+    vazio.className = "card";
+    vazio.textContent = "Você ainda não tem agendamentos.";
+    area.append(vazio);
+    return;
+  }
+
+  [...lista].sort((a,b) =>
+    (a.data+a.horario).localeCompare(b.data+b.horario)
+  ).forEach(a => {
+    const card = document.createElement("article");
+    card.className = "card";
+
+    const titulo = document.createElement("h3");
+    titulo.textContent = a.servico;
+
+    const dados = document.createElement("p");
+    dados.textContent = `${a.nome} | ${a.telefone} | ${a.email}`;
+
+    const data = document.createElement("p");
+    data.textContent = `${a.data.split("-").reverse().join("/")} às ${a.horario}`;
+
+    const prof = document.createElement("p");
+    prof.textContent = "Profissional: " + a.profissional;
+
+    const preco = document.createElement("p");
+    preco.textContent = moeda(a.preco);
+
+    const botao = document.createElement("button");
+    botao.textContent = "Cancelar";
+    botao.onclick = () => {
+      if (!confirm("Deseja cancelar este agendamento?")) return;
+
+      const anterior = lista;
+      lista = lista.filter(x => x.id !== a.id);
+
+      if (salvar()) {
+        renderizar();
+        atualizarHorarios();
+        $("mensagem").textContent = "Agendamento cancelado!";
+      } else {
+        lista = anterior;
+      }
+    };
+
+    card.append(titulo, dados, data, prof, preco, botao);
+    area.append(card);
+  });
+}
+
+atualizarHorarios();
+renderizar();
+</script>
+</body>
+</html>
