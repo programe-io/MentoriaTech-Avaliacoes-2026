@@ -1,0 +1,153 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Minhas Tarefas</title>
+  <link rel="stylesheet" href="style.css">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+<main>
+  <h1>✓ Minhas Tarefas</h1>
+  <p>Organize seu dia, uma tarefa por vez.</p>
+
+  <form id="form">
+    <input id="titulo" type="text"
+      placeholder="Nome da tarefa" required>
+
+    <select id="prioridade">
+      <option value="1">Prioridade baixa</option>
+      <option value="2">Prioridade média</option>
+      <option value="3">Prioridade alta</option>
+    </select>
+
+    <button type="submit">+ Adicionar tarefa</button>
+  </form>
+
+  <div id="mensagem"></div>
+  <h3>Minha lista</h3>
+  <div id="lista"></div>
+</main>
+
+<script>
+let tarefas = [];
+let geradorCodigo = 0;
+
+function validarDadosTarefa(titulo, prioridade) {
+  if (titulo.length < 5)
+    throw new Error("O título deve ter no mínimo 5 caracteres.");
+  if (prioridade < 1 || prioridade > 3)
+    throw new Error("Escolha uma prioridade entre 1 e 3.");
+}
+
+function buscarTarefa(codigo) {
+  const tarefa = tarefas.find(t => t.codigo === codigo);
+  if (!tarefa) throw new Error("Tarefa não encontrada.");
+  return tarefa;
+}
+
+function cadastrarTarefa(titulo, prioridade) {
+  validarDadosTarefa(titulo, prioridade);
+  tarefas.push({
+    codigo: ++geradorCodigo,
+    titulo,
+    prioridade,
+    status: true
+  });
+}
+
+function concluirTarefa(codigo) {
+  const tarefa = buscarTarefa(codigo);
+  if (!tarefa.status) throw new Error("Tarefa já concluída.");
+  tarefa.status = false;
+}
+
+function alterarPrioridade(codigo, prioridade) {
+  const tarefa = buscarTarefa(codigo);
+  validarDadosTarefa(tarefa.titulo, prioridade);
+  tarefa.prioridade = prioridade;
+}
+
+function renderizar() {
+  const lista = document.getElementById("lista");
+  lista.innerHTML = "";
+
+  if (!tarefas.length) {
+    lista.textContent = "Nenhuma tarefa cadastrada.";
+    return;
+  }
+
+  tarefas.forEach(t => {
+    const item = document.createElement("div");
+    item.className = "tarefa" + (!t.status ? " concluida" : "");
+
+    const titulo = document.createElement("strong");
+    titulo.textContent = (t.status ? "○ " : "✓ ") + t.titulo;
+
+    const info = document.createElement("small");
+    info.textContent = "Código: " + t.codigo +
+      " • Prioridade: " + ["Baixa", "Média", "Alta"][t.prioridade - 1] +
+      " • " + (t.status ? "Pendente" : "Concluída");
+
+    item.append(titulo, info);
+
+    if (t.status) {
+      const acoes = document.createElement("div");
+      acoes.className = "acoes";
+
+      const concluir = document.createElement("button");
+      concluir.textContent = "Concluir";
+      concluir.onclick = () => executar(() => concluirTarefa(t.codigo));
+
+      const alterar = document.createElement("button");
+      alterar.textContent = "Prioridade";
+      alterar.className = "secundario";
+      alterar.onclick = () => {
+        const valor = prompt("Nova prioridade: 1 baixa, 2 média, 3 alta");
+        if (valor === null || valor.trim() === "") return;
+
+        executar(() => {
+          if (!["1", "2", "3"].includes(valor.trim()))
+            throw new Error("Informe 1, 2 ou 3.");
+          alterarPrioridade(t.codigo, Number(valor));
+        });
+      };
+
+      acoes.append(concluir, alterar);
+      item.append(acoes);
+    }
+
+    lista.append(item);
+  });
+}
+
+function executar(acao) {
+  const mensagem = document.getElementById("mensagem");
+  try {
+    acao();
+    mensagem.textContent = "Operação realizada com sucesso!";
+    renderizar();
+  } catch (erro) {
+    mensagem.textContent = erro.message;
+  }
+}
+
+document.getElementById("form").addEventListener("submit", function(event) {
+  event.preventDefault();
+
+  executar(() => {
+    cadastrarTarefa(
+      document.getElementById("titulo").value.trim(),
+      Number(document.getElementById("prioridade").value)
+    );
+    document.getElementById("titulo").value = "";
+  });
+});
+
+renderizar();
+</script>
+
+<script src="script.js"></script></body>
+</html>
