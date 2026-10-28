@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciador de Tarefas</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 500px; margin: 20px auto; padding: 0 10px; }
+        .campo { margin-bottom: 10px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, select, button { width: 100%; padding: 8px; margin-top: 5px; box-sizing: border-box; }
+        button { background-color: #28a745; color: white; border: none; cursor: pointer; font-weight: bold; }
+        button:hover { background-color: #218838; }
+        ul { list-style: none; padding: 0; }
+        li { background: #f4f4f4; margin-bottom: 5px; padding: 10px; display: flex; justify-content: space-between; align-items: center; border-left: 5px solid #ccc; }
+        .prioridade-1 { border-left-color: #dc3545; } /* Alta - Vermelho */
+        .prioridade-2 { border-left-color: #ffc107; } /* Média - Amarelo */
+        .prioridade-3 { border-left-color: #28a745; } /* Baixa - Verde */
+        .concluida { text-decoration: line-through; color: #888; opacity: 0.7; }
+        .btn-concluir { background: #007bff; width: auto; margin: 0 5px; }
+        .btn-excluir { background: #dc3545; width: auto; margin: 0; }
+        .acoes { display: flex; }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+    <h2>📝 Gerenciador de Tarefas</h2>
+
+    <!-- Formulário de Cadastro -->
+    <div class="campo">
+        <label for="titulo">Título da Tarefa (mínimo 5 caracteres):</label>
+        <input type="text" id="titulo" placeholder="Ex: Estudar JavaScript">
+    </div>
+    
+    <div class="campo">
+        <label for="prioridade">Prioridade:</label>
+        <select id="prioridade">
+            <option value="1">1 (Alta)</option>
+            <option value="2">2 (Média)</option>
+            <option value="3">3 (Baixa)</option>
+        </select>
+    </div>
+
+    <button onclick="manipularCadastro()">Cadastrar Tarefa</button>
+
+    <h3>Minhas Tarefas</h3>
+    <!-- Lista onde as tarefas serão renderizadas -->
+    <ul id="listaTarefas"></ul>
+
+    <script>
+        let tarefas = []; 
+        let proximoCodigo = 1; 
+
+        // Função de cadastro corrigida
+        function cadastrarTarefa(titulo, prioridade) { 
+            if (!titulo || titulo.trim().length < 5) { 
+                return { sucesso: false, mensagem: "Erro: O título deve ter no mínimo 5 caracteres." }; 
+            } 
+
+            const p = parseInt(prioridade); 
+            if (isNaN(p) || p < 1 || p > 3) { 
+                return { sucesso: false, mensagem: "Erro: A prioridade deve ser um valor entre 1 (alta) e 3 (baixa)." }; 
+            } 
+
+            const novaTarefa = { 
+                codigo: proximoCodigo++, 
+                titulo: titulo.trim(), 
+                prioridade: p, 
+                concluida: false 
+            }; 
+
+            tarefas.push(novaTarefa); 
+            return { sucesso: true, mensagem: `Tarefa "${novaTarefa.titulo}" cadastrada com sucesso!` }; 
+        } 
+
+        // Nova função para alternar o status de concluída
+        function alternarConclusao(codigo) {
+            const tarefa = tarefas.find(t => t.codigo === codigo);
+            if (tarefa) {
+                tarefa.concluida = !tarefa.concluida;
+                renderizarTarefas();
+            }
+        }
+
+        // Nova função para deletar uma tarefa
+        function excluirTarefa(codigo) {
+            tarefas = tarefas.filter(t => t.codigo !== codigo);
+            renderizarTarefas();
+        }
+
+        // Função corrigida e expandida para renderizar a lista com os botões de ação
+        function renderizarTarefas() { 
+            const ul = document.getElementById("listaTarefas"); 
+            if (!ul) return; 
+
+            ul.innerHTML = ""; 
+
+            if (tarefas.length === 0) { 
+                ul.innerHTML = "<li>Nenhuma tarefa cadastrada.</li>"; 
+                return; 
+            }
+
+            tarefas.forEach(tarefa => {
+                const li = document.createElement("li");
+                // Adiciona uma classe de borda baseada na prioridade
+                li.className = `prioridade-${tarefa.prioridade}`;
+
+                // Cria o texto da tarefa e risca se estiver concluída
+                const span = document.createElement("span");
+                span.textContent = `${tarefa.codigo} - ${tarefa.titulo}`;
+                if (tarefa.concluida) {
+                    span.className = "concluida";
+                }
+
+                // Container para os botões
+                const divAcoes = document.createElement("div");
+                divAcoes.className = "acoes";
+
+                // Botão de Concluir
+                const btnConcluir = document.createElement("button");
+                btnConcluir.textContent = tarefa.concluida ? "Desmarcar" : "Concluir";
+                btnConcluir.className = "btn-concluir";
+                btnConcluir.onclick = () => alternarConclusao(tarefa.codigo);
+
+                // Botão de Excluir
+                const btnExcluir = document.createElement("button");
+                btnExcluir.textContent = "Excluir";
+                btnExcluir.className = "btn-excluir";
+                btnExcluir.onclick = () => excluirTarefa(tarefa.codigo);
+
+                // Junta tudo
+                divAcoes.appendChild(btnConcluir);
+                divAcoes.appendChild(btnExcluir);
+                li.appendChild(span);
+                li.appendChild(divAcoes);
+                ul.appendChild(li);
+            });
+        }
+
+        // Intermedia a tela (HTML) com a lógica (JavaScript)
+        function manipularCadastro() {
+            const inputTitulo = document.getElementById("titulo");
+            const selectPrioridade = document.getElementById("prioridade");
+
+            const resultado = cadastrarTarefa(inputTitulo.value, selectPrioridade.value);
+
+            alert(resultado.mensagem);
+
+            if (resultado.sucesso) {
+                inputTitulo.value = ""; // Limpa o campo de texto se der certo
+                renderizarTarefas();    // Atualiza a lista na tela
+            }
+        }
+
+        // Renderiza a mensagem inicial de "Nenhuma tarefa cadastrada" ao carregar a página
+        renderizarTarefas();
+    </script>
+<script src="script.js"></script></body>
+</html>
