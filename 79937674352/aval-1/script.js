@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Blog | Desenvolvendo a Web</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Fonte Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Cabeçalho Principal -->
+    <header class="header">
+        <div class="container header-container">
+            <a href="#" class="logo">Meu<span>Blog</span></a>
+            
+            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Abrir Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <nav class="nav" id="navMenu">
+                <ul>
+                    <li><a href="#" class="active">Início</a></li>
+                    <li><a href="#posts">Artigos</a></li>
+                    <li><a href="#sobre">Sobre</a></li>
+                    <li><a href="#contato">Contato</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Apresentação do Blog -->
+    <section class="hero">
+        <div class="container">
+            <h1>Bem-vindo ao Meu Blog</h1>
+            <p>Compartilhando conhecimentos sobre desenvolvimento web, tecnologia e programação.</p>
+        </div>
+    </section>
+
+    <!-- Layout Principal com Conteúdo e Barra Lateral -->
+    <div class="container layout-grid">
+        
+        <!-- Área de Conteúdo Principal (Posts) -->
+        <main class="main-content" id="posts">
+            
+            <article class="post-card">
+                <img src="https://picsum.photos/800/400?random=1" alt="Imagem do Post sobre HTML e CSS" class="post-image">
+                <div class="post-content">
+                    <span class="category-tag">Desenvolvimento Web</span>
+                    <h2> Primeiros Passos no Desenvolvimento Web</h2>
+                    <p class="post-meta">Publicado em 24 de Outubro, 2026 • 5 min de leitura</p>
+                    <p class="post-excerpt">
+                        Aprender desenvolvimento web envolve compreender conceitos teóricos e aplicá-los na prática através da criação de estruturas semânticas com HTML5 e estilizações modernas com CSS.
+                    </p>
+                    <a href="#" class="btn-read-more">Ler artigo completo →</a>
+                </div>
+            </article>
+
+            <article class="post-card">
+                <img src="https://picsum.photos/800/400?random=2" alt="Imagem sobre Organização de Layouts com Flexbox" class="post-image">
+                <div class="post-content">
+                    <span class="category-tag">CSS & Design</span>
+                    <h2> Dominando Layouts Responsivos com Flexbox</h2>
+                    <p class="post-meta">Publicado em 20 de Outubro, 2026 • 8 min de leitura</p>
+                    <p class="post-excerpt">
+                        O Flexbox revolucionou a forma como organizamos elementos numa página web. Veja como criar alinhamentos e distribuições de espaço flexíveis e elegantes de forma simples.
+                    </p>
+                    <a href="#" class="btn-read-more">Ler artigo completo →</a>
+                </div>
+            </article>
+
+            <article class="post-card">
+                <img src="https://picsum.photos/800/400?random=3" alt="Imagem sobre JavaScript no Frontend" class="post-image">
+                <div class="post-content">
+                    <span class="category-tag">JavaScript</span>
+                    <h2> Interatividade e Dinamismo na Web</h2>
+                    <p class="post-meta">Publicado em 15 de Outubro, 2026 • 6 min de leitura</p>
+                    <p class="post-excerpt">
+                        Entenda como o JavaScript atua manipulando o DOM da página para trazer vida, interações, respostas a eventos e comportamentos dinâmicos aos seus projetos.
+                    </p>
+                    <a href="#" class="btn-read-more">Ler artigo completo →</a>
+                </div>
+            </article>
+
+        </main>
+
+        <!-- Barra Lateral (Sidebar) -->
+        <aside class="sidebar">
+            
+            <!-- Widget Sobre o Autor -->
+            <div class="widget" id="sobre">
+                <h3 class="widget-title">Sobre o Autor</h3>
+                <img src="https://picsum.photos/100/100?random=10" alt="Foto do Autor" class="author-avatar">
+                <p>Estudante e apaixonado por tecnologia, construindo projetos práticos para consolidar os fundamentos da programação web.</p>
+            </div>
+
+            <!-- Widget Pesquisa -->
+            <div class="widget">
+                <h3 class="widget-title">Buscar no Blog</h3>
+                <form class="search-form" onsubmit="event.preventDefault();">
+                    <input type="text" placeholder="Pesquisar artigos..." id="searchInput">
+                    <button type="submit">Buscar</button>
+                </form>
+            </div>
+
+            <!-- Widget Categorias -->
+            <div class="widget">
+                <h3 class="widget-title">Categorias</h3>
+                <ul class="category-list">
+                    <li><a href="#">HTML5 & CSS3 <span>(12)</span></a></li>
+                    <li><a href="#">JavaScript <span>(8)</span></a></li>
+                    <li><a href="#">Projetos Práticos <span>(5)</span></a></li>
+                    <li><a href="#">Dicas de Carreira <span>(4)</span></a></li>
+                </ul>
+            </div>
+
+        </aside>
+
+    </div>
+
+    <!-- Rodapé -->
+    <footer class="footer" id="contato">
+        <div class="container footer-container">
+            <p>&copy; 2026 Projeto Meu Blog. Todos os direitos reservados.</p>
+            <div class="social-links">
+                <a href="#" target="_blank" rel="noopener">GitHub</a>
+                <a href="#" target="_blank" rel="noopener">LinkedIn</a>
+                <a href="#" target="_blank" rel="noopener">Twitter</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
