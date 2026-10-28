@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastro de Produtos</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+    <h2>Cadastrar Produto</h2>
+
+    <!-- Formulário simples para entrada de dados -->
+    <input type="text" id="descricao" placeholder="Descrição (min. 5 letras)">
+    <input type="number" id="quantidade" placeholder="Quantidade">
+    <input type="number" id="valor" step="0.01" placeholder="Valor (R$)">
+    <button onclick="adicionar()">Cadastrar</button>
+
+    <h2>Lista de Produtos</h2>
+    <ul id="lista"></ul>
+
+    <!-- Coloque o seu código JavaScript na mesma pasta com o nome 'script.js' 
+         ou cole o seu script dentro da tag abaixo -->
+    <script src="script.js"></script>
+
+    <!-- Função auxiliar para conectar o HTML com as suas funções JS -->
+    <script>
+        function adicionar() {
+            try {
+                let desc = document.getElementById("descricao").value;
+                let qtd = Number(document.getElementById("quantidade").value);
+                let val = Number(document.getElementById("valor").value);
+
+                // Chama a sua função JS existente
+                cadastrarProduto(desc, qtd, val);
+                
+                // Atualiza a exibição na tela
+                renderizarLista();
+                alert("Produto cadastrado com sucesso!");
+            } catch (erro) {
+                // Captura as validações do seu código (throw new Error)
+                alert("Erro: " + erro.message);
+            }
+        }
+
+        function renderizarLista() {
+            let ul = document.getElementById("lista");
+            ul.innerHTML = ""; // Limpa a lista antes de desenhar
+            
+            // Percorre o array 'produtos' criado no seu script
+            produtos.forEach(p => {
+                let li = document.createElement("li");
+                li.textContent = `#${p.codigo} - ${p.descricao} | Qtd: ${p.quantidade} | R$ ${p.valor.toFixed(2)}`;
+                ul.appendChild(li);
+            });
+        }
+
+        // Executa para exibir os produtos iniciais (Cadeira Gamer, Mouse, Teclado)
+        renderizarLista();
+    </script>
+
+<script src="script.js"></script></body>
+</html>
