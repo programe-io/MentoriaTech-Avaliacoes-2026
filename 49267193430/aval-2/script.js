@@ -1,171 +1,105 @@
-// Banco de dados simulado dos vídeos do Vlog
-const videosData = [
+// Lista inicial de posts simulados
+let posts = [
     {
         id: 1,
-        title: "Ep. 08: Cruzando os Alpes Suíços de Moto",
-        category: "Viagens",
-        duration: "14:20",
-        views: "45 mil visualizações",
-        date: "Há 2 dias",
-        thumbnail: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80",
-        url: "https://www.youtube.com/embed/dQw4w9WgXcQ"
+        author: "Ana Souza",
+        initials: "AS",
+        time: "Há 5 minutos",
+        content: "Criando meu primeiro mini feed social com HTML, CSS e JavaScript puro! Muito legal o resultado. 🚀",
+        likes: 3,
+        liked: false
     },
     {
         id: 2,
-        title: "Montando um Setup de Desenvolvimento Definitivo 2026",
-        category: "Tecnologia",
-        duration: "22:15",
-        views: "89 mil visualizações",
-        date: "Há 5 dias",
-        thumbnail: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=600&q=80",
-        url: "https://www.youtube.com/embed/dQw4w9WgXcQ"
-    },
-    {
-        id: 3,
-        title: "Rotina Matinal de Alta Performance: O Que Funciona",
-        category: "Estilo de Vida",
-        duration: "10:05",
-        views: "31 mil visualizações",
-        date: "Há 1 semana",
-        thumbnail: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=600&q=80",
-        url: "https://www.youtube.com/embed/dQw4w9WgXcQ"
-    },
-    {
-        id: 4,
-        title: "Explorando as Ruínas Antigas na Costa Amalfitana",
-        category: "Viagens",
-        duration: "19:40",
-        views: "62 mil visualizações",
-        date: "Há 2 semanas",
-        thumbnail: "https://images.unsplash.com/photo-1533105079780-92b9be482077?auto=format&fit=crop&w=600&q=80",
-        url: "https://www.youtube.com/embed/dQw4w9WgXcQ"
-    },
-    {
-        id: 5,
-        title: "Inteligência Artificial na Prática: Criando Apps Locais",
-        category: "Tecnologia",
-        duration: "25:00",
-        views: "112 mil visualizações",
-        date: "Há 3 semanas",
-        thumbnail: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=600&q=80",
-        url: "https://www.youtube.com/embed/dQw4w9WgXcQ"
-    },
-    {
-        id: 6,
-        title: "Minimalismo: Como Reduzir Distrações no Dia a Dia",
-        category: "Estilo de Vida",
-        duration: "11:50",
-        views: "28 mil visualizações",
-        date: "Há 1 mês",
-        thumbnail: "https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=600&q=80",
-        url: "https://www.youtube.com/embed/dQw4w9WgXcQ"
+        author: "Carlos Silva",
+        initials: "CS",
+        time: "Há 2 horas",
+        content: "Alguém recomendando algum framework moderno para continuar os estudos?",
+        likes: 7,
+        liked: true
     }
 ];
 
-// Elementos do DOM
-const videoGrid = document.getElementById('videoGrid');
-const filterContainer = document.getElementById('filterContainer');
-const modal = document.getElementById('videoModal');
-const modalIframe = document.getElementById('modalIframe');
-const themeToggle = document.getElementById('themeToggle');
-const htmlElement = document.documentElement;
+const postInput = document.getElementById('postInput');
+const publishBtn = document.getElementById('publishBtn');
+const postsList = document.getElementById('postsList');
 
-// 1. Renderização dos Vídeos na Tela
-function renderVideos(videosToRender) {
-    videoGrid.innerHTML = '';
-    
-    if (videosToRender.length === 0) {
-        videoGrid.innerHTML = `<p style="color: var(--text-secondary);">Nenhum vídeo encontrado nesta categoria.</p>`;
-        return;
-    }
+// Função para renderizar os posts na tela
+function renderPosts() {
+    postsList.innerHTML = '';
 
-    videosToRender.forEach(video => {
-        const card = document.createElement('div');
-        card.className = 'video-card';
-        card.innerHTML = `
-            <div class="thumbnail-container">
-                <img src="${video.thumbnail}" alt="${video.title}" loading="lazy">
-                <span class="tag-category">${video.category}</span>
-                <span class="duration">${video.duration}</span>
-            </div>
-            <div class="video-details">
-                <h3>${video.title}</h3>
-                <div class="video-meta">
-                    <span><i class="fa-solid fa-eye"></i> ${video.views}</span>
-                    <span>•</span>
-                    <span>${video.date}</span>
+    posts.forEach(post => {
+        const postCard = document.createElement('div');
+        postCard.className = 'post-card';
+        
+        postCard.innerHTML = `
+            <div class="post-header">
+                <div class="post-avatar">${post.initials}</div>
+                <div class="post-user-info">
+                    <h4>${post.author}</h4>
+                    <span>${post.time}</span>
                 </div>
             </div>
+            <div class="post-content">
+                <p>${escapeHTML(post.content)}</p>
+            </div>
+            <div class="post-footer">
+                <button class="like-btn ${post.liked ? 'liked' : ''}" onclick="toggleLike(${post.id})">
+                    <i class="${post.liked ? 'fa-solid' : 'fa-regular'} fa-heart"></i> 
+                    <span>${post.likes}</span> Curtidas
+                </button>
+            </div>
         `;
-        
-        // Evento para abrir o modal com o vídeo específico
-        card.addEventListener('click', () => abrirModal(video.url));
-        videoGrid.appendChild(card);
+
+        postsList.appendChild(postCard);
     });
 }
 
-// 2. Sistema de Filtros por Categoria
-filterContainer.addEventListener('click', (e) => {
-    if (e.target.tagName === 'BUTTON') {
-        // Remove a classe active de todos os botões e adiciona no clicado
-        document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-        e.target.classList.add('active');
-
-        const filterValue = e.target.getAttribute('data-filter');
-
-        if (filterValue === 'all') {
-            renderVideos(videosData);
-        } else {
-            const filtered = videosData.filter(v => v.category === filterValue);
-            renderVideos(filtered);
-        }
-    }
-});
-
-// 3. Controle do Modal
-function abrirModal(url) {
-    modalIframe.src = url;
-    modal.style.display = 'flex';
-    document.body.style.overflow = 'hidden'; // Impede o scroll de fundo
-}
-
-function fecharModal() {
-    modal.style.display = 'none';
-    modalIframe.src = '';
-    document.body.style.overflow = 'auto';
-}
-
-// Fecha o modal ao clicar fora da área interna
-window.addEventListener('click', (e) => {
-    if (e.target === modal) {
-        fecharModal();
-    }
-});
-
-// 4. Alternância de Tema (Dark / Light) com Persistência
-const currentTheme = localStorage.getItem('theme') || 'dark';
-htmlElement.setAttribute('data-theme', currentTheme);
-updateThemeIcon(currentTheme);
-
-themeToggle.addEventListener('click', () => {
-    let theme = htmlElement.getAttribute('data-theme');
-    let newTheme = theme === 'dark' ? 'light' : 'dark';
+// Função para publicar um novo post
+publishBtn.addEventListener('click', () => {
+    const content = postInput.value.trim();
     
-    htmlElement.setAttribute('data-theme', newTheme);
-    localStorage.setItem('theme', newTheme);
-    updateThemeIcon(newTheme);
+    if (content === "") {
+        alert("Escreva alguma coisa antes de publicar!");
+        return;
+    }
+
+    const newPost = {
+        id: Date.now(),
+        author: "Você (Usuário)",
+        initials: "EU",
+        time: "Agora mesmo",
+        content: content,
+        likes: 0,
+        liked: false
+    };
+
+    posts.unshift(newPost); // Adiciona no início do array
+    postInput.value = ""; // Limpa o campo
+    renderPosts();
 });
 
-function updateThemeIcon(theme) {
-    const icon = themeToggle.querySelector('i');
-    if (theme === 'light') {
-        icon.className = 'fa-solid fa-sun';
-    } else {
-        icon.className = 'fa-solid fa-moon';
+// Função para curtir / descurtir um post
+function toggleLike(id) {
+    const post = posts.find(p => p.id === id);
+    if (post) {
+        if (post.liked) {
+            post.likes -= 1;
+            post.liked = false;
+        } else {
+            post.likes += 1;
+            post.liked = true;
+        }
+        renderPosts();
     }
 }
 
-// Inicializa a aplicação carregando todos os vídeos
-document.addEventListener('DOMContentLoaded', () => {
-    renderVideos(videosData);
-});
+// Segurança básica contra injeção de HTML no input
+function escapeHTML(str) {
+    return str.replace(/[&<>'"]/g, 
+        tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+    );
+}
+
+// Inicializa a renderização ao carregar a página
+document.addEventListener('DOMContentLoaded', renderPosts);
