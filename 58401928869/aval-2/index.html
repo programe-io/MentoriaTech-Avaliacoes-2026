@@ -1,0 +1,199 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciador de Tarefas</title>
+    <link rel="stylesheet" href="style.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+    <main class="container">
+        <header>
+            <h1>Gerenciador de Tarefas</h1>
+            <p>Organize suas tarefas e acompanhe seu progresso.</p>
+        </header>
+
+        <section class="painel">
+            <h2>Nova tarefa</h2>
+
+            <form id="formTarefa">
+                <label for="titulo">Título da tarefa</label>
+                <input id="titulo" type="text"
+                       placeholder="Ex.: Organizar o estoque"
+                       minlength="5" required>
+
+                <label for="prioridade">Prioridade</label>
+                <select id="prioridade" required>
+                    <option value="1">1 - Alta</option>
+                    <option value="2" selected>2 - Média</option>
+                    <option value="3">3 - Baixa</option>
+                </select>
+
+                <button type="submit">Cadastrar tarefa</button>
+            </form>
+
+            <p id="mensagem" role="status"></p>
+        </section>
+
+        <section class="painel">
+            <h2>Tarefas cadastradas</h2>
+            <div id="listaTarefas">
+                Carregando tarefas...
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const API = "/api/tarefas";
+        const lista = document.getElementById("listaTarefas");
+        const mensagem = document.getElementById("mensagem");
+
+        async function requisicao(url, opcoes = {}) {
+            const resposta = await fetch(url, {
+                ...opcoes,
+                headers: {
+                    "Content-Type": "application/json",
+                    ...opcoes.headers
+                }
+            });
+
+            if (!resposta.ok) {
+                const erro = await resposta.json().catch(() => ({}));
+                throw new Error(erro.detail || erro.message ||
+                    "Não foi possível realizar a operação.");
+            }
+
+            return resposta.json();
+        }
+
+        async function carregarTarefas() {
+            try {
+                const tarefas = await requisicao(API);
+                lista.replaceChildren();
+
+                if (tarefas.length === 0) {
+                    lista.textContent = "Nenhuma tarefa cadastrada.";
+                    return;
+                }
+
+                tarefas.forEach(tarefa => {
+                    const card = document.createElement("article");
+                    card.className = "tarefa";
+
+                    const titulo = document.createElement("h3");
+                    titulo.textContent =
+                        `#${tarefa.codigo} - ${tarefa.titulo}`;
+
+                    const status = document.createElement("p");
+                    status.textContent = tarefa.concluida
+                        ? "Concluída"
+                        : "Pendente";
+                    status.className = tarefa.concluida
+                        ? "concluida"
+                        : "pendente";
+
+                    const prioridade = document.createElement("p");
+                    prioridade.textContent =
+                        `Prioridade: ${tarefa.prioridade} - ` +
+                        ["", "Alta", "Média", "Baixa"][tarefa.prioridade];
+
+                    card.append(titulo, prioridade, status);
+
+                    const seletor = document.createElement("select");
+                    [1, 2, 3].forEach(valor => {
+                        const opcao = document.createElement("option");
+                        opcao.value = valor;
+                        opcao.textContent =
+                            `${valor} - ${["", "Alta", "Média", "Baixa"][valor]}`;
+                        opcao.selected = valor === tarefa.prioridade;
+                        seletor.appendChild(opcao);
+                    });
+
+                    seletor.setAttribute(
+                        "aria-label", `Prioridade da tarefa ${tarefa.codigo}`
+                    );
+
+                    seletor.addEventListener("change", async () => {
+                        try {
+                            await requisicao(
+                                `${API}/${tarefa.codigo}/prioridade`,
+                                {
+                                    method: "PATCH",
+                                    body: JSON.stringify({
+                                        prioridade: Number(seletor.value)
+                                    })
+                                }
+                            );
+                            mensagem.textContent = "Prioridade atualizada!";
+                            await carregarTarefas();
+                        } catch (erro) {
+                            mensagem.textContent = erro.message;
+                            await carregarTarefas();
+                        }
+                    });
+
+                    card.appendChild(seletor);
+
+                    if (!tarefa.concluida) {
+                        const botao = document.createElement("button");
+                        botao.textContent = "Concluir tarefa";
+
+                        botao.addEventListener("click", async () => {
+                            try {
+                                await requisicao(
+                                    `${API}/${tarefa.codigo}/concluir`,
+                                    { method: "PATCH" }
+                                );
+                                mensagem.textContent = "Tarefa concluída!";
+                                await carregarTarefas();
+                            } catch (erro) {
+                                mensagem.textContent = erro.message;
+                            }
+                        });
+
+                        card.appendChild(botao);
+                    }
+
+                    lista.appendChild(card);
+                });
+            } catch (erro) {
+                lista.textContent = erro.message;
+            }
+        }
+
+        document.getElementById("formTarefa")
+            .addEventListener("submit", async evento => {
+                evento.preventDefault();
+
+                const titulo = document.getElementById("titulo").value.trim();
+                const prioridade = Number(
+                    document.getElementById("prioridade").value
+                );
+
+                if (titulo.length < 5) {
+                    mensagem.textContent =
+                        "O título deve ter no mínimo 5 caracteres.";
+                    return;
+                }
+
+                try {
+                    await requisicao(API, {
+                        method: "POST",
+                        body: JSON.stringify({ titulo, prioridade })
+                    });
+
+                    mensagem.textContent = "Tarefa cadastrada com sucesso!";
+                    evento.target.reset();
+                    document.getElementById("prioridade").value = "2";
+                    await carregarTarefas();
+                } catch (erro) {
+                    mensagem.textContent = erro.message;
+                }
+            });
+
+        carregarTarefas();
+    </script>
+<script src="script.js"></script></body>
+</html>
