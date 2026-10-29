@@ -27,16 +27,14 @@ function salvarDados() {
 }
 
 // ===== Dados =====
-// Carrega os dados ou inicia do zero caso seja a primeira execução.
 const dadosIniciais = carregarDados();
 const tarefas = dadosIniciais.tarefas;
 let ultimoCodigo = dadosIniciais.ultimoCodigo;
 
 const NOMES_PRIORIDADE = { 1: "Alta", 2: "Média", 3: "Baixa" };
 
-// ===== Regras de negócio (uma responsabilidade por função) =====
+// ===== Regras de negócio =====
 
-// Valida título e prioridade; interrompe com erro se algum for inválido.
 function validarDadosDaTarefa(titulo, prioridade) {
   const tituloFormatado = titulo ? titulo.trim() : "";
 
@@ -49,7 +47,6 @@ function validarDadosDaTarefa(titulo, prioridade) {
   }
 }
 
-// Localiza uma tarefa pelo código; erro se não existir.
 function buscarTarefa(codigo) {
   const tarefa = tarefas.find((t) => t.codigo === codigo);
 
@@ -60,7 +57,6 @@ function buscarTarefa(codigo) {
   return tarefa;
 }
 
-// Cria a tarefa (código e status definidos pelo algoritmo) e adiciona ao array.
 function cadastrarTarefa(titulo, prioridade) {
   const tituloLimpo = titulo.trim();
   validarDadosDaTarefa(tituloLimpo, prioridade);
@@ -79,12 +75,10 @@ function cadastrarTarefa(titulo, prioridade) {
   return tarefa;
 }
 
-// Retorna as tarefas (exibir é responsabilidade de quem chama).
 function listarTarefas() {
   return tarefas;
 }
 
-// Marca a tarefa como concluída, impedindo conclusão duplicada.
 function concluirTarefa(codigo) {
   const tarefa = buscarTarefa(codigo);
 
@@ -97,7 +91,6 @@ function concluirTarefa(codigo) {
   return tarefa;
 }
 
-// Altera a prioridade reaproveitando a validação existente.
 function alterarPrioridade(codigo, novaPrioridade) {
   const tarefa = buscarTarefa(codigo);
 
@@ -127,17 +120,17 @@ function mostrarMensagem(texto, tipo) {
     clearTimeout(temporizadorMensagem);
   }
 
+  if (!elMensagem) return;
+
   elMensagem.textContent = texto;
   elMensagem.className = `mensagem ${tipo}`;
 
-  // Limpa a mensagem automaticamente após 4 segundos
   temporizadorMensagem = setTimeout(() => {
     elMensagem.textContent = "";
     elMensagem.className = "mensagem";
   }, 4000);
 }
 
-// Executa uma ação de negócio e mostra o erro (se houver) na tela.
 function executar(acao, mensagemSucesso) {
   try {
     const resultado = acao();
@@ -215,8 +208,9 @@ function criarItem(tarefa) {
   return item;
 }
 
-// Percorre o array com uma estrutura de repetição para exibir os dados.
 function renderizar() {
+  if (!elLista) return;
+  
   const lista = listarTarefas();
   elLista.replaceChildren();
 
@@ -231,28 +225,32 @@ function renderizar() {
     }
   }
 
-  const emExecucao = lista.filter((t) => t.status).length;
-  const concluidas = lista.length - emExecucao;
-  elResumo.textContent = `${emExecucao} em execução, ${concluidas} concluída(s)`;
+  if (elResumo) {
+    const emExecucao = lista.filter((t) => t.status).length;
+    const concluidas = lista.length - emExecucao;
+    elResumo.textContent = `${emExecucao} em execução, ${concluidas} concluída(s)`;
+  }
 }
 
-formulario.addEventListener("submit", (evento) => {
-  evento.preventDefault();
+if (formulario) {
+  formulario.addEventListener("submit", (evento) => {
+    evento.preventDefault();
 
-  const titulo = campoTitulo.value;
-  const prioridade = Number(campoPrioridade.value);
+    const titulo = campoTitulo.value;
+    const prioridade = Number(campoPrioridade.value);
 
-  const criada = executar(
-    () => cadastrarTarefa(titulo, prioridade),
-    null // Mensagem gerenciada abaixo para incluir o número do código
-  );
+    const criada = executar(
+      () => cadastrarTarefa(titulo, prioridade),
+      null
+    );
 
-  if (criada) {
-    mostrarMensagem(`Tarefa #${criada.codigo} cadastrada com sucesso!`, "sucesso");
-    formulario.reset();
-  }
-  campoTitulo.focus();
-});
+    if (criada) {
+      mostrarMensagem(`Tarefa #${criada.codigo} cadastrada com sucesso!`, "sucesso");
+      formulario.reset();
+    }
+    campoTitulo.focus();
+  });
+}
 
 // Renderização inicial
 renderizar();
