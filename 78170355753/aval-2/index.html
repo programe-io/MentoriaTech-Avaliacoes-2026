@@ -1,40 +1,59 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8">
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Shadow Fighters Arena</title>
 <link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="style.css" rel="stylesheet"></head>
 <body>
-<canvas id="c"></canvas>
+<div id="stage"></div>
 
-<div id="hud" class="hide">
-  <div class="side"><b id="n1"></b><div class="bar hp"><i id="h1"></i></div><div class="bar en"><i id="e1"></i></div><div id="r1" class="pips"></div></div>
-  <div id="mid"><div id="tm">60</div></div>
-  <div class="side r"><b id="n2"></b><div class="bar hp"><i id="h2"></i></div><div class="bar en"><i id="e2"></i></div><div id="r2" class="pips"></div></div>
+<div id="hud" class="hidden">
+  <div class="pl" id="pl0"><div class="nm" id="nm0"></div><div class="bar hp"><i id="hp0"></i></div><div class="bar en"><i id="en0"></i></div><div class="pips" id="wn0"></div></div>
+  <div class="mid"><div id="round">ROUND 1</div><div id="timer">60</div></div>
+  <div class="pl r" id="pl1"><div class="nm" id="nm1"></div><div class="bar hp"><i id="hp1"></i></div><div class="bar en"><i id="en1"></i></div><div class="pips" id="wn1"></div></div>
+  <div id="combo"></div>
+  <div id="msg"></div>
+  <div id="help">ESC: menu</div>
 </div>
-<div id="msg"></div>
-<div id="combo"></div>
 
-<div id="menu" class="panel">
-  <h1>SHADOW <span>FIGHTERS</span> ARENA</h1>
-  <div class="dock">
-    <p>Escolha seu lutador</p>
+<div id="menu" class="screen">
+  <section id="s-title" class="sec on">
+    <h1>SHADOW FIGHTERS <span>ARENA</span></h1>
+    <button class="btn big" data-go="s-mode">JOGAR</button>
     <div class="row">
-      <button class="pick sel" data-f="kai">KAI<small>Fogo · mais força</small></button>
-      <button class="pick" data-f="frost">FROST<small>Gelo · mais velocidade</small></button>
+      <button class="btn" id="snd">Som: ON</button>
+      <button class="btn" id="shd">Sombras: ON</button>
     </div>
-    <div class="row"><button id="play">JOGAR</button><button id="train">TREINO</button></div>
-    <div class="row"><button id="snd" class="mini">Som: ON</button><button id="gfx" class="mini">Gráficos: ALTO</button></div>
-    <pre>WASD mover · Espaço pular · J soco · K chute · L defender · Shift esquivar · Q especial (30 energia) · E superataque (energia cheia)</pre>
-  </div>
+    <p class="keys">Jogador 1: WASD mover e profundidade · Espaço pular · J soco · K chute · L defender · Shift esquivar · Q especial · E superataque<br>Jogador 2: setas mover · Numpad 0 pular · 1 soco · 2 chute · 3 defender · 4 esquivar · 7 especial · 9 superataque</p>
+  </section>
+  <section id="s-mode" class="sec">
+    <h2>Modo de jogo</h2>
+    <button class="btn" data-mode="1p">1 jogador (vs IA)</button>
+    <button class="btn" data-mode="2p">2 jogadores</button>
+    <button class="btn" data-mode="tr">Treino</button>
+    <button class="btn ghost" data-go="s-title">Voltar</button>
+  </section>
+  <section id="s-char" class="sec">
+    <h2 id="pickT">Escolha seu lutador</h2>
+    <div id="roster" class="grid"></div>
+    <button class="btn ghost" data-go="s-mode">Voltar</button>
+  </section>
+  <section id="s-arena" class="sec">
+    <h2>Escolha a arena</h2>
+    <div id="arenas" class="grid"></div>
+    <button class="btn ghost" data-go="s-char">Voltar</button>
+  </section>
 </div>
 
-<div id="end" class="panel hide">
-  <h1 id="et"></h1>
-  <div class="row"><button id="again">JOGAR NOVAMENTE</button><button id="tomenu">MENU</button></div>
+<div id="over" class="screen hidden">
+  <h2 id="ovT"></h2>
+  <p id="ovS"></p>
+  <button class="btn big" id="again">Jogar de novo</button>
+  <button class="btn" id="toMenu">Menu</button>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
