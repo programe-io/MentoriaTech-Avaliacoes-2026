@@ -37,6 +37,7 @@ function escaparHTML(texto) {
       '"': "&quot;",
       "'": "&#39;"
     };
+
     return entidades[caractere];
   });
 }
@@ -48,91 +49,88 @@ function nomePrioridade(prioridade) {
 }
 
 function atualizarResumo() {
-  document.getElementById("total").textContent = tarefas.length;
+  const total = tarefas.length;
+  const pendentes = tarefas.filter(function(tarefa) {
+    return !tarefa.concluida;
+  }).length;
+  const concluidas = total - pendentes;
 
-  document.getElementById("pendentes").textContent =
-    tarefas.filter(function(tarefa) {
-      return !tarefa.concluida;
-    }).length;
+  document.getElementById("total").textContent = total;
+  document.getElementById("pendentes").textContent = pendentes;
+  document.getElementById("concluidas").textContent = concluidas;
 
-  document.getElementById("concluidas").textContent =
-    tarefas.filter(function(tarefa) {
-      return tarefa.concluida;
-    }).length;
+  document.getElementById("barraTotal").style.width =
+    total > 0 ? "100%" : "0%";
+
+  document.getElementById("barraPendente").style.width =
+    total > 0 ? (pendentes / total * 100) + "%" : "0%";
+
+  document.getElementById("barraConcluida").style.width =
+    total > 0 ? (concluidas / total * 100) + "%" : "0%";
 }
 
 function listarTarefas() {
   const lista = document.getElementById("lista");
-  const busca = document.getElementById("busca").value
-    .trim()
-    .toLowerCase();
-  const filtro = document.getElementById("filtroStatus").value;
+  const vazio = document.getElementById("vazio");
 
   lista.innerHTML = "";
 
-  const tarefasFiltradas = tarefas.filter(function(tarefa) {
-    const combinaBusca =
-      tarefa.titulo.toLowerCase().includes(busca) ||
-      tarefa.codigo.toLowerCase().includes(busca);
+  tarefas.forEach(function(tarefa) {
+    const linha = document.createElement("tr");
 
-    const combinaStatus =
-      filtro === "todas" ||
-      (filtro === "pendente" && !tarefa.concluida) ||
-      (filtro === "concluida" && tarefa.concluida);
+    if (tarefa.concluida) {
+      linha.classList.add("is-completed");
+    }
 
-    return combinaBusca && combinaStatus;
-  });
-
-  tarefasFiltradas.forEach(function(tarefa) {
-    const linha = document.createElement("article");
-    linha.className = "task-row" +
-      (tarefa.concluida ? " is-completed" : "");
-
-    const tituloSeguro = escaparHTML(tarefa.titulo);
     const codigoSeguro = escaparHTML(tarefa.codigo);
+    const tituloSeguro = escaparHTML(tarefa.titulo);
 
-    const status = tarefa.concluida
-      ? '<span class="status-badge done">● Concluída</span>'
-      : '<span class="status-badge pending">● Pendente</span>';
+    const classeStatus = tarefa.concluida
+      ? "status-concluida"
+      : "status-pendente";
+
+    const textoStatus = tarefa.concluida
+      ? "✓ Concluída"
+      : "● Pendente";
 
     linha.innerHTML = `
-      <div class="task-info">
-        <div class="task-check">${tarefa.concluida ? "✓" : "○"}</div>
-        <div>
-          <div class="task-name">${tituloSeguro}</div>
-          <span class="task-code">${codigoSeguro} · TAREFA</span>
-        </div>
-      </div>
+      <td><span class="task-code">${codigoSeguro}</span></td>
 
-      <div class="task-priority">
+      <td>${tituloSeguro}</td>
+
+      <td>
         <span class="priority-badge priority-${tarefa.prioridade}">
           ${nomePrioridade(tarefa.prioridade)}
         </span>
-      </div>
+      </td>
 
-      <div class="task-status">${status}</div>
+      <td>
+        <span class="status-badge ${classeStatus}">
+          ${textoStatus}
+        </span>
+      </td>
 
-      <div class="task-actions">
-        <button class="action-button"
-          data-acao="concluir"
-          data-codigo="${codigoSeguro}">
-          ${tarefa.concluida ? "Reabrir" : "✓ Concluir"}
-        </button>
+      <td>
+        <div class="actions">
+          <button class="action-button"
+            data-acao="concluir"
+            data-codigo="${codigoSeguro}">
+            ${tarefa.concluida ? "Reabrir" : "✓ Concluir"}
+          </button>
 
-        <button class="action-button"
-          data-acao="prioridade"
-          data-codigo="${codigoSeguro}">
-          ↕ Prioridade
-        </button>
-      </div>
+          <button class="action-button"
+            data-acao="prioridade"
+            data-codigo="${codigoSeguro}">
+            ↕ Prioridade
+          </button>
+        </div>
+      </td>
     `;
 
     lista.appendChild(linha);
   });
 
-  document.getElementById("vazio").hidden =
-    tarefasFiltradas.length !== 0;
-
+  vazio.hidden = tarefas.length !== 0;
   atualizarResumo();
 }
 
@@ -168,10 +166,8 @@ document.getElementById("adicionar").addEventListener("click", function() {
 
   proximoCodigo++;
   campoTitulo.value = "";
-  document.getElementById("filtroStatus").value = "todas";
-  document.getElementById("busca").value = "";
-  mensagem.textContent = "✓ Tarefa adicionada com sucesso!";
 
+  mensagem.textContent = "✓ Tarefa cadastrada com sucesso!";
   listarTarefas();
 });
 
@@ -181,17 +177,13 @@ document.getElementById("titulo").addEventListener("keydown", function(event) {
   }
 });
 
-document.getElementById("busca").addEventListener("input", listarTarefas);
-
-document.getElementById("filtroStatus").addEventListener("change", listarTarefas);
-
 document.getElementById("lista").addEventListener("click", function(event) {
   const botao = event.target.closest("button");
+
   if (!botao) return;
 
-  const codigo = botao.dataset.codigo;
   const tarefa = tarefas.find(function(item) {
-    return item.codigo === codigo;
+    return item.codigo === botao.dataset.codigo;
   });
 
   if (!tarefa) return;
@@ -201,8 +193,8 @@ document.getElementById("lista").addEventListener("click", function(event) {
 
     document.getElementById("mensagem").textContent =
       tarefa.concluida
-        ? "✓ Tarefa concluída!"
-        : "Tarefa reaberta.";
+        ? "✓ Tarefa marcada como concluída!"
+        : "Tarefa voltou para pendente.";
   }
 
   if (botao.dataset.acao === "prioridade") {
@@ -211,7 +203,7 @@ document.getElementById("lista").addEventListener("click", function(event) {
       : tarefa.prioridade + 1;
 
     document.getElementById("mensagem").textContent =
-      "↻ Prioridade alterada para " +
+      "Prioridade atualizada para " +
       nomePrioridade(tarefa.prioridade) + ".";
   }
 
