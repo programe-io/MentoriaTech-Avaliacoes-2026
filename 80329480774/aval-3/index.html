@@ -1,0 +1,321 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Instagram Clone</title>
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: #fafafa;
+  color: #262626;
+  font-family: Arial, sans-serif;
+}
+header {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%;
+  height: 62px;
+  background: white;
+  border-bottom: 1px solid #dbdbdb;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  z-index: 10;
+}
+.logo {
+  font-family: cursive;
+  font-size: 29px;
+  font-weight: bold;
+}
+.search {
+  padding: 10px 15px;
+  background: #efefef;
+  border: 0;
+  border-radius: 8px;
+  width: 220px;
+  font-size: 14px;
+}
+.icons { display: flex; gap: 20px; font-size: 23px; }
+.layout {
+  max-width: 950px;
+  margin: 85px auto 30px;
+  display: grid;
+  grid-template-columns: 600px 290px;
+  gap: 35px;
+}
+.stories {
+  background: white;
+  border: 1px solid #dbdbdb;
+  border-radius: 8px;
+  display: flex;
+  gap: 16px;
+  padding: 18px 12px;
+  overflow-x: auto;
+  margin-bottom: 22px;
+}
+.story { text-align: center; min-width: 60px; font-size: 11px; }
+.avatar {
+  width: 58px; height: 58px;
+  border-radius: 50%;
+  padding: 3px;
+  background: linear-gradient(45deg,#ffb000,#ff0069,#8a3ffc);
+  margin: 0 auto 6px;
+}
+.avatar img {
+  width: 100%; height: 100%;
+  border-radius: 50%;
+  border: 2px solid white;
+  object-fit: cover;
+}
+.post {
+  background: white;
+  border: 1px solid #dbdbdb;
+  border-radius: 8px;
+  margin-bottom: 22px;
+}
+.post-header {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  gap: 10px;
+}
+.post-header img, .suggestion img {
+  width: 35px; height: 35px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.username { font-weight: bold; font-size: 13px; }
+.more { margin-left: auto; font-weight: bold; }
+.post-image {
+  width: 100%;
+  height: 420px;
+  object-fit: cover;
+  display: block;
+  background: #eee;
+}
+.actions {
+  padding: 12px 12px 4px;
+  display: flex;
+  gap: 14px;
+  font-size: 25px;
+}
+.actions span { cursor: pointer; }
+.actions .save { margin-left: auto; }
+.likes, .caption, .comments, .add-comment {
+  padding: 4px 12px;
+  font-size: 13px;
+}
+.caption { line-height: 1.6; }
+.comments { color: #8e8e8e; cursor: pointer; }
+.add-comment {
+  border-top: 1px solid #efefef;
+  margin-top: 10px;
+  padding: 13px 12px;
+  display: flex;
+}
+.add-comment input {
+  border: 0; outline: 0; flex: 1;
+  font-size: 13px;
+}
+.add-comment button {
+  border: 0; background: none;
+  color: #0095f6; font-weight: bold;
+  cursor: pointer;
+}
+.sidebar { padding-top: 12px; }
+.profile, .suggestion {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 22px;
+  font-size: 13px;
+}
+.profile img {
+  width: 45px; height: 45px;
+  border-radius: 50%; object-fit: cover;
+}
+.muted { color: #8e8e8e; font-size: 12px; margin-top: 5px; }
+.switch, .follow {
+  margin-left: auto;
+  color: #0095f6;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.suggest-title {
+  display: flex;
+  justify-content: space-between;
+  color: #8e8e8e;
+  font-size: 13px;
+  font-weight: bold;
+  margin-bottom: 18px;
+}
+footer { color: #c7c7c7; font-size: 11px; line-height: 1.8; }
+footer a { color: inherit; text-decoration: none; }
+@media(max-width: 850px) {
+  .layout { display: block; max-width: 600px; margin-top: 78px; }
+  .sidebar { display: none; }
+  header { justify-content: space-between; padding: 0 15px; }
+  .search { display: none; }
+}
+@media(max-width: 620px) {
+  body { background: white; }
+  .layout { margin: 62px 0 60px; }
+  .stories, .post { border-radius: 0; border-left: 0; border-right: 0; }
+  .post-image { height: auto; max-height: 520px; }
+  header { height: 55px; }
+  .icons { gap: 12px; }
+}
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+<header>
+  <div class="logo">Instagram</div>
+  <input class="search" placeholder="Pesquisar">
+  <div class="icons">
+    <span>⌂</span><span>✉</span><span>＋</span>
+    <span>♡</span><span>☻</span>
+  </div>
+</header>
+
+<div class="layout">
+<main>
+  <section class="stories">
+    <div class="story"><div class="avatar"><img src="https://i.pravatar.cc/100?img=12"></div>seu_story</div>
+    <div class="story"><div class="avatar"><img src="https://i.pravatar.cc/100?img=47"></div>mariana</div>
+    <div class="story"><div class="avatar"><img src="https://i.pravatar.cc/100?img=11"></div>pedro</div>
+    <div class="story"><div class="avatar"><img src="https://i.pravatar.cc/100?img=32"></div>julia</div>
+    <div class="story"><div class="avatar"><img src="https://i.pravatar.cc/100?img=53"></div>gabriel</div>
+    <div class="story"><div class="avatar"><img src="https://i.pravatar.cc/100?img=44"></div>ana</div>
+    <div class="story"><div class="avatar"><img src="https://i.pravatar.cc/100?img=15"></div>lucas</div>
+  </section>
+
+  <article class="post">
+    <div class="post-header">
+      <img src="https://i.pravatar.cc/100?img=47">
+      <div class="username">mariana.silva <div class="muted">Teresina, PI</div></div>
+      <span class="more">•••</span>
+    </div>
+    <img class="post-image" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=900" alt="Foto de retrato">
+    <div class="actions">
+      <span onclick="like(this)">♡</span>
+      <span onclick="commentFocus(this)">♧</span>
+      <span>➤</span><span class="save" onclick="savePost(this)">♧</span>
+    </div>
+    <div class="likes"><b class="like-count">1.248</b> curtidas</div>
+    <div class="caption"><b>mariana.silva</b> Vivendo cada momento ✨❤️</div>
+    <div class="comments" onclick="commentFocus(this)">Ver todos os 32 comentários</div>
+    <div class="add-comment">
+      <input placeholder="Adicione um comentário..." onkeydown="if(event.key==='Enter') addComment(this)">
+      <button onclick="addComment(this.previousElementSibling)">Publicar</button>
+    </div>
+  </article>
+
+  <article class="post">
+    <div class="post-header">
+      <img src="https://i.pravatar.cc/100?img=11">
+      <div class="username">pedro.costa <div class="muted">Praia 🌊</div></div>
+      <span class="more">•••</span>
+    </div>
+    <img class="post-image" src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=900" alt="Praia com mar azul">
+    <div class="actions">
+      <span onclick="like(this)">♡</span>
+      <span onclick="commentFocus(this)">♧</span>
+      <span>➤</span><span class="save" onclick="savePost(this)">♧</span>
+    </div>
+    <div class="likes"><b class="like-count">856</b> curtidas</div>
+    <div class="caption"><b>pedro.costa</b> Que lugar incrível! 🌴☀️</div>
+    <div class="comments" onclick="commentFocus(this)">Ver todos os 18 comentários</div>
+    <div class="add-comment">
+      <input placeholder="Adicione um comentário..." onkeydown="if(event.key==='Enter') addComment(this)">
+      <button onclick="addComment(this.previousElementSibling)">Publicar</button>
+    </div>
+  </article>
+
+  <article class="post">
+    <div class="post-header">
+      <img src="https://i.pravatar.cc/100?img=32">
+      <div class="username">julia.oliveira <div class="muted">Em casa</div></div>
+      <span class="more">•••</span>
+    </div>
+    <img class="post-image" src="https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=900" alt="Flores coloridas">
+    <div class="actions">
+      <span onclick="like(this)">♡</span>
+      <span onclick="commentFocus(this)">♧</span>
+      <span>➤</span><span class="save" onclick="savePost(this)">♧</span>
+    </div>
+    <div class="likes"><b class="like-count">432</b> curtidas</div>
+    <div class="caption"><b>julia.oliveira</b> Pequenas coisas, grandes felicidades 🌷</div>
+    <div class="comments" onclick="commentFocus(this)">Ver todos os 9 comentários</div>
+    <div class="add-comment">
+      <input placeholder="Adicione um comentário..." onkeydown="if(event.key==='Enter') addComment(this)">
+      <button onclick="addComment(this.previousElementSibling)">Publicar</button>
+    </div>
+  </article>
+</main>
+
+<aside class="sidebar">
+  <div class="profile">
+    <img src="https://i.pravatar.cc/100?img=12">
+    <div><b>seu_usuario</b><div class="muted">Seu nome</div></div>
+    <span class="switch" onclick="alert('Personalize seu perfil no código!')">Mudar</span>
+  </div>
+  <div class="suggest-title"><span>Sugestões para você</span><span style="color:#262626">Ver tudo</span></div>
+  <div class="suggestion"><img src="https://i.pravatar.cc/100?img=21"><div><b>carolina.s</b><div class="muted">Seguido por maria</div></div><span class="follow" onclick="follow(this)">Seguir</span></div>
+  <div class="suggestion"><img src="https://i.pravatar.cc/100?img=8"><div><b>rafael.lima</b><div class="muted">Sugestão para você</div></div><span class="follow" onclick="follow(this)">Seguir</span></div>
+  <div class="suggestion"><img src="https://i.pravatar.cc/100?img=25"><div><b>amanda.jpg</b><div class="muted">Novo no Instagram</div></div><span class="follow" onclick="follow(this)">Seguir</span></div>
+  <footer>
+    Sobre · Ajuda · Imprensa · API · Carreiras · Privacidade · Termos · Localizações<br><br>
+    © 2026 INSTAGRAM CLONE
+  </footer>
+</aside>
+</div>
+
+<script>
+function like(el) {
+  const post = el.closest('.post');
+  const count = post.querySelector('.like-count');
+  const liked = el.dataset.liked === 'true';
+  el.dataset.liked = !liked;
+  el.textContent = liked ? '♡' : '♥';
+  el.style.color = liked ? '#262626' : '#ff3040';
+  count.textContent = (parseInt(count.textContent.replace(/\./g,''),10) + (liked ? -1 : 1)).toLocaleString('pt-BR');
+}
+function savePost(el) {
+  const saved = el.dataset.saved === 'true';
+  el.dataset.saved = !saved;
+  el.textContent = saved ? '♧' : '▣';
+  alert(saved ? 'Publicação removida dos salvos!' : 'Publicação salva!');
+}
+function commentFocus(el) {
+  const input = el.closest('.post').querySelector('.add-comment input');
+  input.focus();
+}
+function addComment(input) {
+  const value = input.value.trim();
+  if (!value) return;
+  const post = input.closest('.post');
+  const comments = post.querySelector('.comments');
+  const comment = document.createElement('div');
+  comment.className = 'caption';
+  const user = document.createElement('b');
+  user.textContent = 'seu_usuario ';
+  comment.appendChild(user);
+  comment.appendChild(document.createTextNode(value));
+  comments.insertAdjacentElement('beforebegin', comment);
+  input.value = '';
+}
+function follow(el) {
+  const following = el.textContent === 'Seguindo';
+  el.textContent = following ? 'Seguir' : 'Seguindo';
+  el.style.color = following ? '#0095f6' : '#262626';
+}
+</script>
+<script src="script.js"></script></body>
+</html>
