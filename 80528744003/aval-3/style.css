@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instagram Clone - Apenas CSS</title>
+    <style>
+        /* ==========================================================================
+           1. VARIÁVEIS E CONFIGURAÇÕES GERAIS (CSS Avançado)
+           ========================================================================== */
+        :root {
+            --bg-body: #fafafa;
+            --bg-container: #ffffff;
+            --border-color: #dbdbdb;
+            --text-main: #262626;
+            --text-secondary: #8e8e8e;
+            --link-color: #0095f6;
+            --heart-color: #ed4956;
+        }
+
+        /* Mecanismo de Dark Mode puramente com CSS (:checked) */
+        #darkModeToggle:checked ~ .instagram-app {
+            --bg-body: #000000;
+            --bg-container: #121212;
+            --border-color: #262626;
+            --text-main: #f5f5f5;
+            --text-secondary: #a8a8a8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #fafafa; /* Fallback caso quebre */
+            margin: 0;
+        }
+
+        /* Esconde os checkboxes controladores de estados */
+        .css-trigger {
+            display: none;
+        }
+
+        /* Wrapper principal que herda as variáveis controladas pelo Dark Mode */
+        .instagram-app {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            min-height: 100vh;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 935px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 0 20px;
+        }
+
+        /* ==========================================================================
+           2. BARRA DE NAVEGAÇÃO (FLEXBOX)
+           ========================================================================== */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background-color: var(--bg-container);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: bold;
+            font-style: italic;
+            cursor: pointer;
+        }
+
+        .search-bar {
+            background-color: #efefef;
+            border: none;
+            padding: 7px 15px;
+            border-radius: 8px;
+            width: 250px;
+            outline: none;
+        }
+
+        .nav-icons {
+            display: flex;
+            align-items: center;
+            gap: 22px;
+            font-size: 22px;
+        }
+
+        .nav-icons label, .nav-icons span {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        /* ==========================================================================
+           3. ESTRUTURA DO PERFIL (CSS GRID & FLEXBOX)
+           ========================================================================== */
+        .profile-layout {
+            margin-top: 90px;
+            padding-bottom: 40px;
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 60px;
+            padding: 20px 0 40px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .profile-pic-container {
+            flex-shrink: 0;
+        }
+
+        .profile-pic {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .profile-pic .inner-pic {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background-color: var(--bg-container);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 70px;
+        }
+
+        .profile-info {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .info-top {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .username {
+            font-size: 28px;
+            font-weight: 300;
+        }
+
+        .btn-edit {
+            background-color: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 5px 9px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .info-stats {
+            display: flex;
+            gap: 40px;
+            list-style: none;
+        }
+
+        .info-stats span {
+            font-weight: bold;
+        }
+
+        .info-bio h1 {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .info-bio p {
+            font-size: 16px;
+            margin-top: 4px;
+        }
+
+        /* ==========================================================================
+           4. GRADE DE POSTAGENS (CSS GRID COMPLETO)
+           ========================================================================== */
+        .posts-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 28px;
+            margin-top: 30px;
+        }
+
+        .grid-item {
+            position: relative;
+            aspect-ratio: 1 / 1; /* Mantém o formato perfeitamente quadrado */
+            background: linear-gradient(135deg, #65799b, #5e256d);
+            border-radius: 4px;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        /* Variações visuais puramente em CSS para simular imagens distintas */
+        .item-1 { background: linear-gradient(45deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%); }
+        .item-2 { background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%); }
+        .item-3 { background: linear-gradient(to top, #a18cd1 0%, #fbc2eb 100%); }
+        .item-4 { background: linear-gradient(to right, #ffefba, #ffffff); }
+        .item-5 { background: linear-gradient(to top, #cfd9df 0%, #e2ebf0 100%); }
+        .item-6 { background: linear-gradient(120deg, #f6d365 0%, #fda085 100%); }
+
+        .item-content {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+        }
+
+        /* Efeito de Hover por cima do Grid (CSS Puro) */
+        .grid-item-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+            color: #ffffff;
+            font-size: 18px;
+            font-weight: bold;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .grid-item:hover .grid-item-overlay {
+            opacity: 1;
+        }
+
+        /* ==========================================================================
+           5. INTERATIVIDADE PURA VIA CSS (Hacks de Elementos)
+           ========================================================================== */
+        .interactive-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+            font-size: 20px;
+        }
+
+        .action-label {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        /* Efeito de dar Like mudando o emoji e a contagem via CSS */
+        .like-checker:checked + .action-label .heart-icon::before {
+            content: "❤️";
+        }
+        .like-checker:not(:checked) + .action-label .heart-icon::before {
+            content: "🤍";
+        }
+
+        /* Efeito de salvar publicação via CSS */
+        .save-checker:checked + .action-label .bookmark-icon::before {
+            content: "🔖";
+        }
+        .save-checker:not(:checked) + .action-label .bookmark-icon::before {
+            content: "🔖\FE0E"; /* Força o ícone vazio original */
+            opacity: 0.5;
+        }
+
+        /* Responsividade Básica em CSS */
+        @media (max-width: 735px) {
+            .profile-header {
+                gap: 20px;
+            }
+            .profile-pic {
+                width: 90px;
+                height: 90px;
+            }
+            .profile-pic .inner-pic {
+                font-size: 40px;
+            }
+            .username {
+                font-size: 22px;
+            }
+            .posts-grid {
+                gap: 3px;
+            }
+            .info-stats {
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Ativador invisível do Dark Mode -->
+    <input type="checkbox" id="darkModeToggle" class="css-trigger">
+
+    <!-- Escopo da aplicação gerenciada por CSS -->
+    <div class="instagram-app">
+
+        <!-- BARRA DE NAVEGAÇÃO -->
+        <header class="navbar">
+            <div class="container nav-content">
+                <div class="logo">Instagram</div>
+                <input type="text" class="search-bar" placeholder="Pesquisar">
+                <div class="nav-icons">
+                    <span>🏠</span>
+                    <span>💬</span>
+                    <span>🧭</span>
