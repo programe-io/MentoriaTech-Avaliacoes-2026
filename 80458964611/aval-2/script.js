@@ -1,467 +1,243 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Homem-Aranha 2 (2004) — O Clássico do Cinema de Heróis</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,700;0,900;1,900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <style>
-    /* PALETA TEMÁTICA HOMEM-ARANHA (SPIDER RED, NAVY BLUE & WEB GOLD) */
-    :root {
-      --bg-dark: #0a0b10;
-      --card-bg: #121520;
-      --card-hover: #1b2030;
-      --border-color: #252d42;
-      --spider-red: #e62429;
-      --spider-red-hover: #ff3b41;
-      --spider-blue: #0055ff;
-      --web-gold: #ffb703;
-      --text-main: #ffffff;
-      --text-muted: #9aa3b8;
-      --header-bg: rgba(10, 11, 16, 0.95);
+/* ==========================================================================
+   CR7 LEGACY — Main JavaScript File
+   Lógica e Interatividade em JS Puro (Vanilla)
+   ========================================================================== */
+
+// Base de Dados dos Clubes
+const clubData = {
+    realmadrid: {
+        title: "REAL MADRID C.F.",
+        period: "2009 — 2018",
+        stats: [
+            { label: "Jogos", value: "438" },
+            { label: "Gols", value: "450" },
+            { label: "Assistências", value: "120" },
+            { label: "Média/Jogo", value: "1.03" }
+        ],
+        text: "A era mais avassaladora da história do futebol moderno. Cristiano transformou-se no maior artilheiro da história do Real Madrid, superando Raúl González em um número consideravelmente menor de partidas.",
+        achievements: [
+            "4x UEFA Champions League (2014, 2016, 2017, 2018)",
+            "2x La Liga Espanhola (2012, 2017)",
+            "4x Bolas de Ouro FIFA/France Football como merengue",
+            "3x Mundiais de Clubes da FIFA"
+        ]
+    },
+    manutd: {
+        title: "MANCHESTER UNITED",
+        period: "2003 — 2009 | 2021 — 2022",
+        stats: [
+            { label: "Jogos Total", value: "346" },
+            { label: "Gols Total", value: "145" },
+            { label: "Assistências", value: "64" },
+            { label: "Títulos", value: "10" }
+        ],
+        text: "Sob a tutoria paterna de Sir Alex Ferguson, o jovem habilidoso da Madeira transformou-se num atacante completo e letal, herdando a histórica camisa 7 de Eric Cantona e David Beckham.",
+        achievements: [
+            "1x UEFA Champions League (2008)",
+            "3x Premier League (2007, 2008, 2009)",
+            "1x Bola de Ouro FIFA (2008)",
+            "1x Chuteira de Ouro Europeia (2008)"
+        ]
+    },
+    juventus: {
+        title: "JUVENTUS F.C.",
+        period: "2018 — 2021",
+        stats: [
+            { label: "Jogos", value: "134" },
+            { label: "Gols", value: "101" },
+            { label: "Assistências", value: "22" },
+            { label: "Média/Jogo", value: "0.75" }
+        ],
+        text: "Transferiu-se para Turim em 2018 como a maior contratação do futebol italiano. Manteve seu ritmo impressionante, alcançando a marca de 100 gols mais rápido do que qualquer outro jogador na história da Juve.",
+        achievements: [
+            "2x Serie A Italiana (2019, 2020)",
+            "1x Coppa Italia (2021)",
+            "2x Supercoppa Italiana",
+            "Capocannoniere (Artilheiro da Serie A 2021)"
+        ]
+    },
+    alnassr: {
+        title: "AL-NASSR FC",
+        period: "2023 — PRESENTE",
+        stats: [
+            { label: "Jogos", value: "70+" },
+            { label: "Gols", value: "65+" },
+            { label: "Assistências", value: "18+" },
+            { label: "Gols em 2023", value: "54" }
+        ],
+        text: "Em janeiro de 2023, aceitou o desafio de expandir as fronteiras do futebol global ao assinar com o Al-Nassr na Arábia Saudita, impulsionando a migração de astros internacionais para a Liga Saudita.",
+        achievements: [
+            "1x Copa dos Campeões Clubes Árabes (2023)",
+            "Artilheiro Mundial do Ano de 2023 (54 gols)",
+            "Recorde de gols em uma única temporada da Saudi Pro League"
+        ]
+    },
+    sporting: {
+        title: "SPORTING CP",
+        period: "2002 — 2003",
+        stats: [
+            { label: "Jogos", value: "31" },
+            { label: "Gols", value: "5" },
+            { label: "Assistências", value: "6" },
+            { label: "Estreia", value: "17 anos" }
+        ],
+        text: "O berço de sua carreira. Formado na célebre Academia de Alcochete, demonstrou desde o primeiro momento uma velocidade espetacular e drible desconcertante que impressionou a Europa.",
+        achievements: [
+            "1x Supertaça Cândido de Oliveira (2002)",
+            "Único atleta a atuar por 5 categorias na mesma época",
+            "Inauguração do Estádio José Alvalade (2003)"
+        ]
+    }
+};
+
+// Base de Dados da Linha do Tempo
+const timelineData = {
+    '2002': {
+        year: '2002',
+        title: 'Estreia Profissional no Sporting CP',
+        text: 'Em 7 de outubro de 2002, aos 17 anos, Cristiano Ronaldo estreou como titular pela equipe principal do Sporting CP contra o Moreirense. Marcou dois gols na vitória por 3-0, anunciando ao mundo o surgimento de um talento fora do comum.'
+    },
+    '2003': {
+        year: '2003',
+        title: 'A Noite Inesquecível em Alvalade',
+        text: 'Em agosto de 2003, no jogo de inauguração do novo Estádio José Alvalade, o Sporting venceu o Manchester United por 3-1. A atuação desconcertante de Ronaldo fez com que os jogadores do United pedissem a Sir Alex Ferguson sua contratação imediata no voo de volta.'
+    },
+    '2008': {
+        year: '2008',
+        title: 'A Primeira Bola de Ouro',
+        text: 'Uma temporada perfeita: 42 gols marcados, título da Premier League e conquista da UEFA Champions League em Moscou contra o Chelsea. Foi coroado com sua primeira Bola de Ouro da France Football e o prêmio de Melhor Jogador do Mundo pela FIFA.'
+    },
+    '2009': {
+        year: '2009',
+        title: 'A Maior Apresentação do Futebol',
+        text: 'Transferiu-se para o Real Madrid pela quantia recorde de 94 milhões de euros. No dia 6 de julho de 2009, mais de 80.000 torcedores lotaram o Santiago Bernabéu para dar as boas-vindas ao novo camisa 9 (que mais tarde reassumiria o número 7).'
+    },
+    '2016': {
+        year: '2016',
+        title: 'A Glória Inédita por Portugal',
+        text: 'Após anos de dedicação à seleção, liderou Portugal à conquista do seu primeiro título oficial: a UEFA EURO 2016. Mesmo lesionado durante a final contra a França, atuou como um verdadeiro treinador à beira do gramado incentivando seus companheiros.'
+    },
+    '2018': {
+        year: '2018',
+        title: 'Tricampeonato Europeu e transferência para a Itália',
+        text: 'Conquistou sua quinta Champions League com uma vitória sobre o Liverpool em Kiev. Pouco tempo depois, anunciou sua transferência para a Juventus por 100 milhões de euros, iniciando uma vitoriosa etapa no futebol italiano.'
+    },
+    '2021': {
+        year: '2021',
+        title: 'O Maior Artilheiro por Seleções da História',
+        text: 'Ao marcar dois gols contra a Irlanda em setembro de 2021, superou a marca do iraniano Ali Daei (109 gols) e tornou-se isoladamente o maior artilheiro de todas as seleções nacionais masculinas da história do futebol mundial.'
+    },
+    '2023': {
+        year: '2023',
+        title: 'Pioneirismo na Ásia e Artilheiro do Ano',
+        text: 'Assinou com o Al-Nassr da Arábia Saudita, redefinindo o mapa do futebol mundial e atraindo dezenas de craques europeus para o Oriente Médio. Encerrou o ano civil de 2023 como o maior artilheiro do mundo com 54 gols marcados.'
+    }
+};
+
+// Inicialização das funções quando o DOM estiver carregado
+document.addEventListener('DOMContentLoaded', () => {
+    // Menu Mobile
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const mobileNav = document.getElementById('mobile-nav');
+
+    if (mobileMenuBtn && mobileNav) {
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileNav.classList.toggle('hidden');
+        });
+
+        // Fechar menu mobile ao clicar num link
+        document.querySelectorAll('.mobile-nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileNav.classList.add('hidden');
+            });
+        });
     }
 
-    /* RESET GLOBAL */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      scroll-behavior: smooth;
+    // Carregar clube padrão no painel
+    renderClubPanel('realmadrid');
+});
+
+// Função para renderizar as informações dos clubes
+function selectClub(clubKey, buttonElement) {
+    // Atualizar classe ativa nos botões
+    document.querySelectorAll('.club-tab').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    if (buttonElement) {
+        buttonElement.classList.add('active');
     }
 
-    body {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      background-color: var(--bg-dark);
-      color: var(--text-main);
-      line-height: 1.7;
-    }
+    renderClubPanel(clubKey);
+}
 
-    h1, h2, h3, h4, .brand-font {
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 900;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
+function renderClubPanel(clubKey) {
+    const data = clubData[clubKey];
+    const panel = document.getElementById('club-display-panel');
+    
+    if (!data || !panel) return;
 
-    a {
-      text-decoration: none;
-      color: inherit;
-    }
+    let statsHtml = data.stats.map(s => `
+        <div class="club-stat-card">
+            <div class="club-stat-value">${s.value}</div>
+            <div class="club-stat-label">${s.label}</div>
+        </div>
+    `).join('');
 
-    /* HEADER FIXO */
-    .header {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      background-color: var(--header-bg);
-      backdrop-filter: blur(10px);
-      border-bottom: 2px solid var(--spider-red);
-      z-index: 1000;
-      padding: 1.2rem 2rem;
-    }
+    let achievementsHtml = data.achievements.map(a => `
+        <li style="margin-bottom:0.5rem; color:var(--color-gray); font-size:0.9rem;">
+            <i class="fa-solid fa-trophy text-gold" style="margin-right:0.5rem;"></i> ${a}
+        </li>
+    `).join('');
 
-    .nav-container {
-      max-width: 1100px;
-      margin: 0 auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .nav-logo {
-      font-size: 1.3rem;
-      letter-spacing: 1.5px;
-      color: var(--text-main);
-    }
-
-    .nav-logo span {
-      color: var(--spider-red);
-    }
-
-    .nav-menu {
-      display: flex;
-      gap: 2rem;
-      list-style: none;
-    }
-
-    .nav-link {
-      font-size: 0.85rem;
-      font-weight: 700;
-      color: var(--text-muted);
-      transition: all 0.3s ease;
-      text-transform: uppercase;
-    }
-
-    .nav-link:hover {
-      color: var(--spider-red);
-    }
-
-    /* HERO SECTION */
-    .hero {
-      padding: 10rem 2rem 5rem;
-      max-width: 1100px;
-      margin: 0 auto;
-      text-align: center;
-      background: radial-gradient(circle at center, rgba(230, 36, 41, 0.15) 0%, transparent 70%);
-    }
-
-    .hero-badge {
-      display: inline-block;
-      padding: 0.5rem 1.5rem;
-      background-color: rgba(230, 36, 41, 0.15);
-      border: 1px solid var(--spider-red);
-      color: var(--spider-red);
-      font-size: 0.75rem;
-      font-weight: 800;
-      border-radius: 50px;
-      margin-bottom: 1.8rem;
-      letter-spacing: 2px;
-    }
-
-    .hero-title {
-      font-size: 3.8rem;
-      line-height: 1.1;
-      margin-bottom: 1.2rem;
-      font-weight: 900;
-      text-shadow: 0 0 20px rgba(230, 36, 41, 0.4);
-    }
-
-    .hero-subtitle {
-      font-size: 1.2rem;
-      color: var(--text-muted);
-      max-width: 750px;
-      margin: 0 auto 2.5rem;
-      font-weight: 300;
-    }
-
-    .hero-buttons {
-      display: flex;
-      gap: 1rem;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    .btn {
-      display: inline-block;
-      padding: 0.9rem 2.2rem;
-      font-weight: 800;
-      border-radius: 4px;
-      transition: all 0.3s ease;
-      font-size: 0.85rem;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .btn-primary {
-      background-color: var(--spider-red);
-      color: #fff;
-      box-shadow: 0 4px 15px rgba(230, 36, 41, 0.4);
-    }
-
-    .btn-primary:hover {
-      background-color: var(--spider-red-hover);
-      transform: translateY(-2px);
-    }
-
-    .btn-outline {
-      border: 1px solid var(--border-color);
-      color: var(--text-main);
-      background-color: rgba(18, 21, 32, 0.8);
-    }
-
-    .btn-outline:hover {
-      border-color: var(--spider-red);
-      color: var(--spider-red);
-      transform: translateY(-2px);
-    }
-
-    /* FAIXA DE ESTATÍSTICAS */
-    .strip-banner {
-      background-color: var(--card-bg);
-      border-top: 1px solid var(--border-color);
-      border-bottom: 1px solid var(--border-color);
-      padding: 1.5rem 0;
-    }
-
-    .strip-content {
-      max-width: 1100px;
-      margin: 0 auto;
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 1.5rem;
-      text-align: center;
-    }
-
-    .stat-val {
-      font-size: 1.8rem;
-      font-weight: 900;
-      color: var(--web-gold);
-    }
-
-    .stat-lbl {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      font-weight: 700;
-      text-transform: uppercase;
-    }
-
-    /* CONTAINER PRINCIPAL */
-    .main-container {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 5rem 2rem;
-    }
-
-    .section {
-      margin-bottom: 6rem;
-    }
-
-    .section-header {
-      text-align: center;
-      margin-bottom: 3.5rem;
-    }
-
-    .section-tag {
-      font-size: 0.75rem;
-      font-weight: 800;
-      color: var(--spider-red);
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      display: block;
-    }
-
-    .section-title {
-      font-size: 2.2rem;
-      margin-top: 0.3rem;
-    }
-
-    .divider {
-      width: 50px;
-      height: 4px;
-      background-color: var(--spider-red);
-      margin: 1rem auto 0;
-    }
-
-    /* GRID & CARDS */
-    .grid {
-      display: grid;
-      gap: 2rem;
-    }
-
-    .grid-2 { grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
-    .grid-3 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
-
-    .card {
-      background-color: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      padding: 2rem;
-      transition: all 0.3s ease;
-    }
-
-    .card:hover {
-      background-color: var(--card-hover);
-      border-color: var(--spider-red);
-      transform: translateY(-4px);
-    }
-
-    .card-meta {
-      font-size: 0.8rem;
-      color: var(--web-gold);
-      margin-bottom: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      font-weight: 700;
-    }
-
-    .card-title {
-      font-size: 1.3rem;
-      margin-bottom: 0.8rem;
-      line-height: 1.3;
-    }
-
-    .card-desc {
-      color: var(--text-muted);
-      font-size: 0.95rem;
-    }
-
-    /* HIGHLIGHT DO VILÃO / DOCTO OCK */
-    .villain-box {
-      background: linear-gradient(135deg, #180a0e 0%, #0d121c 100%);
-      border: 2px solid var(--spider-red);
-      border-radius: 12px;
-      padding: 3.5rem 2.5rem;
-      text-align: center;
-      box-shadow: 0 0 30px rgba(230, 36, 41, 0.2);
-    }
-
-    .villain-badge {
-      background-color: var(--spider-red);
-      color: #fff;
-      font-weight: 900;
-      padding: 0.3rem 1rem;
-      font-size: 0.8rem;
-      border-radius: 3px;
-      display: inline-block;
-      margin-bottom: 1rem;
-    }
-
-    /* FOOTER */
-    .footer {
-      border-top: 1px solid var(--border-color);
-      padding: 3.5rem 2rem;
-      text-align: center;
-      background-color: #06070a;
-    }
-
-    .footer p {
-      color: var(--text-muted);
-      font-size: 0.85rem;
-    }
-
-    /* RESPONSIVIDADE */
-    @media (max-width: 768px) {
-      .nav-menu { display: none; }
-      .hero-title { font-size: 2.4rem; }
-      .strip-content { gap: 1rem; }
-    }
-  </style>
-</head>
-<body>
-
-  <!-- HEADER -->
-  <header class="header">
-    <div class="nav-container">
-      <a href="#inicio" class="nav-logo brand-font">HOMEM-ARANHA <span>2</span></a>
-      <nav>
-        <ul class="nav-menu">
-          <li><a href="#inicio" class="nav-link">Início</a></li>
-          <li><a href="#sinopse" class="nav-link">Enredo</a></li>
-          <li><a href="#vilao" class="nav-link">Dr. Octopus</a></li>
-          <li><a href="#cenas" class="nav-link">Cenas Antológicas</a></li>
-        </ul>
-      </nav>
-    </div>
-  </header>
-
-  <!-- HERO -->
-  <section id="inicio" class="hero">
-    <span class="hero-badge">DIRIGIDO POR SAM RAIMI ★ 2004</span>
-    <h1 class="hero-title">HOMEM-ARANHA 2</h1>
-    <p class="hero-subtitle">
-      A maior obra-prima do cinema de super-heróis. A jornada emocional de Peter Parker lidando com o fardo da responsabilidade, o amor e a perda de seus poderes.
-    </p>
-    <div class="hero-buttons">
-      <a href="#sinopse" class="btn btn-primary">Conhecer a História</a>
-      <a href="#cenas" class="btn btn-outline">A Cena do Trem</a>
-    </div>
-  </section>
-
-  <!-- FAIXA DE ESTATÍSTICAS E PRÊMIOS -->
-  <div class="strip-banner">
-    <div class="strip-content">
-      <div>
-        <span class="stat-val">🏆 OSCAR</span>
-        <span class="stat-lbl">Melhores Efeitos Visuais</span>
-      </div>
-      <div>
-        <span class="stat-val">$788M+</span>
-        <span class="stat-lbl">Bilheteria Mundial</span>
-      </div>
-      <div>
-        <span class="stat-val">93%</span>
-        <span class="stat-lbl">Rotten Tomatoes</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- CONTEÚDO PRINCIPAL -->
-  <main class="main-container">
-
-    <!-- SEÇÃO SINOPSE / ENREDO -->
-    <section id="sinopse" class="section">
-      <div class="section-header">
-        <span class="section-tag">O DILEMA HUMANO</span>
-        <h2 class="section-title">A HISTÓRIA DE PETER PARKER</h2>
-        <div class="divider"></div>
-      </div>
-
-      <div class="grid grid-2">
-        <div class="card">
-          <div class="card-meta">O CONFLITO INTERNO</div>
-          <h3 class="card-title brand-font">Spider-Man No More</h3>
-          <p class="card-desc">
-            Anos após assumir o manto do Herói do Pedaço, Peter Parker enfrenta graves dificuldades financeiras, notas baixas na faculdade e o distanciamento de Mary Jane e Harry Osborn. O estresse acumulado faz com que ele perca temporariamente seus poderes.
-          </p>
+    panel.innerHTML = `
+        <div class="club-panel-header">
+            <div>
+                <h3 class="club-panel-title">${data.title}</h3>
+            </div>
+            <span class="club-panel-period">${data.period}</span>
         </div>
 
-        <div class="card">
-          <div class="card-meta">A LIÇÃO ETERNA</div>
-          <h3 class="card-title brand-font">Grandes Poderes, Grandes Responsabilidades</h3>
-          <p class="card-desc">
-            Com conselhos marcantes da Tia May, Peter compreende que ser um herói exige sacrificar seus desejos pessoais pelo bem maior, decidindo aceitar seu destino e retornar à luta pelo povo de Nova York.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <!-- SEÇÃO VILÃO -->
-    <section id="vilao" class="section">
-      <div class="villain-box">
-        <span class="villain-badge brand-font">O ANTAGONISTA TRÁGICO</span>
-        <h2 class="section-title brand-font" style="color: #fff;">DOCTOR OCTOPUS (DR. OTTO OCTAVIUS)</h2>
-        <p style="color: var(--text-muted); max-width: 750px; margin: 1rem auto 1.5rem;">
-          Interpretado magistralmente por Alfred Molina, Dr. Otto Octavius é um brilhante cientista que busca criar uma fonte inesgotável de energia de fusão. Após um grave acidente em seu experimento que vitimou sua esposa, ele é manipulado pela inteligência artificial de quatro braços mecânicos acoplados à sua espinha.
-        </p>
-      </div>
-    </section>
-
-    <!-- SEÇÃO CENAS MARCANTES -->
-    <section id="cenas" class="section">
-      <div class="section-header">
-        <span class="section-tag">CINEMA EM ESTADO PURO</span>
-        <h2 class="section-title">CENAS ICÔNICAS</h2>
-        <div class="divider"></div>
-      </div>
-
-      <div class="grid grid-3">
-        <div class="card">
-          <div class="card-meta">AÇÃO LENDÁRIA</div>
-          <h3 class="card-title brand-font">A Batalha do Trem</h3>
-          <p class="card-desc">
-            Uma das sequências de ação mais aclamadas da história do cinema, onde Peter esgota todas as suas forças para parar um trem descontrolado e salvar centenas de passageiros.
-          </p>
+        <div class="club-stats-grid">
+            ${statsHtml}
         </div>
 
-        <div class="card">
-          <div class="card-meta">EFEITOS PRÁTICOS</div>
-          <h3 class="card-title brand-font">O Acordar dos Braços no Hospital</h3>
-          <p class="card-desc">
-            Com forte influência do diretor Sam Raimi em filmes de terror, a cena em que os braços robóticos ganham consciência própria no hospital é inesquecível.
-          </p>
+        <div style="display:grid; grid-template-columns: 1fr; gap: 1.5rem;">
+            <div>
+                <h4 style="font-family:var(--font-subheading); color:var(--color-gold); font-size:1.1rem; margin-bottom:0.5rem;">RESUMO DA PASSAGEM</h4>
+                <p style="color:var(--color-gray); font-size:0.95rem; line-height:1.6;">${data.text}</p>
+            </div>
+            <div>
+                <h4 style="font-family:var(--font-subheading); color:var(--color-gold); font-size:1.1rem; margin-bottom:0.5rem;">PRINCIPAIS TÍTULOS</h4>
+                <ul style="list-style:none;">
+                    ${achievementsHtml}
+                </ul>
+            </div>
         </div>
+    `;
+}
 
-        <div class="card">
-          <div class="card-meta">EMOÇÃO PURA</div>
-          <h3 class="card-title brand-font">O Povo de Nova York</h3>
-          <p class="card-desc">
-            A cena emblemática em que os passageiros do trem carregam o Homem-Aranha exausto, prometendo guardar sua identidade em segredo em um gesto de eterna gratidão.
-          </p>
-        </div>
-      </div>
-    </section>
+// Funções para abrir/fechar o modal da Linha do Tempo
+function openTimelineModal(year) {
+    const modal = document.getElementById('timeline-modal');
+    const data = timelineData[year];
 
-  </main>
+    if (!modal || !data) return;
 
-  <!-- RODAPÉ -->
-  <footer class="footer">
-    <p>© 2026 Blog de Fã — Homenagem ao filme Homem-Aranha 2 (2004) de Sam Raimi. Marvel & Sony Pictures.</p>
-  </footer>
+    document.getElementById('modal-year').innerText = data.year;
+    document.getElementById('modal-title').innerText = data.title;
+    document.getElementById('modal-body').innerText = data.text;
 
-</body>
-</html>
+    modal.classList.remove('hidden');
+}
+
+function closeTimelineModal() {
+    const modal = document.getElementById('timeline-modal');
+    if (modal) {
+        modal.classList.add('hidden');
+    }
+}
+
+// Função para acionar/expandir cartões de Curiosidades
+function toggleCuriosity(element) {
+    element.classList.toggle('active');
+}
