@@ -1,201 +1,248 @@
-// --- LÓGICA ORIGINAL DO JS DOS PRINTS ---
+// ==========================================
+// ESTRUTURA DE DADOS CENTRAL
+// ==========================================
+const tarefas = [];
+let proximoCodigo = 1;
 
-// Lista (Array) de Produtos
-let produtos = [];
+// ==========================================
+// REGRAS DE NEGÓCIO E VALIDAÇÕES (LÓGICA)
+// ==========================================
 
-function validarProduto(descricao, quantidade, valor) {
-  if (descricao.length < 5) {
-    throw new Error("Descricao deve ter no mínimo cinco caracteres");
-  }
-  if (quantidade < 1) {
-    throw new Error("Quantidade deve ser maior que zero");
-  }
-  if (valor < 0) {
-    throw new Error("Valor deve ser maior ou igual a zero");
-  }
+/**
+ * Valida o título e a prioridade da tarefa.
+ * @param {string} titulo 
+ * @param {number} prioridade 
+ */
+function validarDadosDaTarefa(titulo, prioridade) {
+    if (!titulo || titulo.trim().length < 5) {
+        throw new Error("O título da tarefa deve possuir no mínimo 5 caracteres.");
+    }
+    
+    if (prioridade < 1 || prioridade > 3) {
+        throw new Error("A prioridade deve estar entre 1 (mais alta) e 3 (mais baixa).");
+    }
 }
 
-function cadastrarProduto(descricao, quantidade, valor) {
-  validarProduto(descricao, quantidade, valor);
-  let novoProduto = {
-    "codigo": produtos.length + 1,
-    "descricao": descricao,
-    "quantidade": Number(quantidade),
-    "valor": Number(valor)
-  };
-  produtos.push(novoProduto);
-  atualizarInterface();
+/**
+ * Cadastra uma nova tarefa no array central.
+ * @param {string} titulo 
+ * @param {number} prioridade 
+ * @returns {Object} Objeto da tarefa criada.
+ */
+function cadastrarTarefa(titulo, prioridade) {
+    validarDadosDaTarefa(titulo, prioridade);
+
+    const novaTarefa = {
+        codigo: proximoCodigo++,
+        titulo: titulo.trim(),
+        prioridade: Number(prioridade),
+        status: true // true = Em execução, false = Concluída
+    };
+
+    tarefas.push(novaTarefa);
+    return novaTarefa;
 }
 
-function listarProdutos() {
-  console.log(produtos);
+/**
+ * Retorna o array completo com todas as tarefas.
+ * @returns {Array}
+ */
+function listarTarefas() {
+    return tarefas;
 }
 
-function atualizarValor(codigoProduto, novoValor) {
-  if (novoValor < 0) {
-    throw new Error("Valor deve ser maior ou igual a zero");
-  }
-  const produto = produtos.find(prod => prod.codigo === codigoProduto);
-  if (produto) {
-    produto.valor = Number(novoValor);
-    atualizarInterface();
-  } else {
-    throw new Error("Produto não encontrado");
-  }
+/**
+ * Localiza uma tarefa pelo código utilizando .find().
+ * @param {number} codigo 
+ * @returns {Object} Objeto da tarefa encontrada.
+ */
+function buscarTarefa(codigo) {
+    const tarefaEncontrada = tarefas.find(t => t.codigo === Number(codigo));
+
+    if (!tarefaEncontrada) {
+        throw new Error(`Código ${codigo} não encontrado.`);
+    }
+
+    return tarefaEncontrada;
 }
 
-function atualizarQuantidade(codigoProduto, novaQuantidade) {
-  if (novaQuantidade < 1) {
-    throw new Error("Quantidade a adicionar deve ser pelo menos 1");
-  }
-  const produto = produtos.find(prod => prod.codigo === codigoProduto);
-  if (produto) {
-    produto.quantidade += Number(novaQuantidade);
-    atualizarInterface();
-  } else {
-    throw new Error("Produto não encontrado");
-  }
+/**
+ * Conclui uma tarefa alterando o seu status para false.
+ * @param {number} codigo 
+ * @returns {Object} Tarefa atualizada.
+ */
+function concluirTarefa(codigo) {
+    const tarefa = buscarTarefa(codigo);
+
+    if (tarefa.status === false) {
+        throw new Error(`A tarefa de código ${codigo} já se encontrava concluída.`);
+    }
+
+    tarefa.status = false;
+    return tarefa;
 }
 
-// --- LÓGICA DE INTEGRAÇÃO COM A INTERFACE (DOM) ---
-
-// Elementos da página
-const formProduto = document.getElementById('form-produto');
-const tabelaBody = document.getElementById('tabela-produtos-body');
-const mensagemErro = document.getElementById('mensagem-erro');
-
-// Cartões
-const statTotalProdutos = document.getElementById('stat-total-produtos');
-const statTotalItens = document.getElementById('stat-total-itens');
-const statValorTotal = document.getElementById('stat-valor-total');
-
-// Modal
-const modal = document.getElementById('modal');
-const modalTitulo = document.getElementById('modal-titulo');
-const modalDescricaoProduto = document.getElementById('modal-descricao-produto');
-const modalLabelInput = document.getElementById('modal-label-input');
-const modalInput = document.getElementById('modal-input');
-const modalMensagemErro = document.getElementById('modal-mensagem-erro');
-const btnModalSalvar = document.getElementById('btn-modal-salvar');
-
-let acaoModal = null; // Função a ser executada ao guardar no modal
-
-// Atualizar a tabela e os cartões na tela
-function atualizarInterface() {
-  tabelaBody.innerHTML = '';
-
-  let totalItens = 0;
-  let valorTotalEstoque = 0;
-
-  produtos.forEach(prod => {
-    const totalProduto = prod.quantidade * prod.valor;
-    totalItens += prod.quantidade;
-    valorTotalEstoque += totalProduto;
-
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>#${prod.codigo}</td>
-      <td><strong>${prod.descricao}</strong></td>
-      <td>${prod.quantidade}</td>
-      <td>R$ ${prod.valor.toFixed(2)}</td>
-      <td>R$ ${totalProduto.toFixed(2)}</td>
-      <td>
-        <button class="btn btn-action" onclick="abrirModalAtualizarQuantidade(${prod.codigo})">+ Qtd</button>
-        <button class="btn btn-action" onclick="abrirModalAtualizarValor(${prod.codigo})">Valor</button>
-      </td>
-    `;
-    tabelaBody.appendChild(tr);
-  });
-
-  // Atualizar contadores
-  statTotalProdutos.textContent = produtos.length;
-  statTotalItens.textContent = totalItens;
-  statValorTotal.textContent = `R$ ${valorTotalEstoque.toFixed(2)}`;
+/**
+ * Altera a prioridade de uma tarefa existente.
+ * @param {number} codigo 
+ * @param {number} novaPrioridade 
+ * @returns {Object} Tarefa atualizada.
+ */
+function alterarPrioridade(codigo, novaPrioridade) {
+    const tarefa = buscarTarefa(codigo);
+    
+    // Reutiliza a validação passando o título atual da tarefa
+    validarDadosDaTarefa(tarefa.titulo, Number(novaPrioridade));
+    
+    tarefa.prioridade = Number(novaPrioridade);
+    return tarefa;
 }
 
-// Submissão do Formulário de Cadastro
-formProduto.addEventListener('submit', (e) => {
-  e.preventDefault();
-  ocultarErro();
+// ==========================================
+// INTEGRAÇÃO COM A INTERFACE (DOM)
+// ==========================================
 
-  const descricao = document.getElementById('descricao').value.trim();
-  const quantidade = Number(document.getElementById('quantidade').value);
-  const valor = Number(document.getElementById('valor').value);
+document.addEventListener("DOMContentLoaded", () => {
+    const formCadastrar = document.getElementById("form-cadastrar");
+    const inputTitulo = document.getElementById("titulo");
+    const selectPrioridade = document.getElementById("prioridade");
 
-  try {
-    cadastrarProduto(descricao, quantidade, valor);
-    formProduto.reset();
-  } catch (err) {
-    exibirErro(err.message);
-  }
+    const btnConcluir = document.getElementById("btn-concluir");
+    const inputCodigoConcluir = document.getElementById("codigo-concluir");
+
+    const btnAlterarPrioridade = document.getElementById("btn-alterar-prioridade");
+    const inputCodigoPrioridade = document.getElementById("codigo-prioridade");
+    const selectNovaPrioridade = document.getElementById("nova-prioridade");
+
+    const btnBuscar = document.getElementById("btn-buscar");
+    const inputCodigoBuscar = document.getElementById("codigo-buscar");
+
+    const btnAtualizar = document.getElementById("btn-atualizar");
+    const tabelaTarefas = document.getElementById("tabela-tarefas");
+    const mensagemStatus = document.getElementById("mensagem-status");
+
+    // Exibe mensagens de feedback
+    function exibirMensagem(texto, tipo = "success") {
+        mensagemStatus.className = `alert alert-${tipo}`;
+        mensagemStatus.textContent = texto;
+        mensagemStatus.classList.remove("hidden");
+        setTimeout(() => {
+            mensagemStatus.classList.add("hidden");
+        }, 4000);
+    }
+
+    // Renderiza a lista na tabela HTML
+    function renderizarTabela() {
+        const lista = listarTarefas();
+        tabelaTarefas.innerHTML = "";
+
+        if (lista.length === 0) {
+            tabelaTarefas.innerHTML = `
+                <tr>
+                    <td colspan="4" style="text-align: center; color: #888;">Nenhuma tarefa cadastrada.</td>
+                </tr>
+            `;
+            return;
+        }
+
+        lista.forEach(tarefa => {
+            const tr = document.createElement("tr");
+
+            const labelPrioridade = {
+                1: '<span class="badge badge-alta">1 - Alta</span>',
+                2: '<span class="badge badge-media">2 - Média</span>',
+                3: '<span class="badge badge-baixa">3 - Baixa</span>'
+            };
+
+            const statusHTML = tarefa.status 
+                ? '<span class="badge badge-execucao">Em Execução</span>' 
+                : '<span class="badge badge-concluida">Concluída</span>';
+
+            tr.innerHTML = `
+                <td><strong>#${tarefa.codigo}</strong></td>
+                <td>${tarefa.titulo}</td>
+                <td>${labelPrioridade[tarefa.prioridade]}</td>
+                <td>${statusHTML}</td>
+            `;
+
+            tabelaTarefas.appendChild(tr);
+        });
+    }
+
+    // Evento: Cadastrar
+    formCadastrar.addEventListener("submit", (e) => {
+        e.preventDefault();
+        try {
+            const titulo = inputTitulo.value;
+            const prioridade = Number(selectPrioridade.value);
+            const novaTarefa = cadastrarTarefa(titulo, prioridade);
+
+            exibirMensagem(`Tarefa #${novaTarefa.codigo} cadastrada com sucesso!`, "success");
+            inputTitulo.value = "";
+            renderizarTabela();
+        } catch (erro) {
+            exibirMensagem(erro.message, "danger");
+        }
+    });
+
+    // Evento: Concluir
+    btnConcluir.addEventListener("click", () => {
+        const codigo = inputCodigoConcluir.value;
+        if (!codigo) {
+            exibirMensagem("Informe o código da tarefa para concluir.", "danger");
+            return;
+        }
+        try {
+            const tarefa = concluirTarefa(codigo);
+            exibirMensagem(`Tarefa #${tarefa.codigo} ("${tarefa.titulo}") concluída com sucesso!`, "success");
+            inputCodigoConcluir.value = "";
+            renderizarTabela();
+        } catch (erro) {
+            exibirMensagem(erro.message, "danger");
+        }
+    });
+
+    // Evento: Alterar Prioridade
+    btnAlterarPrioridade.addEventListener("click", () => {
+        const codigo = inputCodigoPrioridade.value;
+        const novaPrioridade = Number(selectNovaPrioridade.value);
+
+        if (!codigo) {
+            exibirMensagem("Informe o código da tarefa para alterar a prioridade.", "danger");
+            return;
+        }
+        try {
+            const tarefa = alterarPrioridade(codigo, novaPrioridade);
+            exibirMensagem(`Prioridade da tarefa #${tarefa.codigo} alterada para ${novaPrioridade} com sucesso!`, "success");
+            inputCodigoPrioridade.value = "";
+            renderizarTabela();
+        } catch (erro) {
+            exibirMensagem(erro.message, "danger");
+        }
+    });
+
+    // Evento: Buscar
+    btnBuscar.addEventListener("click", () => {
+        const codigo = inputCodigoBuscar.value;
+        if (!codigo) {
+            exibirMensagem("Informe um código para realizar a busca.", "danger");
+            return;
+        }
+        try {
+            const tarefa = buscarTarefa(codigo);
+            const statusTexto = tarefa.status ? "Em Execução" : "Concluída";
+            exibirMensagem(`Tarefa Encontrada: [#${tarefa.codigo}] "${tarefa.titulo}" | Prioridade: ${tarefa.prioridade} | Estado: ${statusTexto}`, "success");
+        } catch (erro) {
+            exibirMensagem(erro.message, "danger");
+        }
+    });
+
+    // Evento: Atualizar Lista
+    btnAtualizar.addEventListener("click", () => {
+        renderizarTabela();
+        exibirMensagem("Lista de tarefas atualizada.", "success");
+    });
+
+    // Renderização inicial
+    renderizarTabela();
 });
-
-function exibirErro(msg) {
-  mensagemErro.textContent = msg;
-  mensagemErro.style.display = 'block';
-}
-
-function ocultarErro() {
-  mensagemErro.style.display = 'none';
-}
-
-// --- MODAL DE EDIÇÃO ---
-
-function abrirModalAtualizarQuantidade(codigo) {
-  const produto = produtos.find(p => p.codigo === codigo);
-  modalTitulo.textContent = "Adicionar Quantidade";
-  modalDescricaoProduto.textContent = `Produto: ${produto.descricao} (Atual: ${produto.quantidade})`;
-  modalLabelInput.textContent = "Quantidade a somar";
-  modalInput.value = 1;
-  modalInput.min = 1;
-  modalInput.step = 1;
-
-  acaoModal = () => {
-    atualizarQuantidade(codigo, Number(modalInput.value));
-  };
-
-  abrirModal();
-}
-
-function abrirModalAtualizarValor(codigo) {
-  const produto = produtos.find(p => p.codigo === codigo);
-  modalTitulo.textContent = "Atualizar Valor Unitário";
-  modalDescricaoProduto.textContent = `Produto: ${produto.descricao} (Atual: R$ ${produto.valor.toFixed(2)})`;
-  modalLabelInput.textContent = "Novo Valor (R$)";
-  modalInput.value = produto.valor;
-  modalInput.min = 0;
-  modalInput.step = 0.01;
-
-  acaoModal = () => {
-    atualizarValor(codigo, Number(modalInput.value));
-  };
-
-  abrirModal();
-}
-
-function abrirModal() {
-  modalMensagemErro.style.display = 'none';
-  modal.style.display = 'flex';
-}
-
-function fecharModal() {
-  modal.style.display = 'none';
-}
-
-btnModalSalvar.addEventListener('click', () => {
-  try {
-    if (acaoModal) acaoModal();
-    fecharModal();
-  } catch (err) {
-    modalMensagemErro.textContent = err.message;
-    modalMensagemErro.style.display = 'block';
-  }
-});
-
-// Execução inicial simulando a sequência do print das imagens
-window.onload = () => {
-  cadastrarProduto("Cadeira Gamer", 12, 699.00);
-  cadastrarProduto("Mouse Logi", 38, 99.00);
-  atualizarValor(2, 97.00);
-  atualizarQuantidade(1, 3);
-};
