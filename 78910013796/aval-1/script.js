@@ -1,9 +1,12 @@
-const botao = document.getElementById('botao');
-const contadorElemento = document.getElementById('contador');
+// Seleciona todos os botões de curtir da página
+const botoesCurtir = document.querySelectorAll('.btn-curtir');
 
-let cliques = 0;
+botoesCurtir.forEach((botao) => {
+    let contador = 0;
+    const spanContador = botao.querySelector('span');
 
-botao.addEventListener('click', function() {
-    cliques++;
-    contadorElemento.textContent = cliques;
+    botao.addEventListener('click', () => {
+        contador++;
+        spanContador.textContent = contador;
+    });
 });
