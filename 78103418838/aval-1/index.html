@@ -1,244 +1,136 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0">
-
-  <title>VidaCity 3D - Simulador de Vida</title>
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>O Mundinho da Lua — v3.9</title>
   <link rel="stylesheet" href="style.css">
-
-  <!-- Biblioteca para gráficos 3D -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="script.js" defer></script>
 <link href="style.css" rel="stylesheet"></head>
-
 <body>
-
-  <!-- TELA DE CARREGAMENTO -->
-  <div id="loadingScreen">
-    <h1>🌆 VidaCity 3D</h1>
-    <p>Preparando sua nova aventura...</p>
-    <div class="loading-bar">
-      <div class="loading-progress"></div>
-    </div>
-  </div>
-
-  <!-- MENU PRINCIPAL -->
-  <div id="mainMenu" class="menu-screen">
-    <div class="menu-content">
-      <h1>🌆 VidaCity 3D</h1>
-      <p>Crie sua história. Explore seu mundo!</p>
-
-      <button id="playBtn">▶ JOGAR</button>
-      <button id="continueBtn">💾 CONTINUAR</button>
-      <button id="settingsBtn">⚙️ CONFIGURAÇÕES</button>
-
-      <p class="version">Versão 1.0</p>
-    </div>
-  </div>
-
-  <!-- ÁREA PRINCIPAL DO JOGO -->
-  <main id="gameContainer" class="hidden">
-
-    <!-- O JavaScript criará o mundo 3D aqui -->
-    <div id="gameCanvas"></div>
-
-    <!-- INFORMAÇÕES DO JOGADOR -->
-    <header id="gameHUD">
-
-      <div class="player-info">
-        <div class="player-avatar">😎</div>
-
-        <div>
-          <h3 id="playerName">Meu Personagem</h3>
-          <span id="playerLevel">⭐ Nível 1</span>
-        </div>
+  <main class="game">
+    <header class="topo">
+      <div>
+        <h1>🐾 O Mundinho da Lua</h1>
+        <p>Cuide da sua gatinha mágica!</p>
       </div>
-
-      <div class="game-resources">
-        <div class="money-display">
-          💰 <span id="money">1000</span>
-        </div>
-
-        <div class="time-display">
-          🕒 <span id="gameTime">08:00</span>
-        </div>
-
-        <div class="day-display">
-          ☀️ <span id="gameDay">Dia 1</span>
-        </div>
-      </div>
-
+      <span class="versao">v3.9</span>
     </header>
 
-    <!-- NECESSIDADES DO PERSONAGEM -->
-    <section id="needsPanel">
-      <h3>❤️ Necessidades</h3>
+    <section class="painel">
+      <div class="status-topo">
+        <span>⭐ Nível <b id="nivel">1</b></span>
+        <span>💖 Carinho: <b id="carinho">0</b></span>
+      </div>
 
-      <div class="need">
-        <span>🍔 Fome</span>
-        <div class="progress-bar">
-          <div id="hungerBar" class="progress-fill"></div>
+      <div class="casa" id="casa">
+        <div class="janela">
+          <span>☁️</span>
+          <span>☀️</span>
+        </div>
+
+        <div class="quadro">🌙</div>
+        <div class="prateleira">🪴 📚 🧸</div>
+        <div class="tapete"></div>
+        <div class="caminha">🧺</div>
+
+        <div class="gatinha-area">
+          <div id="efeito" class="efeito" aria-live="polite"></div>
+
+          <div id="lua" class="lua">
+            <div class="orelha orelha-esquerda"></div>
+            <div class="orelha orelha-direita"></div>
+
+            <div class="corpo"></div>
+            <div class="rabo"></div>
+
+            <div class="cabeca">
+              <div class="olho olho-esquerdo">
+                <span class="pupila"></span>
+              </div>
+              <div class="olho olho-direito">
+                <span class="pupila"></span>
+              </div>
+
+              <div class="sobrancelha sobrancelha-esquerda"></div>
+              <div class="sobrancelha sobrancelha-direita"></div>
+
+              <div class="focinho">
+                <span class="nariz"></span>
+                <span class="boca"></span>
+              </div>
+
+              <div class="bigode bigode-esquerdo"></div>
+              <div class="bigode bigode-direito"></div>
+              <div class="bochecha bochecha-esquerda"></div>
+              <div class="bochecha bochecha-direita"></div>
+            </div>
+
+            <div class="pata pata-esquerda"></div>
+            <div class="pata pata-direita"></div>
+          </div>
+
+          <div id="comida" class="comida">🍗</div>
+          <div id="brinquedo" class="brinquedo">🧶</div>
+          <div id="agua" class="agua">🥣</div>
+        </div>
+
+        <div class="chao"></div>
+      </div>
+
+      <div class="fala">
+        <span id="emoji-fala">😺</span>
+        <p id="fala">Miau! Oi! Vamos brincar?</p>
+      </div>
+
+      <div class="necessidades">
+        <div class="necessidade">
+          <div class="barra-titulo"><span>🍗 Fome</span><b id="fome-num">80%</b></div>
+          <div class="barra"><div id="fome-barra" class="preenchimento fome"></div></div>
+        </div>
+
+        <div class="necessidade">
+          <div class="barra-titulo"><span>💧 Sede</span><b id="sede-num">80%</b></div>
+          <div class="barra"><div id="sede-barra" class="preenchimento sede"></div></div>
+        </div>
+
+        <div class="necessidade">
+          <div class="barra-titulo"><span>⚡ Energia</span><b id="energia-num">80%</b></div>
+          <div class="barra"><div id="energia-barra" class="preenchimento energia"></div></div>
+        </div>
+
+        <div class="necessidade">
+          <div class="barra-titulo"><span>🧼 Higiene</span><b id="higiene-num">80%</b></div>
+          <div class="barra"><div id="higiene-barra" class="preenchimento higiene"></div></div>
+        </div>
+
+        <div class="necessidade">
+          <div class="barra-titulo"><span>🥰 Felicidade</span><b id="felicidade-num">80%</b></div>
+          <div class="barra"><div id="felicidade-barra" class="preenchimento felicidade"></div></div>
         </div>
       </div>
 
-      <div class="need">
-        <span>⚡ Energia</span>
-        <div class="progress-bar">
-          <div id="energyBar" class="progress-fill"></div>
-        </div>
+      <h2>✨ O que vamos fazer?</h2>
+
+      <div class="botoes">
+        <button data-acao="comer">🍗 Alimentar</button>
+        <button data-acao="beber">💧 Dar água</button>
+        <button data-acao="banho">🛁 Dar banho</button>
+        <button data-acao="brincar">🧶 Brincar</button>
+        <button data-acao="dormir">😴 Dormir</button>
+        <button data-acao="carinho">❤️ Carinho</button>
+        <button data-acao="acordar" id="botao-acordar" hidden>☀️ Acordar</button>
       </div>
 
-      <div class="need">
-        <span>🎮 Diversão</span>
-        <div class="progress-bar">
-          <div id="funBar" class="progress-fill"></div>
-        </div>
-      </div>
-
-      <div class="need">
-        <span>🧼 Higiene</span>
-        <div class="progress-bar">
-          <div id="hygieneBar" class="progress-fill"></div>
-        </div>
+      <div class="rodape">
+        <span>🏡 Casinha da Lua</span>
+        <button id="reiniciar" class="botao-reiniciar">🔄 Recomeçar</button>
       </div>
     </section>
 
-    <!-- MISSÕES -->
-    <section id="missionsPanel">
-      <h3>🎯 Missão atual</h3>
-      <p id="missionText">
-        Explore a cidade e conheça seus vizinhos!
-      </p>
-      <div id="missionProgress">0/3</div>
-    </section>
-
-    <!-- INTERAÇÃO COM OBJETOS E PERSONAGENS -->
-    <div id="interactionBox" class="hidden">
-      <p id="interactionText">Pressione E para interagir</p>
-      <button id="interactBtn">Interagir</button>
-    </div>
-
-    <!-- NOTIFICAÇÕES -->
-    <div id="notifications"></div>
-
-    <!-- MENU DE AÇÕES -->
-    <nav id="actionMenu">
-      <button id="phoneBtn" title="Celular">📱</button>
-      <button id="houseBtn" title="Minha casa">🏠</button>
-      <button id="shopBtn" title="Loja">🛍️</button>
-      <button id="jobsBtn" title="Trabalhos">💼</button>
-      <button id="mapBtn" title="Mapa">🗺️</button>
-      <button id="characterBtn" title="Personagem">👕</button>
-      <button id="pauseBtn" title="Pausar">⏸️</button>
-    </nav>
-
-    <!-- MINIMAPA -->
-    <div id="minimap">
-      <h4>🗺️ Cidade</h4>
-      <canvas id="minimapCanvas"
-              width="180" height="180"></canvas>
-    </div>
-
-    <!-- CONTROLES PARA CELULAR -->
-    <div id="mobileControls">
-      <div class="direction-controls">
-        <button id="moveUp">▲</button>
-
-        <div>
-          <button id="moveLeft">◀</button>
-          <button id="moveDown">▼</button>
-          <button id="moveRight">▶</button>
-        </div>
-      </div>
-
-      <button id="mobileInteract">✋</button>
-    </div>
-
+    <footer>
+      <p>Feito com carinho para a Lua 💚 · Versão 3.9</p>
+    </footer>
   </main>
-
-  <!-- JANELA DE LOJA -->
-  <div id="shopModal" class="modal hidden">
-    <div class="modal-content">
-      <button class="close-modal">✖</button>
-      <h2>🛍️ Loja VidaCity</h2>
-      <div id="shopItems"></div>
-    </div>
-  </div>
-
-  <!-- JANELA DE TRABALHOS -->
-  <div id="jobsModal" class="modal hidden">
-    <div class="modal-content">
-      <button class="close-modal">✖</button>
-      <h2>💼 Trabalhos</h2>
-      <div id="jobsList"></div>
-    </div>
-  </div>
-
-  <!-- JANELA DO PERSONAGEM -->
-  <div id="characterModal" class="modal hidden">
-    <div class="modal-content">
-      <button class="close-modal">✖</button>
-      <h2>👕 Personalizar Personagem</h2>
-
-      <label for="nameInput">Nome:</label>
-      <input id="nameInput" type="text"
-             maxlength="20"
-             placeholder="Nome do personagem">
-
-      <h3>Escolha uma cor de roupa</h3>
-      <div id="clothingColors">
-        <button data-color="#ff5555">🔴</button>
-        <button data-color="#4488ff">🔵</button>
-        <button data-color="#44cc88">🟢</button>
-        <button data-color="#ffcc33">🟡</button>
-      </div>
-
-      <button id="saveCharacterBtn">Salvar</button>
-    </div>
-  </div>
-
-  <!-- JANELA DE PAUSA -->
-  <div id="pauseMenu" class="modal hidden">
-    <div class="modal-content">
-      <h2>⏸️ Jogo Pausado</h2>
-      <button id="resumeBtn">▶ Continuar</button>
-      <button id="saveBtn">💾 Salvar Jogo</button>
-      <button id="exitBtn">🏠 Menu Principal</button>
-    </div>
-  </div>
-
-  <!-- CONFIGURAÇÕES -->
-  <div id="settingsModal" class="modal hidden">
-    <div class="modal-content">
-      <button class="close-modal">✖</button>
-      <h2>⚙️ Configurações</h2>
-
-      <label for="graphicsQuality">Qualidade gráfica</label>
-      <select id="graphicsQuality">
-        <option value="low">Baixa</option>
-        <option value="medium">Média</option>
-        <option value="high" selected>Alta</option>
-      </select>
-
-      <label for="soundVolume">Volume</label>
-      <input id="soundVolume" type="range"
-             min="0" max="100" value="70">
-    </div>
-  </div>
-
-  <!-- INSTRUÇÕES -->
-  <div id="controlsHelp" class="hidden">
-    <p>W A S D - Movimentar</p>
-    <p>Mouse - Girar câmera</p>
-    <p>E - Interagir</p>
-    <p>ESC - Pausar</p>
-  </div>
-
-  <!-- CÓDIGO DO JOGO -->
-  <script src="script.js"></script>
-
 <script src="script.js"></script></body>
 </html>
