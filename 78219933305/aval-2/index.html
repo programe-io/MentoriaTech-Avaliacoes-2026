@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ONLYCONNECT</title>
+
+    <!-- CSS dentro do HTML -->
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #0f172a;
+            color: white;
+        }
+
+        header {
+            background: #1e293b;
+            padding: 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            color: #38bdf8;
+        }
+
+        main {
+            max-width: 600px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        .composer, .post {
+            background: #1e293b;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        textarea {
+            box-sizing: border-box;
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            resize: vertical;
+        }
+
+        button {
+            background: #0284c7;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background: #0369a1;
+        }
+
+        .post p {
+            line-height: 1.5;
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+    <header>
+        <h1>ONLYCONNECT</h1>
+        <p>Sua comunidade, suas conexões.</p>
+    </header>
+
+    <main>
+        <section class="composer">
+            <h2>O que você está pensando?</h2>
+            <textarea id="postText" placeholder="Escreva uma publicação..."></textarea>
+            <br>
+            <button onclick="publicar()">Publicar</button>
+        </section>
+
+        <section id="feed">
+            <article class="post">
+                <h3>Marvel Universe 🦸</h3>
+                <p>Qual é o seu herói favorito da Marvel? 🕷️</p>
+                <button onclick="curtir(this)">❤️ Curtir <span>24</span></button>
+            </article>
+        </section>
+    </main>
+
+    <!-- JavaScript dentro do HTML -->
+    <script>
+        function publicar() {
+            const campo = document.getElementById("postText");
+            const texto = campo.value.trim();
+
+            if (texto === "") {
+                alert("Escreva algo antes de publicar!");
+                return;
+            }
+
+            const post = document.createElement("article");
+            post.className = "post";
+
+            const titulo = document.createElement("h3");
+            titulo.textContent = "Você";
+
+            const conteudo = document.createElement("p");
+            conteudo.textContent = texto;
+
+            const botao = document.createElement("button");
+            botao.innerHTML = '❤️ Curtir <span>0</span>';
+            botao.onclick = function () {
+                curtir(botao);
+            };
+
+            post.appendChild(titulo);
+            post.appendChild(conteudo);
+            post.appendChild(botao);
+
+            document.getElementById("feed").prepend(post);
+            campo.value = "";
+        }
+
+        function curtir(botao) {
+            const contador = botao.querySelector("span");
+            contador.textContent = Number(contador.textContent) + 1;
+        }
+    </script>
+<script src="script.js"></script></body>
+</html>
