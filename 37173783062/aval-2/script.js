@@ -1,0 +1,69 @@
+// 3. Armazenamento das tarefas em um array
+let tarefas = [];
+
+// 7. Gerador de código automático independente
+let proximoCodigo = 1;
+
+// 5. Validação dos dados da tarefa (Título e Prioridade)
+function validarDadosDaTarefa(titulo, prioridade) {
+  if (titulo.length < 5) {
+    throw new Error("O título deve ter no mínimo cinco caracteres.");
+  }
+  if (prioridade < 1 || prioridade > 3) {
+    throw new Error("A prioridade deve estar entre 1 e 3.");
+  }
+}
+
+// 9. Função auxiliar para buscar uma tarefa pelo código
+function buscarTarefa(codigo) {
+  const tarefa = tarefas.find((item) => item.codigo === codigo);
+
+  if (!tarefa) {
+    throw new Error("Código não encontrado.");
+  }
+
+  return tarefa;
+}
+
+// 6. Função para cadastrar uma nova tarefa
+function cadastrarTarefa(titulo, prioridade) {
+  validarDadosDaTarefa(titulo, prioridade);
+
+  const novaTarefa = {
+    codigo: proximoCodigo++, // O código avança de forma sequencial e independente
+    titulo: titulo,
+    prioridade: prioridade,
+    status: true // true = Em execução (não concluída)
+  };
+
+  tarefas.push(novaTarefa);
+  return novaTarefa;
+}
+
+// 8. Função para listar as tarefas cadastradas
+function listarTarefas() {
+  return tarefas;
+}
+
+// 10. Função para concluir uma tarefa
+function concluirTarefa(codigo) {
+  const tarefa = buscarTarefa(codigo);
+
+  if (!tarefa.status) {
+    throw new Error("A tarefa já estava concluída.");
+  }
+
+  tarefa.status = false; // false = Concluída
+  return tarefa;
+}
+
+// 11. Função para alterar a prioridade de uma tarefa
+function alterarPrioridade(codigo, novaPrioridade) {
+  const tarefa = buscarTarefa(codigo);
+
+  // Reutiliza a validação passando o título atual e a nova prioridade
+  validarDadosDaTarefa(tarefa.titulo, novaPrioridade);
+
+  tarefa.prioridade = novaPrioridade;
+  return tarefa;
+}
