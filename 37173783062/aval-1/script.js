@@ -1,3 +1,5 @@
+// --- LÓGICA EM JAVASCRIPT ---
+
 // 4. Criação da lista de produtos
 let produtos = [];
 
@@ -26,11 +28,13 @@ function cadastrarProduto(descricao, quantidade, valor) {
   };
 
   produtos.push(novoProduto);
+  return novoProduto;
 }
 
 // 14. Função para listar produtos
 function listarProdutos() {
   console.log(produtos);
+  return produtos;
 }
 
 // 16. Função para atualizar o valor do produto
@@ -43,6 +47,7 @@ function atualizarValor(codigoProduto, novoValor) {
 
   if (produto) {
     produto.valor = novoValor;
+    return produto;
   } else {
     throw new Error("Produto não encontrado");
   }
@@ -58,7 +63,21 @@ function atualizarQuantidade(codigoProduto, novaQuantidade) {
 
   if (produto) {
     produto.quantidade = produto.quantidade + novaQuantidade;
+    return produto;
   } else {
     throw new Error("Produto não encontrado");
   }
+}
+
+// --- TESTES DE EXECUÇÃO NO CONSOLE ---
+try {
+  cadastrarProduto("Cadeira gamer", 12, 699);
+  cadastrarProduto("Mouse Logitech", 38, 99);
+  
+  atualizarValor(2, 97);
+  atualizarQuantidade(1, 3);
+  
+  listarProdutos();
+} catch (erro) {
+  console.error("Erro no teste:", erro.message);
 }
