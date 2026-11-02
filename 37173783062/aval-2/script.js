@@ -1,83 +1,83 @@
 // --- LÓGICA EM JAVASCRIPT ---
 
-// 4. Criação da lista de produtos
-let produtos = [];
+// 3. Armazenamento das tarefas com array
+let tarefas = [];
 
-// 6. Função para validar produto
-function validarProduto(descricao, quantidade, valor) {
-  if (descricao.length < 5) {
-    throw new Error("Descrição deve ter, no mínimo, cinco caracteres");
+// 7. Geração automática de códigos independente
+let proximoCodigo = 1;
+
+// 5. Validação dos dados da tarefa
+function validarDadosDaTarefa(titulo, prioridade) {
+  if (titulo.length < 5) {
+    throw new Error("O título deve ter no mínimo cinco caracteres.");
   }
-  if (quantidade < 1) {
-    throw new Error("Quantidade deve ser maior que zero");
-  }
-  if (valor < 0) {
-    throw new Error("Valor deve ser maior ou igual a zero");
+  if (prioridade < 1 || prioridade > 3) {
+    throw new Error("A prioridade deve estar entre 1 e 3.");
   }
 }
 
-// 10. Função para cadastrar produto
-function cadastrarProduto(descricao, quantidade, valor) {
-  validarProduto(descricao, quantidade, valor);
+// 9. Busca de tarefas com find
+function buscarTarefa(codigo) {
+  const tarefa = tarefas.find((item) => item.codigo === codigo);
 
-  let novoProduto = {
-    codigo: produtos.length + 1,
-    descricao: descricao,
-    quantidade: quantidade,
-    valor: valor
+  if (!tarefa) {
+    throw new Error("Código não encontrado.");
+  }
+
+  return tarefa;
+}
+
+// 6. Cadastro e modelagem de uma tarefa
+function cadastrarTarefa(titulo, prioridade) {
+  validarDadosDaTarefa(titulo, prioridade);
+
+  const novaTarefa = {
+    codigo: proximoCodigo++,
+    titulo: titulo,
+    prioridade: prioridade,
+    status: true // true = Em execução / não concluída
   };
 
-  produtos.push(novoProduto);
-  return novoProduto;
+  tarefas.push(novaTarefa);
+  return novaTarefa;
 }
 
-// 14. Função para listar produtos
-function listarProdutos() {
-  console.log(produtos);
-  return produtos;
+// 8. Listagem das tarefas cadastradas
+function listarTarefas() {
+  return tarefas;
 }
 
-// 16. Função para atualizar o valor do produto
-function atualizarValor(codigoProduto, novoValor) {
-  if (novoValor < 0) {
-    throw new Error("Valor deve ser maior ou igual a zero");
+// 10. Conclusão de uma tarefa
+function concluirTarefa(codigo) {
+  const tarefa = buscarTarefa(codigo);
+
+  if (!tarefa.status) {
+    throw new Error("A tarefa já estava concluída.");
   }
 
-  const produto = produtos.find((prod) => prod.codigo === codigoProduto);
-
-  if (produto) {
-    produto.valor = novoValor;
-    return produto;
-  } else {
-    throw new Error("Produto não encontrado");
-  }
+  tarefa.status = false; // false = Concluída
+  return tarefa;
 }
 
-// 19. Função para atualizar a quantidade do produto
-function atualizarQuantidade(codigoProduto, novaQuantidade) {
-  if (novaQuantidade < 1) {
-    throw new Error("Quantidade deve ser maior que zero");
-  }
+// 11. Alteração da prioridade
+function alterarPrioridade(codigo, novaPrioridade) {
+  const tarefa = buscarTarefa(codigo);
 
-  const produto = produtos.find((prod) => prod.codigo === codigoProduto);
+  validarDadosDaTarefa(tarefa.titulo, novaPrioridade);
 
-  if (produto) {
-    produto.quantidade = produto.quantidade + novaQuantidade;
-    return produto;
-  } else {
-    throw new Error("Produto não encontrado");
-  }
+  tarefa.prioridade = novaPrioridade;
+  return tarefa;
 }
 
 // --- TESTES DE EXECUÇÃO NO CONSOLE ---
 try {
-  cadastrarProduto("Cadeira gamer", 12, 699);
-  cadastrarProduto("Mouse Logitech", 38, 99);
-  
-  atualizarValor(2, 97);
-  atualizarQuantidade(1, 3);
-  
-  listarProdutos();
+  cadastrarTarefa("Estudar JavaScript", 1);
+  cadastrarTarefa("Fazer compras da semana", 2);
+
+  concluirTarefa(1);
+  alterarPrioridade(2, 3);
+
+  console.log("Tarefas cadastradas:", listarTarefas());
 } catch (erro) {
   console.error("Erro no teste:", erro.message);
 }
