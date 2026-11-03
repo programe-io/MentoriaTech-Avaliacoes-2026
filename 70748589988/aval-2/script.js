@@ -1,42 +1,41 @@
-// Array para o banco de dados de tarefas
+// Array para armazenar as tarefas
 const tarefas = [];
 
-// Seleção de elementos da DOM
+// Elementos da DOM
 const formTarefa = document.getElementById('form-tarefa');
 const tabelaCorpo = document.getElementById('tabela-corpo');
 const listaVazia = document.getElementById('lista-vazia');
-const toastBox = document.getElementById('toast-mensagem');
+const mensagemBox = document.getElementById('mensagem');
 
-// Contadores de estatísticas
-const statTotal = document.getElementById('stat-total');
-const statPendentes = document.getElementById('stat-pendentes');
-const statConcluidas = document.getElementById('stat-concluidas');
+const totalEl = document.getElementById('total-tarefas');
+const pendentesEl = document.getElementById('pendentes-tarefas');
+const concluidasEl = document.getElementById('concluidas-tarefas');
 
-// Exibe notificações dinâmicas (Toast)
-function mostrarNotificacao(mensagem, tipo = 'success') {
-  toastBox.textContent = mensagem;
-  toastBox.className = `toast toast-${tipo}`;
-  toastBox.style.display = 'block';
+// Exibe mensagens de feedback
+function exibirMensagem(texto, tipo = 'success') {
+  mensagemBox.textContent = texto;
+  mensagemBox.className = `alert alert-${tipo}`;
+  mensagemBox.style.display = 'block';
 
   setTimeout(() => {
-    toastBox.style.display = 'none';
+    mensagemBox.style.display = 'none';
   }, 3500);
 }
 
-// Atualiza o painel de estatísticas no topo
-function atualizarEstatisticas() {
+// Atualiza o painel de contadores
+function atualizarContadores() {
   const total = tarefas.length;
   const concluidas = tarefas.filter(t => t.concluida).length;
   const pendentes = total - concluidas;
 
-  statTotal.textContent = total;
-  statPendentes.textContent = pendentes;
-  statConcluidas.textContent = concluidas;
+  totalEl.textContent = total;
+  pendentesEl.textContent = pendentes;
+  concluidasEl.textContent = concluidas;
 }
 
-// 1. Cadastrar uma nova tarefa
-formTarefa.addEventListener('submit', (event) => {
-  event.preventDefault();
+// 1. Cadastrar uma nova tarefa com validações
+formTarefa.addEventListener('submit', (e) => {
+  e.preventDefault();
 
   const codigo = document.getElementById('codigo').value.trim();
   const titulo = document.getElementById('titulo').value.trim();
@@ -44,23 +43,22 @@ formTarefa.addEventListener('submit', (event) => {
 
   // Validação: Código único
   if (tarefas.some(t => t.codigo.toLowerCase() === codigo.toLowerCase())) {
-    mostrarNotificacao(`Código "${codigo}" já cadastrado.`, 'error');
+    exibirMensagem(`Erro: O código "${codigo}" já está em uso.`, 'error');
     return;
   }
 
-  // Validação: Título mínimo de 5 caracteres
+  // Validação: Título com no mínimo 5 caracteres
   if (titulo.length < 5) {
-    mostrarNotificacao('O título deve conter pelo menos 5 caracteres.', 'error');
+    exibirMensagem('Erro: O título deve ter no mínimo 5 caracteres.', 'error');
     return;
   }
 
-  // Validação: Prioridade entre 1 e 3
+  // Validação: Prioridade entre 1 (alta) e 3 (baixa)
   if (isNaN(prioridade) || prioridade < 1 || prioridade > 3) {
-    mostrarNotificacao('A prioridade deve ser entre 1 (Alta) e 3 (Baixa).', 'error');
+    exibirMensagem('Erro: A prioridade deve ser um valor entre 1 (Alta) e 3 (Baixa).', 'error');
     return;
   }
 
-  // Adiciona novo objeto à lista
   tarefas.push({
     codigo,
     titulo,
@@ -68,65 +66,60 @@ formTarefa.addEventListener('submit', (event) => {
     concluida: false
   });
 
-  mostrarNotificacao(`Tarefa "${codigo}" cadastrada com sucesso!`, 'success');
+  exibirMensagem(`Tarefa "${titulo}" cadastrada com sucesso!`, 'success');
   formTarefa.reset();
   listarTarefas();
 });
 
-// 2. Listar as tarefas cadastrais
+// 2. Listar as tarefas cadastradas
 function listarTarefas() {
   tabelaCorpo.innerHTML = '';
 
   if (tarefas.length === 0) {
     listaVazia.style.display = 'block';
-    atualizarEstatisticas();
+    atualizarContadores();
     return;
   }
 
   listaVazia.style.display = 'none';
 
-  // Ordenação automática por nível de prioridade (1 a 3)
+  // Ordenação por prioridade (1 = Alta, 2 = Média, 3 = Baixa)
   const tarefasOrdenadas = [...tarefas].sort((a, b) => a.prioridade - b.prioridade);
 
   tarefasOrdenadas.forEach(tarefa => {
     const tr = document.createElement('tr');
 
-    // Coluna Código
     const tdCodigo = document.createElement('td');
-    tdCodigo.innerHTML = `<code>${tarefa.codigo}</code>`;
+    tdCodigo.innerHTML = `<strong>${tarefa.codigo}</strong>`;
 
-    // Coluna Título
     const tdTitulo = document.createElement('td');
     tdTitulo.textContent = tarefa.titulo;
     if (tarefa.concluida) {
-      tdTitulo.classList.add('text-strikethrough');
+      tdTitulo.classList.add('concluido');
     }
 
-    // Coluna Prioridade (Badge)
     const tdPrioridade = document.createElement('td');
     const rotulos = { 1: '1 - Alta', 2: '2 - Média', 3: '3 - Baixa' };
     tdPrioridade.innerHTML = `<span class="badge badge-p${tarefa.prioridade}">${rotulos[tarefa.prioridade]}</span>`;
 
-    // Coluna Status
     const tdStatus = document.createElement('td');
     const statusTexto = tarefa.concluida ? 'Concluída' : 'Pendente';
     const statusClasse = tarefa.concluida ? 'badge-status-done' : 'badge-status-pending';
     tdStatus.innerHTML = `<span class="badge ${statusClasse}">${statusTexto}</span>`;
 
-    // Coluna Ações
     const tdAcoes = document.createElement('td');
 
-    const btnConcluir = document.createElement('button');
-    btnConcluir.className = 'btn btn-action btn-check';
-    btnConcluir.textContent = tarefa.concluida ? 'Reabrir' : 'Concluir';
-    btnConcluir.addEventListener('click', () => alternarStatus(tarefa.codigo));
+    const btnStatus = document.createElement('button');
+    btnStatus.className = 'btn btn-action';
+    btnStatus.textContent = tarefa.concluida ? 'Reabrir' : 'Concluir';
+    btnStatus.addEventListener('click', () => alternarStatus(tarefa.codigo));
 
     const btnPrioridade = document.createElement('button');
     btnPrioridade.className = 'btn btn-action';
     btnPrioridade.textContent = 'Alterar Prioridade';
     btnPrioridade.addEventListener('click', () => alterarPrioridade(tarefa.codigo));
 
-    tdAcoes.appendChild(btnConcluir);
+    tdAcoes.appendChild(btnStatus);
     tdAcoes.appendChild(btnPrioridade);
 
     tr.appendChild(tdCodigo);
@@ -138,17 +131,17 @@ function listarTarefas() {
     tabelaCorpo.appendChild(tr);
   });
 
-  atualizarEstatisticas();
+  atualizarContadores();
 }
 
-// 3. Marcar uma tarefa como concluída / reabrir
+// 3. Marcar uma tarefa como concluída (ou reabrir)
 function alternarStatus(codigo) {
   const tarefa = tarefas.find(t => t.codigo === codigo);
   if (!tarefa) return;
 
   tarefa.concluida = !tarefa.concluida;
   const acao = tarefa.concluida ? 'concluída' : 'reaberta';
-  mostrarNotificacao(`Tarefa "${tarefa.codigo}" ${acao}.`, 'success');
+  exibirMensagem(`Tarefa "${tarefa.titulo}" foi ${acao}.`, 'success');
   listarTarefas();
 }
 
@@ -157,26 +150,21 @@ function alterarPrioridade(codigo) {
   const tarefa = tarefas.find(t => t.codigo === codigo);
   if (!tarefa) return;
 
-  const entrada = prompt(
-    `Alterar prioridade de "${tarefa.titulo}"\n` +
-    `1 = Alta | 2 = Média | 3 = Baixa\n` +
-    `Prioridade Atual: ${tarefa.prioridade}`
-  );
-
+  const entrada = prompt(`Nova prioridade para "${tarefa.titulo}"\n(1 = Alta, 2 = Média, 3 = Baixa)\nAtual: ${tarefa.prioridade}`);
   if (entrada === null || entrada.trim() === '') return;
 
   const novaPrioridade = parseInt(entrada, 10);
 
-  // Validação rigorosa: aceitar apenas 1, 2 ou 3
+  // Validação: Prioridade entre 1 e 3
   if (isNaN(novaPrioridade) || novaPrioridade < 1 || novaPrioridade > 3) {
-    mostrarNotificacao('Prioridade inválida! Digite um valor de 1 a 3.', 'error');
+    exibirMensagem('Erro: A prioridade deve ser 1 (Alta), 2 (Média) ou 3 (Baixa).', 'error');
     return;
   }
 
   tarefa.prioridade = novaPrioridade;
-  mostrarNotificacao(`Prioridade da tarefa "${tarefa.codigo}" atualizada para ${novaPrioridade}.`, 'success');
+  exibirMensagem(`Prioridade de "${tarefa.titulo}" alterada para ${novaPrioridade}.`, 'success');
   listarTarefas();
 }
 
-// Carregamento inicial da tela
+// Inicializa a listagem ao carregar a página
 listarTarefas();
