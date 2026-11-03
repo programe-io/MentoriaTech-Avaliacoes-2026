@@ -1,227 +1,333 @@
 
-let produtos = JSON.parse(localStorage.getItem("produtos")) || [];
+document.addEventListener("DOMContentLoaded", () => {
 
-const form = document.getElementById("formProduto");
-const lista = document.getElementById("listaProdutos");
+    // ELEMENTOS DO HTML
+    const formulario = document.querySelector("form");
+    const tabela = document.querySelector("tbody");
+    const pesquisa = document.querySelector(".barra-pesquisa input");
 
-// Salvar produtos
-function salvarDados() {
-    localStorage.setItem("produtos", JSON.stringify(produtos));
-}
+    const botoesSalvar = document.querySelector(".btn-salvar");
+    const botoesLimpar = document.querySelector(".btn-limpar");
 
-// Formatar moeda
-function formatarMoeda(valor) {
-    return valor.toLocaleString("pt-BR", {
-        style: "currency",
-        currency: "BRL"
-    });
-}
+    // DADOS DO ESTOQUE
+    let produtos = JSON.parse(localStorage.getItem("produtos")) || [];
+    let indiceEdicao = null;
 
-// Cadastrar e atualizar
-form.addEventListener("submit", function(event) {
-    event.preventDefault();
-
-    const id = document.getElementById("produtoId").value;
-    const nome = document.getElementById("nome").value.trim();
-    const categoria = document.getElementById("categoria").value.trim();
-    const quantidade = Number(document.getElementById("quantidade").value);
-    const preco = Number(document.getElementById("preco").value);
-
-    if (!nome || !categoria || quantidade < 0 || preco < 0 ||
-        !Number.isFinite(quantidade) || !Number.isFinite(preco)) {
-        alert("Preencha os campos corretamente!");
-        return;
+    // SALVAR DADOS NO NAVEGADOR
+    function salvarDados() {
+        localStorage.setItem("produtos", JSON.stringify(produtos));
     }
 
-    if (id) {
-        const produto = produtos.find(p => p.id === Number(id));
+    // FORMATAR NÚMEROS
+    function numero(valor) {
+        return Number(valor) || 0;
+    }
 
-        if (!produto) return;
+    // ATUALIZAR INDICADORES
+    function atualizarIndicadores() {
 
-        produto.nome = nome;
-        produto.categoria = categoria;
-        produto.quantidade = quantidade;
-        produto.preco = preco;
+        const totalProdutos = produtos.length;
 
-        alert("Produto atualizado!");
+        const totalEstoque = produtos.reduce(
+            (total, produto) => total + numero(produto.quantidade),
+            0
+        );
 
-    } else {
-        produtos.push({
-            id: Date.now(),
+        const estoqueBaixo = produtos.filter(
+            produto => numero(produto.quantidade) <= 5
+        ).length;
+
+        const indicadores = document.querySelectorAll(".card-indicador h3");
+
+        if (indicadores.length >= 3) {
+            indicadores[0].textContent = totalProdutos;
+            indicadores[1].textContent = totalEstoque;
+            indicadores[2].textContent = estoqueBaixo;
+        }
+    }
+
+    // CADASTRAR PRODUTO
+    function cadastrarProduto(event) {
+
+        event.preventDefault();
+
+        const campos = formulario.querySelectorAll("input");
+
+        const nome = campos[0].value.trim();
+        const codigo = campos[1].value.trim();
+        const categoria = campos[2].value.trim();
+        const quantidade = numero(campos[3].value);
+        const preco = numero(campos[4].value);
+        const fornecedor = campos[5].value.trim();
+
+        if (!nome || !codigo || !categoria) {
+            alert("Preencha os campos obrigatórios!");
+            return;
+        }
+
+        if (quantidade < 0 || preco < 0) {
+            alert("Quantidade e preço não podem ser negativos!");
+            return;
+        }
+
+        const codigoDuplicado = produtos.some((produto, index) =>
+            produto.codigo === codigo && index !== indiceEdicao
+        );
+
+        if (codigoDuplicado) {
+            alert("Já existe um produto com esse código!");
+            return;
+        }
+
+        const produto = {
             nome,
+            codigo,
             categoria,
             quantidade,
-            preco
-        });
+            preco,
+            fornecedor
+        };
 
-        alert("Produto cadastrado!");
+        if (indiceEdicao !== null) {
+            produtos[indiceEdicao] = produto;
+            indiceEdicao = null;
+            alert("Produto atualizado com sucesso!");
+        } else {
+            produtos.push(produto);
+            alert("Produto cadastrado com sucesso!");
+        }
+
+        salvarDados();
+        renderizarTabela();
+        atualizarIndicadores();
+        formulario.reset();
     }
 
-    salvarDados();
-    form.reset();
+    // MOSTRAR PRODUTOS NA TABELA
+    function renderizarTabela(lista = produtos) {
 
-    document.getElementById("produtoId").value = "";
-    document.getElementById("btnSalvar").textContent = "Cadastrar Produto";
+        tabela.innerHTML = "";
 
-    atualizarTela();
-});
+        if (lista.length === 0) {
+            tabela.innerHTML = `
+                <tr>
+                    <td colspan="8" style="text-align:center">
+                        Nenhum produto encontrado.
+                    </td>
+                </tr>
+            `;
+            return;
+        }
 
-// Atualizar tabela
-function atualizarTela(filtro = "") {
-    lista.innerHTML = "";
+        lista.forEach(produto => {
 
-    const filtrados = produtos.filter(p =>
-        p.nome.toLowerCase().includes(filtro.toLowerCase())
-    );
+            const indice = produtos.indexOf(produto);
 
-    filtrados.forEach(produto => {
-        const linha = document.createElement("tr");
+            const status = numero(produto.quantidade) <= 5
+                ? '<span class="status-baixo">Estoque baixo</span>'
+                : '<span class="status-ok">Disponível</span>';
 
-        const valores = [
-            produto.nome,
-            produto.categoria,
-            produto.quantidade,
-            formatarMoeda(produto.preco),
-            formatarMoeda(produto.quantidade * produto.preco)
-        ];
+            const linha = document.createElement("tr");
 
-        valores.forEach(valor => {
-            const td = document.createElement("td");
-            td.textContent = valor;
-            linha.appendChild(td);
+            const valores = [
+                produto.nome,
+                produto.codigo,
+                produto.categoria,
+                produto.quantidade,
+                `R$ ${numero(produto.preco).toFixed(2)}`,
+                produto.fornecedor || "-",
+                status
+            ];
+
+            valores.forEach((valor, index) => {
+                const celula = document.createElement("td");
+
+                if (index === 6) {
+                    celula.innerHTML = valor;
+                } else {
+                    celula.textContent = valor;
+                }
+
+                linha.appendChild(celula);
+            });
+
+            const acoes = document.createElement("td");
+
+            acoes.innerHTML = `
+                <button class="btn-editar" data-acao="editar">
+                    Editar
+                </button>
+
+                <button class="btn-excluir" data-acao="excluir">
+                    Excluir
+                </button>
+
+                <button class="btn-entrada" data-acao="entrada">
+                    Entrada
+                </button>
+
+                <button class="btn-saida" data-acao="saida">
+                    Saída
+                </button>
+            `;
+
+            acoes.querySelectorAll("button").forEach(botao => {
+                botao.dataset.indice = indice;
+            });
+
+            linha.appendChild(acoes);
+            tabela.appendChild(linha);
         });
-
-        const status = document.createElement("td");
-
-        status.textContent = produto.quantidade <= 5
-            ? "Estoque Baixo"
-            : "Disponível";
-
-        status.className = produto.quantidade <= 5
-            ? "status-baixo"
-            : "status-ok";
-
-        linha.appendChild(status);
-
-        const acoes = document.createElement("td");
-
-        // Botão editar
-        const editar = document.createElement("button");
-        editar.textContent = "Editar";
-        editar.className = "btn-editar";
-        editar.addEventListener("click", () => editarProduto(produto.id));
-
-        // Botão excluir
-        const excluir = document.createElement("button");
-        excluir.textContent = "Excluir";
-        excluir.className = "btn-excluir";
-        excluir.addEventListener("click", () => excluirProduto(produto.id));
-
-        // Botão entrada
-        const entrada = document.createElement("button");
-        entrada.textContent = "Entrada";
-        entrada.className = "btn-entrada";
-        entrada.addEventListener("click", () =>
-            movimentarEstoque(produto.id, "entrada")
-        );
-
-        // Botão saída
-        const saida = document.createElement("button");
-        saida.textContent = "Saída";
-        saida.className = "btn-saida";
-        saida.addEventListener("click", () =>
-            movimentarEstoque(produto.id, "saida")
-        );
-
-        acoes.append(editar, excluir, entrada, saida);
-        linha.appendChild(acoes);
-
-        lista.appendChild(linha);
-    });
-
-    atualizarResumo();
-}
-
-// Atualizar indicadores
-function atualizarResumo() {
-    const totalProdutos = produtos.length;
-
-    const totalItens = produtos.reduce(
-        (soma, p) => soma + p.quantidade, 0
-    );
-
-    const valorTotal = produtos.reduce(
-        (soma, p) => soma + p.quantidade * p.preco, 0
-    );
-
-    document.getElementById("totalProdutos").textContent = totalProdutos;
-    document.getElementById("totalItens").textContent = totalItens;
-    document.getElementById("valorEstoque").textContent =
-        formatarMoeda(valorTotal);
-}
-
-// Editar produto
-function editarProduto(id) {
-    const produto = produtos.find(p => p.id === id);
-
-    if (!produto) return;
-
-    document.getElementById("produtoId").value = produto.id;
-    document.getElementById("nome").value = produto.nome;
-    document.getElementById("categoria").value = produto.categoria;
-    document.getElementById("quantidade").value = produto.quantidade;
-    document.getElementById("preco").value = produto.preco;
-
-    document.getElementById("btnSalvar").textContent =
-        "Atualizar Produto";
-
-    window.scrollTo({ top: 0, behavior: "smooth" });
-}
-
-// Excluir produto
-function excluirProduto(id) {
-    if (!confirm("Deseja excluir este produto?")) return;
-
-    produtos = produtos.filter(p => p.id !== id);
-
-    salvarDados();
-    atualizarTela();
-}
-
-// Entrada e saída
-function movimentarEstoque(id, tipo) {
-    const produto = produtos.find(p => p.id === id);
-
-    if (!produto) return;
-
-    const quantidade = Number(prompt("Digite a quantidade:"));
-
-    if (!Number.isInteger(quantidade) || quantidade <= 0) {
-        alert("Digite uma quantidade inteira válida!");
-        return;
     }
 
-    if (tipo === "entrada") {
-        produto.quantidade += quantidade;
-    } else {
-        if (quantidade > produto.quantidade) {
+    // EDITAR PRODUTO
+    function editarProduto(indice) {
+
+        const produto = produtos[indice];
+
+        const campos = formulario.querySelectorAll("input");
+
+        campos[0].value = produto.nome;
+        campos[1].value = produto.codigo;
+        campos[2].value = produto.categoria;
+        campos[3].value = produto.quantidade;
+        campos[4].value = produto.preco;
+        campos[5].value = produto.fornecedor;
+
+        indiceEdicao = indice;
+
+        formulario.scrollIntoView({
+            behavior: "smooth"
+        });
+    }
+
+    // EXCLUIR PRODUTO
+    function excluirProduto(indice) {
+
+        if (confirm("Deseja realmente excluir este produto?")) {
+
+            produtos.splice(indice, 1);
+
+            salvarDados();
+            renderizarTabela();
+            atualizarIndicadores();
+
+            alert("Produto excluído com sucesso!");
+        }
+    }
+
+    // REGISTRAR ENTRADA
+    function registrarEntrada(indice) {
+
+        const quantidade = Number(
+            prompt("Quantas unidades deseja adicionar?")
+        );
+
+        if (!Number.isInteger(quantidade) || quantidade <= 0) {
+            alert("Digite uma quantidade inteira válida!");
+            return;
+        }
+
+        produtos[indice].quantidade += quantidade;
+
+        salvarDados();
+        renderizarTabela();
+        atualizarIndicadores();
+
+        alert("Entrada registrada com sucesso!");
+    }
+
+    // REGISTRAR SAÍDA
+    function registrarSaida(indice) {
+
+        const quantidade = Number(
+            prompt("Quantas unidades deseja retirar?")
+        );
+
+        if (!Number.isInteger(quantidade) || quantidade <= 0) {
+            alert("Digite uma quantidade inteira válida!");
+            return;
+        }
+
+        if (quantidade > produtos[indice].quantidade) {
             alert("Estoque insuficiente!");
             return;
         }
 
-        produto.quantidade -= quantidade;
+        produtos[indice].quantidade -= quantidade;
+
+        salvarDados();
+        renderizarTabela();
+        atualizarIndicadores();
+
+        alert("Saída registrada com sucesso!");
     }
 
-    salvarDados();
-    atualizarTela();
+    // AÇÕES DA TABELA
+    tabela.addEventListener("click", event => {
 
-    alert("Movimentação realizada com sucesso!");
-}
+        const botao = event.target.closest("button");
 
-// Pesquisa
-document.getElementById("pesquisa").addEventListener("input", function() {
-    atualizarTela(this.value);
+        if (!botao) return;
+
+        const indice = Number(botao.dataset.indice);
+        const acao = botao.dataset.acao;
+
+        switch (acao) {
+
+            case "editar":
+                editarProduto(indice);
+                break;
+
+            case "excluir":
+                excluirProduto(indice);
+                break;
+
+            case "entrada":
+                registrarEntrada(indice);
+                break;
+
+            case "saida":
+                registrarSaida(indice);
+                break;
+        }
+    });
+
+    // PESQUISAR PRODUTOS
+    if (pesquisa) {
+
+        pesquisa.addEventListener("input", () => {
+
+            const termo = pesquisa.value.toLowerCase();
+
+            const resultado = produtos.filter(produto =>
+                produto.nome.toLowerCase().includes(termo) ||
+                produto.codigo.toLowerCase().includes(termo) ||
+                produto.categoria.toLowerCase().includes(termo)
+            );
+
+            renderizarTabela(resultado);
+        });
+    }
+
+    // LIMPAR FORMULÁRIO
+    if (botoesLimpar) {
+
+        botoesLimpar.addEventListener("click", () => {
+
+            formulario.reset();
+            indiceEdicao = null;
+
+        });
+    }
+
+    // EVENTO DE CADASTRO
+    if (formulario) {
+        formulario.addEventListener("submit", cadastrarProduto);
+    }
+
+    // INICIALIZAR SISTEMA
+    renderizarTabela();
+    atualizarIndicadores();
+
 });
-
-// Iniciar sistema
-atualizarTela();
