@@ -1,0 +1,1 @@
+<p id="foo">Eu sou um simples texto.</p>
