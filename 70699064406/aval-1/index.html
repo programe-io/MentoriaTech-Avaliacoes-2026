@@ -8,192 +8,124 @@
   <style>body{margin:0;background:#0d1117}pre{margin:0}code.hljs{padding:1.5rem;min-height:100vh;box-sizing:border-box}</style>
 </head>
 <body>
-  <pre><code class="language-javascript">let tarefas = [];
+  <pre><code class="language-javascript">let produtos = [];
 let proximoCodigo = 1;
-function nomePrioridade(prioridade) {
-return ["", "Baixa", "Média", "Alta"][prioridade];
-}
-function buscarTarefa(codigo) {
-return tarefas.find(tarefa =&gt; tarefa.codigo === codigo);
-}
-function cadastrarTarefa() {
-const titulo = prompt("Digite o título da tarefa:");
-if (titulo === null) return;
-if (titulo.trim().length &lt; 5) {
-alert("O título deve ter pelo menos 5 caracteres.");
-return;
-}
-const entrada = prompt(
-"Escolha a prioridade:\n1 - Baixa\n2 - Média\n3 - Alta"
-);
-if (entrada === null) return;
-const prioridade = Number(entrada);
-if (!Number.isInteger(prioridade) ||
-prioridade &lt; 1 || prioridade &gt; 3) {
-alert("Prioridade inválida!");
-return;
-}
-tarefas.push({
-codigo: proximoCodigo++,
-titulo: titulo.trim(),
-prioridade,
-status: "Em andamento"
-});
-alert("Tarefa cadastrada com sucesso!");
+
+// Cadastrar produto
+function cadastrarProduto() {
+    let descricao = prompt("Digite o nome do produto:");
+    let quantidade = Number(prompt("Digite a quantidade:"));
+    let valor = Number(prompt("Digite o valor:"));
+
+    if (!descricao || descricao.trim() === "" ||
+        !Number.isInteger(quantidade) || quantidade &lt; 0 ||
+        !Number.isFinite(valor) || valor &lt; 0) {
+        console.log("Dados inválidos!");
+        return;
+    }
+
+    let produto = {
+        codigo: proximoCodigo,
+        descricao: descricao,
+        quantidade: quantidade,
+        valor: valor
+    };
+
+    produtos.push(produto);
+    proximoCodigo++;
+
+    console.log("Produto cadastrado com sucesso!");
 }
 
-function listarTarefas() {
-if (tarefas.length === 0) {
-alert("Nenhuma tarefa cadastrada.");
-return;
-}
-const lista = tarefas.map(tarefa =&gt;
-`Código: ${tarefa.codigo}\n` +
-`Título: ${tarefa.titulo}\n` +
-`Prioridade: ${nomePrioridade(tarefa.prioridade)}\n` +
-`Status: ${tarefa.status}`
-).join("\n\n--------------------\n\n");
-alert("===== LISTA DE TAREFAS =====\n\n" + lista);
-}
-function consultarTarefa() {
-const entrada = prompt("Digite o código da tarefa:");
-if (entrada === null) return;
-const codigo = Number(entrada);
-const tarefa = buscarTarefa(codigo);
-if (!tarefa) {
-alert("Tarefa não encontrada.");
-return;
-}
-alert(
-`Código: ${tarefa.codigo}\n` +
-`Título: ${tarefa.titulo}\n` +
-`Prioridade: ${nomePrioridade(tarefa.prioridade)}\n` +
-`Status: ${tarefa.status}`
-);
-}
-function concluirTarefa() {
-const entrada = prompt("Código da tarefa que deseja concluir:");
-if (entrada === null) return;
-const tarefa = buscarTarefa(Number(entrada));
-if (!tarefa) {
+// Listar produtos
+function listarProdutos() {
+    console.log("=== LISTA DE PRODUTOS ===");
 
-alert("Tarefa não encontrada.");
-return;
+    produtos.forEach(produto =&gt; {
+        console.log("Código: " + produto.codigo);
+        console.log("Descrição: " + produto.descricao);
+        console.log("Quantidade: " + produto.quantidade);
+        console.log("Valor: R$ " + produto.valor.toFixed(2));
+        console.log("----------------------");
+    });
 }
-if (tarefa.status === "Concluída") {
-alert("Essa tarefa já foi concluída.");
-return;
-}
-tarefa.status = "Concluída";
-alert("Tarefa concluída com sucesso!");
-}
-function alterarPrioridade() {
-const entrada = prompt("Código da tarefa:");
-if (entrada === null) return;
-const tarefa = buscarTarefa(Number(entrada));
-if (!tarefa) {
-alert("Tarefa não encontrada.");
-return;
-}
-const nova = prompt(
-"Nova prioridade:\n1 - Baixa\n2 - Média\n3 - Alta"
-);
-if (nova === null) return;
-const prioridade = Number(nova);
-if (!Number.isInteger(prioridade) ||
-prioridade &lt; 1 || prioridade &gt; 3) {
-alert("Prioridade inválida!");
-return;
-}
-tarefa.prioridade = prioridade;
-alert("Prioridade alterada com sucesso!");
-}
-function removerTarefa() {
-const entrada = prompt("Código da tarefa que deseja remover:");
 
-if (entrada === null) return;
-const codigo = Number(entrada);
-const indice = tarefas.findIndex(t =&gt; t.codigo === codigo);
-if (indice === -1) {
-alert("Tarefa não encontrada.");
-return;
-}
-const confirmacao = confirm(
-`Deseja remover "${tarefas[indice].titulo}"?`
-);
-if (!confirmacao) {
-alert("Remoção cancelada.");
-return;
-}
-tarefas.splice(indice, 1);
-alert("Tarefa removida com sucesso!");
-}
-function mostrarResumo() {
-const concluidas = tarefas.filter(
-t =&gt; t.status === "Concluída"
-).length;
-const andamento = tarefas.length - concluidas;
-alert(
-"===== RESUMO =====\n\n" +
-`Total de tarefas: ${tarefas.length}\n` +
-`Em andamento: ${andamento}\n` +
-`Concluídas: ${concluidas}`
-);
-}
-function mostrarMenu() {
-return prompt(
-"===== GERENCIADOR DE TAREFAS =====\n\n" +
-"1 - Cadastrar tarefa\n" +
-"2 - Listar tarefas\n" +
-"3 - Consultar tarefa\n" +
+// Alterar valor
+function alterarValor() {
+    let codigo = Number(prompt("Digite o código do produto:"));
+    let produto = produtos.find(p =&gt; p.codigo === codigo);
 
-"4 - Concluir tarefa\n" +
-"5 - Alterar prioridade\n" +
-"6 - Remover tarefa\n" +
-"7 - Mostrar resumo\n" +
-"0 - Sair\n\n" +
-"Digite o número da opção:"
-);
-}
-function iniciarSistema() {
-let executando = true;
-while (executando) {
-const opcao = mostrarMenu();
-if (opcao === null || opcao === "0") {
-executando = false;
-alert("Sistema encerrado. Até logo!");
-continue;
-}
-switch (opcao) {
-case "1":
-cadastrarTarefa();
-break;
-case "2":
-listarTarefas();
-break;
-case "3":
-consultarTarefa();
-break;
-case "4":
-concluirTarefa();
-break;
-case "5":
-alterarPrioridade();
-break;
-case "6":
-removerTarefa();
-break;
-case "7":
-mostrarResumo();
-break;
-default:
+    if (produto) {
+        let novoValor = Number(prompt("Digite o novo valor:"));
 
-alert("Opção inválida! Escolha de 0 a 7.");
+        if (Number.isFinite(novoValor) &amp;&amp; novoValor &gt;= 0) {
+            produto.valor = novoValor;
+            console.log("Valor atualizado com sucesso!");
+        } else {
+            console.log("Valor inválido!");
+        }
+    } else {
+        console.log("Produto não encontrado!");
+    }
 }
+
+// Alterar quantidade
+function alterarQuantidade() {
+    let codigo = Number(prompt("Digite o código do produto:"));
+    let produto = produtos.find(p =&gt; p.codigo === codigo);
+
+    if (produto) {
+        let novaQuantidade = Number(prompt("Digite a nova quantidade:"));
+
+        if (Number.isInteger(novaQuantidade) &amp;&amp; novaQuantidade &gt;= 0) {
+            produto.quantidade = novaQuantidade;
+            console.log("Quantidade atualizada com sucesso!");
+        } else {
+            console.log("Quantidade inválida!");
+        }
+    } else {
+        console.log("Produto não encontrado!");
+    }
 }
-}
-// Inicia o programa
-iniciarSistema();</code></pre>
+
+// Menu principal
+let opcao;
+
+do {
+    opcao = prompt(
+        "SISTEMA DE ESTOQUE\n\n" +
+        "1 - Cadastrar produto\n" +
+        "2 - Listar produtos\n" +
+        "3 - Alterar valor\n" +
+        "4 - Alterar quantidade\n" +
+        "0 - Sair\n\n" +
+        "Escolha uma opção:"
+    );
+
+    switch (opcao) {
+        case "1":
+            cadastrarProduto();
+            break;
+        case "2":
+            listarProdutos();
+            break;
+        case "3":
+            alterarValor();
+            break;
+        case "4":
+            alterarQuantidade();
+            break;
+        case "0":
+            console.log("Sistema encerrado!");
+            break;
+        case null:
+            opcao = "0";
+            break;
+        default:
+            console.log("Opção inválida!");
+    }
+
+} while (opcao !== "0");</code></pre>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
   <script>hljs.highlightAll();</script>
 </body>
