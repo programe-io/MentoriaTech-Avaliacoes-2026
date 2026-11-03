@@ -1,83 +1,142 @@
-// 2 - Lista (Array) de Produtos
-let produtos = [];
+let tarefas = [];
+let geradorCodigo = 0;
 
-// 5 - Função de Validação
-function validarProduto(descricao, quantidade, valor) {
-  if (descricao.length < 5) {
-      throw new Error("Descricao deve ter no mínimo cinco caracteres");
-        }
-          if (quantidade < 1) {
-              throw new Error("Quantidade deve ser maior que zero");
-                }
-                  if (valor < 0) {
-                      throw new Error("Valor deve maior igual a zero");
-                        }
-                        }
+function validarDadosTarefa(titulo, prioridade) {
 
-                        // 17 - Cadastrar Produto
-                        function cadastrarProduto(descricao, quantidade, valor) {
-                          validarProduto(descricao, quantidade, valor);
-                            
-                              let novoProduto = {
-                                  "codigo": produtos.length + 1,
-                                      "descricao": descricao,
-                                          "quantidade": quantidade,
-                                              "valor": valor
-                                                };
-                                                  
-                                                    produtos.push(novoProduto);
-                                                    }
+    if (titulo.trim().length < 5) {
+            throw new Error(
+                        "O título deve ter no mínimo 5 caracteres"
+                                );
+                                    }
 
-                                                    // 28 - Listar Produtos
-                                                    function listarProdutos() {
-                                                      console.log(produtos);
-                                                      }
+                                        if (!Number.isInteger(prioridade) ||
+                                                prioridade < 1 || prioridade > 3) {
 
-                                                      // 32 - Atualizar Valor
-                                                      function atualizarValor(codigoProduto, novoValor) {
-                                                        if (novoValor < 0) {
-                                                            throw new Error("Valor deve maior igual a zero");
-                                                              }
-
-                                                                const produto = produtos.find(prod => prod.codigo === codigoProduto);
-                                                                  
-                                                                    if (produto) {
-                                                                        produto.valor = novoValor;
-                                                                          } else {
-                                                                              throw new Error("Produto não encontrado");
+                                                        throw new Error(
+                                                                    "Informe uma prioridade entre 1 e 3"
+                                                                            );
                                                                                 }
                                                                                 }
 
-                                                                                // 45 - Atualizar Quantidade (Corrigido)
-                                                                                function atualizarQuantidade(codigoProduto, novaQuantidade) {
-                                                                                  if (novaQuantidade < 1) {
-                                                                                      throw new Error("Quantidade deve ser maior que zero");
-                                                                                        }
+                                                                                function buscarTarefa(codigo) {
 
-                                                                                          const produto = produtos.find(prod => prod.codigo === codigoProduto);
-                                                                                            
-                                                                                              if (produto) {
-                                                                                                  // Linha 51 corrigida: substitui o valor antigo em vez de somar com +=
-                                                                                                      produto.quantidade = novaQuantidade; 
-                                                                                                        } else {
-                                                                                                            throw new Error("Produto não encontrado");
-                                                                                                              }
-                                                                                                              }
+                                                                                    const tarefa = tarefas.find(
+                                                                                            t => t.codigo === codigo
+                                                                                                );
 
-                                                                                                              // -------------------------------------------------------------
-                                                                                                              // Execução dos Testes (Linhas 62-70)
-                                                                                                              // -------------------------------------------------------------
-                                                                                                              listarProdutos(); // []
+                                                                                                    if (!tarefa) {
+                                                                                                            throw new Error(
+                                                                                                                        "Código de tarefa não encontrado"
+                                                                                                                                );
+                                                                                                                                    }
 
-                                                                                                              cadastrarProduto("Cadeira Gamer", 12, 699.00);
-                                                                                                              cadastrarProduto("Mouse Logi", 38, 99.00);
+                                                                                                                                        return tarefa;
+                                                                                                                                        }
 
-                                                                                                              listarProdutos(); // Exibe os dois produtos cadastrados
+                                                                                                                                        function cadastrarTarefa() {
 
-                                                                                                              atualizarValor(2, 97.00); // Atualiza o preço do Mouse Logi
+                                                                                                                                            const titulo = document.getElementById("titulo").value;
 
-                                                                                                              listarProdutos(); // Exibe a lista com o preço do mouse atualizado
+                                                                                                                                                const prioridade = Number(
+                                                                                                                                                        document.getElementById("prioridade").value
+                                                                                                                                                            );
 
-                                                                                                              atualizarQuantidade(1, 3); // Altera a quantidade da Cadeira Gamer para exatamente 3
+                                                                                                                                                                try {
 
-                                                                                                              listarProdutos(); // Exibe a lista final com a quantidade corrigida
+                                                                                                                                                                        validarDadosTarefa(titulo, prioridade);
+
+                                                                                                                                                                                const tarefa = {
+                                                                                                                                                                                            codigo: ++geradorCodigo,
+                                                                                                                                                                                                        titulo: titulo.trim(),
+                                                                                                                                                                                                                    prioridade: prioridade,
+                                                                                                                                                                                                                                status: true
+                                                                                                                                                                                                                                        };
+
+                                                                                                                                                                                                                                                tarefas.push(tarefa);
+
+                                                                                                                                                                                                                                                        document.getElementById("titulo").value = "";
+                                                                                                                                                                                                                                                                document.getElementById("mensagem").textContent = "";
+
+                                                                                                                                                                                                                                                                        listarTarefas();
+
+                                                                                                                                                                                                                                                                            } catch (erro) {
+
+                                                                                                                                                                                                                                                                                    document.getElementById("mensagem").textContent =
+                                                                                                                                                                                                                                                                                                erro.message;
+
+                                                                                                                                                                                                                                                                                                    }
+                                                                                                                                                                                                                                                                                                    }
+
+                                                                                                                                                                                                                                                                                                    function listarTarefas() {
+
+                                                                                                                                                                                                                                                                                                        const lista = document.getElementById("listaTarefas");
+
+                                                                                                                                                                                                                                                                                                            lista.innerHTML = "";
+
+                                                                                                                                                                                                                                                                                                                tarefas.forEach(tarefa => {
+
+                                                                                                                                                                                                                                                                                                                        const elemento = document.createElement("div");
+
+                                                                                                                                                                                                                                                                                                                                elemento.className = "tarefa";
+
+                                                                                                                                                                                                                                                                                                                                        const titulo = document.createElement("h3");
+
+                                                                                                                                                                                                                                                                                                                                                titulo.textContent =
+                                                                                                                                                                                                                                                                                                                                                            tarefa.codigo + " - " + tarefa.titulo;
+
+                                                                                                                                                                                                                                                                                                                                                                    if (!tarefa.status) {
+                                                                                                                                                                                                                                                                                                                                                                                titulo.classList.add("concluida");
+                                                                                                                                                                                                                                                                                                                                                                                        }
+
+                                                                                                                                                                                                                                                                                                                                                                                                const prioridade = document.createElement("p");
+
+                                                                                                                                                                                                                                                                                                                                                                                                        prioridade.textContent =
+                                                                                                                                                                                                                                                                                                                                                                                                                    "Prioridade: " +
+                                                                                                                                                                                                                                                                                                                                                                                                                                ["Alta", "Média", "Baixa"][tarefa.prioridade - 1];
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                        const status = document.createElement("p");
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                status.textContent = tarefa.status
+                                                                                                                                                                                                                                                                                                                                                                                                                                                            ? "Pendente"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                        : "Concluída";
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                elemento.appendChild(titulo);
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        elemento.appendChild(prioridade);
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                elemento.appendChild(status);
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        if (tarefa.status) {
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    const botao = document.createElement("button");
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                botao.textContent = "Concluir tarefa";
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            botao.className = "concluir";
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        botao.onclick = function() {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        concluirTarefa(tarefa.codigo);
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    };
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                elemento.appendChild(botao);
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        }
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                lista.appendChild(elemento);
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    });
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    }
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    function concluirTarefa(codigo) {
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        try {
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                const tarefa = buscarTarefa(codigo);
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        tarefa.status = false;
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                listarTarefas();
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    } catch (erro) {
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            document.getElementById("mensagem").textContent =
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        erro.message;
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            }
