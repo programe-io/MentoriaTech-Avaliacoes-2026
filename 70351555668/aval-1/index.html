@@ -8,168 +8,182 @@
   <style>body{margin:0;background:#0d1117}pre{margin:0}code.hljs{padding:1.5rem;min-height:100vh;box-sizing:border-box}</style>
 </head>
 <body>
-  <pre><code class="language-javascript">&lt;!DOCTYPE html&gt;
-&lt;html lang="pt-BR"&gt;
-&lt;head&gt;
-    &lt;meta charset="UTF-8"&gt;
-    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
-    &lt;title&gt;Jogo da Velha&lt;/title&gt;
+  <pre><code class="language-javascript">
+const readline = require("readline");
 
-    &lt;style&gt;
-        body {
-            font-family: Arial, sans-serif;
-            background: #222;
-            color: white;
-            text-align: center;
-            margin: 0;
-            padding: 30px;
-        }
+const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
 
-        h1 {
-            margin-bottom: 10px;
-        }
+let tarefas = [];
+let proximoCodigo = 1;
 
-        #status {
-            font-size: 20px;
-            margin: 20px;
-        }
-
-        .tabuleiro {
-            display: grid;
-            grid-template-columns: repeat(3, 100px);
-            grid-template-rows: repeat(3, 100px);
-            gap: 5px;
-            justify-content: center;
-            margin: 20px auto;
-        }
-
-        .casa {
-            background: #444;
-            border: none;
-            font-size: 40px;
-            font-weight: bold;
-            color: white;
-            cursor: pointer;
-            border-radius: 8px;
-        }
-
-        .casa:hover {
-            background: #555;
-        }
-
-        button#reiniciar {
-            padding: 12px 25px;
-            font-size: 16px;
-            border: none;
-            border-radius: 8px;
-            background: #00aaff;
-            color: white;
-            cursor: pointer;
-        }
-
-        button#reiniciar:hover {
-            background: #0088cc;
-        }
-    &lt;/style&gt;
-&lt;/head&gt;
-
-&lt;body&gt;
-
-    &lt;h1&gt;🎮 Jogo da Velha&lt;/h1&gt;
-
-    &lt;div id="status"&gt;Vez do jogador X&lt;/div&gt;
-
-    &lt;div class="tabuleiro"&gt;
-        &lt;button class="casa"&gt;&lt;/button&gt;
-        &lt;button class="casa"&gt;&lt;/button&gt;
-        &lt;button class="casa"&gt;&lt;/button&gt;
-
-        &lt;button class="casa"&gt;&lt;/button&gt;
-        &lt;button class="casa"&gt;&lt;/button&gt;
-        &lt;button class="casa"&gt;&lt;/button&gt;
-
-        &lt;button class="casa"&gt;&lt;/button&gt;
-        &lt;button class="casa"&gt;&lt;/button&gt;
-        &lt;button class="casa"&gt;&lt;/button&gt;
-    &lt;/div&gt;
-
-    &lt;button id="reiniciar"&gt;Reiniciar&lt;/button&gt;
-
-    &lt;script&gt;
-        const casas = document.querySelectorAll(".casa");
-        const status = document.getElementById("status");
-        const reiniciar = document.getElementById("reiniciar");
-
-        let jogadorAtual = "X";
-        let jogoAtivo = true;
-        let tabuleiro = ["", "", "", "", "", "", "", ""];
-
-        const vitorias = [
-            [0, 1, 2],
-            [3, 4, 5],
-            [6, 7, 8],
-            [0, 3, 6],
-            [1, 4, 7],
-            [2, 5, 8],
-            [0, 4, 8],
-            [2, 4, 6]
-        ];
-
-        casas.forEach((casa, indice) =&gt; {
-            casa.addEventListener("click", () =&gt; jogar(indice));
+// Função para receber dados do usuário
+function perguntar(mensagem) {
+    return new Promise(resolve =&gt; {
+        rl.question(mensagem, resposta =&gt; {
+            resolve(resposta.trim());
         });
+    });
+}
 
-        function jogar(indice) {
-            if (tabuleiro[indice] !== "" || !jogoAtivo) {
-                return;
-            }
+// Cadastrar tarefa
+async function cadastrarTarefa() {
+    let titulo = await perguntar("Digite o título da tarefa: ");
 
-            tabuleiro[indice] = jogadorAtual;
-            casas[indice].textContent = jogadorAtual;
+    if (titulo.length &lt; 5) {
+        console.log("Erro: O título precisa ter no mínimo 5 caracteres.");
+        return;
+    }
 
-            verificarResultado();
+    let prioridade = Number(
+        await perguntar("Digite a prioridade (1-Alta, 2-Média, 3-Baixa): ")
+    );
+
+    if (!Number.isInteger(prioridade) || prioridade &lt; 1 || prioridade &gt; 3) {
+        console.log("Erro: A prioridade deve estar entre 1 e 3.");
+        return;
+    }
+
+    let tarefa = {
+        codigo: proximoCodigo,
+        titulo: titulo,
+        prioridade: prioridade,
+        concluida: false
+    };
+
+    tarefas.push(tarefa);
+    proximoCodigo++;
+
+    console.log("Tarefa cadastrada com sucesso!");
+}
+
+// Listar tarefas
+function listarTarefas() {
+    if (tarefas.length === 0) {
+        console.log("Nenhuma tarefa cadastrada.");
+        return;
+    }
+
+    console.log("\n===== LISTA DE TAREFAS =====");
+
+    tarefas.forEach(tarefa =&gt; {
+        console.log("----------------------------");
+        console.log("Código: " + tarefa.codigo);
+        console.log("Título: " + tarefa.titulo);
+
+        let prioridadeTexto = "";
+
+        if (tarefa.prioridade === 1) {
+            prioridadeTexto = "Alta";
+        } else if (tarefa.prioridade === 2) {
+            prioridadeTexto = "Média";
+        } else {
+            prioridadeTexto = "Baixa";
         }
 
-        function verificarResultado() {
-            for (let combinacao of vitorias) {
-                const [a, b, c] = combinacao;
+        console.log("Prioridade: " + prioridadeTexto);
+        console.log("Status: " +
+            (tarefa.concluida ? "Concluída" : "Pendente"));
+    });
 
-                if (
-                    tabuleiro[a] !== "" &amp;&amp;
-                    tabuleiro[a] === tabuleiro[b] &amp;&amp;
-                    tabuleiro[a] === tabuleiro[c]
-                ) {
-                    status.textContent = `🎉 Jogador ${jogadorAtual} venceu!`;
-                    jogoAtivo = false;
-                    return;
-                }
-            }
+    console.log("----------------------------");
+}
 
-            if (!tabuleiro.includes("")) {
-                status.textContent = "🤝 Empate!";
-                jogoAtivo = false;
-                return;
-            }
+// Concluir tarefa
+async function concluirTarefa() {
+    let codigo = Number(
+        await perguntar("Digite o código da tarefa: ")
+    );
 
-            jogadorAtual = jogadorAtual === "X" ? "O" : "X";
-            status.textContent = `Vez do jogador ${jogadorAtual}`;
+    let tarefa = tarefas.find(t =&gt; t.codigo === codigo);
+
+    if (tarefa) {
+        tarefa.concluida = true;
+        console.log("Tarefa marcada como concluída!");
+    } else {
+        console.log("Tarefa não encontrada!");
+    }
+}
+
+// Alterar prioridade
+async function alterarPrioridade() {
+    let codigo = Number(
+        await perguntar("Digite o código da tarefa: ")
+    );
+
+    let tarefa = tarefas.find(t =&gt; t.codigo === codigo);
+
+    if (!tarefa) {
+        console.log("Tarefa não encontrada!");
+        return;
+    }
+
+    let novaPrioridade = Number(
+        await perguntar("Nova prioridade (1-Alta, 2-Média, 3-Baixa): ")
+    );
+
+    if (!Number.isInteger(novaPrioridade) ||
+        novaPrioridade &lt; 1 || novaPrioridade &gt; 3) {
+        console.log("Prioridade inválida!");
+        return;
+    }
+
+    tarefa.prioridade = novaPrioridade;
+
+    console.log("Prioridade alterada com sucesso!");
+}
+
+// Menu principal
+async function menu() {
+    let opcao;
+
+    do {
+        console.log("\n==============================");
+        console.log("    GERENCIADOR DE TAREFAS");
+        console.log("==============================");
+        console.log("1 - Cadastrar tarefa");
+        console.log("2 - Listar tarefas");
+        console.log("3 - Concluir tarefa");
+        console.log("4 - Alterar prioridade");
+        console.log("0 - Sair");
+        console.log("==============================");
+
+        opcao = await perguntar("Escolha uma opção: ");
+
+        switch (opcao) {
+            case "1":
+                await cadastrarTarefa();
+                break;
+
+            case "2":
+                listarTarefas();
+                break;
+
+            case "3":
+                await concluirTarefa();
+                break;
+
+            case "4":
+                await alterarPrioridade();
+                break;
+
+            case "0":
+                console.log("Sistema encerrado. Até mais!");
+                break;
+
+            default:
+                console.log("Opção inválida! Tente novamente.");
         }
 
-        reiniciar.addEventListener("click", () =&gt; {
-            tabuleiro = ["", "", "", "", "", "", "", ""];
-            jogadorAtual = "X";
-            jogoAtivo = true;
+    } while (opcao !== "0");
 
-            casas.forEach(casa =&gt; {
-                casa.textContent = "";
-            });
+    rl.close();
+}
 
-            status.textContent = "Vez do jogador X";
-        });
-    &lt;/script&gt;
-
-&lt;/body&gt;
-</code></pre>
+// Iniciar o sistema
+menu();</code></pre>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
   <script>hljs.highlightAll();</script>
 </body>
