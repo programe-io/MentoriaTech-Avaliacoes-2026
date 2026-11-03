@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Produtos</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f1f5f9;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #1e293b;
+        }
+
+        h2 {
+            margin-bottom: 15px;
+            color: #334155;
+        }
+
+        .formulario {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 15px;
+        }
+
+        button {
+            border: none;
+            padding: 10px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            color: white;
+            font-weight: bold;
+            margin: 3px;
+        }
+
+        .btn-cadastrar {
+            background: #2563eb;
+            grid-column: 1 / -1;
+            padding: 13px;
+        }
+
+        .btn-cadastrar:hover {
+            background: #1d4ed8;
+        }
+
+        .btn-valor {
+            background: #16a34a;
+        }
+
+        .btn-quantidade {
+            background: #d97706;
+        }
+
+        .btn-excluir {
+            background: #dc2626;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #e2e8f0;
+            text-align: center;
+        }
+
+        th {
+            background: #1e293b;
+            color: white;
+        }
+
+        tr:hover {
+            background: #f8fafc;
+        }
+
+        .mensagem {
+            margin: 15px 0;
+            padding: 12px;
+            border-radius: 6px;
+            display: none;
+        }
+
+        .sucesso {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .erro {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .vazio {
+            text-align: center;
+            padding: 20px;
+            color: #64748b;
+        }
+
+        @media (max-width: 700px) {
+            body {
+                padding: 10px;
+            }
+
+            .formulario {
+                grid-template-columns: 1fr;
+            }
+
+            .btn-cadastrar {
+                grid-column: auto;
+            }
+
+            .container {
+                padding: 15px;
+                overflow-x: auto;
+            }
+
+            table {
+                min-width: 650px;
+            }
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>📦 Sistema de Cadastro de Produtos</h1>
+
+    <h2>Cadastrar Produto</h2>
+
+    <div class="formulario">
+
+        <input type="text" id="descricao"
+            placeholder="Descrição do produto">
+
+        <input type="number" id="quantidade"
+            placeholder="Quantidade" min="1">
+
+        <input type="number" id="valor"
+            placeholder="Valor (R$)" min="0" step="0.01">
+
+        <button class="btn-cadastrar" onclick="cadastrarProduto()">
+            Cadastrar Produto
+        </button>
+
+    </div>
+
+    <div id="mensagem" class="mensagem"></div>
+
+    <h2>Lista de Produtos</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Código</th>
+                <th>Descrição</th>
+                <th>Quantidade</th>
+                <th>Valor</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+
+        <tbody id="listaProdutos">
+        </tbody>
+    </table>
+
+</div>
+
+<script>
+
+    // Array de produtos
+    let produtos = [];
+
+    let proximoCodigo = 1;
+
+    // Validar produto
+    function validarProduto(descricao, quantidade, valor) {
+
+        if (descricao.length < 5) {
+            throw new Error(
+                "Descrição deve ter, no mínimo, cinco caracteres"
+            );
+        }
+
+        if (!Number.isInteger(quantidade) || quantidade < 1) {
+            throw new Error(
+                "Quantidade deve ser um número inteiro maior que zero"
+            );
+        }
+
+        if (!Number.isFinite(valor) || valor < 0) {
+            throw new Error(
+                "Valor deve ser maior ou igual a zero"
+            );
+        }
+    }
+
+    // Exibir mensagens
+    function mostrarMensagem(texto, tipo) {
+
+        const mensagem = document.getElementById("mensagem");
+
+        mensagem.textContent = texto;
+        mensagem.className = "mensagem " + tipo;
+        mensagem.style.display = "block";
+    }
+
+    // Cadastrar produto
+    function cadastrarProduto() {
+
+        try {
+
+            const descricao = document
+                .getElementById("descricao").value.trim();
+
+            const quantidade = Number(
+                document.getElementById("quantidade").value
+            );
+
+            const valor = Number(
+                document.getElementById("valor").value
+            );
+
+            validarProduto(descricao, quantidade, valor);
+
+            const novoProduto = {
+                codigo: proximoCodigo++,
+                descricao: descricao,
+                quantidade: quantidade,
+                valor: valor
+            };
+
+            produtos.push(novoProduto);
+
+            mostrarMensagem(
+                "Produto cadastrado com sucesso!",
+                "sucesso"
+            );
+
+            document.getElementById("descricao").value = "";
+            document.getElementById("quantidade").value = "";
+            document.getElementById("valor").value = "";
+
+            listarProdutos();
+
+        } catch (erro) {
+
+            mostrarMensagem(erro.message, "erro");
+
+        }
+    }
+
+    // Listar produtos
+    function listarProdutos() {
+
+        const tabela = document.getElementById("listaProdutos");
+
+        tabela.innerHTML = "";
+
+        if (produtos.length === 0) {
+
+            tabela.innerHTML = `
+                <tr>
+                    <td colspan="5" class="vazio">
+                        Nenhum produto cadastrado.
+                    </td>
+                </tr>
+            `;
+
+            return;
+        }
+
+        produtos.forEach((produto) => {
+
+            const linha = document.createElement("tr");
+
+            const codigo = document.createElement("td");
+            codigo.textContent = produto.codigo;
+
+            const descricao = document.createElement("td");
+            descricao.textContent = produto.descricao;
+
+            const quantidade = document.createElement("td");
+            quantidade.textContent = produto.quantidade;
+
+            const valor = document.createElement("td");
+            valor.textContent = produto.valor.toLocaleString(
+                "pt-BR",
+                { style: "currency", currency: "BRL" }
+            );
+
+            const acoes = document.createElement("td");
+
+            const botaoValor = document.createElement("button");
+            botaoValor.textContent = "Alterar valor";
+            botaoValor.className = "btn-valor";
+            botaoValor.onclick = () => atualizarValor(produto.codigo);
+
+            const botaoQuantidade = document.createElement("button");
+            botaoQuantidade.textContent = "Adicionar";
+            botaoQuantidade.className = "btn-quantidade";
+            botaoQuantidade.onclick = () =>
+                atualizarQuantidade(produto.codigo);
+
+            const botaoExcluir = document.createElement("button");
+            botaoExcluir.textContent = "Excluir";
+            botaoExcluir.className = "btn-excluir";
+            botaoExcluir.onclick = () => excluirProduto(produto.codigo);
+
+            acoes.append(botaoValor, botaoQuantidade, botaoExcluir);
+
+            linha.append(
+                codigo,
+                descricao,
+                quantidade,
+                valor,
+                acoes
+            );
+
+            tabela.appendChild(linha);
+
+        });
+    }
+
+    // Atualizar valor
+    function atualizarValor(codigoProduto) {
+
+        try {
+
+            const novoValor = Number(
+                prompt("Digite o novo valor do produto:")
+            );
+
+            if (!Number.isFinite(novoValor) || novoValor < 0) {
+                throw new Error("Valor inválido!");
+            }
+
+            const produto = produtos.find(
+                (prod) => prod.codigo === codigoProduto
+            );
+
+            if (!produto) {
+                throw new Error("Produto não encontrado");
+            }
+
+            produto.valor = novoValor;
+
+            mostrarMensagem(
+                "Valor atualizado com sucesso!",
+                "sucesso"
+            );
+
+            listarProdutos();
+
+        } catch (erro) {
+
+            mostrarMensagem(erro.message, "erro");
+
+        }
+    }
+
+    // Atualizar quantidade
+    function atualizarQuantidade(codigoProduto) {
+
+        try {
+
+            const novaQuantidade = Number(
+                prompt("Quantas unidades deseja adicionar?")
+            );
+
+            if (!Number.isInteger(novaQuantidade) || novaQuantidade < 1) {
+                throw new Error("Quantidade deve ser maior que zero!");
+            }
+
+            const produto = produtos.find(
+                (prod) => prod.codigo === codigoProduto
+            );
+
+            if (!produto) {
+                throw new Error("Produto não encontrado");
+            }
+
+            produto.quantidade += novaQuantidade;
+
+            mostrarMensagem(
+                "Estoque atualizado com sucesso!",
+                "sucesso"
+            );
+
+            listarProdutos();
+
+        } catch (erro) {
+
+            mostrarMensagem(erro.message, "erro");
+
+        }
+    }
+
+    // Excluir produto
+    function excluirProduto(codigoProduto) {
+
+        const confirmar = confirm(
+            "Deseja realmente excluir este produto?"
+        );
+
+        if (!confirmar) return;
+
+        produtos = produtos.filter(
+            (prod) => prod.codigo !== codigoProduto
+        );
+
+        mostrarMensagem(
+            "Produto excluído com sucesso!",
+            "sucesso"
+        );
+
+        listarProdutos();
+    }
+
+    // Inicializar tabela
+    listarProdutos();
+
+</script>
+
+<script src="script.js"></script></body>
+</html>
