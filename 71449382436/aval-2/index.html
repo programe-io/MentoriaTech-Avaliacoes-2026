@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Código JavaScript</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <style>body{margin:0;background:#0d1117}pre{margin:0}code.hljs{padding:1.5rem;min-height:100vh;box-sizing:border-box}</style>
+</head>
+<body>
+  <pre><code class="language-javascript">const readline = require("readline");
+
+const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
+
+let tarefas = [];
+let codigo = 1;
+
+function perguntar(texto) {
+    return new Promise(resolve =&gt; {
+        rl.question(texto, resposta =&gt; resolve(resposta));
+    });
+}
+
+async function menu() {
+    while (true) {
+        console.log("\n===== SISTEMA DE TAREFAS =====");
+        console.log("1 - Cadastrar tarefa");
+        console.log("2 - Listar tarefas");
+        console.log("3 - Concluir tarefa");
+        console.log("4 - Alterar prioridade");
+        console.log("5 - Sair");
+
+        let opcao = await perguntar("Escolha: ");
+
+        if (opcao === "1") {
+            let titulo = await perguntar("Título: ");
+
+            if (titulo.length &lt; 5) {
+                console.log("Título deve ter no mínimo 5 caracteres!");
+                continue;
+            }
+
+            let prioridade = Number(await perguntar("Prioridade (1-Alta, 2-Média, 3-Baixa): "));
+
+            if (prioridade &lt; 1 || prioridade &gt; 3 || !Number.isInteger(prioridade)) {
+                console.log("Prioridade inválida!");
+                continue;
+            }
+
+            tarefas.push({
+                codigo: codigo++,
+                titulo: titulo,
+                prioridade: prioridade,
+                status: "Pendente"
+            });
+
+            console.log("Tarefa cadastrada!");
+
+        } else if (opcao === "2") {
+
+            if (tarefas.length === 0) {
+                console.log("Nenhuma tarefa cadastrada.");
+            }
+
+            tarefas.forEach(t =&gt; {
+                console.log(
+                    `Código: ${t.codigo} | Título: ${t.titulo} | Prioridade: ${t.prioridade} | Status: ${t.status}`
+                );
+            });
+
+        } else if (opcao === "3") {
+
+            let id = Number(await perguntar("Código da tarefa: "));
+            let tarefa = tarefas.find(t =&gt; t.codigo === id);
+
+            if (tarefa) {
+                tarefa.status = "Concluída";
+                console.log("Tarefa concluída!");
+            } else {
+                console.log("Tarefa não encontrada!");
+            }
+
+        } else if (opcao === "4") {
+
+            let id = Number(await perguntar("Código da tarefa: "));
+            let tarefa = tarefas.find(t =&gt; t.codigo === id);
+
+            if (tarefa) {
+                let nova = Number(await perguntar("Nova prioridade (1 a 3): "));
+
+                if (nova &gt;= 1 &amp;&amp; nova &lt;= 3 &amp;&amp; Number.isInteger(nova)) {
+                    tarefa.prioridade = nova;
+                    console.log("Prioridade alterada!");
+                } else {
+                    console.log("Prioridade inválida!");
+                }
+            } else {
+                console.log("Tarefa não encontrada!");
+            }
+
+        } else if (opcao === "5") {
+            console.log("Sistema encerrado!");
+            break;
+
+        } else {
+            console.log("Opção inválida!");
+        }
+    }
+
+    rl.close();
+}
+
+menu();</code></pre>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+</body>
+</html>
