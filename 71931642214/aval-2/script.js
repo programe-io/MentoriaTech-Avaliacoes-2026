@@ -1,140 +1,212 @@
-// Array que guarda todas as tarefas cadastradas.
+// Projeto: Gerenciador de Tarefas por Prioridade
 
 let tarefas = [];
-
-
-// Gerador de códigos únicos para as tarefas.
-
 let geradorCodigo = 0;
 
-
-// Valida o título e a prioridade da tarefa.
-
-function validarDadosTarefa(titulo, prioridade) {
-
-  if (titulo.length < 5) {
-
-    throw new Error("O título deve ter no mínimo 5 caracteres");
-
-  }
-
-
-  if (prioridade < 1 || prioridade > 3) {
-
-    throw new Error("Informe uma prioridade entre 1 e 3");
-
-  }
-
-}
-
-
 // Cadastra uma nova tarefa.
+function cadastrarTarefa() {
+  let titulo = prompt("Digite o título da tarefa:");
 
-function cadastrarTarefa(titulo, prioridade) {
+  if (!titulo || titulo.trim().length < 5) {
+    alert("O título deve ter no mínimo 5 caracteres!");
+    return;
+  }
 
-  validarDadosTarefa(titulo, prioridade);
+  let prioridade = Number(prompt(
+    "Escolha a prioridade:\n1 - Alta\n2 - Média\n3 - Baixa"
+  ));
 
+  if (![1, 2, 3].includes(prioridade)) {
+    alert("Informe uma prioridade entre 1 e 3!");
+    return;
+  }
 
   const tarefa = {
-
     codigo: ++geradorCodigo,
-
-    titulo: titulo,
-
+    titulo: titulo.trim(),
     prioridade: prioridade,
-
-    status: true // true = em execução; false = concluída
-
+    status: true
   };
-
 
   tarefas.push(tarefa);
 
+  alert("Tarefa cadastrada com sucesso!");
 }
 
-
-// Retorna todas as tarefas cadastradas.
-
+// Lista todas as tarefas.
 function listarTarefas() {
+  if (tarefas.length === 0) {
+    alert("Nenhuma tarefa cadastrada!");
+    return;
+  }
 
-  return tarefas;
+  let resultado = "=== TODAS AS TAREFAS ===\n\n";
 
+  tarefas.forEach(tarefa => {
+    resultado +=
+      "Código: " + tarefa.codigo +
+      "\nTítulo: " + tarefa.titulo +
+      "\nPrioridade: " + tarefa.prioridade +
+      "\nStatus: " + (tarefa.status ? "Em execução" : "Concluída") +
+      "\n-------------------------\n";
+  });
+
+  alert(resultado);
 }
 
-
-// Procura uma tarefa pelo código.
-
-function buscarTarefa(codigo) {
-
-  const tarefaEncontrada = tarefas.find(
-
-    tarefa => tarefa.codigo === codigo
-
+// Visualiza tarefas por prioridade.
+function visualizarPorPrioridade() {
+  const tarefasOrdenadas = [...tarefas].sort(
+    (a, b) => a.prioridade - b.prioridade
   );
 
+  let resultado = "=== TAREFAS POR PRIORIDADE ===\n\n";
 
-  if (!tarefaEncontrada) {
+  tarefasOrdenadas.forEach(tarefa => {
+    let nivelPrioridade;
 
-    throw new Error("Código de tarefa não encontrado");
+    if (tarefa.prioridade === 1) {
+      nivelPrioridade = "Alta";
+    } else if (tarefa.prioridade === 2) {
+      nivelPrioridade = "Média";
+    } else {
+      nivelPrioridade = "Baixa";
+    }
 
-  }
+    resultado +=
+      "Código: " + tarefa.codigo +
+      "\nTítulo: " + tarefa.titulo +
+      "\nPrioridade: " + nivelPrioridade +
+      "\nStatus: " + (tarefa.status ? "Em execução" : "Concluída") +
+      "\n-------------------------\n";
+  });
 
-
-  return tarefaEncontrada;
-
+  alert(resultado);
 }
 
+// Edita uma tarefa.
+function editarTarefa() {
+  let codigo = Number(prompt("Digite o código da tarefa que deseja editar:"));
 
-// Marca uma tarefa como concluída.
+  let tarefa = tarefas.find(t => t.codigo === codigo);
 
-function concluirTarefa(codigo) {
-
-  const tarefa = buscarTarefa(codigo);
-
-
-  if (tarefa.status === false) {
-
-    throw new Error("Tarefa já estava como concluída");
-
+  if (!tarefa) {
+    alert("Tarefa não encontrada!");
+    return;
   }
 
+  let novoTitulo = prompt("Digite o novo título:", tarefa.titulo);
 
-  tarefa.status = false;
+  if (!novoTitulo || novoTitulo.trim().length < 5) {
+    alert("Título inválido!");
+    return;
+  }
 
-}
+  let novaPrioridade = Number(prompt(
+    "Nova prioridade:\n1 - Alta\n2 - Média\n3 - Baixa",
+    tarefa.prioridade
+  ));
 
+  if (![1, 2, 3].includes(novaPrioridade)) {
+    alert("Prioridade inválida!");
+    return;
+  }
 
-// Altera a prioridade de uma tarefa.
-
-function alterarPrioridade(codigo, novaPrioridade) {
-
-  const tarefa = buscarTarefa(codigo);
-
-
-  validarDadosTarefa(tarefa.titulo, novaPrioridade);
-
+  tarefa.titulo = novoTitulo.trim();
   tarefa.prioridade = novaPrioridade;
 
+  alert("Tarefa editada com sucesso!");
 }
 
+// Exclui uma tarefa.
+function excluirTarefa() {
+  let codigo = Number(prompt("Digite o código da tarefa que deseja excluir:"));
 
-// Testes do projeto.
+  let indice = tarefas.findIndex(t => t.codigo === codigo);
 
-cadastrarTarefa("Cadastrar Clientes", 1);
+  if (indice === -1) {
+    alert("Tarefa não encontrada!");
+    return;
+  }
 
-cadastrarTarefa("Limpar banco de dados", 3);
+  tarefas.splice(indice, 1);
 
+  alert("Tarefa excluída com sucesso!");
+}
 
-console.log("Lista inicial:");
+// Altera o status de uma tarefa.
+function alterarStatus() {
+  let codigo = Number(prompt("Digite o código da tarefa:"));
 
-console.log(listarTarefas());
+  let tarefa = tarefas.find(t => t.codigo === codigo);
 
+  if (!tarefa) {
+    alert("Tarefa não encontrada!");
+    return;
+  }
 
-alterarPrioridade(1, 2);
+  tarefa.status = !tarefa.status;
 
-concluirTarefa(2);
+  alert("Status atualizado: " +
+    (tarefa.status ? "Em execução" : "Concluída"));
+}
 
+// Menu principal.
+function menu() {
+  let opcao;
 
-console.log("Lista atualizada:");
+  do {
+    opcao = prompt(
+      "=== GERENCIADOR DE TAREFAS ===\n\n" +
+      "1 - Cadastrar tarefa\n" +
+      "2 - Listar tarefas\n" +
+      "3 - Visualizar por prioridade\n" +
+      "4 - Editar tarefa\n" +
+      "5 - Excluir tarefa\n" +
+      "6 - Alterar status\n" +
+      "0 - Sair\n\n" +
+      "Escolha uma opção:"
+    );
 
-console.log(listarTarefas());
+    switch (opcao) {
+      case "1":
+        cadastrarTarefa();
+        break;
+
+      case "2":
+        listarTarefas();
+        break;
+
+      case "3":
+        visualizarPorPrioridade();
+        break;
+
+      case "4":
+        editarTarefa();
+        break;
+
+      case "5":
+        excluirTarefa();
+        break;
+
+      case "6":
+        alterarStatus();
+        break;
+
+      case "0":
+        alert("Programa encerrado!");
+        break;
+
+      case null:
+        opcao = "0";
+        break;
+
+      default:
+        alert("Opção inválida!");
+    }
+
+  } while (opcao !== "0");
+}
+
+// Inicia o programa.
+menu();
