@@ -59,3 +59,9 @@ function validarDadosTarefa (titulo,prioridade){
     cadastrarTarefa('Cadastrar Clientes',1);
     cadastrarTarefa ('Limpar banco de dados',3);
     console. log (listrarTarefas());
+
+    concluirTarefa(2);
+    console.log(listarTarefas());
+
+    alterarPrioridade(1; 2);
+    console.log(listarTarefas());
