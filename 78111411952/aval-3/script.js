@@ -16,18 +16,24 @@ function publicar() {
     }
 
     let post = document.createElement("article");
-    let autor = document.createElement("b");
-    let texto = document.createElement("p");
-    let botao = document.createElement("button");
+    post.className = "post";
 
+    let autor = document.createElement("h3");
     autor.textContent = nome;
+
+    let texto = document.createElement("p");
     texto.textContent = mensagem;
+
+    let botao = document.createElement("button");
     botao.textContent = "♡ Curtir";
     botao.onclick = function() {
         curtir(botao);
     };
 
-    post.append(autor, texto, botao);
+    post.appendChild(autor);
+    post.appendChild(botao);
+    post.appendChild(texto);
+
     document.getElementById("feed").prepend(post);
 
     document.getElementById("nome").value = "";
