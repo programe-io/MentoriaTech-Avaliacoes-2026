@@ -1,0 +1,74 @@
+
+/* Array que vai guardar o conjunto de todas as tarefas */
+let tarefas = [];
+let geradorCodigo = 0;
+function validarDadosTarefa(título, prioridade){
+if(titulo.legth < 5){
+    throw new Error(' O título deve ter no mínimo 5 caracteres');
+}
+if(prioridade < 1 || prioridade > 3) {
+    throw new Error(' informe uma prioridade entre 1 e 3 ');
+}
+}
+
+
+
+function buscarTarefa(){
+    const tarefaBuscada = tarefas.find(t => t.codigo  === codigoTarefa);
+}
+if(!tarefasBuscada){
+throw new Error('Código de tarefa não encontrado');
+}
+return tarefaBuscada;
+
+function cadastrarTarefa(título, prioridade) {
+    validarDadosTarefa(título, prioridade);
+
+    let tarefa = {
+'codigo': ++geradorCodigo,
+'titulo': título,
+'prioridade': prioridade,
+'status': true
+}
+
+
+
+tarefas.push(tarefa);
+}
+
+
+function listarTarefas(){
+    return tarefas;
+}
+
+function concluirTarefa(codigo){
+    let tarefa = buscarTarefa(codigo);
+
+        if(tarefa.status === false){
+             throw new Error( 'Tarefa ja estava como concluída');
+        }
+    tarefa.status = false;
+}
+
+
+function alterarPrioridade(codigo, novaPrioridade){
+        let tarefa = buscarTarefa(codigo);
+        validarDadosTarefa(tarefa.título, prioridade)
+
+        tarefa.prioridade = novaPrioridade;
+}
+
+
+
+
+
+
+
+cadastrarTarefa('Cadastrar Clientes' , 1);
+console.log(listarTarefas());
+
+
+alterarPrioridade(1,2);
+
+
+console.log(listarTarefas());
