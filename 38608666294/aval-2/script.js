@@ -47,4 +47,40 @@ function cadastrarTarefa(titulo, prioridade) {
 
 // Retorna as tarefas cadastradas (retornar não é o mesmo que exibir)
 function listarTarefas() {
-  return
+  return tarefas;
+}
+
+// Marca uma tarefa como concluída
+function concluirTarefa(codigo) {
+  const tarefa = buscarTarefa(codigo);
+
+  if (!tarefa.status) {
+    throw new Error("A tarefa já estava concluída.");
+  }
+
+  tarefa.status = false;
+  return tarefa;
+}
+
+// Altera a prioridade de uma tarefa existente
+function alterarPrioridade(codigo, novaPrioridade) {
+  const tarefa = buscarTarefa(codigo);
+
+  // Reaproveita a validação usando o título já cadastrado
+  validarDadosDaTarefa(tarefa.titulo, novaPrioridade);
+
+  tarefa.prioridade = novaPrioridade;
+  return tarefa;
+}
+
+// Permite usar o arquivo no Node (testes) sem atrapalhar o navegador
+if (typeof module !== "undefined") {
+  module.exports = {
+    validarDadosDaTarefa,
+    buscarTarefa,
+    cadastrarTarefa,
+    listarTarefas,
+    concluirTarefa,
+    alterarPrioridade,
+  };
+}
