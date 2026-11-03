@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Super Game</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #17152f;
+    color: white;
+    text-align: center;
+}
+
+header {
+    background: linear-gradient(135deg, #542b91, #172b75);
+    padding: 35px;
+}
+
+header h1 {
+    font-size: 40px;
+    color: #d9b5ff;
+}
+
+nav {
+    margin-top: 20px;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    margin: 10px;
+}
+
+.banner {
+    padding: 50px 20px;
+}
+
+.banner h2 {
+    color: #c69aff;
+    font-size: 30px;
+    margin-bottom: 15px;
+}
+
+.publicidade {
+    background: #352653;
+    margin: 20px auto;
+    padding: 25px;
+    width: 90%;
+    max-width: 650px;
+    border-radius: 15px;
+}
+
+.publicidade h2 {
+    color: #ffcf5c;
+}
+
+.jogo {
+    background: #292344;
+    padding: 30px;
+    width: 90%;
+    max-width: 500px;
+    margin: 30px auto;
+    border-radius: 20px;
+}
+
+button {
+    background: #8b4bce;
+    color: white;
+    border: none;
+    padding: 14px 25px;
+    border-radius: 10px;
+    cursor: pointer;
+    margin: 10px;
+    font-size: 16px;
+}
+
+button:hover {
+    background: #b36aff;
+}
+
+#respostas button {
+    display: block;
+    width: 100%;
+    margin: 10px 0;
+}
+
+#pergunta {
+    margin: 20px;
+    font-size: 22px;
+}
+
+footer {
+    background: #292344;
+    padding: 25px;
+    margin-top: 40px;
+}
+
+@media(max-width: 600px) {
+    header h1 {
+        font-size: 28px;
+    }
+}
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+<header>
+    <h1>🎮 SUPER GAME</h1>
+    <p>A diversão começa aqui!</p>
+
+    <nav>
+        <a href="#inicio">Início</a>
+        <a href="#jogo">Jogar</a>
+        <a href="#publicidade">Publicidade</a>
+    </nav>
+</header>
+
+<section class="banner" id="inicio">
+    <h2>ENTRE NESSA AVENTURA!</h2>
+    <p>Teste seus conhecimentos e conquiste pontos!</p>
+</section>
+
+<section class="publicidade" id="publicidade">
+    <h2>🔥 PUBLICIDADE</h2>
+    <p>Conheça o mundo dos games e descubra novos desafios!</p>
+    <p>Novidades e diversão esperam por você!</p>
+</section>
+
+<section class="jogo" id="jogo">
+
+    <h2>🕹️ DESAFIO DO SABER</h2>
+
+    <p id="pergunta">Clique em começar para jogar!</p>
+
+    <div id="respostas"></div>
+
+    <h3 id="pontuacao">Pontos: 0</h3>
+
+    <button id="comecar" onclick="iniciarJogo()">
+        COMEÇAR A JOGAR
+    </button>
+
+    <button id="proximo" onclick="proximaPergunta()" hidden>
+        PRÓXIMA
+    </button>
+
+</section>
+
+<footer>
+    <p>© 2026 - SUPER GAME</p>
+    <p>Diversão para todos! 🎮</p>
+</footer>
+
+<script>
+const perguntas = [
+    {
+        pergunta: "Qual é o planeta vermelho?",
+        respostas: ["Terra", "Marte", "Júpiter"],
+        correta: 1
+    },
+    {
+        pergunta: "Quantos dias tem uma semana?",
+        respostas: ["5", "6", "7"],
+        correta: 2
+    },
+    {
+        pergunta: "Qual é a capital do Brasil?",
+        respostas: ["Brasília", "São Paulo", "Rio de Janeiro"],
+        correta: 0
+    }
+];
+
+let atual = 0;
+let pontos = 0;
+let respondeu = false;
+
+function iniciarJogo() {
+    atual = 0;
+    pontos = 0;
+    document.getElementById("comecar").hidden = true;
+    mostrarPergunta();
+}
+
+function mostrarPergunta() {
+    respondeu = false;
+
+    const p = perguntas[atual];
+
+    document.getElementById("pergunta").textContent =
+        p.pergunta;
+
+    document.getElementById("pontuacao").textContent =
+        "Pontos: " + pontos;
+
+    const area = document.getElementById("respostas");
+    area.innerHTML = "";
+
+    p.respostas.forEach((resposta, indice) => {
+        const botao = document.createElement("button");
+
+        botao.textContent = resposta;
+
+        botao.onclick = () => verificarResposta(indice);
+
+        area.appendChild(botao);
+    });
+
+    document.getElementById("proximo").hidden = true;
+}
+
+function verificarResposta(indice) {
+    if (respondeu) return;
+
+    respondeu = true;
+
+    const correta = perguntas[atual].correta;
+
+    if (indice === correta) {
+        pontos += 10;
+        alert("🎉 Resposta correta!");
+    } else {
+        alert("❌ Resposta incorreta!");
+    }
+
+    document.getElementById("pontuacao").textContent =
+        "Pontos: " + pontos;
+
+    document.getElementById("proximo").hidden = false;
+}
+
+function proximaPergunta() {
+    atual++;
+
+    if (atual < perguntas.length) {
+        mostrarPergunta();
+    } else {
+        document.getElementById("pergunta").textContent =
+            "🏆 Fim de jogo! Você fez " + pontos + " pontos!";
+
+        document.getElementById("respostas").innerHTML = "";
+
+        document.getElementById("proximo").hidden = true;
+
+        document.getElementById("comecar").hidden = false;
+        document.getElementById("comecar").textContent =
+            "JOGAR NOVAMENTE";
+    }
+}
+</script>
+
+<script src="script.js"></script></body>
+</html>
