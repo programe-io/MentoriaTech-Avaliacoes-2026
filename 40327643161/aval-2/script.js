@@ -1,7 +1,13 @@
 class GerenciadorDeTarefas {
     constructor() {
-        this.tarefas = [];
-        this.proximoCodigo = 1;
+        // Carrega as tarefas salvas ou inicia um array vazio
+        this.tarefas = JSON.parse(localStorage.getItem('tarefas')) || [];
+        // Define o próximo código com base no maior ID existente ou 1
+        this.proximoCodigo = this.tarefas.length > 0 ? Math.max(...this.tarefas.map(t => t.code)) + 1 : 1;
+    }
+
+    _salvar() {
+        localStorage.setItem('tarefas', JSON.stringify(this.tarefas));
     }
 
     cadastrarTarefa(titulo, prioridade) {
@@ -22,13 +28,15 @@ class GerenciadorDeTarefas {
         };
 
         this.tarefas.push(novaTarefa);
+        this._salvar();
         return { sucesso: true, mensagem: "Tarefa cadastrada com sucesso!" };
     }
 
     marcarComoConcluida(code) {
         const tarefa = this.tarefas.find(t => t.code === code);
         if (tarefa) {
-            tarefa.completed = !tarefa.completed; // Alterna entre concluída e pendente
+            tarefa.completed = !tarefa.completed;
+            this._salvar();
             return true;
         }
         return false;
@@ -38,6 +46,7 @@ class GerenciadorDeTarefas {
         const tarefa = this.tarefas.find(t => t.code === code);
         if (tarefa) {
             tarefa.priority = parseInt(novaPrioridade);
+            this._salvar();
             return true;
         }
         return false;
