@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet">
+</head>
+<body>
+  <main class="container">
+  <h1>📦 Controle de Estoque</h1>
+  <p id="mensagem" role="status" aria-live="polite"></p>
+
+  <div class="resumo">
+    <div class="card"><span>Produtos</span><strong id="resProdutos">0</strong></div>
+    <div class="card"><span>Unidades</span><strong id="resUnidades">0</strong></div>
+    <div class="card"><span>Valor total</span><strong id="resTotal">R$ 0,00</strong></div>
+    <div class="card alerta"><span>Precisam de atenção</span><strong id="resAlertas">0</strong></div>
+  </div>
+
+  <div class="grade">
+    <section>
+      <h2>Cadastrar produto</h2>
+      <form id="formCadastro" class="coluna">
+        <input id="descricao" type="text" placeholder="Descrição (mín. 3 caracteres)" aria-label="Descrição">
+        <input id="quantidade" type="number" min="0" step="1" placeholder="Quantidade" aria-label="Quantidade">
+        <input id="valor" type="number" min="0" step="0.01" placeholder="Valor (R$)" aria-label="Valor">
+        <button type="submit">Cadastrar</button>
+      </form>
+    </section>
+
+    <section>
+      <h2>Alterar produto</h2>
+      <p class="dica">Escolha o produto (ou clique na linha da tabela).</p>
+      <div class="coluna">
+        <select id="selAlterar" aria-label="Produto a alterar"></select>
+        <div class="linha">
+          <input id="novoValor" type="number" min="0" step="0.01" placeholder="Novo valor (R$)">
+          <button id="btnValor" type="button">Alterar valor</button>
+        </div>
+        <div class="linha">
+          <input id="novaQuantidade" type="number" min="0" step="1" placeholder="Nova quantidade">
+          <button id="btnQuantidade" type="button">Alterar qtd.</button>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Entrada / saída</h2>
+      <p class="dica">Soma ou subtrai do estoque atual.</p>
+      <form id="formMov" class="coluna">
+        <select id="selMov" aria-label="Produto"></select>
+        <div class="linha">
+          <select id="tipoMov" aria-label="Tipo">
+            <option value="entrada">Entrada (+)</option>
+            <option value="saida">Saída (−)</option>
+          </select>
+          <input id="qtdMov" type="number" min="1" step="1" placeholder="Qtd." aria-label="Quantidade">
+        </div>
+        <button type="submit">Registrar</button>
+      </form>
+    </section>
+  </div>
+
+  <section>
+    <h2>Produtos cadastrados</h2>
+    <div class="linha filtros">
+      <input id="busca" type="search" placeholder="🔍 Buscar por código ou descrição">
+      <select id="filtroSituacao" aria-label="Filtrar por situação">
+        <option value="todos">Todas as situações</option>
+        <option value="normal">Normal</option>
+        <option value="baixo">Estoque baixo</option>
+        <option value="zerado">Sem estoque</option>
+      </select>
+    </div>
+    <div class="tabela-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th data-campo="codigo">Código</th>
+            <th data-campo="descricao">Descrição</th>
+            <th data-campo="quantidade">Qtd.</th>
+            <th data-campo="valor">Valor</th>
+            <th data-campo="subtotal">Subtotal</th>
+            <th data-campo="situacao">Situação</th>
+            <th>Ação</th>
+          </tr>
+        </thead>
+        <tbody id="listaProdutos"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>Últimas movimentações</h2>
+    <ul id="historico" class="historico"></ul>
+  </section>
+</main>
+  <script src="script.js"></script>
+  
+</body>
+</html>
