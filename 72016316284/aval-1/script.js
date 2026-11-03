@@ -1,0 +1,250 @@
+
+const readline = require("readline");
+
+const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
+
+let produtos = [];
+let proximoCodigo = 1;
+
+// Função para fazer perguntas ao usuário
+function perguntar(texto) {
+    return new Promise(resolve => {
+        rl.question(texto, resposta => resolve(resposta));
+    });
+}
+
+// 1. Validar descrição do produto
+function validarDescricao(descricao) {
+    return descricao.trim() !== "";
+}
+
+// 2. Validar quantidade
+function validarQuantidade(quantidade) {
+    return Number.isInteger(quantidade) && quantidade >= 0;
+}
+
+// 3. Validar valor
+function validarValor(valor) {
+    return !isNaN(valor) && valor > 0;
+}
+
+// 4. Criar objeto produto
+function criarProduto(descricao, quantidade, valor) {
+    return {
+        codigo: proximoCodigo++,
+        descricao: descricao,
+        quantidade: quantidade,
+        valor: valor
+    };
+}
+
+// 5. Cadastrar produto
+async function cadastrarProduto() {
+    console.log("\n--- CADASTRAR PRODUTO ---");
+
+    let descricao = await perguntar("Descrição do produto: ");
+
+    if (!validarDescricao(descricao)) {
+        console.log("Erro: descrição inválida!");
+        return;
+    }
+
+    let quantidade = Number(
+        await perguntar("Quantidade em estoque: ")
+    );
+
+    if (!validarQuantidade(quantidade)) {
+        console.log("Erro: quantidade inválida!");
+        return;
+    }
+
+    let valor = Number(
+        await perguntar("Valor do produto: R$ ")
+    );
+
+    if (!validarValor(valor)) {
+        console.log("Erro: valor inválido!");
+        return;
+    }
+
+    let produto = criarProduto(
+        descricao,
+        quantidade,
+        valor
+    );
+
+    produtos.push(produto);
+
+    console.log("Produto cadastrado com sucesso!");
+    console.log("Código do produto:", produto.codigo);
+}
+
+// 6. Listar produtos
+function listarProdutos() {
+    console.log("\n--- LISTA DE PRODUTOS ---");
+
+    if (produtos.length === 0) {
+        console.log("Nenhum produto cadastrado.");
+        return;
+    }
+
+    produtos.forEach(produto => {
+        console.log("-------------------------");
+        console.log("Código:", produto.codigo);
+        console.log("Descrição:", produto.descricao);
+        console.log("Quantidade:", produto.quantidade);
+        console.log("Valor: R$", produto.valor.toFixed(2));
+    });
+}
+
+// 7. Buscar produto pelo código
+function buscarProduto(codigo) {
+    return produtos.find(
+        produto => produto.codigo === codigo
+    );
+}
+
+// 8. Atualizar valor do produto
+async function atualizarValor() {
+    console.log("\n--- ATUALIZAR VALOR ---");
+
+    let codigo = Number(
+        await perguntar("Código do produto: ")
+    );
+
+    let produto = buscarProduto(codigo);
+
+    if (!produto) {
+        console.log("Produto não encontrado!");
+        return;
+    }
+
+    console.log("Produto:", produto.descricao);
+    console.log("Valor atual: R$", produto.valor.toFixed(2));
+
+    let novoValor = Number(
+        await perguntar("Novo valor: R$ ")
+    );
+
+    if (!validarValor(novoValor)) {
+        console.log("Erro: valor inválido!");
+        return;
+    }
+
+    produto.valor = novoValor;
+
+    console.log("Valor atualizado com sucesso!");
+}
+
+// 9. Atualizar quantidade do produto
+async function atualizarQuantidade() {
+    console.log("\n--- ATUALIZAR QUANTIDADE ---");
+
+    let codigo = Number(
+        await perguntar("Código do produto: ")
+    );
+
+    let produto = buscarProduto(codigo);
+
+    if (!produto) {
+        console.log("Produto não encontrado!");
+        return;
+    }
+
+    console.log("Produto:", produto.descricao);
+    console.log("Quantidade atual:", produto.quantidade);
+
+    console.log("1 - Alterar quantidade");
+    console.log("2 - Somar quantidade");
+
+    let opcao = await perguntar("Escolha uma opção: ");
+
+    let quantidade = Number(
+        await perguntar("Informe a quantidade: ")
+    );
+
+    if (!validarQuantidade(quantidade)) {
+        console.log("Erro: quantidade inválida!");
+        return;
+    }
+
+    if (opcao === "1") {
+        produto.quantidade = quantidade;
+        console.log("Quantidade alterada!");
+    } else if (opcao === "2") {
+        produto.quantidade += quantidade;
+        console.log("Quantidade adicionada!");
+    } else {
+        console.log("Opção inválida!");
+    }
+}
+
+// 10. Menu principal
+async function menu() {
+    let opcao;
+
+    do {
+        console.log("\n=========================");
+        console.log(" SISTEMA DE ESTOQUE");
+        console.log("=========================");
+        console.log("1 - Cadastrar produto");
+        console.log("2 - Listar produtos");
+        console.log("3 - Atualizar valor");
+        console.log("4 - Buscar produto");
+        console.log("5 - Atualizar quantidade");
+        console.log("0 - Sair");
+
+        opcao = await perguntar("Escolha uma opção: ");
+
+        switch (opcao) {
+            case "1":
+                await cadastrarProduto();
+                break;
+
+            case "2":
+                listarProdutos();
+                break;
+
+            case "3":
+                await atualizarValor();
+                break;
+
+            case "4": {
+                let codigo = Number(
+                    await perguntar("Código do produto: ")
+                );
+
+                let produto = buscarProduto(codigo);
+
+                if (produto) {
+                    console.log("\nProduto encontrado:");
+                    console.log(produto);
+                } else {
+                    console.log("Produto não encontrado!");
+                }
+
+                break;
+            }
+
+            case "5":
+                await atualizarQuantidade();
+                break;
+
+            case "0":
+                console.log("Sistema encerrado!");
+                break;
+
+            default:
+                console.log("Opção inválida!");
+        }
+
+    } while (opcao !== "0");
+
+    rl.close();
+}
+
+// Executar o sistema
+menu();
