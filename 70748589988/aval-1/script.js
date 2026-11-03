@@ -1,13 +1,13 @@
-// Banco de dados em memória
+// Array para armazenar o estoque de produtos
 const estoque = [];
 
-// Elementos da DOM
+// Seleção dos elementos HTML
 const formProduto = document.getElementById('form-produto');
 const tabelaCorpo = document.getElementById('tabela-corpo');
 const estoqueVazio = document.getElementById('estoque-vazio');
 const mensagemBox = document.getElementById('mensagem');
 
-// Exibe notificações de sucesso ou erro
+// Função auxiliar para exibir alertas na tela
 function exibirMensagem(texto, tipo = 'success') {
   mensagemBox.textContent = texto;
   mensagemBox.className = `alert alert-${tipo}`;
@@ -26,7 +26,7 @@ formProduto.addEventListener('submit', (e) => {
   const quantidade = parseInt(document.getElementById('quantidade').value, 10);
   const valor = parseFloat(document.getElementById('valor').value);
 
-  // Validação: não permitir códigos duplicados
+  // Validação para impedir códigos duplicados
   if (estoque.some(p => p.codigo === codigo)) {
     exibirMensagem(`Erro: O código "${codigo}" já está cadastrado.`, 'error');
     return;
@@ -52,16 +52,40 @@ function listarProdutos() {
 
   estoque.forEach(produto => {
     const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td><strong>${produto.codigo}</strong></td>
-      <td>${produto.descricao}</td>
-      <td>${produto.quantidade}</td>
-      <td>R$ ${produto.valor.toFixed(2)}</td>
-      <td>
-        <button class="btn btn-action" onclick="alterarValor('${produto.codigo}')">Alterar Valor</button>
-        <button class="btn btn-action" onclick="alterarQuantidade('${produto.codigo}')">Alterar Qtd</button>
-      </td>
-    `;
+
+    const tdCodigo = document.createElement('td');
+    tdCodigo.innerHTML = `<strong>${produto.codigo}</strong>`;
+
+    const tdDescricao = document.createElement('td');
+    tdDescricao.textContent = produto.descricao;
+
+    const tdQuantidade = document.createElement('td');
+    tdQuantidade.textContent = produto.quantidade;
+
+    const tdValor = document.createElement('td');
+    tdValor.textContent = `R$ ${produto.valor.toFixed(2)}`;
+
+    const tdAcoes = document.createElement('td');
+
+    const btnValor = document.createElement('button');
+    btnValor.className = 'btn btn-action';
+    btnValor.textContent = 'Alterar Valor';
+    btnValor.addEventListener('click', () => alterarValor(produto.codigo));
+
+    const btnQtd = document.createElement('button');
+    btnQtd.className = 'btn btn-action';
+    btnQtd.textContent = 'Alterar Qtd';
+    btnQtd.addEventListener('click', () => alterarQuantidade(produto.codigo));
+
+    tdAcoes.appendChild(btnValor);
+    tdAcoes.appendChild(btnQtd);
+
+    tr.appendChild(tdCodigo);
+    tr.appendChild(tdDescricao);
+    tr.appendChild(tdQuantidade);
+    tr.appendChild(tdValor);
+    tr.appendChild(tdAcoes);
+
     tabelaCorpo.appendChild(tr);
   });
 }
@@ -104,5 +128,5 @@ function alterarQuantidade(codigo) {
   listarProdutos();
 }
 
-// Renderização inicial
+// Inicializa a tabela ao carregar a página
 listarProdutos();
