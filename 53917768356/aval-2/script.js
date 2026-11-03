@@ -1,0 +1,248 @@
+// ==========================================
+// ESTRUTURA DE DADOS CENTRAL
+// ==========================================
+const tarefas = [];
+let proximoCodigo = 1;
+
+// ==========================================
+// REGRAS DE NEGÓCIO E VALIDAÇÕES (LÓGICA)
+// ==========================================
+
+/**
+ * Valida o título e a prioridade da tarefa.
+ * @param {string} titulo 
+ * @param {number} prioridade 
+ */
+function validarDadosDaTarefa(titulo, prioridade) {
+    if (!titulo || titulo.trim().length < 5) {
+        throw new Error("O título da tarefa deve possuir no mínimo 5 caracteres.");
+    }
+    
+    if (prioridade < 1 || prioridade > 3) {
+        throw new Error("A prioridade deve estar entre 1 (mais alta) e 3 (mais baixa).");
+    }
+}
+
+/**
+ * Cadastra uma nova tarefa no array central.
+ * @param {string} titulo 
+ * @param {number} prioridade 
+ * @returns {Object} Objeto da tarefa criada.
+ */
+function cadastrarTarefa(titulo, prioridade) {
+    validarDadosDaTarefa(titulo, prioridade);
+
+    const novaTarefa = {
+        codigo: proximoCodigo++,
+        titulo: titulo.trim(),
+        prioridade: Number(prioridade),
+        status: true // true = Em execução, false = Concluída
+    };
+
+    tarefas.push(novaTarefa);
+    return novaTarefa;
+}
+
+/**
+ * Retorna o array completo com todas as tarefas.
+ * @returns {Array}
+ */
+function listarTarefas() {
+    return tarefas;
+}
+
+/**
+ * Localiza uma tarefa pelo código utilizando .find().
+ * @param {number} codigo 
+ * @returns {Object} Objeto da tarefa encontrada.
+ */
+function buscarTarefa(codigo) {
+    const tarefaEncontrada = tarefas.find(t => t.codigo === Number(codigo));
+
+    if (!tarefaEncontrada) {
+        throw new Error(`Código ${codigo} não encontrado.`);
+    }
+
+    return tarefaEncontrada;
+}
+
+/**
+ * Conclui uma tarefa alterando o seu status para false.
+ * @param {number} codigo 
+ * @returns {Object} Tarefa atualizada.
+ */
+function concluirTarefa(codigo) {
+    const tarefa = buscarTarefa(codigo);
+
+    if (tarefa.status === false) {
+        throw new Error(`A tarefa de código ${codigo} já se encontrava concluída.`);
+    }
+
+    tarefa.status = false;
+    return tarefa;
+}
+
+/**
+ * Altera a prioridade de uma tarefa existente.
+ * @param {number} codigo 
+ * @param {number} novaPrioridade 
+ * @returns {Object} Tarefa atualizada.
+ */
+function alterarPrioridade(codigo, novaPrioridade) {
+    const tarefa = buscarTarefa(codigo);
+    
+    // Reutiliza a validação passando o título atual da tarefa
+    validarDadosDaTarefa(tarefa.titulo, Number(novaPrioridade));
+    
+    tarefa.prioridade = Number(novaPrioridade);
+    return tarefa;
+}
+
+// ==========================================
+// INTEGRAÇÃO COM A INTERFACE (DOM)
+// ==========================================
+
+document.addEventListener("DOMContentLoaded", () => {
+    const formCadastrar = document.getElementById("form-cadastrar");
+    const inputTitulo = document.getElementById("titulo");
+    const selectPrioridade = document.getElementById("prioridade");
+
+    const btnConcluir = document.getElementById("btn-concluir");
+    const inputCodigoConcluir = document.getElementById("codigo-concluir");
+
+    const btnAlterarPrioridade = document.getElementById("btn-alterar-prioridade");
+    const inputCodigoPrioridade = document.getElementById("codigo-prioridade");
+    const selectNovaPrioridade = document.getElementById("nova-prioridade");
+
+    const btnBuscar = document.getElementById("btn-buscar");
+    const inputCodigoBuscar = document.getElementById("codigo-buscar");
+
+    const btnAtualizar = document.getElementById("btn-atualizar");
+    const tabelaTarefas = document.getElementById("tabela-tarefas");
+    const mensagemStatus = document.getElementById("mensagem-status");
+
+    // Exibe mensagens de feedback
+    function exibirMensagem(texto, tipo = "success") {
+        mensagemStatus.className = `alert alert-${tipo}`;
+        mensagemStatus.textContent = texto;
+        mensagemStatus.classList.remove("hidden");
+        setTimeout(() => {
+            mensagemStatus.classList.add("hidden");
+        }, 4000);
+    }
+
+    // Renderiza a lista na tabela HTML
+    function renderizarTabela() {
+        const lista = listarTarefas();
+        tabelaTarefas.innerHTML = "";
+
+        if (lista.length === 0) {
+            tabelaTarefas.innerHTML = `
+                <tr>
+                    <td colspan="4" style="text-align: center; color: #888;">Nenhuma tarefa cadastrada.</td>
+                </tr>
+            `;
+            return;
+        }
+
+        lista.forEach(tarefa => {
+            const tr = document.createElement("tr");
+
+            const labelPrioridade = {
+                1: '<span class="badge badge-alta">1 - Alta</span>',
+                2: '<span class="badge badge-media">2 - Média</span>',
+                3: '<span class="badge badge-baixa">3 - Baixa</span>'
+            };
+
+            const statusHTML = tarefa.status 
+                ? '<span class="badge badge-execucao">Em Execução</span>' 
+                : '<span class="badge badge-concluida">Concluída</span>';
+
+            tr.innerHTML = `
+                <td><strong>#${tarefa.codigo}</strong></td>
+                <td>${tarefa.titulo}</td>
+                <td>${labelPrioridade[tarefa.prioridade]}</td>
+                <td>${statusHTML}</td>
+            `;
+
+            tabelaTarefas.appendChild(tr);
+        });
+    }
+
+    // Evento: Cadastrar
+    formCadastrar.addEventListener("submit", (e) => {
+        e.preventDefault();
+        try {
+            const titulo = inputTitulo.value;
+            const prioridade = Number(selectPrioridade.value);
+            const novaTarefa = cadastrarTarefa(titulo, prioridade);
+
+            exibirMensagem(`Tarefa #${novaTarefa.codigo} cadastrada com sucesso!`, "success");
+            inputTitulo.value = "";
+            renderizarTabela();
+        } catch (erro) {
+            exibirMensagem(erro.message, "danger");
+        }
+    });
+
+    // Evento: Concluir
+    btnConcluir.addEventListener("click", () => {
+        const codigo = inputCodigoConcluir.value;
+        if (!codigo) {
+            exibirMensagem("Informe o código da tarefa para concluir.", "danger");
+            return;
+        }
+        try {
+            const tarefa = concluirTarefa(codigo);
+            exibirMensagem(`Tarefa #${tarefa.codigo} ("${tarefa.titulo}") concluída com sucesso!`, "success");
+            inputCodigoConcluir.value = "";
+            renderizarTabela();
+        } catch (erro) {
+            exibirMensagem(erro.message, "danger");
+        }
+    });
+
+    // Evento: Alterar Prioridade
+    btnAlterarPrioridade.addEventListener("click", () => {
+        const codigo = inputCodigoPrioridade.value;
+        const novaPrioridade = Number(selectNovaPrioridade.value);
+
+        if (!codigo) {
+            exibirMensagem("Informe o código da tarefa para alterar a prioridade.", "danger");
+            return;
+        }
+        try {
+            const tarefa = alterarPrioridade(codigo, novaPrioridade);
+            exibirMensagem(`Prioridade da tarefa #${tarefa.codigo} alterada para ${novaPrioridade} com sucesso!`, "success");
+            inputCodigoPrioridade.value = "";
+            renderizarTabela();
+        } catch (erro) {
+            exibirMensagem(erro.message, "danger");
+        }
+    });
+
+    // Evento: Buscar
+    btnBuscar.addEventListener("click", () => {
+        const codigo = inputCodigoBuscar.value;
+        if (!codigo) {
+            exibirMensagem("Informe um código para realizar a busca.", "danger");
+            return;
+        }
+        try {
+            const tarefa = buscarTarefa(codigo);
+            const statusTexto = tarefa.status ? "Em Execução" : "Concluída";
+            exibirMensagem(`Tarefa Encontrada: [#${tarefa.codigo}] "${tarefa.titulo}" | Prioridade: ${tarefa.prioridade} | Estado: ${statusTexto}`, "success");
+        } catch (erro) {
+            exibirMensagem(erro.message, "danger");
+        }
+    });
+
+    // Evento: Atualizar Lista
+    btnAtualizar.addEventListener("click", () => {
+        renderizarTabela();
+        exibirMensagem("Lista de tarefas atualizada.", "success");
+    });
+
+    // Renderização inicial
+    renderizarTabela();
+});
