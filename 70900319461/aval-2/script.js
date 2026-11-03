@@ -1,0 +1,119 @@
+let tarefas = [];
+let codigo = 1;
+let opcao = 0;
+
+while (opcao != 5) {
+
+    opcao = Number(prompt(
+        "1 - Cadastrar tarefa\n" +
+        "2 - Listar tarefas\n" +
+        "3 - Concluir tarefa\n" +
+        "4 - Alterar prioridade\n" +
+        "5 - Sair"
+    ));
+
+    if (opcao == 1) {
+
+        let titulo = prompt("Digite o título da tarefa:");
+
+        if (titulo == null || titulo.trim().length < 5) {
+            alert("Digite um título com pelo menos 5 caracteres.");
+        } else {
+
+            let prioridade = Number(prompt(
+                "Digite a prioridade:\n1 - Alta\n2 - Média\n3 - Baixa"
+            ));
+
+            if (prioridade == 1 || prioridade == 2 || prioridade == 3) {
+
+                tarefas.push({
+                    codigo: codigo,
+                    titulo: titulo.trim(),
+                    prioridade: prioridade,
+                    status: "Pendente"
+                });
+
+                alert("Tarefa cadastrada com sucesso! Código: " + codigo);
+
+                codigo++;
+
+            } else {
+                alert("Prioridade inválida! Digite 1, 2 ou 3.");
+            }
+        }
+    }
+
+    else if (opcao == 2) {
+
+        if (tarefas.length == 0) {
+            alert("Nenhuma tarefa cadastrada.");
+        } else {
+
+            let lista = "";
+
+            for (let i = 0; i < tarefas.length; i++) {
+                lista += "Código: " + tarefas[i].codigo + "\n";
+                lista += "Título: " + tarefas[i].titulo + "\n";
+                lista += "Prioridade: " + tarefas[i].prioridade + "\n";
+                lista += "Status: " + tarefas[i].status + "\n\n";
+            }
+
+            alert(lista);
+        }
+    }
+
+    else if (opcao == 3) {
+
+        let cod = Number(prompt("Digite o código da tarefa:"));
+        let encontrou = false;
+
+        for (let i = 0; i < tarefas.length; i++) {
+            if (tarefas[i].codigo == cod) {
+                tarefas[i].status = "Concluída";
+                encontrou = true;
+                alert("Tarefa concluída!");
+                break;
+            }
+        }
+
+        if (encontrou == false) {
+            alert("Tarefa não encontrada.");
+        }
+    }
+
+    else if (opcao == 4) {
+
+        let cod = Number(prompt("Digite o código da tarefa:"));
+        let encontrou = false;
+
+        for (let i = 0; i < tarefas.length; i++) {
+            if (tarefas[i].codigo == cod) {
+
+                let prioridade = Number(prompt("Digite a nova prioridade (1, 2 ou 3):"));
+
+                if (prioridade == 1 || prioridade == 2 || prioridade == 3) {
+                    tarefas[i].prioridade = prioridade;
+                    alert("Prioridade alterada!");
+                } else {
+                    alert("Prioridade inválida!");
+                }
+
+                encontrou = true;
+                break;
+            }
+        }
+
+        if (encontrou == false) {
+            alert("Tarefa não encontrada.");
+        }
+    }
+
+    else if (opcao == 5) {
+        alert("Sistema encerrado!");
+    }
+
+    else {
+        alert("Opção inválida!");
+    }
+} 
+
