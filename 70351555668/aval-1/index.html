@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Código JavaScript</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <style>body{margin:0;background:#0d1117}pre{margin:0}code.hljs{padding:1.5rem;min-height:100vh;box-sizing:border-box}</style>
+</head>
+<body>
+  <pre><code class="language-javascript">&lt;!DOCTYPE html&gt;
+&lt;html lang="pt-BR"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;Jogo da Velha&lt;/title&gt;
+
+    &lt;style&gt;
+        body {
+            font-family: Arial, sans-serif;
+            background: #222;
+            color: white;
+            text-align: center;
+            margin: 0;
+            padding: 30px;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+        }
+
+        #status {
+            font-size: 20px;
+            margin: 20px;
+        }
+
+        .tabuleiro {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(3, 100px);
+            gap: 5px;
+            justify-content: center;
+            margin: 20px auto;
+        }
+
+        .casa {
+            background: #444;
+            border: none;
+            font-size: 40px;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            border-radius: 8px;
+        }
+
+        .casa:hover {
+            background: #555;
+        }
+
+        button#reiniciar {
+            padding: 12px 25px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            background: #00aaff;
+            color: white;
+            cursor: pointer;
+        }
+
+        button#reiniciar:hover {
+            background: #0088cc;
+        }
+    &lt;/style&gt;
+&lt;/head&gt;
+
+&lt;body&gt;
+
+    &lt;h1&gt;🎮 Jogo da Velha&lt;/h1&gt;
+
+    &lt;div id="status"&gt;Vez do jogador X&lt;/div&gt;
+
+    &lt;div class="tabuleiro"&gt;
+        &lt;button class="casa"&gt;&lt;/button&gt;
+        &lt;button class="casa"&gt;&lt;/button&gt;
+        &lt;button class="casa"&gt;&lt;/button&gt;
+
+        &lt;button class="casa"&gt;&lt;/button&gt;
+        &lt;button class="casa"&gt;&lt;/button&gt;
+        &lt;button class="casa"&gt;&lt;/button&gt;
+
+        &lt;button class="casa"&gt;&lt;/button&gt;
+        &lt;button class="casa"&gt;&lt;/button&gt;
+        &lt;button class="casa"&gt;&lt;/button&gt;
+    &lt;/div&gt;
+
+    &lt;button id="reiniciar"&gt;Reiniciar&lt;/button&gt;
+
+    &lt;script&gt;
+        const casas = document.querySelectorAll(".casa");
+        const status = document.getElementById("status");
+        const reiniciar = document.getElementById("reiniciar");
+
+        let jogadorAtual = "X";
+        let jogoAtivo = true;
+        let tabuleiro = ["", "", "", "", "", "", "", ""];
+
+        const vitorias = [
+            [0, 1, 2],
+            [3, 4, 5],
+            [6, 7, 8],
+            [0, 3, 6],
+            [1, 4, 7],
+            [2, 5, 8],
+            [0, 4, 8],
+            [2, 4, 6]
+        ];
+
+        casas.forEach((casa, indice) =&gt; {
+            casa.addEventListener("click", () =&gt; jogar(indice));
+        });
+
+        function jogar(indice) {
+            if (tabuleiro[indice] !== "" || !jogoAtivo) {
+                return;
+            }
+
+            tabuleiro[indice] = jogadorAtual;
+            casas[indice].textContent = jogadorAtual;
+
+            verificarResultado();
+        }
+
+        function verificarResultado() {
+            for (let combinacao of vitorias) {
+                const [a, b, c] = combinacao;
+
+                if (
+                    tabuleiro[a] !== "" &amp;&amp;
+                    tabuleiro[a] === tabuleiro[b] &amp;&amp;
+                    tabuleiro[a] === tabuleiro[c]
+                ) {
+                    status.textContent = `🎉 Jogador ${jogadorAtual} venceu!`;
+                    jogoAtivo = false;
+                    return;
+                }
+            }
+
+            if (!tabuleiro.includes("")) {
+                status.textContent = "🤝 Empate!";
+                jogoAtivo = false;
+                return;
+            }
+
+            jogadorAtual = jogadorAtual === "X" ? "O" : "X";
+            status.textContent = `Vez do jogador ${jogadorAtual}`;
+        }
+
+        reiniciar.addEventListener("click", () =&gt; {
+            tabuleiro = ["", "", "", "", "", "", "", ""];
+            jogadorAtual = "X";
+            jogoAtivo = true;
+
+            casas.forEach(casa =&gt; {
+                casa.textContent = "";
+            });
+
+            status.textContent = "Vez do jogador X";
+        });
+    &lt;/script&gt;
+
+&lt;/body&gt;
+</code></pre>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+</body>
+</html>
