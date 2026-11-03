@@ -66,7 +66,6 @@ function removerProduto(index) {
     carrinho.splice(index, 1);
 
     atualizarCarrinho();
-
 }
 
 function finalizarCompra() {
@@ -88,7 +87,7 @@ function finalizarCompra() {
         "Quantidade de produtos: " + carrinho.length +
         "\nTotal: R$ " +
         total.toFixed(2).replace(".", ",") +
-        "\n\nObrigado por comprar na Doce Encanto!"
+        "\n\nObrigado por comprar na ConstruForte!"
     );
 
 }
