@@ -43,6 +43,7 @@ function atualizarCarrinho() {
             " - R$ " + produto.preco.toFixed(2).replace(".", ",");
 
         const botao = document.createElement("button");
+
         botao.textContent = "Remover";
         botao.className = "remover";
 
@@ -65,6 +66,7 @@ function removerProduto(index) {
     carrinho.splice(index, 1);
 
     atualizarCarrinho();
+
 }
 
 function finalizarCompra() {
@@ -86,7 +88,7 @@ function finalizarCompra() {
         "Quantidade de produtos: " + carrinho.length +
         "\nTotal: R$ " +
         total.toFixed(2).replace(".", ",") +
-        "\n\nObrigado por comprar na Step Shoes!"
+        "\n\nObrigado por comprar na Doce Encanto!"
     );
 
 }
