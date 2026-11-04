@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  
+</head>
+<body>
+  const tarefas = [];
+
+let proximoCodigo = 0;
+
+// 1. Validar dados da tarefa
+function validarDadosDaTarefa(titulo, prioridade) {
+    if (titulo.length < 5) {
+        throw new Error("O título deve ter no mínimo 5 caracteres.");
+    }
+
+    if (prioridade < 1 || prioridade > 3) {
+        throw new Error("A prioridade deve ser entre 1 e 3.");
+    }
+}
+
+// 2. Cadastrar uma tarefa
+function cadastrarTarefa(titulo, prioridade) {
+    validarDadosDaTarefa(titulo, prioridade);
+
+    proximoCodigo++;
+
+    const tarefa = {
+        codigo: proximoCodigo,
+        titulo: titulo,
+        prioridade: prioridade,
+        status: true
+    };
+
+    tarefas.push(tarefa);
+
+    return tarefa;
+}
+
+// 3. Listar tarefas
+function listarTarefas() {
+    return tarefas;
+}
+
+// 4. Buscar tarefa pelo código
+function buscarTarefa(codigo) {
+    const tarefa = tarefas.find(
+        tarefa => tarefa.codigo === codigo
+    );
+
+    if (!tarefa) {
+        throw new Error("Tarefa não encontrada.");
+    }
+
+    return tarefa;
+}
+
+// 5. Concluir uma tarefa
+function concluirTarefa(codigo) {
+    const tarefa = buscarTarefa(codigo);
+
+    if (tarefa.status === false) {
+        throw new Error("Essa tarefa já foi concluída.");
+    }
+
+    tarefa.status = false;
+
+    return tarefa;
+}
+
+// 6. Alterar prioridade
+function alterarPrioridade(codigo, novaPrioridade) {
+    const tarefa = buscarTarefa(codigo);
+
+    validarDadosDaTarefa(tarefa.titulo, novaPrioridade);
+
+    tarefa.prioridade = novaPrioridade;
+
+    return tarefa;
+}
+
+// 7. Cadastrar tarefas de exemplo
+try {
+    cadastrarTarefa("Estudar JavaScript", 1);
+    cadastrarTarefa("Fazer exercícios", 2);
+    cadastrarTarefa("Organizar o quarto", 3);
+
+    console.log("Tarefas cadastradas com sucesso!");
+
+} catch (erro) {
+    console.log("Erro:", erro.message);
+}
+
+// 8. Mostrar todas as tarefas
+console.log("Lista de tarefas:");
+console.log(listarTarefas());
+
+// 9. Buscar uma tarefa
+try {
+    console.log("Tarefa encontrada:");
+    console.log(buscarTarefa(1));
+
+} catch (erro) {
+    console.log("Erro:", erro.message);
+}
+
+// 10. Concluir uma tarefa
+try {
+    concluirTarefa(1);
+    console.log("Tarefa concluída com sucesso!");
+
+} catch (erro) {
+    console.log("Erro:", erro.message);
+}
+
+// 11. Alterar prioridade
+try {
+    alterarPrioridade(2, 1);
+    console.log("Prioridade alterada com sucesso!");
+
+} catch (erro) {
+    console.log("Erro:", erro.message);
+}
+
+// 12. Mostrar resultado final
+console.log("Lista atualizada:");
+console.log(listarTarefas());
+
+  
+  
+</body>
+</html>
