@@ -1,0 +1,61 @@
+// Lista (array) de produtos
+let produtos = [];
+
+function validarProduto(descricao, quantidade, valor) {
+  if (descricao.length < 5) {
+    throw new Error('A descrição deve ter no mínimo 5 caracteres');
+  }
+  if (quantidade < 1) {
+    throw new Error('A quantidade deve ser maior que zero');
+  }
+  if (valor < 0) {
+    throw new Error('O valor deve ser maior ou igual a zero');
+  }
+}
+
+function cadastrarProduto(descricao, quantidade, valor) {
+  validarProduto(descricao, quantidade, valor);
+  let novoProduto = {
+    codigo: produtos.length + 1,
+    descricao: descricao, // Corrigido de "drescricao"
+    quantidade: quantidade,
+    valor: valor,
+  };
+  produtos.push(novoProduto);
+}
+
+function listarProdutos() {
+  console.log(produtos);
+}
+
+// Corrigida a sintaxe da função e removido o ';' extra
+function atualizarValor(codigoProduto, novoValor) {
+  if (novoValor < 0) {
+    throw new Error('Valor deve ser maior ou igual a zero');
+  }
+  const produto = produtos.find((prod) => prod.codigo === codigoProduto);
+  if (produto) {
+    produto.valor = novoValor;
+  } else {
+    throw new Error('Produto não encontrado');
+  }
+}
+
+// Nome corrigido e lógica implementada
+function atualizarQuantidade(codigoProduto, novaQuantidade) {
+  if (novaQuantidade < 1) {
+    throw new Error('A quantidade deve ser maior que zero');
+  }
+  const produto = produtos.find((prod) => prod.codigo === codigoProduto);
+  if (produto) {
+    produto.quantidade = novaQuantidade;
+  } else {
+    throw new Error('Produto não encontrado');
+  }
+}
+
+// --- Testes de uso ---
+cadastrarProduto('Cadeira Gamer', 12, 699.0);
+cadastrarProduto('Mouse Logi', 38, 99.0);
+
+listarProdutos();
