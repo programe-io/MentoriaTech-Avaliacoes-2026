@@ -8,75 +8,76 @@
   <style>body{margin:0;background:#0d1117}pre{margin:0}code.hljs{padding:1.5rem;min-height:100vh;box-sizing:border-box}</style>
 </head>
 <body>
-  <pre><code class="language-javascript">//Nafilly vitoria De queiroz
-// Lista (Array) de Produtos 
-let produtos = []; 
- 
-function validarProduto(descricao, quantidade, valor){ 
-    if(descricao.length &lt; 5){ 
-        throw new Error("Descricao deve ter no minimo cinco caracteres"); 
-    } 
-    if(quantidade &lt; 1){ 
-        throw new Error("Quantidade deve ser maior que zero"); 
-    } 
-    if(valor &lt; 0){ 
-        throw new Error("Valor deve maior igual a zero"); 
-    } 
-} 
- 
-function cadastrarProduto(descricao, quantidade, valor){ 
-    validarProduto(descricao, quantidade, valor); 
-    let novoProduto = { 
-        "codigo": produtos.length + 1, 
-        "descricao": descricao, 
-        "quantidade": quantidade, 
-        "valor": valor 
-    }; 
-    produtos.push(novoProduto); 
-} 
- 
-function listarProdutos(){ 
-    console.log(produtos); 
-} 
- 
-function atualizarValor(codigoProduto, novoValor){ 
-    if(novoValor &lt; 0){ 
-        throw new Error("Valor deve maior igual a zero"); 
-    } 
- 
-    const produto = produtos.find(prod =&gt; prod.codigo === codigoProduto); 
-    if(produto){ 
-        produto.valor = novoValor; 
-    } 
-    else{ 
-        throw new Error("Produto não encontrado"); 
-    } 
-} 
- 
-function atualizarQuantidade(codigoProduto, novaQuantidade){ 
-    if(novaQuantidade &lt; 1){ 
-        throw new Error("Quantidade deve ser maior que zero"); 
-    } 
- 
-    const produto = produtos.find(prod =&gt; prod.codigo === codigoProduto); 
-    if(produto){ 
-        produto.quantidade += novaQuantidade; 
-    } 
-    else{ 
-        throw new Error("Produto não encontrado"); 
-    } 
-} 
- 
-//------------------------------------- 
-listarProdutos(); 
-cadastrarProduto("Cadeira Gamer", 12, 699.00); 
-cadastrarProduto("Mouse Logi", 38, 99.00); 
-listarProdutos(); 
-atualizarValor(2, 97.00); 
-listarProdutos(); 
- 
-atualizarQuantidade(1, 3); 
-listarProdutos();</code></pre>
+  <pre><code class="language-javascript">// Aluna: Domiciana
+/* Arrayique val guardar e conjunto de todas as far */
+
+let tarefas = [];
+let geradorCodigo = 0;
+
+function validarDadosTarefa(titulo, prioridade) {
+    if (titulo.length &lt; 5) {
+        throw new Error('O título deve ter no mínimo 5 caracteres');
+    }
+
+    if (prioridade &lt; 1 || prioridade &gt; 3) {
+        throw new Error('Informe uma prioridade entre 1 e 3');
+    }
+}
+
+function buscarTarefa(codigoTarefa) {
+    const tarefaBuscada = tarefas.find(t =&gt; t.codigo === codigoTarefa);
+
+    if (!tarefaBuscada) {
+        throw new Error('Código de tarefa não encontrado');
+    }
+
+    return tarefaBuscada;
+}
+
+function cadastrarTarefa(titulo, prioridade) {
+    validarDadosTarefa(titulo, prioridade);
+
+    let tarefa = {
+        'codigo': ++geradorCodigo,
+        'titulo': titulo,
+        'prioridade': prioridade,
+        'status': true
+    };
+
+    tarefas.push(tarefa);
+}
+
+function listarTarefas() {
+    return tarefas;
+}
+
+function concluirTarefa(codigo) {
+    let tarefa = buscarTarefa(codigo);
+
+    if (tarefa.status === false) {
+        throw new Error('Tarefa já estava como concluída');
+    }
+
+    tarefa.status = false;
+}
+
+function alterarPrioridade(codigo, novaPrioridade) {
+    let tarefa = buscarTarefa(codigo);
+
+    validarDadosTarefa(tarefa.titulo, novaPrioridade);
+
+    tarefa.prioridade = novaPrioridade;
+}
+
+cadastrarTarefa('Cadastrar Clientes', 1);
+console.log(listarTarefas());
+
+alterarPrioridade(1, 2);
+
+console.log(listarTarefas());
+
+
+</code></pre>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
   <script>hljs.highlightAll();</script>
 </body>
