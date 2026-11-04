@@ -1,27 +1,28 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet">
+</head>
+<body>
+  <!DOCTYPE html>
+<html lang="pt-BR">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meu Projeto Prático - Mentoria Tech</title>
-    
-    <!-- 🎨 ESTILIZAÇÃO (CSS) -->
+    <title>Plataforma de Estudos: Internet vs Web</title>
     <style>
-        /* Variáveis de cores para facilitar o Modo Claro/Escuro */
         :root {
-            --bg-color: #f4f7f6;
-            --card-bg: #ffffff;
-            --text-color: #333333;
-            --primary-color: #007bff;
-            --accent-color: #28a745;
-        }
-
-        /* Classe que o JavaScript vai ativar para o Modo Escuro */
-        .dark-mode {
-            --bg-color: #121212;
-            --card-bg: #1e1e1e;
-            --text-color: #ffffff;
-            --primary-color: #37b7ff;
+            --primary: #1e40af;
+            --secondary: #0284c7;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --success: #16a34a;
+            --danger: #dc2626;
+            --border: #cbd5e1;
         }
 
         * {
@@ -29,124 +30,286 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            transition: background-color 0.3s, color 0.3s;
         }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
+            background-color: var(--light);
+            color: var(--dark);
             line-height: 1.6;
-            padding: 20px;
         }
 
         header {
-            text-align: center;
-            padding: 40px 20px;
-            background-color: var(--card-bg);
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-        }
-
-        h1 {
-            color: var(--primary-color);
-            margin-bottom: 10px;
-        }
-
-        .btn-theme {
-            background-color: var(--primary-color);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-weight: bold;
-            margin-top: 15px;
+            text-align: center;
+            padding: 3rem 1rem;
         }
 
-        .btn-theme:hover {
-            opacity: 0.9;
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Menu de Abas Interativas */
+        nav {
+            display: flex;
+            justify-content: center;
+            background: #ffffff;
+            border-bottom: 2px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 1rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab-btn:hover {
+            color: var(--primary);
+        }
+
+        .tab-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
         }
 
         main {
-            max-width: 800px;
-            margin: 0 auto;
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .content-section {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .card {
-            background-color: var(--card-bg);
-            padding: 25px;
+            background: white;
+            padding: 2rem;
             border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            margin-bottom: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            margin-bottom: 1.5rem;
         }
 
         h2 {
-            color: var(--accent-color);
-            margin-bottom: 15px;
-            border-bottom: 2px solid var(--bg-color);
-            padding-bottom: 5px;
+            color: var(--primary);
+            margin-bottom: 1rem;
         }
 
+        /* Grid de Comparação */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .grid-2 { grid-template-columns: 1fr; }
+            nav { flex-wrap: wrap; }
+            .tab-btn { padding: 0.5rem 1rem; font-size: 0.9rem; }
+        }
+
+        .box {
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 5px solid;
+            background: #f1f5f9;
+        }
+
+        .box-internet { border-left-color: var(--primary); }
+        .box-web { border-left-color: var(--secondary); }
+
         ul {
-            list-style-position: inside;
-            margin-top: 10px;
+            margin-left: 1.5rem;
+            margin-top: 0.5rem;
         }
 
         li {
-            margin-bottom: 8px;
+            margin-bottom: 0.25rem;
         }
 
-        footer {
-            text-align: center;
-            margin-top: 40px;
-            font-size: 0.9rem;
-            opacity: 0.7;
+        /* Linha do Tempo */
+        .timeline {
+            position: relative;
+            border-left: 3px solid var(--border);
+            padding-left: 1.5rem;
+            margin-left: 1rem;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -29px;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--secondary);
+            border: 3px solid white;
+        }
+
+        .year {
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        /* CSS do Jogo de Quiz */
+        .option-btn {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: left;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .option-btn:hover:not([disabled]) {
+            border-color: var(--secondary);
+            background: #f0f9ff;
+        }
+
+        .option-btn.correct {
+            background-color: #dcfce7;
+            border-color: var(--success);
+            color: #166534;
+        }
+
+        .option-btn.wrong {
+            background-color: #fee2e2;
+            border-color: var(--danger);
+            color: #991b1b;
+        }
+
+        .next-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            display: none;
+            margin-top: 1rem;
+        }
+
+        .next-btn:hover {
+            background: #1d4ed8;
         }
     </style>
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="style.css" rel="stylesheet"></head>
+</head>
 <body>
 
-    <!-- 🏗️ ESTRUTURA (HTML) -->
     <header>
-        <h1>Meu Portfólio de Tecnologia</h1>
-        <p>Projeto Trimestral Desenvolvido para a Mentoria Tech - SEDUC</p>
-        <!-- Botão que vai interagir com o JavaScript -->
-        <button class="btn-theme" id="themeToggle">Mudar Tema 🌓</button>
+        <h1>Infraestrutura Digital</h1>
+        <p>Aprenda os conceitos fundamentais de Internet e World Wide Web baseados no material didático</p>
     </header>
 
+    <!-- Menu de Navegação Interativo (Abas) -->
+    <nav>
+        <button class="tab-btn active" onclick="switchTab('conceitos')">Conceitos & Diferenças</button>
+        <button class="tab-btn" onclick="switchTab('historia')">História & Infraestrutura</button>
+        <button class="tab-btn" onclick="switchTab('quiz')">Simulado / Quiz</button>
+    </nav>
+
     <main>
-        <section class="card">
-            <h2>Sobre Mim</h2>
-            <p>Olá! Sou estudante da rede pública estadual e estou participando da Mentoria Tech. Este projeto foi construído utilizando as tecnologias fundamentais do desenvolvimento web para demonstrar os conhecimentos adquiridos neste trimestre.</p>
+        <!-- ABA 1: CONCEITOS E DIFERENÇAS -->
+        <section id="conceitos" class="content-section active">
+            <div class="card">
+                <h2>Introdução</h2>
+                <p>Todos os dias acessamos sites, assistimos vídeos e utilizamos redes sociais sem compreender a infraestrutura tecnológica complexa por trás. Este sistema conecta bilhões de dispositivos mundialmente através de regras padronizadas.</p>
+            </div>
+
+            <div class="grid-2">
+                <div class="card box box-internet">
+                    <h2>O que é a Internet?</h2>
+                    <p>Um sistema global de redes de computadores interligadas que se comunicam utilizando um conjunto padronizado de regras chamado <strong>protocolos de comunicação</strong>.</p>
+                    <ul>
+                        <li>Rede mundial de redes</li>
+                        <li>Utiliza o protocolo TCP/IP</li>
+                        <li>Permite e-mail, streaming e nuvem</li>
+                    </ul>
+                </div>
+                <div class="card box box-web">
+                    <h2>O que é a Web?</h2>
+                    <p>A <strong>World Wide Web</strong> é um sistema de documentos interligados por hiperlinks que funciona <em>sobre</em> a internet, acessado através de navegadores.</p>
+                    <ul>
+                        <li>Documentos multimídia (textos, vídeos, imagens)</li>
+                        <li>Funciona na arquitetura Cliente-Servidor</li>
+                        <li>Depende de HTML, HTTP e URL</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Resumo da Comparação Direta</h2>
+                <p><strong>Internet:</strong> É a infraestrutura (as estradas, cabos físicos e conexões).</p>
+                <p><strong>Web:</strong> É o sistema de páginas e documentos (os carros que viajam por essa estrada).</p>
+            </div>
         </section>
 
-        <section class="card">
-            <h2>Tecnologias Aprendidas</h2>
-            <ul>
-                <li><strong>HTML5:</strong> Estruturação semântica de páginas web.</li>
-                <li><strong>CSS3:</strong> Estilização estática, responsividade e variáveis de ambiente.</li>
-                <li><strong>JavaScript:</strong> Manipulação do DOM e criação de eventos dinâmicos.</li>
-            </ul>
+        <!-- ABA 2: HISTÓRIA E INFRAESTRUTURA -->
+        <section id="historia" class="content-section">
+            <div class="card">
+                <h2>História da Internet</h2>
+                <p>Surgiu na década de 1960 durante a Guerra Fria como **ARPANET**, um projeto do Departamento de Defesa dos EUA focado em comunicação descentralizada.</p>
+                <div class="timeline">
+                    <div class="timeline-item"><span class="year">Década de 1960:</span> Criação da ARPANET militar e acadêmica.</div>
+                    <div class="timeline-item"><span class="year">Década de 1970:</span> Desenvolvimento do conjunto de protocolos TCP/IP.</div>
+                    <div class="timeline-item"><span class="year">Década de 1980:</span> Expansão da rede para universidades.</div>
+                    <div class="timeline-item"><span class="year">Década de 1990:</span> Popularização da internet comercial e criação da Web.</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Infraestrutura Física & Cabos Submarinos</h2>
+                <p>Embora pareça virtual, a internet depende de <strong>data centers, servidores, roteadores e satélites</strong>. Grande parte do tráfego internacional de dados viaja por **cabos submarinos de fibra óptica** que cruzam oceanos, pois entregam maior velocidade e menor latência que satélites.</p>
+            </div>
+
+            <div class="card">
+                <h2>O Legado de Tim Berners-Lee</h2>
+                <p>No final da década de 1980, trabalhando no CERN, ele criou três tecnologias pilares:</p>
+                <ul>
+                    <li><strong>HTML:</strong> Linguagem de marcação de páginas.</li>
+                    <li><strong>HTTP:</strong> Protocolo de comunicação da web.</li>
+                    <li><strong>URL:</strong> Sistema de endereçamento de recursos.</li>
+                </ul>
+            </div>
         </section>
-    </main>
 
-    <footer>
-        <p>&copy; 2026 - Desenvolvido por um Futuro Programador</p>
-    </footer>
+        <!-- ABA 3: QUIZ MULTI-PERGUNTAS -->
+        <section id="quiz" class="content-section">
+            <div class="card">
 
-    <!-- 🧠 INTERATIVIDADE (JAVASCRIPT) -->
-    <script>
-        // Seleciona o botão usando o ID
-        const button = document.getElementById('themeToggle');
-
-        // Adiciona um evento de clique ao botão
-        button.addEventListener('click', () => {
-            // Alterna a classe 'dark-mode' na tag <body>
-            document.body.classList.toggle('dark-mode');
-        });
-    </script>
-<script src="script.js"></script></body>
+  <script src="script.js"></script>
+  
+</body>
 </html>

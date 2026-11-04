@@ -1,63 +1,55 @@
-/* ==========================================
-   VARIÁVEIS DE AMBIENTE (Tema Claro e Escuro)
-   ========================================== */
+/* ==========================================================================
+   1. VARIÁVEIS DE SISTEMA E PALETA DE CORES (DESIGN MODERN)
+   ========================================================================== */
 :root {
-    --bg-color: #f4f7f6;
-    --card-bg: #ffffff;
-    --text-color: #333333;
-    --primary-color: #007bff;
-    --accent-color: #28a745;
-    --shadow-color: rgba(0, 0, 0, 0.1);
+    --primary: #1e40af;       /* Azul Escuro (Representa a Infraestrutura Física) */
+    --secondary: #0284c7;     /* Azul Claro (Representa a Web e Páginas) */
+    --dark: #0f172a;          /* Grafite Escuro para textos principais */
+    --light: #f8fafc;         /* Cinza muito claro para o fundo da tela */
+    --white: #ffffff;         /* Branco puro para os blocos de conteúdo */
+    --success: #16a34a;       /* Verde para respostas corretas */
+    --danger: #dc2626;        /* Vermelho para respostas erradas */
+    --border: #e2e8f0;        /* Linhas divisórias discretas */
+    --text-muted: #64748b;    /* Cinza médio para textos secundários */
+    --shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.05); /* Sombra suave nos cards */
 }
 
-/* Classe ativada dinamicamente pelo JavaScript */
-.dark-mode {
-    --bg-color: #121212;
-    --card-bg: #1e1e1e;
-    --text-color: #ffffff;
-    --primary-color: #37b7ff;
-    --accent-color: #2ee65f;
-    --shadow-color: rgba(0, 0, 0, 0.4);
-}
-
-/* ==========================================
-   RESETS E CONFIGURAÇÕES GERAIS
-   ========================================== */
+/* ==========================================================================
+   2. RESET DE LAYOUT E ESTILOS BASE
+   ========================================================================== */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    /* Suaviza a transição de cores ao mudar de tema */
-    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
 }
 
 body {
-    background-color: var(--bg-color);
-    color: var(--text-color);
+    background-color: var(--light);
+    color: var(--dark);
     line-height: 1.6;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
 }
 
-/* ==========================================
-   CABEÇALHO (Header)
-   ========================================== */
+main {
+    max-width: 960px;
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+}
+
+/* ==========================================================================
+   3. TOPO DA PÁGINA (HEADER)
+   ========================================================================== */
 header {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: var(--white);
     text-align: center;
-    padding: 40px 20px;
-    background-color: var(--card-bg);
-    border-radius: 12px;
-    box-shadow: 0 4px 6px var(--shadow-color);
-    margin-bottom: 20px;
+    padding: 3rem 1rem;
 }
 
 header h1 {
-    color: var(--primary-color);
-    margin-bottom: 10px;
     font-size: 2.2rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
 }
 
 header p {
@@ -65,76 +57,219 @@ header p {
     opacity: 0.9;
 }
 
-/* Botão de alternar tema */
-.btn-theme {
-    background-color: var(--primary-color);
-    color: white;
+/* ==========================================================================
+   4. MENU INTERATIVO (SISTEMA DE ABAS FLUTUANTES)
+   ========================================================================== */
+nav {
+    display: flex;
+    justify-content: center;
+    background: var(--white);
+    border-bottom: 2px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+.tab-btn {
+    background: none;
     border: none;
-    padding: 12px 24px;
-    border-radius: 25px;
-    cursor: pointer;
-    font-weight: bold;
+    padding: 1rem 1.5rem;
     font-size: 1rem;
-    margin-top: 15px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    font-weight: 600;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-bottom: 3px solid transparent;
 }
 
-.btn-theme:hover {
-    opacity: 0.9;
-    transform: translateY(-1px);
+.tab-btn:hover {
+    color: var(--primary);
 }
 
-.btn-theme:active {
-    transform: translateY(1px);
+.tab-btn.active {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
 }
 
-/* ==========================================
-   CONTEÚDO PRINCIPAL (Main & Cards)
-   ========================================== */
-main {
-    max-width: 800px;
-    width: 100%;
-    margin: 0 auto;
-    flex: 1; /* Garante que o footer fique no rodapé */
+/* Gerenciamento de exibição via JavaScript */
+.content-section {
+    display: none;
+    animation: slideUp 0.3s ease-out; /* Efeito suave ao trocar de aba */
 }
 
+.content-section.active {
+    display: block;
+}
+
+/* ==========================================================================
+   5. CARTÕES DE CONTEÚDO (CARDS E GRIDS)
+   ========================================================================== */
 .card {
-    background-color: var(--card-bg);
-    padding: 25px;
+    background: var(--white);
+    padding: 2rem;
     border-radius: 12px;
-    box-shadow: 0 4px 6px var(--shadow-color);
-    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--border);
 }
 
-.card h2 {
-    color: var(--accent-color);
-    margin-bottom: 15px;
-    border-bottom: 2px solid var(--bg-color);
-    padding-bottom: 5px;
+h2 {
+    color: var(--primary);
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
 }
 
-/* Estilização da lista de tecnologias */
+p {
+    margin-bottom: 1rem;
+}
+
+/* Estrutura lado-a-lado para Internet e Web */
+.grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.box {
+    padding: 1.5rem;
+    border-radius: 8px;
+    background: #f1f5f9;
+    border-left: 5px solid;
+}
+
+.box-internet { border-left-color: var(--primary); }
+.box-web { border-left-color: var(--secondary); }
+
 ul {
-    list-style-position: inside;
-    margin-top: 10px;
+    margin-left: 1.25rem;
+    margin-top: 0.5rem;
 }
 
 li {
-    margin-bottom: 10px;
-    font-size: 1.05rem;
+    margin-bottom: 0.5rem;
 }
 
-li strong {
-    color: var(--primary-color);
+/* ==========================================================================
+   6. LINHA DO TEMPO HISTÓRICA (TIMELINE)
+   ========================================================================== */
+.timeline {
+    position: relative;
+    border-left: 3px solid var(--border);
+    padding-left: 1.5rem;
+    margin-left: 0.5rem;
+    margin-top: 1.5rem;
 }
 
-/* ==========================================
-   RODAPÉ (Footer)
-   ========================================== */
-footer {
-    text-align: center;
-    padding: 20px 0;
-    font-size: 0.9rem;
-    opacity: 0.7;
-    margin-top: 20px;
+.timeline-item {
+    position: relative;
+    margin-bottom: 2rem;
+}
+
+.timeline-item:last-child {
+    margin-bottom: 0;
+}
+
+/* Criação das bolinhas indicadoras da linha do tempo */
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -29px;
+    top: 6px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--secondary);
+    border: 3px solid var(--white);
+    box-shadow: 0 0 0 2px var(--secondary);
+}
+
+.year {
+    font-weight: 700;
+    color: var(--primary);
+    display: block;
+    margin-bottom: 0.25rem;
+}
+
+/* ==========================================================================
+   7. INTERFACE E INTERATIVIDADE DO QUIZ
+   ========================================================================== */
+.option-btn {
+    display: block;
+    width: 100%;
+    padding: 1rem 1.25rem;
+    margin: 0.75rem 0;
+    background: var(--light);
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: left;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+}
+
+.option-btn:hover:not([disabled]) {
+    border-color: var(--secondary);
+    background: #f0f9ff;
+}
+
+/* Classes injetadas dinamicamente pelo JavaScript para acertos/erros */
+.option-btn.correct {
+    background-color: #dcfce7;
+    border-color: var(--success);
+    color: #166534;
+    font-weight: 600;
+}
+
+.option-btn.wrong {
+    background-color: #fee2e2;
+    border-color: var(--danger);
+    color: #991b1b;
+}
+
+/* Botão "Próxima Pergunta" */
+.next-btn {
+    background: var(--primary);
+    color: var(--white);
+    border: none;
+    padding: 0.75rem 1.75rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    display: none; /* Só aparece após responder */
+    margin-top: 1.5rem;
+    box-shadow: 0 2px 4px rgba(30, 64, 175, 0.2);
+    transition: background 0.2s;
+}
+
+.next-btn:hover {
+    background: #1d4ed8;
+}
+
+#score-box {
+    margin-top: 1rem;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+/* ==========================================================================
+   8. ANIMAÇÕES E MEDIA QUERIES (RESPONSIVIDADE PARA CELULARES)
+   ========================================================================== */
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 768px) {
+    header { padding: 2rem 1rem; }
+    header h1 { font-size: 1.8rem; }
+    
+    /* Quebra o grid em uma única coluna no celular */
+    .grid-2 { grid-template-columns: 1fr; } 
+    
+    /* Transforma o menu em botões empilhados ou quebrados no celular */
+    nav { flex-wrap: wrap; }
+    .tab-btn { padding: 0.75rem 1rem; font-size: 0.9rem; flex-grow: 1; text-align: center; }
 }
