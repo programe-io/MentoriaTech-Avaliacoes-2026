@@ -1,57 +1,355 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minha Página</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meu Blog</title>
 
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            text-align: center;
-            padding: 50px;
-        }
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
 
-        .container {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            max-width: 600px;
-            margin: auto;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
+body {
+    background: #f4f4f9;
+    color: #222;
+}
 
-        button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            background: #007bff;
-            color: white;
-            cursor: pointer;
-        }
+header {
+    background: #17172b;
+    color: white;
+    padding: 25px 8%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+}
 
-        button:hover {
-            background: #0056b3;
-        }
-    </style>
+header h1 {
+    color: #8b7cff;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    margin-left: 20px;
+}
+
+nav a:hover {
+    color: #8b7cff;
+}
+
+.banner {
+    background: linear-gradient(120deg, #28245c, #7664e8);
+    color: white;
+    text-align: center;
+    padding: 85px 20px;
+}
+
+.banner h2 {
+    font-size: 40px;
+    margin-bottom: 15px;
+}
+
+.banner p {
+    font-size: 18px;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.search {
+    width: 100%;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 25px;
+    font-size: 16px;
+}
+
+.categories {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+}
+
+.categories button {
+    border: none;
+    padding: 10px 18px;
+    border-radius: 20px;
+    background: #e2dfff;
+    color: #4535a0;
+    cursor: pointer;
+}
+
+.categories button:hover,
+.categories button.active {
+    background: #6251d5;
+    color: white;
+}
+
+.posts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 25px;
+}
+
+.post {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px #00000010;
+    transition: 0.3s;
+}
+
+.post:hover {
+    transform: translateY(-5px);
+}
+
+.post img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+}
+
+.post-content {
+    padding: 20px;
+}
+
+.post-content small {
+    color: #7664e8;
+    font-weight: bold;
+}
+
+.post-content h3 {
+    margin: 12px 0;
+}
+
+.post-content p {
+    color: #666;
+    line-height: 1.6;
+}
+
+.post-content button {
+    margin-top: 15px;
+    padding: 11px 20px;
+    background: #6251d5;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.post-content button:hover {
+    background: #4535a0;
+}
+
+footer {
+    background: #17172b;
+    color: white;
+    text-align: center;
+    padding: 25px;
+    margin-top: 60px;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: #000b;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.modal-content {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    max-width: 550px;
+    width: 100%;
+}
+
+.modal-content h2 {
+    margin-bottom: 15px;
+}
+
+.modal-content p {
+    line-height: 1.7;
+}
+
+.fechar {
+    float: right;
+    cursor: pointer;
+    font-size: 25px;
+    color: red;
+}
+
+@media(max-width: 600px) {
+    header {
+        justify-content: center;
+        text-align: center;
+    }
+
+    nav a {
+        margin: 8px;
+    }
+
+    .banner h2 {
+        font-size: 30px;
+    }
+}
+</style>
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
-    <div class="container">
-        <h1>Olá, Mundo!</h1>
-        <p>Esta é uma página HTML simples.</p>
+<link href="style.css" rel="stylesheet"></head>
 
-        <button onclick="mostrarMensagem()">
-            Clique aqui
-        </button>
+<body>
+
+<header>
+    <h1>MeuBlog</h1>
+
+    <nav>
+        <a href="#">Início</a>
+        <a href="#artigos">Artigos</a>
+        <a href="#sobre">Sobre</a>
+    </nav>
+</header>
+
+<section class="banner">
+    <h2>Bem-vindo ao Meu Blog!</h2>
+    <p>Conhecimento, tecnologia e novidades em um só lugar.</p>
+</section>
+
+<main class="container" id="artigos">
+
+    <input
+        type="text"
+        class="search"
+        id="pesquisa"
+        placeholder="🔎 Pesquisar artigos..."
+    >
+
+    <div class="categories">
+        <button class="active" onclick="filtrar('Todos', this)">Todos</button>
+        <button onclick="filtrar('Tecnologia', this)">Tecnologia</button>
+        <button onclick="filtrar('Programação', this)">Programação</button>
+        <button onclick="filtrar('Curiosidades', this)">Curiosidades</button>
     </div>
 
-    <script>
-        function mostrarMensagem() {
-            alert("Você clicou no botão!");
+    <section class="posts" id="listaPosts">
+
+        <article class="post" data-categoria="Tecnologia">
+            <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=600" alt="Tecnologia">
+            <div class="post-content">
+                <small>TECNOLOGIA</small>
+                <h3>O futuro da tecnologia</h3>
+                <p>Descubra como a tecnologia está transformando o mundo.</p>
+                <button onclick="ler('O futuro da tecnologia', 'A tecnologia está evoluindo rapidamente. Inteligência artificial, robótica e novas ferramentas estão transformando a maneira como vivemos, estudamos e trabalhamos.')">Ler mais</button>
+            </div>
+        </article>
+
+        <article class="post" data-categoria="Programação">
+            <img src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=600" alt="Programação">
+            <div class="post-content">
+                <small>PROGRAMAÇÃO</small>
+                <h3>Aprenda JavaScript</h3>
+                <p>Conheça uma das linguagens mais utilizadas na internet.</p>
+                <button onclick="ler('Aprenda JavaScript', 'JavaScript é uma linguagem de programação utilizada para criar páginas interativas, aplicações web e muito mais. Comece aprendendo variáveis, funções e eventos.')">Ler mais</button>
+            </div>
+        </article>
+
+        <article class="post" data-categoria="Curiosidades">
+            <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=600" alt="Internet">
+            <div class="post-content">
+                <small>CURIOSIDADES</small>
+                <h3>Como surgiu a internet?</h3>
+                <p>Conheça um pouco da história da maior rede do mundo.</p>
+                <button onclick="ler('Como surgiu a internet?', 'A internet começou a se desenvolver a partir de pesquisas de comunicação entre computadores. Com o passar dos anos, tornou-se uma rede global que conecta bilhões de pessoas.')">Ler mais</button>
+            </div>
+        </article>
+
+    </section>
+
+</main>
+
+<section class="container" id="sobre">
+    <h2>Sobre o Blog</h2>
+    <p style="margin-top:15px; line-height:1.7;">
+        Este blog foi criado para compartilhar conhecimentos,
+        novidades e curiosidades sobre tecnologia e programação.
+    </p>
+</section>
+
+<div class="modal" id="modal">
+    <div class="modal-content">
+        <span class="fechar" onclick="fecharModal()">&times;</span>
+        <h2 id="tituloModal"></h2>
+        <p id="textoModal"></p>
+    </div>
+</div>
+
+<footer>
+    <p>© 2026 MeuBlog - Todos os direitos reservados.</p>
+    <p>Feito com HTML, CSS e JavaScript ❤️</p>
+</footer>
+
+<script>
+
+function filtrar(categoria, botao) {
+    document.querySelectorAll('.categories button')
+        .forEach(b => b.classList.remove('active'));
+
+    botao.classList.add('active');
+
+    document.querySelectorAll('.post').forEach(post => {
+        if (categoria === 'Todos' ||
+            post.dataset.categoria === categoria) {
+            post.style.display = 'block';
+        } else {
+            post.style.display = 'none';
         }
-    </script>
-</body>
+    });
+}
+
+document.getElementById('pesquisa').addEventListener('input', function() {
+    let texto = this.value.toLowerCase();
+
+    document.querySelectorAll('.post').forEach(post => {
+        let conteudo = post.innerText.toLowerCase();
+
+        post.style.display = conteudo.includes(texto)
+            ? 'block'
+            : 'none';
+    });
+});
+
+function ler(titulo, texto) {
+    document.getElementById('tituloModal').innerText = titulo;
+    document.getElementById('textoModal').innerText = texto;
+    document.getElementById('modal').style.display = 'flex';
+}
+
+function fecharModal() {
+    document.getElementById('modal').style.display = 'none';
+}
+
+window.onclick = function(event) {
+    if (event.target === document.getElementById('modal')) {
+        fecharModal();
+    }
+}
+
+</script>
+
+<script src="script.js"></script></body>
 </html>
