@@ -1,11 +1,106 @@
-// Lista  (Array) de Produtos
- let produtos
-function cadastrarproduto(descriçao, quantidade,valor){
-\\ Descriçao no minimo 5 caracteres
-if(descriçao.length < 5){
-  throw new Error('Descriçao deve ter no minimo 5 caracteres');
+:root {
+  --fundo: #eef2f6;
+  --papel: #ffffff;
+  --tinta: #14213d;
+  --suave: #5b6b82;
+  --linha: #d5dde7;
+  --acento: #1d4ed8;
+  --p1: #d93a3a;
+  --p2: #e0932b;
+  --p3: #1f9d8a;
+  --erro: #b42318;
+  --ok: #157347;
 }
-if(quantidade < 0){
-  
-}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fundo: #0e1522;
+    --papel: #172033;
+    --tinta: #e8edf5;
+    --suave: #9aa8bf;
+    --linha: #2a3650;
+    --acento: #6e9bff;
+    --erro: #ff8a80;
+    --ok: #5fd39a;
   }
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--fundo);
+  color: var(--tinta);
+  font-family: "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
+  line-height: 1.5;
+}
+.app { max-width: 640px; margin: 0 auto; padding: 2.5rem 1rem 4rem; }
+h1 { font-size: 2rem; margin: 0; letter-spacing: -0.02em; }
+#resumo { color: var(--suave); margin: .25rem 0 1.5rem; }
+
+form {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: .25rem .75rem;
+  background: var(--papel);
+  border: 1px solid var(--linha);
+  border-radius: 10px;
+  padding: 1rem;
+}
+label { font-size: .875rem; color: var(--suave); }
+form label[for="prioridade"] { grid-column: 2; }
+input, select, button { font: inherit; color: inherit; }
+input, select {
+  background: var(--fundo);
+  border: 1px solid var(--linha);
+  border-radius: 6px;
+  padding: .55rem .7rem;
+}
+button {
+  cursor: pointer;
+  border: 0;
+  border-radius: 6px;
+  padding: .55rem 1rem;
+  background: var(--acento);
+  color: #fff;
+  font-weight: 600;
+}
+form button { grid-column: 1 / -1; margin-top: .5rem; }
+input:focus-visible, select:focus-visible, button:focus-visible {
+  outline: 3px solid var(--acento);
+  outline-offset: 2px;
+}
+
+#mensagem { min-height: 1.5rem; margin: .75rem 0; font-weight: 600; }
+#mensagem.erro { color: var(--erro); }
+#mensagem.ok { color: var(--ok); }
+
+.lista { list-style: none; margin: 0; padding: 0; display: grid; gap: .6rem; }
+.tarefa {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: .25rem 1rem;
+  background: var(--papel);
+  border: 1px solid var(--linha);
+  border-left: 6px solid var(--cor);
+  border-radius: 8px;
+  padding: .8rem 1rem;
+}
+.tarefa[data-prioridade="1"] { --cor: var(--p1); }
+.tarefa[data-prioridade="2"] { --cor: var(--p2); }
+.tarefa[data-prioridade="3"] { --cor: var(--p3); }
+.codigo { font-variant-numeric: tabular-nums; color: var(--suave); font-weight: 600; }
+.titulo { font-weight: 600; overflow-wrap: anywhere; }
+.status { font-size: .8rem; color: var(--suave); grid-column: 2; }
+.acoes { grid-column: 3; grid-row: 1 / span 2; display: flex; gap: .5rem; align-items: center; }
+.acoes select { padding: .35rem .5rem; }
+.acoes button { padding: .4rem .75rem; }
+.tarefa.concluida .titulo { text-decoration: line-through; color: var(--suave); }
+.tarefa.concluida { opacity: .8; }
+.vazio { color: var(--suave); text-align: center; padding: 2rem 0; }
+
+@media (max-width: 520px) {
+  form { grid-template-columns: 1fr; }
+  form label[for="prioridade"] { grid-column: 1; }
+  .tarefa { grid-template-columns: auto 1fr; }
+  .acoes { grid-column: 1 / -1; grid-row: auto; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
