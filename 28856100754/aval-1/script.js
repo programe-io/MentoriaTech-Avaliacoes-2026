@@ -1,90 +1,61 @@
 
-let posts = JSON.parse(
-    localStorage.getItem("posts")
-) || [];
+// Lista de postagens
+let postagens = [];
 
-function salvar() {
-    localStorage.setItem("posts", JSON.stringify(posts));
-}
+// Função para adicionar postagem
+function adicionarPost() {
 
-function publicar() {
-    const titulo = document.getElementById("titulo").value.trim();
-    const imagem = document.getElementById("imagem").value.trim();
-    const conteudo = document.getElementById("conteudo").value.trim();
+    let titulo = document.getElementById("titulo").value;
+    let conteudo = document.getElementById("conteudo").value;
 
-    if (!titulo || !conteudo) {
-        alert("Preencha o título e o conteúdo!");
+    if (titulo === "" || conteudo === "") {
+        alert("Preencha todos os campos!");
         return;
     }
 
-    posts.unshift({
-        id: Date.now(),
-        titulo,
-        imagem,
-        conteudo,
-        data: new Date().toLocaleDateString("pt-BR")
-    });
+    let postagem = {
+        titulo: titulo,
+        conteudo: conteudo
+    };
 
-    salvar();
+    postagens.push(postagem);
+
     mostrarPosts();
 
     document.getElementById("titulo").value = "";
-    document.getElementById("imagem").value = "";
     document.getElementById("conteudo").value = "";
 }
 
+// Função para mostrar postagens
 function mostrarPosts() {
-    const lista = document.getElementById("lista-posts");
 
-    lista.innerHTML = "";
+    let area = document.getElementById("posts");
 
-    if (posts.length === 0) {
-        lista.textContent = "Nenhuma publicação ainda.";
-        return;
-    }
+    area.innerHTML = "";
 
-    posts.forEach(post => {
-        const artigo = document.createElement("article");
-        artigo.className = "post";
+    postagens.forEach(function(post, indice) {
 
-        const titulo = document.createElement("h3");
+        let artigo = document.createElement("article");
+
+        let titulo = document.createElement("h3");
         titulo.textContent = post.titulo;
 
-        const data = document.createElement("div");
-        data.className = "data";
-        data.textContent = post.data;
-
-        artigo.appendChild(titulo);
-        artigo.appendChild(data);
-
-        if (post.imagem) {
-            const img = document.createElement("img");
-
-            img.src = post.imagem;
-            img.alt = post.titulo;
-            img.onerror = () => img.remove();
-
-            artigo.appendChild(img);
-        }
-
-        const texto = document.createElement("p");
+        let texto = document.createElement("p");
         texto.textContent = post.conteudo;
 
-        artigo.appendChild(texto);
-
-        const botao = document.createElement("button");
-        botao.className = "excluir";
+        let botao = document.createElement("button");
         botao.textContent = "Excluir";
 
-        botao.onclick = () => {
-            posts = posts.filter(p => p.id !== post.id);
-            salvar();
+        botao.onclick = function() {
+            postagens.splice(indice, 1);
             mostrarPosts();
         };
 
+        artigo.appendChild(titulo);
+        artigo.appendChild(texto);
         artigo.appendChild(botao);
-        lista.appendChild(artigo);
+
+        area.appendChild(artigo);
+
     });
 }
-
-mostrarPosts();
