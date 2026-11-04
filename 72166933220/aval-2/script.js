@@ -65,3 +65,5 @@ console.log(listarTarefas());
 alterarPrioridade(1, 2);
 
 console.log(listarTarefas());
+
+
