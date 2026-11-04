@@ -2,77 +2,152 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meu Mini Feed</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mini Feed</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f0f2f5;
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 500px;
+    margin: auto;
+}
+
+h1 {
+    text-align: center;
+    color: #1877f2;
+}
+
+.post-box, .post {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 5px #ddd;
+}
+
+textarea {
+    width: 100%;
+    height: 80px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    resize: none;
+}
+
+button {
+    border: none;
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 8px;
+}
+
+.publicar {
+    background: #1877f2;
+    color: white;
+    width: 100%;
+}
+
+.curtir {
+    background: #eee;
+}
+
+.excluir {
+    background: #ffdddd;
+    color: red;
+}
+
+.nome {
+    font-weight: bold;
+    color: #1877f2;
+}
+
+.data {
+    color: gray;
+    font-size: 12px;
+}
+
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="style.css" rel="stylesheet"></head>
+
 <body>
 
-    <header>
-        <h1>Meu Mini Feed</h1>
-        <p>Compartilhe suas ideias!</p>
-    </header>
+<div class="container">
 
-    <hr>
+<h1>📱 Meu Mini Feed</h1>
 
-    <main>
+<div class="post-box">
+    <textarea id="mensagem" placeholder="O que você está pensando?"></textarea>
+    <button class="publicar" onclick="publicar()">Publicar</button>
+</div>
 
-        <section>
-            <h2>Nova publicação</h2>
+<div id="feed"></div>
 
-            <input type="text" placeholder="Seu nome">
+</div>
 
-            <br><br>
+<script>
+function publicar() {
+    const campo = document.getElementById("mensagem");
+    const texto = campo.value.trim();
 
-            <textarea placeholder="O que você está pensando?"></textarea>
+    if (texto === "") {
+        alert("Digite alguma coisa!");
+        return;
+    }
 
-            <br><br>
+    const post = document.createElement("div");
+    post.className = "post";
 
-            <button>Publicar</button>
-        </section>
+    const nome = document.createElement("div");
+    nome.className = "nome";
+    nome.textContent = "Usuário";
 
-        <hr>
+    const data = document.createElement("div");
+    data.className = "data";
+    data.textContent = new Date().toLocaleString("pt-BR");
 
-        <section>
-            <h2>Feed de publicações</h2>
+    const conteudo = document.createElement("p");
+    conteudo.textContent = texto;
 
-            <article>
-                <h3>João Silva</h3>
-                <p>Olá pessoal! Este é meu primeiro post!</p>
-                <small>04/11/2026</small>
-                <br><br>
-                <button>Curtir ❤️</button>
-            </article>
+    const curtir = document.createElement("button");
+    curtir.className = "curtir";
+    curtir.textContent = "❤️ Curtir (0)";
 
-            <hr>
+    let curtidas = 0;
 
-            <article>
-                <h3>Maria Santos</h3>
-                <p>Hoje estou aprendendo HTML. É muito interessante!</p>
-                <small>04/11/2026</small>
-                <br><br>
-                <button>Curtir ❤️</button>
-            </article>
+    curtir.onclick = function() {
+        curtidas++;
+        curtir.textContent = "❤️ Curtir (" + curtidas + ")";
+    };
 
-            <hr>
+    const excluir = document.createElement("button");
+    excluir.className = "excluir";
+    excluir.textContent = "Excluir";
 
-            <article>
-                <h3>Pedro Oliveira</h3>
-                <p>Sejam todos bem-vindos ao meu mini feed!</p>
-                <small>04/11/2026</small>
-                <br><br>
-                <button>Curtir ❤️</button>
-            </article>
+    excluir.onclick = function() {
+        post.remove();
+    };
 
-        </section>
+    post.append(nome, data, conteudo, curtir, excluir);
 
-    </main>
+    document.getElementById("feed").prepend(post);
 
-    <hr>
-
-    <footer>
-        <p>© 2026 - Meu Mini Feed</p>
-    </footer>
+    campo.value = "";
+}
+</script>
 
 <script src="script.js"></script></body>
 </html>

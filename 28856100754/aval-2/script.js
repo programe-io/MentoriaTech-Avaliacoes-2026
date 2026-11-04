@@ -1,32 +1,74 @@
 
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meu Mini Feed</title>
-</head>
-<body>
+// MINI FEED - JAVASCRIPT PURO
 
-    <h1>Meu Mini Feed</h1>
+const posts = [];
 
-    <h2>Nova publicação</h2>
+function criarPost(usuario, mensagem) {
+    const post = {
+        id: Date.now(),
+        usuario,
+        mensagem,
+        curtidas: 0,
+        comentarios: []
+    };
 
-    <input type="text" id="nome" placeholder="Seu nome">
+    posts.unshift(post);
+    console.log("✅ Publicação criada!");
+    mostrarFeed();
+}
 
-    <br><br>
+function curtirPost(id) {
+    const post = posts.find(p => p.id === id);
 
-    <textarea id="mensagem" placeholder="O que você está pensando?"></textarea>
+    if (post) {
+        post.curtidas++;
+        mostrarFeed();
+    }
+}
 
-    <br><br>
+function comentarPost(id, comentario) {
+    const post = posts.find(p => p.id === id);
 
-    <button onclick="publicar()">Publicar</button>
+    if (post) {
+        post.comentarios.push(comentario);
+        mostrarFeed();
+    }
+}
 
-    <h2>Feed de publicações</h2>
+function mostrarFeed() {
+    console.clear();
 
-    <div id="feed"></div>
+    console.log("========== MINI FEED ==========");
 
-    <script src="script.js"></script>
+    posts.forEach(post => {
+        console.log(`👤 ${post.usuario}`);
+        console.log(`📝 ${post.mensagem}`);
+        console.log(`❤️ Curtidas: ${post.curtidas}`);
+        console.log("💬 Comentários:");
 
-</body>
-</html>
+        post.comentarios.forEach(comentario => {
+            console.log(`- ${comentario}`);
+        });
+
+        console.log("------------------------------");
+    });
+}
+
+// PUBLICAÇÕES DE EXEMPLO
+
+criarPost("Ana", "Olá! Estou aprendendo JavaScript 🚀");
+criarPost("Pedro", "JavaScript é incrível!");
+criarPost("Maria", "Hoje aprendi sobre funções!");
+
+// INTERAÇÕES
+
+curtirPost(posts[0].id);
+
+comentarPost(
+    posts[0].id,
+    "Muito legal! Continue aprendendo!"
+);
+
+// EXIBIR FEED FINAL
+
+mostrarFeed();
