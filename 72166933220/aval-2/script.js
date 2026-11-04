@@ -1,4 +1,4 @@
-// Aluna: Domiciana
+// Aluna: Nafilly
 /* Arrayique val guardar e conjunto de todas as far */
 
 let tarefas = [];
@@ -65,5 +65,3 @@ console.log(listarTarefas());
 alterarPrioridade(1, 2);
 
 console.log(listarTarefas());
-
-
