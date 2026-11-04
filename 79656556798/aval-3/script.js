@@ -1,138 +1,136 @@
-function curtir(botao) {
-    botao.classList.toggle("curtiu");
+// CURTIR PUBLICAÇÕES
+document.querySelectorAll(".like-btn").forEach(button => {
+    button.addEventListener("click", function() {
+        const post = this.closest(".post");
+        const count = post.querySelector(".likes span");
 
-    if (botao.classList.contains("curtiu")) {
-        botao.innerHTML = "♥";
+        let likes = Number(count.textContent);
+
+        if (this.classList.contains("liked")) {
+            likes--;
+            this.classList.remove("liked");
+            this.textContent = "♡";
+        } else {
+            likes++;
+            this.classList.add("liked");
+            this.textContent = "♥";
+        }
+
+        count.textContent = likes;
+    });
+});
+
+// SEGUIR PERFIL
+const followBtn = document.getElementById("followBtn");
+
+followBtn.addEventListener("click", function() {
+    if (this.textContent === "Seguir") {
+        this.textContent = "Seguindo ✓";
+        this.style.background = "#9b59b6";
     } else {
-        botao.innerHTML = "♡";
+        this.textContent = "Seguir";
+        this.style.background = "#e83e8c";
+    }
+});
+
+// COMENTAR
+function commentPost() {
+    const comment = prompt("Escreva seu comentário:");
+
+    if (comment && comment.trim() !== "") {
+        alert("Comentário publicado: " + comment);
     }
 }
 
-function comentar(botao) {
-    const post = botao.closest(".post");
-    const comentario = prompt("Escreva seu comentário:");
-
-    if (comentario && comentario.trim() !== "") {
-        const area = post.querySelector(".comentarios");
-        area.innerHTML += "💬 " + comentario + "<br>";
-    }
+// COMPARTILHAR
+function sharePost() {
+    alert("Compartilhe esta publicação com seus amigos! 💗");
 }
 
-function compartilhar() {
-    if (navigator.share) {
-        navigator.share({
-            title: "InstaVibe",
-            text: "Veja esta publicação!"
-        });
-    } else {
-        alert("Compartilhamento disponível no seu navegador!");
-    }
-}
+// CRIAR NOVA PUBLICAÇÃO
+function addPost() {
+    const imageUrl = document.getElementById("imageUrl").value.trim();
+    const caption = document.getElementById("caption").value.trim();
 
-function publicar() {
-    const imagem = document.getElementById("imagem").value;
-    const legenda = document.getElementById("legenda").value;
-
-    if (!imagem.trim()) {
-        alert("Adicione o link de uma foto!");
+    if (!imageUrl || !caption) {
+        alert("Preencha o link da imagem e a legenda!");
         return;
     }
 
-    const feed = document.getElementById("feed");
+    try {
+        const url = new URL(imageUrl);
 
-    const post = document.createElement("article");
-    post.className = "post";
+        if (!["http:", "https:"].includes(url.protocol)) {
+            throw new Error("Link inválido");
+        }
 
-    const topo = document.createElement("div");
-    topo.className = "post-topo";
+        const post = document.createElement("article");
+        post.className = "post";
 
-    const avatar = document.createElement("img");
-    avatar.src = "https://i.pravatar.cc/100?img=47";
+        post.innerHTML = `
+            <div class="post-header">
+                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100">
+                <strong>ariane.nunes ✨</strong>
+            </div>
 
-    const nome = document.createElement("strong");
-    nome.textContent = "Camila Vitória ✨";
+            <img class="post-image" alt="Nova publicação">
 
-    topo.append(avatar, nome);
+            <div class="post-actions">
+                <button class="like-btn">♡</button>
+                <button>💬</button>
+                <button>↗</button>
+            </div>
 
-    const foto = document.createElement("img");
-    foto.className = "foto";
-    foto.src = imagem;
-    foto.alt = "Foto publicada";
+            <p class="likes">❤️ <span>0</span> curtidas</p>
+            <p><strong>ariane.nunes</strong> ${caption.replace(/[&<>"']/g, c => ({
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#39;"
+            })[c])}</p>
+            <p class="date">AGORA</p>
+        `;
 
-    foto.onerror = function() {
-        alert("Não foi possível carregar essa imagem.");
-        post.remove();
-    };
+        const newImage = post.querySelector(".post-image");
+        newImage.src = url.href;
 
-    const acoes = document.createElement("div");
-    acoes.className = "acoes";
+        newImage.onerror = function() {
+            alert("Não foi possível carregar essa imagem.");
+            post.remove();
+        };
 
-    const curtirBtn = document.createElement("button");
-    curtirBtn.textContent = "♡";
-    curtirBtn.onclick = function() {
-        curtir(this);
-    };
+        post.querySelector(".like-btn").addEventListener("click", function() {
+            const count = post.querySelector(".likes span");
+            let likes = Number(count.textContent);
 
-    const comentarBtn = document.createElement("button");
-    comentarBtn.textContent = "💬";
-    comentarBtn.onclick = function() {
-        comentar(this);
-    };
+            if (this.classList.contains("liked")) {
+                likes--;
+                this.textContent = "♡";
+                this.classList.remove("liked");
+            } else {
+                likes++;
+                this.textContent = "♥";
+                this.classList.add("liked");
+            }
 
-    const compartilharBtn = document.createElement("button");
-    compartilharBtn.textContent = "↗";
-    compartilharBtn.onclick = compartilhar;
+            count.textContent = likes;
+        });
 
-    acoes.append(curtirBtn, comentarBtn, compartilharBtn);
+        post.querySelectorAll(".post-actions button")[1]
+            .addEventListener("click", commentPost);
 
-    const likes = document.createElement("p");
-    likes.className = "likes";
-    likes.textContent = "❤️ 0 curtidas";
+        post.querySelectorAll(".post-actions button")[2]
+            .addEventListener("click", sharePost);
 
-    const texto = document.createElement("p");
-    const legendaTexto = document.createElement("span");
-    legendaTexto.textContent = legenda;
+        document.getElementById("feed").prepend(post);
 
-    const usuario = document.createElement("strong");
-    usuario.textContent = "Camila Vitória ";
+        document.getElementById("imageUrl").value = "";
+        document.getElementById("caption").value = "";
 
-    texto.append(usuario, legendaTexto);
+        alert("Publicação adicionada com sucesso! 💗");
 
-    const comentarios = document.createElement("p");
-    comentarios.className = "comentarios";
-
-    post.append(topo, foto, acoes, likes, texto, comentarios);
-    feed.prepend(post);
-
-    document.getElementById("imagem").value = "";
-    document.getElementById("legenda").value = "";
-
-    alert("Publicação criada com sucesso! 💗");
-}
-
-function criarStory() {
-    const link = prompt("Cole o link da foto para seu story:");
-
-    if (link && link.trim() !== "") {
-        const story = document.createElement("div");
-        story.className = "story";
-
-        const foto = document.createElement("img");
-        foto.src = link;
-        foto.alt = "Meu story";
-
-        const nome = document.createElement("span");
-        nome.textContent = "Seu story";
-
-        story.append(foto, nome);
-        document.querySelector(".stories").append(story);
+    } catch (error) {
+        alert("Digite um link válido de imagem!");
     }
-}
-
-function mostrarNotificacao() {
-    alert("Você não tem novas notificações! 💗");
-}
-
-function mostrarMensagem() {
-    alert("Bem-vindo às mensagens do InstaVibe! 💌");
 }
