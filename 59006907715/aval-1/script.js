@@ -1,0 +1,82 @@
+
+// Lista (array) de produtos
+let produtos = [];
+
+// Validar os dados do produto
+function validarProduto(descricao, quantidade, valor) {
+    if (descricao.length < 5) {
+        throw new Error("Descrição deve ter no mínimo 5 caracteres");
+    }
+
+    if (quantidade < 1) {
+        throw new Error("Quantidade deve ser maior que zero");
+    }
+
+    if (valor < 0) {
+        throw new Error("Valor deve ser maior ou igual a zero");
+    }
+}
+
+// Cadastrar produto
+function cadastrarProduto(descricao, quantidade, valor) {
+    validarProduto(descricao, quantidade, valor);
+
+    let novoProduto = {
+        codigo: produtos.length + 1,
+        descricao: descricao,
+        quantidade: quantidade,
+        valor: valor
+    };
+
+    produtos.push(novoProduto);
+
+    console.log("Produto cadastrado com sucesso!");
+}
+
+// Listar produtos
+function listarProdutos() {
+    console.log(produtos);
+}
+
+// Atualizar valor do produto
+function atualizarValor(codigoProduto, novoValor) {
+    if (novoValor < 0) {
+        throw new Error("Valor deve ser maior ou igual a zero");
+    }
+
+    const produto = produtos.find(prod => prod.codigo === codigoProduto);
+
+    if (produto) {
+        produto.valor = novoValor;
+        console.log("Valor atualizado com sucesso!");
+    } else {
+        throw new Error("Produto não encontrado");
+    }
+}
+
+// Atualizar quantidade do produto
+function atualizarQuantidade(codigoProduto, novaQuantidade) {
+    if (novaQuantidade < 1) {
+        throw new Error("Quantidade deve ser maior que zero");
+    }
+
+    const produto = produtos.find(prod => prod.codigo === codigoProduto);
+
+    if (produto) {
+        produto.quantidade = novaQuantidade;
+        console.log("Quantidade atualizada com sucesso!");
+    } else {
+        throw new Error("Produto não encontrado");
+    }
+}
+
+// Testando o código
+cadastrarProduto("Cadeira Gamer", 12, 699.00);
+cadastrarProduto("Mouse Logitech", 38, 99.00);
+
+listarProdutos();
+
+atualizarValor(1, 750.00);
+atualizarQuantidade(2, 50);
+
+listarProdutos();
