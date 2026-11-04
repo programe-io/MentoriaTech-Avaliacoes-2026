@@ -1,0 +1,354 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meu Feed Social</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f0f2f5;
+    color: #222;
+}
+
+header {
+    background: #1877f2;
+    color: white;
+    padding: 18px;
+    text-align: center;
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.layout {
+    max-width: 650px;
+    margin: 25px auto;
+    padding: 0 15px;
+}
+
+.criar-post, .post {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px #00000012;
+}
+
+h3 {
+    margin-bottom: 15px;
+}
+
+input, textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    font-size: 15px;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 75px;
+}
+
+button {
+    background: #1877f2;
+    color: white;
+    border: none;
+    padding: 11px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+button:hover {
+    opacity: 0.85;
+}
+
+.usuario {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.avatar {
+    width: 42px;
+    height: 42px;
+    background: #1877f2;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.nome {
+    font-weight: bold;
+}
+
+.data {
+    font-size: 12px;
+    color: gray;
+}
+
+.conteudo {
+    margin-bottom: 15px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.foto {
+    width: 100%;
+    border-radius: 10px;
+    margin-bottom: 12px;
+    max-height: 450px;
+    object-fit: cover;
+}
+
+.acoes {
+    border-top: 1px solid #eee;
+    padding-top: 12px;
+    display: flex;
+    gap: 15px;
+}
+
+.acoes button {
+    background: transparent;
+    color: #555;
+    padding: 8px;
+}
+
+.acoes button.curtiu {
+    color: #e0245e;
+}
+
+.comentarios {
+    margin-top: 15px;
+}
+
+.comentario {
+    background: #f0f2f5;
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 8px;
+    font-size: 14px;
+}
+
+.comentar {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.comentar input {
+    margin: 0;
+}
+
+.vazio {
+    text-align: center;
+    padding: 30px;
+    color: #777;
+}
+
+footer {
+    text-align: center;
+    padding: 25px;
+    color: #777;
+}
+
+@media(max-width: 500px) {
+    .layout {
+        margin-top: 15px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>🌐 Meu Feed</header>
+
+<main class="layout">
+
+<section class="criar-post">
+    <h3>✏️ Criar publicação</h3>
+
+    <input id="nome" placeholder="Seu nome">
+
+    <textarea id="texto" placeholder="O que você está pensando?"></textarea>
+
+    <input id="imagem" placeholder="Cole o link de uma imagem (opcional)">
+
+    <button onclick="publicar()">Publicar</button>
+</section>
+
+<section id="feed">
+
+    <article class="post">
+        <div class="usuario">
+            <div class="avatar">A</div>
+            <div>
+                <div class="nome">Administrador</div>
+                <div class="data">Publicado agora</div>
+            </div>
+        </div>
+
+        <div class="conteudo">
+            🎉 Bem-vindo ao Meu Feed! Compartilhe suas ideias,
+            fotos e momentos com todo mundo!
+        </div>
+
+        <div class="acoes">
+            <button onclick="curtir(this)">❤️ Curtir <span>0</span></button>
+            <button onclick="this.closest('.post').querySelector('.campo-comentario').focus()">💬 Comentar</button>
+        </div>
+
+        <div class="comentarios"></div>
+
+        <div class="comentar">
+            <input class="campo-comentario" placeholder="Escreva um comentário...">
+            <button onclick="comentar(this)">Enviar</button>
+        </div>
+    </article>
+
+</section>
+
+</main>
+
+<footer>
+    © 2026 Meu Feed - Todos os direitos reservados.
+</footer>
+
+<script>
+
+function publicar() {
+    const nome = document.getElementById("nome").value.trim() || "Visitante";
+    const texto = document.getElementById("texto").value.trim();
+    const imagem = document.getElementById("imagem").value.trim();
+
+    if (!texto) {
+        alert("Escreva alguma coisa antes de publicar!");
+        return;
+    }
+
+    const post = document.createElement("article");
+    post.className = "post";
+
+    const usuario = document.createElement("div");
+    usuario.className = "usuario";
+
+    const avatar = document.createElement("div");
+    avatar.className = "avatar";
+    avatar.textContent = nome.charAt(0).toUpperCase();
+
+    const dados = document.createElement("div");
+    const nomeEl = document.createElement("div");
+    nomeEl.className = "nome";
+    nomeEl.textContent = nome;
+
+    const data = document.createElement("div");
+    data.className = "data";
+    data.textContent = new Date().toLocaleString("pt-BR");
+
+    dados.append(nomeEl, data);
+    usuario.append(avatar, dados);
+    post.appendChild(usuario);
+
+    const conteudo = document.createElement("div");
+    conteudo.className = "conteudo";
+    conteudo.textContent = texto;
+    post.appendChild(conteudo);
+
+    if (imagem) {
+        try {
+            const url = new URL(imagem);
+            if (url.protocol === "https:" || url.protocol === "http:") {
+                const foto = document.createElement("img");
+                foto.className = "foto";
+                foto.src = url.href;
+                foto.alt = "Imagem da publicação";
+                post.appendChild(foto);
+            }
+        } catch (e) {
+            alert("O link da imagem não é válido.");
+        }
+    }
+
+    const acoes = document.createElement("div");
+    acoes.className = "acoes";
+
+    const like = document.createElement("button");
+    like.innerHTML = "❤️ Curtir <span>0</span>";
+    like.onclick = function() { curtir(this); };
+
+    const comentarioBotao = document.createElement("button");
+    comentarioBotao.textContent = "💬 Comentar";
+    comentarioBotao.onclick = function() {
+        post.querySelector(".campo-comentario").focus();
+    };
+
+    acoes.append(like, comentarioBotao);
+    post.appendChild(acoes);
+
+    const comentarios = document.createElement("div");
+    comentarios.className = "comentarios";
+    post.appendChild(comentarios);
+
+    const area = document.createElement("div");
+    area.className = "comentar";
+
+    const campo = document.createElement("input");
+    campo.className = "campo-comentario";
+    campo.placeholder = "Escreva um comentário...";
+
+    const enviar = document.createElement("button");
+    enviar.textContent = "Enviar";
+    enviar.onclick = function() { comentar(this); };
+
+    area.append(campo, enviar);
+    post.appendChild(area);
+
+    document.getElementById("feed").prepend(post);
+
+    document.getElementById("texto").value = "";
+    document.getElementById("imagem").value = "";
+}
+
+function curtir(botao) {
+    const numero = botao.querySelector("span");
+    const ativo = botao.classList.toggle("curtiu");
+
+    let total = Number(numero.textContent);
+    numero.textContent = ativo ? total + 1 : total - 1;
+}
+
+function comentar(botao) {
+    const area = botao.closest(".post");
+    const campo = area.querySelector(".campo-comentario");
+    const texto = campo.value.trim();
+
+    if (!texto) return;
+
+    const comentario = document.createElement("div");
+    comentario.className = "comentario";
+    comentario.textContent = "💬 " + texto;
+
+    area.querySelector(".comentarios").appendChild(comentario);
+    campo.value = "";
+}
+
+</script>
+
+</body>
+</html>
