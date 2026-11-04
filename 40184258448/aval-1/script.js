@@ -1,0 +1,153 @@
+# ============================================================
+# MENTORIA: LISTAS DE PRODUTOS EM PYTHON
+# Cole este código em: https://www.programiz.com/python-programming/online-compiler/
+# Dica: rode um bloco por vez (comente os outros com #)
+# ============================================================
+
+# ------------------------------------------------------------
+# 1) CRIANDO UMA LISTA SIMPLES
+# ------------------------------------------------------------
+print("=== 1) Lista simples ===")
+produtos = ["Arroz", "Feijão", "Macarrão", "Café"]
+print(produtos)
+print("Primeiro produto:", produtos[0])
+print("Último produto:", produtos[-1])
+print("Quantidade de produtos:", len(produtos))
+
+# ------------------------------------------------------------
+# 2) ADICIONAR, REMOVER E ALTERAR
+# ------------------------------------------------------------
+print("\n=== 2) Adicionar, remover e alterar ===")
+produtos.append("Açúcar")        # adiciona no final
+produtos.insert(1, "Sal")        # adiciona na posição 1
+produtos.remove("Macarrão")      # remove pelo nome
+produtos[0] = "Arroz Integral"   # altera um item
+print(produtos)
+
+# ------------------------------------------------------------
+# 3) PERCORRENDO A LISTA COM FOR
+# ------------------------------------------------------------
+print("\n=== 3) Percorrendo com for ===")
+for i, produto in enumerate(produtos, start=1):
+    print(f"{i}. {produto}")
+
+# ------------------------------------------------------------
+# 4) LISTA DE DICIONÁRIOS (nome, preço, estoque)
+# ------------------------------------------------------------
+print("\n=== 4) Lista de dicionários ===")
+estoque = [
+    {"nome": "Arroz",    "preco": 25.90, "qtd": 10},
+    {"nome": "Feijão",   "preco": 8.50,  "qtd": 0},
+    {"nome": "Café",     "preco": 18.00, "qtd": 5},
+    {"nome": "Açúcar",   "preco": 4.75,  "qtd": 20},
+]
+
+for p in estoque:
+    print(f"{p['nome']:<10} R$ {p['preco']:>6.2f}  | Estoque: {p['qtd']}")
+
+# ------------------------------------------------------------
+# 5) BUSCAR UM PRODUTO
+# ------------------------------------------------------------
+print("\n=== 5) Buscar produto ===")
+
+def buscar_produto(lista, nome):
+    for p in lista:
+        if p["nome"].lower() == nome.lower():
+            return p
+    return None
+
+resultado = buscar_produto(estoque, "café")
+if resultado:
+    print("Encontrado:", resultado)
+else:
+    print("Produto não encontrado.")
+
+# ------------------------------------------------------------
+# 6) FILTRAR (produtos em falta e produtos baratos)
+# ------------------------------------------------------------
+print("\n=== 6) Filtrar ===")
+em_falta = [p["nome"] for p in estoque if p["qtd"] == 0]
+baratos = [p["nome"] for p in estoque if p["preco"] < 10]
+print("Em falta:", em_falta)
+print("Baratos (< R$ 10):", baratos)
+
+# ------------------------------------------------------------
+# 7) ORDENAR
+# ------------------------------------------------------------
+print("\n=== 7) Ordenar ===")
+por_preco = sorted(estoque, key=lambda p: p["preco"])
+print("Do mais barato ao mais caro:")
+for p in por_preco:
+    print(f"  {p['nome']} - R$ {p['preco']:.2f}")
+
+por_nome = sorted(estoque, key=lambda p: p["nome"])
+print("Ordem alfabética:", [p["nome"] for p in por_nome])
+
+# ------------------------------------------------------------
+# 8) CÁLCULOS: valor total do estoque, média, mais caro
+# ------------------------------------------------------------
+print("\n=== 8) Cálculos ===")
+total = sum(p["preco"] * p["qtd"] for p in estoque)
+media = sum(p["preco"] for p in estoque) / len(estoque)
+mais_caro = max(estoque, key=lambda p: p["preco"])
+print(f"Valor total em estoque: R$ {total:.2f}")
+print(f"Preço médio: R$ {media:.2f}")
+print(f"Produto mais caro: {mais_caro['nome']} (R$ {mais_caro['preco']:.2f})")
+
+# ------------------------------------------------------------
+# 9) APLICAR DESCONTO EM TODOS OS PRODUTOS
+# ------------------------------------------------------------
+print("\n=== 9) Desconto de 10% ===")
+com_desconto = [
+    {**p, "preco": round(p["preco"] * 0.90, 2)} for p in estoque
+]
+for p in com_desconto:
+    print(f"{p['nome']}: R$ {p['preco']:.2f}")
+
+# ------------------------------------------------------------
+# 10) PROJETO FINAL: CADASTRO DE PRODUTOS COM MENU
+# (no Programiz, digite as respostas no campo de entrada)
+# ------------------------------------------------------------
+print("\n=== 10) Mini sistema de produtos ===")
+
+lista = []
+
+def cadastrar():
+    nome = input("Nome do produto: ")
+    preco = float(input("Preço: ").replace(",", "."))
+    qtd = int(input("Quantidade: "))
+    lista.append({"nome": nome, "preco": preco, "qtd": qtd})
+    print("✔ Produto cadastrado!")
+
+def listar():
+    if not lista:
+        print("Nenhum produto cadastrado.")
+        return
+    for i, p in enumerate(lista, start=1):
+        print(f"{i}. {p['nome']} - R$ {p['preco']:.2f} ({p['qtd']} un.)")
+
+def remover():
+    listar()
+    if lista:
+        n = int(input("Número do produto a remover: "))
+        if 1 <= n <= len(lista):
+            removido = lista.pop(n - 1)
+            print(f"✔ {removido['nome']} removido.")
+        else:
+            print("Número inválido.")
+
+def menu():
+    while True:
+        print("\n1) Cadastrar  2) Listar  3) Remover  0) Sair")
+        opcao = input("Escolha: ")
+        if opcao == "1":
+            cadastrar()
+        elif opcao == "2":
+            listar()
+        elif opcao == "3":
+            remover()
+        elif opcao == "0":
+            print("Até logo!")
+            break
+        else:
+            print("Opção inválida.")
