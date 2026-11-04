@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Quiz Poli</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #e0ecff, #f4f7ff);
+      color: #1e293b;
+      min-height: 100vh;
+    }
+
+    .container {
+      width: min(90%, 800px);
+      margin: auto;
+      padding: 30px 0;
+    }
+
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+
+    h1, h2 {
+      text-align: center;
+    }
+
+    h1 {
+      color: #2563eb;
+      margin-bottom: 5px;
+    }
+
+    .subtitulo {
+      text-align: center;
+      color: #64748b;
+      margin-bottom: 25px;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin-top: 15px;
+      margin-bottom: 6px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      margin-top: 20px;
+      border: none;
+      border-radius: 10px;
+      background: #2563eb;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #1d4ed8;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .info {
+      display: flex;
+      justify-content: space-between;
+      background: #eff6ff;
+      padding: 12px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      font-weight: bold;
+    }
+
+    .pergunta {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    .alternativa {
+      display: block;
+      width: 100%;
+      text-align: left;
+      background: #f8fafc;
+      color: #1e293b;
+      border: 2px solid #e2e8f0;
+      margin: 10px 0;
+    }
+
+    .alternativa:hover {
+      background: #dbeafe;
+      border-color: #2563eb;
+    }
+
+    .progresso {
+      height: 10px;
+      background: #e2e8f0;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    .barra {
+      height: 100%;
+      width: 0%;
+      background: #2563eb;
+      transition: 0.3s;
+    }
+
+    .resultado {
+      text-align: center;
+      font-size: 20px;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 600px) {
+      .card {
+        padding: 20px;
+      }
+
+      .info {
+        flex-direction: column;
+        gap: 8px;
+      }
+    }
+  </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+  <div class="container">
+
+    <!-- TELA INICIAL -->
+    <section id="inicio" class="card">
+
+      <h1>📚 Quiz Poli</h1>
+      <p class="subtitulo">
+        Teste seus conhecimentos de uma forma divertida!
+      </p>
+
+      <label for="nome">Seu nome:</label>
+      <input type="text" id="nome" placeholder="Digite seu nome">
+
+      <label for="serie">Sua série:</label>
+      <select id="serie">
+        <option value="">Selecione</option>
+        <option value="1º Ano">1º Ano do Ensino Médio</option>
+        <option value="2º Ano">2º Ano do Ensino Médio</option>
+        <option value="3º Ano">3º Ano do Ensino Médio</option>
+      </select>
+
+      <label for="materia">Escolha uma matéria:</label>
+      <select id="materia">
+        <option value="Todas">🎲 Todas as matérias</option>
+        <option value="Português">📖 Português</option>
+        <option value="Matemática">➗ Matemática</option>
+        <option value="História">🏛️ História</option>
+        <option value="Geografia">🌎 Geografia</option>
+        <option value="Biologia">🧬 Biologia</option>
+        <option value="Química">⚗️ Química</option>
+        <option value="Física">⚡ Física</option>
+        <option value="Inglês">🇬🇧 Inglês</option>
+        <option value="Filosofia">💭 Filosofia</option>
+        <option value="Sociologia">👥 Sociologia</option>
+        <option value="Arte">🎨 Arte</option>
+        <option value="IA">🤖 Inteligência Artificial</option>
+        <option value="Outras">➕ Outras</option>
+      </select>
+
+      <label for="nivel">Escolha o nível:</label>
+      <select id="nivel">
+        <option value="Fácil">🟢 Fácil</option>
+        <option value="Médio">🟡 Médio</option>
+        <option value="Difícil">🔴 Difícil</option>
+      </select>
+
+      <button onclick="iniciarQuiz()">Começar Quiz 🚀</button>
+
+    </section>
+
+
+    <!-- TELA DO QUIZ -->
+    <section id="quiz" class="card hidden">
+
+      <div class="info">
+        <span id="jogador"></span>
+        <span id="pontuacao">Pontos: 0</span>
+      </div>
+
+      <div class="progresso">
+        <div id="barra" class="barra"></div>
+      </div>
+
+      <p id="contador"></p>
+
+      <div id="materiaAtual" class="subtitulo"></div>
+
+      <div id="pergunta" class="pergunta"></div>
+
+      <div id="alternativas"></div>
+
+    </section>
+
+
+    <!-- RESULTADO -->
+    <section id="resultado" class="card hidden">
+
+      <h2>🎉 Quiz Finalizado!</h2>
+
+      <div id="mensagemResultado" class="resultado"></div>
+
+      <button onclick="reiniciarQuiz()">
+        Jogar Novamente 🔄
+      </button>
+
+    </section>
+
+  </div>
+
+
+  <script>
+
+    // BANCO DE PERGUNTAS
+    const perguntas = [
+
+      {
+        materia: "Matemática",
+        nivel: "Fácil",
+        pergunta: "Quanto é 5 + 7?",
+        alternativas: ["10", "11", "12", "13"],
+        correta: 2
+      },
+
+      {
+        materia: "Matemática",
+        nivel: "Médio",
+        pergunta: "Quanto é 9 × 8?",
+        alternativas: ["63", "72", "81", "64"],
+        correta: 1
+      },
+
+      {
+        materia: "Matemática",
+        nivel: "Difícil",
+        pergunta: "Qual é a raiz quadrada de 144?",
+        alternativas: ["10", "11", "12", "14"],
+        correta: 2
+      },
+
+      {
+        materia: "Português",
+        nivel: "Fácil",
+        pergunta: "Qual destas palavras é um verbo?",
+        alternativas: ["Correr", "Bonito", "Casa", "Azul"],
+        correta: 0
+      },
+
+      {
+        materia: "Português",
+        nivel: "Médio",
+        pergunta: "Qual é o plural correto de 'cidadão'?",
+        alternativas: ["Cidadões", "Cidadãos", "Cidadães", "Cidadãoes"],
+        correta: 1
+      },
+
+      {
+        materia: "Português",
+        nivel: "Difícil",
+        pergunta: "Em 'Maria chegou cedo', qual é o sujeito?",
+        alternativas: ["Chegou", "Cedo", "Maria", "Chegou cedo"],
+        correta: 2
+      },
+
+      {
+        materia: "História",
+        nivel: "Fácil",
+        pergunta: "Quem foi o primeiro presidente do Brasil?",
+        alternativas: [
+          "Getúlio Vargas",
+          "Deodoro da Fonseca",
+          "Juscelino Kubitschek",
+          "Dom Pedro II"
+        ],
+        correta: 1
+      },
+
+      {
+        materia: "História",
+        nivel: "Médio",
+        pergunta: "Em que ano ocorreu a Independência do Brasil?",
+        alternativas: ["1500", "1822", "1889", "1930"],
+        correta: 1
+      },
+
+      {
+        materia: "Geografia",
+        nivel: "Fácil",
+        pergunta: "Qual é o maior país da América do Sul?",
+        alternativas: ["Argentina", "Brasil", "Chile", "Peru"],
+        correta: 1
+      },
+
+      {
+        materia: "Geografia",
+        nivel: "Médio",
+        pergunta: "Qual é a capital do Brasil?",
+        alternativas: ["Rio de Janeiro", "São Paulo", "Brasília", "Salvador"],
+        correta: 2
+      },
+
+      {
+        materia: "Biologia",
+        nivel: "Fácil",
+        pergunta: "Qual órgão bombeia o sangue pelo corpo?",
+        alternativas: ["Pulmão", "Coração", "Fígado", "Estômago"],
+        correta: 1
+      },
+
+      {
+        materia: "Biologia",
+        nivel: "Médio",
+        pergunta: "Qual processo as plantas utilizam para produzir seu alimento?",
+        alternativas: [
+          "Respiração",
+          "Fotossíntese",
+          "Digestão",
+          "Fermentação"
+        ],
+        correta: 1
+      },
+
+      {
+        materia: "Química",
+        nivel: "Fácil",
+        pergunta: "Qual é o símbolo químico da água?",
+        alternativas: ["O2", "CO2", "H2O", "NaCl"],
+        correta: 2
+      },
+
+      {
+        materia: "Física",
+        nivel: "Fácil",
+        pergunta: "Qual unidade é usada para medir a temperatura?",
+        alternativas: ["Metro", "Litro", "Graus Celsius", "Quilograma"],
+        correta: 2
+      },
+
+      {
+        materia: "Inglês",
+        nivel: "Fácil",
+        pergunta: "Qual é a tradução de 'Book'?",
+        alternativas: ["Caneta", "Livro", "Caderno", "Escola"],
+        correta: 1
+      },
+
+      {
+        materia: "Filosofia",
+        nivel: "Fácil",
+        pergunta: "A Filosofia busca principalmente:",
+        alternativas: [
+          "Refletir e questionar",
+          "Decorar palavras",
+          "Construir prédios",
+          "Vender produtos"
+        ],
+        correta: 0
+      },
+
+      {
+        materia: "Sociologia",
+        nivel: "Fácil",
+        pergunta: "A Sociologia estuda principalmente:",
+        alternativas: [
+          "A sociedade",
+          "Somente plantas",
+          "Somente números",
+          "Somente planetas"
+        ],
+        correta: 0
+      },
+
+      {
+        materia: "Arte",
+        nivel: "Fácil",
+        pergunta: "Qual destas é uma forma de expressão artística?",
+        alternativas: ["Pintura", "Multiplicação", "Divisão", "Equação"],
+        correta: 0
+      },
+
+      {
+        materia: "IA",
+        nivel: "Médio",
+        pergunta: "O que significa a sigla IA?",
+        alternativas: [
+          "Informação Automática",
+          "Inteligência Artificial",
+          "Internet Avançada",
+          "Interação Automática"
+        ],
+        correta: 1
+      },
+
+      {
+        materia: "Outras",
+        nivel: "Fácil",
+        pergunta: "Qual hábito pode ajudar nos estudos?",
+        alternativas: [
+          "Organizar uma rotina",
+          "Nunca revisar",
+          "Ignorar as aulas",
+          "Não fazer atividades"
+        ],
+        correta: 0
+      }
+
+    ];
+
+
+    let perguntasSelecionadas = [];
+    let perguntaAtual = 0;
+    let pontos = 0;
+    let nomeJogador = "";
+
+
+    function iniciarQuiz() {
+
+      nomeJogador = document.getElementById("nome").value.trim();
+
+      const serie =
+        document.getElementById("serie").value;
+
+      const materia =
+        document.getElementById("materia").value;
+
+      const nivel =
+        document.getElementById("nivel").value;
+
+
+      if (!nomeJogador || !serie) {
+        alert("Preencha seu nome e escolha sua série!");
+        return;
+      }
+
+
+      perguntasSelecionadas =
+        perguntas.filter(p => {
+
+          const materiaCorreta =
+            materia === "Todas" ||
+            p.materia === materia;
+
+          const nivelCorreto =
+            p.nivel === nivel;
+
+          return materiaCorreta && nivelCorreto;
+
+        });
+
+
+      if (perguntasSelecionadas.length === 0) {
+
+        alert(
+          "Ainda não temos perguntas desse nível para essa matéria. Escolha outra opção!"
+        );
+
+        return;
+
+      }
+
+
+      // Embaralha as perguntas
+      perguntasSelecionadas.sort(
+        () => Math.random() - 0.5
+      );
+
+
+      perguntaAtual = 0;
+      pontos = 0;
+
+
+      document
+        .getElementById("inicio")
+        .classList.add("hidden");
+
+
+      document
+        .getElementById("quiz")
+        .classList.remove("hidden");
+
+
+      document
+        .getElementById("jogador")
+        .textContent =
+        nomeJogador + " • " + serie;
+
+
+      mostrarPergunta();
+
+    }
+
+
+    function mostrarPergunta() {
+
+      const atual =
+        perguntasSelecionadas[perguntaAtual];
+
+
+      document
+        .getElementById("contador")
+        .textContent =
+        "Pergunta " +
+        (perguntaAtual + 1) +
+        " de " +
+        perguntasSelecionadas.length;
+
+
+      document
+        .getElementById("materiaAtual")
+        .textContent =
+        atual.materia +
+        " • Nível " +
+        atual.nivel;
+
+
+      document
+        .getElementById("pergunta")
+        .textContent =
+        atual.pergunta;
+
+
+      document
+        .getElementById("pontuacao")
+        .textContent =
+        "Pontos: " + pontos;
+
+
+      const alternativas =
+        document.getElementById("alternativas");
+
+
+      alternativas.innerHTML = "";
+
+
+      atual.alternativas.forEach(
+        (alternativa, indice) => {
+
+          const botao =
+            document.createElement("button");
+
+
+          botao.textContent = alternativa;
+
+          botao.className = "alternativa";
+
+
+          botao.onclick =
+            function () {
+
+              responder(indice);
+
+            };
+
+
+          alternativas.appendChild(botao);
+
+        }
+      );
+
+
+      const progresso =
+        ((perguntaAtual) /
+        perguntasSelecionadas.length) * 100;
+
+
+      document
+        .getElementById("barra")
+        .style.width =
+        progresso + "%";
+
+    }
+
+
+    function responder(resposta) {
+
+      const atual =
+        perguntasSelecionadas[perguntaAtual];
+
+
+      if (
+        resposta === atual.correta
+      ) {
+
+        pontos++;
+
+      }
+
+
+      perguntaAtual++;
+
+
+      if (
+        perguntaAtual <
+        perguntasSelecionadas.length
+      ) {
+
+        mostrarPergunta();
+
+      } else {
+
+        finalizarQuiz();
+
+      }
+
+    }
+
+
+    function finalizarQuiz() {
+
+      document
+        .getElementById("quiz")
+        .classList.add("hidden");
+
+
+      document
+        .getElementById("resultado")
+        .classList.remove("hidden");
+
+
+      const total =
+        perguntasSelecionadas.length;
+
+
+      const porcentagem =
+        (pontos / total) * 100;
+
+
+      let mensagem = "";
+
+
+      if (porcentagem === 100) {
+
+        mensagem =
+          "🏆 Caralho, " + nomeJogador +
+          "! Você acertou tudo! Mandou bem demais!";
+
+      }
+
+      else if (porcentagem >= 70) {
+
+        mensagem =
+          "🎉 Muito bem, " + nomeJogador +
+          "! Você teve um ótimo resultado!";
+
+      }
+
+      else if (porcentagem >= 40) {
+
+        mensagem =
+          "👍 Boa tentativa, " + nomeJogador +
+          "! Continue estudando e tente novamente!";
+
+      }
+
+      else {
+
+        mensagem =
+          "📚 " + nomeJogador +
+          ", não desanima! Estuda mais um pouquinho e tenta de novo.";
+
+      }
+
+
+      document
+        .getElementById("mensagemResultado")
+        .innerHTML =
+        mensagem +
+        "<br><br>" +
+        "Você acertou <strong>" +
+        pontos +
+        "</strong> de <strong>" +
+        total +
+        "</strong> perguntas.";
+
+
+      document
+        .getElementById("barra")
+        .style.width = "100%";
+
+    }
+
+
+    function reiniciarQuiz() {
+
+      document
+        .getElementById("resultado")
+        .classList.add("hidden");
+
+
+      document
+        .getElementById("inicio")
+        .classList.remove("hidden");
+
+
+      document
+        .getElementById("barra")
+        .style.width = "0%";
+
+    }
+
+  </script>
+
+</body>
+</html>
