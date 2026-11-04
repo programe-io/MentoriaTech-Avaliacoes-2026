@@ -47,23 +47,3 @@ function concluirTarefa(codigo) {
     if (tarefa.status === false) {
         throw new Error('Tarefa já estava como concluída');
     }
-
-    tarefa.status = false;
-}
-
-function alterarPrioridade(codigo, novaPrioridade) {
-    let tarefa = buscarTarefa(codigo);
-
-    validarDadosTarefa(tarefa.titulo, novaPrioridade);
-
-    tarefa.prioridade = novaPrioridade;
-}
-
-cadastrarTarefa('Cadastrar Clientes', 1);
-console.log(listarTarefas());
-
-alterarPrioridade(1, 2);
-
-console.log(listarTarefas());
-
-
