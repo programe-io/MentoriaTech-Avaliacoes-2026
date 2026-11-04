@@ -129,4 +129,4 @@ document.querySelector('#year').textContent =
 
                                                                                                                                                               newsletterForm.reset();
                                                                                                                                                               });
-                                                                                                                                                              i
+                                                                                                                                                              
