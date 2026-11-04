@@ -1,81 +1,82 @@
 function curtir(botao) {
 
-  let post = botao.closest(".post");
-  let likes = post.querySelector(".likes");
+  let postagem = botao.closest(".post");
+  let likes = postagem.querySelector(".likes");
 
   let quantidade = Number(
-    likes.dataset.count ||
+    likes.dataset.quantidade || 
     likes.textContent.replace(/\D/g, "")
   );
 
   if (botao.textContent === "♡") {
+
     botao.textContent = "♥";
-    botao.style.color = "#ff4081";
+    botao.style.color = "red";
     quantidade++;
+
   } else {
+
     botao.textContent = "♡";
-    botao.style.color = "white";
+    botao.style.color = "black";
     quantidade--;
+
   }
 
-  likes.dataset.count = quantidade;
+  likes.dataset.quantidade = quantidade;
   likes.textContent = quantidade + " curtidas";
 }
 
 function comentar() {
-  let comentario = prompt("Digite seu comentário:");
 
-  if (comentario && comentario.trim()) {
-    alert("Comentário adicionado!");
+  let mensagem = prompt("Digite seu comentário:");
+
+  if (mensagem && mensagem.trim()) {
+    alert("Comentário enviado: " + mensagem);
   }
+
 }
 
-function criarPost() {
+function novaPublicacao() {
 
-  let legenda = prompt("Escreva sua publicação:");
+  let legenda = prompt("Digite a legenda da publicação:");
 
   if (!legenda || !legenda.trim()) {
     return;
   }
 
-  let post = document.createElement("div");
+  let postagem = document.createElement("div");
 
-  post.className = "post";
+  postagem.className = "post";
 
-  let perfil = document.createElement("div");
-  perfil.className = "perfil";
-  perfil.innerHTML = "<strong>meu.perfil</strong>";
+  let usuario = document.createElement("div");
+  usuario.className = "usuario";
+  usuario.innerHTML = "<strong>Meu perfil</strong>";
 
   let texto = document.createElement("p");
-  texto.className = "legenda";
+  texto.textContent = legenda;
 
-  let nome = document.createElement("strong");
-  nome.textContent = "meu.perfil ";
+  let botoes = document.createElement("div");
+  botoes.className = "botoes";
 
-  texto.appendChild(nome);
-  texto.appendChild(document.createTextNode(legenda));
+  let curtirBotao = document.createElement("button");
+  curtirBotao.textContent = "♡";
+  curtirBotao.onclick = function() {
+    curtir(this);
+  };
 
   let likes = document.createElement("p");
   likes.className = "likes";
   likes.textContent = "0 curtidas";
 
-  let acoes = document.createElement("div");
-  acoes.className = "acoes";
+  botoes.appendChild(curtirBotao);
 
-  let botao = document.createElement("button");
-  botao.textContent = "♡";
-  botao.onclick = function() {
-    curtir(this);
-  };
+  postagem.appendChild(usuario);
+  postagem.appendChild(texto);
+  postagem.appendChild(botoes);
+  postagem.appendChild(likes);
 
-  acoes.appendChild(botao);
+  document.getElementById("feed")
+    .prepend(postagem);
 
-  post.appendChild(perfil);
-  post.appendChild(acoes);
-  post.appendChild(likes);
-  post.appendChild(texto);
-
-  document.getElementById("feed").prepend(post);
-
-  alert("Publicação criada!");
+  alert("Publicação criada com sucesso!");
 }
