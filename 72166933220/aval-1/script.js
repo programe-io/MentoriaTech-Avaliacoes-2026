@@ -1,3 +1,4 @@
+//Nafilly vitoria De queiroz
 // Lista (Array) de Produtos 
 let produtos = []; 
  
@@ -66,4 +67,3 @@ listarProdutos();
  
 atualizarQuantidade(1, 3); 
 listarProdutos();
-// aluna  Nafilly
