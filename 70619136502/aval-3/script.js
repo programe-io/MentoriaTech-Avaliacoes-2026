@@ -1,124 +1,86 @@
+const formulario = document.getElementById("formulario");
+const resultados = document.getElementById("resultados");
+const modoBtn = document.getElementById("modoBtn");
 
-let carroX;
-let carroY;
-let obstaculos = [];
-let linhas = [];
-let pontos = 0;
-let velocidade = 5;
-let perdeu = false;
+// Cadastrar pessoa e calcular IMC
+formulario.addEventListener("submit", function(event) {
+    event.preventDefault();
 
-function setup() {
-  createCanvas(400, 600);
-  carroX = width / 2;
-  carroY = height - 100;
+        const nome = document.getElementById("nome").value.trim();
+            const peso = Number(document.getElementById("peso").value);
+                const altura = Number(document.getElementById("altura").value);
 
-  for (let i = 0; i < 8; i++) {
-    linhas.push(i * 100);
-  }
+                    if (
+                            !nome ||
+                                    !Number.isFinite(peso) ||
+                                            !Number.isFinite(altura) ||
+                                                    peso <= 0 ||
+                                                            altura <= 0
+                                                                ) {
+                                                                        alert("Informe nome, peso e altura válidos!");
+                                                                                return;
+                                                                                    }
 
-  for (let i = 0; i < 3; i++) {
-    obstaculos.push({
-      x: random(100, 280),
-      y: -i * 220
-    });
-  }
-}
+                                                                                        const imc = peso / (altura * altura);
 
-function draw() {
-  background(35, 120, 55);
+                                                                                            let status;
+                                                                                                let classe;
 
-  // Pista
-  fill(55);
-  rect(60, 0, 280, height);
+                                                                                                    if (imc < 18.5) {
+                                                                                                            status = "Abaixo do peso";
+                                                                                                                    classe = "abaixo";
+                                                                                                                        } else if (imc < 25) {
+                                                                                                                                status = "Faixa de referência normal";
+                                                                                                                                        classe = "normal";
+                                                                                                                                            } else if (imc < 30) {
+                                                                                                                                                    status = "Acima da faixa de referência";
+                                                                                                                                                            classe = "acima";
+                                                                                                                                                                } else {
+                                                                                                                                                                        status = "Obesidade";
+                                                                                                                                                                                classe = "obesidade";
+                                                                                                                                                                                    }
 
-  // Bordas da pista
-  stroke(255);
-  strokeWeight(4);
-  line(65, 0, 65, height);
-  line(335, 0, 335, height);
-  noStroke();
+                                                                                                                                                                                        // Criar uma nova linha
+                                                                                                                                                                                            const linha = document.createElement("tr");
 
-  // Linhas da pista
-  fill(255, 220, 0);
-  for (let i = 0; i < linhas.length; i++) {
-    rect(195, linhas[i], 10, 50);
-    linhas[i] += velocidade;
+                                                                                                                                                                                                const dados = [
+                                                                                                                                                                                                        nome,
+                                                                                                                                                                                                                peso.toFixed(1) + " kg",
+                                                                                                                                                                                                                        altura.toFixed(2) + " m",
+                                                                                                                                                                                                                                imc.toFixed(2),
+                                                                                                                                                                                                                                        status
+                                                                                                                                                                                                                                            ];
 
-    if (linhas[i] > height) {
-      linhas[i] = -50;
-    }
-  }
+                                                                                                                                                                                                                                                dados.forEach(function(texto, indice) {
+                                                                                                                                                                                                                                                        const celula = document.createElement("td");
+                                                                                                                                                                                                                                                                celula.textContent = texto;
 
-  if (!perdeu) {
-    // Movimento do carro
-    if (keyIsDown(LEFT_ARROW)) carroX -= 5;
-    if (keyIsDown(RIGHT_ARROW)) carroX += 5;
+                                                                                                                                                                                                                                                                        if (indice === 4) {
+                                                                                                                                                                                                                                                                                    celula.classList.add("status");
+                                                                                                                                                                                                                                                                                            }
 
-    carroX = constrain(carroX, 85, 315);
+                                                                                                                                                                                                                                                                                                    linha.appendChild(celula);
+                                                                                                                                                                                                                                                                                                        });
 
-    // Desenhar obstáculos
-    for (let o of obstaculos) {
-      o.y += velocidade;
+                                                                                                                                                                                                                                                                                                            // classList.add(): adiciona a classe de cor
+                                                                                                                                                                                                                                                                                                                linha.classList.add(classe);
 
-      fill(30, 100, 255);
-      rect(o.x, o.y, 35, 55, 6);
+                                                                                                                                                                                                                                                                                                                    resultados.appendChild(linha);
 
-      // Colisão
-      if (
-        carroX + 20 > o.x &&
-        carroX - 20 < o.x + 35 &&
-        carroY + 30 > o.y &&
-        carroY - 30 < o.y + 55
-      ) {
-        perdeu = true;
-      }
+                                                                                                                                                                                                                                                                                                                        formulario.reset();
+                                                                                                                                                                                                                                                                                                                        });
 
-      if (o.y > height) {
-        o.y = -random(150, 350);
-        o.x = random(85, 280);
-        pontos++;
-        velocidade += 0.1;
-      }
-    }
+                                                                                                                                                                                                                                                                                                                        // classList.toggle(): alterna o modo escuro
+                                                                                                                                                                                                                                                                                                                        modoBtn.addEventListener("click", function() {
+                                                                                                                                                                                                                                                                                                                            document.body.classList.toggle("escuro");
+                                                                                                                                                                                                                                                                                                                            });
 
-    // Carro do jogador
-    fill(220, 20, 40);
-    rect(carroX - 17, carroY - 30, 34, 60, 8);
+                                                                                                                                                                                                                                                                                                                            // Exemplo de classList.remove():
+                                                                                                                                                                                                                                                                                                                            // Remove a classe "normal" da primeira linha, se existir.
+                                                                                                                                                                                                                                                                                                                            function removerCorNormal() {
+                                                                                                                                                                                                                                                                                                                                const primeiraLinha = resultados.querySelector("tr");
 
-    fill(120, 220, 255);
-    rect(carroX - 12, carroY - 20, 24, 15, 4);
-
-    fill(20);
-    rect(carroX - 22, carroY - 20, 6, 17);
-    rect(carroX + 16, carroY - 20, 6, 17);
-    rect(carroX - 22, carroY + 10, 6, 17);
-    rect(carroX + 16, carroY + 10, 6, 17);
-
-    // Pontuação
-    fill(255);
-    textSize(20);
-    text("Pontos: " + pontos, 15, 30);
-  } else {
-    fill(255);
-    textAlign(CENTER);
-    textSize(32);
-    text("FIM DE JOGO", width / 2, height / 2);
-    textSize(18);
-    text("Pontos: " + pontos, width / 2, height / 2 + 35);
-    text("Pressione ESPAÇO para reiniciar", width / 2, height / 2 + 75);
-    textAlign(LEFT);
-  }
-}
-
-function keyPressed() {
-  if (key === " " && perdeu) {
-    pontos = 0;
-    velocidade = 5;
-    perdeu = false;
-
-    for (let i = 0; i < obstaculos.length; i++) {
-      obstaculos[i].y = -200 * (i + 1);
-      obstaculos[i].x = random(100, 280);
-    }
-  }
-}
+                                                                                                                                                                                                                                                                                                                                    if (primeiraLinha) {
+                                                                                                                                                                                                                                                                                                                                            primeiraLinha.classList.remove("normal");
+                                                                                                                                                                                                                                                                                                                                                }
+                                                                                                                                                                                                                                                                                                                                                }
