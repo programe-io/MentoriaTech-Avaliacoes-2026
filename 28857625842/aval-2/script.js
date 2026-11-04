@@ -1,155 +1,86 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
+document.addEventListener('DOMContentLoaded', () => {
+  const btnPublish = document.getElementById('btnPublish');
+  const postContent = document.getElementById('postContent');
+  const feedList = document.getElementById('feedList');
 
-body {
-  background-color: #f0f2f5;
-  color: #1c1e21;
-  padding: 20px;
-}
+  // Adicionar novo post ao topo
+  btnPublish.addEventListener('click', () => {
+    const text = postContent.value.trim();
 
-.feed-container {
-  max-width: 600px;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
+    if (!text) {
+      alert('Escreva algo para publicar!');
+      return;
+    \}
 
-.card {
-  background: #ffffff;
-  border-radius: 8px;
-  padding: 16px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
+    const newPost = createPostElement('Você', text);
+    feedList.prepend(newPost);
+    postContent.value = '';
+  \});
 
-/* Criar Post */
-.create-post h3 {
-  font-size: 1rem;
-  margin-bottom: 10px;
-  color: #65676b;
-}
+  // Criar elemento DOM do post
+  function createPostElement(author, content) {
+    const article = document.createElement('article');
+    article.classList.add('card', 'post');
 
-.create-post textarea {
-  width: 100%;
-  height: 80px;
-  border: 1px solid #dddfe2;
-  border-radius: 6px;
-  padding: 10px;
-  resize: none;
-  outline: none;
-  font-size: 0.95rem;
-}
+    const randomId = Math.floor(Math.random() * 1000);
 
-.create-post button {
-  margin-top: 10px;
-  background-color: #1877f2;
-  color: #fff;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 6px;
-  font-weight: bold;
-  cursor: pointer;
-  float: right;
-}
+    article.innerHTML = `
+      <header class="post-header">
+        <img src="https://picsum.photos/45/45?random=\${randomId\}" alt="Avatar" class="avatar">
+        <div class="author-details">
+          <strong>\${author\}</strong>
+          <span class="timestamp">Agora mesmo</span>
+        </div>
+      </header>
 
-.create-post button:hover {
-  background-color: #166fe5;
-}
+      <p class="post-text">\${content\}</p>
 
-/* Estrutura do Post */
-.post-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 12px;
-}
+      <div class="post-actions">
+        <button class="action-btn btn-like">
+          <span class="icon">❤️</span> 
+          <span class="like-count">0</span>
+        </button>
+        <button class="action-btn btn-share">
+          <span class="icon">🔗</span> Compartilhar
+        </button>
+      </div>
+    `;
 
-.avatar {
-  border-radius: 50%;
-}
+    setupPostInteractions(article);
+    return article;
+  \}
 
-.time {
-  display: block;
-  font-size: 0.8rem;
-  color: #65676b;
-}
+  // Interatividade (Curtir e Compartilhar)
+  function setupPostInteractions(post) {
+    const btnLike = post.querySelector('.btn-like');
+    const likeCountSpan = post.querySelector('.like-count');
+    const btnShare = post.querySelector('.btn-share');
 
-.post-content {
-  font-size: 0.95rem;
-  line-height: 1.4;
-  margin-bottom: 15px;
-}
+    let likes = 0;
+    let liked = false;
 
-/* Ações */
-.post-actions {
-  display: flex;
-  gap: 10px;
-  border-top: 1px solid #e4e6eb;
-  padding-top: 10px;
-}
+    // Lógica do botão curtir
+    btnLike.addEventListener('click', () => {
+      liked = !liked;
+      likes += liked ? 1 : -1;
+      likeCountSpan.textContent = likes;
+      btnLike.classList.toggle('active', liked);
+    \});
 
-.post-actions button {
-  background: transparent;
-  border: none;
-  padding: 6px 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  color: #65676b;
-  font-weight: 600;
-}
+    // Lógica de compartilhar (Copiar texto)
+    btnShare.addEventListener('click', () => {
+      const text = post.querySelector('.post-text').textContent;
+      navigator.clipboard.writeText(text);
+      
+      const originalText = btnShare.innerHTML;
+      btnShare.innerHTML = '<span class="icon">✅</span> Copiado!';
+      
+      setTimeout(() => {
+        btnShare.innerHTML = originalText;
+      \}, 1500);
+    \});
+  \}
 
-.post-actions button:hover {
-  background-color: #f2f2f2;
-}
-
-.post-actions button.liked {
-  color: #e41e3f;
-}
-
-/* Comentários */
-.comments-section {
-  margin-top: 15px;
-  border-top: 1px solid #f0f2f5;
-  padding-top: 10px;
-}
-
-.comments-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-bottom: 10px;
-}
-
-.comment-item {
-  background: #f0f2f5;
-  padding: 8px 12px;
-  border-radius: 12px;
-  font-size: 0.85rem;
-}
-
-.comment-input-box {
-  display: flex;
-  gap: 8px;
-}
-
-.comment-input {
-  flex: 1;
-  border: 1px solid #dddfe2;
-  border-radius: 18px;
-  padding: 6px 12px;
-  outline: none;
-}
-
-.btn-comment {
-  background: #1877f2;
-  color: #fff;
-  border: none;
-  padding: 6px 12px;
-  border-radius: 18px;
-  cursor: pointer;
-  font-size: 0.85rem;
-}
+  // Inicializa o post de exemplo
+  document.querySelectorAll('.post').forEach(setupPostInteractions);
+\});$0
