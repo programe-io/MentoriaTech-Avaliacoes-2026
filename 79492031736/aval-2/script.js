@@ -1,0 +1,59 @@
+const postForm = document.getElementById('postForm');
+const postText = document.getElementById('postText');
+const characterCount = document.getElementById('characterCount');
+const posts = document.getElementById('posts');
+
+postText?.addEventListener('input', () => {
+  characterCount.textContent = `${postText.value.length}/280`;
+});
+
+postForm?.addEventListener('submit', (event) => {
+  event.preventDefault();
+  const content = postText.value.trim();
+  if (!content) return;
+
+  const post = document.createElement('article');
+  post.className = 'post-card';
+  post.innerHTML = `
+    <header class="post-header"><span class="avatar avatar-me">A</span><div class="user-meta"><strong>alex.oliveira</strong><span>agora</span></div><button class="dots" type="button" aria-label="Mais opções">···</button></header>
+    <div class="text-post">${escapeHTML(content)}</div>
+    <div class="post-controls"><button class="like-button" type="button" aria-label="Curtir publicação" aria-pressed="false">♡</button><button type="button" aria-label="Comentar">▢</button><button type="button" aria-label="Compartilhar">➤</button><button class="save-button" type="button" aria-label="Salvar publicação">♧</button></div>
+    <div class="post-info"><strong><span class="like-count">0</span> curtidas</strong><p><strong>alex.oliveira</strong> ${escapeHTML(content)}</p><time>AGORA</time></div>`;
+  posts.prepend(post);
+  postForm.reset();
+  characterCount.textContent = '0/280';
+});
+
+function escapeHTML(value) {
+  return value.replace(/[&<>"']/g, (character) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  })[character]);
+}
+
+posts?.addEventListener('click', (event) => {
+  const likeButton = event.target.closest('.like-button');
+  if (!likeButton) return;
+
+  const liked = likeButton.getAttribute('aria-pressed') === 'true';
+  const count = likeButton.closest('.post-card').querySelector('.like-count');
+  const nextCount = Number(count.textContent) + (liked ? -1 : 1);
+  count.textContent = String(Math.max(0, nextCount));
+  likeButton.setAttribute('aria-pressed', String(!liked));
+  likeButton.classList.toggle('liked', !liked);
+  likeButton.textContent = liked ? '♡' : '♥';
+});
+
+document.querySelectorAll('.follow-button').forEach((button) => {
+  button.addEventListener('click', () => {
+    const following = button.textContent === 'Seguir';
+    button.textContent = following ? 'Seguindo' : 'Seguir';
+    button.setAttribute('aria-pressed', String(following));
+  });
+});
+
+document.querySelectorAll('.story').forEach((story) => {
+  story.addEventListener('click', () => {
+    const name = story.querySelector('span:last-child')?.textContent || 'Seu story';
+    alert(`${name}: story demonstrativo`);
+  });
+});
