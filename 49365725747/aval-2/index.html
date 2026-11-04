@@ -1,0 +1,191 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mini Feed Social</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f0f2f5;
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 600px;
+    margin: auto;
+}
+
+h1 {
+    text-align: center;
+    color: #1877f2;
+}
+
+.criar-post, .post {
+    background: white;
+    padding: 18px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px #ccc;
+}
+
+textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    resize: vertical;
+}
+
+button {
+    border: none;
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.publicar {
+    background: #1877f2;
+    color: white;
+}
+
+.curtir {
+    background: #eee;
+}
+
+.comentar {
+    background: #42b72a;
+    color: white;
+}
+
+.usuario {
+    font-weight: bold;
+    color: #1877f2;
+}
+
+.data {
+    font-size: 12px;
+    color: gray;
+}
+
+.comentarios {
+    margin-top: 10px;
+    border-top: 1px solid #ddd;
+    padding-top: 10px;
+}
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+<div class="container">
+
+    <h1>🌐 Mini Feed Social</h1>
+
+    <div class="criar-post">
+        <h3>O que você está pensando?</h3>
+
+        <textarea id="textoPost"
+        placeholder="Escreva sua publicação..."></textarea>
+
+        <button class="publicar" onclick="publicarPost()">
+            Publicar
+        </button>
+    </div>
+
+    <div id="feed"></div>
+
+</div>
+
+<script>
+
+function publicarPost() {
+    const texto = document.getElementById("textoPost").value;
+
+    if (texto.trim() === "") {
+        alert("Digite alguma coisa!");
+        return;
+    }
+
+    const post = document.createElement("div");
+    post.className = "post";
+
+    const data = new Date().toLocaleString("pt-BR");
+
+    const usuario = document.createElement("div");
+    usuario.className = "usuario";
+    usuario.textContent = "👤 Usuário";
+
+    const horario = document.createElement("div");
+    horario.className = "data";
+    horario.textContent = data;
+
+    const conteudo = document.createElement("p");
+    conteudo.textContent = texto;
+
+    const curtidas = document.createElement("span");
+    curtidas.textContent = "0 curtidas";
+
+    let totalCurtidas = 0;
+
+    const botaoCurtir = document.createElement("button");
+    botaoCurtir.className = "curtir";
+    botaoCurtir.textContent = "❤️ Curtir";
+
+    botaoCurtir.onclick = function() {
+        totalCurtidas++;
+        curtidas.textContent = totalCurtidas + " curtidas";
+    };
+
+    const comentarios = document.createElement("div");
+    comentarios.className = "comentarios";
+
+    const campoComentario = document.createElement("input");
+    campoComentario.placeholder = "Escreva um comentário...";
+    campoComentario.style.padding = "10px";
+    campoComentario.style.width = "70%";
+
+    const botaoComentar = document.createElement("button");
+    botaoComentar.className = "comentar";
+    botaoComentar.textContent = "Comentar";
+
+    botaoComentar.onclick = function() {
+        if (campoComentario.value.trim() === "") return;
+
+        const comentario = document.createElement("p");
+        comentario.textContent = "💬 " + campoComentario.value;
+
+        comentarios.appendChild(comentario);
+        campoComentario.value = "";
+    };
+
+    post.appendChild(usuario);
+    post.appendChild(horario);
+    post.appendChild(conteudo);
+    post.appendChild(curtidas);
+    post.appendChild(document.createElement("br"));
+    post.appendChild(botaoCurtir);
+    post.appendChild(document.createElement("br"));
+    post.appendChild(campoComentario);
+    post.appendChild(botaoComentar);
+    post.appendChild(comentarios);
+
+    document.getElementById("feed").prepend(post);
+
+    document.getElementById("textoPost").value = "";
+}
+
+</script>
+
+<script src="script.js"></script></body>
+</html>
