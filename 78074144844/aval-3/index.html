@@ -1,0 +1,1704 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Startpoli</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f7fb;
+            color: #17233c;
+        }
+
+        /* ================= LOGIN ================= */
+
+        .tela {
+            display: none;
+            min-height: 100vh;
+        }
+
+        .tela.ativa {
+            display: block;
+        }
+
+        #login {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #061b3a, #0b3d91);
+        }
+
+        .login-box {
+            background: white;
+            width: 380px;
+            padding: 40px;
+            border-radius: 18px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+            text-align: center;
+        }
+
+        .logo {
+            color: #0b3d91;
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .login-box p {
+            color: #666;
+            margin-bottom: 25px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 13px;
+            margin: 8px 0;
+            border: 1px solid #ccd4df;
+            border-radius: 8px;
+            outline: none;
+        }
+
+        input:focus, select:focus {
+            border-color: #1769d1;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 13px;
+            background: #0b3d91;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            background: #1769d1;
+        }
+
+        .link {
+            color: #0b3d91;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* ================= HEADER ================= */
+
+        header {
+            background: #061b3a;
+            color: white;
+            padding: 15px 5%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        header h2 {
+            font-size: 21px;
+        }
+
+        nav {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        nav button {
+            background: transparent;
+            color: white;
+            border: none;
+            padding: 9px 12px;
+            cursor: pointer;
+            border-radius: 6px;
+        }
+
+        nav button:hover {
+            background: #0b3d91;
+        }
+
+        .sair {
+            background: #c62828 !important;
+        }
+
+        /* ================= CONTEÚDO ================= */
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 35px auto;
+        }
+
+        .titulo {
+            margin-bottom: 20px;
+        }
+
+        .titulo h1 {
+            color: #061b3a;
+            margin-bottom: 8px;
+        }
+
+        .titulo p {
+            color: #666;
+        }
+
+        /* ================= INÍCIO ================= */
+
+        .bem-vindo {
+            background: linear-gradient(135deg, #061b3a, #0b3d91);
+            color: white;
+            padding: 35px;
+            border-radius: 18px;
+            margin-bottom: 25px;
+        }
+
+        .bem-vindo h1 {
+            margin-bottom: 10px;
+        }
+
+        .busca {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .busca input {
+            margin: 0;
+            background: white;
+        }
+
+        .busca button {
+            width: 130px;
+            background: white;
+            color: #0b3d91;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .atalhos {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin: 25px 0;
+        }
+
+        .atalho {
+            background: white;
+            padding: 25px;
+            border-radius: 14px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            cursor: pointer;
+        }
+
+        .atalho:hover {
+            transform: translateY(-3px);
+        }
+
+        .atalho .icone {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        /* ================= CARDS ================= */
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 22px;
+            border-radius: 15px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+            border-left: 5px solid #0b3d91;
+        }
+
+        .card h3 {
+            color: #061b3a;
+            margin: 10px 0;
+        }
+
+        .card p {
+            color: #666;
+            margin: 7px 0;
+        }
+
+        .tag {
+            display: inline-block;
+            background: #e7effc;
+            color: #0b3d91;
+            padding: 5px 9px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .compatibilidade {
+            color: #16803c;
+            font-weight: bold;
+            margin: 12px 0;
+        }
+
+        .acoes {
+            display: flex;
+            gap: 8px;
+        }
+
+        .acoes button {
+            flex: 1;
+            padding: 9px;
+            border: none;
+            border-radius: 7px;
+            cursor: pointer;
+            background: #0b3d91;
+            color: white;
+        }
+
+        .acoes button.favorito {
+            background: #e9eef5;
+            color: #061b3a;
+        }
+
+        /* ================= FILTROS ================= */
+
+        .filtros {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+        }
+
+        .filtros input,
+        .filtros select {
+            margin: 0;
+        }
+
+        /* ================= PERFIL ================= */
+
+        .perfil {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            max-width: 700px;
+            margin: auto;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+        }
+
+        .perfil h2 {
+            color: #061b3a;
+            margin-bottom: 20px;
+        }
+
+        /* ================= CALENDÁRIO ================= */
+
+        .calendario {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+        }
+
+        .mes {
+            text-align: center;
+            color: #061b3a;
+            margin-bottom: 20px;
+            font-size: 25px;
+        }
+
+        .dias {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+        }
+
+        .dia {
+            min-height: 80px;
+            border: 1px solid #e1e6ed;
+            padding: 8px;
+            border-radius: 7px;
+            background: #fafcff;
+        }
+
+        .dia strong {
+            color: #061b3a;
+        }
+
+        .evento {
+            margin-top: 8px;
+            padding: 4px;
+            background: #dbe8fa;
+            color: #0b3d91;
+            border-radius: 5px;
+            font-size: 11px;
+        }
+
+        .hoje {
+            border: 2px solid #0b3d91;
+        }
+
+        /* ================= RESPONSIVO ================= */
+
+        @media (max-width: 800px) {
+            .cards {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .atalhos {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .filtros {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            header {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+
+        @media (max-width: 550px) {
+            .cards,
+            .atalhos,
+            .filtros {
+                grid-template-columns: 1fr;
+            }
+
+            .login-box {
+                width: 90%;
+            }
+
+            .busca {
+                flex-direction: column;
+            }
+
+            .busca button {
+                width: 100%;
+                padding: 13px;
+            }
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+<!-- =====================================================
+     LOGIN
+===================================================== -->
+
+<section id="login" class="tela ativa">
+
+    <div class="login-box">
+
+        <div class="logo">🎓Startpoli</div>
+
+        <p>Banco de Oportunidades para Alunos</p>
+
+        <form onsubmit="entrar(event)">
+
+            <input
+                type="email"
+                id="loginEmail"
+                placeholder="E-mail"
+                required
+            >
+
+            <input
+                type="password"
+                id="loginSenha"
+                placeholder="Senha"
+                required
+            >
+
+            <button class="btn" type="submit">
+                Entrar
+            </button>
+
+        </form>
+
+        <br>
+
+        <p>
+            Ainda não possui uma conta?
+            <span class="link" onclick="mostrar('cadastro')">
+                Cadastre-se
+            </span>
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     CADASTRO
+===================================================== -->
+
+<section id="cadastro" class="tela">
+
+    <div id="cadastroArea">
+
+        <header>
+            <h2>🎓 Startpoli</h2>
+
+            <nav>
+                <button onclick="mostrar('login')">
+                    Voltar
+                </button>
+            </nav>
+        </header>
+
+        <div class="container">
+
+            <div class="perfil">
+
+                <h2>📝 Criar minha conta</h2>
+
+                <form onsubmit="cadastrar(event)">
+
+                    <input
+                        id="cadNome"
+                        type="text"
+                        placeholder="Nome completo"
+                        required
+                    >
+
+                    <input
+                        id="cadEmail"
+                        type="email"
+                        placeholder="E-mail"
+                        required
+                    >
+
+                    <input
+                        id="cadIdade"
+                        type="number"
+                        placeholder="Idade"
+                        required
+                    >
+
+                    <select id="cadEscolaridade" required>
+
+                        <option value="">
+                            Escolaridade
+                        </option>
+
+                        <option>
+                            Ensino Fundamental
+                        </option>
+
+                        <option>
+                            Ensino Médio
+                        </option>
+
+                        <option>
+                            Ensino Técnico
+                        </option>
+
+                        <option>
+                            Ensino Superior
+                        </option>
+
+                    </select>
+
+                    <select id="cadArea" required>
+
+                        <option value="">
+                            Área de interesse
+                        </option>
+
+                        <option>Tecnologia</option>
+                        <option>Saúde</option>
+                        <option>Administração</option>
+                        <option>Engenharia</option>
+                        <option>Artes</option>
+                        <option>Ciências</option>
+
+                    </select>
+
+                    <select id="cadObjetivo" required>
+
+                        <option value="">
+                            Meu principal objetivo
+                        </option>
+
+                        <option>Estudar</option>
+                        <option>Trabalhar</option>
+                        <option>Competir</option>
+                        <option>Aprender</option>
+                        <option>Desenvolver projetos</option>
+
+                    </select>
+
+                    <input
+                        id="cadSenha"
+                        type="password"
+                        placeholder="Crie uma senha"
+                        required
+                    >
+
+                    <button class="btn">
+                        Criar conta
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     ÁREA PRINCIPAL
+===================================================== -->
+
+<section id="principal" class="tela">
+
+    <header>
+
+        <h2>🎓 Startpoli</h2>
+
+        <nav>
+
+            <button onclick="mostrarPagina('inicio')">
+                🏠 Início
+            </button>
+
+            <button onclick="mostrarPagina('oportunidades')">
+                🔎 Oportunidades
+            </button>
+
+            <button onclick="mostrarPagina('perfil')">
+                👤 Perfil
+            </button>
+
+            <button onclick="mostrarPagina('calendario')">
+                📅 Calendário
+            </button>
+
+            <button class="sair" onclick="sair()">
+                Sair
+            </button>
+
+        </nav>
+
+    </header>
+
+
+    <!-- ================= INÍCIO ================= -->
+
+    <div id="pagina-inicio" class="pagina">
+
+        <div class="container">
+
+            <div class="bem-vindo">
+
+                <h1>
+                    Olá, <span id="nomeInicio">Aluno</span>! 👋
+                </h1>
+
+                <p>
+                    Encontre oportunidades que combinam com seus interesses.
+                </p>
+
+                <div class="busca">
+
+                    <input
+                        id="buscaInicio"
+                        type="text"
+                        placeholder="O que você está procurando?"
+                    >
+
+                    <button onclick="buscarInicio()">
+                        Buscar
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div class="atalhos">
+
+                <div class="atalho"
+                     onclick="mostrarPagina('oportunidades')">
+
+                    <div class="icone">🔎</div>
+
+                    <strong>
+                        Encontrar oportunidades
+                    </strong>
+
+                </div>
+
+                <div class="atalho"
+                     onclick="mostrarPagina('calendario')">
+
+                    <div class="icone">📅</div>
+
+                    <strong>
+                        Ver calendário
+                    </strong>
+
+                </div>
+
+                <div class="atalho"
+                     onclick="mostrarPagina('perfil')">
+
+                    <div class="icone">👤</div>
+
+                    <strong>
+                        Meu perfil
+                    </strong>
+
+                </div>
+
+                <div class="atalho">
+
+                    <div class="icone">⭐</div>
+
+                    <strong>
+                        Favoritos
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="titulo">
+
+                <h2>✨ Recomendações para você</h2>
+
+                <p>
+                    Oportunidades selecionadas de acordo com seu perfil.
+                </p>
+
+            </div>
+
+
+            <div class="cards" id="cardsInicio"></div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================= OPORTUNIDADES ================= -->
+
+    <div id="pagina-oportunidades"
+         class="pagina"
+         style="display:none;">
+
+        <div class="container">
+
+            <div class="titulo">
+
+                <h1>🔎 Oportunidades</h1>
+
+                <p>
+                    Encontre cursos, bolsas, competições,
+                    estágios e muito mais.
+                </p>
+
+            </div>
+
+
+            <div class="filtros">
+
+                <input
+                    id="filtroBusca"
+                    type="text"
+                    placeholder="Pesquisar..."
+                    oninput="filtrar()"
+                >
+
+                <select id="filtroTipo"
+                        onchange="filtrar()">
+
+                    <option value="">
+                        Todos os tipos
+                    </option>
+
+                    <option>Curso</option>
+                    <option>Competição</option>
+                    <option>Bolsa</option>
+                    <option>Hackathon</option>
+                    <option>Estágio</option>
+                    <option>Palestra</option>
+
+                </select>
+
+
+                <select id="filtroArea"
+                        onchange="filtrar()">
+
+                    <option value="">
+                        Todas as áreas
+                    </option>
+
+                    <option>Tecnologia</option>
+                    <option>Saúde</option>
+                    <option>Administração</option>
+                    <option>Engenharia</option>
+                    <option>Artes</option>
+                    <option>Ciências</option>
+
+                </select>
+
+
+                <select id="filtroModalidade"
+                        onchange="filtrar()">
+
+                    <option value="">
+                        Modalidade
+                    </option>
+
+                    <option>Online</option>
+                    <option>Presencial</option>
+
+                </select>
+
+            </div>
+
+
+            <div class="cards" id="listaOportunidades"></div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================= PERFIL ================= -->
+
+    <div id="pagina-perfil"
+         class="pagina"
+         style="display:none;">
+
+        <div class="container">
+
+            <div class="perfil">
+
+                <h2>👤 Meu Perfil</h2>
+
+                <input
+                    id="perfilNome"
+                    placeholder="Nome"
+                >
+
+                <input
+                    id="perfilEmail"
+                    placeholder="E-mail"
+                    type="email"
+                >
+
+                <input
+                    id="perfilIdade"
+                    placeholder="Idade"
+                    type="number"
+                >
+
+                <select id="perfilEscolaridade">
+
+                    <option>Ensino Fundamental</option>
+                    <option>Ensino Médio</option>
+                    <option>Ensino Técnico</option>
+                    <option>Ensino Superior</option>
+
+                </select>
+
+
+                <select id="perfilArea">
+
+                    <option>Tecnologia</option>
+                    <option>Saúde</option>
+                    <option>Administração</option>
+                    <option>Engenharia</option>
+                    <option>Artes</option>
+                    <option>Ciências</option>
+
+                </select>
+
+
+                <select id="perfilObjetivo">
+
+                    <option>Estudar</option>
+                    <option>Trabalhar</option>
+                    <option>Competir</option>
+                    <option>Aprender</option>
+                    <option>Desenvolver projetos</option>
+
+                </select>
+
+
+                <button
+                    class="btn"
+                    onclick="salvarPerfil()">
+
+                    Salvar alterações
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================= CALENDÁRIO ================= -->
+
+    <div id="pagina-calendario"
+         class="pagina"
+         style="display:none;">
+
+        <div class="container">
+
+            <div class="titulo">
+
+                <h1>📅 Calendário</h1>
+
+                <p>
+                    Acompanhe prazos e eventos importantes.
+                </p>
+
+            </div>
+
+
+            <div class="calendario">
+
+                <div class="mes">
+                    Outubro 2026
+                </div>
+
+
+                <div class="dias">
+
+                    <div class="dia">
+                        <strong>Dom</strong>
+                    </div>
+
+                    <div class="dia">
+                        <strong>Seg</strong>
+                    </div>
+
+                    <div class="dia">
+                        <strong>Ter</strong>
+                    </div>
+
+                    <div class="dia">
+                        <strong>Qua</strong>
+                    </div>
+
+                    <div class="dia">
+                        <strong>Qui</strong>
+                    </div>
+
+                    <div class="dia">
+                        <strong>Sex</strong>
+                    </div>
+
+                    <div class="dia">
+                        <strong>Sáb</strong>
+                    </div>
+
+
+                    <!-- Outubro 2026 começa na quinta -->
+
+                    <div class="dia"></div>
+                    <div class="dia"></div>
+                    <div class="dia"></div>
+                    <div class="dia"></div>
+
+
+                    <div class="dia hoje">
+                        <strong>1</strong>
+                    </div>
+
+                    <div class="dia">
+                        <strong>2</strong>
+                    </div>
+
+                    <div class="dia">
+                        <strong>3</strong>
+                    </div>
+
+                    <div class="dia">
+                        <strong>4</strong>
+                    </div>
+
+                    <div class="dia">
+                        <strong>5</strong>
+                    </div>
+
+                    <div class="dia">
+                        <strong>6</strong>
+                    </div>
+
+                    <div class="dia">
+                        <strong>7</strong>
+                    </div>
+
+                    <div class="dia">
+                        <strong>8</strong>
+
+                        <div class="evento">
+                            Inscrição
+                        </div>
+                    </div>
+
+                    <div class="dia">
+                        <strong>9</strong>
+                    </div>
+
+                    <div class="dia">
+                        <strong>10</strong>
+                    </div>
+
+                    <div class="dia">
+                        <strong>11</strong>
+                    </div>
+
+                    <div class="dia">
+                        <strong>12</strong>
+                    </div>
+
+                    <div class="dia">
+                        <strong>13</strong>
+                    </div>
+
+                    <div class="dia">
+                        <strong>14</strong>
+
+                        <div class="evento">
+                            Curso
+                        </div>
+                    </div>
+
+                    <div class="dia">
+                        <strong>15</strong>
+                    </div>
+
+                    <div class="dia">
+                        <strong>16</strong>
+                    </div>
+
+                    <div class="dia">
+                        <strong>17</strong>
+                    </div>
+
+                    <div class="dia">
+                        <strong>18</strong>
+                    </div>
+
+                    <div class="dia">
+                        <strong>19</strong>
+                    </div>
+
+                    <div class="dia">
+                        <strong>20</strong>
+
+                        <div class="evento">
+                            Hackathon
+                        </div>
+                    </div>
+
+                    <div class="dia">
+                        <strong>21</strong>
+                    </div>
+
+                    <div class="dia">
+                        <strong>22</strong>
+                    </div>
+
+                    <div class="dia">
+                        <strong>23</strong>
+                    </div>
+
+                    <div class="dia">
+                        <strong>24</strong>
+                    </div>
+
+                    <div class="dia">
+                        <strong>25</strong>
+                    </div>
+
+                    <div class="dia">
+                        <strong>26</strong>
+                    </div>
+
+                    <div class="dia">
+                        <strong>27</strong>
+                    </div>
+
+                    <div class="dia">
+                        <strong>28</strong>
+
+                        <div class="evento">
+                            Bolsa
+                        </div>
+                    </div>
+
+                    <div class="dia">
+                        <strong>29</strong>
+                    </div>
+
+                    <div class="dia">
+                        <strong>30</strong>
+                    </div>
+
+                    <div class="dia">
+                        <strong>31</strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<script>
+
+    /* =====================================================
+       BANCO DE OPORTUNIDADES
+    ===================================================== */
+
+    const oportunidades = [
+
+        {
+            titulo: "Curso de Programação Web",
+            tipo: "Curso",
+            area: "Tecnologia",
+            modalidade: "Online",
+            prazo: "15/10/2026",
+            compatibilidade: "95%"
+        },
+
+        {
+            titulo: "Olimpíada Nacional de Ciências",
+            tipo: "Competição",
+            area: "Ciências",
+            modalidade: "Online",
+            prazo: "20/10/2026",
+            compatibilidade: "90%"
+        },
+
+        {
+            titulo: "Bolsa de Iniciação Científica",
+            tipo: "Bolsa",
+            area: "Ciências",
+            modalidade: "Presencial",
+            prazo: "28/10/2026",
+            compatibilidade: "87%"
+        },
+
+        {
+            titulo: "Hackathon de Tecnologia",
+            tipo: "Hackathon",
+            area: "Tecnologia",
+            modalidade: "Online",
+            prazo: "20/10/2026",
+            compatibilidade: "93%"
+        },
+
+        {
+            titulo: "Estágio para Jovens",
+            tipo: "Estágio",
+            area: "Administração",
+            modalidade: "Presencial",
+            prazo: "30/10/2026",
+            compatibilidade: "82%"
+        },
+
+        {
+            titulo: "Palestra sobre Engenharia",
+            tipo: "Palestra",
+            area: "Engenharia",
+            modalidade: "Online",
+            prazo: "12/10/2026",
+            compatibilidade: "85%"
+        }
+
+    ];
+
+
+    /* =====================================================
+       TROCAR TELAS
+    ===================================================== */
+
+    function mostrar(tela) {
+
+        document.querySelectorAll(".tela")
+            .forEach(t => t.classList.remove("ativa"));
+
+        document.getElementById(tela)
+            .classList.add("ativa");
+
+    }
+
+
+    function mostrarPagina(pagina) {
+
+        document.querySelectorAll(".pagina")
+            .forEach(p => p.style.display = "none");
+
+        document.getElementById("pagina-" + pagina)
+            .style.display = "block";
+
+        if (pagina === "inicio") {
+            carregarInicio();
+        }
+
+        if (pagina === "oportunidades") {
+            carregarOportunidades();
+        }
+
+        if (pagina === "perfil") {
+            carregarPerfil();
+        }
+
+    }
+
+
+    /* =====================================================
+       CADASTRO
+    ===================================================== */
+
+    function cadastrar(event) {
+
+        event.preventDefault();
+
+        const usuario = {
+
+            nome: document.getElementById("cadNome").value,
+
+            email: document.getElementById("cadEmail").value,
+
+            idade: document.getElementById("cadIdade").value,
+
+            escolaridade:
+                document.getElementById("cadEscolaridade").value,
+
+            area:
+                document.getElementById("cadArea").value,
+
+            objetivo:
+                document.getElementById("cadObjetivo").value,
+
+            senha:
+                document.getElementById("cadSenha").value
+
+        };
+
+
+        localStorage.setItem(
+            "usuario",
+            JSON.stringify(usuario)
+        );
+
+
+        alert("Cadastro realizado com sucesso!");
+
+
+        mostrar("principal");
+
+        mostrarPagina("inicio");
+
+    }
+
+
+    /* =====================================================
+       LOGIN
+    ===================================================== */
+
+    function entrar(event) {
+
+        event.preventDefault();
+
+        const email =
+            document.getElementById("loginEmail").value;
+
+        const senha =
+            document.getElementById("loginSenha").value;
+
+
+        const usuario =
+            JSON.parse(localStorage.getItem("usuario"));
+
+
+        if (!usuario) {
+
+            alert("Você ainda não possui cadastro.");
+
+            mostrar("cadastro");
+
+            return;
+
+        }
+
+
+        if (
+            email === usuario.email &&
+            senha === usuario.senha
+        ) {
+
+            mostrar("principal");
+
+            mostrarPagina("inicio");
+
+        } else {
+
+            alert("E-mail ou senha incorretos.");
+
+        }
+
+    }
+
+
+    /* =====================================================
+       INÍCIO
+    ===================================================== */
+
+    function carregarInicio() {
+
+        const usuario =
+            JSON.parse(localStorage.getItem("usuario"));
+
+
+        if (usuario) {
+
+            document.getElementById("nomeInicio")
+                .textContent = usuario.nome.split(" ")[0];
+
+        }
+
+
+        const container =
+            document.getElementById("cardsInicio");
+
+
+        container.innerHTML = "";
+
+
+        oportunidades
+            .slice(0, 3)
+            .forEach(op => {
+
+                container.innerHTML += criarCard(op);
+
+            });
+
+    }
+
+
+    /* =====================================================
+       OPORTUNIDADES
+    ===================================================== */
+
+    function carregarOportunidades() {
+
+        document.getElementById("filtroBusca").value = "";
+
+        document.getElementById("filtroTipo").value = "";
+
+        document.getElementById("filtroArea").value = "";
+
+        document.getElementById("filtroModalidade").value = "";
+
+
+        filtrar();
+
+    }
+
+
+    function filtrar() {
+
+        const busca =
+            document.getElementById("filtroBusca")
+            .value
+            .toLowerCase();
+
+
+        const tipo =
+            document.getElementById("filtroTipo").value;
+
+
+        const area =
+            document.getElementById("filtroArea").value;
+
+
+        const modalidade =
+            document.getElementById("filtroModalidade").value;
+
+
+        const resultados =
+            oportunidades.filter(op => {
+
+                const texto =
+                    op.titulo.toLowerCase();
+
+
+                return (
+
+                    texto.includes(busca)
+
+                    &&
+
+                    (!tipo || op.tipo === tipo)
+
+                    &&
+
+                    (!area || op.area === area)
+
+                    &&
+
+                    (!modalidade ||
+                        op.modalidade === modalidade)
+
+                );
+
+            });
+
+
+        const container =
+            document.getElementById(
+                "listaOportunidades"
+            );
+
+
+        container.innerHTML = "";
+
+
+        if (resultados.length === 0) {
+
+            container.innerHTML = `
+                <div class="card">
+                    <h3>Nenhuma oportunidade encontrada.</h3>
+                    <p>
+                        Tente mudar os filtros da pesquisa.
+                    </p>
+                </div>
+            `;
+
+            return;
+
+        }
+
+
+        resultados.forEach(op => {
+
+            container.innerHTML += criarCard(op);
+
+        });
+
+    }
+
+
+    /* =====================================================
+       CRIAR CARD
+    ===================================================== */
+
+    function criarCard(op) {
+
+        return `
+
+            <div class="card">
+
+                <span class="tag">
+                    ${op.tipo}
+                </span>
+
+                <h3>
+                    ${op.titulo}
+                </h3>
+
+                <p>
+                    📚 Área: ${op.area}
+                </p>
+
+                <p>
+                    💻 Modalidade: ${op.modalidade}
+                </p>
+
+                <p>
+                    📅 Inscrições até:
+                    <strong>${op.prazo}</strong>
+                </p>
+
+                <div class="compatibilidade">
+                    ⭐ ${op.compatibilidade}
+                    de compatibilidade
+                </div>
+
+                <div class="acoes">
+
+                    <button
+                        onclick="salvarFavorito('${op.titulo}')">
+
+                        ⭐ Salvar
+
+                    </button>
+
+                    <button
+                        onclick="verDetalhes('${op.titulo}')">
+
+                        Ver detalhes
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        `;
+
+    }
+
+
+    /* =====================================================
+       FAVORITOS
+    ===================================================== */
+
+    function salvarFavorito(titulo) {
+
+        let favoritos =
+            JSON.parse(
+                localStorage.getItem("favoritos")
+            ) || [];
+
+
+        if (!favoritos.includes(titulo)) {
+
+            favoritos.push(titulo);
+
+            localStorage.setItem(
+                "favoritos",
+                JSON.stringify(favoritos)
+            );
+
+            alert("Oportunidade salva nos favoritos!");
+
+        } else {
+
+            alert("Essa oportunidade já está salva.");
+
+        }
+
+    }
+
+
+    /* =====================================================
+       DETALHES
+    ===================================================== */
+
+    function verDetalhes(titulo) {
+
+        const op =
+            oportunidades.find(
+                item => item.titulo === titulo
+            );
+
+
+        alert(
+
+            "📌 " + op.titulo +
+
+            "\n\nTipo: " + op.tipo +
+
+            "\nÁrea: " + op.area +
+
+            "\nModalidade: " + op.modalidade +
+
+            "\nPrazo: " + op.prazo +
+
+            "\nCompatibilidade: " +
+            op.compatibilidade
+
+        );
+
+    }
+
+
+    /* =====================================================
+       PERFIL
+    ===================================================== */
+
+    function carregarPerfil() {
+
+        const usuario =
+            JSON.parse(localStorage.getItem("usuario"));
+
+
+        if (!usuario) return;
+
+
+        document.getElementById("perfilNome")
+            .value = usuario.nome;
+
+        document.getElementById("perfilEmail")
+            .value = usuario.email;
+
+        document.getElementById("perfilIdade")
+            .value = usuario.idade;
+
+        document.getElementById("perfilEscolaridade")
+            .value = usuario.escolaridade;
+
+        document.getElementById("perfilArea")
+            .value = usuario.area;
+
+        document.getElementById("perfilObjetivo")
+            .value = usuario.objetivo;
+
+    }
+
+
+    function salvarPerfil() {
+
+        const usuario =
+            JSON.parse(localStorage.getItem("usuario"));
+
+
+        usuario.nome =
+            document.getElementById("perfilNome").value;
+
+
+        usuario.email =
+            document.getElementById("perfilEmail").value;
+
+
+        usuario.idade =
+            document.getElementById("perfilIdade").value;
+
+
+        usuario.escolaridade =
+            document.getElementById(
+                "perfilEscolaridade"
+            ).value;
+
+
+        usuario.area =
+            document.getElementById(
+                "perfilArea"
+            ).value;
+
+
+        usuario.objetivo =
+            document.getElementById(
+                "perfilObjetivo"
+            ).value;
+
+
+        localStorage.setItem(
+            "usuario",
+            JSON.stringify(usuario)
+        );
+
+
+        alert("Perfil atualizado com sucesso!");
+
+        carregarInicio();
+
+    }
+
+
+    /* =====================================================
+       BUSCA DA PÁGINA INICIAL
+    ===================================================== */
+
+    function buscarInicio() {
+
+        const busca =
+            document.getElementById(
+                "buscaInicio"
+            ).value;
+
+
+        mostrarPagina("oportunidades");
+
+
+        document.getElementById(
+            "filtroBusca"
+        ).value = busca;
+
+
+        filtrar();
+
+    }
+
+
+    /* =====================================================
+       SAIR
+    ===================================================== */
+
+    function sair() {
+
+        mostrar("login");
+
+        document.getElementById("loginEmail")
+            .value = "";
+
+        document.getElementById("loginSenha")
+            .value = "";
+
+    }
+
+
+    /* =====================================================
+       INICIALIZAÇÃO
+    ===================================================== */
+
+    window.onload = function() {
+
+        const usuario =
+            JSON.parse(
+                localStorage.getItem("usuario")
+            );
+
+
+        if (usuario) {
+
+            // Mantém a tela de login ao abrir
+            // para o usuário fazer login normalmente.
+
+        }
+
+    };
+
+</script>
+
+</body>
+</html>
