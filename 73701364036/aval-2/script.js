@@ -1,0 +1,88 @@
+const tarefas = [];
+let proximoCodigo = 0;
+
+function validarDadosDaTarefa(titulo, prioridade) {
+    if (titulo.length < 5) {
+        throw new Error("O título deve possuir no mínimo 5 caracteres.");
+    }
+
+    if (prioridade < 1 || prioridade > 3) {
+        throw new Error("A prioridade deve estar entre 1 e 3.");
+    }
+}
+
+function cadastrarTarefa(titulo, prioridade) {
+    validarDadosDaTarefa(titulo, prioridade);
+
+    proximoCodigo++;
+
+    const novaTarefa = {
+        codigo: proximoCodigo,
+        titulo: titulo,
+        prioridade: prioridade,
+        status: true
+    };
+
+    tarefas.push(novaTarefa);
+
+    return novaTarefa;
+}
+
+function listarTarefas() {
+    return tarefas;
+}
+
+function buscarTarefa(codigo) {
+    const tarefa = tarefas.find(
+        tarefa => tarefa.codigo === codigo
+    );
+
+    if (!tarefa) {
+        throw new Error("Tarefa não encontrada.");
+    }
+
+    return tarefa;
+}
+
+function concluirTarefa(codigo) {
+    const tarefa = buscarTarefa(codigo);
+
+    if (tarefa.status === false) {
+        throw new Error("Essa tarefa já está concluída.");
+    }
+
+    tarefa.status = false;
+
+    return tarefa;
+}
+
+function alterarPrioridade(codigo, novaPrioridade) {
+    const tarefa = buscarTarefa(codigo);
+
+    validarDadosDaTarefa(tarefa.titulo, novaPrioridade);
+
+    tarefa.prioridade = novaPrioridade;
+
+    return tarefa;
+}
+
+try {
+    cadastrarTarefa("Estudar JavaScript", 1);
+    cadastrarTarefa("Fazer atividade", 2);
+    cadastrarTarefa("Organizar o quarto", 3);
+
+    console.log("TAREFAS CADASTRADAS:");
+    console.log(listarTarefas());
+
+    console.log("\nCONCLUINDO A TAREFA 1:");
+    console.log(concluirTarefa(1));
+
+    console.log("\nALTERANDO PRIORIDADE DA TAREFA 2:");
+    console.log(alterarPrioridade(2, 1));
+
+    console.log("\nLISTA FINAL:");
+    console.log(listarTarefas());
+
+} catch (erro) {
+    console.error("Erro:", erro.message);
+}
