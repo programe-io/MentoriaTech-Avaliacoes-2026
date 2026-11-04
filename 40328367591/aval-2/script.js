@@ -1,14 +1,10 @@
 // ===== Armazenamento =====
-// Array central que guarda todos os objetos de tarefa.
 const tarefas = [];
 
-// Gerador de código independente do tamanho do array:
-// sempre avança, então nunca repete um código, mesmo se tarefas forem removidas.
+// Gerador de código independente do tamanho do array (nunca repete códigos).
 let ultimoCodigo = 0;
 
 // ===== Funções do sistema =====
-
-// Valida título (mínimo de 5 caracteres) e prioridade (entre 1 e 3).
 function validarDadosDaTarefa(titulo, prioridade) {
   if (titulo.length < 5) {
     throw new Error("O título deve ter no mínimo 5 caracteres.");
@@ -18,7 +14,6 @@ function validarDadosDaTarefa(titulo, prioridade) {
   }
 }
 
-// Cria e adiciona uma nova tarefa. Código e status são definidos aqui, não pelo usuário.
 function cadastrarTarefa(titulo, prioridade) {
   validarDadosDaTarefa(titulo, prioridade);
 
@@ -35,12 +30,10 @@ function cadastrarTarefa(titulo, prioridade) {
   return tarefa;
 }
 
-// Retorna as tarefas cadastradas (retornar não é o mesmo que exibir).
 function listarTarefas() {
   return tarefas;
 }
 
-// Localiza uma tarefa pelo código usando find.
 function buscarTarefa(codigo) {
   const tarefa = tarefas.find((t) => t.codigo === codigo);
 
@@ -50,7 +43,6 @@ function buscarTarefa(codigo) {
   return tarefa;
 }
 
-// Marca uma tarefa como concluída (status passa de true para false).
 function concluirTarefa(codigo) {
   const tarefa = buscarTarefa(codigo);
 
@@ -61,8 +53,6 @@ function concluirTarefa(codigo) {
   return tarefa;
 }
 
-// Altera a prioridade reaproveitando a validação existente.
-// O título da própria tarefa é repassado, pois já foi validado antes.
 function alterarPrioridade(codigo, novaPrioridade) {
   const tarefa = buscarTarefa(codigo);
 
@@ -76,6 +66,7 @@ function alterarPrioridade(codigo, novaPrioridade) {
 const formulario = document.getElementById("formulario-tarefa");
 const campoTitulo = document.getElementById("titulo");
 const campoPrioridade = document.getElementById("prioridade");
+const campoFiltro = document.getElementById("filtro");
 const elMensagem = document.getElementById("mensagem");
 const elLista = document.getElementById("lista-tarefas");
 const elVazio = document.getElementById("vazio");
@@ -94,7 +85,6 @@ function limparMensagem() {
   elMensagem.textContent = "";
 }
 
-// Executa uma ação do sistema e mostra na tela o erro, se houver.
 function executar(acao, mensagemSucesso) {
   try {
     acao();
@@ -139,13 +129,13 @@ function criarItem(tarefa) {
 
   const seletor = document.createElement("select");
   seletor.setAttribute("aria-label", "Alterar prioridade da tarefa " + tarefa.codigo);
-  [1, 2, 3].forEach((p) => {
+  for (const p of [1, 2, 3]) {
     const opcao = document.createElement("option");
     opcao.value = p;
     opcao.textContent = p + " – " + NOMES_PRIORIDADE[p];
     opcao.selected = p === tarefa.prioridade;
     seletor.append(opcao);
-  });
+  }
   seletor.addEventListener("change", () => {
     executar(
       () => alterarPrioridade(tarefa.codigo, Number(seletor.value)),
@@ -170,16 +160,32 @@ function criarItem(tarefa) {
   return li;
 }
 
+// Listagem com estrutura de repetição (evolução sugerida na aula).
 function renderizar() {
-  const lista = listarTarefas();
+  const todas = listarTarefas();
+  const filtro = campoFiltro.value;
 
-  elLista.replaceChildren(...lista.map(criarItem));
-  elVazio.hidden = lista.length > 0;
+  elLista.replaceChildren();
 
-  const emExecucao = lista.filter((t) => t.status).length;
-  elResumo.textContent = lista.length === 0
+  let exibidas = 0;
+  for (const tarefa of todas) {
+    if (filtro === "execucao" && !tarefa.status) continue;
+    if (filtro === "concluidas" && tarefa.status) continue;
+    elLista.append(criarItem(tarefa));
+    exibidas++;
+  }
+
+  if (exibidas === 0) {
+    elVazio.textContent = todas.length === 0
+      ? "Nenhuma tarefa cadastrada. Preencha o formulário acima para adicionar a primeira."
+      : "Nenhuma tarefa neste filtro.";
+  }
+  elVazio.hidden = exibidas > 0;
+
+  const emExecucao = todas.filter((t) => t.status).length;
+  elResumo.textContent = todas.length === 0
     ? ""
-    : lista.length + " cadastrada(s), " + emExecucao + " em execução.";
+    : todas.length + " cadastrada(s), " + emExecucao + " em execução.";
 }
 
 formulario.addEventListener("submit", (evento) => {
@@ -188,10 +194,7 @@ formulario.addEventListener("submit", (evento) => {
   const titulo = campoTitulo.value.trim();
   const prioridade = Number(campoPrioridade.value);
 
-  const ok = executar(
-    () => cadastrarTarefa(titulo, prioridade),
-    "Tarefa cadastrada."
-  );
+  const ok = executar(() => cadastrarTarefa(titulo, prioridade), "Tarefa cadastrada.");
 
   if (ok) {
     campoTitulo.value = "";
@@ -199,5 +202,7 @@ formulario.addEventListener("submit", (evento) => {
   }
   campoTitulo.focus();
 });
+
+campoFiltro.addEventListener("change", renderizar);
 
 renderizar();
