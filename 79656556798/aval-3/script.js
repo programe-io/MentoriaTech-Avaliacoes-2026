@@ -1,40 +1,138 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+function curtir(botao) {
+    botao.classList.toggle("curtiu");
 
-      <!-- Tailwind CSS -->
-        <script src="https://cdn.tailwindcss.com"></script>
+    if (botao.classList.contains("curtiu")) {
+        botao.innerHTML = "♥";
+    } else {
+        botao.innerHTML = "♡";
+    }
+}
 
-          <title>Introdução ao Tailwind</title>
-          </head>
+function comentar(botao) {
+    const post = botao.closest(".post");
+    const comentario = prompt("Escreva seu comentário:");
 
-          <body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    if (comentario && comentario.trim() !== "") {
+        const area = post.querySelector(".comentarios");
+        area.innerHTML += "💬 " + comentario + "<br>";
+    }
+}
 
-            <div class="bg-white p-8 rounded-lg shadow-lg text-center">
-                <h1 class="text-3xl font-bold text-blue-600 mb-4">
-                      Introdução ao Tailwind CSS
-                          </h1>
+function compartilhar() {
+    if (navigator.share) {
+        navigator.share({
+            title: "InstaVibe",
+            text: "Veja esta publicação!"
+        });
+    } else {
+        alert("Compartilhamento disponível no seu navegador!");
+    }
+}
 
-                              <button
-                                    id="botao"
-                                          class="bg-blue-500 text-white px-5 py-2 rounded hover:bg-blue-700"
-                                              >
-                                                    Clique aqui
-                                                        </button>
+function publicar() {
+    const imagem = document.getElementById("imagem").value;
+    const legenda = document.getElementById("legenda").value;
 
-                                                            <p id="mensagem" class="mt-4 text-gray-700"></p>
-                                                              </div>
+    if (!imagem.trim()) {
+        alert("Adicione o link de uma foto!");
+        return;
+    }
 
-                                                                <script>
-                                                                    const botao = document.getElementById("botao");
-                                                                        const mensagem = document.getElementById("mensagem");
+    const feed = document.getElementById("feed");
 
-                                                                            botao.addEventListener("click", () => {
-                                                                                  mensagem.textContent = "Você clicou no botão!";
-                                                                                      });
-                                                                                        </script>
+    const post = document.createElement("article");
+    post.className = "post";
 
-                                                                                        </body>
-                                                                                        </html>
+    const topo = document.createElement("div");
+    topo.className = "post-topo";
+
+    const avatar = document.createElement("img");
+    avatar.src = "https://i.pravatar.cc/100?img=47";
+
+    const nome = document.createElement("strong");
+    nome.textContent = "Camila Vitória ✨";
+
+    topo.append(avatar, nome);
+
+    const foto = document.createElement("img");
+    foto.className = "foto";
+    foto.src = imagem;
+    foto.alt = "Foto publicada";
+
+    foto.onerror = function() {
+        alert("Não foi possível carregar essa imagem.");
+        post.remove();
+    };
+
+    const acoes = document.createElement("div");
+    acoes.className = "acoes";
+
+    const curtirBtn = document.createElement("button");
+    curtirBtn.textContent = "♡";
+    curtirBtn.onclick = function() {
+        curtir(this);
+    };
+
+    const comentarBtn = document.createElement("button");
+    comentarBtn.textContent = "💬";
+    comentarBtn.onclick = function() {
+        comentar(this);
+    };
+
+    const compartilharBtn = document.createElement("button");
+    compartilharBtn.textContent = "↗";
+    compartilharBtn.onclick = compartilhar;
+
+    acoes.append(curtirBtn, comentarBtn, compartilharBtn);
+
+    const likes = document.createElement("p");
+    likes.className = "likes";
+    likes.textContent = "❤️ 0 curtidas";
+
+    const texto = document.createElement("p");
+    const legendaTexto = document.createElement("span");
+    legendaTexto.textContent = legenda;
+
+    const usuario = document.createElement("strong");
+    usuario.textContent = "Camila Vitória ";
+
+    texto.append(usuario, legendaTexto);
+
+    const comentarios = document.createElement("p");
+    comentarios.className = "comentarios";
+
+    post.append(topo, foto, acoes, likes, texto, comentarios);
+    feed.prepend(post);
+
+    document.getElementById("imagem").value = "";
+    document.getElementById("legenda").value = "";
+
+    alert("Publicação criada com sucesso! 💗");
+}
+
+function criarStory() {
+    const link = prompt("Cole o link da foto para seu story:");
+
+    if (link && link.trim() !== "") {
+        const story = document.createElement("div");
+        story.className = "story";
+
+        const foto = document.createElement("img");
+        foto.src = link;
+        foto.alt = "Meu story";
+
+        const nome = document.createElement("span");
+        nome.textContent = "Seu story";
+
+        story.append(foto, nome);
+        document.querySelector(".stories").append(story);
+    }
+}
+
+function mostrarNotificacao() {
+    alert("Você não tem novas notificações! 💗");
+}
+
+function mostrarMensagem() {
+    alert("Bem-vindo às mensagens do InstaVibe! 💌");
+}
