@@ -1,192 +1,308 @@
 
-import java.util.ArrayList;
-import java.util.Scanner;
+// ======================================
+// 1. CRIAÇÃO DA LISTA DE PRODUTOS
+// ======================================
 
-public class GerenciadorTarefas {
+let produtos = [];
 
-    static Scanner scanner = new Scanner(System.in);
+let contadorCodigo = 0;
 
-    static ArrayList<Tarefa> tarefas = new ArrayList<>();
 
-    static int contadorCodigo = 0;
+// ======================================
+// 2. MAPEAMENTO DOS ELEMENTOS HTML
+// ======================================
 
-    // Classe que representa uma tarefa
-    static class Tarefa {
+const formProduto = document.getElementById("formProduto");
 
-        int id;
-        String titulo;
-        boolean concluida;
+const descricaoInput = document.getElementById("descricao");
 
-        Tarefa(int id, String titulo, boolean concluida) {
-            this.id = id;
-            this.titulo = titulo;
-            this.concluida = concluida;
-        }
-    }
+const quantidadeInput = document.getElementById("quantidade");
 
-    // Gera código automaticamente
-    public static int gerarCodigo() {
-        contadorCodigo++;
-        return contadorCodigo;
-    }
+const valorInput = document.getElementById("valor");
 
-    // Cadastra uma nova tarefa
-    public static void cadastrarTarefa() {
+const listaProdutos = document.getElementById("listaProdutos");
 
-        System.out.print("Digite o título da tarefa: ");
+const mensagem = document.getElementById("mensagem");
 
-        String titulo = scanner.nextLine().trim();
 
-        if (titulo.isEmpty()) {
-            System.out.println("Digite uma tarefa válida!");
-            return;
-        }
+// ======================================
+// 3. FUNÇÃO PARA VALIDAR PRODUTO
+// ======================================
 
-        Tarefa novaTarefa = new Tarefa(
-            gerarCodigo(),
-            titulo,
-            false
+function validarProduto(descricao, quantidade, valor) {
+
+    if (descricao.trim().length < 5) {
+        throw new Error(
+            "A descrição deve ter, no mínimo, cinco caracteres."
         );
-
-        tarefas.add(novaTarefa);
-
-        System.out.println("Tarefa cadastrada com sucesso!");
     }
 
-    // Lista todas as tarefas
-    public static void listarTarefas() {
-
-        if (tarefas.isEmpty()) {
-            System.out.println("Nenhuma tarefa cadastrada.");
-            return;
-        }
-
-        System.out.println("\n===== LISTA DE TAREFAS =====");
-
-        for (Tarefa tarefa : tarefas) {
-
-            System.out.println("Código: " + tarefa.id);
-            System.out.println("Título: " + tarefa.titulo);
-
-            System.out.println(
-                "Concluída: " +
-                (tarefa.concluida ? "Sim" : "Não")
-            );
-
-            System.out.println("-------------------------");
-        }
+    if (!Number.isInteger(quantidade) || quantidade < 1) {
+        throw new Error(
+            "A quantidade deve ser maior que zero."
+        );
     }
 
-    // Busca tarefa pelo código
-    public static Tarefa buscarTarefa(int codigo) {
-
-        for (Tarefa tarefa : tarefas) {
-
-            if (tarefa.id == codigo) {
-                return tarefa;
-            }
-        }
-
-        return null;
-    }
-
-    // Marca tarefa como concluída
-    public static void concluirTarefa() {
-
-        System.out.print("Digite o código da tarefa: ");
-
-        int codigo = Integer.parseInt(scanner.nextLine());
-
-        Tarefa tarefa = buscarTarefa(codigo);
-
-        if (tarefa != null) {
-
-            tarefa.concluida = !tarefa.concluida;
-
-            System.out.println("Situação da tarefa atualizada!");
-
-        } else {
-
-            System.out.println("Tarefa não encontrada!");
-        }
-    }
-
-    // Exclui uma tarefa
-    public static void excluirTarefa() {
-
-        System.out.print("Digite o código da tarefa: ");
-
-        int codigo = Integer.parseInt(scanner.nextLine());
-
-        Tarefa tarefa = buscarTarefa(codigo);
-
-        if (tarefa != null) {
-
-            tarefas.remove(tarefa);
-
-            System.out.println("Tarefa excluída com sucesso!");
-
-        } else {
-
-            System.out.println("Tarefa não encontrada!");
-        }
-    }
-
-    // Menu principal
-    public static void main(String[] args) {
-
-        int opcao;
-
-        do {
-
-            System.out.println("\n===== GERENCIADOR DE TAREFAS =====");
-            System.out.println("1 - Cadastrar tarefa");
-            System.out.println("2 - Listar tarefas");
-            System.out.println("3 - Concluir / Desfazer tarefa");
-            System.out.println("4 - Excluir tarefa");
-            System.out.println("0 - Sair");
-
-            System.out.print("Escolha uma opção: ");
-
-            try {
-
-                opcao = Integer.parseInt(scanner.nextLine());
-
-                switch (opcao) {
-
-                    case 1:
-                        cadastrarTarefa();
-                        break;
-
-                    case 2:
-                        listarTarefas();
-                        break;
-
-                    case 3:
-                        concluirTarefa();
-                        break;
-
-                    case 4:
-                        excluirTarefa();
-                        break;
-
-                    case 0:
-                        System.out.println("Sistema encerrado!");
-                        break;
-
-                    default:
-                        System.out.println("Opção inválida!");
-                }
-
-            } catch (NumberFormatException erro) {
-
-                System.out.println("Digite uma opção numérica válida!");
-
-                opcao = -1;
-            }
-
-        } while (opcao != 0);
-
-        scanner.close();
+    if (!Number.isFinite(valor) || valor < 0) {
+        throw new Error(
+            "O valor deve ser maior ou igual a zero."
+        );
     }
 }
+
+
+// ======================================
+// 4. GERAÇÃO AUTOMÁTICA DO CÓDIGO
+// ======================================
+
+function gerarCodigo() {
+
+    contadorCodigo++;
+
+    return contadorCodigo;
+}
+
+
+// ======================================
+// 5. FUNÇÃO PARA CADASTRAR PRODUTO
+// ======================================
+
+function cadastrarProduto(descricao, quantidade, valor) {
+
+    // Valida os dados
+    validarProduto(descricao, quantidade, valor);
+
+    // Cria o objeto produto
+    let novoProduto = {
+
+        codigo: gerarCodigo(),
+
+        descricao: descricao.trim(),
+
+        quantidade: quantidade,
+
+        valor: valor
+
+    };
+
+    // Adiciona ao array
+    produtos.push(novoProduto);
+
+    // Atualiza a listagem
+    listarProdutos();
+}
+
+
+// ======================================
+// 6. FUNÇÃO PARA LISTAR PRODUTOS
+// ======================================
+
+function listarProdutos() {
+
+    // Limpa a tabela
+    listaProdutos.innerHTML = "";
+
+    // Percorre o array
+    produtos.forEach(function(produto) {
+
+        const linha = document.createElement("tr");
+
+        const codigo = document.createElement("td");
+        codigo.textContent = produto.codigo;
+
+        const descricao = document.createElement("td");
+        descricao.textContent = produto.descricao;
+
+        const quantidade = document.createElement("td");
+        quantidade.textContent = produto.quantidade;
+
+        const valor = document.createElement("td");
+        valor.textContent = "R$ " + produto.valor.toFixed(2);
+
+        const acoes = document.createElement("td");
+
+        // Botão para alterar valor
+        const botaoValor = document.createElement("button");
+
+        botaoValor.textContent = "Alterar valor";
+        botaoValor.className = "editar";
+
+        botaoValor.addEventListener("click", function() {
+            atualizarValor(produto.codigo);
+        });
+
+        // Botão para adicionar quantidade
+        const botaoQuantidade = document.createElement("button");
+
+        botaoQuantidade.textContent = "Entrada";
+        botaoQuantidade.className = "entrada";
+
+        botaoQuantidade.addEventListener("click", function() {
+            atualizarQuantidade(produto.codigo);
+        });
+
+        // Adiciona os botões
+        acoes.appendChild(botaoValor);
+        acoes.appendChild(botaoQuantidade);
+
+        // Adiciona as células à linha
+        linha.appendChild(codigo);
+        linha.appendChild(descricao);
+        linha.appendChild(quantidade);
+        linha.appendChild(valor);
+        linha.appendChild(acoes);
+
+        // Adiciona a linha à tabela
+        listaProdutos.appendChild(linha);
+
+    });
+
+    // Atualiza os totais
+    document.getElementById("totalProdutos").textContent =
+        produtos.length;
+
+    const totalUnidades = produtos.reduce(function(total, produto) {
+        return total + produto.quantidade;
+    }, 0);
+
+    document.getElementById("totalUnidades").textContent =
+        totalUnidades;
+}
+
+
+// ======================================
+// 7. BUSCAR PRODUTO PELO CÓDIGO
+// ======================================
+
+function buscarProdutoPorCodigo(codigoProduto) {
+
+    return produtos.find(function(produto) {
+
+        return produto.codigo === codigoProduto;
+
+    });
+}
+
+
+// ======================================
+// 8. ATUALIZAR VALOR DO PRODUTO
+// ======================================
+
+function atualizarValor(codigoProduto) {
+
+    const produto = buscarProdutoPorCodigo(codigoProduto);
+
+    if (!produto) {
+
+        alert("Produto não encontrado!");
+
+        return;
+    }
+
+    let novoValor = prompt("Digite o novo valor do produto:");
+
+    if (novoValor === null || novoValor.trim() === "") {
+        return;
+    }
+
+    novoValor = Number(novoValor);
+
+    if (!Number.isFinite(novoValor) || novoValor < 0) {
+
+        alert("O valor deve ser maior ou igual a zero!");
+
+        return;
+    }
+
+    // Substitui o valor antigo
+    produto.valor = novoValor;
+
+    listarProdutos();
+
+    alert("Valor atualizado com sucesso!");
+}
+
+
+// ======================================
+// 9. ATUALIZAR QUANTIDADE DO PRODUTO
+// ======================================
+
+function atualizarQuantidade(codigoProduto) {
+
+    const produto = buscarProdutoPorCodigo(codigoProduto);
+
+    if (!produto) {
+
+        alert("Produto não encontrado!");
+
+        return;
+    }
+
+    let novaQuantidade = prompt(
+        "Digite a quantidade que deseja adicionar:"
+    );
+
+    if (novaQuantidade === null || novaQuantidade.trim() === "") {
+        return;
+    }
+
+    novaQuantidade = Number(novaQuantidade);
+
+    if (!Number.isInteger(novaQuantidade) || novaQuantidade < 1) {
+
+        alert("A quantidade deve ser maior que zero!");
+
+        return;
+    }
+
+    // Soma a quantidade ao estoque existente
+    produto.quantidade =
+        produto.quantidade + novaQuantidade;
+
+    listarProdutos();
+
+    alert("Quantidade atualizada com sucesso!");
+}
+
+
+// ======================================
+// 10. EVENTO DE CADASTRO DO FORMULÁRIO
+// ======================================
+
+formProduto.addEventListener("submit", function(event) {
+
+    event.preventDefault();
+
+    try {
+
+        const descricao = descricaoInput.value;
+
+        const quantidade = Number(quantidadeInput.value);
+
+        const valor = Number(valorInput.value);
+
+        cadastrarProduto(descricao, quantidade, valor);
+
+        mensagem.textContent =
+            "Produto cadastrado com sucesso!";
+
+        mensagem.style.color = "green";
+
+        formProduto.reset();
+
+    } catch (erro) {
+
+        mensagem.textContent = erro.message;
+
+        mensagem.style.color = "red";
+
+    }
+
+});
+
+
+// ======================================
+// 11. INICIALIZAÇÃO DO SISTEMA
+// ======================================
+
+listarProdutos();
