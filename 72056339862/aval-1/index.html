@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  
+</head>
+<body>
+  
+// ==========================================
+// SISTEMA DE CONTROLE DE ESTOQUE
+// ==========================================
+
+// 1. Lista de produtos
+let produtos = [];
+
+// 2. Função para validar produto
+function validarProduto(descricao, quantidade, valor) {
+
+    if (typeof descricao !== "string" || descricao.trim().length < 5) {
+        throw new Error("A descrição deve ter, no mínimo, cinco caracteres.");
+    }
+
+    if (!Number.isInteger(quantidade) || quantidade < 1) {
+        throw new Error("A quantidade deve ser um número inteiro maior que zero.");
+    }
+
+    if (typeof valor !== "number" || !Number.isFinite(valor) || valor < 0) {
+        throw new Error("O valor deve ser um número maior ou igual a zero.");
+    }
+}
+
+// 3. Função para cadastrar produto
+function cadastrarProduto(descricao, quantidade, valor) {
+
+    // Validar os dados
+    validarProduto(descricao, quantidade, valor);
+
+    // Criar objeto produto
+    let novoProduto = {
+        codigo: produtos.length + 1,
+        descricao: descricao.trim(),
+        quantidade: quantidade,
+        valor: valor
+    };
+
+    // Adicionar produto ao array
+    produtos.push(novoProduto);
+
+    console.log("Produto cadastrado com sucesso!");
+    console.log(novoProduto);
+
+    return novoProduto;
+}
+
+// 4. Função para listar produtos
+function listarProdutos() {
+
+    if (produtos.length === 0) {
+        console.log("Nenhum produto cadastrado.");
+        return;
+    }
+
+    console.log("===== LISTA DE PRODUTOS =====");
+
+    produtos.forEach((produto) => {
+        console.log("----------------------------");
+        console.log("Código:", produto.codigo);
+        console.log("Descrição:", produto.descricao);
+        console.log("Quantidade:", produto.quantidade);
+        console.log("Valor: R$", produto.valor.toFixed(2));
+    });
+
+    console.log("============================");
+}
+
+// 5. Função para buscar produto pelo código
+function buscarProdutoPorCodigo(codigoProduto) {
+
+    return produtos.find((produto) => {
+        return produto.codigo === codigoProduto;
+    });
+}
+
+// 6. Função para atualizar valor do produto
+function atualizarValor(codigoProduto, novoValor) {
+
+    if (typeof novoValor !== "number" ||
+        !Number.isFinite(novoValor) || novoValor < 0) {
+        throw new Error("O valor deve ser maior ou igual a zero.");
+    }
+
+    const produto = buscarProdutoPorCodigo(codigoProduto);
+
+    if (produto) {
+        produto.valor = novoValor;
+
+        console.log("Valor atualizado com sucesso!");
+        console.log(produto);
+    } else {
+        throw new Error("Produto não encontrado.");
+    }
+}
+
+// 7. Função para atualizar quantidade do produto
+function atualizarQuantidade(codigoProduto, novaQuantidade) {
+
+    if (!Number.isInteger(novaQuantidade) || novaQuantidade < 1) {
+        throw new Error("A quantidade deve ser um número inteiro maior que zero.");
+    }
+
+    const produto = buscarProdutoPorCodigo(codigoProduto);
+
+    if (produto) {
+
+        // Somar a nova quantidade ao estoque atual
+        produto.quantidade += novaQuantidade;
+
+        console.log("Quantidade atualizada com sucesso!");
+        console.log(produto);
+
+    } else {
+        throw new Error("Produto não encontrado.");
+    }
+}
+
+// ==========================================
+// 8. TESTANDO O SISTEMA
+// ==========================================
+
+try {
+
+    // Cadastrar produtos
+    cadastrarProduto("Cadeira gamer", 12, 699);
+    cadastrarProduto("Mouse Logitech", 38, 99);
+    cadastrarProduto("Teclado mecânico", 20, 250);
+
+    // Listar produtos
+    listarProdutos();
+
+    // Atualizar valor do produto de código 2
+    atualizarValor(2, 89.90);
+
+    // Adicionar 10 unidades ao produto de código 1
+    atualizarQuantidade(1, 10);
+
+    // Listar produtos novamente
+    console.log("===== ESTOQUE ATUALIZADO =====");
+    listarProdutos();
+
+} catch (erro) {
+
+    console.log("Erro:", erro.message);
+
+}
+
+  
+  
+</body>
+</html>
