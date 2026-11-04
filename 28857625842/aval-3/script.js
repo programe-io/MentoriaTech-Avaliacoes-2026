@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnCloseModal = document.getElementById('btnCloseModal');
   const btnCreatePost = document.getElementById('btnCreatePost');
 
-  // Controlar Modal
+  // Controle do Modal
   btnOpenModal.addEventListener('click', () => modal.classList.add('active'));
   btnCloseModal.addEventListener('click', () => modal.classList.remove('active'));
 
@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
     modal.classList.remove('active');
   \});
 
-  // Função para Gerar Post HTML
+  // Função para Gerar HTML do Post
   function createPostElement(username, imgUrl, caption) {
     const article = document.createElement('article');
     article.classList.add('post');
@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return article;
   \}
 
-  // Interatividade do Post (Curtir e Comentar)
+  // Interatividade (Curtir e Comentar)
   function setupPostInteractions(post) {
     const btnLike = post.querySelector('.btn-like');
     const likeNum = post.querySelector('.like-num');
@@ -87,10 +87,10 @@ document.addEventListener('DOMContentLoaded', () => {
       btnLike.classList.toggle('liked', isLiked);
     \}
 
-    // Clique no botão de curtir
+    // Clique no botão curtir
     btnLike.addEventListener('click', toggleLike);
 
-    // Duplo clique na imagem (Animação de coração)
+    // Duplo clique na imagem (Efeito do coração)
     imgContainer.addEventListener('dblclick', () => {
       if (!isLiked) toggleLike();
       
@@ -112,6 +112,6 @@ document.addEventListener('DOMContentLoaded', () => {
     \});
   \}
 
-  // Configura interações para o post inicial
+  // Inicializa o post existente
   document.querySelectorAll('.post').forEach(setupPostInteractions);
 \});$0
