@@ -1,51 +1,54 @@
-let produtos = [];
-function validarProduto(descricao, quantidade, valor) {
-  if (descricao.length < 5) {
-      throw new Error("Descricao deve ter no mínimo 5 caracteres");
-        }
-          if (quantidade < 1) {
-              throw new Error("Quantidade deve ser maior que zero");
+let tarefas = []
+
+function validarDadosTarefa(titulo, prioridade){
+    if(titulo.length  < 5){
+            throw new Error("O título deve ter no mínimo 5 caracteres");
                 }
-                  if (valor < 0) {
-                      throw new Error("Valor deve maior igual a zero");
-                        }
-                        }
+                    if(prioridade < 1 || prioridade > 3){
+                            throw new Error("Informe uma prioridade entre 1 e 3");
+                                }
+                                }
 
-                        function cadastrarProduto(descricao, quantidade, valor) {
-                          validarProduto(descricao, quantidade, produto);
-                            let novoProduto = {
-                                codigo: produto.length + 1,
-                                    descricao: descricao,
-                                        quantidade: quantidade,
-                                            valor: valor,
-                                              };
-                                                produtos.push(novoProduto);
-                                                }
+                                function buscarTarefa(codigoTarefa){
+                                    const tarefaBuscada = tarefas.find(t => t.codigo === codigoTarefa);
 
-                                                function listarProdutos() {
-                                                  console.log(produtos);
-                                                  }
+                                        if(!tarefaBuscada){
+                                                throw new Error("Código de tarefa não encontrado");
+                                                    }
 
-                                                  function atualizarValor(codigoProduto, novoValor) {
-                                                    if (novoValor < 0) {
-                                                        throw new Error("Valor deve ser maior que zero");
-                                                          }
-                                                            const produto = produtos.find((prod) => prod.codigo === codigo);
-                                                              if (produto) {
-                                                                  produto.valor = novoValor;
-                                                                    } else {
-                                                                        throw new Error("Produto não encontrado");
-                                                                          }
-                                                                          }
+                                                        return tarefaBuscada
+                                                        }
 
-                                                                          function atualizarQuantidade(codigoProduto, novaQuantidade) {
-                                                                            if (novaQuantidade < 1) {
-                                                                                throw new Error("Valor deve ser maior que zero");
-                                                                                  }
-                                                                                    const produto = produtos.find((prod) => prod.codigo === codigo);
-                                                                                      if (produto) {
-                                                                                          produto.quantidade += novoValor;
-                                                                                            } else {
-                                                                                                throw new Error("Produto não encontrado");
-                                                                                                  }
-                                                                                                  }
+                                                        function cadastrarTarefa(titulo, prioridade){
+                                                            validarDadostarefa(titulo, prioridade);
+
+                                                                let tarefa = {
+                                                                        'codigo': tarefa.length + 1,
+                                                                                'titulo': titulo,
+                                                                                        'prioridade': prioridade,
+                                                                                                'status': true
+                                                                                                    }
+                                                                                                        tarefa.push(tarefa)
+                                                                                                        }
+
+                                                                                                        function listarTarefas(){
+                                                                                                            return tarefas;
+                                                                                                            }
+
+
+                                                                                                            function concluirTarefa(codigo){
+                                                                                                                let tarefa = buscarTarefa(codigo);
+
+                                                                                                                    if(tarefa.status === false){
+                                                                                                                            throw new Error("Tarefa já estava como concluída")
+                                                                                                                                }
+                                                                                                                                    tarefa.status = false
+                                                                                                                                    }
+
+                                                                                                                                    function alterarPrioridade(codigo, novaPrioridade){
+                                                                                                                                        let tarefa = buscarTarefa(codigo);
+                                                                                                                                            validarDadosTarefa(tarefa.titulo, novaPrioridade);
+
+                                                                                                                                                tarefa.prioridade = novaPrioridade;
+                                                                                                                                                }
+                                                                                                                                                
