@@ -1,0 +1,1467 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>Soma Notas Poli</title>
+
+<style>
+:root{
+  --site-primary:#2563eb;
+  --site-secondary:#0f766e;
+  --site-background:#eef4ff;
+  --site-on-background:#152238;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  color:var(--site-on-background);
+  background:var(--site-background);
+}
+
+#app{
+  min-height:100vh;
+  padding:20px;
+}
+
+.wrap{
+  max-width:1200px;
+  margin:auto;
+}
+
+.hero{
+  background:linear-gradient(135deg,var(--site-primary),var(--site-secondary));
+  color:#fff;
+  padding:28px;
+  border-radius:22px;
+  margin-bottom:20px;
+}
+
+.hero h1{
+  margin:0;
+  font-size:2rem;
+}
+
+.hero p{
+  margin:8px 0 0;
+  opacity:.9;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:18px;
+}
+
+.card{
+  background:#fff;
+  padding:20px;
+  border-radius:18px;
+  box-shadow:0 8px 24px #00000012;
+}
+
+.wide{
+  grid-column:1/-1;
+}
+
+h2{
+  margin-top:0;
+  font-size:1.2rem;
+}
+
+label{
+  display:block;
+  font-weight:700;
+  margin:10px 0 5px;
+}
+
+input,
+select,
+textarea,
+button{
+  font:inherit;
+  border-radius:10px;
+}
+
+input,
+select,
+textarea{
+  width:100%;
+  padding:11px;
+  border:1px solid #cbd5e1;
+  background:#fff;
+  color:inherit;
+}
+
+textarea{
+  min-height:100px;
+  resize:vertical;
+}
+
+.row{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+}
+
+.row2{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.buttons{
+  display:flex;
+  gap:9px;
+  flex-wrap:wrap;
+  margin-top:15px;
+}
+
+button{
+  border:0;
+  padding:11px 15px;
+  background:var(--site-primary);
+  color:#fff;
+  font-weight:700;
+  cursor:pointer;
+}
+
+button.secondary{
+  background:var(--site-secondary);
+}
+
+button.danger{
+  background:#dc2626;
+}
+
+button.light{
+  background:#64748b;
+}
+
+button:hover{
+  filter:brightness(.94);
+}
+
+.hidden{
+  display:none!important;
+}
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+}
+
+.stat{
+  padding:15px;
+  border-radius:14px;
+  background:#eff6ff;
+}
+
+.stat b{
+  display:block;
+  font-size:1.5rem;
+}
+
+.tablewrap{
+  overflow:auto;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:850px;
+}
+
+th,
+td{
+  padding:10px;
+  border-bottom:1px solid #dbeafe;
+  text-align:left;
+}
+
+th{
+  background:#eff6ff;
+}
+
+.status{
+  font-weight:800;
+}
+
+.ok{
+  color:#15803d;
+}
+
+.rec{
+  color:#d97706;
+}
+
+.bad{
+  color:#dc2626;
+}
+
+.note-list{
+  margin-top:12px;
+}
+
+.note-item{
+  display:grid;
+  grid-template-columns:1fr auto auto;
+  gap:8px;
+  align-items:center;
+  padding:9px;
+  border-bottom:1px solid #e2e8f0;
+}
+
+.small{
+  font-size:.88rem;
+  color:#64748b;
+}
+
+.notice{
+  margin-top:10px;
+  font-weight:700;
+  color:#15803d;
+}
+
+@media(max-width:760px){
+
+  .grid{
+    grid-template-columns:1fr;
+  }
+
+  .wide{
+    grid-column:auto;
+  }
+
+  .row,
+  .row2,
+  .stats{
+    grid-template-columns:1fr;
+  }
+
+  .hero{
+    padding:22px;
+  }
+
+  #app{
+    padding:12px;
+  }
+}
+
+@media print{
+
+  body{
+    background:#fff;
+  }
+
+  #app{
+    padding:0;
+  }
+
+  .hero,
+  .card{
+    box-shadow:none;
+  }
+
+  .no-print{
+    display:none!important;
+  }
+
+  .card{
+    break-inside:avoid;
+  }
+
+  .tablewrap{
+    overflow:visible;
+  }
+
+  table{
+    min-width:0;
+  }
+}
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+<div id="app">
+<div class="wrap">
+
+<header class="hero">
+  <h1>📚 Soma Notas Poli</h1>
+  <p>Organize suas notas, calcule médias e gere seu boletim.</p>
+</header>
+
+<div class="grid">
+
+<section class="card">
+
+<h2>👤 Identificação do aluno</h2>
+
+<label>Nome completo</label>
+<input id="nome" placeholder="Digite seu nome">
+
+<div class="row2">
+
+<div>
+<label>Série/Ano</label>
+
+<select id="serie">
+<option value="">Selecione</option>
+<option>1º ano do Ensino Médio</option>
+<option>2º ano do Ensino Médio</option>
+<option>3º ano do Ensino Médio</option>
+</select>
+
+</div>
+
+<div>
+
+<label>Turma</label>
+
+<select id="turma">
+<option value="">Selecione</option>
+<option>3º A Regular</option>
+<option>3º B Regular</option>
+<option>Outra turma</option>
+</select>
+
+<input
+id="outraTurma"
+class="hidden"
+placeholder="Digite a turma">
+
+</div>
+
+</div>
+
+<label>Curso</label>
+
+<select id="curso">
+<option value="">Selecione</option>
+<option>Segurança do Trabalho</option>
+<option>Desenvolvimento de Sistemas</option>
+<option>Marketing</option>
+<option>Outro curso</option>
+</select>
+
+<input
+id="outroCurso"
+class="hidden"
+placeholder="Digite o nome do curso">
+
+</section>
+
+
+<section class="card">
+
+<h2>⚙️ Configurações</h2>
+
+<label>Média mínima para aprovação</label>
+
+<input
+id="minAprov"
+type="number"
+min="0"
+max="10"
+step="0.1"
+value="7">
+
+<label>Média para recuperação</label>
+
+<input
+id="minRec"
+type="number"
+min="0"
+max="10"
+step="0.1"
+value="5">
+
+<p class="small">
+Abaixo da recuperação = Reprovado.
+</p>
+
+<div class="stats">
+
+<div class="stat">
+<span>Média geral</span>
+<b id="mediaGeral">0,00</b>
+</div>
+
+<div class="stat">
+<span>Disciplinas</span>
+<b id="qtdDisc">0</b>
+</div>
+
+<div class="stat">
+<span>Notas</span>
+<b id="qtdNotas">0</b>
+</div>
+
+</div>
+
+</section>
+
+
+<section class="card wide no-print">
+
+<h2>➕ Adicionar avaliação</h2>
+
+<div class="row">
+
+<div>
+
+<label>Disciplina</label>
+<select id="disciplina"></select>
+
+</div>
+
+<div>
+
+<label>Outra disciplina</label>
+
+<input
+id="novaDisc"
+placeholder="Opcional: escreva uma nova">
+
+</div>
+
+<div>
+
+<label>Bimestre</label>
+
+<select id="bimestre">
+<option value="1">1º bimestre</option>
+<option value="2">2º bimestre</option>
+<option value="3">3º bimestre</option>
+<option value="4">4º bimestre</option>
+</select>
+
+</div>
+
+</div>
+
+
+<div class="row2">
+
+<div>
+
+<label>Nota</label>
+
+<input
+id="nota"
+type="number"
+min="0"
+max="10"
+step="0.01"
+placeholder="Ex.: 8,5">
+
+</div>
+
+<div>
+
+<label>Observação da avaliação</label>
+
+<input
+id="obsNota"
+placeholder="Ex.: prova, trabalho">
+
+</div>
+
+</div>
+
+<div class="buttons">
+
+<button onclick="adicionarNota()">
+Adicionar nota
+</button>
+
+<button
+class="secondary"
+onclick="calcular()">
+
+Calcular notas
+
+</button>
+
+</div>
+
+<div
+id="listaNotas"
+class="note-list">
+</div>
+
+</section>
+
+
+<section class="card wide">
+
+<h2>📝 Observação / Conteúdo estudado</h2>
+
+<textarea
+id="observacao"
+placeholder="Ex.: Estou estudando programação em JavaScript...">
+</textarea>
+
+<div class="buttons no-print">
+
+<button onclick="salvar()">
+💾 Salvar tudo
+</button>
+
+<button
+class="light"
+onclick="limparTudo()">
+
+🗑️ Limpar dados
+
+</button>
+
+</div>
+
+<div
+id="notice"
+class="notice">
+</div>
+
+</section>
+
+
+<section
+class="card wide"
+id="boletim">
+
+<h2>🎓 Meu Boletim</h2>
+
+<p
+id="dadosAluno"
+class="small">
+
+Preencha seus dados para gerar o boletim.
+
+</p>
+
+<div class="tablewrap">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Disciplina</th>
+<th>1º</th>
+<th>2º</th>
+<th>3º</th>
+<th>4º</th>
+<th>Média final</th>
+<th>Situação</th>
+
+</tr>
+
+</thead>
+
+<tbody id="tabelaBoletim">
+</tbody>
+
+</table>
+
+</div>
+
+
+<div class="buttons no-print">
+
+<button onclick="gerarBoletim()">
+📄 Gerar boletim
+</button>
+
+<button
+class="secondary"
+onclick="window.print()">
+
+🖨️ Imprimir / Salvar PDF
+
+</button>
+
+</div>
+
+</section>
+
+</div>
+</div>
+</div>
+
+
+<script>
+
+const PADRAO = [
+
+'Língua Portuguesa',
+'Matemática',
+'História',
+'Geografia',
+'Biologia',
+'Física',
+'Química',
+'Sociologia',
+'Filosofia',
+'Educação Física',
+'Arte',
+'Inglês',
+'Espanhol',
+'Inteligência Artificial',
+'Educação Financeira',
+'Projeto de Vida'
+
+];
+
+let dados = {
+
+aluno:{},
+
+notas:[],
+
+observacao:''
+
+};
+
+let editando = null;
+
+
+const $ = id => document.getElementById(id);
+
+
+function esc(s){
+
+return String(s).replace(/[&<>'"]/g,c=>(
+
+{
+
+'&':'&amp;',
+'<':'&lt;',
+'>':'&gt;',
+"'":'&#39;',
+'"':'&quot;'
+
+}[c]
+
+));
+
+}
+
+
+function disciplinas(){
+
+let extras = [
+
+...new Set(
+
+dados.notas
+.map(n => n.disciplina)
+.filter(d => !PADRAO.includes(d))
+
+)
+
+];
+
+
+$('disciplina').innerHTML =
+
+'<option value="">Selecione uma disciplina</option>' +
+
+[...PADRAO,...extras]
+
+.map(d => `<option>${esc(d)}</option>`)
+
+.join('');
+
+}
+
+
+function alunoAtual(){
+
+return {
+
+nome:$('nome').value.trim(),
+
+serie:$('serie').value,
+
+turma:
+
+$('turma').value === 'Outra turma'
+
+? $('outraTurma').value.trim()
+
+: $('turma').value,
+
+curso:
+
+$('curso').value === 'Outro curso'
+
+? $('outroCurso').value.trim()
+
+: $('curso').value,
+
+minAprov:+$('minAprov').value || 7,
+
+minRec:+$('minRec').value || 5
+
+};
+
+}
+
+
+function adicionarNota(){
+
+let d =
+
+$('novaDisc').value.trim()
+
+|| $('disciplina').value;
+
+
+let n = parseFloat($('nota').value);
+
+let b = +$('bimestre').value;
+
+let obs = $('obsNota').value.trim();
+
+
+if(!d || Number.isNaN(n)){
+
+alert('Escolha uma disciplina e digite uma nota válida.');
+
+return;
+
+}
+
+
+if(n < 0 || n > 10){
+
+alert('A nota deve estar entre 0 e 10.');
+
+return;
+
+}
+
+
+let item = {
+
+disciplina:d,
+
+nota:n,
+
+bimestre:b,
+
+obs
+
+};
+
+
+if(editando !== null){
+
+dados.notas[editando] = item;
+
+editando = null;
+
+}else{
+
+dados.notas.push(item);
+
+}
+
+
+$('novaDisc').value = '';
+
+$('nota').value = '';
+
+$('obsNota').value = '';
+
+
+disciplinas();
+
+renderNotas();
+
+calcular();
+
+salvar(false);
+
+}
+
+
+function renderNotas(){
+
+let el = $('listaNotas');
+
+
+if(!dados.notas.length){
+
+el.innerHTML =
+
+'<p class="small">Nenhuma avaliação adicionada ainda.</p>';
+
+return;
+
+}
+
+
+el.innerHTML = dados.notas.map((n,i) => `
+
+<div class="note-item">
+
+<span>
+
+<b>${esc(n.disciplina)}</b>
+
+— ${n.nota.toLocaleString('pt-BR')}
+
+(${n.bimestre}º bim.)
+
+<span class="small">
+
+${esc(n.obs || '')}
+
+</span>
+
+</span>
+
+
+<button
+class="light"
+onclick="editarNota(${i})">
+
+Editar
+
+</button>
+
+
+<button
+class="danger"
+onclick="excluirNota(${i})">
+
+Excluir
+
+</button>
+
+</div>
+
+`).join('');
+
+}
+
+
+function editarNota(i){
+
+let n = dados.notas[i];
+
+
+$('disciplina').value =
+
+PADRAO.includes(n.disciplina)
+
+? n.disciplina
+
+: '';
+
+
+$('novaDisc').value =
+
+PADRAO.includes(n.disciplina)
+
+? ''
+
+: n.disciplina;
+
+
+$('nota').value = n.nota;
+
+$('bimestre').value = n.bimestre;
+
+$('obsNota').value = n.obs;
+
+
+editando = i;
+
+
+window.scrollTo({
+
+top:0,
+
+behavior:'smooth'
+
+});
+
+}
+
+
+function excluirNota(i){
+
+if(confirm('Excluir esta nota?')){
+
+dados.notas.splice(i,1);
+
+renderNotas();
+
+calcular();
+
+salvar(false);
+
+}
+
+}
+
+
+function calcular(){
+
+let ds = [
+
+...new Set(
+
+dados.notas.map(n => n.disciplina)
+
+)
+
+];
+
+
+let minA =
+
++$('minAprov').value || 7;
+
+
+let minR =
+
++$('minRec').value || 5;
+
+
+let linhas = [];
+
+let medias = [];
+
+
+ds.forEach(d => {
+
+
+let bs = [1,2,3,4].map(b => {
+
+
+let ns = dados.notas.filter(
+
+n =>
+
+n.disciplina === d
+
+&&
+
+n.bimestre === b
+
+);
+
+
+return ns.length
+
+?
+
+ns.reduce((a,x) => a + x.nota,0)
+
+/
+
+ns.length
+
+:
+
+null;
+
+});
+
+
+let usados = bs.filter(
+
+x => x !== null
+
+);
+
+
+let media = usados.length
+
+?
+
+usados.reduce((a,x) => a + x,0)
+
+/
+
+usados.length
+
+:
+
+0;
+
+
+medias.push(media);
+
+
+let sit =
+
+media >= minA
+
+?
+
+'Aprovado'
+
+:
+
+media >= minR
+
+?
+
+'Recuperação'
+
+:
+
+'Reprovado';
+
+
+let cls =
+
+media >= minA
+
+?
+
+'ok'
+
+:
+
+media >= minR
+
+?
+
+'rec'
+
+:
+
+'bad';
+
+
+linhas.push(`
+
+<tr>
+
+<td>${esc(d)}</td>
+
+${bs.map(x =>
+
+`<td>${
+x === null
+
+?
+
+'-'
+
+:
+
+x.toFixed(2).replace('.',',')
+
+}</td>`
+
+).join('')}
+
+<td>
+
+<b>
+
+${media.toFixed(2).replace('.',',')}
+
+</b>
+
+</td>
+
+
+<td class="status ${cls}">
+
+${sit}
+
+</td>
+
+</tr>
+
+`);
+
+});
+
+
+$('tabelaBoletim').innerHTML =
+
+linhas.join('')
+
+||
+
+'<tr><td colspan="7" class="small">Adicione notas para visualizar o boletim.</td></tr>';
+
+
+let geral =
+
+medias.length
+
+?
+
+medias.reduce((a,x) => a + x,0)
+
+/
+
+medias.length
+
+:
+
+0;
+
+
+$('mediaGeral').textContent =
+
+geral.toFixed(2).replace('.',',');
+
+
+$('qtdDisc').textContent =
+
+ds.length;
+
+
+$('qtdNotas').textContent =
+
+dados.notas.length;
+
+
+let a = alunoAtual();
+
+
+$('dadosAluno').textContent =
+
+`Aluno(a): ${a.nome || '—'}
+
+| Série: ${a.serie || '—'}
+
+| Turma: ${a.turma || '—'}
+
+| Curso: ${a.curso || '—'}`;
+
+}
+
+
+function gerarBoletim(){
+
+calcular();
+
+document.getElementById('boletim')
+
+.scrollIntoView({
+
+behavior:'smooth'
+
+});
+
+
+salvar(false);
+
+}
+
+
+function salvar(msg=true){
+
+dados.aluno = alunoAtual();
+
+dados.observacao =
+
+$('observacao').value;
+
+
+localStorage.setItem(
+
+'somaNotasPoli',
+
+JSON.stringify(dados)
+
+);
+
+
+if(msg){
+
+$('notice').textContent =
+
+'Dados salvos com sucesso neste dispositivo!';
+
+
+setTimeout(
+
+() => $('notice').textContent = '',
+
+2500
+
+);
+
+}
+
+}
+
+
+function limparTudo(){
+
+if(confirm('Apagar todos os dados salvos?')){
+
+
+dados = {
+
+aluno:{},
+
+notas:[],
+
+observacao:''
+
+};
+
+
+localStorage.removeItem(
+
+'somaNotasPoli'
+
+);
+
+
+document
+
+.querySelectorAll('input,textarea')
+
+.forEach(x => {
+
+
+if(x.id === 'minAprov'){
+
+x.value = 7;
+
+}
+
+else if(x.id === 'minRec'){
+
+x.value = 5;
+
+}
+
+else{
+
+x.value = '';
+
+}
+
+});
+
+
+document
+
+.querySelectorAll('select')
+
+.forEach(x =>
+
+x.selectedIndex = 0
+
+);
+
+
+$('outraTurma')
+
+.classList.add('hidden');
+
+
+$('outroCurso')
+
+.classList.add('hidden');
+
+
+disciplinas();
+
+renderNotas();
+
+calcular();
+
+}
+
+}
+
+
+$('turma').onchange = () =>
+
+$('outraTurma')
+
+.classList.toggle(
+
+'hidden',
+
+$('turma').value !== 'Outra turma'
+
+);
+
+
+$('curso').onchange = () =>
+
+$('outroCurso')
+
+.classList.toggle(
+
+'hidden',
+
+$('curso').value !== 'Outro curso'
+
+);
+
+
+[
+
+'nome',
+
+'serie',
+
+'turma',
+
+'curso',
+
+'outraTurma',
+
+'outroCurso',
+
+'minAprov',
+
+'minRec',
+
+'observacao'
+
+]
+
+.forEach(id =>
+
+$(id).addEventListener(
+
+'input',
+
+calcular
+
+)
+
+);
+
+
+(function init(){
+
+
+let salvo = localStorage.getItem(
+
+'somaNotasPoli'
+
+);
+
+
+if(salvo){
+
+try{
+
+dados = JSON.parse(salvo);
+
+}
+
+catch(e){}
+
+}
+
+
+let a = dados.aluno || {};
+
+
+$('nome').value = a.nome || '';
+
+$('serie').value = a.serie || '';
+
+$('minAprov').value = a.minAprov || 7;
+
+$('minRec').value = a.minRec || 5;
+
+$('observacao').value =
+
+dados.observacao || '';
+
+
+if(
+
+['3º A Regular','3º B Regular']
+
+.includes(a.turma)
+
+){
+
+$('turma').value = a.turma;
+
+}
+
+else if(a.turma){
+
+$('turma').value = 'Outra turma';
+
+$('outraTurma').value = a.turma;
+
+$('outraTurma')
+
+.classList.remove('hidden');
+
+}
+
+
+if(
+
+[
+
+'Segurança do Trabalho',
+
+'Desenvolvimento de Sistemas',
+
+'Marketing'
+
+]
+
+.includes(a.curso)
+
+){
+
+$('curso').value = a.curso;
+
+}
+
+else if(a.curso){
+
+$('curso').value = 'Outro curso';
+
+$('outroCurso').value = a.curso;
+
+$('outroCurso')
+
+.classList.remove('hidden');
+
+}
+
+
+disciplinas();
+
+renderNotas();
+
+calcular();
+
+
+})();
+
+</script>
+
+</body>
+</html>
