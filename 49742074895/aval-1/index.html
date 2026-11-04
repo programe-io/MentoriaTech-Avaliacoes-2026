@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SLENDRINA // THE CELLAR [FEED DE INTELIGÊNCIA AO VIVO]</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Share+Tech+Mono&family=Special+Elite&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body class="loading-state">
+
+    <!-- SOBREPOSIÇÕES ATMOSFÉRICAS -->
+    <div class="crt-scanlines"></div>
+    <div class="film-grain"></div>
+    <div class="vignette"></div>
+    <div class="glitch-overlay" id="glitchOverlay"></div>
+    <div class="red-flash" id="redFlash"></div>
+
+    <!-- SEQUÊNCIA DE INICIALIZAÇÃO (BOOT) -->
+    <div id="bootSequence" class="boot-screen">
+        <div class="boot-terminal">
+            <div id="bootLog" class="boot-log"></div>
+            <div class="boot-actions" id="bootActions" style="display: none;">
+                <p class="boot-warning">[AVISO: TRANSMISSÃO DO FEED COMPROMETIDA POR SINAL DESCONHECIDO]</p>
+                <button id="enterCellarBtn" class="terminal-btn glitch-btn" aria-label="Acessar Feed">ACESSAR FEED DO PORÃO</button>
+                <button id="skipBootBtn" class="terminal-btn-secondary" aria-label="Pular Boot">IGNORAR PROTOCOLO</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTÊINER PRINCIPAL DA INTERFACE -->
+    <div id="mainContainer" class="main-container hidden">
+
+        <!-- CABEÇALHO / NAVEGAÇÃO -->
+        <header class="site-header">
+            <div class="header-status">
+                <span class="status-indicator blinking"></span>
+                <span class="status-text">TERMINAL SEGURO // SETOR 04 // AO VIVO</span>
+            </div>
+            <nav class="site-nav" aria-label="Navegação Principal">
+                <a href="#feed" class="nav-link">[FEED DE DADOS]</a>
+                <a href="#terminal" class="nav-link">[CONSOLE DE COMANDOS]</a>
+                <a href="#lab" class="nav-link">[LABORATÓRIO TÉCNICO]</a>
+            </nav>
+            <div class="audio-controls">
+                <button id="audioToggleBtn" class="audio-btn" aria-label="Alternar Áudio">ÁUDIO: [DESL]</button>
+                <input type="range" id="volumeSlider" class="volume-slider" min="0" max="1" step="0.05" value="0.4" aria-label="Volume">
+            </div>
+        </header>
+
+        <!-- BANNER DE APRESENTAÇÃO -->
+        <section class="hero-mini">
+            <div class="classification-tag">STATUS DO STREAM: RECEBENDO PACOTES CRIPTOGRAFADOS...</div>
+            <h1 class="hero-title glitch-text" data-text="SLENDRINA: THE CELLAR">SLENDRINA: THE CELLAR</h1>
+            <p class="hero-subtitle">"Monitoramento em tempo real da zona de quarentena subterrânea."</p>
+        </section>
+
+        <!-- LAYOUT DO FEED + BARRA LATERAL -->
+        <div class="feed-layout-wrapper" id="feed">
+            
+            <!-- ESQUERDA: O FEED DE POSTAGENS EXPANSÍVEIS -->
+            <main class="feed-stream">
+                <div class="feed-controls-bar">
+                    <span class="feed-filter-title">FILTRAR REGISTROS:</span>
+                    <div class="filter-buttons">
+                        <button class="filter-btn active" data-filter="all">TODOS</button>
+                        <button class="filter-btn" data-filter="alert">ALERTAS</button>
+                        <button class="filter-btn" data-filter="lore">LORE DO JOGO</button>
+                        <button class="filter-btn" data-filter="mechanics"> MECÂNICAS</button>
+                        <button class="filter-btn" data-filter="dev">ARQUITETURA DEV</button>
+                    </div>
+                </div>
+
+                <!-- CONTÊINER ONDE OS CARTOES SÃO INJETADOS -->
+                <div id="feedPostsContainer" class="feed-posts"></div>
+
+                <div class="feed-load-more-wrap">
+                    <button id="loadMoreBtn" class="terminal-btn">[BUSCAR MAIS BLOCOS DE ARQUIVO]</button>
+                </div>
+            </main>
+
+            <!-- DIREITA: MÉTRICAS E WIDGETS -->
+            <aside class="feed-sidebar">
+                <div class="sidebar-widget">
+                    <h3>[MÉTRICAS DA REDE]</h3>
+                    <ul class="metric-list">
+                        <li>NÓS ATIVOS: <span class="highlight-val">01 (LOCAL)</span></li>
+                        <li>TAXA DE ANOMALIA: <span class="highlight-val alert-color">CRÍTICA (94%)</span></li>
+                        <li>CRIPTOGRAFIA: <span class="highlight-val">AES-666</span></li>
+                        <li>INTEGRIDADE DO SINAL: <span id="signalStrength" class="highlight-val">INSTÁVEL</span></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-widget" id="terminal">
+                    <h3>[TERMINAL DE COMANDO RÁPIDO]</h3>
+                    <div class="mini-terminal">
+                        <div class="mini-terminal-output" id="miniTerminalOutput">
+                            <p>Sistema operacional v6.6.6 carregado.</p>
+                            <p>Digite 'ajuda' para ver comandos disponíveis.</p>
+                        </div>
+                        <div class="mini-terminal-input-wrap">
+                            <span>></span>
+                            <input type="text" id="miniTerminalInput" placeholder="Digite um comando..." autocomplete="off" spellcheck="false">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sidebar-widget" id="lab">
+                    <h3>[LABORATÓRIO DE CÓDIGO // CSS]</h3>
+                    <div class="code-snippet-box">
+                        <pre><code>@keyframes screenFlicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.92; }
+  52% { opacity: 0.75; }
+  54% { opacity: 1; }
+}</code></pre>
+                        <button class="copy-btn" data-snippet="codeSnippet1">COPIAR</button>
+                    </div>
+                </div>
+            </aside>
+
+        </div>
+
+        <!-- TRANSMISSÃO FINAL -->
+        <section class="final-transmission">
+            <div class="transmission-box">
+                <h2 class="glitch-text" data-text="O ARQUIVO FOI ACESSADO.">O ARQUIVO FOI ACESSADO.</h2>
+                <p class="pause-text">"MAS ALGO MAIS ACABOU DE ACESSAR VOCÊ."</p>
+                <div class="termination-status">CONEXÃO ENCERRADA. STATUS DA ENTIDADE: DESCONHECIDO.</div>
+                <button id="restartBtn" class="terminal-btn red-glow">REINICIAR SESSÃO</button>
+            </div>
+        </section>
+
+        <!-- RODAPÉ -->
+        <footer class="site-footer">
+            <p>EXPERIÊNCIA DE FÃ NÃO OFICIAL INSPIRADA EM SLENDRINA: THE CELLAR (DVloper). TODOS OS DIREITOS RESERVADOS AOS CRIADORES ORIGINAIS.</p>
+        </footer>
+
+    </div>
+
+    <script src="script.js"></script>
+<script src="script.js"></script></body>
+</html>
