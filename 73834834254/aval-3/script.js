@@ -1,99 +1,203 @@
-// Base de Dados Teórica Estruturada como se fossem as legendas estendidas do Instagram
-const postsData = {
+const postsDatabase = {
     "intro": {
-        title: "1. Introdução à Web",
-        visual: "🍒 CONTEÚDO EXCLUSIVO BLOSSOM",
-        text: "A internet e a web estão tão presentes no cotidiano que muitas vezes as pessoas usam sem entender a complexidade nos bastidores. Todo santo dia você acessa redes sociais e assiste a vídeos, mas saiba que há uma malha gigantesca conectando bilhões de dispositivos mundiais. <br><br>Neste perfil, você vai dominar de forma impecável: O surgimento da rede, a comunicação de computadores e a diferença crucial entre Web e Internet."
+        title: "1. Introdução à Redes",
+        likes: 125432,
+        liked: false,
+        slides: [
+            { label: "CAPA", desc: "A internet e a web estão em todo lugar, mas aposto que você as usa sem entender como funcionam. Vamos corrigir esse lapso de conhecimento, queridinho(a)..." },
+            { label: "O QUE VEREMOS", desc: "Neste feed você aprenderá de forma cirúrgica:<br>• O conceito real de internet<br>• As origens militares<br>• A arquitetura cliente-servidor<br>• Como a Web roda por cima de tudo." }
+        ],
+        comments: [
+            { user: "v_lodge", text: "Amei o formato carrossel, Cheryl! Super explicativo para quem vive no offline. 💅" },
+            { user: "jughead_jones", text: "Olha só, a rainha de Thornhill virou arquiteta de sistemas distribuídos? Surpreendente." },
+            { user: "cheryl_blossom", text: "@jughead_jones Menos sarcasmo, Jones. Meu intelecto é multifacetado." }
+        ]
     },
     "o-que-e-internet": {
-        title: "2. O que é a Internet?",
-        visual: "🌐 REDE DE REDES MUNDIAL",
-        text: "Simplificando para quem não tem neurônios digitais: a Internet é o <strong>sistema global de infraestrutura física e digital</strong> que conecta computadores por todo o planeta. <br><br>Ela opera através de um conjunto rígido de regras padronizadas conhecidas como <strong>protocolos de comunicação</strong> (como o TCP/IP). Sem essas regras, os dispositivos simplesmente não conseguiriam conversar entre si."
+        title: "2. O que é a Internet",
+        likes: 98114,
+        liked: false,
+        slides: [
+            { label: "DEFINIÇÃO", desc: "A internet é o <strong>sistema físico global de redes de computadores interconectadas</strong>. Ela liga celulares, PCs e servidores pelo mundo todo." },
+            { label: "PROTOCOLOS", desc: "Tudo isso só funciona porque existe um conjunto estrito de regras universais chamado <strong>Protocolos de Comunicação (TCP/IP)</strong>. Eles ditam como os dados se quebram e viajam." }
+        ],
+        comments: [
+            { user: "betty_cooper", text: "Excelente resumo dos protocolos de rede. Salvando para estudar pro exame!" },
+            { user: "archie_andrews", text: "Eu achava que os computadores se conectavam direto por mágica rs 🤓" }
+        ]
     },
     "historia": {
-        title: "3. Origens da Rede",
-        visual: "⏳ DA GUERRA FRIA PARA O SEU FEED",
-        text: "Tudo começou na década de 1960. Em meio à paranoia da Guerra Fria, o Departamento de Defesa dos EUA precisava de uma rede de comunicação que não caísse se um pedaço fosse destruído. Nasceu a <strong>ARPANET</strong>. <br><br>Anote a evolução, querido(a):<br>• Década de 60: ARPANET<br>• Década de 70: Surgem os protocolos TCP/IP<br>• Década de 80: Universidades entram no jogo<br>• Década de 90: A explosão comercial."
+        title: "3. História da Internet",
+        likes: 142903,
+        liked: false,
+        slides: [
+            { label: "ARPANET", desc: "Anos 1960, Guerra Fria. O Departamento de Defesa dos EUA criou a ARPANET. Uma rede descentralizada para resistir a ataques militares locais." },
+            { label: "MARCOS", desc: "Evolução temporal rápida:<br>• 1970: Padronização do TCP/IP.<br>• 1980: Entrada em massa de centros acadêmicos.<br>• 1990: Abertura comercial definitiva." }
+        ],
+        comments: [
+            { user: "jughead_jones", text: "História militar misturada com tecnologia. Agora você capturou minha atenção." }
+        ]
     },
     "infraestrutura": {
-        title: "4. Infraestrutura Física",
-        visual: "🏢 A NUVEM NÃO EXISTE, SÃO COMPUTADORES DOS OUTROS",
-        text: "Você acha que a internet é mágica e virtual? Que amador. Ela depende de uma infraestrutura física massiva: <strong>data centers gigantescos, servidores dedicados, roteadores de alta performance e cabos potentes</strong>.<br><br> Quando você digita um endereço, sua requisição viaja fisicamente por esses aparelhos em milissegundos até encontrar a resposta do servidor."
+        title: "4. Infraestrutura Real",
+        likes: 87341,
+        liked: false,
+        slides: [
+            { label: "FÍSICO", desc: "A internet não flutua no ar! Ela depende de uma infraestrutura massiva: Data Centers gigantes, Servidores potentes, Roteadores de borda e cabos." },
+            { label: "PROCESSO", desc: "Quando você requisita um site, o sinal viaja fisicamente por esses equipamentos em milissegundos até bater no servidor de destino e retornar." }
+        ],
+        comments: [
+            { user: "v_lodge", text: "Sempre imaginei data centers parecidos com cofres de banco, muito elegantes." }
+        ]
     },
     "cabos": {
         title: "5. Cabos Submarinos",
-        visual: "⚓ INTERNET DE BAIXO D'ÁGUA",
-        text: "Esqueça os satélites por um momento. A grande espinha dorsal da internet mundial está no fundo dos oceanos. <br><br>São <strong>milhares de quilômetros de cabos submarinos de fibra óptica</strong> que interligam continentes. Eles são os preferidos para o tráfego internacional porque entregam largura de banda gigantesca e latência infinitamente menor que conexões espaciais."
+        likes: 110567,
+        liked: false,
+        slides: [
+            { label: "OCEANOS", desc: "Esqueça satélites lentos. Quase 99% do tráfego internacional de dados passa por <strong>cabos submarinos de fibra óptica</strong> esticados no leito do oceano." },
+            { label: "VANTAGEM", desc: "A fibra subaquática fornece velocidades absurdas de transmissão de dados e uma latência muito menor do que mandar dados para o espaço." }
+        ],
+        comments: [
+            { user: "betty_cooper", text: "Minha nossa, imagine o trabalho técnico de manutenção desses cabos profundos!" }
+        ]
     },
     "o-que-e-web": {
-        title: "6. O que é a Web?",
-        visual: "🕸️ WORLD WIDE WEB",
-        text: "Atenção: A Web <strong>NÃO</strong> é a internet. Ela é um sistema de informações que roda <em>sobre</em> a internet. <br><br>A Web consiste em um conjunto gigantesco de documentos digitais e arquivos de mídia (vídeos, textos, imagens) totalmente interconectados por meio de <strong>hiperlinks</strong>. Você navega por essa teia usando o seu browser."
+        title: "6. O que é a Web",
+        likes: 134291,
+        liked: false,
+        slides: [
+            { label: "CONCEITO", desc: "A World Wide Web (WWW) é apenas <strong>um dos serviços</strong> que rodam em cima da Internet. É a coleção de páginas digitais interligadas." },
+            { label: "MÍDIAS", desc: "Essas páginas agregam hipermídias: textos, imagens, áudios e vídeos estruturados, acessíveis a partir de navegadores web através de links." }
+        ],
+        comments: [
+            { user: "reggie_mantle", text: "Finalmente entendi. Internet = pista de corrida. Web = os carros esportivos. Correto?" },
+            { user: "cheryl_blossom", text: "@reggie_mantle Surpreendentemente preciso, Reggie. Te dou um 10." }
+        ]
     },
     "como-funciona-web": {
-        title: "7. Arquitetura Cliente-Servidor",
-        visual: "⚙️ COMO ELES CONVERSAM",
-        text: "A engrenagem da Web roda sob o modelo <strong>Cliente-Servidor</strong>:<br><br>1. <strong>Cliente:</strong> O seu smartphone ou PC rodando navegadores de elite como Chrome, Safari ou Firefox.<br>2. <strong>Servidor:</strong> Supercomputadores que guardam os sites.<br><br>O cliente faz uma requisição via protocolo <strong>HTTP</strong>, o servidor processa e envia os dados de volta para montar sua tela."
+        title: "7. Como Funciona a Web",
+        likes: 95400,
+        liked: false,
+        slides: [
+            { label: "ARQUITETURA", desc: "O ecossistema é baseado no modelo <strong>Cliente-Servidor</strong>. O cliente faz pedidos e o servidor responde com dados." },
+            { label: "FLUXO", desc: "Seu navegador (Cliente) envia um <strong>HTTP Request</strong>. O Servidor recebe, processa os arquivos HTML/CSS e devolve um <strong>HTTP Response</strong>." }
+        ],
+        comments: []
     },
     "tim": {
-        title: "8. O Toque de Midas de Tim Berners-Lee",
-        visual: "👑 O ARQUITETO DA WEB",
-        text: "No final dos anos 80, o cientista <strong>Tim Berners-Lee</strong> precisava facilitar o compartilhamento de pesquisas no CERN. Ele simplesmente revolucionou o mundo criando a trindade da Web:<br><br>• <strong>HTML:</strong> A linguagem para estruturar as páginas.<br>• <strong>HTTP:</strong> O protocolo para transferir os dados.<br>• <strong>URL:</strong> O endereço exclusivo para achar cada página."
+        title: "8. Tim Berners-Lee",
+        likes: 156112,
+        liked: false,
+        slides: [
+            { label: "O MITO", desc: "O cientista britânico Tim Berners-Lee inventou a Web no fim dos anos 80 enquanto trabalhava no CERN para facilitar a troca de arquivos científicos." },
+            { label: "PILAS", desc: "Para fazer a teia funcionar, ele criou os três pilares absolutos de qualquer desenvolvedor:<br>• <strong>HTML</strong><br>• <strong>HTTP</strong><br>• <strong>URL</strong>" }
+        ],
+        comments: [
+            { user: "jughead_jones", text: "Esse homem mudou a história humana operando de uma mesa de laboratório suíça." }
+        ]
     },
     "diferencas": {
-        title: "9. O Erro Amador: Internet x Web",
-        visual: "🔥 ANATOMIA DA DIFERENÇA",
-        text: "Aprenda de uma vez por todas para não passar vergonha:<br><br>• <strong>INTERNET:</strong> É a infraestrutura global. As estradas, os fios, a parte física e de rede.<br>• <strong>WEB:</strong> É apenas um dos serviços que roda nessa estrada (as páginas digitais).<br><br>Outros serviços que usam a internet e não são a web: Aplicativos de Email, Protocolos de FTP, Jogos Online e Streams de App."
+        title: "9. Internet x Web",
+        likes: 210889,
+        liked: false,
+        slides: [
+            { label: "COMPARATIVO", desc: "<strong>Internet:</strong> A rede de hardware, cabos e roteadores mundiais.<br><strong>Web:</strong> O sistema de documentos acessados via navegador." },
+            { label: "OUTROS SERVIÇOS", desc: "Se lembre que existem outros serviços que usam a internet e não passam pela web, tais como: Emails diretos, Transferência FTP, Jogos Online e canais de streaming de apps." }
+        ],
+        comments: [
+            { user: "v_lodge", text: "Post necessário! Metade de Manhattan confunde esses dois termos cotidianamente." }
+        ]
     },
     "conclusao": {
-        title: "10. Conclusão da Aula",
-        visual: "🍷 DOMÍNIO TOTAL",
-        text: "A internet veio de um projeto militar estratégico e a Web tornou tudo visual e acessível. <br><br>Compreender essa base não é opcional, é fundamental se você deseja dominar o desenvolvimento moderno, segurança ou engenharia de sistemas. Classe dispensada. Deixe seu like."
+        title: "10. Conclusão",
+        likes: 180320,
+        liked: false,
+        slides: [
+            { label: "ENCERRAMENTO", desc: "Dominar a espinha dorsal técnica da rede é o primeiro passo para quem quer controlar o desenvolvimento tecnológico ou sistemas modernos." },
+            { label: "BYE", desc: "Fundamentos consolidados com sucesso. Agora vocês estão prontos para criar impérios. Beijos da Cheryl. 🍷🍒" }
+        ],
+        comments: [
+            { user: "betty_cooper", text: "Adorei a mini-classe de redes, Cheryl! Faça mais vezes." }
+        ]
     }
 };
 
-// Lógica de Interação da Página (Modal e Destaques)
+let activePostId = null;
+let activeSlideIndex = 0;
+
 document.addEventListener('DOMContentLoaded', () => {
+    renderGrid();
+    setupEventListeners();
+});
+
+// Renderização dinâmica da grade do feed do IG
+function renderGrid() {
+    const grid = document.getElementById('gridContent');
+    grid.innerHTML = '';
+    
+    Object.keys(postsDatabase).forEach(key => {
+        const post = postsDatabase[key];
+        const card = document.createElement('article');
+        card.className = 'post-card';
+        card.id = key;
+        card.innerHTML = `
+            <span class="post-card-tag">🗂️ Carrossel</span>
+            <div>
+                <h3>${post.title}</h3>
+            </div>
+            <div class="post-overlay">
+                <div class="post-overlay-stats">❤️ ${formatNumber(post.likes)}</div>
+            </div>
+        `;
+        grid.appendChild(card);
+    });
+}
+
+function setupEventListeners() {
     const modal = document.getElementById('postModal');
     const closeModal = document.querySelector('.close-modal');
-    const postCards = document.querySelectorAll('.post-card');
-    const highlightItems = document.querySelectorAll('.highlight-item');
-
-    // Função para abrir o modal com os dados corretos
-    function openPost(id) {
-        const data = postsData[id];
-        if (data) {
-            document.getElementById('modalPostTitle').innerText = data.title;
-            document.getElementById('modalPostVisual').innerHTML = `<strong>[${data.visual}]</strong>`;
-            document.getElementById('modalPostFullText').innerHTML = data.text;
-            modal.style.display = 'flex';
-        }
-    }
-
-    // Clique nos posts da grade
-    postCards.forEach(card => {
-        card.addEventListener('click', () => {
-            openPost(card.id);
-        });
+    
+    // Abrir Post ao Clicar na Grade
+    document.getElementById('gridContent').addEventListener('click', (e) => {
+        const card = e.target.closest('.post-card');
+        if (card) openModal(card.id);
     });
 
-    // Clique nos círculos de Destaque (Stories) abre direto o respectivo post
-    highlightItems.forEach(item => {
+    // Cliques nos Destaques
+    document.querySelectorAll('.highlight-item').forEach(item => {
         item.addEventListener('click', () => {
-            const targetId = item.getAttribute('data-target');
-            openPost(targetId);
+            openModal(item.getAttribute('data-target'));
         });
     });
 
     // Fechar Modal
-    closeModal.addEventListener('click', () => {
-        modal.style.display = 'none';
-    });
+    closeModal.addEventListener('click', () => modal.style.display = 'none');
+    window.addEventListener('click', (e) => { if (e.target === modal) modal.style.display = 'none'; });
 
-    // Fechar clicando fora do conteúdo
-    window.addEventListener('click', (e) => {
-        if (e.target === modal) {
-            modal.style.display = 'none';
+    // Navegação do Carrossel interno
+    document.getElementById('prevBtn').addEventListener('click', () => changeSlide(-1));
+    document.getElementById('nextBtn').addEventListener('click', () => changeSlide(1));
+
+    // Duplo Clique na Imagem do Modal (Efeito Curtida IG)
+    document.getElementById('modalImageSide').addEventListener('dblclick', () => {
+        triggerHeartPop();
+        if(!postsDatabase[activePostId].liked) {
+            toggleLike();
         }
     });
-});
+
+    // Botão Curtir na Barra de Ações
+    document.getElementById('likeActionBtn').addEventListener('click', toggleLike);
+
+    // Publicar Comentário Interativo
+    document.getElementById('postCommentBtn').addEventListener('click', addNewComment);
+    document.getElementById('commentInput').addEventListener('keypress', (e) => {
+        if(e.key === 'Enter') addNewComment();
+    });
+
+    // Troca de Abas do Perfil
+    document.querySelectorAll('.profile-tabs .tab').forEach(tab => {
+        tab.addEventListener('click', (e) => {
+            document.querySelectorAll('.profile-tabs .tab').forEach(t => t.classList.remove('active'));
+
