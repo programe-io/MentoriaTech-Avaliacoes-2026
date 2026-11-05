@@ -1,34 +1,61 @@
-function publicar() {
+// Função para adicionar uma notícia
+function adicionarNoticia() {
 
-    // Capturar os valores digitados
     let titulo = document.getElementById("titulo").value;
 
-    let conteudo = document.getElementById("conteudo").value;
+    let descricao = document.getElementById("descricao").value;
 
-    // Verificar se os campos estão preenchidos
-    if (titulo === "" || conteudo === "") {
+    if (titulo === "" || descricao === "") {
         alert("Preencha todos os campos!");
         return;
     }
 
-    // Criar uma nova publicação
-    let novaPostagem = document.createElement("article");
+    // Criar o card
+    let card = document.createElement("article");
 
-    novaPostagem.className = "post";
+    card.className = "card";
 
-    novaPostagem.innerHTML = `
+    card.innerHTML = `
         <h3>${titulo}</h3>
-        <p>${conteudo}</p>
+        <p>${descricao}</p>
+        <span>Nova notícia</span>
     `;
 
-    // Adicionar a publicação na página
-    document.getElementById("postagens")
-        .prepend(novaPostagem);
+    // Adicionar na página
+    document.getElementById("noticias").prepend(card);
 
-    // Limpar os campos
+    // Limpar campos
     document.getElementById("titulo").value = "";
+    document.getElementById("descricao").value = "";
 
-    document.getElementById("conteudo").value = "";
+    alert("Notícia adicionada com sucesso!");
+}
 
-    alert("Postagem publicada com sucesso!");
+
+// Função para pesquisar notícias
+function pesquisar() {
+
+    let termo = document.getElementById("pesquisa")
+        .value.toLowerCase();
+
+    let cards = document.querySelectorAll(".card");
+
+    let encontrados = 0;
+
+    cards.forEach(function(card) {
+
+        let texto = card.innerText.toLowerCase();
+
+        if (texto.includes(termo)) {
+            card.style.display = "block";
+            encontrados++;
+        } else {
+            card.style.display = "none";
+        }
+
+    });
+
+    if (encontrados === 0) {
+        alert("Nenhuma notícia encontrada!");
+    }
 }
