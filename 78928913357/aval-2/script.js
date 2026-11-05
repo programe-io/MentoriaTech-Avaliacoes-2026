@@ -1,28 +1,25 @@
-// Garante que o código só roda após o HTML estar totalmente carregado
-document.addEventListener('DOMContentLoaded', () => {
-    
-    // Seleciona os elementos da página usando seletores CSS
-    const botao = document.querySelector('.btn');
-    const titulo = document.querySelector('h1');
-    const paragrafo = document.querySelector('p');
+// Sistema de Filtro por Categoria Dinâmico
+const botoesFiltro = document.querySelectorAll('.filtro-btn');
+const posts = document.querySelectorAll('.post');
 
-    // Verifica se o botão realmente existe na página para evitar erros
-    if (botao) {
-        // Adiciona um evento de clique ao botão
-        botao.addEventListener('click', (evento) => {
-            // Evita o comportamento padrão (caso o botão fosse um link)
-            evento.preventDefault();
+botoesFiltro.forEach((botao) => {
+    botao.addEventListener('click', () => {
+        // 1. Alterar a classe ativa nos botões da navbar
+        botoesFiltro.forEach(b => b.classList.remove('active'));
+        botao.classList.add('active');
 
-            // Altera o conteúdo dos textos dinamicamente
-            titulo.textContent = '¡Sucesso!';
-            paragrafo.textContent = 'O JavaScript foi executado com sucesso e mudou esta página.';
+        // 2. Pegar a categoria selecionada
+        const categoriaSelecionada = botao.getAttribute('data-categoria');
 
-            // Altera o estilo do botão temporariamente como feedback visual
-            botao.style.backgroundColor = '#059669'; // Verde
-            botao.textContent = 'Clicado!';
+        // 3. Esconder ou mostrar os posts baseado na categoria
+        posts.forEach((post) => {
+            const categoriaPost = post.getAttribute('data-categoria');
 
-            // Desativa o botão para não clicar repetidas vezes
-            botao.style.pointerEvents = 'none';
+            if (categoriaSelecionada === 'todos' || categoriaSelecionada === categoriaPost) {
+                post.style.display = 'flex'; // Exibe o post
+            } else {
+                post.style.display = 'none'; // Esconde o post
+            }
         });
-    }
+    });
 });
