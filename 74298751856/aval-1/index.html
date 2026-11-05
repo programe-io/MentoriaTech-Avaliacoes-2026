@@ -7,217 +7,165 @@
 
 </head>
 <body>
-  let produtos = [];
+  
+let tarefas = [];
 
-function cadastrarProduto() {
+// 1 - CADASTRAR TAREFA
+function cadastrarTarefa() {
 
-    let codigo = Number(prompt("Digite o código do produto:"));
+    let codigo = Number(prompt("Digite o código da tarefa:"));
 
-    // Verifica se o código já existe
-
-    if (produtos.some(produto => produto.codigo === codigo)) {
-
-        alert("Esse código já está cadastrado!");
-
-        return;
-
+    // Verificar se o código já existe
+    for (let i = 0; i < tarefas.length; i++) {
+        if (tarefas[i].codigo === codigo) {
+            alert("Código já cadastrado!");
+            return;
+        }
     }
 
-    let descricao = prompt("Digite a descrição do produto:");
+    let titulo = prompt("Digite o título da tarefa:");
 
-    let quantidade = Number(prompt("Digite a quantidade:"));
-
-    let valor = Number(prompt("Digite o valor do produto:"));
-
-    if (!descricao || quantidade < 0 || valor < 0 ||
-
-        !Number.isFinite(quantidade) || !Number.isFinite(valor)) {
-
-        alert("Dados inválidos!");
-
+    if (titulo === null || titulo.trim().length < 5) {
+        alert("O título precisa ter no mínimo 5 caracteres!");
         return;
-
     }
 
-    let produto = {
+    let prioridade = Number(prompt(
+        "Digite a prioridade:\n1 - Alta\n2 - Média\n3 - Baixa"
+    ));
 
+    if (prioridade < 1 || prioridade > 3 ||
+        !Number.isInteger(prioridade)) {
+        alert("Prioridade inválida!");
+        return;
+    }
+
+    let tarefa = {
         codigo: codigo,
-
-        descricao: descricao,
-
-        quantidade: quantidade,
-
-        valor: valor
-
+        titulo: titulo.trim(),
+        prioridade: prioridade,
+        concluida: false
     };
 
-    produtos.push(produto);
+    tarefas.push(tarefa);
 
-    alert("Produto cadastrado com sucesso!");
-
+    alert("Tarefa cadastrada com sucesso!");
 }
 
-function listarProdutos() {
+// 2 - LISTAR TAREFAS
+function listarTarefas() {
 
-    if (produtos.length === 0) {
-
-        alert("Nenhum produto cadastrado!");
-
+    if (tarefas.length === 0) {
+        alert("Nenhuma tarefa cadastrada!");
         return;
-
     }
 
-    let lista = "PRODUTOS CADASTRADOS:\n\n";
+    let mensagem = "";
 
-    produtos.forEach(produto => {
+    for (let i = 0; i < tarefas.length; i++) {
 
-        lista +=
-
-            "Código: " + produto.codigo +
-
-            "\nDescrição: " + produto.descricao +
-
-            "\nQuantidade: " + produto.quantidade +
-
-            "\nValor: R$ " + produto.valor.toFixed(2) +
-
+        mensagem +=
+            "Código: " + tarefas[i].codigo +
+            "\nTítulo: " + tarefas[i].titulo +
+            "\nPrioridade: " + tarefas[i].prioridade +
+            "\nStatus: " +
+            (tarefas[i].concluida ? "Concluída" : "Pendente") +
             "\n----------------------\n";
-
-    });
-
-    alert(lista);
-
-}
-
-function alterarValor() {
-
-    let codigo = Number(prompt("Digite o código do produto:"));
-
-    let produto = produtos.find(p => p.codigo === codigo);
-
-    if (produto) {
-
-        let novoValor = Number(prompt("Digite o novo valor:"));
-
-        if (!Number.isFinite(novoValor) || novoValor < 0) {
-
-            alert("Valor inválido!");
-
-            return;
-
-        }
-
-        produto.valor = novoValor;
-
-        alert("Valor alterado com sucesso!");
-
-    } else {
-
-        alert("Produto não encontrado!");
-
     }
 
+    alert(mensagem);
 }
 
-function alterarQuantidade() {
+// 3 - CONCLUIR TAREFA
+function concluirTarefa() {
 
-    let codigo = Number(prompt("Digite o código do produto:"));
+    let codigo = Number(prompt("Digite o código da tarefa:"));
 
-    let produto = produtos.find(p => p.codigo === codigo);
+    for (let i = 0; i < tarefas.length; i++) {
 
-    if (produto) {
+        if (tarefas[i].codigo === codigo) {
 
-        let novaQuantidade = Number(
+            tarefas[i].concluida = true;
 
-            prompt("Digite a nova quantidade:")
-
-        );
-
-        if (!Number.isFinite(novaQuantidade) ||
-
-            novaQuantidade < 0) {
-
-            alert("Quantidade inválida!");
-
+            alert("Tarefa concluída!");
             return;
-
         }
-
-        produto.quantidade = novaQuantidade;
-
-        alert("Quantidade alterada com sucesso!");
-
-    } else {
-
-        alert("Produto não encontrado!");
-
     }
 
+    alert("Tarefa não encontrada!");
 }
 
-// Menu principal
+// 4 - ALTERAR PRIORIDADE
+function alterarPrioridade() {
 
+    let codigo = Number(prompt("Digite o código da tarefa:"));
+
+    for (let i = 0; i < tarefas.length; i++) {
+
+        if (tarefas[i].codigo === codigo) {
+
+            let novaPrioridade = Number(prompt(
+                "Digite a nova prioridade:\n1 - Alta\n2 - Média\n3 - Baixa"
+            ));
+
+            if (novaPrioridade < 1 || novaPrioridade > 3 ||
+                !Number.isInteger(novaPrioridade)) {
+                alert("Prioridade inválida!");
+                return;
+            }
+
+            tarefas[i].prioridade = novaPrioridade;
+
+            alert("Prioridade alterada com sucesso!");
+            return;
+        }
+    }
+
+    alert("Tarefa não encontrada!");
+}
+
+// 5 - MENU PRINCIPAL
 let opcao;
 
 do {
 
     opcao = prompt(
-
-        "SISTEMA DE ESTOQUE\n\n" +
-
-        "1 - Cadastrar produto\n" +
-
-        "2 - Listar produtos\n" +
-
-        "3 - Alterar valor do produto\n" +
-
-        "4 - Alterar quantidade do produto\n" +
-
-        "0 - Sair\n\n" +
-
-        "Escolha uma opção:"
-
+        "GERENCIAMENTO DE TAREFAS\n\n" +
+        "1 - Cadastrar tarefa\n" +
+        "2 - Listar tarefas\n" +
+        "3 - Concluir tarefa\n" +
+        "4 - Alterar prioridade\n" +
+        "0 - Sair"
     );
 
     switch (opcao) {
 
         case "1":
-
-            cadastrarProduto();
-
+            cadastrarTarefa();
             break;
 
         case "2":
-
-            listarProdutos();
-
+            listarTarefas();
             break;
 
         case "3":
-
-            alterarValor();
-
+            concluirTarefa();
             break;
 
         case "4":
-
-            alterarQuantidade();
-
+            alterarPrioridade();
             break;
 
         case "0":
-
-            alert("Sistema encerrado!");
-
+            alert("Programa encerrado!");
             break;
 
         default:
-
             alert("Opção inválida!");
-
     }
 
 } while (opcao !== "0");
+
   
   
 </body>
