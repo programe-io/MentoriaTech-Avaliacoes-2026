@@ -1,23 +1,23 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const btn = document.getElementById("add-transaction-btn");
-    const tableBody = document.getElementById("transaction-rows");
+    const buttons = document.querySelectorAll(".buy-btn");
+    const cartCount = document.getElementById("cart-count");
+    let count = 0;
 
-    // Adiciona uma nova linha dinamicamente na tabela ao clicar
-    btn.addEventListener("click", () => {
-        const newRow = document.createElement("tr");
-        
-        newRow.innerHTML = `
-            <td>Recompensa de Bug Bounty</td>
-            <td>Trabalho</td>
-            <td>05/11/2026</td>
-            <td class="positive">+ R$ 850,00</td>
-        `;
-        
-        tableBody.appendChild(newRow);
-        
-        // Desativa o botão após o clique para simulação única
-        btn.disabled = true;
-        btn.textContent = "Nova Entrada Adicionada!";
-        btn.style.backgroundColor = "#94a3b8";
+    // Adiciona evento dinâmico para somar itens ao carrinho
+    buttons.forEach(button => {
+        button.addEventListener("click", () => {
+            count++;
+            cartCount.textContent = count;
+            
+            // Feedback visual temporário no botão
+            const originalText = button.textContent;
+            button.textContent = "✓ Adicionado";
+            button.style.backgroundColor = "#2a9d8f"; // Verde sucesso
+            
+            setTimeout(() => {
+                button.textContent = originalText;
+                button.style.backgroundColor = "#3e2723";
+            }, 1000);
+        });
     });
 });
