@@ -1,17 +1,17 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const likeBtn = document.getElementById("like-btn");
-    const likeCount = document.getElementById("like-count");
-    let count = 0;
+    const playBtn = document.getElementById("play-btn");
 
-    // Sistema de curtidas simples com contador dinâmico
-    likeBtn.addEventListener("click", () => {
-        count++;
-        likeCount.textContent = count;
+    // Adiciona uma simulação de carregamento do player de vídeo ao clicar no banner
+    playBtn.addEventListener("click", () => {
+        playBtn.textContent = "⌛ Carregando filme...";
+        playBtn.style.backgroundColor = "#e50914";
+        playBtn.style.color = "#ffffff";
         
-        // Efeito visual rápido de pulso ao clicar
-        likeBtn.style.transform = "scale(1.1)";
         setTimeout(() => {
-            likeBtn.style.transform = "scale(1)";
-        }, 100);
+            alert("🎬 Iniciando a reprodução de 'A Jornada Estelar' em Alta Definição!");
+            playBtn.textContent = "▶️ Assistir Agora";
+            playBtn.style.backgroundColor = "#ffffff";
+            playBtn.style.color = "#000000";
+        }, 1200);
     });
 });
