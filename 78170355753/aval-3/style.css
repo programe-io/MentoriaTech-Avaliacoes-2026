@@ -1,1 +1,103 @@
-body{margin:0;padding:20px;background:#101526;color:#f4f7ff;font-family:Arial,sans-serif;text-align:center}main{max-width:1000px;margin:auto}h1{color:#a78bfa}.stats,.below,.mobile{margin:15px;display:flex;justify-content:center;gap:12px;flex-wrap:wrap}.gamebox{padding:10px;background:#1b2440;border-radius:15px}canvas{width:100%;display:block;image-rendering:pixelated;border-radius:10px;background:#86d9ff}button{padding:12px 18px;border:0;border-radius:10px;background:#8b5cf6;color:white;font-weight:bold;cursor:pointer}button:hover{background:#3b82f6}
+:root {
+    --amarelo: #FCEE0A;
+    --ciano: #00F0FF;
+    --magenta: #FF2A6D;
+    --fundo: #0A0A14;
+    --fonte-titulo: 'Orbitron', 'Share Tech Mono', monospace;
+    --fonte-corpo: 'Share Tech Mono', 'Courier New', monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    height: 100%; background: #000; overflow: hidden; overscroll-behavior: none;
+    touch-action: none; -webkit-user-select: none; user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--fonte-corpo); color: var(--ciano);
+  }
+
+  /* Área do jogo: proporção fixa 4:7, escalada para caber na janela */
+  #jogo {
+    position: relative; overflow: hidden; background: var(--fundo);
+    width: min(100vw, calc(100vh * 4 / 7));
+    height: min(100vh, calc(100vw * 7 / 4));
+  }
+  #tela { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+
+  /* Scanlines e vinheta */
+  #crt {
+    position: absolute; inset: 0; pointer-events: none; z-index: 5;
+    background:
+      repeating-linear-gradient(to bottom, transparent 0, transparent 2px, rgba(0,0,0,.2) 3px),
+      radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,.65) 100%);
+  }
+
+  .painel {
+    position: absolute; inset: 0; z-index: 4; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 18px; text-align: center;
+    transition: opacity .25s;
+  }
+  .veu { background: rgba(0,0,0,.35); }
+  .oculto { opacity: 0 !important; pointer-events: none; }
+
+  /* Painel holográfico: cantos angulosos e linha fina */
+  .holo {
+    position: relative; padding: 24px 28px; min-width: 260px;
+    border: 1px solid var(--ciano); background: rgba(10,10,20,.78);
+    clip-path: polygon(16px 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%, 0 16px);
+    box-shadow: 0 0 18px rgba(0,240,255,.25), inset 0 0 14px rgba(0,240,255,.08);
+  }
+  h1 {
+    font-family: var(--fonte-titulo); font-weight: 800; font-size: 46px; line-height: 1;
+    letter-spacing: 4px; color: var(--amarelo); margin: 10px 0;
+    text-shadow: 0 0 6px var(--amarelo), 0 0 18px var(--amarelo), 0 0 34px var(--magenta);
+  }
+  h2 {
+    font-family: var(--fonte-titulo); font-size: 22px; letter-spacing: 2px;
+    color: var(--magenta); text-shadow: 0 0 10px var(--magenta); margin-bottom: 10px;
+  }
+  p { font-size: 14px; letter-spacing: 1px; margin: 6px 0; }
+  b { color: var(--amarelo); font-weight: normal; }
+  .chamada { color: #fff; letter-spacing: 3px; }
+  .piscante { animation: piscar 1.2s steps(2, start) infinite; }
+  @keyframes piscar { to { visibility: hidden; } }
+
+  .opcoes { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+  .botao {
+    font-family: var(--fonte-corpo); font-size: 13px; letter-spacing: 2px;
+    background: rgba(10,10,20,.7); color: var(--ciano); border: 1px solid var(--ciano);
+    padding: 8px 12px; cursor: pointer;
+    clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+  }
+  .botao:hover, .botao:focus-visible { background: rgba(0,240,255,.15); outline: none; }
+  .ajuda { font-size: 12px; opacity: .6; max-width: 300px; }
+
+  /* HUD holográfico */
+  #hud {
+    position: absolute; top: 12px; left: 12px; right: 12px; z-index: 4; pointer-events: none;
+    display: flex; justify-content: space-between;
+  }
+  .chip {
+    font-size: 11px; letter-spacing: 2px; padding: 4px 10px; background: rgba(10,10,20,.55);
+    border-left: 2px solid var(--ciano);
+    clip-path: polygon(8px 0, 100% 0, 100% 100%, 0 100%, 0 8px);
+  }
+  .chip b { display: block; font-family: var(--fonte-titulo); font-size: 17px; color: #fff; }
+  #pontos {
+    position: absolute; top: 14px; left: 0; right: 0; z-index: 4; text-align: center;
+    pointer-events: none; font-family: var(--fonte-titulo); font-weight: 800; font-size: 64px;
+    color: var(--amarelo); text-shadow: 0 0 8px var(--amarelo), 0 0 22px var(--amarelo);
+  }
+  #aviso {
+    position: absolute; top: 38%; left: 0; right: 0; z-index: 6; text-align: center;
+    opacity: 0; pointer-events: none; font-family: var(--fonte-titulo); font-size: 28px;
+    color: var(--magenta); text-shadow: 0 0 12px var(--magenta);
+  }
+  #aviso.ativo { animation: aviso 1.2s ease-out forwards; }
+  @keyframes aviso {
+    0% { opacity: 0; transform: scale(1.3); }
+    15% { opacity: 1; transform: scale(1); }
+    80% { opacity: 1; }
+    100% { opacity: 0; }
+  }
