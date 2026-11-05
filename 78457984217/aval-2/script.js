@@ -1,21 +1,16 @@
+// Aguarda o carregamento completo do documento
+document.addEventListener("DOMContentLoaded", () => {
+    // Seleciona todos os links dentro do menu de navegação
+    const links = document.querySelectorAll("nav a");
 
-function mostrarMensagem() {
-    const mensagem = document.getElementById("mensagem");
-
-    mensagem.textContent = "🚀 Obrigado por visitar meu site!";
-    mensagem.style.color = "#60a5fa";
-    mensagem.style.fontSize = "20px";
-}
-
-const titulo = document.querySelector("main h1");
-
-titulo.addEventListener("mouseover", function() {
-    titulo.style.transform = "scale(1.05)";
+    // Adiciona um evento de clique para cada link
+    links.forEach(link => {
+        link.addEventListener("click", (event) => {
+            // Remove o destaque de todos os outros links antes
+            links.forEach(l => l.style.color = "white");
+            
+            // Aplica uma nova cor temporária ao link clicado
+            event.target.style.color = "#2ecc71"; // Verde claro
+        });
+    });
 });
-
-titulo.addEventListener("mouseout", function() {
-    titulo.style.transform = "scale(1)";
-});
-
-// Mensagem no console
-console.log("Meu site foi carregado com sucesso!");
