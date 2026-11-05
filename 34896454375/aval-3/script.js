@@ -19,7 +19,7 @@ const bookmarkButtons = document.querySelectorAll('.bookmark-btn');
 bookmarkButtons.forEach(btn => {
     btn.addEventListener('click', () => {
         if (btn.textContent === '🔖') {
-            btn.textContent = '💝'; // Marcador combinando com o tema vermelho fraco
+            btn.textContent = '💝'; 
         } else {
             btn.textContent = '🔖';
         }
