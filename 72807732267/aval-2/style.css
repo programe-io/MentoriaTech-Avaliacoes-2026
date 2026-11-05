@@ -1,0 +1,85 @@
+let tarefas = [];
+
+function cadastrar() {
+    let codigo = document.getElementById("codigo").value;
+        let titulo = document.getElementById("titulo").value;
+            let prioridade = Number(document.getElementById("prioridade").value);
+
+                if (codigo === "" || titulo.length < 5) {
+                        alert("Preencha o código e um título com pelo menos 5 caracteres!");
+                                return;
+                                    }
+
+                                        if (tarefas.some(t => t.codigo === codigo)) {
+                                                alert("Código já cadastrado!");
+                                                        return;
+                                                            }
+
+                                                                tarefas.push({
+                                                                        codigo: codigo,
+                                                                                titulo: titulo,
+                                                                                        prioridade: prioridade,
+                                                                                                concluida: false
+                                                                                                    });
+
+                                                                                                        alert("Tarefa cadastrada com sucesso!");
+
+                                                                                                            listar();
+                                                                                                            }
+
+                                                                                                            function listar() {
+                                                                                                                let lista = document.getElementById("lista");
+
+                                                                                                                    lista.innerHTML = "";
+
+                                                                                                                        tarefas.forEach(t => {
+                                                                                                                                lista.innerHTML += `
+                                                                                                                                            <div>
+                                                                                                                                                            <p>
+                                                                                                                                                                                Código: ${t.codigo}<br>
+                                                                                                                                                                                                    Título: ${t.titulo}<br>
+                                                                                                                                                                                                                        Prioridade: ${t.prioridade}<br>
+                                                                                                                                                                                                                                            Status: ${t.concluida ? "Concluída" : "Pendente"}
+                                                                                                                                                                                                                                                            </p>
+
+                                                                                                                                                                                                                                                                            <button onclick="concluir('${t.codigo}')">
+                                                                                                                                                                                                                                                                                                Concluir tarefa
+                                                                                                                                                                                                                                                                                                                </button>
+                                                                                                                                                                                                                                                                                                                            </div>
+                                                                                                                                                                                                                                                                                                                                        <hr>
+                                                                                                                                                                                                                                                                                                                                                `;
+                                                                                                                                                                                                                                                                                                                                                    });
+                                                                                                                                                                                                                                                                                                                                                    }
+
+                                                                                                                                                                                                                                                                                                                                                    function concluir(codigo) {
+                                                                                                                                                                                                                                                                                                                                                        let tarefa = tarefas.find(t => t.codigo === codigo);
+
+                                                                                                                                                                                                                                                                                                                                                            if (tarefa) {
+                                                                                                                                                                                                                                                                                                                                                                    tarefa.concluida = true;
+                                                                                                                                                                                                                                                                                                                                                                            alert("Tarefa concluída!");
+                                                                                                                                                                                                                                                                                                                                                                                    listar();
+                                                                                                                                                                                                                                                                                                                                                                                        }
+                                                                                                                                                                                                                                                                                                                                                                                        }
+
+                                                                                                                                                                                                                                                                                                                                                                                        function alterarPrioridade() {
+                                                                                                                                                                                                                                                                                                                                                                                            let codigo = document.getElementById("codigoAlterar").value;
+                                                                                                                                                                                                                                                                                                                                                                                                let prioridade = Number(document.getElementById("novaPrioridade").value);
+
+                                                                                                                                                                                                                                                                                                                                                                                                    let tarefa = tarefas.find(t => t.codigo === codigo);
+
+                                                                                                                                                                                                                                                                                                                                                                                                        if (!tarefa) {
+                                                                                                                                                                                                                                                                                                                                                                                                                alert("Tarefa não encontrada!");
+                                                                                                                                                                                                                                                                                                                                                                                                                        return;
+                                                                                                                                                                                                                                                                                                                                                                                                                            }
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                if (prioridade < 1 || prioridade > 3) {
+                                                                                                                                                                                                                                                                                                                                                                                                                                        alert("Prioridade inválida!");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                return;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                    }
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        tarefa.prioridade = prioridade;
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                            alert("Prioridade alterada com sucesso!");
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                listar();
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                }
