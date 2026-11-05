@@ -1,0 +1,347 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Missão Galáctica</title>
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    background: #03051b;
+    color: white;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    overflow: hidden;
+}
+
+h1 {
+    color: #00eaff;
+    text-shadow: 0 0 15px #008cff;
+    margin: 12px;
+}
+
+.info {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    font-size: 18px;
+    margin: 12px;
+}
+
+canvas {
+    display: block;
+    margin: auto;
+    background: linear-gradient(#080b32, #16082d);
+    border: 2px solid #00cfff;
+    box-shadow: 0 0 20px #007bff;
+    max-width: 100%;
+}
+
+button {
+    background: #00cfff;
+    border: none;
+    padding: 12px 25px;
+    margin: 10px;
+    border-radius: 20px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    background: white;
+}
+
+.controls {
+    margin-top: 5px;
+}
+
+.controls button {
+    min-width: 55px;
+    font-size: 20px;
+}
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"><link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+<h1>🚀 MISSÃO GALÁCTICA</h1>
+
+<div class="info">
+    <span>⭐ Pontos: <b id="score">0</b></span>
+    <span>❤️ Vidas: <b id="lives">3</b></span>
+</div>
+
+<canvas id="game" width="600" height="430"></canvas>
+
+<div>
+    <button onclick="startGame()">INICIAR / REINICIAR</button>
+</div>
+
+<div class="controls">
+    <button onpointerdown="move('left')" onpointerup="stop()" onpointerleave="stop()">⬅️</button>
+    <button onpointerdown="move('up')" onpointerup="stop()" onpointerleave="stop()">⬆️</button>
+    <button onpointerdown="move('down')" onpointerup="stop()" onpointerleave="stop()">⬇️</button>
+    <button onpointerdown="move('right')" onpointerup="stop()" onpointerleave="stop()">➡️</button>
+    <button onclick="shoot()">🔫</button>
+</div>
+
+<p>Use as setas do teclado e a barra de espaço para atirar!</p>
+
+<script>
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+
+let score = 0;
+let lives = 3;
+let playing = false;
+let ship, asteroids, bullets, stars;
+let keys = {};
+let direction = null;
+let lastShot = 0;
+let animation;
+
+function reset() {
+    score = 0;
+    lives = 3;
+
+    ship = {
+        x: 280,
+        y: 340,
+        size: 22
+    };
+
+    asteroids = [];
+    bullets = [];
+
+    stars = Array.from({length: 90}, () => ({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        speed: Math.random() * 2 + 0.5
+    }));
+
+    updateInfo();
+}
+
+function updateInfo() {
+    document.getElementById("score").textContent = score;
+    document.getElementById("lives").textContent = lives;
+}
+
+function drawShip() {
+    ctx.save();
+    ctx.translate(ship.x, ship.y);
+
+    ctx.fillStyle = "#00eaff";
+    ctx.shadowColor = "#00eaff";
+    ctx.shadowBlur = 18;
+
+    ctx.beginPath();
+    ctx.moveTo(0, -22);
+    ctx.lineTo(18, 18);
+    ctx.lineTo(0, 10);
+    ctx.lineTo(-18, 18);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.fillStyle = "orange";
+    ctx.fillRect(-5, 15, 10, 12);
+
+    ctx.restore();
+}
+
+function drawStars() {
+    ctx.fillStyle = "white";
+
+    stars.forEach(s => {
+        ctx.fillRect(s.x, s.y, 2, 2);
+        s.y += s.speed;
+
+        if (s.y > canvas.height) {
+            s.y = 0;
+            s.x = Math.random() * canvas.width;
+        }
+    });
+}
+
+function createAsteroid() {
+    asteroids.push({
+        x: Math.random() * (canvas.width - 40) + 20,
+        y: -30,
+        size: Math.random() * 15 + 15,
+        speed: Math.random() * 2 + 2
+    });
+}
+
+function drawAsteroids() {
+    asteroids.forEach((a, i) => {
+        a.y += a.speed;
+
+        ctx.fillStyle = "#999";
+        ctx.shadowColor = "#777";
+        ctx.shadowBlur = 10;
+
+        ctx.beginPath();
+        ctx.arc(a.x, a.y, a.size, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.shadowBlur = 0;
+
+        if (a.y > canvas.height + 30) {
+            asteroids.splice(i, 1);
+        }
+    });
+}
+
+function shoot() {
+    if (!playing) return;
+
+    const now = Date.now();
+    if (now - lastShot < 250) return;
+
+    lastShot = now;
+
+    bullets.push({
+        x: ship.x,
+        y: ship.y - 20
+    });
+}
+
+function drawBullets() {
+    bullets.forEach((b, i) => {
+        b.y -= 7;
+
+        ctx.fillStyle = "#00ffcc";
+        ctx.shadowColor = "#00ffcc";
+        ctx.shadowBlur = 12;
+        ctx.fillRect(b.x - 3, b.y, 6, 15);
+        ctx.shadowBlur = 0;
+
+        if (b.y < 0) bullets.splice(i, 1);
+    });
+}
+
+function collisions() {
+    asteroids.forEach((a, ai) => {
+        let dx = ship.x - a.x;
+        let dy = ship.y - a.y;
+
+        if (Math.hypot(dx, dy) < a.size + 15) {
+            asteroids.splice(ai, 1);
+            lives--;
+            updateInfo();
+
+            if (lives <= 0) endGame();
+        }
+
+        bullets.forEach((b, bi) => {
+            if (Math.hypot(b.x - a.x, b.y - a.y) < a.size + 8) {
+                asteroids.splice(ai, 1);
+                bullets.splice(bi, 1);
+                score += 10;
+                updateInfo();
+            }
+        });
+    });
+}
+
+function moveShip() {
+    if (keys.ArrowLeft || keys.a || direction === "left")
+        ship.x -= 5;
+
+    if (keys.ArrowRight || keys.d || direction === "right")
+        ship.x += 5;
+
+    if (keys.ArrowUp || keys.w || direction === "up")
+        ship.y -= 5;
+
+    if (keys.ArrowDown || keys.s || direction === "down")
+        ship.y += 5;
+
+    ship.x = Math.max(22, Math.min(canvas.width - 22, ship.x));
+    ship.y = Math.max(25, Math.min(canvas.height - 25, ship.y));
+}
+
+let frames = 0;
+
+function loop() {
+    if (!playing) return;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    drawStars();
+    moveShip();
+
+    frames++;
+
+    if (frames % 45 === 0) createAsteroid();
+
+    drawShip();
+    drawAsteroids();
+    drawBullets();
+    collisions();
+
+    if (playing) animation = requestAnimationFrame(loop);
+}
+
+function startGame() {
+    cancelAnimationFrame(animation);
+    reset();
+    frames = 0;
+    playing = true;
+    loop();
+}
+
+function endGame() {
+    playing = false;
+    cancelAnimationFrame(animation);
+
+    ctx.fillStyle = "rgba(0,0,20,0.85)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#ff4444";
+    ctx.font = "bold 38px Arial";
+    ctx.fillText("FIM DE JOGO!", 300, 190);
+
+    ctx.fillStyle = "white";
+    ctx.font = "22px Arial";
+    ctx.fillText("Pontuação: " + score, 300, 235);
+    ctx.fillText("Clique em REINICIAR para jogar novamente", 300, 280);
+}
+
+function move(dir) {
+    direction = dir;
+}
+
+function stop() {
+    direction = null;
+}
+
+document.addEventListener("keydown", e => {
+    keys[e.key] = true;
+
+    if (e.code === "Space") {
+        e.preventDefault();
+        shoot();
+    }
+});
+
+document.addEventListener("keyup", e => {
+    keys[e.key] = false;
+});
+
+reset();
+
+ctx.fillStyle = "white";
+ctx.font = "24px Arial";
+ctx.textAlign = "center";
+ctx.fillText("APERTE INICIAR PARA JOGAR", 300, 210);
+
+</script>
+<script src="script.js"></script></body>
+</html>
