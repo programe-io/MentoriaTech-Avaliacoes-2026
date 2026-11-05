@@ -1,0 +1,435 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Galaxy Play - Filmes e Séries</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: #080808;
+    color: white;
+    font-family: Arial, sans-serif;
+}
+
+/* CABEÇALHO */
+header {
+    background: #111;
+    padding: 20px 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.logo {
+    color: #e50914;
+    font-size: 30px;
+    font-weight: bold;
+}
+
+nav {
+    display: flex;
+    gap: 20px;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+}
+
+nav a:hover {
+    color: #e50914;
+}
+
+/* PESQUISA */
+.search {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #444;
+    background: #222;
+    color: white;
+}
+
+/* DESTAQUE */
+.banner {
+    height: 400px;
+    background:
+    linear-gradient(to right, #000 10%, transparent),
+    url("https://images.unsplash.com/photo-1440404653325-ab127d49abc1")
+    center/cover;
+
+    display: flex;
+    align-items: center;
+    padding: 50px;
+}
+
+.banner-content {
+    max-width: 500px;
+}
+
+.banner h1 {
+    font-size: 45px;
+    margin-bottom: 15px;
+}
+
+.banner p {
+    color: #ddd;
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+.btn {
+    background: #e50914;
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+/* CONTEÚDO */
+section {
+    padding: 35px 5%;
+}
+
+section h2 {
+    margin-bottom: 20px;
+    border-left: 5px solid #e50914;
+    padding-left: 12px;
+}
+
+/* CARDS */
+.movies {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 20px;
+}
+
+.card {
+    background: #181818;
+    border-radius: 10px;
+    overflow: hidden;
+    transition: 0.3s;
+    cursor: pointer;
+}
+
+.card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px #e50914;
+}
+
+.card img {
+    width: 100%;
+    height: 240px;
+    object-fit: cover;
+}
+
+.card h3 {
+    padding: 10px;
+    font-size: 16px;
+}
+
+.card p {
+    padding: 0 10px 12px;
+    color: #aaa;
+    font-size: 13px;
+}
+
+/* PLAYER */
+.player {
+    display: none;
+    background: #111;
+    padding: 25px;
+    text-align: center;
+}
+
+.player video {
+    width: 100%;
+    max-width: 850px;
+    background: black;
+}
+
+.close {
+    display: block;
+    margin: 15px auto;
+}
+
+/* RODAPÉ */
+footer {
+    background: #111;
+    text-align: center;
+    padding: 25px;
+    color: #888;
+}
+
+@media(max-width: 600px) {
+    header {
+        flex-direction: column;
+    }
+
+    .banner {
+        height: 350px;
+        padding: 20px;
+    }
+
+    .banner h1 {
+        font-size: 32px;
+    }
+
+    nav {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+<header>
+
+    <div class="logo">🎬 GALAXY PLAY</div>
+
+    <nav>
+        <a href="#inicio">Início</a>
+        <a href="#filmes">Filmes</a>
+        <a href="#series">Séries</a>
+        <a href="#dublados">Dublados</a>
+    </nav>
+
+    <input
+        class="search"
+        type="text"
+        id="search"
+        placeholder="Pesquisar..."
+        oninput="searchMovies()"
+    >
+
+</header>
+
+<!-- DESTAQUE -->
+
+<div class="banner" id="inicio">
+
+    <div class="banner-content">
+
+        <h1>SEU UNIVERSO DE ENTRETENIMENTO</h1>
+
+        <p>
+            Explore filmes, séries e grandes aventuras.
+            Encontre conteúdos gratuitos e aproveite
+            sua experiência de cinema.
+        </p>
+
+        <a href="#filmes" class="btn">
+            EXPLORAR AGORA
+        </a>
+
+    </div>
+
+</div>
+
+<!-- FILMES -->
+
+<section id="filmes">
+
+    <h2>🔥 Filmes em destaque</h2>
+
+    <div class="movies">
+
+        <div class="card" data-title="Big Buck Bunny">
+            <img src="https://peach.blender.org/wp-content/uploads/title_anouncement.jpg">
+            <h3>Big Buck Bunny</h3>
+            <p>🎬 Animação • Gratuito</p>
+            <p>🇧🇷 Áudio disponível conforme o vídeo</p>
+            <button class="btn" onclick="playMovie('bunny')">
+                Assistir
+            </button>
+        </div>
+
+        <div class="card" data-title="Sintel">
+            <img src="https://durian.blender.org/wp-content/uploads/2010/05/sintel_poster.jpg">
+            <h3>Sintel</h3>
+            <p>🐉 Fantasia • Gratuito</p>
+            <button class="btn" onclick="playMovie('sintel')">
+                Assistir
+            </button>
+        </div>
+
+        <div class="card" data-title="Cosmos">
+            <img src="https://images.unsplash.com/photo-1462331940025-496dfbfc7564">
+            <h3>Universo Cosmos</h3>
+            <p>🌌 Documentário</p>
+            <button class="btn" onclick="playMovie('cosmos')">
+                Ver detalhes
+            </button>
+        </div>
+
+    </div>
+
+</section>
+
+<!-- SÉRIES -->
+
+<section id="series">
+
+    <h2>📺 Séries e documentários</h2>
+
+    <div class="movies">
+
+        <div class="card" data-title="Natureza">
+            <img src="https://images.unsplash.com/photo-1472396961693-142e6e269027">
+            <h3>Natureza Selvagem</h3>
+            <p>🌳 Documentário</p>
+            <button class="btn" onclick="showInfo('Natureza Selvagem')">
+                Ver detalhes
+            </button>
+        </div>
+
+        <div class="card" data-title="Espaço">
+            <img src="https://images.unsplash.com/photo-1446776811953-b23d57bd21aa">
+            <h3>Explorando o Espaço</h3>
+            <p>🚀 Ciência</p>
+            <button class="btn" onclick="showInfo('Explorando o Espaço')">
+                Ver detalhes
+            </button>
+        </div>
+
+    </div>
+
+</section>
+
+<!-- DUBLADOS -->
+
+<section id="dublados">
+
+    <h2>🇧🇷 Conteúdos em português</h2>
+
+    <p>
+        Confira os conteúdos que possuem áudio ou
+        legendas em português nas plataformas de origem.
+    </p>
+
+</section>
+
+<!-- PLAYER -->
+
+<div class="player" id="player">
+
+    <h2 id="playerTitle">Assistindo</h2>
+
+    <video id="video" controls>
+        Seu navegador não suporta vídeos.
+    </video>
+
+    <button class="btn close" onclick="closePlayer()">
+        FECHAR PLAYER
+    </button>
+
+</div>
+
+<footer>
+
+    <p>🎬 GALAXY PLAY</p>
+    <p>Entretenimento para todos os exploradores do universo.</p>
+    <p>Conteúdos gratuitos e legalmente disponibilizados.</p>
+
+</footer>
+
+<script>
+
+// PESQUISAR FILMES E SÉRIES
+function searchMovies() {
+
+    let search = document
+        .getElementById("search")
+        .value.toLowerCase();
+
+    let cards = document.querySelectorAll(".card");
+
+    cards.forEach(card => {
+
+        let title = card.dataset.title.toLowerCase();
+
+        card.style.display =
+            title.includes(search) ? "block" : "none";
+
+    });
+}
+
+// ABRIR PLAYER
+function playMovie(movie) {
+
+    const videos = {
+        bunny: {
+            title: "Big Buck Bunny",
+            url: "https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+        },
+
+        sintel: {
+            title: "Sintel",
+            url: "https://storage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4"
+        }
+    };
+
+    if (!videos[movie]) {
+        showInfo("Universo Cosmos");
+        return;
+    }
+
+    document.getElementById("playerTitle").textContent =
+        videos[movie].title;
+
+    const video = document.getElementById("video");
+
+    video.src = videos[movie].url;
+
+    document.getElementById("player").style.display = "block";
+
+    video.play().catch(() => {
+        alert("Clique no botão de reprodução para assistir.");
+    });
+
+    document.getElementById("player").scrollIntoView({
+        behavior: "smooth"
+    });
+}
+
+// FECHAR PLAYER
+function closePlayer() {
+
+    const video = document.getElementById("video");
+
+    video.pause();
+    video.removeAttribute("src");
+    video.load();
+
+    document.getElementById("player").style.display = "none";
+}
+
+// DETALHES
+function showInfo(name) {
+    alert(
+        name +
+        "\n\nConsulte a plataforma de origem para encontrar os conteúdos disponíveis gratuitamente."
+    );
+}
+
+</script>
+
+<script src="script.js"></script></body>
+</html>
