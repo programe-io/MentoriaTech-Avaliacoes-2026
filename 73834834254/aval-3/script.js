@@ -200,4 +200,3 @@ function setupEventListeners() {
     document.querySelectorAll('.profile-tabs .tab').forEach(tab => {
         tab.addEventListener('click', (e) => {
             document.querySelectorAll('.profile-tabs .tab').forEach(t => t.classList.remove('active'));
-
