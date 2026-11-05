@@ -1,27 +1,19 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const searchBtn = document.getElementById("search-btn");
-    const cityInput = document.getElementById("city-input");
+    const cards = document.querySelectorAll(".destination-card");
 
-    // Banco de dados simulado para alternar os climas
-    const weatherData = {
-        "sao paulo": { name: "São Paulo, BR", temp: "22°C", cond: "Nublado", icon: "☁️", hum: "80%", wind: "18 km/h" },
-        "rio de janeiro": { name: "Rio de Janeiro, BR", temp: "28°C", cond: "Ensolarado", icon: "☀️", hum: "65%", wind: "14 km/h" },
-        "curitiba": { name: "Curitiba, BR", temp: "14°C", cond: "Chuvoso", icon: "🌧️", hum: "92%", wind: "22 km/h" }
-    };
+    cards.forEach(card => {
+        const button = card.querySelector(".explore-btn");
+        // Captura o preço guardado no atributo HTML "data-price"
+        const price = card.getAttribute("data-price");
 
-    searchBtn.addEventListener("click", () => {
-        const cityKey = cityInput.value.toLowerCase().trim();
-
-        if (weatherData[cityKey]) {
-            const data = weatherData[cityKey];
-            document.getElementById("city-name").textContent = data.name;
-            document.getElementById("temperature").textContent = data.temp;
-            document.getElementById("condition").textContent = data.cond;
-            document.getElementById("weather-icon").textContent = data.icon;
-            document.getElementById("humidity").textContent = data.hum;
-            document.getElementById("wind").textContent = data.wind;
-        } else {
-            alert("Cidade não encontrada! Experimente testar: 'Sao Paulo' ou 'Curitiba'.");
-        }
+        button.addEventListener("click", () => {
+            // Altera o texto do botão para exibir o preço da viagem espacial
+            button.textContent = `Orçamento: ${price}`;
+            button.style.backgroundColor = "#818cf8"; // Cor roxa de ativo
+            button.style.color = "#ffffff";
+            
+            // Efeito sonoro/visual simulado desativando cliques repetidos
+            button.style.pointerEvents = "none";
+        });
     });
 });
