@@ -1,16 +1,17 @@
-// Aguarda o carregamento completo do documento
 document.addEventListener("DOMContentLoaded", () => {
-    // Seleciona todos os links do menu de navegação
-    const links = document.querySelectorAll("nav a");
+    const likeBtn = document.getElementById("like-btn");
+    const likeCount = document.getElementById("like-count");
+    let count = 0;
 
-    // Adiciona um evento de clique para cada link
-    links.forEach(link => {
-        link.addEventListener("click", (event) => {
-            // Reseta a cor de todos os links antes
-            links.forEach(l => l.style.color = "white");
-            
-            // Aplica uma cor verde de destaque ao link clicado
-            event.target.style.color = "#2ecc71"; 
-        });
+    // Sistema de curtidas simples com contador dinâmico
+    likeBtn.addEventListener("click", () => {
+        count++;
+        likeCount.textContent = count;
+        
+        // Efeito visual rápido de pulso ao clicar
+        likeBtn.style.transform = "scale(1.1)";
+        setTimeout(() => {
+            likeBtn.style.transform = "scale(1)";
+        }, 100);
     });
 });
