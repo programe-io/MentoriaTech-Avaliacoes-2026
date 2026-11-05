@@ -1,271 +1,508 @@
 
-/* Navegação entre as seções */
-document.querySelectorAll('[data-target]').forEach(button => {
-  button.addEventListener('click', () => {
-    const section = document.getElementById(button.dataset.target);
-
-    if (section) {
-      section.scrollIntoView({ behavior: 'smooth' });
-    }
-
-    document.querySelectorAll('nav button').forEach(item => {
-      item.classList.toggle(
-        'active',
-        item.dataset.target === button.dataset.target
-      );
+// NAVEGAÇÃO ENTRE AS PÁGINAS
+function mostrarPagina(nome) {
+    document.querySelectorAll('.pagina').forEach(pagina => {
+        pagina.classList.remove('ativa');
     });
-  });
-});
 
-/* Pontuação e progresso */
-let xp = 0;
-let completedMissions = 0;
-let correctAnswers = 0;
-let answeredQuestions = 0;
-
-const missionChecks = document.querySelectorAll('#missionList input');
-
-function updateStats() {
-  document.getElementById('xp').textContent = xp + ' XP';
-  document.getElementById('level').textContent =
-    'Nível ' + (Math.floor(xp / 100) + 1);
-  document.getElementById('completed').textContent = completedMissions;
-
-  const accuracy = answeredQuestions
-    ? Math.round((correctAnswers / answeredQuestions) * 100)
-    : 0;
-
-  document.getElementById('accuracy').textContent = accuracy + '%';
+    document.getElementById(nome).classList.add('ativa');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-missionChecks.forEach(check => {
-  check.addEventListener('change', () => {
-    const mission = check.closest('.mission');
+// CRONOGRAMA
+function adicionarTarefa() {
+    const campo = document.getElementById('tarefa');
+    const data = document.getElementById('dataTarefa');
 
-    if (check.checked) {
-      xp += 20;
-      completedMissions++;
-      mission.classList.add('done');
-    } else {
-      xp = Math.max(0, xp - 20);
-      completedMissions--;
-      mission.classList.remove('done');
+    if (campo.value.trim() === '') {
+        alert('Digite uma tarefa!');
+        return;
     }
 
-    const total = missionChecks.length;
+    const li = document.createElement('li');
+    const texto = document.createElement('span');
+    texto.textContent = campo.value + (data.value ? ' - ' + data.value : '');
 
-    document.getElementById('missionProgress').style.width =
-      (completedMissions / total * 100) + '%';
+    const concluir = document.createElement('button');
+    concluir.textContent = 'Concluir ✓';
+    concluir.onclick = () => {
+        texto.style.textDecoration = 'line-through';
+        texto.style.opacity = '0.5';
+    };
 
-    document.getElementById('missionStatus').textContent =
-      `${completedMissions} de ${total} missões concluídas.`;
+    const excluir = document.createElement('button');
+    excluir.textContent = 'Excluir ✕';
+    excluir.className = 'secundario';
+    excluir.onclick = () => li.remove();
 
-    updateStats();
-  });
-});
+    li.append(texto, concluir, excluir);
+    document.getElementById('listaTarefas').appendChild(li);
 
-/* Cronômetro de 25 minutos */
-let remaining = 25 * 60;
-let timerInterval = null;
-
-function displayTimer() {
-  const minutes = Math.floor(remaining / 60);
-  const seconds = remaining % 60;
-
-  document.getElementById('timer').textContent =
-    String(minutes).padStart(2, '0') + ':' +
-    String(seconds).padStart(2, '0');
+    campo.value = '';
+    data.value = '';
 }
 
-document.getElementById('startTimer').addEventListener('click', () => {
-  if (timerInterval !== null || remaining <= 0) return;
+// ANOTAÇÕES COM SALVAMENTO
+let notas = JSON.parse(localStorage.getItem('notasStudyVerse')) || [];
 
-  document.getElementById('timerStatus').textContent =
-    'Hora de focar! 💪';
+function salvarNota() {
+    const titulo = document.getElementById('tituloNota').value.trim();
+    const texto = document.getElementById('textoNota').value.trim();
 
-  timerInterval = setInterval(() => {
-    remaining--;
-    displayTimer();
-
-    if (remaining <= 0) {
-      clearInterval(timerInterval);
-      timerInterval = null;
-
-      document.getElementById('timerStatus').textContent =
-        'Parabéns! Você concluiu sua sessão de foco. 🎉';
+    if (!titulo || !texto) {
+        alert('Preencha o título e o conteúdo!');
+        return;
     }
-  }, 1000);
-});
 
-document.getElementById('pauseTimer').addEventListener('click', () => {
-  clearInterval(timerInterval);
-  timerInterval = null;
+    notas.push({ titulo, texto });
+    localStorage.setItem('notasStudyVerse', JSON.stringify(notas));
 
-  document.getElementById('timerStatus').textContent =
-    'Cronômetro pausado.';
-});
+    document.getElementById('tituloNota').value = '';
+    document.getElementById('textoNota').value = '';
 
-document.getElementById('resetTimer').addEventListener('click', () => {
-  clearInterval(timerInterval);
-  timerInterval = null;
-  remaining = 25 * 60;
+    mostrarNotas();
+}
 
-  displayTimer();
-  document.getElementById('timerStatus').textContent = '';
-});
+function mostrarNotas() {
+    const lista = document.getElementById('listaNotas');
+    lista.replaceChildren();
 
-/* Resumidor simples de texto */
-document.getElementById('summarize').addEventListener('click', () => {
-  const text = document.getElementById('sourceText').value.trim();
-  const output = document.getElementById('summary');
+    notas.forEach((nota, indice) => {
+        const caixa = document.createElement('div');
+        caixa.className = 'nota';
 
-  if (!text) {
-    output.value = 'Cole um texto antes de gerar o resumo.';
-    return;
-  }
+        const titulo = document.createElement('h3');
+        titulo.textContent = '📌 ' + nota.titulo;
 
-  const sentences = text.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [text];
-  const cleaned = sentences.map(sentence => sentence.trim()).filter(Boolean);
-  const amount = Math.max(1, Math.ceil(cleaned.length * 0.4));
+        const conteudo = document.createElement('p');
+        conteudo.textContent = nota.texto;
 
-  output.value = cleaned.slice(0, amount).join(' ').trim();
-});
+        const excluir = document.createElement('button');
+        excluir.textContent = 'Excluir anotação';
+        excluir.className = 'secundario';
 
-/* Perguntas do quiz */
-const questions = [
-  {
-    text: 'Qual é o resultado de 8 × 7?',
-    options: ['54', '56', '64', '48'],
-    correct: 1,
-    explanation: '8 multiplicado por 7 é igual a 56.'
-  },
-  {
-    text: 'Qual é o sujeito da frase "Os alunos estudaram bastante"?',
-    options: [
-      'Estudaram',
-      'Bastante',
-      'Os alunos',
-      'A frase não tem sujeito'
-    ],
-    correct: 2,
-    explanation: '"Os alunos" é quem pratica a ação de estudar.'
-  },
-  {
-    text: 'Qual é o planeta conhecido como Planeta Vermelho?',
-    options: ['Vênus', 'Júpiter', 'Marte', 'Saturno'],
-    correct: 2,
-    explanation:
-      'Marte tem aparência avermelhada por causa dos óxidos de ferro na superfície.'
-  },
-  {
-    text: 'Qual é a capital do Brasil?',
-    options: ['São Paulo', 'Brasília', 'Rio de Janeiro', 'Salvador'],
-    correct: 1,
-    explanation: 'Brasília é a capital federal do Brasil desde 1960.'
-  },
-  {
-    text: 'Qual processo as plantas usam para produzir seu alimento?',
-    options: ['Respiração', 'Evaporação', 'Fotossíntese', 'Digestão'],
-    correct: 2,
-    explanation:
-      'Na fotossíntese, as plantas usam luz, água e gás carbônico para produzir açúcares.'
-  }
+        excluir.onclick = () => {
+            notas.splice(indice, 1);
+            localStorage.setItem('notasStudyVerse', JSON.stringify(notas));
+            mostrarNotas();
+        };
+
+        caixa.append(titulo, conteudo, excluir);
+        lista.appendChild(caixa);
+    });
+}
+
+mostrarNotas();
+
+// CALCULADORA
+function calcular() {
+    const n1 = Number(document.getElementById('numero1').value);
+    const n2 = Number(document.getElementById('numero2').value);
+    const op = document.getElementById('operacao').value;
+
+    if (document.getElementById('numero1').value === '' ||
+        document.getElementById('numero2').value === '') {
+        alert('Digite os dois números!');
+        return;
+    }
+
+    let resultado;
+
+    if (op === '+') resultado = n1 + n2;
+    if (op === '-') resultado = n1 - n2;
+    if (op === '*') resultado = n1 * n2;
+
+    if (op === '/') {
+        if (n2 === 0) {
+            document.getElementById('resultado').textContent =
+                'Não é possível dividir por zero!';
+            return;
+        }
+        resultado = n1 / n2;
+    }
+
+    document.getElementById('resultado').textContent =
+        'Resultado: ' + resultado;
+}
+
+// POMODORO
+let tempo = 25 * 60;
+let intervalo = null;
+
+function atualizarRelogio() {
+    const minutos = Math.floor(tempo / 60);
+    const segundos = tempo % 60;
+
+    document.getElementById('relogio').textContent =
+        String(minutos).padStart(2, '0') + ':' +
+        String(segundos).padStart(2, '0');
+}
+
+function iniciarPomodoro() {
+    if (intervalo !== null) return;
+
+    intervalo = setInterval(() => {
+        if (tempo > 0) {
+            tempo--;
+            atualizarRelogio();
+        } else {
+            clearInterval(intervalo);
+            intervalo = null;
+            alert('Parabéns! Você completou seu tempo de estudo!');
+        }
+    }, 1000);
+}
+
+function pausarPomodoro() {
+    clearInterval(intervalo);
+    intervalo = null;
+}
+
+function resetarPomodoro() {
+    pausarPomodoro();
+    tempo = 25 * 60;
+    atualizarRelogio();
+}
+
+atualizarRelogio();
+
+// FLASHCARDS
+const cartoes = [
+    {
+        pergunta: 'O que é fotossíntese?',
+        resposta: 'É o processo pelo qual as plantas produzem seu alimento utilizando luz solar.'
+    },
+    {
+        pergunta: 'Quanto é 9 × 9?',
+        resposta: '81!'
+    },
+    {
+        pergunta: 'O que é um substantivo?',
+        resposta: 'É a palavra que dá nome aos seres, objetos, lugares e sentimentos.'
+    },
+    {
+        pergunta: 'Qual é o planeta conhecido como planeta vermelho?',
+        resposta: 'Marte!'
+    },
+    {
+        pergunta: 'O que é HTML?',
+        resposta: 'É uma linguagem de marcação usada para estruturar páginas da internet.'
+    }
 ];
 
-let questionIndex = 0;
-let answeredCurrent = false;
+let cartaoAtual = 0;
+let mostrandoResposta = false;
 
-function renderQuestion() {
-  const question = questions[questionIndex];
-  answeredCurrent = false;
+function virarCartao() {
+    mostrandoResposta = !mostrandoResposta;
 
-  document.getElementById('quizNumber').textContent =
-    `QUESTÃO ${questionIndex + 1} DE ${questions.length}`;
+    document.getElementById('perguntaFlash').textContent =
+        mostrandoResposta
+        ? cartoes[cartaoAtual].resposta
+        : cartoes[cartaoAtual].pergunta;
+}
 
-  document.getElementById('question').textContent = question.text;
-  document.getElementById('quizFeedback').textContent = '';
-  document.getElementById('nextQuestion').classList.add('hidden');
+function proximoCartao() {
+    cartaoAtual = (cartaoAtual + 1) % cartoes.length;
+    mostrandoResposta = false;
+    document.getElementById('perguntaFlash').textContent =
+        cartoes[cartaoAtual].pergunta;
+}
 
-  const answers = document.getElementById('answers');
-  answers.replaceChildren();
+// QUIZ
+const perguntas = [
+    {
+        pergunta: 'Qual é o resultado de 8 × 7?',
+        opcoes: ['54', '56', '64', '48'],
+        correta: 1
+    },
+    {
+        pergunta: 'Qual é a capital do Brasil?',
+        opcoes: ['São Paulo', 'Rio de Janeiro', 'Brasília', 'Salvador'],
+        correta: 2
+    },
+    {
+        pergunta: 'Qual planeta é conhecido como planeta vermelho?',
+        opcoes: ['Vênus', 'Marte', 'Júpiter', 'Saturno'],
+        correta: 1
+    },
+    {
+        pergunta: 'Qual linguagem estrutura uma página web?',
+        opcoes: ['HTML', 'Excel', 'Photoshop', 'Word'],
+        correta: 0
+    },
+    {
+        pergunta: 'Quanto é 100 dividido por 4?',
+        opcoes: ['20', '30', '25', '40'],
+        correta: 2
+    }
+];
 
-  question.options.forEach((option, index) => {
-    const button = document.createElement('button');
+let perguntaAtual = 0;
+let pontos = 0;
+let respondeu = false;
 
-    button.className = 'answer';
-    button.textContent = String.fromCharCode(65 + index) + ') ' + option;
+function carregarQuiz() {
+    const pergunta = perguntas[perguntaAtual];
 
-    button.addEventListener('click', () => {
-      chooseAnswer(index, button);
+    document.getElementById('perguntaQuiz').textContent =
+        pergunta.pergunta;
+
+    document.getElementById('feedback').textContent = '';
+
+    const alternativas = document.getElementById('alternativas');
+    alternativas.replaceChildren();
+
+    respondeu = false;
+
+    pergunta.opcoes.forEach((opcao, indice) => {
+        const botao = document.createElement('button');
+        botao.textContent = opcao;
+
+        botao.onclick = () => responder(indice);
+
+        alternativas.appendChild(botao);
     });
 
-    answers.appendChild(button);
-  });
+    document.getElementById('pontuacao').textContent =
+        'Pontuação: ' + pontos;
 }
 
-function chooseAnswer(index, chosenButton) {
-  if (answeredCurrent) return;
+function responder(indice) {
+    if (respondeu) return;
 
-  answeredCurrent = true;
+    respondeu = true;
 
-  const question = questions[questionIndex];
-  const buttons = document.querySelectorAll('.answer');
+    const correta = perguntas[perguntaAtual].correta;
 
-  buttons.forEach(button => {
-    button.disabled = true;
-  });
+    if (indice === correta) {
+        pontos++;
+        document.getElementById('feedback').textContent =
+            '🎉 Parabéns! Resposta correta!';
+    } else {
+        document.getElementById('feedback').textContent =
+            '❌ Resposta incorreta! A correta era: ' +
+            perguntas[perguntaAtual].opcoes[correta];
+    }
 
-  answeredQuestions++;
+    document.getElementById('pontuacao').textContent =
+        'Pontuação: ' + pontos;
 
-  const feedback = document.getElementById('quizFeedback');
-
-  if (index === question.correct) {
-    correctAnswers++;
-    xp += 10;
-    chosenButton.classList.add('correct');
-
-    feedback.textContent = 'Resposta correta! +10 XP 🎉 ' +
-      question.explanation;
-    feedback.className = 'feedback green';
-  } else {
-    chosenButton.classList.add('wrong');
-    buttons[question.correct].classList.add('correct');
-
-    feedback.textContent = 'Ainda não! ' + question.explanation;
-    feedback.className = 'feedback pink';
-  }
-
-  document.getElementById('quizScore').textContent =
-    `Pontuação: ${correctAnswers} acerto(s) de ${answeredQuestions} questão(ões).`;
-
-  document.getElementById('nextQuestion').textContent =
-    questionIndex === questions.length - 1
-      ? 'Recomeçar quiz ↻'
-      : 'Próxima questão →';
-
-  document.getElementById('nextQuestion').classList.remove('hidden');
-
-  updateStats();
+    document.querySelectorAll('#alternativas button').forEach(botao => {
+        botao.disabled = true;
+    });
 }
 
-document.getElementById('nextQuestion').addEventListener('click', () => {
-  if (questionIndex < questions.length - 1) {
-    questionIndex++;
-  } else {
-    questionIndex = 0;
-    correctAnswers = 0;
-    answeredQuestions = 0;
+function proximaPergunta() {
+    if (!respondeu) {
+        alert('Responda à pergunta antes de continuar!');
+        return;
+    }
 
-    document.getElementById('quizScore').textContent =
-      'Pontuação: 0 acertos';
+    perguntaAtual++;
 
-    updateStats();
-  }
+    if (perguntaAtual >= perguntas.length) {
+        document.getElementById('perguntaQuiz').textContent =
+            '🏆 Quiz finalizado!';
 
-  renderQuestion();
-});
+        document.getElementById('alternativas').replaceChildren();
 
-/* Inicialização */
-renderQuestion();
-displayTimer();
-updateStats();
+        document.getElementById('feedback').textContent =
+            'Você acertou ' + pontos + ' de ' +
+            perguntas.length + ' perguntas!';
+
+        document.getElementById('pontuacao').textContent =
+            'Parabéns por participar!';
+
+        pontos = 0;
+        perguntaAtual = 0;
+
+        const botao = document.createElement('button');
+        botao.textContent = 'Jogar novamente';
+        botao.onclick = carregarQuiz;
+
+        document.getElementById('alternativas').appendChild(botao);
+        return;
+    }
+
+    carregarQuiz();
+}
+
+// INICIAR O QUIZ
+carregarQuiz();
+
+// ===============================
+// 🌙 MODO ESCURO
+// ===============================
+
+function alternarTema() {
+    document.body.classList.toggle('escuro');
+
+    const escuro = document.body.classList.contains('escuro');
+
+    localStorage.setItem('temaStudyVerse', escuro ? 'escuro' : 'claro');
+
+    document.getElementById('botaoTema').textContent =
+        escuro ? '☀️' : '🌙';
+}
+
+if (localStorage.getItem('temaStudyVerse') === 'escuro') {
+    document.body.classList.add('escuro');
+    document.getElementById('botaoTema').textContent = '☀️';
+}
+
+
+// ===============================
+// 📚 MATÉRIAS
+// ===============================
+
+function abrirMateria(materia) {
+    const conteudo = document.getElementById('conteudoMateria');
+
+    const mensagens = {
+        'Matemática': 'Pratique operações, frações, equações e geometria.',
+        'Português': 'Estude interpretação de texto, gramática e redação.',
+        'Geografia': 'Explore continentes, países, mapas e meio ambiente.',
+        'História': 'Conheça civilizações, acontecimentos e personagens históricos.',
+        'Ciências': 'Descubra o corpo humano, a natureza e a tecnologia.',
+        'Inglês': 'Aprenda novas palavras e pratique frases em inglês.'
+    };
+
+    conteudo.innerHTML = `
+        <h2>📖 ${materia}</h2>
+        <p>${mensagens[materia]}</p>
+        <p>💡 Dica: escreva um resumo sobre o assunto no seu caderno!</p>
+    `;
+}
+
+
+// ===============================
+// 📊 CALCULADORA DE MÉDIAS
+// ===============================
+
+function calcularMedia() {
+    const campos = ['nota1', 'nota2', 'nota3'];
+
+    const notas = campos.map(id =>
+        document.getElementById(id).value
+    );
+
+    if (notas.some(n => n.trim() === '')) {
+        alert('Preencha todas as notas!');
+        return;
+    }
+
+    const valores = notas.map(Number);
+
+    if (valores.some(n => n < 0 || n > 10)) {
+        alert('As notas devem estar entre 0 e 10!');
+        return;
+    }
+
+    const media = valores.reduce((a, b) => a + b, 0) / 3;
+
+    let mensagem = '';
+
+    if (media >= 7) {
+        mensagem = '🎉 Você atingiu a média!';
+    } else if (media >= 5) {
+        mensagem = '📚 Continue estudando para melhorar!';
+    } else {
+        mensagem = '💪 Vale a pena revisar os conteúdos!';
+    }
+
+    document.getElementById('mediaResultado').textContent =
+        'Média: ' + media.toFixed(2) + ' | ' + mensagem;
+}
+
+
+// ===============================
+// 🎯 SISTEMA DE METAS
+// ===============================
+
+let metas = JSON.parse(localStorage.getItem('metasStudyVerse')) || [];
+
+function salvarMetas() {
+    localStorage.setItem('metasStudyVerse', JSON.stringify(metas));
+}
+
+function adicionarMeta() {
+    const campo = document.getElementById('nomeMeta');
+    const nome = campo.value.trim();
+
+    if (!nome) {
+        alert('Digite uma meta!');
+        return;
+    }
+
+    metas.push({
+        nome: nome,
+        concluida: false
+    });
+
+    campo.value = '';
+    salvarMetas();
+    mostrarMetas();
+}
+
+function concluirMeta(indice) {
+    metas[indice].concluida = !metas[indice].concluida;
+    salvarMetas();
+    mostrarMetas();
+}
+
+function mostrarMetas() {
+    const lista = document.getElementById('listaMetas');
+    lista.replaceChildren();
+
+    metas.forEach((meta, indice) => {
+        const item = document.createElement('div');
+        item.className = 'nota';
+
+        const texto = document.createElement('span');
+        texto.textContent = (meta.concluida ? '✅ ' : '🎯 ') + meta.nome;
+
+        if (meta.concluida) {
+            texto.style.textDecoration = 'line-through';
+        }
+
+        const botao = document.createElement('button');
+        botao.textContent = meta.concluida ? 'Desfazer' : 'Concluir';
+        botao.onclick = () => concluirMeta(indice);
+
+        item.append(texto, botao);
+        lista.appendChild(item);
+    });
+
+    const concluidas = metas.filter(m => m.concluida).length;
+
+    document.getElementById('progressoMetas').textContent =
+        concluidas + ' de ' + metas.length + ' metas concluídas';
+}
+
+mostrarMetas();
+
+
+// ===============================
+// 🎲 DESAFIOS ALEATÓRIOS
+// ===============================
+
+const desafios = [
+    'Leia 5 páginas de um livro hoje. 📖',
+    'Resolva 5 exercícios de matemática. ➗',
+    'Aprenda 5 palavras novas em inglês. 🇺🇸',
+    'Faça um resumo de uma matéria. ✍️',
+    'Revise o conteúdo da última aula. 🧠',
+    'Estude durante um período de foco. ⏳',
+    'Pesquise uma curiosidade científica. 🔬',
+    'Organize suas atividades da semana. 📅',
+    'Explique um conteúdo que você aprendeu. 🎓'
+];
+
+function novoDesafio() {
+    const sorteado = desafios[
+        Math.floor(Math.random() * desafios.length)
+    ];
+
+    document.getElementById('desafioDiario').textContent = sorteado;
+}
