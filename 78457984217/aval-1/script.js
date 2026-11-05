@@ -1,13 +1,16 @@
-// Seleciona os elementos da página pelo ID ou classe
-const botao = document.getElementById('meuBotao');
-const mensagem = document.getElementById('minhaMensagem');
+// Aguarda o carregamento completo do documento
+document.addEventListener("DOMContentLoaded", () => {
+    // Seleciona todos os links dentro do menu de navegação
+    const links = document.querySelectorAll("nav a");
 
-// Adiciona um "ouvinte de evento" para o clique no botão
-botao.addEventListener('click', function() {
-    // Altera o texto do parágrafo quando o botão for clicado
-        mensagem.textContent = 'Você clicou no botão! O JavaScript está funcionando.';
+    // Adiciona um evento de clique para cada link
+    links.forEach(link => {
+        link.addEventListener("click", (event) => {
+            // Remove o destaque de todos os outros links antes
+            links.forEach(l => l.style.color = "white");
             
-                // Altera a cor do texto para dar um feedback visual
-                    mensagem.style.color = '#007bff';
-                    });
-                    
+            // Aplica uma nova cor temporária ao link clicado
+            event.target.style.color = "#2ecc71"; // Verde claro
+        });
+    });
+});
