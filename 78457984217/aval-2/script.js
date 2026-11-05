@@ -1,23 +1,28 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const buttons = document.querySelectorAll(".buy-btn");
-    const cartCount = document.getElementById("cart-count");
-    let count = 0;
+    // Captura os containers de lista de cada coluna
+    const todoList = document.querySelector("#col-todo .cards-list");
+    const progressList = document.querySelector("#col-progress .cards-list");
+    const doneList = document.querySelector("#col-done .cards-list");
 
-    // Adiciona evento dinâmico para somar itens ao carrinho
-    buttons.forEach(button => {
-        button.addEventListener("click", () => {
-            count++;
-            cartCount.textContent = count;
-            
-            // Feedback visual temporário no botão
-            const originalText = button.textContent;
-            button.textContent = "✓ Adicionado";
-            button.style.backgroundColor = "#2a9d8f"; // Verde sucesso
-            
-            setTimeout(() => {
-                button.textContent = originalText;
-                button.style.backgroundColor = "#3e2723";
-            }, 1000);
-        });
+    // Delegação de eventos para capturar o clique nos botões de mover
+    document.body.addEventListener("click", (event) => {
+        if (event.target.classList.contains("move-btn")) {
+            const button = event.target;
+            const card = button.closest(".task-card");
+            const currentColumnId = card.parentElement.parentElement.id;
+
+            if (currentColumnId === "col-todo") {
+                // Move da coluna "A Fazer" para "Em Progresso"
+                progressList.appendChild(card);
+            } else if (currentColumnId === "col-progress") {
+                // Move da coluna "Em Progresso" para "Concluído"
+                doneList.appendChild(card);
+                // Atualiza o botão para indicar finalização
+                button.textContent = "✓ Finalizado";
+                button.style.backgroundColor = "#10b981";
+                button.style.color = "white";
+                button.style.pointerEvents = "none";
+            }
+        }
     });
 });
