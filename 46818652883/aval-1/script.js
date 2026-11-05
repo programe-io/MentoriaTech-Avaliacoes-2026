@@ -1,50 +1,51 @@
 
-function alternarMenu() {
-    document.querySelector("nav").classList.toggle("aberto");
+// Abrir e fechar menu
+function abrirMenu() {
+    document.getElementById("menu").classList.toggle("aberto");
 }
 
-// Filtrar publicações por categoria
-function filtrar(categoria, botao) {
-    const posts = document.querySelectorAll(".post");
+// Filtrar destinos
+function filtrar(tipo, botao) {
+    const cards = document.querySelectorAll(".card");
 
-    document.querySelectorAll(".categories button")
-        .forEach(btn => btn.classList.remove("active"));
+    document.querySelectorAll(".filtros button")
+        .forEach(b => b.classList.remove("selecionado"));
 
-    botao.classList.add("active");
+    botao.classList.add("selecionado");
 
-    posts.forEach(post => {
-        const tipo = post.dataset.categoria;
-
-        post.style.display =
-            categoria === "Todos" || tipo === categoria
-            ? "block" : "none";
+    cards.forEach(card => {
+        if (tipo === "todos" || card.dataset.tipo === tipo) {
+            card.style.display = "block";
+        } else {
+            card.style.display = "none";
+        }
     });
 }
 
-// Pesquisar artigos
-function pesquisar() {
-    const termo = document.getElementById("pesquisa")
+// Pesquisar destino
+function pesquisarDestino() {
+    const pesquisa = document.getElementById("busca")
         .value.toLowerCase();
 
-    const posts = document.querySelectorAll(".post");
+    const cards = document.querySelectorAll(".card");
 
-    posts.forEach(post => {
-        const conteudo = post.innerText.toLowerCase();
+    cards.forEach(card => {
+        const texto = card.innerText.toLowerCase();
 
-        post.style.display = conteudo.includes(termo)
+        card.style.display = texto.includes(pesquisa)
             ? "block" : "none";
     });
 }
 
-// Abrir artigo completo
-function lerArtigo(titulo, texto) {
-    document.getElementById("tituloModal").innerText = titulo;
-    document.getElementById("textoModal").innerText = texto;
+// Abrir detalhes do destino
+function detalhes(titulo, texto) {
+    document.getElementById("modalTitulo").innerText = titulo;
+    document.getElementById("modalTexto").innerText = texto;
 
     document.getElementById("modal").style.display = "flex";
 }
 
-// Fechar artigo
+// Fechar modal
 function fecharModal() {
     document.getElementById("modal").style.display = "none";
 }
@@ -55,15 +56,3 @@ document.getElementById("modal").addEventListener("click", function(event) {
         fecharModal();
     }
 });
-
-// Inscrição na newsletter
-function inscrever(event) {
-    event.preventDefault();
-
-    const email = document.getElementById("email").value;
-
-    document.getElementById("mensagem").innerText =
-        "Obrigado! O e-mail " + email + " foi cadastrado com sucesso!";
-
-    document.getElementById("email").value = "";
-}
