@@ -1,5 +1,4 @@
 // CURTIR E DESCURTIR
-
 let curtiu = false;
 let currentLikes = 1248;
 
@@ -27,9 +26,7 @@ function toggleLike() {
         currentLikes.toLocaleString('pt-BR');
 }
 
-
 // ADICIONAR COMENTÁRIO
-
 function addComment() {
 
     const input = document.getElementById('comment-input');
@@ -58,9 +55,7 @@ function addComment() {
     input.value = '';
 }
 
-
 // VOLTAR AO INÍCIO
-
 function irInicio() {
     document.querySelector('.feed-content')
         .scrollTo({top: 0, behavior: 'smooth'});
