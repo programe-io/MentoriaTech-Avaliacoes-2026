@@ -1,61 +1,35 @@
-// Função para adicionar uma notícia
-function adicionarNoticia() {
+// Lista de curiosidades
 
-    let titulo = document.getElementById("titulo").value;
+let curiosidades = [
 
-    let descricao = document.getElementById("descricao").value;
+    "O primeiro domínio registrado na internet foi symbolics.com, em 1985.",
 
-    if (titulo === "" || descricao === "") {
-        alert("Preencha todos os campos!");
-        return;
+    "O Bluetooth recebeu esse nome em referência ao rei Harald Bluetooth.",
+
+    "O primeiro iPhone foi lançado em 2007.",
+
+    "O código QR foi criado no Japão, em 1994.",
+
+    "A linguagem Python foi criada por Guido van Rossum."
+
+];
+
+// Controlar a curiosidade exibida
+
+let indice = 0;
+
+// Função para mostrar curiosidades
+
+function mostrarCuriosidade() {
+
+    let elemento = document.getElementById("curiosidade-extra");
+
+    elemento.innerText = curiosidades[indice];
+
+    indice++;
+
+    if (indice >= curiosidades.length) {
+        indice = 0;
     }
 
-    // Criar o card
-    let card = document.createElement("article");
-
-    card.className = "card";
-
-    card.innerHTML = `
-        <h3>${titulo}</h3>
-        <p>${descricao}</p>
-        <span>Nova notícia</span>
-    `;
-
-    // Adicionar na página
-    document.getElementById("noticias").prepend(card);
-
-    // Limpar campos
-    document.getElementById("titulo").value = "";
-    document.getElementById("descricao").value = "";
-
-    alert("Notícia adicionada com sucesso!");
-}
-
-
-// Função para pesquisar notícias
-function pesquisar() {
-
-    let termo = document.getElementById("pesquisa")
-        .value.toLowerCase();
-
-    let cards = document.querySelectorAll(".card");
-
-    let encontrados = 0;
-
-    cards.forEach(function(card) {
-
-        let texto = card.innerText.toLowerCase();
-
-        if (texto.includes(termo)) {
-            card.style.display = "block";
-            encontrados++;
-        } else {
-            card.style.display = "none";
-        }
-
-    });
-
-    if (encontrados === 0) {
-        alert("Nenhuma notícia encontrada!");
-    }
 }
