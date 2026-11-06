@@ -1,0 +1,147 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biblioteca Virtual</title>
+
+<style>
+body {
+  font-family: Arial;
+  background: #eaf0f8;
+  text-align: center;
+  margin: 0;
+}
+
+header {
+  background: #243b64;
+  color: white;
+  padding: 25px;
+}
+
+.container {
+  background: white;
+  max-width: 500px;
+  margin: 30px auto;
+  padding: 20px;
+  border-radius: 12px;
+}
+
+input {
+  padding: 12px;
+  margin: 5px;
+  width: 80%;
+}
+
+button {
+  background: #243b64;
+  color: white;
+  border: none;
+  padding: 12px;
+  margin: 8px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.livro {
+  background: #edf2fa;
+  padding: 12px;
+  margin: 10px;
+  border-radius: 8px;
+}
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+<header>
+  <h1>📚 Biblioteca Virtual</h1>
+  <p>Seja bem-vindo à nossa biblioteca!</p>
+</header>
+
+<div class="container">
+  <h2>Cadastrar Livro</h2>
+
+  <input id="titulo" placeholder="Nome do livro">
+  <input id="autor" placeholder="Nome do autor">
+
+  <button onclick="adicionarLivro()">
+    Adicionar Livro
+  </button>
+
+  <h2>Pesquisar Livros</h2>
+  <input id="pesquisa"
+  placeholder="Digite o título..."
+  oninput="mostrarLivros()">
+
+  <h2>Livros Cadastrados</h2>
+  <p id="quantidade">Total: 0 livros</p>
+
+  <div id="lista"></div>
+</div>
+
+<script>
+let livros = [];
+
+function adicionarLivro() {
+  let titulo = document.getElementById("titulo").value;
+  let autor = document.getElementById("autor").value;
+
+  if (titulo === "" || autor === "") {
+    alert("Preencha todos os campos!");
+    return;
+  }
+
+  livros.push({ titulo, autor });
+
+  document.getElementById("titulo").value = "";
+  document.getElementById("autor").value = "";
+
+  mostrarLivros();
+}
+
+function mostrarLivros() {
+  let lista = document.getElementById("lista");
+  let pesquisa = document.getElementById("pesquisa").value.toLowerCase();
+
+  lista.innerHTML = "";
+
+  let encontrados = livros.filter(livro =>
+    livro.titulo.toLowerCase().includes(pesquisa)
+  );
+
+  encontrados.forEach((livro) => {
+    let item = document.createElement("div");
+    item.className = "livro";
+
+    item.innerHTML = `
+      <strong>${livro.titulo}</strong>
+      <p>Autor: ${livro.autor}</p>
+      <button onclick="excluirLivro('${livro.titulo.replace(/'/g, "\\'")}')">
+        Excluir
+      </button>
+    `;
+
+    lista.appendChild(item);
+  });
+
+  document.getElementById("quantidade").innerText =
+    "Total: " + livros.length + " livros";
+}
+
+function excluirLivro(titulo) {
+  let indice = livros.findIndex(livro => livro.titulo === titulo);
+
+  if (indice !== -1) {
+    livros.splice(indice, 1);
+  }
+
+  mostrarLivros();
+}
+</script>
+
+<script src="script.js"></script></body>
+</html>
