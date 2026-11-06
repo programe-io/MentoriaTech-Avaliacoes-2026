@@ -1,12 +1,13 @@
 
 let tarefas = [];
-let proximoCodigo = 1;
+let codigo = 1;
 
 // Cadastrar tarefa
-function adicionarTarefa() {
-    const titulo = document.getElementById("titulo").value.trim();
-    const prioridade = Number(document.getElementById("prioridade").value);
-    const mensagem = document.getElementById("mensagem");
+function cadastrarTarefa() {
+
+    let titulo = document.getElementById("titulo").value.trim();
+    let prioridade = Number(document.getElementById("prioridade").value);
+    let mensagem = document.getElementById("mensagem");
 
     if (titulo.length < 5) {
         mensagem.textContent = "O título precisa ter pelo menos 5 caracteres!";
@@ -15,19 +16,20 @@ function adicionarTarefa() {
     }
 
     if (![1, 2, 3].includes(prioridade)) {
-        mensagem.textContent = "Selecione uma prioridade válida!";
+        mensagem.textContent = "Escolha uma prioridade entre 1 e 3!";
         mensagem.style.color = "red";
         return;
     }
 
-    const tarefa = {
-        codigo: proximoCodigo++,
+    let tarefa = {
+        codigo: codigo,
         titulo: titulo,
         prioridade: prioridade,
         concluida: false
     };
 
     tarefas.push(tarefa);
+    codigo++;
 
     mensagem.textContent = "Tarefa cadastrada com sucesso!";
     mensagem.style.color = "green";
@@ -40,97 +42,88 @@ function adicionarTarefa() {
 
 // Listar tarefas
 function listarTarefas() {
-    const lista = document.getElementById("listaTarefas");
 
+    let lista = document.getElementById("lista");
     lista.innerHTML = "";
 
-    tarefas.forEach(tarefa => {
-        const item = document.createElement("li");
+    tarefas.forEach(function(tarefa) {
+
+        let item = document.createElement("li");
 
         if (tarefa.concluida) {
             item.classList.add("concluida");
         }
 
-        const titulo = document.createElement("strong");
-        titulo.className = "titulo-tarefa";
-        titulo.textContent = tarefa.titulo;
+        item.innerHTML =
+            "<strong>Código:</strong> " + tarefa.codigo +
+            "<br><strong>Título:</strong> " + tarefa.titulo +
+            "<br><strong>Prioridade:</strong> " + tarefa.prioridade +
+            "<br><strong>Status:</strong> " +
+            (tarefa.concluida ? "Concluída" : "Pendente");
 
-        const informacoes = document.createElement("p");
-        informacoes.textContent =
-            "Código: " + tarefa.codigo +
-            " | Prioridade: " + tarefa.prioridade +
-            " | Status: " + (tarefa.concluida ? "Concluída" : "Pendente");
-
-        const acoes = document.createElement("div");
+        let acoes = document.createElement("div");
         acoes.className = "acoes";
 
-        const concluir = document.createElement("button");
-        concluir.className = "btn-concluir";
-        concluir.textContent = tarefa.concluida ? "Concluída" : "Concluir";
-        concluir.disabled = tarefa.concluida;
-        concluir.onclick = function() {
+        let botaoConcluir = document.createElement("button");
+        botaoConcluir.textContent = "Concluir";
+        botaoConcluir.className = "concluir";
+
+        botaoConcluir.onclick = function() {
             concluirTarefa(tarefa.codigo);
         };
 
-        const seletor = document.createElement("select");
+        let seletor = document.createElement("select");
 
-        seletor.innerHTML = `
-            <option value="">Nova prioridade</option>
-            <option value="1">Alta</option>
-            <option value="2">Média</option>
-            <option value="3">Baixa</option>
-        `;
+        seletor.innerHTML =
+            '<option value="">Nova prioridade</option>' +
+            '<option value="1">Alta</option>' +
+            '<option value="2">Média</option>' +
+            '<option value="3">Baixa</option>';
 
-        const alterar = document.createElement("button");
-        alterar.className = "btn-alterar";
-        alterar.textContent = "Alterar prioridade";
+        let botaoAlterar = document.createElement("button");
+        botaoAlterar.textContent = "Alterar prioridade";
+        botaoAlterar.className = "alterar";
 
-        alterar.onclick = function() {
-            alterarPrioridade(
-                tarefa.codigo,
-                Number(seletor.value)
-            );
+        botaoAlterar.onclick = function() {
+            alterarPrioridade(tarefa.codigo, Number(seletor.value));
         };
 
-        acoes.appendChild(concluir);
+        acoes.appendChild(botaoConcluir);
         acoes.appendChild(seletor);
-        acoes.appendChild(alterar);
+        acoes.appendChild(botaoAlterar);
 
-        item.appendChild(titulo);
-        item.appendChild(informacoes);
         item.appendChild(acoes);
-
         lista.appendChild(item);
     });
 }
 
 // Concluir tarefa
-function concluirTarefa(codigo) {
-    const tarefa = tarefas.find(t => t.codigo === codigo);
+function concluirTarefa(codigoTarefa) {
 
-    if (!tarefa) {
-        alert("Tarefa não encontrada!");
-        return;
+    let tarefa = tarefas.find(function(t) {
+        return t.codigo === codigoTarefa;
+    });
+
+    if (tarefa) {
+        tarefa.concluida = true;
+        listarTarefas();
     }
-
-    tarefa.concluida = true;
-    listarTarefas();
 }
 
 // Alterar prioridade
-function alterarPrioridade(codigo, novaPrioridade) {
-    const tarefa = tarefas.find(t => t.codigo === codigo);
-
-    if (!tarefa) {
-        alert("Tarefa não encontrada!");
-        return;
-    }
+function alterarPrioridade(codigoTarefa, novaPrioridade) {
 
     if (![1, 2, 3].includes(novaPrioridade)) {
         alert("Selecione uma prioridade válida!");
         return;
     }
 
-    tarefa.prioridade = novaPrioridade;
-    listarTarefas();
+    let tarefa = tarefas.find(function(t) {
+        return t.codigo === codigoTarefa;
+    });
+
+    if (tarefa) {
+        tarefa.prioridade = novaPrioridade;
+        listarTarefas();
+    }
 }
