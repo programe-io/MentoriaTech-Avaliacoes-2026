@@ -1,0 +1,428 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mini Instagram</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #fafafa;
+    color: #262626;
+}
+
+header {
+    background: white;
+    border-bottom: 1px solid #ddd;
+    padding: 15px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.logo {
+    font-family: cursive;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+header input {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.container {
+    max-width: 600px;
+    margin: 25px auto;
+}
+
+.stories {
+    display: flex;
+    gap: 18px;
+    background: white;
+    padding: 18px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin-bottom: 20px;
+}
+
+.story {
+    text-align: center;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.story img {
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    padding: 3px;
+    border: 3px solid #e1306c;
+    object-fit: cover;
+}
+
+.post {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 25px;
+}
+
+.post-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+}
+
+.post-header img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.post-image {
+    width: 100%;
+    max-height: 600px;
+    object-fit: cover;
+    display: block;
+}
+
+.actions {
+    padding: 12px;
+    font-size: 25px;
+}
+
+.actions span {
+    cursor: pointer;
+    margin-right: 12px;
+}
+
+.liked {
+    color: red;
+}
+
+.description {
+    padding: 0 12px 12px;
+}
+
+.comments {
+    padding: 0 12px 12px;
+    color: #555;
+    font-size: 14px;
+}
+
+.comment-box {
+    display: flex;
+    border-top: 1px solid #eee;
+    padding: 12px;
+}
+
+.comment-box input {
+    flex: 1;
+    border: none;
+    outline: none;
+}
+
+.comment-box button {
+    border: none;
+    background: none;
+    color: #0095f6;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.create {
+    background: white;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.create input {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.create button {
+    background: #0095f6;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+footer {
+    text-align: center;
+    padding: 20px;
+    color: #888;
+}
+
+@media(max-width: 600px) {
+    header input {
+        width: 110px;
+    }
+    .container {
+        margin: 10px;
+    }
+}
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+<header>
+    <div class="logo">Mini Insta</div>
+    <input type="text" placeholder="Pesquisar...">
+    <span>🏠 ❤️ 👤</span>
+</header>
+
+<div class="container">
+
+    <div class="stories">
+        <div class="story">
+            <img src="https://i.pravatar.cc/100?img=1">
+            <p>Maria</p>
+        </div>
+        <div class="story">
+            <img src="https://i.pravatar.cc/100?img=2">
+            <p>João</p>
+        </div>
+        <div class="story">
+            <img src="https://i.pravatar.cc/100?img=3">
+            <p>Ana</p>
+        </div>
+        <div class="story">
+            <img src="https://i.pravatar.cc/100?img=4">
+            <p>Pedro</p>
+        </div>
+        <div class="story">
+            <img src="https://i.pravatar.cc/100?img=5">
+            <p>Lucas</p>
+        </div>
+    </div>
+
+    <div class="create">
+        <h3>📸 Nova publicação</h3>
+        <input type="text" id="user" placeholder="Seu nome">
+        <input type="text" id="image" placeholder="URL da imagem">
+        <input type="text" id="caption" placeholder="Escreva uma legenda">
+        <button onclick="createPost()">Publicar</button>
+    </div>
+
+    <div id="feed">
+
+        <div class="post">
+            <div class="post-header">
+                <img src="https://i.pravatar.cc/100?img=1">
+                <strong>maria_fotos</strong>
+            </div>
+
+            <img class="post-image"
+            src="https://picsum.photos/id/1011/600/600">
+
+            <div class="actions">
+                <span onclick="like(this)">♡</span>
+                <span onclick="focusComment(this)">💬</span>
+                <span>📤</span>
+            </div>
+
+            <div class="description">
+                <strong>maria_fotos</strong>
+                Aproveitando a natureza! 🌳❤️
+                <p class="likes">0 curtidas</p>
+            </div>
+
+            <div class="comments"></div>
+
+            <div class="comment-box">
+                <input placeholder="Adicione um comentário...">
+                <button onclick="comment(this)">Publicar</button>
+            </div>
+        </div>
+
+        <div class="post">
+            <div class="post-header">
+                <img src="https://i.pravatar.cc/100?img=2">
+                <strong>joao_tech</strong>
+            </div>
+
+            <img class="post-image"
+            src="https://picsum.photos/id/0/600/600">
+
+            <div class="actions">
+                <span onclick="like(this)">♡</span>
+                <span onclick="focusComment(this)">💬</span>
+                <span>📤</span>
+            </div>
+
+            <div class="description">
+                <strong>joao_tech</strong>
+                Meu setup novo! 💻🔥
+                <p class="likes">0 curtidas</p>
+            </div>
+
+            <div class="comments"></div>
+
+            <div class="comment-box">
+                <input placeholder="Adicione um comentário...">
+                <button onclick="comment(this)">Publicar</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<footer>
+    Mini Instagram © 2026
+</footer>
+
+<script>
+
+function like(element) {
+    const post = element.closest(".post");
+    const likes = post.querySelector(".likes");
+
+    let count = Number(likes.dataset.count || 0);
+
+    if (element.classList.contains("liked")) {
+        count--;
+        element.classList.remove("liked");
+        element.innerText = "♡";
+    } else {
+        count++;
+        element.classList.add("liked");
+        element.innerText = "♥";
+    }
+
+    likes.dataset.count = count;
+    likes.innerText = count + " curtidas";
+}
+
+function comment(button) {
+    const post = button.closest(".post");
+    const input = post.querySelector(".comment-box input");
+    const comments = post.querySelector(".comments");
+
+    if (input.value.trim() === "") return;
+
+    const p = document.createElement("p");
+    p.innerHTML = "<strong>Você:</strong> ";
+    p.appendChild(document.createTextNode(input.value));
+
+    comments.appendChild(p);
+    input.value = "";
+}
+
+function focusComment(element) {
+    element.closest(".post")
+    .querySelector(".comment-box input").focus();
+}
+
+function createPost() {
+    const user = document.getElementById("user").value.trim();
+    const image = document.getElementById("image").value.trim();
+    const caption = document.getElementById("caption").value.trim();
+
+    if (!user || !image) {
+        alert("Preencha seu nome e a URL da imagem!");
+        return;
+    }
+
+    try {
+        const url = new URL(image);
+        if (!["http:", "https:"].includes(url.protocol)) {
+            throw new Error();
+        }
+    } catch {
+        alert("Digite uma URL de imagem válida!");
+        return;
+    }
+
+    const post = document.createElement("div");
+    post.className = "post";
+
+    const header = document.createElement("div");
+    header.className = "post-header";
+
+    const avatar = document.createElement("img");
+    avatar.src = "https://i.pravatar.cc/100?u=" +
+        encodeURIComponent(user);
+
+    const username = document.createElement("strong");
+    username.textContent = user;
+
+    header.append(avatar, username);
+
+    const photo = document.createElement("img");
+    photo.className = "post-image";
+    photo.src = image;
+    photo.alt = "Publicação de " + user;
+
+    const actions = document.createElement("div");
+    actions.className = "actions";
+    actions.innerHTML = `
+        <span onclick="like(this)">♡</span>
+        <span onclick="focusComment(this)">💬</span>
+        <span>📤</span>
+    `;
+
+    const description = document.createElement("div");
+    description.className = "description";
+
+    const name = document.createElement("strong");
+    name.textContent = user + " ";
+
+    const text = document.createTextNode(caption);
+
+    const likes = document.createElement("p");
+    likes.className = "likes";
+    likes.textContent = "0 curtidas";
+
+    description.append(name, text, likes);
+
+    const comments = document.createElement("div");
+    comments.className = "comments";
+
+    const commentBox = document.createElement("div");
+    commentBox.className = "comment-box";
+    commentBox.innerHTML = `
+        <input placeholder="Adicione um comentário...">
+        <button onclick="comment(this)">Publicar</button>
+    `;
+
+    post.append(header, photo, actions, description,
+                comments, commentBox);
+
+    document.getElementById("feed").prepend(post);
+
+    document.getElementById("user").value = "";
+    document.getElementById("image").value = "";
+    document.getElementById("caption").value = "";
+}
+
+</script>
+
+<script src="script.js"></script></body>
+</html>
