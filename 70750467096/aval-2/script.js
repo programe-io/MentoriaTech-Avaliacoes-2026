@@ -2,15 +2,21 @@
 let tarefas = [];
 let proximoCodigo = 1;
 
-// Cadastrar uma nova tarefa
-function cadastrarTarefa(titulo, prioridade) {
-    if (titulo.trim().length < 5) {
-        console.log("Erro: o título deve ter no mínimo 5 caracteres.");
+// Cadastrar tarefa
+function adicionarTarefa() {
+    const titulo = document.getElementById("titulo").value.trim();
+    const prioridade = Number(document.getElementById("prioridade").value);
+    const mensagem = document.getElementById("mensagem");
+
+    if (titulo.length < 5) {
+        mensagem.textContent = "O título precisa ter pelo menos 5 caracteres!";
+        mensagem.style.color = "red";
         return;
     }
 
-    if (prioridade < 1 || prioridade > 3 || !Number.isInteger(prioridade)) {
-        console.log("Erro: a prioridade deve ser entre 1 e 3.");
+    if (![1, 2, 3].includes(prioridade)) {
+        mensagem.textContent = "Selecione uma prioridade válida!";
+        mensagem.style.color = "red";
         return;
     }
 
@@ -22,67 +28,109 @@ function cadastrarTarefa(titulo, prioridade) {
     };
 
     tarefas.push(tarefa);
-    console.log("Tarefa cadastrada com sucesso!");
+
+    mensagem.textContent = "Tarefa cadastrada com sucesso!";
+    mensagem.style.color = "green";
+
+    document.getElementById("titulo").value = "";
+    document.getElementById("prioridade").value = "";
+
+    listarTarefas();
 }
 
-// Listar tarefas cadastradas
+// Listar tarefas
 function listarTarefas() {
-    if (tarefas.length === 0) {
-        console.log("Nenhuma tarefa cadastrada.");
-        return;
-    }
+    const lista = document.getElementById("listaTarefas");
+
+    lista.innerHTML = "";
 
     tarefas.forEach(tarefa => {
-        console.log(
-            `Código: ${tarefa.codigo} | ` +
-            `Título: ${tarefa.titulo} | ` +
-            `Prioridade: ${tarefa.prioridade} | ` +
-            `Status: ${tarefa.concluida ? "Concluída" : "Pendente"}`
-        );
+        const item = document.createElement("li");
+
+        if (tarefa.concluida) {
+            item.classList.add("concluida");
+        }
+
+        const titulo = document.createElement("strong");
+        titulo.className = "titulo-tarefa";
+        titulo.textContent = tarefa.titulo;
+
+        const informacoes = document.createElement("p");
+        informacoes.textContent =
+            "Código: " + tarefa.codigo +
+            " | Prioridade: " + tarefa.prioridade +
+            " | Status: " + (tarefa.concluida ? "Concluída" : "Pendente");
+
+        const acoes = document.createElement("div");
+        acoes.className = "acoes";
+
+        const concluir = document.createElement("button");
+        concluir.className = "btn-concluir";
+        concluir.textContent = tarefa.concluida ? "Concluída" : "Concluir";
+        concluir.disabled = tarefa.concluida;
+        concluir.onclick = function() {
+            concluirTarefa(tarefa.codigo);
+        };
+
+        const seletor = document.createElement("select");
+
+        seletor.innerHTML = `
+            <option value="">Nova prioridade</option>
+            <option value="1">Alta</option>
+            <option value="2">Média</option>
+            <option value="3">Baixa</option>
+        `;
+
+        const alterar = document.createElement("button");
+        alterar.className = "btn-alterar";
+        alterar.textContent = "Alterar prioridade";
+
+        alterar.onclick = function() {
+            alterarPrioridade(
+                tarefa.codigo,
+                Number(seletor.value)
+            );
+        };
+
+        acoes.appendChild(concluir);
+        acoes.appendChild(seletor);
+        acoes.appendChild(alterar);
+
+        item.appendChild(titulo);
+        item.appendChild(informacoes);
+        item.appendChild(acoes);
+
+        lista.appendChild(item);
     });
 }
 
-// Marcar uma tarefa como concluída
+// Concluir tarefa
 function concluirTarefa(codigo) {
     const tarefa = tarefas.find(t => t.codigo === codigo);
 
     if (!tarefa) {
-        console.log("Tarefa não encontrada.");
+        alert("Tarefa não encontrada!");
         return;
     }
 
     tarefa.concluida = true;
-    console.log("Tarefa concluída com sucesso!");
+    listarTarefas();
 }
 
-// Alterar a prioridade de uma tarefa
+// Alterar prioridade
 function alterarPrioridade(codigo, novaPrioridade) {
     const tarefa = tarefas.find(t => t.codigo === codigo);
 
     if (!tarefa) {
-        console.log("Tarefa não encontrada.");
+        alert("Tarefa não encontrada!");
         return;
     }
 
-    if (!Number.isInteger(novaPrioridade) ||
-        novaPrioridade < 1 || novaPrioridade > 3) {
-        console.log("Erro: a prioridade deve ser entre 1 e 3.");
+    if (![1, 2, 3].includes(novaPrioridade)) {
+        alert("Selecione uma prioridade válida!");
         return;
     }
 
     tarefa.prioridade = novaPrioridade;
-    console.log("Prioridade alterada com sucesso!");
+    listarTarefas();
 }
-
-// Exemplos de utilização
-cadastrarTarefa("Estudar JavaScript", 1);
-cadastrarTarefa("Fazer atividade", 2);
-cadastrarTarefa("Organizar documentos", 3);
-
-listarTarefas();
-
-concluirTarefa(1);
-alterarPrioridade(2, 1);
-
-console.log("\nLista atualizada:");
-listarTarefas();
