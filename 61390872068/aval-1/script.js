@@ -1,51 +1,45 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const mundo = document.getElementById('mundo');
-    const slots = document.querySelectorAll('.slot');
-    
-    let blocoSelecionado = 'grama';
-    const iconesBlocos = {
-        grama: '🌿',
-        terra: '🟫',
-        pedra: '⬜',
-        madeira: '🪵'
-    };
+document.addEventListener("DOMContentLoaded", () => {
+    const summaryList = document.getElementById("summary-list");
+    const sections = document.querySelectorAll(".blog-section");
+    const backToTopBtn = document.getElementById("backToTop");
 
-    // Selecionar bloco na Hotbar
-    slots.forEach(slot => {
-        slot.addEventListener('click', () => {
-            slots.forEach(s => s.classList.remove('selecionado'));
-            slot.classList.add('selecionado');
-            blocoSelecionado = slot.getAttribute('data-bloco');
+    // 1. Geração Dinâmica do Sumário na Lateral
+    sections.forEach((section) => {
+        const titleText = section.querySelector("h2").innerText;
+        const sectionId = section.getAttribute("id");
+
+        // Cria o elemento da lista
+        const listItem = document.createElement("li");
+        const link = document.createElement("a");
+        
+        link.setAttribute("href", `#${sectionId}`);
+        link.innerText = titleText;
+
+        // Adiciona rolagem suave personalizada ao clicar
+        link.addEventListener("click", (e) => {
+            e.preventDefault();
+            document.getElementById(sectionId).scrollIntoView({
+                behavior: "smooth"
+            });
         });
+
+        listItem.appendChild(link);
+        summaryList.appendChild(listItem);
     });
 
-    // Criar o grid do mundo (8x5 = 40 blocos)
-    const totalBlocos = 40;
-    for (let i = 0; i < totalBlocos; i++) {
-        const divBloco = document.createElement('div');
-        divBloco.classList.add('bloco');
-        
-        // Define alguns blocos iniciais de grama na última linha
-        if (i >= 32) {
-            divBloco.textContent = iconesBlocos.grama;
-            divBloco.dataset.tipo = 'grama';
+    // 2. Comportamento do Botão de Voltar ao Topo
+    window.onscroll = () => {
+        if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+            backToTopBtn.style.display = "block";
         } else {
-            divBloco.textContent = '';
-            divBloco.dataset.tipo = 'vazio';
+            backToTopBtn.style.display = "none";
         }
+    };
 
-        // Clicar no bloco para colocar ou remover
-        divBloco.addEventListener('click', () => {
-            if (divBloco.dataset.tipo === 'vazio') {
-                divBloco.textContent = iconesBlocos[blocoSelecionado];
-                divBloco.dataset.tipo = blocoSelecionado;
-            } else {
-                // Se já tem bloco, limpa
-                divBloco.textContent = '';
-                divBloco.dataset.tipo = 'vazio';
-            }
+    backToTopBtn.addEventListener("click", () => {
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
         });
-
-        mundo.appendChild(divBloco);
-    }
-}
+    });
+});
