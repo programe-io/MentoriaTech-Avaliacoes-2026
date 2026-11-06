@@ -1,47 +1,202 @@
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f9;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+/* Paleta de Cores Neon / Sobrenatural Mais Viva e Bonita */
+:root {
+    --bg-main: #0d0e12;
+    --card-bg: #181a23;
+    
+    /* Cores das "Espécies" / Categorias */
+    --vamp-glow: linear-gradient(135deg, #ff0055, #8b0000);
+    --witch-glow: linear-gradient(135deg, #a855f7, #4c1d95);
+    --wolf-glow: linear-gradient(135deg, #f59e0b, #78350f);
+    
+    --text-main: #f3f4f6;
+    --text-muted: #9ca3af;
+    --border-color: #272a37;
+}
+
+* {
+    box-sizing: border-box;
     margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.container {
-    background: #ffffff;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+body {
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    padding-bottom: 5px;
+}
+
+/* Header com Efeito de Texto Iluminado */
+.feed-header {
+    background: radial-gradient(circle at center, #1e1b4b 0%, #0d0e12 100%);
+    padding: 40px 20px;
     text-align: center;
+    border-bottom: 1px solid var(--border-color);
 }
 
-h1 {
-    color: #333333;
-    font-size: 24px;
+.text-gradient {
+    background: linear-gradient(90deg, #ff0055, #a855f7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
-p {
-    font-size: 18px;
-    color: #666666;
+.feed-header p {
+    color: var(--text-muted);
+    margin-top: 8px;
+    font-size: 0.95rem;
 }
 
-span {
-    font-weight: bold;
-    color: #007bff;
+/* Container do Feed */
+.feed-container {
+    max-width: 650px;
+    margin: 0 auto;
+    padding: 20px;
 }
 
-button {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    font-size: 16px;
-    border-radius: 5px;
+/* Botões de Filtro Modernos e Coloridos */
+.feed-filters {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+    overflow-x: auto;
+    padding-bottom: 5px;
+}
+
+.filter-btn {
+    background-color: var(--card-bg);
+    color: var(--text-main);
+    border: 1px solid var(--border-color);
+    padding: 8px 16px;
+    border-radius: 20px;
     cursor: pointer;
-    transition: background-color 0.2s;
+    font-weight: 600;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-button:hover {
-    background-color: #0056b3;
+.filter-btn:hover {
+    border-color: #6b7280;
+}
+
+/* Estado Ativo dos Filtros com Cores Personalizadas */
+.filter-btn.active {
+    background: linear-gradient(90deg, #ff0055, #a855f7);
+    color: #fff;
+    border: none;
+    box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3);
+}
+
+/* Cards do Feed Estilizados e Polidos */
+.feed-main {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.feed-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feed-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Linha lateral brilhante indicando a categoria */
+.feed-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 5px;
+    height: 100%;
+}
+
+.feed-card.vamp::before { background: var(--vamp-glow); }
+.feed-card.witch::before { background: var(--witch-glow); }
+.feed-card.wolf::before { background: var(--wolf-glow); }
+
+/* Badges / Tags coloridas */
+.card-tag {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: bold;
+    padding: 4px 10px;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+}
+
+.tag-vamp { background: rgba(255, 0, 85, 0.15); color: #ff4382; }
+.tag-witch { background: rgba(168, 85, 247, 0.15); color: #c084fc; }
+.tag-wolf { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
+
+/* Tipografia interna do Card */
+.card-title {
+    font-size: 1.25rem;
+    margin-bottom: 6px;
+    color: #fff;
+}
+
+.card-meta {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+}
+
+.card-meta .author {
+    color: #fff;
+    font-weight: 500;
+}
+
+.card-excerpt {
+    font-size: 0.95rem;
+    color: #d1d5db;
+    line-height: 1.5;
+    margin-bottom: 20px;
+}
+
+/* Rodapé do Card com Interações */
+.card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--border-color);
+    padding-top: 15px;
+}
+
+.like-btn {
+    background-color: rgba(255, 255, 255, 0.05);
+    border: none;
+    color: #fff;
+    padding: 6px 14px;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: background 0.2s, transform 0.1s;
+}
+
+.like-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.like-btn.liked {
+    background-color: rgba(255, 0, 85, 0.2);
+    color: #ff4382;
+    font-weight: bold;
+}
+
+.card-status {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    background-color: rgba(255, 255, 255, 0.03);
+    padding: 4px 10px;
+    border-radius: 4px;
 }
