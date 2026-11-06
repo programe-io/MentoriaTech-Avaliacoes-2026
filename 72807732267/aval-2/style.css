@@ -1,85 +1,107 @@
-let tarefas = [];
 
-function cadastrar() {
-    let codigo = document.getElementById("codigo").value;
-        let titulo = document.getElementById("titulo").value;
-            let prioridade = Number(document.getElementById("prioridade").value);
+* {
+    margin: 0;
+        padding: 0;
+            box-sizing: border-box;
+            }
 
-                if (codigo === "" || titulo.length < 5) {
-                        alert("Preencha o código e um título com pelo menos 5 caracteres!");
-                                return;
-                                    }
+            body {
+                font-family: Arial, sans-serif;
+                    background: #eef2f7;
+                        padding: 30px;
+                        }
 
-                                        if (tarefas.some(t => t.codigo === codigo)) {
-                                                alert("Código já cadastrado!");
-                                                        return;
+                        .container {
+                            max-width: 600px;
+                                margin: auto;
+                                    background: white;
+                                        padding: 25px;
+                                            border-radius: 12px;
+                                                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                                                }
+
+                                                h1 {
+                                                    text-align: center;
+                                                        color: #17365d;
+                                                            margin-bottom: 10px;
                                                             }
 
-                                                                tarefas.push({
-                                                                        codigo: codigo,
-                                                                                titulo: titulo,
-                                                                                        prioridade: prioridade,
-                                                                                                concluida: false
-                                                                                                    });
+                                                            p {
+                                                                text-align: center;
+                                                                    color: #666;
+                                                                        margin-bottom: 20px;
+                                                                        }
 
-                                                                                                        alert("Tarefa cadastrada com sucesso!");
+                                                                        h2 {
+                                                                            color: #17365d;
+                                                                                margin: 25px 0 15px;
+                                                                                }
 
-                                                                                                            listar();
+                                                                                .formulario {
+                                                                                    display: flex;
+                                                                                        flex-direction: column;
+                                                                                            gap: 12px;
+                                                                                            }
+
+                                                                                            input, select {
+                                                                                                padding: 12px;
+                                                                                                    border: 1px solid #ccc;
+                                                                                                        border-radius: 6px;
+                                                                                                            font-size: 15px;
                                                                                                             }
 
-                                                                                                            function listar() {
-                                                                                                                let lista = document.getElementById("lista");
+                                                                                                            button {
+                                                                                                                padding: 12px;
+                                                                                                                    background: #087f68;
+                                                                                                                        color: white;
+                                                                                                                            border: none;
+                                                                                                                                border-radius: 6px;
+                                                                                                                                    cursor: pointer;
+                                                                                                                                        font-size: 15px;
+                                                                                                                                        }
 
-                                                                                                                    lista.innerHTML = "";
+                                                                                                                                        button:hover {
+                                                                                                                                            background: #05634f;
+                                                                                                                                            }
 
-                                                                                                                        tarefas.forEach(t => {
-                                                                                                                                lista.innerHTML += `
-                                                                                                                                            <div>
-                                                                                                                                                            <p>
-                                                                                                                                                                                Código: ${t.codigo}<br>
-                                                                                                                                                                                                    Título: ${t.titulo}<br>
-                                                                                                                                                                                                                        Prioridade: ${t.prioridade}<br>
-                                                                                                                                                                                                                                            Status: ${t.concluida ? "Concluída" : "Pendente"}
-                                                                                                                                                                                                                                                            </p>
+                                                                                                                                            .tarefa {
+                                                                                                                                                background: #f5f7fa;
+                                                                                                                                                    padding: 15px;
+                                                                                                                                                        margin-bottom: 12px;
+                                                                                                                                                            border-radius: 8px;
+                                                                                                                                                                border-left: 5px solid #087f68;
+                                                                                                                                                                }
 
-                                                                                                                                                                                                                                                                            <button onclick="concluir('${t.codigo}')">
-                                                                                                                                                                                                                                                                                                Concluir tarefa
-                                                                                                                                                                                                                                                                                                                </button>
-                                                                                                                                                                                                                                                                                                                            </div>
-                                                                                                                                                                                                                                                                                                                                        <hr>
-                                                                                                                                                                                                                                                                                                                                                `;
-                                                                                                                                                                                                                                                                                                                                                    });
-                                                                                                                                                                                                                                                                                                                                                    }
+                                                                                                                                                                .tarefa button {
+                                                                                                                                                                    margin-top: 10px;
+                                                                                                                                                                        margin-right: 5px;
+                                                                                                                                                                            padding: 8px;
+                                                                                                                                                                            }
 
-                                                                                                                                                                                                                                                                                                                                                    function concluir(codigo) {
-                                                                                                                                                                                                                                                                                                                                                        let tarefa = tarefas.find(t => t.codigo === codigo);
+                                                                                                                                                                            .alta {
+                                                                                                                                                                                border-left-color: red;
+                                                                                                                                                                                }
 
-                                                                                                                                                                                                                                                                                                                                                            if (tarefa) {
-                                                                                                                                                                                                                                                                                                                                                                    tarefa.concluida = true;
-                                                                                                                                                                                                                                                                                                                                                                            alert("Tarefa concluída!");
-                                                                                                                                                                                                                                                                                                                                                                                    listar();
-                                                                                                                                                                                                                                                                                                                                                                                        }
-                                                                                                                                                                                                                                                                                                                                                                                        }
+                                                                                                                                                                                .media {
+                                                                                                                                                                                    border-left-color: orange;
+                                                                                                                                                                                    }
 
-                                                                                                                                                                                                                                                                                                                                                                                        function alterarPrioridade() {
-                                                                                                                                                                                                                                                                                                                                                                                            let codigo = document.getElementById("codigoAlterar").value;
-                                                                                                                                                                                                                                                                                                                                                                                                let prioridade = Number(document.getElementById("novaPrioridade").value);
+                                                                                                                                                                                    .baixa {
+                                                                                                                                                                                        border-left-color: green;
+                                                                                                                                                                                        }
 
-                                                                                                                                                                                                                                                                                                                                                                                                    let tarefa = tarefas.find(t => t.codigo === codigo);
+                                                                                                                                                                                        .concluida {
+                                                                                                                                                                                            opacity: 0.6;
+                                                                                                                                                                                                text-decoration: line-through;
+                                                                                                                                                                                                }
 
-                                                                                                                                                                                                                                                                                                                                                                                                        if (!tarefa) {
-                                                                                                                                                                                                                                                                                                                                                                                                                alert("Tarefa não encontrada!");
-                                                                                                                                                                                                                                                                                                                                                                                                                        return;
-                                                                                                                                                                                                                                                                                                                                                                                                                            }
+                                                                                                                                                                                                @media (max-width: 600px) {
+                                                                                                                                                                                                    body {
+                                                                                                                                                                                                            padding: 12px;
+                                                                                                                                                                                                                }
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                if (prioridade < 1 || prioridade > 3) {
-                                                                                                                                                                                                                                                                                                                                                                                                                                        alert("Prioridade inválida!");
-                                                                                                                                                                                                                                                                                                                                                                                                                                                return;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                    }
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                        tarefa.prioridade = prioridade;
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                            alert("Prioridade alterada com sucesso!");
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                listar();
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                }
+                                                                                                                                                                                                                    .container {
+                                                                                                                                                                                                                            padding: 18px;
+                                                                                                                                                                                                                                }
+                                                                                                                                                                                                                                }
+                                                                                                                                                                                                                                
