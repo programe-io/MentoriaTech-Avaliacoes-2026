@@ -10,17 +10,13 @@ function curtir(botao) {
                 );
 
                   if (botao.textContent === "♡") {
-
                       botao.textContent = "♥";
-                          botao.style.color = "#e84393";
+                          botao.style.color = "red";
                               quantidade++;
-
                                 } else {
-
                                     botao.textContent = "♡";
-                                        botao.style.color = "#8b5cf6";
+                                        botao.style.color = "#1877f2";
                                             quantidade--;
-
                                               }
 
                                                 likes.dataset.count = quantidade;
@@ -29,65 +25,63 @@ function curtir(botao) {
 
                                                   function comentar() {
 
-                                                    let mensagem = prompt("Escreva seu comentário:");
+                                                    let comentario = prompt("Digite seu comentário:");
 
-                                                      if (mensagem && mensagem.trim()) {
-                                                          alert("Comentário enviado com sucesso!");
+                                                      if (comentario && comentario.trim()) {
+                                                          alert("Comentário enviado!");
                                                             }
 
                                                             }
 
-                                                            function criarPost() {
+                                                            function novoPost() {
 
-                                                              let legenda = prompt("Qual será a legenda da publicação?");
+                                                              let legenda = prompt("Escreva sua publicação:");
 
                                                                 if (!legenda || !legenda.trim()) {
                                                                     return;
                                                                       }
 
                                                                         let post = document.createElement("article");
+
                                                                           post.className = "post";
 
                                                                             let perfil = document.createElement("div");
                                                                               perfil.className = "perfil";
+                                                                                perfil.innerHTML = "<strong>meu.perfil</strong>";
 
-                                                                                let nome = document.createElement("strong");
-                                                                                  nome.textContent = "meu.perfil";
+                                                                                  let texto = document.createElement("p");
+                                                                                    texto.className = "legenda";
 
-                                                                                    perfil.appendChild(nome);
+                                                                                      let nome = document.createElement("b");
+                                                                                        nome.textContent = "meu.perfil ";
 
-                                                                                      let texto = document.createElement("p");
-                                                                                        texto.className = "legenda";
+                                                                                          texto.appendChild(nome);
+                                                                                            texto.appendChild(
+                                                                                                document.createTextNode(legenda)
+                                                                                                  );
 
-                                                                                          let identificacao = document.createElement("b");
-                                                                                            identificacao.textContent = "meu.perfil ";
+                                                                                                    let acoes = document.createElement("div");
+                                                                                                      acoes.className = "acoes";
 
-                                                                                              texto.appendChild(identificacao);
-                                                                                                texto.appendChild(document.createTextNode(legenda));
+                                                                                                        let botao = document.createElement("button");
+                                                                                                          botao.textContent = "♡";
+                                                                                                            botao.onclick = function() {
+                                                                                                                curtir(this);
+                                                                                                                  };
 
-                                                                                                  let likes = document.createElement("p");
-                                                                                                    likes.className = "likes";
-                                                                                                      likes.textContent = "0 curtidas";
+                                                                                                                    acoes.appendChild(botao);
 
-                                                                                                        let acoes = document.createElement("div");
-                                                                                                          acoes.className = "acoes";
+                                                                                                                      let likes = document.createElement("p");
+                                                                                                                        likes.className = "likes";
+                                                                                                                          likes.textContent = "0 curtidas";
 
-                                                                                                            let botao = document.createElement("button");
-                                                                                                              botao.textContent = "♡";
+                                                                                                                            post.appendChild(perfil);
+                                                                                                                              post.appendChild(acoes);
+                                                                                                                                post.appendChild(likes);
+                                                                                                                                  post.appendChild(texto);
 
-                                                                                                                botao.onclick = function() {
-                                                                                                                    curtir(this);
-                                                                                                                      };
+                                                                                                                                    document.getElementById("feed").prepend(post);
 
-                                                                                                                        acoes.appendChild(botao);
-
-                                                                                                                          post.appendChild(perfil);
-                                                                                                                            post.appendChild(acoes);
-                                                                                                                              post.appendChild(likes);
-                                                                                                                                post.appendChild(texto);
-
-                                                                                                                                  document.getElementById("feed").prepend(post);
-
-                                                                                                                                    alert("Publicação criada!");
-                                                                                                                                    }
-                                                                                                                                    
+                                                                                                                                      alert("Publicação criada!");
+                                                                                                                                      }
+                                                                                                                                      
