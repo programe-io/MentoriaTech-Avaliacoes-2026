@@ -10,13 +10,17 @@ function curtir(botao) {
                 );
 
                   if (botao.textContent === "♡") {
+
                       botao.textContent = "♥";
                           botao.style.color = "red";
                               quantidade++;
+
                                 } else {
+
                                     botao.textContent = "♡";
-                                        botao.style.color = "#1877f2";
+                                        botao.style.color = "#d4af37";
                                             quantidade--;
+
                                               }
 
                                                 likes.dataset.count = quantidade;
@@ -25,15 +29,15 @@ function curtir(botao) {
 
                                                   function comentar() {
 
-                                                    let comentario = prompt("Digite seu comentário:");
+                                                    let mensagem = prompt("Digite seu comentário:");
 
-                                                      if (comentario && comentario.trim()) {
-                                                          alert("Comentário enviado!");
+                                                      if (mensagem && mensagem.trim()) {
+                                                          alert("Comentário enviado com sucesso!");
                                                             }
 
                                                             }
 
-                                                            function novoPost() {
+                                                            function criarPost() {
 
                                                               let legenda = prompt("Escreva sua publicação:");
 
@@ -42,46 +46,47 @@ function curtir(botao) {
                                                                       }
 
                                                                         let post = document.createElement("article");
-
                                                                           post.className = "post";
 
                                                                             let perfil = document.createElement("div");
                                                                               perfil.className = "perfil";
-                                                                                perfil.innerHTML = "<strong>meu.perfil</strong>";
 
-                                                                                  let texto = document.createElement("p");
-                                                                                    texto.className = "legenda";
+                                                                                let nome = document.createElement("strong");
+                                                                                  nome.textContent = "meu.perfil";
 
-                                                                                      let nome = document.createElement("b");
-                                                                                        nome.textContent = "meu.perfil ";
+                                                                                    perfil.appendChild(nome);
 
-                                                                                          texto.appendChild(nome);
-                                                                                            texto.appendChild(
-                                                                                                document.createTextNode(legenda)
-                                                                                                  );
+                                                                                      let acoes = document.createElement("div");
+                                                                                        acoes.className = "acoes";
 
-                                                                                                    let acoes = document.createElement("div");
-                                                                                                      acoes.className = "acoes";
+                                                                                          let botao = document.createElement("button");
+                                                                                            botao.textContent = "♡";
+                                                                                              botao.onclick = function() {
+                                                                                                  curtir(this);
+                                                                                                    };
 
-                                                                                                        let botao = document.createElement("button");
-                                                                                                          botao.textContent = "♡";
-                                                                                                            botao.onclick = function() {
-                                                                                                                curtir(this);
-                                                                                                                  };
+                                                                                                      acoes.appendChild(botao);
 
-                                                                                                                    acoes.appendChild(botao);
+                                                                                                        let likes = document.createElement("p");
+                                                                                                          likes.className = "likes";
+                                                                                                            likes.textContent = "0 curtidas";
 
-                                                                                                                      let likes = document.createElement("p");
-                                                                                                                        likes.className = "likes";
-                                                                                                                          likes.textContent = "0 curtidas";
+                                                                                                              let texto = document.createElement("p");
+                                                                                                                texto.className = "legenda";
 
-                                                                                                                            post.appendChild(perfil);
-                                                                                                                              post.appendChild(acoes);
-                                                                                                                                post.appendChild(likes);
-                                                                                                                                  post.appendChild(texto);
+                                                                                                                  let identificacao = document.createElement("b");
+                                                                                                                    identificacao.textContent = "meu.perfil ";
 
-                                                                                                                                    document.getElementById("feed").prepend(post);
+                                                                                                                      texto.appendChild(identificacao);
+                                                                                                                        texto.appendChild(document.createTextNode(legenda));
 
-                                                                                                                                      alert("Publicação criada!");
-                                                                                                                                      }
-                                                                                                                                      
+                                                                                                                          post.appendChild(perfil);
+                                                                                                                            post.appendChild(acoes);
+                                                                                                                              post.appendChild(likes);
+                                                                                                                                post.appendChild(texto);
+
+                                                                                                                                  document.getElementById("feed").prepend(post);
+
+                                                                                                                                    alert("Publicação criada!");
+                                                                                                                                    }
+                                                                                                                                    
