@@ -1,0 +1,122 @@
+// AVALIAÇÃO 1 - PROJETO CRUD E ESTOQUE EM JAVASCRIPT
+// Ambiente de execução: Programiz (JavaScript)
+// =====================================================
+
+// Lista que guarda todos os produtos do estoque
+let produtos = [];
+
+// -----------------------------------------------------
+// FUNÇÃO PARA VALIDAR OS DADOS DO PRODUTO
+// -----------------------------------------------------
+function validarProduto(descricao, quantidade, valor) {
+  if (descricao.length < 5) {
+    throw new Error("Descrição deve ter, no mínimo, cinco caracteres");
+  }
+
+  if (quantidade < 1) {
+    throw new Error("Quantidade deve ser maior que zero");
+  }
+
+  if (valor < 0) {
+    throw new Error("Valor deve ser maior ou igual a zero");
+  }
+}
+
+// -----------------------------------------------------
+// FUNÇÃO PARA CADASTRAR UM NOVO PRODUTO
+// -----------------------------------------------------
+function cadastrarProduto(descricao, quantidade, valor) {
+  validarProduto(descricao, quantidade, valor);
+
+  let novoProduto = {
+    codigo: produtos.length + 1,
+    descricao: descricao,
+    quantidade: quantidade,
+    valor: valor
+  };
+
+  produtos.push(novoProduto);
+}
+
+// -----------------------------------------------------
+// FUNÇÃO PARA LISTAR OS PRODUTOS CADASTRADOS
+// -----------------------------------------------------
+function listarProdutos() {
+  console.log(produtos);
+}
+
+// -----------------------------------------------------
+// FUNÇÃO PARA ATUALIZAR O VALOR DE UM PRODUTO
+// (o novo valor SUBSTITUI o valor antigo)
+// -----------------------------------------------------
+function atualizarValor(codigoProduto, novoValor) {
+  if (novoValor < 0) {
+    throw new Error("Valor deve ser maior ou igual a zero");
+  }
+
+  const produto = produtos.find(
+    (prod) => prod.codigo === codigoProduto
+  );
+
+  if (produto) {
+    produto.valor = novoValor;
+  } else {
+    throw new Error("Produto não encontrado");
+  }
+}
+
+// -----------------------------------------------------
+// FUNÇÃO PARA ATUALIZAR A QUANTIDADE DE UM PRODUTO
+// (a nova quantidade é SOMADA ao estoque existente)
+// -----------------------------------------------------
+function atualizarQuantidade(codigoProduto, novaQuantidade) {
+  if (novaQuantidade < 1) {
+    throw new Error("Quantidade deve ser maior que zero");
+  }
+
+  const produto = produtos.find(
+    (prod) => prod.codigo === codigoProduto
+  );
+
+  if (produto) {
+    produto.quantidade = produto.quantidade + novaQuantidade;
+  } else {
+    throw new Error("Produto não encontrado");
+  }
+}
+
+// =====================================================
+// TESTES DO SISTEMA
+// =====================================================
+
+// Lista vazia no início
+listarProdutos();
+
+// Cadastrando produtos
+cadastrarProduto("Cadeira gamer", 12, 699);
+listarProdutos();
+
+cadastrarProduto("Mouse Logitech", 38, 99);
+listarProdutos();
+
+// Atualizando o valor do produto de código 2
+// O novo valor substitui o valor antigo
+atualizarValor(2, 97);
+listarProdutos();
+
+// Atualizando a quantidade do produto de código 1
+// A nova quantidade é somada ao estoque existente
+atualizarQuantidade(1, 3);
+listarProdutos();
+
+// -----------------------------------------------------
+// TESTES DE ERRO
+// Tire o // da frente de UMA linha por vez para testar.
+// Cada uma interrompe o programa com uma mensagem de erro.
+// -----------------------------------------------------
+
+// cadastrarProduto("TV", 5, 1500);
+// cadastrarProduto("Mouse Logitech", 0, 99);
+// cadastrarProduto("Cadeira gamer", 12, -699);
+// atualizarValor(5, 97);
+// atualizarQuantidade(9, 10);
