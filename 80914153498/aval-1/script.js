@@ -1,11 +1,30 @@
 
-console.log("Bem-vindo ao Mundo do Futebol!");
+function publicar() {
+    const titulo = document.getElementById("titulo").value.trim();
+        const conteudo = document.getElementById("conteudo").value.trim();
 
-const cards = document.querySelectorAll(".card");
+            if (titulo === "" || conteudo === "") {
+                    alert("Preencha o título e o conteúdo!");
+                            return;
+                                }
 
-cards.forEach(card => {
-    card.addEventListener("click", () => {
-            alert("Você selecionou: " + card.textContent);
-                });
-                });
-                
+                                    const postagem = document.createElement("article");
+                                        postagem.className = "post";
+
+                                            const novoTitulo = document.createElement("h3");
+                                                novoTitulo.textContent = titulo;
+
+                                                    const novoConteudo = document.createElement("p");
+                                                        novoConteudo.textContent = conteudo;
+
+                                                            postagem.appendChild(novoTitulo);
+                                                                postagem.appendChild(novoConteudo);
+
+                                                                    document.getElementById("postagens").prepend(postagem);
+
+                                                                        document.getElementById("titulo").value = "";
+                                                                            document.getElementById("conteudo").value = "";
+
+                                                                                alert("Postagem publicada com sucesso!");
+                                                                                }
+                                                                                
