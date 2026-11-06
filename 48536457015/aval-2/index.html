@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <style>
+        /* --- ESTILOS GERAIS --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        }
+
+        body {
+            background-color: lch(60.53% 61.86 275.52);
+            color: hsl(0, 0%, 0%);
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 580px;
+        }
+
+        /* --- CAIXA DE CRIAÇÃO DE POST --- */
+        .post-creator {
+            background: lch(87.87% 119.02 135.55);
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 1px 2px lch(87.87% 119.02 135.55);
+            margin-bottom: 20px;
+        }
+
+        .post-creator textarea {
+            width: 100%;
+            height: 80px;
+            border: 1px solid  lch(87.87% 119.02 135.55);;
+            border-radius: 6px;
+            padding: 12px;
+            resize: none;
+            font-size: 15px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .post-creator textarea:focus {
+            border-color: hwb(0 0% 100%);
+        }
+
+        .post-creator-bottom {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 12px;
+        }
+
+        .btn-post {
+            background-color: #1877f2;
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-post:hover {
+            background-color: #166fe5;
+        }
+
+        /* --- FEED DE POSTS --- */
+        .feed {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .post {
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Topo do Post (Usuário e Tempo) */
+        .post-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            background-color: hsl(223, 100%, 24%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: hsl(151, 100%, 50%);
+            margin-right: 10px;
+        }
+
+        .post-info-meta {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .username {
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .timestamp {
+            font-size: 12px;
+            color: #65676b;
+        }
+
+        /* Conteúdo do Post */
+        .post-content {
+            font-size: 15px;
+            line-height: 1.5;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+            margin-bottom: 12px;
+        }
+
+        /* Rodapé do Post (Interações) */
+        .post-actions {
+            border-top: 1px solid #e4e6eb;
+            padding-top: 10px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-action {
+            background: none;
+            border: none;
+            color: #65676b;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: background-color 0.2s;
+        }
+
+        .btn-action:hover {
+            background-color: #f2f2f2;
+        }
+
+        .btn-action.liked {
+            color: #1877f2;
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+    <div class="container">
+        <!-- Caixa para Criar Novo Post -->
+        <div class="post-creator">
+            <textarea id="postInput" placeholder="No que você está pensando?"></textarea>
+            <div class="post-creator-bottom">
+                <button class="btn-post" id="publishBtn">Publicar</button>
+            </div>
+        </div>
+
+        <!-- Feed onde as postagens vão aparecer -->
+        <div class="feed" id="feedContainer">
+            <!-- Os posts serão inseridos aqui dinamicamente via JS -->
+        </div>
+    </div>
+
+    <script>
+        // --- LÓGICA DO JAVASCRIPT ---
+        const postInput = document.getElementById('postInput');
+        const publishBtn = document.getElementById('publishBtn');
+        const feedContainer = document.getElementById('feedContainer');
+
+        // Dados simulados para iniciar o feed com conteúdo
+        let postsData = [
+            {
+                id: 1,
+                author: "Carol Oliveira",
+                initials: "AS",
+                content: "Estou aprendendo violão, e já sei de 3 músicas nele, poderiam me apoiar ?",
+                time: "Há 10 min",
+                likes: 8,
+                userHasLiked: false
+            },
+            {
+                id: 2,
+                author: "Francisco Brito",
+                initials: "LS",
+                content: "Alguém aí quer maratonar Black clover comigo? ",
+                time: "Há  35 min",
+                likes: 36,
+                userHasLiked: true
+            } 
+
+        ];
+
+        // Função responsável por renderizar a lista de posts na tela
+        function renderFeed() {
+            feedContainer.innerHTML = ''; // Limpa o feed existente
+            
+            postsData.forEach(post => {
+                const postElement = document.createElement('div');
+                postElement.classList.add('post');
+
+                postElement.innerHTML = `
+                    <div class="post-header">
+                        <div class="avatar">${post.initials}</div>
+                        <div class="post-info-meta">
+                            <span class="username">${post.author}</span>
+                            <span class="timestamp">${post.time}</span>
+                        </div>
+                    </div>
+                    <div class="post-content">${escapeHTML(post.content)}</div>
+                    <div class="post-actions">
+                        <button class="btn-action ${post.userHasLiked ? 'liked' : ''}" onclick="toggleLike(${post.id})">
+                            👍 ${post.likes} ${post.likes === 100 ? 'Curtida' : 'Curtidas'}
+                        </button>
+                    </div>
+                `;
+                feedContainer.appendChild(postElement);
+            });
+        }
+
+        // Função para criar uma nova postagem
+        function createPost() {
+            const text = postInput.value.trim();
+            
+            if (text === '') {
+                alert('Por favor, digite algo antes de publicar!');
+                return;
+            }
+
+            
+
+            // Adiciona o novo post no topo da lista
+            postsData.unshift(newPost);
+            
+            // Limpa o campo de texto e atualiza a tela
+            postInput.value = '';
+            renderFeed();
+        }
+
+        // Função para alternar o botão de curtir (Like/Unlike)
+        function toggleLike(postId) {
+            postsData = postsData.map(post => {
+                if (post.id === postId) {
+                    if (post.userHasLiked) {
+                        return { ...post, likes: post.likes - 1, userHasLiked: false };
+                    } else {
+                        return { ...post, likes: post.likes + 1, userHasLiked: true };
+                    }
+                }
+                return post;
+            });
+            renderFeed();
+        }
+
+        // Medida de segurança simples para evitar problemas com injeção de scripts (XSS)
+        function escapeHTML(str) {
+            return str.replace(/[&<>'"]/g, 
+                tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+            );
+        }
+
+        // Ouvintes de eventos (Listeners)
+        publishBtn.addEventListener('click', createPost);
+
+        // Inicializa o feed carregando os posts simulados
+        renderFeed();
+    </script>
+</body>
+</html>
