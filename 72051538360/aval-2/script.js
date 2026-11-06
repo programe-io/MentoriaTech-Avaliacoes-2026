@@ -1,0 +1,98 @@
+```javascript
+// Array para armazenar as tarefas
+let tarefas = [];
+let geradorDeCodigo = 0;
+
+// Validar os dados da tarefa
+function validarDadosDaTarefa(titulo, prioridade) {
+    if (titulo.length < 5) {
+        throw new Error("O título deve ter no mínimo 5 caracteres.");
+    }
+
+    if (prioridade < 1 || prioridade > 3) {
+        throw new Error("A prioridade deve estar entre 1 e 3.");
+    }
+}
+
+// Cadastrar uma nova tarefa
+function cadastrarTarefa(titulo, prioridade) {
+    validarDadosDaTarefa(titulo, prioridade);
+
+    let tarefa = {
+        codigo: ++geradorDeCodigo,
+        titulo: titulo,
+        prioridade: prioridade,
+        status: true
+    };
+
+    tarefas.push(tarefa);
+
+    return tarefa;
+}
+
+// Listar todas as tarefas
+function listarTarefas() {
+    return tarefas;
+}
+
+// Buscar uma tarefa pelo código
+function buscarTarefa(codigo) {
+    const tarefa = tarefas.find(
+        (tarefa) => tarefa.codigo === codigo
+    );
+
+    if (!tarefa) {
+        throw new Error("Tarefa não encontrada.");
+    }
+
+    return tarefa;
+}
+
+// Marcar uma tarefa como concluída
+function concluirTarefa(codigo) {
+    const tarefa = buscarTarefa(codigo);
+
+    if (tarefa.status === false) {
+        throw new Error("A tarefa já está concluída.");
+    }
+
+    tarefa.status = false;
+
+    return tarefa;
+}
+
+// Alterar a prioridade de uma tarefa
+function alterarPrioridade(codigo, novaPrioridade) {
+    const tarefa = buscarTarefa(codigo);
+
+    validarDadosDaTarefa(tarefa.titulo, novaPrioridade);
+
+    tarefa.prioridade = novaPrioridade;
+
+    return tarefa;
+}
+
+// Exemplos de utilização
+
+cadastrarTarefa("Estudar JavaScript", 1);
+cadastrarTarefa("Fazer atividade", 2);
+cadastrarTarefa("Organizar material", 3);
+
+// Listar tarefas cadastradas
+console.log("Lista de tarefas:");
+console.log(listarTarefas());
+
+// Buscar uma tarefa pelo código
+console.log("Tarefa encontrada:");
+console.log(buscarTarefa(1));
+
+// Concluir uma tarefa
+concluirTarefa(1);
+
+// Alterar prioridade de uma tarefa
+alterarPrioridade(2, 1);
+
+// Listar tarefas após as alterações
+console.log("Tarefas atualizadas:");
+console.log(listarTarefas());
+```
