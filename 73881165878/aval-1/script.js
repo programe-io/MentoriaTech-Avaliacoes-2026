@@ -1,18 +1,32 @@
+
+
 let produtos = [];
 
 function cadastrar() {
 
-    let codigo = document.getElementById("codigo").value;
+    let codigo = document.getElementById("codigo").value.trim();
 
-    let descricao = document.getElementById("descricao").value;
+    let descricao = document.getElementById("descricao").value.trim();
 
-    let quantidade = Number(document.getElementById("quantidade").value);
+    let quantidade = document.getElementById("quantidade").value;
 
-    let valor = Number(document.getElementById("valor").value);
+    let valor = document.getElementById("valor").value;
 
-    if (!codigo || !descricao || quantidade < 0 || !valor) {
+    if (codigo === "" || descricao === "" ||
 
-        alert("Preencha os campos corretamente!");
+        quantidade === "" || valor === "" ||
+
+        Number(quantidade) < 0 || Number(valor) < 0) {
+
+        alert("Preencha todos os campos corretamente!");
+
+        return;
+
+    }
+
+    if (produtos.some(p => p.codigo === codigo)) {
+
+        alert("Código já cadastrado!");
 
         return;
 
@@ -24,13 +38,21 @@ function cadastrar() {
 
         descricao,
 
-        quantidade,
+        quantidade: Number(quantidade),
 
-        valor
+        valor: Number(valor)
 
     });
 
-    alert("Produto cadastrado!");
+    alert("Produto cadastrado com sucesso!");
+
+    document.getElementById("codigo").value = "";
+
+    document.getElementById("descricao").value = "";
+
+    document.getElementById("quantidade").value = "";
+
+    document.getElementById("valor").value = "";
 
     listar();
 
@@ -42,25 +64,31 @@ function listar() {
 
     lista.innerHTML = "";
 
-    produtos.forEach(produto => {
+    if (produtos.length === 0) {
 
-        lista.innerHTML += `
+        lista.textContent = "Nenhum produto cadastrado.";
 
-            <p>
+        return;
 
-                Código: ${produto.codigo}<br>
+    }
 
-                Descrição: ${produto.descricao}<br>
+    produtos.forEach(p => {
 
-                Quantidade: ${produto.quantidade}<br>
+        let div = document.createElement("div");
 
-                Valor: R$ ${produto.valor.toFixed(2)}
+        div.className = "produto";
 
-            </p>
+        div.textContent =
 
-            <hr>
+            "Código: " + p.codigo +
 
-        `;
+            " | Descrição: " + p.descricao +
+
+            " | Quantidade: " + p.quantidade +
+
+            " | Valor: R$ " + p.valor.toFixed(2);
+
+        lista.appendChild(div);
 
     });
 
@@ -68,64 +96,62 @@ function listar() {
 
 function alterarValor() {
 
-    let codigo = document.getElementById("codigoAlterar").value;
+    let codigo = document.getElementById("codigoAlterar").value.trim();
+
+    let novoValor = document.getElementById("novoValor").value;
 
     let produto = produtos.find(p => p.codigo === codigo);
 
-    if (produto) {
-
-        let valor = Number(document.getElementById("novoValor").value);
-
-        if (valor <= 0) {
-
-            alert("Digite um valor válido!");
-
-            return;
-
-        }
-
-        produto.valor = valor;
-
-        alert("Valor alterado!");
-
-        listar();
-
-    } else {
+    if (!produto) {
 
         alert("Produto não encontrado!");
 
+        return;
+
     }
+
+    if (novoValor === "" || Number(novoValor) < 0) {
+
+        alert("Digite um valor válido!");
+
+        return;
+
+    }
+
+    produto.valor = Number(novoValor);
+
+    alert("Valor alterado!");
+
+    listar();
 
 }
 
 function alterarQuantidade() {
 
-    let codigo = document.getElementById("codigoAlterar").value;
+    let codigo = document.getElementById("codigoAlterar").value.trim();
+
+    let novaQuantidade = document.getElementById("novaQuantidade").value;
 
     let produto = produtos.find(p => p.codigo === codigo);
 
-    if (produto) {
-
-        let quantidade = Number(document.getElementById("novaQuantidade").value);
-
-        if (quantidade < 0) {
-
-            alert("Digite uma quantidade válida!");
-
-            return;
-
-        }
-
-        produto.quantidade = quantidade;
-
-        alert("Quantidade alterada!");
-
-        listar();
-
-    } else {
+    if (!produto) {
 
         alert("Produto não encontrado!");
 
+        return;
+
     }
 
-}
+    if (novaQuantidade === "" || Number(novaQuantidade) < 0) {
+
+        alert("Digite uma quantidade válida!");
+
+        return;
+
+    }
+
+    produto.quantidade = Number(novaQuantidade);
+
+    alert("Quantidade alterada!");
+
+    listar();
