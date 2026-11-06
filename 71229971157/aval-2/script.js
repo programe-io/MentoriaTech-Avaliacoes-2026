@@ -1,92 +1,132 @@
 
-import java.util.Scanner;
+let tarefas = [];
+let proximoId = 1;
 
-public class MentoriaTec {
+// Cadastrar tarefa
+function cadastrarTarefa() {
+    const nome = document.getElementById("nomeTarefa").value;
+    const prioridade = document.getElementById("prioridade").value;
 
-    static Scanner scanner = new Scanner(System.in);
-
-    static void mostrarMenu() {
-        System.out.println("\n================================");
-        System.out.println("       MENTORIA TEC");
-        System.out.println(" Tecnologia para o seu futuro!");
-        System.out.println("================================");
-        System.out.println("1 - Conhecer a mentoria");
-        System.out.println("2 - Cursos disponíveis");
-        System.out.println("3 - Benefícios");
-        System.out.println("4 - Contato");
-        System.out.println("0 - Sair");
-        System.out.print("\nEscolha uma opção: ");
+    if (nome.trim() === "") {
+        alert("Digite o nome da tarefa!");
+        return;
     }
 
-    static void conhecerMentoria() {
-        System.out.println("\n--- SOBRE A MENTORIA TEC ---");
-        System.out.println("Aprenda tecnologia e desenvolva");
-        System.out.println("novas habilidades para o futuro.");
-        System.out.println("Nosso objetivo é ajudar você a evoluir!");
+    const tarefa = {
+        id: proximoId++,
+        nome: nome,
+        prioridade: prioridade,
+        concluida: false
+    };
+
+    tarefas.push(tarefa);
+
+    document.getElementById("nomeTarefa").value = "";
+
+    listarTarefas();
+}
+
+// Listar tarefas
+function listarTarefas() {
+    const lista = document.getElementById("listaTarefas");
+
+    lista.innerHTML = "";
+
+    tarefas.forEach(tarefa => {
+        const item = document.createElement("li");
+
+        if (tarefa.concluida) {
+            item.classList.add("concluida");
+        }
+
+        const nome = document.createElement("span");
+        nome.textContent = tarefa.nome +
+            " | Prioridade: " + tarefa.prioridade;
+
+        item.appendChild(nome);
+
+        const acoes = document.createElement("div");
+        acoes.classList.add("acoes");
+
+        // Botão concluir
+        const concluir = document.createElement("button");
+        concluir.textContent = tarefa.concluida
+            ? "Concluída"
+            : "Concluir";
+
+        concluir.disabled = tarefa.concluida;
+
+        concluir.onclick = function() {
+            concluirTarefa(tarefa.id);
+        };
+
+        // Botão alterar prioridade
+        const alterar = document.createElement("button");
+        alterar.textContent = "Alterar prioridade";
+
+        alterar.onclick = function() {
+            alterarPrioridade(tarefa.id);
+        };
+
+        // Botão excluir
+        const excluir = document.createElement("button");
+        excluir.textContent = "Excluir";
+        excluir.classList.add("excluir");
+
+        excluir.onclick = function() {
+            excluirTarefa(tarefa.id);
+        };
+
+        acoes.appendChild(concluir);
+        acoes.appendChild(alterar);
+        acoes.appendChild(excluir);
+
+        item.appendChild(acoes);
+        lista.appendChild(item);
+    });
+}
+
+// Concluir tarefa
+function concluirTarefa(id) {
+    const tarefa = tarefas.find(t => t.id === id);
+
+    if (tarefa) {
+        tarefa.concluida = true;
+        listarTarefas();
     }
+}
 
-    static void mostrarCursos() {
-        System.out.println("\n--- CURSOS DISPONÍVEIS ---");
-        System.out.println("1. Programação Java");
-        System.out.println("2. Desenvolvimento Web");
-        System.out.println("3. HTML e CSS");
-        System.out.println("4. Inteligência Artificial");
+// Alterar prioridade
+function alterarPrioridade(id) {
+    const tarefa = tarefas.find(t => t.id === id);
+
+    if (tarefa) {
+        let novaPrioridade = prompt(
+            "Digite a nova prioridade: Alta, Média ou Baixa"
+        );
+
+        if (novaPrioridade === null) return;
+
+        novaPrioridade = novaPrioridade.trim().toLowerCase();
+
+        const prioridades = {
+            "alta": "Alta",
+            "média": "Média",
+            "media": "Média",
+            "baixa": "Baixa"
+        };
+
+        if (prioridades[novaPrioridade]) {
+            tarefa.prioridade = prioridades[novaPrioridade];
+            listarTarefas();
+        } else {
+            alert("Prioridade inválida!");
+        }
     }
+}
 
-    static void mostrarBeneficios() {
-        System.out.println("\n--- BENEFÍCIOS ---");
-        System.out.println("- Aprendizado prático");
-        System.out.println("- Desenvolvimento de projetos");
-        System.out.println("- Orientação profissional");
-        System.out.println("- Evolução no seu próprio ritmo");
-    }
-
-    static void mostrarContato() {
-        System.out.println("\n--- ENTRE EM CONTATO ---");
-        System.out.println("Projeto: Mentoria Tec");
-        System.out.println("Contato: contato@mentori atec.com");
-        System.out.println("Substitua pelo e-mail oficial.");
-    }
-
-    public static void main(String[] args) {
-
-        int opcao;
-
-        do {
-            mostrarMenu();
-            opcao = scanner.nextInt();
-
-            switch (opcao) {
-                case 1:
-                    conhecerMentoria();
-                    break;
-
-                case 2:
-                    mostrarCursos();
-                    break;
-
-                case 3:
-                    mostrarBeneficios();
-                    break;
-
-                case 4:
-                    mostrarContato();
-                    break;
-
-                case 0:
-                    System.out.println(
-                        "\nObrigado por conhecer a Mentoria Tec!"
-                    );
-                    break;
-
-                default:
-                    System.out.println(
-                        "\nOpção inválida. Tente novamente."
-                    );
-            }
-
-        } while (opcao != 0);
-
-        scanner.close();
-    }
+// Excluir tarefa
+function excluirTarefa(id) {
+    tarefas = tarefas.filter(t => t.id !== id);
+    listarTarefas();
 }
