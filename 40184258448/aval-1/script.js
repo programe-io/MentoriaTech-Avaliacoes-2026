@@ -1,153 +1,181 @@
-# ============================================================
-# MENTORIA: LISTAS DE PRODUTOS EM PYTHON
-# Cole este código em: https://www.programiz.com/python-programming/online-compiler/
-# Dica: rode um bloco por vez (comente os outros com #)
-# ============================================================
+// ============================================================
+// LISTA DE PRODUTOS - VERSÃO PARA O PROGRAMIZ (JavaScript)
+// Cole em: https://www.programiz.com/javascript/online-compiler/
+// Não usa prompt(): tudo roda só com console.log.
+// Para testar outros casos, altere as chamadas na seção "USO" no final.
+//
+// Regras:
+//  - nome com no mínimo 3 caracteres
+//  - preço maior que 0
+//  - quantidade inteira maior ou igual a 0
+// ============================================================
 
-# ------------------------------------------------------------
-# 1) CRIANDO UMA LISTA SIMPLES
-# ------------------------------------------------------------
-print("=== 1) Lista simples ===")
-produtos = ["Arroz", "Feijão", "Macarrão", "Café"]
-print(produtos)
-print("Primeiro produto:", produtos[0])
-print("Último produto:", produtos[-1])
-print("Quantidade de produtos:", len(produtos))
+var produtos = [];
+var proximoId = 1;
 
-# ------------------------------------------------------------
-# 2) ADICIONAR, REMOVER E ALTERAR
-# ------------------------------------------------------------
-print("\n=== 2) Adicionar, remover e alterar ===")
-produtos.append("Açúcar")        # adiciona no final
-produtos.insert(1, "Sal")        # adiciona na posição 1
-produtos.remove("Macarrão")      # remove pelo nome
-produtos[0] = "Arroz Integral"   # altera um item
-print(produtos)
+// ---------- Validações ----------
+function nomeValido(nome) {
+  return typeof nome === "string" && nome.trim().length >= 3;
+}
 
-# ------------------------------------------------------------
-# 3) PERCORRENDO A LISTA COM FOR
-# ------------------------------------------------------------
-print("\n=== 3) Percorrendo com for ===")
-for i, produto in enumerate(produtos, start=1):
-    print(f"{i}. {produto}")
+function precoValido(preco) {
+  return typeof preco === "number" && preco > 0;
+}
 
-# ------------------------------------------------------------
-# 4) LISTA DE DICIONÁRIOS (nome, preço, estoque)
-# ------------------------------------------------------------
-print("\n=== 4) Lista de dicionários ===")
-estoque = [
-    {"nome": "Arroz",    "preco": 25.90, "qtd": 10},
-    {"nome": "Feijão",   "preco": 8.50,  "qtd": 0},
-    {"nome": "Café",     "preco": 18.00, "qtd": 5},
-    {"nome": "Açúcar",   "preco": 4.75,  "qtd": 20},
-]
+function quantidadeValida(qtd) {
+  return Number.isInteger(qtd) && qtd >= 0;
+}
 
-for p in estoque:
-    print(f"{p['nome']:<10} R$ {p['preco']:>6.2f}  | Estoque: {p['qtd']}")
+function formatarPreco(valor) {
+  return "R$ " + valor.toFixed(2).replace(".", ",");
+}
 
-# ------------------------------------------------------------
-# 5) BUSCAR UM PRODUTO
-# ------------------------------------------------------------
-print("\n=== 5) Buscar produto ===")
+function buscarPorId(id) {
+  for (var i = 0; i < produtos.length; i++) {
+    if (produtos[i].id === id) return produtos[i];
+  }
+  console.log("Erro: produto #" + id + " não encontrado.");
+  return null;
+}
 
-def buscar_produto(lista, nome):
-    for p in lista:
-        if p["nome"].lower() == nome.lower():
-            return p
-    return None
+// ---------- 1) Cadastrar produto ----------
+function cadastrarProduto(nome, preco, quantidade) {
+  if (!nomeValido(nome)) {
+    console.log('Erro: nome "' + nome + '" inválido (mínimo 3 caracteres).');
+    return;
+  }
+  if (!precoValido(preco)) {
+    console.log("Erro: preço inválido (deve ser maior que 0).");
+    return;
+  }
+  if (!quantidadeValida(quantidade)) {
+    console.log("Erro: quantidade inválida (use inteiro maior ou igual a 0).");
+    return;
+  }
+  var produto = {
+    id: proximoId,
+    nome: nome.trim(),
+    preco: preco,
+    quantidade: quantidade
+  };
+  proximoId++;
+  produtos.push(produto);
+  console.log("OK: produto #" + produto.id + ' "' + produto.nome + '" cadastrado.');
+}
 
-resultado = buscar_produto(estoque, "café")
-if resultado:
-    print("Encontrado:", resultado)
-else:
-    print("Produto não encontrado.")
+// ---------- 2) Listar produtos ----------
+function listarProdutos() {
+  console.log("");
+  console.log("===== LISTA DE PRODUTOS =====");
+  if (produtos.length === 0) {
+    console.log("Nenhum produto cadastrado.");
+    return;
+  }
+  for (var i = 0; i < produtos.length; i++) {
+    var p = produtos[i];
+    var aviso = p.quantidade === 0 ? "  (SEM ESTOQUE)" : "";
+    console.log(
+      "#" + p.id + " - " + p.nome + " | " + formatarPreco(p.preco) +
+      " | Qtd: " + p.quantidade + aviso
+    );
+  }
+  console.log("=============================");
+}
 
-# ------------------------------------------------------------
-# 6) FILTRAR (produtos em falta e produtos baratos)
-# ------------------------------------------------------------
-print("\n=== 6) Filtrar ===")
-em_falta = [p["nome"] for p in estoque if p["qtd"] == 0]
-baratos = [p["nome"] for p in estoque if p["preco"] < 10]
-print("Em falta:", em_falta)
-print("Baratos (< R$ 10):", baratos)
+// ---------- 3) Alterar preço ----------
+function alterarPreco(id, novoPreco) {
+  var p = buscarPorId(id);
+  if (!p) return;
+  if (!precoValido(novoPreco)) {
+    console.log("Erro: preço inválido (deve ser maior que 0).");
+    return;
+  }
+  p.preco = novoPreco;
+  console.log("OK: preço de " + p.nome + " alterado para " + formatarPreco(novoPreco) + ".");
+}
 
-# ------------------------------------------------------------
-# 7) ORDENAR
-# ------------------------------------------------------------
-print("\n=== 7) Ordenar ===")
-por_preco = sorted(estoque, key=lambda p: p["preco"])
-print("Do mais barato ao mais caro:")
-for p in por_preco:
-    print(f"  {p['nome']} - R$ {p['preco']:.2f}")
+// ---------- 4) Entrada de estoque ----------
+function adicionarEstoque(id, quantidade) {
+  var p = buscarPorId(id);
+  if (!p) return;
+  if (!Number.isInteger(quantidade) || quantidade <= 0) {
+    console.log("Erro: informe uma quantidade inteira maior que 0.");
+    return;
+  }
+  p.quantidade += quantidade;
+  console.log("OK: +" + quantidade + " de " + p.nome + ". Total: " + p.quantidade + ".");
+}
 
-por_nome = sorted(estoque, key=lambda p: p["nome"])
-print("Ordem alfabética:", [p["nome"] for p in por_nome])
+// ---------- 5) Vender produto ----------
+function venderProduto(id, quantidade) {
+  var p = buscarPorId(id);
+  if (!p) return;
+  if (!Number.isInteger(quantidade) || quantidade <= 0) {
+    console.log("Erro: informe uma quantidade inteira maior que 0.");
+    return;
+  }
+  if (quantidade > p.quantidade) {
+    console.log("Erro: estoque insuficiente de " + p.nome + " (disponível: " + p.quantidade + ").");
+    return;
+  }
+  p.quantidade -= quantidade;
+  console.log("OK: venda de " + quantidade + "x " + p.nome + " = " + formatarPreco(quantidade * p.preco) + ".");
+}
 
-# ------------------------------------------------------------
-# 8) CÁLCULOS: valor total do estoque, média, mais caro
-# ------------------------------------------------------------
-print("\n=== 8) Cálculos ===")
-total = sum(p["preco"] * p["qtd"] for p in estoque)
-media = sum(p["preco"] for p in estoque) / len(estoque)
-mais_caro = max(estoque, key=lambda p: p["preco"])
-print(f"Valor total em estoque: R$ {total:.2f}")
-print(f"Preço médio: R$ {media:.2f}")
-print(f"Produto mais caro: {mais_caro['nome']} (R$ {mais_caro['preco']:.2f})")
+// ---------- 6) Remover produto ----------
+function removerProduto(id) {
+  for (var i = 0; i < produtos.length; i++) {
+    if (produtos[i].id === id) {
+      var nome = produtos[i].nome;
+      produtos.splice(i, 1);
+      console.log("OK: produto " + nome + " removido.");
+      return;
+    }
+  }
+  console.log("Erro: produto #" + id + " não encontrado.");
+}
 
-# ------------------------------------------------------------
-# 9) APLICAR DESCONTO EM TODOS OS PRODUTOS
-# ------------------------------------------------------------
-print("\n=== 9) Desconto de 10% ===")
-com_desconto = [
-    {**p, "preco": round(p["preco"] * 0.90, 2)} for p in estoque
-]
-for p in com_desconto:
-    print(f"{p['nome']}: R$ {p['preco']:.2f}")
+// ---------- 7) Relatório ----------
+function relatorio() {
+  var total = 0;
+  var semEstoque = [];
+  for (var i = 0; i < produtos.length; i++) {
+    total += produtos[i].preco * produtos[i].quantidade;
+    if (produtos[i].quantidade === 0) semEstoque.push(produtos[i].nome);
+  }
+  console.log("");
+  console.log("===== RELATÓRIO =====");
+  console.log("Produtos cadastrados: " + produtos.length);
+  console.log("Valor total em estoque: " + formatarPreco(total));
+  console.log("Sem estoque: " + (semEstoque.length > 0 ? semEstoque.join(", ") : "nenhum"));
+  console.log("=====================");
+}
 
-# ------------------------------------------------------------
-# 10) PROJETO FINAL: CADASTRO DE PRODUTOS COM MENU
-# (no Programiz, digite as respostas no campo de entrada)
-# ------------------------------------------------------------
-print("\n=== 10) Mini sistema de produtos ===")
+// ============================================================
+// USO (altere à vontade para testar)
+// ============================================================
+console.log("*** LISTA DE PRODUTOS ***");
 
-lista = []
+// Cadastrar
+cadastrarProduto("Arroz", 25.9, 10);
+cadastrarProduto("Feijão", 8.5, 4);
+cadastrarProduto("Café", 18, 0);
+cadastrarProduto("Ab", 5, 1);             // erro: nome com menos de 3 caracteres
+cadastrarProduto("Sal", -2, 1);           // erro: preço inválido
+cadastrarProduto("Açúcar", 4.75, 2.5);    // erro: quantidade não inteira
 
-def cadastrar():
-    nome = input("Nome do produto: ")
-    preco = float(input("Preço: ").replace(",", "."))
-    qtd = int(input("Quantidade: "))
-    lista.append({"nome": nome, "preco": preco, "qtd": qtd})
-    print("✔ Produto cadastrado!")
+// Listar
+listarProdutos();
 
-def listar():
-    if not lista:
-        print("Nenhum produto cadastrado.")
-        return
-    for i, p in enumerate(lista, start=1):
-        print(f"{i}. {p['nome']} - R$ {p['preco']:.2f} ({p['qtd']} un.)")
+// Vender e repor estoque
+venderProduto(1, 3);
+venderProduto(2, 10);                     // erro: estoque insuficiente
+adicionarEstoque(3, 8);
 
-def remover():
-    listar()
-    if lista:
-        n = int(input("Número do produto a remover: "))
-        if 1 <= n <= len(lista):
-            removido = lista.pop(n - 1)
-            print(f"✔ {removido['nome']} removido.")
-        else:
-            print("Número inválido.")
+// Alterar preço e remover
+alterarPreco(2, 9.2);
+removerProduto(99);                       // erro: não existe
 
-def menu():
-    while True:
-        print("\n1) Cadastrar  2) Listar  3) Remover  0) Sair")
-        opcao = input("Escolha: ")
-        if opcao == "1":
-            cadastrar()
-        elif opcao == "2":
-            listar()
-        elif opcao == "3":
-            remover()
-        elif opcao == "0":
-            print("Até logo!")
-            break
-        else:
-            print("Opção inválida.")
+// Resultado final
+listarProdutos();
+relatorio();
