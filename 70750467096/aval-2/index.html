@@ -1,103 +1,42 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Código JavaScript</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
-  <style>body{margin:0;background:#0d1117}pre{margin:0}code.hljs{padding:1.5rem;min-height:100vh;box-sizing:border-box}</style>
-</head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciador de Tarefas</title>
+    <link rel="stylesheet" href="style.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
 <body>
-  <pre><code class="language-javascript">
-let tarefas = [];
-let proximoCodigo = 1;
 
-// Cadastrar uma nova tarefa
-function cadastrarTarefa(titulo, prioridade) {
-    if (titulo.trim().length &lt; 5) {
-        console.log("Erro: o título deve ter no mínimo 5 caracteres.");
-        return;
-    }
+    <div class="container">
+        <h1>Gerenciador de Tarefas</h1>
+        <p>Organize suas atividades de forma simples!</p>
 
-    if (prioridade &lt; 1 || prioridade &gt; 3 || !Number.isInteger(prioridade)) {
-        console.log("Erro: a prioridade deve ser entre 1 e 3.");
-        return;
-    }
+        <section class="formulario">
+            <h2>Cadastrar tarefa</h2>
 
-    const tarefa = {
-        codigo: proximoCodigo++,
-        titulo: titulo,
-        prioridade: prioridade,
-        concluida: false
-    };
+            <input type="text" id="titulo" placeholder="Digite o título da tarefa">
 
-    tarefas.push(tarefa);
-    console.log("Tarefa cadastrada com sucesso!");
-}
+            <select id="prioridade">
+                <option value="">Selecione a prioridade</option>
+                <option value="1">Alta</option>
+                <option value="2">Média</option>
+                <option value="3">Baixa</option>
+            </select>
 
-// Listar tarefas cadastradas
-function listarTarefas() {
-    if (tarefas.length === 0) {
-        console.log("Nenhuma tarefa cadastrada.");
-        return;
-    }
+            <button onclick="adicionarTarefa()">Cadastrar tarefa</button>
+            <p id="mensagem"></p>
+        </section>
 
-    tarefas.forEach(tarefa =&gt; {
-        console.log(
-            `Código: ${tarefa.codigo} | ` +
-            `Título: ${tarefa.titulo} | ` +
-            `Prioridade: ${tarefa.prioridade} | ` +
-            `Status: ${tarefa.concluida ? "Concluída" : "Pendente"}`
-        );
-    });
-}
+        <section class="lista">
+            <h2>Minhas tarefas</h2>
 
-// Marcar uma tarefa como concluída
-function concluirTarefa(codigo) {
-    const tarefa = tarefas.find(t =&gt; t.codigo === codigo);
+            <ul id="listaTarefas"></ul>
+        </section>
+    </div>
 
-    if (!tarefa) {
-        console.log("Tarefa não encontrada.");
-        return;
-    }
-
-    tarefa.concluida = true;
-    console.log("Tarefa concluída com sucesso!");
-}
-
-// Alterar a prioridade de uma tarefa
-function alterarPrioridade(codigo, novaPrioridade) {
-    const tarefa = tarefas.find(t =&gt; t.codigo === codigo);
-
-    if (!tarefa) {
-        console.log("Tarefa não encontrada.");
-        return;
-    }
-
-    if (!Number.isInteger(novaPrioridade) ||
-        novaPrioridade &lt; 1 || novaPrioridade &gt; 3) {
-        console.log("Erro: a prioridade deve ser entre 1 e 3.");
-        return;
-    }
-
-    tarefa.prioridade = novaPrioridade;
-    console.log("Prioridade alterada com sucesso!");
-}
-
-// Exemplos de utilização
-cadastrarTarefa("Estudar JavaScript", 1);
-cadastrarTarefa("Fazer atividade", 2);
-cadastrarTarefa("Organizar documentos", 3);
-
-listarTarefas();
-
-concluirTarefa(1);
-alterarPrioridade(2, 1);
-
-console.log("\nLista atualizada:");
-listarTarefas();
-</code></pre>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-  <script>hljs.highlightAll();</script>
-</body>
+    <script src="script.js"></script>
+<script src="script.js"></script></body>
 </html>
