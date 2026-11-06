@@ -48,7 +48,23 @@
 
         .post-actions {
             margin-top: 15px;
+            color: #777;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .like-button {
+            border: none;
+            background: none;
             color: #d62839;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .like-button.liked {
+            color: #a00018;
+            font-weight: bold;
         }
     </style>
 <script src="https://cdn.tailwindcss.com"></script>
@@ -67,22 +83,45 @@
             <h3>MarvelFan</h3>
             <div class="post-info"><small>Há 10 minutos · Novidades</small></div>
             <p>Será que o Homem-Aranha vai ter um traje novo?</p>
-            <div class="post-actions">♥ 245 curtidas · 18 comentários</div>
+            <div class="post-actions">
+                <button class="like-button" type="button" aria-pressed="false">♥ <span>245</span> curtidas</button>
+                <span>18 comentários</span>
+            </div>
         </article>
 
         <article class="post">
             <h3>PeterParkerFan</h3>
             <div class="post-info"><small>Há 30 minutos · Filmes</small></div>
             <p>Como a história do Peter vai continuar?</p>
-            <div class="post-actions">♥ 189 curtidas · 12 comentários</div>
+            <div class="post-actions">
+                <button class="like-button" type="button" aria-pressed="false">♥ <span>189</span> curtidas</button>
+                <span>12 comentários</span>
+            </div>
         </article>
 
         <article class="post">
             <h3>SpiderNews</h3>
             <div class="post-info"><small>Há 1 hora · Conversa</small></div>
             <p>Quem vocês gostariam de ver no novo filme?</p>
-            <div class="post-actions">♥ 312 curtidas · 27 comentários</div>
+            <div class="post-actions">
+                <button class="like-button" type="button" aria-pressed="false">♥ <span>312</span> curtidas</button>
+                <span>27 comentários</span>
+            </div>
         </article>
     </main>
+
+    <script>
+        document.querySelectorAll(".like-button").forEach(function (botao) {
+            botao.addEventListener("click", function () {
+                const curtidas = botao.querySelector("span");
+                const curtiu = botao.getAttribute("aria-pressed") === "true";
+                const total = Number(curtidas.textContent);
+
+                curtidas.textContent = curtiu ? total - 1 : total + 1;
+                botao.setAttribute("aria-pressed", !curtiu);
+                botao.classList.toggle("liked", !curtiu);
+            });
+        });
+    </script>
 <script src="script.js"></script></body>
 </html>
