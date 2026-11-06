@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link href="style.css" rel="stylesheet">
+</head>
+<body>
+  
+// ==========================================
+// 1. ARMAZENAMENTO DAS TAREFAS
+// ==========================================
+
+const tarefas = [];
+
+// Gerador automático de códigos
+let proximoCodigo = 0;
+
+
+// ==========================================
+// 2. VALIDAÇÃO DOS DADOS DA TAREFA
+// ==========================================
+
+function validarDadosDaTarefa(titulo, prioridade) {
+
+    if (titulo.length < 5) {
+        throw new Error("O título deve possuir no mínimo 5 caracteres.");
+    }
+
+    if (prioridade < 1 || prioridade > 3) {
+        throw new Error("A prioridade deve estar entre 1 e 3.");
+    }
+}
+
+
+// ==========================================
+// 3. CADASTRAR UMA NOVA TAREFA
+// ==========================================
+
+function cadastrarTarefa(titulo, prioridade) {
+
+    try {
+
+        validarDadosDaTarefa(titulo, prioridade);
+
+        proximoCodigo++;
+
+        const novaTarefa = {
+            codigo: proximoCodigo,
+            titulo: titulo,
+            prioridade: prioridade,
+            status: true
+        };
+
+        tarefas.push(novaTarefa);
+
+        console.log("Tarefa cadastrada com sucesso!");
+        return novaTarefa;
+
+    } catch (erro) {
+
+        console.log("Erro: " + erro.message);
+
+    }
+}
+
+
+// ==========================================
+// 4. LISTAR AS TAREFAS
+// ==========================================
+
+function listarTarefas() {
+
+    return tarefas;
+
+}
+
+
+// ==========================================
+// 5. BUSCAR UMA TAREFA PELO CÓDIGO
+// ==========================================
+
+function buscarTarefa(codigo) {
+
+    const tarefa = tarefas.find(
+        (tarefa) => tarefa.codigo === codigo
+    );
+
+    if (!tarefa) {
+        throw new Error("Tarefa não encontrada!");
+    }
+
+    return tarefa;
+
+}
+
+
+// ==========================================
+// 6. CONCLUIR UMA TAREFA
+// ==========================================
+
+function concluirTarefa(codigo) {
+
+    try {
+
+        const tarefa = buscarTarefa(codigo);
+
+        if (!tarefa.status) {
+            throw new Error("Essa tarefa já foi concluída!");
+        }
+
+        tarefa.status = false;
+
+        console.log("Tarefa concluída com sucesso!");
+
+        return tarefa;
+
+    } catch (erro) {
+
+        console.log("Erro: " + erro.message);
+
+    }
+
+}
+
+
+// ==========================================
+// 7. ALTERAR A PRIORIDADE
+// ==========================================
+
+function alterarPrioridade(codigo, novaPrioridade) {
+
+    try {
+
+        const tarefa = buscarTarefa(codigo);
+
+        validarDadosDaTarefa(
+            tarefa.titulo,
+            novaPrioridade
+        );
+
+        tarefa.prioridade = novaPrioridade;
+
+        console.log("Prioridade alterada com sucesso!");
+
+        return tarefa;
+
+    } catch (erro) {
+
+        console.log("Erro: " + erro.message);
+
+    }
+
+}
+
+
+// ==========================================
+// 8. TESTANDO O GERENCIADOR DE TAREFAS
+// ==========================================
+
+// Cadastrando tarefas
+
+cadastrarTarefa("Estudar JavaScript", 1);
+
+cadastrarTarefa("Fazer exercícios", 2);
+
+cadastrarTarefa("Organizar o quarto", 3);
+
+
+// Listando todas as tarefas
+
+console.log("LISTA DE TAREFAS:");
+
+console.log(listarTarefas());
+
+
+// Buscando uma tarefa
+
+console.log("BUSCANDO TAREFA:");
+
+try {
+    console.log(buscarTarefa(1));
+} catch (erro) {
+    console.log("Erro: " + erro.message);
+}
+
+
+// Concluindo uma tarefa
+
+concluirTarefa(1);
+
+
+// Alterando a prioridade
+
+alterarPrioridade(2, 1);
+
+
+// Tentando cadastrar uma tarefa inválida
+
+cadastrarTarefa("Oi", 2);
+
+
+// Tentando cadastrar prioridade inválida
+
+cadastrarTarefa("Estudar programação", 5);
+
+
+// Tentando concluir uma tarefa já concluída
+
+concluirTarefa(1);
+
+
+// Listagem final
+
+console.log("LISTA FINAL DE TAREFAS:");
+
+console.log(listarTarefas());
+
+  <script src="script.js"></script>
+  
+</body>
+</html>
