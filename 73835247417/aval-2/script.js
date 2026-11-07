@@ -1,237 +1,147 @@
+// ===== Dados =====
+const tarefas = [];
+let proximoCodigo = 1;
 
-// Recupera as tarefas salvas no navegador
-let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+const NOMES_PRIORIDADE = { 1: "Alta", 2: "Média", 3: "Baixa" };
 
-// Elementos da página
-const taskForm = document.getElementById("taskForm");
-const taskCode = document.getElementById("taskCode");
-const taskTitle = document.getElementById("taskTitle");
-const taskPriority = document.getElementById("taskPriority");
-const taskList = document.getElementById("taskList");
-
-// Salva as tarefas no navegador
-function saveTasks() {
-    localStorage.setItem("tasks", JSON.stringify(tasks));
+// ===== Regras de validação =====
+function validarTitulo(titulo) {
+  return typeof titulo === "string" && titulo.trim().length >= 5;
 }
 
-// Cadastra uma nova tarefa
-taskForm.addEventListener("submit", function(event) {
-    event.preventDefault();
+function validarPrioridade(prioridade) {
+  return Number.isInteger(prioridade) && prioridade >= 1 && prioridade <= 3;
+}
 
-    const code = taskCode.value.trim();
-    const title = taskTitle.value.trim();
-    const priority = Number(taskPriority.value);
+// ===== Funções principais =====
+function cadastrarTarefa(titulo, prioridade) {
+  if (!validarTitulo(titulo)) {
+    return { ok: false, mensagem: "O título deve ter no mínimo 5 caracteres." };
+  }
+  if (!validarPrioridade(prioridade)) {
+    return { ok: false, mensagem: "A prioridade deve ser entre 1 (alta) e 3 (baixa)." };
+  }
+  const tarefa = {
+    codigo: proximoCodigo++,
+    titulo: titulo.trim(),
+    prioridade: prioridade,
+    concluida: false
+  };
+  tarefas.push(tarefa);
+  return { ok: true, mensagem: "Tarefa cadastrada com sucesso!" };
+}
 
-    // Validação do código
-    if (!code) {
-        alert("Informe o código da tarefa!");
-        return;
-    }
+function listarTarefas() {
+  return tarefas;
+}
 
-    // Validação do título
-    if (title.length < 5) {
-        alert("O título deve ter no mínimo 5 caracteres!");
-        return;
-    }
+function concluirTarefa(codigo) {
+  const tarefa = tarefas.find(function (t) { return t.codigo === codigo; });
+  if (!tarefa) return { ok: false, mensagem: "Tarefa não encontrada." };
+  if (tarefa.concluida) return { ok: false, mensagem: "Essa tarefa já está concluída." };
+  tarefa.concluida = true;
+  return { ok: true, mensagem: "Tarefa marcada como concluída!" };
+}
 
-    // Validação da prioridade
-    if (![1, 2, 3].includes(priority)) {
-        alert("A prioridade deve ser 1, 2 ou 3!");
-        return;
-    }
+function alterarPrioridade(codigo, novaPrioridade) {
+  if (!validarPrioridade(novaPrioridade)) {
+    return { ok: false, mensagem: "A prioridade deve ser entre 1 (alta) e 3 (baixa)." };
+  }
+  const tarefa = tarefas.find(function (t) { return t.codigo === codigo; });
+  if (!tarefa) return { ok: false, mensagem: "Tarefa não encontrada." };
+  tarefa.prioridade = novaPrioridade;
+  return { ok: true, mensagem: "Prioridade alterada com sucesso!" };
+}
 
-    // Verifica se o código já existe
-    if (tasks.some(task => task.code === code)) {
-        alert("Já existe uma tarefa com esse código!");
-        return;
-    }
+// ===== Interface =====
+const form = document.getElementById("form-tarefa");
+const campoTitulo = document.getElementById("titulo");
+const campoPrioridade = document.getElementById("prioridade");
+const mensagem = document.getElementById("mensagem");
+const lista = document.getElementById("lista");
+const contador = document.getElementById("contador");
 
-    const newTask = {
-        code: code,
-        title: title,
-        priority: priority,
-        completed: false
-    };
+function mostrarMensagem(resultado) {
+  mensagem.textContent = resultado.mensagem;
+  mensagem.className = resultado.ok ? "sucesso" : "erro";
+}
 
-    tasks.push(newTask);
+function renderizar() {
+  lista.innerHTML = "";
+  const todas = listarTarefas();
 
-    saveTasks();
-    renderTasks();
+  contador.textContent = todas.length + (todas.length === 1 ? " tarefa" : " tarefas");
 
-    taskForm.reset();
-    taskPriority.value = "2";
+  if (todas.length === 0) {
+    const vazio = document.createElement("li");
+    vazio.className = "vazio";
+    vazio.textContent = "Nenhuma tarefa cadastrada ainda.";
+    lista.appendChild(vazio);
+    return;
+  }
 
-    alert("Tarefa cadastrada com sucesso!");
-});
+  todas.forEach(function (tarefa) {
+    const li = document.createElement("li");
+    li.className = "tarefa p" + tarefa.prioridade + (tarefa.concluida ? " concluida" : "");
 
-// Exibe as tarefas na tela
-function renderTasks() {
-    taskList.innerHTML = "";
+    const codigo = document.createElement("span");
+    codigo.className = "codigo";
+    codigo.textContent = "#" + tarefa.codigo;
 
-    if (tasks.length === 0) {
-        taskList.innerHTML = `
-            <p class="empty-state">
-                Nenhuma tarefa cadastrada. Adicione sua primeira tarefa!
-            </p>
-        `;
-    }
+    const titulo = document.createElement("span");
+    titulo.className = "titulo";
+    titulo.textContent = tarefa.titulo;
 
-    tasks.forEach(task => {
-        const card = document.createElement("div");
+    const status = document.createElement("span");
+    status.className = "status";
+    status.textContent = tarefa.concluida ? "Concluída" : "Pendente";
 
-        card.className = task.completed
-            ? "task-card completed"
-            : "task-card";
+    const acoes = document.createElement("div");
+    acoes.className = "acoes";
 
-        card.innerHTML = `
-            <div class="task-info">
-                <h3>${escapeHTML(task.title)}</h3>
-
-                <p>Código: ${escapeHTML(task.code)}</p>
-
-                <p>
-                    Status:
-                    ${task.completed ? "Concluída" : "Pendente"}
-                </p>
-
-                <span class="priority priority-${task.priority}">
-                    Prioridade:
-                    ${getPriorityName(task.priority)}
-                </span>
-            </div>
-
-            <div class="task-actions">
-
-                <button class="btn-complete" data-action="toggle">
-                    ${task.completed ? "Reabrir" : "Concluir"}
-                </button>
-
-                <select data-action="priority"
-                    aria-label="Alterar prioridade">
-                    <option value="1" ${task.priority === 1 ? "selected" : ""}>
-                        Alta
-                    </option>
-                    <option value="2" ${task.priority === 2 ? "selected" : ""}>
-                        Média
-                    </option>
-                    <option value="3" ${task.priority === 3 ? "selected" : ""}>
-                        Baixa
-                    </option>
-                </select>
-
-                <button class="btn-delete" data-action="delete">
-                    Excluir
-                </button>
-
-            </div>
-        `;
-
-        // Identifica a tarefa correspondente
-        card.dataset.code = task.code;
-
-        taskList.appendChild(card);
+    const seletor = document.createElement("select");
+    seletor.setAttribute("aria-label", "Alterar prioridade");
+    [1, 2, 3].forEach(function (p) {
+      const op = document.createElement("option");
+      op.value = p;
+      op.textContent = p + " - " + NOMES_PRIORIDADE[p];
+      if (p === tarefa.prioridade) op.selected = true;
+      seletor.appendChild(op);
+    });
+    seletor.addEventListener("change", function () {
+      mostrarMensagem(alterarPrioridade(tarefa.codigo, Number(seletor.value)));
+      renderizar();
     });
 
-    updateSummary();
-}
-
-// Retorna o nome da prioridade
-function getPriorityName(priority) {
-    const names = {
-        1: "Alta",
-        2: "Média",
-        3: "Baixa"
-    };
-
-    return names[priority] || "Não definida";
-}
-
-// Protege a exibição dos textos inseridos
-function escapeHTML(value) {
-    return String(value).replace(/[&<>"']/g, function(char) {
-        return {
-            "&": "&amp;",
-            "<": "&lt;",
-            ">": "&gt;",
-            '"': "&quot;",
-            "'": "&#39;"
-        }[char];
+    const botao = document.createElement("button");
+    botao.type = "button";
+    botao.textContent = tarefa.concluida ? "Concluída ✓" : "Concluir";
+    botao.disabled = tarefa.concluida;
+    botao.addEventListener("click", function () {
+      mostrarMensagem(concluirTarefa(tarefa.codigo));
+      renderizar();
     });
+
+    acoes.appendChild(seletor);
+    acoes.appendChild(botao);
+    li.appendChild(codigo);
+    li.appendChild(titulo);
+    li.appendChild(status);
+    li.appendChild(acoes);
+    lista.appendChild(li);
+  });
 }
 
-// Atualiza os números do resumo
-function updateSummary() {
-    const total = tasks.length;
-    const completed = tasks.filter(task => task.completed).length;
-    const pending = total - completed;
-
-    document.getElementById("totalTasks").textContent =
-        "Total: " + total;
-
-    document.getElementById("completedTasks").textContent =
-        "Concluídas: " + completed;
-
-    document.getElementById("pendingTasks").textContent =
-        "Pendentes: " + pending;
-}
-
-// Controla as ações das tarefas
-taskList.addEventListener("click", function(event) {
-    const button = event.target.closest("button");
-
-    if (!button) return;
-
-    const card = button.closest(".task-card");
-    if (!card) return;
-
-    const code = card.dataset.code;
-    const task = tasks.find(task => task.code === code);
-
-    if (!task) return;
-
-    // Marcar como concluída ou reabrir
-    if (button.dataset.action === "toggle") {
-        task.completed = !task.completed;
-    }
-
-    // Excluir tarefa
-    if (button.dataset.action === "delete") {
-        const confirmed = confirm(
-            "Tem certeza que deseja excluir esta tarefa?"
-        );
-
-        if (!confirmed) return;
-
-        tasks = tasks.filter(task => task.code !== code);
-    }
-
-    saveTasks();
-    renderTasks();
+form.addEventListener("submit", function (evento) {
+  evento.preventDefault();
+  const resultado = cadastrarTarefa(campoTitulo.value, Number(campoPrioridade.value));
+  mostrarMensagem(resultado);
+  if (resultado.ok) {
+    campoTitulo.value = "";
+    campoPrioridade.value = "2";
+    renderizar();
+  }
+  campoTitulo.focus();
 });
 
-// Alterar prioridade da tarefa
-taskList.addEventListener("change", function(event) {
-    if (event.target.dataset.action !== "priority") {
-        return;
-    }
-
-    const card = event.target.closest(".task-card");
-    if (!card) return;
-
-    const code = card.dataset.code;
-    const newPriority = Number(event.target.value);
-
-    const task = tasks.find(task => task.code === code);
-
-    if (!task || ![1, 2, 3].includes(newPriority)) {
-        return;
-    }
-
-    task.priority = newPriority;
-
-    saveTasks();
-    renderTasks();
-});
-
-// Carrega as tarefas quando abrir a página
-renderTasks();
+renderizar();
