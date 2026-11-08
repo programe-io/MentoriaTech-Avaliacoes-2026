@@ -1,52 +1,54 @@
-const canvas = document.getElementById('quadro');
-const ctx = canvas.getContext('2d');
-const selectorCor = document.getElementById('cor');
-const btnLimpar = document.getElementById('limpar');
+// Mapeamento dos elementos do Formulário
+const inputName = document.getElementById('inputName');
+const inputRole = document.getElementById('inputRole');
+const inputPhone = document.getElementById('inputPhone');
+const inputEmail = document.getElementById('inputEmail');
+const themeColor = document.getElementById('themeColor');
 
-let desenhando = false;
+// Mapeamento dos elementos do Cartão de Visita
+const cardName = document.getElementById('cardName');
+const cardRole = document.getElementById('cardRole');
+const cardPhone = document.getElementById('cardPhone');
+const cardEmail = document.getElementById('cardEmail');
+const businessCard = document.getElementById('businessCard');
+const avatarDecoration = document.getElementById('avatarDecoration');
 
-// Configuração inicial do pincel
-ctx.lineWidth = 5;
-ctx.lineCap = 'round';
-ctx.strokeStyle = selectorCor.value;
+// Função para atualizar as iniciais do avatar
+function updateInitials(name) {
+    const words = name.trim().split(' ');
+    let initials = '';
+    if (words.length > 0 && words[0] !== '') {
+        initials += words[0][0].toUpperCase();
+        if (words.length > 1) {
+            initials += words[words.length - 1][0].toUpperCase();
+        }
+    }
+    avatarDecoration.textContent = initials || 'ID';
+}
 
-// Atualiza a cor quando o usuário muda o seletor
-selectorCor.addEventListener('input', (e) => {
-  ctx.strokeStyle = e.target.value;
+// Ouvintes de eventos (Event Listeners) para atualização dinâmica
+inputName.addEventListener('input', (e) => {
+    cardName.textContent = e.target.value || 'Seu Nome';
+    updateInitials(e.target.value);
 });
 
-// Funções de desenho
-function iniciarDesenho(e) {
-  desenhando = true;
-  desenhar(e);
-}
-
-function pararDesenho() {
-  desenhando = false;
-  ctx.beginPath(); // Reseta o caminho para não ligar linhas soltas
-}
-
-function desenhar(e) {
-  if (!desenhando) return;
-
-  // Pega a posição correta do mouse dentro do canvas
-  const rect = canvas.getBoundingClientRect();
-  const x = e.clientX - rect.left;
-  const y = e.clientY - rect.top;
-
-  ctx.lineTo(x, y);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.moveTo(x, y);
-}
-
-// Eventos do Mouse
-canvas.addEventListener('mousedown', iniciarDesenho);
-canvas.addEventListener('mouseup', pararDesenho);
-canvas.addEventListener('mousemove', desenhar);
-canvas.addEventListener('mouseleave', pararDesenho);
-
-// Limpar tela
-btnLimpar.addEventListener('click', () => {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+inputRole.addEventListener('input', (e) => {
+    cardRole.textContent = e.target.value || 'Seu Cargo';
 });
+
+inputPhone.addEventListener('input', (e) => {
+    cardPhone.textContent = e.target.value || '(00) 00000-0000';
+});
+
+inputEmail.addEventListener('input', (e) => {
+    cardEmail.textContent = e.target.value || 'seu@email.com';
+});
+
+// Atualiza a cor temática do cartão
+themeColor.addEventListener('input', (e) => {
+    const selectedColor = e.target.value;
+    document.documentElement.style.setProperty('--primary-color', selectedColor);
+});
+
+// Executa uma vez no início para ajustar as iniciais padrão
+updateInitials(inputName.value);
