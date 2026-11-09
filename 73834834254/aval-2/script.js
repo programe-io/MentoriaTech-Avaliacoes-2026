@@ -1,92 +1,132 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const tabs = document.querySelectorAll(".tab-btn");
-    const topicsContainer = document.getElementById("topics-container");
-    const form = document.getElementById("new-topic-form");
+// Pessoas simuladas conversando e debatendo sobre o material enviado
+const tweetsIniciais = [
+    {
+        avatar: "🐰",
+        avatarClass: "pink-avatar",
+        nome: "Bia Dev Pastel",
+        arroba: "@biacodes",
+        texto: "Mano, muita gente confunde até hoje, mas fixa aí na cabeça: \n\nINTERNET = Infraestrutura física de cabos, roteadores e redes mundiais.\nWEB = Só as páginas e documentos com hiperlinks que rodam lá dentro!\n\nNão errem mais isso pfvr 😭",
+        likes: 142,
+        rt: 28
+    },
+    {
+        avatar: "⚡",
+        avatarClass: "blue-avatar",
+        nome: "Tech_Guto",
+        arroba: "@gutotech",
+        texto: "Chocado com o tópico dos CABOS SUBMARINOS. A gente acha q a internet tá flutuando na nuvem ou via satélite, mas quase toda a comunicação global cruza oceanos por cabos físicos de fibra óptica de altíssima capacidade. O mundo é um grande emaranhado de fios marítimos 🌊🌐",
+        likes: 89,
+        rt: 12
+    },
+    {
+        avatar: "🦖",
+        avatarClass: "purple-avatar",
+        nome: "Nostalgia Web",
+        arroba: "@retro_net",
+        texto: "Um brinde ao Tim Berners-Lee na década de 1980 lá no CERN! O cara simplesmente inventou a trindade da nossa vida moderna:\n\n1. HTML (Páginas)\n2. HTTP (Protocolo de conversa)\n3. URL (Os endereços)\n\nSem ele, a internet ainda seria só uma rede acadêmica/militar sem graça como a ARPANET.",
+        likes: 310,
+        rt: 95
+    },
+    {
+        avatar: "🧁",
+        avatarClass: "yellow-avatar",
+        nome: "Lari Estudante",
+        arroba: "@laristudies",
+        texto: "Estudando o modelo Cliente-Servidor aqui. Basicamente, quando digito uma URL no Chrome (Cliente), meu pc manda uma requisição HTTP cruzando milissegundos de roteadores até o Servidor. Ele processa e cospe o site de volta na minha tela. É lindo demais como tudo funciona rápido.",
+        likes: 54,
+        rt: 6
+    }
+];
 
-    // 1. SISTEMA DE ABAS (FILTRAR POR GERAÇÃO)
-    tabs.forEach(tab => {
-        tab.addEventListener("click", () => {
-            // Remove classe ativa de todos e adiciona no clicado
-            tabs.forEach(t => t.classList.remove("active"));
-            tab.classList.add("active");
+const feedContainer = document.getElementById('tweet-feed');
+const tweetInput = document.getElementById('tweet-input');
+const tweetBtn = document.getElementById('tweet-btn');
 
-            const genFilter = tab.getAttribute("data-gen");
-            const cards = document.querySelectorAll(".topic-card");
-
-            cards.forEach(card => {
-                const cardGen = card.getAttribute("data-generation");
-                if (genFilter === "all" || cardGen === genFilter) {
-                    card.style.display = "flex";
-                } else {
-                    card.style.display = "none";
-                }
-            });
-        });
+// Renderiza a conversa inicial
+function renderizarTweets() {
+    feedContainer.innerHTML = "";
+    tweetsIniciais.forEach((tweet, index) => {
+        criarElementoTweet(tweet, false);
     });
+}
 
-    // 2. SISTEMA DE CURTIDAS (BOTÃO DE INCÊNDIO 🔥)
-    topicsContainer.addEventListener("click", (e) => {
-        // Encontra o botão de curtir mais próximo, caso clique no emoji ou número
-        const likeBtn = e.target.closest(".like-btn");
-        if (!likeBtn) return;
+// Cria a estrutura visual do Tweet estilo X
+function criarElementoTweet(data, inserirNoTopo = false) {
+    const div = document.createElement('article');
+    div.classList.add('tweet');
 
-        const countSpan = likeBtn.querySelector(".like-count");
-        let currentLikes = parseInt(countSpan.textContent);
-        
-        // Simulação simples de Toggle (Adiciona ou tira 1 curtida)
-        if (likeBtn.classList.contains("liked")) {
-            likeBtn.classList.remove("liked");
-            likeBtn.style.background = "#2a2a2a";
-            countSpan.textContent = currentLikes - 1;
-        } else {
-            likeBtn.classList.add("liked");
-            likeBtn.style.background = "#ff5500";
-            countSpan.textContent = currentLikes + 1;
-        }
-    });
-
-    // 3. ADICIONAR NOVO TÓPICO DINAMICAMENTE
-    form.addEventListener("submit", (e) => {
-        e.preventDefault();
-
-        const title = document.getElementById("topic-title").value;
-        const gen = document.getElementById("topic-gen").value;
-        const user = document.getElementById("topic-user").value;
-
-        // Formata o nome da label baseado no valor selecionado
-        const genLabelMap = {
-            'gen1': 'Geração 1',
-            'gen2': 'Geração 2',
-            'gen3': 'Geração 3'
-        };
-
-        // Cria a estrutura HTML do novo elemento de tópico
-        const newCard = document.createElement("article");
-        newCard.classList.add("topic-card");
-        newCard.setAttribute("data-generation", gen);
-        
-        // Define a borda esquerda com base na geração para combinar com o CSS
-        if(gen === 'gen1') newCard.style.borderLeftColor = '#ff0055';
-        if(gen === 'gen2') newCard.style.borderLeftColor = '#00a2ff';
-        if(gen === 'gen3') newCard.style.borderLeftColor = '#b500ff';
-
-        newCard.innerHTML = `
-            <div class="topic-info">
-                <span class="badge ${gen}">${genLabelMap[gen]}</span>
-                <h3>${title}</h3>
-                <p>Iniciado por <strong>${user.startsWith('@') ? user : '@' + user}</strong> &bull; Agora mesmo</p>
+    div.innerHTML = `
+        <div class="avatar ${data.avatarClass}">${data.avatar}</div>
+        <div class="tweet-content">
+            <div class="tweet-meta">
+                <span class="user-name">${data.nome}</span>
+                <span class="user-handle">${data.arroba} • agora</span>
             </div>
-            <div class="topic-stats">
-                <span>💬 0 respostas</span>
-                <button class="like-btn">🔥 <span class="like-count">0</span></button>
+            <p class="tweet-text">${data.texto}</p>
+            <div class="tweet-actions">
+                <div class="action-item" onclick="fazerRetweet(this, ${data.rt})">
+                    <span>🔁</span> <span class="count">${data.rt}</span>
+                </div>
+                <div class="action-item" onclick="darLike(this, ${data.likes})">
+                    <span>♥</span> <span class="count">${data.likes}</span>
+                </div>
             </div>
-        `;
+        </div>
+    `;
 
-        // Adiciona no topo da lista e limpa o formulário
-        topicsContainer.prepend(newCard);
-        form.reset();
+    if (inserirNoTopo) {
+        feedContainer.insertBefore(div, feedContainer.firstChild);
+    } else {
+        feedContainer.appendChild(div);
+    }
+}
 
-        // Volta o filtro para "Todas as Eras" para garantir que o novo post apareça
-        document.querySelector('[data-gen="all"]').click();
-    });
+// Lógica para enviar um novo Tweet digitado
+tweetBtn.addEventListener('click', () => {
+    const texto = tweetInput.value.trim();
+    if (!texto) return;
+
+    const novo = {
+        avatar: "✨",
+        avatarClass: "pink-avatar",
+        nome: "Você (Estudante)",
+        arroba: "@meu_user",
+        texto: texto,
+        likes: 0,
+        rt: 0
+    };
+
+    criarElementoTweet(novo, true);
+    tweetInput.value = "";
+    document.querySelector('.char-counter').innerText = "0/280";
 });
+
+// Atualiza contador de caracteres
+tweetInput.addEventListener('input', () => {
+    const contagem = tweetInput.value.length;
+    document.querySelector('.char-counter').innerText = `${contagem}/280`;
+});
+
+// Ações clássicas interativas de curtida e retweet
+function darLike(elemento, valorOriginal) {
+    elemento.classList.toggle('active-like');
+    const spanContador = elemento.querySelector('.count');
+    if (elemento.classList.contains('active-like')) {
+        spanContador.innerText = valorOriginal + 1;
+    } else {
+        spanContador.innerText = valorOriginal;
+    }
+}
+
+function fazerRetweet(elemento, valorOriginal) {
+    elemento.classList.toggle('active-like'); // Reaproveita estilo visual de ativo
+    const spanContador = elemento.querySelector('.count');
+    if (elemento.classList.contains('active-like')) {
+        spanContador.innerText = valorOriginal + 1;
+    } else {
+        spanContador.innerText = valorOriginal;
+    }
+}
+
+// Inicializa a timeline
+renderizarTweets();
