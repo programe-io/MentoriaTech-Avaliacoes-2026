@@ -1,132 +1,88 @@
 
-/* SISTEMA DE CURTIDAS */
+function publicar() {
+    const texto = document.getElementById("texto");
+    const conteudo = texto.value.trim();
 
-document.addEventListener("click", function(event) {
-
-    if (event.target.closest(".like-button")) {
-
-        const button = event.target.closest(".like-button");
-        const count = button.querySelector(".like-count");
-
-        let likes = Number(count.textContent);
-
-        if (button.classList.contains("liked")) {
-            likes--;
-            button.classList.remove("liked");
-            button.firstChild.textContent = "♡ Curtir ";
-        } else {
-            likes++;
-            button.classList.add("liked");
-            button.firstChild.textContent = "♥ Curtido ";
-        }
-
-        count.textContent = likes;
-    }
-
-});
-
-/* ABRIR COMENTÁRIOS */
-
-document.addEventListener("click", function(event) {
-
-    if (event.target.closest(".comment-button")) {
-
-        const post = event.target.closest(".post");
-
-        const area = post.querySelector(".comment-area");
-
-        area.classList.toggle("active");
-    }
-
-});
-
-/* ENVIAR COMENTÁRIOS */
-
-document.addEventListener("click", function(event) {
-
-    if (event.target.closest(".send-comment")) {
-
-        const post = event.target.closest(".post");
-
-        const input = post.querySelector(".comment-area input");
-
-        const list = post.querySelector(".comments-list");
-
-        const message = input.value.trim();
-
-        if (message === "") {
-            alert("Digite um comentário primeiro!");
-            return;
-        }
-
-        const comment = document.createElement("div");
-
-        comment.classList.add("comment-item");
-
-        comment.textContent = "💜 ARMY: " + message;
-
-        list.appendChild(comment);
-
-        input.value = "";
-    }
-
-});
-
-/* CRIAR PUBLICAÇÕES */
-
-const publishButton = document.getElementById("publish-button");
-
-publishButton.addEventListener("click", function() {
-
-    const input = document.getElementById("post-input");
-
-    const message = input.value.trim();
-
-    if (message === "") {
-        alert("Escreva alguma coisa antes de publicar!");
+    if (conteudo === "") {
+        alert("Escreva algo antes de publicar! 💜");
         return;
     }
 
     const post = document.createElement("article");
+    post.className = "post";
 
-    post.classList.add("post");
+    const titulo = document.createElement("h3");
+    titulo.textContent = "ARMY 💜";
 
-    post.innerHTML = `
-        <div class="post-header">
-            <div class="avatar small">💜</div>
-            <div>
-                <h3>ARMY</h3>
-                <span>Agora mesmo</span>
-            </div>
-        </div>
+    const mensagem = document.createElement("p");
+    mensagem.textContent = conteudo;
 
-        <p class="post-text"></p>
+    const acoes = document.createElement("div");
+    acoes.className = "acoes";
 
-        <div class="post-actions">
-            <button class="like-button">
-                ♡ Curtir <span class="like-count">0</span>
-            </button>
+    const curtirBtn = document.createElement("button");
+    curtirBtn.innerHTML = "🤍 Curtir <span>0</span>";
+    curtirBtn.onclick = function() {
+        curtir(this);
+    };
 
-            <button class="comment-button">
-                💬 Comentar
-            </button>
-        </div>
+    const comentario = document.createElement("div");
+    comentario.className = "comentario";
 
-        <div class="comment-area">
-            <input type="text" placeholder="Escreva um comentário...">
-            <button class="send-comment">Enviar</button>
-            <div class="comments-list"></div>
-        </div>
-    `;
+    const input = document.createElement("input");
+    input.placeholder = "Comente...";
 
-    post.querySelector(".post-text").textContent = message;
+    const enviarBtn = document.createElement("button");
+    enviarBtn.textContent = "Enviar";
+    enviarBtn.onclick = function() {
+        comentar(this);
+    };
 
-    const feed = document.getElementById("posts-container");
+    const lista = document.createElement("div");
+    lista.className = "lista-comentarios";
 
-    feed.prepend(post);
+    acoes.appendChild(curtirBtn);
+    comentario.append(input, enviarBtn);
+
+    post.append(
+        titulo,
+        mensagem,
+        acoes,
+        comentario,
+        lista
+    );
+
+    document.getElementById("feed").prepend(post);
+
+    texto.value = "";
+}
+
+function curtir(botao) {
+    const numero = botao.querySelector("span");
+    let total = Number(numero.textContent);
+
+    total++;
+
+    numero.textContent = total;
+    botao.innerHTML = `💜 Curtido <span>${total}</span>`;
+}
+
+function comentar(botao) {
+    const post = botao.closest(".post");
+    const input = post.querySelector(".comentario input");
+    const lista = post.querySelector(".lista-comentarios");
+
+    const texto = input.value.trim();
+
+    if (texto === "") {
+        alert("Digite um comentário!");
+        return;
+    }
+
+    const novoComentario = document.createElement("p");
+    novoComentario.textContent = "💜 ARMY: " + texto;
+
+    lista.appendChild(novoComentario);
 
     input.value = "";
-
-    alert("Sua publicação foi criada! 💜");
-
-});
+}
