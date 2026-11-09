@@ -1,83 +1,210 @@
 
-// MENSAGEM DE BOAS-VINDAS
+document.querySelectorAll(".post").forEach(post => {
 
-function mostrarMensagem() {
-    alert("😈 Bem-vindo à Família Sacana!");
-}
+    // Sistema de curtidas
+    const likeButton = post.querySelector(".like");
 
-// SISTEMA DE CURTIDAS
+    likeButton.addEventListener("click", () => {
+        const count = likeButton.querySelector("span");
+        let likes = Number(count.textContent);
 
-function curtir(botao) {
-    const contador = botao.querySelector("span");
-
-    let numero = Number(contador.textContent);
-
-    numero++;
-
-    contador.textContent = numero;
-}
-
-// FORMULÁRIO
-
-function enviarMensagem(event) {
-    event.preventDefault();
-
-    const nome = document.getElementById("nome").value;
-    const mensagem = document.getElementById("mensagem").value;
-
-    document.getElementById("resultado").textContent =
-        "Obrigado, " + nome + "! Sua mensagem foi recebida.";
-
-    console.log("Mensagem:", mensagem);
-
-    event.target.reset();
-}
-
-// ANIMAÇÃO AO DESCER A PÁGINA
-
-const observador = new IntersectionObserver((entradas) => {
-
-    entradas.forEach((entrada) => {
-
-        if (entrada.isIntersecting) {
-            entrada.target.classList.add("visivel");
-            observador.unobserve(entrada.target);
+        if (likeButton.classList.toggle("active")) {
+            likes++;
+            likeButton.firstChild.textContent = "♥ Curtido ";
+        } else {
+            likes--;
+            likeButton.firstChild.textContent = "♡ Curtir ";
         }
 
+        count.textContent = likes;
     });
 
-}, {
-    threshold: 0.15
+    // Abrir campo de comentários
+    const input = post.querySelector("input");
+    post.querySelector(".comment-focus").addEventListener("click", () => {
+        input.focus();
+    });
+
+    // Adicionar comentários
+    const sendButton = post.querySelector(".send-comment");
+    const commentList = post.querySelector(".comment-list");
+
+    function addComment() {
+        const message = input.value.trim();
+
+        if (!message) {
+            alert("Digite um comentário primeiro!");
+            return;
+        }
+
+        const comment = document.createElement("div");
+        comment.className = "comment-item";
+
+        const author = document.createElement("strong");
+        author.textContent = "Você";
+
+        const paragraph = document.createElement("p");
+        paragraph.textContent = message;
+
+        const edit = document.createElement("button");
+        edit.textContent = "✏️ Editar";
+
+        const remove = document.createElement("button");
+        remove.textContent = "🗑️ Excluir";
+
+        edit.addEventListener("click", () => {
+            const newMessage = prompt("Edite seu comentário:", paragraph.textContent);
+
+            if (newMessage && newMessage.trim()) {
+                paragraph.textContent = newMessage.trim();
+            }
+        });
+
+        remove.addEventListener("click", () => {
+            comment.remove();
+        });
+
+        comment.append(author, paragraph, edit, remove);
+        commentList.appendChild(comment);
+
+        input.value = "";
+    }
+
+    sendButton.addEventListener("click", addComment);
+
+    input.addEventListener("keydown", event => {
+        if (event.key === "Enter") {
+            addComment();
+        }
+    });
+
+    // Compartilhamento
+    post.querySelector(".share").addEventListener("click", async () => {
+        const title = post.querySelector("h3").textContent;
+
+        try {
+            if (navigator.share) {
+                await navigator.share({
+                    title: "Economia Connect",
+                    text: title,
+                    url: location.href
+                });
+            } else {
+                await navigator.clipboard.writeText(
+                    title + " - Economia Connect"
+                );
+                alert("Publicação copiada!");
+            }
+        } catch (error) {
+            if (error.name !== "AbortError") {
+                alert("Não foi possível compartilhar.");
+            }
+        }
+    });
+
 });
 
-document.querySelectorAll(".container, .post").forEach((elemento) => {
+document.querySelectorAll(".post").forEach(post => {
 
-    elemento.classList.add("animar");
+    // Sistema de curtidas
+    const likeButton = post.querySelector(".like");
 
-    observador.observe(elemento);
+    likeButton.addEventListener("click", () => {
+        const count = likeButton.querySelector("span");
+        let likes = Number(count.textContent);
+
+        if (likeButton.classList.toggle("active")) {
+            likes++;
+            likeButton.firstChild.textContent = "♥ Curtido ";
+        } else {
+            likes--;
+            likeButton.firstChild.textContent = "♡ Curtir ";
+        }
+
+        count.textContent = likes;
+    });
+
+    // Abrir campo de comentários
+    const input = post.querySelector("input");
+    post.querySelector(".comment-focus").addEventListener("click", () => {
+        input.focus();
+    });
+
+    // Adicionar comentários
+    const sendButton = post.querySelector(".send-comment");
+    const commentList = post.querySelector(".comment-list");
+
+    function addComment() {
+        const message = input.value.trim();
+
+        if (!message) {
+            alert("Digite um comentário primeiro!");
+            return;
+        }
+
+        const comment = document.createElement("div");
+        comment.className = "comment-item";
+
+        const author = document.createElement("strong");
+        author.textContent = "Você";
+
+        const paragraph = document.createElement("p");
+        paragraph.textContent = message;
+
+        const edit = document.createElement("button");
+        edit.textContent = "✏️ Editar";
+
+        const remove = document.createElement("button");
+        remove.textContent = "🗑️ Excluir";
+
+        edit.addEventListener("click", () => {
+            const newMessage = prompt("Edite seu comentário:", paragraph.textContent);
+
+            if (newMessage && newMessage.trim()) {
+                paragraph.textContent = newMessage.trim();
+            }
+        });
+
+        remove.addEventListener("click", () => {
+            comment.remove();
+        });
+
+        comment.append(author, paragraph, edit, remove);
+        commentList.appendChild(comment);
+
+        input.value = "";
+    }
+
+    sendButton.addEventListener("click", addComment);
+
+    input.addEventListener("keydown", event => {
+        if (event.key === "Enter") {
+            addComment();
+        }
+    });
+
+    // Compartilhamento
+    post.querySelector(".share").addEventListener("click", async () => {
+        const title = post.querySelector("h3").textContent;
+
+        try {
+            if (navigator.share) {
+                await navigator.share({
+                    title: "Economia Connect",
+                    text: title,
+                    url: location.href
+                });
+            } else {
+                await navigator.clipboard.writeText(
+                    title + " - Economia Connect"
+                );
+                alert("Publicação copiada!");
+            }
+        } catch (error) {
+            if (error.name !== "AbortError") {
+                alert("Não foi possível compartilhar.");
+            }
+        }
+    });
 
 });
-
-// PARTÍCULAS VERMELHAS FLUTUANTES
-
-function criarParticula() {
-
-    const particula = document.createElement("div");
-
-    particula.classList.add("particula");
-
-    particula.textContent = "♥";
-
-    particula.style.left = Math.random() * 100 + "vw";
-
-    particula.style.fontSize =
-        (Math.random() * 15 + 10) + "px";
-
-    document.body.appendChild(particula);
-
-    setTimeout(() => {
-        particula.remove();
-    }, 5000);
-}
-
-setInterval(criarParticula, 500);
