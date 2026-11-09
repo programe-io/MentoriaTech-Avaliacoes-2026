@@ -1,60 +1,73 @@
-document.addEventListener("DOMContentLoaded", () => {
+/**
+ * Dicionário contendo dados de personalização dinâmicos baseados
+ * nos principais membros da Patrulha Canina.
+ */
+const dadosFilhotes = {
+    ryder: {
+        username: "@ryder_lider",
+        nome: "Ryder - Líder da Patrulha",
+        bio: "🚨 Sempre que houver problemas na Baía da Aventura, é só chamar! Comandante técnico dos filhotes.",
+        avatar: "🧑‍✈️"
+    },
+    chase: {
+        username: "@chase_oficial",
+        nome: "Chase (Pastor Alemão)",
+        bio: "🚓 O Chase está no caso! Filhote policial focado em manter a ordem e guiar o trânsito da Baía.",
+        avatar: "🐕‍🦺"
+    },
+    marshall: {
+        username: "@marshall_bombeiro",
+        nome: "Marshall (Dálmata)",
+        bio: "消防 Prontinho para o resgate! Filhote bombeiro que apaga incêndios e comete algumas trapalhadas.",
+        avatar: "🦮"
+    },
+    skye: {
+        username: "@skye_voadora",
+        nome: "Skye (Cockapoo)",
+        bio: "🚁 Esse filhote vai voar! Pilota aérea oficial equipada com asas em seu casulo tecnológico.",
+        avatar: "🐕"
+    }
+};
+
+/**
+ * Modifica o tema geral da interface do Pupstagram alterando classes do body
+ * e atualizando os campos de texto do perfil dinamicamente.
+ * @param {string} nomeFilhote - Chave do filhote ('ryder', 'chase', etc)
+ */
+function mudarTema(nomeFilhote) {
+    const corpoPagina = document.body;
+    const classesTemas = ['tema-ryder', 'tema-chase', 'tema-marshall', 'tema-skye'];
     
-    // 1. Mecanismo de Curtir do Instagram (Double click na imagem ou clique no coração)
-    const likeButtons = document.querySelectorAll(".btn-like");
-    const cardsMedia = document.querySelectorAll(".card-media");
+    // Altera a classe cromática estrutural do CSS
+    classesTemas.forEach(classe => corpoPagina.classList.remove(classe));
+    corpoPagina.classList.add(`tema-${nomeFilhote}`);
+    
+    // Atualiza o estado visual ativo no painel de botões
+    const botoes = document.querySelectorAll('.btn-filhote');
+    botoes.forEach(btn => btn.classList.remove('active'));
+    
+    const botaoAlvo = document.querySelector(`.btn-filhote.${nomeFilhote}`);
+    if (botaoAlvo) {
+        botaoAlvo.classList.add('active');
+    }
+    
+    // Executa a alteração dinâmica de dados do perfil na tela
+    const info = dadosFilhotes[nomeFilhote];
+    if (info) {
+        document.getElementById('perfil-username').textContent = info.username;
+        document.getElementById('perfil-nome').textContent = info.nome;
+        document.getElementById('perfil-avatar').textContent = info.avatar;
+        
+        // Aplica o texto da bio atualizada com animação suave
+        const elementoBio = document.querySelector('.perfil-bio p');
+        elementoBio.textContent = info.bio;
+    }
+}
 
-    // Função interna para computar a curtida
-    const toggleLike = (button) => {
-        const isLiked = button.classList.contains("liked");
-        const card = button.closest(".insta-card");
-        const counterDisplay = card.querySelector(".like-counter");
-        let initialCount = parseInt(button.getAttribute("data-count"), 10);
-
-        if (!isLiked) {
-            button.classList.add("liked");
-            button.innerText = "❤️";
-            initialCount += 1;
-            counterDisplay.innerText = initialCount.toLocaleString("pt-BR") + " pessoas";
-        } else {
-            button.classList.remove("liked");
-            initialCount -= 1;
-            counterDisplay.innerText = initialCount.toLocaleString("pt-BR") + " pessoas";
-        }
-        button.setAttribute("data-count", initialCount);
-    };
-
-    // Evento de clique no ícone do coração
-    likeButtons.forEach(btn => {
-        btn.addEventListener("click", () => toggleLike(btn));
-    });
-
-    // Evento de Double Click sobre o corpo da foto do post
-    cardsMedia.forEach(media => {
-        media.addEventListener("dblclick", () => {
-            const card = media.closest(".insta-card");
-            const likeBtn = card.querySelector(".btn-like");
-            
-            // Só executa o duplo clique se ainda não estiver curtido
-            if (!likeBtn.classList.contains("liked")) {
-                toggleLike(likeBtn);
-            }
-        });
-    });
-
-    // 2. Ação Real de Publicar Comentários Inline no Card
-    const postCommentButtons = document.querySelectorAll(".post-comment-btn");
-
-    postCommentButtons.forEach(btn => {
-        btn.addEventListener("click", () => {
-            const card = btn.closest(".insta-card");
-            const input = card.querySelector(".comment-input");
-            const commentText = input.value.trim();
-
-            if (commentText !== "") {
-                alert(`⚽ Comentário postado com sucesso!\n"dev_ousado: ${commentText}"`);
-                input.value = ""; // Limpa a caixa de texto
-            }
-        });
+// Vincula alerta divertido ao clicar nos blocos quadrados da grelha de fotos
+const itensGrade = document.querySelectorAll('.item-grade');
+itensGrade.forEach((item, index) => {
+    item.addEventListener('click', function() {
+        alert(`Carregando imagem do Equipamento de Resgate Nº ${index + 1}... 🚀`);
     });
 });
