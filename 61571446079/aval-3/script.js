@@ -1,105 +1,55 @@
-// Captura dos elementos do DOM
-const display = document.querySelector("#display");
-const btnIniciar = document.querySelector("#btn-iniciar");
-const btnVolta = document.querySelector("#btn-volta");
-const btnZerar = document.querySelector("#btn-zerar");
-const listaVoltas = document.querySelector("#lista-voltas");
+// Lista para armazenar os produtos do carrinho
+let carrinho = [];
 
-// Variáveis de controle de tempo
-let milissegundos = 0;
-let segundos = 0;
-let minutos = 0;
-let intervalo = null;
-let rodando = false;
-let numeroVolta = 1;
-
-// Formata números menores que 10 com zero à esquerda
-function formatarTempo(valor) {
-    return valor < 10 ? `0${valor}` : valor;
+function adicionarAoCarrinho(nome, preco) {
+    // Adiciona o produto como um objeto na lista
+    carrinho.push({ nome: nome, preco: preco });
+    atualizarCarrinho();
 }
 
-// Atualiza a exibição no HTML
-function atualizarDisplay() {
-    const min = formatarTempo(minutos);
-    const seg = formatarTempo(segundos);
-    const ms = formatarTempo(Math.floor(milissegundos / 10)); // Exibe 2 dígitos para milissegundos
-    display.textContent = `${min}:${seg}:${ms}`;
+function atualizarCarrinho() {
+    const listaCarrinho = document.getElementById('listaCarrinho');
+    const contadorCarrinho = document.getElementById('contadorCarrinho');
+    const valorTotal = document.getElementById('valorTotal');
+
+    // Limpa a lista atual na tela
+    listaCarrinho.innerHTML = "";
+
+    if (carrinho.length === 0) {
+        listaCarrinho.innerHTML = '<li class="carrinho-vazio">O carrinho está vazio.</li>';
+        contadorCarrinho.textContent = "0";
+        valorTotal.textContent = "0,00";
+        return;
+    }
+
+    let total = 0;
+
+    // Percorre os itens do carrinho para exibi-los
+    carrinho.forEach((item, index) => {
+        total += item.preco;
+
+        const li = document.createElement('li');
+        li.innerHTML = `
+            <span>${item.nome}</span>
+            <span>R$ ${item.preco.toFixed(2)}</span>
+        `;
+        listaCarrinho.appendChild(li);
+    });
+
+    // Atualiza contadores e total formatado
+    contadorCarrinho.textContent = carrinho.length;
+    valorTotal.textContent = total.toFixed(2);
 }
 
-// Lógica de contagem
-function iniciarContagem() {
-    milissegundos += 10;
-
-    if (milissegundos >= 1000) {
-        milissegundos = 0;
-        segundos++;
+function finalizarCompra() {
+    if (carrinho.length === 0) {
+        alert("Seu carrinho está vazio!");
+        return;
     }
 
-    if (segundos >= 60) {
-        segundos = 0;
-        minutos++;
-    }
-
-    atualizarDisplay();
+    alert("Compra finalizada com sucesso! Obrigado pela preferência.");
+    
+    // Esvazia o carrinho após a compra
+    carrinho = [];
+    atualizarCarrinho();
 }
-
-// Iniciar ou Pausar o cronômetro
-btnIniciar.addEventListener("click", () => {
-    if (!rodando) {
-        // Iniciar
-        intervalo = setInterval(iniciarContagem, 10);
-        rodando = true;
-
-        btnIniciar.textContent = "Pausar";
-        btnIniciar.classList.remove("btn-iniciar");
-        btnIniciar.classList.add("btn-pausar");
-
-        btnVolta.disabled = false;
-        btnZerar.disabled = false;
-    } else {
-        // Pausar
-        clearInterval(intervalo);
-        rodando = false;
-
-        btnIniciar.textContent = "Continuar";
-        btnIniciar.classList.remove("btn-pausar");
-        btnIniciar.classList.add("btn-iniciar");
-
-        btnVolta.disabled = true;
-    }
-});
-
-// Registrar Volta
-btnVolta.addEventListener("click", () => {
-    if (!rodando) return;
-
-    const li = document.createElement("li");
-    li.innerHTML = `
-        <span>Volta ${numeroVolta}</span>
-        <span>${display.textContent}</span>
-    `;
-
-    // Insere a nova volta no topo da lista
-    listaVoltas.prepend(li);
-    numeroVolta++;
-});
-
-// Zerar Cronômetro
-btnZerar.addEventListener("click", () => {
-    clearInterval(intervalo);
-    rodando = false;
-    milissegundos = 0;
-    segundos = 0;
-    minutos = 0;
-    numeroVolta = 1;
-
-    atualizarDisplay();
-
-    btnIniciar.textContent = "Iniciar";
-    btnIniciar.classList.remove("btn-pausar");
-    btnIniciar.classList.add("btn-iniciar");
-
-    btnVolta.disabled = true;
-    btnZerar.disabled = true;
-    listaVoltas.innerHTML = "";
-});
