@@ -1,83 +1,97 @@
 document.addEventListener("DOMContentLoaded", () => {
-    
-    // Seleciona todos os artigos de postagem do feed
-    const posts = document.querySelectorAll("article");
+    // Seleciona o container pai de todo o feed (main) para usar delegação de eventos
+    const feed = document.querySelector("main");
 
-    posts.forEach(post => {
-        // Seleção dos elementos internos de cada post individual
-        const likeBtn = post.querySelector(".flex.items-center.gap-4 button:first-child i");
-        const bookmarkBtn = post.querySelector("button.text-2xl:last-child i");
-        const postImageContainer = post.querySelector(".relative.bg-gray-100");
+    if (!feed) return;
 
-        if (likeBtn) {
-            // 1. Interação do Botão Curtir (Clique Único)
-            likeBtn.parentElement.addEventListener("click", () => {
-                toggleLike(likeBtn);
-            });
-        }
+    // 1. Ouvinte Global de Cliques (Delegação de Eventos)
+    feed.addEventListener("click", (event) => {
+        // Encontra o botão clicado ou o botão pai (caso o clique tenha sido em cima do ícone <i>)
+        const targetButton = event.target.closest("button[data-action]");
+        if (!targetButton) return;
 
-        if (bookmarkBtn) {
-            // 2. Interação do Botão Salvar/Bookmark
-            bookmarkBtn.parentElement.addEventListener("click", () => {
-                bookmarkBtn.classList.toggle("bx-bookmark");
-                bookmarkBtn.classList.toggle("bxs-bookmark"); // Ícone preenchido do Boxicons
-                bookmarkBtn.parentElement.classList.toggle("text-black");
-            });
-        }
+        const action = targetButton.dataset.action;
+        const postCard = targetButton.closest("article");
 
-        if (postImageContainer && likeBtn) {
-            // 3. Efeito de Clique Duplo na Imagem (Double Tap to Like)
-            postImageContainer.addEventListener("dblclick", () => {
-                // Força o curtir caso ainda não esteja curtido
-                if (likeBtn.classList.contains("bx-heart")) {
-                    toggleLike(likeBtn);
-                }
-
-                // Cria a animação do coração flutuante no meio da tela
-                createHeartAnimation(postImageContainer);
-            });
+        if (action === "like") {
+            handleLikeToggle(targetButton, postCard);
+        } else if (action === "save") {
+            handleSaveToggle(targetButton);
         }
     });
 
-    // Função auxiliar para alternar o estado do Curtir
-    function toggleLike(icon) {
-        icon.classList.toggle("bx-heart");
-        icon.classList.toggle("bxs-heart"); // Ícone de coração preenchido
+    // 2. Ouvinte Global para Clique Duplo (Double Tap nas Imagens)
+    feed.addEventListener("dblclick", (event) => {
+        const mediaContainer = event.target.closest("[data-component='media']");
+        if (!mediaContainer) return;
+
+        const postCard = mediaContainer.closest("article");
+        const likeButton = postCard.querySelector("button[data-action='like']");
+
+        // Executa a animação visual do coração pulando na tela
+        triggerPopupHeart(mediaContainer);
+
+        // Se o post ainda não estiver curtido, simula o clique de curtir
+        if (likeButton && !likeButton.classList.contains("is-active")) {
+            handleLikeToggle(likeButton, postCard);
+        }
+    });
+
+    // Lógica para Alternar Curtida e Atualizar Contador Simulado
+    function handleLikeToggle(button, post) {
+        const icon = button.querySelector("i");
+        const countElement = post.querySelector("[data-component='like-count']");
         
-        if (icon.classList.contains("bxs-heart")) {
-            icon.style.color = "#ed4956"; // Vermelho característico do Instagram
-            icon.classList.add("scale-125"); // Pequeno efeito de pulso
-            setTimeout(() => icon.classList.remove("scale-125"), 150);
+        button.classList.toggle("is-active");
+
+        if (button.classList.contains("is-active")) {
+            // Transforma o ícone em preenchido e muda a cor via Tailwind/CSS dinâmico
+            icon.className = "bx bxs-heart text-red-500 scale-110 transition-transform";
+            if (countElement) countElement.textContent = "1.001 curtidas";
         } else {
-            icon.style.color = ""; // Volta para a cor padrão do CSS
+            // Retorna ao ícone de linha padrão
+            icon.className = "bx bx-heart text-slate-900";
+            if (countElement) countElement.textContent = "mil e poucas curtidas";
+        }
+
+        // Remove o efeito de pulo após a animação terminar
+        setTimeout(() => icon.classList.remove("scale-110"), 200);
+    }
+
+    // Lógica para Alternar o Botão Salvar
+    function handleSaveToggle(button) {
+        const icon = button.querySelector("i");
+        button.classList.toggle("is-active");
+
+        if (button.classList.contains("is-active")) {
+            icon.className = "bx bxs-bookmark text-slate-900";
+        } else {
+            icon.className = "bx bx-bookmark text-slate-900";
         }
     }
 
-    // Função para gerar o coração flutuante no double click
-    function createHeartAnimation(container) {
-        const heart = document.createElement("i");
-        // Classes do Boxicons e do Tailwind para estilizar e animar o elemento no centro
-        heart.className = "bx bxs-heart absolute text-white text-7xl opacity-0 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none transition-all duration-300 ease-out";
-        heart.style.left = "50%";
-        heart.style.top = "50%";
-        heart.style.textShadow = "0 0 15px rgba(0, 0, 0, 0.3)";
+    // Gerador de Animação do Coração (Estilo Flash Pop-up)
+    function triggerPopupHeart(container) {
+        const heartOverlay = document.createElement("div");
+        
+        // Estilização minimalista injetada diretamente para a animação disparar isolada
+        heartOverlay.innerHTML = `<i class='bx bxs-heart' style='font-size: 80px; color: #fff; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));'></i>`;
+        heartOverlay.className = "absolute inset-0 flex items-center justify-center pointer-events-none z-10 animate-ping opacity-0";
+        heartOverlay.style.transition = "all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)";
 
-        container.appendChild(heart);
+        container.appendChild(heartOverlay);
 
-        // Dispara a animação (Surgir -> Crescer -> Desaparecer)
+        // Frame 1: Aparece e expande
+        requestAnimationFrame(() => {
+            heartOverlay.classList.remove("opacity-0");
+            heartOverlay.classList.add("opacity-100", "scale-110");
+        });
+
+        // Frame 2: Some e se destrói
         setTimeout(() => {
-            heart.style.opacity = "0.9";
-            heart.style.transform = "translate(-50%, -50%) scale(1.2)";
-        }, 10);
-
-        setTimeout(() => {
-            heart.style.opacity = "0";
-            heart.style.transform = "translate(-50%, -50%) scale(0.5)";
+            heartOverlay.classList.replace("opacity-100", "opacity-0");
+            heartOverlay.classList.remove("scale-110");
+            setTimeout(() => heartOverlay.remove(), 400);
         }, 500);
-
-        // Remove o elemento do HTML após o fim da animação para manter o código limpo
-        setTimeout(() => {
-            heart.remove();
-        }, 800);
     }
 });
