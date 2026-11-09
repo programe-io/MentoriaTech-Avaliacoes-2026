@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Caça às Estrelas — Jogo com CSS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --fundo: #101c2e;
+      --texto: #f5f1e8;
+      --suave: #aabbd0;
+      --estrela: #ffd16b;
+      --linha: #33435a;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100svh;
+      background: var(--fundo);
+      color: var(--texto);
+      font-family: "DM Sans", sans-serif;
+      padding: 24px;
+    }
+
+    .pagina {
+      width: min(100%, 1000px);
+      margin: auto;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 8px 0 22px;
+      border-bottom: 1px solid var(--linha);
+    }
+
+    .marca {
+      font-family: "Chakra Petch", sans-serif;
+      font-weight: 700;
+      letter-spacing: 2px;
+    }
+
+    .selo {
+      color: var(--estrela);
+      font-size: 11px;
+      letter-spacing: 2px;
+    }
+
+    .introducao {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 36px 0 28px;
+      animation: aparecer .7s both;
+    }
+
+    .categoria {
+      color: var(--estrela);
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      font-size: 11px;
+    }
+
+    h1 {
+      font-family: "Chakra Petch", sans-serif;
+      font-size: clamp(38px, 7vw, 70px);
+      line-height: 1;
+      letter-spacing: -2px;
+      margin: 14px 0;
+    }
+
+    h1 span { color: var(--estrela); }
+
+    .introducao p {
+      color: var(--suave);
+      line-height: 1.7;
+      font-size: 14px;
+      max-width: 310px;
+      margin: 0;
+    }
+
+    form { margin: 0; }
+
+    .jogo {
+      position: relative;
+      min-height: 400px;
+      height: min(56vh, 530px);
+      overflow: hidden;
+      border: 1px solid #475671;
+      border-radius: 8px;
+      background:
+        radial-gradient(ellipse at 80% 80%, #34556666, transparent 55%),
+        radial-gradient(ellipse at 15% 10%, #3d466e55, transparent 50%),
+        #142237;
+      animation: aparecer .7s .15s both;
+    }
+
+    .jogo::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      opacity: .5;
+      background-image:
+        radial-gradient(circle, #e9f3ff 1px, transparent 1.5px),
+        radial-gradient(circle, #aabbd0 1px, transparent 1.5px);
+      background-size: 79px 83px, 131px 117px;
+      background-position: 13px 21px, 41px 60px;
+      pointer-events: none;
+    }
+
+    .coordenadas {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      color: var(--suave);
+      letter-spacing: 2px;
+      font-size: 10px;
+    }
+
+    .planeta {
+      position: absolute;
+      width: clamp(130px, 24vw, 240px);
+      aspect-ratio: 1;
+      left: 39%;
+      top: 30%;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 25%, #89b8c5, #385a74 48%, #172a41 80%);
+      box-shadow: inset -22px -10px 30px #0b162a88, 0 0 60px #72bac315;
+      pointer-events: none;
+    }
+
+    .planeta::after {
+      content: "";
+      position: absolute;
+      inset: 28% -35%;
+      border: 13px solid #9cbbbf70;
+      border-top-color: #9cbbbf22;
+      border-radius: 50%;
+      transform: rotate(-28deg);
+    }
+
+    /* Os checkboxes guardam as estrelas capturadas, sem JavaScript. */
+    .alvo {
+      position: absolute;
+      width: 60px;
+      height: 60px;
+      z-index: 2;
+      animation: flutuar 3s ease-in-out infinite;
+    }
+
+    .alvo:nth-of-type(2) { animation-delay: -.7s; }
+    .alvo:nth-of-type(3) { animation-delay: -1.5s; }
+    .alvo:nth-of-type(4) { animation-delay: -2.1s; }
+    .alvo:nth-of-type(5) { animation-delay: -.4s; }
+    .alvo:nth-of-type(6) { animation-delay: -1.2s; }
+
+    .alvo input {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      opacity: 0;
+      cursor: pointer;
+      z-index: 2;
+    }
+
+    .alvo label {
+      display: grid;
+      place-items: center;
+      width: 100%;
+      height: 100%;
+      color: var(--estrela);
+      font-size: 46px;
+      text-shadow: 0 0 24px #ffd16b45;
+      transition: transform .2s, opacity .2s;
+      cursor: pointer;
+    }
+
+    .alvo:hover label { transform: scale(1.22) rotate(12deg); }
+    .alvo:active label { transform: scale(.9); }
+
+    .alvo input:focus-visible + label {
+      outline: 2px solid white;
+      outline-offset: 3px;
+      border-radius: 10px;
+    }
+
+    .alvo input:checked + label {
+      transform: scale(.3);
+      opacity: 0;
+    }
+
+    .alvo:has(input:checked) {
+      visibility: hidden;
+      animation: none;
+    }
+
+    .a1 { left: 9%; top: 17%; }
+    .a2 { left: 43%; top: 9%; }
+    .a3 { right: 10%; top: 24%; }
+    .a4 { left: 20%; bottom: 14%; }
+    .a5 { left: 53%; bottom: 8%; }
+    .a6 { right: 8%; bottom: 21%; }
+
+    .rodape-jogo {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 22px 0;
+    }
+
+    .progresso {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .progresso span {
+      color: var(--suave);
+      font-size: 11px;
+      letter-spacing: 1px;
+      margin-right: 10px;
+    }
+
+    .ponto {
+      width: 12px;
+      height: 12px;
+      border: 1px solid #738299;
+      border-radius: 50%;
+      transition: background .2s;
+    }
+
+    form:has(#e1:checked) .p1,
+    form:has(#e2:checked) .p2,
+    form:has(#e3:checked) .p3,
+    form:has(#e4:checked) .p4,
+    form:has(#e5:checked) .p5,
+    form:has(#e6:checked) .p6 {
+      background: var(--estrela);
+      border-color: var(--estrela);
+    }
+
+    button {
+      padding: 12px 18px;
+      color: var(--texto);
+      background: transparent;
+      border: 1px solid #64748c;
+      border-radius: 4px;
+      font: 500 13px "DM Sans", sans-serif;
+      cursor: pointer;
+      transition: background .2s, transform .2s;
+    }
+
+    button:hover { background: #31435b; transform: translateY(-2px); }
+    button:active { transform: scale(.96); }
+    button:focus-visible { outline: 3px solid var(--estrela); outline-offset: 4px; }
+
+    .vitoria {
+      position: absolute;
+      inset: 0;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 24px;
+      z-index: 5;
+      background: #101c2eef;
+      backdrop-filter: blur(8px);
+    }
+
+    .vitoria .icone { font-size: 58px; color: var(--estrela); }
+
+    .vitoria h2 {
+      font: 700 clamp(28px, 5vw, 44px) "Chakra Petch", sans-serif;
+      margin: 18px 0 8px;
+    }
+
+    .vitoria p { color: var(--suave); line-height: 1.6; margin-bottom: 24px; }
+
+    .vitoria button {
+      background: var(--estrela);
+      border-color: var(--estrela);
+      color: var(--fundo);
+      font-weight: 700;
+    }
+
+    .vitoria button:hover { background: #ffe5aa; }
+
+    .jogo:has(#e1:checked):has(#e2:checked):has(#e3:checked):has(#e4:checked):has(#e5:checked):has(#e6:checked) .vitoria {
+      display: flex;
+      animation: aparecer .4s both;
+    }
+
+    footer {
+      padding: 18px 0;
+      border-top: 1px solid var(--linha);
+      color: var(--suave);
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    @keyframes flutuar {
+      0%, 100% { transform: translateY(-9px) rotate(-8deg); }
+      50% { transform: translateY(9px) rotate(8deg); }
+    }
+
+    @keyframes aparecer {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 600px) {
+      body { padding: 18px; }
+      .introducao { flex-direction: column; align-items: start; gap: 8px; }
+      .selo { font-size: 9px; letter-spacing: 1px; }
+      .jogo { min-height: 380px; }
+      .rodape-jogo { gap: 12px; }
+      .progresso { gap: 6px; }
+      .progresso span { width: 100%; margin-bottom: 3px; }
+      .planeta { left: 31%; top: 36%; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="pagina">
+    <header>
+      <div class="marca">ÓRBITA /</div>
+      <div class="selo">JOGO FEITO COM HTML + CSS</div>
+    </header>
+
+    <main>
+      <section class="introducao">
+        <div>
+          <div class="categoria">Missão 001 · Explorador espacial</div>
+          <h1>Caça às<br><span>estrelas.</span></h1>
+        </div>
+        <p>
+          O universo está ao seu alcance.
+          Clique ou toque nas 6 estrelas douradas para completar a missão.
+        </p>
+      </section>
+
+      <form autocomplete="off" aria-label="Jogo de coletar estrelas">
+        <div class="jogo">
+          <span class="coordenadas">SETOR 07 / ESPAÇO PROFUNDO</span>
+          <div class="planeta" aria-hidden="true"></div>
+
+          <div class="alvo a1">
+            <input type="checkbox" id="e1" aria-label="Coletar estrela 1">
+            <label for="e1" aria-hidden="true">★</label>
+          </div>
+
+          <div class="alvo a2">
+            <input type="checkbox" id="e2" aria-label="Coletar estrela 2">
+            <label for="e2" aria-hidden="true">★</label>
+          </div>
+
+          <div class="alvo a3">
+            <input type="checkbox" id="e3" aria-label="Coletar estrela 3">
+            <label for="e3" aria-hidden="true">★</label>
+          </div>
+
+          <div class="alvo a4">
+            <input type="checkbox" id="e4" aria-label="Coletar estrela 4">
+            <label for="e4" aria-hidden="true">★</label>
+          </div>
+
+          <div class="alvo a5">
+            <input type="checkbox" id="e5" aria-label="Coletar estrela 5">
+            <label for="e5" aria-hidden="true">★</label>
+          </div>
+
+          <div class="alvo a6">
+            <input type="checkbox" id="e6" aria-label="Coletar estrela 6">
+            <label for="e6" aria-hidden="true">★</label>
+          </div>
+
+          <section class="vitoria" aria-label="Missão concluída">
+            <div class="icone" aria-hidden="true">✦</div>
+            <h2>Você iluminou o universo!</h2>
+            <p>6 estrelas coletadas. Missão cumprida, explorador.</p>
+            <button type="reset">Jogar novamente ↗</button>
+          </section>
+        </div>
+
+        <div class="rodape-jogo">
+          <div class="progresso" aria-label="Indicadores de estrelas coletadas">
+            <span>SUA CONSTELAÇÃO</span>
+            <i class="ponto p1"></i>
+            <i class="ponto p2"></i>
+            <i class="ponto p3"></i>
+            <i class="ponto p4"></i>
+            <i class="ponto p5"></i>
+            <i class="ponto p6"></i>
+          </div>
+          <button type="reset">Reiniciar ↻</button>
+        </div>
+      </form>
+    </main>
+
+    <footer>
+      Sem JavaScript: este jogo usa HTML e CSS.
+      No teclado, use Tab para escolher uma estrela e Espaço para coletar.
+    </footer>
+  </div>
+</body>
+</html>
+
+
+
