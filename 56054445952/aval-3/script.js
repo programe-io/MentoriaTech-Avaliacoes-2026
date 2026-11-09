@@ -1,0 +1,1 @@
+botao.onclick = () => titulo.innerText = 'Pronto!';$0
