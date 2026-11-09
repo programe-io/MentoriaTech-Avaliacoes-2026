@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link href="style.css" rel="stylesheet">
+</head>
+<body>
+  import sqlite3
+from datetime import datetime
+
+# Configuração inicial do Banco de Dados
+conn = sqlite3.connect("tarefas.db")
+cursor = conn.cursor()
+cursor.execute("""
+    CREATE TABLE IF NOT EXISTS tarefas (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        titulo TEXT NOT NULL,
+        status TEXT DEFAULT 'Pendente',
+        criado_em TEXT
+    )
+""")
+conn.commit()
+
+def listar():
+    cursor.execute("SELECT * FROM tarefas")
+    tarefas = cursor.fetchall()
+    print("\\n--- LISTA DE TAREFAS ---")
+    if not tarefas:
+        print("Nenhuma tarefa encontrada.")
+    for t in tarefas:
+        print(f"[{t[0]\}] {t[1]\} | Status: {t[2]\} | Criado em: {t[3]\}")
+
+def adicionar():
+    titulo = input("Título da tarefa: ").strip()
+    if titulo:
+        data = datetime.now().strftime("%Y-%m-%d %H:%M")
+        cursor.execute("INSERT INTO tarefas (titulo, criado_em) VALUES (?, ?)", (titulo, data))
+        conn.commit()
+        print("✓ Tarefa adicionada!")
+
+def concluir():
+    try:
+        t_id = int(input("ID da tarefa a concluir: "))
+        cursor.execute("UPDATE tarefas SET status = 'Concluída' WHERE id = ?", (t_id,))
+        conn.commit()
+        print("✓ Status atualizado!" if cursor.rowcount else "❌ ID não encontrado.")
+    except ValueError:
+        print("❌ Digite um número válido.")
+
+def excluir():
+    try:
+        t_id = int(input("ID da tarefa a excluir: "))
+        cursor.execute("DELETE FROM tarefas WHERE id = ?", (t_id,))
+        conn.commit()
+        print("✓ Tarefa removida!" if cursor.rowcount else "❌ ID não encontrado.")
+    except ValueError:
+        print("❌ Digite um número válido.")
+
+# Menu Principal
+opcoes = {"1": adicionar, "2": listar, "3": concluir, "4": excluir\}
+
+while True:
+    print("\\n--- GERENCIADOR DE TAREFAS ---")
+    print("1. Adicionar | 2. Listar | 3. Concluir | 4. Excluir | 0. Sair")
+    opcao = input("Escolha uma opção: ").strip()
+    
+    if opcao == "0":
+        print("Até logo!")
+        conn.close()
+        break
+    elif opcao in opcoes:
+        opcoes[opcao]()
+    else:
+        print("Opção inválida!")$0
+  <script src="script.js"></script>
+  
+</body>
+</html>
