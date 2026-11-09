@@ -1,226 +1,213 @@
 
-/* PROJETO 5 - ALTERAR TEMA */
+/* MODO ESCURO */
 
-const themeButton = document.getElementById("themeButton");
+const tema = document.getElementById("tema");
 
-themeButton.addEventListener("click", function () {
+tema.addEventListener("click", function() {
     document.body.classList.toggle("dark");
 
     if (document.body.classList.contains("dark")) {
-        themeButton.textContent = "☀️ Tema";
+        tema.textContent = "☀️ Modo claro";
     } else {
-        themeButton.textContent = "🌙 Tema";
+        tema.textContent = "🌙 Modo escuro";
     }
-});
-
-
-/* CARTÃO DE APRESENTAÇÃO */
-
-const contactButton = document.getElementById("contactButton");
-
-contactButton.addEventListener("click", function () {
-    alert("HTML + CSS + JavaScript: as bases da Web!");
 });
 
 
 /* MENSAGEM INTERATIVA */
 
-const messageButton = document.getElementById("messageButton");
-const message = document.getElementById("message");
+const mensagemBtn = document.getElementById("mensagemBtn");
 
-messageButton.addEventListener("click", function () {
-    message.textContent = "Parabéns! Você está aprendendo JavaScript!";
+mensagemBtn.addEventListener("click", function() {
+    document.getElementById("mensagem").textContent =
+        "Parabéns! Você está aprendendo JavaScript!";
 });
 
 
 /* CONTADOR */
 
-let count = 0;
+let numero = 0;
 
-const countDisplay = document.getElementById("count");
+const contador = document.getElementById("contador");
 
-document.getElementById("increase").addEventListener("click", function () {
-    count++;
-    countDisplay.textContent = count;
+document.getElementById("adicionar").addEventListener("click", function() {
+    numero++;
+    contador.textContent = numero;
 });
 
-document.getElementById("decrease").addEventListener("click", function () {
-    count--;
-    countDisplay.textContent = count;
+document.getElementById("diminuir").addEventListener("click", function() {
+    numero--;
+    contador.textContent = numero;
 });
 
-document.getElementById("reset").addEventListener("click", function () {
-    count = 0;
-    countDisplay.textContent = count;
+document.getElementById("zerar").addEventListener("click", function() {
+    numero = 0;
+    contador.textContent = numero;
 });
 
 
-/* PROJETO 6 - QUIZ */
+/* QUIZ */
 
-const questions = [
+const perguntas = [
     {
-        question: "O que significa HTML?",
-        answers: [
-            "HyperText Markup Language",
-            "High Technology Modern Language",
-            "Home Tool Markup Language"
-        ],
-        correct: 0
-    },
-    {
-        question: "Qual é a função do CSS?",
-        answers: [
-            "Armazenar dados",
-            "Estilizar páginas web",
-            "Criar servidores"
-        ],
-        correct: 1
-    },
-    {
-        question: "Qual tecnologia adiciona interatividade?",
-        answers: [
-            "HTML",
-            "CSS",
-            "JavaScript"
-        ],
-        correct: 2
-    },
-    {
-        question: "O que é a Internet?",
-        answers: [
+        pergunta: "O que é a Internet?",
+        alternativas: [
             "Uma rede mundial de computadores",
             "Um navegador",
             "Uma linguagem de programação"
         ],
-        correct: 0
+        correta: 0
     },
     {
-        question: "Qual tag cria um parágrafo?",
-        answers: [
+        pergunta: "Quem criou a World Wide Web?",
+        alternativas: [
+            "Bill Gates",
+            "Tim Berners-Lee",
+            "Steve Jobs"
+        ],
+        correta: 1
+    },
+    {
+        pergunta: "Qual é a função do HTML?",
+        alternativas: [
+            "Estruturar o conteúdo",
+            "Criar banco de dados",
+            "Editar imagens"
+        ],
+        correta: 0
+    },
+    {
+        pergunta: "Qual é a função do CSS?",
+        alternativas: [
+            "Criar servidores",
+            "Estilizar páginas",
+            "Armazenar arquivos"
+        ],
+        correta: 1
+    },
+    {
+        pergunta: "Qual tecnologia adiciona interatividade?",
+        alternativas: [
+            "HTML",
+            "CSS",
+            "JavaScript"
+        ],
+        correta: 2
+    },
+    {
+        pergunta: "O que significa padding?",
+        alternativas: [
+            "Espaço externo",
+            "Espaço interno",
+            "Borda"
+        ],
+        correta: 1
+    },
+    {
+        pergunta: "Qual tag representa um parágrafo?",
+        alternativas: [
             "<h1>",
             "<p>",
             "<div>"
         ],
-        correct: 1
-    },
-    {
-        question: "Qual propriedade controla o espaço interno?",
-        answers: [
-            "margin",
-            "border",
-            "padding"
-        ],
-        correct: 2
+        correta: 1
     }
 ];
 
-let currentQuestion = 0;
-let score = 0;
-let answered = false;
+let perguntaAtual = 0;
+let pontos = 0;
+let respondeu = false;
 
-const questionElement = document.getElementById("question");
-const answersElement = document.getElementById("answers");
-const feedbackElement = document.getElementById("feedback");
-const nextButton = document.getElementById("nextButton");
-const scoreElement = document.getElementById("score");
+const pergunta = document.getElementById("pergunta");
+const alternativas = document.getElementById("alternativas");
+const resultado = document.getElementById("resultado");
+const proxima = document.getElementById("proxima");
 
-function showQuestion() {
-    answered = false;
+function mostrarPergunta() {
+    respondeu = false;
 
-    const question = questions[currentQuestion];
+    const atual = perguntas[perguntaAtual];
 
-    questionElement.textContent = question.question;
+    pergunta.textContent = atual.pergunta;
+    alternativas.innerHTML = "";
+    resultado.textContent = "";
 
-    answersElement.innerHTML = "";
-    feedbackElement.textContent = "";
+    proxima.disabled = true;
 
-    nextButton.disabled = true;
+    atual.alternativas.forEach(function(opcao, indice) {
+        const botao = document.createElement("button");
 
-    question.answers.forEach(function (answer, index) {
-        const button = document.createElement("button");
+        botao.textContent = opcao;
 
-        button.textContent = answer;
-
-        button.addEventListener("click", function () {
-            checkAnswer(index);
+        botao.addEventListener("click", function() {
+            verificarResposta(indice);
         });
 
-        answersElement.appendChild(button);
+        alternativas.appendChild(botao);
     });
-
-    scoreElement.textContent =
-        "Pergunta " + (currentQuestion + 1) +
-        " de " + questions.length;
 }
 
-function checkAnswer(selected) {
-    if (answered) return;
+function verificarResposta(escolha) {
+    if (respondeu) return;
 
-    answered = true;
+    respondeu = true;
 
-    const question = questions[currentQuestion];
-    const buttons = answersElement.querySelectorAll("button");
+    const correta = perguntas[perguntaAtual].correta;
+    const botoes = alternativas.querySelectorAll("button");
 
-    if (selected === question.correct) {
-        score++;
-        feedbackElement.textContent = "Correto! Muito bem!";
-        feedbackElement.style.color = "green";
+    if (escolha === correta) {
+        pontos++;
+        resultado.textContent = "Resposta correta!";
+        resultado.style.color = "green";
     } else {
-        feedbackElement.textContent =
-            "Resposta incorreta. A resposta certa é: " +
-            question.answers[question.correct];
+        resultado.textContent =
+            "Resposta incorreta! Resposta certa: " +
+            perguntas[perguntaAtual].alternativas[correta];
 
-        feedbackElement.style.color = "red";
+        resultado.style.color = "red";
     }
 
-    buttons.forEach(function (button) {
-        button.disabled = true;
+    botoes.forEach(function(botao) {
+        botao.disabled = true;
     });
 
-    nextButton.disabled = false;
+    proxima.disabled = false;
 }
 
-nextButton.addEventListener("click", function () {
-    if (!answered) return;
+proxima.addEventListener("click", function() {
+    if (!respondeu) return;
 
-    currentQuestion++;
+    perguntaAtual++;
 
-    if (currentQuestion < questions.length) {
-        showQuestion();
+    if (perguntaAtual < perguntas.length) {
+        mostrarPergunta();
     } else {
-        finishQuiz();
+        finalizarQuiz();
     }
 });
 
-function finishQuiz() {
-    questionElement.textContent = "Quiz finalizado!";
+function finalizarQuiz() {
+    pergunta.textContent = "Quiz finalizado!";
+    alternativas.innerHTML = "";
 
-    answersElement.innerHTML = "";
+    resultado.textContent =
+        "Você acertou " + pontos +
+        " de " + perguntas.length + " perguntas!";
 
-    feedbackElement.textContent =
-        "Você acertou " + score +
-        " de " + questions.length + " perguntas!";
+    proxima.textContent = "Recomeçar";
+    proxima.disabled = false;
 
-    scoreElement.textContent =
-        score === questions.length
-        ? "Excelente! Você acertou todas!"
-        : "Continue estudando e tente novamente!";
-
-    nextButton.textContent = "Recomeçar";
-
-    nextButton.disabled = false;
-
-    nextButton.onclick = restartQuiz;
+    proxima.onclick = reiniciarQuiz;
 }
 
-function restartQuiz() {
-    currentQuestion = 0;
-    score = 0;
+function reiniciarQuiz() {
+    perguntaAtual = 0;
+    pontos = 0;
 
-    nextButton.textContent = "Próxima pergunta";
-    nextButton.onclick = null;
+    proxima.textContent = "Próxima pergunta";
+    proxima.onclick = null;
 
-    showQuestion();
+    mostrarPergunta();
 }
 
-showQuestion();
+mostrarPergunta();
