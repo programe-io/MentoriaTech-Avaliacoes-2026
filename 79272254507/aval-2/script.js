@@ -1,65 +1,75 @@
-// 1. Mapeamento e Seleção dos elementos do HTML que vamos interagir
-const publishBtn = document.getElementById('publish-btn');
-const postInput = document.getElementById('post-input');
-const feedContainer = document.getElementById('feed-container');
+// 1. Seleção dos elementos da interface
+const botaoPublicar = document.querySelector('.new-post-card button');
+const areaTexto = document.querySelector('.new-post-card span');
+const containerFeed = document.querySelector('main');
 
-// 2. Evento Ouvinte (Listener) monitorando o clique no botão "Publicar"
-publishBtn.addEventListener('click', function() {
-    // Captura o texto digitado e remove espaços em branco extras nas pontas
-    const postTextContent = postInput.value.trim();
-
-    // Validação básica: se o usuário não digitou nada, avisa e interrompe a função
-    if (postTextContent === "") {
-        alert("Por favor, escreva algo antes de publicar!");
-        return; 
+// 2. Função responsável por criar e adicionar uma nova postagem
+function criarNovaPublicacao() {
+    // Abre uma caixa para o usuário digitar o texto da nova postagem
+    const textoDoUsuario = prompt("O que você deseja publicar no seu feed?");
+    
+    // Validação: impede a publicação se o usuário não digitar nada ou cancelar
+    if (!textoDoUsuario || textoDoUsuario.trim() === "") {
+        alert("A publicação não pode estar vazia!");
+        return;
     }
 
-    // 3. Manipulação do DOM: Construção dinâmica do novo card de postagem
-    const newPostCard = document.createElement('article');
-    newPostCard.classList.add('post-card');
+    // 3. Criação da estrutura semântica via JavaScript (reutilizando a lógica do HTML)
+    const novoArticle = document.createElement('article');
+    novoArticle.classList.add('post-card');
 
-    // Injeção da estrutura HTML necessária usando Template Literals (Crase)
-    newPostCard.innerHTML = `
-        <header class="post-header">
+    // Monta o conteúdo interno exatamente igual ao modelo estruturado na aula
+    novoArticle.innerHTML = `
+        <div class="post-header">
             <div class="user">
-                <div class="avatar" style="background-color: #1877f2; color: #fff;">U</div>
+                <div class="avatar">U</div>
                 <div class="user-info">
                     <strong>Seu Nome</strong>
-                    <span>agora mesmo</span>
+                    <span>Agora mesmo</span>
                 </div>
             </div>
-        </header>
+        </div>
         
-        <p class="post-text">${postTextContent}</p>
-        
+        <div class="post-text">
+            <p>${textoDoUsuario}</p>
+        </div>
+
+        <div class="post-image">
+            <img src="https://unsplash.com" alt="Imagem abstrata colorida de nova publicação">
+        </div>
+
         <div class="post-actions">
-            <button type="button" class="like-btn">Curtir</button>
-            <button type="button">Comentar</button>
+            <button class="btn-curtir">Curtir</button>
+            <button>Comentar</button>
         </div>
     `;
 
-    // 4. Inserção no Feed: Adiciona a nova publicação no topo do feedContainer
-    feedContainer.prepend(newPostCard);
+    // 4. Insere a nova postagem no feed (logo abaixo da área de nova publicação)
+    const primeiroCardDoFeed = containerFeed.children[1]; 
+    containerFeed.insertBefore(novoArticle, primeiroCardDoFeed);
 
-    // 5. Reset: Limpa a caixa de texto para a próxima postagem
-    postInput.value = "";
-});
+    // 5. Adiciona o evento de curtir especificamente para este novo botão criado
+    adicionarEventoCurtir(novoArticle.querySelector('.btn-curtir'));
+}
 
-// 6. Funcionalidade Bônus: Evento para fazer o botão "Curtir" funcionar dinamicamente
-// Usamos delegação de eventos para garantir que posts novos também possam ser curtidos
-feedContainer.addEventListener('click', function(event) {
-    // Verifica se o elemento clicado possui a classe "like-btn"
-    if (event.target.classList.contains('like-btn')) {
-        const targetButton = event.target;
-        
-        // Alterna (liga/desliga) a classe CSS de curtido
-        targetButton.classList.toggle('liked');
-        
-        // Altera o texto de feedback visual
-        if (targetButton.classList.contains('liked')) {
-            targetButton.textContent = '👍 Curtido';
+// Função para gerenciar a lógica de curtir/descurtir
+function adicionarEventoCurtir(botao) {
+    botao.addEventListener('click', function() {
+        // Altera visualmente o botão simulando a ação de curtir
+        if (botao.style.backgroundColor === 'rgb(40, 167, 69)') { // Cor verde
+            botao.style.backgroundColor = '#007bff'; // Volta para o azul padrão
+            botao.textContent = 'Curtir';
         } else {
-            targetButton.textContent = 'Curtir';
+            botao.style.backgroundColor = '#28a745'; // Fica verde ao curtir
+            botao.textContent = '✓ Curtido';
         }
-    }
+    });
+}
+
+// 6. Vincula as funções aos eventos de clique da página inicial
+botaoPublicar.addEventListener('click', criarNovaPublicacao);
+
+// Aplica a função de curtir em todos os botões já existentes na página carregada
+document.querySelectorAll('.post-actions button:nth-child(1)').forEach(botao => {
+    adicionarEventoCurtir(botao);
 });

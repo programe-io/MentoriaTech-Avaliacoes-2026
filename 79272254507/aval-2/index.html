@@ -3,13 +3,175 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mini Feed Interativo</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Mini Feed</title>
+    <style>
+        /* 7. Reset de estilos */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* 8. Estilização geral da página */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333333;
+        }
+
+        header {
+            background-color: #ffffff;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .header-content {
+            max-width: 800px; /* Evita esticar indefinidamente em telas grandes */
+            margin: 0 auto;    /* Centraliza o conteúdo */
+            padding: 15px 20px;
+            
+            /* 9. Organização do layout com Flexbox */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        main {
+            width: 100%;
+            max-width: 600px;  /* Largura máxima menor que o cabeçalho */
+            margin: 30px auto; /* Afasta do cabeçalho e centraliza */
+            padding: 0 15px;   /* Proteção para as bordas da tela */
+        }
+
+        /* 9. Organização do menu com Flexbox */
+        nav {
+            display: flex;
+            gap: 20px;
+        }
+
+        /* 9. Flexbox para informações dos usuários */
+        .user, .post-header .user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 10. Título e links do cabeçalho */
+        header h1 {
+            color: #007bff;
+            font-size: 24px;
+        }
+
+        header nav a {
+            color: #333333;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        /* 11. Efeito hover nos links */
+        header nav a:hover {
+            color: #007bff;
+        }
+
+        /* 10. Estilização do Avatar circular */
+        .avatar {
+            width: 40px;
+            height: 40px;
+            background-color: #007bff;
+            color: #ffffff;
+            font-weight: bold;
+            border-radius: 50%;
+            
+            /* Flexbox para centralizar a letra do avatar */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* 10. Textos auxiliares */
+        .user-info strong {
+            font-size: 16px;
+        }
+
+        .user-info span {
+            font-size: 14px;
+            color: #777777;
+            margin-top: 2px;
+        }
+
+        /* 10. Estilização dos Cards (Nova publicação e Postagens) */
+        .new-post-card, .post-card {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Sombra discreta */
+        }
+
+        /* 9. Layout interno da área de nova publicação */
+        .new-post-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* 10. Texto da postagem */
+        .post-text {
+            margin: 15px 0;
+        }
+
+        /* 10. Imagem da postagem */
+        .post-image img {
+            display: block;
+            width: 100%;
+            max-width: 100%;
+            border-radius: 6px;
+            object-fit: cover;
+        }
+
+        /* Ações da postagem */
+        .post-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        /* 11. Botões */
+        button {
+            background-color: #007bff;
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 16px;
+            font-weight: bold;
+            cursor: pointer; /* Altera o cursor ao passar o mouse */
+        }
+
+        /* 11. Efeito hover nos botões */
+        button:hover {
+            opacity: 0.9;
+        }
+
+        /* 11. Rodapé */
+        footer {
+            text-align: center;
+            font-size: 14px;
+            padding: 20px;
+            background-color: #333333;
+            color: #ffffff;
+            margin-top: 40px;
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="style.css" rel="stylesheet"></head>
 <body>
 
-    <!-- Cabeçalho da página -->
+    <!-- 4. Construção do cabeçalho e navegação -->
     <header>
         <div class="header-content">
             <h1>Mini Feed</h1>
@@ -20,51 +182,76 @@
         </div>
     </header>
 
-    <!-- Conteúdo principal -->
+    <!-- 3. Conteúdo principal da página -->
     <main>
         
-        <!-- Área de nova publicação (Agora funcional) -->
+        <!-- 5. Área de nova publicação -->
         <section class="new-post-card">
             <div class="user">
                 <div class="avatar">U</div>
                 <div class="user-info">
                     <strong>Seu Nome</strong>
-                    <!-- Trocamos o span por uma caixa de texto real -->
-                    <textarea id="post-input" placeholder="O que você está pensando?"></textarea>
+                    <span>O que você está pensando?</span>
                 </div>
             </div>
-            <!-- Adicionado ID no botão para o evento de clique -->
-            <button type="button" id="publish-btn">Publicar</button>
+            <button>Publicar</button>
         </section>
 
-        <!-- Feed de Postagens (O JavaScript vai injetar os novos posts aqui dentro) -->
-        <div id="feed-container">
-            
-            <!-- Postagem Inicial Estática -->
-            <article class="post-card">
-                <header class="post-header">
-                    <div class="user">
-                        <div class="avatar">P</div>
-                        <div class="user-info">
-                            <strong>Peter Parker</strong>
-                            <span>há 10 minutos</span>
-                        </div>
+        <!-- 6. Estrutura das postagens do feed -->
+        <article class="post-card">
+            <!-- Cabeçalho da postagem -->
+            <div class="post-header">
+                <div class="user">
+                    <div class="avatar">P</div>
+                    <div class="user-info">
+                        <strong>Peter Parker</strong>
+                        <span>há 10 minutos</span>
                     </div>
-                </header>
-                
-                <p class="post-text">
-                    Acabei de assistir ao novo filme do Homem-Aranha! Sensacional! 🕷️🕸️
-                </p>
-                
-                <img src="https://unsplash.com" alt="Máscara do Homem-Aranha em detalhe" class="post-image">
-                
-                <div class="post-actions">
-                    <button type="button" class="like-btn">Curtir</button>
-                    <button type="button">Comentar</button>
                 </div>
-            </article>
+            </div>
+            
+            <!-- Texto da postagem -->
+            <div class="post-text">
+                <p>Acabei de assistir ao novo filme do Homem-Aranha! Sensacional! 🕷️🕸️</p>
+            </div>
 
-        </div>
+            <!-- Imagem -->
+            <div class="post-image">
+                <img src="https://unsplash.com" alt="Máscara em destaque do Homem-Aranha">
+            </div>
+
+            <!-- Ações da postagem -->
+            <div class="post-actions">
+                <button>Curtir</button>
+                <button>Comentar</button>
+            </div>
+        </article>
+
+        <!-- 11. Repetição das postagens para demonstração -->
+        <article class="post-card">
+            <div class="post-header">
+                <div class="user">
+                    <div class="avatar">G</div>
+                    <div class="user-info">
+                        <strong>Gwen Stacy</strong>
+                        <span>há 20 minutos</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="post-text">
+                <p>Criando a estrutura semântica do meu projeto prático de HTML e CSS no VS Code Online! Muito massa! 💻✨</p>
+            </div>
+
+            <div class="post-image">
+                <img src="https://unsplash.com" alt="Tela de computador exibindo linhas de código de programação">
+            </div>
+
+            <div class="post-actions">
+                <button>Curtir</button>
+                <button>Comentar</button>
+            </div>
+        </article>
 
     </main>
 
@@ -73,7 +260,5 @@
         <p>&copy; 2026 Mini Feed - Todos os direitos reservados.</p>
     </footer>
 
-    <!-- Vínculo com o arquivo de lógica JavaScript -->
-    <script src="script.js"></script>
 <script src="script.js"></script></body>
 </html>
