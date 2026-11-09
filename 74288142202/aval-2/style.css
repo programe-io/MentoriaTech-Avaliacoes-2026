@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Validador de Código com CSS</title>
+  <style>
+    /* 1. CONFIGURAÇÃO DO TEMA ESCURO (Estilo VS Code) */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #1e1e1e;
+      color: #d4d4d4;
+      padding: 40px 20px;
+      margin: 0;
+    \}
+
+    .container {
+      max-width: 750px;
+      margin: 0 auto;
+    \}
+
+    h2 {
+      color: #ffffff;
+      margin-bottom: 5px;
+    \}
+
+    p {
+      color: #858585;
+      margin-bottom: 25px;
+    \}
+
+    /* 2. ESTILIZAÇÃO DA CAIXA DE TEXTO DO CÓDIGO */
+    .editor-wrapper {
+      position: relative;
+      margin-bottom: 20px;
+    \}
+
+    textarea {
+      width: 100%;
+      height: 200px;
+      background-color: #111111;
+      color: #9cdcfe; /* Cor padrão para tags/texto em código */
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 14px;
+      padding: 15px;
+      border: 2px solid #3c3c3c;
+      border-radius: 8px;
+      box-sizing: border-box;
+      resize: vertical;
+      outline: none;
+      transition: all 0.3s ease;
+    \}
+
+    /* 3. CORREÇÃO E VALIDAÇÃO VISUAL COM PSEUDOCLASSES CSS */
+    
+    /* Quando o usuário clica para digitar, mostra borda azul de edição */
+    textarea:focus {
+      border-color: #007acc;
+      box-shadow: 0 0 10px rgba(0, 122, 204, 0.3);
+    \}
+
+    /* CSS detecta se o campo obrigatório foi deixado em branco e avisa */
+    textarea:placeholder-shown {
+      border-color: #ffcc00; /* Borda amarela de atenção */
+    \}
+
+    /* Quando o código digitado NÃO segue o padrão correto (Simulação usando padrão Regex) */
+    textarea:invalid:not(:placeholder-shown) {
+      border-color: #f44336; /* Borda vermelha de erro */
+      background-color: #2d1818; /* Fundo avermelhado de erro */
+      color: #ff8888;
+    \}
+
+    /* Quando o código digitado está correto e validado */
+    textarea:valid:not(:placeholder-shown) {
+      border-color: #4caf50; /* Borda verde de sucesso */
+      background-color: #162417; /* Fundo esverdeado */
+      color: #b5cea8;
+    \}
+
+    /* 4. BALÃO DE FEEDBACK EM CSS (Aparece dinamicamente baseado no estado) */
+    .status-msg {
+      margin-top: 8px;
+      font-size: 13px;
+      display: none;
+      font-weight: bold;
+    \}
+
+    /* Se o campo for inválido, exibe a mensagem de erro */
+    textarea:invalid:not(:placeholder-shown) + .status-msg.erro {
+      display: block;
+      color: #f44336;
+    \}
+
+    /* Se o campo for válido, exibe a mensagem de sucesso */
+    textarea:valid:not(:placeholder-shown) + .status-msg.sucesso {
+      display: block;
+      color: #4caf50;
+    \}
+
+    /* 5. INDENTAÇÃO E REGRAS VISUAIS DE CÓDIGO LIMPO */
+    pre {
+      background-color: #252526;
+      border-left: 4px solid #007acc;
+      padding: 15px;
+      border-radius: 4px;
+      overflow-x: auto;
+    \}
+
+    code {
+      font-family: 'Consolas', monospace;
+      color: #ce9178; /* Estilo de string em editores */
+    \}
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Editor Corretor de Estrutura (Foco CSS)</h2>
+  <p>Insira uma tag HTML completa que comece com <b>&lt;</b> e termine com <b>&gt;</b> para validar a estrutura básica via CSS puro.</p>
+
+  <div class="editor-wrapper">
+    <!-- O atributo 'pattern' força regras. Se não começar com < e terminar com >, o CSS aciona o estado ':invalid' -->
+    <textarea 
+      id="codeEditor" 
+      required 
+      placeholder="Digite seu código aqui... Ex: <div>Conteúdo</div>"
+      pattern="^&lt;.*&gt;\$"
+    ></textarea>
+    
+    <!-- Mensagens controladas 100% via seletores CSS acima -->
+    <div class="status-msg erro">✖ Erro de Sintaxe: O código precisa ser uma tag HTML válida fechada com &gt;.</div>
+    <div class="status-msg sucesso">✔ Sintaxe Correta: Estrutura aceita pelo validador.</div>
+  </div>
+
+  <h3>Dica de Clean Code (CSS):</h3>
+  <pre><code>/* O CSS usa tab-size para corrigir o tamanho de recuo de códigos copiados */
+textarea {
+  tab-size: 4;
+  -moz-tab-size: 4;
+\}</code></pre>
+</div>
+
+</body>
+</html>
