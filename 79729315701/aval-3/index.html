@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link href="style.css" rel="stylesheet">
+</head>
+<body>
+  import sqlite3
+from datetime import datetime
+
+# Inicialização do Banco de Dados
+conn = sqlite3.connect("estoque.db")
+cursor = conn.cursor()
+
+# Criação das tabelas de Produtos e Vendas
+cursor.execute("""
+    CREATE TABLE IF NOT EXISTS produtos (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nome TEXT NOT NULL,
+        preco REAL NOT NULL,
+        qtd INTEGER NOT NULL
+    )
+""")
+
+cursor.execute("""
+    CREATE TABLE IF NOT EXISTS vendas (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        produto_id INTEGER,
+        qtd INTEGER,
+        total REAL,
+        data TEXT,
+        FOREIGN KEY (produto_id) REFERENCES produtos(id)
+    )
+""")
+conn.commit()
+
+
+def cadastrar_produto():
+    nome = input("Nome do produto: ").strip()
+    try:
+        preco = float(input("Preço (R\$): "))
+        qtd = int(input("Quantidade inicial em estoque: "))
+        cursor.execute("INSERT INTO produtos (nome, preco, qtd) VALUES (?, ?, ?)", (nome, preco, qtd))
+        conn.commit()
+        print("✓ Produto cadastrado com sucesso!")
+    except ValueError:
+        print("❌ Preço ou quantidade inválidos.")
+
+
+def listar_produtos():
+    cursor.execute("SELECT * FROM produtos")
+    produtos = cursor.fetchall()
+    print("\\n--- ESTOQUE ATUAL ---")
+    if not produtos:
+        print("Nenhum produto cadastrado.")
+    else:
+        for p in produtos:
+            print(f"[{p[0]\}] {p[1]\} | Preço: R\${p[2]:.2f\} | Estoque: {p[3]\} un")
+
+
+def registrar_venda():
+    listar_produtos()
+    try:
+        p_id = int(input("\\nID do produto a vender: "))
+        cursor.execute("SELECT nome, preco, qtd FROM produtos WHERE id = ?", (p_id,))
+        produto = cursor.fetchone()
+
+        if not produto:
+            print("❌ Produto não encontrado.")
+            return
+
+        nome, preco, estoque = produto
+        qtd_venda = int(input(f"Quantidade de '{nome\}' a vender: "))
+
+        if qtd_venda > estoque:
+            print(f"❌ Estoque insuficiente! Disponível: {estoque\}")
+            return
+
+        total = preco * qtd_venda
+        novo_estoque = estoque - qtd_venda
+        data = datetime.now().strftime("%Y-%m-%d %H:%M")
+
+        # Atualiza estoque e registra a venda
+        cursor.execute("UPDATE produtos SET qtd = ? WHERE id = ?", (novo_estoque, p_id))
+        cursor.execute("INSERT INTO vendas (produto_id, qtd, total, data) VALUES (?, ?, ?, ?)", 
+                       (p_id, qtd_venda, total, data))
+        conn.commit()
+        print(f"✓ Venda realizada! Total: R\${total:.2f\}")
+
+    except ValueError:
+        print("❌ Entrada inválida.")
+
+
+def relatorio_vendas():
+    cursor.execute("""
+        SELECT v.id, p.nome, v.qtd, v.total, v.data 
+        FROM vendas v 
+        JOIN produtos p ON v.produto_id = p.id
+    """)
+    vendas = cursor.fetchall()
+    print("\\n--- HISTÓRICO DE VENDAS ---")
+    if not vendas:
+        print("Nenhuma venda registrada ainda.")
+        return
+
+    faturamento_total = 0
+    for v in vendas:
+        print(f"Venda #{v[0]\} | {v[1]\} x{v[2]\} | Total: R\${v[3]:.2f\} | Data: {v[4]\}")
+        faturamento_total += v[3]
+
+    print(f"\\n💰 Faturamento Total: R\${faturamento_total:.2f\}")
+
+
+# Menu Principal
+opcoes = {
+    "1": cadastrar_produto,
+    "2": listar_produtos,
+    "3": registrar_venda,
+    "4": relatorio_vendas
+\}
+
+while True:
+    print("\\n" + "="*40)
+    print("      SISTEMA DE ESTOQUE E VENDAS")
+    print("="*40)
+    print("1. Cadastrar Produto | 2. Listar Estoque")
+    print("3. Registrar Venda   | 4. Relatório de Vendas")
+    print("0. Sair")
+    
+    opcao = input("Escolha uma opção: ").strip()
+
+    if opcao == "0":
+        print("Encerrando o sistema... Até logo!")
+        conn.close()
+        break
+    elif opcao in opcoes:
+        opcoes[opcao]()
+    else:
+        print("❌ Opção inválida!")$0
+  <script src="script.js"></script>
+  
+</body>
+</html>
