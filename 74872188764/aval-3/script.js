@@ -1,0 +1,30 @@
+Aqui você envia seus códigos para correção. Revise antes de publicar e garanta que sua avaliação esteja completa.
+
+Finalize seu trabalho, publique seu código e compartilhe sua solução com o professor para ser avaliada.
+
+HTML
+Maximizar
+123456789
+Aqui você envia seus códigos para correção. Revise antes de publicar e garanta que sua avaliação esteja completa.
+
+Finalize seu trabalho, publique seu código e compartilhe sua solução com o professor para ser avaliada.
+
+HTML
+Maximizar
+1
+CSS
+Maximizar\$0
+CSS
+Maximizar
+1234567891011121314151617181920
+Finalize seu trabalho, publique seu código e compartilhe sua solução com o professor para ser avaliada.
+
+HTML
+Maximizar
+1
+CSS
+Maximizar\\\$0
+CSS
+Maximizar
+1\$0
+$0
