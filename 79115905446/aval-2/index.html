@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MiniFeed</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Ajustes pontuais para formulários e inputs se encaixarem no design do seu CSS */
+        .new-post {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 15px;
+        }
+        .new-post textarea, .comments-container input, .comments-container textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-family: inherit;
+            resize: vertical;
+            box-sizing: border-box;
+        }
+        .comments-container {
+            margin-top: 15px;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+        }
+        .comment-item {
+            margin-bottom: 10px;
+            padding: 10px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            border-left: 3px solid #053d47;
+            font-size: 14px;
+        }
+        .post-time, .comment-time {
+            font-size: 0.8em;
+            color: #777;
+        }
+        #commentsList {
+            list-style: none;
+            padding: 0;
+            margin-top: 10px;
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+    <header>
+        <div class="header-content">
+            <h2>MiniFeed</h2>
+            <nav>
+                <a href="#">Início</a>
+                <a href="#">Perfil</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- Caixa para Criar Novo Post -->
+        <section class="new-post">
+            <div class="user">
+                <div class="avatar">☢️</div>
+                <div>
+                    <strong>JOSE MAICON P.F</strong>
+                    <span>O que deseja escrever?</span>
+                </div>
+            </div>
+            
+            <form id="postForm">
+                <textarea id="postText" placeholder="No que você está pensando?" rows="3" required></textarea>
+                <button type="submit" style="margin-top: 5px;">Publicar</button>
+            </form>
+        </section>
+
+        <!-- Container onde os posts criados dinamicamente vão aparecer -->
+        <div id="feedContainer"></div>
+
+        <!-- Post Fixo de Exemplo -->
+        <article class="post">
+            <div class="post-header">
+                <div class="avatar">💯</div> 
+                <div>
+                    <strong>MAICON</strong>
+                    <span class="post-time">Há 10 Minutos</span>
+                </div>
+            </div>
+
+            <div class="post-text">
+                <p>Exemplo de postagem fixa no feed com suporte a curtidas e comentários dinâmicos!</p>
+            </div>
+
+            <img src="IM/OIP (7).webp" alt="Imagem do post" onerror="this.style.display='none'">
+
+            <div class="post-actions" style="margin-top: 15px; display: flex; gap: 10px;">
+                <button id="btn-curtir" onclick="curtirPost()">
+                    👌 Curtir (<span id="contador-curtidas">0</span>)
+                </button>
+            </div>
+
+            <!-- Seção de Comentários -->
+            <div class="comments-container">
+                <h4 style="margin-bottom: 10px; color: #053d47; font-size: 16px;">Comentários</h4>
+                <form id="commentForm">
+                    <input type="text" id="commentName" placeholder="Seu nome" required style="margin-bottom: 8px;"><br>
+                    <textarea id="commentText" placeholder="Escreva um comentário..." rows="2" required style="margin-bottom: 8px;"></textarea><br>
+                    <button type="submit" style="padding: 6px 12px; font-size: 14px;">Enviar Comentário</button>
+                </form>
+
+                <div id="commentsSection">
+                    <ul id="commentsList"></ul>
+                </div>
+            </div>
+        </article>
+    </main>
+
+    <footer>
+        <p>MiniFeed - Todos os Direitos Reservados - 2026</p>
+    </footer>
+
+    <!-- Lógica de Funcionamento (JavaScript) -->
+    <script>
+        // Função inteligente para calcular o tempo decorrido
+        function calcularTempoDecorrido(timestamp) {
+            const agora = new Date().getTime();
+            const diferencaSegundos = Math.floor((agora - timestamp) / 1000);
+
+            if (diferencaSegundos < 60) return "Agora mesmo";
+            const minutos = Math.floor(diferencaSegundos / 60);
+            if (minutos < 60) return `Há ${minutos} ${minutos === 1 ? 'minuto' : 'minutos'}`;
+            const horas = Math.floor(minutos / 60);
+            if (horas < 24) return `Há ${horas} ${horas === 1 ? 'hora' : 'horas'}`;
+            const dias = Math.floor(horas / 24);
+            return `Há ${dias} ${dias === 1 ? 'dia' : 'dias'}`;
+        }
+
+        // --- SISTEMA DE CURTIDAS ---
+        const STORAGE_KEY = 'total_curtidas_post';
+
+        function carregarCurtidas() {
+            const curtidasSalvas = localStorage.getItem(STORAGE_KEY) || 0;
+            const contadorEl = document.getElementById('contador-curtidas');
+            if (contadorEl) contadorEl.innerText = curtidasSalvas;
+        }
+
+        function curtirPost() {
+            let contador = document.getElementById('contador-curtidas');
+            let total = parseInt(contador.innerText) + 1;
+            contador.innerText = total;
+            localStorage.setItem(STORAGE_KEY, total);
+        }
+
+        // --- SISTEMA DE POSTAGENS ---
+        const POSTS_KEY = 'meus_posts_feed';
+
+        function carregarPosts() {
+            const posts = JSON.parse(localStorage.getItem(POSTS_KEY)) || [];
+            const feedContainer = document.getElementById('feedContainer');
+            feedContainer.innerHTML = '';
+
+            posts.forEach(post => {
+                const article = document.createElement('article');
+                article.className = 'post';
+                
+                const tempoFormatado = calcularTempoDecorrido(post.timestamp);
+
+                article.innerHTML = `
+                    <div class="post-header">
+                        <div class="avatar">W</div> 
+                        <div>
+                            <strong>${post.autor}</strong>
+                            <span class="post-time">${tempoFormatado}</span>
+                        </div>
+                    </div>
+                    <div class="post-text">
+                        <p>${post.texto}</p>
+                    </div>
+                `;
+                feedContainer.appendChild(article);
+            });
+        }
+
+        document.getElementById('postForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const textoInput = document.getElementById('postText');
+            const texto = textoInput.value.trim();
+
+            if (texto) {
+                const novoPost = {
+                    autor: "JOSE MAICON P.F",
+                    texto: texto,
+                    timestamp: new Date().getTime()
+                };
+
+                const posts = JSON.parse(localStorage.getItem(POSTS_KEY)) || [];
+                posts.unshift(novoPost);
+                localStorage.setItem(POSTS_KEY, JSON.stringify(posts));
+
+                carregarPosts();
+                textoInput.value = '';
+            }
+        });
+
+        // --- SISTEMA DE COMENTÁRIOS ---
+        const COMENTARIOS_KEY = 'meus_comentarios_feed';
+
+        function carregarComentarios() {
+            const comments = JSON.parse(localStorage.getItem(COMENTARIOS_KEY)) || [];
+            const list = document.getElementById('commentsList');
+            if (!list) return;
+
+            list.innerHTML = '';
+            comments.forEach(c => {
+                const li = document.createElement('li');
+                li.className = 'comment-item';
+                
+                const tempoFormatado = calcularTempoDecorrido(c.timestamp);
+
+                li.innerHTML = `
+                    <strong>${c.name}</strong> <span class="comment-time">${tempoFormatado}</span>
+                    <p style="margin: 5px 0 0 0;">${c.comment}</p>
+                `;
+                list.appendChild(li);
+            });
+        }
+
+        document.getElementById('commentForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const nameInput = document.getElementById('commentName');
+            const commentInput = document.getElementById('commentText');
+
+            const name = nameInput.value.trim();
+            const comment = commentInput.value.trim();
+
+            if (name && comment) {
+                const novoComentario = {
+                    name,
+                    comment,
+                    timestamp: new Date().getTime()
+                };
+
+                const comments = JSON.parse(localStorage.getItem(COMENTARIOS_KEY)) || [];
+                comments.unshift(novoComentario);
+                localStorage.setItem(COMENTARIOS_KEY, JSON.stringify(comments));
+
+                carregarComentarios();
+                document.getElementById('commentForm').reset();
+            }
+        });
+
+        // Inicializa dados ao carregar a página
+        window.addEventListener('load', () => {
+            carregarCurtidas();
+            carregarPosts();
+            carregarComentarios();
+        });
+    </script>
+</body>
+</html>
