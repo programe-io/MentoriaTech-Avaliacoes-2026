@@ -1,66 +1,63 @@
 
 function publicar() {
-    let usuario = document.getElementById("usuario").value.trim();
+    let nome = document.getElementById("nome").value.trim();
     let texto = document.getElementById("texto").value.trim();
+    let foto = document.getElementById("foto").value.trim();
 
-    if (usuario === "" || texto === "") {
-        alert("Preencha seu nome e sua publicação!");
+    if (nome === "" || texto === "" || foto === "") {
+        alert("Preencha todos os campos!");
         return;
     }
 
-    let feed = document.getElementById("feed");
+    try {
+        let url = new URL(foto);
 
-    let post = document.createElement("article");
-    post.className = "post";
+        if (!["http:", "https:"].includes(url.protocol)) {
+            alert("Digite um link de imagem válido!");
+            return;
+        }
 
-    let nome = document.createElement("h3");
-    nome.textContent = usuario;
+        let post = document.createElement("article");
+        post.className = "post";
 
-    let data = document.createElement("p");
-    data.className = "data";
-    data.textContent = "Agora";
+        let titulo = document.createElement("h3");
+        titulo.textContent = nome;
 
-    let mensagem = document.createElement("p");
-    mensagem.textContent = texto;
+        let mensagem = document.createElement("p");
+        mensagem.textContent = texto;
 
-    let curtirBtn = document.createElement("button");
-    curtirBtn.innerHTML = 'Curtir ❤️ <span>0</span>';
-    curtirBtn.onclick = function() {
-        curtir(this);
-    };
+        let imagem = document.createElement("img");
+        imagem.src = url.href;
+        imagem.alt = "Foto da publicação";
 
-    let comentarBtn = document.createElement("button");
-    comentarBtn.textContent = "Comentar 💬";
-    comentarBtn.onclick = function() {
-        comentar(this);
-    };
+        imagem.onerror = function() {
+            alert("Não foi possível carregar essa imagem.");
+            post.remove();
+        };
 
-    let comentarios = document.createElement("div");
-    comentarios.className = "comentarios";
+        let botao = document.createElement("button");
+        botao.innerHTML = '❤️ Curtir <span>0</span>';
 
-    post.append(nome, data, mensagem, curtirBtn, comentarBtn, comentarios);
+        botao.onclick = function() {
+            curtir(this);
+        };
 
-    feed.prepend(post);
+        post.append(titulo, mensagem, imagem, botao);
 
-    document.getElementById("usuario").value = "";
-    document.getElementById("texto").value = "";
+        document.getElementById("feed").prepend(post);
+
+        document.getElementById("nome").value = "";
+        document.getElementById("texto").value = "";
+        document.getElementById("foto").value = "";
+
+    } catch (erro) {
+        alert("Digite um endereço de imagem válido!");
+    }
 }
 
 function curtir(botao) {
     let contador = botao.querySelector("span");
-    contador.textContent = Number(contador.textContent) + 1;
-}
 
-function comentar(botao) {
-    let area = botao.parentElement.querySelector(".comentarios");
-
-    let comentario = prompt("Digite seu comentário:");
-
-    if (comentario && comentario.trim() !== "") {
-        let novo = document.createElement("div");
-        novo.className = "comentario";
-        novo.textContent = comentario.trim();
-
-        area.appendChild(novo);
-    }
+    contador.textContent =
+        Number(contador.textContent) + 1;
 }
