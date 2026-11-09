@@ -1,144 +1,66 @@
-const formPost = document.getElementById("formPost");
-const publicacoes = document.getElementById("publicacoes");
-const pesquisa = document.getElementById("pesquisa");
-
-// Curtir publicações
+// SISTEMA DE CURTIDAS
 document.addEventListener("click", function(event) {
-    if (event.target.classList.contains("curtir")) {
+    if (event.target.classList.contains("like")) {
         const botao = event.target;
         const post = botao.closest(".post");
-        const contador = post.querySelector(".contador");
+        const contador = post.querySelector(".likes");
 
-        let curtidas = Number(contador.dataset.curtidas || 0);
+        let curtidas = Number(post.dataset.curtidas || 0);
 
-        if (botao.classList.contains("ativo")) {
+        if (botao.classList.contains("liked")) {
             curtidas--;
-            botao.classList.remove("ativo");
-            botao.textContent = "♡ Curtir";
+            botao.classList.remove("liked");
+            botao.textContent = "♡";
         } else {
             curtidas++;
-            botao.classList.add("ativo");
-            botao.textContent = "♥ Curtido";
+            botao.classList.add("liked");
+            botao.textContent = "♥";
         }
 
-        contador.dataset.curtidas = curtidas;
+        post.dataset.curtidas = curtidas;
         contador.textContent = curtidas + " curtidas";
     }
-});
 
-// Criar nova publicação
-formPost.addEventListener("submit", function(event) {
-    event.preventDefault();
-
-    const nome = document.getElementById("nome").value.trim();
-    const legenda = document.getElementById("legenda").value.trim();
-    const imagem = document.getElementById("imagem").value.trim();
-
-    if (!nome || !legenda) {
-        alert("Preencha seu nome e a legenda!");
-        return;
+    // SALVAR PUBLICAÇÃO
+    if (event.target.classList.contains("save")) {
+        event.target.classList.toggle("saved");
+        event.target.textContent =
+            event.target.classList.contains("saved") ? "▣" : "♧";
     }
 
-    const post = document.createElement("article");
-    post.className = "post";
-
-    const titulo = document.createElement("h3");
-    titulo.textContent = nome;
-
-    const texto = document.createElement("p");
-    texto.textContent = legenda;
-
-    const botaoCurtir = document.createElement("button");
-    botaoCurtir.className = "curtir";
-    botaoCurtir.textContent = "♡ Curtir";
-
-    const contador = document.createElement("span");
-    contador.className = "contador";
-    contador.dataset.curtidas = "0";
-    contador.textContent = "0 curtidas";
-
-    const comentarios = document.createElement("div");
-    comentarios.className = "comentarios";
-
-    const formularioComentario = document.createElement("form");
-    formularioComentario.className = "form-comentario";
-
-    const campoComentario = document.createElement("input");
-    campoComentario.type = "text";
-    campoComentario.placeholder = "Escreva um comentário...";
-    campoComentario.required = true;
-
-    const enviarComentario = document.createElement("button");
-    enviarComentario.type = "submit";
-    enviarComentario.textContent = "Enviar";
-
-    formularioComentario.append(campoComentario, enviarComentario);
-
-    formularioComentario.addEventListener("submit", function(e) {
-        e.preventDefault();
-
-        const comentario = document.createElement("p");
-        comentario.textContent = campoComentario.value.trim();
-
-        if (comentario.textContent) {
-            comentarios.appendChild(comentario);
-            campoComentario.value = "";
-        }
-    });
-
-    post.append(titulo);
-
-    // Adicionar imagem se o usuário informar um link
-    if (imagem) {
-        try {
-            const url = new URL(imagem);
-
-            if (!["http:", "https:"].includes(url.protocol)) {
-                throw new Error("Link inválido");
-            }
-
-            const foto = document.createElement("img");
-            foto.src = url.href;
-            foto.alt = "Imagem da publicação";
-
-            foto.onerror = function() {
-                foto.remove();
-                alert("Não foi possível carregar essa imagem.");
-            };
-
-            post.appendChild(foto);
-        } catch {
-            alert("Digite um link de imagem válido.");
-            return;
-        }
+    // IR PARA OS COMENTÁRIOS
+    if (event.target.classList.contains("comment-focus")) {
+        const post = event.target.closest(".post");
+        post.querySelector(".comment-form input").focus();
     }
 
-    post.append(
-        texto,
-        botaoCurtir,
-        contador,
-        comentarios,
-        formularioComentario
-    );
+    // COMPARTILHAR PUBLICAÇÃO
+    if (event.target.classList.contains("share")) {
+        const post = event.target.closest(".post");
+        const legenda = post.querySelector(".post-content p");
 
-    publicacoes.prepend(post);
-
-    formPost.reset();
-    alert("Publicação criada com sucesso!");
+        if (navigator.clipboard && legenda) {
+            navigator.clipboard.writeText(legenda.innerText)
+                .then(() => alert("Legenda copiada para compartilhar!"))
+                .catch(() => alert("Não foi possível copiar o conteúdo."));
+        } else {
+            alert("Compartilhamento não disponível neste navegador.");
+        }
+    }
 });
 
-// Comentários das publicações iniciais
-document.querySelectorAll(".form-comentario").forEach(function(formulario) {
-    formulario.addEventListener("submit", function(event) {
+// SISTEMA DE COMENTÁRIOS
+document.querySelectorAll(".comment-form").forEach(function(form) {
+    form.addEventListener("submit", function(event) {
         event.preventDefault();
 
-        const campo = formulario.querySelector("input");
+        const campo = form.querySelector("input");
         const texto = campo.value.trim();
 
-        if (!texto) return;
+        if (texto === "") return;
 
-        const post = formulario.closest(".post");
-        const comentarios = post.querySelector(".comentarios");
+        const post = form.closest(".post");
+        const comentarios = post.querySelector(".comments");
 
         const comentario = document.createElement("p");
         comentario.textContent = texto;
@@ -148,15 +70,155 @@ document.querySelectorAll(".form-comentario").forEach(function(formulario) {
     });
 });
 
-// Pesquisar publicações
-pesquisa.addEventListener("input", function() {
-    const termo = pesquisa.value.toLowerCase().trim();
+// CRIAR PUBLICAÇÃO
+const postForm = document.getElementById("postForm");
 
-    document.querySelectorAll(".post").forEach(function(post) {
-        const conteudo = post.textContent.toLowerCase();
+postForm.addEventListener("submit", function(event) {
+    event.preventDefault();
 
-        post.style.display = conteudo.includes(termo)
-            ? "block"
-            : "none";
+    const nome = document.getElementById("username").value.trim();
+    const legenda = document.getElementById("caption").value.trim();
+    const imagem = document.getElementById("imageUrl").value.trim();
+
+    if (!nome || !legenda) {
+        alert("Preencha seu nome e sua legenda!");
+        return;
+    }
+
+    if (imagem) {
+        try {
+            const url = new URL(imagem);
+
+            if (!["http:", "https:"].includes(url.protocol)) {
+                throw new Error("URL inválida");
+            }
+        } catch {
+            alert("Digite um endereço de imagem válido.");
+            return;
+        }
+    }
+
+    const post = document.createElement("article");
+    post.className = "post";
+    post.dataset.curtidas = "0";
+
+    // Cabeçalho
+    const cabecalho = document.createElement("div");
+    cabecalho.className = "post-header";
+
+    const avatar = document.createElement("img");
+    avatar.src = "https://i.pravatar.cc/100?img=12";
+    avatar.alt = "Foto do perfil";
+
+    const usuario = document.createElement("strong");
+    usuario.textContent = nome;
+
+    const opcoes = document.createElement("span");
+    opcoes.textContent = "•••";
+
+    cabecalho.append(avatar, usuario, opcoes);
+    post.appendChild(cabecalho);
+
+    // Imagem
+    if (imagem) {
+        const foto = document.createElement("img");
+        foto.className = "post-image";
+        foto.src = imagem;
+        foto.alt = "Imagem da publicação";
+
+        foto.onerror = function() {
+            foto.remove();
+            alert("Não foi possível carregar a imagem.");
+        };
+
+        post.appendChild(foto);
+    }
+
+    // Botões
+    const acoes = document.createElement("div");
+    acoes.className = "post-actions";
+
+    acoes.innerHTML = `
+        <button class="like">♡</button>
+        <button class="comment-focus">♧</button>
+        <button class="share">➤</button>
+        <button class="save">♧</button>
+    `;
+
+    // Conteúdo
+    const conteudo = document.createElement("div");
+    conteudo.className = "post-content";
+
+    const curtidas = document.createElement("strong");
+    curtidas.className = "likes";
+    curtidas.textContent = "0 curtidas";
+
+    const texto = document.createElement("p");
+    const nomeNegrito = document.createElement("strong");
+    nomeNegrito.textContent = nome + " ";
+    texto.append(nomeNegrito, document.createTextNode(legenda));
+
+    const comentarios = document.createElement("div");
+    comentarios.className = "comments";
+
+    const horario = document.createElement("small");
+    horario.textContent = "AGORA";
+
+    const formulario = document.createElement("form");
+    formulario.className = "comment-form";
+
+    const campo = document.createElement("input");
+    campo.type = "text";
+    campo.placeholder = "Adicione um comentário...";
+    campo.required = true;
+
+    const publicar = document.createElement("button");
+    publicar.type = "submit";
+    publicar.textContent = "Publicar";
+
+    formulario.append(campo, publicar);
+
+    formulario.addEventListener("submit", function(e) {
+        e.preventDefault();
+
+        const comentarioTexto = campo.value.trim();
+
+        if (!comentarioTexto) return;
+
+        const comentario = document.createElement("p");
+        comentario.textContent = comentarioTexto;
+
+        comentarios.appendChild(comentario);
+        campo.value = "";
+    });
+
+    conteudo.append(
+        curtidas,
+        texto,
+        comentarios,
+        horario,
+        formulario
+    );
+
+    post.append(acoes, conteudo);
+
+    // Colocar publicação no início do feed
+    document.getElementById("posts").prepend(post);
+
+    postForm.reset();
+
+    alert("Publicação criada com sucesso!");
+});
+
+// SISTEMA DE SEGUIR
+document.querySelectorAll(".follow").forEach(function(botao) {
+    botao.addEventListener("click", function() {
+        if (botao.textContent === "Seguir") {
+            botao.textContent = "Seguindo";
+            botao.style.color = "#888";
+        } else {
+            botao.textContent = "Seguir";
+            botao.style.color = "#0095f6";
+        }
     });
 });
