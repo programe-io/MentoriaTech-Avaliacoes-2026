@@ -1,10 +1,12 @@
+
 // CURTIR PUBLICAÇÕES
+
 document.querySelectorAll(".curtir").forEach(botao => {
 
     botao.addEventListener("click", function() {
 
         let post = this.closest(".post");
-        let contador = post.querySelector(".contador");
+        let contador = post.querySelector(".quantidade");
 
         let numero = Number(contador.textContent);
 
@@ -22,12 +24,14 @@ document.querySelectorAll(".curtir").forEach(botao => {
 
             contador.textContent = numero + 1;
         }
+
     });
 
 });
 
 
 // SALVAR PUBLICAÇÕES
+
 document.querySelectorAll(".salvar").forEach(botao => {
 
     botao.addEventListener("click", function() {
@@ -41,6 +45,7 @@ document.querySelectorAll(".salvar").forEach(botao => {
         } else {
 
             icone.className = "bx bxs-bookmark";
+
         }
 
     });
@@ -48,8 +53,9 @@ document.querySelectorAll(".salvar").forEach(botao => {
 });
 
 
-// SEGUIR USUÁRIOS
-document.querySelectorAll(".sugestao button").forEach(botao => {
+// SEGUIR AMIGOS
+
+document.querySelectorAll(".amigo button").forEach(botao => {
 
     botao.addEventListener("click", function() {
 
@@ -60,6 +66,7 @@ document.querySelectorAll(".sugestao button").forEach(botao => {
         } else {
 
             this.textContent = "Seguir";
+
         }
 
     });
@@ -67,28 +74,34 @@ document.querySelectorAll(".sugestao button").forEach(botao => {
 });
 
 
-// ADICIONAR COMENTÁRIOS
-document.querySelectorAll(".form-comentario").forEach(formulario => {
+// COMENTÁRIOS
 
-    formulario.addEventListener("submit", function(event) {
+document.querySelectorAll(".form-comentario").forEach(form => {
+
+    form.addEventListener("submit", function(event) {
 
         event.preventDefault();
 
         let campo = this.querySelector("input");
-        let comentario = campo.value.trim();
+        let texto = campo.value.trim();
 
-        if (comentario === "") {
+        if (texto === "") {
             return;
         }
 
         let novoComentario = document.createElement("p");
-
         let usuario = document.createElement("strong");
-        usuario.textContent = "frojo_dev ";
 
-        novoComentario.append(usuario, document.createTextNode(comentario));
+        usuario.textContent = "gabriel.dev: ";
 
-        this.before(novoComentario);
+        novoComentario.append(
+            usuario,
+            document.createTextNode(texto)
+        );
+
+        this.parentElement.querySelector(
+            ".lista-comentarios"
+        ).appendChild(novoComentario);
 
         campo.value = "";
 
@@ -98,15 +111,50 @@ document.querySelectorAll(".form-comentario").forEach(formulario => {
 
 
 // PESQUISAR PUBLICAÇÕES
+
 document.getElementById("pesquisa").addEventListener("input", function() {
 
-    let pesquisa = this.value.toLowerCase();
+    let texto = this.value.toLowerCase();
 
     document.querySelectorAll(".post").forEach(post => {
 
-        let texto = post.textContent.toLowerCase();
+        let conteudo = post.textContent.toLowerCase();
 
-        post.style.display = texto.includes(pesquisa) ? "block" : "none";
+        post.style.display = conteudo.includes(texto)
+            ? "block"
+            : "none";
+
+    });
+
+});
+
+
+// ABRIR CAMPO DE COMENTÁRIO
+
+document.querySelectorAll(".comentar").forEach(botao => {
+
+    botao.addEventListener("click", function() {
+
+        let post = this.closest(".post");
+
+        post.querySelector(
+            ".form-comentario input"
+        ).focus();
+
+    });
+
+});
+
+
+// MOSTRAR COMENTÁRIOS
+
+document.querySelectorAll(".ver-comentarios").forEach(botao => {
+
+    botao.addEventListener("click", function() {
+
+        let lista = this.nextElementSibling;
+
+        lista.hidden = !lista.hidden;
 
     });
 
