@@ -1,91 +1,83 @@
 
-function curtir(botao) {
-    const post = botao.closest(".post");
-        const contador = post.querySelector(".likes");
+let seguindo = false;
+let quantidadeSeguidores = 1250;
+let timer;
 
-            let numero = parseInt(contador.textContent);
+function seguir() {
+    const botao = document.getElementById("seguir");
+        const numero = document.getElementById("seguidores");
 
-                if (botao.classList.contains("liked")) {
-                        botao.classList.remove("liked");
-                                botao.textContent = "♡";
-                                        numero--;
-                                            } else {
-                                                    botao.classList.add("liked");
-                                                            botao.textContent = "♥";
-                                                                    numero++;
-                                                                        }
+            seguindo = !seguindo;
 
-                                                                            contador.textContent = numero + " curtidas";
-                                                                            }
+                if (seguindo) {
+                        quantidadeSeguidores++;
+                                botao.innerText = "Seguindo ✓";
+                                        botao.style.background = "#172c29";
+                                                botao.style.color = "#00e69a";
+                                                        botao.style.border = "1px solid #00e69a";
 
-                                                                            function comentar(botao) {
-                                                                                const post = botao.closest(".post");
+                                                                notificar("Você começou a seguir Luis Gustavo! 💚");
+                                                                    } else {
+                                                                            quantidadeSeguidores--;
+                                                                                    botao.innerText = "Seguir +";
+                                                                                            botao.style.background = "";
+                                                                                                    botao.style.color = "white";
+                                                                                                            botao.style.border = "";
 
-                                                                                    const texto = prompt("Digite seu comentário:");
+                                                                                                                    notificar("Você deixou de seguir.");
+                                                                                                                        }
 
-                                                                                        if (texto && texto.trim() !== "") {
-                                                                                                const comentarios = post.querySelector(".comentarios");
+                                                                                                                            numero.innerText = quantidadeSeguidores.toLocaleString("pt-BR");
+                                                                                                                            }
 
-                                                                                                        const novo = document.createElement("p");
-                                                                                                                novo.className = "comentario";
+                                                                                                                            function curtir(post) {
+                                                                                                                                post.classList.toggle("curtido");
 
-                                                                                                                        const nome = document.createElement("strong");
-                                                                                                                                nome.textContent = "luisgustavo ";
+                                                                                                                                    const coracao = post.querySelector(".coracao");
 
-                                                                                                                                        novo.appendChild(nome);
-                                                                                                                                                novo.appendChild(document.createTextNode(texto));
+                                                                                                                                        if (post.classList.contains("curtido")) {
+                                                                                                                                                coracao.innerText = "♥";
+                                                                                                                                                    } else {
+                                                                                                                                                            coracao.innerText = "♡";
+                                                                                                                                                                }
+                                                                                                                                                                }
 
-                                                                                                                                                        comentarios.appendChild(novo);
-                                                                                                                                                            }
-                                                                                                                                                            }
+                                                                                                                                                                function mudarAba(aba, botao) {
+                                                                                                                                                                    document.getElementById("posts").style.display =
+                                                                                                                                                                            aba === "posts" ? "grid" : "none";
 
-                                                                                                                                                            function salvar(botao) {
-                                                                                                                                                                if (botao.textContent === "▢") {
-                                                                                                                                                                        botao.textContent = "▣";
-                                                                                                                                                                                botao.classList.add("liked");
-                                                                                                                                                                                    } else {
-                                                                                                                                                                                            botao.textContent = "▢";
-                                                                                                                                                                                                    botao.classList.remove("liked");
-                                                                                                                                                                                                        }
-                                                                                                                                                                                                        }
+                                                                                                                                                                                document.getElementById("marcados").style.display =
+                                                                                                                                                                                        aba === "marcados" ? "block" : "none";
 
-                                                                                                                                                                                                        function novaPublicacao() {
-                                                                                                                                                                                                            const legenda = prompt("Digite a legenda da publicação:");
+                                                                                                                                                                                            document.querySelectorAll(".aba").forEach(item => {
+                                                                                                                                                                                                    item.classList.remove("ativa");
+                                                                                                                                                                                                        });
 
-                                                                                                                                                                                                                if (!legenda || !legenda.trim()) return;
+                                                                                                                                                                                                            botao.classList.add("ativa");
+                                                                                                                                                                                                            }
 
-                                                                                                                                                                                                                    const post = document.createElement("article");
-                                                                                                                                                                                                                        post.className = "post";
+                                                                                                                                                                                                            function compartilhar() {
+                                                                                                                                                                                                                if (navigator.share) {
+                                                                                                                                                                                                                        navigator.share({
+                                                                                                                                                                                                                                    title: "Luis Gustavo",
+                                                                                                                                                                                                                                                text: "Confira este perfil!",
+                                                                                                                                                                                                                                                            url: window.location.href
+                                                                                                                                                                                                                                                                    });
+                                                                                                                                                                                                                                                                        } else {
+                                                                                                                                                                                                                                                                                notificar("Copie o endereço desta página para compartilhar!");
+                                                                                                                                                                                                                                                                                    }
+                                                                                                                                                                                                                                                                                    }
 
-                                                                                                                                                                                                                            post.innerHTML = `
-                                                                                                                                                                                                                                    <div class="post-header">
-                                                                                                                                                                                                                                                <div class="avatar">LG</div>
-                                                                                                                                                                                                                                                            <strong>luisgustavo</strong>
-                                                                                                                                                                                                                                                                        <span>•••</span>
-                                                                                                                                                                                                                                                                                </div>
+                                                                                                                                                                                                                                                                                    function notificar(texto) {
+                                                                                                                                                                                                                                                                                        const caixa = document.getElementById("notificacao");
 
-                                                                                                                                                                                                                                                                                        <div class="foto foto1">
-                                                                                                                                                                                                                                                                                                    LUIS GUSTAVO
-                                                                                                                                                                                                                                                                                                                <small>NOVA PUBLICAÇÃO</small>
-                                                                                                                                                                                                                                                                                                                        </div>
+                                                                                                                                                                                                                                                                                            caixa.innerText = texto;
+                                                                                                                                                                                                                                                                                                caixa.classList.add("visivel");
 
-                                                                                                                                                                                                                                                                                                                                <div class="acoes">
-                                                                                                                                                                                                                                                                                                                                            <button onclick="curtir(this)">♡</button>
-                                                                                                                                                                                                                                                                                                                                                        <button onclick="comentar(this)">♧</button>
-                                                                                                                                                                                                                                                                                                                                                                    <button>➤</button>
-                                                                                                                                                                                                                                                                                                                                                                                <button class="salvar" onclick="salvar(this)">▢</button>
-                                                                                                                                                                                                                                                                                                                                                                                        </div>
+                                                                                                                                                                                                                                                                                                    clearTimeout(timer);
 
-                                                                                                                                                                                                                                                                                                                                                                                                <div class="descricao">
-                                                                                                                                                                                                                                                                                                                                                                                                            <strong class="likes">0 curtidas</strong>
-                                                                                                                                                                                                                                                                                                                                                                                                                        <p><b>luisgustavo</b> ${legenda.replace(/[&<>"']/g, c => ({
-                                                                                                                                                                                                                                                                                                                                                                                                                                        '&':'&amp;', '<':'&lt;', '>':'&gt;',
-                                                                                                                                                                                                                                                                                                                                                                                                                                                        '"':'&quot;', "'":'&#39;'
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                    })[c])}</p>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <div class="comentarios"></div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        </div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            `;
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                document.getElementById("feed").prepend(post);
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                                                                                                                                                                                                                                                                                        timer = setTimeout(() => {
+                                                                                                                                                                                                                                                                                                                caixa.classList.remove("visivel");
+                                                                                                                                                                                                                                                                                                                    }, 2500);
+                                                                                                                                                                                                                                                                                                                    }
+                                                                                                                                                                                                                                                                                                                    
