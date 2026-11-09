@@ -1,27 +1,24 @@
-// Seleciona os elementos do HTML
-let valorAtual = 0;
-const contadorTexto = document.getElementById('contador');
-const btnDiminuir = document.getElementById('diminuir');
-const btnResetar = document.getElementById('resetar');
-const btnAumentar = document.getElementById('aumentar');
+document.addEventListener("DOMContentLoaded", () => {
+    // Sistema interativo de Likes do Blog
+    const likeBtn = document.getElementById("likeBtn");
+    const likeCount = document.getElementById("likeCount");
+    let count = 42;
 
-// Função para atualizar o número na tela
-function atualizarContador() {
-  contadorTexto.textContent = valorAtual;
-}
+    likeBtn.addEventListener("click", () => {
+        count++;
+        likeCount.textContent = count;
+        
+        // Efeito visual rápido de pulo estilo desenho animado
+        likeBtn.style.transform = "scale(1.2) rotate(-5deg)";
+        setTimeout(() => {
+            likeBtn.style.transform = "scale(1) rotate(0deg)";
+        }, 150);
+    });
 
-// Adiciona eventos de clique nos botões
-btnAumentar.addEventListener('click', () => {
-  valorAtual++;
-  atualizarContador();
-});
-
-btnDiminuir.addEventListener('click', () => {
-  valorAtual--;
-  atualizarContador();
-});
-
-btnResetar.addEventListener('click', () => {
-  valorAtual = 0;
-  atualizarContador();
+    // Animação rústica ao enviar comentário
+    const form = document.querySelector(".comment-form");
+    form.addEventListener("submit", (e) => {
+        alert("🍞 Osmar diz: Comentário enviado para a fila da torradeira!");
+        form.reset();
+    });
 });
