@@ -1,85 +1,84 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // 1. Funcionalidade de Curtir/Gostar da Publicação
-  const heartIcons = document.querySelectorAll('.post-actions .bx-heart');
-  const likesCountElement = document.querySelector('.likes-count');
+  const feedContainer = document.getElementById('feed-container');
+  const publishBtn = document.getElementById('publish-btn');
 
-  heartIcons.forEach((heart) => {
-    heart.addEventListener('click', () => {
-      // Alterna entre o ícone normal e o preenchido (solid)
-      const isLiked = heart.classList.contains('bxs-heart');
+  // 1. Interação nos Botões de Curtir e Comentar (Delegação de Eventos)
+  feedContainer.addEventListener('click', (event) => {
+    const likeBtn = event.target.closest('.btn-like');
+    
+    if (likeBtn) {
+      const countSpan = likeBtn.querySelector('.like-count');
+      let currentLikes = parseInt(countSpan.textContent.replace(/\D/g, '')) || 0;
+      const isLiked = likeBtn.classList.contains('liked');
 
       if (isLiked) {
-        heart.classList.remove('bxs-heart', 'text-red-500');
-        heart.classList.add('bx-heart');
-        heart.style.color = '';
-        
-        // Atualiza a contagem de curtidas
-        if (likesCountElement) {
-          likesCountElement.textContent = '1.234 curtidas';
-        }
+        likeBtn.classList.remove('liked');
+        currentLikes--;
       } else {
-        heart.classList.remove('bx-heart');
-        heart.classList.add('bxs-heart');
-        heart.style.color = '#ef4444'; // Cor vermelha do Instagram
-        
-        // Atualiza a contagem de curtidas
-        if (likesCountElement) {
-          likesCountElement.textContent = '1.235 curtidas';
-        }
+        likeBtn.classList.add('liked');
+        currentLikes++;
       }
-    });
-  });
 
-  // 2. Funcionalidade de Guardar / Bookmark
-  const bookmarkIcons = document.querySelectorAll('.bx-bookmark');
+      countSpan.textContent = `(${currentLikes})`;
+    }
 
-  bookmarkIcons.forEach((bookmark) => {
-    bookmark.addEventListener('click', () => {
-      const isBookmarked = bookmark.classList.contains('bxs-bookmark');
-
-      if (isBookmarked) {
-        bookmark.classList.remove('bxs-bookmark');
-        bookmark.classList.add('bx-bookmark');
-      } else {
-        bookmark.classList.remove('bx-bookmark');
-        bookmark.classList.add('bxs-bookmark');
+    const commentBtn = event.target.closest('.btn-comment');
+    if (commentBtn) {
+      const commentText = prompt('Digite seu comentário:');
+      if (commentText && commentText.trim() !== '') {
+        alert(`Comentário adicionado: "${commentText.trim()}"`);
       }
-    });
-  });
-
-  // 3. Botão "Seguir / Seguindo" na Sidebar
-  const followButtons = document.querySelectorAll('.sidebar .btn-link');
-
-  followButtons.forEach((btn) => {
-    if (btn.textContent.trim().toLowerCase() === 'seguir') {
-      btn.addEventListener('click', () => {
-        if (btn.textContent.trim() === 'Seguir') {
-          btn.textContent = 'Seguindo';
-          btn.style.color = '#6b7280'; // tom de cinzento
-        } else {
-          btn.textContent = 'Seguir';
-          btn.style.color = '#3b82f6'; // tom de azul
-        }
-      });
     }
   });
 
-  // 4. Navegação Móvel (Destacar o ícone ativo)
-  const navButtons = document.querySelectorAll('.bottom-nav .nav-btn');
-
-  navButtons.forEach((btn) => {
-    btn.addEventListener('click', () => {
-      navButtons.forEach((b) => b.classList.remove('active'));
-      btn.classList.add('active');
+  // 2. Criar Nova Publicação Dinamicamente
+  if (publishBtn) {
+    publishBtn.addEventListener('click', () => {
+      const postText = prompt('O que você gostaria de publicar?');
+      if (postText && postText.trim() !== '') {
+        createNewPost(postText.trim());
+      }
     });
-  });
+  }
 
-  // 5. Filtro Simples na Barra de Pesquisa
-  const searchInput = document.querySelector('.search-input');
-  if (searchInput) {
-    searchInput.addEventListener('keyup', (e) => {
-      const searchTerm = e.target.value.toLowerCase();
-      console.log('Pesquisando por:', searchTerm);
-    });
+  function createNewPost(text) {
+    const article = document.createElement('article');
+    article.className = 'card post-card';
+    article.innerHTML = `
+      <header class="post-header">
+        <div class="user-info">
+          <div class="avatar">U</div>
+          <div class="user-details">
+            <strong>Seu Nome</strong>
+            <span class="post-time">agora mesmo</span>
+          </div>
+        </div>
+      </header>
+
+      <p class="post-text">${escapeHTML(text)}</p>
+
+      <footer class="post-actions">
+        <button class="btn btn-action btn-like">
+          <span class="icon">❤️</span> Curtir <span class="like-count">(0)</span>
+        </button>
+        <button class="btn btn-action btn-comment">
+          <span class="icon">💬</span> Comentar
+        </button>
+      </footer>
+    `;
+
+    feedContainer.prepend(article);
+  }
+
+  function escapeHTML(str) {
+    return str.replace(/[&<>'"]/g, 
+      tag => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        "'": '&#39;',
+        '"': '&quot;'
+      }[tag] || tag)
+    );
   }
 });
