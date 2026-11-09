@@ -1,35 +1,23 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const commentForm = document.getElementById('comment-form');
-    const commentsContainer = document.getElementById('comments-container');
+document.addEventListener("DOMContentLoaded", function() {
+    const filterButtons = document.querySelectorAll(".filter-btn");
+    const skinCards = document.querySelectorAll(".skin-card");
 
-    // Escuta o evento de envio do formulário
-    commentForm.addEventListener('submit', (event) => {
-        event.preventDefault(); // Impede o recarregamento da página
+    filterButtons.forEach(button => {
+        button.addEventListener("click", () => {
+            // Remove a classe ativa de todos os botões e adiciona no clicado
+            filterButtons.forEach(btn => btn.classList.remove("active"));
+            button.classList.add("active");
 
-        // Pega os valores digitados pelo usuário
-        const nameInput = document.getElementById('user-name').value;
-        const messageInput = document.getElementById('user-message').value;
+            const filterValue = button.getAttribute("data-filter");
 
-        // Cria o elemento de bloco do comentário
-        const commentBox = document.createElement('div');
-        commentBox.classList.add('comment-box');
-
-        // Cria o título com o nome do jogador
-        const commenterName = document.createElement('h4');
-        commenterName.textContent = nameInput;
-
-        // Cria o parágrafo com a mensagem
-        const commenterMessage = document.createElement('p');
-        commenterMessage.textContent = messageInput;
-
-        // Monta o comentário dentro do bloco correspondente
-        commentBox.appendChild(commenterName);
-        commentBox.appendChild(commenterMessage);
-
-        // Adiciona o comentário no topo da lista de comentários
-        commentsContainer.insertBefore(commentBox, commentsContainer.firstChild);
-
-        // Limpa o formulário após o envio
-        commentForm.reset();
+            skinCards.forEach(card => {
+                // Se "Todas" for selecionado ou o card tiver a classe correspondente
+                if (filterValue === "all" || card.classList.contains(filterValue)) {
+                    card.classList.remove("hide");
+                } else {
+                    card.classList.add("hide");
+                }
+            });
+        });
     });
 });
