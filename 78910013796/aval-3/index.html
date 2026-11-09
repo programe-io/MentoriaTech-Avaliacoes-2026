@@ -1,134 +1,71 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Instagram Clone com Reels</title>
-    <link rel="stylesheet" href="style.css">
-    <!-- Ícones do FontAwesome -->
-    <link rel="stylesheet" href="https://cloudflare.com">
+    <title>Instagram</title>
+    <!-- Importação do Tailwind CSS via CDN -->
+    <script src="https://tailwindcss.com"></script>
+    <!-- Biblioteca de ícones Lucide Icons -->
+    <script src="https://unpkg.com"></script>
+    <style>
+        /* Oculta as barras de rolagem nos stories sem quebrar a navegação por toque ou scroll */
+        .scrollbar-none::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-none {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"><link href="style.css" rel="stylesheet"></head>
-<body>
+<link href="style.css" rel="stylesheet"></head>
+<body class="bg-black text-white font-sans antialiased min-h-screen flex">
 
-    <div class="container">
-        <!-- Barra Lateral de Navegação -->
-        <aside class="sidebar">
-            <div class="logo">
-                <h2>Instagram</h2>
-            </div>
-            <nav class="nav-links">
-                <a href="#" id="nav-home" class="active"><i class="fa-solid fa-house"></i> <span>Página inicial</span></a>
-                <a href="#"><i class="fa-solid fa-magnifying-glass"></i> <span>Pesquisa</span></a>
-                <a href="#"><i class="fa-regular fa-compass"></i> <span>Explorar</span></a>
-                <a href="#" id="nav-reels"><i class="fa-solid fa-clapperboard"></i> <span>Reels</span></a>
-                <a href="#"><i class="fa-regular fa-paper-plane"></i> <span>Mensagens</span></a>
-                <a href="#"><i class="fa-regular fa-heart"></i> <span>Notificações</span></a>
-                <a href="#"><i class="fa-regular fa-square-plus"></i> <span>Criar</span></a>
-                <a href="#"><i class="fa-regular fa-user"></i> <span>Perfil</span></a>
+    <!-- MENU LATERAL DE NAVEGAÇÃO -->
+    <aside class="w-64 border-r border-zinc-800 h-screen fixed left-0 top-0 p-6 flex flex-col justify-between hidden md:flex">
+        <div class="flex flex-col gap-8">
+            <!-- Logo oficial textual -->
+            <h1 class="text-xl font-bold tracking-wider italic my-4 px-2">Instagram</h1>
+            
+            <!-- Itens de navegação principal -->
+            <nav class="flex flex-col gap-4">
+                <a href="#" class="flex items-center gap-4 hover:bg-zinc-900 p-3 rounded-lg transition font-medium"><i data-lucide="home"></i> Página inicial</a>
+                <a href="#" class="flex items-center gap-4 hover:bg-zinc-900 p-3 rounded-lg transition font-medium"><i data-lucide="search"></i> Pesquisa</a>
+                <a href="#" class="flex items-center gap-4 hover:bg-zinc-900 p-3 rounded-lg transition font-medium"><i data-lucide="compass"></i> Explorar</a>
+                <a href="#" class="flex items-center gap-4 hover:bg-zinc-900 p-3 rounded-lg transition font-medium"><i data-lucide="film"></i> Reels</a>
+                <a href="#" class="flex items-center gap-4 hover:bg-zinc-900 p-3 rounded-lg transition font-medium"><i data-lucide="message-circle"></i> Mensagens</a>
+                <a href="#" class="flex items-center gap-4 hover:bg-zinc-900 p-3 rounded-lg transition font-medium"><i data-lucide="heart"></i> Notificações</a>
+                <a href="#" class="flex items-center gap-4 hover:bg-zinc-900 p-3 rounded-lg transition font-medium"><i data-lucide="plus-square"></i> Criar</a>
+                <a href="#" class="flex items-center gap-4 hover:bg-zinc-900 p-3 rounded-lg transition font-medium">
+                    <img src="https://unsplash.com" class="w-6 h-6 rounded-full object-cover" alt="Perfil Logado">
+                    Perfil
+                </a>
             </nav>
-        </aside>
+        </div>
 
-        <!-- Feed Principal (Página Inicial) -->
-        <main id="feed-section" class="main-content">
-            <div class="feed">
-                <!-- Post -->
-                <article class="post">
-                    <div class="post-header">
-                        <div class="user-info">
-                            <img src="https://picsum.photos" alt="Avatar" class="avatar">
-                            <span class="username">usuario_exemplo</span>
-                        </div>
-                        <i class="fa-solid fa-ellipsis"></i>
-                    </div>
-                    <div class="post-image">
-                        <img src="https://picsum.photos" alt="Post">
-                    </div>
-                    <div class="post-actions">
-                        <div class="left-actions">
-                            <button id="like-btn" class="action-btn"><i class="fa-regular fa-heart"></i></button>
-                            <button class="action-btn"><i class="fa-regular fa-comment"></i></button>
-                            <button class="action-btn"><i class="fa-regular fa-paper-plane"></i></button>
-                        </div>
-                        <button class="action-btn"><i class="fa-regular fa-bookmark"></i></button>
-                    </div>
-                    <div class="post-body">
-                        <p class="likes-count"><span id="likes-number">102</span> curtidas</p>
-                        <p class="caption"><span class="username">usuario_exemplo</span> Explorando novas paisagens hoje! 🌲✨</p>
-                        <div id="comments-list" class="comments-container"></div>
-                    </div>
-                    <div class="comment-box">
-                        <input type="text" id="comment-input" placeholder="Adicione um comentário...">
-                        <button id="post-comment-btn">Publicar</button>
-                    </div>
-                </article>
+        <!-- Opções adicionais de configuração -->
+        <a href="#" class="flex items-center gap-4 hover:bg-zinc-900 p-3 rounded-lg transition font-medium"><i data-lucide="menu"></i> Mais</a>
+    </aside>
+
+    <!-- ÁREA PRINCIPAL DO FEED -->
+    <main class="flex-1 md:ml-64 flex justify-center py-8 px-4">
+        <div class="max-w-[600px] w-full flex flex-col gap-6">
+            
+            <!-- CAROUSEL DE STORIES -->
+            <div id="stories-container" class="flex gap-4 p-4 bg-black border border-zinc-800 rounded-lg overflow-x-auto scrollbar-none">
+                <!-- Alimentado dinamicamente por JavaScript -->
             </div>
-        </main>
 
-        <!-- Seção de Reels (Oculta por padrão) -->
-        <main id="reels-section" class="main-content hidden">
-            <div class="reels-container">
-                
-                <!-- Reel 1 -->
-                <div class="reel-card">
-                    <div class="video-wrapper">
-                        <!-- Usando vídeos públicos de amostra -->
-                        <video src="https://mixkit.co" loop muted autoplay playsinline></video>
-                        
-                        <!-- Informações sobrepostas no vídeo -->
-                        <div class="reel-overlay">
-                            <div class="reel-user">
-                                <img src="https://picsum.photos" alt="Avatar" class="avatar">
-                                <span class="username">criador_reels</span>
-                                <button class="follow-btn">Seguir</button>
-                            </div>
-                            <p class="reel-caption">Destaques da noite na cidade maravilhosa! 🌃 #neon #aesthetic</p>
-                            <div class="reel-music">
-                                <i class="fa-solid fa-music"></i> <span>Áudio original • criador_reels</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Ações laterais flutuantes -->
-                    <div class="reel-actions">
-                        <button class="reel-action-btn like-reel"><i class="fa-regular fa-heart"></i><span>45K</span></button>
-                        <button class="reel-action-btn"><i class="fa-regular fa-comment"></i><span>289</span></button>
-                        <button class="reel-action-btn"><i class="fa-regular fa-paper-plane"></i></button>
-                        <button class="reel-action-btn"><i class="fa-regular fa-bookmark"></i></button>
-                        <button class="reel-action-btn"><i class="fa-solid fa-ellipsis"></i></button>
-                    </div>
-                </div>
-
-                <!-- Reel 2 -->
-                <div class="reel-card">
-                    <div class="video-wrapper">
-                        <video src="https://mixkit.co" loop muted playsinline></video>
-                        <div class="reel-overlay">
-                            <div class="reel-user">
-                                <img src="https://picsum.photos" alt="Avatar" class="avatar">
-                                <span class="username">nature_travel</span>
-                                <button class="follow-btn">Seguir</button>
-                            </div>
-                            <p class="reel-caption">A calmaria do oceano vista de cima. 🌊 #natureza #drone</p>
-                            <div class="reel-music">
-                                <i class="fa-solid fa-music"></i> <span>Som relaxante • Natureza</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="reel-actions">
-                        <button class="reel-action-btn like-reel"><i class="fa-regular fa-heart"></i><span>12K</span></button>
-                        <button class="reel-action-btn"><i class="fa-regular fa-comment"></i><span>94</span></button>
-                        <button class="reel-action-btn"><i class="fa-regular fa-paper-plane"></i></button>
-                        <button class="reel-action-btn"><i class="fa-regular fa-bookmark"></i></button>
-                        <button class="reel-action-btn"><i class="fa-solid fa-ellipsis"></i></button>
-                    </div>
-                </div>
-
+            <!-- TIMELINE DE PUBLICAÇÕES -->
+            <div id="feed-container" class="flex flex-col gap-6">
+                <!-- Alimentado dinamicamente por JavaScript -->
             </div>
-        </main>
-    </div>
+
+        </div>
+    </main>
 
     <script src="script.js"></script>
 <script src="script.js"></script></body>
 </html>
-
