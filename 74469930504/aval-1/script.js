@@ -1,219 +1,186 @@
 
-// Array que armazena os produtos
 let produtos = [];
 
-// Identifica se estamos editando algum produto
-let indiceEdicao = -1;
+// CADASTRAR PRODUTO
+document.getElementById("formProduto").addEventListener("submit", function(event) {
+    event.preventDefault();
 
-// Elementos do formulário
-const formulario = document.getElementById("formProduto");
-const lista = document.getElementById("listaProdutos");
+    const codigo = document.getElementById("codigo").value.trim();
+    const descricao = document.getElementById("descricao").value.trim();
+    const quantidade = Number(document.getElementById("quantidade").value);
+    const valor = Number(document.getElementById("valor").value);
 
-// Cadastrar ou atualizar produto
-formulario.addEventListener("submit", function(event) {
+    // Verificar se o código já existe
+    if (produtos.some(produto => produto.codigo === codigo)) {
+        alert("Este código já está cadastrado!");
+        return;
+    }
 
-  event.preventDefault();
+    if (quantidade < 0 || valor < 0 ||
+        !Number.isFinite(quantidade) || !Number.isFinite(valor)) {
+        alert("Informe valores válidos!");
+        return;
+    }
 
-  const codigo = document.getElementById("codigo").value.trim();
-  const descricao = document.getElementById("descricao").value.trim();
-  const quantidade = Number(document.getElementById("quantidade").value);
-  const valor = Number(document.getElementById("valor").value);
+    const produto = {
+        codigo,
+        descricao,
+        quantidade,
+        valor
+    };
 
-  if (
-    !codigo ||
-    !descricao ||
-    !Number.isSafeInteger(quantidade) ||
-    quantidade < 0 ||
-    !Number.isFinite(valor) ||
-    valor < 0
-  ) {
-    alert("Preencha os campos corretamente!");
-    return;
-  }
-
-  // Verifica se o código já existe
-  const codigoExistente = produtos.some((produto, index) =>
-    produto.codigo.toLowerCase() === codigo.toLowerCase() &&
-    index !== indiceEdicao
-  );
-
-  if (codigoExistente) {
-    alert("Já existe um produto com esse código!");
-    return;
-  }
-
-  const produto = {
-    codigo,
-    descricao,
-    quantidade,
-    valor
-  };
-
-  if (indiceEdicao === -1) {
-
-    // Cadastro de novo produto
     produtos.push(produto);
 
     alert("Produto cadastrado com sucesso!");
 
-  } else {
-
-    // Atualização de produto existente
-    produtos[indiceEdicao] = produto;
-
-    alert("Produto atualizado com sucesso!");
-
-    indiceEdicao = -1;
-
-    document.getElementById("tituloFormulario")
-      .textContent = "Cadastrar novo produto";
-
-    document.getElementById("btnCadastrar")
-      .textContent = "+ Cadastrar produto";
-  }
-
-  formulario.reset();
-
-  listarProdutos();
-
-});
-
-// Listar produtos
-function listarProdutos() {
-
-  lista.innerHTML = "";
-
-  if (produtos.length === 0) {
-
-    lista.innerHTML = `
-            <tr>
-                <td colspan="5" class="vazio">
-                    Nenhum produto cadastrado.
-                </td>
-            </tr>
-        `;
-
-  }
-
-  produtos.forEach((produto, index) => {
-
-    const linha = document.createElement("tr");
-
-    // Evita inserir os dados do usuário como HTML
-    [produto.codigo, produto.descricao,
-      String(produto.quantidade),
-      produto.valor.toLocaleString("pt-BR", {
-        style: "currency",
-        currency: "BRL"
-      })].forEach(valor => {
-
-      const celula = document.createElement("td");
-      celula.textContent = valor;
-      linha.appendChild(celula);
-
-    });
-
-    const celulaAcoes = document.createElement("td");
-    const acoes = document.createElement("div");
-    acoes.className = "acoes";
-
-    const editar = document.createElement("button");
-    editar.className = "btn-editar";
-    editar.textContent = "Editar";
-    editar.addEventListener("click", () => editarProduto(index));
-
-    const excluir = document.createElement("button");
-    excluir.className = "btn-excluir";
-    excluir.textContent = "Excluir";
-    excluir.addEventListener("click", () => excluirProduto(index));
-
-    acoes.append(editar, excluir);
-    celulaAcoes.appendChild(acoes);
-    linha.appendChild(celulaAcoes);
-
-    lista.appendChild(linha);
-
-  });
-
-  atualizarDashboard();
-
-}
-
-// Alterar valor e quantidade do produto
-function editarProduto(index) {
-
-  const produto = produtos[index];
-
-  document.getElementById("codigo").value = produto.codigo;
-  document.getElementById("descricao").value = produto.descricao;
-  document.getElementById("quantidade").value = produto.quantidade;
-  document.getElementById("valor").value = produto.valor;
-
-  indiceEdicao = index;
-
-  document.getElementById("tituloFormulario")
-    .textContent = "Alterar produto";
-
-  document.getElementById("btnCadastrar")
-    .textContent = "Salvar alterações";
-
-  document.getElementById("codigo").focus();
-
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth"
-  });
-
-}
-
-// Excluir produto
-function excluirProduto(index) {
-
-  const confirmar = confirm(
-    "Deseja realmente excluir este produto?"
-  );
-
-  if (confirmar) {
-
-    produtos.splice(index, 1);
-
-    if (indiceEdicao === index) {
-      indiceEdicao = -1;
-      formulario.reset();
-
-      document.getElementById("tituloFormulario")
-        .textContent = "Cadastrar novo produto";
-
-      document.getElementById("btnCadastrar")
-        .textContent = "+ Cadastrar produto";
-
-    } else if (indiceEdicao > index) {
-      indiceEdicao--;
-    }
+    this.reset();
 
     listarProdutos();
+});
 
-  }
 
+// LISTAR PRODUTOS
+function listarProdutos() {
+    const lista = document.getElementById("listaProdutos");
+
+    lista.innerHTML = "";
+
+    if (produtos.length === 0) {
+        lista.innerHTML = `
+            <tr>
+                <td colspan="5">Nenhum produto cadastrado.</td>
+            </tr>
+        `;
+    }
+
+    produtos.forEach((produto, indice) => {
+        const linha = document.createElement("tr");
+
+        const codigo = document.createElement("td");
+        codigo.textContent = produto.codigo;
+
+        const descricao = document.createElement("td");
+        descricao.textContent = produto.descricao;
+
+        const quantidade = document.createElement("td");
+        quantidade.textContent = produto.quantidade;
+
+        const valor = document.createElement("td");
+        valor.textContent = produto.valor.toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL"
+        });
+
+        const acoes = document.createElement("td");
+
+        const btnValor = document.createElement("button");
+        btnValor.textContent = "Valor";
+        btnValor.className = "btn-edit";
+        btnValor.onclick = () => alterarValor(indice);
+
+        const btnQuantidade = document.createElement("button");
+        btnQuantidade.textContent = "Qtd.";
+        btnQuantidade.className = "btn-edit";
+        btnQuantidade.onclick = () => alterarQuantidade(indice);
+
+        const btnExcluir = document.createElement("button");
+        btnExcluir.textContent = "Excluir";
+        btnExcluir.className = "btn-delete";
+        btnExcluir.onclick = () => excluirProduto(indice);
+
+        acoes.append(btnValor, btnQuantidade, btnExcluir);
+
+        linha.append(
+            codigo,
+            descricao,
+            quantidade,
+            valor,
+            acoes
+        );
+
+        lista.appendChild(linha);
+    });
+
+    atualizarDashboard();
 }
 
-// Atualizar indicadores
+
+// ALTERAR VALOR DO PRODUTO
+function alterarValor(indice) {
+    const novoValor = prompt("Digite o novo valor do produto:");
+
+    if (novoValor === null || novoValor.trim() === "") return;
+
+    const valor = Number(novoValor);
+
+    if (!Number.isFinite(valor) || valor < 0) {
+        alert("Informe um valor válido!");
+        return;
+    }
+
+    produtos[indice].valor = valor;
+
+    alert("Valor atualizado com sucesso!");
+
+    listarProdutos();
+}
+
+
+// ALTERAR QUANTIDADE
+function alterarQuantidade(indice) {
+    const novaQuantidade = prompt("Digite a nova quantidade:");
+
+    if (novaQuantidade === null || novaQuantidade.trim() === "") return;
+
+    const quantidade = Number(novaQuantidade);
+
+    if (!Number.isInteger(quantidade) || quantidade < 0) {
+        alert("Informe uma quantidade inteira válida!");
+        return;
+    }
+
+    produtos[indice].quantidade = quantidade;
+
+    alert("Quantidade atualizada com sucesso!");
+
+    listarProdutos();
+}
+
+
+// EXCLUIR PRODUTO
+function excluirProduto(indice) {
+    const confirmar = confirm("Deseja realmente excluir este produto?");
+
+    if (confirmar) {
+        produtos.splice(indice, 1);
+        listarProdutos();
+    }
+}
+
+
+// ATUALIZAR INDICADORES
 function atualizarDashboard() {
+    const totalProdutos = produtos.length;
 
-  document.getElementById("totalProdutos")
-    .textContent = produtos.length;
+    const totalUnidades = produtos.reduce(
+        (total, produto) => total + produto.quantidade, 0
+    );
 
-  const total = produtos.reduce((soma, produto) => {
-    return soma + (produto.quantidade * produto.valor);
-  }, 0);
+    const valorEstoque = produtos.reduce(
+        (total, produto) => total + (produto.quantidade * produto.valor), 0
+    );
 
-  document.getElementById("valorEstoque")
-    .textContent = total.toLocaleString("pt-BR", {
-    style: "currency",
-    currency: "BRL"
-  });
+    document.getElementById("totalProdutos").textContent = totalProdutos;
 
+    document.getElementById("totalUnidades").textContent = totalUnidades;
+
+    document.getElementById("valorEstoque").textContent =
+        valorEstoque.toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL"
+        });
 }
 
-// Inicialização
+
+// EXIBIR LISTA INICIAL
 listarProdutos();
