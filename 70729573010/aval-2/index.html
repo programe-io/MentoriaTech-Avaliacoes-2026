@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle de Estoque - Aula 14</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h1, h2 {
+            color: #007bff;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .box {
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 6px;
+            background: #fafafa;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .actions-btn {
+            padding: 4px 8px;
+            font-size: 12px;
+            margin: 2px;
+            width: auto;
+            display: inline-block;
+        }
+        .btn-warning { background-color: #ffc107; color: black; }
+        .btn-warning:hover { background-color: #e0a800; }
+        .btn-success { background-color: #28a745; }
+        .btn-success:hover { background-color: #218838; }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+<div class="container">
+    <h1>Sistema de Simulação de Estoque</h1>
+    
+    <div class="grid">
+        <!-- Formulário de Cadastro -->
+        <div class="box">
+            <h2>Cadastrar Novo Produto</h2>
+            <div class="form-group">
+                <label for="codigo">Código:</label>
+                <input type="text" id="codigo" placeholder="Ex: 001">
+            </div>
+            <div class="form-group">
+                <label for="descricao">Descrição:</label>
+                <input type="text" id="descricao" placeholder="Ex: Caderno 10 Matérias">
+            </div>
+            <div class="form-group">
+                <label for="quantidade">Quantidade:</label>
+                <input type="number" id="quantidade" min="0" value="0">
+            </div>
+            <div class="form-group">
+                <label for="valor">Valor (R$):</label>
+                <input type="number" id="valor" step="0.01" min="0" value="0.00">
+            </div>
+            <button onclick="cadastrarProduto()">Cadastrar Produto</button>
+        </div>
+
+        <!-- Painel Informativo / Instruções adicionais -->
+        <div class="box">
+            <h2>Gerenciamento</h2>
+            <p>Utilize o formulário ao lado para adicionar itens à tabela de estoque.</p>
+            <p>Para alterar o <strong>Valor</strong> ou a <strong>Quantidade</strong> de um item existente, basta clicar nos botões de ação correspondentes diretamente na linha do produto listado abaixo.</p>
+        </div>
+    </div>
+
+    <!-- Tabela de Listagem de Produtos -->
+    <h2>Produtos Cadastrados</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Código</th>
+                <th>Descrição</th>
+                <th>Quantidade</th>
+                <th>Valor (R$)</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody id="tabela-estoque">
+            <!-- Os produtos cadastrados aparecerão aqui dinamicamente -->
+        </tbody>
+    </table>
+</div>
+
+<script>
+    // Array que funciona como banco de dados em memória
+    const estoque = [];
+
+    // Função para renderizar/atualizar a tabela na tela
+    function atualizarTabela() {
+        const tbody = document.getElementById('tabela-estoque');
+        tbody.innerHTML = ''; // Limpa a tabela antes de redesenhar
+
+        if (estoque.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;">Nenhum produto cadastrado.</td></tr>`;
+            return;
+        }
+
+        estoque.forEach(produto => {
+            const linha = document.createElement('tr');
+
+            linha.innerHTML = `
+                <td>${produto.codigo}</td>
+                <td>${produto.descricao}</td>
+                <td>${produto.quantidade}</td>
+                <td>R$ ${produto.valor.toFixed(2)}</td>
+                <td>
+                    <button class="actions-btn btn-warning" onclick="alterarValor('${produto.codigo}')">Alterar Valor</button>
+                    <button class="actions-btn btn-success" onclick="alterarQuantidade('${produto.codigo}')">Alterar Qtd</button>
+                </td>
+            `;
+            tbody.appendChild(linha);
+        });
+    }
+
+    // 1. Cadastrar um novo produto
+    function cadastrarProduto() {
+        const codigoInput = document.getElementById('codigo');
+        const descricaoInput = document.getElementById('descricao');
+        const quantidadeInput = document.getElementById('quantidade');
+        const valorInput = document.getElementById('valor');
+
+        const codigo = codigoInput.value.trim();
+        const descricao = descricaoInput.value.trim();
+        const quantidade = parseInt(quantidadeInput.value);
+        const valor = parseFloat(valorInput.value);
+
+        // Validações básicas
+        if (!codigo || !descricao) {
+            alert('Por favor, preencha o código e a descrição do produto.');
+            return;
+        }
+
+        // Verifica se o código já existe
+        const existe = estoque.find(p => p.codigo === codigo);
+        if (existe) {
+            alert('Erro: Já existe um produto cadastrado com este código!');
+            return;
+        }
+
+        if (isNaN(quantidade) || quantidade < 0 || isNaN(valor) || valor < 0) {
+            alert('Quantidade e valor devem ser números positivos.');
+            return;
+        }
+
+        // Cria o objeto e adiciona no array
+        const novo = { codigo, descricao, quantidade, valor };
+        estoque.push(novo);
+
+        // Limpa os campos do formulário
+        codigoInput.value = '';
+        descricaoInput.value = '';
+        quantidadeInput.value = '0';
+        valorInput.value = '0.00';
+
+        atualizarTabela();
+        alert('Produto cadastrado com sucesso!');
+    }
+
+    // 2. Alterar o valor de um produto
+    function alterarValor(codigo) {
+        const produto = estoque.find(p => p.codigo === codigo);
+        if (!produto) return;
+
+        const novoValorStr = prompt(`Produto: ${produto.descricao}\nValor atual: R$ ${produto.valor.toFixed(2)}\nDigite o novo valor (R$):`);
+        
+        if (novoValorStr !== null) {
+            const novoValor = parseFloat(novoValorStr);
+            if (isNaN(novoValor) || novoValor < 0) {
+                alert('Valor inválido!');
+            } else {
+                produto.valor = novoValor;
+                atualizarTabela();
+            }
+        }
+    }
+
+    // 3. Alterar a quantidade de um produto
+    function alterarQuantidade(codigo) {
+        const produto = estoque.find(p => p.codigo === codigo);
+        if (!produto) return;
+
+        const novaQtdStr = prompt(`Produto: ${produto.descricao}\nQuantidade atual: ${produto.quantidade}\nDigite a nova quantidade:`);
+        
+        if (novaQtdStr !== null) {
+            const novaQtd = parseInt(novaQtdStr);
+            if (isNaN(novaQtd) || novaQtd < 0) {
+                alert('Quantidade inválida!');
+            } else {
+                produto.quantidade = novaQtd;
+                atualizarTabela();
+            }
+        }
+    }
+
+    // Inicializa a tabela vazia ao carregar a página
+    atualizarTabela();
+</script>
+
+</body>
+</html>
