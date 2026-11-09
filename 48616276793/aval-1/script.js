@@ -1,213 +1,196 @@
 
-/* MODO ESCURO */
+/* EXEMPLO DE INTERATIVIDADE */
 
-const tema = document.getElementById("tema");
+const exampleButton = document.getElementById("example-button");
+const exampleTitle = document.getElementById("example-title");
+const exampleText = document.getElementById("example-text");
 
-tema.addEventListener("click", function() {
-    document.body.classList.toggle("dark");
+exampleButton.addEventListener("click", function() {
+    exampleTitle.textContent = "JavaScript funcionando!";
+    exampleText.textContent =
+        "Parabéns! Você acabou de executar uma ação com JavaScript.";
 
-    if (document.body.classList.contains("dark")) {
-        tema.textContent = "☀️ Modo claro";
-    } else {
-        tema.textContent = "🌙 Modo escuro";
-    }
+    exampleButton.textContent = "Funcionou!";
 });
 
+/* ANO AUTOMÁTICO NO RODAPÉ */
 
-/* MENSAGEM INTERATIVA */
-
-const mensagemBtn = document.getElementById("mensagemBtn");
-
-mensagemBtn.addEventListener("click", function() {
-    document.getElementById("mensagem").textContent =
-        "Parabéns! Você está aprendendo JavaScript!";
-});
-
-
-/* CONTADOR */
-
-let numero = 0;
-
-const contador = document.getElementById("contador");
-
-document.getElementById("adicionar").addEventListener("click", function() {
-    numero++;
-    contador.textContent = numero;
-});
-
-document.getElementById("diminuir").addEventListener("click", function() {
-    numero--;
-    contador.textContent = numero;
-});
-
-document.getElementById("zerar").addEventListener("click", function() {
-    numero = 0;
-    contador.textContent = numero;
-});
-
+document.getElementById("year").textContent =
+    new Date().getFullYear();
 
 /* QUIZ */
 
-const perguntas = [
+const questions = [
     {
-        pergunta: "O que é a Internet?",
-        alternativas: [
+        question: "1. O que é a Internet?",
+        answers: [
+            "Uma linguagem de programação",
             "Uma rede mundial de computadores",
             "Um navegador",
-            "Uma linguagem de programação"
+            "Um sistema operacional"
         ],
-        correta: 0
+        correct: 1
     },
     {
-        pergunta: "Quem criou a World Wide Web?",
-        alternativas: [
-            "Bill Gates",
-            "Tim Berners-Lee",
-            "Steve Jobs"
+        question: "2. Qual é a função do HTML?",
+        answers: [
+            "Criar a estrutura da página",
+            "Criar o banco de dados",
+            "Definir apenas as cores",
+            "Hospedar sites"
         ],
-        correta: 1
+        correct: 0
     },
     {
-        pergunta: "Qual é a função do HTML?",
-        alternativas: [
-            "Estruturar o conteúdo",
-            "Criar banco de dados",
-            "Editar imagens"
+        question: "3. Para que serve o CSS?",
+        answers: [
+            "Armazenar arquivos",
+            "Conectar computadores",
+            "Estilizar páginas web",
+            "Criar servidores"
         ],
-        correta: 0
+        correct: 2
     },
     {
-        pergunta: "Qual é a função do CSS?",
-        alternativas: [
-            "Criar servidores",
-            "Estilizar páginas",
-            "Armazenar arquivos"
-        ],
-        correta: 1
-    },
-    {
-        pergunta: "Qual tecnologia adiciona interatividade?",
-        alternativas: [
+        question: "4. Qual tecnologia adiciona interatividade?",
+        answers: [
             "HTML",
             "CSS",
-            "JavaScript"
+            "JavaScript",
+            "HTTP"
         ],
-        correta: 2
+        correct: 2
     },
     {
-        pergunta: "O que significa padding?",
-        alternativas: [
-            "Espaço externo",
-            "Espaço interno",
-            "Borda"
+        question: "5. Qual tag representa o conteúdo principal?",
+        answers: [
+            "<footer>",
+            "<main>",
+            "<head>",
+            "<title>"
         ],
-        correta: 1
-    },
-    {
-        pergunta: "Qual tag representa um parágrafo?",
-        alternativas: [
-            "<h1>",
-            "<p>",
-            "<div>"
-        ],
-        correta: 1
+        correct: 1
     }
 ];
 
-let perguntaAtual = 0;
-let pontos = 0;
-let respondeu = false;
+let currentQuestion = 0;
+let score = 0;
+let answered = false;
 
-const pergunta = document.getElementById("pergunta");
-const alternativas = document.getElementById("alternativas");
-const resultado = document.getElementById("resultado");
-const proxima = document.getElementById("proxima");
+const questionNumber = document.getElementById("question-number");
+const questionTitle = document.getElementById("question");
+const answersContainer = document.getElementById("answers");
+const feedback = document.getElementById("feedback");
+const nextButton = document.getElementById("next-button");
+const scoreDisplay = document.getElementById("score");
 
-function mostrarPergunta() {
-    respondeu = false;
+function showQuestion() {
 
-    const atual = perguntas[perguntaAtual];
+    answered = false;
 
-    pergunta.textContent = atual.pergunta;
-    alternativas.innerHTML = "";
-    resultado.textContent = "";
+    const current = questions[currentQuestion];
 
-    proxima.disabled = true;
+    questionNumber.textContent =
+        `Pergunta ${currentQuestion + 1} de ${questions.length}`;
 
-    atual.alternativas.forEach(function(opcao, indice) {
-        const botao = document.createElement("button");
+    questionTitle.textContent = current.question;
 
-        botao.textContent = opcao;
+    answersContainer.innerHTML = "";
+    feedback.textContent = "";
+    nextButton.disabled = true;
 
-        botao.addEventListener("click", function() {
-            verificarResposta(indice);
+    current.answers.forEach(function(answer, index) {
+
+        const button = document.createElement("button");
+
+        button.classList.add("answer");
+        button.textContent = answer;
+
+        button.addEventListener("click", function() {
+            checkAnswer(index, button);
         });
 
-        alternativas.appendChild(botao);
+        answersContainer.appendChild(button);
     });
 }
 
-function verificarResposta(escolha) {
-    if (respondeu) return;
+function checkAnswer(selected, selectedButton) {
 
-    respondeu = true;
+    if (answered) return;
 
-    const correta = perguntas[perguntaAtual].correta;
-    const botoes = alternativas.querySelectorAll("button");
+    answered = true;
 
-    if (escolha === correta) {
-        pontos++;
-        resultado.textContent = "Resposta correta!";
-        resultado.style.color = "green";
+    const correctAnswer = questions[currentQuestion].correct;
+    const buttons = answersContainer.querySelectorAll(".answer");
+
+    buttons.forEach(function(button) {
+        button.disabled = true;
+    });
+
+    if (selected === correctAnswer) {
+
+        score++;
+
+        selectedButton.classList.add("correct");
+        feedback.textContent = "Muito bem! Resposta correta!";
+
     } else {
-        resultado.textContent =
-            "Resposta incorreta! Resposta certa: " +
-            perguntas[perguntaAtual].alternativas[correta];
 
-        resultado.style.color = "red";
+        selectedButton.classList.add("wrong");
+        buttons[correctAnswer].classList.add("correct");
+
+        feedback.textContent =
+            "Resposta incorreta! Veja a alternativa em verde.";
     }
 
-    botoes.forEach(function(botao) {
-        botao.disabled = true;
-    });
-
-    proxima.disabled = false;
+    nextButton.disabled = false;
 }
 
-proxima.addEventListener("click", function() {
-    if (!respondeu) return;
+nextButton.addEventListener("click", function() {
 
-    perguntaAtual++;
+    currentQuestion++;
 
-    if (perguntaAtual < perguntas.length) {
-        mostrarPergunta();
+    if (currentQuestion < questions.length) {
+
+        showQuestion();
+
     } else {
-        finalizarQuiz();
+
+        finishQuiz();
+
     }
 });
 
-function finalizarQuiz() {
-    pergunta.textContent = "Quiz finalizado!";
-    alternativas.innerHTML = "";
+function finishQuiz() {
 
-    resultado.textContent =
-        "Você acertou " + pontos +
-        " de " + perguntas.length + " perguntas!";
+    questionNumber.textContent = "Quiz finalizado!";
 
-    proxima.textContent = "Recomeçar";
-    proxima.disabled = false;
+    questionTitle.textContent =
+        "Parabéns por concluir o desafio!";
 
-    proxima.onclick = reiniciarQuiz;
+    answersContainer.innerHTML = "";
+
+    feedback.textContent = "Você concluiu todas as perguntas.";
+
+    nextButton.textContent = "Refazer quiz";
+    nextButton.disabled = false;
+
+    scoreDisplay.textContent =
+        `Sua pontuação: ${score} de ${questions.length}`;
+
+    nextButton.onclick = function() {
+        currentQuestion = 0;
+        score = 0;
+
+        nextButton.textContent = "Próxima pergunta";
+        nextButton.onclick = null;
+
+        scoreDisplay.textContent = "";
+
+        showQuestion();
+    };
 }
 
-function reiniciarQuiz() {
-    perguntaAtual = 0;
-    pontos = 0;
+/* INICIAR QUIZ */
 
-    proxima.textContent = "Próxima pergunta";
-    proxima.onclick = null;
-
-    mostrarPergunta();
-}
-
-mostrarPergunta();
+showQuestion();
