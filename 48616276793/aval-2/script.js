@@ -1,88 +1,127 @@
 
-function publicar() {
-    const texto = document.getElementById("texto");
-    const conteudo = texto.value.trim();
+const posts = document.getElementById("posts");
 
-    if (conteudo === "") {
-        alert("Escreva algo antes de publicar! 💜");
+// PUBLICAR
+function publicar() {
+    const campo = document.getElementById("texto");
+    const texto = campo.value.trim();
+
+    if (!texto) {
+        alert("Escreva alguma coisa, ARMY! 💜");
         return;
     }
 
     const post = document.createElement("article");
     post.className = "post";
 
-    const titulo = document.createElement("h3");
-    titulo.textContent = "ARMY 💜";
+    post.innerHTML = `
+        <div class="post-header">
+            <div class="avatar">💜</div>
+            <div>
+                <h3>Meu perfil ARMY</h3>
+                <small>@army_user · agora</small>
+            </div>
+        </div>
 
-    const mensagem = document.createElement("p");
-    mensagem.textContent = conteudo;
+        <p class="post-text"></p>
 
-    const acoes = document.createElement("div");
-    acoes.className = "acoes";
+        <div class="post-actions">
+            <button onclick="curtir(this)">
+                🤍 <span>0</span>
+            </button>
+            <button onclick="focarComentario(this)">
+                💬 Comentar
+            </button>
+            <button onclick="compartilhar(this)">
+                ↗ Compartilhar
+            </button>
+        </div>
 
-    const curtirBtn = document.createElement("button");
-    curtirBtn.innerHTML = "🤍 Curtir <span>0</span>";
-    curtirBtn.onclick = function() {
-        curtir(this);
-    };
+        <div class="comments">
+            <div class="comment-list"></div>
+            <div class="comment-input">
+                <input placeholder="Escreva um comentário...">
+                <button onclick="comentar(this)">Enviar</button>
+            </div>
+        </div>
+    `;
 
-    const comentario = document.createElement("div");
-    comentario.className = "comentario";
+    post.querySelector(".post-text").textContent = texto;
 
-    const input = document.createElement("input");
-    input.placeholder = "Comente...";
-
-    const enviarBtn = document.createElement("button");
-    enviarBtn.textContent = "Enviar";
-    enviarBtn.onclick = function() {
-        comentar(this);
-    };
-
-    const lista = document.createElement("div");
-    lista.className = "lista-comentarios";
-
-    acoes.appendChild(curtirBtn);
-    comentario.append(input, enviarBtn);
-
-    post.append(
-        titulo,
-        mensagem,
-        acoes,
-        comentario,
-        lista
-    );
-
-    document.getElementById("feed").prepend(post);
-
-    texto.value = "";
+    posts.prepend(post);
+    campo.value = "";
 }
 
+// CURTIR E DESCURTIR
 function curtir(botao) {
     const numero = botao.querySelector("span");
-    let total = Number(numero.textContent);
+    let total = Number(numero.textContent.replace("k", "")) || 0;
 
-    total++;
-
-    numero.textContent = total;
-    botao.innerHTML = `💜 Curtido <span>${total}</span>`;
+    if (botao.classList.contains("liked")) {
+        total--;
+        botao.classList.remove("liked");
+        botao.innerHTML = `🤍 <span>${total}</span>`;
+    } else {
+        total++;
+        botao.classList.add("liked");
+        botao.innerHTML = `💜 <span>${total}</span>`;
+    }
 }
 
+// FOCAR COMENTÁRIO
+function focarComentario(botao) {
+    const input = botao.closest(".post")
+        .querySelector(".comment-input input");
+
+    input.focus();
+}
+
+// COMENTAR
 function comentar(botao) {
     const post = botao.closest(".post");
-    const input = post.querySelector(".comentario input");
-    const lista = post.querySelector(".lista-comentarios");
+    const input = post.querySelector(".comment-input input");
+    const lista = post.querySelector(".comment-list");
 
     const texto = input.value.trim();
 
-    if (texto === "") {
-        alert("Digite um comentário!");
-        return;
-    }
+    if (!texto) return;
 
-    const novoComentario = document.createElement("p");
-    novoComentario.textContent = "💜 ARMY: " + texto;
+    const comentario = document.createElement("p");
+    comentario.textContent = "💜 ARMY: " + texto;
 
-    lista.appendChild(novoComentario);
-
+    lista.appendChild(comentario);
     input.value = "";
 }
+
+// COMPARTILHAR
+function compartilhar(botao) {
+    const texto = "Confira esse post do BTS no ARMY SPACE! 💜";
+
+    if (navigator.share) {
+        navigator.share({
+            title: "ARMY SPACE",
+            text: texto
+        }).catch(() => {});
+    } else if (navigator.clipboard) {
+        navigator.clipboard.writeText(texto)
+            .then(() => alert("Texto copiado! 💜"))
+            .catch(() => alert(texto));
+    } else {
+        alert(texto);
+    }
+}
+
+// PESQUISAR PUBLICAÇÕES
+document.getElementById("pesquisa")
+    .addEventListener("input", function() {
+
+        const pesquisa = this.value.toLowerCase();
+
+        document.querySelectorAll(".post").forEach(post => {
+            const conteudo = post.textContent.toLowerCase();
+
+            post.style.display = conteudo.includes(pesquisa)
+                ? "block"
+                : "none";
+        });
+    });
