@@ -1,161 +1,83 @@
 
-// CURTIR PUBLICAÇÕES
+// Curtidas
+document.querySelectorAll(".like").forEach(botao => {
+    botao.addEventListener("click", () => {
+        const post = botao.closest(".post");
+        const contador = post.querySelector(".likes");
 
-document.querySelectorAll(".curtir").forEach(botao => {
+        let curtidas = Number(contador.dataset.count || 120);
 
-    botao.addEventListener("click", function() {
-
-        let post = this.closest(".post");
-        let contador = post.querySelector(".quantidade");
-
-        let numero = Number(contador.textContent);
-
-        if (this.classList.contains("ativo")) {
-
-            this.classList.remove("ativo");
-            this.querySelector("i").className = "bx bx-heart";
-
-            contador.textContent = numero - 1;
-
+        if (botao.classList.contains("curtido")) {
+            curtidas--;
+            botao.classList.remove("curtido");
+            botao.innerHTML = "♡ Curtir";
         } else {
-
-            this.classList.add("ativo");
-            this.querySelector("i").className = "bx bxs-heart";
-
-            contador.textContent = numero + 1;
+            curtidas++;
+            botao.classList.add("curtido");
+            botao.innerHTML = "♥ Curtido";
         }
 
+        contador.dataset.count = curtidas;
+        contador.textContent = curtidas + " curtidas";
     });
-
 });
 
-
-// SALVAR PUBLICAÇÕES
-
-document.querySelectorAll(".salvar").forEach(botao => {
-
-    botao.addEventListener("click", function() {
-
-        let icone = this.querySelector("i");
-
-        if (icone.classList.contains("bxs-bookmark")) {
-
-            icone.className = "bx bx-bookmark";
-
+// Seguir pessoas
+document.querySelectorAll(".follow").forEach(botao => {
+    botao.addEventListener("click", () => {
+        if (botao.textContent === "Seguir") {
+            botao.textContent = "Seguindo";
+            botao.style.background = "#16a34a";
         } else {
-
-            icone.className = "bx bxs-bookmark";
-
+            botao.textContent = "Seguir";
+            botao.style.background = "#1877f2";
         }
-
     });
-
 });
 
+// Comentários
+document.querySelectorAll(".comment").forEach(botao => {
+    botao.addEventListener("click", () => {
+        const post = botao.closest(".post");
+        const campo = post.querySelector(".comment-input");
+        campo.focus();
+    });
+});
 
-// SEGUIR AMIGOS
+document.querySelectorAll(".comment-input").forEach(campo => {
+    campo.addEventListener("keydown", evento => {
+        if (evento.key === "Enter" && campo.value.trim() !== "") {
+            const comentario = document.createElement("p");
+            comentario.textContent = "Você: " + campo.value;
 
-document.querySelectorAll(".amigo button").forEach(botao => {
+            campo.before(comentario);
+            campo.value = "";
+        }
+    });
+});
 
-    botao.addEventListener("click", function() {
+// Compartilhar
+document.querySelectorAll(".share").forEach(botao => {
+    botao.addEventListener("click", async () => {
+        const dados = {
+            title: "PhotoWave",
+            text: "Confira esta publicação no PhotoWave!"
+        };
 
-        if (this.textContent === "Seguir") {
-
-            this.textContent = "Seguindo";
-
+        if (navigator.share) {
+            await navigator.share(dados);
         } else {
-
-            this.textContent = "Seguir";
-
+            alert("Compartilhamento não disponível neste navegador.");
         }
-
     });
-
 });
 
-
-// COMENTÁRIOS
-
-document.querySelectorAll(".form-comentario").forEach(form => {
-
-    form.addEventListener("submit", function(event) {
-
-        event.preventDefault();
-
-        let campo = this.querySelector("input");
-        let texto = campo.value.trim();
-
-        if (texto === "") {
-            return;
-        }
-
-        let novoComentario = document.createElement("p");
-        let usuario = document.createElement("strong");
-
-        usuario.textContent = "gabriel.dev: ";
-
-        novoComentario.append(
-            usuario,
-            document.createTextNode(texto)
-        );
-
-        this.parentElement.querySelector(
-            ".lista-comentarios"
-        ).appendChild(novoComentario);
-
-        campo.value = "";
-
-    });
-
-});
-
-
-// PESQUISAR PUBLICAÇÕES
-
-document.getElementById("pesquisa").addEventListener("input", function() {
-
-    let texto = this.value.toLowerCase();
+// Pesquisa
+document.getElementById("pesquisa").addEventListener("input", evento => {
+    const busca = evento.target.value.toLowerCase();
 
     document.querySelectorAll(".post").forEach(post => {
-
-        let conteudo = post.textContent.toLowerCase();
-
-        post.style.display = conteudo.includes(texto)
-            ? "block"
-            : "none";
-
+        const texto = post.textContent.toLowerCase();
+        post.style.display = texto.includes(busca) ? "block" : "none";
     });
-
-});
-
-
-// ABRIR CAMPO DE COMENTÁRIO
-
-document.querySelectorAll(".comentar").forEach(botao => {
-
-    botao.addEventListener("click", function() {
-
-        let post = this.closest(".post");
-
-        post.querySelector(
-            ".form-comentario input"
-        ).focus();
-
-    });
-
-});
-
-
-// MOSTRAR COMENTÁRIOS
-
-document.querySelectorAll(".ver-comentarios").forEach(botao => {
-
-    botao.addEventListener("click", function() {
-
-        let lista = this.nextElementSibling;
-
-        lista.hidden = !lista.hidden;
-
-    });
-
 });
