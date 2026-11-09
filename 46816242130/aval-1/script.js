@@ -1,35 +1,23 @@
 
-function lerNoticia(texto) {
+function mostrarMensagem() {
+    document.getElementById("destaques").scrollIntoView({
+        behavior: "smooth"
+    });
+}
+
+function lerMais(texto) {
     alert(texto);
 }
 
-function enviarComentario() {
-    let nome = document.getElementById("nome").value.trim();
-    let comentario = document.getElementById("comentario").value.trim();
+function inscrever() {
+    let email = document.getElementById("email").value.trim();
 
-    if (nome === "" || comentario === "") {
-        alert("Preencha seu nome e comentário!");
+    if (email === "" || !email.includes("@") || !email.includes(".")) {
+        alert("Digite um e-mail válido!");
         return;
     }
 
-    let lista = document.getElementById("listaComentarios");
+    alert("Inscrição realizada com sucesso!");
 
-    let novoComentario = document.createElement("div");
-    novoComentario.className = "comentario-item";
-
-    let titulo = document.createElement("h3");
-    titulo.textContent = nome;
-
-    let texto = document.createElement("p");
-    texto.textContent = comentario;
-
-    novoComentario.appendChild(titulo);
-    novoComentario.appendChild(texto);
-
-    lista.prepend(novoComentario);
-
-    document.getElementById("nome").value = "";
-    document.getElementById("comentario").value = "";
-
-    alert("Comentário publicado com sucesso!");
+    document.getElementById("email").value = "";
 }
