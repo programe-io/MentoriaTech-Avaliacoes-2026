@@ -1,194 +1,240 @@
-/* ==========================================
-   7. RESET INICIAL
-   ========================================== */
+/* 7. Reset Avançado */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
 }
 
-/* ==========================================
-   8. ESTILIZAÇÃO GERAL DA PÁGINA
-   ========================================== */
+/* Variáveis para fácil customização de Cores (Dark Mode) */
+:root {
+    --bg-main: #0b0f19;
+    --bg-card: #151f32;
+    --border-color: #22314d;
+    --text-primary: #f3f4f6;
+    --text-secondary: #9ca3af;
+    --accent-color: #00ecb9;
+    --accent-hover: #00c49a;
+}
+
+/* 8. Estilização Base */
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f0f2f5; /* Tom claro no fundo */
-    color: #333333;            /* Cinza escuro para evitar contraste extremo */
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    line-height: 1.6;
 }
 
-header {
-    background-color: #ffffff;
-    border-bottom: 1px solid #e0e0e0; /* Borda fina e clara inferior */
+/* Header com Grid */
+.main-header {
+    background-color: var(--bg-card);
+    border-bottom: 1px solid var(--border-color);
     position: sticky;
     top: 0;
     z-index: 100;
 }
 
-/* Conteúdo centralizado do cabeçalho */
-.header-content {
-    max-width: 1000px;
-    margin: 0 auto; /* Centraliza as laterais */
-    padding: 15px 20px;
-    
-    /* 9. Organização do layout com Flexbox */
-    display: flex;
-    justify-content: space-between;
+.header-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+    display: grid;
+    grid-template-columns: auto 1fr;
     align-items: center;
 }
 
-/* Conteúdo principal centralizado */
-main {
-    width: 100%;
-    max-width: 600px; /* Largura máxima menor que o cabeçalho */
-    margin: 20px auto; /* Afasta do cabeçalho e centraliza */
-    padding: 0 15px;   /* Proteção para as bordas da tela */
+.logo {
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
 }
 
-/* ==========================================
-   9 & 10. ESTILIZAÇÃO DOS COMPONENTES E LINKS
-   ========================================== */
-
-/* Título e links do cabeçalho */
-header h1 {
-    color: #1877f2; /* Cor de destaque (estilo rede social) */
-    font-size: 24px;
+.logo span {
+    color: var(--accent-color);
 }
 
-nav {
+.nav-menu {
+    justify-self: end;
     display: flex;
-    gap: 20px; /* Espaço entre os links */
+    gap: 1.5rem;
 }
 
-nav a {
-    color: #65676b;
+.nav-link {
+    color: var(--text-secondary);
     text-decoration: none;
-    font-weight: bold;
-    transition: color 0.2s;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: color 0.2s ease;
 }
 
-/* 11. Efeito Hover nos Links */
-nav a:hover {
-    color: #1877f2;
+.nav-link:hover, .nav-link.active {
+    color: var(--accent-color);
 }
 
-/* Componente de Avatar */
-.avatar {
-    width: 40px;
-    height: 40px;
-    background-color: #1877f2;
-    color: #ffffff;
-    font-weight: bold;
-    border-radius: 50%; /* Transforma o quadrado em círculo */
-    
-    /* Centraliza a letra internamente */
+/* Layout Principal */
+.feed-container {
+    max-width: 680px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+/* Caixa de Criação Dinâmica */
+.creation-box {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.user-profile {
     display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.status-prompt strong {
+    display: block;
+    font-size: 0.95rem;
+}
+
+.status-prompt span {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.post-form {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.feed-input {
+    flex: 1;
+    background-color: var(--bg-main);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    outline: none;
+}
+
+.feed-input:focus {
+    border-color: var(--accent-color);
+}
+
+/* Componentes de Avatar Baseados em Flexbox Centrado */
+.avatar-circle {
+    width: 42px;
+    height: 42px;
+    background-color: var(--border-color);
+    color: var(--text-primary);
+    border-radius: 50%;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
     justify-content: center;
-    align-items: center;
 }
 
-/* Estrutura das informações textuais do usuário */
-.user-info {
-    display: flex;
-    flex-direction: column;
+.avatar-circle.alt-color { background-color: #ff4757; }
+.avatar-circle.alt-color-2 { background-color: #ffa502; }
+
+/* Cards da Timeline */
+.feed-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
 }
 
-.user-info strong {
-    font-size: 15px;
+.card-header {
+    margin-bottom: 1rem;
 }
 
-.user-info span {
-    font-size: 13px;
-    color: #8c8c8c;
-    margin-top: 2px;
-}
-
-/* Cards comuns (Nova publicação e Postagens) */
-.new-post-card, .post-card {
-    background-color: #ffffff;
-    padding: 20px;
-    margin-bottom: 20px; /* Espaçamento inferior entre os blocos */
-    border-radius: 8px;   /* Cantos arredondados */
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Sombra discreta */
-}
-
-/* Flexbox específico da área de nova publicação */
-.new-post-card {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.user {
+.author-info {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 0.75rem;
 }
 
-/* Componentes internos das postagens do feed */
-.post-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
+.author-name {
+    font-size: 1rem;
+    font-weight: 600;
 }
 
-.post-text {
-    margin: 15px 0; /* Margens verticais para não encostar nos elementos */
-    line-height: 1.4;
+.post-time {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
 }
 
-.post-card img {
+/* Conteúdo do Card */
+.post-content {
+    font-size: 0.95rem;
+    color: #e5e7eb;
+    margin-bottom: 1rem;
+}
+
+.image-wrapper {
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+
+.image-wrapper img {
     display: block;
     width: 100%;
-    max-width: 100%;
-    border-radius: 6px;
+    height: auto;
+    max-height: 350px;
     object-fit: cover;
-    margin-bottom: 15px;
 }
 
-.post-actions {
+/* Rodapé Interativo */
+.card-footer {
+    margin-top: 1.25rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
     display: flex;
-    gap: 10px;
-    border-top: 1px solid #f0f2f5;
-    padding-top: 12px;
+    gap: 1.5rem;
 }
 
-/* ==========================================
-   11. BOTÕES, INTERAÇÕES E RODAPÉ
-   ========================================== */
-button {
-    background-color: #1877f2;
-    color: #ffffff;
+/* Botões Modernizados */
+.btn-action {
+    background-color: var(--accent-color);
+    color: var(--bg-main);
     border: none;
-    padding: 8px 16px;
-    border-radius: 6px;
-    font-weight: bold;
-    cursor: pointer; /* Indica que o elemento é clicável */
-    transition: opacity 0.2s;
+    border-radius: 8px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
 }
 
-/* Efeito Hover nos botões */
-button:hover {
-    opacity: 0.85; /* Reduz levemente a opacidade */
+.btn-action:hover {
+    background-color: var(--accent-hover);
 }
 
-/* Ajuste específico para os botões secundários das ações do post */
-.post-actions button {
-    background-color: #f0f2f5;
-    color: #65676b;
-    flex: 1; /* Faz os botões dividirem o espaço igualmente */
+.btn-interaction {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: color 0.2s ease;
 }
 
-.post-actions button:hover {
-    background-color: #e4e6eb;
-    opacity: 1; /* Reseta a opacidade padrão do seletor genérico */
+.btn-interaction:hover {
+    color: var(--text-primary);
 }
 
-/* Footer (Rodapé) */
-footer {
+/* Footer Geral */
+.main-footer {
     text-align: center;
-    padding: 20px;
-    background-color: #242526;
-    color: #ffffff;
-    font-size: 14px;
-    margin-top: 40px;
+    padding: 2rem;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
 }

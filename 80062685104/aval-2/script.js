@@ -1,125 +1,85 @@
-// ==========================================
-// 1. SISTEMA DE DIALOGAR E PUBLICAR UM NOVO POST
-// ==========================================
-const btnPublicar = document.querySelector('.new-post-card button');
-const feedContainer = document.querySelector('main');
+document.addEventListener("DOMContentLoaded", () => {
+    // 1. Seleção de Elementos Principais
+    const postForm = document.querySelector(".post-form");
+    const feedInput = document.querySelector(".feed-input");
+    const timeline = document.querySelector(".timeline");
 
-btnPublicar.addEventListener('click', () => {
-    // Solicita o texto ao usuário através de uma caixa de diálogo do navegador
-    const textoPost = prompt("O que você está pensando?");
-    
-    // Valida se o usuário escreveu algo e não apenas cancelou a janela
-    if (textoPost && textoPost.trim() !== "") {
-        // Cria o elemento article para a nova postagem
-        const novoPost = document.createElement('article');
-        novoPost.classList.add('post-card');
-        
-        // Define a estrutura HTML idêntica à do projeto
-        novoPost.innerHTML = `
-            <div class="post-header">
-                <div class="avatar">U</div>
-                <div class="user-info">
-                    <strong>Seu Nome</strong>
-                    <span>agora mesmo</span>
-                </div>
-            </div>
-            
-            <div class="post-text">
-                <p>${textoPost}</p>
-            </div>
+    // 2. Evento para Criar Nova Publicação
+    postForm.addEventListener("submit", (event) => {
+        event.preventDefault(); // Impede a página de recarregar ao enviar o formulário
 
-            <div class="post-actions">
-                <button class="btn-curtir">Curtir (0)</button>
-                <button class="btn-comentar">Comentar</button>
-            </div>
-            <div class="comments-section" style="margin-top: 10px; display: flex; flex-direction: column; gap: 5px;"></div>
-        `;
-        
-        // Adiciona os eventos de curtir e comentar especificamente para este novo post criado
-        configurarEventosPost(novoPost);
+        const textContent = feedInput.value.trim();
 
-        // Insere o novo post logo após o card de publicação (segundo elemento do main)
-        const cardPublicacao = document.querySelector('.new-post-card');
-        cardPublicacao.after(novoPost);
-    }
-});
-
-// ==========================================
-// 2. FUNÇÃO PARA GERENCIAR AS INTERAÇÕES DOS POSTS
-// ==========================================
-function configurarEventosPost(postElement) {
-    const btnCurtir = postElement.querySelector('.btn-curtir') || postElement.querySelectorAll('.post-actions button')[0];
-    const btnComentar = postElement.querySelector('.btn-comentar') || postElement.querySelectorAll('.post-actions button')[1];
-    
-    // Garante que as classes corretas existam para identificação posterior
-    if(btnCurtir) btnCurtir.classList.add('btn-curtir');
-    if(btnComentar) btnComentar.classList.add('btn-comentar');
-
-    let curtidas = 0;
-    let jaCurtido = false;
-
-    // Ação de Curtir
-    if (btnCurtir) {
-        // Inicializa o texto padrão com contador zerado caso não venha do HTML
-        if (!btnCurtir.textContent.includes('(')) {
-            btnCurtir.textContent = `Curtir (0)`;
+        // Validação: não permite publicação vazia
+        if (textContent === "") {
+            alert("Por favor, digite algo antes de postar!");
+            return;
         }
 
-        btnCurtir.addEventListener('click', () => {
-            if (!jaCurtido) {
-                curtidas++;
-                btnCurtir.textContent = `Curtido (${curtidas})`;
-                btnCurtir.style.backgroundColor = '#1877f2'; // Fica azul ao curtir
-                btnCurtir.style.color = '#ffffff';
-                jaCurtido = true;
-            } else {
-                curtidas--;
-                btnCurtir.textContent = `Curtir (${curtidas})`;
-                btnCurtir.style.backgroundColor = '#f0f2f5'; // Retorna à cor padrão
-                btnCurtir.style.color = '#65676b';
-                jaCurtido = false;
-            }
-        });
-    }
+        // Cria o elemento da nova postagem baseada na estrutura do feed
+        const newPost = document.createElement("article");
+        newPost.classList.add("feed-card");
 
-    // Ação de Comentar
-    if (btnComentar) {
-        btnComentar.addEventListener('click', () => {
-            const textoComentario = prompt("Digite seu comentário:");
+        // Insere a estrutura interna HTML preenchendo com o texto digitado
+        newPost.innerHTML = `
+            <header class="card-header">
+                <div class="author-info">
+                    <div class="avatar-circle">M</div>
+                    <div>
+                        <h2 class="author-name">Minha Conta</h2>
+                        <time class="post-time">agora mesmo</time>
+                    </div>
+                </div>
+            </header>
             
-            if (textoComentario && textoComentario.trim() !== "") {
-                // Cria ou localiza uma área para agrupar os comentários dentro do card do post
-                let secaoComentarios = postElement.querySelector('.comments-section');
-                if (!secaoComentarios) {
-                    secaoComentarios = document.createElement('div');
-                    secaoComentarios.classList.add('comments-section');
-                    secaoComentarios.style.marginTop = "12px";
-                    secaoComentarios.style.paddingTop = "12px";
-                    secaoComentarios.style.borderTop = "1px dashed #e4e6eb";
-                    secaoComentarios.style.display = "flex";
-                    secaoComentarios.style.flexDirection = "column";
-                    secaoComentarios.style.gap = "8px";
-                    postElement.appendChild(secaoComentarios);
-                }
+            <div class="card-body">
+                <p class="post-content">${escapeHTML(textContent)}</p>
+            </div>
 
-                // Cria a estrutura visual do comentário adicionado
-                const novoComentario = document.createElement('div');
-                novoComentario.style.backgroundColor = "#f0f2f5";
-                novoComentario.style.padding = "8px 12px";
-                novoComentario.style.borderRadius = "12px";
-                novoComentario.style.fontSize = "14px";
-                novoComentario.innerHTML = `<strong>Você:</strong> ${textoComentario}`;
+            <footer class="card-footer">
+                <button class="btn-interaction btn-like">❤️ <span>Gostei</span></button>
+                <button class="btn-interaction">💬 <span>Responder</span></button>
+            </footer>
+        `;
 
-                secaoComentarios.appendChild(novoComentario);
+        // Adiciona o novo card no topo da linha do tempo (timeline)
+        timeline.prepend(newPost);
+
+        // Limpa o campo de texto e devolve o foco para ele
+        feedInput.value = "";
+        feedInput.focus();
+
+        // Configura o botão de curtir para este novo card criado
+        setupLikeButton(newPost.querySelector(".btn-like"));
+    });
+
+    // 3. Sistema Dinâmico de Curtidas (Para posts existentes e novos)
+    function setupLikeButton(button) {
+        button.addEventListener("click", () => {
+            const spanText = button.querySelector("span");
+            
+            // Alterna o estado visual utilizando classes ou manipulação direta
+            button.classList.toggle("liked");
+
+            if (button.classList.contains("liked")) {
+                button.style.color = "#ff4757"; // Muda o texto para vermelho
+                spanText.textContent = "Curtido!";
+            } else {
+                button.style.color = "var(--text-secondary)"; // Volta para a cor padrão
+                spanText.textContent = "Gostei";
             }
         });
     }
-}
 
-// ==========================================
-// 3. INICIALIZAÇÃO NOS POSTS EXISTENTES DO HTML
-// ==========================================
-// Aplica as regras de cliques para todos os artigos que já vieram prontos no HTML inicial
-document.querySelectorAll('.post-card').forEach(post => {
-    configurarEventosPost(post);
+    // Aplica a lógica de clique em todos os botões de curtir iniciais da página
+    document.querySelectorAll(".btn-interaction:first-child").forEach(button => {
+        setupLikeButton(button);
+    });
+
+    // 4. Segurança: Função auxiliar para evitar que códigos maliciosos (XSS) quebrem o layout
+    function escapeHTML(str) {
+        return str.replace(/[&<>'"]/g, 
+            tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+        );
+    }
 });
