@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clone Instagram (CSS Puro)</title>
+    <!-- Adição do pacote de ícones Boxicons -->
+    <link href="https://unpkg.com" rel="stylesheet">
+    
+    <style>
+        /* 4. Estrutura geral do body */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background-color: #f3f4f6; /* bg-gray-100 */
+            color: #0f172a; /* text-slate-900 */
+        }
+
+        /* 5. Construção do cabeçalho (header) */
+        .app-header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background-color: #ffffff;
+            border-bottom: 1px solid #e5e7eb; /* border-gray-200 */
+        }
+
+        .header-container {
+            max-width: 1024px; /* max-w-5xl */
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+
+        /* 6. Alinhamento dos elementos do cabeçalho */
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 3.5rem; /* h-14 */
+        }
+
+        .logo {
+            font-size: 1.25rem; /* text-xl */
+            font-weight: 600; /* font-semibold */
+        }
+
+        .menu-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem; /* text-2xl */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: inherit;
+        }
+
+        /* 7. Estrutura do conteúdo principal (main) */
+        .app-main {
+            max-width: 1024px; /* max-w-5xl */
+            margin-left: auto;
+            margin-right: auto;
+            padding-top: 1rem;
+            padding-bottom: 5rem; /* pb-20 */
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+
+        .main-layout {
+            display: flex;
+            gap: 2rem; /* gap-8 */
+        }
+
+        /* 8. Estrutura do feed */
+        .feed-container {
+            flex: 1 1 0%; /* flex-1 */
+            max-width: 32rem; /* max-w-lg */
+            margin-left: auto;
+            margin-right: auto;
+            width: 100%;
+        }
+
+        /* 11. Organização dos stories em linha com rolagem horizontal */
+        .stories-section {
+            background-color: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem; /* rounded-lg */
+            padding: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            gap: 1rem; /* gap-4 */
+            overflow-x: auto;
+            /* Esconde a barra de rolagem padrão em alguns navegadores para melhor estética */
+            scrollbar-width: none; 
+        }
+        .stories-section::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* 9 e 10. Construção e Reaproveitamento das Estruturas dos Stories */
+        .story-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex-shrink: 0; /* flex-shrink-0 */
+            cursor: pointer;
+        }
+
+        /* Estrutura base da bolinha (Ajustável via classes modificadoras) */
+        .circle-container {
+            border-radius: 50%;
+            background-color: #f3f4f6;
+            padding: 0.125rem; /* p-0.5 */
+        }
+
+        /* Tamanho padrão dos Stories (w-16 h-16) */
+        .circle-lg {
+            width: 4rem;
+            height: 4rem;
+        }
+
+        /* Camada intermediária branca */
+        .circle-inner-border {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background-color: #ffffff;
+            padding: 0.125rem;
+        }
+
+        /* Efeito Gradiente dos stories de contatos */
+        .gradient-border {
+            background: linear-gradient(to bottom right, #ec4899, #ef4444, #eab308); /* from-pink-500 via-red-500 to-yellow-500 */
+        }
+
+        /* Camada cinza interna do botão "+" */
+        .circle-bg-gray {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background-color: #f3f4f6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .plus-sign {
+            font-size: 1.5rem; /* text-2xl */
+            color: #6b7280; /* text-gray-500 */
+            font-weight: 300;
+        }
+
+        .story-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .story-name {
+            font-size: 0.75rem; /* text-xs */
+            margin-top: 0.25rem;
+            width: 4rem;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis; /* truncate */
+        }
+
+        /* 12. Início da construção do feed de postagens */
+        .post-card {
+            background-color: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem; /* p-3 */
+        }
+
+        .post-author-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem; /* gap-3 */
+        }
+
+        /* 13. Reaproveitamento do círculo modificado para tamanho 10 (w-10 h-10) */
+        .circle-md {
+            width: 2.5rem;
+            height: 2.5rem;
+        }
+
+        .author-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .author-name {
+            font-size: 0.875rem; /* text-sm */
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .author-name:hover {
+            text-decoration: underline;
+        }
+
+        .author-location {
+            font-size: 0.75rem; /* text-xs */
+            color: #6b7280;
+        }
+
+        .post-options-btn {
+            background: none;
+            border: none;
+            font-size: 1.25rem;
+            color: #4b5563;
+            cursor: pointer;
+        }
+
+        /* Área interna provisória da foto do post */
+        .post-media-placeholder {
+            background-color: #f9fafb;
+            aspect-ratio: 1 / 1;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #9ca3af;
+            font-size: 0.875rem;
+            border-top: 1px solid #f3f4f6;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        /* Espaço reservado para a coluna lateral em telas maiores */
+        .sidebar-aside {
+            display: none;
+            width: 18rem; /* w-72 */
+            flex-shrink: 0;
+        }
+
+        @media (min-width: 768px) {
+            .sidebar-aside {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 5. Cabeçalho (header) -->
+    <header class="app-header">
+        <div class="header-container">
+            <div class="header-content">
+                <h1 class="logo">Instagram</h1>
+                <button class="menu-btn">
+                    <i class="bx bx-menu"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 7. Conteúdo principal (main) -->
+    <main class="app-main">
+        <div class="main-layout">
+            
+            <!-- 8. Feed principal -->
+            <div class="feed-container">
+                
+                <!-- 11. Seção de Stories com Rolagem Horizontal -->
+                <section class="stories-section">
+                    
+                    <!-- 9. Elemento de adicionar story -->
+                    <div class="story-item">
+                        <div class="circle-container circle-lg">
+                            <div class="circle-inner-border">
+                                <div class="circle-bg-gray">
+                                    <span class="plus-sign">+</span>
+                                </div>
+                            </div>
+                        </div>
+                        <span class="story-name">Seu story</span>
+                    </div>
+
+                    <!-- 10. Stories de contatos (Com modificador de gradiente) -->
+                    <!-- Contato 1 (João) -->
+                    <div class="story-item">
+                        <div class="circle-container circle-lg">
+                            <div class="circle-inner-border gradient-border">
+                                <div class="circle-inner-border">
+                                    <img src="https://unsplash.com" alt="João" class="story-img">
+                                </div>
+                            </div>
+                        </div>
+                        <span class="story-name">João</span>
+                    </div>
+
+                    <!-- Contato 2 -->
+                    <div class="story-item">
+                        <div class="circle-container circle-lg">
+                            <div class="circle-inner-border gradient-border">
+                                <div class="circle-inner-border">
+                                    <img src="https://unsplash.com" alt="Maria" class="story-img">
+                                </div>
+                            </div>
+                        </div>
