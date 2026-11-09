@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link href="style.css" rel="stylesheet">
+</head>
+<body>
+  <footer>Feito com amor e flores 🌸</footer>
+
+<script>
+const flowers = [
+  {
+    image: "photo-1490750967868-88aa4486c946",
+    caption: "A beleza está nos pequenos detalhes 🌸",
+    likes: 125
+  },
+  {
+    image: "photo-1494972308805-463bc619d34e",
+    caption: "Um jardim cheio de amor! 🌷",
+    likes: 89
+  },
+  {
+    image: "photo-1508610048659-a06b669e3321",
+    caption: "Flores para deixar o dia mais bonito 🌼",
+    likes: 203
+  },
+  {
+    image: "photo-1462275646964-a0e3386b89fa",
+    caption: "Que nunca faltem flores no caminho! 🌻",
+    likes: 156
+  }
+];
+
+const posts = document.getElementById("posts");
+
+flowers.forEach((flower, index) => {
+  const post = document.createElement("article");
+  post.className = "post";
+
+  const img = document.createElement("img");
+  img.src = `https://images.unsplash.com/${flower.image}?w=900&auto=format&fit=crop`;
+  img.alt = flower.caption;
+
+  const actions = document.createElement("div");
+  actions.className = "post-actions";
+
+  const like = document.createElement("button");
+  like.className = "like";
+  like.textContent = "♡";
+
+  const count = document.createElement("span");
+  count.textContent = flower.likes + " curtidas";
+  count.style.padding = "7px";
+
+  like.onclick = () => {
+    like.classList.toggle("active");
+    const active = like.classList.contains("active");
+    like.textContent = active ? "♥" : "♡";
+    count.textContent = (flower.likes + (active ? 1 : 0)) + " curtidas";
+  };
+
+  const comment = document.createElement("button");
+  comment.textContent = "💬";
+  comment.onclick = () => {
+    document.getElementById("comment" + index).focus();
+  };
+
+  actions.append(like, count, comment);
+
+  const caption = document.createElement("div");
+  caption.className = "caption";
+
+  const description = document.createElement("p");
+  description.textContent = flower.caption;
+
+  const commentInput = document.createElement("input");
+  commentInput.id = "comment" + index;
+  commentInput.placeholder = "Adicione um comentário...";
+  commentInput.style.cssText = "width:100%;padding:10px;margin-top:12px;border:1px solid #ddd;border-radius:15px;background:transparent;color:inherit";
+
+  caption.append(description, commentInput);
+  post.append(img, actions, caption);
+  posts.appendChild(post);
+});
+
+function toggleTheme() {
+  document.body.classList.toggle("dark");
+  document.getElementById("theme").textContent =
+    document.body.classList.contains("dark") ? "☀️" : "🌙";
+}
+
+function showPage(page) {
+  document.getElementById("feed").style.display =
+    page === "feed" ? "block" : "none";
+
+  document.getElementById("messages").style.display =
+    page === "messages" ? "block" : "none";
+}
+
+function sendMessage() {
+  const input = document.getElementById("messageInput");
+  const value = input.value.trim();
+
+  if (!value) return;
+
+  const message = document.createElement("div");
+  message.className = "sent";
+  message.textContent = value;
+
+  document.getElementById("messageList").appendChild(message);
+  input.value = "";
+}
+
+document.getElementById("messageInput")
+  .addEventListener("keydown", event => {
+    if (event.key === "Enter") sendMessage();
+  });
+</script>
+
+</body>
+</html>
+
+  
+  
+</body>
+</html>

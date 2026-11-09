@@ -1,0 +1,251 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Floresgram 🌸</title>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: #fff8fb;
+  color: #333;
+  transition: .3s;
+}
+
+body.dark {
+  background: #17131a;
+  color: #fff;
+}
+
+header {
+  padding: 18px;
+  text-align: center;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: inherit;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+header h1 {
+  color: #e85d9e;
+  font-family: Georgia, serif;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-size: 22px;
+  color: inherit;
+}
+
+.container {
+  max-width: 600px;
+  margin: auto;
+  padding: 15px;
+}
+
+.stories {
+  display: flex;
+  gap: 15px;
+  overflow-x: auto;
+  padding: 15px 0;
+}
+
+.story {
+  min-width: 75px;
+  height: 75px;
+  border-radius: 50%;
+  padding: 3px;
+  background: linear-gradient(45deg, #ff6b9d, #ffc0cb, #c77dff);
+}
+
+.story img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid white;
+}
+
+.post {
+  background: white;
+  border: 1px solid #eee;
+  border-radius: 14px;
+  margin: 20px 0;
+  overflow: hidden;
+}
+
+.dark .post {
+  background: #27212c;
+  border-color: #403544;
+}
+
+.post img {
+  width: 100%;
+  display: block;
+  max-height: 550px;
+  object-fit: cover;
+}
+
+.post-actions {
+  display: flex;
+  gap: 18px;
+  padding: 12px;
+}
+
+.like {
+  font-size: 27px;
+}
+
+.like.active {
+  color: #ff3c78;
+}
+
+.caption {
+  padding: 0 14px 15px;
+}
+
+.caption p {
+  margin-top: 8px;
+}
+
+.comments {
+  padding: 10px 14px;
+  color: #888;
+}
+
+.message-box {
+  display: flex;
+  gap: 8px;
+  padding: 12px;
+  border-top: 1px solid #eee;
+}
+
+.message-box input {
+  flex: 1;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  outline: none;
+  background: transparent;
+  color: inherit;
+  min-width: 0;
+}
+
+.message-box button {
+  color: #e85d9e;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+nav {
+  position: sticky;
+  bottom: 0;
+  background: inherit;
+  border-top: 1px solid #eee;
+  display: flex;
+  justify-content: space-around;
+  padding: 15px;
+  z-index: 5;
+}
+
+nav button {
+  font-size: 25px;
+}
+
+#messages {
+  display: none;
+  padding: 20px 5px;
+}
+
+#messages input {
+  width: 100%;
+  padding: 14px;
+  border-radius: 20px;
+  border: 1px solid #ddd;
+  background: transparent;
+  color: inherit;
+}
+
+.sent {
+  background: #f9d3e5;
+  color: #333;
+  padding: 12px;
+  border-radius: 15px;
+  margin: 10px 0;
+  width: fit-content;
+  max-width: 85%;
+  overflow-wrap: anywhere;
+}
+
+.dark .sent {
+  background: #58334d;
+  color: white;
+}
+
+#messageList {
+  margin-top: 20px;
+}
+
+footer {
+  text-align: center;
+  padding: 20px;
+  color: #e85d9e;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>Floresgram 🌸</h1>
+  <button onclick="toggleTheme()" id="theme">🌙</button>
+</header>
+
+<div class="container">
+
+<section id="feed">
+
+<div class="stories">
+  <div class="story"><img src="https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=200" alt="Flores rosas"></div>
+  <div class="story"><img src="https://images.unsplash.com/photo-1494972308805-463bc619d34e?w=200" alt="Flor rosa"></div>
+  <div class="story"><img src="https://images.unsplash.com/photo-1508610048659-a06b669e3321?w=200" alt="Flores coloridas"></div>
+  <div class="story"><img src="https://images.unsplash.com/photo-1462275646964-a0e3386b89fa?w=200" alt="Flores amarelas"></div>
+</div>
+
+<div id="posts"></div>
+
+</section>
+
+<section id="messages">
+  <h2>💌 Mensagens</h2>
+  <p style="margin:15px 0">Seu cantinho para compartilhar carinho e flores!</p>
+
+  <div id="messageList"></div>
+
+  <div class="message-box">
+    <input id="messageInput" placeholder="Escreva uma mensagem...">
+    <button onclick="sendMessage()">Enviar</button>
+  </div>
+</section>
+
+</div>
+
+<nav>
+  <button onclick="showPage('feed')">🏠</button>
+  <button onclick="showPage('messages')">💌</button>
+  <button onclick="showPage('feed')">🌷</button>
+</nav>
