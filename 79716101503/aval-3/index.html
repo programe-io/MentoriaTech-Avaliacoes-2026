@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link href="style.css" rel="stylesheet">
+</head>
+<body>
+  import json
+import time
+from functools import wraps
+from datetime import datetime
+
+def log_operacao(func):
+    """Decorador para registrar o sucesso ou falha de operações na agenda."""
+    @wraps(func)
+    def wrapper(self, *args, **kwargs):
+        inicio = time.time()
+        resultado = func(self, *args, **kwargs)
+        fim = time.time()
+        print(f"[LOG] A operação '{func.__name__\}' foi processada em {fim - inicio:.4f\}s.")
+        return resultado
+    return wrapper
+
+class Contato:
+    def __init__(self, nome, telefone, email, categoria="Pessoal"):
+        self.nome = nome
+        self.telefone = telefone
+        self.email = email
+        self.categoria = categoria
+        self.criado_em = datetime.now().strftime("%Y-%m-%d %H:%M")
+
+    def para_dicionario(self):
+        return {
+            "nome": self.nome,
+            "telefone": self.telefone,
+            "email": self.email,
+            "categoria": self.categoria,
+            "criado_em": self.criado_em
+        \}
+
+class Agenda:
+    def __init__(self, arquivo="contatos.json"):
+        self.arquivo = arquivo
+        self.contatos = self.carregar_contatos()
+
+    def carregar_contatos(self):
+        """Carrega os contatos salvos no arquivo JSON."""
+        try:
+            with open(self.arquivo, "r", encoding="utf-8") as f:
+                dados = json.load(f)
+                return [Contato(**c) for c in dados]
+        except (FileNotFoundError, json.JSONDecodeError):
+            return []
+
+    def salvar_contatos(self):
+        """Salva a lista de contatos no arquivo JSON."""
+        with open(self.arquivo, "w", encoding="utf-8") as f:
+            json.dump([c.para_dicionario() for c in self.contatos], f, ensure_ascii=False, indent=4)
+
+    @log_operacao
+    def adicionar_contato(self, nome, telefone, email, categoria="Pessoal"):
+        # Validação simples para evitar nomes duplicados
+        for c in self.contatos:
+            if c.nome.lower() == nome.lower():
+                print(f"Aviso: Já existe um contato com o nome '{nome\}'.")
+                return
+
+        novo_contato = Contato(nome, telefone, email, categoria)
+        self.contatos.append(novo_contato)
+        self.salvar_contatos()
+        print(f"Sucesso: Contato '{nome\}' adicionado à agenda.")
+
+    @log_operacao
+    def buscar_contato(self, termo):
+        """Busca contatos por nome (parcial)."""
+        encontrados = [c for c in self.contatos if termo.lower() in c.nome.lower()]
+        
+        if not encontrados:
+            print(f"\\nNenhum contato encontrado para o termo '{termo\}'.")
+            return
+
+        print(f"\\n--- Resultados da Busca por '{termo\}' ---")
+        for c in encontrados:
+            print(f"Nome: {c.nome\} | Tel: {c.telefone\} | E-mail: {c.email\} | [{c.categoria\}]")
+        print("-" * 40)
+
+    def listar_contatos(self):
+        if not self.contatos:
+            print("\\nA agenda está vazia.")
+            return
+
+        print("\\n" + "="*40)
+        print("           MINHA AGENDA")
+        print("="*40)
+        for i, c in enumerate(self.contatos, 1):
+            print(f"{i\}. {c.nome\} - {c.telefone\}")
+            print(f"   E-mail: {c.email\} | Categoria: {c.categoria\}")
+            print("-" * 40)
+
+# Exemplo de uso
+if __name__ == "__main__":
+    minha_agenda = Agenda()
+    
+    # Adiciona contatos de exemplo caso a agenda esteja vazia
+    if not minha_agenda.contatos:
+        minha_agenda.adicionar_contato("Ana Souza", "(11) 98765-4321", "ana@email.com", "Trabalho")
+        minha_agenda.adicionar_contato("Carlos Lima", "(21) 91234-5678", "carlos@email.com", "Família")
+
+    # Lista todos os contatos
+    minha_agenda.listar_contatos()
+
+    # Realiza uma busca
+    minha_agenda.buscar_contato("Ana")$0
+  <script src="script.js"></script>
+  
+</body>
+</html>
