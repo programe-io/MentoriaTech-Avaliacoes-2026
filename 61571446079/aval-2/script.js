@@ -1,67 +1,59 @@
-// Elementos do DOM
-const campoSenha = document.querySelector("#senha");
-const btnCopiar = document.querySelector("#btn-copiar");
-const sliderTamanho = document.querySelector("#tamanho");
-const valorTamanho = document.querySelector("#valor-tamanho");
+const botaoPublicar = document.getElementById('botaoPublicar');
+const textoPost = document.getElementById('textoPost');
+const feed = document.getElementById('feed');
 
-const chkMaiusculas = document.querySelector("#maiusculas");
-const chkMinusculas = document.querySelector("#minusculas");
-const chkNumeros = document.querySelector("#numeros");
-const chkSimbolos = document.querySelector("#simbolos");
-const btnGerar = document.querySelector("#btn-gerar");
+// 1. Função para criar um novo post
+botaoPublicar.addEventListener('click', function() {
+    const texto = textoPost.value.trim();
 
-// Conjuntos de caracteres
-const maiusculas = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-const minusculas = "abcdefghijklmnopqrstuvwxyz";
-const numeros = "0123456789";
-const simbolos = "!@#$%^&*()_+-=[]{}|;:,.<>?";
-
-// Atualiza o valor do texto conforme move o slider
-sliderTamanho.addEventListener("input", () => {
-    valorTamanho.textContent = sliderTamanho.value;
-});
-
-// Função para gerar a senha aleatória
-function gerarSenha() {
-    let caracteresDisponiveis = "";
-    let senhaGerada = "";
-
-    if (chkMaiusculas.checked) caracteresDisponiveis += maiusculas;
-    if (chkMinusculas.checked) caracteresDisponiveis += minusculas;
-    if (chkNumeros.checked) caracteresDisponiveis += numeros;
-    if (chkSimbolos.checked) caracteresDisponiveis += simbolos;
-
-    if (caracteresDisponiveis === "") {
-        alert("Selecione pelo menos uma opção para gerar a senha!");
+    if (texto === "") {
+        alert("Escreva alguma coisa antes de publicar!");
         return;
     }
 
-    const tamanho = parseInt(sliderTamanho.value);
+    // Cria a estrutura HTML do post via JavaScript
+    const novoPost = document.createElement('div');
+    novoPost.classList.add('post');
 
-    for (let i = 0; i < tamanho; i++) {
-        const indiceAleatorio = Math.floor(Math.random() * caracteresDisponiveis.length);
-        senhaGerada += caracteresDisponiveis[indiceAleatorio];
-    }
+    novoPost.innerHTML = `
+        <p class="autor">Você</p>
+        <p class="conteudo">${texto}</p>
+        <button class="botao-curtir">Curtir (<span>0</span>)</button>
+    `;
 
-    campoSenha.value = senhaGerada;
-}
+    // Adiciona o post no topo do feed
+    feed.prepend(novoPost);
 
-// Função para copiar a senha para a área de transferência
-function copiarSenha() {
-    if (!campoSenha.value) return;
+    // Limpa a caixa de texto
+    textoPost.value = "";
 
-    navigator.clipboard.writeText(campoSenha.value).then(() => {
-        const textoOriginal = btnCopiar.textContent;
-        btnCopiar.textContent = "Copiado!";
-        setTimeout(() => {
-            btnCopiar.textContent = textoOriginal;
-        }, 1500);
+    // Ativa o botão de curtir para este novo post
+    ativarBotaoCurtir(novoPost);
+});
+
+// 2. Função para gerenciar curtidas (inclusive em posts criados dinamicamente)
+function ativarBotaoCurtir(elementoPost) {
+    const botaoCurtir = elementoPost.querySelector('.botao-curtir');
+    const spanContador = botaoCurtir.querySelector('span');
+    
+    let curtido = false;
+    let contador = 0;
+
+    botaoCurtir.addEventListener('click', function() {
+        if (!curtido) {
+            contador++;
+            curtido = true;
+            botaoCurtir.classList.add('curtido');
+            botaoCurtir.innerHTML = `Curtido (<span>${contador}</span>)`;
+        } else {
+            contador--;
+            curtido = false;
+            botaoCurtir.classList.remove('curtido');
+            botaoCurtir.innerHTML = `Curtir (<span>${contador}</span>)`;
+        }
     });
 }
 
-// Eventos dos botões
-btnGerar.addEventListener("click", gerarSenha);
-btnCopiar.addEventListener("click", copiarSenha);
-
-// Gera uma senha automaticamente ao carregar a página
-gerarSenha();
+// Ativa o botão de curtir no post inicial que já estava no HTML
+const postInicial = document.querySelector('.post');
+ativarBotaoCurtir(postInicial);
