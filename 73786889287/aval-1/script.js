@@ -2,12 +2,13 @@
 let produtos = [
     {
         codigo: 1,
-        descricao: "SmartDesk LED",
-        quantidade: 25,
-        valor: 149.90
+        descricao: "Fone Bluetooth Pro",
+        quantidade: 40,
+        valor: 89.90
     }
 ];
 
+// Validar produto
 function validarProduto(descricao, quantidade, valor) {
     if (descricao.trim().length < 5) {
         throw new Error("A descrição deve ter pelo menos 5 caracteres.");
@@ -22,139 +23,157 @@ function validarProduto(descricao, quantidade, valor) {
     }
 }
 
+// Cadastrar produto
 function cadastrarProduto(descricao, quantidade, valor) {
     validarProduto(descricao, quantidade, valor);
 
     let novoProduto = {
-        codigo: produtos.length > 0
-            ? Math.max(...produtos.map(p => p.codigo)) + 1
-            : 1,
+        codigo: produtos.length + 1,
         descricao: descricao.trim(),
         quantidade: quantidade,
         valor: valor
     };
 
     produtos.push(novoProduto);
-
     listarProdutos();
 }
 
-function listarProdutos() {
-    const lista = document.getElementById("listaProdutos");
+// Buscar produto pelo código
+function buscarProdutoPorCodigo(codigoProduto) {
+    return produtos.find(prod => prod.codigo === codigoProduto);
+}
 
-    lista.innerHTML = "";
+// Listar produtos
+function listarProdutos() {
+    const tabela = document.getElementById("listaProdutos");
+
+    tabela.innerHTML = "";
+
+    let totalUnidades = 0;
+    let valorEstoque = 0;
 
     produtos.forEach(produto => {
-        const linha = document.createElement("tr");
+        let total = produto.quantidade * produto.valor;
 
-        const dados = [
-            produto.codigo,
-            produto.descricao,
-            produto.quantidade,
-            produto.valor.toLocaleString("pt-BR", {
-                style: "currency",
-                currency: "BRL"
-            }),
-            (produto.quantidade * produto.valor).toLocaleString("pt-BR", {
-                style: "currency",
-                currency: "BRL"
-            })
-        ];
+        totalUnidades += produto.quantidade;
+        valorEstoque += total;
 
-        dados.forEach(dado => {
-            const td = document.createElement("td");
-            td.textContent = dado;
-            linha.appendChild(td);
-        });
+        let linha = document.createElement("tr");
 
-        const acoes = document.createElement("td");
-        acoes.className = "acoes";
+        linha.innerHTML = `
+            <td>${produto.codigo}</td>
+            <td>${produto.descricao}</td>
+            <td>${produto.quantidade}</td>
+            <td>${formatarMoeda(produto.valor)}</td>
+            <td>${formatarMoeda(total)}</td>
+            <td>
+                <div class="acoes">
+                    <button onclick="atualizarValor(${produto.codigo})">
+                        Alterar valor
+                    </button>
 
-        const btnValor = document.createElement("button");
-        btnValor.className = "btn-valor";
-        btnValor.textContent = "Alterar valor";
-        btnValor.onclick = () => atualizarValor(produto.codigo);
+                    <button onclick="atualizarQuantidade(${produto.codigo})">
+                        Adicionar quantidade
+                    </button>
+                </div>
+            </td>
+        `;
 
-        const btnQuantidade = document.createElement("button");
-        btnQuantidade.className = "btn-quantidade";
-        btnQuantidade.textContent = "Adicionar estoque";
-        btnQuantidade.onclick = () => atualizarQuantidade(produto.codigo);
-
-        acoes.append(btnValor, btnQuantidade);
-        linha.appendChild(acoes);
-
-        lista.appendChild(linha);
+        tabela.appendChild(linha);
     });
 
     document.getElementById("totalProdutos").textContent =
         produtos.length;
 
     document.getElementById("totalUnidades").textContent =
-        produtos.reduce((total, p) => total + p.quantidade, 0);
+        totalUnidades;
+
+    document.getElementById("valorEstoque").textContent =
+        formatarMoeda(valorEstoque);
 }
 
+// Formatar valores em reais
+function formatarMoeda(valor) {
+    return valor.toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL"
+    });
+}
+
+// Atualizar valor
 function atualizarValor(codigoProduto) {
-    const produto = produtos.find(p => p.codigo === codigoProduto);
+    let produto = buscarProdutoPorCodigo(codigoProduto);
 
     if (!produto) {
         alert("Produto não encontrado!");
         return;
     }
 
-    const novoValor = Number(prompt("Digite o novo valor:"));
+    let entrada = prompt("Digite o novo valor do produto:");
+
+    if (entrada === null || entrada.trim() === "") {
+        return;
+    }
+
+    let novoValor = Number(entrada);
 
     if (!Number.isFinite(novoValor) || novoValor < 0) {
-        alert("Valor inválido!");
+        alert("Informe um valor válido.");
         return;
     }
 
     produto.valor = novoValor;
 
     listarProdutos();
-    alert("Valor atualizado!");
+    alert("Valor atualizado com sucesso!");
 }
 
+// Atualizar quantidade
 function atualizarQuantidade(codigoProduto) {
-    const produto = produtos.find(p => p.codigo === codigoProduto);
+    let produto = buscarProdutoPorCodigo(codigoProduto);
 
     if (!produto) {
         alert("Produto não encontrado!");
         return;
     }
 
-    const novaQuantidade = Number(
-        prompt("Digite a quantidade que deseja adicionar:")
-    );
+    let entrada = prompt("Digite a quantidade que deseja adicionar:");
+
+    if (entrada === null || entrada.trim() === "") {
+        return;
+    }
+
+    let novaQuantidade = Number(entrada);
 
     if (!Number.isInteger(novaQuantidade) || novaQuantidade < 1) {
-        alert("Quantidade inválida!");
+        alert("Informe uma quantidade válida.");
         return;
     }
 
     produto.quantidade += novaQuantidade;
 
     listarProdutos();
-    alert("Estoque atualizado!");
+    alert("Quantidade atualizada com sucesso!");
 }
 
+// Evento do formulário
 document.getElementById("formProduto").addEventListener("submit", function(event) {
     event.preventDefault();
 
-    const descricao = document.getElementById("descricao").value;
-    const quantidade = Number(document.getElementById("quantidade").value);
-    const valor = Number(document.getElementById("valor").value);
+    let descricao = document.getElementById("descricao").value;
+    let quantidade = Number(document.getElementById("quantidade").value);
+    let valor = Number(document.getElementById("valor").value);
 
     try {
         cadastrarProduto(descricao, quantidade, valor);
 
-        this.reset();
+        document.getElementById("formProduto").reset();
 
         alert("Produto cadastrado com sucesso!");
-
     } catch (erro) {
         alert(erro.message);
     }
 });
 
-// Mostrar produto já cadastrado ao abrir a página.
+// Mostrar produtos ao abrir a página
 listarProdutos();
