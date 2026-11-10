@@ -1,11 +1,11 @@
-// 1. Geração automática de identificadores por meio de incremento
+// Geração automática de identificadores por pré-incremento
 let contadorCodigo = 0;
 
 function gerarCodigo() {
     return ++contadorCodigo;
 }
 
-// 2. Estrutura do array de tarefas (Estrutura de Dados em memória)
+// Estrutura de dados inicial (array de tarefas)
 const tarefas = [
     {
         id: gerarCodigo(),
@@ -19,68 +19,68 @@ const tarefas = [
     }
 ];
 
-// 3. Mapeamento dos elementos do DOM com getElementById
+// Mapeamento dos elementos do DOM
 const formTarefa = document.getElementById("form-tarefa");
 const inputTitulo = document.getElementById("input-titulo");
 const listaTarefas = document.getElementById("lista-tarefas");
 
-// 4. Construção da função render (Padrão para limpar, percorrer e inserir elementos no DOM)
+// Função render para sincronizar o array com a interface gráfica
 function render() {
-    // A) Limpa o container atual
+    // 1. Limpa o container visual
     listaTarefas.innerHTML = "";
 
-    // B) Percorre a estrutura de dados (Array tarefas)
+    // 2. Percorre a estrutura de dados
     tarefas.forEach(function (tarefa) {
-        // C) Gera o elemento HTML correspondente a cada dado
+        // 3. Cria o elemento HTML <li>
         const li = document.createElement("li");
         li.classList.add("task-item");
         li.textContent = tarefa.titulo;
 
-        // Adiciona a badge com o ID gerado automaticamente
+        // Adiciona a identificação sequencial (#id)
         const badge = document.createElement("span");
         badge.classList.add("task-badge");
         badge.textContent = `#${tarefa.id}`;
         li.appendChild(badge);
 
-        // Verificação de tarefas concluídas (Aplica a classe que insere o estilo line-through)
+        // Aplica o estilo de concluída caso seja true
         if (tarefa.concluida) {
             li.classList.add("concluida");
         }
 
-        // D) Insere esse elemento no DOM
+        // 4. Insere o item criado na lista
         listaTarefas.appendChild(li);
     });
 }
 
-// 5. Manipulação de eventos de formulário com addEventListener e preventDefault
+// Evento de envio do formulário
 formTarefa.addEventListener("submit", function (event) {
-    // Impede o comportamento padrão do navegador de recarregar a página
+    // Evita o recarregamento automático da página
     event.preventDefault();
 
-    // Captura e valida o título digitado
+    // Obtém o texto limpo de espaços adicionais
     const novoTitulo = inputTitulo.value.trim();
 
-    // Interrompe se o campo estiver vazio
+    // Valida se o título não está vazio
     if (novoTitulo === "") {
         return;
     }
 
-    // Cria o objeto da nova tarefa
+    // Objeto da nova tarefa
     const novaTarefa = {
         id: gerarCodigo(),
         titulo: novoTitulo,
         concluida: false
     };
 
-    // 6. Adição de novos itens ao array com push
+    // Adiciona o novo item ao array
     tarefas.push(novaTarefa);
 
-    // Limpa o campo do formulário
+    // Reseta o campo do input
     inputTitulo.value = "";
 
-    // Atualização da tela por meio de nova chamada à função render
+    // Atualiza a visualização no navegador
     render();
 });
 
-// 7. Chamada inicial da função render
+// Execução inicial para exibir os dados predefinidos
 render();
