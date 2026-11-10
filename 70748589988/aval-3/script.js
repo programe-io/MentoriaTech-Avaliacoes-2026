@@ -1,93 +1,74 @@
-'use strict';
+// 1. Geração automática de identificadores por pré-incremento
+let contadorCodigo = 0;
 
-document.addEventListener("DOMContentLoaded", () => {
-  // Gerador de ID seguro
-  const gerarId = () => 
-    typeof crypto !== "undefined" && crypto.randomUUID 
-      ? crypto.randomUUID() 
-      : String(Date.now() + Math.random());
+function gerarCodigo() {
+    return ++contadorCodigo;
+}
 
-  // 1. ESTADO EM MEMÓRIA (Única Fonte da Verdade)
-  let tarefas = [
-    { id: gerarId(), titulo: "Aprender renderização orientada a dados", concluida: true },
-    { id: gerarId(), titulo: "Entender o fluxo do estado para o DOM", concluida: false }
-  ];
-
-  // Elementos do DOM
-  const containerLista = document.getElementById("lista-tarefas");
-  const formTarefa = document.getElementById("form-tarefa");
-  const inputTarefa = document.getElementById("input-tarefa");
-
-  // 2. FUNÇÃO DE RENDERIZAÇÃO (Dados -> DOM)
-  function render() {
-    // Passo A: Limpar o container de forma segura
-    containerLista.replaceChildren();
-
-    // Tratamento caso a lista esteja vazia
-    if (tarefas.length === 0) {
-      const liVazio = document.createElement("li");
-      liVazio.className = "vazio";
-      liVazio.textContent = "Nenhuma tarefa encontrada.";
-      containerLista.appendChild(liVazio);
-      return;
+// 2. Estrutura do array de tarefas com objetos iniciais
+const tarefas = [
+    {
+        id: gerarCodigo(),
+        titulo: "estudar JavaScript",
+        concluida: false
+    },
+    {
+        id: gerarCodigo(),
+        titulo: "montar o slide de apresentação do trabalho",
+        concluida: true
     }
+];
 
-    // Passo B, C e D: Percorrer os dados, gerar HTML seguro e inserir no DOM
+// 3. Mapeamento de elementos do DOM com getElementById
+const formTarefa = document.getElementById("form-tarefa");
+const inputTitulo = document.getElementById("input-titulo");
+const listaTarefas = document.getElementById("lista-tarefas");
+
+// 4. Função render para sincronizar o array com o DOM
+function render() {
+    // Etapa 1: Limpar o container atual
+    listaTarefas.innerHTML = "";
+
+    // Etapa 2: Percorrer o array de tarefas
     tarefas.forEach(tarefa => {
-      const li = document.createElement("li");
-      li.className = `item-tarefa ${tarefa.concluida ? "concluida" : ""}`;
+        // Etapa 3: Gerar o elemento HTML correspondente
+        const li = document.createElement("li");
+        li.textContent = tarefa.titulo;
 
-      const span = document.createElement("span");
-      span.textContent = tarefa.titulo;
-      span.addEventListener("click", () => alternarStatus(tarefa.id));
+        // Verificação e estilização visual de tarefa concluída
+        if (tarefa.concluida) {
+            li.style.textDecoration = "line-through";
+            li.classList.add("concluida");
+        }
 
-      const btnDeletar = document.createElement("button");
-      btnDeletar.className = "btn-deletar";
-      btnDeletar.type = "button";
-      btnDeletar.textContent = "✕";
-      btnDeletar.setAttribute("aria-label", `Excluir ${tarefa.titulo}`);
-      btnDeletar.addEventListener("click", () => removerTarefa(tarefa.id));
-
-      li.appendChild(span);
-      li.appendChild(btnDeletar);
-      containerLista.appendChild(li);
+        // Etapa 4: Inserir o elemento criado no DOM
+        listaTarefas.appendChild(li);
     });
-  }
+}
 
-  // 3. OPERAÇÕES NO ARRAY + RE-RENDERIZAÇÃO
-  function adicionarTarefa(titulo) {
-    tarefas.push({
-      id: gerarId(),
-      titulo: titulo,
-      concluida: false
-    });
+// Chamada inicial para renderizar os dados já existentes
+render();
+
+// 5. Manipulação de evento do formulário com addEventListener e preventDefault
+formTarefa.addEventListener("submit", function (event) {
+    // Impede o recarregamento automático da página
+    event.preventDefault();
+
+    // Captura e remoção de espaços em branco nas extremidades
+    const novoTitulo = inputTitulo.value.trim();
+
+    // Validação: evita cadastrar tarefas sem título
+    if (!novoTitulo) return;
+
+    // Criação da nova tarefa
+    const novaTarefa = {
+        id: gerarCodigo(),
+        titulo: novoTitulo,
+        concluida: false
+    };
+
+    // Adição ao array e sincronização da interface
+    tarefas.push(novaTarefa);
+    inputTitulo.value = "";
     render();
-  }
-
-  function removerTarefa(id) {
-    tarefas = tarefas.filter(t => t.id !== id);
-    render();
-  }
-
-  function alternarStatus(id) {
-    tarefas = tarefas.map(t => 
-      t.id === id ? { ...t, concluida: !t.concluida } : t
-    );
-    render();
-  }
-
-  // Evento de submissão do formulário
-  formTarefa.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const valor = inputTarefa.value.trim();
-
-    if (valor) {
-      adicionarTarefa(valor);
-      inputTarefa.value = "";
-      inputTarefa.focus();
-    }
-  });
-
-  // Renderização inicial ao carregar a página
-  render();
 });
