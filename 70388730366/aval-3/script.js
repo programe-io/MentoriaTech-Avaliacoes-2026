@@ -24,7 +24,7 @@ const formTarefa = document.getElementById("form-tarefa");
 const inputTitulo = document.getElementById("input-titulo");
 const listaTarefas = document.getElementById("lista-tarefas");
 
-// 4. Construção da função render (Padrão para limpar, percorrer e inserir no DOM)
+// 4. Construção da função render (Padrão para limpar, percorrer e inserir elementos no DOM)
 function render() {
     // A) Limpa o container atual
     listaTarefas.innerHTML = "";
@@ -36,13 +36,13 @@ function render() {
         li.classList.add("task-item");
         li.textContent = tarefa.titulo;
 
-        // Adiciona uma badge visual com o ID gerado automaticamente
+        // Adiciona a badge com o ID gerado automaticamente
         const badge = document.createElement("span");
         badge.classList.add("task-badge");
         badge.textContent = `#${tarefa.id}`;
         li.appendChild(badge);
 
-        // Verificação de tarefas concluídas (Aplica linha riscada via CSS ou estilo)
+        // Verificação de tarefas concluídas (Aplica a classe que insere o estilo line-through)
         if (tarefa.concluida) {
             li.classList.add("concluida");
         }
@@ -65,7 +65,7 @@ formTarefa.addEventListener("submit", function (event) {
         return;
     }
 
-    // Cria a nova estrutura de objeto da tarefa
+    // Cria o objeto da nova tarefa
     const novaTarefa = {
         id: gerarCodigo(),
         titulo: novoTitulo,
@@ -78,9 +78,9 @@ formTarefa.addEventListener("submit", function (event) {
     // Limpa o campo do formulário
     inputTitulo.value = "";
 
-    // Atualização da tela por meio de uma nova chamada à função render
+    // Atualização da tela por meio de nova chamada à função render
     render();
 });
 
-// 7. Chamada inicial da função render para exibir as tarefas existentes ao carregar
+// 7. Chamada inicial da função render
 render();
