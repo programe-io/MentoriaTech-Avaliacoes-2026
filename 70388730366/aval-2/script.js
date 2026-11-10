@@ -1,115 +1,207 @@
-let tarefas = [];
-let proximoCodigo = 1;
+document.addEventListener('DOMContentLoaded', () => {
+  // Estado local com tratamento seguro do localStorage
+  let tarefas = carregarDados();
 
-const inputTitle = document.getElementById('taskTitle');
-const selectPriority = document.getElementById('taskPriority');
-const tableBody = document.getElementById('taskList');
-const errorMsg = document.getElementById('errorMsg');
 
-function cadastrarTarefa() {
-  const titulo = inputTitle.value.trim();
-  const prioridade = parseInt(selectPriority.value, 10);
+  // Referências do DOM
+  const formTarefa = document.getElementById('form-tarefa');
+  const inputCodigo = document.getElementById('codigo');
+  const inputTitulo = document.getElementById('titulo');
+  const selectPrioridade = document.getElementById('prioridade');
+  const tabelaBody = document.getElementById('lista-tarefas');
+  const filtroPrioridade = document.getElementById('filtro-prioridade');
 
-  if (titulo.length < 5) {
-    exibirErro("O título da tarefa deve ter no mínimo 5 caracteres.");
-    return;
+
+  // Recupera dados salvos
+  function carregarDados() {
+    try {
+      const dados = localStorage.getItem('tarefas_db');
+      return dados ? JSON.parse(dados) : [
+        { codigo: 'TSK-01', titulo: 'Estudar JavaScript ES6', prioridade: 'Alta', concluida: false },
+        { codigo: 'TSK-02', titulo: 'Revisar estrutura HTML/CSS', prioridade: 'Média', concluida: true }
+      ];
+    } catch (error) {
+      console.error('Erro ao ler localStorage:', error);
+      return [];
+    }
   }
 
-  if (isNaN(prioridade) || prioridade < 1 || prioridade > 3) {
-    exibirErro("Selecione uma prioridade válida entre 1 (alta) e 3 (baixa).");
-    return;
+
+  // Persiste dados no localStorage
+  function salvarDados() {
+    try {
+      localStorage.setItem('tarefas_db', JSON.stringify(tarefas));
+    } catch (error) {
+      console.error('Erro ao salvar no localStorage:', error);
+    }
   }
 
-  ocultarErro();
 
-  const novaTarefa = {
-    codigo: proximoCodigo++,
-    titulo: titulo,
-    prioridade: prioridade,
-    concluida: false
-  };
+  // 1. Cadastrar Tarefa
+  function cadastrarTarefa(codigo, titulo, prioridade) {
+    const codLimpo = codigo.trim();
+    const titLimpo = titulo.trim();
 
-  tarefas.push(novaTarefa);
-  
-  inputTitle.value = '';
-  selectPriority.value = '2';
 
-  listarTarefas();
-}
+    if (!codLimpo || !titLimpo) {
+      alert('Preencha todos os campos obrigatórios.');
+      return false;
+    }
 
-function listarTarefas() {
-  tableBody.innerHTML = '';
 
-  if (tarefas.length === 0) {
-    tableBody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #999;">Nenhuma tarefa cadastrada.</td></tr>';
-    return;
-  }
+    const existe = tarefas.some(t => t.codigo.toLowerCase() === codLimpo.toLowerCase());
+    if (existe) {
+      alert(Já existe uma tarefa com o código "${codLimpo}".);
+      return false;
+    }
 
-  tarefas.forEach(tarefa => {
-    const tr = document.createElement('tr');
-    const prioridadeTexto = { 1: 'Alta', 2: 'Média', 3: 'Baixa' }[tarefa.prioridade];
 
-    const btnConcluir = !tarefa.concluida 
-      ? `<button class="btn-action btn-complete" onclick="marcarConcluida(${tarefa.codigo})">Concluir</button>` 
-      : '';
+    tarefas.push({
+      codigo: codLimpo,
+      titulo: titLimpo,
+      prioridade: prioridade,
+      concluida: false
+    });
 
-    tr.innerHTML = `
-      <td>#${tarefa.codigo}</td>
-      <td class="${tarefa.concluida ? 'completed' : ''}">${escapeHtml(tarefa.titulo)}</td>
-      <td>
-        <span class="badge-priority p-${tarefa.prioridade}">${prioridadeTexto}</span>
-      </td>
-      <td>${tarefa.concluida ? 'Concluída' : 'Pendente'}</td>
-      <td>
-        ${btnConcluir}
-        <select class="select-priority-inline" onchange="alterarPrioridade(${tarefa.codigo}, this.value)">
-          <option value="1" ${tarefa.prioridade === 1 ? 'selected' : ''}>P1 (Alta)</option>
-          <option value="2" ${tarefa.prioridade === 2 ? 'selected' : ''}>P2 (Média)</option>
-          <option value="3" ${tarefa.prioridade === 3 ? 'selected' : ''}>P3 (Baixa)</option>
-        </select>
-      </td>
-    `;
 
-    tableBody.appendChild(tr);
-  });
-}
-
-function marcarConcluida(codigo) {
-  const tarefa = tarefas.find(t => t.codigo === codigo);
-  if (tarefa) {
-    tarefa.concluida = true;
+    salvarDados();
     listarTarefas();
+    return true;
   }
-}
 
-function alterarPrioridade(codigo, novaPrioridade) {
-  const prioridadeNum = parseInt(novaPrioridade, 10);
-  
-  if (prioridadeNum >= 1 && prioridadeNum <= 3) {
+
+  // 2. Listar Tarefas (Criação nativa de nós para evitar falhas por aspas ou caracteres especiais)
+  function listarTarefas() {
+    const filtro = filtroPrioridade ? filtroPrioridade.value : 'Todas';
+    tabelaBody.innerHTML = '';
+
+
+    const filtradas = tarefas.filter(t => filtro === 'Todas' || t.prioridade === filtro);
+
+
+    if (filtradas.length === 0) {
+      const trVazia = document.createElement('tr');
+      const tdVazia = document.createElement('td');
+      tdVazia.colSpan = 5;
+      tdVazia.style.textAlign = 'center';
+      tdVazia.textContent = 'Nenhuma tarefa encontrada.';
+      trVazia.appendChild(tdVazia);
+      tabelaBody.appendChild(trVazia);
+      return;
+    }
+
+
+    filtradas.forEach(tarefa => {
+      const tr = document.createElement('tr');
+      if (tarefa.concluida) {
+        tr.classList.add('concluida');
+      }
+
+
+      // 1. Checkbox Concluída
+      const tdCheck = document.createElement('td');
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.checked = tarefa.concluida;
+      checkbox.addEventListener('change', () => marcarConcluida(tarefa.codigo));
+      tdCheck.appendChild(checkbox);
+
+
+      // 2. Código
+      const tdCodigo = document.createElement('td');
+      const strongCod = document.createElement('strong');
+      strongCod.textContent = tarefa.codigo;
+      tdCodigo.appendChild(strongCod);
+
+
+      // 3. Título
+      const tdTitulo = document.createElement('td');
+      tdTitulo.className = 'titulo-tarefa';
+      tdTitulo.textContent = tarefa.titulo;
+
+
+      // 4. Badge Prioridade
+      const tdBadge = document.createElement('td');
+      const badge = document.createElement('span');
+      badge.className = badge badge-${tarefa.prioridade};
+      badge.textContent = tarefa.prioridade;
+      tdBadge.appendChild(badge);
+
+
+      // 5. Select para Alteração Inline da Prioridade
+      const tdAcoes = document.createElement('td');
+      const selectInline = document.createElement('select');
+      selectInline.className = 'select-prio-inline';
+      
+      ['Baixa', 'Média', 'Alta'].forEach(prio => {
+        const opt = document.createElement('option');
+        opt.value = prio;
+        opt.textContent = prio;
+        if (tarefa.prioridade === prio) opt.selected = true;
+        selectInline.appendChild(opt);
+      });
+
+
+      selectInline.addEventListener('change', (e) => alterarPrioridade(tarefa.codigo, e.target.value));
+      tdAcoes.appendChild(selectInline);
+
+
+      // Montagem da linha
+      tr.appendChild(tdCheck);
+      tr.appendChild(tdCodigo);
+      tr.appendChild(tdTitulo);
+      tr.appendChild(tdBadge);
+      tr.appendChild(tdAcoes);
+
+
+      tabelaBody.appendChild(tr);
+    });
+  }
+
+
+  // 3. Marcar Tarefa como Concluída
+  function marcarConcluida(codigo) {
     const tarefa = tarefas.find(t => t.codigo === codigo);
     if (tarefa) {
-      tarefa.prioridade = prioridadeNum;
+      tarefa.concluida = !tarefa.concluida;
+      salvarDados();
       listarTarefas();
     }
   }
-}
 
-function exibirErro(mensagem) {
-  errorMsg.textContent = mensagem;
-  errorMsg.style.display = 'block';
-}
 
-function ocultarErro() {
-  errorMsg.style.display = 'none';
-}
+  // 4. Alterar Prioridade
+  function alterarPrioridade(codigo, novaPrioridade) {
+    const tarefa = tarefas.find(t => t.codigo === codigo);
+    if (tarefa) {
+      tarefa.prioridade = novaPrioridade;
+      salvarDados();
+      listarTarefas();
+    }
+  }
 
-function escapeHtml(texto) {
-  return texto
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-}
 
-listarTarefas();
+  // Handlers de Eventos
+  formTarefa.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const enviado = cadastrarTarefa(
+      inputCodigo.value,
+      inputTitulo.value,
+      selectPrioridade.value
+    );
+
+
+    if (enviado) {
+      inputCodigo.value = '';
+      inputTitulo.value = '';
+      selectPrioridade.value = 'Média';
+    }
+  });
+
+
+  filtroPrioridade.addEventListener('change', listarTarefas);
+
+
+  // Inicializa listagem
+  listarTarefas();
+});
