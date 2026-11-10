@@ -2,8 +2,9 @@
 let produtos = [];
 
 function cadastrarProduto() {
-    let codigo = document.getElementById("codigo").value;
-    let descricao = document.getElementById("descricao").value;
+
+    let codigo = document.getElementById("codigo").value.trim();
+    let descricao = document.getElementById("descricao").value.trim();
     let quantidade = document.getElementById("quantidade").value;
     let valor = document.getElementById("valor").value;
 
@@ -43,6 +44,7 @@ function cadastrarProduto() {
 }
 
 function listarProdutos() {
+
     let lista = document.getElementById("listaProdutos");
 
     lista.innerHTML = "";
@@ -52,23 +54,40 @@ function listarProdutos() {
         return;
     }
 
-    produtos.forEach(produto => {
-        lista.innerHTML += `
-            <div class="produto">
-                <p><strong>Código:</strong> ${produto.codigo}</p>
-                <p><strong>Descrição:</strong> ${produto.descricao}</p>
-                <p><strong>Quantidade:</strong> ${produto.quantidade}</p>
-                <p><strong>Valor:</strong> R$ ${produto.valor.toFixed(2)}</p>
-            </div>
-        `;
+    produtos.forEach(function(produto) {
+
+        let item = document.createElement("div");
+        item.className = "produto";
+
+        let codigo = document.createElement("p");
+        codigo.textContent = "Código: " + produto.codigo;
+
+        let descricao = document.createElement("p");
+        descricao.textContent = "Descrição: " + produto.descricao;
+
+        let quantidade = document.createElement("p");
+        quantidade.textContent = "Quantidade: " + produto.quantidade;
+
+        let valor = document.createElement("p");
+        valor.textContent = "Valor: R$ " + produto.valor.toFixed(2);
+
+        item.appendChild(codigo);
+        item.appendChild(descricao);
+        item.appendChild(quantidade);
+        item.appendChild(valor);
+
+        lista.appendChild(item);
     });
 }
 
 function alterarValor() {
-    let codigo = document.getElementById("codigoAlterar").value;
+
+    let codigo = document.getElementById("codigoAlterar").value.trim();
     let novoValor = document.getElementById("novoValor").value;
 
-    let produto = produtos.find(p => p.codigo === codigo);
+    let produto = produtos.find(function(p) {
+        return p.codigo === codigo;
+    });
 
     if (!produto) {
         alert("Produto não encontrado!");
@@ -90,10 +109,13 @@ function alterarValor() {
 }
 
 function alterarQuantidade() {
-    let codigo = document.getElementById("codigoAlterar").value;
+
+    let codigo = document.getElementById("codigoAlterar").value.trim();
     let novaQuantidade = document.getElementById("novaQuantidade").value;
 
-    let produto = produtos.find(p => p.codigo === codigo);
+    let produto = produtos.find(function(p) {
+        return p.codigo === codigo;
+    });
 
     if (!produto) {
         alert("Produto não encontrado!");
