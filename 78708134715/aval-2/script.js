@@ -1,163 +1,90 @@
 
-const textoPost = document.getElementById("textoPost");
-const imagemPost = document.getElementById("imagemPost");
-const previewImagem = document.getElementById("previewImagem");
-const btnPublicar = document.getElementById("btnPublicar");
-const feed = document.getElementById("feed");
+// Função para publicar uma nova postagem
+function publicarPost() {
+    const texto = document.getElementById("textoPost").value.trim();
+    const imagem = document.getElementById("imagemPost").value.trim();
 
-let imagemSelecionada = "";
-
-// Pré-visualização da imagem
-imagemPost.addEventListener("change", function () {
-    const arquivo = this.files[0];
-
-    if (arquivo) {
-        if (!arquivo.type.startsWith("image/")) {
-            alert("Selecione um arquivo de imagem válido.");
-            this.value = "";
-            return;
-        }
-
-        const leitor = new FileReader();
-
-        leitor.onload = function (evento) {
-            imagemSelecionada = evento.target.result;
-            previewImagem.src = imagemSelecionada;
-            previewImagem.style.display = "block";
-        };
-
-        leitor.readAsDataURL(arquivo);
-    }
-});
-
-// Criar publicação
-btnPublicar.addEventListener("click", function () {
-    const texto = textoPost.value.trim();
-
-    if (!texto && !imagemSelecionada) {
-        alert("Digite um texto ou selecione uma imagem!");
+    if (texto === "") {
+        alert("Digite algo antes de publicar!");
         return;
     }
+
+    const feed = document.getElementById("feed");
 
     const post = document.createElement("article");
     post.className = "post";
 
-    const data = new Date().toLocaleString("pt-BR", {
-        dateStyle: "short",
-        timeStyle: "short"
-    });
-
-    const imagemHTML = imagemSelecionada
-        ? `<img class="post-imagem" src="${imagemSelecionada}" alt="Imagem publicada">`
-        : "";
-
     post.innerHTML = `
         <div class="post-header">
-            <img src="https://i.pravatar.cc/100?img=12" alt="Meu perfil">
+            <img src="https://i.pravatar.cc/100?img=12" alt="Usuário">
             <div>
-                <h3>Meu Perfil</h3>
-                <small>${data}</small>
+                <h3>Você</h3>
+                <small>Agora mesmo</small>
             </div>
         </div>
 
         <p></p>
 
-        ${imagemHTML}
+        ${imagem ? `<img class="post-image" alt="Imagem da publicação">` : ""}
 
-        <div class="post-acoes">
-            <button class="curtir">❤️ Curtir <span>0</span></button>
-            <button class="comentar">💬 Comentar</button>
-            <button class="compartilhar">🔗 Compartilhar</button>
+        <div class="acoes">
+            <button onclick="curtir(this)">
+                ♡ Curtir <span>0</span>
+            </button>
+            <button onclick="comentar()">💬 Comentar</button>
+            <button onclick="compartilhar()">↗ Compartilhar</button>
         </div>
     `;
 
-    post.querySelector(".post-header + p").textContent = texto;
+    // Insere o texto com segurança
+    post.querySelector("p").textContent = texto;
 
-    feed.insertBefore(post, feed.children[1]);
-
-    textoPost.value = "";
-    imagemPost.value = "";
-    imagemSelecionada = "";
-    previewImagem.src = "";
-    previewImagem.style.display = "none";
-
-    alert("Publicação realizada com sucesso!");
-});
-
-// Ações dos posts
-feed.addEventListener("click", function (evento) {
-    const botao = evento.target.closest("button");
-
-    if (!botao) return;
-
-    const post = botao.closest(".post");
-
-    if (botao.classList.contains("curtir")) {
-        const contador = botao.querySelector("span");
-        let quantidade = Number(contador.textContent);
-
-        if (botao.classList.toggle("liked")) {
-            quantidade++;
-        } else {
-            quantidade--;
-        }
-
-        contador.textContent = quantidade;
+    // Adiciona a imagem, caso tenha sido informada
+    if (imagem) {
+        post.querySelector(".post-image").src = imagem;
     }
 
-    if (botao.classList.contains("comentar")) {
-        let area = post.querySelector(".area-comentarios");
+    // Adiciona a postagem no início do feed
+    feed.prepend(post);
 
-        if (!area) {
-            area = document.createElement("div");
-            area.className = "area-comentarios";
+    // Limpa os campos
+    document.getElementById("textoPost").value = "";
+    document.getElementById("imagemPost").value = "";
+}
 
-            area.innerHTML = `
-                <input class="comentario-input"
-                    type="text"
-                    placeholder="Escreva um comentário...">
+// Função para curtir uma postagem
+function curtir(botao) {
+    const contador = botao.querySelector("span");
+    let quantidade = Number(contador.textContent);
 
-                <button class="enviar-comentario">
-                    Enviar
-                </button>
-
-                <div class="lista-comentarios"></div>
-            `;
-
-            post.appendChild(area);
-        } else {
-            area.querySelector(".comentario-input").focus();
-        }
+    if (botao.classList.contains("liked")) {
+        quantidade--;
+        botao.classList.remove("liked");
+        botao.innerHTML = `♡ Curtir <span>${quantidade}</span>`;
+    } else {
+        quantidade++;
+        botao.classList.add("liked");
+        botao.innerHTML = `♥ Curtido <span>${quantidade}</span>`;
     }
+}
 
-    if (botao.classList.contains("enviar-comentario")) {
-        const input = post.querySelector(".comentario-input");
-        const lista = post.querySelector(".lista-comentarios");
-        const comentario = input.value.trim();
+// Função para comentar
+function comentar() {
+    const comentario = prompt("Digite seu comentário:");
 
-        if (!comentario) return;
-
-        const novoComentario = document.createElement("p");
-        novoComentario.textContent = "Você: " + comentario;
-
-        lista.appendChild(novoComentario);
-        input.value = "";
+    if (comentario && comentario.trim() !== "") {
+        alert("Comentário enviado: " + comentario);
     }
+}
 
-    if (botao.classList.contains("compartilhar")) {
-        const texto = post.querySelector("p")?.textContent || "Confira esta publicação!";
-
-        if (navigator.share) {
-            navigator.share({
-                title: "MiniFeed",
-                text: texto
-            }).catch(() => {});
-        } else if (navigator.clipboard) {
-            navigator.clipboard.writeText(texto)
-                .then(() => alert("Texto copiado para compartilhar!"))
-                .catch(() => alert("Não foi possível copiar o texto."));
-        } else {
-            alert("Compartilhamento não disponível neste navegador.");
-        }
+// Função para compartilhar
+function compartilhar() {
+    if (navigator.share) {
+        navigator.share({
+            title: "MiniFeed",
+            text: "Confira esta publicação no MiniFeed!"
+        }).catch(() => {});
+    } else {
+        alert("Compartilhamento não disponível neste navegador.");
     }
-});
+}
