@@ -1,0 +1,226 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciador de Tarefas</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f0eaff;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 650px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px #0002;
+        }
+
+        h1 {
+            text-align: center;
+            color: #7041a6;
+            margin-bottom: 25px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0 15px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+
+        label {
+            color: #444;
+            font-weight: bold;
+        }
+
+        button {
+            padding: 11px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background: #8054b8;
+            color: white;
+            margin: 4px;
+        }
+
+        button:hover {
+            background: #60358f;
+        }
+
+        .tarefa {
+            background: #f7f3ff;
+            padding: 15px;
+            margin-top: 12px;
+            border-radius: 10px;
+            border-left: 5px solid #8054b8;
+        }
+
+        .concluida {
+            opacity: 0.6;
+            text-decoration: line-through;
+        }
+
+        .acoes {
+            margin-top: 10px;
+        }
+
+        .acoes button {
+            font-size: 12px;
+        }
+
+        .excluir {
+            background: #d9534f;
+        }
+
+        @media (max-width: 500px) {
+            body {
+                padding: 12px;
+            }
+
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+    <div class="container">
+
+        <h1>Gerenciador de Tarefas</h1>
+
+        <label>Título da tarefa:</label>
+        <input type="text" id="titulo" placeholder="Digite sua tarefa">
+
+        <label>Prioridade:</label>
+        <select id="prioridade">
+            <option value="1">Alta</option>
+            <option value="2">Média</option>
+            <option value="3">Baixa</option>
+        </select>
+
+        <button onclick="cadastrarTarefa()">Cadastrar tarefa</button>
+
+        <h2 style="margin-top: 25px; color: #7041a6;">
+            Minhas tarefas
+        </h2>
+
+        <div id="listaTarefas"></div>
+
+    </div>
+
+    <script>
+        let tarefas = [];
+        let geradorDeCodigo = 1;
+
+        function cadastrarTarefa() {
+            let titulo = document.getElementById("titulo").value.trim();
+            let prioridade = Number(document.getElementById("prioridade").value);
+
+            if (titulo.length < 5) {
+                alert("O título precisa ter no mínimo 5 caracteres!");
+                return;
+            }
+
+            if (prioridade < 1 || prioridade > 3) {
+                alert("Prioridade inválida!");
+                return;
+            }
+
+            let tarefa = {
+                codigo: geradorDeCodigo++,
+                titulo: titulo,
+                prioridade: prioridade,
+                status: false
+            };
+
+            tarefas.push(tarefa);
+
+            document.getElementById("titulo").value = "";
+
+            listarTarefas();
+        }
+
+        function listarTarefas() {
+            let lista = document.getElementById("listaTarefas");
+            lista.innerHTML = "";
+
+            tarefas.forEach(tarefa => {
+                let div = document.createElement("div");
+                div.className = "tarefa";
+
+                div.innerHTML = `
+                    <div class="${tarefa.status ? 'concluida' : ''}">
+                        <strong>Código:</strong> ${tarefa.codigo}<br>
+                        <strong>Tarefa:</strong> ${tarefa.titulo}<br>
+                        <strong>Prioridade:</strong> ${
+                            tarefa.prioridade == 1 ? "Alta" :
+                            tarefa.prioridade == 2 ? "Média" : "Baixa"
+                        }<br>
+                        <strong>Status:</strong> ${
+                            tarefa.status ? "Concluída" : "Pendente"
+                        }
+                    </div>
+
+                    <div class="acoes">
+                        <button onclick="concluirTarefa(${tarefa.codigo})">
+                            Concluir
+                        </button>
+
+                        <button onclick="alterarPrioridade(${tarefa.codigo})">
+                            Alterar prioridade
+                        </button>
+                    </div>
+                `;
+
+                lista.appendChild(div);
+            });
+        }
+
+        function concluirTarefa(codigo) {
+            let tarefa = tarefas.find(t => t.codigo === codigo);
+
+            if (tarefa) {
+                tarefa.status = true;
+                listarTarefas();
+            }
+        }
+
+        function alterarPrioridade(codigo) {
+            let novaPrioridade = Number(
+                prompt("Digite a nova prioridade: 1 - Alta, 2 - Média, 3 - Baixa")
+            );
+
+            if (![1, 2, 3].includes(novaPrioridade)) {
+                alert("Prioridade inválida!");
+                return;
+            }
+
+            let tarefa = tarefas.find(t => t.codigo === codigo);
+
+            if (tarefa) {
+                tarefa.prioridade = novaPrioridade;
+                listarTarefas();
+            }
+        }
+    </script>
+
+<script src="script.js"></script></body>
+</html>
