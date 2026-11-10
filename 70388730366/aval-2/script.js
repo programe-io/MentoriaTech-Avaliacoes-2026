@@ -1,27 +1,20 @@
-// Armazenamento em memória das tarefas
 let tarefas = [];
 let proximoCodigo = 1;
 
-// Seleção dos elementos do DOM
 const inputTitle = document.getElementById('taskTitle');
 const selectPriority = document.getElementById('taskPriority');
 const tableBody = document.getElementById('taskList');
 const errorMsg = document.getElementById('errorMsg');
 
-/**
- * 1. Cadastra uma nova tarefa no sistema
- */
 function cadastrarTarefa() {
   const titulo = inputTitle.value.trim();
   const prioridade = parseInt(selectPriority.value, 10);
 
-  // Validação: Título com no mínimo 5 caracteres
   if (titulo.length < 5) {
     exibirErro("O título da tarefa deve ter no mínimo 5 caracteres.");
     return;
   }
 
-  // Validação: Prioridade entre 1 e 3
   if (isNaN(prioridade) || prioridade < 1 || prioridade > 3) {
     exibirErro("Selecione uma prioridade válida entre 1 (alta) e 3 (baixa).");
     return;
@@ -29,7 +22,6 @@ function cadastrarTarefa() {
 
   ocultarErro();
 
-  // Criação do objeto tarefa
   const novaTarefa = {
     codigo: proximoCodigo++,
     titulo: titulo,
@@ -39,16 +31,12 @@ function cadastrarTarefa() {
 
   tarefas.push(novaTarefa);
   
-  // Limpeza dos campos
   inputTitle.value = '';
   selectPriority.value = '2';
 
   listarTarefas();
 }
 
-/**
- * 2. Renderiza a lista de tarefas na tabela
- */
 function listarTarefas() {
   tableBody.innerHTML = '';
 
@@ -86,9 +74,6 @@ function listarTarefas() {
   });
 }
 
-/**
- * 3. Marca uma tarefa existente como concluída
- */
 function marcarConcluida(codigo) {
   const tarefa = tarefas.find(t => t.codigo === codigo);
   if (tarefa) {
@@ -97,9 +82,6 @@ function marcarConcluida(codigo) {
   }
 }
 
-/**
- * 4. Altera a prioridade de uma tarefa
- */
 function alterarPrioridade(codigo, novaPrioridade) {
   const prioridadeNum = parseInt(novaPrioridade, 10);
   
@@ -112,7 +94,6 @@ function alterarPrioridade(codigo, novaPrioridade) {
   }
 }
 
-// Funções utilitárias
 function exibirErro(mensagem) {
   errorMsg.textContent = mensagem;
   errorMsg.style.display = 'block';
@@ -131,5 +112,4 @@ function escapeHtml(texto) {
     .replace(/'/g, "&#039;");
 }
 
-// Renderização inicial ao carregar a página
 listarTarefas();
