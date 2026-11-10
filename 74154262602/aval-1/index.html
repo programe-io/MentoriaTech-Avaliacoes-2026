@@ -1,0 +1,255 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Estoque</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #e9eef5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px #ccc;
+        }
+
+        h1, h3 {
+            text-align: center;
+            color: #1e3a5f;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 7px 0;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            margin: 7px 0;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background: #1e3a5f;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f2f2f2;
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+<div class="container">
+
+    <h1>Sistema de Estoque</h1>
+
+    <h3>Cadastrar Produto</h3>
+
+    <input type="number" id="codigo" placeholder="Código">
+    <input type="text" id="descricao" placeholder="Descrição">
+    <input type="number" id="quantidade" placeholder="Quantidade">
+    <input type="number" id="valor" placeholder="Valor">
+
+    <button onclick="cadastrar()">Cadastrar Produto</button>
+
+    <hr>
+
+    <h3>Alterar Produto</h3>
+
+    <input type="number" id="codigoAlterar" placeholder="Código do produto">
+
+    <input type="number" id="novoValor" placeholder="Novo valor">
+    <button onclick="alterarValor()">Alterar Valor</button>
+
+    <input type="number" id="novaQuantidade" placeholder="Nova quantidade">
+    <button onclick="alterarQuantidade()">Alterar Quantidade</button>
+
+    <hr>
+
+    <h3>Lista de Produtos</h3>
+
+    <button onclick="listar()">Listar Produtos</button>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Código</th>
+                <th>Descrição</th>
+                <th>Quantidade</th>
+                <th>Valor</th>
+            </tr>
+        </thead>
+
+        <tbody id="tabela"></tbody>
+    </table>
+
+</div>
+
+<script>
+
+    let produtos = [];
+
+    // CADASTRAR PRODUTO
+    function cadastrar() {
+
+        let codigo = Number(document.getElementById("codigo").value);
+        let descricao = document.getElementById("descricao").value.trim();
+        let quantidade = Number(document.getElementById("quantidade").value);
+        let valor = Number(document.getElementById("valor").value);
+
+        if (!Number.isInteger(codigo) || codigo <= 0 ||
+            descricao === "" ||
+            document.getElementById("quantidade").value === "" ||
+            !Number.isInteger(quantidade) || quantidade < 0 ||
+            document.getElementById("valor").value === "" ||
+            !Number.isFinite(valor) || valor < 0) {
+
+            alert("Preencha os campos corretamente!");
+            return;
+        }
+
+        if (produtos.some(p => p.codigo === codigo)) {
+            alert("Código já cadastrado!");
+            return;
+        }
+
+        produtos.push({
+            codigo,
+            descricao,
+            quantidade,
+            valor
+        });
+
+        alert("Produto cadastrado com sucesso!");
+
+        document.getElementById("codigo").value = "";
+        document.getElementById("descricao").value = "";
+        document.getElementById("quantidade").value = "";
+        document.getElementById("valor").value = "";
+
+        listar();
+    }
+
+    // LISTAR PRODUTOS
+    function listar() {
+
+        let tabela = document.getElementById("tabela");
+
+        tabela.innerHTML = "";
+
+        produtos.forEach(p => {
+
+            tabela.innerHTML += `
+                <tr>
+                    <td>${p.codigo}</td>
+                    <td>${p.descricao.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")}</td>
+                    <td>${p.quantidade}</td>
+                    <td>R$ ${p.valor.toFixed(2)}</td>
+                </tr>
+            `;
+
+        });
+    }
+
+    // ALTERAR VALOR
+    function alterarValor() {
+
+        let codigo = Number(document.getElementById("codigoAlterar").value);
+
+        let produto = produtos.find(p => p.codigo === codigo);
+
+        if (!produto) {
+            alert("Produto não encontrado!");
+            return;
+        }
+
+        let campo = document.getElementById("novoValor");
+
+        if (campo.value === "" || Number(campo.value) < 0) {
+            alert("Digite um valor válido!");
+            return;
+        }
+
+        produto.valor = Number(campo.value);
+
+        alert("Valor alterado com sucesso!");
+
+        campo.value = "";
+
+        listar();
+    }
+
+    // ALTERAR QUANTIDADE
+    function alterarQuantidade() {
+
+        let codigo = Number(document.getElementById("codigoAlterar").value);
+
+        let produto = produtos.find(p => p.codigo === codigo);
+
+        if (!produto) {
+            alert("Produto não encontrado!");
+            return;
+        }
+
+        let campo = document.getElementById("novaQuantidade");
+
+        if (campo.value === "" ||
+            !Number.isInteger(Number(campo.value)) ||
+            Number(campo.value) < 0) {
+
+            alert("Digite uma quantidade válida!");
+            return;
+        }
+
+        produto.quantidade = Number(campo.value);
+
+        alert("Quantidade alterada com sucesso!");
+
+        campo.value = "";
+
+        listar();
+    }
+
+</script>
+
+<script src="script.js"></script></body>
+</html>
