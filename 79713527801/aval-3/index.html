@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feed - Instagram (Projeto Escolar)</title>
+    <!-- Ícones do FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #000000;
+            color: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Navbar Superior */
+        .navbar {
+            width: 100%;
+            height: 60px;
+            background-color: #000000;
+            border-bottom: 1px solid #262626;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-content {
+            max-width: 470px;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 16px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            font-family: cursive;
+            letter-spacing: 1px;
+        }
+
+        .nav-icons {
+            display: flex;
+            gap: 20px;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        /* Container Principal do Feed */
+        .main-container {
+            max-width: 470px;
+            width: 100%;
+            padding: 16px 0;
+        }
+
+        /* Barra de Stories */
+        .stories-container {
+            display: flex;
+            gap: 16px;
+            overflow-x: auto;
+            padding: 8px 16px 16px 16px;
+            background-color: #000000;
+            border-bottom: 1px solid #262626;
+            margin-bottom: 16px;
+        }
+
+        .stories-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .story {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .story-ring {
+            width: 68px;
+            height: 68px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+            padding: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .story-img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 2px solid #000;
+            object-fit: cover;
+        }
+
+        .story-username {
+            font-size: 11px;
+            color: #a8a8a8;
+            width: 64px;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Post do Feed */
+        .post {
+            background-color: #000000;
+            border-bottom: 1px solid #262626;
+            margin-bottom: 16px;
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 16px;
+        }
+
+        .post-user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .post-user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .post-username {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .post-image-container {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            background-color: #121212;
+            position: relative;
+        }
+
+        .post-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .post-actions {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 16px;
+            font-size: 22px;
+        }
+
+        .post-actions-left {
+            display: flex;
+            gap: 16px;
+        }
+
+        .post-actions i {
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .post-actions i:hover {
+            color: #a8a8a8;
+        }
+
+        /* Estados Ativos dos Botões */
+        .post-actions i.liked {
+            color: #ed4956 !important;
+        }
+
+        .post-actions i.saved {
+            color: #f5f5f5 !important;
+        }
+
+        .post-likes {
+            padding: 0 16px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .post-caption {
+            padding: 0 16px;
+            font-size: 14px;
+            line-height: 1.4;
+            margin-bottom: 8px;
+        }
+
+        .post-caption span {
+            font-weight: 600;
+            margin-right: 6px;
+        }
+
+        .post-comments-section {
+            padding: 0 16px 12px 16px;
+        }
+
+        .post-comments-link {
+            font-size: 14px;
+            color: #8e8e8e;
+            cursor: pointer;
+            margin-bottom: 6px;
+        }
+
+        .comments-list {
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .comment-item {
+            margin-bottom: 4px;
+        }
+
+        .comment-item span {
+            font-weight: 600;
+            margin-right: 6px;
+        }
+
+        .add-comment-box {
+            display: flex;
+            border-top: 1px solid #262626;
+            padding-top: 8px;
+            margin-top: 8px;
+        }
+
+        .add-comment-box input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #f5f5f5;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .add-comment-box button {
+            background: transparent;
+            border: none;
+            color: #0095f6;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px;
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"></head>
+<body>
+
+    <!-- Navbar Superior -->
+    <header class="navbar">
+        <div class="nav-content">
+            <div class="logo">Instagram</div>
+            <div class="nav-icons">
+                <i class="fa-regular fa-heart" id="nav-heart" title="Notificações"></i>
+                <i class="fa-regular fa-paper-plane" id="nav-direct" title="Mensagens"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <div class="main-container">
+        
+        <!-- Stories -->
+        <section class="stories-container">
+            <div class="story" data-user="ana_silva">
+                <div class="story-ring">
+                    <img class="story-img" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150" alt="Story de Ana">
+                </div>
+                <span class="story-username">ana_silva</span>
+            </div>
+            <div class="story" data-user="carlos_dev">
+                <div class="story-ring">
+                    <img class="story-img" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150" alt="Story de Carlos">
+                </div>
+                <span class="story-username">carlos_dev</span>
+            </div>
+            <div class="story" data-user="julia.art">
+                <div class="story-ring">
+                    <img class="story-img" src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150" alt="Story de Julia">
+                </div>
+                <span class="story-username">julia.art</span>
+            </div>
+            <div class="story" data-user="lucas_fit">
+                <div class="story-ring">
+                    <img class="story-img" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150" alt="Story de Lucas">
+                </div>
+                <span class="story-username">lucas_fit</span>
+            </div>
+            <div class="story" data-user="bia_viagens">
+                <div class="story-ring">
+                    <img class="story-img" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150" alt="Story de Beatriz">
+                </div>
+                <span class="story-username">bia_viagens</span>
+            </div>
+        </section>
+
+        <!-- Feed de Posts -->
+        <main>
+            <!-- Post 1: ana_silva -->
+            <article class="post" data-likes="184">
+                <div class="post-header">
+                    <div class="post-user-info">
+                        <img class="post-user-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150" alt="Avatar">
+                        <span class="post-username">ana_silva</span>
+                    </div>
+                    <i class="fa-solid fa-ellipsis options-btn"></i>
+                </div>
+                <div class="post-image-container">
+                    <img class="post-image" src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600" alt="Post foto">
+                </div>
+                <div class="post-actions">
+                    <div class="post-actions-left">
+                        <i class="fa-regular fa-heart like-btn" title="Curtir"></i>
+                        <i class="fa-regular fa-comment comment-focus-btn" title="Comentar"></i>
+                        <i class="fa-regular fa-paper-plane share-btn" title="Compartilhar"></i>
+                    </div>
+                    <i class="fa-regular fa-bookmark save-btn" title="Salvar"></i>
+                </div>
+                <div class="post-likes"><span class="likes-count">184</span> curtidas</div>
+                <div class="post-caption"><span>ana_silva</span> Um dia incrível na praia! 🌊☀️</div>
+                
+                <div class="post-comments-section">
+                    <div class="post-comments-link">Ver todos os 12 comentários</div>
+                    <div class="comments-list">
+                        <div class="comment-item"><span>carlos_dev</span> Que lugar lindo!</div>
+                    </div>
+                    <div class="add-comment-box">
+                        <input type="text" placeholder="Adicione um comentário..." class="comment-input">
+                        <button class="post-comment-btn">Publicar</button>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Post 2: carlos_dev -->
+            <article class="post" data-likes="342">
+                <div class="post-header">
+                    <div class="post-user-info">
+                        <img class="post-user-avatar" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150" alt="Avatar">
+                        <span class="post-username">carlos_dev</span>
+                    </div>
+                    <i class="fa-solid fa-ellipsis options-btn"></i>
+                </div>
+                <div class="post-image-container">
+                    <img class="post-image" src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=600" alt="Post foto">
+                </div>
+                <div class="post-actions">
+                    <div class="post-actions-left">
+                        <i class="fa-regular fa-heart like-btn" title="Curtir"></i>
+                        <i class="fa-regular fa-comment comment-focus-btn" title="Comentar"></i>
+                        <i class="fa-regular fa-paper-plane share-btn" title="Compartilhar"></i>
+                    </div>
+                    <i class="fa-regular fa-bookmark save-btn" title="Salvar"></i>
+                </div>
+                <div class="post-likes"><span class="likes-count">342</span> curtidas</div>
+                <div class="post-caption"><span>carlos_dev</span> Focado nos códigos hoje 💻🚀</div>
+                
+                <div class="post-comments-section">
+                    <div class="post-comments-link">Ver todos os 25 comentários</div>
+                    <div class="comments-list">
+                        <div class="comment-item"><span>ana_silva</span> Brabo demais! 🔥</div>
+                    </div>
+                    <div class="add-comment-box">
+                        <input type="text" placeholder="Adicione um comentário..." class="comment-input">
+                        <button class="post-comment-btn">Publicar</button>
+                    </div>
+                </div>
+            </article>
+        </main>
+    </div>
+
+    <!-- Script JavaScript para interatividade completa -->
+    <script>
+        // 1. Navbar Superior - Coração e Mensagens
+        document.getElementById('nav-heart').addEventListener('click', () => {
+            alert('Notificações: \n- carlos_dev curtiu sua foto.\n- ana_silva começou a seguir você.');
+        });
+
+        document.getElementById('nav-direct').addEventListener('click', () => {
+            alert('Abrindo mensagens diretas (Direct)...');
+        });
+
+        // 2. Stories
+        document.querySelectorAll('.story').forEach(story => {
+            story.addEventListener('click', () => {
+                const user = story.getAttribute('data-user');
+                alert(`Visualizando os Stories de @${user}`);
+            });
+        });
+
+        // 3. Botão de Curtir (Like)
+        document.querySelectorAll('.like-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const post = button.closest('.post');
+                const likesCountSpan = post.querySelector('.likes-count');
+                let baseLikes = parseInt(post.getAttribute('data-likes'));
+
+                button.classList.toggle('liked');
+                
+                if (button.classList.contains('liked')) {
+                    button.classList.remove('fa-regular');
+                    button.classList.add('fa-solid');
+                    likesCountSpan.textContent = baseLikes + 1;
+                } else {
+                    button.classList.remove('fa-solid');
+                    button.classList.add('fa-regular');
+                    likesCountSpan.textContent = baseLikes;
+                }
+            });
+        });
+
+        // 4. Botão de Salvar (Bookmark)
+        document.querySelectorAll('.save-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                button.classList.toggle('saved');
+                if (button.classList.contains('saved')) {
+                    button.classList.remove('fa-regular');
+                    button.classList.add('fa-solid');
+                    alert('Publicação salva nos favoritos!');
+                } else {
+                    button.classList.remove('fa-solid');
+                    button.classList.add('fa-regular');
+                    alert('Publicação removida dos salvos.');
+                }
+            });
+        });
+
+        // 5. Botão de Compartilhar (Aviãozinho)
+        document.querySelectorAll('.share-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                alert('Link da publicação copiado para a área de transferência!');
+            });
+        });
+
+        // 6. Botão de Opções (...) do Post
+        document.querySelectorAll('.options-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                alert('Opções: Denunciar, Ocultar, Copiar link ou Cancelar.');
+            });
+        });
+
+        // 7. Focar na caixa de comentário ao clicar no ícone de balão
+        document.querySelectorAll('.comment-focus-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const post = button.closest('.post');
+                const input = post.querySelector('.comment-input');
+                input.focus();
+            });
+        });
+
+        // 8. Adicionar Comentário Funcional
+        document.querySelectorAll('.post-comment-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const post = button.closest('.post');
+                const input = post.querySelector('.comment-input');
+                const commentsList = post.querySelector('.comments-list');
+
+                if (input.value.trim() !== '') {
+                    const newComment = document.createElement('div');
+                    newComment.classList.add('comment-item');
+                    newComment.innerHTML = `<span>voce</span> ${input.value}`;
+                    commentsList.appendChild(newComment);
+                    input.value = ''; // Limpa o campo
+                }
+            });
+        });
+
+        // Permitir enviar comentário apertando "Enter"
+        document.querySelectorAll('.comment-input').forEach(input => {
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    const post = input.closest('.post');
+                    const postBtn = post.querySelector('.post-comment-btn');
+                    postBtn.click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
