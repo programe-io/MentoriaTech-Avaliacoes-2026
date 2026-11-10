@@ -1,0 +1,215 @@
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo: Apanha a Bola</title>
+    <style>
+        /* --- ESTILOS CSS DO JOGO --- */
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #1e1e2f, #0f0f1a);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            color: #fff;
+            overflow: hidden;
+        }
+
+        #placar {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
+        }
+
+        /* Área onde o jogo acontece */
+        #tela-jogo {
+            width: 400px;
+            height: 500px;
+            background-color: #252538;
+            border: 4px solid #00ffcc;
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        /* O jogador (barra inferior) */
+        #jogador {
+            width: 80px;
+            height: 15px;
+            background: linear-gradient(90deg, #00ffcc, #00bfff);
+            position: absolute;
+            bottom: 10px;
+            left: 160px; /* Posição inicial centralizada */
+            border-radius: 10px;
+            box-shadow: 0 0 15px #00ffcc;
+            transition: left 0.1s ease-out;
+        }
+
+        /* O objeto que cai (bola) */
+        #bola {
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, #ff007f, #ff0033);
+            border-radius: 50%;
+            position: absolute;
+            top: 0px;
+            left: 190px;
+            box-shadow: 0 0 15px #ff007f;
+        }
+
+        /* Ecrã de Fim de Jogo */
+        #fim-de-jogo {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(15, 15, 26, 0.95);
+            padding: 30px;
+            border-radius: 10px;
+            border: 2px solid #ff007f;
+            text-align: center;
+            box-shadow: 0 0 25px rgba(255, 0, 127, 0.4);
+        }
+
+        #fim-de-jogo h2 {
+            color: #ff007f;
+            margin-top: 0;
+        }
+
+        #fim-de-jogo button {
+            background: #00ffcc;
+            color: #1e1e2f;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: 0.2s;
+        }
+
+        #fim-de-jogo button:hover {
+            background: #00bfff;
+            transform: scale(1.05);
+        }
+
+        /* Instruções na base */
+        .instrucoes {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #8888a0;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="placar">Pontos: <span id="pontos">0</span></div>
+
+    <!-- ESTRUTURA HTML DO JOGO -->
+    <div id="tela-jogo">
+        <div id="jogador"></div>
+        <div id="bola"></div>
+
+        <div id="fim-de-jogo">
+            <h2>Fim de Jogo!</h2>
+            <p>A bola caiu no chão.</p>
+            <button onclick="reiniciarJogo()">Jogar Novamente</button>
+        </div>
+    </div>
+
+    <div class="instrucoes">Usa as setas ⬅️ e ➡️ do teclado para mover a barra.</div>
+
+    <!-- LÓGICA JAVASCRIPT DO JOGO -->
+    <script>
+        const jogador = document.getElementById('jogador');
+        const bola = document.getElementById('bola');
+        const pontosSpan = document.getElementById('pontos');
+        const telaJogo = document.getElementById('tela-jogo');
+        const painelFimJogo = document.getElementById('fim-de-jogo');
+
+        let jogadorX = 160;
+        let bolaX = 190;
+        let bolaY = 0;
+        let velocidadeBola = 4;
+        let pontos = 0;
+        let jogoAtivo = true;
+
+        // Movimento do Jogador com as Setas do Teclado
+        document.addEventListener('keydown', (e) => {
+            if (!jogoAtivo) return;
+            
+            if (e.key === 'ArrowLeft' && jogadorX > 0) {
+                jogadorX -= 25;
+            } else if (e.key === 'ArrowRight' && jogadorX < 320) { // 400 largura - 80 da barra
+                jogadorX += 25;
+            }
+            jogador.style.left = jogadorX + 'px';
+        });
+
+        // Loop Principal do Jogo (Atualização Física)
+        function atualizarJogo() {
+            if (!jogoAtivo) return;
+
+            // Fazer a bola cair
+            bolaY += velocidadeBola;
+            bola.style.top = bolaY + 'px';
+
+            // Detetar quando a bola chega à altura da barra do jogador
+            if (bolaY >= 465 && bolaY <= 480) {
+                // Verificar se a bola bateu na barra do jogador
+                if (bolaX + 20 >= jogadorX && bolaX <= jogadorX + 80) {
+                    pontos++;
+                    pontosSpan.innerText = pontos;
+                    resetarBola();
+                    
+                    // Aumentar a velocidade gradualmente para ficar mais difícil
+                    if (pontos % 3 === 0) {
+                        velocidadeBola += 1;
+                    }
+                }
+            }
+
+            // Detetar se a bola passou do limite inferior (Game Over)
+            if (bolaY > 500) {
+                jogoAtivo = false;
+                painelFimJogo.style.display = 'block';
+            }
+
+            requestAnimationFrame(atualizarJogo);
+        }
+
+        // Coloca a bola de volta no topo numa posição aleatória
+        function resetarBola() {
+            bolaY = 0;
+            bolaX = Math.floor(Math.random() * 380); // 400 largura - 20 da bola
+            bola.style.left = bolaX + 'px';
+        }
+
+        // Reiniciar as variáveis para um novo jogo
+        function reiniciarJogo() {
+            pontos = 0;
+            velocidadeBola = 4;
+            jogadorX = 160;
+            jogoAtivo = true;
+            pontosSpan.innerText = pontos;
+            jogador.style.left = jogadorX + 'px';
+            painelFimJogo.style.display = 'none';
+            resetarBola();
+            atualizarJogo();
+        }
+
+        // Iniciar o jogo pela primeira vez
+        resetarBola();
+        atualizarJogo();
+    </script>
+</body>
+</html>
+
