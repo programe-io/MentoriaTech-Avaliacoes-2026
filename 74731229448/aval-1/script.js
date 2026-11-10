@@ -1,85 +1,111 @@
-// Sistema de Controle de Estoque
 
-// Array que servirá como banco de dados para armazenar os produtos
-const estoque = [];
+let produtos = [];
 
-// 1. Função para Cadastrar um novo produto
-function cadastrarProduto(codigo, descricao, quantidade, valor) {
-    // Verifica se o código já existe para evitar duplicidades
-    const produtoExiste = estoque.find(p => p.codigo === codigo);
-    if (produtoExiste) {
-        console.log(`Erro: Já existe um produto cadastrado com o código ${codigo}.`);
-        return;
-    }
+function cadastrarProduto() {
+    let codigo = Number(prompt("Digite o código do produto:"));
+    let descricao = prompt("Digite a descrição do produto:");
+    let quantidade = Number(prompt("Digite a quantidade:"));
+    let valor = Number(prompt("Digite o valor do produto:"));
 
-    // Cria o objeto do produto e adiciona ao estoque
-    const novoProduto = {
+    let produto = {
         codigo: codigo,
         descricao: descricao,
-        quantidade: Number(quantidade),
-        valor: Number(valor)
+        quantidade: quantidade,
+        valor: valor
     };
 
-    estoque.push(novoProduto);
-    console.log(`Produto "${descricao}" cadastrado com sucesso!`);
+    produtos.push(produto);
+
+    alert("Produto cadastrado com sucesso!");
 }
 
-// 2. Função para Listar os produtos cadastrados
 function listarProdutos() {
-    if (estoque.length === 0) {
-        console.log("O estoque está vazio.");
+    if (produtos.length === 0) {
+        alert("Nenhum produto cadastrado!");
         return;
     }
 
-    console.log("\n=== PRODUTOS EM ESTOQUE ===");
-    estoque.forEach(produto => {
-        console.log(`Cód: ${produto.codigo} | Descrição: ${produto.descricao} | Qtd: ${produto.quantidade} | Preço: R$ ${produto.valor.toFixed(2)}`);
+    let lista = "";
+
+    produtos.forEach(function(produto) {
+        lista += "Código: " + produto.codigo + "\n";
+        lista += "Descrição: " + produto.descricao + "\n";
+        lista += "Quantidade: " + produto.quantidade + "\n";
+        lista += "Valor: R$ " + produto.valor.toFixed(2) + "\n";
+        lista += "----------------------\n";
     });
-    console.log("===========================\n");
+
+    alert(lista);
 }
 
-// 3. Função para Alterar o valor de um produto
-function alterarValor(codigo, novoValor) {
-    const produto = estoque.find(p => p.codigo === codigo);
+function alterarValor() {
+    let codigo = Number(prompt("Digite o código do produto:"));
 
-    if (!produto) {
-        console.log(`Erro: Produto com o código ${codigo} não foi encontrado.`);
-        return;
+    let produto = produtos.find(p => p.codigo === codigo);
+
+    if (produto) {
+        let novoValor = Number(prompt("Digite o novo valor:"));
+        produto.valor = novoValor;
+
+        alert("Valor alterado com sucesso!");
+    } else {
+        alert("Produto não encontrado!");
+    }
+}
+
+function alterarQuantidade() {
+    let codigo = Number(prompt("Digite o código do produto:"));
+
+    let produto = produtos.find(p => p.codigo === codigo);
+
+    if (produto) {
+        let novaQuantidade = Number(prompt("Digite a nova quantidade:"));
+        produto.quantidade = novaQuantidade;
+
+        alert("Quantidade alterada com sucesso!");
+    } else {
+        alert("Produto não encontrado!");
+    }
+}
+
+// Menu principal
+let opcao;
+
+do {
+    opcao = prompt(
+        "SISTEMA DE ESTOQUE\n\n" +
+        "1 - Cadastrar produto\n" +
+        "2 - Listar produtos\n" +
+        "3 - Alterar valor\n" +
+        "4 - Alterar quantidade\n" +
+        "5 - Sair\n\n" +
+        "Escolha uma opção:"
+    );
+
+    switch (opcao) {
+        case "1":
+            cadastrarProduto();
+            break;
+
+        case "2":
+            listarProdutos();
+            break;
+
+        case "3":
+            alterarValor();
+            break;
+
+        case "4":
+            alterarQuantidade();
+            break;
+
+        case "5":
+            alert("Saindo do sistema...");
+            break;
+
+        default:
+            alert("Opção inválida!");
     }
 
-    produto.valor = Number(novoValor);
-    console.log(`Preço do produto "${produto.descricao}" atualizado para R$ ${produto.valor.toFixed(2)}.`);
-}
-
-// 4. Função para Alterar a quantidade de um produto
-function alterarQuantidade(codigo, novaQuantidade) {
-    const produto = estoque.find(p => p.codigo === codigo);
-
-    if (!produto) {
-        console.log(`Erro: Produto com o código ${codigo} não foi encontrado.`);
-        return;
-    }
-
-    produto.quantidade = Number(novaQuantidade);
-    console.log(`Quantidade do produto "${produto.descricao}" atualizada para ${produto.quantidade} unidades.`);
-}
-
-
-// --- EXEMPLO PRÁTICO DE USO ---
-
-// Cadastrando produtos
-cadastrarProduto(101, "Camiseta Preta", 50, 29.90);
-cadastrarProduto(102, "Calça Jeans", 30, 89.90);
-cadastrarProduto(103, "Tênis Esportivo", 15, 199.99);
-
-// Listando o estoque inicial
-listarProdutos();
-
-// Alterando o valor de um produto (Camiseta Preta)
-alterarValor(101, 34.90);
-
-// Alterando a quantidade de um produto (Calça Jeans)
-alterarQuantidade(102, 25);
-
-// Listando novamente para ver as alterações aplicadas
-listarProdutos();
+} while (opcao !== "5");
+  
