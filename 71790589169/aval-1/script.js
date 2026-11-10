@@ -1,118 +1,178 @@
 
-let produtos = [];
-let opcao;
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Sistema de Estoque</title>
+</head>
+<body>
 
-do {
-    opcao = Number(prompt(
-        "===== SISTEMA DE ESTOQUE =====\n" +
-        "1 - Cadastrar novo produto\n" +
-        "2 - Listar produtos cadastrados\n" +
-        "3 - Alterar valor de um produto\n" +
-        "4 - Alterar quantidade de um produto\n" +
-        "5 - Sair\n\n" +
-        "Escolha uma opção:"
-    ));
+    <h2>Sistema de Controle de Estoque</h2>
+    <p>Abra o menu para utilizar o sistema.</p>
 
-    switch (opcao) {
+    <button onclick="menu()">Abrir Sistema</button>
 
-        case 1:
-            // Cadastrar produto
-            let codigo = Number(prompt("Digite o código do produto:"));
+    <script>
+        let produtos = [];
 
-            let existe = produtos.find(p => p.codigo === codigo);
+        function cadastrar() {
+            let codigo = prompt("Digite o código do produto:");
 
-            if (existe) {
-                alert("Já existe um produto com esse código!");
-                break;
+            if (codigo === null || codigo.trim() === "") return;
+
+            if (produtos.some(p => p.codigo === codigo)) {
+                alert("Código já cadastrado!");
+                return;
             }
 
-            let descricao = prompt("Digite a descrição do produto:");
-            let quantidade = Number(prompt("Digite a quantidade:"));
-            let valor = Number(prompt("Digite o valor do produto:"));
+            let descricao = prompt("Digite a descrição:");
 
-            if (!descricao || !Number.isFinite(quantidade) ||
-                !Number.isFinite(valor) || quantidade < 0 ||
-                valor < 0 || !Number.isInteger(codigo)) {
-                alert("Dados inválidos! Tente novamente.");
-                break;
+            if (descricao === null || descricao.trim() === "") return;
+
+            let quantidade = Number(prompt("Digite a quantidade:"));
+
+            if (!Number.isInteger(quantidade) || quantidade < 0) {
+                alert("Quantidade inválida!");
+                return;
+            }
+
+            let valor = Number(prompt("Digite o valor:"));
+
+            if (!Number.isFinite(valor) || valor < 0) {
+                alert("Valor inválido!");
+                return;
             }
 
             produtos.push({
-                codigo: codigo,
-                descricao: descricao,
-                quantidade: quantidade,
-                valor: valor
+                codigo,
+                descricao,
+                quantidade,
+                valor
             });
 
             alert("Produto cadastrado com sucesso!");
-            break;
+        }
 
-        case 2:
-            // Listar produtos
+        function listar() {
             if (produtos.length === 0) {
-                alert("Nenhum produto cadastrado!");
-            } else {
-                let lista = "===== PRODUTOS CADASTRADOS =====\n";
-
-                produtos.forEach(produto => {
-                    lista +=
-                        "\nCódigo: " + produto.codigo +
-                        "\nDescrição: " + produto.descricao +
-                        "\nQuantidade: " + produto.quantidade +
-                        "\nValor: R$ " + produto.valor.toFixed(2) +
-                        "\n-----------------------------";
-                });
-
-                alert(lista);
+                alert("Nenhum produto cadastrado.");
+                return;
             }
-            break;
 
-        case 3:
-            // Alterar valor do produto
-            let codValor = Number(prompt("Digite o código do produto:"));
+            let texto = "LISTA DE PRODUTOS\n\n";
 
-            let produtoValor = produtos.find(p => p.codigo === codValor);
+            produtos.forEach(p => {
+                texto +=
+                    "Código: " + p.codigo +
+                    "\nDescrição: " + p.descricao +
+                    "\nQuantidade: " + p.quantidade +
+                    "\nValor: R$ " + p.valor.toFixed(2) +
+                    "\n----------------------\n";
+            });
 
-            if (produtoValor) {
-                let novoValor = Number(prompt("Digite o novo valor:"));
+            alert(texto);
+        }
 
-                if (Number.isFinite(novoValor) && novoValor >= 0) {
-                    produtoValor.valor = novoValor;
-                    alert("Valor alterado com sucesso!");
-                } else {
-                    alert("Valor inválido!");
-                }
-            } else {
+        function alterarValor() {
+            let codigo = prompt("Digite o código do produto:");
+
+            if (codigo === null) return;
+
+            let produto = produtos.find(p => p.codigo === codigo);
+
+            if (!produto) {
                 alert("Produto não encontrado!");
+                return;
             }
-            break;
 
-        case 4:
-            // Alterar quantidade do produto
-            let codQuantidade = Number(prompt("Digite o código do produto:"));
+            let valor = prompt("Digite o novo valor:");
 
-            let produtoQuantidade = produtos.find(p => p.codigo === codQuantidade);
+            if (valor === null || valor.trim() === "") return;
 
-            if (produtoQuantidade) {
-                let novaQuantidade = Number(prompt("Digite a nova quantidade:"));
+            let novoValor = Number(valor);
 
-                if (Number.isInteger(novaQuantidade) && novaQuantidade >= 0) {
-                    produtoQuantidade.quantidade = novaQuantidade;
-                    alert("Quantidade alterada com sucesso!");
-                } else {
-                    alert("Quantidade inválida!");
-                }
-            } else {
+            if (!Number.isFinite(novoValor) || novoValor < 0) {
+                alert("Valor inválido!");
+                return;
+            }
+
+            produto.valor = novoValor;
+
+            alert("Valor atualizado com sucesso!");
+        }
+
+        function alterarQuantidade() {
+            let codigo = prompt("Digite o código do produto:");
+
+            if (codigo === null) return;
+
+            let produto = produtos.find(p => p.codigo === codigo);
+
+            if (!produto) {
                 alert("Produto não encontrado!");
+                return;
             }
-            break;
 
-        case 5:
-            alert("Sistema encerrado. Até logo!");
-            break;
+            let quantidade = prompt("Digite a nova quantidade:");
 
-        default:
-            alert("Opção inválida! Escolha uma opção de 1 a 5.");
-    }
+            if (quantidade === null || quantidade.trim() === "") return;
 
-} while (opcao !== 5);
+            let novaQuantidade = Number(quantidade);
+
+            if (!Number.isInteger(novaQuantidade) || novaQuantidade < 0) {
+                alert("Quantidade inválida!");
+                return;
+            }
+
+            produto.quantidade = novaQuantidade;
+
+            alert("Quantidade atualizada com sucesso!");
+        }
+
+        function menu() {
+            let opcao;
+
+            do {
+                opcao = prompt(
+                    "===== SISTEMA DE ESTOQUE =====\n\n" +
+                    "1 - Cadastrar produto\n" +
+                    "2 - Listar produtos\n" +
+                    "3 - Alterar valor\n" +
+                    "4 - Alterar quantidade\n" +
+                    "5 - Sair\n\n" +
+                    "Digite uma opção:"
+                );
+
+                if (opcao === null) break;
+
+                switch (opcao) {
+                    case "1":
+                        cadastrar();
+                        break;
+
+                    case "2":
+                        listar();
+                        break;
+
+                    case "3":
+                        alterarValor();
+                        break;
+
+                    case "4":
+                        alterarQuantidade();
+                        break;
+
+                    case "5":
+                        alert("Sistema encerrado!");
+                        break;
+
+                    default:
+                        alert("Opção inválida!");
+                }
+
+            } while (opcao !== "5");
+        }
+    </script>
+
+</body>
+</html>

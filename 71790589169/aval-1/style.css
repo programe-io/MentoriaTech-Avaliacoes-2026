@@ -1,102 +1,343 @@
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: Arial, sans-serif;
-}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Estoque</title>
 
-body {
-    background: #f0f2f5;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
 
-.container {
-    background: white;
-    width: 90%;
-    max-width: 600px;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-}
+        body {
+            background: #f0f2f5;
+            margin: 0;
+            padding: 30px;
+        }
 
-h1 {
-    text-align: center;
-    color: #263238;
-    margin-bottom: 25px;
-}
+        .container {
+            max-width: 850px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px #0002;
+        }
 
-.menu {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
+        h1 {
+            text-align: center;
+            color: #263b50;
+        }
 
-button {
-    background: #1976d2;
-    color: white;
-    border: none;
-    padding: 14px;
-    border-radius: 8px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: 0.3s;
-}
+        h2 {
+            color: #263b50;
+        }
 
-button:hover {
-    background: #0d47a1;
-    transform: scale(1.02);
-}
+        .formulario {
+            display: grid;
+            gap: 12px;
+        }
 
-input {
-    width: 100%;
-    padding: 12px;
-    margin: 8px 0;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    font-size: 15px;
-}
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 15px;
+        }
 
-input:focus {
-    outline: none;
-    border-color: #1976d2;
-}
+        button {
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            color: white;
+            font-size: 15px;
+            background: #2563eb;
+        }
 
-.produto {
-    background: #f5f7fa;
-    padding: 15px;
-    margin-top: 12px;
-    border-radius: 8px;
-    border-left: 4px solid #1976d2;
-}
+        button:hover {
+            opacity: 0.85;
+        }
 
-.produto p {
-    margin: 5px 0;
-    color: #333;
-}
+        .botoes {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 15px 0;
+        }
 
-h2 {
-    color: #1976d2;
-    margin: 20px 0 10px;
-}
+        .botoes button {
+            flex: 1;
+        }
 
-#listaProdutos {
-    margin-top: 20px;
-}
+        .verde {
+            background: #16a34a;
+        }
 
-@media (max-width: 480px) {
-    .container {
-        padding: 20px;
+        .laranja {
+            background: #ea580c;
+        }
+
+        .vermelho {
+            background: #dc2626;
+        }
+
+        .mensagem {
+            margin: 15px 0;
+            font-weight: bold;
+            color: #15803d;
+        }
+
+        .tabela {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background: #263b50;
+            color: white;
+        }
+
+        tr:hover {
+            background: #f1f5f9;
+        }
+
+        .acoes {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        .acoes button {
+            padding: 8px;
+            font-size: 12px;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>📦 Sistema de Estoque</h1>
+
+    <h2>Cadastrar Produto</h2>
+
+    <div class="formulario">
+        <input type="text" id="codigo" placeholder="Código do produto">
+
+        <input type="text" id="descricao" placeholder="Descrição do produto">
+
+        <input type="number" id="quantidade" placeholder="Quantidade" min="0">
+
+        <input type="number" id="valor" placeholder="Valor do produto" min="0" step="0.01">
+
+        <button class="verde" onclick="cadastrarProduto()">
+            Cadastrar Produto
+        </button>
+    </div>
+
+    <div class="mensagem" id="mensagem"></div>
+
+    <h2>Produtos Cadastrados</h2>
+
+    <div class="botoes">
+        <button onclick="listarProdutos()">Listar Produtos</button>
+    </div>
+
+    <div class="tabela">
+        <table>
+            <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Descrição</th>
+                    <th>Quantidade</th>
+                    <th>Valor</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+
+            <tbody id="listaProdutos">
+                <tr>
+                    <td colspan="5">Nenhum produto cadastrado.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<script>
+
+    let produtos = [];
+
+    // Cadastrar produto
+    function cadastrarProduto() {
+
+        let codigo = document.getElementById("codigo").value.trim();
+        let descricao = document.getElementById("descricao").value.trim();
+        let quantidade = document.getElementById("quantidade").value;
+        let valor = document.getElementById("valor").value;
+
+        quantidade = Number(quantidade);
+        valor = Number(valor);
+
+        if (codigo === "" || descricao === "" ||
+            document.getElementById("quantidade").value === "" ||
+            document.getElementById("valor").value === "") {
+
+            mostrarMensagem("Preencha todos os campos!", true);
+            return;
+        }
+
+        if (!Number.isInteger(quantidade) || quantidade < 0 ||
+            !Number.isFinite(valor) || valor < 0) {
+
+            mostrarMensagem("Quantidade ou valor inválido!", true);
+            return;
+        }
+
+        if (produtos.some(p => p.codigo === codigo)) {
+            mostrarMensagem("Código já cadastrado!", true);
+            return;
+        }
+
+        produtos.push({
+            codigo: codigo,
+            descricao: descricao,
+            quantidade: quantidade,
+            valor: valor
+        });
+
+        mostrarMensagem("Produto cadastrado com sucesso!");
+
+        document.getElementById("codigo").value = "";
+        document.getElementById("descricao").value = "";
+        document.getElementById("quantidade").value = "";
+        document.getElementById("valor").value = "";
+
+        listarProdutos();
     }
 
-    h1 {
-        font-size: 22px;
+    // Listar produtos
+    function listarProdutos() {
+
+        let tabela = document.getElementById("listaProdutos");
+
+        tabela.innerHTML = "";
+
+        if (produtos.length === 0) {
+            tabela.innerHTML =
+                '<tr><td colspan="5">Nenhum produto cadastrado.</td></tr>';
+            return;
+        }
+
+        produtos.forEach((produto, indice) => {
+
+            tabela.innerHTML += `
+                <tr>
+                    <td>${produto.codigo}</td>
+                    <td>${produto.descricao}</td>
+                    <td>${produto.quantidade}</td>
+                    <td>R$ ${produto.valor.toFixed(2)}</td>
+
+                    <td>
+                        <div class="acoes">
+                            <button class="laranja"
+                                onclick="alterarValor(${indice})">
+                                Valor
+                            </button>
+
+                            <button onclick="alterarQuantidade(${indice})">
+                                Quantidade
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+
+        });
     }
 
-    button {
-        font-size: 14px;
+    // Alterar valor
+    function alterarValor(indice) {
+
+        let novoValor = prompt("Digite o novo valor:");
+
+        if (novoValor === null || novoValor.trim() === "") return;
+
+        novoValor = Number(novoValor);
+
+        if (!Number.isFinite(novoValor) || novoValor < 0) {
+            mostrarMensagem("Valor inválido!", true);
+            return;
+        }
+
+        produtos[indice].valor = novoValor;
+
+        mostrarMensagem("Valor alterado com sucesso!");
+
+        listarProdutos();
     }
-}
+
+    // Alterar quantidade
+    function alterarQuantidade(indice) {
+
+        let novaQuantidade = prompt("Digite a nova quantidade:");
+
+        if (novaQuantidade === null || novaQuantidade.trim() === "") return;
+
+        novaQuantidade = Number(novaQuantidade);
+
+        if (!Number.isInteger(novaQuantidade) || novaQuantidade < 0) {
+            mostrarMensagem("Quantidade inválida!", true);
+            return;
+        }
+
+        produtos[indice].quantidade = novaQuantidade;
+
+        mostrarMensagem("Quantidade alterada com sucesso!");
+
+        listarProdutos();
+    }
+
+    // Mostrar mensagens
+    function mostrarMensagem(texto, erro = false) {
+
+        let mensagem = document.getElementById("mensagem");
+
+        mensagem.textContent = texto;
+
+        mensagem.style.color = erro ? "#dc2626" : "#15803d";
+
+    }
+
+</script>
+
+</body>
+</html>
