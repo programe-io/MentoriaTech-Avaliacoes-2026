@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Código JavaScript</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <style>body{margin:0;background:#0d1117}pre{margin:0}code.hljs{padding:1.5rem;min-height:100vh;box-sizing:border-box}</style>
+</head>
+<body>
+  <pre><code class="language-javascript">// 4. Criação da lista de produtos
+let produtos = [];
+
+// 6. Função para validar produto
+function validarProduto(descricao, quantidade, valor) {
+  // 7. Validação da descrição
+  if (descricao.length &lt; 5) {
+    throw new Error("Descrição deve ter, no mínimo, cinco caracteres");
+  }
+
+  // 8. Validação da quantidade
+  if (quantidade &lt; 1) {
+    throw new Error("Quantidade deve ser maior que zero");
+  }
+
+  // 9. Validação do valor
+  if (valor &lt; 0) {
+    throw new Error("Valor deve ser maior ou igual a zero");
+  }
+}
+
+// 10. Função para cadastrar produto
+function cadastrarProduto(descricao, quantidade, valor) {
+  validarProduto(descricao, quantidade, valor);
+
+  // 11. Criação do objeto produto
+  // 12. Geração automática do código
+  let novoProduto = {
+    codigo: produtos.length + 1,
+    descricao: descricao,
+    quantidade: quantidade,
+    valor: valor
+  };
+
+  // 13. Adição de produtos ao array
+  produtos.push(novoProduto);
+}
+
+// 14. Função para listar produtos
+function listarProdutos() {
+  for (let produto of produtos) {
+    console.log(
+      `Código: ${produto.codigo} | Descrição: ${produto.descricao} | Quantidade: ${produto.quantidade} | Valor: R$ ${produto.valor}`
+    );
+  }
+}
+
+// 17. Busca de produto por código
+function buscarProduto(codigoProduto) {
+  let produto = produtos.find(function (p) {
+    return p.codigo === codigoProduto;
+  });
+
+  // 18. Tratamento de produto não encontrado
+  if (!produto) {
+    throw new Error("Produto não encontrado");
+  }
+
+  return produto;
+}
+
+// 15 / 19 / 20. Função para atualizar o valor do produto
+// Aqui ALTERA o valor, não soma
+function atualizarValor(codigoProduto, novoValor) {
+  if (novoValor &lt; 0) {
+    throw new Error("Valor deve ser maior ou igual a zero");
+  }
+
+  let produto = buscarProduto(codigoProduto);
+  produto.valor = novoValor;
+}
+
+// 19 / 20. Função para atualizar a quantidade do produto
+// Aqui ALTERA a quantidade, não soma
+function atualizarQuantidade(codigoProduto, novaQuantidade) {
+  if (novaQuantidade &lt; 1) {
+    throw new Error("Quantidade deve ser maior que zero");
+  }
+
+  let produto = buscarProduto(codigoProduto);
+  produto.quantidade = novaQuantidade;
+}
+
+// 15. Testando o cadastro e a listagem
+try {
+  cadastrarProduto("Mouse Logitech", 38, 99);
+  cadastrarProduto("Cadeira gamer", 12, 699);
+  cadastrarProduto("Teclado mecânico", 20, 350);
+
+  listarProdutos();
+
+  console.log("--- Atualizando ---");
+  atualizarValor(1, 119);
+  atualizarQuantidade(2, 10);
+
+  listarProdutos();
+
+} catch (erro) {
+  // 16. Tratamento de erro na listagem / cadastro
+  console.log("Erro: " + erro.message);
+}</code></pre>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+</body>
+</html>
