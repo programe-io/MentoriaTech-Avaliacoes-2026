@@ -1,0 +1,309 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Instagram Clone</title>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: #fafafa;
+  color: #262626;
+  transition: .3s;
+}
+
+body.dark {
+  background: #101010;
+  color: white;
+}
+
+.sidebar {
+  position: fixed;
+  width: 235px;
+  height: 100vh;
+  border-right: 1px solid #ddd;
+  padding: 30px 20px;
+  background: inherit;
+}
+
+.logo {
+  font-family: cursive;
+  font-size: 30px;
+  margin-bottom: 40px;
+}
+
+.menu button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 15px 8px;
+  background: transparent;
+  border: none;
+  color: inherit;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.menu button:hover {
+  background: #8882;
+}
+
+.main {
+  margin-left: 235px;
+  padding: 35px;
+  display: flex;
+  justify-content: center;
+  gap: 35px;
+}
+
+.feed {
+  width: 470px;
+  max-width: 100%;
+}
+
+.stories {
+  display: flex;
+  gap: 17px;
+  overflow-x: auto;
+  padding: 15px 0 25px;
+}
+
+.story {
+  text-align: center;
+  font-size: 12px;
+  min-width: 65px;
+}
+
+.story img {
+  width: 62px;
+  height: 62px;
+  border-radius: 50%;
+  padding: 3px;
+  border: 3px solid #e1306c;
+  object-fit: cover;
+}
+
+.post {
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 25px;
+  padding-bottom: 18px;
+}
+
+.post-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 0;
+}
+
+.post-header img {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.post-image {
+  width: 100%;
+  border-radius: 4px;
+  display: block;
+  max-height: 600px;
+  object-fit: cover;
+}
+
+.actions {
+  display: flex;
+  gap: 18px;
+  padding: 12px 0;
+}
+
+.actions button {
+  background: none;
+  border: none;
+  font-size: 25px;
+  cursor: pointer;
+  color: inherit;
+}
+
+.like.active {
+  color: #ff3040;
+}
+
+.caption {
+  font-size: 14px;
+  margin: 8px 0;
+}
+
+.right {
+  width: 250px;
+  padding-top: 30px;
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 25px;
+}
+
+.profile img {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+}
+
+.muted {
+  color: #888;
+  font-size: 12px;
+}
+
+.theme {
+  margin-top: 20px;
+  padding: 12px;
+  border-radius: 10px;
+  background: #8882;
+  cursor: pointer;
+  border: none;
+  color: inherit;
+  width: 100%;
+}
+
+.message-box {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 330px;
+  height: 400px;
+  background: white;
+  color: #222;
+  border-radius: 15px;
+  box-shadow: 0 0 20px #0003;
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 10;
+}
+
+.dark .message-box {
+  background: #242424;
+  color: white;
+}
+
+.message-header {
+  padding: 15px;
+  border-bottom: 1px solid #8884;
+  display: flex;
+  justify-content: space-between;
+}
+
+.messages {
+  flex: 1;
+  padding: 12px;
+  overflow-y: auto;
+}
+
+.bubble {
+  background: #3797f0;
+  color: white;
+  padding: 10px 14px;
+  border-radius: 15px;
+  margin: 8px 0 8px auto;
+  width: fit-content;
+  max-width: 85%;
+  overflow-wrap: anywhere;
+}
+
+.message-input {
+  display: flex;
+  padding: 10px;
+  gap: 5px;
+}
+
+.message-input input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  min-width: 0;
+}
+
+.message-input button {
+  background: #3797f0;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.close {
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: inherit;
+  font-size: 20px;
+}
+
+@media(max-width: 900px) {
+  .right {
+    display: none;
+  }
+}
+
+@media(max-width: 650px) {
+  .sidebar {
+    top: auto;
+    bottom: 0;
+    width: 100%;
+    height: 60px;
+    padding: 5px;
+    border-right: none;
+    border-top: 1px solid #ddd;
+    z-index: 5;
+  }
+
+  .logo {
+    display: none;
+  }
+
+  .menu {
+    display: flex;
+    justify-content: space-around;
+  }
+
+  .menu button {
+    width: auto;
+    font-size: 20px;
+    padding: 12px;
+  }
+
+  .menu button span {
+    display: none;
+  }
+
+  .main {
+    margin: 0;
+    padding: 12px;
+  }
+
+  .feed {
+    width: 100%;
+  }
+
+  .message-box {
+    width: calc(100% - 30px);
+    right: 15px;
+    bottom: 75px;
+  }
+}
+</style>
+</head>

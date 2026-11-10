@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet">
+</head>
+<body>
+  <body>
+
+<aside class="sidebar">
+  <h1 class="logo">Instagram</h1>
+
+  <nav class="menu">
+    <button onclick="window.scrollTo(0,0)">🏠 <span> Início</span></button>
+    <button onclick="alert('Pesquisa em breve!')">🔍 <span> Pesquisar</span></button>
+    <button onclick="openMessages()">💬 <span> Mensagens</span></button>
+    <button onclick="createPost()">➕ <span> Criar</span></button>
+    <button onclick="alert('Perfil do usuário')">👤 <span> Perfil</span></button>
+  </nav>
+</aside>
+
+<main class="main">
+
+<section class="feed">
+
+  <div class="stories">
+    <div class="story">
+      <img src="https://i.pravatar.cc/100?img=12">
+      <p>seu_story</p>
+    </div>
+    <div class="story">
+      <img src="https://i.pravatar.cc/100?img=5">
+      <p>mariana</p>
+    </div>
+    <div class="story">
+      <img src="https://i.pravatar.cc/100?img=8">
+      <p>pedro</p>
+    </div>
+    <div class="story">
+      <img src="https://i.pravatar.cc/100?img=15">
+      <p>juliana</p>
+    </div>
+    <div class="story">
+      <img src="https://i.pravatar.cc/100?img=20">
+      <p>gabriel</p>
+    </div>
+  </div>
+
+  <div id="posts">
+
+    <article class="post">
+      <div class="post-header">
+        <img src="https://i.pravatar.cc/100?img=12">
+        <strong>mariana.oficial</strong>
+      </div>
+
+      <img class="post-image"
+      src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=800">
+
+      <div class="actions">
+        <button class="like" onclick="likePost(this)">♡</button>
+        <button onclick="openMessages()">💬</button>
+        <button onclick="sharePost()">➤</button>
+      </div>
+
+      <p><strong class="likes">120 curtidas</strong></p>
+
+      <p class="caption">
+        <strong>mariana.oficial</strong>
+        Aproveitando a vida! 🌴❤️
+      </p>
+    </article>
+
+    <article class="post">
+      <div class="post-header">
+        <img src="https://i.pravatar.cc/100?img=8">
+        <strong>pedro_fotos</strong>
+      </div>
+
+      <img class="post-image"
+      src="https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=800">
+
+      <div class="actions">
+        <button class="like" onclick="likePost(this)">♡</button>
+        <button onclick="openMessages()">💬</button>
+        <button onclick="sharePost()">➤</button>
+      </div>
+
+      <p><strong class="likes">85 curtidas</strong></p>
+
+      <p class="caption">
+        <strong>pedro_fotos</strong>
+        Que lugar incrível! 📸
+      </p>
+    </article>
+
+  </div>
+</section>
+
+<aside class="right">
+  <div class="profile">
+    <img src="https://i.pravatar.cc/100?img=33">
+    <div>
+      <strong>meu_perfil</strong>
+      <p class="muted">Meu Instagram</p>
+    </div>
+  </div>
+
+  <p class="muted">Sugestões para você</p>
+
+  <div class="profile" style="margin-top:20px">
+    <img src="https://i.pravatar.cc/100?img=21">
+    <strong>ana.silva</strong>
+  </div>
+
+  <div class="profile">
+    <img src="https://i.pravatar.cc/100?img=45">
+    <strong>lucas_01</strong>
+  </div>
+
+  <button class="theme" onclick="toggleTheme()">
+    🌙 Alternar modo escuro/claro
+  </button>
+</aside>
+
+</main>
+
+<!-- CHAT -->
+
+<div class="message-box" id="chat">
+  <div class="message-header">
+    <strong>💬 Mensagens</strong>
+    <button class="close" onclick="closeMessages()">✕</button>
+  </div>
+
+  <div class="messages" id="messages">
+    <p class="muted">Conversa com Mariana</p>
+  </div>
+
+  <div class="message-input">
+    <input id="messageInput"
+    placeholder="Digite uma mensagem..."
+    onkeydown="if(event.key==='Enter')sendMessage()">
+
+    <button onclick="sendMessage()">Enviar</button>
+  </div>
+</div>
+
+<script>
+
+// CURTIR PUBLICAÇÃO
+function likePost(button) {
+  const post = button.closest(".post");
+  const likes = post.querySelector(".likes");
+
+  let count = parseInt(likes.innerText);
+
+  if(button.classList.contains("active")) {
+    button.classList.remove("active");
+    button.innerText = "♡";
+    count--;
+  } else {
+    button.classList.add("active");
+    button.innerText = "♥";
+    count++;
+  }
+
+  likes.innerText = count + " curtidas";
+}
+
+// MODO ESCURO E CLARO
+function toggleTheme() {
+  document.body.classList.toggle("dark");
+
+  const dark = document.body.classList.contains("dark");
+
+  localStorage.setItem("theme", dark ? "dark" : "light");
+}
+
+if(localStorage.getItem("theme") === "dark") {
+  document.body.classList.add("dark");
+}
+
+// ABRIR MENSAGENS
+function openMessages() {
+  document.getElementById("chat").style.display = "flex";
+}
+
+// FECHAR MENSAGENS
+function closeMessages() {
+  document.getElementById("chat").style.display = "none";
+}
+
+// ENVIAR MENSAGEM
+function sendMessage() {
+  const input = document.getElementById("messageInput");
+  const messages = document.getElementById("messages");
+
+  const text = input.value.trim();
+
+  if(text === "") return;
+
+  const bubble = document.createElement("div");
+  bubble.className = "bubble";
+  bubble.textContent = text;
+
+  messages.appendChild(bubble);
+
+  input.value = "";
+
+  messages.scrollTop = messages.scrollHeight;
+}
+
+// COMPARTILHAR
+function sharePost() {
+  if(navigator.share) {
+    navigator.share({
+      title: "Instagram Clone",
+      text: "Olha essa publicação!"
+    });
+  } else {
+    alert("Compartilhamento não disponível neste navegador.");
+  }
+}
+
+// CRIAR PUBLICAÇÃO
+function createPost() {
+  const caption = prompt("Escreva uma legenda:");
+
+  if(caption === null) return;
+
+  const url = prompt("Cole o link de uma imagem:");
+
+  if(!url) return;
+
+  const post = document.createElement("article");
+  post.className = "post";
+
+  const header = document.createElement("div");
+  header.className = "post-header";
+  header.innerHTML = `
+    <img src="https://i.pravatar.cc/100?img=33">
+    <strong>meu_perfil</strong>
+  `;
+
+  const img = document.createElement("img");
+  img.className = "post-image";
+  img.src = url;
+
+  const actions = document.createElement("div");
+  actions.className = "actions";
+  actions.innerHTML = `
+    <button class="like">♡</button>
+    <button>💬</button>
+    <button>➤</button>
+  `;
+
+  actions.children[0].onclick = function() {
+    likePost(this);
+  };
+
+  actions.children[1].onclick = openMessages;
+
+  const count = document.createElement("p");
+  count.innerHTML = '<strong class="likes">0 curtidas</strong>';
+
+  const text = document.createElement("p");
+  text.className = "caption";
+
+  const username = document.createElement("strong");
+  username.textContent = "meu_perfil ";
+
+  text.append(username, document.createTextNode(caption));
+
+  post.append(header, img, actions, count, text);
+
+  document.getElementById("posts").prepend(post);
+}
+
+</script>
+
+</body>
+</html>
+
+  
+  
+</body>
+</html>
