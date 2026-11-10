@@ -1,86 +1,178 @@
+/* 1. ESTRUTURA FOR */
 
+function executarFor() {
+    let somaPares = 0;
 
-/* 6. ARROW FUNCTION */
+        for (let i = 1; i <= 10; i++) {
+                if (i % 2 === 0) {
+                            somaPares += i;
+                                    }
+                                        }
 
-const multiplicar = (a, b) => a * b;
-
-function executarMultiplicacao() {
-    let a = Number(document.getElementById("multiplicador1").value);
-        let b = Number(document.getElementById("multiplicador2").value);
-
-            document.getElementById("resultadoMultiplicacao").innerHTML =
-                    "Resultado: " + multiplicar(a, b);
-                    }
-
-
-                    /* 7. FUNÇÃO ANÔNIMA E SETINTERVAL */
-
-                    let intervalo;
-
-                    function iniciarIntervalo() {
-                        if (intervalo) return;
-
-                            intervalo = setInterval(function() {
-                                    document.getElementById("resultadoIntervalo").innerHTML =
-                                                "Mensagem repetida a cada 2 segundos!";
-                                                    }, 2000);
+                                            document.getElementById("resultadoFor").innerHTML =
+                                                    "A soma dos números pares é: " + somaPares;
                                                     }
 
-                                                    function pararIntervalo() {
-                                                        clearInterval(intervalo);
-                                                            intervalo = null;
 
-                                                                document.getElementById("resultadoIntervalo").innerHTML =
-                                                                        "Intervalo encerrado.";
-                                                                        }
+                                                    /* 2. ESTRUTURA WHILE */
+
+                                                    let soma = 0;
+
+                                                    function executarWhile() {
+                                                        let campo = document.getElementById("numeroWhile");
+                                                            let numero = Number(campo.value);
+
+                                                                if (campo.value.trim() === "") {
+                                                                        alert("Digite um número!");
+                                                                                return;
+                                                                                    }
+
+                                                                                        if (numero === 0) {
+                                                                                                document.getElementById("resultadoWhile").innerHTML =
+                                                                                                            "Soma dos números pares: " + soma;
+
+                                                                                                                    soma = 0;
+                                                                                                                            campo.value = "";
+                                                                                                                                    return;
+                                                                                                                                        }
+
+                                                                                                                                            while (numero !== 0) {
+                                                                                                                                                    if (numero % 2 === 0) {
+                                                                                                                                                                soma += numero;
+                                                                                                                                                                        }
+
+                                                                                                                                                                                break;
+                                                                                                                                                                                    }
+
+                                                                                                                                                                                        document.getElementById("resultadoWhile").innerHTML =
+                                                                                                                                                                                                "Soma parcial dos pares: " + soma;
+
+                                                                                                                                                                                                    campo.value = "";
+                                                                                                                                                                                                    }
 
 
-                                                                        /* 8. ARRAYS */
+                                                                                                                                                                                                    /* 3. ESTRUTURA DO...WHILE */
 
-                                                                        let frutas = ["Maçã", "Banana", "Uva"];
+                                                                                                                                                                                                    function executarDoWhile() {
+                                                                                                                                                                                                        let contador = 1;
+                                                                                                                                                                                                            let resultado = "";
 
-                                                                        // PUSH: adiciona no final
-                                                                        function adicionarFruta() {
-                                                                            let fruta = document.getElementById("novaFruta").value;
+                                                                                                                                                                                                                do {
+                                                                                                                                                                                                                        resultado += contador + " ";
+                                                                                                                                                                                                                                contador++;
+                                                                                                                                                                                                                                    } while (contador <= 5);
 
-                                                                                if (fruta.trim() !== "") {
-                                                                                        frutas.push(fruta);
-                                                                                                document.getElementById("novaFruta").value = "";
-                                                                                                        mostrarFrutas();
-                                                                                                            }
-                                                                                                            }
+                                                                                                                                                                                                                                        document.getElementById("resultadoDoWhile").innerHTML =
+                                                                                                                                                                                                                                                "Repetições realizadas: " + resultado;
+                                                                                                                                                                                                                                                }
 
-                                                                                                            // POP: remove do final
-                                                                                                            function removerFruta() {
-                                                                                                                frutas.pop();
-                                                                                                                    mostrarFrutas();
-                                                                                                                    }
 
-                                                                                                                    // UNSHIFT: adiciona no início
-                                                                                                                    function inicioFruta() {
-                                                                                                                        let fruta = document.getElementById("novaFruta").value;
+                                                                                                                                                                                                                                                /* 4. DECLARAÇÃO DE FUNÇÃO */
 
-                                                                                                                            if (fruta.trim() !== "") {
-                                                                                                                                    frutas.unshift(fruta);
-                                                                                                                                            document.getElementById("novaFruta").value = "";
-                                                                                                                                                    mostrarFrutas();
-                                                                                                                                                        }
-                                                                                                                                                        }
+                                                                                                                                                                                                                                                function saudacao() {
+                                                                                                                                                                                                                                                    document.getElementById("resultadoFuncao").innerHTML =
+                                                                                                                                                                                                                                                            "Olá! A função foi executada com sucesso!";
+                                                                                                                                                                                                                                                            }
 
-                                                                                                                                                        // SHIFT: remove do início
-                                                                                                                                                        function removerInicio() {
-                                                                                                                                                            frutas.shift();
-                                                                                                                                                                mostrarFrutas();
-                                                                                                                                                                }
 
-                                                                                                                                                                // LENGTH: mostra a quantidade
-                                                                                                                                                                function mostrarFrutas() {
-                                                                                                                                                                    document.getElementById("listaFrutas").innerHTML =
-                                                                                                                                                                            "Frutas: " + frutas.join(", ");
+                                                                                                                                                                                                                                                            /* 5. EXPRESSÃO DE FUNÇÃO */
 
-                                                                                                                                                                                document.getElementById("quantidadeFrutas").innerHTML =
-                                                                                                                                                                                        "Quantidade de elementos: " + frutas.length;
-                                                                                                                                                                                        }
+                                                                                                                                                                                                                                                            const somar = function(a, b) {
+                                                                                                                                                                                                                                                                return a + b;
+                                                                                                                                                                                                                                                                };
 
-                                                                                                                                                                                        // Exibe a lista inicial
-                                                                                                                                                                                        mostrarFrutas();
+                                                                                                                                                                                                                                                                function executarSoma() {
+                                                                                                                                                                                                                                                                    let a = Number(document.getElementById("valor1").value);
+                                                                                                                                                                                                                                                                        let b = Number(document.getElementById("valor2").value);
+
+                                                                                                                                                                                                                                                                            let resultado = somar(a, b);
+
+                                                                                                                                                                                                                                                                                document.getElementById("resultadoSoma").innerHTML =
+                                                                                                                                                                                                                                                                                        "Resultado da soma: " + resultado;
+                                                                                                                                                                                                                                                                                        }
+
+
+                                                                                                                                                                                                                                                                                        /* 6. ARROW FUNCTION */
+
+                                                                                                                                                                                                                                                                                        const multiplicar = (a, b) => a * b;
+
+                                                                                                                                                                                                                                                                                        function executarMultiplicacao() {
+                                                                                                                                                                                                                                                                                            let a = Number(document.getElementById("multiplicador1").value);
+                                                                                                                                                                                                                                                                                                let b = Number(document.getElementById("multiplicador2").value);
+
+                                                                                                                                                                                                                                                                                                    document.getElementById("resultadoMultiplicacao").innerHTML =
+                                                                                                                                                                                                                                                                                                            "Resultado: " + multiplicar(a, b);
+                                                                                                                                                                                                                                                                                                            }
+
+
+                                                                                                                                                                                                                                                                                                            /* 7. FUNÇÃO ANÔNIMA E SETINTERVAL */
+
+                                                                                                                                                                                                                                                                                                            let intervalo;
+
+                                                                                                                                                                                                                                                                                                            function iniciarIntervalo() {
+                                                                                                                                                                                                                                                                                                                if (intervalo) return;
+
+                                                                                                                                                                                                                                                                                                                    intervalo = setInterval(function() {
+                                                                                                                                                                                                                                                                                                                            document.getElementById("resultadoIntervalo").innerHTML =
+                                                                                                                                                                                                                                                                                                                                        "Mensagem repetida a cada 2 segundos!";
+                                                                                                                                                                                                                                                                                                                                            }, 2000);
+                                                                                                                                                                                                                                                                                                                                            }
+
+                                                                                                                                                                                                                                                                                                                                            function pararIntervalo() {
+                                                                                                                                                                                                                                                                                                                                                clearInterval(intervalo);
+                                                                                                                                                                                                                                                                                                                                                    intervalo = null;
+
+                                                                                                                                                                                                                                                                                                                                                        document.getElementById("resultadoIntervalo").innerHTML =
+                                                                                                                                                                                                                                                                                                                                                                "Intervalo encerrado.";
+                                                                                                                                                                                                                                                                                                                                                                }
+
+
+                                                                                                                                                                                                                                                                                                                                                                /* 8. ARRAYS */
+
+                                                                                                                                                                                                                                                                                                                                                                let frutas = ["Maçã", "Banana", "Uva"];
+
+                                                                                                                                                                                                                                                                                                                                                                // PUSH: adiciona no final
+                                                                                                                                                                                                                                                                                                                                                                function adicionarFruta() {
+                                                                                                                                                                                                                                                                                                                                                                    let fruta = document.getElementById("novaFruta").value;
+
+                                                                                                                                                                                                                                                                                                                                                                        if (fruta.trim() !== "") {
+                                                                                                                                                                                                                                                                                                                                                                                frutas.push(fruta);
+                                                                                                                                                                                                                                                                                                                                                                                        document.getElementById("novaFruta").value = "";
+                                                                                                                                                                                                                                                                                                                                                                                                mostrarFrutas();
+                                                                                                                                                                                                                                                                                                                                                                                                    }
+                                                                                                                                                                                                                                                                                                                                                                                                    }
+
+                                                                                                                                                                                                                                                                                                                                                                                                    // POP: remove do final
+                                                                                                                                                                                                                                                                                                                                                                                                    function removerFruta() {
+                                                                                                                                                                                                                                                                                                                                                                                                        frutas.pop();
+                                                                                                                                                                                                                                                                                                                                                                                                            mostrarFrutas();
+                                                                                                                                                                                                                                                                                                                                                                                                            }
+
+                                                                                                                                                                                                                                                                                                                                                                                                            // UNSHIFT: adiciona no início
+                                                                                                                                                                                                                                                                                                                                                                                                            function inicioFruta() {
+                                                                                                                                                                                                                                                                                                                                                                                                                let fruta = document.getElementById("novaFruta").value;
+
+                                                                                                                                                                                                                                                                                                                                                                                                                    if (fruta.trim() !== "") {
+                                                                                                                                                                                                                                                                                                                                                                                                                            frutas.unshift(fruta);
+                                                                                                                                                                                                                                                                                                                                                                                                                                    document.getElementById("novaFruta").value = "";
+                                                                                                                                                                                                                                                                                                                                                                                                                                            mostrarFrutas();
+                                                                                                                                                                                                                                                                                                                                                                                                                                                }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                }
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                // SHIFT: remove do início
+                                                                                                                                                                                                                                                                                                                                                                                                                                                function removerInicio() {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                    frutas.shift();
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        mostrarFrutas();
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        }
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        // LENGTH: mostra a quantidade
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        function mostrarFrutas() {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                            document.getElementById("listaFrutas").innerHTML =
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                    "Frutas: " + frutas.join(", ");
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                        document.getElementById("quantidadeFrutas").innerHTML =
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                "Quantidade de elementos: " + frutas.length;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                }
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                // Exibe a lista inicial
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                mostrarFrutas();
