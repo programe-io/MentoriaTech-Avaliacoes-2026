@@ -1,60 +1,90 @@
-// Base de dados das motos
-const motos = [
-  {
-    id: 1,
-    nome: "Apex RR 1000",
-    categoria: "esportiva",
-    preco: 84900,
-    cc: "999 cc",
-    potencia: "205 cv",
-    imagem: "https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?auto=format&fit=crop&w=800&q=80",
-    descricao: "Projetada para pistas e estradas com aerodinâmica de ponta, suspensão eletrônica ajustável e acelerador ride-by-wire."
-  },
-  {
-    id: 2,
-    nome: "Street Dark 750",
-    categoria: "naked",
-    preco: 46500,
-    cc: "749 cc",
-    potencia: "112 cv",
-    imagem: "https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=800&q=80",
-    descricao: "Design agressivo e controle total no tráfego urbano. Motor de 2 cilindros com torque imediato para máxima diversão."
-  },
-  {
-    id: 3,
-    nome: "Iron Cruiser 1200",
-    categoria: "custom",
-    preco: 68900,
-    cc: "1200 cc",
-    potencia: "88 cv",
-    imagem: "https://images.unsplash.com/photo-1558981359-219d6364c9c8?auto=format&fit=crop&w=800&q=80",
-    descricao: "O autêntico estilo custom clássico com acabamento premium em cromo escurecido e ronco inconfundível do motor V-Twin."
-  },
-  {
-    id: 4,
-    nome: "Terra Explorer 850",
-    categoria: "trail",
-    preco: 59900,
-    cc: "853 cc",
-    potencia: "95 cv",
-    imagem: "https://images.unsplash.com/photo-1591637333184-19aa84b3e01f?auto=format&fit=crop&w=800&q=80",
-    descricao: "Pronta para cruzar qualquer terreno. Equipada com rodas raiadas, proteção de motor e tanque de grande capacidade."
-  },
-  {
-    id: 5,
-    nome: "Vortex Sport 600",
-    categoria: "esportiva",
-    preco: 52000,
-    cc: "599 cc",
-    potencia: "120 cv",
-    imagem: "https://images.unsplash.com/photo-1547549662-16a2955146c9?auto=format&fit=crop&w=800&q=80",
-    descricao: "Agilidade surpreendente em curvas com chassis de alumínio leve e pacote eletrônico avançado de frenagem."
-  },
-  {
-    id: 6,
-    nome: "Urban Monster 500",
-    categoria: "naked",
-    preco: 34900,
-    cc: "471 cc",
-    potencia: "48 cv",
-    imagem: "https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?auto=format&fit=crop&w=800&q=80",
+document.addEventListener('DOMContentLoaded', () => {
+  const postText = document.getElementById('post-text');
+  const btnPost = document.getElementById('btn-post');
+  const postsContainer = document.getElementById('posts-container');
+
+  // Posts iniciais de exemplo
+  let posts = [
+    {
+      id: 1,
+      author: 'Jonatas',
+      content: 'Projeto de Mini Feed concluído com sucesso! 🚀',
+      time: 'Agora mesmo',
+      likes: 2,
+      isLiked: false
+    }
+  ];
+
+  // Função para renderizar todos os posts
+  function renderPosts() {
+    postsContainer.innerHTML = '';
+
+    posts.forEach((post) => {
+      const postCard = document.createElement('div');
+      postCard.classList.add('post-card');
+
+      postCard.innerHTML = `
+        <div class="post-header">
+          <span class="author">${post.author}</span>
+          <span class="timestamp">${post.time}</span>
+        </div>
+        <p class="post-content">${post.content}</p>
+        <div class="post-actions">
+          <button class="btn-like ${post.isLiked ? 'liked' : ''}" onclick="toggleLike(${post.id})">
+            ❤️ ${post.likes} ${post.likes === 1 ? 'Curtida' : 'Curtidas'}
+          </button>
+          <button class="btn-delete" onclick="deletePost(${post.id})">Excluir</button>
+        </div>
+      `;
+
+      postsContainer.appendChild(postCard);
+    });
+  }
+
+  // Função para adicionar uma nova publicação
+  btnPost.addEventListener('click', () => {
+    const text = postText.value.trim();
+
+    if (text === '') {
+      alert('Escreva algo antes de publicar!');
+      return;
+    }
+
+    const newPost = {
+      id: Date.now(),
+      author: 'Usuário',
+      content: text,
+      time: 'Agora mesmo',
+      likes: 0,
+      isLiked: false
+    };
+
+    posts.unshift(newPost); // Adiciona no início da lista
+    postText.value = ''; // Limpa o campo
+    renderPosts();
+  });
+
+  // Função para curtir/descurtir
+  window.toggleLike = (id) => {
+    posts = posts.map(post => {
+      if (post.id === id) {
+        return {
+          ...post,
+          likes: post.isLiked ? post.likes - 1 : post.likes + 1,
+          isLiked: !post.isLiked
+        };
+      }
+      return post;
+    });
+    renderPosts();
+  };
+
+  // Função para deletar post
+  window.deletePost = (id) => {
+    posts = posts.filter(post => post.id !== id);
+    renderPosts();
+  };
+
+  // Primeira renderização
+  renderPosts();
+});
