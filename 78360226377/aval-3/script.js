@@ -1,10 +1,15 @@
 
-function conhecerMais() {
-    alert("Nunca desista! Esse é o caminho para se tornar o Rei Mago!");
-}
+function mostrarMagia(poder) {
 
-function escolherMagia(magia) {
     const resultado = document.getElementById("resultado");
 
-    resultado.innerHTML = `🍀 Sua magia escolhida é: ${magia}!`;
+    resultado.innerHTML = "Seu poder mágico é: " + poder + "!";
+
+    resultado.style.color = "#bd50ff";
+
+    resultado.style.transform = "scale(1.1)";
+
+    setTimeout(() => {
+        resultado.style.transform = "scale(1)";
+    }, 300);
 }
