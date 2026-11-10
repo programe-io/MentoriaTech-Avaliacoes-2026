@@ -1,9 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // Estado local com carregamento seguro do localStorage
-  let tarefas = carregarDados();
-
-
-  // Referências dos elementos do DOM
+  // Elementos do DOM
   const formTarefa = document.getElementById('form-tarefa');
   const inputCodigo = document.getElementById('codigo');
   const inputTitulo = document.getElementById('titulo');
@@ -12,22 +8,40 @@ document.addEventListener('DOMContentLoaded', () => {
   const filtroPrioridade = document.getElementById('filtro-prioridade');
 
 
-  // Função para ler o localStorage com tratamento de exceções
+  // Mapeamento seguro de prioridade para classe CSS (evita erros com acentos)
+  const CSS_MAP = {
+    'Alta': 'badge-alta',
+    'Média': 'badge-media',
+    'Baixa': 'badge-baixa'
+  };
+
+
+  // Carregamento de dados com auto-recuperação caso o localStorage esteja corrompido
+  let tarefas = carregarDados();
+
+
   function carregarDados() {
     try {
       const dados = localStorage.getItem('tarefas_db');
-      return dados ? JSON.parse(dados) : [
-        { codigo: 'TSK-01', titulo: 'Estudar JavaScript ES6', prioridade: 'Alta', concluida: false },
-        { codigo: 'TSK-02', titulo: 'Revisar estrutura HTML/CSS', prioridade: 'Média', concluida: true }
-      ];
+      if (!dados) return getDadosIniciais();
+      const parsed = JSON.parse(dados);
+      return Array.isArray(parsed) ? parsed : getDadosIniciais();
     } catch (error) {
-      console.error('Erro ao ler localStorage:', error);
-      return [];
+      console.error('Erro ao ler localStorage. Restaurando dados iniciais:', error);
+      localStorage.removeItem('tarefas_db');
+      return getDadosIniciais();
     }
   }
 
 
-  // Função para salvar no localStorage
+  function getDadosIniciais() {
+    return [
+      { codigo: 'TSK-01', titulo: 'Estudar JavaScript ES6', prioridade: 'Alta', concluida: false },
+      { codigo: 'TSK-02', titulo: 'Revisar estrutura HTML/CSS', prioridade: 'Média', concluida: true }
+    ];
+  }
+
+
   function salvarDados() {
     try {
       localStorage.setItem('tarefas_db', JSON.stringify(tarefas));
@@ -44,14 +58,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     if (!codLimpo || !titLimpo) {
-      alert('Preencha todos os campos obrigatórios.');
+      alert('Por favor, preencha todos os campos.');
       return false;
     }
 
 
     const existe = tarefas.some(t => t.codigo.toLowerCase() === codLimpo.toLowerCase());
     if (existe) {
-      alert(Já existe uma tarefa com o código "${codLimpo}".);
+      alert(Erro: Já existe uma tarefa cadastrada com o código "${codLimpo}".);
       return false;
     }
 
@@ -70,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
 
-  // 2. Listar Tarefas (Construção segura de DOM sem innerHTML para strings dinamicas)
+  // 2. Listar Tarefas (Criação de nós nativa para 100% de segurança)
   function listarTarefas() {
     const filtro = filtroPrioridade ? filtroPrioridade.value : 'Todas';
     tabelaBody.innerHTML = '';
@@ -82,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (filtradas.length === 0) {
       const trVazia = document.createElement('tr');
       const tdVazia = document.createElement('td');
-      tdVazia.colSpan = 5;
+      tdVazia.colSpan = 6;
       tdVazia.style.textAlign = 'center';
       tdVazia.textContent = 'Nenhuma tarefa encontrada.';
       trVazia.appendChild(tdVazia);
@@ -98,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
 
-      // Checkbox (Marcar Concluída)
+      // Checkbox Concluída
       const tdCheck = document.createElement('td');
       const checkbox = document.createElement('input');
       checkbox.type = 'checkbox';
@@ -123,16 +137,18 @@ document.addEventListener('DOMContentLoaded', () => {
       // Badge Prioridade
       const tdBadge = document.createElement('td');
       const badge = document.createElement('span');
-      badge.className = badge badge-${tarefa.prioridade};
+      const classeBadge = CSS_MAP[tarefa.prioridade] || 'badge-media';
+      badge.className = badge ${classeBadge};
       badge.textContent = tarefa.prioridade;
       tdBadge.appendChild(badge);
 
 
       // Alterar Prioridade (Select Inline)
-      const tdAcoes = document.createElement('td');
+      const tdPrioSelect = document.createElement('td');
       const selectInline = document.createElement('select');
       selectInline.className = 'select-prio-inline';
-      
+
+
       ['Baixa', 'Média', 'Alta'].forEach(prio => {
         const opt = document.createElement('option');
         opt.value = prio;
@@ -143,14 +159,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
       selectInline.addEventListener('change', (e) => alterarPrioridade(tarefa.codigo, e.target.value));
-      tdAcoes.appendChild(selectInline);
+      tdPrioSelect.appendChild(selectInline);
 
 
-      // Inserção dos elementos na linha
+      // Botão Excluir
+      const tdAcoes = document.createElement('td');
+      const btnExcluir = document.createElement('button');
+      btnExcluir.className = 'btn btn-danger';
+      btnExcluir.textContent = 'Excluir';
+      btnExcluir.addEventListener('click', () => excluirTarefa(tarefa.codigo));
+      tdAcoes.appendChild(btnExcluir);
+
+
+      // Montagem da linha
       tr.appendChild(tdCheck);
       tr.appendChild(tdCodigo);
       tr.appendChild(tdTitulo);
       tr.appendChild(tdBadge);
+      tr.appendChild(tdPrioSelect);
       tr.appendChild(tdAcoes);
 
 
@@ -181,7 +207,15 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
 
-  // Listeners de Eventos
+  // 5. Excluir Tarefa
+  function excluirTarefa(codigo) {
+    tarefas = tarefas.filter(t => t.codigo !== codigo);
+    salvarDados();
+    listarTarefas();
+  }
+
+
+  // Event Listeners
   formTarefa.addEventListener('submit', (e) => {
     e.preventDefault();
     const cadastrado = cadastrarTarefa(
@@ -202,5 +236,6 @@ document.addEventListener('DOMContentLoaded', () => {
   filtroPrioridade.addEventListener('change', listarTarefas);
 
 
-  // Exibição inicial
+  // Renderização Inicial
   listarTarefas();
+});
