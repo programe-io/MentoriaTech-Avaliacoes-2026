@@ -1,0 +1,1 @@
+console.log("Galeria de Paisagens")
