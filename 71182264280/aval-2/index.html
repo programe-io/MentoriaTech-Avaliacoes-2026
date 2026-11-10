@@ -1,191 +1,366 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gerenciador de Tarefas</title>
+  
+  <!-- === ESTILIZAÇÃO CSS INDEPENDENTE === -->
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --bg: #f1f5f9;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --text-light: #64748b;
+      --border: #e2e8f0;
+      
+      /* Cores das Regras de Validação */
+      --prio-1: #ef4444; /* Alta - Vermelho */
+      --prio-2: #f59e0b; /* Média - Amarelo */
+      --prio-3: #10b981; /* Baixa - Verde */
+      
+      --radius-lg: 16px;
+      --radius-md: 8px;
+      --shadow: 0 10px 15px -3px rgba(15, 23, 42, 0.05);
+      --transition: all 0.25s ease;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      padding: 3rem 1.5rem;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 680px;
+    }
+
+    header {
+      margin-bottom: 2.5rem;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    /* Caixa do Formulário */
+    .card {
+      background: var(--card-bg);
+      padding: 2rem;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      margin-bottom: 2.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      font-size: 0.875rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      font-size: 1rem;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15);
+    }
+
+    /* Mensagem de Erro Visual */
+    .error-msg {
+      color: var(--prio-1);
+      font-size: 0.85rem;
+      font-weight: 500;
+      margin-top: 0.5rem;
+      display: none;
+    }
+
+    .btn {
+      background-color: var(--primary);
+      color: #ffffff;
+      padding: 1rem;
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      transition: var(--transition);
+    }
+
+    .btn:hover {
+      background-color: var(--primary-hover);
+    }
+
+    /* Lista de Tarefas */
+    h2 {
+      font-size: 1.25rem;
+      color: var(--text-light);
+      margin-bottom: 1rem;
+    }
+
+    .task-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .task-item {
+      background: var(--card-bg);
+      padding: 1.25rem 1.5rem;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      border-left: 6px solid var(--text-light);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+      transition: var(--transition);
+    }
+
+    /* Cores das Bordas baseadas no Requisito */
+    .task-item.prio-1 { border-left-color: var(--prio-1); }
+    .task-item.prio-2 { border-left-color: var(--prio-2); }
+    .task-item.prio-3 { border-left-color: var(--prio-3); }
+
+    /* Tarefa Concluída */
+    .task-item.completed {
+      opacity: 0.55;
+      background-color: #f8fafc;
+    }
+
+    .task-item.completed .task-title {
+      text-decoration: line-through;
+      color: var(--text-light);
+    }
+
+    .task-info {
+      flex-grow: 1;
+    }
+
+    .task-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+    }
+
+    .task-meta {
+      font-size: 0.8rem;
+      color: var(--text-light);
+      margin-top: 0.35rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .badge {
+      padding: 0.2rem 0.6rem;
+      border-radius: 9999px;
+      font-weight: 700;
+      font-size: 0.7rem;
+      color: #ffffff;
+    }
+    .badge.prio-1 { background-color: var(--prio-1); }
+    .badge.prio-2 { background-color: var(--prio-2); }
+    .badge.prio-3 { background-color: var(--prio-3); }
+
+    .task-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .select-prio {
+      padding: 0.5rem;
+      font-size: 0.85rem;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      cursor: pointer;
+    }
+
+    .action-btn {
+      background: #f1f5f9;
+      border: 1px solid var(--border);
+      padding: 0.5rem 0.875rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .action-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+  </style>
+<script src="https://cdn.tailwindcss.com"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="style.css" rel="stylesheet">
-</head>
+<link href="style.css" rel="stylesheet"></head>
 <body>
-  :root {
-  --primary: #4f46e5;
-  --primary-hover: #4338ca;
-  --bg: #f8fafc;
-  --card-bg: #ffffff;
-  --text: #1e293b;
-  --text-light: #64748b;
-  --border: #e2e8f0;
-  
-  /* Cores das Regras de Validação de Prioridade */
-  --prio-1: #ef4444; /* Alta - Vermelho */
-  --prio-2: #f59e0b; /* Média - Amarelo */
-  --prio-3: #10b981; /* Baixa - Verde */
-}
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: 'Segoe UI', system-ui, sans-serif;
-}
+  <div class="container">
+    <header>
+      <h1>Gerenciador de Tarefas</h1>
+    </header>
 
-body {
-  background-color: var(--bg);
-  color: var(--text);
-  padding: 2rem 1rem;
-  display: flex;
-  justify-content: center;
-}
+    <!-- Formulário HTML -->
+    <div class="card">
+      <div class="form-group">
+        <label for="taskTitle">Título da Tarefa</label>
+        <input type="text" id="taskTitle" class="form-control" placeholder="Mínimo 5 caracteres...">
+        <div id="titleError" class="error-msg">O título deve ter no mínimo 5 caracteres.</div>
+      </div>
+      
+      <div class="form-group">
+        <label for="taskPriority">Prioridade</label>
+        <select id="taskPriority" class="form-control">
+          <option value="1">1 - Alta</option>
+          <option value="2">2 - Média</option>
+          <option value="3">3 - Baixa</option>
+        </select>
+      </div>
 
-.container {
-  width: 100%;
-  max-width: 800px;
-}
+      <button id="addBtn" class="btn">Cadastrar Tarefa</button>
+    </div>
 
-header {
-  margin-bottom: 2rem;
-  text-align: center;
-}
+    <h2>Tarefas Atuais</h2>
+    <div id="taskList" class="task-list"></div>
+  </div>
 
-header h1 {
-  font-size: 2.25rem;
-  color: var(--primary);
-}
+  <!-- === ALGORITMO JAVASCRIPT INTEGRADO === -->
+  <script>
+    class GerenciadorTarefas {
+      constructor() {
+        this.tarefas = [];
+        this.proximoCodigo = 1;
+      }
 
-.card {
-  background: var(--card-bg);
-  padding: 1.5rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  margin-bottom: 2rem;
-  border: 1px solid var(--border);
-}
+      cadastrarTarefa(titulo, prioridade) {
+        if (!titulo || titulo.trim().length < 5) return null;
+        if (prioridade < 1 || prioridade > 3) return null;
 
-.form-group {
-  margin-bottom: 1.25rem;
-}
+        const novaTarefa = {
+          codigo: this.proximoCodigo++,
+          titulo: titulo.trim(),
+          prioridade: parseInt(prioridade),
+          concluida: false
+        };
 
-.form-group label {
-  display: block;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-  font-size: 0.9rem;
-}
+        this.tarefas.push(novaTarefa);
+        return novaTarefa;
+      }
 
-.form-control {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  font-size: 1rem;
-}
+      marcarComoConcluida(codigo) {
+        const tarefa = this.tarefas.find(t => t.codigo === codigo);
+        if (tarefa) tarefa.concluida = !tarefa.concluida;
+      }
 
-.form-control:focus {
-  outline: 2px solid var(--primary);
-}
+      alterarPrioridade(codigo, novaPrioridade) {
+        const tarefa = this.tarefas.find(t => t.codigo === codigo);
+        if (tarefa) tarefa.prioridade = parseInt(novaPrioridade);
+      }
+    }
 
-.btn {
-  background-color: var(--primary);
-  color: white;
-  padding: 0.75rem 1.5rem;
-  border: none;
-  border-radius: 6px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  width: 100%;
-  transition: background 0.2s;
-}
+    const app = new GerenciadorTarefas();
 
-.btn:hover {
-  background-color: var(--primary-hover);
-}
+    const inputTitulo = document.getElementById('taskTitle');
+    const selectPrioridade = document.getElementById('taskPriority');
+    const btnAdicionar = document.getElementById('addBtn');
+    const containerLista = document.getElementById('taskList');
+    const erroTitulo = document.getElementById('titleError');
 
-.error-msg {
-  color: var(--prio-1);
-  font-size: 0.85rem;
-  margin-top: 0.25rem;
-  display: none;
-}
+    function atualizarInterface() {
+      containerLista.innerHTML = '';
 
-.task-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  margin-top: 1rem;
-}
+      if (app.tarefas.length === 0) {
+        containerLista.innerHTML = '<p style="color: var(--text-light); text-align: center;">Nenhuma tarefa encontrada.</p>';
+        return;
+      }
 
-.task-item {
-  background: var(--card-bg);
-  padding: 1rem;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  border-left: 6px solid var(--text-light);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-}
+      app.tarefas.forEach(tarefa => {
+        const itemHtml = document.createElement('div');
+        itemHtml.className = `task-item prio-${tarefa.prioridade} ${tarefa.concluida ? 'completed' : ''}`;
 
-/* Indicadores visuais de prioridade */
-.task-item.prio-1 { border-left-color: var(--prio-1); }
-.task-item.prio-2 { border-left-color: var(--prio-2); }
-.task-item.prio-3 { border-left-color: var(--prio-3); }
+        const textoPrioridade = tarefa.prioridade === 1 ? 'Alta' : tarefa.prioridade === 2 ? 'Média' : 'Baixa';
 
-/* Tarefa concluída */
-.task-item.completed {
-  opacity: 0.5;
-}
+        itemHtml.innerHTML = `
+          <div class="task-info">
+            <div class="task-title">${tarefa.titulo}</div>
+            <div class="task-meta">
+              <span>Código: <strong>#${tarefa.codigo}</strong></span>
+              <span>Prioridade: <span class="badge prio-${tarefa.prioridade}">${textoPrioridade}</span></span>
+            </div>
+          </div>
+          <div class="task-actions">
+            <select class="select-prio" onchange="mudarPrioridade(${tarefa.codigo}, this.value)">
+              <option value="1" ${tarefa.prioridade === 1 ? 'selected' : ''}>Prio 1</option>
+              <option value="2" ${tarefa.prioridade === 2 ? 'selected' : ''}>Prio 2</option>
+              <option value="3" ${tarefa.prioridade === 3 ? 'selected' : ''}>Prio 3</option>
+            </select>
+            <button class="action-btn" onclick="alternarConclusao(${tarefa.codigo})">
+              ${tarefa.concluida ? '↩️ Desfazer' : '✅ Concluir'}
+            </button>
+          </div>
+        `;
+        containerLista.appendChild(itemHtml);
+      });
+    }
 
-.task-item.completed .task-title {
-  text-decoration: line-through;
-  color: var(--text-light);
-}
+    btnAdicionar.addEventListener('click', () => {
+      const titulo = inputTitulo.value;
+      const prioridade = selectPrioridade.value;
 
-.task-info {
-  flex-grow: 1;
-}
+      if (titulo.trim().length < 5) {
+        erroTitulo.style.display = 'block';
+        return;
+      } else {
+        erroTitulo.style.display = 'none';
+      }
 
-.task-meta {
-  font-size: 0.8rem;
-  color: var(--text-light);
-  margin-top: 0.25rem;
-  display: flex;
-  gap: 0.75rem;
-}
+      app.cadastrarTarefa(titulo, prioridade);
+      inputTitulo.value = '';
+      atualizarInterface();
+    });
 
-.badge {
-  padding: 0.15rem 0.5rem;
-  border-radius: 4px;
-  font-weight: 600;
-  font-size: 0.75rem;
-  color: white;
-}
-.badge.prio-1 { background-color: var(--prio-1); }
-.badge.prio-2 { background-color: var(--prio-2); }
-.badge.prio-3 { background-color: var(--prio-3); }
+    window.alternarConclusao = function(codigo) {
+      app.marcarComoConcluida(codigo);
+      atualizarInterface();
+    };
 
-.task-actions {
-  display: flex;
-  gap: 0.5rem;
-}
+    window.mudarPrioridade = function(codigo, novaPrioridade) {
+      app.alterarPrioridade(codigo, novaPrioridade);
+      atualizarInterface();
+    };
 
-.action-btn {
-  background: #f1f5f9;
-  border: 1px solid var(--border);
-  padding: 0.5rem;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.select-prio {
-  padding: 0.4rem;
-  border-radius: 4px;
-  border: 1px solid var(--border);
-}
-
-  <script src="script.js"></script>
-  
-</body>
+    atualizarInterface();
+  </script>
+<script src="script.js"></script></body>
 </html>
