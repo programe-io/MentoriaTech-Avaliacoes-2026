@@ -1,89 +1,20 @@
- feed.appendChild(postElement);
-      });
-    }
+.tag-code {
+  background-color: #f3f4f6;
+  color: #db2777;
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  font-family: monospace;
+}
 
-    function addPost() {
-      const quoteInput = document.getElementById("quoteInput");
-      const authorInput = document.getElementById("authorInput");
 
-      const quote = quoteInput.value.trim();
-      const author = authorInput.value.trim();
+.btn-action {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  transition: color 0.2s ease-in-out;
+}
 
-      if (!quote) return;
-
-      const newPost = {
-        id: Date.now(),
-        quote: quote,
-        author: author || "Autor Desconhecido",
-        likes: 0,
-        liked: false,
-        comments: []
-      };
-
-      posts.unshift(newPost);
-      quoteInput.value = "";
-      authorInput.value = "";
-      renderFeed();
-    }
-
-    function generateRandomQuote() {
-      const randomIndex = Math.floor(Math.random() * randomQuotes.length);
-      const randomQuote = randomQuotes[randomIndex];
-
-      document.getElementById("quoteInput").value = randomQuote.text;
-      document.getElementById("authorInput").value = randomQuote.author;
-    }
-
-    function toggleLike(id) {
-      posts = posts.map(post => {
-        if (post.id === id) {
-          return {
-            ...post,
-            liked: !post.liked,
-            likes: post.liked ? post.likes - 1 : post.likes + 1
-          };
-        }
-        return post;
-      });
-      renderFeed();
-    }
-
-    function addComment(postId) {
-      const input = document.getElementById(`comment-input-${postId}`);
-      const text = input.value.trim();
-
-      if (!text) return;
-
-      posts = posts.map(post => {
-        if (post.id === postId) {
-          return { ...post, comments: [...post.comments, text] };
-        }
-        return post;
-      });
-
-      renderFeed();
-    }
-
-    function handleCommentKeyPress(event, postId) {
-      if (event.key === "Enter") {
-        addComment(postId);
-      }
-    }
-
-    function deletePost(id) {
-      posts = posts.filter(post => post.id !== id);
-      renderFeed();
-    }
-
-    function escapeHTML(str) {
-      return str.replace(/[&<>'"]/g, 
-        tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
-      );
-    }
-
-    // Renderiza ao carregar
-    renderFeed();
-  </script>
-
-</body>
-</html>
+.btn-action:hover {
+  color: #4f46e5;
+}
