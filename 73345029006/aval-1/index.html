@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PixelPulse - Seu Blog de Jogos</title>
+    <!-- Fonte Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f1015;
+            --card-bg: #1a1c23;
+            --accent-color: #7b2cbf;
+            --accent-hover: #9d4edd;
+            --neon-blue: #00f5d4;
+            --text-color: #e0e0e0;
+            --text-muted: #9e9e9e;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* Cabeçalho */
+        header {
+            background: rgba(15, 16, 21, 0.95);
+            border-bottom: 2px solid var(--accent-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.2rem 5%;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .logo span {
+            color: var(--neon-blue);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        nav ul li a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: var(--neon-blue);
+        }
+
+        /* Destaque Principal (Hero) */
+        .hero {
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1200&q=80') no-repeat center center/cover;
+            padding: 5rem 5%;
+            text-align: center;
+            border-bottom: 1px solid #2a2d3d;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto 2rem auto;
+        }
+
+        .btn {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 0.8rem 2rem;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background 0.3s, transform 0.2s;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            background-color: var(--accent-hover);
+            transform: translateY(-2px);
+        }
+
+        /* Layout do Blog (Conteúdo + Sidebar) */
+        .container {
+            max-width: 1200px;
+            margin: 3rem auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            nav ul {
+                display: none; /* Simplificado para mobile */
+            }
+        }
+
+        /* Posts */
+        .posts-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .post-card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #2a2d3d;
+            transition: transform 0.3s;
+        }
+
+        .post-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .post-img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+
+        .post-content {
+            padding: 1.5rem;
+        }
+
+        .tag {
+            background-color: rgba(0, 245, 212, 0.1);
+            color: var(--neon-blue);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .post-title {
+            font-size: 1.5rem;
+            margin: 0.8rem 0;
+            color: #fff;
+        }
+
+        .post-excerpt {
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+        }
+
+        .post-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #2a2d3d;
+            padding-top: 1rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .like-btn {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            cursor: pointer;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .like-btn:hover {
+            color: #ff4757;
+        }
+
+        /* Sidebar */
+        aside {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .widget {
+            background-color: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid #2a2d3d;
+        }
+
+        .widget h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: #fff;
+            border-left: 4px solid var(--neon-blue);
+            padding-left: 10px;
+        }
+
+        .widget ul {
+            list-style: none;
+        }
+
+        .widget ul li {
+            margin-bottom: 0.8rem;
+        }
+
+        .widget ul li a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .widget ul li a:hover {
+            color: var(--neon-blue);
+        }
+
+        /* Rodapé */
+        footer {
+            background-color: #0b0c10;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 4rem;
+            border-top: 2px solid #2a2d3d;
+            color: var(--text-muted);
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Cabeçalho -->
+    <header>
+        <a href="#" class="logo">Pixel<span>Pulse</span></a>
+        <nav>
+            <ul>
+                <li><a href="#">Início</a></li>
+                <li><a href="#">Análises</a></li>
+                <li><a href="#">Notícias</a></li>
+                <li><a href="#">Lançamentos</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Destaque / Hero -->
+    <section class="hero">
+        <h1>As últimas novidades do mundo dos games</h1>
+        <p>Análises profundas, notícias fresquinhas e tudo o que rola no universo do entretenimento digital.</p>
+        <a href="#posts" class="btn">Explorar Artigos</a>
+    </section>
+
+    <!-- Conteúdo Principal -->
+    <div class="container" id="posts">
+        <!-- Lista de Posts -->
+        <main class="posts-grid">
+            
+            <!-- Post 1 -->
+            <article class="post-card">
+                <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=800&q=80" alt="Setup Gamer" class="post-img">
+                <div class="post-content">
+                    <span class="tag">Análise</span>
+                    <h2 class="post-title">O Futuro dos Jogos de Mundo Aberto em 2026</h2>
+                    <p class="post-excerpt">Descubra como as novas tecnologias de inteligência artificial generativa e motores gráficos estão transformando a forma como exploramos mapas virtuais massivos.</p>
+                    <div class="post-footer">
+                        <span>Por Redação • 10 de Nov, 2026</span>
+                        <button class="like-btn" onclick="curtirPost(this)">❤️ <span class="count">142</span></button>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Post 2 -->
+            <article class="post-card">
+                <img src="https://images.unsplash.com/photo-1612287233002-b1d1baec615c?auto=format&fit=crop&w=800&q=80" alt="Controle de Videogame" class="post-img">
+                <div class="post-content">
+                    <span class="tag">Lançamentos</span>
+                    <h2 class="post-title">Os Jogos Mais Esperados do Segundo Semestre</h2>
+                    <p class="post-excerpt">Fizemos uma seleção rigorosa com os títulos que prometem dominar as conversas dos gamers e sacudir o mercado nos próximos meses.</p>
+                    <div class="post-footer">
+                        <span>Por Carlos Silva • 8 de Nov, 2026</span>
+                        <button class="like-btn" onclick="curtirPost(this)">❤️ <span class="count">98</span></button>
+                    </div>
+                </div>
+            </article>
+
+        </main>
+
+        <!-- Barra Lateral -->
+        <aside>
+            <div class="widget">
+                <h3>Categorias</h3>
+                <ul>
+                    <li><a href="#">🎮 PC Gaming</a></li>
+                    <li><a href="#">🕹️ Consoles</a></li>
+                    <li><a href="#">📱 Mobile Games</a></li>
+                    <li><a href="#">⚡ Esportes Eletrônicos</a></li>
+                </ul>
+            </div>
+
+            <div class="widget">
+                <h3>Mais Lidos</h3>
+                <ul>
+                    <li><a href="#">1. Guia definitivo para otimizar seu FPS</a></li>
+                    <li><a href="#">2. A evolução histórica dos RPGs de turno</a></li>
+                    <li><a href="#">3. Melhores hardwares custo-benefício</a></li>
+                </ul>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Rodapé -->
+    <footer>
+        <p>&copy; 2026 PixelPulse. Todos os direitos reservados.</p>
+    </footer>
+
+    <!-- Script Simples para Interatividade -->
+    <script>
+        function curtirPost(button) {
+            const countSpan = button.querySelector('.count');
+            let currentLikes = parseInt(countSpan.textContent);
+            currentLikes++;
+            countSpan.textContent = currentLikes;
+            button.style.color = '#ff4757';
+        }
+    </script>
+</body>
+</html>
