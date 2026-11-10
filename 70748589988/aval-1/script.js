@@ -1,20 +1,36 @@
-// Array para armazenar o estoque de produtos
+// Banco de dados em memória para os produtos do estoque
 const estoque = [];
 
-// Seleção dos elementos HTML
+// Elementos DOM
 const formProduto = document.getElementById('form-produto');
 const tabelaCorpo = document.getElementById('tabela-corpo');
 const estoqueVazio = document.getElementById('estoque-vazio');
 const mensagemBox = document.getElementById('mensagem');
 
-// Função auxiliar para exibir alertas na tela
+const totalProdutosEl = document.getElementById('total-produtos');
+const totalItensEl = document.getElementById('total-itens');
+const valorTotalEl = document.getElementById('valor-total');
+
+// Exibe notificações dinâmicas
 function exibirMensagem(texto, tipo = 'success') {
   mensagemBox.textContent = texto;
   mensagemBox.className = `alert alert-${tipo}`;
   mensagemBox.style.display = 'block';
+
   setTimeout(() => {
     mensagemBox.style.display = 'none';
   }, 3500);
+}
+
+// Atualiza o painel de estatísticas do estoque
+function atualizarEstatisticas() {
+  const totalProdutos = estoque.length;
+  const totalItens = estoque.reduce((acc, item) => acc + item.quantidade, 0);
+  const valorTotal = estoque.reduce((acc, item) => acc + (item.quantidade * item.valor), 0);
+
+  totalProdutosEl.textContent = totalProdutos;
+  totalItensEl.textContent = totalItens;
+  valorTotalEl.textContent = `R$ ${valorTotal.toFixed(2)}`;
 }
 
 // 1. Cadastrar um novo produto
@@ -26,9 +42,20 @@ formProduto.addEventListener('submit', (e) => {
   const quantidade = parseInt(document.getElementById('quantidade').value, 10);
   const valor = parseFloat(document.getElementById('valor').value);
 
-  // Validação para impedir códigos duplicados
-  if (estoque.some(p => p.codigo === codigo)) {
+  // Validação: Código único
+  if (estoque.some(p => p.codigo.toLowerCase() === codigo.toLowerCase())) {
     exibirMensagem(`Erro: O código "${codigo}" já está cadastrado.`, 'error');
+    return;
+  }
+
+  // Validação: Quantidade e Valor válidos
+  if (isNaN(quantidade) || quantidade < 0) {
+    exibirMensagem('Erro: A quantidade deve ser um número maior ou igual a 0.', 'error');
+    return;
+  }
+
+  if (isNaN(valor) || valor < 0) {
+    exibirMensagem('Erro: O valor deve ser um número maior ou igual a 0.', 'error');
     return;
   }
 
@@ -39,12 +66,13 @@ formProduto.addEventListener('submit', (e) => {
   listarProdutos();
 });
 
-// 2. Listar os produtos cadastrados
+// 2. Listar produtos cadastrados
 function listarProdutos() {
   tabelaCorpo.innerHTML = '';
 
   if (estoque.length === 0) {
     estoqueVazio.style.display = 'block';
+    atualizarEstatisticas();
     return;
   }
 
@@ -62,8 +90,11 @@ function listarProdutos() {
     const tdQuantidade = document.createElement('td');
     tdQuantidade.textContent = produto.quantidade;
 
-    const tdValor = document.createElement('td');
-    tdValor.textContent = `R$ ${produto.valor.toFixed(2)}`;
+    const tdValorUnitario = document.createElement('td');
+    tdValorUnitario.textContent = `R$ ${produto.valor.toFixed(2)}`;
+
+    const tdValorTotal = document.createElement('td');
+    tdValorTotal.textContent = `R$ ${(produto.quantidade * produto.valor).toFixed(2)}`;
 
     const tdAcoes = document.createElement('td');
 
@@ -83,11 +114,14 @@ function listarProdutos() {
     tr.appendChild(tdCodigo);
     tr.appendChild(tdDescricao);
     tr.appendChild(tdQuantidade);
-    tr.appendChild(tdValor);
+    tr.appendChild(tdValorUnitario);
+    tr.appendChild(tdValorTotal);
     tr.appendChild(tdAcoes);
 
     tabelaCorpo.appendChild(tr);
   });
+
+  atualizarEstatisticas();
 }
 
 // 3. Alterar o valor de um produto
@@ -95,12 +129,12 @@ function alterarValor(codigo) {
   const produto = estoque.find(p => p.codigo === codigo);
   if (!produto) return;
 
-  const entrada = prompt(`Novo valor para "${produto.descricao}" (Valor atual: R$ ${produto.valor.toFixed(2)}):`);
+  const entrada = prompt(`Novo valor unitário para "${produto.descricao}" (Atual: R$ ${produto.valor.toFixed(2)}):`);
   if (entrada === null || entrada.trim() === '') return;
 
   const novoValor = parseFloat(entrada);
   if (isNaN(novoValor) || novoValor < 0) {
-    exibirMensagem('Valor inválido digitado.', 'error');
+    exibirMensagem('Erro: Informe um valor numérico válido.', 'error');
     return;
   }
 
@@ -114,12 +148,12 @@ function alterarQuantidade(codigo) {
   const produto = estoque.find(p => p.codigo === codigo);
   if (!produto) return;
 
-  const entrada = prompt(`Nova quantidade para "${produto.descricao}" (Qtd atual: ${produto.quantidade}):`);
+  const entrada = prompt(`Nova quantidade para "${produto.descricao}" (Atual: ${produto.quantidade}):`);
   if (entrada === null || entrada.trim() === '') return;
 
   const novaQuantidade = parseInt(entrada, 10);
   if (isNaN(novaQuantidade) || novaQuantidade < 0) {
-    exibirMensagem('Quantidade inválida digitada.', 'error');
+    exibirMensagem('Erro: Informe uma quantidade numérica válida.', 'error');
     return;
   }
 
@@ -128,5 +162,5 @@ function alterarQuantidade(codigo) {
   listarProdutos();
 }
 
-// Inicializa a tabela ao carregar a página
+// Inicializa a renderização da tabela
 listarProdutos();
