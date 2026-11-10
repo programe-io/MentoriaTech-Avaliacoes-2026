@@ -1,9 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // Estado local com tratamento seguro do localStorage
+  // Estado local com carregamento seguro do localStorage
   let tarefas = carregarDados();
 
 
-  // Referências do DOM
+  // Referências dos elementos do DOM
   const formTarefa = document.getElementById('form-tarefa');
   const inputCodigo = document.getElementById('codigo');
   const inputTitulo = document.getElementById('titulo');
@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const filtroPrioridade = document.getElementById('filtro-prioridade');
 
 
-  // Recupera dados salvos
+  // Função para ler o localStorage com tratamento de exceções
   function carregarDados() {
     try {
       const dados = localStorage.getItem('tarefas_db');
@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
 
-  // Persiste dados no localStorage
+  // Função para salvar no localStorage
   function salvarDados() {
     try {
       localStorage.setItem('tarefas_db', JSON.stringify(tarefas));
@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
 
-  // 2. Listar Tarefas (Criação nativa de nós para evitar falhas por aspas ou caracteres especiais)
+  // 2. Listar Tarefas (Construção segura de DOM sem innerHTML para strings dinamicas)
   function listarTarefas() {
     const filtro = filtroPrioridade ? filtroPrioridade.value : 'Todas';
     tabelaBody.innerHTML = '';
@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
 
-      // 1. Checkbox Concluída
+      // Checkbox (Marcar Concluída)
       const tdCheck = document.createElement('td');
       const checkbox = document.createElement('input');
       checkbox.type = 'checkbox';
@@ -107,20 +107,20 @@ document.addEventListener('DOMContentLoaded', () => {
       tdCheck.appendChild(checkbox);
 
 
-      // 2. Código
+      // Código
       const tdCodigo = document.createElement('td');
       const strongCod = document.createElement('strong');
       strongCod.textContent = tarefa.codigo;
       tdCodigo.appendChild(strongCod);
 
 
-      // 3. Título
+      // Título
       const tdTitulo = document.createElement('td');
       tdTitulo.className = 'titulo-tarefa';
       tdTitulo.textContent = tarefa.titulo;
 
 
-      // 4. Badge Prioridade
+      // Badge Prioridade
       const tdBadge = document.createElement('td');
       const badge = document.createElement('span');
       badge.className = badge badge-${tarefa.prioridade};
@@ -128,7 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
       tdBadge.appendChild(badge);
 
 
-      // 5. Select para Alteração Inline da Prioridade
+      // Alterar Prioridade (Select Inline)
       const tdAcoes = document.createElement('td');
       const selectInline = document.createElement('select');
       selectInline.className = 'select-prio-inline';
@@ -146,7 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
       tdAcoes.appendChild(selectInline);
 
 
-      // Montagem da linha
+      // Inserção dos elementos na linha
       tr.appendChild(tdCheck);
       tr.appendChild(tdCodigo);
       tr.appendChild(tdTitulo);
@@ -181,17 +181,17 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
 
-  // Handlers de Eventos
+  // Listeners de Eventos
   formTarefa.addEventListener('submit', (e) => {
     e.preventDefault();
-    const enviado = cadastrarTarefa(
+    const cadastrado = cadastrarTarefa(
       inputCodigo.value,
       inputTitulo.value,
       selectPrioridade.value
     );
 
 
-    if (enviado) {
+    if (cadastrado) {
       inputCodigo.value = '';
       inputTitulo.value = '';
       selectPrioridade.value = 'Média';
@@ -202,6 +202,5 @@ document.addEventListener('DOMContentLoaded', () => {
   filtroPrioridade.addEventListener('change', listarTarefas);
 
 
-  // Inicializa listagem
+  // Exibição inicial
   listarTarefas();
-});
