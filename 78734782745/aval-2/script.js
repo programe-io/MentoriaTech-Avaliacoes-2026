@@ -1,52 +1,87 @@
-const questoes = [
-    {
-        pergunta: "Qual é a capital do Brasil?",
-        opcoes: ["São Paulo", "Brasília", "Rio de Janeiro"],
-        correta: 1
-    \},
-    {
-        pergunta: "Quanto é 5 + 5?",
-        opcoes: ["10", "15", "20"],
-        correta: 0
-    \}
-];
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Média - Trabalho Escolar</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        \}
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            text-align: center;
+            width: 300px;
+        \}
+        input {
+            width: 80%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        \}
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        \}
+        button:hover {
+            background-color: #0056b3;
+        \}
+        #resultado {
+            margin-top: 15px;
+            font-weight: bold;
+        \}
+    </style>
+</head>
+<body>
 
-let indiceAtual = 0;
-let pontuacao = 0;
+    <div class="container">
+        <h2>Calculadora de Média</h2>
+        <input type="number" id="nota1" placeholder="Digite a 1ª nota" step="0.1"><br>
+        <input type="number" id="nota2" placeholder="Digite a 2ª nota" step="0.1"><br>
+        <button onclick="calcularMedia()">Calcular Média</button>
+        <div id="resultado"></div>
+    </div>
 
-function carregarPergunta() {
-    const q = questoes[indiceAtual];
-    document.getElementById("pergunta").textContent = q.pergunta;
-    
-    const divRespostas = document.getElementById("respostas");
-    divRespostas.innerHTML = "";
-    
-    q.opcoes.forEach((opcao, index) => {
-        const btn = document.createElement("button");
-        btn.textContent = opcao;
-        btn.classList.add("opcao");
-        btn.onclick = () => verificarResposta(index);
-        divRespostas.appendChild(btn);
-    \});
-\}
+    <script>
+        // Função em JavaScript acionada pelo botão
+        function calcularMedia() {
+            // Pegando os valores digitados nos inputs pelo ID
+            const n1 = parseFloat(document.getElementById('nota1').value);
+            const n2 = parseFloat(document.getElementById('nota2').value);
 
-function verificarResposta(escolha) {
-    const q = questoes[indiceAtual];
-    if (escolha === q.correta) {
-        pontuacao++;
-    \}
-    indiceAtual++;
-    
-    if (indiceAtual < questoes.length) {
-        carregarPergunta();
-    \} else {
-        mostrarResultado();
-    \}
-\}
+            // Validando se os campos estão preenchidos
+            if (isNaN(n1) || isNaN(n2)) {
+                document.getElementById('resultado').innerHTML = "Por favor, digite as duas notas!";
+                document.getElementById('resultado').style.color = "red";
+                return;
+            \}
 
-function mostrarResultado() {
-    document.getElementById("pergunta").textContent = "Fim do Quiz!";
-    document.getElementById("respostas").innerHTML = `Você acertou \${pontuacao\} de \${questoes.length\} perguntas!`;
-\}
+            // Calculando a média
+            const media = (n1 + n2) / 2;
 
-carregarPergunta();$0
+            // Verificando aprovação (média 6.0 como exemplo)
+            if (media >= 6.0) {
+                document.getElementById('resultado').innerHTML = `Média: \${media.toFixed(1)\} - <span style="color: green;">Aprovado! 🎉</span>`;
+            \} else {
+                document.getElementById('resultado').innerHTML = `Média: \${media.toFixed(1)\} - <span style="color: red;">Reprovado. 📚</span>`;
+            \}
+        \}
+    </script>
+
+</body>
+</html>$0
