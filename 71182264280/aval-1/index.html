@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet">
+</head>
+<body>
+  <!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Estoque Interativo</title>
+    <style>
+        /* === ESTILIZAÇÃO CSS === */
+        :root {
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --success-color: #2ecc71;
+            --text-color: #333333;
+            --border-color: #e2e8f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding: 2rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1100px;
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        h1, h2 {
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+        }
+
+        h1 {
+            grid-column: 1 / -1;
+            text-align: center;
+            font-size: 2rem;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 1rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 0.95rem;
+            transition: border-color 0.2s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+
+        button {
+            width: 100%;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-size: 0.95rem;
+        }
+
+        .btn-add { background-color: var(--success-color); color: white; }
+        .btn-add:hover { background-color: #27ae60; }
+
+        .btn-update { background-color: var(--accent-color); color: white; }
+        .btn-update:hover { background-color: #2980b9; }
+
+        /* Estilização da Tabela de Produtos */
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th, td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: #f8fafc;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background-color: #f8fafc;
+        }
+
+        .empty-message {
+            text-align: center;
+            color: #718096;
+            padding: 2rem;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Simulador de Controle de Estoque</h1>
+
+    <!-- COLUNA DA ESQUERDA: FORMULÁRIOS -->
+    <div class="sidebar">
+        <!-- Cadastrar Produto -->
+        <div class="card">
+            <h2>Cadastrar Produto</h2>
+            <div class="form-group">
+                <label for="reg-codigo">Código</label>
+                <input type="number" id="reg-codigo" placeholder="Ex: 101">
+            </div>
+            <div class="form-group">
+                <label for="reg-descricao">Descrição</label>
+                <input type="text" id="reg-descricao" placeholder="Ex: Mouse Gamer">
+            </div>
+            <div class="form-group">
+                <label for="reg-qtd">Quantidade</label>
+                <input type="number" id="reg-qtd" placeholder="Ex: 10">
+            </div>
+            <div class="form-group">
+                <label for="reg-valor">Valor (R$)</label>
+                <input type="number" step="0.01" id="reg-valor" placeholder="Ex: 150.00">
+            </div>
+            <button class="btn-add" onclick="uiCadastrar()">Cadastrar Produto</button>
+        </div>
+
+        <!-- Alterar Valores / Quantidades -->
+        <div class="card">
+            <h2>Atualizar Produto</h2>
+            <div class="form-group">
+                <label for="edit-codigo">Código do Produto</label>
+                <input type="number" id="edit-codigo" placeholder="Código do produto a alterar">
+            </div>
+            <div class="form-group">
+                <label for="edit-valor">Novo Valor (Opcional)</label>
+                <input type="number" step="0.01" id="edit-valor" placeholder="Deixe em branco para manter">
+            </div>
+            <div class="form-group">
+                <label for="edit-qtd">Nova Quantidade (Opcional)</label>
+                <input type="number" id="edit-qtd" placeholder="Deixe em branco para manter">
+            </div>
+            <button class="btn-update" onclick="uiAtualizar()">Atualizar Produto</button>
+        </div>
+    </div>
+
+    <!-- COLUNA DA DIREITA: LISTAGEM -->
+    <div class="main-content">
+        <div class="card" style="height: 100%;">
+            <h2>Produtos Cadastrados</h2>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Descrição</th>
+                            <th>Quantidade</th>
+                            <th>Valor Unitário</th>
+                        </tr>
+                    </thead>
+                    <tbody id="lista-produtos">
+                        <!-- Os produtos inseridos vão aparecer aqui -->
+                    </tbody>
+                </table>
+                <div id="mensagem-vazia" class="empty-message">Nenhum produto cadastrado no estoque.</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- === LÓGICA JAVASCRIPT === -->
+<script>
+    const estoque = [];
+
+    // Função para renderizar a tabela atualizada na tela
+    function atualizarTabela() {
+        const tbody = document.getElementById('lista-produtos');
+        const msgVazia = document.getElementById('mensagem-vazia');
+        
+        tbody.innerHTML = '';
+
+        if (estoque.length === 0) {
+            msgVazia.style.display = 'block';
+            return;
+        }
+
+        msgVazia.style.display = 'none';
+
+        estoque.forEach(produto => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><strong>#${produto.codigo}</strong></td>
+                <td>${produto.descricao}</td>
+                <td>${produto.quantidade}</td>
+                <td>R$ ${produto.valor.toFixed(2)}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    // Ação do botão Cadastrar
+    function uiCadastrar() {
+        const codigo = document.getElementById('reg-codigo').value;
+        const descricao = document.getElementById('reg-descricao').value;
+        const qtd = document.getElementById('reg-qtd').value;
+        const valor = document.getElementById('reg-valor').value;
+
+        if (!codigo || !descricao || !qtd || !valor) {
+            alert("Por favor, preencha todos os campos para cadastrar.");
+            return;
+        }
+
+        const produtoExiste = estoque.find(p => p.codigo === parseInt(codigo));
+        if (produtoExiste) {
+            alert(`Erro: Já existe um produto com o código ${codigo}.`);
+            return;
+        }
+
+        estoque.push({
+            codigo: parseInt(codigo),
+            descricao: descricao,
+            quantidade: parseInt(qtd),
+            valor: parseFloat(valor)
+        });
+
+        // Limpa os campos
+        document.getElementById('reg-codigo').value = '';
+        document.getElementById('reg-descricao').value = '';
+        document.getElementById('reg-qtd').value = '';
+        document.getElementById('reg-valor').value = '';
+
+        atualizarTabela();
+    }
+
+    // Ação do botão Atualizar (Alterar valor e/ou quantidade)
+    function uiAtualizar() {
+        const codigo = parseInt(document.getElementById('edit-codigo').value);
+        const novoValor = document.getElementById('edit-valor').value;
+        const novaQtd = document.getElementById('edit-qtd').value;
+
+        if (!codigo) {
+            alert("Por favor, informe o código do produto que deseja alterar.");
+            return;
+        }
+
+        const produto = estoque.find(p => p.codigo === codigo);
+        if (!produto) {
+            alert(`Produto com o código ${codigo} não encontrado.`);
+            return;
+        }
+
+        let alterou = false;
+
+        // Se o usuário preencheu o valor, altera
+        if (novoValor !== '') {
+            produto.valor = parseFloat(novoValor);
+            alterou = true;
+        }
+
+        // Se o usuário preencheu a quantidade, altera
+        if (novaQtd !== '') {
+            produto.quantidade = parseInt(novaQtd);
+            alterou = true;
+        }
+
+        if (!alterou) {
+            alert("Informe um novo valor ou uma nova quantidade para atualizar.");
+            return;
+        }
+
+        // Limpa os campos de edição
+        document.getElementById('edit-codigo').value = '';
+        document.getElementById('edit-valor').value = '';
+        document.getElementById('edit-qtd').value = '';
+
+
+  <script src="script.js"></script>
+  
+</body>
+</html>
