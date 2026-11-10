@@ -1,0 +1,224 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciador de Tarefas</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f0f0;
+            margin: 0;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        input, select, button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        .tarefa {
+            background: #eeeeee;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 5px;
+        }
+
+        .concluida {
+            background: #d1fae5;
+        }
+
+        .acoes {
+            display: flex;
+            gap: 10px;
+        }
+
+        .acoes button {
+            flex: 1;
+        }
+
+        .excluir {
+            background: #dc2626;
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+<div class="container">
+
+    <h1>Gerenciador de Tarefas</h1>
+
+    <h3>Cadastrar nova tarefa</h3>
+
+    <input type="text" id="titulo"
+        placeholder="Digite o título da tarefa">
+
+    <select id="prioridade">
+        <option value="1">Alta</option>
+        <option value="2">Média</option>
+        <option value="3">Baixa</option>
+    </select>
+
+    <button onclick="cadastrarTarefa()">
+        Cadastrar tarefa
+    </button>
+
+    <h2>Lista de tarefas</h2>
+
+    <div id="listaTarefas"></div>
+
+</div>
+
+<script>
+
+    let tarefas = [];
+    let codigo = 1;
+
+    // Cadastrar tarefa
+    function cadastrarTarefa() {
+
+        let titulo = document.getElementById("titulo").value.trim();
+        let prioridade = Number(
+            document.getElementById("prioridade").value
+        );
+
+        if (titulo.length < 5) {
+            alert("O título deve ter no mínimo 5 caracteres!");
+            return;
+        }
+
+        if (prioridade < 1 || prioridade > 3) {
+            alert("Prioridade inválida!");
+            return;
+        }
+
+        let tarefa = {
+            codigo: codigo,
+            titulo: titulo,
+            prioridade: prioridade,
+            concluida: false
+        };
+
+        tarefas.push(tarefa);
+        codigo++;
+
+        document.getElementById("titulo").value = "";
+
+        listarTarefas();
+    }
+
+    // Listar tarefas
+    function listarTarefas() {
+
+        let lista = document.getElementById("listaTarefas");
+
+        lista.innerHTML = "";
+
+        tarefas.forEach(tarefa => {
+
+            let div = document.createElement("div");
+
+            div.className = tarefa.concluida
+                ? "tarefa concluida"
+                : "tarefa";
+
+            let prioridadeTexto = {
+                1: "Alta",
+                2: "Média",
+                3: "Baixa"
+            };
+
+            div.innerHTML = `
+                <h3>${tarefa.titulo}</h3>
+
+                <p>Código: ${tarefa.codigo}</p>
+
+                <p>Prioridade:
+                ${prioridadeTexto[tarefa.prioridade]}</p>
+
+                <p>Status:
+                ${tarefa.concluida ? "Concluída" : "Pendente"}</p>
+
+                <div class="acoes">
+
+                    <button onclick="concluirTarefa(${tarefa.codigo})">
+                        Concluir
+                    </button>
+
+                    <button onclick="alterarPrioridade(${tarefa.codigo})">
+                        Alterar prioridade
+                    </button>
+
+                </div>
+            `;
+
+            lista.appendChild(div);
+        });
+    }
+
+    // Concluir tarefa
+    function concluirTarefa(codigo) {
+
+        let tarefa = tarefas.find(t => t.codigo === codigo);
+
+        if (tarefa) {
+            tarefa.concluida = true;
+            listarTarefas();
+        }
+    }
+
+    // Alterar prioridade
+    function alterarPrioridade(codigo) {
+
+        let tarefa = tarefas.find(t => t.codigo === codigo);
+
+        let novaPrioridade = Number(
+            prompt("Digite a nova prioridade:\n1 - Alta\n2 - Média\n3 - Baixa")
+        );
+
+        if (![1, 2, 3].includes(novaPrioridade)) {
+            alert("Prioridade inválida! Digite 1, 2 ou 3.");
+            return;
+        }
+
+        tarefa.prioridade = novaPrioridade;
+
+        listarTarefas();
+    }
+
+</script>
+
+<script src="script.js"></script></body>
+</html>
