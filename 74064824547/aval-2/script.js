@@ -1,4 +1,4 @@
-// ===== Lógica do projeto (mesma estrutura da aula) =====
+
 const tarefas = [];
 let geradorDeCodigo = 0;
 
@@ -26,7 +26,7 @@ function cadastrarTarefa(titulo, prioridade) {
     codigo: geradorDeCodigo,
     titulo: titulo,
     prioridade: prioridade,
-    status: true // true = em andamento | false = concluída
+    status: true 
   });
 }
 
@@ -48,7 +48,7 @@ function alterarPrioridade(codigo, novaPrioridade) {
   tarefa.prioridade = novaPrioridade;
 }
 
-// ===== Interface =====
+
 const $ = (id) => document.getElementById(id);
 const nomesPrioridade = { 1: "Alta", 2: "Média", 3: "Baixa" };
 
@@ -86,7 +86,6 @@ function renderizar() {
     return;
   }
 
-  // Mais prioritárias primeiro; concluídas vão para o fim
   const ordenadas = [...todas].sort((a, b) =>
     (b.status - a.status) || (a.prioridade - b.prioridade) || (a.codigo - b.codigo));
 
