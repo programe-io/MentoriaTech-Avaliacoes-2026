@@ -1,7 +1,7 @@
 'use strict';
 
 document.addEventListener("DOMContentLoaded", () => {
-  // Gerador de ID único e seguro
+  // Gerador de ID seguro
   const gerarId = () => 
     typeof crypto !== "undefined" && crypto.randomUUID 
       ? crypto.randomUUID() 
@@ -20,10 +20,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // 2. FUNÇÃO DE RENDERIZAÇÃO (Dados -> DOM)
   function render() {
-    // Passo A: Limpar o container de forma otimizada
+    // Passo A: Limpar o container de forma segura
     containerLista.replaceChildren();
 
-    // Tratamento de lista vazia
+    // Tratamento caso a lista esteja vazia
     if (tarefas.length === 0) {
       const liVazio = document.createElement("li");
       liVazio.className = "vazio";
@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // Passo B, C e D: Percorrer dados, gerar HTML seguro e inserir no DOM
+    // Passo B, C e D: Percorrer os dados, gerar HTML seguro e inserir no DOM
     tarefas.forEach(tarefa => {
       const li = document.createElement("li");
       li.className = `item-tarefa ${tarefa.concluida ? "concluida" : ""}`;
@@ -76,7 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
     render();
   }
 
-  // Evento de submissão
+  // Evento de submissão do formulário
   formTarefa.addEventListener("submit", (e) => {
     e.preventDefault();
     const valor = inputTarefa.value.trim();
@@ -88,6 +88,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Renderização inicial
+  // Renderização inicial ao carregar a página
   render();
 });
