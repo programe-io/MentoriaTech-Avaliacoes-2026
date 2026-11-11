@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Código JavaScript</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <style>body{margin:0;background:#0d1117}pre{margin:0}code.hljs{padding:1.5rem;min-height:100vh;box-sizing:border-box}</style>
+</head>
+<body>
+  <pre><code class="language-javascript">
+let produtos = [];
+let proximoCodigo = 1;
+
+// Cadastrar produto
+function cadastrarProduto(nome, quantidade, valor) {
+    if (quantidade &lt; 0 || valor &lt; 0) {
+        throw new Error("Valores devem ser maiores ou iguais a zero");
+    }
+
+    const produto = {
+        codigo: proximoCodigo++,
+        nome: nome,
+        quantidade: quantidade,
+        valor: valor
+    };
+
+    produtos.push(produto);
+    console.log("Produto cadastrado com sucesso!");
+}
+
+// Listar produtos
+function listarProdutos() {
+    console.log("\n===== LISTA DE PRODUTOS =====");
+
+    produtos.forEach(produto =&gt; {
+        console.log(
+            `Código: ${produto.codigo} | ` +
+            `Nome: ${produto.nome} | ` +
+            `Quantidade: ${produto.quantidade} | ` +
+            `Valor: R$ ${produto.valor.toFixed(2)}`
+        );
+    });
+}
+
+// Atualizar quantidade
+function atualizarQuantidade(codigoProduto, novaQuantidade) {
+    if (novaQuantidade &lt; 0) {
+        throw new Error("Valor deve ser maior ou igual a zero");
+    }
+
+    const produto = produtos.find(
+        prod =&gt; prod.codigo === codigoProduto
+    );
+
+    if (produto) {
+        produto.quantidade = novaQuantidade;
+        console.log("Quantidade atualizada!");
+    } else {
+        throw new Error("Produto não encontrado");
+    }
+}
+
+// Atualizar valor
+function atualizarValor(codigoProduto, novoValor) {
+    if (novoValor &lt; 0) {
+        throw new Error("Valor deve ser maior ou igual a zero");
+    }
+
+    const produto = produtos.find(
+        prod =&gt; prod.codigo === codigoProduto
+    );
+
+    if (produto) {
+        produto.valor = novoValor;
+        console.log("Valor atualizado!");
+    } else {
+        throw new Error("Produto não encontrado");
+    }
+}
+
+// Excluir produto
+function excluirProduto(codigoProduto) {
+    const indice = produtos.findIndex(
+        prod =&gt; prod.codigo === codigoProduto
+    );
+
+    if (indice !== -1) {
+        produtos.splice(indice, 1);
+        console.log("Produto excluído com sucesso!");
+    } else {
+        throw new Error("Produto não encontrado");
+    }
+}
+
+// ==============================
+// TESTANDO O SISTEMA
+// ==============================
+
+listarProdutos();
+
+cadastrarProduto("Cadeira Gamer", 12, 699.00);
+cadastrarProduto("Mouse LED", 30, 59.90);
+
+listarProdutos();
+
+atualizarValor(1, 97.00);
+
+listarProdutos();
+
+atualizarQuantidade(1, 20);
+
+listarProdutos();
+
+excluirProduto(2);
+
+listarProdutos();
+</code></pre>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+</body>
+</html>
