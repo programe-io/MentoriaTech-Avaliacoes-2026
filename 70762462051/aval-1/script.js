@@ -1,0 +1,206 @@
+
+// SISTEMA DE CONTROLE DE ESTOQUE
+
+// Lista de produtos
+const produtos = [];
+
+// 1. Cadastrar produto
+function cadastrarProduto(codigo, nome, quantidade, valor) {
+    if (quantidade < 0 || valor < 0) {
+        throw new Error("Quantidade e valor devem ser positivos");
+    }
+
+    const existe = produtos.find(prod => prod.codigo === codigo);
+
+    if (existe) {
+        throw new Error("Produto já cadastrado");
+    }
+
+    const produto = {
+        codigo: codigo,
+        nome: nome,
+        quantidade: quantidade,
+        valor: valor
+    };
+
+    produtos.push(produto);
+
+    console.log("Produto cadastrado com sucesso!");
+}
+
+// 2. Listar produtos
+function listarProdutos() {
+    console.log("\n===== LISTA DE PRODUTOS =====");
+
+    if (produtos.length === 0) {
+        console.log("Estoque vazio!");
+        return;
+    }
+
+    produtos.forEach(produto => {
+        console.log(
+            `Código: ${produto.codigo} | ` +
+            `Nome: ${produto.nome} | ` +
+            `Quantidade: ${produto.quantidade} | ` +
+            `Valor: R$ ${produto.valor.toFixed(2)}`
+        );
+    });
+}
+
+// 3. Atualizar valor do produto
+function atualizarValor(codigoProduto, novoValor) {
+    if (novoValor < 0) {
+        throw new Error("O valor não pode ser negativo");
+    }
+
+    const produto = produtos.find(
+        prod => prod.codigo === codigoProduto
+    );
+
+    if (produto) {
+        produto.valor = novoValor;
+        console.log("Valor atualizado com sucesso!");
+    } else {
+        throw new Error("Produto não encontrado");
+    }
+}
+
+// 4. Atualizar quantidade do produto
+function atualizarQuantidade(codigoProduto, novaQuantidade) {
+    if (novaQuantidade < 1) {
+        throw new Error("Quantidade deve ser maior que zero");
+    }
+
+    const produto = produtos.find(
+        prod => prod.codigo === codigoProduto
+    );
+
+    if (produto) {
+        produto.quantidade += novaQuantidade;
+        console.log("Quantidade atualizada com sucesso!");
+    } else {
+        throw new Error("Produto não encontrado");
+    }
+}
+
+// 5. Consultar produto pelo código
+function consultarProduto(codigoProduto) {
+    const produto = produtos.find(
+        prod => prod.codigo === codigoProduto
+    );
+
+    if (produto) {
+        console.log("\n===== PRODUTO ENCONTRADO =====");
+        console.log(produto);
+        return produto;
+    } else {
+        console.log("Produto não encontrado!");
+        return null;
+    }
+}
+
+// 6. Remover produto
+function removerProduto(codigoProduto) {
+    const indice = produtos.findIndex(
+        prod => prod.codigo === codigoProduto
+    );
+
+    if (indice !== -1) {
+        produtos.splice(indice, 1);
+        console.log("Produto removido com sucesso!");
+    } else {
+        throw new Error("Produto não encontrado");
+    }
+}
+
+// 7. Registrar saída de produtos
+function retirarEstoque(codigoProduto, quantidade) {
+    if (quantidade <= 0) {
+        throw new Error("Informe uma quantidade válida");
+    }
+
+    const produto = produtos.find(
+        prod => prod.codigo === codigoProduto
+    );
+
+    if (!produto) {
+        throw new Error("Produto não encontrado");
+    }
+
+    if (produto.quantidade < quantidade) {
+        throw new Error("Estoque insuficiente!");
+    }
+
+    produto.quantidade -= quantidade;
+
+    console.log("Saída registrada com sucesso!");
+}
+
+// 8. Verificar produtos com estoque baixo
+function verificarEstoqueBaixo(limite = 5) {
+    console.log("\n===== ESTOQUE BAIXO =====");
+
+    const baixo = produtos.filter(
+        prod => prod.quantidade <= limite
+    );
+
+    if (baixo.length === 0) {
+        console.log("Nenhum produto com estoque baixo.");
+        return;
+    }
+
+    baixo.forEach(produto => {
+        console.log(
+            `${produto.nome} - Quantidade: ${produto.quantidade}`
+        );
+    });
+}
+
+// 9. Calcular valor total do estoque
+function calcularValorEstoque() {
+    const total = produtos.reduce(
+        (soma, produto) =>
+            soma + (produto.quantidade * produto.valor),
+        0
+    );
+
+    console.log(
+        `\nValor total do estoque: R$ ${total.toFixed(2)}`
+    );
+
+    return total;
+}
+
+// =================================
+// TESTANDO O SISTEMA DE ESTOQUE
+// =================================
+
+listarProdutos();
+
+cadastrarProduto("1", "Cadeira Gamer", 12, 699.00);
+cadastrarProduto("2", "Mouse Logitech", 38, 99.00);
+cadastrarProduto("3", "Teclado Mecânico", 15, 250.00);
+
+listarProdutos();
+
+atualizarValor("2", 97.00);
+
+listarProdutos();
+
+atualizarQuantidade("1", 3);
+
+listarProdutos();
+
+consultarProduto("3");
+
+retirarEstoque("2", 5);
+
+listarProdutos();
+
+verificarEstoqueBaixo(10);
+
+calcularValorEstoque();
+
+removerProduto("3");
+
+listarProdutos();
