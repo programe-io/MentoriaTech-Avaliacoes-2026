@@ -1,0 +1,737 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EducaTech | Plataforma de Ensino</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background: #f3f5fb;
+    color: #252b42;
+}
+
+header {
+    background: #252b55;
+    color: white;
+    padding: 20px 35px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.logo span {
+    color: #61d6c4;
+}
+
+header button {
+    background: #61d6c4;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.layout {
+    display: flex;
+    min-height: calc(100vh - 70px);
+}
+
+aside {
+    width: 230px;
+    background: #fff;
+    padding: 25px 15px;
+    box-shadow: 2px 0 10px #ddd;
+}
+
+aside h3 {
+    margin: 10px;
+    color: #777;
+    font-size: 13px;
+}
+
+.menu {
+    display: block;
+    width: 100%;
+    text-align: left;
+    border: none;
+    background: transparent;
+    padding: 14px;
+    margin: 4px 0;
+    border-radius: 9px;
+    cursor: pointer;
+    color: #444;
+    font-size: 15px;
+}
+
+.menu:hover, .menu.active {
+    background: #e9f8f6;
+    color: #188c80;
+    font-weight: bold;
+}
+
+main {
+    flex: 1;
+    padding: 30px;
+    min-width: 0;
+}
+
+section {
+    display: none;
+}
+
+section.active {
+    display: block;
+}
+
+h1 {
+    margin-bottom: 10px;
+    color: #252b55;
+}
+
+.subtitle {
+    color: #777;
+    margin-bottom: 25px;
+}
+
+.welcome {
+    background: linear-gradient(120deg, #252b55, #5267b8);
+    color: white;
+    border-radius: 15px;
+    padding: 30px;
+    margin-bottom: 25px;
+}
+
+.welcome h2 {
+    margin-bottom: 12px;
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin-bottom: 30px;
+}
+
+.card {
+    background: white;
+    padding: 22px;
+    border-radius: 13px;
+    box-shadow: 0 3px 12px #0000000a;
+    margin-bottom: 18px;
+}
+
+.stat-number {
+    font-size: 29px;
+    font-weight: bold;
+    color: #5267b8;
+    margin-top: 12px;
+}
+
+.courses {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.course {
+    background: white;
+    border-radius: 13px;
+    overflow: hidden;
+    box-shadow: 0 3px 12px #0000000a;
+}
+
+.course-banner {
+    height: 115px;
+    display: grid;
+    place-items: center;
+    font-size: 42px;
+    background: #e5eaff;
+}
+
+.course-content {
+    padding: 18px;
+}
+
+.course-content h3 {
+    margin-bottom: 10px;
+}
+
+.course-content p {
+    color: #777;
+    font-size: 14px;
+    margin-bottom: 12px;
+}
+
+button.action {
+    background: #5267b8;
+    color: white;
+    border: none;
+    padding: 11px 16px;
+    border-radius: 7px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+button.action:hover {
+    background: #384d9b;
+}
+
+.progress {
+    background: #e7e9ef;
+    height: 9px;
+    border-radius: 10px;
+    margin: 12px 0;
+    overflow: hidden;
+}
+
+.progress div {
+    background: #42bda8;
+    height: 100%;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+td, th {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    text-align: left;
+}
+
+th {
+    background: #e9edfa;
+}
+
+.quiz-option {
+    display: block;
+    padding: 13px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin: 10px 0;
+    cursor: pointer;
+}
+
+.quiz-option:hover {
+    background: #edf3ff;
+}
+
+input {
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 7px;
+    width: 100%;
+    margin: 8px 0;
+}
+
+.certificate {
+    border: 5px double #c6a84b;
+    padding: 35px;
+    text-align: center;
+    background: #fffdf5;
+    margin-top: 20px;
+}
+
+.certificate h2 {
+    color: #a38632;
+    margin: 20px;
+}
+
+footer {
+    padding: 20px;
+    text-align: center;
+    color: #888;
+}
+
+#login {
+    position: fixed;
+    inset: 0;
+    background: #252b55;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+}
+
+.login-box {
+    background: white;
+    width: 350px;
+    max-width: 90%;
+    padding: 30px;
+    border-radius: 15px;
+    text-align: center;
+}
+
+@media(max-width: 750px) {
+    .layout {
+        flex-direction: column;
+    }
+
+    aside {
+        width: 100%;
+        display: flex;
+        overflow-x: auto;
+        padding: 8px;
+    }
+
+    aside h3 {
+        display: none;
+    }
+
+    .menu {
+        min-width: max-content;
+        width: auto;
+    }
+
+    main {
+        padding: 18px;
+    }
+
+    .stats {
+        grid-template-columns: 1fr;
+    }
+
+    header {
+        padding: 15px;
+    }
+
+    table {
+        font-size: 12px;
+    }
+}
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+<header>
+    <div class="logo">Educa<span>Tech</span> 🎓</div>
+    <button onclick="abrirLogin()">Área do aluno</button>
+</header>
+
+<div class="layout">
+
+<aside>
+    <h3>MENU PRINCIPAL</h3>
+    <button class="menu active" onclick="ir('inicio',this)">🏠 Início</button>
+    <button class="menu" onclick="ir('cursos',this)">📚 Meus cursos</button>
+    <button class="menu" onclick="ir('aulas',this)">🎬 Aulas</button>
+    <button class="menu" onclick="ir('atividades',this)">📝 Atividades</button>
+    <button class="menu" onclick="ir('notas',this)">📊 Minhas notas</button>
+    <button class="menu" onclick="ir('certificados',this)">🏆 Certificados</button>
+    <button class="menu" onclick="ir('perfil',this)">👤 Meu perfil</button>
+</aside>
+
+<main>
+
+<!-- INÍCIO -->
+<section id="inicio" class="active">
+
+<div class="welcome">
+    <h2>Olá, estudante! 👋</h2>
+    <p>Seja bem-vindo à EducaTech. Continue aprendendo e conquiste seus objetivos!</p>
+</div>
+
+<div class="stats">
+    <div class="card">
+        <p>📚 Cursos matriculados</p>
+        <div class="stat-number">4</div>
+    </div>
+
+    <div class="card">
+        <p>🎯 Cursos concluídos</p>
+        <div class="stat-number" id="concluidos">1</div>
+    </div>
+
+    <div class="card">
+        <p>⭐ Média geral</p>
+        <div class="stat-number">8,5</div>
+    </div>
+</div>
+
+<h2>Continue seus estudos</h2>
+
+<div class="card">
+    <h3>Desenvolvimento Web</h3>
+    <p>Seu progresso neste curso:</p>
+    <div class="progress"><div style="width:65%"></div></div>
+    <p>65% concluído</p>
+    <button class="action" onclick="ir('aulas',null)">Continuar estudando</button>
+</div>
+
+<div class="card">
+    <h3>📅 Próximas atividades</h3>
+    <p>Introdução ao HTML — 15/11/2026</p>
+    <p>Questionário de JavaScript — 18/11/2026</p>
+</div>
+
+</section>
+
+<!-- CURSOS -->
+<section id="cursos">
+
+<h1>Catálogo de cursos</h1>
+<p class="subtitle">Explore nossos cursos e desenvolva novas habilidades.</p>
+
+<div class="courses">
+
+<div class="course">
+<div class="course-banner">💻</div>
+<div class="course-content">
+<h3>Desenvolvimento Web</h3>
+<p>HTML, CSS, JavaScript e criação de sites.</p>
+<p>Professor: Carlos Mendes</p>
+<button class="action" onclick="selecionarCurso('Desenvolvimento Web')">Acessar curso</button>
+</div>
+</div>
+
+<div class="course">
+<div class="course-banner">🐍</div>
+<div class="course-content">
+<h3>Programação Python</h3>
+<p>Lógica, variáveis, funções e estruturas.</p>
+<p>Professora: Ana Souza</p>
+<button class="action" onclick="selecionarCurso('Programação Python')">Acessar curso</button>
+</div>
+</div>
+
+<div class="course">
+<div class="course-banner">📱</div>
+<div class="course-content">
+<h3>Desenvolvimento Mobile</h3>
+<p>Aplicativos para Android e iOS com Flutter.</p>
+<p>Professor: Pedro Lima</p>
+<button class="action" onclick="selecionarCurso('Desenvolvimento Mobile')">Acessar curso</button>
+</div>
+</div>
+
+<div class="course">
+<div class="course-banner">🔐</div>
+<div class="course-content">
+<h3>Segurança da Informação</h3>
+<p>Redes, proteção de dados e cibersegurança.</p>
+<p>Professora: Marina Alves</p>
+<button class="action" onclick="selecionarCurso('Segurança da Informação')">Acessar curso</button>
+</div>
+</div>
+
+</div>
+</section>
+
+<!-- AULAS -->
+<section id="aulas">
+
+<h1>Central de aulas</h1>
+<p class="subtitle">Conteúdos disponíveis para estudar.</p>
+
+<div class="card">
+<h3>📘 Aula 01 — Introdução à programação</h3>
+<p>Conheça os conceitos fundamentais da programação.</p>
+<button class="action" onclick="verAula('Introdução à programação')">Assistir aula</button>
+</div>
+
+<div class="card">
+<h3>📘 Aula 02 — Variáveis e operadores</h3>
+<p>Aprenda a armazenar informações e realizar operações.</p>
+<button class="action" onclick="verAula('Variáveis e operadores')">Assistir aula</button>
+</div>
+
+<div class="card">
+<h3>📘 Aula 03 — Estruturas de decisão</h3>
+<p>Conheça as estruturas if, else e switch.</p>
+<button class="action" onclick="verAula('Estruturas de decisão')">Assistir aula</button>
+</div>
+
+<div class="card">
+<h3>📘 Aula 04 — Laços de repetição</h3>
+<p>Aprenda a utilizar for, while e do-while.</p>
+<button class="action" onclick="verAula('Laços de repetição')">Assistir aula</button>
+</div>
+
+<div class="card" id="conteudoAula" style="display:none">
+<h2 id="tituloAula"></h2>
+<p id="textoAula"></p>
+<button class="action" onclick="marcarConcluida()">Marcar como concluída</button>
+</div>
+
+</section>
+
+<!-- ATIVIDADES -->
+<section id="atividades">
+
+<h1>Atividades e avaliações</h1>
+<p class="subtitle">Teste seus conhecimentos.</p>
+
+<div class="card">
+<h3>📝 Questionário de programação</h3>
+<p>Responda às questões abaixo:</p>
+
+<form id="quiz">
+
+<p><strong>1. Qual linguagem é utilizada para estruturar páginas web?</strong></p>
+
+<label class="quiz-option">
+<input type="radio" name="q1" value="a"> Python
+</label>
+
+<label class="quiz-option">
+<input type="radio" name="q1" value="b"> HTML
+</label>
+
+<label class="quiz-option">
+<input type="radio" name="q1" value="c"> Java
+</label>
+
+<p><strong>2. Qual estrutura executa código enquanto uma condição é verdadeira?</strong></p>
+
+<label class="quiz-option">
+<input type="radio" name="q2" value="a"> while
+</label>
+
+<label class="quiz-option">
+<input type="radio" name="q2" value="b"> print
+</label>
+
+<label class="quiz-option">
+<input type="radio" name="q2" value="c"> class
+</label>
+
+<p><strong>3. Qual tecnologia é responsável pela estilização de páginas?</strong></p>
+
+<label class="quiz-option">
+<input type="radio" name="q3" value="a"> SQL
+</label>
+
+<label class="quiz-option">
+<input type="radio" name="q3" value="b"> CSS
+</label>
+
+<label class="quiz-option">
+<input type="radio" name="q3" value="c"> PHP
+</label>
+
+<button type="submit" class="action">Enviar respostas</button>
+</form>
+
+<h3 id="resultado"></h3>
+</div>
+
+</section>
+
+<!-- NOTAS -->
+<section id="notas">
+
+<h1>Boletim acadêmico</h1>
+<p class="subtitle">Acompanhe seu desempenho.</p>
+
+<table>
+<tr>
+<th>Curso</th>
+<th>Nota</th>
+<th>Situação</th>
+</tr>
+<tr>
+<td>Desenvolvimento Web</td>
+<td>9,0</td>
+<td>Concluído</td>
+</tr>
+<tr>
+<td>Programação Python</td>
+<td>8,5</td>
+<td>Em andamento</td>
+</tr>
+<tr>
+<td>Desenvolvimento Mobile</td>
+<td>8,0</td>
+<td>Em andamento</td>
+</tr>
+<tr>
+<td>Segurança da Informação</td>
+<td>8,5</td>
+<td>Em andamento</td>
+</tr>
+</table>
+
+</section>
+
+<!-- CERTIFICADOS -->
+<section id="certificados">
+
+<h1>Meus certificados</h1>
+<p class="subtitle">Certificados demonstrativos da plataforma.</p>
+
+<div class="certificate">
+<p>EDUCATECH — PLATAFORMA DE ENSINO</p>
+<h2>Certificado de Conclusão</h2>
+<p>Certificamos que</p>
+<h3>Estudante Exemplo</h3>
+<p>concluiu o curso de</p>
+<h2>Introdução à Programação</h2>
+<p>Com carga horária fictícia de 40 horas.</p>
+<br>
+<p>11 de novembro de 2026</p>
+<p>Coordenação Acadêmica — EducaTech</p>
+<button class="action" onclick="window.print()">Imprimir certificado</button>
+</div>
+
+</section>
+
+<!-- PERFIL -->
+<section id="perfil">
+
+<h1>Meu perfil</h1>
+<p class="subtitle">Informações do estudante.</p>
+
+<div class="card">
+<h3>👤 Dados pessoais</h3>
+<p>Nome: Estudante Exemplo</p>
+<p>E-mail: aluno@educatech.com</p>
+<p>Matrícula: 20260001</p>
+<p>Modalidade: Ensino online</p>
+<p>Status: Ativo</p>
+</div>
+
+<div class="card">
+<h3>⚙️ Preferências</h3>
+<p>Notificações: Ativadas</p>
+<p>Idioma: Português (Brasil)</p>
+<p>Plano: Gratuito demonstrativo</p>
+</div>
+
+</section>
+
+</main>
+</div>
+
+<footer>
+© 2026 EducaTech — Plataforma fictícia de ensino.
+Todos os direitos reservados.
+</footer>
+
+<!-- LOGIN -->
+<div id="login">
+<div class="login-box">
+<h2>Entrar na EducaTech</h2>
+<p>Acesso demonstrativo do aluno</p>
+<input type="email" id="email" placeholder="Seu e-mail">
+<input type="password" id="senha" placeholder="Sua senha">
+<button class="action" onclick="entrar()">Entrar</button>
+<button class="action" onclick="fecharLogin()">Voltar</button>
+<p id="mensagemLogin"></p>
+</div>
+</div>
+
+<script>
+
+function ir(pagina, botao) {
+    document.querySelectorAll('main section').forEach(s => {
+        s.classList.remove('active');
+    });
+
+    document.getElementById(pagina).classList.add('active');
+
+    document.querySelectorAll('.menu').forEach(b => {
+        b.classList.remove('active');
+    });
+
+    if(botao) botao.classList.add('active');
+    else {
+        const botoes = document.querySelectorAll('.menu');
+        const paginas = ['inicio','cursos','aulas','atividades','notas','certificados','perfil'];
+        botoes[paginas.indexOf(pagina)].classList.add('active');
+    }
+}
+
+function selecionarCurso(nome) {
+    alert('Você acessou o curso: ' + nome);
+    ir('aulas', null);
+}
+
+function verAula(nome) {
+    document.getElementById('conteudoAula').style.display = 'block';
+    document.getElementById('tituloAula').innerText = nome;
+    document.getElementById('textoAula').innerText =
+        'Bem-vindo a esta aula! Aqui você estudará os principais conceitos de ' +
+        nome + '. Leia o conteúdo, pratique os exemplos e teste seus conhecimentos.';
+    document.getElementById('conteudoAula').scrollIntoView({behavior:'smooth'});
+}
+
+function marcarConcluida() {
+    alert('Aula marcada como concluída!');
+}
+
+document.getElementById('quiz').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const respostas = {
+        q1: 'b',
+        q2: 'a',
+        q3: 'b'
+    };
+
+    let pontos = 0;
+
+    for(let pergunta in respostas) {
+        const marcada = document.querySelector(
+            'input[name="' + pergunta + '"]:checked'
+        );
+
+        if(marcada && marcada.value === respostas[pergunta]) {
+            pontos++;
+        }
+    }
+
+    document.getElementById('resultado').innerText =
+        'Você acertou ' + pontos + ' de 3 questões! Nota: ' +
+        (pontos * 10 / 3).toFixed(1);
+});
+
+function abrirLogin() {
+    document.getElementById('login').style.display = 'flex';
+}
+
+function fecharLogin() {
+    document.getElementById('login').style.display = 'none';
+}
+
+function entrar() {
+    const email = document.getElementById('email').value;
+    const senha = document.getElementById('senha').value;
+
+    if(email && senha.length >= 4) {
+        document.getElementById('mensagemLogin').innerText =
+            'Acesso demonstrativo realizado com sucesso!';
+        document.getElementById('mensagemLogin').style.color = 'green';
+    } else {
+        document.getElementById('mensagemLogin').innerText =
+            'Preencha o e-mail e uma senha com pelo menos 4 caracteres.';
+        document.getElementById('mensagemLogin').style.color = 'red';
+    }
+}
+
+</script>
+
+</body>
+</html>
