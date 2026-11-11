@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistema de Estoque</title>
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background: #f1f4f9;
+    padding: 20px;
+    color: #263238;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 20px auto;
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px #00000012;
+}
+
+h1 {
+    text-align: center;
+    color: #173b67;
+    margin-bottom: 25px;
+}
+
+.resumo {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.card {
+    background: #e8eff9;
+    padding: 18px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.card h3 {
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.card p {
+    font-size: 25px;
+    font-weight: bold;
+    color: #173b67;
+}
+
+form {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr auto;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+input, button {
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid #ccd3dc;
+    font-size: 14px;
+}
+
+button {
+    border: none;
+    cursor: pointer;
+    color: white;
+    background: #176b45;
+}
+
+button:hover {
+    opacity: 0.85;
+}
+
+.pesquisa {
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+.tabela {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 550px;
+}
+
+th, td {
+    padding: 13px;
+    border-bottom: 1px solid #e1e5eb;
+    text-align: left;
+}
+
+th {
+    background: #173b67;
+    color: white;
+}
+
+.acoes {
+    display: flex;
+    gap: 6px;
+}
+
+.editar {
+    background: #d99013;
+}
+
+.excluir {
+    background: #c62828;
+}
+
+.vazio {
+    text-align: center;
+    padding: 25px;
+}
+
+@media (max-width: 700px) {
+    form {
+        grid-template-columns: 1fr;
+    }
+
+    .resumo {
+        grid-template-columns: 1fr;
+    }
+
+    .container {
+        padding: 15px;
+    }
+}
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+<div class="container">
+    <h1>Sistema de Estoque</h1>
+
+    <div class="resumo">
+        <div class="card">
+            <h3>Produtos cadastrados</h3>
+            <p id="totalProdutos">0</p>
+        </div>
+        <div class="card">
+            <h3>Unidades em estoque</h3>
+            <p id="totalUnidades">0</p>
+        </div>
+        <div class="card">
+            <h3>Produtos sem estoque</h3>
+            <p id="semEstoque">0</p>
+        </div>
+    </div>
+
+    <form id="formEstoque">
+        <input type="text" id="codigo" placeholder="Código" required>
+        <input type="text" id="descricao" placeholder="Descrição do produto" required>
+        <input type="number" id="quantidade" placeholder="Quantidade" min="0" step="1" required>
+        <button type="submit" id="botaoSalvar">Cadastrar</button>
+    </form>
+
+    <input type="text" id="pesquisa" class="pesquisa" placeholder="Pesquisar por código ou descrição">
+
+    <div class="tabela">
+        <table>
+            <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Descrição</th>
+                    <th>Quantidade</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="listaProdutos"></tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+const form = document.getElementById("formEstoque");
+const codigo = document.getElementById("codigo");
+const descricao = document.getElementById("descricao");
+const quantidade = document.getElementById("quantidade");
+const pesquisa = document.getElementById("pesquisa");
+const lista = document.getElementById("listaProdutos");
+const botaoSalvar = document.getElementById("botaoSalvar");
+
+let produtos = JSON.parse(localStorage.getItem("estoqueProdutos")) || [];
+let codigoEditando = null;
+
+function salvarDados() {
+    localStorage.setItem("estoqueProdutos", JSON.stringify(produtos));
+}
+
+function atualizarResumo() {
+    document.getElementById("totalProdutos").textContent = produtos.length;
+    document.getElementById("totalUnidades").textContent =
+        produtos.reduce((total, produto) => total + produto.quantidade, 0);
+    document.getElementById("semEstoque").textContent =
+        produtos.filter(produto => produto.quantidade === 0).length;
+}
+
+function renderizarProdutos() {
+    const termo = pesquisa.value.toLowerCase();
+
+    const filtrados = produtos.filter(produto =>
+        produto.codigo.toLowerCase().includes(termo) ||
+        produto.descricao.toLowerCase().includes(termo)
+    );
+
+    lista.replaceChildren();
+
+    if (filtrados.length === 0) {
+        const linha = document.createElement("tr");
+        const celula = document.createElement("td");
+        celula.colSpan = 4;
+        celula.className = "vazio";
+        celula.textContent = "Nenhum produto encontrado";
+        linha.appendChild(celula);
+        lista.appendChild(linha);
+    }
+
+    filtrados.forEach(produto => {
+        const linha = document.createElement("tr");
+
+        [produto.codigo, produto.descricao, produto.quantidade].forEach(valor => {
+            const celula = document.createElement("td");
+            celula.textContent = valor;
+            linha.appendChild(celula);
+        });
+
+        const celulaAcoes = document.createElement("td");
+        const acoes = document.createElement("div");
+        acoes.className = "acoes";
+
+        const editar = document.createElement("button");
+        editar.textContent = "Editar";
+        editar.className = "editar";
+        editar.addEventListener("click", () => editarProduto(produto.codigo));
+
+        const excluir = document.createElement("button");
+        excluir.textContent = "Excluir";
+        excluir.className = "excluir";
+        excluir.addEventListener("click", () => excluirProduto(produto.codigo));
+
+        acoes.append(editar, excluir);
+        celulaAcoes.appendChild(acoes);
+        linha.appendChild(celulaAcoes);
+        lista.appendChild(linha);
+    });
+
+    atualizarResumo();
+}
+
+form.addEventListener("submit", function(evento) {
+    evento.preventDefault();
+
+    const novoCodigo = codigo.value.trim();
+    const novaDescricao = descricao.value.trim();
+    const novaQuantidade = Number(quantidade.value);
+
+    if (!novoCodigo || !novaDescricao || !Number.isInteger(novaQuantidade) || novaQuantidade < 0) {
+        alert("Preencha os campos corretamente.");
+        return;
+    }
+
+    const duplicado = produtos.some(produto =>
+        produto.codigo.toLowerCase() === novoCodigo.toLowerCase() &&
+        produto.codigo !== codigoEditando
+    );
+
+    if (duplicado) {
+        alert("Já existe um produto com esse código.");
+        return;
+    }
+
+    if (codigoEditando !== null) {
+        produtos = produtos.map(produto =>
+            produto.codigo === codigoEditando
+                ? { codigo: novoCodigo, descricao: novaDescricao, quantidade: novaQuantidade }
+                : produto
+        );
+        codigoEditando = null;
+        botaoSalvar.textContent = "Cadastrar";
+    } else {
+        produtos.push({
+            codigo: novoCodigo,
+            descricao: novaDescricao,
+            quantidade: novaQuantidade
+        });
+    }
+
+    salvarDados();
+    form.reset();
+    renderizarProdutos();
+});
+
+function editarProduto(codigoProduto) {
+    const produto = produtos.find(item => item.codigo === codigoProduto);
+
+    if (!produto) return;
+
+    codigoEditando = produto.codigo;
+    codigo.value = produto.codigo;
+    descricao.value = produto.descricao;
+    quantidade.value = produto.quantidade;
+    botaoSalvar.textContent = "Salvar edição";
+    codigo.focus();
+}
+
+function excluirProduto(codigoProduto) {
+    if (!confirm("Deseja excluir este produto?")) return;
+
+    produtos = produtos.filter(produto => produto.codigo !== codigoProduto);
+
+    if (codigoEditando === codigoProduto) {
+        codigoEditando = null;
+        form.reset();
+        botaoSalvar.textContent = "Cadastrar";
+    }
+
+    salvarDados();
+    renderizarProdutos();
+}
+
+pesquisa.addEventListener("input", renderizarProdutos);
+
+renderizarProdutos();
+</script>
+
+<script src="script.js"></script></body>
+</html>
