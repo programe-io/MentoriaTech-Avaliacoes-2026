@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Código JavaScript</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <style>body{margin:0;background:#0d1117}pre{margin:0}code.hljs{padding:1.5rem;min-height:100vh;box-sizing:border-box}</style>
+</head>
+<body>
+  <pre><code class="language-javascript">
+// ==========================================
+// SISTEMA DE GERENCIAMENTO DE ESTOQUE
+// ==========================================
+
+// Lista de produtos
+let produtos = [];
+
+// ==========================================
+// 1. VALIDAR PRODUTO
+// ==========================================
+
+function validarProduto(descricao, quantidade, valor) {
+
+    if (descricao.length &lt; 5) {
+        throw new Error("Descrição deve ter no mínimo cinco caracteres");
+    }
+
+    if (quantidade &lt; 0) {
+        throw new Error("Quantidade não pode ser negativa");
+    }
+
+    if (valor &lt; 0) {
+        throw new Error("Valor deve ser maior ou igual a zero");
+    }
+}
+
+// ==========================================
+// 2. CADASTRAR PRODUTO
+// ==========================================
+
+function cadastrarProduto(descricao, quantidade, valor) {
+
+    validarProduto(descricao, quantidade, valor);
+
+    let novoProduto = {
+        codigo: produtos.length &gt; 0
+            ? Math.max(...produtos.map(p =&gt; p.codigo)) + 1
+            : 1,
+        descricao: descricao,
+        quantidade: quantidade,
+        valor: valor
+    };
+
+    produtos.push(novoProduto);
+
+    console.log("Produto cadastrado com sucesso!");
+    return novoProduto;
+}
+
+// ==========================================
+// 3. LISTAR PRODUTOS
+// ==========================================
+
+function listarProdutos() {
+
+    console.log("===== LISTA DE PRODUTOS =====");
+
+    if (produtos.length === 0) {
+        console.log("Estoque vazio!");
+        return;
+    }
+
+    console.table(produtos);
+}
+
+// ==========================================
+// 4. BUSCAR PRODUTO
+// ==========================================
+
+function buscarProduto(codigo) {
+
+    let produto = produtos.find(p =&gt; p.codigo === codigo);
+
+    if (!produto) {
+        console.log("Produto não encontrado!");
+        return null;
+    }
+
+    console.log("Produto encontrado:");
+    console.table([produto]);
+
+    return produto;
+}
+
+// ==========================================
+// 5. ATUALIZAR PRODUTO
+// ==========================================
+
+function atualizarProduto(codigo, novaDescricao, novaQuantidade, novoValor) {
+
+    let produto = produtos.find(p =&gt; p.codigo === codigo);
+
+    if (!produto) {
+        console.log("Produto não encontrado!");
+        return;
+    }
+
+    validarProduto(novaDescricao, novaQuantidade, novoValor);
+
+    produto.descricao = novaDescricao;
+    produto.quantidade = novaQuantidade;
+    produto.valor = novoValor;
+
+    console.log("Produto atualizado com sucesso!");
+}
+
+// ==========================================
+// 6. EXCLUIR PRODUTO
+// ==========================================
+
+function excluirProduto(codigo) {
+
+    let indice = produtos.findIndex(p =&gt; p.codigo === codigo);
+
+    if (indice === -1) {
+        console.log("Produto não encontrado!");
+        return;
+    }
+
+    produtos.splice(indice, 1);
+
+    console.log("Produto excluído com sucesso!");
+}
+
+// ==========================================
+// 7. ENTRADA DE ESTOQUE
+// ==========================================
+
+function registrarEntrada(codigo, quantidade) {
+
+    let produto = buscarPorCodigo(codigo);
+
+    if (!produto) {
+        console.log("Produto não encontrado!");
+        return;
+    }
+
+    if (quantidade &lt;= 0) {
+        console.log("Informe uma quantidade válida!");
+        return;
+    }
+
+    produto.quantidade += quantidade;
+
+    console.log("Entrada registrada com sucesso!");
+}
+
+// ==========================================
+// 8. SAÍDA DE ESTOQUE
+// ==========================================
+
+function registrarSaida(codigo, quantidade) {
+
+    let produto = buscarPorCodigo(codigo);
+
+    if (!produto) {
+        console.log("Produto não encontrado!");
+        return;
+    }
+
+    if (quantidade &lt;= 0) {
+        console.log("Informe uma quantidade válida!");
+        return;
+    }
+
+    if (produto.quantidade &lt; quantidade) {
+        console.log("Estoque insuficiente!");
+        return;
+    }
+
+    produto.quantidade -= quantidade;
+
+    console.log("Saída registrada com sucesso!");
+}
+
+// Função auxiliar de busca
+function buscarPorCodigo(codigo) {
+    return produtos.find(p =&gt; p.codigo === codigo);
+}
+
+// ==========================================
+// 9. CALCULAR VALOR TOTAL DO ESTOQUE
+// ==========================================
+
+function calcularValorEstoque() {
+
+    let total = produtos.reduce((soma, produto) =&gt; {
+        return soma + (produto.quantidade * produto.valor);
+    }, 0);
+
+    console.log("Valor total do estoque: R$", total.toFixed(2));
+
+    return total;
+}
+
+// ==========================================
+// 10. PRODUTOS COM ESTOQUE BAIXO
+// ==========================================
+
+function verificarEstoqueBaixo() {
+
+    console.log("===== ESTOQUE BAIXO =====");
+
+    let baixos = produtos.filter(p =&gt; p.quantidade &lt;= 5);
+
+    if (baixos.length === 0) {
+        console.log("Nenhum produto com estoque baixo.");
+        return;
+    }
+
+    console.table(baixos);
+}
+
+// ==========================================
+// 11. RELATÓRIO GERAL
+// ==========================================
+
+function gerarRelatorio() {
+
+    console.log("===== RELATÓRIO DO ESTOQUE =====");
+
+    let totalProdutos = produtos.length;
+
+    let totalUnidades = produtos.reduce(
+        (soma, p) =&gt; soma + p.quantidade, 0
+    );
+
+    let valorTotal = produtos.reduce(
+        (soma, p) =&gt; soma + (p.quantidade * p.valor), 0
+    );
+
+    console.log("Produtos cadastrados:", totalProdutos);
+    console.log("Unidades em estoque:", totalUnidades);
+    console.log("Valor total: R$", valorTotal.toFixed(2));
+
+    verificarEstoqueBaixo();
+}
+
+// ==========================================
+// 12. TESTANDO O SISTEMA
+// ==========================================
+
+cadastrarProduto("Cadeira Gamer", 12, 699);
+cadastrarProduto("Mouse Logitech", 38, 99);
+cadastrarProduto("Teclado Mecânico", 15, 250);
+
+listarProdutos();
+
+registrarEntrada(1, 5);
+registrarSaida(2, 3);
+
+buscarProduto(1);
+
+atualizarProduto(2, "Mouse Logitech RGB", 40, 97);
+
+gerarRelatorio();
+</code></pre>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+</body>
+</html>
