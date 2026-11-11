@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Código JavaScript</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <style>body{margin:0;background:#0d1117}pre{margin:0}code.hljs{padding:1.5rem;min-height:100vh;box-sizing:border-box}</style>
+</head>
+<body>
+  <pre><code class="language-javascript">
+let produtos = [];
+
+// CADASTRAR PRODUTO
+function cadastrarProduto(codigo, descricao, quantidade, valor) {
+    if (quantidade &lt; 0 || valor &lt; 0) {
+        throw new Error("Quantidade e valor devem ser maiores ou iguais a zero");
+    }
+
+    const existe = produtos.find(prod =&gt; prod.codigo === codigo);
+
+    if (existe) {
+        throw new Error("Produto ja cadastrado");
+    }
+
+    const novoProduto = {
+        "codigo": codigo,
+        "descricao": descricao,
+        "quantidade": quantidade,
+        "valor": valor
+    };
+
+    produtos.push(novoProduto);
+}
+
+// LISTAR PRODUTOS
+function listarProdutos() {
+    console.log("===== LISTA DE PRODUTOS =====");
+
+    if (produtos.length === 0) {
+        console.log("Estoque vazio");
+        return;
+    }
+
+    console.log(produtos);
+}
+
+// CONSULTAR PRODUTO
+function consultarProduto(codigoProduto) {
+    const produto = produtos.find(prod =&gt; prod.codigo === codigoProduto);
+
+    if (produto) {
+        console.log("===== PRODUTO ENCONTRADO =====");
+        console.log(produto);
+    } else {
+        throw new Error("Produto nao encontrado");
+    }
+}
+
+// ATUALIZAR VALOR
+function atualizarValor(codigoProduto, novoValor) {
+    if (novoValor &lt; 0) {
+        throw new Error("Valor deve ser maior ou igual a zero");
+    }
+
+    const produto = produtos.find(prod =&gt; prod.codigo === codigoProduto);
+
+    if (produto) {
+        produto.valor = novoValor;
+    } else {
+        throw new Error("Produto nao encontrado");
+    }
+}
+
+// ATUALIZAR QUANTIDADE
+function atualizarQuantidade(codigoProduto, novaQuantidade) {
+    if (novaQuantidade &lt; 0) {
+        throw new Error("Quantidade deve ser maior ou igual a zero");
+    }
+
+    const produto = produtos.find(prod =&gt; prod.codigo === codigoProduto);
+
+    if (produto) {
+        produto.quantidade = novaQuantidade;
+    } else {
+        throw new Error("Produto nao encontrado");
+    }
+}
+
+// ENTRADA DE ESTOQUE
+function entradaEstoque(codigoProduto, quantidade) {
+    if (quantidade &lt;= 0) {
+        throw new Error("Quantidade deve ser maior que zero");
+    }
+
+    const produto = produtos.find(prod =&gt; prod.codigo === codigoProduto);
+
+    if (produto) {
+        produto.quantidade += quantidade;
+        console.log("Entrada realizada com sucesso!");
+    } else {
+        throw new Error("Produto nao encontrado");
+    }
+}
+
+// SAIDA DE ESTOQUE
+function saidaEstoque(codigoProduto, quantidade) {
+    if (quantidade &lt;= 0) {
+        throw new Error("Quantidade deve ser maior que zero");
+    }
+
+    const produto = produtos.find(prod =&gt; prod.codigo === codigoProduto);
+
+    if (produto) {
+        if (produto.quantidade &lt; quantidade) {
+            throw new Error("Estoque insuficiente");
+        }
+
+        produto.quantidade -= quantidade;
+        console.log("Saida realizada com sucesso!");
+    } else {
+        throw new Error("Produto nao encontrado");
+    }
+}
+
+// REMOVER PRODUTO
+function removerProduto(codigoProduto) {
+    const indice = produtos.findIndex(prod =&gt; prod.codigo === codigoProduto);
+
+    if (indice !== -1) {
+        produtos.splice(indice, 1);
+        console.log("Produto removido com sucesso!");
+    } else {
+        throw new Error("Produto nao encontrado");
+    }
+}
+
+// CALCULAR VALOR TOTAL DO ESTOQUE
+function calcularEstoque() {
+    let total = 0;
+
+    produtos.forEach(produto =&gt; {
+        total += produto.quantidade * produto.valor;
+    });
+
+    console.log("Valor total do estoque: R$ " + total.toFixed(2));
+
+    return total;
+}
+
+// LISTAR PRODUTOS COM ESTOQUE BAIXO
+function estoqueBaixo(limite) {
+    console.log("===== PRODUTOS COM ESTOQUE BAIXO =====");
+
+    produtos.forEach(produto =&gt; {
+        if (produto.quantidade &lt;= limite) {
+            console.log(produto);
+        }
+    });
+}
+
+// EXEMPLO DE UTILIZACAO DO SISTEMA
+
+cadastrarProduto(1, "Cadeira Gamer", 12, 699);
+cadastrarProduto(2, "Mouse Logi", 38, 99);
+cadastrarProduto(3, "Teclado Mecanico", 5, 250);
+
+listarProdutos();
+
+atualizarValor(2, 97);
+
+entradaEstoque(1, 5);
+
+saidaEstoque(2, 3);
+
+atualizarQuantidade(3, 10);
+
+consultarProduto(1);
+
+calcularEstoque();
+
+estoqueBaixo(10);
+
+listarProdutos();
+</code></pre>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+</body>
+</html>
