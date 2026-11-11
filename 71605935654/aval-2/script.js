@@ -1,4 +1,3 @@
-
 /* Array que vai guardar o conjunto de todas as tarefas */
 let tarefas = [];
 let geradorCodigo = 0;
