@@ -1,0 +1,126 @@
+// PROJETO: Sistema de Estoque
+// Fundamentos Lógicos com JavaScript - Aula 14
+// Conteúdos usados: variáveis, tipos de dados, operadores,
+// estruturas condicionais, repetição, funções e array
+
+const readline = require("readline");
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
+
+function perguntar(pergunta) {
+  return new Promise((resolve) => {
+    rl.question(pergunta, (resposta) => {
+      resolve(resposta);
+    });
+  });
+}
+
+// Estrutura de dados: array de objetos
+let estoque = [];
+
+async function cadastrarProduto() {
+  console.log("\n--- CADASTRAR NOVO PRODUTO ---");
+  let codigo = await perguntar("Digite o código: ");
+  let descricao = await perguntar("Digite a descrição: ");
+  let quantidade = parseInt(await perguntar("Digite a quantidade: "));
+  let valor = parseFloat(await perguntar("Digite o valor: "));
+
+  let produto = {
+    codigo: codigo,
+    descricao: descricao,
+    quantidade: quantidade,
+    valor: valor
+  };
+
+  estoque.push(produto);
+  console.log("Produto cadastrado com sucesso!");
+}
+
+function listarProdutos() {
+  console.log("\n--- PRODUTOS CADASTRADOS ---");
+  if (estoque.length === 0) {
+    console.log("Nenhum produto cadastrado!");
+    return;
+  }
+
+  for (let i = 0; i < estoque.length; i++) {
+    console.log(
+      "Código: " + estoque[i].codigo +
+      " | Descrição: " + estoque[i].descricao +
+      " | Qtd: " + estoque[i].quantidade +
+      " | Valor: R$ " + estoque[i].valor
+    );
+  }
+}
+
+async function alterarValor() {
+  let codigo = await perguntar("\nDigite o código do produto para alterar o valor: ");
+  let achou = false;
+
+  for (let i = 0; i < estoque.length; i++) {
+    if (estoque[i].codigo == codigo) {
+      let novoValor = parseFloat(await perguntar("Digite o novo valor: "));
+      estoque[i].valor = novoValor;
+      console.log("Valor alterado com sucesso!");
+      achou = true;
+    }
+  }
+
+  if (!achou) {
+    console.log("Produto não encontrado!");
+  }
+}
+
+async function alterarQuantidade() {
+  let codigo = await perguntar("\nDigite o código do produto para alterar a quantidade: ");
+  let achou = false;
+
+  for (let i = 0; i < estoque.length; i++) {
+    if (estoque[i].codigo == codigo) {
+      let novaQtd = parseInt(await perguntar("Digite a nova quantidade: "));
+      estoque[i].quantidade = novaQtd;
+      console.log("Quantidade alterada com sucesso!");
+      achou = true;
+    }
+  }
+
+  if (!achou) {
+    console.log("Produto não encontrado!");
+  }
+}
+
+async function menu() {
+  let opcao;
+
+  do {
+    console.log("\n=== SISTEMA DE ESTOQUE ===");
+    console.log("1 - Cadastrar um novo produto");
+    console.log("2 - Listar os produtos cadastrados");
+    console.log("3 - Alterar o valor de um produto");
+    console.log("4 - Alterar a quantidade de um produto");
+    console.log("5 - Sair");
+
+    opcao = await perguntar("Escolha uma opção: ");
+
+    if (opcao == "1") {
+      await cadastrarProduto();
+    } else if (opcao == "2") {
+      listarProdutos();
+    } else if (opcao == "3") {
+      await alterarValor();
+    } else if (opcao == "4") {
+      await alterarQuantidade();
+    } else if (opcao == "5") {
+      console.log("Saindo do sistema...");
+      rl.close();
+    } else {
+      console.log("Opção inválida!");
+    }
+
+  } while (opcao != "5");
+}
+
+menu();
