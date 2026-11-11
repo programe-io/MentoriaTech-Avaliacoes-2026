@@ -1,0 +1,64 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Shark Neon</title>
+<style>
+:root{--bg:#080b18;--panel:#11172b;--border:#25345b;--text:#edf4ff;--muted:#8d9cbd;--accent:#19c8ff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px Arial}
+.layout{display:flex;min-height:100vh}aside{width:230px;background:#0c1020;padding:24px;border-right:1px solid var(--border)}
+.logo{font-size:22px;font-weight:bold;margin-bottom:35px}.logo span{color:var(--accent);text-shadow:0 0 12px var(--accent)}
+nav{display:grid;gap:8px}button{cursor:pointer;padding:12px;border-radius:8px}
+nav button{background:transparent;color:var(--muted);border:1px solid transparent;text-align:left}
+nav button.active,nav button:hover{border-color:var(--accent);background:#10283b;color:white}
+main{padding:28px;flex:1;min-width:0;max-width:1450px}header{display:flex;justify-content:space-between;align-items:center}
+h1{font-size:27px}.muted,p,small{color:var(--muted)}
+.view{display:none}.view.active{display:block}
+.hero,.card,.panel,.item{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:20px}
+.hero{margin:20px 0;background:linear-gradient(120deg,#102b4a,#16122e)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:15px 0}
+.number{font-size:29px;font-weight:bold;margin:15px 0;color:var(--accent);text-shadow:0 0 10px #1689bb}
+.form{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:18px 0}
+label{display:grid;gap:7px;color:var(--muted)}
+input,textarea{width:100%;padding:12px;background:#080e20;border:1px solid var(--border);border-radius:8px;color:white}
+.primary{background:var(--accent);color:#06101d;border:0;font-weight:bold}
+.secondary{background:#18223b;color:white;border:1px solid var(--border)}
+.list{display:grid;gap:10px}.item{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.item small{display:block;margin-top:6px;overflow-wrap:anywhere}
+.pill{background:#102c45;color:var(--accent);padding:7px;border-radius:20px}
+.notice{background:#102c45;padding:12px;border-radius:8px;margin:12px 0}.full{grid-column:1/-1}
+@media(max-width:800px){.layout{display:block}aside{width:100%;padding:15px}nav{display:flex;overflow:auto}nav button{white-space:nowrap}main{padding:15px}.stats{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:500px){.form{grid-template-columns:1fr}.full{grid-column:auto}.item{flex-wrap:wrap}}
+</style></head>
+<body><div class="layout"><aside><div class="logo">SHARK <span>NEON</span></div><p>MENU PRINCIPAL</p>
+<nav><button class="active" data-view="dashboard">▦ Dashboard</button><button data-view="bots">◈ Meus bots</button><button data-view="leads">♙ Clientes</button><button data-view="flows">⌘ Automações</button><button data-view="payments">＄ Pagamentos</button></nav><p>● Sistema local</p></aside>
+<main><header><div><small>PAINEL NEON</small><h1 id="title">Dashboard</h1></div><button class="secondary" onclick="render()">↻ Atualizar</button></header><div id="notice" class="notice" hidden></div>
+<section id="dashboard" class="view active"><div class="hero"><h2>Controle total da sua operação.</h2><p>Bem-vindo ao Shark Neon.</p></div><div class="stats"><div class="card">Bots<div class="number" id="sb">0</div></div><div class="card">Clientes<div class="number" id="sl">0</div></div><div class="card">Automações<div class="number" id="sf">0</div></div><div class="card">Vendas aprovadas<div class="number" id="sp">0</div></div></div><div class="panel">FATURAMENTO<h2 id="revenue">R$ 0,00</h2></div></section>
+<section id="bots" class="view"><h2>Meus bots</h2><form class="panel form" id="botForm"><label>Nome<input name="name" required></label><label>Usuário Telegram<input name="extra"></label><button class="primary">Adicionar bot</button></form><div id="bots" class="list"></div></section>
+<section id="leads" class="view"><h2>Clientes</h2><form class="panel form" id="leadForm"><label>Nome<input name="name" required></label><label>E-mail<input name="extra" type="email"></label><button class="primary">Adicionar cliente</button></form><div id="leads" class="list"></div></section>
+<section id="flows" class="view"><h2>Automações</h2><form class="panel form" id="flowForm"><label>Nome<input name="name" required></label><label>Gatilho<input name="extra"></label><label class="full">Mensagem<textarea name="message" required></textarea></label><button class="primary">Criar automação</button></form><div id="flows" class="list"></div></section>
+<section id="payments" class="view"><h2>Pagamentos</h2><form class="panel form" id="paymentForm"><label>ID do cliente<input name="lead" type="number" min="1" required></label><label>Valor<input name="amount" type="number" min=".01" step=".01" required></label><button class="primary">Registrar pagamento</button></form><div id="payments" class="list"></div><p>Não gera cobranças reais.</p></section></main></div>
+<script>
+const keys=["bots","leads","flows","payments"],db={};
+keys.forEach(k=>{try{db[k]=JSON.parse(localStorage.getItem("neon_"+k))||[]}catch{db[k]=[]}});
+const $=id=>document.getElementById(id),money=n=>Number(n).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+function save(){keys.forEach(k=>localStorage.setItem("neon_"+k,JSON.stringify(db[k])))}
+function render(){
+$("sb").textContent=db.bots.length;$("sl").textContent=db.leads.length;$("sf").textContent=db.flows.filter(x=>x.active).length;
+$("sp").textContent=db.payments.filter(x=>x.status==="APROVADO").length;
+$("revenue").textContent=money(db.payments.filter(x=>x.status==="APROVADO").reduce((a,x)=>a+x.amount,0));
+keys.forEach(k=>{const root=$(k);root.replaceChildren();if(!db[k].length){root.textContent="Nenhum registro cadastrado.";return}
+db[k].forEach(x=>{const row=document.createElement("div");row.className="item";const info=document.createElement("div"),name=document.createElement("strong"),detail=document.createElement("small");
+name.textContent=x.name||money(x.amount);detail.textContent=x.extra||x.message||("Registro #"+x.id);info.append(name,detail);
+const actions=document.createElement("div");if(x.status){const badge=document.createElement("span");badge.className="pill";badge.textContent=x.status;actions.append(badge)}
+const del=document.createElement("button");del.className="secondary";del.textContent="Excluir";del.onclick=()=>{if(confirm("Excluir registro?")){db[k]=db[k].filter(y=>y.id!==x.id);save();render()}};actions.append(del);row.append(info,actions);root.append(row)})})
+}
+function add(id,key,fn){$(id).onsubmit=e=>{e.preventDefault();const d=Object.fromEntries(new FormData(e.target));try{fn(d);save();render();e.target.reset();$("notice").hidden=false;$("notice").textContent="Salvo com sucesso."}catch(err){$("notice").hidden=false;$("notice").textContent=err.message}}}
+const next=k=>Math.max(0,...db[k].map(x=>x.id))+1;
+add("botForm","bots",d=>db.bots.push({id:next("bots"),name:d.name,extra:d.extra,active:true}));
+add("leadForm","leads",d=>db.leads.push({id:next("leads"),name:d.name,extra:d.extra}));
+add("flowForm","flows",d=>db.flows.push({id:next("flows"),name:d.name,extra:d.extra,message:d.message,active:true}));
+add("paymentForm","payments",d=>{let lead=Number(d.lead),amount=Number(d.amount);if(!db.leads.some(x=>x.id===lead))throw Error("Cadastre o cliente primeiro.");if(amount<=0||!Number.isFinite(amount))throw Error("Valor inválido.");db.payments.push({id:next("payments"),name:"Pagamento cliente #"+lead,amount,status:"PENDENTE"})});
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));document.querySelectorAll(".view").forEach(x=>x.classList.remove("active"));b.classList.add("active");$(b.dataset.view).classList.add("active");$("title").textContent=b.textContent.trim()});render();
+</script></body></html>
