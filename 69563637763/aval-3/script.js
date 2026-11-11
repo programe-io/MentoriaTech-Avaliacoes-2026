@@ -1,31 +1,34 @@
-// Simulação de navegação web (muda o feed ou exibe avisos conforme o item clicado)
-function navigate(section) {
-    // Remove a classe 'active' de todos os itens do menu
-    const navItems = document.querySelectorAll('.nav-links li');
-    navItems.forEach(item => item.classList.remove('active'));
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instagram Simples</title>
+    <!-- Vinculando o arquivo de estilo -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-    // Adiciona a classe 'active' ao item correspondente clicado
-    event.currentTarget.parentElement.classList.add('active');
+    <!-- Topo / Cabeçalho -->
+    <header class="header">
+        <h1>Instagram</h1>
+        <input type="text" placeholder="Pesquisar">
+    </header>
 
-    const mainContent = document.querySelector('.main-content');
-
-    if (section === 'home') {
-        location.reload(); // Recarrega para o feed original
-    } else {
-        // Exibe uma visualização personalizada simulando a navegação na web
-        mainContent.innerHTML = `
-            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 70vh; color: #8e8e8e; text-align: center;">
-                <i class="fa-solid fa-compass" style="font-size: 50px; margin-bottom: 20px;"></i>
-                <h2>Seção: ${section.toUpperCase()}</h2>
-                <p>Navegação web simulada com sucesso! Esta página está pronta para personalizações.</p>
+    <!-- Conteúdo do Feed -->
+    <main class="feed">
+        <div class="post">
+            <div class="post-header">
+                <strong>seu_usuario</strong>
             </div>
-        `;
-    }
-}
+            <div class="post-img">
+                <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600" alt="Foto do Post">
+            </div>
+            <div class="post-footer">
+                <p><strong>seu_usuario</strong> Minha primeira postagem no feed simplificado! 📸</p>
+            </div>
+        </div>
+    </main>
 
-// Interação de curtir postagem (Like)
-function toggleLike(icon) {
-    icon.classList.toggle('fa-regular');
-    icon.classList.toggle('fa-solid');
-    icon.classList.toggle('liked');
-}
+</body>
+</html>
