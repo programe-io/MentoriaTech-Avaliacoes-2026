@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Código JavaScript</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <style>body{margin:0;background:#0d1117}pre{margin:0}code.hljs{padding:1.5rem;min-height:100vh;box-sizing:border-box}</style>
+</head>
+<body>
+  <pre><code class="language-javascript">
+// ==========================================
+// GERENCIADOR DE TAREFAS
+// ==========================================
+
+// Lista de tarefas
+const tarefas = [];
+
+// Gerador de códigos
+let geradorCodigo = 1;
+
+
+// ==========================================
+// 1. VALIDAR DADOS DA TAREFA
+// ==========================================
+
+function validarDadosTarefa(titulo, prioridade) {
+
+    if (!titulo || titulo.trim().length &lt; 5) {
+        throw new Error('O título deve ter no mínimo 5 caracteres');
+    }
+
+    if (prioridade &lt; 1 || prioridade &gt; 3 || !Number.isInteger(prioridade)) {
+        throw new Error('Informe uma prioridade entre 1 e 3');
+    }
+
+}
+
+
+// ==========================================
+// 2. BUSCAR TAREFA
+// ==========================================
+
+function buscarTarefa(codigoTarefa) {
+
+    const tarefaBuscada = tarefas.find(
+        t =&gt; t.codigo === codigoTarefa
+    );
+
+    if (!tarefaBuscada) {
+        throw new Error('Código de tarefa não encontrado');
+    }
+
+    return tarefaBuscada;
+
+}
+
+
+// ==========================================
+// 3. CADASTRAR TAREFA
+// ==========================================
+
+function cadastrarTarefa(titulo, prioridade) {
+
+    validarDadosTarefa(titulo, prioridade);
+
+    let tarefa = {
+
+        codigo: geradorCodigo++,
+        titulo: titulo,
+        prioridade: prioridade,
+        status: true
+
+    };
+
+    tarefas.push(tarefa);
+
+    console.log('Tarefa cadastrada com sucesso!');
+
+    return tarefa;
+
+}
+
+
+// ==========================================
+// 4. LISTAR TODAS AS TAREFAS
+// ==========================================
+
+function listarTarefas() {
+
+    console.log('===== LISTA DE TAREFAS =====');
+
+    if (tarefas.length === 0) {
+        console.log('Nenhuma tarefa cadastrada');
+        return;
+    }
+
+    tarefas.forEach(tarefa =&gt; {
+
+        console.log(
+            'Código:', tarefa.codigo,
+            '| Título:', tarefa.titulo,
+            '| Prioridade:', tarefa.prioridade,
+            '| Status:', tarefa.status ? 'Pendente' : 'Concluída'
+        );
+
+    });
+
+}
+
+
+// ==========================================
+// 5. CONCLUIR TAREFA
+// ==========================================
+
+function concluirTarefa(codigoTarefa) {
+
+    const tarefa = buscarTarefa(codigoTarefa);
+
+    tarefa.status = false;
+
+    console.log('Tarefa concluída com sucesso!');
+
+}
+
+
+// ==========================================
+// 6. REABRIR TAREFA
+// ==========================================
+
+function reabrirTarefa(codigoTarefa) {
+
+    const tarefa = buscarTarefa(codigoTarefa);
+
+    tarefa.status = true;
+
+    console.log('Tarefa reaberta com sucesso!');
+
+}
+
+
+// ==========================================
+// 7. EDITAR TAREFA
+// ==========================================
+
+function editarTarefa(codigoTarefa, novoTitulo, novaPrioridade) {
+
+    validarDadosTarefa(novoTitulo, novaPrioridade);
+
+    const tarefa = buscarTarefa(codigoTarefa);
+
+    tarefa.titulo = novoTitulo;
+    tarefa.prioridade = novaPrioridade;
+
+    console.log('Tarefa editada com sucesso!');
+
+}
+
+
+// ==========================================
+// 8. EXCLUIR TAREFA
+// ==========================================
+
+function excluirTarefa(codigoTarefa) {
+
+    const indice = tarefas.findIndex(
+        t =&gt; t.codigo === codigoTarefa
+    );
+
+    if (indice === -1) {
+        throw new Error('Tarefa não encontrada');
+    }
+
+    tarefas.splice(indice, 1);
+
+    console.log('Tarefa excluída com sucesso!');
+
+}
+
+
+// ==========================================
+// 9. FILTRAR TAREFAS PENDENTES
+// ==========================================
+
+function listarPendentes() {
+
+    const pendentes = tarefas.filter(
+        t =&gt; t.status === true
+    );
+
+    console.log('===== TAREFAS PENDENTES =====');
+
+    console.log(pendentes);
+
+    return pendentes;
+
+}
+
+
+// ==========================================
+// 10. FILTRAR TAREFAS CONCLUÍDAS
+// ==========================================
+
+function listarConcluidas() {
+
+    const concluidas = tarefas.filter(
+        t =&gt; t.status === false
+    );
+
+    console.log('===== TAREFAS CONCLUÍDAS =====');
+
+    console.log(concluidas);
+
+    return concluidas;
+
+}
+
+
+// ==========================================
+// 11. FILTRAR POR PRIORIDADE
+// ==========================================
+
+function filtrarPorPrioridade(prioridade) {
+
+    if (![1, 2, 3].includes(prioridade)) {
+        throw new Error('Prioridade inválida');
+    }
+
+    const resultado = tarefas.filter(
+        t =&gt; t.prioridade === prioridade
+    );
+
+    console.log('Tarefas da prioridade:', prioridade);
+
+    console.log(resultado);
+
+    return resultado;
+
+}
+
+
+// ==========================================
+// 12. CONTAR TAREFAS
+// ==========================================
+
+function contarTarefas() {
+
+    const total = tarefas.length;
+
+    const pendentes = tarefas.filter(
+        t =&gt; t.status === true
+    ).length;
+
+    const concluidas = tarefas.filter(
+        t =&gt; t.status === false
+    ).length;
+
+    console.log('===== RESUMO =====');
+    console.log('Total:', total);
+    console.log('Pendentes:', pendentes);
+    console.log('Concluídas:', concluidas);
+
+    return {
+        total,
+        pendentes,
+        concluidas
+    };
+
+}
+
+
+// ==========================================
+// 13. TESTANDO O SISTEMA
+// ==========================================
+
+// Cadastrar tarefas
+
+cadastrarTarefa('Estudar JavaScript', 1);
+cadastrarTarefa('Fazer atividade escolar', 2);
+cadastrarTarefa('Organizar os materiais', 3);
+
+// Listar tarefas
+
+listarTarefas();
+
+// Concluir tarefa de código 1
+
+concluirTarefa(1);
+
+// Listar tarefas pendentes
+
+listarPendentes();
+
+// Listar tarefas concluídas
+
+listarConcluidas();
+
+// Editar tarefa de código 2
+
+editarTarefa(2, 'Estudar programação', 1);
+
+// Filtrar por prioridade
+
+filtrarPorPrioridade(1);
+
+// Buscar tarefa
+
+console.log(buscarTarefa(1));
+
+// Mostrar resumo
+
+contarTarefas();
+
+// Excluir tarefa
+
+// excluirTarefa(3);
+
+// Listar novamente
+
+listarTarefas();
+</code></pre>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+</body>
+</html>
