@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Código JavaScript</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <style>body{margin:0;background:#0d1117}pre{margin:0}code.hljs{padding:1.5rem;min-height:100vh;box-sizing:border-box}</style>
+</head>
+<body>
+  <pre><code class="language-javascript">
+let produtos = [];
+
+// Função para validar os dados do produto
+function validarProduto(descricao, quantidade, valor) {
+  if (!descricao || quantidade &lt;= 0 || valor &lt;= 0) {
+    throw new Error("Dados do produto inválidos.");
+  }
+}
+
+// Função para cadastrar produto
+function cadastrarProduto(descricao, quantidade, valor) {
+  validarProduto(descricao, quantidade, valor);
+
+  let novoProduto = {
+    codigo: produtos.length + 1,
+    descricao: descricao,
+    quantidade: quantidade,
+    valor: valor
+  };
+
+  produtos.push(novoProduto);
+
+  console.log("Produto cadastrado com sucesso!");
+}
+
+// Função para listar produtos
+function listarProdutos() {
+  console.log("=== LISTA DE PRODUTOS ===");
+  console.log(produtos);
+}
+
+// Função para atualizar o valor do produto
+function atualizarValor(codigoProduto, novoValor) {
+  let produto = produtos.find(
+    item =&gt; item.codigo === codigoProduto
+  );
+
+  if (produto) {
+    if (novoValor &gt; 0) {
+      produto.valor = novoValor;
+      console.log("Valor atualizado com sucesso!");
+    } else {
+      console.log("O novo valor deve ser maior que zero.");
+    }
+  } else {
+    console.log("Produto não encontrado.");
+  }
+}
+
+// ------------------------------------
+// EXECUÇÃO DO PROGRAMA
+
+listarProdutos();
+
+cadastrarProduto("Cadeira Gamer", 12, 699.00);
+cadastrarProduto("Mouse Logi", 38, 90.00);
+
+listarProdutos();
+
+atualizarValor(1, 649.90);
+
+listarProdutos();
+</code></pre>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+</body>
+</html>
