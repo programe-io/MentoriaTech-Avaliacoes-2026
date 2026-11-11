@@ -1,78 +1,69 @@
-
-
-// CONCLUIR TAREFA
-function concluirTarefa(codigo) {
-    let tarefa = buscarTarefa(codigo);
+/* Array que vai guardar o conjunto de todas as tarefas */
 let tarefas = [];
 let geradorCodigo = 0;
 
-// VALIDAR DADOS DA TAREFA
 function validarDadosTarefa(titulo, prioridade) {
     if (titulo.length < 5) {
-        throw new Error("O título deve ter no mínimo 5 caracteres");
-    }
+        throw new Error('O título deve ter no mínimo 5 caracteres');
+    \}
+    if (prioridade < 1 || prioridade > 3) {
+        throw new Error('Informe uma prioridade entre 1 e 3');
+    \}
+\}
 
-    if (!Number.isInteger(prioridade) || prioridade < 1 || prioridade > 3) {
-        throw new Error("Informe uma prioridade entre 1 e 3");
-    }
-}
-
-// BUSCAR TAREFA
 function buscarTarefa(codigoTarefa) {
-    return tarefas.find(tarefa => tarefa.codigo === codigoTarefa);
-}
+    const tarefaBuscada = tarefas.find(t => t.codigo === codigoTarefa);
 
-// CADASTRAR TAREFA
+    if (!tarefaBuscada) {
+        throw new Error('Código de tarefa não encontrado');
+    \}
+
+    return tarefaBuscada;
+\}
+
 function cadastrarTarefa(titulo, prioridade) {
     validarDadosTarefa(titulo, prioridade);
 
     let tarefa = {
-        codigo: ++geradorCodigo,
-        titulo: titulo,
-        prioridade: prioridade,
-        status: true
-    };
+        'codigo': ++geradorCodigo,
+        'titulo': titulo,
+        'prioridade': prioridade,
+        'status': false // Inicia como false (pendente)
+    \};
 
     tarefas.push(tarefa);
-}
+\}
 
-// LISTAR TAREFAS
-function listarTarefas() {
+function listarTarefas(){
     return tarefas;
-}
+\}
 
-    if (!tarefa) {
-        throw new Error("Tarefa não encontrada!");
-    }
-
-    if (tarefa.status === false) {
-        throw new Error("Tarefa já está concluída!");
-    }
-
-    tarefa.status = false;
-}
-
-// ALTERAR PRIORIDADE
-function alterarPrioridade(codigo, novaPrioridade) {
+function concluirTarefa(codigo){
     let tarefa = buscarTarefa(codigo);
 
-    if (!tarefa) {
-        throw new Error("Tarefa não encontrada!");
-    }
+    // Correção: lança erro se a tarefa JÁ estiver concluída (true)
+    if (tarefa.status === true) {
+        throw new Error('Tarefa já estava como concluída');
+    \}
 
+  
+    // Correção: altera o status para concluída (true)
+    tarefa.status = true;
+\}
+
+function alterarPrioridade(codigo, novaPrioridade){
+    let tarefa = buscarTarefa(codigo);
     validarDadosTarefa(tarefa.titulo, novaPrioridade);
 
     tarefa.prioridade = novaPrioridade;
-}
+\}
 
-// CADASTRAR TAREFA
-cadastrarTarefa("Cadastrar Clientes", 1);
+// Exemplo de uso:
+cadastrarTarefa('Cadastrar Clientes', 1);
+console.log(listarTarefas());
 
-// MOSTRAR TAREFA ORIGINAL
-console.log(buscarTarefa(1));
+concluirTarefa(1); // Conclui a tarefa
+console.log(listarTarefas());
 
-// ALTERAR PRIORIDADE
 alterarPrioridade(1, 2);
-
-// MOSTRAR TAREFA ATUALIZADA
-console.log(buscarTarefa(1));
+console.log(listarTarefas());$0
