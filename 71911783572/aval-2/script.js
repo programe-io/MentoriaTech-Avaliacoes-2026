@@ -1,0 +1,216 @@
+
+// ======================================
+// GERENCIADOR DE TAREFAS
+// ======================================
+
+let tarefas = [];
+let proximoCodigo = 1;
+let opcao;
+
+// ======================================
+// FUNÇÃO CADASTRAR TAREFA
+// ======================================
+
+function cadastrarTarefa() {
+
+    let descricao = prompt("Digite a tarefa:");
+
+    if (!descricao || descricao.trim().length < 3) {
+        alert("Digite uma tarefa válida!");
+        return;
+    }
+
+    let novaTarefa = {
+        codigo: proximoCodigo++,
+        descricao: descricao.trim(),
+        concluida: false
+    };
+
+    tarefas.push(novaTarefa);
+
+    alert("Tarefa cadastrada com sucesso!");
+}
+
+// ======================================
+// FUNÇÃO LISTAR TAREFAS
+// ======================================
+
+function listarTarefas() {
+
+    if (tarefas.length === 0) {
+        alert("Nenhuma tarefa cadastrada!");
+        return;
+    }
+
+    let resultado = "===== MINHAS TAREFAS =====\n\n";
+
+    tarefas.forEach(function(tarefa) {
+
+        resultado +=
+            "Código: " + tarefa.codigo + "\n" +
+            "Descrição: " + tarefa.descricao + "\n" +
+            "Status: " +
+            (tarefa.concluida ? "Concluída" : "Pendente") +
+            "\n\n";
+    });
+
+    alert(resultado);
+}
+
+// ======================================
+// CONCLUIR TAREFA
+// ======================================
+
+function concluirTarefa() {
+
+    let codigo = Number(prompt("Digite o código da tarefa:"));
+
+    let tarefa = tarefas.find(t => t.codigo === codigo);
+
+    if (!tarefa) {
+        alert("Tarefa não encontrada!");
+        return;
+    }
+
+    tarefa.concluida = true;
+
+    alert("Tarefa concluída com sucesso!");
+}
+
+// ======================================
+// EXCLUIR TAREFA
+// ======================================
+
+function excluirTarefa() {
+
+    let codigo = Number(prompt("Digite o código da tarefa:"));
+
+    let indice = tarefas.findIndex(
+        t => t.codigo === codigo
+    );
+
+    if (indice === -1) {
+        alert("Tarefa não encontrada!");
+        return;
+    }
+
+    tarefas.splice(indice, 1);
+
+    alert("Tarefa excluída com sucesso!");
+}
+
+// ======================================
+// PESQUISAR TAREFA
+// ======================================
+
+function pesquisarTarefa() {
+
+    let pesquisa = prompt("Digite o nome da tarefa:");
+
+    if (!pesquisa) return;
+
+    let resultado = tarefas.filter(t =>
+        t.descricao.toLowerCase().includes(
+            pesquisa.toLowerCase()
+        )
+    );
+
+    if (resultado.length === 0) {
+        alert("Nenhuma tarefa encontrada!");
+        return;
+    }
+
+    let mensagem = "===== RESULTADO DA PESQUISA =====\n\n";
+
+    resultado.forEach(t => {
+        mensagem +=
+            "Código: " + t.codigo + "\n" +
+            "Tarefa: " + t.descricao + "\n" +
+            "Status: " +
+            (t.concluida ? "Concluída" : "Pendente") +
+            "\n\n";
+    });
+
+    alert(mensagem);
+}
+
+// ======================================
+// RELATÓRIO DE TAREFAS
+// ======================================
+
+function gerarRelatorio() {
+
+    let total = tarefas.length;
+
+    let concluidas = tarefas.filter(
+        t => t.concluida
+    ).length;
+
+    let pendentes = total - concluidas;
+
+    alert(
+        "===== RELATÓRIO =====\n\n" +
+        "Total de tarefas: " + total + "\n" +
+        "Concluídas: " + concluidas + "\n" +
+        "Pendentes: " + pendentes
+    );
+}
+
+// ======================================
+// MENU PRINCIPAL COM SWITCH
+// ======================================
+
+do {
+
+    opcao = prompt(
+        "===== GERENCIADOR DE TAREFAS =====\n\n" +
+        "1 - Cadastrar tarefa\n" +
+        "2 - Listar tarefas\n" +
+        "3 - Concluir tarefa\n" +
+        "4 - Excluir tarefa\n" +
+        "5 - Pesquisar tarefa\n" +
+        "6 - Gerar relatório\n" +
+        "0 - Sair\n\n" +
+        "Escolha uma opção:"
+    );
+
+    if (opcao === null) {
+        break;
+    }
+
+    switch(Number(opcao)) {
+
+        case 1:
+            cadastrarTarefa();
+            break;
+
+        case 2:
+            listarTarefas();
+            break;
+
+        case 3:
+            concluirTarefa();
+            break;
+
+        case 4:
+            excluirTarefa();
+            break;
+
+        case 5:
+            pesquisarTarefa();
+            break;
+
+        case 6:
+            gerarRelatorio();
+            break;
+
+        case 0:
+            alert("Sistema encerrado!");
+            break;
+
+        default:
+            alert("Opção inválida! Tente novamente.");
+            break;
+    }
+
+} while (Number(opcao) !== 0);
