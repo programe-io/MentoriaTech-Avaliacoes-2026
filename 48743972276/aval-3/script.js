@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clone Instagram</title>
+
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Boxicons -->
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="min-h-screen bg-gray-100 text-slate-900">
+
+  <!-- ============================= -->
+  <!-- CABEÇALHO                     -->
+  <!-- ============================= -->
+  <header class="sticky top-0 z-50 bg-white border-b border-gray-200">
+    <div class="max-w-5xl mx-auto px-4">
+      <div class="flex items-center justify-between h-14 md:h-16">
+
+        <!-- Logo -->
+        <h1 class="text-xl font-semibold">Instagram</h1>
+
+        <!-- Botão menu hamburguer (mobile) -->
+        <button id="btn-mobile-menu" class="md:hidden">
+          <i class="bx bx-menu text-2xl"></i>
+        </button>
+
+        <!-- Área de busca (desktop) -->
+        <div class="hidden md:flex items-center">
+          <input
+            id="input-busca"
+            type="text"
+            placeholder="Pesquisar"
+            class="w-64 h-9 bg-gray-100 px-4 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-300"
+          >
+        </div>
+
+        <!-- Ícones do menu (desktop) -->
+        <div class="hidden md:flex items-center gap-5">
+          <button data-nav="home"><i class="bx bx-home text-xl"></i></button>
+          <button data-nav="search"><i class="bx bx-search text-xl"></i></button>
+          <button id="btn-nova-postagem-desktop" data-nav="plus"><i class="bx bx-plus text-xl"></i></button>
+          <button data-nav="heart"><i class="bx bx-heart text-xl"></i></button>
+          <button data-nav="user"><i class="bx bx-user text-xl"></i></button>
+
+          <!-- Avatar do usuário (desktop) -->
+          <button class="w-7 h-7 rounded-full bg-gradient-to-br from-pink-500 via-red-500 to-yellow-500"></button>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- ============================= -->
+  <!-- MENU MOBILE (dropdown)        -->
+  <!-- ============================= -->
+  <div id="mobile-menu" class="hidden md:hidden bg-white border-b border-gray-200 px-4 py-2">
+    <button class="flex items-center gap-2 w-full py-2 text-sm" data-nav="home">
+      <i class="bx bx-home text-xl"></i> Início
+    </button>
+    <button class="flex items-center gap-2 w-full py-2 text-sm" data-nav="search">
+      <i class="bx bx-search text-xl"></i> Pesquisar
+    </button>
+    <button id="btn-nova-postagem-mobile" class="flex items-center gap-2 w-full py-2 text-sm" data-nav="plus">
+      <i class="bx bx-plus text-xl"></i> Nova postagem
+    </button>
+    <button class="flex items-center gap-2 w-full py-2 text-sm" data-nav="heart">
+      <i class="bx bx-heart text-xl"></i> Curtidas
+    </button>
+    <button class="flex items-center gap-2 w-full py-2 text-sm" data-nav="user">
+      <i class="bx bx-user text-xl"></i> Perfil
+    </button>
+  </div>
+
+  <!-- ============================= -->
+  <!-- CONTEÚDO PRINCIPAL            -->
+  <!-- ============================= -->
+  <main class="max-w-5xl mx-auto py-4 pb-20 md:px-8 md:py-8 md:mx-0">
+    <div class="flex gap-8">
+
+      <!-- ============================= -->
+      <!-- FEED PRINCIPAL                -->
+      <!-- ============================= -->
+      <div class="flex-1 max-w-lg mx-auto">
+
+        <!-- ============================= -->
+        <!-- STORIES                       -->
+        <!-- ============================= -->
+        <section class="bg-white border border-gray-200 rounded-lg p-4 mb-4">
+          <div class="flex gap-4 overflow-x-auto">
+
+            <!-- Story: Adicionar -->
+            <div class="flex flex-col items-center flex-shrink-0 cursor-pointer" id="story-add">
+              <div class="w-16 h-16 rounded-full p-0.5 bg-gray-100">
+                <div class="w-full h-full rounded-full bg-white">
+                  <div class="w-full h-full rounded-full bg-gray-100 flex items-center justify-center">
+                    <span class="text-2xl text-gray-500">+</span>
+                  </div>
+                </div>
+              </div>
+              <span class="text-xs mt-1 w-16 text-center">Você</span>
+            </div>
+
+            <!-- Story: João -->
+            <div class="flex flex-col items-center flex-shrink-0 cursor-pointer story-item" data-user="João">
+              <div class="w-16 h-16 rounded-full p-0.5 bg-gray-100">
+                <div class="w-full h-full rounded-full bg-gradient-to-br from-pink-500 via-red-500 to-yellow-500">
+                  <div class="w-full h-full rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
+                    <img src="https://i.pravatar.cc/150?img=12" alt="Foto de perfil" class="w-full h-full object-cover rounded-full">
+                  </div>
+                </div>
+              </div>
+              <span class="text-xs mt-1 w-16 text-center">João</span>
+            </div>
+
+            <!-- Story: Maria -->
+            <div class="flex flex-col items-center flex-shrink-0 cursor-pointer story-item" data-user="Maria">
+              <div class="w-16 h-16 rounded-full p-0.5 bg-gray-100">
+                <div class="w-full h-full rounded-full bg-gradient-to-br from-pink-500 via-red-500 to-yellow-500">
+                  <div class="w-full h-full rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
+                    <img src="https://i.pravatar.cc/150?img=32" alt="Foto de perfil" class="w-full h-full object-cover rounded-full">
+                  </div>
+                </div>
+              </div>
+              <span class="text-xs mt-1 w-16 text-center">Maria</span>
+            </div>
+
+            <!-- Story: Pedro -->
+            <div class="flex flex-col items-center flex-shrink-0 cursor-pointer story-item" data-user="Pedro">
+              <div class="w-16 h-16 rounded-full p-0.5 bg-gray-100">
+                <div class="w-full h-full rounded-full bg-gradient-to-br from-pink-500 via-red-500 to-yellow-500">
+                  <div class="w-full h-full rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
+                    <img src="https://i.pravatar.cc/150?img=8" alt="Foto de perfil" class="w-full h-full object-cover rounded-full">
+                  </div>
+                </div>
+              </div>
+              <span class="text-xs mt-1 w-16 text-center">Pedro</span>
+            </div>
+
+            <!-- Story: Ana -->
+            <div class="flex flex-col items-center flex-shrink-0 cursor-pointer story-item" data-user="Ana">
+              <div class="w-16 h-16 rounded-full p-0.5 bg-gray-100">
+                <div class="w-full h-full rounded-full bg-gradient-to-br from-pink-500 via-red-500 to-yellow-500">
+                  <div class="w-full h-full rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
+                    <img src="https://i.pravatar.cc/150?img=45" alt="Foto de perfil" class="w-full h-full object-cover rounded-full">
+                  </div>
+                </div>
+              </div>
+              <span class="text-xs mt-1 w-16 text-center">Ana</span>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ============================= -->
+        <!-- CONTAINER DE POSTAGENS        -->
+        <!-- ============================= -->
+        <div id="feed-container">
+
+          <!-- POSTAGEM 1 -->
+          <article class="bg-white border border-gray-200 rounded-lg mb-4 post" data-post-id="1">
+            <header class="flex items-center justify-between p-3">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full p-0.5 bg-gradient-to-br from-pink-500 via-red-500 to-yellow-500">
+                  <div class="w-full h-full rounded-full bg-white p-0.5">
+                    <img src="https://i.pravatar.cc/150?img=12" alt="Foto de perfil" class="w-full h-full object-cover rounded-full">
+                  </div>
+                </div>
+                <div>
+                  <p class="text-sm font-semibold">frojo_dev</p>
+                  <p class="text-xs text-gray-500">Parnaíba-PI</p>
+                </div>
+              </div>
+              <button class="btn-opcoes">
+                <i class="bx bx-dots-horizontal-rounded text-xl"></i>
+              </button>
+            </header>
+
+            <div class="bg-gray-100 relative">
+              <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800" alt="imagem do meu projeto" class="w-full h-full object-cover">
+            </div>
+
+            <div class="p-3">
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-4">
+                  <button class="btn-curtir"><i class="bx bx-heart text-2xl"></i></button>
+                  <button class="btn-comentar"><i class="bx bx-message-rounded text-2xl"></i></button>
+                  <button class="btn-compartilhar"><i class="bx bx-send text-2xl"></i></button>
+                </div>
+                <button class="btn-salvar"><i class="bx bx-bookmark text-2xl"></i></button>
+              </div>
+
+              <p class="curtidas font-semibold text-sm mb-2">mil e poucas curtidas</p>
+
+              <p class="text-sm mb-1">
+                <span class="font-semibold">frojo_dev</span>
+                <span class="text-slate-900 opacity-80">Explorando a natureza hoje 🌿 #natureza #fotografia</span>
+              </p>
+
+              <button class="btn-comentarios text-sm text-gray-500 mt-1">Ver todos os comentários</button>
+
+              <p class="text-xs text-gray-500 mt-2 uppercase">há duas horas</p>
+
+              <!-- Lista de comentários (oculta por padrão) -->
+              <div class="comentarios-lista hidden mt-2 space-y-1"></div>
+
+              <!-- Formulário de comentário (oculto por padrão) -->
+              <form class="form-comentario hidden mt-2 flex items-center gap-2">
+                <input type="text" placeholder="Adicione um comentário..." class="flex-1 text-sm bg-gray-100 rounded-lg px-3 py-1.5 outline-none">
+                <button type="submit" class="text-blue-500 text-sm font-semibold">Publicar</button>
+              </form>
+            </div>
+          </article>
+
+          <!-- POSTAGEM 2 -->
+          <article class="bg-white border border-gray-200 rounded-lg mb-4 post" data-post-id="2">
+            <header class="flex items-center justify-between p-3">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full p-0.5 bg-gradient-to-br from-pink-500 via-red-500 to-yellow-500">
+                  <div class="w-full h-full rounded-full bg-white p-0.5">
+                    <img src="https://i.pravatar.cc/150?img=12" alt="Foto de perfil" class="w-full h-full object-cover rounded-full">
+                  </div>
+                </div>
+                <div>
+                  <p class="text-sm font-semibold">frojo_dev</p>
+                  <p class="text-xs text-gray-500">Parnaíba-PI</p>
+                </div>
+              </div>
+              <button class="btn-opcoes">
+                <i class="bx bx-dots-horizontal-rounded text-xl"></i>
+              </button>
+            </header>
+
+            <div class="bg-gray-100 relative">
+              <img src="https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800" alt="imagem do meu projeto" class="w-full h-full object-cover">
+            </div>
+
+            <div class="p-3">
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-4">
+                  <button class="btn-curtir"><i class="bx bx-heart text-2xl"></i></button>
+                  <button class="btn-comentar"><i class="bx bx-message-rounded text-2xl"></i></button>
+                  <button class="btn-compartilhar"><i class="bx bx-send text-2xl"></i></button>
+                </div>
+                <button class="btn-salvar"><i class="bx bx-bookmark text-2xl"></i></button>
+              </div>
+
+              <p class="curtidas font-semibold text-sm mb-2">mil e poucas curtidas</p>
+
+              <p class="text-sm mb-1">
+                <span class="font-semibold">frojo_dev</span>
+                <span class="text-slate-900 opacity-80">Nascer do sol incrível ⛰️ #sunrise #natureza</span>
+              </p>
+
+              <button class="btn-comentarios text-sm text-gray-500 mt-1">Ver todos os comentários</button>
+
+              <p class="text-xs text-gray-500 mt-2 uppercase">há duas horas</p>
+
+              <div class="comentarios-lista hidden mt-2 space-y-1"></div>
+
+              <form class="form-comentario hidden mt-2 flex items-center gap-2">
+                <input type="text" placeholder="Adicione um comentário..." class="flex-1 text-sm bg-gray-100 rounded-lg px-3 py-1.5 outline-none">
+                <button type="submit" class="text-blue-500 text-sm font-semibold">Publicar</button>
+              </form>
+            </div>
+          </article>
+
+        </div>
+      </div>
+
+      <!-- ============================= -->
+      <!-- BARRA LATERAL (desktop)       -->
+      <!-- ============================= -->
+      <aside class="hidden md:block w-80 flex-shrink-0">
+        <div class="sticky top-20">
+
+          <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center gap-3">
+              <img src="https://i.pravatar.cc/150?img=12" alt="Foto de perfil" class="w-14 h-14 object-cover rounded-full">
+              <div>
+                <p class="font-semibold text-sm">frojo_dev</p>
+                <p class="text-sm text-gray-500">Jonathan William</p>
+              </div>
+            </div>
+            <button id="btn-trocar" class="text-blue-500 text-sm font-semibold">Trocar</button>
+          </div>
+
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <p class="text-sm font-semibold text-gray-500">sugestões para você</p>
+              <button class="text-xs font-semibold">ver tudo</button>
+            </div>
+
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-3">
+                <img src="https://i.pravatar.cc/150?img=32" alt="Foto de perfil" class="w-8 h-8 object-cover rounded-full">
+                <div>
+                  <p class="text-sm font-semibold">João</p>
+                  <p class="text-xs text-gray-500">sugerido para você</p>
+                </div>
+              </div>
+              <button class="btn-seguir text-blue-500 text-xs font-semibold">seguir</button>
+            </div>
+
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-3">
+                <img src="https://i.pravatar.cc/150?img=45" alt="Foto de perfil" class="w-8 h-8 object-cover rounded-full">
+                <div>
+                  <p class="text-sm font-semibold">Ana</p>
+                  <p class="text-xs text-gray-500">sugerido para você</p>
+                </div>
+              </div>
+              <button class="btn-seguir text-blue-500 text-xs font-semibold">seguir</button>
+            </div>
+
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-3">
+                <img src="https://i.pravatar.cc/150?img=8" alt="Foto de perfil" class="w-8 h-8 object-cover rounded-full">
+                <div>
+                  <p class="text-sm font-semibold">Pedro</p>
+                  <p class="text-xs text-gray-500">sugerido para você</p>
+                </div>
+              </div>
+              <button class="btn-seguir text-blue-500 text-xs font-semibold">seguir</button>
+            </div>
+          </div>
+
+          <div class="mt-8">
+            <p class="text-xs text-gray-500 opacity-80">
+              Sobre · Ajuda · Imprensa · API · Carreiras · Privacidade · Termos · Localizações · Idioma
+            </p>
+            <p class="text-xs text-gray-500 mt-4">© 2026 INSTAGRAM CLONE</p>
+          </div>
+
+        </div>
+      </aside>
+
+    </div>
+  </main>
+
+  <!-- ============================= -->
+  <!-- MENU INFERIOR (mobile)        -->
+  <!-- ============================= -->
+  <nav class="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 md:hidden">
+    <div class="flex items-center justify-around px-4 py-2">
+      <button data-nav="home"><i class="bx bx-home text-2xl"></i></button>
+      <button data-nav="search"><i class="bx bx-search text-2xl"></i></button>
+      <button id="btn-nova-postagem-nav" data-nav="plus"><i class="bx bx-plus text-2xl"></i></button>
+      <button data-nav="heart"><i class="bx bx-heart text-2xl"></i></button>
+      <button data-nav="user"><i class="bx bx-user text-2xl"></i></button>
+    </div>
+  </nav>
+
+  <!-- ============================= -->
+  <!-- MODAL NOVA POSTAGEM           -->
+  <!-- ============================= -->
+  <div id="modal-nova-postagem" class="hidden fixed inset-0 z-[100] bg-black/60 flex items-center justify-center p-4">
+    <div class="bg-white rounded-lg w-full max-w-md p-4">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="font-semibold">Nova postagem</h2>
+        <button id="fechar-modal" class="text-gray-500 text-2xl leading-none">&times;</button>
+      </div>
+      <input id="modal-imagem-url" type="text" placeholder="URL da imagem" class="w-full text-sm bg-gray-100 rounded-lg px-3 py-2 mb-2 outline-none">
+      <textarea id="modal-descricao" placeholder="Escreva uma legenda..." rows="3" class="w-full text-sm bg-gray-100 rounded-lg px-3 py-2 mb-3 outline-none"></textarea>
+      <button id="publicar-postagem" class="w-full bg-blue-500 text-white text-sm font-semibold rounded-lg py-2">Publicar</button>
+    </div>
+  </div>
+
+  <!-- ============================= -->
+  <!-- TOAST (feedback)              -->
+  <!-- ============================= -->
+  <div id="toast" class="hidden fixed bottom-20 left-1/2 -translate-x-1/2 z-[110] bg-slate-900 text-white text-sm px-4 py-2 rounded-lg shadow-lg"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
