@@ -1,13 +1,13 @@
 
-function mostrarMensagem() {
-    alert("⚽ Bem-vindo ao Mundo do Futebol!");
-
+function mensagem() {
+    alert("⚽ Seja bem-vindo ao Mundo do Futebol!");
 }
 
-function mudarCor() {
-    document.body.style.backgroundColor = "#087a35";
-}
+const cards = document.querySelectorAll(".card");
 
-function voltarCor() {
-    document.body.style.backgroundColor = "#101010";
-}
+cards.forEach(function(card) {
+    card.addEventListener("click", function() {
+        alert("Você selecionou: " +
+        card.querySelector("h3").textContent);
+    });
+});
