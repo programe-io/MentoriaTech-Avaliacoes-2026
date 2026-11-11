@@ -1,0 +1,205 @@
+
+let tarefas = [];
+let proximoCodigo = 1;
+
+// CADASTRAR TAREFA
+function cadastrarTarefa(titulo, prioridade) {
+
+    if (!titulo || titulo.trim() === "") {
+        throw new Error("O título da tarefa é obrigatório");
+    }
+
+    if (![1, 2, 3].includes(prioridade)) {
+        throw new Error("Prioridade inválida. Use 1, 2 ou 3");
+    }
+
+    let tarefa = {
+        codigo: proximoCodigo,
+        titulo: titulo,
+        prioridade: prioridade,
+        status: true
+    };
+
+    tarefas.push(tarefa);
+    proximoCodigo++;
+
+    return tarefa;
+}
+
+// LISTAR TODAS AS TAREFAS
+function listarTarefas() {
+    return tarefas;
+}
+
+// BUSCAR TAREFA PELO CÓDIGO
+function buscarTarefa(codigo) {
+
+    let tarefa = tarefas.find(t => t.codigo === codigo);
+
+    if (!tarefa) {
+        throw new Error("Tarefa não encontrada");
+    }
+
+    return tarefa;
+}
+
+// CONCLUIR TAREFA
+function concluirTarefa(codigo) {
+
+    let tarefa = buscarTarefa(codigo);
+
+    if (tarefa.status === false) {
+        throw new Error("Tarefa já estava concluída");
+    }
+
+    tarefa.status = false;
+
+    return tarefa;
+}
+
+// REABRIR TAREFA
+function reabrirTarefa(codigo) {
+
+    let tarefa = buscarTarefa(codigo);
+
+    if (tarefa.status === true) {
+        throw new Error("A tarefa já está pendente");
+    }
+
+    tarefa.status = true;
+
+    return tarefa;
+}
+
+// EXCLUIR TAREFA
+function excluirTarefa(codigo) {
+
+    let tarefa = buscarTarefa(codigo);
+
+    tarefas = tarefas.filter(t => t.codigo !== codigo);
+
+    return tarefa;
+}
+
+// EDITAR TAREFA
+function editarTarefa(codigo, novoTitulo, novaPrioridade) {
+
+    let tarefa = buscarTarefa(codigo);
+
+    if (!novoTitulo || novoTitulo.trim() === "") {
+        throw new Error("O título não pode ficar vazio");
+    }
+
+    if (![1, 2, 3].includes(novaPrioridade)) {
+        throw new Error("Prioridade inválida");
+    }
+
+    tarefa.titulo = novoTitulo;
+    tarefa.prioridade = novaPrioridade;
+
+    return tarefa;
+}
+
+// LISTAR TAREFAS PENDENTES
+function listarPendentes() {
+
+    return tarefas.filter(t => t.status === true);
+}
+
+// LISTAR TAREFAS CONCLUÍDAS
+function listarConcluidas() {
+
+    return tarefas.filter(t => t.status === false);
+}
+
+// LISTAR POR PRIORIDADE
+function listarPorPrioridade(prioridade) {
+
+    return tarefas.filter(t => t.prioridade === prioridade);
+}
+
+// ORGANIZAR TAREFAS POR PRIORIDADE
+function ordenarPorPrioridade() {
+
+    return [...tarefas].sort((a, b) => a.prioridade - b.prioridade);
+}
+
+// CONTAR TAREFAS
+function contarTarefas() {
+
+    let total = tarefas.length;
+
+    let pendentes = listarPendentes().length;
+
+    let concluidas = listarConcluidas().length;
+
+    return {
+        total: total,
+        pendentes: pendentes,
+        concluidas: concluidas
+    };
+}
+
+// EXIBIR RESUMO DO SISTEMA
+function resumoTarefas() {
+
+    let resumo = contarTarefas();
+
+    console.log("===== RESUMO DAS TAREFAS =====");
+    console.log("Total de tarefas:", resumo.total);
+    console.log("Pendentes:", resumo.pendentes);
+    console.log("Concluídas:", resumo.concluidas);
+}
+
+// EXIBIR TODAS AS TAREFAS NO CONSOLE
+function exibirTarefas() {
+
+    console.log("===== GERENCIADOR DE TAREFAS =====");
+
+    tarefas.forEach(tarefa => {
+
+        console.log("-------------------------");
+        console.log("Código:", tarefa.codigo);
+        console.log("Título:", tarefa.titulo);
+        console.log("Prioridade:", tarefa.prioridade);
+        console.log("Status:", tarefa.status ? "Pendente" : "Concluída");
+
+    });
+}
+
+
+// ===============================
+// TESTANDO O SISTEMA
+// ===============================
+
+cadastrarTarefa("Cadastrar Clientes", 1);
+cadastrarTarefa("Limpar banco de dados", 3);
+cadastrarTarefa("Criar relatório", 2);
+cadastrarTarefa("Atualizar sistema", 1);
+
+console.log("LISTA INICIAL:");
+exibirTarefas();
+
+console.log("CONCLUINDO TAREFA 2:");
+concluirTarefa(2);
+
+console.log("REABRINDO TAREFA 2:");
+reabrirTarefa(2);
+
+console.log("EDITANDO TAREFA 3:");
+editarTarefa(3, "Criar relatório mensal", 1);
+
+console.log("TAREFAS PENDENTES:");
+console.log(listarPendentes());
+
+console.log("TAREFAS CONCLUÍDAS:");
+console.log(listarConcluidas());
+
+console.log("TAREFAS ORDENADAS POR PRIORIDADE:");
+console.log(ordenarPorPrioridade());
+
+console.log("RESUMO:");
+resumoTarefas();
+
+console.log("LISTA FINAL:");
+exibirTarefas();
