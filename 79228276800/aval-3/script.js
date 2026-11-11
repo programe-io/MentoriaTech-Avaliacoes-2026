@@ -1,256 +1,261 @@
-// Dados Iniciais
-const storiesData = [
-  { id: 1, user: 'ana.design', avatar: 'https://unsplash.com', storyImg: 'https://unsplash.com', viewed: false \},
-  { id: 2, user: 'lucas_tech', avatar: 'https://unsplash.com', storyImg: 'https://unsplash.com', viewed: false \},
-  { id: 3, user: 'marina.viaja', avatar: 'https://unsplash.com', storyImg: 'https://unsplash.com', viewed: false \},
-  { id: 4, user: 'pedro.foto', avatar: 'https://unsplash.com', storyImg: 'https://unsplash.com', viewed: false \}
-];
-
-let postsData = [
-  {
-    id: 101,
-    user: 'marina.viaja',
-    location: 'Amalfi, Itália',
-    avatar: 'https://unsplash.com',
-    image: 'https://unsplash.com',
-    likes: 1248,
-    liked: false,
-    saved: false,
-    caption: 'Pôr do sol inesquecível na costa italiana! 🌅✨',
-    time: 'HÁ 2 HORAS',
-    comments: [
-      { user: 'ana.design', text: 'Que lugar maravilhoso!' \},
-      { user: 'pedro.foto', text: 'As cores dessa foto ficaram incríveis.' \}
-    ]
+// Estado inicial da aplicação
+const state = {
+  currentUser: {
+    username: "dev_ana",
+    avatar: "https://unsplash.com"
   \},
-  {
-    id: 102,
-    user: 'lucas_tech',
-    location: 'São Paulo, Brasil',
-    avatar: 'https://unsplash.com',
-    image: 'https://unsplash.com',
-    likes: 842,
-    liked: true,
-    saved: false,
-    caption: 'Setup pronto para mais uma maratona de código ☕💻 #frontend #javascript',
-    time: 'HÁ 5 HORAS',
-    comments: []
-  \}
-];
+  stories: [
+    { id: 1, username: "lucas_ui", avatar: "https://unsplash.com", storyImg: "https://unsplash.com", viewed: false \},
+    { id: 2, username: "mari.code", avatar: "https://unsplash.com", storyImg: "https://unsplash.com", viewed: false \},
+    { id: 3, username: "pedro_js", avatar: "https://unsplash.com", storyImg: "https://unsplash.com", viewed: false \},
+    { id: 4, username: "julia.art", avatar: "https://unsplash.com", storyImg: "https://unsplash.com", viewed: false \},
+    { id: 5, username: "tech_br", avatar: "https://unsplash.com", storyImg: "https://unsplash.com", viewed: false \}
+  ],
+  posts: [
+    {
+      id: 101,
+      username: "lucas_ui",
+      avatar: "https://unsplash.com",
+      location: "Florianópolis, SC",
+      image: "https://unsplash.com",
+      likes: 142,
+      liked: false,
+      saved: false,
+      caption: "Refatorando toda a arquitetura CSS hoje. Código limpo é vida! 💻🚀 #webdev #javascript",
+      time: "HÁ 2 HORAS",
+      comments: [
+        { user: "mari.code", text: "Ficou incrível esse setup!" \},
+        { user: "pedro_js", text: "Qual tema você usa no editor?" \}
+      ]
+    \},
+    {
+      id: 102,
+      username: "julia.art",
+      avatar: "https://unsplash.com",
+      location: "Rio de Janeiro, RJ",
+      image: "https://unsplash.com",
+      likes: 389,
+      liked: true,
+      saved: false,
+      caption: "Fim de tarde perfeito para recarregar as energias antes da entrega do projeto. ✨🌄",
+      time: "HÁ 5 HORAS",
+      comments: [
+        { user: "dev_ana", text: "Que vista maravilhosa!" \}
+      ]
+    \}
+  ],
+  suggestions: [
+    { username: "css_wizard", bio: "Seguido por lucas_ui", avatar: "https://unsplash.com", following: false \},
+    { username: "design.daily", bio: "Novo no InstaDev", avatar: "https://unsplash.com", following: false \},
+    { username: "fullstack_lab", bio: "Sugestão para você", avatar: "https://unsplash.com", following: false \}
+  ]
+\};
 
-const suggestionsData = [
-  { user: 'studio.arquitetura', subtitle: 'Seguido por ana.design', avatar: 'https://unsplash.com', following: false \},
-  { user: 'cafe.especial', subtitle: 'Novo no Instagram', avatar: 'https://unsplash.com', following: false \},
-  { user: 'ui.inspiracao', subtitle: 'Sugestão para você', avatar: 'https://unsplash.com', following: false \}
-];
-
-// Renderizar Stories
+// Renderiza Stories
 function renderStories() {
-  const container = document.getElementById('storiesContainer');
-  container.innerHTML = storiesData.map(story => `
+  const container = document.getElementById("storiesContainer");
+  container.innerHTML = state.stories.map(story => `
     <div class="story-item" onclick="openStory(\${story.id\})">
       <div class="story-ring \${story.viewed ? 'viewed' : ''\}">
-        <img src="\${story.avatar\}" alt="\${story.user\}">
+        <img src="\${story.avatar\}" alt="\${story.username\}">
       </div>
-      <span>\${story.user\}</span>
+      <span>\${story.username\}</span>
     </div>
-  `).join('');
+  `).join("");
 \}
 
-// Renderizar Feed de Posts
-function renderPosts(filterText = '') {
-  const container = document.getElementById('postsContainer');
-  const filtered = postsData.filter(p => p.user.toLowerCase().includes(filterText.toLowerCase()));
+// Renderiza Posts
+function renderPosts(filterText = "") {
+  const container = document.getElementById("feedContainer");
+  const filtered = state.posts.filter(post =>
+    post.username.toLowerCase().includes(filterText.toLowerCase()) ||
+    post.caption.toLowerCase().includes(filterText.toLowerCase())
+  );
+
+  if (filtered.length === 0) {
+    container.innerHTML = `<p style="text-align:center; padding: 40px; color: var(--text-secondary);">Nenhuma publicação encontrada.</p>`;
+    return;
+  \}
 
   container.innerHTML = filtered.map(post => `
-    <article class="post-card" id="post-\${post.id\}">
+    <article class="post-card">
       <div class="post-header">
-        <div class="post-user">
-          <img src="\${post.avatar\}" alt="\${post.user\}">
-          <div class="post-user-info">
-            <strong>\${post.user\}</strong>
-            <span>\${post.location\}</span>
+        <div class="post-author">
+          <img src="\${post.avatar\}" alt="\${post.username\}">
+          <div class="author-details">
+            <strong>\${post.username\}</strong>
+            \${post.location ? `<small>\${post.location\}</small>` : ""\}
           </div>
         </div>
-        <i class="fas fa-ellipsis-h" style="cursor:pointer;"></i>
+        <span>•••</span>
       </div>
 
-      <div class="post-image-wrapper" ondblclick="doubleClickLike(\${post.id\})">
-        <img src="\${post.image\}" alt="Publicação">
-        <i class="fas fa-heart heart-animation" id="heart-anim-\${post.id\}"></i>
+      <div class="post-image-wrapper" ondblclick="doubleClickLike(\${post.id\}, this)">
+        <img src="\${post.image\}" alt="Post de \${post.username\}">
+        <div class="big-heart-anim">❤️</div>
       </div>
 
       <div class="post-actions">
-        <div class="post-actions-left">
-          <i class="\${post.liked ? 'fas liked' : 'far'\} fa-heart" onclick="toggleLike(\${post.id\})"></i>
-          <i class="far fa-comment" onclick="focusComment(\${post.id\})"></i>
-          <i class="far fa-paper-plane"></i>
+        <div class="left-actions">
+          <button class="action-btn" onclick="toggleLike(\${post.id\})">
+            \${post.liked ? "❤️" : "🤍"\}
+          </button>
+          <button class="action-btn" onclick="focusComment(\${post.id\})">💬</button>
+          <button class="action-btn" onclick="sharePost('\${post.username\}')">🚀</button>
         </div>
-        <i class="\${post.saved ? 'fas' : 'far'\} fa-bookmark" onclick="toggleSave(\${post.id\})"></i>
+        <button class="action-btn" onclick="toggleSave(\${post.id\})">
+          \${post.saved ? "🔖" : "📑"\}
+        </button>
       </div>
 
-      <div class="post-likes">\${post.likes.toLocaleString('pt-BR')\} curtidas</div>
-
-      <div class="post-caption">
-        <strong>\${post.user\}</strong> \${post.caption\}
+      <div class="post-body">
+        <div class="likes-count">\${post.likes\} curtidas</div>
+        <div class="post-caption">
+          <strong>\${post.username\}</strong> \${post.caption\}
+        </div>
+        <div class="comments-list">
+          \${post.comments.map(c => `
+            <div class="comment-item"><strong>\${c.user\}</strong> \${c.text\}</div>
+          `).join("")\}
+        </div>
+        <div class="post-time">\${post.time\}</div>
       </div>
-
-      <div class="post-comments">
-        \${post.comments.map(c => `
-          <div class="comment-item">
-            <span><strong>\${c.user\}</strong> \${c.text\}</span>
-          </div>
-        `).join('')\}
-      </div>
-
-      <div class="post-time">\${post.time\}</div>
 
       <form class="comment-form" onsubmit="addComment(event, \${post.id\})">
-        <input type="text" id="input-\${post.id\}" placeholder="Adicione um comentário..." oninput="toggleCommentBtn(\${post.id\})">
-        <button type="submit" id="btn-\${post.id\}" disabled>Publicar</button>
+        <input type="text" id="comment-input-\${post.id\}" placeholder="Adicione um comentário..." required>
+        <button type="submit">Publicar</button>
       </form>
     </article>
-  `).join('');
+  `).join("");
 \}
 
-// Renderizar Sugestões
+// Renderiza Sugestões
 function renderSuggestions() {
-  const container = document.getElementById('suggestionsList');
-  container.innerHTML = suggestionsData.map((item, idx) => `
+  const container = document.getElementById("suggestionsContainer");
+  container.innerHTML = state.suggestions.map((sug, index) => `
     <div class="suggestion-item">
-      <img src="\${item.avatar\}" alt="\${item.user\}">
-      <div class="user-info">
-        <strong>\${item.user\}</strong>
-        <span>\${item.subtitle\}</span>
+      <div class="suggestion-left">
+        <img src="\${sug.avatar\}" alt="\${sug.username\}">
+        <div class="user-info">
+          <strong>\${sug.username\}</strong>
+          <span>\${sug.bio\}</span>
+        </div>
       </div>
-      <button class="text-btn \${item.following ? 'dark' : ''\}" onclick="toggleFollow(\${idx\})">
-        \${item.following ? 'Seguindo' : 'Seguir'\}
+      <button class="follow-btn \${sug.following ? 'following' : ''\}" onclick="toggleFollow(\${index\})">
+        \${sug.following ? "Seguindo" : "Seguir"\}
       </button>
     </div>
-  `).join('');
+  `).join("");
 \}
 
-// Interações dos Posts
-function toggleLike(id) {
-  const post = postsData.find(p => p.id === id);
-  post.liked = !post.liked;
-  post.likes += post.liked ? 1 : -1;
-  renderPosts(document.getElementById('searchInput').value);
-\}
+// Interações de Like, Salvar e Comentários
+window.toggleLike = function(postId) {
+  const post = state.posts.find(p => p.id === postId);
+  if (post) {
+    post.liked = !post.liked;
+    post.likes += post.liked ? 1 : -1;
+    renderPosts(document.getElementById("searchInput").value);
+  \}
+\};
 
-function doubleClickLike(id) {
-  const post = postsData.find(p => p.id === id);
-  if (!post.liked) {
+window.doubleClickLike = function(postId, wrapper) {
+  const post = state.posts.find(p => p.id === postId);
+  const heart = wrapper.querySelector(".big-heart-anim");
+  
+  heart.classList.add("active");
+  setTimeout(() => heart.classList.remove("active"), 700);
+
+  if (post && !post.liked) {
     post.liked = true;
     post.likes += 1;
-    renderPosts(document.getElementById('searchInput').value);
+    setTimeout(() => renderPosts(document.getElementById("searchInput").value), 500);
   \}
-  const heart = document.getElementById(`heart-anim-\${id\}`);
-  heart.classList.add('animate');
-  setTimeout(() => heart.classList.remove('animate'), 700);
-\}
+\};
 
-function toggleSave(id) {
-  const post = postsData.find(p => p.id === id);
-  post.saved = !post.saved;
-  renderPosts(document.getElementById('searchInput').value);
-\}
+window.toggleSave = function(postId) {
+  const post = state.posts.find(p => p.id === postId);
+  if (post) {
+    post.saved = !post.saved;
+    renderPosts(document.getElementById("searchInput").value);
+  \}
+\};
 
-function focusComment(id) {
-  document.getElementById(`input-\${id\}`).focus();
-\}
-
-function toggleCommentBtn(id) {
-  const input = document.getElementById(`input-\${id\}`);
-  const btn = document.getElementById(`btn-\${id\}`);
-  btn.disabled = input.value.trim() === '';
-\}
-
-function addComment(event, id) {
+window.addComment = function(event, postId) {
   event.preventDefault();
-  const input = document.getElementById(`input-\${id\}`);
+  const input = document.getElementById(`comment-input-\${postId\}`);
   const text = input.value.trim();
   if (!text) return;
 
-  const post = postsData.find(p => p.id === id);
-  post.comments.push({ user: 'dev.criativo', text \});
-  renderPosts(document.getElementById('searchInput').value);
-\}
+  const post = state.posts.find(p => p.id === postId);
+  if (post) {
+    post.comments.push({ user: state.currentUser.username, text \});
+    renderPosts(document.getElementById("searchInput").value);
+  \}
+\};
 
-function toggleFollow(index) {
-  suggestionsData[index].following = !suggestionsData[index].following;
+window.focusComment = function(postId) {
+  document.getElementById(`comment-input-\${postId\}`).focus();
+\};
+
+window.sharePost = function(username) {
+  alert(`Link da publicação de @\${username\} copiado para a área de transferência!`);
+\};
+
+window.toggleFollow = function(index) {
+  state.suggestions[index].following = !state.suggestions[index].following;
   renderSuggestions();
-\}
+\};
 
-// Lógica do Visualizador de Stories
-let storyTimer;
-function openStory(id) {
-  const story = storiesData.find(s => s.id === id);
+// Controle de Stories
+let storyTimeout;
+window.openStory = function(storyId) {
+  const story = state.stories.find(s => s.id === storyId);
+  if (!story) return;
+
   story.viewed = true;
   renderStories();
 
-  document.getElementById('storyUserImg').src = story.avatar;
-  document.getElementById('storyUsername').textContent = story.user;
-  document.getElementById('storyMainImg').src = story.storyImg;
-  
-  const viewer = document.getElementById('storyViewer');
-  const fill = document.getElementById('storyProgressFill');
-  viewer.classList.add('active');
-  
-  fill.style.transition = 'none';
-  fill.style.width = '0%';
-  
+  const viewer = document.getElementById("storyViewer");
+  const progress = document.getElementById("storyProgress");
+  document.getElementById("storyUserImg").src = story.avatar;
+  document.getElementById("storyUserName").textContent = story.username;
+  document.getElementById("storyMainImg").src = story.storyImg;
+
+  viewer.classList.add("open");
+  progress.style.transition = "none";
+  progress.style.width = "0%";
+
   setTimeout(() => {
-    fill.style.transition = 'width 4s linear';
-    fill.style.width = '100%';
+    progress.style.transition = "width 3s linear";
+    progress.style.width = "100%";
   \}, 50);
 
-  clearTimeout(storyTimer);
-  storyTimer = setTimeout(closeStory, 4050);
-\}
+  clearTimeout(storyTimeout);
+  storyTimeout = setTimeout(() => {
+    viewer.classList.remove("open");
+  \}, 3100);
+\};
 
-function closeStory() {
-  document.getElementById('storyViewer').classList.remove('active');
-  clearTimeout(storyTimer);
-\}
-
-document.getElementById('closeStoryBtn').addEventListener('click', closeStory);
-
-// Pesquisa em Tempo Real
-document.getElementById('searchInput').addEventListener('input', (e) => {
-  renderPosts(e.target.value);
+document.getElementById("closeStoryBtn").addEventListener("click", () => {
+  clearTimeout(storyTimeout);
+  document.getElementById("storyViewer").classList.remove("open");
 \});
 
 // Modal de Nova Publicação
-const modal = document.getElementById('createPostModal');
-document.getElementById('openModalBtn').addEventListener('click', () => modal.classList.add('active'));
-document.getElementById('closeModalBtn').addEventListener('click', () => modal.classList.remove('active'));
+const postModal = document.getElementById("postModal");
+document.getElementById("openModalBtn").addEventListener("click", () => postModal.classList.add("open"));
+document.getElementById("closeModalBtn").addEventListener("click", () => postModal.classList.remove("open"));
 
-document.getElementById('newPostForm').addEventListener('submit', (e) => {
+window.setPresetImage = function(url) {
+  document.getElementById("postImageUrl").value = url;
+\};
+
+document.getElementById("newPostForm").addEventListener("submit", (e) => {
   e.preventDefault();
-  const image = document.getElementById('postImageUrl').value;
-  const caption = document.getElementById('postCaption').value;
+  const image = document.getElementById("postImageUrl").value;
+  const location = document.getElementById("postLocation").value;
+  const caption = document.getElementById("postCaption").value;
 
-  postsData.unshift({
+  state.posts.unshift({
     id: Date.now(),
-    user: 'dev.criativo',
-    location: 'Brasil',
-    avatar: 'https://unsplash.com',
-    image,
-    likes: 0,
-    liked: false,
-    saved: false,
-    caption,
-    time: 'AGORA MESMO',
-    comments: []
-  \});
-
-  renderPosts();
-  e.target.reset();
-  modal.classList.remove('active');
-\});
-
-// Inicializar Aplicação
-renderStories();
-renderPosts();
-renderSuggestions();$0
+    username: state.currentUser.username,$0
