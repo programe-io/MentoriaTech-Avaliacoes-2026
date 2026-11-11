@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Código JavaScript</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <style>body{margin:0;background:#0d1117}pre{margin:0}code.hljs{padding:1.5rem;min-height:100vh;box-sizing:border-box}</style>
+</head>
+<body>
+  <pre><code class="language-javascript">
+
+// ===== CARRINHO DE COMPRAS =====
+
+let carrinho = [];
+
+// Formatar preço em reais
+function formatarPreco(valor) {
+    return valor.toLocaleString("pt-BR", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+}
+
+// Adicionar produto
+function adicionar(index) {
+    const produto = produtos[index];
+
+    if (!produto) return;
+
+    carrinho.push(produto);
+
+    atualizarCarrinho();
+
+    alert(produto.nome + " adicionado ao carrinho!");
+}
+
+// Remover produto
+function remover(index) {
+    carrinho.splice(index, 1);
+    atualizarCarrinho();
+}
+
+// Atualizar carrinho
+function atualizarCarrinho() {
+    const itens = document.getElementById("itens");
+    const totalElemento = document.getElementById("total");
+
+    if (!itens || !totalElemento) return;
+
+    let total = 0;
+
+    itens.innerHTML = "";
+
+    if (carrinho.length === 0) {
+        itens.innerHTML = "&lt;p&gt;Seu carrinho está vazio.&lt;/p&gt;";
+    }
+
+    carrinho.forEach((produto, index) =&gt; {
+        total += produto.preco;
+
+        const item = document.createElement("p");
+
+        item.innerHTML = `
+            ${produto.nome} - R$ ${formatarPreco(produto.preco)}
+            &lt;button onclick="remover(${index})"
+                style="background:#e53935;color:white;border:0;
+                padding:5px 8px;border-radius:5px;cursor:pointer;"&gt;
+                Remover
+            &lt;/button&gt;
+        `;
+
+        itens.appendChild(item);
+    });
+
+    totalElemento.textContent = formatarPreco(total);
+}
+
+// ===== FINALIZAR PEDIDO =====
+
+function finalizar() {
+
+    if (carrinho.length === 0) {
+        alert("Seu carrinho está vazio!");
+        return;
+    }
+
+    let total = 0;
+
+    let mensagem = "Olá! Gostaria de fazer um pedido:\n\n";
+
+    carrinho.forEach(produto =&gt; {
+        mensagem += `- ${produto.nome}: R$ ${formatarPreco(produto.preco)}\n`;
+
+        total += produto.preco;
+    });
+
+    mensagem += `\nTOTAL: R$ ${formatarPreco(total)}`;
+
+    // Coloque aqui o WhatsApp da sua loja
+    const telefone = "5500000000000";
+
+    const link = "https://wa.me/" + telefone +
+        "?text=" + encodeURIComponent(mensagem);
+
+    window.open(link, "_blank");
+}
+
+// ===== INICIALIZAÇÃO =====
+
+document.addEventListener("DOMContentLoaded", () =&gt; {
+    if (typeof produtos !== "undefined") {
+        carregarProdutos();
+    }
+
+    atualizarCarrinho();
+});</code></pre>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+</body>
+</html>
