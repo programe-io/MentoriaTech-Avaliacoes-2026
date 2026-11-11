@@ -1,174 +1,160 @@
-let tarefas = [];
-let geradorDeCodigo = 0;
+// Lista de produtos já cadastrados
 
-const formulario = document.getElementById("formTarefa");
-const mensagem = document.getElementById("mensagem");
+let produtos = [
+    {
+            codigo: 1,
+                    descricao: "Cadeira gamer",
+                            quantidade: 12,
+                                    valor: 699
+                                        },
+                                            {
+                                                    codigo: 2,
+                                                            descricao: "Mouse Logitech",
+                                                                    quantidade: 38,
+                                                                            valor: 99
+                                                                                },
+                                                                                    {
+                                                                                            codigo: 3,
+                                                                                                    descricao: "Teclado gamer",
+                                                                                                            quantidade: 15,
+                                                                                                                    valor: 150
+                                                                                                                        }
+                                                                                                                        ];
 
-// Validar dados da tarefa
-function validarDadosDaTarefa(titulo, prioridade) {
-    if (titulo.trim().length < 5) {
-        throw new Error("O título deve ter no mínimo 5 caracteres!");
-    \}
+                                                                                                                        // Função para cadastrar produto
 
-    if (prioridade < 1 || prioridade > 3) {
-        throw new Error("A prioridade deve ser entre 1 e 3!");
-    \}
-\}
+                                                                                                                        function cadastrarProduto() {
 
-// Cadastrar tarefa
-function cadastrarTarefa(titulo, prioridade) {
-    validarDadosDaTarefa(titulo, prioridade);
+                                                                                                                            let descricao = document.getElementById("descricao").value;
+                                                                                                                                let quantidade = Number(document.getElementById("quantidade").value);
+                                                                                                                                    let valor = Number(document.getElementById("valor").value);
 
-    let tarefa = {
-        codigo: ++geradorDeCodigo,
-        titulo: titulo.trim(),
-        prioridade: Number(prioridade),
-        status: true
-    \};
+                                                                                                                                        if (descricao.length < 5) {
+                                                                                                                                                alert("A descrição deve ter pelo menos 5 caracteres!");
+                                                                                                                                                        return;
+                                                                                                                                                            }
 
-    tarefas.push(tarefa);
+                                                                                                                                                                if (quantidade < 1 || !Number.isInteger(quantidade)) {
+                                                                                                                                                                        alert("A quantidade deve ser maior que zero!");
+                                                                                                                                                                                return;
+                                                                                                                                                                                    }
 
-    return tarefa;
-\}
+                                                                                                                                                                                        if (valor < 0 || !Number.isFinite(valor)) {
+                                                                                                                                                                                                alert("O valor deve ser maior ou igual a zero!");
+                                                                                                                                                                                                        return;
+                                                                                                                                                                                                            }
 
-// Listar tarefas
-function listarTarefas() {
-    return tarefas;
-\}
+                                                                                                                                                                                                                let novoProduto = {
+                                                                                                                                                                                                                        codigo: produtos.length + 1,
+                                                                                                                                                                                                                                descricao: descricao,
+                                                                                                                                                                                                                                        quantidade: quantidade,
+                                                                                                                                                                                                                                                valor: valor
+                                                                                                                                                                                                                                                    };
 
-// Buscar tarefa pelo código
-function buscarTarefa(codigo) {
-    let tarefa = tarefas.find(
-        tarefa => tarefa.codigo === codigo
-    );
+                                                                                                                                                                                                                                                        produtos.push(novoProduto);
 
-    if (!tarefa) {
-        throw new Error("Tarefa não encontrada!");
-    \}
+                                                                                                                                                                                                                                                            document.getElementById("descricao").value = "";
+                                                                                                                                                                                                                                                                document.getElementById("quantidade").value = "";
+                                                                                                                                                                                                                                                                    document.getElementById("valor").value = "";
 
-    return tarefa;
-\}
+                                                                                                                                                                                                                                                                        listarProdutos();
 
-// Concluir tarefa
-function concluirTarefa(codigo) {
-    let tarefa = buscarTarefa(codigo);
+                                                                                                                                                                                                                                                                            alert("Produto cadastrado com sucesso!");
+                                                                                                                                                                                                                                                                            }
 
-    if (!tarefa.status) {
-        throw new Error("Esta tarefa já foi concluída!");
-    \}
+                                                                                                                                                                                                                                                                            // Função para listar produtos
 
-    tarefa.status = false;
-\}
+                                                                                                                                                                                                                                                                            function listarProdutos() {
 
-// Alterar prioridade
-function alterarPrioridade(codigo, novaPrioridade) {
-    let tarefa = buscarTarefa(codigo);
+                                                                                                                                                                                                                                                                                let lista = document.getElementById("listaProdutos");
 
-    validarDadosDaTarefa(
-        tarefa.titulo,
-        Number(novaPrioridade)
-    );
+                                                                                                                                                                                                                                                                                    lista.innerHTML = "";
 
-    tarefa.prioridade = Number(novaPrioridade);
-\}
+                                                                                                                                                                                                                                                                                        produtos.forEach(function(produto) {
 
-// Exibir tarefas na tela
-function exibirTarefas() {
-    const lista = document.getElementById("listaTarefas");
-    lista.innerHTML = "";
+                                                                                                                                                                                                                                                                                                lista.innerHTML += `
+                                                                                                                                                                                                                                                                                                            <tr>
+                                                                                                                                                                                                                                                                                                                            <td>${produto.codigo}</td>
+                                                                                                                                                                                                                                                                                                                                            <td>${produto.descricao}</td>
+                                                                                                                                                                                                                                                                                                                                                            <td>${produto.quantidade}</td>
+                                                                                                                                                                                                                                                                                                                                                                            <td>R$ ${produto.valor.toFixed(2)}</td>
 
-    let tarefasCadastradas = listarTarefas();
+                                                                                                                                                                                                                                                                                                                                                                                            <td>
+                                                                                                                                                                                                                                                                                                                                                                                                                <button class="atualizar"
+                                                                                                                                                                                                                                                                                                                                                                                                                                    onclick="atualizarValor(${produto.codigo})">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        Atualizar Valor
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                            </button>
 
-    if (tarefasCadastradas.length === 0) {
-        lista.innerHTML =
-            '<p class="vazio">Nenhuma tarefa cadastrada.</p>';
-    \}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <button class="quantidade"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    onclick="atualizarQuantidade(${produto.codigo})">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        Adicionar Quantidade
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            </button>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            </td>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        </tr>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                `;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    });
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    }
 
-    tarefasCadastradas.forEach(tarefa => {
-        let card = document.createElement("div");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    // Função para atualizar valor
 
-        card.className = tarefa.status
-            ? "tarefa"
-            : "tarefa concluida";
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    function atualizarValor(codigoProduto) {
 
-        let titulo = document.createElement("h3");
-        titulo.textContent = tarefa.titulo;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        let novoValor = Number(prompt("Digite o novo valor:"));
 
-        let codigo = document.createElement("p");
-        codigo.textContent = "Código: " + tarefa.codigo;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            if (!Number.isFinite(novoValor) || novoValor < 0) {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    alert("Valor inválido!");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            return;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                }
 
-        let prioridade = document.createElement("p");
-        prioridade.textContent =
-            "Prioridade: " +
-            ["", "Alta", "Média", "Baixa"][tarefa.prioridade];
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    let produto = produtos.find(
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            prod => prod.codigo === codigoProduto
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                );
 
-        let status = document.createElement("p");
-        status.textContent = tarefa.status
-            ? "Status: Pendente"
-            : "Status: Concluída";
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    if (produto) {
 
-        let botoes = document.createElement("div");
-        botoes.className = "botoes";
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            produto.valor = novoValor;
 
-        // Botão concluir
-        let botaoConcluir = document.createElement("button");
-        botaoConcluir.textContent = "Concluir";
-        botaoConcluir.disabled = !tarefa.status;
-        botaoConcluir.className = "btn-concluir";
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    listarProdutos();
 
-        botaoConcluir.onclick = function() {
-            try {
-                concluirTarefa(tarefa.codigo);
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            alert("Valor atualizado com sucesso!");
 
-                mensagem.textContent = "Tarefa concluída!";
-                mensagem.className = "sucesso";
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                } else {
 
-                exibirTarefas();
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        alert("Produto não encontrado!");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            }
 
-            \} catch (erro) {
-                mostrarErro(erro);
-            \}
-        \};
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            // Função para atualizar quantidade
 
-        // Botão alterar prioridade
-        let botaoAlterar = document.createElement("button");
-        botaoAlterar.textContent = "Alterar prioridade";
-        botaoAlterar.className = "btn-alterar";
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            function atualizarQuantidade(codigoProduto) {
 
-        botaoAlterar.onclick = function() {
-            let novaPrioridade = prompt(
-                "Digite a nova prioridade (1, 2 ou 3):"
-            );
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                let novaQuantidade = Number(
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        prompt("Digite a quantidade que deseja adicionar:")
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            );
 
-            if (novaPrioridade === null) return;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                if (!Number.isInteger(novaQuantidade) || novaQuantidade < 1) {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        alert("Quantidade inválida!");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                return;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    }
 
-            try {
-                alterarPrioridade(
-                    tarefa.codigo,
-                    Number(novaPrioridade)
-                );
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        let produto = produtos.find(
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                prod => prod.codigo === codigoProduto
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    );
 
-                mensagem.textContent =
-                    "Prioridade alterada com sucesso!";
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        if (produto) {
 
-                mensagem.className = "sucesso";
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                produto.quantidade += novaQuantidade;
 
-                exibirTarefas();
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        listarProdutos();
 
-            \} catch (erro) {
-                mostrarErro(erro);
-            \}
-        \};
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                alert("Quantidade atualizada com sucesso!");
 
-        botoes.append(
-            botaoConcluir,
-            botaoAlterar
-        );
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    } else {
 
-        card.append(
-            titulo,
-            codigo,
-            prioridade,
-            status,
-            botoes
-        );$0
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            alert("Produto não encontrado!");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                }
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                // Mostrar produtos ao abrir o sistema
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                listarProdutos();
