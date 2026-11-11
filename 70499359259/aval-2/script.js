@@ -1,0 +1,320 @@
+
+/* =====================================
+   GERENCIADOR DE TAREFAS
+   ===================================== */
+
+// Array que vai guardar todas as tarefas
+let tarefas = [];
+let geradorCodigo = 0;
+
+// =====================================
+// VALIDAR DADOS DA TAREFA
+// =====================================
+
+function validarDadosTarefa(titulo, prioridade) {
+
+    if (!titulo || titulo.trim().length < 5) {
+        throw new Error(
+            "O título deve ter no mínimo 5 caracteres."
+        );
+    }
+
+    if (prioridade < 1 || prioridade > 3) {
+        throw new Error(
+            "Informe uma prioridade entre 1 e 3."
+        );
+    }
+}
+
+// =====================================
+// BUSCAR TAREFA PELO CÓDIGO
+// =====================================
+
+function buscarTarefa(codigoTarefa) {
+
+    const tarefaBuscada = tarefas.find(
+        tarefa => tarefa.codigo === codigoTarefa
+    );
+
+    if (!tarefaBuscada) {
+        throw new Error("Código de tarefa não encontrado.");
+    }
+
+    return tarefaBuscada;
+}
+
+// =====================================
+// CADASTRAR TAREFA
+// =====================================
+
+function cadastrarTarefa(titulo, prioridade) {
+
+    validarDadosTarefa(titulo, prioridade);
+
+    const tarefa = {
+        codigo: ++geradorCodigo,
+        titulo: titulo.trim(),
+        prioridade: prioridade,
+        status: false,
+        dataCriacao: new Date().toLocaleDateString("pt-BR")
+    };
+
+    tarefas.push(tarefa);
+
+    console.log("Tarefa cadastrada com sucesso!");
+
+    return tarefa;
+}
+
+// =====================================
+// LISTAR TODAS AS TAREFAS
+// =====================================
+
+function listarTarefas() {
+
+    console.log("\n===== LISTA DE TAREFAS =====");
+
+    if (tarefas.length === 0) {
+        console.log("Nenhuma tarefa cadastrada.");
+        return;
+    }
+
+    tarefas.forEach(tarefa => {
+
+        console.log({
+            codigo: tarefa.codigo,
+            titulo: tarefa.titulo,
+            prioridade: tarefa.prioridade,
+            status: tarefa.status ? "Concluída" : "Pendente"
+        });
+
+    });
+}
+
+// =====================================
+// ATUALIZAR TÍTULO DA TAREFA
+// =====================================
+
+function atualizarTarefa(codigoTarefa, novoTitulo, novaPrioridade) {
+
+    validarDadosTarefa(novoTitulo, novaPrioridade);
+
+    const tarefa = buscarTarefa(codigoTarefa);
+
+    tarefa.titulo = novoTitulo.trim();
+    tarefa.prioridade = novaPrioridade;
+
+    console.log("Tarefa atualizada com sucesso!");
+
+    return tarefa;
+}
+
+// =====================================
+// CONCLUIR TAREFA
+// =====================================
+
+function concluirTarefa(codigoTarefa) {
+
+    const tarefa = buscarTarefa(codigoTarefa);
+
+    if (tarefa.status === true) {
+        throw new Error("Tarefa já está concluída.");
+    }
+
+    tarefa.status = true;
+
+    console.log("Tarefa concluída com sucesso!");
+
+    return tarefa;
+}
+
+// =====================================
+// REABRIR TAREFA
+// =====================================
+
+function reabrirTarefa(codigoTarefa) {
+
+    const tarefa = buscarTarefa(codigoTarefa);
+
+    if (tarefa.status === false) {
+        throw new Error("A tarefa já está pendente.");
+    }
+
+    tarefa.status = false;
+
+    console.log("Tarefa reaberta com sucesso!");
+
+    return tarefa;
+}
+
+// =====================================
+// EXCLUIR TAREFA
+// =====================================
+
+function excluirTarefa(codigoTarefa) {
+
+    const indice = tarefas.findIndex(
+        tarefa => tarefa.codigo === codigoTarefa
+    );
+
+    if (indice === -1) {
+        throw new Error("Tarefa não encontrada.");
+    }
+
+    tarefas.splice(indice, 1);
+
+    console.log("Tarefa excluída com sucesso!");
+}
+
+// =====================================
+// FILTRAR TAREFAS PENDENTES
+// =====================================
+
+function listarTarefasPendentes() {
+
+    const pendentes = tarefas.filter(
+        tarefa => tarefa.status === false
+    );
+
+    console.log("\n===== TAREFAS PENDENTES =====");
+
+    if (pendentes.length === 0) {
+        console.log("Não existem tarefas pendentes.");
+        return;
+    }
+
+    pendentes.forEach(tarefa => {
+        console.log(tarefa);
+    });
+}
+
+// =====================================
+// FILTRAR TAREFAS CONCLUÍDAS
+// =====================================
+
+function listarTarefasConcluidas() {
+
+    const concluidas = tarefas.filter(
+        tarefa => tarefa.status === true
+    );
+
+    console.log("\n===== TAREFAS CONCLUÍDAS =====");
+
+    if (concluidas.length === 0) {
+        console.log("Não existem tarefas concluídas.");
+        return;
+    }
+
+    concluidas.forEach(tarefa => {
+        console.log(tarefa);
+    });
+}
+
+// =====================================
+// FILTRAR POR PRIORIDADE
+// =====================================
+
+function listarPorPrioridade(prioridade) {
+
+    if (prioridade < 1 || prioridade > 3) {
+        throw new Error("Prioridade deve ser 1, 2 ou 3.");
+    }
+
+    const resultado = tarefas.filter(
+        tarefa => tarefa.prioridade === prioridade
+    );
+
+    console.log("\n===== FILTRO POR PRIORIDADE =====");
+
+    if (resultado.length === 0) {
+        console.log("Nenhuma tarefa encontrada.");
+        return;
+    }
+
+    resultado.forEach(tarefa => {
+        console.log(tarefa);
+    });
+}
+
+// =====================================
+// RELATÓRIO GERAL
+// =====================================
+
+function gerarRelatorio() {
+
+    const total = tarefas.length;
+
+    const concluidas = tarefas.filter(
+        tarefa => tarefa.status === true
+    ).length;
+
+    const pendentes = tarefas.filter(
+        tarefa => tarefa.status === false
+    ).length;
+
+    const prioridadeAlta = tarefas.filter(
+        tarefa => tarefa.prioridade === 1
+    ).length;
+
+    console.log("\n===== RELATÓRIO GERAL =====");
+
+    console.log("Total de tarefas:", total);
+    console.log("Tarefas concluídas:", concluidas);
+    console.log("Tarefas pendentes:", pendentes);
+    console.log("Prioridade alta:", prioridadeAlta);
+
+    if (total > 0) {
+        console.log(
+            "Percentual concluído:",
+            ((concluidas / total) * 100).toFixed(2) + "%"
+        );
+    }
+
+    console.log("===========================");
+}
+
+// =====================================
+// EXECUÇÃO DO SISTEMA
+// =====================================
+
+// Cadastrar tarefas
+cadastrarTarefa("Cadastrar Clientes", 1);
+cadastrarTarefa("Limpar banco de dados", 3);
+cadastrarTarefa("Desenvolver sistema", 2);
+cadastrarTarefa("Revisar documentação", 1);
+
+// Listar tarefas
+listarTarefas();
+
+// Buscar tarefa
+console.log("\nConsulta de tarefa:");
+console.log(buscarTarefa(1));
+
+// Atualizar tarefa
+atualizarTarefa(
+    2,
+    "Limpar banco de dados antigo",
+    2
+);
+
+// Concluir tarefa
+concluirTarefa(1);
+
+// Reabrir tarefa
+reabrirTarefa(1);
+
+// Excluir tarefa
+// excluirTarefa(4);
+
+// Listar pendentes
+listarTarefasPendentes();
+
+// Listar concluídas
+concluirTarefa(3);
+listarTarefasConcluidas();
+
+// Filtrar prioridade alta
+listarPorPrioridade(1);
+
+// Gerar relatório
+gerarRelatorio();
