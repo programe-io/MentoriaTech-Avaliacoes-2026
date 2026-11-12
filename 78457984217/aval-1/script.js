@@ -1,26 +1,82 @@
-const formulario = document.getElementById("formulario");
-const mensagem = document.getElementById("mensagem");
+let pontos = 0;
+let tempo = 30;
+let intervalo;
+let gerador;
+let jogando = false;
 
-formulario.addEventListener("submit", function(event) {
-    event.preventDefault();
+const campo = document.getElementById("campo");
 
-    const usuario = document.getElementById("usuario").value;
-    const senha = document.getElementById("senha").value;
+function iniciarJogo() {
+    pontos = 0;
+    tempo = 30;
+    jogando = true;
 
-    if (usuario.length < 3) {
-        mensagem.style.color = "#ff4444";
-        mensagem.textContent = "Usuário muito curto!";
-        return;
-    }
+    document.getElementById("pontos").textContent = pontos;
+    document.getElementById("tempo").textContent = tempo;
+    document.getElementById("resultado").textContent = "";
 
-    if (senha.length < 6) {
-        mensagem.style.color = "#ff4444";
-        mensagem.textContent = "Senha precisa ter 6 caracteres!";
-        return;
-    }
+    campo.innerHTML = "";
 
-    mensagem.style.color = "#00ff99";
-    mensagem.textContent = "⚡ Login demonstrativo realizado!";
+    intervalo = setInterval(() => {
+        tempo--;
 
-    formulario.reset();
-});
+        document.getElementById("tempo").textContent = tempo;
+
+        if (tempo <= 0) {
+            terminarJogo();
+        }
+    }, 1000);
+
+    criarZumbi();
+
+    gerador = setInterval(criarZumbi, 900);
+}
+
+function criarZumbi() {
+    if (!jogando) return;
+
+    const zumbi = document.createElement("button");
+
+    zumbi.className = "zumbi";
+    zumbi.textContent = "🧟";
+
+    const maxX = campo.clientWidth - 55;
+    const maxY = campo.clientHeight - 55;
+
+    zumbi.style.left = Math.random() * maxX + "px";
+    zumbi.style.top = Math.random() * maxY + "px";
+
+    zumbi.onclick = () => {
+        if (!jogando) return;
+
+        pontos += 10;
+
+        document.getElementById("pontos").textContent = pontos;
+
+        zumbi.remove();
+    };
+
+    campo.appendChild(zumbi);
+
+    setTimeout(() => {
+        zumbi.remove();
+    }, 1800);
+}
+
+function terminarJogo() {
+    jogando = false;
+
+    clearInterval(intervalo);
+    clearInterval(gerador);
+
+    campo.innerHTML = `
+        <div id="inicio">
+            <h2>FIM DE JOGO! 🧟</h2>
+            <p>Você conseguiu ${pontos} pontos!</p>
+            <button onclick="iniciarJogo()">JOGAR NOVAMENTE</button>
+        </div>
+    `;
+
+    document.getElementById("resultado").textContent =
+        pontos >= 100 ? "🏆 EXCELENTE SOBREVIVENTE!" : "☠️ Tente novamente!";
+}
