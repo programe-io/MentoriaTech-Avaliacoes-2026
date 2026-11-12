@@ -1,103 +1,36 @@
-const mundo = document.getElementById("mundo");
 
-const largura = 10;
-const altura = 10;
+const botao = document.getElementById("botaoMissao");
+const missao = document.getElementById("missao");
 
-let ferramenta = "quebrar";
+const missoes = [
+  "🐉 Derrote o dragão que ameaça o reino!",
+  "⚔️ Encontre a espada lendária perdida.",
+  "💎 Descubra o tesouro escondido na montanha.",
+  "🧙 Encontre o mago desaparecido.",
+  "🏰 Defenda o castelo de uma invasão!",
+  "🛡️ Recupere o escudo dos antigos reis.",
+  "🌲 Explore a floresta encantada."
+];
 
-let inventario = {
-    grama: 0,
-    terra: 0,
-    pedra: 0
-};
+botao.addEventListener("click", () => {
+  const numero = Math.floor(Math.random() * missoes.length);
 
-let blocos = [];
+  missao.textContent = missoes[numero];
 
-function gerarMundo() {
-    for (let y = 0; y < altura; y++) {
-        for (let x = 0; x < largura; x++) {
+  botao.textContent = "NOVA MISSÃO";
+});
 
-            let tipo = "vazio";
+function criarParticula() {
+  const particula = document.createElement("div");
 
-            if (y === 6) tipo = "grama";
-            if (y > 6 && y <= 8) tipo = "terra";
-            if (y === 9) tipo = "pedra";
+  particula.classList.add("particula");
 
-            blocos.push(tipo);
-        }
-    }
+  particula.style.left = Math.random() * 100 + "vw";
+  particula.style.top = Math.random() * 100 + "vh";
 
-    desenharMundo();
+  document.getElementById("particulas").appendChild(particula);
 }
 
-function desenharMundo() {
-    mundo.innerHTML = "";
-
-    blocos.forEach((tipo, indice) => {
-        const bloco = document.createElement("button");
-
-        bloco.className = "bloco " + tipo;
-
-        bloco.textContent =
-            tipo === "grama" ? "🌱" :
-            tipo === "terra" ? "🟫" :
-            tipo === "pedra" ? "🪨" : "";
-
-        bloco.onclick = () => interagir(indice);
-
-        mundo.appendChild(bloco);
-    });
-
-    atualizarInventario();
+for (let i = 0; i < 50; i++) {
+  criarParticula();
 }
-
-function selecionar(tipo) {
-    ferramenta = tipo;
-
-    document.getElementById("mensagem").textContent =
-        "Ferramenta selecionada: " + tipo;
-}
-
-function interagir(indice) {
-    const atual = blocos[indice];
-
-    if (ferramenta === "quebrar") {
-
-        if (atual === "vazio") return;
-
-        inventario[atual]++;
-        blocos[indice] = "vazio";
-
-    } else {
-
-        if (atual !== "vazio") {
-            document.getElementById("mensagem").textContent =
-                "Esse espaço já está ocupado!";
-            return;
-        }
-
-        if (inventario[ferramenta] <= 0) {
-            document.getElementById("mensagem").textContent =
-                "Você não possui esse bloco!";
-            return;
-        }
-
-        inventario[ferramenta]--;
-        blocos[indice] = ferramenta;
-    }
-
-    desenharMundo();
-}
-
-function atualizarInventario() {
-    document.getElementById("grama").textContent =
-        inventario.grama;
-
-    document.getElementById("terra").textContent =
-        inventario.terra;
-
-    document.getElementById("pedra").textContent =
-        inventario.pedra;
-}
-
-gerarMundo();
