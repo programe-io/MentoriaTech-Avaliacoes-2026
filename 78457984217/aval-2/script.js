@@ -1,40 +1,23 @@
-const visor = document.getElementById("visor");
+const pesquisa = document.getElementById("pesquisa");
 
-function adicionar(valor) {
-    if (visor.value === "0" || visor.value === "Erro") {
-        visor.value = valor === "." ? "0." : valor;
-    } else {
-        visor.value += valor;
-    }
+pesquisa.addEventListener("input", function() {
+    const texto = pesquisa.value.toLowerCase();
+
+    const filmes = document.querySelectorAll(".filme");
+
+    filmes.forEach(filme => {
+        const nome = filme.dataset.nome.toLowerCase();
+
+        filme.style.display = nome.includes(texto)
+            ? "block"
+            : "none";
+    });
+});
+
+function detalhes(nome) {
+    alert("Você selecionou o filme: " + nome);
 }
 
-function limpar() {
-    visor.value = "0";
-}
-
-function apagar() {
-    visor.value = visor.value.slice(0, -1) || "0";
-}
-
-function calcular() {
-    try {
-        const expressao = visor.value;
-
-        if (!/^[0-9+\-*/.() ]+$/.test(expressao)) {
-            throw new Error("Expressão inválida");
-        }
-
-        const resultado = Function(
-            '"use strict"; return (' + expressao + ')'
-        )();
-
-        if (!Number.isFinite(resultado)) {
-            throw new Error("Resultado inválido");
-        }
-
-        visor.value = Number(resultado.toFixed(10)).toString();
-
-    } catch {
-        visor.value = "Erro";
-    }
+function mostrarDestaque() {
+    alert("🌟 Destaque do dia: Interestelar!");
 }
