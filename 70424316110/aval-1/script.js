@@ -132,4 +132,4 @@ function limparCampos() {
     document.getElementById("quantidade").value = "";
     document.getElementById("valor").value = "";
 
-\}$0
+\}
