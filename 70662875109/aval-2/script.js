@@ -1,0 +1,213 @@
+
+// ======================================
+// SISTEMA DE GERENCIAMENTO DE ESTOQUE
+// ======================================
+
+// Lista de produtos
+let produtos = [];
+
+// Validar dados
+function validarDadosProduto(nome, valor, quantidade) {
+    if (!nome || nome.trim() === "") {
+        throw new Error("Nome do produto obrigatório!");
+    }
+
+    if (!Number.isFinite(valor) || valor < 0) {
+        throw new Error("Valor inválido!");
+    }
+
+    if (!Number.isInteger(quantidade) || quantidade < 0) {
+        throw new Error("Quantidade inválida!");
+    }
+}
+
+// Cadastrar produto
+function adicionarProduto(codigo, nome, valor, quantidade) {
+    validarDadosProduto(nome, valor, quantidade);
+
+    if (produtos.some(p => p.codigo === codigo)) {
+        throw new Error("Produto já cadastrado!");
+    }
+
+    produtos.push({
+        codigo,
+        nome,
+        valor,
+        quantidade
+    });
+
+    console.log("Produto cadastrado com sucesso!");
+}
+
+// Listar produtos
+function listarProdutos() {
+    console.log("===== LISTA DE PRODUTOS =====");
+    console.table(produtos);
+    return produtos;
+}
+
+// Buscar produto
+function buscarProduto(codigo) {
+    const produto = produtos.find(p => p.codigo === codigo);
+
+    if (!produto) {
+        throw new Error("Produto não encontrado!");
+    }
+
+    return produto;
+}
+
+// Atualizar valor
+function atualizarValor(codigo, novoValor) {
+    const produto = buscarProduto(codigo);
+
+    validarDadosProduto(
+        produto.nome,
+        novoValor,
+        produto.quantidade
+    );
+
+    produto.valor = novoValor;
+
+    console.log("Valor atualizado!");
+}
+
+// Atualizar quantidade
+function atualizarQuantidade(codigo, novaQuantidade) {
+    const produto = buscarProduto(codigo);
+
+    validarDadosProduto(
+        produto.nome,
+        produto.valor,
+        novaQuantidade
+    );
+
+    produto.quantidade = novaQuantidade;
+
+    console.log("Quantidade atualizada!");
+}
+
+// Atualizar nome
+function atualizarNome(codigo, novoNome) {
+    const produto = buscarProduto(codigo);
+
+    validarDadosProduto(
+        novoNome,
+        produto.valor,
+        produto.quantidade
+    );
+
+    produto.nome = novoNome;
+
+    console.log("Nome atualizado!");
+}
+
+// Registrar entrada
+function registrarEntrada(codigo, quantidade) {
+    const produto = buscarProduto(codigo);
+
+    if (!Number.isInteger(quantidade) || quantidade <= 0) {
+        throw new Error("Quantidade inválida!");
+    }
+
+    produto.quantidade += quantidade;
+
+    console.log("Entrada registrada!");
+}
+
+// Registrar saída
+function registrarSaida(codigo, quantidade) {
+    const produto = buscarProduto(codigo);
+
+    if (!Number.isInteger(quantidade) || quantidade <= 0) {
+        throw new Error("Quantidade inválida!");
+    }
+
+    if (produto.quantidade < quantidade) {
+        throw new Error("Estoque insuficiente!");
+    }
+
+    produto.quantidade -= quantidade;
+
+    console.log("Saída registrada!");
+}
+
+// Excluir produto
+function removerProduto(codigo) {
+    const indice = produtos.findIndex(p => p.codigo === codigo);
+
+    if (indice === -1) {
+        throw new Error("Produto não encontrado!");
+    }
+
+    produtos.splice(indice, 1);
+
+    console.log("Produto removido!");
+}
+
+// Produtos com estoque baixo
+function consultarEstoqueBaixo(limite = 5) {
+    const resultado = produtos.filter(
+        p => p.quantidade <= limite
+    );
+
+    console.log("===== ESTOQUE BAIXO =====");
+    console.table(resultado);
+
+    return resultado;
+}
+
+// Calcular quantidade total
+function calcularTotalProdutos() {
+    return produtos.reduce(
+        (total, p) => total + p.quantidade,
+        0
+    );
+}
+
+// Calcular valor total
+function calcularValorEstoque() {
+    return produtos.reduce(
+        (total, p) => total + p.valor * p.quantidade,
+        0
+    );
+}
+
+// Gerar relatório
+function gerarRelatorio() {
+    console.log("===== RELATÓRIO DO ESTOQUE =====");
+
+    console.log("Tipos de produtos:", produtos.length);
+
+    console.log(
+        "Quantidade total:",
+        calcularTotalProdutos()
+    );
+
+    console.log(
+        "Valor total: R$",
+        calcularValorEstoque().toFixed(2)
+    );
+
+    console.table(produtos);
+}
+
+// ======================================
+// TESTES DO SISTEMA
+// ======================================
+
+adicionarProduto(1, "Notebook", 2500, 10);
+adicionarProduto(2, "Mouse", 50, 20);
+adicionarProduto(3, "Teclado", 100, 4);
+
+listarProdutos();
+
+registrarEntrada(1, 5);
+registrarSaida(2, 3);
+
+atualizarValor(3, 120);
+atualizarNome(3, "Teclado Gamer");
+
+consultarEstoqueBaixo();
+
+gerarRelatorio();
