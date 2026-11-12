@@ -1,0 +1,106 @@
+!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MiniFeed</title>
+    <link rel="stylesheet" href="style.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+    <header>
+        <div class="header-content">
+            <h1>MiniFeed</h1>
+            <nav>
+                <a href="#">Inicio</a>
+                <a href="#">Perfil</a>
+            </nav>
+        </div>
+    </header>
+    <main>
+        <section class="new-post">
+            <div class="user">
+                <div class="avatar">
+                    <img src="https://legis.senado.leg.br/senadores/fotos-oficiais/5894" alt="">
+                </div>
+                <div>
+                    <strong>Flavio bolsonaro22</strong>
+                    <span> assistiu alguma coisa ultimamente?</span>
+                </div>
+            </div>
+            <div>
+                <input type="text" id="novoPost" placeholder="no que esta pensando?">
+            </div>
+            <button id="publicar">Publicar</button>
+        </section>
+        <article class="post">
+            <div class="post-header">
+                <div class="avatar">
+                    <img src="https://images.jota.info/wp-content/uploads/2026/08/55487506368-8b95ec0218-k.jpg" alt="">
+                </div>
+                <div>
+                    <strong>Lula13</strong>
+                    <span>Há 11 minutos</span>
+                </div>
+                <br>
+            </div>
+            <div class="post-text">
+                Estava lembrando a minha vitoria
+            </div>
+            <img src="https://media.gazetadopovo.com.br/2026/10/25230529/lula-pt-vermelho--660x372.jpg" alt="">
+            <button class="curtir">🤍 Curtir <span>0</span></button>
+            <input type="text" placeholder="Escreva um comentário..." class="placeholder">
+            <button class="comentar">Comentar</button>
+            <div class="comentarios">
+            </div>
+        </article>
+    </main>
+    <footer>
+        <p>MiniFeed - Todos os Direitos Reservados - 2026</p>
+    </footer>
+</body>
+<script>
+    const botoes_curtir = document.querySelectorAll(".curtir");
+
+    botoes_curtir.forEach(function (botao_curtir) {
+        let curtido = false;
+        let curtidas = 0;
+
+        botao_curtir.addEventListener("click", function () {
+            curtido = !curtido;
+            curtidas += curtido ? 1 : -1;
+
+            botao_curtir.querySelector("span").textContent = curtidas;
+            botao_curtir.firstChild.textContent = curtido
+                ? "❤️ Curtido "
+                : "🤍 Curtir ";
+        });
+    });
+    const botoes_comentar = document.querySelectorAll(".comentar");
+
+    botoes_comentar.forEach(botao_comentar => {
+        botao_comentar.addEventListener("click", () => {
+
+            const post = botao_comentar.closest(".post");
+            const campo = post.querySelector("input");
+            const comentarios = post.querySelector(".comentarios");
+
+            if (campo.value.trim() === "") {
+                alert("Digite um comentário!");
+                return;
+            }
+
+            const novoComentario = document.createElement("p");
+
+            novoComentario.textContent = campo.value;
+
+            comentarios.appendChild(novoComentario);
+
+            campo.value = "";
+        });
+    });
+</script>
+
+</html>
