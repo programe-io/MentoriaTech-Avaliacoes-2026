@@ -8,499 +8,1339 @@
   <style>body{margin:0;background:#0d1117}pre{margin:0}code.hljs{padding:1.5rem;min-height:100vh;box-sizing:border-box}</style>
 </head>
 <body>
-  <pre><code class="language-javascript">
-```html
-&lt;!DOCTYPE html&gt;
-&lt;html lang="pt-BR" class="scroll-smooth"&gt;
-&lt;head&gt;
-    &lt;meta charset="UTF-8"&gt;
-    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
-    &lt;title&gt;Blog Consciência Negra - Memória, Luta e Justiça&lt;/title&gt;
-    &lt;!-- Tailwind CSS CDN --&gt;
-    &lt;script src="https://cdn.tailwindcss.com"&gt;&lt;/script&gt;
-    &lt;script&gt;
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brandDark: '#120E0A',
-                        brandGold: '#D4AF37',
-                        brandBrown: '#5C3A21',
-                        brandLight: '#FDFBF7',
-                        brandCard: '#1C1611'
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    &lt;/script&gt;
-    &lt;!-- Google Fonts --&gt;
-    &lt;link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"&gt;
-    &lt;!-- FontAwesome Icons --&gt;
-    &lt;link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"&gt;
-    &lt;style&gt;
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #120E0A;
-            color: #FDFBF7;
-        }
-        .gold-gradient {
-            background: linear-gradient(135deg, #D4AF37 0%, #AA771C 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .card-hover {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .card-hover:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 25px -5px rgba(212, 175, 55, 0.15);
-        }
-    &lt;/style&gt;
-&lt;/head&gt;
-&lt;body class="bg-brandDark text-brandLight antialiased selection:bg-brandGold selection:text-brandDark"&gt;
+  <pre><code class="language-javascript">```react
+import React, { useState, useEffect, useMemo, useRef } from 'react';
+import {
+  Sun,
+  Feather,
+  UserPen,
+  PlusCircle,
+  Search,
+  PenTool,
+  Edit3,
+  BookOpen,
+  Sparkles,
+  Pencil,
+  Trash2,
+  ArrowRight,
+  X,
+  Send,
+  Share2,
+  SearchX,
+  RotateCcw,
+  CheckCircle2,
+  Quote
+} from 'lucide-react';
 
-    &lt;!-- Toast Notification Container --&gt;
-    &lt;div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2"&gt;&lt;/div&gt;
+// Chaves do armazenamento local (localStorage) para persistência automática
+const STORAGE_AUTHOR_KEY = 'vozes_raizes_react_author_v1';
+const STORAGE_ARTICLES_KEY = 'vozes_raizes_react_articles_v1';
+const STORAGE_APPLAUSE_KEY = 'vozes_raizes_react_applause_v1';
 
-    &lt;!-- Header / Navbar --&gt;
-    &lt;header class="sticky top-0 z-40 bg-brandDark/90 backdrop-blur-md border-b border-brandGold/20"&gt;
-        &lt;div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between"&gt;
-            &lt;div class="flex items-center gap-3"&gt;
-                &lt;span class="text-3xl"&gt;✊🏿&lt;/span&gt;
-                &lt;span class="font-bold text-xl sm:text-2xl tracking-wide gold-gradient"&gt;Consciência Viva&lt;/span&gt;
+// Perfil inicial personalizável pelo usuário
+const DEFAULT_AUTHOR = {
+  name: 'Seu Nome',
+  role: 'Autor(a) &amp; Voz Ativa',
+  bio: 'Bem-vindo ao meu espaço de escrita e reflexão. Aqui compartilho minhas palavras sobre identidade, ancestralidade, cultura afro-brasileira e a importância de manter viva a nossa história todos os dias do ano.'
+};
+
+// Temas visuais para as capas artísticas dos artigos
+const COVER_THEMES = {
+  ouro: {
+    gradient: 'from-amber-700 via-amber-600 to-[#1c100b]',
+    accent: '#fbbf24',
+    label: 'Ouro &amp; Ancestralidade'
+  },
+  esmeralda: {
+    gradient: 'from-emerald-800 via-emerald-950 to-[#120a07]',
+    accent: '#34d399',
+    label: 'Força &amp; Quilombo'
+  },
+  terracota: {
+    gradient: 'from-red-900 via-amber-900 to-[#120a07]',
+    accent: '#f87171',
+    label: 'Terracota &amp; Raízes'
+  },
+  kente: {
+    gradient: 'from-amber-600 via-red-800 to-emerald-950',
+    accent: '#fde68a',
+    label: 'Arte &amp; Tradição'
+  }
+};
+
+const CATEGORIES = [
+  'Todos',
+  'História &amp; Memória',
+  'Cultura &amp; Arte',
+  'Reflexões',
+  'Atualidade'
+];
+
+// Artigos iniciais em primeira pessoa prontos para levar a assinatura do usuário
+const DEFAULT_ARTICLES = [
+  {
+    id: 1,
+    title: '20 de Novembro: Muito Além de Uma Data no Calendário',
+    category: 'História &amp; Memória',
+    theme: 'ouro',
+    date: '20 Nov • Especial',
+    readTime: '4 min',
+    applause: 48,
+    excerpt:
+      'Quando olho para a história de Zumbi e Dandara dos Palmares, entendo que a resistência não ficou no passado: ela pulsa na nossa voz hoje.',
+    paragraphs: [
+      'Escrevo este texto pensando no verdadeiro significado de celebrarmos o Dia Nacional de Zumbi e da Consciência Negra. Para mim, esta data nunca foi apenas um feriado ou uma formalidade escolar — ela é um convite urgente à memória e ao reconhecimento.',
+      'Durante muito tempo, tentaram contar a nossa história apenas pelo ponto de vista da dor. Mas quando estudamos a fundo a organização do Quilombo dos Palmares, a estratégia de Zumbi e a liderança destemida de Dandara, descobrimos uma história de inteligência, soberania e construção coletiva.',
+      'Ter consciência negra, no meu dia a dia, significa reconhecer o valor de quem veio antes de mim, valorizar nossa estética, nossa fala e garantir que as próximas gerações cresçam sabendo que somos protagonistas da cultura e do futuro deste país.'
+    ]
+  },
+  {
+    id: 2,
+    title: 'A Herança que Carregamos na Música, na Língua e no Cotidiano',
+    category: 'Cultura &amp; Arte',
+    theme: 'kente',
+    date: '14 Nov',
+    readTime: '5 min',
+    applause: 36,
+    excerpt:
+      'Do ritmo dos tambores às palavras que usamos sem perceber: a matriz africana é o coração pulsante da identidade brasileira.',
+    paragraphs: [
+      'Basta prestar atenção ao som das ruas, ao vocabulário que usamos em casa ou à culinária que reúne nossas famílias à mesa para perceber: a cultura afro-brasileira é a base viva do que somos.',
+      'Palavras como cafuné, quilombo, axé, moleque e dengo carregam afeto e ancestralidade. Na música, o samba, o maracatu, o jongo, o rap e o ijexá transformaram resistência em poesia e celebração.',
+      'Ao escrever sobre cultura aqui no meu blog, quero sempre lembrar que valorizar nossas expressões artísticas é também valorizar os artistas, mestres e griôs que mantêm essas tradições vivas.'
+    ]
+  },
+  {
+    id: 3,
+    title: 'Representatividade Importa: O Impacto de Nos Vermos em Todos os Espaços',
+    category: 'Reflexões',
+    theme: 'esmeralda',
+    date: '08 Nov',
+    readTime: '4 min',
+    applause: 52,
+    excerpt:
+      'Quando ocupamos lugares de criação, liderança e escrita, abrimos portas para que outras pessoas também acreditem no próprio potencial.',
+    paragraphs: [
+      'Sempre reflito sobre como a presença muda tudo. Quando vemos pessoas negras escrevendo livros, dirigindo filmes, liderando pesquisas científicas e criando tecnologia, a percepção sobre o que é possível se transforma.',
+      'A representatividade não é apenas estética; ela é sobre ter voz ativa nas decisões e contar nossas próprias narrativas com autenticidade e respeito.',
+      'Cada texto que publico neste espaço é uma forma de afirmar que nossas histórias merecem ser lidas, discutidas e celebradas com toda a riqueza que possuem.'
+    ]
+  },
+  {
+    id: 4,
+    title: 'Educação Antirracista: Um Compromisso de Todos os Dias',
+    category: 'Atualidade',
+    theme: 'terracota',
+    date: '02 Nov',
+    readTime: '3 min',
+    applause: 29,
+    excerpt:
+      'O combate ao racismo começa no diálogo honesto, na leitura de autores negros e na transformação das nossas atitudes diárias.',
+    paragraphs: [
+      'Falar sobre consciência negra exige também olhar para o presente com responsabilidade. Não basta dizer que não somos racistas; é preciso construir ativamente uma sociedade mais justa e igualitária.',
+      'Isso passa por ler escritores e escritoras negras, apoiar empreendedores locais, questionar estereótipos e ensinar às crianças o orgulho de suas raízes desde cedo.',
+      'Que este blog seja sempre um ponto de encontro para ideias que constroem pontes, despertam consciência e fortalecem nossa caminhada.'
+    ]
+  }
+];
+
+// Componente auxiliar para ilustrações geométricas nas capas dos cards
+function CoverGeometricArt({ themeKey, uniqueId }) {
+  const theme = COVER_THEMES[themeKey] || COVER_THEMES.ouro;
+  const patternId = `geo-pattern-${themeKey}-${uniqueId}`;
+
+  return (
+    &lt;svg
+      className="absolute inset-0 w-full h-full opacity-35 pointer-events-none"
+      viewBox="0 0 400 200"
+      preserveAspectRatio="none"
+    &gt;
+      &lt;defs&gt;
+        &lt;pattern id={patternId} width="40" height="40" patternUnits="userSpaceOnUse"&gt;
+          &lt;path
+            d="M20 0 L40 20 L20 40 L0 20 Z"
+            fill="none"
+            stroke={theme.accent}
+            strokeWidth="1.2"
+          /&gt;
+          &lt;circle cx="20" cy="20" r="4" fill={theme.accent} /&gt;
+        &lt;/pattern&gt;
+      &lt;/defs&gt;
+      &lt;rect width="100%" height="100%" fill={`url(#${patternId})`} /&gt;
+    &lt;/svg&gt;
+  );
+}
+
+// Faixa decorativa inspirada nos tecidos Kente
+function KenteStripe() {
+  return (
+    &lt;div
+      className="w-full h-1.5"
+      style={{
+        background:
+          'repeating-linear-gradient(90deg, #d97706 0px, #d97706 24px, #059669 24px, #059669 48px, #b91c1c 48px, #b91c1c 72px, #f59e0b 72px, #f59e0b 96px)'
+      }}
+    /&gt;
+  );
+}
+
+export default function App() {
+  // Estado do perfil do autor com carregamento seguro do localStorage
+  const [author, setAuthor] = useState(() =&gt; {
+    try {
+      const saved = localStorage.getItem(STORAGE_AUTHOR_KEY);
+      return saved ? JSON.parse(saved) : DEFAULT_AUTHOR;
+    } catch {
+      return DEFAULT_AUTHOR;
+    }
+  });
+
+  // Estado dos artigos com carregamento seguro do localStorage
+  const [articles, setArticles] = useState(() =&gt; {
+    try {
+      const saved = localStorage.getItem(STORAGE_ARTICLES_KEY);
+      return saved ? JSON.parse(saved) : DEFAULT_ARTICLES;
+    } catch {
+      return DEFAULT_ARTICLES;
+    }
+  });
+
+  // Estado dos artigos curtidos/aplaudidos pelo usuário
+  const [applaudedIds, setApplaudedIds] = useState(() =&gt; {
+    try {
+      const saved = localStorage.getItem(STORAGE_APPLAUSE_KEY);
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  // Estados de filtro, busca e modais
+  const [selectedCategory, setSelectedCategory] = useState('Todos');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [readingArticleId, setReadingArticleId] = useState(null);
+  const [readProgress, setReadProgress] = useState(0);
+  const [isAuthorModalOpen, setIsAuthorModalOpen] = useState(false);
+  const [isEditorModalOpen, setIsEditorModalOpen] = useState(false);
+  const [editingArticleId, setEditingArticleId] = useState(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState(null);
+  const [toastMessage, setToastMessage] = useState('');
+
+  // Estados dos formulários
+  const [authorForm, setAuthorForm] = useState({ name: '', role: '', bio: '' });
+  const [articleForm, setArticleForm] = useState({
+    title: '',
+    category: 'Reflexões',
+    theme: 'ouro',
+    excerpt: '',
+    content: ''
+  });
+
+  const readModalScrollRef = useRef(null);
+  const toastTimerRef = useRef(null);
+
+  // Persistência automática no localStorage
+  useEffect(() =&gt; {
+    try {
+      localStorage.setItem(STORAGE_AUTHOR_KEY, JSON.stringify(author));
+    } catch {
+      // Ignora erro caso armazenamento esteja indisponível
+    }
+  }, [author]);
+
+  useEffect(() =&gt; {
+    try {
+      localStorage.setItem(STORAGE_ARTICLES_KEY, JSON.stringify(articles));
+    } catch {
+      // Ignora erro caso armazenamento esteja indisponível
+    }
+  }, [articles]);
+
+  useEffect(() =&gt; {
+    try {
+      localStorage.setItem(STORAGE_APPLAUSE_KEY, JSON.stringify(applaudedIds));
+    } catch {
+      // Ignora erro caso armazenamento esteja indisponível
+    }
+  }, [applaudedIds]);
+
+  // Bloqueia rolagem do fundo quando algum modal estiver aberto
+  useEffect(() =&gt; {
+    const anyModalOpen =
+      readingArticleId !== null || isAuthorModalOpen || isEditorModalOpen;
+    document.body.style.overflow = anyModalOpen ? 'hidden' : '';
+    return () =&gt; {
+      document.body.style.overflow = '';
+    };
+  }, [readingArticleId, isAuthorModalOpen, isEditorModalOpen]);
+
+  // Exibe notificação flutuante suave
+  const triggerToast = (msg) =&gt; {
+    setToastMessage(msg);
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+    toastTimerRef.current = setTimeout(() =&gt; {
+      setToastMessage('');
+    }, 3200);
+  };
+
+  // Dados derivados da assinatura do autor
+  const displayAuthorName = author.name?.trim() || 'Seu Nome';
+  const authorFirstName = displayAuthorName.split(' ')[0];
+  const authorInitials = useMemo(() =&gt; {
+    return (
+      displayAuthorName
+        .split(' ')
+        .filter(Boolean)
+        .slice(0, 2)
+        .map((part) =&gt; part[0].toUpperCase())
+        .join('') || 'SN'
+    );
+  }, [displayAuthorName]);
+
+  // Filtragem de artigos por categoria e busca
+  const filteredArticles = useMemo(() =&gt; {
+    const query = searchQuery.trim().toLowerCase();
+    return articles.filter((art) =&gt; {
+      const matchesCategory =
+        selectedCategory === 'Todos' || art.category === selectedCategory;
+      const matchesQuery =
+        !query ||
+        art.title.toLowerCase().includes(query) ||
+        art.excerpt.toLowerCase().includes(query) ||
+        art.category.toLowerCase().includes(query) ||
+        art.paragraphs.some((p) =&gt; p.toLowerCase().includes(query));
+      return matchesCategory &amp;&amp; matchesQuery;
+    });
+  }, [articles, selectedCategory, searchQuery]);
+
+  const readingArticle = useMemo(
+    () =&gt; articles.find((a) =&gt; a.id === readingArticleId) || null,
+    [articles, readingArticleId]
+  );
+
+  // Handlers de interação
+  const handleToggleApplause = (e, id) =&gt; {
+    e.stopPropagation();
+    setApplaudedIds((prev) =&gt; {
+      const exists = prev.includes(id);
+      if (exists) {
+        return prev.filter((item) =&gt; item !== id);
+      }
+      triggerToast('Você aplaudiu este texto!');
+      return [...prev, id];
+    });
+  };
+
+  const openAuthorEditor = () =&gt; {
+    setAuthorForm({
+      name: author.name === 'Seu Nome' ? '' : author.name,
+      role: author.role,
+      bio: author.bio
+    });
+    setIsAuthorModalOpen(true);
+  };
+
+  const handleSaveAuthor = (e) =&gt; {
+    e.preventDefault();
+    const updated = {
+      name: authorForm.name.trim() || 'Seu Nome',
+      role: authorForm.role.trim() || 'Autor(a) &amp; Voz Ativa',
+      bio: authorForm.bio.trim() || DEFAULT_AUTHOR.bio
+    };
+    setAuthor(updated);
+    setIsAuthorModalOpen(false);
+    triggerToast(`Blog personalizado para ${updated.name}!`);
+  };
+
+  const openNewArticleEditor = () =&gt; {
+    setEditingArticleId(null);
+    setArticleForm({
+      title: '',
+      category: 'Reflexões',
+      theme: 'ouro',
+      excerpt: '',
+      content: ''
+    });
+    setIsEditorModalOpen(true);
+  };
+
+  const openEditArticleEditor = (e, art) =&gt; {
+    if (e) e.stopPropagation();
+    setEditingArticleId(art.id);
+    setArticleForm({
+      title: art.title,
+      category: art.category,
+      theme: art.theme,
+      excerpt: art.excerpt,
+      content: art.paragraphs.join('\n\n')
+    });
+    setIsEditorModalOpen(true);
+  };
+
+  const handleSaveArticle = (e) =&gt; {
+    e.preventDefault();
+    const paragraphs = articleForm.content
+      .split(/\n+/)
+      .map((p) =&gt; p.trim())
+      .filter(Boolean);
+
+    if (!articleForm.title.trim() || paragraphs.length === 0) return;
+
+    const wordCount = articleForm.content.trim().split(/\s+/).length;
+    const readTime = `${Math.max(1, Math.ceil(wordCount / 180))} min`;
+
+    if (editingArticleId !== null) {
+      setArticles((prev) =&gt;
+        prev.map((art) =&gt;
+          art.id === editingArticleId
+            ? {
+                ...art,
+                title: articleForm.title.trim(),
+                category: articleForm.category,
+                theme: articleForm.theme,
+                excerpt: articleForm.excerpt.trim(),
+                paragraphs,
+                readTime
+              }
+            : art
+        )
+      );
+      triggerToast('Texto atualizado com sucesso!');
+    } else {
+      const created = {
+        id: Date.now(),
+        title: articleForm.title.trim(),
+        category: articleForm.category,
+        theme: articleForm.theme,
+        date: 'Hoje',
+        readTime,
+        applause: 1,
+        excerpt: articleForm.excerpt.trim(),
+        paragraphs
+      };
+      setArticles((prev) =&gt; [created, ...prev]);
+      triggerToast('Seu novo texto foi publicado no blog!');
+    }
+
+    setIsEditorModalOpen(false);
+    setEditingArticleId(null);
+  };
+
+  const handleDeleteArticle = (id) =&gt; {
+    setArticles((prev) =&gt; prev.filter((art) =&gt; art.id !== id));
+    setConfirmDeleteId(null);
+    if (readingArticleId === id) {
+      setReadingArticleId(null);
+    }
+    triggerToast('Texto removido do blog.');
+  };
+
+  const handleRestoreDefaults = () =&gt; {
+    setArticles(DEFAULT_ARTICLES);
+    setConfirmDeleteId(null);
+    triggerToast('Textos iniciais restaurados!');
+  };
+
+  const handleCopyCitation = (title) =&gt; {
+    const citation = `"${title}" — Texto escrito por ${displayAuthorName} no blog Vozes &amp; Raízes (Consciência Negra).`;
+    if (navigator.clipboard &amp;&amp; navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(citation).catch(() =&gt; {});
+    }
+    triggerToast('Título e sua assinatura copiados para compartilhar!');
+  };
+
+  const handleReadModalScroll = () =&gt; {
+    const el = readModalScrollRef.current;
+    if (!el) return;
+    const maxScroll = el.scrollHeight - el.clientHeight;
+    const pct = maxScroll &gt; 0 ? (el.scrollTop / maxScroll) * 100 : 0;
+    setReadProgress(pct);
+  };
+
+  const openArticleReader = (id) =&gt; {
+    setReadProgress(0);
+    setReadingArticleId(id);
+  };
+
+  return (
+    &lt;div className="min-h-screen bg-gradient-to-br from-[#120a07] via-[#1c100b] to-[#0b1913] text-amber-50 font-sans antialiased selection:bg-amber-500 selection:text-[#120a07] relative overflow-x-hidden"&gt;
+      {/* Estilos globais para texturas geométricas Kente/Adinkra e animações */}
+      &lt;style&gt;{`
+        .afro-geometric-bg {
+          background-image:
+            radial-gradient(circle at 2px 2px, rgba(245, 158, 11, 0.14) 1px, transparent 0),
+            linear-gradient(45deg, rgba(217, 119, 6, 0.045) 25%, transparent 25%, transparent 75%, rgba(217, 119, 6, 0.045) 75%),
+            linear-gradient(-45deg, rgba(5, 150, 105, 0.045) 25%, transparent 25%, transparent 75%, rgba(5, 150, 105, 0.045) 75%);
+          background-size: 32px 32px, 64px 64px, 64px 64px;
+        }
+        @keyframes pulseGlow {
+          0%, 100% { transform: scale(1) translate(0, 0); opacity: 0.25; }
+          50% { transform: scale(1.12) translate(16px, -18px); opacity: 0.4; }
+        }
+        .animate-glow-slow {
+          animation: pulseGlow 9s ease-in-out infinite;
+        }
+        .animate-glow-delayed {
+          animation: pulseGlow 11s ease-in-out 3s infinite;
+        }
+      `}&lt;/style&gt;
+
+      {/* Camada de Fundo Atmosférico com Padrão Geométrico e Luzes Difusas */}
+      &lt;div aria-hidden="true" className="fixed inset-0 pointer-events-none overflow-hidden z-0"&gt;
+        &lt;div className="absolute inset-0 afro-geometric-bg opacity-90" /&gt;
+        &lt;div className="absolute -top-32 -left-24 w-[30rem] h-[30rem] bg-amber-600/25 rounded-full blur-[120px] animate-glow-slow" /&gt;
+        &lt;div className="absolute top-1/3 -right-24 w-[28rem] h-[28rem] bg-red-800/25 rounded-full blur-[120px] animate-glow-delayed" /&gt;
+        &lt;div className="absolute -bottom-32 left-1/4 w-[32rem] h-[32rem] bg-emerald-800/25 rounded-full blur-[130px] animate-glow-slow" /&gt;
+      &lt;/div&gt;
+
+      {/* Conteúdo Principal acima do fundo */}
+      &lt;div className="relative z-10 flex flex-col min-h-screen"&gt;
+        {/* Faixa Geométrica Kente Superior */}
+        &lt;KenteStripe /&gt;
+
+        {/* Barra Superior do Espaço Autoral */}
+        &lt;div className="bg-[#1c100b]/90 border-b border-amber-500/25 backdrop-blur-md"&gt;
+          &lt;div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex flex-wrap items-center justify-between gap-3 text-xs sm:text-sm"&gt;
+            &lt;div className="flex items-center gap-2.5"&gt;
+              &lt;span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-500/15 border border-amber-400/30 text-amber-300 font-semibold text-xs"&gt;
+                &lt;Feather className="w-3.5 h-3.5" /&gt;
+                &lt;span&gt;Espaço Autoral&lt;/span&gt;
+              &lt;/span&gt;
+              &lt;span className="text-amber-100/80"&gt;
+                Escrito por:{' '}
+                &lt;strong className="text-amber-300 font-semibold"&gt;{displayAuthorName}&lt;/strong&gt;
+              &lt;/span&gt;
             &lt;/div&gt;
-            &lt;nav class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-300"&gt;
-                &lt;a href="#historia" class="hover:text-brandGold transition-colors"&gt;História&lt;/a&gt;
-                &lt;a href="#resistencia" class="hover:text-brandGold transition-colors"&gt;Resistência&lt;/a&gt;
-                &lt;a href="#leis" class="hover:text-brandGold transition-colors"&gt;Leis &amp; Punições&lt;/a&gt;
-                &lt;a href="#avaliacao" class="hover:text-brandGold transition-colors"&gt;Avaliação&lt;/a&gt;
-            &lt;/nav&gt;
-            &lt;a href="#avaliacao" class="bg-brandGold text-brandDark font-semibold px-4 py-2 rounded-xl text-sm shadow-md hover:bg-yellow-500 transition-all"&gt;
-                Deixar Feedback
-            &lt;/a&gt;
+
+            &lt;div className="flex items-center gap-2"&gt;
+              &lt;button
+                type="button"
+                onClick={openAuthorEditor}
+                className="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-amber-500/20 border border-amber-500/30 text-amber-200 hover:text-white text-xs font-medium transition-all flex items-center gap-1.5"
+              &gt;
+                &lt;UserPen className="w-3.5 h-3.5 text-amber-400" /&gt;
+                &lt;span&gt;Personalizar Meu Nome &amp; Bio&lt;/span&gt;
+              &lt;/button&gt;
+              &lt;button
+                type="button"
+                onClick={openNewArticleEditor}
+                className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-[#120a07] font-bold text-xs shadow-md shadow-amber-600/25 transition-all flex items-center gap-1.5"
+              &gt;
+                &lt;PlusCircle className="w-3.5 h-3.5" /&gt;
+                &lt;span&gt;Escrever Artigo&lt;/span&gt;
+              &lt;/button&gt;
+            &lt;/div&gt;
+          &lt;/div&gt;
         &lt;/div&gt;
-    &lt;/header&gt;
 
-    &lt;!-- Hero Section --&gt;
-    &lt;section class="relative overflow-hidden py-20 lg:py-28 bg-gradient-to-b from-brandCard to-brandDark border-b border-brandGold/10"&gt;
-        &lt;div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10"&gt;
-            &lt;div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brandGold/10 border border-brandGold/30 text-brandGold text-xs sm:text-sm font-medium mb-6"&gt;
-                &lt;span&gt;🇧🇷&lt;/span&gt; 20 de Novembro • Dia Nacional da Consciência Negra
-            &lt;/div&gt;
-            &lt;h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight mb-6 leading-tight"&gt;
-                Memória, &lt;span class="gold-gradient"&gt;Resistência&lt;/span&gt; e Justiça
-            &lt;/h1&gt;
-            &lt;p class="text-lg sm:text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed mb-10"&gt;
-                Um espaço dedicado a compreender as raízes históricas da escravidão, honrar os heróis da nossa ancestralidade, conhecer as leis de proteção atuais e combater o racismo diariamente.
-            &lt;/p&gt;
-            &lt;div class="flex flex-wrap justify-center gap-4"&gt;
-                &lt;a href="#historia" class="bg-brandGold text-brandDark font-bold px-8 py-3.5 rounded-xl shadow-lg hover:bg-yellow-500 transition-all"&gt;
-                    Explorar Artigo &lt;i class="fa-solid fa-arrow-down ml-2"&gt;&lt;/i&gt;
-                &lt;/a&gt;
-                &lt;a href="#leis" class="bg-transparent border border-brandGold/50 text-brandLight font-semibold px-8 py-3.5 rounded-xl hover:bg-brandGold/10 transition-all"&gt;
-                    Ver Leis e Punições
-                &lt;/a&gt;
-            &lt;/div&gt;
-        &lt;/div&gt;
-    &lt;/section&gt;
-
-    &lt;!-- Main Content Container --&gt;
-    &lt;main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-20"&gt;
-
-        &lt;!-- Seção 1: História da Escravidão no Mundo e no Brasil --&gt;
-        &lt;section id="historia" class="scroll-mt-28 bg-brandCard/60 border border-brandGold/20 rounded-3xl p-6 sm:p-10 card-hover"&gt;
-            &lt;div class="flex items-center gap-4 mb-6"&gt;
-                &lt;span class="text-4xl p-3 bg-brandGold/10 rounded-2xl border border-brandGold/20"&gt;⛓️&lt;/span&gt;
+        {/* Cabeçalho Glassmorphism com Borda Dourada */}
+        &lt;header className="sticky top-0 z-30 backdrop-blur-xl bg-[#120a07]/85 border-b border-amber-500/20 shadow-xl shadow-black/40"&gt;
+          &lt;div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"&gt;
+            &lt;div className="flex justify-between items-center h-20"&gt;
+              {/* Logo e Título */}
+              &lt;button
+                type="button"
+                onClick={() =&gt; {
+                  setSelectedCategory('Todos');
+                  setSearchQuery('');
+                }}
+                className="flex items-center gap-3.5 group text-left"
+              &gt;
+                &lt;div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-amber-400 via-amber-600 to-red-800 p-[1.5px] shadow-lg shadow-amber-500/20 group-hover:scale-105 transition-transform duration-300"&gt;
+                  &lt;div className="w-full h-full rounded-[14.5px] bg-[#120a07] flex items-center justify-center text-amber-400"&gt;
+                    &lt;Sun className="w-6 h-6 group-hover:rotate-45 transition-transform duration-500" /&gt;
+                  &lt;/div&gt;
+                &lt;/div&gt;
                 &lt;div&gt;
-                    &lt;span class="text-xs uppercase tracking-wider text-brandGold font-bold"&gt;Capítulo I&lt;/span&gt;
-                    &lt;h2 class="text-2xl sm:text-3xl font-bold text-brandLight"&gt;A História da Escravidão: Do Mundo ao Brasil&lt;/h2&gt;
+                  &lt;span className="font-serif font-extrabold text-xl sm:text-2xl tracking-tight bg-gradient-to-r from-amber-200 via-amber-400 to-amber-100 bg-clip-text text-transparent block"&gt;
+                    Vozes &amp; Raízes
+                  &lt;/span&gt;
+                  &lt;span className="block text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.2em] text-emerald-400 -mt-0.5"&gt;
+                    Consciência Negra • Por {authorFirstName}
+                  &lt;/span&gt;
                 &lt;/div&gt;
-            &lt;/div&gt;
-            
-            &lt;div class="space-y-6 text-gray-300 leading-relaxed text-base sm:text-lg"&gt;
-                &lt;p&gt;
-                    A prática da escravidão infelizmente permeou diversas civilizações antigas ao longo da história mundial 🌍 (como em impérios da Grécia, Roma e Egito), onde prisioneiros de guerra ou devedores eram submetidos ao trabalho forçado. No entanto, o tráfico transatlântico de escravizados africanos, iniciado no século XV por potências europeias 🚢, assumiu uma escala industrial sem precedentes, marcada por profunda desumanização, racismo estrutural e extrema violência.
-                &lt;/p&gt;
-                &lt;div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-6"&gt;
-                    &lt;div class="bg-brandDark/80 p-5 rounded-2xl border border-brandGold/10"&gt;
-                        &lt;h3 class="font-bold text-brandGold mb-2 flex items-center gap-2"&gt;
-                            &lt;span&gt;🌍&lt;/span&gt; No Contexto Mundial
-                        &lt;/h3&gt;
-                        &lt;p class="text-sm text-gray-400"&gt;
-                            Milhões de africanos foram arrancados de suas terras natais, culturas e famílias, sendo transportados em navios negreiros em condições insalubres rumo às Américas para alimentar economias coloniais.
-                        &lt;/p&gt;
-                    &lt;/div&gt;
-                    &lt;div class="bg-brandDark/80 p-5 rounded-2xl border border-brandGold/10"&gt;
-                        &lt;h3 class="font-bold text-brandGold mb-2 flex items-center gap-2"&gt;
-                            &lt;span&gt;🇧🇷&lt;/span&gt; No Brasil Colonial e Imperial
-                        &lt;/h3&gt;
-                        &lt;p class="text-sm text-gray-400"&gt;
-                            O Brasil foi o último país das Américas a abolir formalmente a escravidão (1888). Por mais de 300 anos, o país sustentou sua economia na exploração brutal da mão de obra negra 🖤, deixando marcas profundas na sociedade atual.
-                        &lt;/p&gt;
-                    &lt;/div&gt;
-                &lt;/div&gt;
-                &lt;p&gt;
-                    O sofrimento imposto 😢 gerou cicatrizes geracionais. As famílias eram separadas nos leilões, castigos físicos severos eram aplicados rotineiramente, e negava-se aos negros o direito básico à humanidade, à educação e à liberdade.
-                &lt;/p&gt;
-            &lt;/div&gt;
-        &lt;/section&gt;
+              &lt;/button&gt;
 
-        &lt;!-- Seção 2: O Sofrimento e a Resistência --&gt;
-        &lt;section id="resistencia" class="scroll-mt-28 bg-brandCard/60 border border-brandGold/20 rounded-3xl p-6 sm:p-10 card-hover"&gt;
-            &lt;div class="flex items-center gap-4 mb-6"&gt;
-                &lt;span class="text-4xl p-3 bg-brandGold/10 rounded-2xl border border-brandGold/20"&gt;✊🏿&lt;/span&gt;
-                &lt;div&gt;
-                    &lt;span class="text-xs uppercase tracking-wider text-brandGold font-bold"&gt;Capítulo II&lt;/span&gt;
-                    &lt;h2 class="text-2xl sm:text-3xl font-bold text-brandLight"&gt;Sofrimento, Quilombos e Zumbi dos Palmares&lt;/h2&gt;
-                &lt;/div&gt;
-            &lt;/div&gt;
+              {/* Navegação por Categorias (Desktop) */}
+              &lt;nav className="hidden lg:flex items-center gap-1.5 bg-white/[0.04] p-1.5 rounded-2xl border border-amber-500/20"&gt;
+                {CATEGORIES.map((cat) =&gt; {
+                  const active = selectedCategory === cat;
+                  return (
+                    &lt;button
+                      key={cat}
+                      type="button"
+                      onClick={() =&gt; setSelectedCategory(cat)}
+                      className={`px-4 py-2 rounded-xl text-sm transition-all duration-300 ${
+                        active
+                          ? 'bg-amber-500 text-[#120a07] font-bold shadow-sm'
+                          : 'font-medium text-amber-100/75 hover:text-white hover:bg-white/5'
+                      }`}
+                    &gt;
+                      {cat}
+                    &lt;/button&gt;
+                  );
+                })}
+              &lt;/nav&gt;
 
-            &lt;div class="space-y-6 text-gray-300 leading-relaxed text-base sm:text-lg"&gt;
-                &lt;p&gt;
-                    Apesar da opressão sistêmica, a resistência negra nunca cessou. Desde os tumbeiros até as fazendas e cidades, houve rebeliões, fugas e a criação de comunidades autônomas conhecidas como &lt;strong&gt;quilombos&lt;/strong&gt; 🛖.
-                &lt;/p&gt;
-                &lt;div class="bg-brandDark/80 border-l-4 border-brandGold p-5 rounded-r-2xl my-4"&gt;
-                    &lt;h3 class="font-bold text-brandLight text-lg mb-1 flex items-center gap-2"&gt;
-                        &lt;span&gt;👑&lt;/span&gt; O Quilombo dos Palmares e Zumbi
-                    &lt;/h3&gt;
-                    &lt;p class="text-sm text-gray-300"&gt;
-                        Localizado na Serra da Barriga (atual estado de Alagoas), Palmares foi o maior quilombo do período colonial, abrigando milhares de pessoas entre negros fugitivos, indígenas e brancos pobres. Sob a liderança heroica de &lt;strong&gt;Zumbi dos Palmares&lt;/strong&gt;, a comunidade resistiu por décadas a ataques sucessivos das forças coloniais, tornando-se o maior símbolo nacional de liberdade, bravura e resistência negra. Zumbi foi assassinado em 20 de novembro de 1695, data que hoje consagra o nosso feriado nacional de conscientização.
-                    &lt;/p&gt;
-                &lt;/div&gt;
-                &lt;p&gt;
-                    A resistência também se deu na preservação secreta de religiões de matriz africana, na capoeira 🤸🏾‍♂️, nos batuques e na transmissão oral de sabedorias ancestrais que formam a espinha dorsal da cultura brasileira.
-                &lt;/p&gt;
-            &lt;/div&gt;
-        &lt;/section&gt;
-
-        &lt;!-- Seção 3: Leis de Proteção Atuais --&gt;
-        &lt;section id="leis" class="scroll-mt-28 bg-brandCard/60 border border-brandGold/20 rounded-3xl p-6 sm:p-10 card-hover"&gt;
-            &lt;div class="flex items-center gap-4 mb-6"&gt;
-                &lt;span class="text-4xl p-3 bg-brandGold/10 rounded-2xl border border-brandGold/20"&gt;⚖️&lt;/span&gt;
-                &lt;div&gt;
-                    &lt;span class="text-xs uppercase tracking-wider text-brandGold font-bold"&gt;Capítulo III&lt;/span&gt;
-                    &lt;h2 class="text-2xl sm:text-3xl font-bold text-brandLight"&gt;Leis de Proteção e Combate ao Racismo&lt;/h2&gt;
-                &lt;/div&gt;
-            &lt;/div&gt;
-
-            &lt;div class="space-y-6 text-gray-300 leading-relaxed text-base sm:text-lg"&gt;
-                &lt;p&gt;
-                    Com a redemocratização e a Constituição Federal de 1988, o racismo passou a ser combatido de forma mais enérgica pelo Estado brasileiro, reconhecendo-se que a igualdade precisa ser garantida por meio de marcos legais rígidos.
-                &lt;/p&gt;
-                
-                &lt;div class="grid grid-cols-1 sm:grid-cols-2 gap-4"&gt;
-                    &lt;div class="bg-brandDark/80 p-5 rounded-2xl border border-brandGold/10"&gt;
-                        &lt;div class="text-brandGold text-2xl font-black mb-2"&gt;Lei nº 7.716/1989&lt;/div&gt;
-                        &lt;h4 class="font-bold text-brandLight mb-1"&gt;A Lei do Racismo&lt;/h4&gt;
-                        &lt;p class="text-sm text-gray-400"&gt;
-                            Define e pune os crimes resultantes de preconceito de raça, cor, etnia, religião ou procedência nacional. Trata de condutas que impedem o acesso a estabelecimentos, empregos ou cargos públicos por discriminação.
-                        &lt;/p&gt;
-                    &lt;/div&gt;
-
-                    &lt;div class="bg-brandDark/80 p-5 rounded-2xl border border-brandGold/10"&gt;
-                        &lt;div class="text-brandGold text-2xl font-black mb-2"&gt;Lei nº 14.532/2023&lt;/div&gt;
-                        &lt;h4 class="font-bold text-brandLight mb-1"&gt;Injúria Racial Equiparada&lt;/h4&gt;
-                        &lt;p class="text-sm text-gray-400"&gt;
-                            Equiparou a injúria racial (ofender a honra de alguém com base em elementos de raça, cor, etnia ou origem) ao crime de racismo, tornando-a um crime &lt;strong&gt;imprescritível e inafiançável&lt;/strong&gt;.
-                        &lt;/p&gt;
-                    &lt;/div&gt;
-                &lt;/div&gt;
-            &lt;/div&gt;
-        &lt;/section&gt;
-
-        &lt;!-- Seção 4: Como Ocorrem as Punições Hoje --&gt;
-        &lt;section class="bg-brandCard/60 border border-brandGold/20 rounded-3xl p-6 sm:p-10 card-hover"&gt;
-            &lt;div class="flex items-center gap-4 mb-6"&gt;
-                &lt;span class="text-4xl p-3 bg-brandGold/10 rounded-2xl border border-brandGold/20"&gt;🚨&lt;/span&gt;
-                &lt;div&gt;
-                    &lt;span class="text-xs uppercase tracking-wider text-brandGold font-bold"&gt;Capítulo IV&lt;/span&gt;
-                    &lt;h2 class="text-2xl sm:text-3xl font-bold text-brandLight"&gt;Como Ocorrem as Punições Perante a Lei Atual&lt;/h2&gt;
-                &lt;/div&gt;
-            &lt;/div&gt;
-
-            &lt;div class="space-y-6 text-gray-300 leading-relaxed text-base sm:text-lg"&gt;
-                &lt;p&gt;
-                    Hoje, a legislação brasileira trata o racismo e a injúria racial com rigor severo. Entenda como a justiça atua diante de infrações:
-                &lt;/p&gt;
-                &lt;ul class="space-y-4"&gt;
-                    &lt;li class="flex items-start gap-3 bg-brandDark/50 p-4 rounded-xl border border-brandGold/10"&gt;
-                        &lt;span class="text-brandGold font-bold text-xl"&gt;1.&lt;/span&gt;
-                        &lt;div&gt;
-                            &lt;strong class="text-brandLight"&gt;Inafiançabilidade:&lt;/strong&gt; O agressor preso em flagrante ou preventivamente não pode pagar fiança para responder ao processo em liberdade provisória com pagamento.
-                        &lt;/div&gt;
-                    &lt;/li&gt;
-                    &lt;li class="flex items-start gap-3 bg-brandDark/50 p-4 rounded-xl border border-brandGold/10"&gt;
-                        &lt;span class="text-brandGold font-bold text-xl"&gt;2.&lt;/span&gt;
-                        &lt;div&gt;
-                            &lt;strong class="text-brandLight"&gt;Imprescritibilidade:&lt;/strong&gt; O crime não prescreve, ou seja, pode ser julgado e punido a qualquer momento da vida, mesmo que anos após a ocorrência da ofensa ou discriminação.
-                        &lt;/div&gt;
-                    &lt;/li&gt;
-                    &lt;li class="flex items-start gap-3 bg-brandDark/50 p-4 rounded-xl border border-brandGold/10"&gt;
-                        &lt;span class="text-brandGold font-bold text-xl"&gt;3.&lt;/span&gt;
-                        &lt;div&gt;
-                            &lt;strong class="text-brandLight"&gt;Penas de Reclusão:&lt;/strong&gt; As penas podem variar de 2 a 5 anos de reclusão (podendo aumentar em casos de crimes cometidos em contexto de redes sociais ou por duas ou mais pessoas em concurso).
-                        &lt;/div&gt;
-                    &lt;/li&gt;
-                    &lt;li class="flex items-start gap-3 bg-brandDark/50 p-4 rounded-xl border border-brandGold/10"&gt;
-                        &lt;span class="text-brandGold font-bold text-xl"&gt;4.&lt;/span&gt;
-                        &lt;div&gt;
-                            &lt;strong class="text-brandLight"&gt;Canais de Denúncia:&lt;/strong&gt; Denúncias podem ser feitas imediatamente em delegacias civis comuns, delegacias especializadas, pelo Disque 100 ou pelo site da Ouvidoria Nacional dos Direitos Humanos.
-                        &lt;/div&gt;
-                    &lt;/li&gt;
-                &lt;/ul&gt;
-            &lt;/div&gt;
-        &lt;/section&gt;
-
-        &lt;!-- Seção 5: Avaliação, Feedback e Comentários Interativos --&gt;
-        &lt;section id="avaliacao" class="scroll-mt-28 bg-brandCard/60 border border-brandGold/30 rounded-3xl p-6 sm:p-10 shadow-2xl"&gt;
-            &lt;div class="text-center max-w-xl mx-auto mb-10"&gt;
-                &lt;span class="text-3xl"&gt;⭐&lt;/span&gt;
-                &lt;h2 class="text-2xl sm:text-3xl font-bold text-brandLight mt-2"&gt;Avalie este Artigo&lt;/h2&gt;
-                &lt;p class="text-sm text-gray-400 mt-1"&gt;Sua opinião é fundamental para promovermos reflexões cada vez mais profundas e construtivas.&lt;/p&gt;
-            &lt;/div&gt;
-
-            &lt;!-- Formulário de Avaliação --&gt;
-            &lt;form id="feedback-form" class="space-y-6 bg-brandDark/70 p-6 sm:p-8 rounded-2xl border border-brandGold/20 mb-12"&gt;
-                &lt;div&gt;
-                    &lt;label class="block text-sm font-medium text-gray-300 mb-2"&gt;Sua nota para o conteúdo (1 a 5 estrelas):&lt;/label&gt;
-                    &lt;div id="star-rating" class="flex gap-2 text-2xl cursor-pointer"&gt;
-                        &lt;i class="fa-solid fa-star text-gray-600 hover:text-brandGold transition-colors" data-value="1"&gt;&lt;/i&gt;
-                        &lt;i class="fa-solid fa-star text-gray-600 hover:text-brandGold transition-colors" data-value="2"&gt;&lt;/i&gt;
-                        &lt;i class="fa-solid fa-star text-gray-600 hover:text-brandGold transition-colors" data-value="3"&gt;&lt;/i&gt;
-                        &lt;i class="fa-solid fa-star text-gray-600 hover:text-brandGold transition-colors" data-value="4"&gt;&lt;/i&gt;
-                        &lt;i class="fa-solid fa-star text-gray-600 hover:text-brandGold transition-colors" data-value="5"&gt;&lt;/i&gt;
-                    &lt;/div&gt;
-                    &lt;input type="hidden" id="selected-rating" value="5"&gt;
+              {/* Barra de Busca Desktop &amp; Botão Mobile */}
+              &lt;div className="flex items-center gap-3"&gt;
+                &lt;div className="relative hidden sm:block"&gt;
+                  &lt;Search className="w-4 h-4 text-amber-400/75 absolute left-3.5 top-1/2 -translate-y-1/2" /&gt;
+                  &lt;input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) =&gt; setSearchQuery(e.target.value)}
+                    placeholder="Buscar nos textos..."
+                    className="pl-10 pr-4 py-2 w-44 xl:w-56 rounded-2xl bg-white/[0.06] border border-amber-500/25 text-sm text-amber-50 placeholder:text-amber-200/40 focus:outline-none focus:ring-2 focus:ring-amber-400/50 focus:border-amber-400 transition-all"
+                  /&gt;
                 &lt;/div&gt;
 
-                &lt;div class="grid grid-cols-1 sm:grid-cols-2 gap-4"&gt;
-                    &lt;div&gt;
-                        &lt;label for="user-name" class="block text-sm font-medium text-gray-300 mb-1"&gt;Seu Nome:&lt;/label&gt;
-                        &lt;input type="text" id="user-name" required placeholder="Como gostaria de ser chamado(a)?" class="w-full bg-brandDark border border-brandGold/30 rounded-xl px-4 py-3 text-brandLight placeholder-gray-500 focus:outline-none focus:border-brandGold transition-all"&gt;
-                    &lt;/div&gt;
-                    &lt;div&gt;
-                        &lt;label for="user-email" class="block text-sm font-medium text-gray-300 mb-1"&gt;Seu E-mail (opcional):&lt;/label&gt;
-                        &lt;input type="email" id="user-email" placeholder="exemplo@email.com" class="w-full bg-brandDark border border-brandGold/30 rounded-xl px-4 py-3 text-brandLight placeholder-gray-500 focus:outline-none focus:border-brandGold transition-all"&gt;
-                    &lt;/div&gt;
-                &lt;/div&gt;
-
-                &lt;div&gt;
-                    &lt;label for="user-comment" class="block text-sm font-medium text-gray-300 mb-1"&gt;Seu Comentário ou Feedback:&lt;/label&gt;
-                    &lt;textarea id="user-comment" rows="4" required placeholder="Deixe sua mensagem de apoio, reflexão ou crítica construtiva..." class="w-full bg-brandDark border border-brandGold/30 rounded-xl px-4 py-3 text-brandLight placeholder-gray-500 focus:outline-none focus:border-brandGold transition-all"&gt;&lt;/textarea&gt;
-                &lt;/div&gt;
-
-                &lt;button type="submit" class="w-full bg-brandGold text-brandDark font-bold py-3.5 rounded-xl shadow-lg hover:bg-yellow-500 transition-all flex items-center justify-center gap-2"&gt;
-                    &lt;i class="fa-solid fa-paper-plane"&gt;&lt;/i&gt; Publicar Comentário &amp; Avaliação
+                &lt;button
+                  type="button"
+                  onClick={openNewArticleEditor}
+                  className="lg:hidden px-3.5 py-2 rounded-xl bg-amber-500 text-[#120a07] font-bold text-xs shadow-md flex items-center gap-1.5"
+                &gt;
+                  &lt;PenTool className="w-3.5 h-3.5" /&gt;
+                  &lt;span&gt;Escrever&lt;/span&gt;
                 &lt;/button&gt;
-            &lt;/form&gt;
-
-            &lt;!-- Lista de Comentários Dinâmicos --&gt;
-            &lt;div&gt;
-                &lt;h3 class="text-xl font-bold text-brandLight mb-6 flex items-center justify-between"&gt;
-                    &lt;span&gt;Comentários dos Leitores&lt;/span&gt;
-                    &lt;span id="comment-count" class="text-xs bg-brandGold/20 text-brandGold px-3 py-1 rounded-full border border-brandGold/30"&gt;3 comentários&lt;/span&gt;
-                &lt;/h3&gt;
-
-                &lt;div id="comments-container" class="space-y-4"&gt;
-                    &lt;!-- Comentários Iniciais simulados --&gt;
-                    &lt;div class="bg-brandDark/80 p-5 rounded-2xl border border-brandGold/10"&gt;
-                        &lt;div class="flex items-center justify-between mb-2"&gt;
-                            &lt;span class="font-bold text-brandLight flex items-center gap-2"&gt;
-                                &lt;span&gt;👤&lt;/span&gt; Mariana Souza
-                            &lt;/span&gt;
-                            &lt;div class="text-brandGold text-sm"&gt;
-                                &lt;i class="fa-solid fa-star"&gt;&lt;/i&gt;
-                                &lt;i class="fa-solid fa-star"&gt;&lt;/i&gt;
-                                &lt;i class="fa-solid fa-star"&gt;&lt;/i&gt;
-                                &lt;i class="fa-solid fa-star"&gt;&lt;/i&gt;
-                                &lt;i class="fa-solid fa-star"&gt;&lt;/i&gt;
-                            &lt;/div&gt;
-                        &lt;/div&gt;
-                        &lt;p class="text-gray-300 text-sm leading-relaxed"&gt;
-                            Excelente iniciativa este blog! É fundamental mantermos viva a memória de Zumbi dos Palmares e discutirmos as leis atuais contra o racismo. Consciência negra é todo dia! ✊🏿
-                        &lt;/p&gt;
-                        &lt;span class="text-xs text-gray-500 mt-3 block"&gt;Há 2 horas&lt;/span&gt;
-                    &lt;/div&gt;
-
-                    &lt;div class="bg-brandDark/80 p-5 rounded-2xl border border-brandGold/10"&gt;
-                        &lt;div class="flex items-center justify-between mb-2"&gt;
-                            &lt;span class="font-bold text-brandLight flex items-center gap-2"&gt;
-                                &lt;span&gt;👤&lt;/span&gt; Carlos Eduardo
-                            &lt;/span&gt;
-                            &lt;div class="text-brandGold text-sm"&gt;
-                                &lt;i class="fa-solid fa-star"&gt;&lt;/i&gt;
-                                &lt;i class="fa-solid fa-star"&gt;&lt;/i&gt;
-                                &lt;i class="fa-solid fa-star"&gt;&lt;/i&gt;
-                                &lt;i class="fa-solid fa-star"&gt;&lt;/i&gt;
-                                &lt;i class="fa-solid fa-star"&gt;&lt;/i&gt;
-                            &lt;/div&gt;
-                        &lt;/div&gt;
-                        &lt;p class="text-gray-300 text-sm leading-relaxed"&gt;
-                            Muito didático e esclarecedor sobre a nova lei de injúria racial e a imprescritibilidade. Parabéns aos criadores do conteúdo.
-                        &lt;/p&gt;
-                        &lt;span class="text-xs text-gray-500 mt-3 block"&gt;Há 5 horas&lt;/span&gt;
-                    &lt;/div&gt;
-
-                    &lt;div class="bg-brandDark/80 p-5 rounded-2xl border border-brandGold/10"&gt;
-                        &lt;div class="flex items-center justify-between mb-2"&gt;
-                            &lt;span class="font-bold text-brandLight flex items-center gap-2"&gt;
-                                &lt;span&gt;👤&lt;/span&gt; Ana Beatriz
-                            &lt;/span&gt;
-                            &lt;div class="text-brandGold text-sm"&gt;
-                                &lt;i class="fa-solid fa-star"&gt;&lt;/i&gt;
-                                &lt;i class="fa-solid fa-star"&gt;&lt;/i&gt;
-                                &lt;i class="fa-solid fa-star"&gt;&lt;/i&gt;
-                                &lt;i class="fa-solid fa-star"&gt;&lt;/i&gt;
-                                &lt;i class="fa-regular fa-star"&gt;&lt;/i&gt;
-                            &lt;/div&gt;
-                        &lt;/div&gt;
-                        &lt;p class="text-gray-300 text-sm leading-relaxed"&gt;
-                            Informações essenciais! O uso dos emojis e a clareza dos tópicos facilitam muito a leitura e compreensão.
-                        &lt;/p&gt;
-                        &lt;span class="text-xs text-gray-500 mt-3 block"&gt;Ontem&lt;/span&gt;
-                    &lt;/div&gt;
-                &lt;/div&gt;
+              &lt;/div&gt;
             &lt;/div&gt;
-        &lt;/section&gt;
 
-    &lt;/main&gt;
+            {/* Navegação Horizontal Mobile */}
+            &lt;div className="flex lg:hidden items-center gap-2 overflow-x-auto pb-3 pt-1"&gt;
+              {CATEGORIES.map((cat) =&gt; {
+                const active = selectedCategory === cat;
+                return (
+                  &lt;button
+                    key={cat}
+                    type="button"
+                    onClick={() =&gt; setSelectedCategory(cat)}
+                    className={`shrink-0 px-3.5 py-1.5 rounded-xl text-xs transition-all ${
+                      active
+                        ? 'bg-amber-500 text-[#120a07] font-bold'
+                        : 'bg-white/5 text-amber-100/80 border border-amber-500/20 font-medium'
+                    }`}
+                  &gt;
+                    {cat}
+                  &lt;/button&gt;
+                );
+              })}
+            &lt;/div&gt;
+          &lt;/div&gt;
+        &lt;/header&gt;
 
-    &lt;!-- Footer --&gt;
-    &lt;footer class="border-t border-brandGold/20 bg-brandCard/80 mt-20 py-10 text-center text-sm text-gray-400"&gt;
-        &lt;div class="max-w-4xl mx-auto px-4 space-y-3"&gt;
-            &lt;p class="font-semibold text-brandLight"&gt;Blog Consciência Negra • Respeito, Justiça e Igualdade&lt;/p&gt;
-            &lt;p&gt;Criado em comemoração ao Feriado Nacional da Consciência Negra 🇧🇷 ✊🏿&lt;/p&gt;
-            &lt;p class="text-xs text-gray-500"&gt;© 2026 Todos os direitos reservados.&lt;/p&gt;
-        &lt;/div&gt;
-    &lt;/footer&gt;
+        {/* Área Principal */}
+        &lt;main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 flex-1 w-full"&gt;
+          {/* Banner Manifesto &amp; Assinatura Editável */}
+          &lt;section className="mb-14"&gt;
+            &lt;div className="relative rounded-3xl p-[1.5px] bg-gradient-to-r from-amber-500/70 via-amber-700/40 to-emerald-600/70 shadow-2xl shadow-black/60"&gt;
+              &lt;div className="bg-[#1c100b]/90 backdrop-blur-xl rounded-[22.5px] p-6 sm:p-10 lg:p-12 relative overflow-hidden"&gt;
+                {/* Círculos geométricos decorativos */}
+                &lt;div className="absolute -right-16 -top-16 w-64 h-64 rounded-full border border-amber-500/15 pointer-events-none" /&gt;
+                &lt;div className="absolute -right-8 -top-8 w-48 h-48 rounded-full border border-amber-500/25 pointer-events-none" /&gt;
 
-    &lt;!-- JavaScript Interativo --&gt;
-    &lt;script&gt;
-        document.addEventListener('DOMContentLoaded', () =&gt; {
-            // Sistema de Estrelas de Avaliação Interativa
-            const stars = document.querySelectorAll('#star-rating i');
-            const selectedRatingInput = document.getElementById('selected-rating');
-
-            function highlightStars(rating) {
-                stars.forEach(star =&gt; {
-                    const val = parseInt(star.getAttribute('data-value'));
-                    if (val &lt;= rating) {
-                        star.classList.remove('text-gray-600', 'fa-regular');
-                        star.classList.add('text-brandGold', 'fa-solid');
-                    } else {
-                        star.classList.remove('text-brandGold', 'fa-solid');
-                        star.classList.add('text-gray-600', 'fa-solid');
-                    }
-                });
-            }
-
-            // Inicializar com 5 estrelas selecionadas
-            highlightStars(5);
-
-            stars.forEach(star =&gt; {
-                star.addEventListener('click', () =&gt; {
-                    const rating = parseInt(star.getAttribute('data-value'));
-                    selectedRatingInput.value = rating;
-                    highlightStars(rating);
-                });
-            });
-
-            // Gerenciador de Comentários e Notificações Toast
-            const feedbackForm = document.getElementById('feedback-form');
-            const commentsContainer = document.getElementById('comments-container');
-            const commentCountSpan = document.getElementById('comment-count');
-
-            let commentCount = 3;
-
-            function showToast(message, type = 'success') {
-                const toastContainer = document.getElementById('toast-container');
-                const toast = document.createElement('div');
-                toast.className = `px-5 py-3 rounded-xl shadow-lg border text-sm font-medium transition-all transform translate-y-2 opacity-0 flex items-center gap-2 ${
-                    type === 'success' 
-                        ? 'bg-brandCard border-brandGold text-brandLight' 
-                        : 'bg-red-950 border-red-500 text-red-200'
-                }`;
-                toast.innerHTML = `&lt;i class="fa-solid fa-circle-check text-brandGold"&gt;&lt;/i&gt; ${message}`;
-                toastContainer.appendChild(toast);
-
-                setTimeout(() =&gt; {
-                    toast.classList.remove('translate-y-2', 'opacity-0');
-                }, 10);
-
-                setTimeout(() =&gt; {
-                    toast.classList.add('translate-y-2', 'opacity-0');
-                    setTimeout(() =&gt; toast.remove(), 300);
-                }, 4000);
-            }
-
-            feedbackForm.addEventListener('submit', (e) =&gt; {
-                e.preventDefault();
-
-                const name = document.getElementById('user-name').value.trim();
-                const commentText = document.getElementById('user-comment').value.trim();
-                const rating = parseInt(selectedRatingInput.value);
-
-                if (!name || !commentText) {
-                    showToast('Por favor, preencha todos os campos obrigatórios.', 'error');
-                    return;
-                }
-
-                // Gerar estrelas em HTML
-                let starsHTML = '';
-                for (let i = 1; i &lt;= 5; i++) {
-                    if (i &lt;= rating) {
-                        starsHTML += '&lt;i class="fa-solid fa-star"&gt;&lt;/i&gt;';
-                    } else {
-                        starsHTML += '&lt;i class="fa-regular fa-star"&gt;&lt;/i&gt;';
-                    }
-                }
-
-                // Criar elemento de comentário
-                const commentCard = document.createElement('div');
-                commentCard.className = 'bg-brandDark/80 p-5 rounded-2xl border border-brandGold/10 animate-fade-in';
-                commentCard.innerHTML = `
-                    &lt;div class="flex items-center justify-between mb-2"&gt;
-                        &lt;span class="font-bold text-brandLight flex items-center gap-2"&gt;
-                            &lt;span&gt;👤&lt;/span&gt; ${escapeHtml(name)}
-                        &lt;/span&gt;
-                        &lt;div class="text-brandGold text-sm"&gt;
-                            ${starsHTML}
-                        &lt;/div&gt;
+                &lt;div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10"&gt;
+                  &lt;div className="lg:col-span-8"&gt;
+                    &lt;div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-950/80 border border-emerald-500/35 text-emerald-300 text-xs font-semibold tracking-wide uppercase mb-4"&gt;
+                      &lt;span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" /&gt;
+                      &lt;span&gt;20 de Novembro • Consciência, Memória e Futuro&lt;/span&gt;
                     &lt;/div&gt;
-                    &lt;p class="text-gray-300 text-sm leading-relaxed"&gt;
-                        ${escapeHtml(commentText)}
+
+                    &lt;h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-extrabold text-amber-50 leading-tight mb-4"&gt;
+                      Honrar quem abriu caminhos, escrever o nosso próprio amanhã.
+                    &lt;/h1&gt;
+
+                    &lt;p className="text-amber-100/80 text-base sm:text-lg leading-relaxed max-w-2xl mb-6"&gt;
+                      {author.bio}
                     &lt;/p&gt;
-                    &lt;span class="text-xs text-gray-500 mt-3 block"&gt;Agora mesmo&lt;/span&gt;
-                `;
 
-                commentsContainer.prepend(commentCard);
-                commentCount++;
-                commentCountSpan.textContent = `${commentCount} comentários`;
+                    &lt;div className="flex flex-wrap items-center gap-4"&gt;
+                      &lt;button
+                        type="button"
+                        onClick={openNewArticleEditor}
+                        className="px-6 py-3 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-[#120a07] font-bold text-sm shadow-lg shadow-amber-600/30 hover:-translate-y-0.5 transition-all flex items-center gap-2"
+                      &gt;
+                        &lt;PenTool className="w-4 h-4" /&gt;
+                        &lt;span&gt;Escrever Novo Texto&lt;/span&gt;
+                      &lt;/button&gt;
+                      &lt;button
+                        type="button"
+                        onClick={openAuthorEditor}
+                        className="px-5 py-3 rounded-2xl bg-white/[0.06] hover:bg-white/[0.12] border border-amber-500/35 text-amber-200 text-sm font-medium transition-all flex items-center gap-2"
+                      &gt;
+                        &lt;Edit3 className="w-4 h-4 text-amber-400" /&gt;
+                        &lt;span&gt;Editar Minha Assinatura&lt;/span&gt;
+                      &lt;/button&gt;
+                    &lt;/div&gt;
+                  &lt;/div&gt;
 
-                feedbackForm.reset();
-                highlightStars(5);
-                selectedRatingInput.value = '5';
+                  {/* Cartão da Assinatura do Autor */}
+                  &lt;div className="lg:col-span-4"&gt;
+                    &lt;div className="rounded-2xl bg-[#120a07]/85 border border-amber-500/35 p-6 shadow-inner"&gt;
+                      &lt;div className="flex items-center gap-4 mb-4"&gt;
+                        &lt;div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-400 via-amber-600 to-red-800 flex items-center justify-center text-[#120a07] font-serif font-extrabold text-xl shadow-md shrink-0"&gt;
+                          {authorInitials}
+                        &lt;/div&gt;
+                        &lt;div className="min-w-0"&gt;
+                          &lt;span className="text-[11px] uppercase tracking-widest text-amber-400 font-semibold block"&gt;
+                            Autoria do Blog
+                          &lt;/span&gt;
+                          &lt;h2 className="font-serif text-xl font-bold text-white leading-snug truncate"&gt;
+                            {displayAuthorName}
+                          &lt;/h2&gt;
+                          &lt;p className="text-xs text-amber-200/70 truncate"&gt;{author.role}&lt;/p&gt;
+                        &lt;/div&gt;
+                      &lt;/div&gt;
+                      &lt;div className="pt-4 border-t border-amber-500/20 flex items-center justify-between text-xs text-amber-200/75"&gt;
+                        &lt;span className="flex items-center gap-1.5"&gt;
+                          &lt;BookOpen className="w-3.5 h-3.5 text-amber-400" /&gt;
+                          &lt;span&gt;
+                            {articles.length}{' '}
+                            {articles.length === 1 ? 'texto publicado' : 'textos publicados'}
+                          &lt;/span&gt;
+                        &lt;/span&gt;
+                        &lt;button
+                          type="button"
+                          onClick={openAuthorEditor}
+                          className="text-amber-400 hover:text-amber-300 underline underline-offset-4 font-semibold"
+                        &gt;
+                          Alterar
+                        &lt;/button&gt;
+                      &lt;/div&gt;
+                    &lt;/div&gt;
+                  &lt;/div&gt;
+                &lt;/div&gt;
+              &lt;/div&gt;
+            &lt;/div&gt;
+          &lt;/section&gt;
 
-                showToast('Avaliação e comentário publicados com sucesso!');
-            });
+          {/* Cabeçalho da Lista de Artigos e Busca Mobile */}
+          &lt;div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8"&gt;
+            &lt;div&gt;
+              &lt;h2 className="font-serif text-2xl sm:text-3xl font-bold text-amber-50 flex items-center gap-3"&gt;
+                &lt;span&gt;Meus Textos &amp; Reflexões&lt;/span&gt;
+                &lt;span className="text-xs font-sans font-semibold px-3 py-1 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/35"&gt;
+                  {filteredArticles.length}{' '}
+                  {filteredArticles.length === 1 ? 'artigo' : 'artigos'}
+                &lt;/span&gt;
+              &lt;/h2&gt;
+              &lt;p className="text-sm text-amber-200/65 mt-1"&gt;
+                Clique em qualquer artigo para ler na íntegra, curtir ou editar.
+              &lt;/p&gt;
+            &lt;/div&gt;
 
-            function escapeHtml(text) {
-                const map = {
-                    '&amp;': '&amp;amp;',
-                    '&lt;': '&amp;lt;',
-                    '&gt;': '&amp;gt;',
-                    '"': '&amp;quot;',
-                    "'": '&amp;#039;'
-                };
-                return text.replace(/[&amp;&lt;&gt;"']/g, function(m) { return map[m]; });
-            }
-        });
-    &lt;/script&gt;
-&lt;/body&gt;
-&lt;/html&gt;
+            {/* Campo de busca para telas pequenas */}
+            &lt;div className="relative sm:hidden"&gt;
+              &lt;Search className="w-4 h-4 text-amber-400/75 absolute left-3.5 top-1/2 -translate-y-1/2" /&gt;
+              &lt;input
+                type="text"
+                value={searchQuery}
+                onChange={(e) =&gt; setSearchQuery(e.target.value)}
+                placeholder="Buscar nos textos..."
+                className="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-white/[0.06] border border-amber-500/25 text-sm text-amber-50 placeholder:text-amber-200/40 focus:outline-none focus:ring-2 focus:ring-amber-400/50"
+              /&gt;
+            &lt;/div&gt;
+          &lt;/div&gt;
+
+          {/* Grade de Artigos */}
+          {filteredArticles.length &gt; 0 ? (
+            &lt;section className="grid grid-cols-1 md:grid-cols-2 gap-7 mb-16"&gt;
+              {filteredArticles.map((art) =&gt; {
+                const theme = COVER_THEMES[art.theme] || COVER_THEMES.ouro;
+                const hasApplauded = applaudedIds.includes(art.id);
+                const totalApplause = art.applause + (hasApplauded ? 1 : 0);
+
+                return (
+                  &lt;article
+                    key={art.id}
+                    className="group rounded-3xl bg-[#1c100b]/85 backdrop-blur-md border border-amber-500/25 hover:border-amber-400/75 shadow-xl shadow-black/40 hover:shadow-2xl hover:shadow-amber-500/15 hover:-translate-y-1.5 transition-all duration-300 flex flex-col overflow-hidden"
+                  &gt;
+                    {/* Capa Geométrica Afro-Brasileira */}
+                    &lt;div
+                      onClick={() =&gt; openArticleReader(art.id)}
+                      className={`relative h-44 bg-gradient-to-br ${theme.gradient} p-6 flex flex-col justify-between cursor-pointer overflow-hidden`}
+                    &gt;
+                      &lt;CoverGeometricArt themeKey={art.theme} uniqueId={art.id} /&gt;
+
+                      &lt;div className="relative z-10 flex items-center justify-between gap-2"&gt;
+                        &lt;span className="px-3 py-1 rounded-full text-xs font-bold bg-[#120a07]/80 text-amber-300 border border-amber-400/35 backdrop-blur-md"&gt;
+                          {art.category}
+                        &lt;/span&gt;
+                        &lt;span className="text-xs font-medium text-amber-100/90 bg-black/40 px-2.5 py-1 rounded-full backdrop-blur-sm"&gt;
+                          {art.date} • {art.readTime}
+                        &lt;/span&gt;
+                      &lt;/div&gt;
+
+                      &lt;div className="relative z-10"&gt;
+                        &lt;span className="text-[11px] uppercase tracking-widest text-amber-200/85 font-semibold"&gt;
+                          {theme.label}
+                        &lt;/span&gt;
+                      &lt;/div&gt;
+                    &lt;/div&gt;
+
+                    {/* Corpo do Card */}
+                    &lt;div className="p-6 sm:p-7 flex-1 flex flex-col justify-between"&gt;
+                      &lt;div&gt;
+                        &lt;h3
+                          onClick={() =&gt; openArticleReader(art.id)}
+                          className="font-serif text-xl sm:text-2xl font-bold text-amber-50 group-hover:text-amber-300 leading-snug mb-3 cursor-pointer transition-colors"
+                        &gt;
+                          {art.title}
+                        &lt;/h3&gt;
+                        &lt;p className="text-amber-100/75 text-sm leading-relaxed mb-6"&gt;
+                          {art.excerpt}
+                        &lt;/p&gt;
+                      &lt;/div&gt;
+
+                      {/* Rodapé com Assinatura do Usuário e Controles */}
+                      &lt;div className="pt-4 border-t border-amber-500/20 flex items-center justify-between gap-2"&gt;
+                        &lt;div className="flex items-center gap-2.5 min-w-0"&gt;
+                          &lt;div className="w-8 h-8 rounded-full bg-amber-500/20 border border-amber-400/40 flex items-center justify-center text-amber-300 shrink-0"&gt;
+                            &lt;Feather className="w-3.5 h-3.5" /&gt;
+                          &lt;/div&gt;
+                          &lt;div className="truncate"&gt;
+                            &lt;p className="text-[11px] text-amber-200/60"&gt;Escrito por&lt;/p&gt;
+                            &lt;p className="text-xs font-semibold text-amber-200 truncate"&gt;
+                              {displayAuthorName}
+                            &lt;/p&gt;
+                          &lt;/div&gt;
+                        &lt;/div&gt;
+
+                        &lt;div className="flex items-center gap-1.5 sm:gap-2 shrink-0"&gt;
+                          &lt;button
+                            type="button"
+                            onClick={(e) =&gt; handleToggleApplause(e, art.id)}
+                            title="Curtir / Aplaudir texto"
+                            className={`px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all ${
+                              hasApplauded
+                                ? 'bg-amber-500 text-[#120a07] shadow-sm'
+                                : 'bg-white/5 hover:bg-amber-500/20 text-amber-300 border border-amber-500/25'
+                            }`}
+                          &gt;
+                            &lt;Sparkles className="w-3.5 h-3.5" /&gt;
+                            &lt;span&gt;{totalApplause}&lt;/span&gt;
+                          &lt;/button&gt;
+
+                          &lt;button
+                            type="button"
+                            onClick={(e) =&gt; openEditArticleEditor(e, art)}
+                            title="Editar este texto"
+                            className="w-8 h-8 rounded-xl bg-white/5 hover:bg-white/15 border border-amber-500/20 text-amber-200 flex items-center justify-center transition-colors"
+                          &gt;
+                            &lt;Pencil className="w-3.5 h-3.5" /&gt;
+                          &lt;/button&gt;
+
+                          {confirmDeleteId === art.id ? (
+                            &lt;button
+                              type="button"
+                              onClick={() =&gt; handleDeleteArticle(art.id)}
+                              title="Confirmar exclusão"
+                              className="px-2.5 h-8 rounded-xl bg-red-600 hover:bg-red-500 text-white text-[11px] font-bold flex items-center gap-1 transition-colors"
+                            &gt;
+                              &lt;Trash2 className="w-3.5 h-3.5" /&gt;
+                              &lt;span&gt;Confirmar&lt;/span&gt;
+                            &lt;/button&gt;
+                          ) : (
+                            &lt;button
+                              type="button"
+                              onClick={() =&gt; setConfirmDeleteId(art.id)}
+                              title="Excluir este texto"
+                              className="w-8 h-8 rounded-xl bg-white/5 hover:bg-red-500/20 border border-amber-500/20 hover:border-red-500/40 text-amber-200/70 hover:text-red-300 flex items-center justify-center transition-colors"
+                            &gt;
+                              &lt;Trash2 className="w-3.5 h-3.5" /&gt;
+                            &lt;/button&gt;
+                          )}
+
+                          &lt;button
+                            type="button"
+                            onClick={() =&gt; openArticleReader(art.id)}
+                            className="px-3.5 py-1.5 rounded-xl bg-amber-500/15 hover:bg-amber-500 text-amber-300 hover:text-[#120a07] border border-amber-500/35 text-xs font-bold transition-all flex items-center gap-1"
+                          &gt;
+                            &lt;span&gt;Ler&lt;/span&gt;
+                            &lt;ArrowRight className="w-3.5 h-3.5" /&gt;
+                          &lt;/button&gt;
+                        &lt;/div&gt;
+                      &lt;/div&gt;
+                    &lt;/div&gt;
+                  &lt;/article&gt;
+                );
+              })}
+            &lt;/section&gt;
+          ) : (
+            /* Estado Vazio quando a busca ou filtro não encontra textos */
+            &lt;div className="text-center py-16 px-6 rounded-3xl bg-[#1c100b]/80 border border-amber-500/25 mb-16"&gt;
+              &lt;div className="w-16 h-16 rounded-2xl bg-amber-500/15 text-amber-400 flex items-center justify-center mx-auto mb-4 border border-amber-500/30"&gt;
+                &lt;SearchX className="w-8 h-8" /&gt;
+              &lt;/div&gt;
+              &lt;h3 className="font-serif text-xl font-bold text-amber-50 mb-2"&gt;
+                Nenhum texto encontrado
+              &lt;/h3&gt;
+              &lt;p className="text-amber-200/70 text-sm max-w-md mx-auto mb-6"&gt;
+                Tente buscar por outra palavra-chave ou visualize todas as categorias do seu blog.
+              &lt;/p&gt;
+              &lt;button
+                type="button"
+                onClick={() =&gt; {
+                  setSelectedCategory('Todos');
+                  setSearchQuery('');
+                }}
+                className="px-5 py-2.5 rounded-2xl bg-amber-500 hover:bg-amber-400 text-[#120a07] text-sm font-bold transition-all"
+              &gt;
+                Mostrar todos os textos
+              &lt;/button&gt;
+            &lt;/div&gt;
+          )}
+
+          {/* Seção Provérbio Sankofa */}
+          &lt;section className="rounded-3xl p-[1px] bg-gradient-to-r from-emerald-600/60 via-amber-500/60 to-red-700/60 shadow-xl"&gt;
+            &lt;div className="bg-[#120a07]/90 backdrop-blur-xl rounded-[23px] px-6 py-10 sm:px-12 text-center relative overflow-hidden"&gt;
+              &lt;div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.25em] text-amber-400 mb-3"&gt;
+                &lt;Quote className="w-4 h-4" /&gt;
+                &lt;span&gt;Filosofia Sankofa&lt;/span&gt;
+              &lt;/div&gt;
+              &lt;blockquote className="font-serif italic text-xl sm:text-2xl lg:text-3xl text-amber-50 max-w-3xl mx-auto leading-relaxed mb-4"&gt;
+                “Nunca é tarde para voltar e apanhar aquilo que ficou para trás.”
+              &lt;/blockquote&gt;
+              &lt;p className="text-sm text-amber-200/70"&gt;
+                Símbolo tradicional Adinkra • Resgatar nossas raízes para construir o futuro.
+              &lt;/p&gt;
+            &lt;/div&gt;
+          &lt;/section&gt;
+        &lt;/main&gt;
+
+        {/* Rodapé */}
+        &lt;footer className="border-t border-amber-500/20 bg-[#120a07]/95 mt-12"&gt;
+          &lt;div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-amber-200/70"&gt;
+            &lt;div className="flex items-center gap-2.5 flex-wrap justify-center"&gt;
+              &lt;Sun className="w-4 h-4 text-amber-400" /&gt;
+              &lt;span className="font-serif font-bold text-amber-100"&gt;Vozes &amp; Raízes&lt;/span&gt;
+              &lt;span&gt;•&lt;/span&gt;
+              &lt;span&gt;
+                Escrito por &lt;strong className="text-amber-300"&gt;{displayAuthorName}&lt;/strong&gt;
+              &lt;/span&gt;
+            &lt;/div&gt;
+
+            &lt;div className="flex items-center gap-4 flex-wrap justify-center"&gt;
+              &lt;button
+                type="button"
+                onClick={openAuthorEditor}
+                className="hover:text-amber-300 transition-colors"
+              &gt;
+                Editar Autor
+              &lt;/button&gt;
+              &lt;button
+                type="button"
+                onClick={openNewArticleEditor}
+                className="hover:text-amber-300 transition-colors"
+              &gt;
+                Novo Texto
+              &lt;/button&gt;
+              &lt;button
+                type="button"
+                onClick={handleRestoreDefaults}
+                className="text-xs text-amber-200/45 hover:text-amber-300 transition-colors flex items-center gap-1"
+              &gt;
+                &lt;RotateCcw className="w-3 h-3" /&gt;
+                &lt;span&gt;Restaurar textos iniciais&lt;/span&gt;
+              &lt;/button&gt;
+            &lt;/div&gt;
+          &lt;/div&gt;
+          &lt;KenteStripe /&gt;
+        &lt;/footer&gt;
+      &lt;/div&gt;
+
+      {/* MODAL 1: Leitura Completa do Artigo */}
+      {readingArticle &amp;&amp; (
+        &lt;div
+          onClick={(e) =&gt; {
+            if (e.target === e.currentTarget) setReadingArticleId(null);
+          }}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/80 backdrop-blur-md"
+        &gt;
+          &lt;div
+            ref={readModalScrollRef}
+            onScroll={handleReadModalScroll}
+            className="bg-[#1c100b] border border-amber-500/40 rounded-3xl max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative"
+          &gt;
+            {/* Barra de Progresso de Leitura */}
+            &lt;div
+              className="sticky top-0 left-0 h-1 bg-gradient-to-r from-amber-400 via-amber-500 to-emerald-500 z-30 transition-all duration-150"
+              style={{ width: `${readProgress}%` }}
+            /&gt;
+
+            &lt;button
+              type="button"
+              onClick={() =&gt; setReadingArticleId(null)}
+              aria-label="Fechar leitura"
+              className="sticky top-4 float-right mr-4 mt-4 z-20 w-10 h-10 rounded-full bg-[#120a07]/90 border border-amber-500/45 text-amber-100 hover:bg-amber-500 hover:text-[#120a07] flex items-center justify-center shadow-lg transition-all"
+            &gt;
+              &lt;X className="w-5 h-5" /&gt;
+            &lt;/button&gt;
+
+            {/* Cabeçalho da Leitura */}
+            {(() =&gt; {
+              const theme = COVER_THEMES[readingArticle.theme] || COVER_THEMES.ouro;
+              const hasApplauded = applaudedIds.includes(readingArticle.id);
+              const totalApplause =
+                readingArticle.applause + (hasApplauded ? 1 : 0);
+
+              return (
+                &lt;&gt;
+                  &lt;div
+                    className={`relative bg-gradient-to-br ${theme.gradient} p-7 sm:p-10 overflow-hidden`}
+                  &gt;
+                    &lt;CoverGeometricArt
+                      themeKey={readingArticle.theme}
+                      uniqueId={`modal-${readingArticle.id}`}
+                    /&gt;
+                    &lt;div className="relative z-10"&gt;
+                      &lt;span className="inline-block px-3 py-1 rounded-full text-xs font-bold bg-[#120a07]/85 text-amber-300 border border-amber-400/35 mb-4"&gt;
+                        {readingArticle.category}
+                      &lt;/span&gt;
+                      &lt;h2 className="font-serif text-2xl sm:text-4xl font-extrabold text-white leading-tight mb-4"&gt;
+                        {readingArticle.title}
+                      &lt;/h2&gt;
+                      &lt;div className="flex flex-wrap items-center gap-3 text-xs sm:text-sm text-amber-100/90"&gt;
+                        &lt;span className="font-semibold text-amber-300 flex items-center gap-1.5"&gt;
+                          &lt;Feather className="w-4 h-4" /&gt;
+                          &lt;span&gt;Escrito por {displayAuthorName}&lt;/span&gt;
+                        &lt;/span&gt;
+                        &lt;span&gt;•&lt;/span&gt;
+                        &lt;span&gt;{readingArticle.date}&lt;/span&gt;
+                        &lt;span&gt;•&lt;/span&gt;
+                        &lt;span&gt;{readingArticle.readTime} de leitura&lt;/span&gt;
+                      &lt;/div&gt;
+                    &lt;/div&gt;
+                  &lt;/div&gt;
+
+                  {/* Corpo do Texto */}
+                  &lt;div className="p-6 sm:p-10"&gt;
+                    &lt;p className="text-lg font-serif italic text-amber-200/95 border-l-4 border-amber-500 pl-4 mb-8 leading-relaxed"&gt;
+                      {readingArticle.excerpt}
+                    &lt;/p&gt;
+
+                    &lt;div className="space-y-5 text-amber-50/90 text-base sm:text-lg leading-relaxed"&gt;
+                      {readingArticle.paragraphs.map((paragraph, index) =&gt; (
+                        &lt;p key={index}&gt;{paragraph}&lt;/p&gt;
+                      ))}
+                    &lt;/div&gt;
+
+                    {/* Rodapé do Modal de Leitura */}
+                    &lt;div className="mt-10 pt-6 border-t border-amber-500/25 flex flex-wrap items-center justify-between gap-4"&gt;
+                      &lt;div&gt;
+                        &lt;p className="text-xs text-amber-200/60"&gt;
+                          Texto autoral publicado por
+                        &lt;/p&gt;
+                        &lt;p className="font-serif font-bold text-amber-300 text-lg"&gt;
+                          {displayAuthorName}
+                        &lt;/p&gt;
+                      &lt;/div&gt;
+
+                      &lt;div className="flex flex-wrap items-center gap-2.5"&gt;
+                        &lt;button
+                          type="button"
+                          onClick={(e) =&gt; handleToggleApplause(e, readingArticle.id)}
+                          className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all ${
+                            hasApplauded
+                              ? 'bg-amber-500 text-[#120a07]'
+                              : 'bg-white/5 hover:bg-amber-500/20 border border-amber-500/35 text-amber-300'
+                          }`}
+                        &gt;
+                          &lt;Sparkles className="w-3.5 h-3.5" /&gt;
+                          &lt;span&gt;Aplaudir ({totalApplause})&lt;/span&gt;
+                        &lt;/button&gt;
+
+                        &lt;button
+                          type="button"
+                          onClick={() =&gt; {
+                            const target = readingArticle;
+                            setReadingArticleId(null);
+                            openEditArticleEditor(null, target);
+                          }}
+                          className="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-amber-500/30 text-amber-100 text-xs font-semibold flex items-center gap-1.5"
+                        &gt;
+                          &lt;Pencil className="w-3.5 h-3.5" /&gt;
+                          &lt;span&gt;Editar Texto&lt;/span&gt;
+                        &lt;/button&gt;
+
+                        &lt;button
+                          type="button"
+                          onClick={() =&gt; handleCopyCitation(readingArticle.title)}
+                          className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-[#120a07] text-xs font-bold flex items-center gap-1.5"
+                        &gt;
+                          &lt;Share2 className="w-3.5 h-3.5" /&gt;
+                          &lt;span&gt;Copiar Citação&lt;/span&gt;
+                        &lt;/button&gt;
+                      &lt;/div&gt;
+                    &lt;/div&gt;
+                  &lt;/div&gt;
+                &lt;/&gt;
+              );
+            })()}
+          &lt;/div&gt;
+        &lt;/div&gt;
+      )}
+
+      {/* MODAL 2: Personalizar Identidade do Autor */}
+      {isAuthorModalOpen &amp;&amp; (
+        &lt;div
+          onClick={(e) =&gt; {
+            if (e.target === e.currentTarget) setIsAuthorModalOpen(false);
+          }}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md"
+        &gt;
+          &lt;div className="bg-[#1c100b] border border-amber-500/40 rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl"&gt;
+            &lt;div className="flex items-center justify-between mb-6"&gt;
+              &lt;div className="flex items-center gap-3"&gt;
+                &lt;div className="w-10 h-10 rounded-xl bg-amber-500/15 border border-amber-500/35 flex items-center justify-center text-amber-400"&gt;
+                  &lt;UserPen className="w-5 h-5" /&gt;
+                &lt;/div&gt;
+                &lt;div&gt;
+                  &lt;h3 className="font-serif text-xl font-bold text-amber-50"&gt;
+                    Sua Assinatura no Blog
+                  &lt;/h3&gt;
+                  &lt;p className="text-xs text-amber-200/70"&gt;
+                    Personalize como seu nome aparece em todos os textos
+                  &lt;/p&gt;
+                &lt;/div&gt;
+              &lt;/div&gt;
+              &lt;button
+                type="button"
+                onClick={() =&gt; setIsAuthorModalOpen(false)}
+                className="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-amber-200"
+              &gt;
+                &lt;X className="w-4 h-4" /&gt;
+              &lt;/button&gt;
+            &lt;/div&gt;
+
+            &lt;form onSubmit={handleSaveAuthor} className="space-y-4"&gt;
+              &lt;div&gt;
+                &lt;label className="block text-xs font-semibold uppercase tracking-wider text-amber-300 mb-1.5"&gt;
+                  Seu Nome Completo ou Assinatura
+                &lt;/label&gt;
+                &lt;input
+                  type="text"
+                  required
+                  value={authorForm.name}
+                  onChange={(e) =&gt;
+                    setAuthorForm((prev) =&gt; ({ ...prev, name: e.target.value }))
+                  }
+                  placeholder="Ex: Mariana Silva ou João Pedro"
+                  className="w-full px-4 py-3 rounded-2xl bg-[#120a07] border border-amber-500/35 text-amber-50 placeholder:text-amber-200/30 focus:outline-none focus:ring-2 focus:ring-amber-400"
+                /&gt;
+              &lt;/div&gt;
+
+              &lt;div&gt;
+                &lt;label className="block text-xs font-semibold uppercase tracking-wider text-amber-300 mb-1.5"&gt;
+                  Seu Título / Ocupação
+                &lt;/label&gt;
+                &lt;input
+                  type="text"
+                  value={authorForm.role}
+                  onChange={(e) =&gt;
+                    setAuthorForm((prev) =&gt; ({ ...prev, role: e.target.value }))
+                  }
+                  placeholder="Ex: Estudante, Escritor(a), Educador(a)..."
+                  className="w-full px-4 py-3 rounded-2xl bg-[#120a07] border border-amber-500/35 text-amber-50 placeholder:text-amber-200/30 focus:outline-none focus:ring-2 focus:ring-amber-400"
+                /&gt;
+              &lt;/div&gt;
+
+              &lt;div&gt;
+                &lt;label className="block text-xs font-semibold uppercase tracking-wider text-amber-300 mb-1.5"&gt;
+                  Apresentação do Seu Blog
+                &lt;/label&gt;
+                &lt;textarea
+                  rows={3}
+                  value={authorForm.bio}
+                  onChange={(e) =&gt;
+                    setAuthorForm((prev) =&gt; ({ ...prev, bio: e.target.value }))
+                  }
+                  placeholder="Escreva uma breve apresentação sobre você e o propósito deste blog..."
+                  className="w-full px-4 py-3 rounded-2xl bg-[#120a07] border border-amber-500/35 text-amber-50 placeholder:text-amber-200/30 focus:outline-none focus:ring-2 focus:ring-amber-400"
+                /&gt;
+              &lt;/div&gt;
+
+              &lt;div className="pt-3 flex items-center justify-end gap-3"&gt;
+                &lt;button
+                  type="button"
+                  onClick={() =&gt; setIsAuthorModalOpen(false)}
+                  className="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-amber-200 text-sm font-medium transition-colors"
+                &gt;
+                  Cancelar
+                &lt;/button&gt;
+                &lt;button
+                  type="submit"
+                  className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-[#120a07] text-sm font-bold shadow-lg shadow-amber-600/25 transition-all"
+                &gt;
+                  Salvar Minha Assinatura
+                &lt;/button&gt;
+              &lt;/div&gt;
+            &lt;/form&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+      )}
+
+      {/* MODAL 3: Escrever ou Editar Artigo */}
+      {isEditorModalOpen &amp;&amp; (
+        &lt;div
+          onClick={(e) =&gt; {
+            if (e.target === e.currentTarget) setIsEditorModalOpen(false);
+          }}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md"
+        &gt;
+          &lt;div className="bg-[#1c100b] border border-amber-500/40 rounded-3xl max-w-2xl w-full max-h-[92vh] overflow-y-auto p-6 sm:p-8 shadow-2xl"&gt;
+            &lt;div className="flex items-center justify-between mb-6"&gt;
+              &lt;div className="flex items-center gap-3"&gt;
+                &lt;div className="w-10 h-10 rounded-xl bg-emerald-900/50 border border-emerald-500/40 flex items-center justify-center text-emerald-400"&gt;
+                  &lt;PenTool className="w-5 h-5" /&gt;
+                &lt;/div&gt;
+                &lt;div&gt;
+                  &lt;h3 className="font-serif text-xl font-bold text-amber-50"&gt;
+                    {editingArticleId !== null
+                      ? 'Editar Meu Texto'
+                      : 'Escrever Novo Texto'}
+                  &lt;/h3&gt;
+                  &lt;p className="text-xs text-amber-200/70"&gt;
+                    Será publicado imediatamente com a assinatura de {displayAuthorName}
+                  &lt;/p&gt;
+                &lt;/div&gt;
+              &lt;/div&gt;
+              &lt;button
+                type="button"
+                onClick={() =&gt; setIsEditorModalOpen(false)}
+                className="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-amber-200"
+              &gt;
+                &lt;X className="w-4 h-4" /&gt;
+              &lt;/button&gt;
+            &lt;/div&gt;
+
+            &lt;form onSubmit={handleSaveArticle} className="space-y-4"&gt;
+              &lt;div&gt;
+                &lt;label className="block text-xs font-semibold uppercase tracking-wider text-amber-300 mb-1.5"&gt;
+                  Título do Texto
+                &lt;/label&gt;
+                &lt;input
+                  type="text"
+                  required
+                  value={articleForm.title}
+                  onChange={(e) =&gt;
+                    setArticleForm((prev) =&gt; ({ ...prev, title: e.target.value }))
+                  }
+                  placeholder="Ex: O que o 20 de Novembro significa para mim"
+                  className="w-full px-4 py-3 rounded-2xl bg-[#120a07] border border-amber-500/35 text-amber-50 placeholder:text-amber-200/30 focus:outline-none focus:ring-2 focus:ring-amber-400"
+                /&gt;
+              &lt;/div&gt;
+
+              &lt;div className="grid grid-cols-1 sm:grid-cols-2 gap-4"&gt;
+                &lt;div&gt;
+                  &lt;label className="block text-xs font-semibold uppercase tracking-wider text-amber-300 mb-1.5"&gt;
+                    Categoria
+                  &lt;/label&gt;
+                  &lt;select
+                    value={articleForm.category}
+                    onChange={(e) =&gt;
+                      setArticleForm((prev) =&gt; ({
+                        ...prev,
+                        category: e.target.value
+                      }))
+                    }
+                    className="w-full px-4 py-3 rounded-2xl bg-[#120a07] border border-amber-500/35 text-amber-50 focus:outline-none focus:ring-2 focus:ring-amber-400"
+                  &gt;
+                    &lt;option value="Reflexões"&gt;Reflexões&lt;/option&gt;
+                    &lt;option value="História &amp; Memória"&gt;História &amp; Memória&lt;/option&gt;
+                    &lt;option value="Cultura &amp; Arte"&gt;Cultura &amp; Arte&lt;/option&gt;
+                    &lt;option value="Atualidade"&gt;Atualidade&lt;/option&gt;
+                  &lt;/select&gt;
+                &lt;/div&gt;
+
+                &lt;div&gt;
+                  &lt;label className="block text-xs font-semibold uppercase tracking-wider text-amber-300 mb-1.5"&gt;
+                    Tema Visual da Capa
+                  &lt;/label&gt;
+                  &lt;select
+                    value={articleForm.theme}
+                    onChange={(e) =&gt;
+                      setArticleForm((prev) =&gt; ({ ...prev, theme: e.target.value }))
+                    }
+                    className="w-full px-4 py-3 rounded-2xl bg-[#120a07] border border-amber-500/35 text-amber-50 focus:outline-none focus:ring-2 focus:ring-amber-400"
+                  &gt;
+                    &lt;option value="ouro"&gt;Ouro &amp; Ancestralidade&lt;/option&gt;
+                    &lt;option value="esmeralda"&gt;Verde Esmeralda &amp; Quilombo&lt;/option&gt;
+                    &lt;option value="terracota"&gt;Terracota &amp; Raízes&lt;/option&gt;
+                    &lt;option value="kente"&gt;Cores Kente &amp; Arte&lt;/option&gt;
+                  &lt;/select&gt;
+                &lt;/div&gt;
+              &lt;/div&gt;
+
+              &lt;div&gt;
+                &lt;label className="block text-xs font-semibold uppercase tracking-wider text-amber-300 mb-1.5"&gt;
+                  Resumo / Chamada Inicial
+                &lt;/label&gt;
+                &lt;input
+                  type="text"
+                  required
+                  value={articleForm.excerpt}
+                  onChange={(e) =&gt;
+                    setArticleForm((prev) =&gt; ({ ...prev, excerpt: e.target.value }))
+                  }
+                  placeholder="Uma frase marcante que resume a ideia principal do seu texto..."
+                  className="w-full px-4 py-3 rounded-2xl bg-[#120a07] border border-amber-500/35 text-amber-50 placeholder:text-amber-200/30 focus:outline-none focus:ring-2 focus:ring-amber-400"
+                /&gt;
+              &lt;/div&gt;
+
+              &lt;div&gt;
+                &lt;label className="block text-xs font-semibold uppercase tracking-wider text-amber-300 mb-1.5"&gt;
+                  Seu Texto Completo
+                &lt;/label&gt;
+                &lt;textarea
+                  rows={7}
+                  required
+                  value={articleForm.content}
+                  onChange={(e) =&gt;
+                    setArticleForm((prev) =&gt; ({ ...prev, content: e.target.value }))
+                  }
+                  placeholder="Escreva aqui suas ideias, vivências, poemas ou reflexões sobre a Consciência Negra. Separe os parágrafos pulando uma linha..."
+                  className="w-full px-4 py-3 rounded-2xl bg-[#120a07] border border-amber-500/35 text-amber-50 placeholder:text-amber-200/30 focus:outline-none focus:ring-2 focus:ring-amber-400 leading-relaxed"
+                /&gt;
+              &lt;/div&gt;
+
+              &lt;div className="pt-3 flex items-center justify-end gap-3"&gt;
+                &lt;button
+                  type="button"
+                  onClick={() =&gt; setIsEditorModalOpen(false)}
+                  className="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-amber-200 text-sm font-medium transition-colors"
+                &gt;
+                  Cancelar
+                &lt;/button&gt;
+                &lt;button
+                  type="submit"
+                  className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-[#120a07] text-sm font-bold shadow-lg shadow-amber-600/25 transition-all flex items-center gap-2"
+                &gt;
+                  &lt;Send className="w-4 h-4" /&gt;
+                  &lt;span&gt;
+                    {editingArticleId !== null
+                      ? 'Salvar Alterações'
+                      : 'Publicar no Meu Blog'}
+                  &lt;/span&gt;
+                &lt;/button&gt;
+              &lt;/div&gt;
+            &lt;/form&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+      )}
+
+      {/* Notificação Flutuante (Toast) */}
+      {toastMessage &amp;&amp; (
+        &lt;div className="fixed bottom-6 right-6 z-50 transition-all duration-300"&gt;
+          &lt;div className="px-5 py-3.5 rounded-2xl bg-[#120a07] border border-amber-500/45 text-amber-50 text-sm font-medium shadow-2xl flex items-center gap-3"&gt;
+            &lt;CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" /&gt;
+            &lt;span&gt;{toastMessage}&lt;/span&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+      )}
+    &lt;/div&gt;
+  );
+}
 ```</code></pre>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
   <script>hljs.highlightAll();</script>
