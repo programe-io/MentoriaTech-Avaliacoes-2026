@@ -1,74 +1,92 @@
-const campo = document.getElementById("texto");
-const mensagens = document.getElementById("mensagens");
+let saldo = 1000;
 
-function adicionarMensagem(texto, classe) {
-    const mensagem = document.createElement("div");
+let historico = [];
 
-    mensagem.className = "mensagem " + classe;
-    mensagem.textContent = texto;
-
-    mensagens.appendChild(mensagem);
-
-    mensagens.scrollTop = mensagens.scrollHeight;
+function formatar(valor) {
+    return valor.toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL"
+    });
 }
 
-function responder(texto) {
-    const mensagem = texto.toLowerCase();
+function atualizar() {
+    document.getElementById("saldo").textContent =
+        formatar(saldo);
 
-    if (mensagem.includes("oi") || mensagem.includes("olá")) {
-        return "Olá! 😃 Que bom conversar com você!";
-    }
+    const lista = document.getElementById("transacoes");
 
-    if (mensagem.includes("nome")) {
-        return "Meu nome é CyberBot! 🤖";
-    }
+    lista.innerHTML = "";
 
-    if (mensagem.includes("tudo bem")) {
-        return "Estou funcionando perfeitamente! E você?";
-    }
+    historico.forEach(transacao => {
+        const item = document.createElement("div");
 
-    if (mensagem.includes("hora")) {
-        return "Agora são " +
-            new Date().toLocaleTimeString("pt-BR");
-    }
+        item.className = "transacao " + transacao.tipo;
 
-    if (mensagem.includes("data")) {
-        return "Hoje é " +
-            new Date().toLocaleDateString("pt-BR");
-    }
+        item.textContent =
+            transacao.nome + " — " + formatar(transacao.valor);
 
-    if (mensagem.includes("ajuda")) {
-        return "Você pode perguntar meu nome, a hora, a data ou dizer oi!";
-    }
-
-    if (mensagem.includes("obrigado")) {
-        return "Por nada! Sempre que precisar, estarei aqui! ❤️";
-    }
-
-    if (mensagem.includes("tchau")) {
-        return "Até logo! Foi ótimo conversar com você! 👋";
-    }
-
-    return "Interessante! 😎 Ainda estou aprendendo a responder isso.";
+        lista.appendChild(item);
+    });
 }
 
-function enviar() {
-    const texto = campo.value.trim();
+function obterValor() {
+    const campo = document.getElementById("valor");
+    const valor = Number(campo.value);
 
-    if (!texto) return;
+    if (!Number.isFinite(valor) || valor <= 0) {
+        alert("Digite um valor válido!");
+        return null;
+    }
 
-    adicionarMensagem(texto, "usuario");
-
-    campo.value = "";
-
-    setTimeout(() => {
-        const resposta = responder(texto);
-        adicionarMensagem(resposta, "bot");
-    }, 500);
+    return valor;
 }
 
-campo.addEventListener("keydown", function(event) {
-    if (event.key === "Enter") {
-        enviar();
+function depositar() {
+    const valor = obterValor();
+
+    if (valor === null) return;
+
+    saldo += valor;
+
+    historico.unshift({
+        nome: "📥 Depósito",
+        valor: valor,
+        tipo: "entrada"
+    });
+
+    document.getElementById("valor").value = "";
+
+    atualizar();
+}
+
+function sacar() {
+    const valor = obterValor();
+
+    if (valor === null) return;
+
+    if (valor > saldo) {
+        alert("Saldo insuficiente!");
+        return;
     }
-});
+
+    saldo -= valor;
+
+    historico.unshift({
+        nome: "📤 Saque",
+        valor: valor,
+        tipo: "saida"
+    });
+
+    document.getElementById("valor").value = "";
+
+    atualizar();
+}
+
+function reiniciar() {
+    saldo = 1000;
+    historico = [];
+
+    atualizar();
+}
+
+atualizar();
