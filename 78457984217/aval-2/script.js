@@ -1,25 +1,40 @@
-let pontos = 0;
+const visor = document.getElementById("visor");
 
-const botao = document.getElementById("botao");
-const contador = document.getElementById("pontos");
-const recorde = document.getElementById("recorde");
-
-botao.addEventListener("click", function() {
-
-    pontos++;
-
-    contador.textContent = pontos;
-
-    if (pontos === 10) {
-        recorde.textContent = "🔥 Você chegou a 10 pontos!";
+function adicionar(valor) {
+    if (visor.value === "0" || visor.value === "Erro") {
+        visor.value = valor === "." ? "0." : valor;
+    } else {
+        visor.value += valor;
     }
+}
 
-    if (pontos === 50) {
-        recorde.textContent = "🏆 INCRÍVEL! 50 PONTOS!";
+function limpar() {
+    visor.value = "0";
+}
+
+function apagar() {
+    visor.value = visor.value.slice(0, -1) || "0";
+}
+
+function calcular() {
+    try {
+        const expressao = visor.value;
+
+        if (!/^[0-9+\-*/.() ]+$/.test(expressao)) {
+            throw new Error("Expressão inválida");
+        }
+
+        const resultado = Function(
+            '"use strict"; return (' + expressao + ')'
+        )();
+
+        if (!Number.isFinite(resultado)) {
+            throw new Error("Resultado inválido");
+        }
+
+        visor.value = Number(resultado.toFixed(10)).toString();
+
+    } catch {
+        visor.value = "Erro";
     }
-
-    if (pontos === 100) {
-        recorde.textContent = "👑 VOCÊ É UM CAMPEÃO!";
-    }
-
-});
+}
