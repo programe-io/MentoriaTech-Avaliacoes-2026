@@ -1,0 +1,205 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Gerenciador de Tarefas</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #e8eef5;
+            text-align: center;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #23476b;
+        }
+
+        .container {
+            background: white;
+            max-width: 500px;
+            margin: 20px auto;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px #ccc;
+        }
+
+        input {
+            width: 90%;
+            padding: 12px;
+            margin: 8px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        button {
+            padding: 12px;
+            width: 95%;
+            margin: 8px;
+            background: #2878b5;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #164e7a;
+        }
+
+        #lista {
+            text-align: left;
+        }
+
+        .tarefa {
+            background: #f1f6fb;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+    <h1>Gerenciador de Tarefas</h1>
+
+    <div class="container">
+        <h2>Cadastrar Tarefa</h2>
+
+        <input type="number" id="codigo" placeholder="Código da tarefa">
+        <input type="text" id="titulo" placeholder="Título da tarefa">
+        <input type="number" id="prioridade" placeholder="Prioridade (1 a 3)">
+
+        <button onclick="cadastrar()">Cadastrar Tarefa</button>
+    </div>
+
+    <div class="container">
+        <h2>Marcar como Concluída</h2>
+
+        <input type="number" id="codigoConcluir" placeholder="Código da tarefa">
+
+        <button onclick="concluir()">Concluir Tarefa</button>
+    </div>
+
+    <div class="container">
+        <h2>Alterar Prioridade</h2>
+
+        <input type="number" id="codigoAlterar" placeholder="Código da tarefa">
+        <input type="number" id="novaPrioridade" placeholder="Nova prioridade (1 a 3)">
+
+        <button onclick="alterarPrioridade()">Alterar Prioridade</button>
+    </div>
+
+    <div class="container">
+        <h2>Lista de Tarefas</h2>
+
+        <button onclick="listar()">Listar Tarefas</button>
+
+        <div id="lista"></div>
+    </div>
+
+    <script>
+        let tarefas = [];
+
+        function cadastrar() {
+            let codigo = Number(document.getElementById("codigo").value);
+            let titulo = document.getElementById("titulo").value;
+            let prioridade = Number(document.getElementById("prioridade").value);
+
+            if (!codigo || titulo.trim().length < 5 ||
+                prioridade < 1 || prioridade > 3 ||
+                document.getElementById("prioridade").value === "") {
+
+                alert("Preencha corretamente! O título deve ter no mínimo 5 caracteres e a prioridade deve ser de 1 a 3.");
+                return;
+            }
+
+            if (tarefas.some(t => t.codigo === codigo)) {
+                alert("Esse código já existe!");
+                return;
+            }
+
+            tarefas.push({
+                codigo: codigo,
+                titulo: titulo,
+                prioridade: prioridade,
+                status: "Pendente"
+            });
+
+            alert("Tarefa cadastrada com sucesso!");
+
+            document.getElementById("codigo").value = "";
+            document.getElementById("titulo").value = "";
+            document.getElementById("prioridade").value = "";
+
+            listar();
+        }
+
+        function listar() {
+            let resultado = "";
+
+            if (tarefas.length === 0) {
+                resultado = "<p>Nenhuma tarefa cadastrada.</p>";
+            }
+
+            tarefas.forEach(t => {
+                resultado += `
+                    <div class="tarefa">
+                        <strong>Código:</strong> ${t.codigo}<br>
+                        <strong>Título:</strong> ${t.titulo}<br>
+                        <strong>Prioridade:</strong> ${t.prioridade}<br>
+                        <strong>Status:</strong> ${t.status}
+                    </div>
+                `;
+            });
+
+            document.getElementById("lista").innerHTML = resultado;
+        }
+
+        function concluir() {
+            let codigo = Number(document.getElementById("codigoConcluir").value);
+
+            let tarefa = tarefas.find(t => t.codigo === codigo);
+
+            if (!tarefa) {
+                alert("Tarefa não encontrada!");
+                return;
+            }
+
+            tarefa.status = "Concluída";
+
+            alert("Tarefa concluída com sucesso!");
+            listar();
+        }
+
+        function alterarPrioridade() {
+            let codigo = Number(document.getElementById("codigoAlterar").value);
+            let prioridade = Number(document.getElementById("novaPrioridade").value);
+
+            let tarefa = tarefas.find(t => t.codigo === codigo);
+
+            if (!tarefa) {
+                alert("Tarefa não encontrada!");
+                return;
+            }
+
+            if (document.getElementById("novaPrioridade").value === "" ||
+                prioridade < 1 || prioridade > 3) {
+                alert("A prioridade deve ser entre 1 e 3!");
+                return;
+            }
+
+            tarefa.prioridade = prioridade;
+
+            alert("Prioridade alterada com sucesso!");
+            listar();
+        }
+    </script>
+
+<script src="script.js"></script></body>
+</html>
