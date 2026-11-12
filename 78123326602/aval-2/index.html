@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>PôneiFeed</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/script.js"></script>
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+    <header>
+        <div class="header-content">
+            <h1>PôneiFeed</h1>
+            <nav>
+                <a href="#">Início</a>
+                <a href="#">Meu Pônei</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+
+        <section class="new-post">
+            <div class="user">
+                <div class="avatar">D</div>
+                <div>
+                    <strong>Dieny</strong>
+                    <span>Compartilhe seu momento com os pôneis! 🐴</span>
+                </div>
+            </div>
+            <button>Publicar</button>
+        </section>
+
+        <article class="post">
+            <div class="post-header">
+                <div class="avatar">L</div>
+                <div>
+                    <strong>Luna</strong>
+                    <span>Há 5 minutos</span>
+                </div>
+            </div>
+            <div class="post-test">
+                Conheçam a Estrelinha! Minha pônei favorita! 🐴⭐
+            </div>
+            <img src="https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?w=800" alt="Cavalo em campo">
+            <div class="post-actions">
+                <button>Curtir</button>
+                <button>Comentar</button>
+            </div>
+        </article>
+
+        <article class="post">
+            <div class="post-header">
+                <div class="avatar">M</div>
+                <div>
+                    <strong>Mariana</strong>
+                    <span>Há 12 minutos</span>
+                </div>
+            </div>
+            <div class="post-test">
+                Uma tarde perfeita no campo com meus pôneis! 🌸💗
+            </div>
+            <img src="https://images.unsplash.com/photo-1516467508483-a7212f400b7d?w=800" alt="Cavalos juntos">
+            <div class="post-actions">
+                <button>Curtir</button>
+                <button>Comentar</button>
+            </div>
+        </article>
+
+        <article class="post">
+            <div class="post-header">
+                <div class="avatar">F</div>
+                <div>
+                    <strong>Felipe</strong>
+                    <span>Há 25 minutos</span>
+                </div>
+            </div>
+            <div class="post-test">
+                Hoje foi dia de passeio e muita diversão com a minha pequena! 🐎🌳
+            </div>
+            <img src="https://images.unsplash.com/photo-1534307675525-3aee4f8c8f2a?w=800" alt="Cavalo em passeio">
+            <div class="post-actions">
+                <button>Curtir</button>
+                <button>Comentar</button>
+            </div>
+        </article>
+
+        <article class="post">
+            <div class="post-header">
+                <div class="avatar">A</div>
+                <div>
+                    <strong>Ana Clara</strong>
+                    <span>Há 2 horas</span>
+                </div>
+            </div>
+            <div class="post-test">
+                Os pôneis deixam qualquer dia mais alegre! 🦄✨
+            </div>
+            <img src="https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=800" alt="Paisagem de campo">
+            <div class="post-actions">
+                <button>Curtir</button>
+                <button>Comentar</button>
+            </div>
+        </article>
+
+        <article class="post">
+            <div class="post-header">
+                <div class="avatar">R</div>
+                <div>
+                    <strong>Rafael</strong>
+                    <span>Há 1 dia</span>
+                </div>
+            </div>
+            <div class="post-test">
+                Nada melhor do que passar o dia cuidando desses animais incríveis! ❤️🐴
+            </div>
+            <img src="https://images.unsplash.com/photo-1527004013197-933c4bb611b3?w=800" alt="Cavalo na natureza">
+            <div class="post-actions">
+                <button>Curtir</button>
+                <button>Comentar</button>
+            </div>
+        </article>
+
+    </main>
+
+    <footer>
+        <p>PôneiFeed - Todos os Direitos Reservados - 2026</p>
+    </footer>
+
+<script>
+    const botoesCurtir = document.querySelectorAll(".post-actions button:first-child");
+
+    botoesCurtir.forEach(botao => {
+
+        let curtidas = 0;
+        let curtido = false;
+
+        botao.innerText = "Curtir (0)";
+
+        botao.addEventListener("click", function() {
+
+            if (curtido) {
+
+                curtidas--;
+                curtido = false;
+
+                botao.innerText = `Curtir (${curtidas})`;
+                botao.style.backgroundColor = "#2563eb";
+
+            } else {
+
+                curtidas++;
+                curtido = true;
+
+                botao.innerText = `Curtido (${curtidas})`;
+                botao.style.backgroundColor = "#f97316";
+
+            }
+
+        });
+
+    });
+
+    const botoesComentar = document.querySelectorAll(".post-actions button:last-child");
+
+    botoesComentar.forEach(botao => {
+
+        botao.addEventListener("click", function() {
+
+            const post = botao.closest(".post");
+
+            let areaComentarios = post.querySelector(".comentarios");
+
+            if (!areaComentarios) {
+
+                areaComentarios = document.createElement("div");
+                areaComentarios.classList.add("comentarios");
+
+                areaComentarios.innerHTML = `
+                    <input type="text" placeholder="Escreva um comentário...">
+                    <button class="enviar-comentario">Enviar</button>
+                    <div class="lista-comentarios"></div>
+                `;
+
+                post.appendChild(areaComentarios);
+
+                const input = areaComentarios.querySelector("input");
+                const enviar = areaComentarios.querySelector(".enviar-comentario");
+                const lista = areaComentarios.querySelector(".lista-comentarios");
+
+                enviar.addEventListener("click", function() {
+
+                    if (input.value.trim() !== "") {
+
+                        const comentario = document.createElement("p");
+
+                        comentario.innerText = input.value;
+
+                        lista.appendChild(comentario);
+
+                        input.value = "";
+
+                    }
+
+                });
+
+                input.addEventListener("keypress", function(event) {
+
+                    if (event.key === "Enter") {
+                        enviar.click();
+                    }
+
+                });
+
+            } else {
+
+                areaComentarios.style.display =
+                    areaComentarios.style.display === "none" ? "block" : "none";
+
+            }
+
+        });
+
+    });
+
+</script>
+</body>
+</html>
