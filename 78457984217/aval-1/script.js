@@ -1,51 +1,26 @@
-let pontosJogador = 0;
-let pontosPC = 0;
+const formulario = document.getElementById("formulario");
+const mensagem = document.getElementById("mensagem");
 
-function jogar(escolha) {
-    const opcoes = ["pedra", "papel", "tesoura"];
+formulario.addEventListener("submit", function(event) {
+    event.preventDefault();
 
-    const escolhaPC =
-        opcoes[Math.floor(Math.random() * 3)];
+    const usuario = document.getElementById("usuario").value;
+    const senha = document.getElementById("senha").value;
 
-    let resultado = "";
-
-    if (escolha === escolhaPC) {
-        resultado = "🤝 EMPATE!";
-    } else if (
-        (escolha === "pedra" && escolhaPC === "tesoura") ||
-        (escolha === "papel" && escolhaPC === "pedra") ||
-        (escolha === "tesoura" && escolhaPC === "papel")
-    ) {
-        resultado = "🏆 VOCÊ VENCEU!";
-        pontosJogador++;
-    } else {
-        resultado = "💻 O COMPUTADOR VENCEU!";
-        pontosPC++;
+    if (usuario.length < 3) {
+        mensagem.style.color = "#ff4444";
+        mensagem.textContent = "Usuário muito curto!";
+        return;
     }
 
-    document.getElementById("mensagem").textContent =
-        resultado;
+    if (senha.length < 6) {
+        mensagem.style.color = "#ff4444";
+        mensagem.textContent = "Senha precisa ter 6 caracteres!";
+        return;
+    }
 
-    document.getElementById("jogadas").textContent =
-        `Você: ${escolha} | Computador: ${escolhaPC}`;
+    mensagem.style.color = "#00ff99";
+    mensagem.textContent = "⚡ Login demonstrativo realizado!";
 
-    document.getElementById("pontosJogador").textContent =
-        pontosJogador;
-
-    document.getElementById("pontosPC").textContent =
-        pontosPC;
-}
-
-function reiniciar() {
-    pontosJogador = 0;
-    pontosPC = 0;
-
-    document.getElementById("pontosJogador").textContent = "0";
-    document.getElementById("pontosPC").textContent = "0";
-
-    document.getElementById("mensagem").textContent =
-        "Prepare-se!";
-
-    document.getElementById("jogadas").textContent =
-        "Você: - | Computador: -";
-}
+    formulario.reset();
+});
