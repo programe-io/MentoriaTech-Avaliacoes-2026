@@ -1,89 +1,159 @@
-let tarefas = [];
-let proximoCodigo = 1;
+let produtos = [];
 
-// 1. Cadastrar uma nova tarefa
-function cadastrarTarefa() {
-  const inputTitulo = document.getElementById("titulo");
-  const selectPrioridade = document.getElementById("prioridade");
-  const msgErro = document.getElementById("mensagem-erro");
+document.addEventListener("DOMContentLoaded", function() {
 
-  const titulo = inputTitulo.value.trim();
-  const prioridade = Number(selectPrioridade.value);
+    // BOTÃO CADASTRAR
+    document.getElementById("btnCadastrar").addEventListener("click", cadastrarProduto);
 
-  // Regra 1: O título deve ter no mínimo 5 caracteres
-  if (titulo.length < 5) {
-    msgErro.textContent = "Erro: O título deve ter no mínimo 5 caracteres.";
-    return;
-  \}
+    // BOTÕES DE ALTERAÇÃO
+    document.getElementById("btnValor").addEventListener("click", alterarValor);
 
-  // Regra 2: A prioridade deve ser um valor entre 1 e 3
-  if (![1, 2, 3].includes(prioridade)) {
-    msgErro.textContent = "Erro: A prioridade deve ser entre 1 (alta) e 3 (baixa).";
-    return;
-  \}
+    document.getElementById("btnQuantidade").addEventListener("click", alterarQuantidade);
 
-  msgErro.textContent = "";
+\});
 
-  const novaTarefa = {
-    codigo: proximoCodigo++,
-    titulo: titulo,
-    prioridade: prioridade,
-    concluida: false
-  \};
+function cadastrarProduto() {
 
-  tarefas.push(novaTarefa);
-  inputTitulo.value = "";
-  listarTarefas();
-\}
+    let codigo = document.getElementById("codigo").value;
+    let descricao = document.getElementById("descricao").value.trim();
+    let quantidade = document.getElementById("quantidade").value;
+    let valor = document.getElementById("valor").value;
 
-// 2. Listar as tarefas cadastradas na tela
-function listarTarefas() {
-  const lista = document.getElementById("lista-tarefas");
-  lista.innerHTML = "";
+    let mensagem = document.getElementById("mensagem");
 
-  tarefas.forEach((tarefa) => {
-    const li = document.createElement("li");
-    if (tarefa.concluida) {
-      li.classList.add("concluida");
+    mensagem.style.color = "red";
+
+    if (codigo === "" || descricao === "" ||
+        quantidade === "" || valor === "") {
+
+        mensagem.textContent = "Preencha todos os campos!";
+        return;
     \}
 
-    li.innerHTML = `
-      <span class="titulo-tarefa">
-        <strong>#\${tarefa.codigo\}</strong> - \${tarefa.titulo\}
-      </span>
-      <div class="acoes">
-        <select onchange="alterarPrioridade(\${tarefa.codigo\}, this.value)">
-          <option value="1" \${tarefa.prioridade === 1 ? "selected" : ""\}>Alta (1)</option>
-          <option value="2" \${tarefa.prioridade === 2 ? "selected" : ""\}>Média (2)</option>
-          <option value="3" \${tarefa.prioridade === 3 ? "selected" : ""\}>Baixa (3)</option>
-        </select>
-        <button class="btn-concluir" onclick="concluirTarefa(\${tarefa.codigo\})">
-          \${tarefa.concluida ? "Concluída" : "Concluir"\}
-        </button>
-      </div>
-    `;
+    codigo = Number(codigo);
+    quantidade = Number(quantidade);
+    valor = Number(valor);
 
-    lista.appendChild(li);
-  \});
+    if (!Number.isInteger(codigo) || codigo <= 0 ||
+        !Number.isInteger(quantidade) || quantidade < 0 ||
+        !Number.isFinite(valor) || valor < 0) {
+
+        mensagem.textContent = "Digite valores válidos!";
+        return;
+    \}
+
+    let existe = produtos.find(function(p) {
+        return p.codigo === codigo;
+    \});
+
+    if (existe) {
+        mensagem.textContent = "Código já cadastrado!";
+        return;
+    \}
+
+    let produto = {
+        codigo: codigo,
+        descricao: descricao,
+        quantidade: quantidade,
+        valor: valor
+    \};
+
+    produtos.push(produto);
+
+    mensagem.style.color = "green";
+    mensagem.textContent = "Produto cadastrado com sucesso!";
+
+    document.getElementById("codigo").value = "";
+    document.getElementById("descricao").value = "";
+    document.getElementById("quantidade").value = "";
+    document.getElementById("valor").value = "";
+
+    listarProdutos();
 \}
 
-// 3. Marcar uma tarefa como concluída
-function concluirTarefa(codigo) {
-  const tarefa = tarefas.find((t) => t.codigo === codigo);
-  if (tarefa) {
-    tarefa.concluida = !tarefa.concluida;
-    listarTarefas();
-  \}
+
+// LISTAR PRODUTOS
+function listarProdutos() {
+
+    let tabela = document.getElementById("listaProdutos");
+
+    tabela.innerHTML = "";
+
+    produtos.forEach(function(p) {
+
+        let linha = document.createElement("tr");
+
+        let dados = [
+            p.codigo,
+            p.descricao,
+            p.quantidade,
+            "R\$ " + p.valor.toFixed(2).replace(".", ",")
+        ];
+
+        dados.forEach(function(dado) {
+            let coluna = document.createElement("td");
+            coluna.textContent = dado;
+            linha.appendChild(coluna);
+        \});
+
+        tabela.appendChild(linha);
+
+    \});
+
 \}
 
-// 4. Alterar a prioridade de uma tarefa
-function alterarPrioridade(codigo, novaPrioridade) {
-  const prioridadeNum = Number(novaPrioridade);
-  if (![1, 2, 3].includes(prioridadeNum)) return;
 
-  const tarefa = tarefas.find((t) => t.codigo === codigo);
-  if (tarefa) {
-    tarefa.prioridade = prioridadeNum;
-    listarTarefas();
-  \}
+// ALTERAR VALOR
+function alterarValor() {
+
+    let codigo = Number(document.getElementById("codigoAlterar").value);
+    let valor = document.getElementById("novoValor").value;
+
+    if (!codigo || valor === "" || Number(valor) < 0) {
+        alert("Informe o código e o novo valor!");
+        return;
+    \}
+
+    let produto = produtos.find(p => p.codigo === codigo);
+
+    if (!produto) {
+        alert("Produto não encontrado!");
+        return;
+    \}
+
+    produto.valor = Number(valor);
+
+    alert("Valor alterado com sucesso!");
+
+    listarProdutos();
+
+\}
+
+
+// ALTERAR QUANTIDADE
+function alterarQuantidade() {
+
+    let codigo = Number(document.getElementById("codigoAlterar").value);
+    let quantidade = document.getElementById("novaQuantidade").value;
+
+    if (!codigo || quantidade === "" ||
+        !Number.isInteger(Number(quantidade)) || Number(quantidade) < 0) {
+
+        alert("Informe o código e uma quantidade válida!");
+        return;
+    \}
+
+    let produto = produtos.find(p => p.codigo === codigo);
+
+    if (!produto) {
+        alert("Produto não encontrado!");
+        return;
+    \}
+
+    produto.quantidade = Number(quantidade);
+
+    alert("Quantidade alterada com sucesso!");
+
+    listarProdutos();
+
 \}
