@@ -1,114 +1,103 @@
-// EFEITO MATRIX
+const mundo = document.getElementById("mundo");
 
-const canvas = document.getElementById("matrix");
-const ctx = canvas.getContext("2d");
+const largura = 10;
+const altura = 10;
 
-let colunas = [];
-let tamanho = 16;
+let ferramenta = "quebrar";
 
-function ajustarTela() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+let inventario = {
+    grama: 0,
+    terra: 0,
+    pedra: 0
+};
 
-    const quantidade = Math.floor(canvas.width / tamanho);
+let blocos = [];
 
-    colunas = Array(quantidade).fill(0);
+function gerarMundo() {
+    for (let y = 0; y < altura; y++) {
+        for (let x = 0; x < largura; x++) {
+
+            let tipo = "vazio";
+
+            if (y === 6) tipo = "grama";
+            if (y > 6 && y <= 8) tipo = "terra";
+            if (y === 9) tipo = "pedra";
+
+            blocos.push(tipo);
+        }
+    }
+
+    desenharMundo();
 }
 
-window.addEventListener("resize", ajustarTela);
-ajustarTela();
+function desenharMundo() {
+    mundo.innerHTML = "";
 
-function desenharMatrix() {
-    ctx.fillStyle = "rgba(0, 0, 0, 0.08)";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    blocos.forEach((tipo, indice) => {
+        const bloco = document.createElement("button");
 
-    ctx.fillStyle = "#00ff41";
-    ctx.font = tamanho + "px monospace";
+        bloco.className = "bloco " + tipo;
 
-    colunas.forEach((y, i) => {
-        const letra = String.fromCharCode(
-            33 + Math.random() * 90
-        );
+        bloco.textContent =
+            tipo === "grama" ? "🌱" :
+            tipo === "terra" ? "🟫" :
+            tipo === "pedra" ? "🪨" : "";
 
-        ctx.fillText(
-            letra,
-            i * tamanho,
-            y * tamanho
-        );
+        bloco.onclick = () => interagir(indice);
 
-        if (y * tamanho > canvas.height && Math.random() > 0.975) {
-            colunas[i] = 0;
-        }
-
-        colunas[i]++;
+        mundo.appendChild(bloco);
     });
 
-    requestAnimationFrame(desenharMatrix);
+    atualizarInventario();
 }
 
-desenharMatrix();
+function selecionar(tipo) {
+    ferramenta = tipo;
 
-
-// TERMINAL INTERATIVO
-
-const saida = document.getElementById("saida");
-const comando = document.getElementById("comando");
-
-function escrever(texto, cor = "#00ff41") {
-    const linha = document.createElement("p");
-
-    linha.textContent = texto;
-    linha.style.color = cor;
-
-    saida.appendChild(linha);
-    saida.scrollTop = saida.scrollHeight;
+    document.getElementById("mensagem").textContent =
+        "Ferramenta selecionada: " + tipo;
 }
 
-function executar() {
-    const texto = comando.value.trim().toLowerCase();
+function interagir(indice) {
+    const atual = blocos[indice];
 
-    if (!texto) return;
+    if (ferramenta === "quebrar") {
 
-    escrever("root@matrix:~$ " + texto, "#ffffff");
+        if (atual === "vazio") return;
 
-    switch (texto) {
-        case "help":
-            escrever("COMANDOS DISPONÍVEIS:");
-            escrever("help - Mostrar comandos");
-            escrever("status - Ver status do sistema");
-            escrever("date - Mostrar data e hora");
-            escrever("hello - Enviar saudação");
-            escrever("clear - Limpar terminal");
-            break;
+        inventario[atual]++;
+        blocos[indice] = "vazio";
 
-        case "status":
-            escrever("Sistema: ONLINE");
-            escrever("Simulação: ATIVA");
-            escrever("Segurança: DEMONSTRAÇÃO");
-            break;
+    } else {
 
-        case "date":
-            escrever(new Date().toLocaleString("pt-BR"));
-            break;
+        if (atual !== "vazio") {
+            document.getElementById("mensagem").textContent =
+                "Esse espaço já está ocupado!";
+            return;
+        }
 
-        case "hello":
-            escrever("Bem-vindo, operador! 🚀");
-            break;
+        if (inventario[ferramenta] <= 0) {
+            document.getElementById("mensagem").textContent =
+                "Você não possui esse bloco!";
+            return;
+        }
 
-        case "clear":
-            saida.innerHTML = "";
-            break;
-
-        default:
-            escrever("Comando não reconhecido!", "#ff4444");
+        inventario[ferramenta]--;
+        blocos[indice] = ferramenta;
     }
 
-    comando.value = "";
-    comando.focus();
+    desenharMundo();
 }
 
-comando.addEventListener("keydown", function(event) {
-    if (event.key === "Enter") {
-        executar();
-    }
-});
+function atualizarInventario() {
+    document.getElementById("grama").textContent =
+        inventario.grama;
+
+    document.getElementById("terra").textContent =
+        inventario.terra;
+
+    document.getElementById("pedra").textContent =
+        inventario.pedra;
+}
+
+gerarMundo();
