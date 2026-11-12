@@ -1,0 +1,893 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Instagram</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <link href="https://cdn.boxicons.com/3.0.8/fonts/basic/boxicons.min.css" rel="stylesheet">
+
+  <style>
+    body {
+      background: #fafafa;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .story-ring {
+      background: linear-gradient(45deg, #feda75, #fa7e1e, #d62976, #962fbf, #4f5bd5);
+    }
+
+    .story-ring.seen {
+      background: #d1d5db;
+    }
+
+    .post-image {
+      width: 100%;
+      max-height: 650px;
+      object-fit: cover;
+      background: #eee;
+    }
+
+    .profile-photo {
+      object-fit: cover;
+      border-radius: 50%;
+    }
+
+    .like-active {
+      color: #ed4956 !important;
+    }
+
+    .like-active i {
+      color: #ed4956;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .comment-item {
+      overflow-wrap: anywhere;
+    }
+  </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="min-h-screen text-slate-900">
+
+  <!-- CABEÇALHO -->
+  <header class="sticky top-0 z-50 bg-white border-b border-gray-200">
+    <div class="max-w-5xl mx-auto px-4">
+      <div class="flex items-center justify-between h-14 md:h-16">
+
+        <h1 class="text-2xl font-semibold tracking-tight"
+            style="font-family: cursive;">
+          Instagram
+        </h1>
+
+        <div class="hidden md:flex items-center">
+          <input
+            type="text"
+            id="pesquisa"
+            placeholder="Pesquisar"
+            class="w-64 h-9 bg-gray-100 px-4 rounded-lg text-sm outline-none"
+          >
+        </div>
+
+        <div class="hidden md:flex items-center gap-5 text-2xl">
+          <button title="Página inicial"><i class="bx bx-home"></i></button>
+          <button title="Pesquisar"><i class="bx bx-search"></i></button>
+          <button id="abrirPublicacao" title="Criar publicação">
+            <i class="bx bx-plus-square"></i>
+          </button>
+          <button title="Notificações"><i class="bx bx-heart"></i></button>
+          <button title="Perfil">
+            <img src="img/avc.png" class="w-8 h-8 profile-photo" alt="AVC">
+          </button>
+        </div>
+
+        <button class="md:hidden text-2xl">
+          <i class="bx bx-menu"></i>
+        </button>
+
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-5xl mx-auto px-4 py-4 md:py-8">
+
+    <div class="flex gap-8">
+
+      <!-- FEED -->
+      <div class="flex-1 max-w-lg mx-auto">
+
+        <!-- STORIES -->
+        <section class="bg-white border border-gray-200 rounded-lg p-4 mb-4">
+          <div class="flex gap-4 overflow-x-auto pb-1">
+
+            <div class="flex flex-col items-center flex-shrink-0">
+              <button id="storyProprio" class="w-16 h-16 rounded-full p-0.5 bg-gray-200">
+                <div class="w-full h-full rounded-full bg-white flex items-center justify-center">
+                  <span class="text-3xl text-gray-500">+</span>
+                </div>
+              </button>
+              <span class="text-xs mt-1">Seu story</span>
+            </div>
+
+            <div class="flex flex-col items-center flex-shrink-0">
+              <div class="story-ring w-16 h-16 rounded-full p-0.5">
+                <img class="w-full h-full object-cover rounded-full border-2 border-white"
+                  src="https://marvel.fandom.com/wiki/Special:FilePath/James_Howlett_(Earth-92131)_from_X-Men_%2797_Season_1_001.jpg"
+                  alt="Wolverine">
+              </div>
+              <span class="text-xs mt-1">Wolverine</span>
+            </div>
+
+            <div class="flex flex-col items-center flex-shrink-0">
+              <div class="story-ring w-16 h-16 rounded-full p-0.5">
+                <img class="w-full h-full object-cover rounded-full border-2 border-white"
+                  src="https://marvel.fandom.com/wiki/Special:FilePath/Scott_Summers_(Earth-92131)_from_X-Men_%2797_Season_1_001.jpg"
+                  alt="Ciclope">
+              </div>
+              <span class="text-xs mt-1">Ciclope</span>
+            </div>
+
+            <div class="flex flex-col items-center flex-shrink-0">
+              <div class="story-ring w-16 h-16 rounded-full p-0.5">
+                <img class="w-full h-full object-cover rounded-full border-2 border-white"
+                  src="https://marvel.fandom.com/wiki/Special:FilePath/Ororo_Munroe_(Earth-92131)_from_X-Men_%2797_Season_1_001.jpg"
+                  alt="Tempestade">
+              </div>
+              <span class="text-xs mt-1">Tempestade</span>
+            </div>
+
+            <div class="flex flex-col items-center flex-shrink-0">
+              <div class="story-ring w-16 h-16 rounded-full p-0.5">
+                <img class="w-full h-full object-cover rounded-full border-2 border-white"
+                  src="https://marvel.fandom.com/wiki/Special:FilePath/Rogue_(Anna_Marie)_(Earth-92131)_from_X-Men_%2797_Season_1_001.jpg"
+                  alt="Vampira">
+              </div>
+              <span class="text-xs mt-1">Vampira</span>
+            </div>
+
+            <div class="flex flex-col items-center flex-shrink-0">
+              <div class="story-ring w-16 h-16 rounded-full p-0.5">
+                <img class="w-full h-full object-cover rounded-full border-2 border-white"
+                  src="https://marvel.fandom.com/wiki/Special:FilePath/Remy_LeBeau_(Earth-92131)_from_X-Men_%2797_Season_1_001.jpg"
+                  alt="Gambit">
+              </div>
+              <span class="text-xs mt-1">Gambit</span>
+            </div>
+
+            <div class="flex flex-col items-center flex-shrink-0">
+              <div class="story-ring w-16 h-16 rounded-full p-0.5">
+                <img class="w-full h-full object-cover rounded-full border-2 border-white"
+                  src="https://marvel.fandom.com/wiki/Special:FilePath/Erik_Lehnsherr_(Earth-92131)_from_X-Men_%2797_Season_1_001.jpg"
+                  alt="Magneto">
+              </div>
+              <span class="text-xs mt-1">Magneto</span>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- PUBLICAÇÕES -->
+        <div id="publicacoes">
+
+          <!-- POST WOLVERINE -->
+          <article class="post bg-white border border-gray-200 rounded-lg mb-4">
+
+            <header class="flex items-center justify-between p-3">
+              <div class="flex items-center gap-3">
+                <img
+                  class="w-10 h-10 profile-photo"
+                  src="https://marvel.fandom.com/wiki/Special:FilePath/James_Howlett_(Earth-92131)_from_X-Men_%2797_Season_1_001.jpg"
+                  alt="Wolverine"
+                >
+                <div>
+                  <p class="text-sm font-semibold">wolverine_97</p>
+                  <p class="text-xs text-gray-500">Instituto Xavier</p>
+                </div>
+              </div>
+              <button class="text-xl"><i class="bx bx-dots-horizontal-rounded"></i></button>
+            </header>
+
+            <img
+              class="post-image"
+              src="https://marvel.fandom.com/wiki/Special:FilePath/James_Howlett_(Earth-92131)_from_X-Men_%2797_Season_1_002.jpg"
+              alt="Wolverine em X-Men '97"
+              loading="lazy"
+            >
+
+            <div class="p-3">
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-4 text-2xl">
+                  <button class="curtir"><i class="bx bx-heart"></i></button>
+                  <button class="comentar"><i class="bx bx-message-circle"></i></button>
+                  <button class="compartilhar"><i class="bx bx-send"></i></button>
+                </div>
+                <button class="salvar text-2xl"><i class="bx bx-bookmark"></i></button>
+              </div>
+
+              <p class="font-semibold text-sm mb-2">
+                <span class="quantidade">9.031</span> curtidas
+              </p>
+
+              <p class="text-sm">
+                <strong>wolverine_97</strong>
+                Não sou muito de tirar fotos, mas essa ficou boa. Melhor não perguntar como foi a missão. 😂
+                <span class="text-blue-900">#XMen97 #Wolverine #Logan</span>
+              </p>
+
+              <div class="comentarios mt-3">
+                <p class="text-sm text-gray-500">Ver todos os comentários</p>
+              </div>
+
+              <p class="text-xs text-gray-500 mt-2 uppercase">Há 2 horas</p>
+
+              <form class="form-comentario flex items-center gap-2 mt-3 border-t pt-3">
+                <input type="text" placeholder="Adicione um comentário..."
+                  class="flex-1 text-sm outline-none">
+                <button type="submit" class="text-blue-500 font-semibold text-sm">Publicar</button>
+              </form>
+            </div>
+          </article>
+
+          <!-- POST TEMPESTADE -->
+          <article class="post bg-white border border-gray-200 rounded-lg mb-4">
+
+            <header class="flex items-center justify-between p-3">
+              <div class="flex items-center gap-3">
+                <img
+                  class="w-10 h-10 profile-photo"
+                  src="https://marvel.fandom.com/wiki/Special:FilePath/Ororo_Munroe_(Earth-92131)_from_X-Men_%2797_Season_1_001.jpg"
+                  alt="Tempestade"
+                >
+                <div>
+                  <p class="text-sm font-semibold">ororo.munroe</p>
+                  <p class="text-xs text-gray-500">Nova York</p>
+                </div>
+              </div>
+              <button class="text-xl"><i class="bx bx-dots-horizontal-rounded"></i></button>
+            </header>
+
+            <img
+              class="post-image"
+              src="https://marvel.fandom.com/wiki/Special:FilePath/Ororo_Munroe_(Earth-92131)_from_X-Men_%2797_Season_1_002.jpg"
+              alt="Tempestade em X-Men '97"
+              loading="lazy"
+            >
+
+            <div class="p-3">
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-4 text-2xl">
+                  <button class="curtir"><i class="bx bx-heart"></i></button>
+                  <button class="comentar"><i class="bx bx-message-circle"></i></button>
+                  <button class="compartilhar"><i class="bx bx-send"></i></button>
+                </div>
+                <button class="salvar text-2xl"><i class="bx bx-bookmark"></i></button>
+              </div>
+
+              <p class="font-semibold text-sm mb-2">
+                <span class="quantidade">12.450</span> curtidas
+              </p>
+
+              <p class="text-sm">
+                <strong>ororo.munroe</strong>
+                A verdadeira força não está apenas no poder, mas na maneira como escolhemos usá-lo. 🌩️
+                <span class="text-blue-900">#Storm #XMen97 #Tempestade</span>
+              </p>
+
+              <div class="comentarios mt-3">
+                <p class="text-sm text-gray-500">Ver todos os comentários</p>
+              </div>
+
+              <p class="text-xs text-gray-500 mt-2 uppercase">Há 4 horas</p>
+
+              <form class="form-comentario flex items-center gap-2 mt-3 border-t pt-3">
+                <input type="text" placeholder="Adicione um comentário..."
+                  class="flex-1 text-sm outline-none">
+                <button type="submit" class="text-blue-500 font-semibold text-sm">Publicar</button>
+              </form>
+            </div>
+          </article>
+
+          <!-- POST GAMBIT -->
+          <article class="post bg-white border border-gray-200 rounded-lg mb-4">
+
+            <header class="flex items-center justify-between p-3">
+              <div class="flex items-center gap-3">
+                <img
+                  class="w-10 h-10 profile-photo"
+                  src="https://marvel.fandom.com/wiki/Special:FilePath/Remy_LeBeau_(Earth-92131)_from_X-Men_%2797_Season_1_001.jpg"
+                  alt="Gambit"
+                >
+                <div>
+                  <p class="text-sm font-semibold">remy_lebeau</p>
+                  <p class="text-xs text-gray-500">Nova Orleans</p>
+                </div>
+              </div>
+              <button class="text-xl"><i class="bx bx-dots-horizontal-rounded"></i></button>
+            </header>
+
+            <img
+              class="post-image"
+              src="https://marvel.fandom.com/wiki/Special:FilePath/Remy_LeBeau_(Earth-92131)_from_X-Men_%2797_Season_1_002.jpg"
+              alt="Gambit em X-Men '97"
+              loading="lazy"
+            >
+
+            <div class="p-3">
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-4 text-2xl">
+                  <button class="curtir"><i class="bx bx-heart"></i></button>
+                  <button class="comentar"><i class="bx bx-message-circle"></i></button>
+                  <button class="compartilhar"><i class="bx bx-send"></i></button>
+                </div>
+                <button class="salvar text-2xl"><i class="bx bx-bookmark"></i></button>
+              </div>
+
+              <p class="font-semibold text-sm mb-2">
+                <span class="quantidade">8.720</span> curtidas
+              </p>
+
+              <p class="text-sm">
+                <strong>remy_lebeau</strong>
+                Remy sabe como deixar qualquer momento mais interessante. ♠️❤️
+                <span class="text-blue-900">#Gambit #XMen97 #Cajun</span>
+              </p>
+
+              <div class="comentarios mt-3">
+                <p class="text-sm text-gray-500">Ver todos os comentários</p>
+              </div>
+
+              <p class="text-xs text-gray-500 mt-2 uppercase">Há 6 horas</p>
+
+              <form class="form-comentario flex items-center gap-2 mt-3 border-t pt-3">
+                <input type="text" placeholder="Adicione um comentário..."
+                  class="flex-1 text-sm outline-none">
+                <button type="submit" class="text-blue-500 font-semibold text-sm">Publicar</button>
+              </form>
+            </div>
+          </article>
+
+          <!-- POST VAMPIRA -->
+          <article class="post bg-white border border-gray-200 rounded-lg mb-4">
+
+            <header class="flex items-center justify-between p-3">
+              <div class="flex items-center gap-3">
+                <img
+                  class="w-10 h-10 profile-photo"
+                  src="https://marvel.fandom.com/wiki/Special:FilePath/Rogue_(Anna_Marie)_(Earth-92131)_from_X-Men_%2797_Season_1_001.jpg"
+                  alt="Vampira"
+                >
+                <div>
+                  <p class="text-sm font-semibold">rogue.anna</p>
+                  <p class="text-xs text-gray-500">Instituto Xavier</p>
+                </div>
+              </div>
+              <button class="text-xl"><i class="bx bx-dots-horizontal-rounded"></i></button>
+            </header>
+
+            <img
+              class="post-image"
+              src="https://marvel.fandom.com/wiki/Special:FilePath/Rogue_(Anna_Marie)_(Earth-92131)_from_X-Men_%2797_Season_1_002.jpg"
+              alt="Vampira em X-Men '97"
+              loading="lazy"
+            >
+
+            <div class="p-3">
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-4 text-2xl">
+                  <button class="curtir"><i class="bx bx-heart"></i></button>
+                  <button class="comentar"><i class="bx bx-message-circle"></i></button>
+                  <button class="compartilhar"><i class="bx bx-send"></i></button>
+                </div>
+                <button class="salvar text-2xl"><i class="bx bx-bookmark"></i></button>
+              </div>
+
+              <p class="font-semibold text-sm mb-2">
+                <span class="quantidade">10.200</span> curtidas
+              </p>
+
+              <p class="text-sm">
+                <strong>rogue.anna</strong>
+                Um dia de cada vez, cher. 💚
+                <span class="text-blue-900">#Rogue #Vampira #XMen97</span>
+              </p>
+
+              <div class="comentarios mt-3">
+                <p class="text-sm text-gray-500">Ver todos os comentários</p>
+              </div>
+
+              <p class="text-xs text-gray-500 mt-2 uppercase">Há 8 horas</p>
+
+              <form class="form-comentario flex items-center gap-2 mt-3 border-t pt-3">
+                <input type="text" placeholder="Adicione um comentário..."
+                  class="flex-1 text-sm outline-none">
+                <button type="submit" class="text-blue-500 font-semibold text-sm">Publicar</button>
+              </form>
+            </div>
+          </article>
+
+          <!-- POST CICLOPE -->
+          <article class="post bg-white border border-gray-200 rounded-lg mb-4">
+
+            <header class="flex items-center justify-between p-3">
+              <div class="flex items-center gap-3">
+                <img
+                  class="w-10 h-10 profile-photo"
+                  src="https://marvel.fandom.com/wiki/Special:FilePath/Scott_Summers_(Earth-92131)_from_X-Men_%2797_Season_1_001.jpg"
+                  alt="Ciclope"
+                >
+                <div>
+                  <p class="text-sm font-semibold">scott.summers</p>
+                  <p class="text-xs text-gray-500">Instituto Xavier</p>
+                </div>
+              </div>
+              <button class="text-xl"><i class="bx bx-dots-horizontal-rounded"></i></button>
+            </header>
+
+            <img
+              class="post-image"
+              src="https://marvel.fandom.com/wiki/Special:FilePath/Scott_Summers_(Earth-92131)_from_X-Men_%2797_Season_1_002.jpg"
+              alt="Ciclope em X-Men '97"
+              loading="lazy"
+            >
+
+            <div class="p-3">
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-4 text-2xl">
+                  <button class="curtir"><i class="bx bx-heart"></i></button>
+                  <button class="comentar"><i class="bx bx-message-circle"></i></button>
+                  <button class="compartilhar"><i class="bx bx-send"></i></button>
+                </div>
+                <button class="salvar text-2xl"><i class="bx bx-bookmark"></i></button>
+              </div>
+
+              <p class="font-semibold text-sm mb-2">
+                <span class="quantidade">7.640</span> curtidas
+              </p>
+
+              <p class="text-sm">
+                <strong>scott.summers</strong>
+                Liderar uma equipe significa confiar em cada um deles. Sempre. 🔴
+                <span class="text-blue-900">#Cyclops #Ciclope #XMen97</span>
+              </p>
+
+              <div class="comentarios mt-3">
+                <p class="text-sm text-gray-500">Ver todos os comentários</p>
+              </div>
+
+              <p class="text-xs text-gray-500 mt-2 uppercase">Há 10 horas</p>
+
+              <form class="form-comentario flex items-center gap-2 mt-3 border-t pt-3">
+                <input type="text" placeholder="Adicione um comentário..."
+                  class="flex-1 text-sm outline-none">
+                <button type="submit" class="text-blue-500 font-semibold text-sm">Publicar</button>
+              </form>
+            </div>
+          </article>
+
+          <!-- POST MAGNETO -->
+          <article class="post bg-white border border-gray-200 rounded-lg mb-4">
+
+            <header class="flex items-center justify-between p-3">
+              <div class="flex items-center gap-3">
+                <img
+                  class="w-10 h-10 profile-photo"
+                  src="https://marvel.fandom.com/wiki/Special:FilePath/Erik_Lehnsherr_(Earth-92131)_from_X-Men_%2797_Season_1_001.jpg"
+                  alt="Magneto"
+                >
+                <div>
+                  <p class="text-sm font-semibold">magneto.official</p>
+                  <p class="text-xs text-gray-500">Genosha</p>
+                </div>
+              </div>
+              <button class="text-xl"><i class="bx bx-dots-horizontal-rounded"></i></button>
+            </header>
+
+            <img
+              class="post-image"
+              src="https://marvel.fandom.com/wiki/Special:FilePath/Erik_Lehnsherr_(Earth-92131)_from_X-Men_%2797_Season_1_002.jpg"
+              alt="Magneto em X-Men '97"
+              loading="lazy"
+            >
+
+            <div class="p-3">
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-4 text-2xl">
+                  <button class="curtir"><i class="bx bx-heart"></i></button>
+                  <button class="comentar"><i class="bx bx-message-circle"></i></button>
+                  <button class="compartilhar"><i class="bx bx-send"></i></button>
+                </div>
+                <button class="salvar text-2xl"><i class="bx bx-bookmark"></i></button>
+              </div>
+
+              <p class="font-semibold text-sm mb-2">
+                <span class="quantidade">15.800</span> curtidas
+              </p>
+
+              <p class="text-sm">
+                <strong>magneto.official</strong>
+                A questão nunca foi se os mutantes merecem um lugar no mundo. Nós já temos esse lugar.
+                <span class="text-blue-900">#Magneto #Genosha #XMen97</span>
+              </p>
+
+              <div class="comentarios mt-3">
+                <p class="text-sm text-gray-500">Ver todos os comentários</p>
+              </div>
+
+              <p class="text-xs text-gray-500 mt-2 uppercase">Há 12 horas</p>
+
+              <form class="form-comentario flex items-center gap-2 mt-3 border-t pt-3">
+                <input type="text" placeholder="Adicione um comentário..."
+                  class="flex-1 text-sm outline-none">
+                <button type="submit" class="text-blue-500 font-semibold text-sm">Publicar</button>
+              </form>
+            </div>
+          </article>
+
+        </div>
+      </div>
+
+      <!-- LATERAL -->
+      <aside class="hidden lg:block w-72 pt-2">
+
+        <div class="flex items-center justify-between mb-5">
+          <div class="flex items-center gap-3">
+            <img src="img/avc.png" class="w-12 h-12 profile-photo" alt="AVC">
+            <div>
+              <p class="text-sm font-semibold">avc</p>
+              <p class="text-xs text-gray-500">AVC</p>
+            </div>
+          </div>
+          <button class="text-xs text-blue-500 font-semibold">Mudar</button>
+        </div>
+
+        <div class="flex justify-between mb-4">
+          <p class="text-sm font-semibold text-gray-500">Sugestões para você</p>
+          <button class="text-xs font-semibold">Ver tudo</button>
+        </div>
+
+        <div class="space-y-4">
+
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <img class="w-9 h-9 rounded-full object-cover"
+                src="https://marvel.fandom.com/wiki/Special:FilePath/Jubilation_Lee_(Earth-92131)_from_X-Men_%2797_Season_1_001.jpg"
+                alt="Jubileu">
+              <div>
+                <p class="text-sm font-semibold">jubilee.lee</p>
+                <p class="text-xs text-gray-500">Sugestão para você</p>
+              </div>
+            </div>
+            <button class="seguir text-xs text-blue-500 font-semibold">Seguir</button>
+          </div>
+
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <img class="w-9 h-9 rounded-full object-cover"
+                src="https://marvel.fandom.com/wiki/Special:FilePath/Henry_McCoy_(Earth-92131)_from_X-Men_%2797_Season_1_001.jpg"
+                alt="Fera">
+              <div>
+                <p class="text-sm font-semibold">hank.mccoy</p>
+                <p class="text-xs text-gray-500">Sugestão para você</p>
+              </div>
+            </div>
+            <button class="seguir text-xs text-blue-500 font-semibold">Seguir</button>
+          </div>
+
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <img class="w-9 h-9 rounded-full object-cover"
+                src="https://marvel.fandom.com/wiki/Special:FilePath/Kurt_Wagner_(Earth-92131)_from_X-Men_%2797_Season_1_001.jpg"
+                alt="Noturno">
+              <div>
+                <p class="text-sm font-semibold">kurt.wagner</p>
+                <p class="text-xs text-gray-500">Sugestão para você</p>
+              </div>
+            </div>
+            <button class="seguir text-xs text-blue-500 font-semibold">Seguir</button>
+          </div>
+
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <img class="w-9 h-9 rounded-full object-cover"
+                src="https://marvel.fandom.com/wiki/Special:FilePath/Jubilation_Lee_(Earth-92131)_from_X-Men_%2797_Season_1_001.jpg"
+                alt="Jubileu">
+              <div>
+                <p class="text-sm font-semibold">xmen.institute</p>
+                <p class="text-xs text-gray-500">Sugestão para você</p>
+              </div>
+            </div>
+            <button class="seguir text-xs text-blue-500 font-semibold">Seguir</button>
+          </div>
+
+        </div>
+
+        <p class="text-xs text-gray-400 mt-8 leading-5">
+          Sobre · Ajuda · Imprensa · API · Carreiras · Privacidade
+          <br><br>
+          © 2026 INSTAGRAM
+        </p>
+
+      </aside>
+    </div>
+  </main>
+
+  <!-- MENU MOBILE -->
+  <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around py-3 md:hidden text-2xl z-50">
+    <button><i class="bx bx-home"></i></button>
+    <button><i class="bx bx-search"></i></button>
+    <button id="abrirPublicacaoMobile"><i class="bx bx-plus-square"></i></button>
+    <button><i class="bx bx-heart"></i></button>
+    <button>
+      <img src="img/avc.png" class="w-7 h-7 profile-photo" alt="AVC">
+    </button>
+  </nav>
+
+  <!-- MODAL DE PUBLICAÇÃO -->
+  <div id="modalPublicacao"
+    class="hidden fixed inset-0 bg-black/50 z-[60] items-center justify-center p-4">
+
+    <div class="bg-white rounded-xl w-full max-w-md p-5">
+
+      <div class="flex justify-between items-center border-b pb-3 mb-4">
+        <h2 class="font-semibold">Criar publicação</h2>
+        <button id="fecharModal" class="text-2xl">
+          <i class="bx bx-x"></i>
+        </button>
+      </div>
+
+      <div class="flex items-center gap-3 mb-4">
+        <img src="img/avc.png" class="w-10 h-10 profile-photo" alt="AVC">
+        <span class="font-semibold text-sm">avc</span>
+      </div>
+
+      <textarea id="legenda" placeholder="Escreva uma legenda..."
+        class="w-full border rounded-lg p-3 text-sm outline-none resize-none h-28"></textarea>
+
+      <input id="imagemPublicacao" type="text"
+        placeholder="URL da imagem (opcional)"
+        class="w-full border rounded-lg p-3 text-sm mt-3 outline-none">
+
+      <button id="publicar"
+        class="w-full bg-blue-500 text-white font-semibold rounded-lg py-2 mt-4">
+        Publicar
+      </button>
+
+    </div>
+  </div>
+
+  <script>
+    const AVATAR_USUARIO = "img/avc.png";
+
+    // CURTIR, SALVAR E COMPARTILHAR
+    document.addEventListener("click", function(event) {
+
+      const botaoCurtir = event.target.closest(".curtir");
+
+      if (botaoCurtir) {
+        const artigo = botaoCurtir.closest("article");
+        const quantidade = artigo.querySelector(".quantidade");
+        const icone = botaoCurtir.querySelector("i");
+
+        let numero = Number(
+          quantidade.innerText.replace(/\./g, "")
+        );
+
+        const curtiu = botaoCurtir.classList.toggle("like-active");
+
+        if (curtiu) {
+          numero++;
+          icone.classList.replace("bx-heart", "bxs-heart");
+        } else {
+          numero--;
+          icone.classList.replace("bxs-heart", "bx-heart");
+        }
+
+        quantidade.innerText = numero.toLocaleString("pt-BR");
+      }
+
+      const botaoSalvar = event.target.closest(".salvar");
+
+      if (botaoSalvar) {
+        const icone = botaoSalvar.querySelector("i");
+        icone.classList.toggle("bxs-bookmark");
+        icone.classList.toggle("bx-bookmark");
+      }
+
+      const botaoCompartilhar = event.target.closest(".compartilhar");
+
+      if (botaoCompartilhar) {
+        const url = window.location.href;
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(url)
+            .then(() => alert("Link copiado!"))
+            .catch(() => alert("Não foi possível copiar o link."));
+        } else {
+          alert("Compartilhamento não disponível neste navegador.");
+        }
+      }
+
+      const botaoComentar = event.target.closest(".comentar");
+
+      if (botaoComentar) {
+        const artigo = botaoComentar.closest("article");
+        const campo = artigo.querySelector(".form-comentario input");
+        campo.focus();
+      }
+
+      const botaoSeguir = event.target.closest(".seguir");
+
+      if (botaoSeguir) {
+        const seguindo = botaoSeguir.innerText === "Seguindo";
+        botaoSeguir.innerText = seguindo ? "Seguir" : "Seguindo";
+        botaoSeguir.classList.toggle("text-gray-500", !seguindo);
+      }
+    });
+
+    // COMENTÁRIOS
+    document.addEventListener("submit", function(event) {
+
+      if (!event.target.classList.contains("form-comentario")) return;
+
+      event.preventDefault();
+
+      const campo = event.target.querySelector("input");
+      const texto = campo.value.trim();
+
+      if (!texto) return;
+
+      const artigo = event.target.closest("article");
+      const comentarios = artigo.querySelector(".comentarios");
+
+      const comentario = document.createElement("p");
+      comentario.className = "text-sm mt-2 comment-item";
+
+      const usuario = document.createElement("strong");
+      usuario.textContent = "avc ";
+
+      comentario.appendChild(usuario);
+      comentario.appendChild(document.createTextNode(texto));
+
+      comentarios.appendChild(comentario);
+      campo.value = "";
+    });
+
+    // MODAL
+    const modal = document.getElementById("modalPublicacao");
+
+    function abrirModal() {
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+    }
+
+    function fecharModal() {
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+    }
+
+    document.getElementById("abrirPublicacao").addEventListener("click", abrirModal);
+    document.getElementById("abrirPublicacaoMobile").addEventListener("click", abrirModal);
+    document.getElementById("storyProprio").addEventListener("click", abrirModal);
+    document.getElementById("fecharModal").addEventListener("click", fecharModal);
+
+    modal.addEventListener("click", function(event) {
+      if (event.target === modal) fecharModal();
+    });
+
+    // CRIAR PUBLICAÇÃO
+    document.getElementById("publicar").addEventListener("click", function() {
+
+      const legenda = document.getElementById("legenda").value.trim();
+      const imagem = document.getElementById("imagemPublicacao").value.trim();
+
+      if (!legenda && !imagem) {
+        alert("Escreva uma legenda ou coloque uma imagem.");
+        return;
+      }
+
+      const artigo = document.createElement("article");
+      artigo.className = "post bg-white border border-gray-200 rounded-lg mb-4";
+
+      const cabecalho = document.createElement("header");
+      cabecalho.className = "flex items-center justify-between p-3";
+
+      const perfil = document.createElement("div");
+      perfil.className = "flex items-center gap-3";
+
+      const avatar = document.createElement("img");
+      avatar.src = AVATAR_USUARIO;
+      avatar.alt = "AVC";
+      avatar.className = "w-10 h-10 profile-photo";
+
+      const dados = document.createElement("div");
+      dados.innerHTML = '<p class="text-sm font-semibold">avc</p><p class="text-xs text-gray-500">Publicado agora</p>';
+
+      perfil.appendChild(avatar);
+      perfil.appendChild(dados);
+      cabecalho.appendChild(perfil);
+
+      const opcoes = document.createElement("button");
+      opcoes.className = "text-xl";
+      opcoes.innerHTML = '<i class="bx bx-dots-horizontal-rounded"></i>';
+      cabecalho.appendChild(opcoes);
+
+      artigo.appendChild(cabecalho);
+
+      if (imagem) {
+        const foto = document.createElement("img");
+        foto.src = imagem;
+        foto.alt = "Publicação de AVC";
+        foto.className = "post-image";
+        foto.loading = "lazy";
+        artigo.appendChild(foto);
+      }
+
+      const conteudo = document.createElement("div");
+      conteudo.className = "p-3";
+
+      conteudo.innerHTML = `
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center gap-4 text-2xl">
+            <button class="curtir"><i class="bx bx-heart"></i></button>
+            <button class="comentar"><i class="bx bx-message-circle"></i></button>
+            <button class="compartilhar"><i class="bx bx-send"></i></button>
+          </div>
+          <button class="salvar text-2xl"><i class="bx bx-bookmark"></i></button>
+        </div>
+
+        <p class="font-semibold text-sm mb-2">
+          <span class="quantidade">0</span> curtidas
+        </p>
+
+        <div class="legenda-post text-sm"></div>
+        <div class="comentarios mt-3"></div>
+
+        <p class="text-xs text-gray-500 mt-2 uppercase">Agora mesmo</p>
+
+        <form class="form-comentario flex items-center gap-2 mt-3 border-t pt-3">
+          <input type="text" placeholder="Adicione um comentário..."
+            class="flex-1 text-sm outline-none">
+          <button type="submit" class="text-blue-500 font-semibold text-sm">
+            Publicar
+          </button>
+        </form>
+      `;
+
+      const legendaPost = conteudo.querySelector(".legenda-post");
+      const nomeUsuario = document.createElement("strong");
+      nomeUsuario.textContent = "avc ";
+
+      legendaPost.appendChild(nomeUsuario);
+      legendaPost.appendChild(document.createTextNode(legenda));
+
+      artigo.appendChild(conteudo);
+
+      document.getElementById("publicacoes").prepend(artigo);
+
+      document.getElementById("legenda").value = "";
+      document.getElementById("imagemPublicacao").value = "";
+
+      fecharModal();
+    });
+
+    // PESQUISA
+    document.getElementById("pesquisa").addEventListener("input", function() {
+
+      const pesquisa = this.value.toLowerCase().trim();
+
+      document.querySelectorAll("#publicacoes article").forEach(post => {
+        const conteudo = post.innerText.toLowerCase();
+        post.classList.toggle("hidden", !conteudo.includes(pesquisa));
+      });
+    });
+  </script>
+
+</body>
+</html>
