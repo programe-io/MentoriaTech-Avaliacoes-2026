@@ -1,28 +1,25 @@
-document.addEventListener("DOMContentLoaded", () => {
-    // Captura os containers de lista de cada coluna
-    const todoList = document.querySelector("#col-todo .cards-list");
-    const progressList = document.querySelector("#col-progress .cards-list");
-    const doneList = document.querySelector("#col-done .cards-list");
+let pontos = 0;
 
-    // Delegação de eventos para capturar o clique nos botões de mover
-    document.body.addEventListener("click", (event) => {
-        if (event.target.classList.contains("move-btn")) {
-            const button = event.target;
-            const card = button.closest(".task-card");
-            const currentColumnId = card.parentElement.parentElement.id;
+const botao = document.getElementById("botao");
+const contador = document.getElementById("pontos");
+const recorde = document.getElementById("recorde");
 
-            if (currentColumnId === "col-todo") {
-                // Move da coluna "A Fazer" para "Em Progresso"
-                progressList.appendChild(card);
-            } else if (currentColumnId === "col-progress") {
-                // Move da coluna "Em Progresso" para "Concluído"
-                doneList.appendChild(card);
-                // Atualiza o botão para indicar finalização
-                button.textContent = "✓ Finalizado";
-                button.style.backgroundColor = "#10b981";
-                button.style.color = "white";
-                button.style.pointerEvents = "none";
-            }
-        }
-    });
+botao.addEventListener("click", function() {
+
+    pontos++;
+
+    contador.textContent = pontos;
+
+    if (pontos === 10) {
+        recorde.textContent = "🔥 Você chegou a 10 pontos!";
+    }
+
+    if (pontos === 50) {
+        recorde.textContent = "🏆 INCRÍVEL! 50 PONTOS!";
+    }
+
+    if (pontos === 100) {
+        recorde.textContent = "👑 VOCÊ É UM CAMPEÃO!";
+    }
+
 });
