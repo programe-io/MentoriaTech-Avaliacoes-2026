@@ -1,0 +1,257 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Estoque</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f2f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        input, button {
+            width: 100%;
+            padding: 10px;
+            margin: 7px 0;
+            box-sizing: border-box;
+        }
+
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background: #007bff;
+            color: white;
+        }
+
+        .excluir {
+            background: #dc3545;
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+<div class="container">
+
+    <h1>Sistema de Estoque</h1>
+
+    <h3>Cadastrar Produto</h3>
+
+    <input type="number" id="codigo" placeholder="Código do produto">
+
+    <input type="text" id="descricao" placeholder="Descrição do produto">
+
+    <input type="number" id="quantidade" placeholder="Quantidade">
+
+    <input type="number" id="valor" placeholder="Valor do produto" step="0.01">
+
+    <button onclick="cadastrar()">Cadastrar Produto</button>
+
+    <h3>Produtos Cadastrados</h3>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Código</th>
+                <th>Descrição</th>
+                <th>Quantidade</th>
+                <th>Valor</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+
+        <tbody id="listaProdutos">
+        </tbody>
+    </table>
+
+</div>
+
+<script>
+
+    let produtos = [];
+
+    // Cadastrar produto
+    function cadastrar() {
+
+        let codigo = Number(document.getElementById("codigo").value);
+        let descricao = document.getElementById("descricao").value.trim();
+        let quantidade = Number(document.getElementById("quantidade").value);
+        let valor = Number(document.getElementById("valor").value);
+
+        if (
+            document.getElementById("codigo").value === "" ||
+            !descricao ||
+            document.getElementById("quantidade").value === "" ||
+            document.getElementById("valor").value === "" ||
+            !Number.isFinite(codigo) ||
+            !Number.isFinite(quantidade) ||
+            !Number.isFinite(valor) ||
+            codigo <= 0 || quantidade < 0 || valor < 0
+        ) {
+            alert("Preencha todos os campos corretamente!");
+            return;
+        }
+
+        if (produtos.some(p => p.codigo === codigo)) {
+            alert("Esse código já está cadastrado!");
+            return;
+        }
+
+        let produto = {
+            codigo: codigo,
+            descricao: descricao,
+            quantidade: quantidade,
+            valor: valor
+        };
+
+        produtos.push(produto);
+
+        alert("Produto cadastrado com sucesso!");
+
+        limparCampos();
+        listar();
+    }
+
+    // Listar produtos
+    function listar() {
+
+        let tabela = document.getElementById("listaProdutos");
+
+        tabela.innerHTML = "";
+
+        produtos.forEach((produto, index) => {
+
+            tabela.innerHTML += `
+                <tr>
+                    <td>${produto.codigo}</td>
+                    <td>${produto.descricao}</td>
+                    <td>${produto.quantidade}</td>
+                    <td>R$ ${produto.valor.toFixed(2)}</td>
+                    <td>
+                        <button onclick="alterarValor(${index})">
+                            Alterar Valor
+                        </button>
+
+                        <button onclick="alterarQuantidade(${index})">
+                            Alterar Quantidade
+                        </button>
+
+                        <button class="excluir" onclick="excluir(${index})">
+                            Excluir
+                        </button>
+                    </td>
+                </tr>
+            `;
+
+        });
+    }
+
+    // Alterar valor
+    function alterarValor(index) {
+
+        let novoValor = prompt("Digite o novo valor:");
+
+        if (novoValor === null || novoValor.trim() === "") return;
+
+        novoValor = Number(novoValor);
+
+        if (!Number.isFinite(novoValor) || novoValor < 0) {
+            alert("Valor inválido!");
+            return;
+        }
+
+        produtos[index].valor = novoValor;
+
+        alert("Valor alterado com sucesso!");
+
+        listar();
+    }
+
+    // Alterar quantidade
+    function alterarQuantidade(index) {
+
+        let novaQuantidade = prompt("Digite a nova quantidade:");
+
+        if (novaQuantidade === null || novaQuantidade.trim() === "") return;
+
+        novaQuantidade = Number(novaQuantidade);
+
+        if (!Number.isFinite(novaQuantidade) || novaQuantidade < 0) {
+            alert("Quantidade inválida!");
+            return;
+        }
+
+        produtos[index].quantidade = novaQuantidade;
+
+        alert("Quantidade alterada com sucesso!");
+
+        listar();
+    }
+
+    // Excluir produto
+    function excluir(index) {
+
+        if (confirm("Deseja excluir este produto?")) {
+
+            produtos.splice(index, 1);
+
+            listar();
+
+        }
+    }
+
+    // Limpar campos
+    function limparCampos() {
+
+        document.getElementById("codigo").value = "";
+        document.getElementById("descricao").value = "";
+        document.getElementById("quantidade").value = "";
+        document.getElementById("valor").value = "";
+
+    }
+
+</script>
+
+<script src="script.js"></script></body>
+</html>
