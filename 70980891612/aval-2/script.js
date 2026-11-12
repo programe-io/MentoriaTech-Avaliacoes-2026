@@ -1,29 +1,31 @@
 let tarefas = [];
 let proximoCodigo = 1;
 
-const form = document.getElementById("form-tarefa");
+const btnCadastrar = document.getElementById("btn-cadastrar");
 const inputTitulo = document.getElementById("titulo");
-const selectPrioridade = document.getElementById("prioridade");
+const inputPrioridade = document.getElementById("prioridade");
 const listaTarefas = document.getElementById("lista-tarefas");
-const mensagemErro = document.getElementById("mensagem-erro");
+const mensagemEl = document.getElementById("mensagem");
 
-// 1. Cadastrar uma nova tarefa
-form.addEventListener("submit", function (evento) {
-  evento.preventDefault();
-  mensagemErro.textContent = "";
+function exibirMensagem(texto, tipo) {
+  mensagemEl.textContent = texto;
+  mensagemEl.className = `mensagem ${tipo}`;
+}
 
+// 1. Cadastrar uma nova tarefa ao clicar no botão
+btnCadastrar.addEventListener("click", function () {
   const titulo = inputTitulo.value.trim();
-  const prioridade = Number(selectPrioridade.value);
+  const prioridade = Number(inputPrioridade.value);
 
-  // Validação: título com no mínimo 5 caracteres
+  // Regra 1: Título deve ter no mínimo 5 caracteres
   if (titulo.length < 5) {
-    mensagemErro.textContent = "Erro: O título deve ter no mínimo 5 caracteres.";
+    exibirMensagem("Erro: O título deve ter no mínimo 5 caracteres.", "erro");
     return;
   }
 
-  // Validação: prioridade entre 1 (alta) e 3 (baixa)
-  if (prioridade < 1 || prioridade > 3) {
-    mensagemErro.textContent = "Erro: A prioridade deve ser entre 1 (alta) e 3 (baixa).";
+  // Regra 2: Prioridade deve ser entre 1 (alta) e 3 (baixa)
+  if (prioridade !== 1 && prioridade !== 2 && prioridade !== 3) {
+    exibirMensagem("Erro: A prioridade deve ser um valor entre 1 e 3.", "erro");
     return;
   }
 
@@ -35,41 +37,44 @@ form.addEventListener("submit", function (evento) {
   };
 
   tarefas.push(novaTarefa);
+  exibirMensagem("Tarefa cadastrada com sucesso!", "sucesso");
+
   inputTitulo.value = "";
+  inputPrioridade.value = "1";
   listarTarefas();
 });
 
-// 2. Listar as tarefas cadastradas na tela
+// 2. Listar as tarefas cadastradas
 function listarTarefas() {
   listaTarefas.innerHTML = "";
-  const nomesPrioridade = { 1: "Alta", 2: "Média", 3: "Baixa" };
 
-  tarefas.forEach(function (tarefa) {
-    const item = document.createElement("li");
-    if (tarefa.concluida) {
-      item.classList.add("concluida");
-    }
+  if (tarefas.length === 0) {
+    listaTarefas.innerHTML = "<li>Nenhuma tarefa cadastrada.</li>";
+    return;
+  }
 
-    const statusTexto = tarefa.concluida ? "Concluída" : "Pendente";
+  const textosPrioridade = { 1: "Alta", 2: "Média", 3: "Baixa" };
 
-    item.innerHTML = `
-      <div class="info">
-        <strong>#${tarefa.codigo} - ${tarefa.titulo}</strong><br>
-        <small>Prioridade: ${tarefa.prioridade} (${nomesPrioridade[tarefa.prioridade]}) | Status: ${statusTexto}</small>
+  tarefas.forEach((tarefa) => {
+    const li = document.createElement("li");
+    li.className = `item-tarefa ${tarefa.concluida ? "concluida" : ""}`;
+
+    li.innerHTML = `
+      <div>
+        <strong class="info-titulo">[#${tarefa.codigo}] ${tarefa.titulo}</strong><br>
+        <small>Prioridade: ${tarefa.prioridade} (${textosPrioridade[tarefa.prioridade]}) | Status: ${tarefa.concluida ? "Concluída" : "Pendente"}</small>
       </div>
       <div class="acoes">
-        <select onchange="alterarPrioridade(${tarefa.codigo}, this.value)">
-          <option value="1" ${tarefa.prioridade === 1 ? "selected" : ""}>1 - Alta</option>
-          <option value="2" ${tarefa.prioridade === 2 ? "selected" : ""}>2 - Média</option>
-          <option value="3" ${tarefa.prioridade === 3 ? "selected" : ""}>3 - Baixa</option>
-        </select>
-        <button class="btn-concluir" onclick="concluirTarefa(${tarefa.codigo})">
+        <button type="button" class="btn-acao btn-concluir" onclick="concluirTarefa(${tarefa.codigo})">
           ${tarefa.concluida ? "Concluída" : "Concluir"}
+        </button>
+        <button type="button" class="btn-acao btn-prioridade" onclick="alterarPrioridade(${tarefa.codigo})">
+          Alterar Prioridade
         </button>
       </div>
     `;
 
-    listaTarefas.appendChild(item);
+    listaTarefas.appendChild(li);
   });
 }
 
@@ -78,22 +83,29 @@ function concluirTarefa(codigo) {
   const tarefa = tarefas.find((t) => t.codigo === codigo);
   if (tarefa) {
     tarefa.concluida = true;
+    exibirMensagem(`Tarefa #${codigo} marcada como concluída.`, "sucesso");
     listarTarefas();
   }
 }
 
 // 4. Alterar a prioridade de uma tarefa
-function alterarPrioridade(codigo, novaPrioridade) {
-  const prioridadeNum = Number(novaPrioridade);
+function alterarPrioridade(codigo) {
+  const tarefa = tarefas.find((t) => t.codigo === codigo);
+  if (!tarefa) return;
 
-  if (prioridadeNum < 1 || prioridadeNum > 3) {
-    mensagemErro.textContent = "Erro: A prioridade deve estar entre 1 e 3.";
+  const entrada = prompt("Digite a nova prioridade: 1 (Alta), 2 (Média) ou 3 (Baixa):");
+  if (entrada === null) return;
+
+  const novaPrioridade = Number(entrada);
+
+  if (novaPrioridade !== 1 && novaPrioridade !== 2 && novaPrioridade !== 3) {
+    exibirMensagem("Erro: A prioridade deve ser 1, 2 ou 3.", "erro");
     return;
   }
 
-  const tarefa = tarefas.find((t) => t.codigo === codigo);
-  if (tarefa) {
-    tarefa.prioridade = prioridadeNum;
-    listarTarefas();
-  }
+  tarefa.prioridade = novaPrioridade;
+  exibirMensagem(`Prioridade da tarefa #${codigo} atualizada!`, "sucesso");
+  listarTarefas();
 }
+
+listarTarefas();
