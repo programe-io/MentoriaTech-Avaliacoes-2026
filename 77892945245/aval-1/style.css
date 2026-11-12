@@ -1,183 +1,268 @@
-<style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+:root {
+    --primary-red: #ff1e00;
+    --dark-bg: #090a0f;
+    --card-bg: #131620;
+    --border-color: #222838;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+}
 
-        body {
-            /* Fontes modernas que se adaptam a qualquer sistema */
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background-color: #f0f2f5;
-            padding: 40px 20px;
-            display: flex;
-            justify-content: center;
-        }
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    scroll-behavior: smooth;
+}
 
-        main {
-            max-width: 840px;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-        }
+body {
+    background-color: var(--dark-bg);
+    color: var(--text-main);
+    line-height: 1.6;
+}
 
-        /* Sua regra CSS 'display: flex' refinada com efeitos visuais */
-        article {
-            display: flex;
-            background: #ffffff;
-            padding: 24px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            gap: 24px;
-            align-items: center;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
+/* HEADER E HERO */
+header {
+    background: linear-gradient(rgba(9, 10, 15, 0.8), rgba(9, 10, 15, 0.95)), url('https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=1600') no-repeat center center/cover;
+    padding: 60px 20px;
+    text-align: center;
+    border-bottom: 4px solid var(--primary-red);
+}
 
-        /* Efeito de flutuar levemente ao passar o mouse */
-        article:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-        }
+.logo {
+    font-size: 2.8rem;
+    font-weight: 900;
+    color: #fff;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    font-style: italic;
+}
 
-        article img {
-            max-width: 160px;
-            height: auto;
-            border-radius: 8px;
-            object-fit: cover;
-        }
+.logo span {
+    color: var(--primary-red);
+}
 
-        article div {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            flex: 1;
-        }
+.hero-subtitle {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    margin-top: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
 
-        h2 {
-            color: #1a1a1a;
-            font-size: 1.5rem;
-            font-weight: 700;
-        }
+/* BARRA DE PESQUISA */
+.search-container {
+    max-width: 700px;
+    margin: 30px auto 0 auto;
+    position: relative;
+}
 
-        .artigo-autor {
-            color: #888888;
-            font-style: italic;
-            font-size: 0.85rem;
-        }
+.search-container input {
+    width: 100%;
+    padding: 18px 25px 18px 55px;
+    background-color: var(--card-bg);
+    border: 2px solid var(--border-color);
+    border-radius: 50px;
+    color: #fff;
+    font-size: 1.1rem;
+    outline: none;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
 
-        p {
-            color: #4a4a4a;
-            line-height: 1.5;
-            font-size: 1rem;
-        }
+.search-container input:focus {
+    border-color: var(--primary-red);
+    box-shadow: 0 0 15px rgba(255, 30, 0, 0.3);
+}
 
-        .botoes-container {
-            display: flex;
-            gap: 8px;
-            margin-top: 4px;
-        }
+.search-container i {
+    position: absolute;
+    left: 22px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    font-size: 1.3rem;
+}
 
-        /* Botões padronizados e elegantes */
-        button {
-            cursor: pointer;
-            padding: 8px 16px;
-            border: 1px solid #e1e4e8;
-            border-radius: 20px;
-            background-color: #ffffff;
-            font-size: 0.9rem;
-            color: #4a4a4a;
-            font-weight: 500;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
+/* CONTAINER DA LOJA */
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 50px 20px;
+}
 
-        button:hover {
-            background-color: #f7f9fa;
-            border-color: #cbd5e1;
-        }
+.section-title {
+    font-size: 2rem;
+    text-transform: uppercase;
+    margin-bottom: 30px;
+    font-weight: 900;
+    border-left: 5px solid var(--primary-red);
+    padding-left: 15px;
+}
 
-        /* Classes que o JavaScript vai usar dinamicamente para pintar os botões ativados */
-        button.ativo-coracao {
-            background-color: #ffe4e6;
-            border-color: #fda4af;
-            color: #e11d48;
-        }
+/* GRID DE VEÍCULOS */
+.vehicles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 30px;
+}
 
-        button.ativo-lampada {
-            background-color: #fef9c3;
-            border-color: #fde047;
-            color: #ca8a04;
-        }
+.vehicle-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+    display: flex;
+    flex-direction: column;
+}
 
-        button span {
-            font-weight: 600;
-        }
-    </style>
-</head>
-<body>
+.vehicle-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 30px rgba(255, 30, 0, 0.2);
+    border-color: #3b4664;
+}
 
-<!-- Seu HTML limpo e preservado -->
-<main>
-    <article>
-        <img src="imagem-blog.png" alt="Logotipo conceitual de tecnologia e educacao: um livro aberto de onde emerge um cérebro digital brilhante, cercado por ícones de Wi‑Fi, circuitos e lâmpada de ideia. Cores em tons de azul e branco.">
-        <div>
-            <h2>Meu primeiro post</h2>
-            <p class="artigo-autor">Por: Marcelo Paludetto</p>
-            <p>Boas-vindas ao meu novo blog! Aqui vou compartilhar dicas de programação e curiosidades da área de tecnologia.</p>
-            <div class="botoes-container">
-                <button>❤️<span>0</span></button>
-                <button>💡<span>0</span></button>
-            </div>
-        </div>
-    </article>
+.vehicle-img-box {
+    position: relative;
+    height: 220px;
+    overflow: hidden;
+}
 
-    <article>
-        <img src="imagem-blog.png" alt="Logotipo conceitual de tecnologia e educacao: um livro aberto de onde emerge um cérebro digital brilhante, cercado por ícones de Wi‑Fi, circuitos e lâmpada de ideia. Cores em tons de azul e branco.">
-        <div>
-            <h2>Meu primeiro post</h2>
-            <p class="artigo-autor">Por: Marcelo Paludetto</p>
-            <p>Boas-vindas ao meu novo blog! Aqui vou compartilhar dicas de programação e curiosidades da área de tecnologia.</p>
-            <div class="botoes-container">
-                <button>❤️<span>0</span></button>
-                <button>💡<span>0</span></button>
-            </div>
-        </div>
-    </article>
-</main>
+.vehicle-img-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s;
+}
 
-<!-- Seu JavaScript com o bônus visual de alternar as classes CSS -->
-<script>
-    const botoes = document.querySelectorAll("button");
+.vehicle-card:hover .vehicle-img-box img {
+    transform: scale(1.1);
+}
 
-    botoes.forEach(function (botao) {
-        let curtiu = false;
+.vehicle-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background-color: var(--primary-red);
+    color: #fff;
+    padding: 5px 12px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    border-radius: 4px;
+}
 
-        // Descobre qual é o emoji do botão para aplicar a cor certa depois
-        const ehCoracao = botao.textContent.includes("❤️");
+.vehicle-body {
+    padding: 25px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
 
-        botao.addEventListener("click", botaoClicado);
+.vehicle-title {
+    font-size: 1.4rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #fff;
+}
 
-        function botaoClicado() {
-            console.log("fui clicado");
-            let texto = botao.querySelector("span");
+.vehicle-desc {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+}
 
-            if (curtiu === false) {
-                texto.textContent++;
-                curtiu = true;
-                // Adiciona o visual colorido ativo
-                botao.classList.add(ehCoracao ? 'ativo-coracao' : 'ativo-lampada');
-            } else {
-                texto.textContent--;
-                curtiu = false;
-                // Remove o visual colorido voltando ao padrão
-                botao.classList.remove(ehCoracao ? 'ativo-coracao' : 'ativo-lampada');
-            }
-        }
-    });
-</script>
+/* ESPECIFICAÇÕES TÉCNICAS */
+.specs-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    background-color: rgba(0, 0, 0, 0.3);
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
 
-</body>
-</html>
+.spec-item {
+    text-align: center;
+}
+
+.spec-item .label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    display: block;
+}
+
+.spec-item .value {
+    font-size: 0.95rem;
+    font-weight: bold;
+    color: #fff;
+}
+
+.vehicle-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--border-color);
+    padding-top: 15px;
+    margin-top: auto;
+}
+
+.vehicle-price {
+    font-size: 1.35rem;
+    font-weight: 900;
+    color: var(--primary-red);
+}
+
+.btn-buy {
+    background-color: var(--primary-red);
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-buy:hover {
+    background-color: #d11800;
+}
+
+/* MENSAGEM QUANDO NADA FOR ENCONTRADO */
+.no-results {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px;
+    font-size: 1.2rem;
+    color: var(--text-muted);
+    display: none;
+}
+
+/* RODAPÉ */
+footer {
+    background-color: #050608;
+    border-top: 3px solid var(--primary-red);
+    padding: 40px 20px;
+    text-align: center;
+    color: var(--text-muted);
+    margin-top: 80px;
+}
+
+footer p {
+    margin-bottom: 10px;
+}
+
+@media (max-width: 768px) {
+    .hero-subtitle {
+        font-size: 0.95rem;
+    }
+    .vehicles-grid {
+        grid-template-columns: 1fr;
+    }
+}
