@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Código JavaScript</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <style>body{margin:0;background:#0d1117}pre{margin:0}code.hljs{padding:1.5rem;min-height:100vh;box-sizing:border-box}</style>
+</head>
+<body>
+  <pre><code class="language-javascript">
+// ======================================
+// SISTEMA DE GERENCIAMENTO DE ESTOQUE
+// ======================================
+
+let produtos = [
+    {
+        codigo: 1,
+        descricao: "Cadeira Gamer",
+        quantidade: 10,
+        valor: 850
+    },
+    {
+        codigo: 2,
+        descricao: "Mouse Logitech",
+        quantidade: 20,
+        valor: 120
+    },
+    {
+        codigo: 3,
+        descricao: "Teclado Mecânico",
+        quantidade: 15,
+        valor: 250
+    }
+];
+
+// ======================================
+// CADASTRAR PRODUTO
+// ======================================
+
+function cadastrarProduto(codigo, descricao, quantidade, valor) {
+
+    if (!descricao.trim() || !Number.isInteger(codigo) ||
+        codigo &lt;= 0 || !Number.isInteger(quantidade) ||
+        quantidade &lt; 0 || !Number.isFinite(valor) || valor &lt;= 0) {
+        throw new Error("Dados do produto inválidos.");
+    }
+
+    const existente = produtos.find(prod =&gt; prod.codigo === codigo);
+
+    if (existente) {
+        throw new Error("Este código já está cadastrado.");
+    }
+
+    produtos.push({
+        codigo,
+        descricao,
+        quantidade,
+        valor
+    });
+
+    console.log("Produto cadastrado com sucesso!");
+}
+
+// ======================================
+// LISTAR PRODUTOS
+// ======================================
+
+function listarProdutos() {
+
+    console.log("===== ESTOQUE ATUAL =====");
+
+    produtos.forEach(produto =&gt; {
+
+        console.log(
+            "Código:", produto.codigo,
+            "| Produto:", produto.descricao,
+            "| Quantidade:", produto.quantidade,
+            "| Valor: R$", produto.valor.toFixed(2)
+        );
+
+    });
+}
+
+// ======================================
+// PESQUISAR PRODUTO
+// ======================================
+
+function buscarProduto(codigo) {
+
+    const produto = produtos.find(
+        prod =&gt; prod.codigo === codigo
+    );
+
+    if (produto) {
+        console.log("Produto encontrado:", produto);
+        return produto;
+    }
+
+    console.log("Produto não encontrado.");
+    return null;
+}
+
+// ======================================
+// ATUALIZAR VALOR
+// ======================================
+
+function atualizarValor(codigoProduto, novoValor) {
+
+    if (!Number.isFinite(novoValor) || novoValor &lt;= 0) {
+        throw new Error("O valor deve ser maior que zero.");
+    }
+
+    const produto = produtos.find(
+        prod =&gt; prod.codigo === codigoProduto
+    );
+
+    if (produto) {
+
+        produto.valor = novoValor;
+
+        console.log("Preço atualizado com sucesso!");
+
+    } else {
+
+        throw new Error("Produto não encontrado.");
+
+    }
+}
+
+// ======================================
+// ATUALIZAR QUANTIDADE
+// ======================================
+
+function atualizarQuantidade(codigoProduto, novaQuantidade) {
+
+    if (!Number.isInteger(novaQuantidade) || novaQuantidade &lt; 0) {
+        throw new Error("Quantidade inválida.");
+    }
+
+    const produto = produtos.find(
+        prod =&gt; prod.codigo === codigoProduto
+    );
+
+    if (produto) {
+
+        produto.quantidade = novaQuantidade;
+
+        console.log("Quantidade atualizada!");
+
+    } else {
+
+        throw new Error("Produto não encontrado.");
+
+    }
+}
+
+// ======================================
+// ENTRADA DE MERCADORIAS
+// ======================================
+
+function entradaEstoque(codigo, quantidade) {
+
+    if (!Number.isInteger(quantidade) || quantidade &lt;= 0) {
+        throw new Error("Quantidade inválida.");
+    }
+
+    const produto = buscarProduto(codigo);
+
+    if (produto) {
+
+        produto.quantidade += quantidade;
+
+        console.log("Entrada registrada com sucesso!");
+
+    }
+}
+
+// ======================================
+// SAÍDA DE MERCADORIAS
+// ======================================
+
+function saidaEstoque(codigo, quantidade) {
+
+    if (!Number.isInteger(quantidade) || quantidade &lt;= 0) {
+        throw new Error("Quantidade inválida.");
+    }
+
+    const produto = buscarProduto(codigo);
+
+    if (produto) {
+
+        if (produto.quantidade &lt; quantidade) {
+            throw new Error("Estoque insuficiente!");
+        }
+
+        produto.quantidade -= quantidade;
+
+        console.log("Saída registrada com sucesso!");
+
+    }
+}
+
+// ======================================
+// EXCLUIR PRODUTO
+// ======================================
+
+function removerProduto(codigo) {
+
+    const indice = produtos.findIndex(
+        prod =&gt; prod.codigo === codigo
+    );
+
+    if (indice !== -1) {
+
+        produtos.splice(indice, 1);
+
+        console.log("Produto removido com sucesso!");
+
+    } else {
+
+        throw new Error("Produto não encontrado.");
+
+    }
+}
+
+// ======================================
+// PRODUTOS COM ESTOQUE BAIXO
+// ======================================
+
+function estoqueBaixo(limite = 5) {
+
+    console.log("===== ESTOQUE BAIXO =====");
+
+    const baixos = produtos.filter(
+        prod =&gt; prod.quantidade &lt;= limite
+    );
+
+    if (baixos.length === 0) {
+        console.log("Nenhum produto com estoque baixo.");
+        return;
+    }
+
+    baixos.forEach(produto =&gt; {
+        console.log(
+            produto.descricao,
+            "- Quantidade:", produto.quantidade
+        );
+    });
+}
+
+// ======================================
+// CALCULAR VALOR TOTAL DO ESTOQUE
+// ======================================
+
+function calcularValorEstoque() {
+
+    const total = produtos.reduce(
+        (soma, produto) =&gt;
+            soma + produto.quantidade * produto.valor,
+        0
+    );
+
+    console.log(
+        "Valor total do estoque: R$",
+        total.toFixed(2)
+    );
+
+    return total;
+}
+
+// ======================================
+// RELATÓRIO GERAL
+// ======================================
+
+function gerarRelatorio() {
+
+    console.log("================================");
+    console.log("       RELATÓRIO DE ESTOQUE");
+    console.log("================================");
+
+    console.log("Total de produtos cadastrados:", produtos.length);
+
+    const unidades = produtos.reduce(
+        (total, produto) =&gt; total + produto.quantidade,
+        0
+    );
+
+    console.log("Total de unidades:", unidades);
+
+    calcularValorEstoque();
+
+    estoqueBaixo();
+
+    console.log("================================");
+}
+
+// ======================================
+// TESTES DO SISTEMA
+// ======================================
+
+// Cadastrar produto
+cadastrarProduto(4, "Monitor Gamer", 8, 1200);
+
+// Entrada de mercadorias
+entradaEstoque(1, 5);
+
+// Saída de mercadorias
+saidaEstoque(2, 3);
+
+// Atualizar preço
+atualizarValor(3, 280);
+
+// Atualizar quantidade
+atualizarQuantidade(4, 12);
+
+// Pesquisar produto
+buscarProduto(1);
+
+// Listar produtos
+listarProdutos();
+
+// Mostrar relatório
+gerarRelatorio();
+</code></pre>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+</body>
+</html>
