@@ -1,164 +1,268 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
-    <title>Controle Financeiro</title>
-
-    <link rel="stylesheet" href="style.css">
-    <script src="script.js" defer></script>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="style.css" rel="stylesheet"></head>
-
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet">
+</head>
 <body>
+  // Projeto: Controle de Estoque
+// Os dados são armazenados no localStorage do navegador.
 
-    <div class="container">
+const CHAVE_PRODUTOS = "controleEstoqueProdutos";
+const CHAVE_CODIGO = "controleEstoqueProximoCodigo";
 
-        <header>
-            <h1>Meu Controle Financeiro</h1>
-            <p>Organize suas receitas e despesas</p>
-        </header>
+let produtos = carregarProdutos();
+let proximoCodigo = Number(localStorage.getItem(CHAVE_CODIGO)) || calcularProximoCodigo();
 
-        <!-- PAINEL FINANCEIRO -->
+const formProduto = document.getElementById("formProduto");
+const campoDescricao = document.getElementById("descricao");
+const campoQuantidade = document.getElementById("quantidade");
+const campoValor = document.getElementById("valor");
+const listaProdutos = document.getElementById("listaProdutos");
+const buscaProduto = document.getElementById("buscaProduto");
+const mensagemFormulario = document.getElementById("mensagemFormulario");
 
-        <section class="dashboard">
+document.getElementById("dataAtual").textContent =
+  new Date().toLocaleDateString("pt-BR", {
+    weekday: "long",
+    day: "2-digit",
+    month: "long",
+    year: "numeric"
+  });
 
-            <div class="card">
-                <h3>Total de Receitas</h3>
-                <p id="total-receitas">R$ 0,00</p>
-            </div>
+function carregarProdutos() {
+  try {
+    const dados = JSON.parse(localStorage.getItem(CHAVE_PRODUTOS));
+    return Array.isArray(dados) ? dados : [];
+  } catch (erro) {
+    console.error("Não foi possível carregar os produtos:", erro);
+    return [];
+  }
+}
 
-            <div class="card">
-                <h3>Total de Despesas</h3>
-                <p id="total-despesas">R$ 0,00</p>
-            </div>
+function calcularProximoCodigo() {
+  if (produtos.length === 0) return 1;
+  return Math.max(...produtos.map(produto => Number(produto.codigo) || 0)) + 1;
+}
 
-            <div class="card saldo">
-                <h3>Saldo Atual</h3>
-                <p id="saldo-total">R$ 0,00</p>
-            </div>
+function salvarDados() {
+  localStorage.setItem(CHAVE_PRODUTOS, JSON.stringify(produtos));
+  localStorage.setItem(CHAVE_CODIGO, String(proximoCodigo));
+}
 
-        </section>
+function formatarMoeda(valor) {
+  return Number(valor).toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL"
+  });
+}
 
-        <!-- FORMULÁRIO -->
+// Evita que caracteres digitados na descrição sejam interpretados como HTML.
+function escaparHTML(texto) {
+  return String(texto).replace(/[&<>"']/g, caractere => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#039;"
+  })[caractere]);
+}
 
-        <section class="formulario">
+function validarProduto(descricao, quantidade, valor) {
+  if (descricao.trim().length < 5) {
+    throw new Error("A descrição deve ter, no mínimo, cinco caracteres.");
+  }
 
-            <h2>Cadastrar movimentação</h2>
+  if (!Number.isInteger(quantidade) || quantidade < 1) {
+    throw new Error("A quantidade deve ser um número inteiro maior que zero.");
+  }
 
-            <form id="form-financeiro">
+  if (!Number.isFinite(valor) || valor < 0) {
+    throw new Error("O valor deve ser maior ou igual a zero.");
+  }
+}
 
-                <input type="hidden" id="id">
+function cadastrarProduto(descricao, quantidade, valor) {
+  validarProduto(descricao, quantidade, valor);
 
-                <label>Descrição:</label>
-                <input
-                    type="text"
-                    id="descricao"
-                    placeholder="Ex: Pagamento de salário"
-                    required
-                >
+  const novoProduto = {
+    codigo: proximoCodigo,
+    descricao: descricao.trim(),
+    quantidade: quantidade,
+    valor: valor
+  };
 
-                <label>Valor (R$):</label>
-                <input
-                    type="number"
-                    id="valor"
-                    placeholder="Ex: 1500"
-                    min="0.01"
-                    step="0.01"
-                    required
-                >
+  produtos.push(novoProduto);
+  proximoCodigo++;
+  salvarDados();
+  renderizarProdutos();
+}
 
-                <label>Tipo:</label>
-                <select id="tipo" required>
-                    <option value="receita">Receita</option>
-                    <option value="despesa">Despesa</option>
-                </select>
+function listarProdutos(lista = produtos) {
+  if (lista.length === 0) {
+    listaProdutos.innerHTML = `
+      <tr class="linha-vazia">
+        <td colspan="6">Nenhum produto encontrado.</td>
+      </tr>`;
+    return;
+  }
 
-                <label>Categoria:</label>
-                <select id="categoria" required>
-                    <option value="Salário">Salário</option>
-                    <option value="Alimentação">Alimentação</option>
-                    <option value="Transporte">Transporte</option>
-                    <option value="Moradia">Moradia</option>
-                    <option value="Educação">Educação</option>
-                    <option value="Saúde">Saúde</option>
-                    <option value="Lazer">Lazer</option>
-                    <option value="Outros">Outros</option>
-                </select>
+  listaProdutos.innerHTML = lista.map(produto => {
+    const total = produto.quantidade * produto.valor;
+    const estoqueBaixo = produto.quantidade < 5;
 
-                <label>Data:</label>
-                <input
-                    type="date"
-                    id="data"
-                    required
-                >
+    return `
+      <tr>
+        <td class="codigo">#${produto.codigo}</td>
+        <td class="nome-produto">${escaparHTML(produto.descricao)}</td>
+        <td class="quantidade">
+          ${produto.quantidade}
+          ${estoqueBaixo ? '<span class="estoque-baixo">ESTOQUE BAIXO</span>' : ""}
+        </td>
+        <td>${formatarMoeda(produto.valor)}</td>
+        <td><strong>${formatarMoeda(total)}</strong></td>
+        <td>
+          <div class="acoes-linha">
+            <button class="botao-acao" data-acao="valor" data-codigo="${produto.codigo}">Alterar preço</button>
+            <button class="botao-acao" data-acao="quantidade" data-codigo="${produto.codigo}">Entrada</button>
+            <button class="botao-acao excluir" data-acao="excluir" data-codigo="${produto.codigo}">Excluir</button>
+          </div>
+        </td>
+      </tr>`;
+  }).join("");
+}
 
-                <button type="submit" id="btn-salvar">
-                    Cadastrar movimentação
-                </button>
+function atualizarResumo() {
+  const totalProdutos = produtos.length;
+  const totalUnidades = produtos.reduce((soma, produto) => soma + produto.quantidade, 0);
+  const valorTotal = produtos.reduce(
+    (soma, produto) => soma + produto.quantidade * produto.valor, 0
+  );
 
-                <button
-                    type="button"
-                    id="btn-cancelar"
-                    hidden
-                >
-                    Cancelar edição
-                </button>
+  document.getElementById("totalProdutos").textContent = totalProdutos;
+  document.getElementById("totalUnidades").textContent = totalUnidades;
+  document.getElementById("valorEstoque").textContent = formatarMoeda(valorTotal);
+}
 
-            </form>
+function renderizarProdutos() {
+  const termo = buscaProduto.value.trim().toLocaleLowerCase("pt-BR");
+  const filtrados = produtos.filter(produto =>
+    produto.descricao.toLocaleLowerCase("pt-BR").includes(termo) ||
+    String(produto.codigo).includes(termo)
+  );
 
-        </section>
+  listarProdutos(filtrados);
+  atualizarResumo();
+}
 
-        <!-- LISTAGEM -->
+function exibirMensagem(texto, tipo = "erro") {
+  mensagemFormulario.textContent = texto;
+  mensagemFormulario.className = tipo === "sucesso" ? "mensagem sucesso" : "mensagem";
+}
 
-        <section class="listagem">
+formProduto.addEventListener("submit", evento => {
+  evento.preventDefault();
 
-            <h2>Histórico financeiro</h2>
+  const descricao = campoDescricao.value;
+  const quantidade = Number(campoQuantidade.value);
+  const valor = Number(campoValor.value);
 
-            <div class="filtros">
+  try {
+    cadastrarProduto(descricao, quantidade, valor);
+    formProduto.reset();
+    exibirMensagem("Produto cadastrado com sucesso!", "sucesso");
+    campoDescricao.focus();
+  } catch (erro) {
+    exibirMensagem(erro.message);
+  }
+});
 
-                <button data-filtro="todos">
-                    Todos
-                </button>
+buscaProduto.addEventListener("input", renderizarProdutos);
 
-                <button data-filtro="receita">
-                    Receitas
-                </button>
+listaProdutos.addEventListener("click", evento => {
+  const botao = evento.target.closest("button[data-acao]");
+  if (!botao) return;
 
-                <button data-filtro="despesa">
-                    Despesas
-                </button>
+  const codigo = Number(botao.dataset.codigo);
+  const produto = produtos.find(item => item.codigo === codigo);
+  if (!produto) {
+    exibirMensagem("Produto não encontrado.");
+    return;
+  }
 
-            </div>
+  const acao = botao.dataset.acao;
 
-            <div class="tabela-container">
+  if (acao === "valor") {
+    atualizarValor(codigo);
+  } else if (acao === "quantidade") {
+    atualizarQuantidade(codigo);
+  } else if (acao === "excluir") {
+    excluirProduto(codigo);
+  }
+});
 
-                <table>
+function atualizarValor(codigoProduto) {
+  const produto = produtos.find(item => item.codigo === codigoProduto);
+  if (!produto) throw new Error("Produto não encontrado.");
 
-                    <thead>
-                        <tr>
-                            <th>Data</th>
-                            <th>Descrição</th>
-                            <th>Categoria</th>
-                            <th>Tipo</th>
-                            <th>Valor</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
+  const resposta = prompt(
+    `Novo valor para "${produto.descricao}" (R$):`,
+    produto.valor.toFixed(2)
+  );
 
-                    <tbody id="lista-financeira">
-                    </tbody>
+  if (resposta === null) return;
 
-                </table>
+  const novoValor = Number(resposta.replace(",", "."));
+  if (!Number.isFinite(novoValor) || novoValor < 0) {
+    alert("Informe um valor válido, maior ou igual a zero.");
+    return;
+  }
 
-            </div>
+  produto.valor = novoValor;
+  salvarDados();
+  renderizarProdutos();
+}
 
-        </section>
+function atualizarQuantidade(codigoProduto) {
+  const produto = produtos.find(item => item.codigo === codigoProduto);
+  if (!produto) throw new Error("Produto não encontrado.");
 
-    </div>
+  const resposta = prompt(
+    `Quantas unidades deseja adicionar ao produto "${produto.descricao}"?`,
+    "1"
+  );
 
-<script src="script.js"></script></body>
+  if (resposta === null) return;
+
+  const novaQuantidade = Number(resposta);
+  if (!Number.isInteger(novaQuantidade) || novaQuantidade < 1) {
+    alert("Informe uma quantidade inteira maior que zero.");
+    return;
+  }
+
+  produto.quantidade = produto.quantidade + novaQuantidade;
+  salvarDados();
+  renderizarProdutos();
+}
+
+function excluirProduto(codigoProduto) {
+  const produto = produtos.find(item => item.codigo === codigoProduto);
+  if (!produto) return;
+
+  const confirmou = confirm(`Deseja realmente excluir "${produto.descricao}"?`);
+  if (!confirmou) return;
+
+  produtos = produtos.filter(item => item.codigo !== codigoProduto);
+  salvarDados();
+  renderizarProdutos();
+}
+
+// Exibe os dados que já estavam salvos quando a página foi aberta.
+renderizarProdutos();
+
+  <script src="script.js"></script>
+  
+</body>
 </html>
