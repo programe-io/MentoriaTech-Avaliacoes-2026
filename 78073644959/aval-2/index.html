@@ -1,0 +1,230 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SocialConnect</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/script.js"></script>
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+    <header>
+        <div class="header-content">
+            <h1>SocialConnect</h1>
+            <nav>
+                <a href="#">Página Inicial</a>
+                <a href="#">Meu Perfil</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+
+        <section class="new-post">
+            <div class="user">
+                <div class="avatar">A</div>
+                <div>
+                    <strong>André</strong>
+                    <span>Compartilhe algo com seus amigos!</span>
+                </div>
+            </div>
+            <button>Compartilhar</button>
+        </section>
+
+        <article class="post">
+            <div class="post-header">
+                <div class="avatar">J</div>
+                <div>
+                    <strong>João</strong>
+                    <span>Há 20 minutos</span>
+                </div>
+            </div>
+            <div class="post-test">
+                Explorando novos lugares e descobrindo paisagens incríveis! 🏞️📸
+            </div>
+            <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=800" alt="Montanhas e paisagem">
+            <div class="post-actions">
+                <button>Curtir</button>
+                <button>Comentar</button>
+            </div>
+        </article>
+
+        <article class="post">
+            <div class="post-header">
+                <div class="avatar">G</div>
+                <div>
+                    <strong>Gabriel</strong>
+                    <span>Há 35 minutos</span>
+                </div>
+            </div>
+            <div class="post-test">
+                Tecnologia e criatividade sempre andando juntas! 💻🚀
+            </div>
+            <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800" alt="Pessoas trabalhando com tecnologia">
+            <div class="post-actions">
+                <button>Curtir</button>
+                <button>Comentar</button>
+            </div>
+        </article>
+
+        <article class="post">
+            <div class="post-header">
+                <div class="avatar">C</div>
+                <div>
+                    <strong>Caio</strong>
+                    <span>Há 1 hora</span>
+                </div>
+            </div>
+            <div class="post-test">
+                O importante é nunca desistir dos nossos objetivos! 🏀🔥
+            </div>
+            <img src="https://images.unsplash.com/photo-1546519638-68e109498ffc?w=800" alt="Quadra de basquete">
+            <div class="post-actions">
+                <button>Curtir</button>
+                <button>Comentar</button>
+            </div>
+        </article>
+
+        <article class="post">
+            <div class="post-header">
+                <div class="avatar">B</div>
+                <div>
+                    <strong>Bruno</strong>
+                    <span>Há 3 horas</span>
+                </div>
+            </div>
+            <div class="post-test">
+                Um café, uma boa música e tranquilidade para aproveitar o dia! ☕🎵
+            </div>
+            <img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=800" alt="Café e momentos de tranquilidade">
+            <div class="post-actions">
+                <button>Curtir</button>
+                <button>Comentar</button>
+            </div>
+        </article>
+
+        <article class="post">
+            <div class="post-header">
+                <div class="avatar">M</div>
+                <div>
+                    <strong>Marcos</strong>
+                    <span>Há 1 dia</span>
+                </div>
+            </div>
+            <div class="post-test">
+                Viajar, conhecer lugares e viver novas experiências! ✈️🌎
+            </div>
+            <img src="https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=800" alt="Lago cercado por montanhas">
+            <div class="post-actions">
+                <button>Curtir</button>
+                <button>Comentar</button>
+            </div>
+        </article>
+
+    </main>
+
+    <footer>
+        <p>SocialConnect - Todos os Direitos Reservados - 2026</p>
+    </footer>
+
+<script>
+    const botoesCurtir = document.querySelectorAll(".post-actions button:first-child");
+
+    botoesCurtir.forEach(botao => {
+
+        let curtidas = 0;
+        let curtido = false;
+
+        botao.innerText = "Curtir (0)";
+
+        botao.addEventListener("click", function() {
+
+            if (curtido) {
+
+                curtidas--;
+                curtido = false;
+
+                botao.innerText = `Curtir (${curtidas})`;
+                botao.style.backgroundColor = "#2563eb";
+
+            } else {
+
+                curtidas++;
+                curtido = true;
+
+                botao.innerText = `Curtido (${curtidas})`;
+                botao.style.backgroundColor = "#f97316";
+
+            }
+
+        });
+
+    });
+
+    const botoesComentar = document.querySelectorAll(".post-actions button:last-child");
+
+    botoesComentar.forEach(botao => {
+
+        botao.addEventListener("click", function() {
+
+            const post = botao.closest(".post");
+
+            let areaComentarios = post.querySelector(".comentarios");
+
+            if (!areaComentarios) {
+
+                areaComentarios = document.createElement("div");
+                areaComentarios.classList.add("comentarios");
+
+                areaComentarios.innerHTML = `
+                    <input type="text" placeholder="Digite seu comentário...">
+                    <button class="enviar-comentario">Enviar</button>
+                    <div class="lista-comentarios"></div>
+                `;
+
+                post.appendChild(areaComentarios);
+
+                const input = areaComentarios.querySelector("input");
+                const enviar = areaComentarios.querySelector(".enviar-comentario");
+                const lista = areaComentarios.querySelector(".lista-comentarios");
+
+                enviar.addEventListener("click", function() {
+
+                    if (input.value.trim() !== "") {
+
+                        const comentario = document.createElement("p");
+
+                        comentario.innerText = input.value;
+
+                        lista.appendChild(comentario);
+
+                        input.value = "";
+
+                    }
+
+                });
+
+                input.addEventListener("keypress", function(event) {
+
+                    if (event.key === "Enter") {
+                        enviar.click();
+                    }
+
+                });
+
+            } else {
+
+                areaComentarios.style.display =
+                    areaComentarios.style.display === "none" ? "block" : "none";
+
+            }
+
+        });
+
+    });
+
+</script>
+</body>
+</html>
