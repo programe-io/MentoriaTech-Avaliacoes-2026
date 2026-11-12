@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Código JavaScript</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <style>body{margin:0;background:#0d1117}pre{margin:0}code.hljs{padding:1.5rem;min-height:100vh;box-sizing:border-box}</style>
+</head>
+<body>
+  <pre><code class="language-javascript">
+// ======================================
+// SISTEMA DE CONTROLE DE ESTOQUE
+// ======================================
+
+let produtos = [];
+
+// ======================================
+// CADASTRAR PRODUTO
+// ======================================
+
+function cadastrarProduto(nome, codigo, quantidade, valor) {
+
+    if (!nome || !codigo) {
+        throw new Error("Nome e código são obrigatórios");
+    }
+
+    if (quantidade &lt; 0 || valor &lt; 0) {
+        throw new Error("Quantidade e valor não podem ser negativos");
+    }
+
+    const existe = produtos.find(prod =&gt; prod.codigo === codigo);
+
+    if (existe) {
+        throw new Error("Já existe um produto com esse código");
+    }
+
+    const produto = {
+        nome: nome,
+        codigo: codigo,
+        quantidade: quantidade,
+        valor: valor
+    };
+
+    produtos.push(produto);
+
+    console.log("Produto cadastrado com sucesso!");
+}
+
+// ======================================
+// LISTAR PRODUTOS
+// ======================================
+
+function listarProdutos() {
+
+    console.log("===== ESTOQUE DE PRODUTOS =====");
+
+    if (produtos.length === 0) {
+        console.log("Nenhum produto cadastrado.");
+        return;
+    }
+
+    produtos.forEach(produto =&gt; {
+        console.log("-------------------------");
+        console.log("Nome:", produto.nome);
+        console.log("Código:", produto.codigo);
+        console.log("Quantidade:", produto.quantidade);
+        console.log("Valor: R$", produto.valor.toFixed(2));
+    });
+}
+
+// ======================================
+// ATUALIZAR VALOR
+// ======================================
+
+function atualizarValor(codigoProduto, novoValor) {
+
+    if (novoValor &lt; 0) {
+        throw new Error("Valor deve ser maior ou igual a zero");
+    }
+
+    const produto = produtos.find(
+        prod =&gt; prod.codigo === codigoProduto
+    );
+
+    if (produto) {
+        produto.valor = novoValor;
+        console.log("Valor atualizado com sucesso!");
+    } else {
+        throw new Error("Produto não encontrado");
+    }
+}
+
+// ======================================
+// ATUALIZAR QUANTIDADE
+// ======================================
+
+function atualizarQuantidade(codigoProduto, novaQuantidade) {
+
+    if (novaQuantidade &lt; 0) {
+        throw new Error("Quantidade não pode ser negativa");
+    }
+
+    const produto = produtos.find(
+        prod =&gt; prod.codigo === codigoProduto
+    );
+
+    if (produto) {
+        produto.quantidade = novaQuantidade;
+        console.log("Quantidade atualizada com sucesso!");
+    } else {
+        throw new Error("Produto não encontrado");
+    }
+}
+
+// ======================================
+// REMOVER PRODUTO
+// ======================================
+
+function removerProduto(codigoProduto) {
+
+    const indice = produtos.findIndex(
+        prod =&gt; prod.codigo === codigoProduto
+    );
+
+    if (indice !== -1) {
+        produtos.splice(indice, 1);
+        console.log("Produto removido com sucesso!");
+    } else {
+        throw new Error("Produto não encontrado");
+    }
+}
+
+// ======================================
+// CALCULAR VALOR TOTAL DO ESTOQUE
+// ======================================
+
+function calcularEstoque() {
+
+    const total = produtos.reduce((soma, produto) =&gt; {
+        return soma + (produto.quantidade * produto.valor);
+    }, 0);
+
+    console.log("Valor total do estoque: R$", total.toFixed(2));
+
+    return total;
+}
+
+// ======================================
+// VERIFICAR ESTOQUE BAIXO
+// ======================================
+
+function verificarEstoqueBaixo() {
+
+    console.log("===== PRODUTOS COM ESTOQUE BAIXO =====");
+
+    const baixo = produtos.filter(
+        produto =&gt; produto.quantidade &lt; 5
+    );
+
+    if (baixo.length === 0) {
+        console.log("Nenhum produto com estoque baixo.");
+        return;
+    }
+
+    baixo.forEach(produto =&gt; {
+        console.log(
+            produto.nome + " - Quantidade: " + produto.quantidade
+        );
+    });
+}
+
+// ======================================
+// TESTANDO O SISTEMA
+// ======================================
+
+cadastrarProduto("Cadeira Gamer", 12, 10, 699.00);
+cadastrarProduto("Teclado Mecânico", 13, 15, 250.00);
+cadastrarProduto("Mouse Gamer", 14, 3, 120.00);
+cadastrarProduto("Monitor", 15, 8, 850.00);
+
+// Listar produtos
+listarProdutos();
+
+// Atualizar preço
+atualizarValor(12, 750.00);
+
+// Atualizar quantidade
+atualizarQuantidade(13, 20);
+
+// Remover produto
+// removerProduto(14);
+
+// Calcular valor total
+calcularEstoque();
+
+// Verificar estoque baixo
+verificarEstoqueBaixo();
+
+// Listar novamente
+listarProdutos();
+</code></pre>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+</body>
+</html>
