@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal de Entrega de Avaliações</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: #f3f4f6;
+      color: #1f2937;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 680px;
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      padding: 30px;
+    }
+
+    header {
+      border-bottom: 2px solid #e5e7eb;
+      padding-bottom: 16px;
+      margin-bottom: 24px;
+    }
+
+    header h1 {
+      font-size: 1.6rem;
+      color: #111827;
+    }
+
+    header p {
+      font-size: 0.95rem;
+      color: #6b7280;
+      margin-top: 4px;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 6px;
+      font-size: 0.9rem;
+    }
+
+    input[type="text"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      transition: border-color 0.2s;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: #2563eb;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .drop-zone {
+      border: 2px dashed #93c5fd;
+      background-color: #eff6ff;
+      border-radius: 10px;
+      padding: 28px;
+      text-align: center;
+      cursor: pointer;
+      transition: background-color 0.2s, border-color 0.2s;
+    }
+
+    .drop-zone.dragover {
+      background-color: #dbeafe;
+      border-color: #2563eb;
+    }
+
+    .drop-zone p {
+      color: #1e40af;
+      font-weight: 500;
+    }
+
+    .drop-zone span {
+      display: block;
+      font-size: 0.8rem;
+      color: #6b7280;
+      margin-top: 6px;
+    }
+
+    .file-info {
+      margin-top: 10px;
+      font-size: 0.9rem;
+      color: #059669;
+      font-weight: 600;
+      display: none;
+    }
+
+    .error-msg {
+      color: #dc2626;
+      font-size: 0.85rem;
+      margin-top: 6px;
+      display: none;
+    }
+
+    button.btn-submit {
+      width: 100%;
+      background-color: #2563eb;
+      color: #ffffff;
+      border: none;
+      padding: 14px;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      margin-top: 10px;
+    }
+
+    button.btn-submit:hover {
+      background-color: #1d4ed8;
+    }
+
+    .history {
+      margin-top: 32px;
+      border-top: 2px solid #e5e7eb;
+      padding-top: 20px;
+    }
+
+    .history h2 {
+      font-size: 1.2rem;
+      margin-bottom: 12px;
+    }
+
+    .history-item {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.9rem;
+    }
+
+    .badge {
+      background: #dcfce7;
+      color: #166534;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.8rem;
+    }
+
+    @media (max-width: 540px) {
+      .row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <h1>Entrega de Avaliações</h1>
+      <p>Preencha os dados abaixo e anexe o arquivo da sua atividade.</p>
+    </header>
+
+    <form id="avaliacaoForm">
+      <div class="row">
+        <div class="form-group">
+          <label for="nome">Nome Completo *</label>
+          <input type="text" id="nome" placeholder="Ex: Ana Clara Souza" required>
+        </div>
+
+        <div class="form-group">
+          <label for="matricula">Matrícula / RA *</label>
+          <input type="text" id="matricula" placeholder="Ex: 20260145" required>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="form-group">
+          <label for="disciplina">Disciplina *</label>
+          <select id="disciplina" required>
+            <option value="">Selecione...</option>
+            <option value="Matemática">Matemática</option>
+            <option value="Português">Português</option>
+            <option value="Programação Web">Programação Web</option>
+            <option value="Banco de Dados">Banco de Dados</option>
+            <option value="Física">Física</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="tipo">Tipo de Avaliação *</label>
+          <select id="tipo" required>
+            <option value="">Selecione...</option>
+            <option value="Prova Bimestral">Prova Bimestral</option>
+            <option value="Trabalho em Grupo">Trabalho em Grupo</option>
+            <option value="Lista de Exercícios">Lista de Exercícios</option>
+            <option value="Projeto Prático">Projeto Prático</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Arquivo da Avaliação *</label>
+        <div class="drop-zone" id="dropZone">
+          <p>Clique para selecionar ou arraste o arquivo aqui</p>
+          <span>Formatos aceitos: PDF, DOCX, ZIP (Máx. 25 MB)</span>
+          <input type="file" id="arquivo" accept=".pdf,.doc,.docx,.zip" hidden>
+        </div>
+        <div class="file-info" id="fileInfo"></div>
+        <div class="error-msg" id="fileError"></div>
+      </div>
+
+      <div class="form-group">
+        <label for="observacoes">Observações (opcional)</label>
+        <textarea id="observacoes" rows="3" placeholder="Alguma informação adicional para o professor..."></textarea>
+      </div>
+
+      <button type="submit" class="btn-submit">Enviar Avaliação</button>
+    </form>
+
+    <div class="history">
+      <h2>Entregas Realizadas</h2>
+      <div id="listaEntregas">
+        <p style="color: #6b7280; font-size: 0.9rem;">Nenhuma entrega registrada ainda.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('arquivo');
+    const fileInfo = document.getElementById('fileInfo');
+    const fileError = document.getElementById('fileError');
+    const form = document.getElementById('avaliacaoForm');
+    const listaEntregas = document.getElementById('listaEntregas');
+
+    let arquivoSelecionado = null;
+    const MAX_SIZE = 25 * 1024 * 1024; // 25 MB
+    const EXTENSOES_PERMITIDAS = ['pdf', 'doc', 'docx', 'zip'];
+
+    // Eventos de clique e Drag & Drop
+    dropZone.addEventListener('click', () => fileInput.click());
+
+    dropZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropZone.classList.add('dragover');
+    });
+
+    dropZone.addEventListener('dragleave', () => {
+      dropZone.classList.remove('dragover');
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.classList.remove('dragover');
+      if (e.dataTransfer.files.length) {
+        validarArquivo(e.dataTransfer.files[0]);
+      }
+    });
+
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files.length) {
+        validarArquivo(fileInput.files[0]);
+      }
+    });
+
+    function validarArquivo(file) {
+      fileError.style.display = 'none';
+      fileInfo.style.display = 'none';
+
+      const extensao = file.name.split('.').pop().toLowerCase();
+
+      if (!EXTENSOES_PERMITIDAS.includes(extensao)) {
+        fileError.textContent = 'Formato inválido! Envie apenas PDF, DOC, DOCX ou ZIP.';
+        fileError.style.display = 'block';
+        arquivoSelecionado = null;
+        return;
+      }
+
+      if (file.size > MAX_SIZE) {
+        fileError.textContent = 'O arquivo excede o limite de 25 MB.';
+        fileError.style.display = 'block';
+        arquivoSelecionado = null;
+        return;
+      }
+
+      arquivoSelecionado = file;
+      const tamanhoMB = (file.size / (1024 * 1024)).toFixed(2);
+      fileInfo.textContent = `Arquivo pronto: ${file.name} (${tamanhoMB} MB)`;
+      fileInfo.style.display = 'block';
+    }
+
+    // Carregar histórico salvo no navegador
+    function carregarHistorico() {
+      const entregas = JSON.parse(localStorage.getItem('entregas_avaliacoes')) || [];
+      if (entregas.length === 0) {
+        listaEntregas.innerHTML = '<p style="color: #6b7280; font-size: 0.9rem;">Nenhuma entrega registrada ainda.</p>';
+        return;
+      }
+
+      listaEntregas.innerHTML = entregas.map(item => `
+        <div class="history-item">
+          <div>
+            <strong>${item.disciplina} - ${item.tipo}</strong><br>
+            <span style="color: #6b7280; font-size: 0.85rem;">
+              ${item.nome} (RA: ${item.matricula}) • Arquivo: ${item.arquivo}
+            </span>
+          </div>
+          <div style="text-align: right;">
+            <span class="badge">Protocolo #${item.protocolo}</span><br>
+            <small style="color: #6b7280;">${item.data}</small>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Envio do formulário
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      if (!arquivoSelecionado) {
+        fileError.textContent = 'Por favor, anexe um arquivo válido antes de enviar.';
+        fileError.style.display = 'block';
+        return;
+      }
+
+      const protocolo = Math.floor(100000 + Math.random() * 900000);
+      const novaEntrega = {
+        protocolo,
+        nome: document.getElementById('nome').value.trim(),
+        matricula: document.getElementById('matricula').value.trim(),
+        disciplina: document.getElementById('disciplina').value,
+        tipo: document.getElementById('tipo').value,
+        arquivo: arquivoSelecionado.name,
+        data: new Date().toLocaleString('pt-BR')
+      };
+
+      const entregas = JSON.parse(localStorage.getItem('entregas_avaliacoes')) || [];
+      entregas.unshift(novaEntrega);
+      localStorage.setItem('entregas_avaliacoes', JSON.stringify(entregas));
+
+      alert(`Avaliação enviada com sucesso!\nNúmero de Protocolo: #${protocolo}`);
+
+      form.reset();
+      arquivoSelecionado = null;
+      fileInfo.style.display = 'none';
+      carregarHistorico();
+    });
+
+    carregarHistorico();
+  </script>
+</body>
+</html>
