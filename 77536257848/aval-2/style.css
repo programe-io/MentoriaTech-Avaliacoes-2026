@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Pinturas.">
+  <title>Arte Macabra | Sombras e Expressão</title>
+
+  <style>
+    :root {
+      --fundo: #101010;
+      --painel: #1c1b1b;
+      --preto: #080808;
+      --vermelho: #a52222;
+      --vermelho-claro: #d14a4a;
+      --texto: #e4ded8;
+      --cinza: #aaa09a;
+      --borda: #383030;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--fundo);
+      color: var(--texto);
+      font-family: Georgia, "Times New Roman", serif;
+      line-height: 1.7;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button {
+      font: inherit;
+      cursor: pointer;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    .header {
+      text-align: center;
+      padding: 65px 20px 0;
+      background: radial-gradient(
+        ellipse at top,
+        #351010 0%,
+        #080808 68%
+      );
+      border-bottom: 2px solid #511515;
+    }
+
+    .ornamento {
+      color: var(--vermelho-claro);
+      font-size: 24px;
+      letter-spacing: 12px;
+      margin-bottom: 12px;
+    }
+
+    .header h1 {
+      color: #c33232;
+      font-size: clamp(2.7rem, 8vw, 5rem);
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      line-height: 1.15;
+      text-shadow: 0 4px 25px #65000080;
+    }
+
+    .descricao {
+      color: #c5b8b0;
+      font-style: italic;
+      margin: 20px auto 45px;
+      max-width: 650px;
+    }
+
+    .nav {
+      border-top: 1px solid #382020;
+      background: #090909cc;
+    }
+
+    .nav ul {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      list-style: none;
+      gap: 6px 30px;
+      padding: 18px;
+    }
+
+    .nav a {
+      color: #ddd;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: color .3s;
+    }
+
+    .nav a:hover,
+    .nav a:focus-visible {
+      color: var(--vermelho-claro);
+    }
+
+    .hero {
+      min-height: 330px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 65px 20px;
+      background:
+        linear-gradient(#08080899, #080808e8),
+        url("https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1600&q=85")
+        center/cover;
+    }
+
+    .hero h2 {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      color: #f0e7de;
+      margin-bottom: 15px;
+    }
+
+    .hero p {
+      color: #d0c2bb;
+      max-width: 600px;
+      margin: auto;
+    }
+
+    .container {
+      max-width: 1180px;
+      margin: 55px auto;
+      padding: 0 20px;
+      display: flex;
+      align-items: flex-start;
+      gap: 35px;
+    }
+
+    .conteudo-principal {
+      flex: 3;
+      min-width: 0;
+    }
+
+    .barra-lateral {
+      flex: 1;
+      min-width: 245px;
+    }
+
+    .titulo-secao {
+      font-size: 1.9rem;
+      color: #eee3dc;
+      border-bottom: 1px solid #592222;
+      padding-bottom: 13px;
+      margin-bottom: 30px;
+    }
+
+    .titulo-secao::before {
+      content: "✦ ";
+      color: var(--vermelho);
+    }
+
+    .post {
+      background: var(--painel);
+      border: 1px solid #302727;
+      border-left: 4px solid var(--vermelho);
+      margin-bottom: 30px;
+      overflow: hidden;
+      transition: transform .3s, border-color .3s;
+    }
+
+    .post:hover {
+      transform: translateY(-3px);
+      border-color: #733030;
+    }
+
+    .post img {
+      width: 100%;
+      height: 300px;
+      object-fit: cover;
+      background: #282222;
+    }
+
+    .post-conteudo {
+      padding: 26px;
+    }
+
+    .post h3 {
+      font-size: 1.55rem;
+      line-height: 1.35;
+      color: #f0e8e3;
+      margin-bottom: 10px;
+    }
+
+    .data-post {
+      color: #a79890;
+      font-size: .85rem;
+      margin-bottom: 18px;
+    }
+
+    .post p {
+      margin-bottom: 15px;
+    }
+
+    .texto-extra[hidden] {
+      display: none;
+    }
+
+    .leia-mais {
+      background: transparent;
+      color: #e05a5a;
+      border: 1px solid #7a2828;
+      padding: 9px 18px;
+      margin-top: 7px;
+      transition: background .3s;
+    }
+
+    .leia-mais:hover {
+      background: #632020;
+      color: white;
+    }
+
+    .widget {
+      background: var(--painel);
+      border: 1px solid var(--borda);
+      padding: 25px;
+      margin-bottom: 25px;
+    }
+
+    .widget h3 {
+      color: #d04444;
+      font-size: 1.25rem;
+      border-bottom: 1px solid #493030;
+      padding-bottom: 12px;
+      margin-bottom: 15px;
+    }
+
+    .widget ul {
+      list-style: none;
+    }
+
+    .widget li {
+      padding: 9px 0;
+      border-bottom: 1px solid #302828;
+    }
+
+    .widget a:hover {
+      color: var(--vermelho-claro);
+    }
+
+    .citacao {
+      color: #b7aaa3;
+      font-style: italic;
+      text-align: center;
+      font-size: 1.1rem;
+    }
+
+    .galeria-secao {
+      max-width: 1180px;
+      padding: 35px 20px 65px;
+      margin: auto;
+    }
+
+    .filtros {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 30px;
+    }
+
+    .filtro {
+      background: #201a1a;
+      color: #d4c6c0;
+      border: 1px solid #633030;
+      padding: 9px 18px;
+    }
+
+    .filtro:hover,
+    .filtro.ativo {
+      background: #922828;
+      color: white;
+    }
+
+    .galeria {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 20px;
+    }
+
+    .item-galeria {
+      background: #201c1c;
+      border: 1px solid #423030;
+      overflow: hidden;
+      transition: transform .3s;
+    }
+
+    .item-galeria:hover {
+      transform: translateY(-5px);
+    }
+
+    .item-galeria img {
+      width: 100%;
+      height: 235px;
+      object-fit: cover;
+      transition: transform .4s;
+    }
+
+    .item-galeria:hover img {
+      transform: scale(1.04);
+    }
+
+    .legenda {
+      padding: 17px;
+    }
+
+    .legenda h3 {
+      color: #e5d6cf;
+      font-size: 1.1rem;
+    }
+
+    .legenda p {
+      color: #a99b94;
+      font-size: .85rem;
+    }
+
+    .sobre-secao {
+      background: #191414;
+      border-top: 1px solid #552525;
+      padding: 65px 20px;
+      text-align: center;
+    }
+
+    .sobre-secao .interno {
+      max-width: 780px;
+      margin: auto;
+    }
+
+    .sobre-secao h2 {
+      color: #d14949;
+      font-size: 2rem;
+      margin-bottom: 20px;
+    }
+
+    .footer {
+      background: #050505;
+      border-top: 1px solid #392020;
+      padding: 30px 20px;
+      text-align: center;
+      color: #888;
+      font-size: .9rem;
+    }
+
+    .footer span {
+      color: #c44343;
+    }
+
+    @media (max-width: 850px) {
+      .container {
+        flex-direction: column;
+      }
+
+      .conteudo-principal,
+      .barra-lateral {
+        width: 100%;
+      }
+
+      .galeria {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 520px) {
+      .header {
+        padding-top: 40px;
+      }
+
+      .nav ul {
+        gap: 12px 18px;
+      }
+
+      .nav a {
+        font-size: .8rem;
+      }
+
+      .hero {
+        min-height: 270px;
+      }
+
+      .post img {
+        height: 220px;
+      }
+
+      .post-conteudo {
+        padding: 20px;
+      }
+
+      .galeria {
+        grid-template-columns: 1fr;
+      }
+
+      .item-galeria img {
+        height: 260px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      *,
+      *::before,
+      *::after {
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="header" id="inicio">
+    <div class="ornamento">✦ ✧ ✦</div>
+    <h1>Pinturas</h1>
+    <p class="descricao">
+      Artes que aprecio.
+    </p>
+
+    <nav class="nav" aria-label="Navegação principal">
+      <ul>
+        <li><a href="#inicio">Início</a></li>
+        <li><a href="#artigos">Artigos</a></li>
+        <li><a href="#galeria">Galeria</a></li>
+        <li><a href="#sobre">Sobre</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <section class="hero" aria-labelledby="hero-titulo">
+    <div>
+      <h2 id="hero-titulo">Pinturas atemporais.</h2>
+      <p>
+        Uma jornada pelos símbolos e
+        expressões da história da arte.
+      </p>
+    </div>
+  </section>
+
+  <div class="container">
+
+    <main class="conteudo-principal" id="artigos">
+      <h2 class="titulo-secao">Artigos Recentes</h2>
+
+      <article class="post">
+        <img
+          src="https://share.google/NqubajUienPVqFQtJ"
+          alt="Monalisa"
+          loading="lazy"
+        >
+      </article>
+
+      <article class="post">
+        <img
+          src="https://share.google/mCijhVeelNniFY0kP"
+          alt="Abaporu"
+          loading="lazy"
+        >
+      </article>
+
+      <article class="post">
+        <img
+          src="https://share.google/NqubajUienPVqFQtJ"
+          alt="Pintura Sacra"
+          loading="lazy"
+        >
+      </article>
+
+      <article class="post">
+        <img
+          src="https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=1000&q=85"
+          alt="Pintura clássica exposta em uma galeria"
+          loading="lazy"
+        >
+      </article>
+
+      <article class="post">
+        <img
+          src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1000&q=85"
+          alt="Paisagem atmosférica de natureza"
+          loading="lazy"
+        >
+      </article>
+
+    </main>
+
+    <aside class="barra-lateral">
+      <section class="widget">
+        <h3>Sobre o Blog</h3>
+        <p>
+          Um espaço dedicado à beleza encontrada
+          na arte.
+        </p>
+      </section>
+
+      <section class="widget">
+        <h3>Categorias</h3>
+        <ul>
+          <li><a href="#artigos">Pintura Clássica</a></li>
+          <li><a href="#artigos">Brasileira</a></li>
+          <li><a href="#artigos">Sagrada</a></li>
+          <li><a href="#galeria">Arte e Simbolismo</a></li>
+          <li><a href="#artigos">Artistas Contemporâneos</a></li>
+        </ul>
+      </section>
+
+  </div>
+
+  
+        
