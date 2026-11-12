@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet">
+</head>
+<body>
+  ATIVIDADE 2 — AUTOMAÇÃO DE VENDAS | CAMPO & CIA
+Instalação: pip install pandas openpyxl
+Execução: python processar_vendas.py
+"""
+from pathlib import Path
+import pandas as pd
+
+PASTA_DADOS = Path("arquivos_vendas")
+PASTA_RESULTADO = Path("relatorios")
+PASTA_RESULTADO.mkdir(exist_ok=True)
+
+def carregar(caminho):
+    if caminho.suffix.lower() == ".csv":
+        return pd.read_csv(caminho, sep=";", encoding="utf-8-sig")
+    return pd.read_excel(caminho)
+
+def processar():
+    fontes = [p for p in PASTA_DADOS.glob("*")
+              if p.suffix.lower() in (".csv", ".xlsx", ".xls")]
+    if not fontes:
+        print("Não há planilhas na pasta arquivos_vendas.")
+        return
+
+    partes = []
+    for fonte in fontes:
+        tabela = carregar(fonte)
+        tabela.columns = [str(col).strip().lower() for col in tabela.columns]
+        tabela["arquivo_importado"] = fonte.name
+        partes.append(tabela)
+        print(f"Importado {fonte.name}: {len(tabela)} linhas")
+
+    vendas = pd.concat(partes, ignore_index=True)
+
+    # Normaliza campos textuais
+    for coluna in ["numero_venda", "unidade", "vendedor", "codigo", "produto"]:
+        if coluna in vendas:
+            vendas[coluna] = vendas[coluna].astype("string").str.strip()
+
+    # Converte data e números
+    if "data" in vendas:
+        vendas["data"] = pd.to_datetime(vendas["data"], dayfirst=True, errors="coerce")
+    for coluna in ["unidades", "valor"]:
+        if coluna in vendas:
+            vendas[coluna] = pd.to_numeric(vendas[coluna], errors="coerce")
+
+    # Mantém apenas um registro por número de venda
+    if "numero_venda" in vendas:
+        quantidade_antes = len(vendas)
+        vendas = vendas.drop_duplicates(subset=["numero_venda"], keep="first")
+        print("Duplicatas eliminadas:", quantidade_antes - len(vendas))
+
+    # Preenche valores que faltam
+    for coluna in ["unidade", "vendedor", "codigo", "produto"]:
+        if coluna in vendas:
+            vendas[coluna] = vendas[coluna].fillna("Não informado")
+            vendas[coluna] = vendas[coluna].replace("", "Não informado")
+    if "unidades" in vendas:
+        vendas["unidades"] = vendas["unidades"].fillna(0)
+    if "valor" in vendas:
+        vendas["valor"] = vendas["valor"].fillna(0)
+
+    # Exclui linhas sem identificador ou data reconhecida
+    if "numero_venda" in vendas:
+        vendas = vendas[vendas["numero_venda"].notna()]
+    if "data" in vendas:
+        vendas = vendas[vendas["data"].notna()]
+
+    vendas = vendas.sort_values("data")
+    arquivo_detalhado = PASTA_RESULTADO / "vendas_tratadas.xlsx"
+    vendas.to_excel(arquivo_detalhado, index=False)
+
+    # Resumo por unidade
+    if {"unidade", "valor"}.issubset(vendas.columns):
+        resumo = vendas.groupby("unidade", as_index=False)["valor"].sum()
+        resumo = resumo.rename(columns={"valor": "faturamento_total"})
+        resumo.to_excel(PASTA_RESULTADO / "resumo_por_unidade.xlsx", index=False)
+
+    print("\\nProcessamento finalizado.")
+    print("Vendas válidas:", len(vendas))
+    print("Faturamento total: R$", round(vendas["valor"].sum(), 2))
+    print("Arquivos salvos na pasta:", PASTA_RESULTADO)
+
+if __name__ == "__main__":
+    processar()
+
+  <script src="script.js"></script>
+  
+</body>
+</html>
