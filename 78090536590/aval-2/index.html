@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>MiniFeed</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/script.js"></script>
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+    <header>
+        <div class="header-content">
+            <h1>MiniFeed</h1>
+            <nav>
+                <a href="#">Início</a>
+                <a href="#">Perfil</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+
+        <section class="new-post">
+            <div class="user">
+                <div class="avatar">B</div>
+                <div>
+                    <strong>Bruna</strong>
+                    <span>Compartilhe suas novidades com os amigos!</span>
+                </div>
+            </div>
+            <button>Publicar</button>
+        </section>
+
+        <article class="post">
+            <div class="post-header">
+                <div class="avatar">D</div>
+                <div>
+                    <strong>Dudu</strong>
+                    <span>Há 15 minutos</span>
+                </div>
+            </div>
+            <div class="post-test">
+                Aproveitando uma tarde tranquila e registrando bons momentos! 🌅📸
+            </div>
+            <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=800" alt="Paisagem ao ar livre">
+            <div class="post-actions">
+                <button>Curtir</button>
+                <button>Comentar</button>
+            </div>
+        </article>
+
+        <article class="post">
+            <div class="post-header">
+                <div class="avatar">L</div>
+                <div>
+                    <strong>Lira</strong>
+                    <span>Há 10 minutos</span>
+                </div>
+            </div>
+            <div class="post-test">
+                Um dia especial merece uma foto especial! ✨💖
+            </div>
+            <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=800" alt="Retrato de uma jovem">
+            <div class="post-actions">
+                <button>Curtir</button>
+                <button>Comentar</button>
+            </div>
+        </article>
+
+        <article class="post">
+            <div class="post-header">
+                <div class="avatar">C</div>
+                <div>
+                    <strong>Carlos</strong>
+                    <span>Há 17 minutos</span>
+                </div>
+            </div>
+            <div class="post-test">
+                Mais um treino concluído com sucesso! A evolução não para! ⚽🔥
+            </div>
+            <img src="https://images.unsplash.com/photo-1517466787929-bc90951d0974?w=800" alt="Jogadores de futebol">
+            <div class="post-actions">
+                <button>Curtir</button>
+                <button>Comentar</button>
+            </div>
+        </article>
+
+        <article class="post">
+            <div class="post-header">
+                <div class="avatar">J</div>
+                <div>
+                    <strong>João</strong>
+                    <span>Há 10 horas</span>
+                </div>
+            </div>
+            <div class="post-test">
+                Música boa, amigos por perto e muita diversão! 🎶😎
+            </div>
+            <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800" alt="Festival de música">
+            <div class="post-actions">
+                <button>Curtir</button>
+                <button>Comentar</button>
+            </div>
+        </article>
+
+        <article class="post">
+            <div class="post-header">
+                <div class="avatar">P</div>
+                <div>
+                    <strong>Pedro</strong>
+                    <span>Há 1 dia</span>
+                </div>
+            </div>
+            <div class="post-test">
+                A amizade transforma momentos simples em grandes lembranças! ❤️🤝
+            </div>
+            <img src="https://images.unsplash.com/photo-1528605248644-14dd04022da1?w=800" alt="Amigos reunidos">
+            <div class="post-actions">
+                <button>Curtir</button>
+                <button>Comentar</button>
+            </div>
+        </article>
+
+    </main>
+
+    <footer>
+        <p>MiniFeed - Todos os Direitos Reservados - 2026</p>
+    </footer>
+
+<script>
+    const botoesCurtir = document.querySelectorAll(".post-actions button:first-child");
+
+    botoesCurtir.forEach(botao => {
+
+        let curtidas = 0;
+        let curtido = false;
+
+        botao.innerText = "Curtir (0)";
+
+        botao.addEventListener("click", function() {
+
+            if (curtido) {
+
+                curtidas--;
+                curtido = false;
+
+                botao.innerText = `Curtir (${curtidas})`;
+                botao.style.backgroundColor = "#2563eb";
+
+            } else {
+
+                curtidas++;
+                curtido = true;
+
+                botao.innerText = `Curtido (${curtidas})`;
+                botao.style.backgroundColor = "#f97316";
+
+            }
+
+        });
+
+    });
+
+    const botoesComentar = document.querySelectorAll(".post-actions button:last-child");
+
+    botoesComentar.forEach(botao => {
+
+        botao.addEventListener("click", function() {
+
+            const post = botao.closest(".post");
+
+            let areaComentarios = post.querySelector(".comentarios");
+
+            if (!areaComentarios) {
+
+                areaComentarios = document.createElement("div");
+                areaComentarios.classList.add("comentarios");
+
+                areaComentarios.innerHTML = `
+                    <input type="text" placeholder="Escreva um comentário...">
+                    <button class="enviar-comentario">Enviar</button>
+                    <div class="lista-comentarios"></div>
+                `;
+
+                post.appendChild(areaComentarios);
+
+                const input = areaComentarios.querySelector("input");
+                const enviar = areaComentarios.querySelector(".enviar-comentario");
+                const lista = areaComentarios.querySelector(".lista-comentarios");
+
+                enviar.addEventListener("click", function() {
+
+                    if (input.value.trim() !== "") {
+
+                        const comentario = document.createElement("p");
+
+                        comentario.innerText = input.value;
+
+                        lista.appendChild(comentario);
+
+                        input.value = "";
+
+                    }
+
+                });
+
+                input.addEventListener("keypress", function(event) {
+
+                    if (event.key === "Enter") {
+                        enviar.click();
+                    }
+
+                });
+
+            } else {
+
+                areaComentarios.style.display =
+                    areaComentarios.style.display === "none" ? "block" : "none";
+
+            }
+
+        });
+
+    });
+
+</script>
+</body>
+</html>
