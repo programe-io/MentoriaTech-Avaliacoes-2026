@@ -1,91 +1,74 @@
-let publicacoes = [];
+const campo = document.getElementById("texto");
+const mensagens = document.getElementById("mensagens");
 
-function publicar() {
-    const usuario = document.getElementById("usuario").value.trim();
-    const texto = document.getElementById("texto").value.trim();
+function adicionarMensagem(texto, classe) {
+    const mensagem = document.createElement("div");
 
-    if (!usuario || !texto) {
-        alert("Preencha seu nome e sua publicação!");
-        return;
+    mensagem.className = "mensagem " + classe;
+    mensagem.textContent = texto;
+
+    mensagens.appendChild(mensagem);
+
+    mensagens.scrollTop = mensagens.scrollHeight;
+}
+
+function responder(texto) {
+    const mensagem = texto.toLowerCase();
+
+    if (mensagem.includes("oi") || mensagem.includes("olá")) {
+        return "Olá! 😃 Que bom conversar com você!";
     }
 
-    publicacoes.unshift({
-        usuario,
-        texto,
-        curtidas: 0,
-        comentarios: []
-    });
+    if (mensagem.includes("nome")) {
+        return "Meu nome é CyberBot! 🤖";
+    }
 
-    document.getElementById("usuario").value = "";
-    document.getElementById("texto").value = "";
+    if (mensagem.includes("tudo bem")) {
+        return "Estou funcionando perfeitamente! E você?";
+    }
 
-    atualizarFeed();
+    if (mensagem.includes("hora")) {
+        return "Agora são " +
+            new Date().toLocaleTimeString("pt-BR");
+    }
+
+    if (mensagem.includes("data")) {
+        return "Hoje é " +
+            new Date().toLocaleDateString("pt-BR");
+    }
+
+    if (mensagem.includes("ajuda")) {
+        return "Você pode perguntar meu nome, a hora, a data ou dizer oi!";
+    }
+
+    if (mensagem.includes("obrigado")) {
+        return "Por nada! Sempre que precisar, estarei aqui! ❤️";
+    }
+
+    if (mensagem.includes("tchau")) {
+        return "Até logo! Foi ótimo conversar com você! 👋";
+    }
+
+    return "Interessante! 😎 Ainda estou aprendendo a responder isso.";
 }
 
-function curtir(indice) {
-    publicacoes[indice].curtidas++;
-    atualizarFeed();
-}
-
-function comentar(indice) {
-    const campo = document.getElementById("comentario-" + indice);
+function enviar() {
     const texto = campo.value.trim();
 
     if (!texto) return;
 
-    publicacoes[indice].comentarios.push(texto);
+    adicionarMensagem(texto, "usuario");
 
-    atualizarFeed();
+    campo.value = "";
+
+    setTimeout(() => {
+        const resposta = responder(texto);
+        adicionarMensagem(resposta, "bot");
+    }, 500);
 }
 
-function atualizarFeed() {
-    const feed = document.getElementById("publicacoes");
-
-    feed.innerHTML = "";
-
-    publicacoes.forEach((post, indice) => {
-        const card = document.createElement("article");
-        card.className = "publicacao";
-
-        const titulo = document.createElement("h3");
-        titulo.textContent = "👤 " + post.usuario;
-
-        const texto = document.createElement("p");
-        texto.textContent = post.texto;
-
-        const acoes = document.createElement("div");
-        acoes.className = "acoes";
-
-        const botaoCurtir = document.createElement("button");
-        botaoCurtir.textContent = "❤️ Curtir";
-        botaoCurtir.onclick = () => curtir(indice);
-
-        const contador = document.createElement("span");
-        contador.textContent = post.curtidas + " curtidas";
-
-        acoes.append(botaoCurtir, contador);
-
-        const comentarios = document.createElement("div");
-        comentarios.className = "comentarios";
-
-        post.comentarios.forEach(comentario => {
-            const item = document.createElement("div");
-            item.className = "comentario";
-            item.textContent = "💬 " + comentario;
-            comentarios.appendChild(item);
-        });
-
-        const campo = document.createElement("input");
-        campo.id = "comentario-" + indice;
-        campo.placeholder = "Escreva um comentário...";
-
-        const botaoComentar = document.createElement("button");
-        botaoComentar.textContent = "Comentar";
-        botaoComentar.onclick = () => comentar(indice);
-
-        comentarios.append(campo, botaoComentar);
-
-        card.append(titulo, texto, acoes, comentarios);
-        feed.appendChild(card);
-    });
-}
+campo.addEventListener("keydown", function(event) {
+    if (event.key === "Enter") {
+        enviar();
+    }
+});
