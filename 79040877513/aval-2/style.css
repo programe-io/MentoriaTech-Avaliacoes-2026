@@ -1,0 +1,221 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Feed da maria da cruz</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #ff7aff;
+    color: rgb(255, 29, 180);
+}
+
+header {
+    background: #ff00c8;
+    padding: 20px;
+    text-align: center;
+    border-bottom: 2px solid #e08edc;
+}
+
+header h1 {
+    color: #ee33b0;
+}
+
+.container {
+    max-width: 600px;
+    margin: 25px auto;
+    padding: 15px;
+}
+
+.perfil {
+    background: #ffc2f7;
+    padding: 25px;
+    border-radius: 15px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.foto {
+    width: 100px;
+    height: 100px;
+    background: hsl(268, 100%, 75%);
+    color: #cc9fff;
+    border-radius: 50%;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 35px;
+    font-weight: bold;
+}
+
+.perfil h2 {
+    color: #d1a0ff;
+}
+
+.card {
+    background: #ff41c6;
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 20px;
+}
+
+.card h3 {
+    color: #752a7c;
+}
+
+.info {
+    background: hsl(210, 23%, 95%);
+    padding: 12px;
+    border-radius: 10px;
+    margin: 10px 0;
+}
+
+button {
+    background: #bd76d3;
+    color: #e4a8ff;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #5900ff;
+}
+
+.curtida {
+    margin-top: 15px;
+}
+
+footer {
+    text-align: center;
+    padding: 20px;
+    color: #aaa;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>🌐 Meu Feed</h1>
+    <p>Bem-vindo ao meu mundo roxo!</p>
+</header>
+
+<div class="container">
+
+    <!-- PERFIL -->
+    <section class="perfil">
+
+        <div class="foto">MC</div>
+
+        <h2>Maria da cruz</h2>
+
+        <p>🎓 Estudante do Ensino Médio</p>
+        <p>💻 Curso de Desenvolvimento de Sistemas</p>
+
+        <button onclick="mostrarSobre()">
+            Ver informações
+        </button>
+
+    </section>
+
+    <!-- SOBRE MIM -->
+    <section class="card" id="sobre" style="display:none">
+
+        <h3>👤 Sobre mim</h3>
+
+        <div class="info">
+            <strong>Nome:</strong>
+            <p>maria da cruz</p>
+        </div>
+
+        <div class="info">
+            <strong>Escolaridade:</strong>
+            <p>Estudante do Ensino Médio</p>
+        </div>
+
+        <div class="info">
+            <strong>Curso:</strong>
+            <p>Desenvolvimento de Sistemas</p>
+        </div>
+
+        <div class="info">
+            <strong>Objetivo:</strong>
+            <p>
+               Passar no ENEM e conseguir me formar
+            </p>
+        </div>
+
+    </section>
+
+    <!-- PUBLICAÇÃO -->
+    <section class="card">
+
+        <h3> Minha publicação</h3>
+
+        <p>
+            OII meu nome é maria da cruz.
+            Sou estudante do Ensino Médio e estou
+            fazendo o curso de Desenvolvimento de Sistemas, 
+            porém quero ser médica algum dia.
+        </p>
+
+        <p>
+            Estou aprendendo programação
+        </p>
+
+        <div class="curtida">
+            <button onclick="curtir()">
+                ❤️ Curtir
+            </button>
+
+            <span id="contador">0 curtidas</span>
+        </div>
+
+    </section>
+
+</div>
+
+<footer>
+    <p>© 2026 - Feed da Maria</p>
+    <p>Desenvolvido com HTML, CSS e JavaScript 💻</p>
+</footer>
+
+<script>
+
+let curtidas = 0;
+
+function mostrarSobre() {
+    let sobre = document.getElementById("sobre");
+
+    if (sobre.style.display === "none") {
+        sobre.style.display = "block";
+        sobre.scrollIntoView({behavior: "smooth"});
+    } else {
+        sobre.style.display = "none";
+    }
+}
+
+function curtir() {
+    curtidas++;
+
+    document.getElementById("contador").innerText =
+        curtidas + (curtidas === 1 ? " curtida" : " curtidas");
+}
+
+</script>
+
+</body>
+</html>
