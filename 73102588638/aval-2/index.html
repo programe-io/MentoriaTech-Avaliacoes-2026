@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CloudBox — Gerenciador de Arquivos</title>
+  <link rel="stylesheet" href="style.css" />
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+  <div class="app">
+    <!-- Barra Lateral -->
+    <aside class="sidebar">
+      <div class="logo">🗂️ Gerenciador de tarefas</div>
+
+      <nav class="menu">
+        <button class="menu-item active" id="nav-todos" onclick="mudarFiltro('todos')">
+          📁 tarefas
+        </button>
+        <button class="menu-item" id="nav-favoritos" onclick="mudarFiltro('favoritos')">
+          ⭐ Favoritos
+        </button>
+        <button class="menu-item" id="nav-recentes" onclick="mudarFiltro('recentes')">
+          🕒 Recentes
+        </button>
+      </nav>
+
+      <div class="storage-box">
+        <div class="storage-header">
+          <span>Armazenamento Local</span>
+          <span id="storage-percent">0%</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="storage-bar"></div>
+        </div>
+        <small id="storage-text">0 KB de 5 MB usados</small>
+      </div>
+    </aside>
+
+    <!-- Área Principal -->
+    <main class="main">
+      <!-- Topo: Busca e Ações -->
+      <header class="topbar">
+        <input
+          type="text"
+          id="busca"
+          placeholder="🔍 Buscar pastas ou arquivos..."
+          oninput="renderizar()"
+        />
+
+        <div class="actions">
+          <button class="btn-outline" onclick="abrirModalPasta()">📁+ Nova Tarefa</button>
+          <button class="btn-outline" onclick="abrirModalNota()">📝+ Novo Documento</button>
+          <label class="btn-primary upload-btn">
+            ⬆️ Upload
+            <input type="file" id="upload-input" multiple hidden onchange="fazerUpload(event)" />
+          </label>
+        </div>
+      </header>
+
+      <!-- Navegação de Caminho (Breadcrumb) -->
+      <div class="toolbar">
+        <div class="breadcrumb" id="breadcrumb"></div>
+        <span class="saved-badge" id="status-salvo"></span>
+      </div>
+
+      <!-- Grade de Pastas e Arquivos -->
+      <section class="grid" id="arquivos-grid"></section>
+    </main>
+  </div>
+
+  <!-- Modal: Criar Pasta -->
+  <div class="modal hidden" id="modal-pasta">
+    <div class="modal-card">
+      <h3>📁 Nova Tarefa</h3>
+      <input type="text" id="nome-pasta" placeholder="Nome da pasta..." />
+      <div class="modal-actions">
+        <button class="btn-outline" onclick="fecharModais()">Cancelar</button>
+        <button class="btn-primary" onclick="criarPasta()">Criar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Criar / Visualizar / Editar Documento -->
+  <div class="modal hidden" id="modal-editor">
+    <div class="modal-card modal-lg">
+      <div class="modal-header">
+        <input type="text" id="editor-titulo" placeholder="Nome do arquivo (ex: notas.txt)" />
+        <button class="btn-close" onclick="fecharModais()">✕</button>
+      </div>
+
+      <textarea id="editor-conteudo" rows="12" placeholder="Digite o conteúdo do arquivo aqui..."></textarea>
+      <div id="preview-imagem" class="preview-box hidden"></div>
+
+      <div class="modal-actions">
+        <button class="btn-outline" id="btn-baixar" onclick="baixarArquivoAtual()">⬇️ Baixar Arquivo</button>
+        <button class="btn-primary" id="btn-salvar-doc" onclick="salvarDocumento()">Salvar Alterações</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+<script src="script.js"></script></body>
+</html>
