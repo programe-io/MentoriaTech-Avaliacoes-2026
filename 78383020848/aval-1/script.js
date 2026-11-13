@@ -1,9 +1,14 @@
-audio = document.getElementById("audio");
-const play = document.getElementById("play");
-const prev = document.getElementById("prev");
-const next = document.getElementById("next");
 
-const title = document.getElementById("title");
-const artist = document.getElementById("artist");
+function agendar() {
+    let nome = prompt("Qual é o seu nome?");
 
-const progress = document.getElementById("progress");
+    if (nome && nome.trim() !== "") {
+        alert(
+            "Olá, " + nome +
+            "! 💗 Obrigada pelo interesse. " +
+            "Entre em contato para confirmar seu agendamento!"
+        );
+    } else {
+        alert("Por favor, informe seu nome! 💕");
+    }
+}
