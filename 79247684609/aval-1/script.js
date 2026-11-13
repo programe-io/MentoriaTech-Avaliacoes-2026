@@ -1,46 +1,60 @@
 
 // =====================================
-// 1. ESPERAR O HTML CARREGAR
+// 1. CARREGAMENTO DA PÁGINA
 // =====================================
 
 document.addEventListener("DOMContentLoaded", function() {
 
-    // MENSAGEM DE BOAS-VINDAS
-    alert("Bem-vindo ao FitBlog! Conheça os melhores tipos de treino.");
-
     console.log("FitBlog carregado com sucesso!");
 
-    
+    alert("Bem-vindo ao FitBlog! Conheça os melhores tipos de treino.");
+
+
     // =====================================
     // 2. ANIMAÇÃO DOS CARDS
     // =====================================
 
     const cards = document.querySelectorAll(".card");
 
-    const observador = new IntersectionObserver(function(entradas) {
+    if ("IntersectionObserver" in window) {
 
-        entradas.forEach(function(entrada) {
+        const observador = new IntersectionObserver(function(entradas) {
 
-            if (entrada.isIntersecting) {
-                entrada.target.classList.add("mostrar");
+            entradas.forEach(function(entrada) {
 
-                observador.unobserve(entrada.target);
-            }
+                if (entrada.isIntersecting) {
+
+                    entrada.target.classList.add("mostrar");
+
+                    observador.unobserve(entrada.target);
+
+                }
+
+            });
+
+        }, {
+            threshold: 0.2
+        });
+
+        cards.forEach(function(card) {
+
+            card.classList.add("aparecer");
+
+            observador.observe(card);
 
         });
 
-    }, {
-        threshold: 0.2
-    });
+    } else {
 
-    cards.forEach(function(card) {
-        card.classList.add("aparecer");
-        observador.observe(card);
-    });
+        cards.forEach(function(card) {
+            card.classList.add("mostrar");
+        });
+
+    }
 
 
     // =====================================
-    // 3. INTERAÇÃO COM OS CARDS
+    // 3. CLIQUE NOS CARDS DE TREINO
     // =====================================
 
     cards.forEach(function(card) {
@@ -50,11 +64,13 @@ document.addEventListener("DOMContentLoaded", function() {
             const titulo = card.querySelector("h3");
 
             if (titulo) {
+
                 alert(
                     "Você selecionou: " +
                     titulo.textContent +
-                    "\nContinue explorando o FitBlog!"
+                    "\n\nContinue explorando o FitBlog!"
                 );
+
             }
 
         });
@@ -66,54 +82,56 @@ document.addEventListener("DOMContentLoaded", function() {
     // 4. BOTÃO VOLTAR AO TOPO
     // =====================================
 
-    const botaoTopo = document.createElement("button");
+    const botaoTopo = document.getElementById("voltarTopo");
 
-    botaoTopo.textContent = "↑";
-    botaoTopo.id = "voltarTopo";
-    botaoTopo.setAttribute("aria-label", "Voltar ao topo");
+    if (botaoTopo) {
 
-    document.body.appendChild(botaoTopo);
+        botaoTopo.addEventListener("click", function() {
 
+            window.scrollTo({
 
-    // =====================================
-    // 5. AÇÃO DO BOTÃO
-    // =====================================
+                top: 0,
 
-    botaoTopo.addEventListener("click", function() {
+                behavior: "smooth"
 
-        window.scrollTo({
-            top: 0,
-            behavior: "smooth"
+            });
+
         });
 
-    });
+
+        // =====================================
+        // 5. MOSTRAR BOTÃO AO ROLAR A PÁGINA
+        // =====================================
+
+        window.addEventListener("scroll", function() {
+
+            if (window.scrollY > 300) {
+
+                botaoTopo.style.display = "block";
+
+            } else {
+
+                botaoTopo.style.display = "none";
+
+            }
+
+        });
+
+    }
 
 
     // =====================================
-    // 6. MOSTRAR BOTÃO AO ROLAR A PÁGINA
+    // 6. ATUALIZAR ANO AUTOMATICAMENTE
     // =====================================
-
-    window.addEventListener("scroll", function() {
-
-        if (window.scrollY > 300) {
-            botaoTopo.style.display = "block";
-        } else {
-            botaoTopo.style.display = "none";
-        }
-
-    });
-
-
-    // =====================================
-    // 7. ATUALIZAR ANO DO RODAPÉ
-    // =====================================
-
-    const ano = new Date().getFullYear();
 
     const elementoAno = document.getElementById("ano");
 
     if (elementoAno) {
-        elementoAno.textContent = ano;
+
+        const anoAtual = new Date().getFullYear();
+
+        elementoAno.textContent = anoAtual;
+
     }
 
 });
