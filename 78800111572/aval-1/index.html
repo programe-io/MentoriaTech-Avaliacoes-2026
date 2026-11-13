@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Notas & Acordes — Blog Pessoal de Música</title>
+  <style>
+    :root {
+      --bg: #0f1115;
+      --surface: #181b22;
+      --surface-hover: #20242e;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --accent: #f97316;
+      --accent-soft: rgba(249, 115, 22, 0.15);
+      --border: #2a2f3d;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    /* Cabeçalho */
+    header {
+      border-bottom: 1px solid var(--border);
+      background-color: rgba(15, 17, 21, 0.9);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(8px);
+    }
+
+    .container {
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 70px;
+    }
+
+    .logo {
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .logo span {
+      color: var(--accent);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 24px;
+      list-style: none;
+      font-size: 0.95rem;
+      color: var(--muted);
+    }
+
+    .nav-links a:hover {
+      color: var(--text);
+    }
+
+    /* Destaque Principal */
+    .hero {
+      padding: 60px 0 40px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .tag {
+      display: inline-block;
+      background-color: var(--accent-soft);
+      color: var(--accent);
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 14px;
+    }
+
+    .hero h1 {
+      font-size: clamp(1.9rem, 4vw, 2.8rem);
+      line-height: 1.2;
+      max-width: 720px;
+      margin-bottom: 16px;
+    }
+
+    .hero p {
+      color: var(--muted);
+      max-width: 620px;
+      font-size: 1.05rem;
+      margin-bottom: 24px;
+    }
+
+    .btn {
+      display: inline-block;
+      background-color: var(--accent);
+      color: #fff;
+      font-weight: 600;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      transition: opacity 0.2s;
+    }
+
+    .btn:hover {
+      opacity: 0.9;
+    }
+
+    /* Grade Principal */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 40px;
+      padding: 48px 0;
+    }
+
+    .section-title {
+      font-size: 1.2rem;
+      margin-bottom: 24px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* Lista de Postagens */
+    .posts {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .post-card {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      transition: background-color 0.2s, transform 0.2s;
+    }
+
+    .post-card:hover {
+      background-color: var(--surface-hover);
+      transform: translateY(-2px);
+    }
+
+    .post-meta {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .post-card h2 {
+      font-size: 1.35rem;
+      margin-bottom: 10px;
+    }
+
+    .post-card p {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 16px;
+    }
+
+    .read-more {
+      color: var(--accent);
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    /* Barra Lateral */
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    .widget {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 22px;
+    }
+
+    .widget h3 {
+      font-size: 1.05rem;
+      margin-bottom: 12px;
+    }
+
+    .widget p {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .track-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .track-list li {
+      font-size: 0.9rem;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .track-list li:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .track-artist {
+      display: block;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .categories {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .categories a {
+      background-color: var(--bg);
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .categories a:hover {
+      border-color: var(--accent);
+      color: var(--text);
+    }
+
+    /* Rodapé */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    /* Responsivo */
+    @media (max-width: 768px) {
+      .main-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .nav-links {
+        display: none;
+      }
+    }
+  </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Cabeçalho -->
+  <header>
+    <div class="container nav">
+      <a href="#" class="logo">Notas <span>&</span> Acordes</a>
+      <ul class="nav-links">
+        <li><a href="#">Início</a></li>
+        <li><a href="#">Resenhas</a></li>
+        <li><a href="#">Playlists</a></li>
+        <li><a href="#">Sobre</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <!-- Destaque -->
+  <section class="hero">
+    <div class="container">
+      <span class="tag">Em Destaque</span>
+      <h1>Como os discos ao vivo dos anos 70 moldaram o som das guitarras atuais</h1>
+      <p>Uma análise pessoal sobre timbres analógicos, gravações sem cortes e os álbuns que continuam inspirando novas bandas.</p>
+      <a href="#" class="btn">Ler artigo completo</a>
+    </div>
+  </section>
+
+  <!-- Conteúdo Principal -->
+  <main class="container main-grid">
+    
+    <!-- Artigos -->
+    <section>
+      <h2 class="section-title">Últimas Publicações</h2>
+      <div class="posts">
+
+        <article class="post-card">
+          <div class="post-meta">10 Nov 2026 • Resenha de Álbum</div>
+          <h2><a href="#">5 discos nacionais essenciais para ouvir em dias chuvosos</a></h2>
+          <p>Do folk intimista ao jazz brasileiro, uma seleção comentada faixa a faixa para desacelerar no fim de semana.</p>
+          <a href="#" class="read-more">Continuar lendo →</a>
+        </article>
+
+        <article class="post-card">
+          <div class="post-meta">02 Nov 2026 • Equipamentos & Estúdio</div>
+          <h2><a href="#">Meu setup minimalista para gravar demos em casa</a></h2>
+          <p>O que realmente faz diferença na hora de registrar ideias rápidas sem gastar muito com interface e microfones.</p>
+          <a href="#" class="read-more">Continuar lendo →</a>
+        </article>
+
+        <article class="post-card">
+          <div class="post-meta">24 Out 2026 • Descobertas</div>
+          <h2><a href="#">Novos nomes da cena independente que você precisa conhecer</a></h2>
+          <p>Artistas independentes que misturam sintetizadores retrô, letras diretas e produção artesanal.</p>
+          <a href="#" class="read-more">Continuar lendo →</a>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- Barra Lateral -->
+    <aside class="sidebar">
+      <div class="widget">
+        <h3>Sobre o Blog</h3>
+        <p>Olá! Sou apaixonado por discos de vinil, produção caseira e histórias por trás das músicas. Aqui compartilho resenhas, listas e descobertas semanais.</p>
+      </div>
+
+      <div class="widget">
+        <h3>Tocando Agora</h3>
+        <ul class="track-list">
+          <li>
+            <strong>Clube da Esquina</strong>
+            <span class="track-artist">Milton Nascimento & Lô Borges</span>
+          </li>
+          <li>
+            <strong>Teardrop</strong>
+            <span class="track-artist">Massive Attack</span>
+          </li>
+          <li>
+            <strong>Construção</strong>
+            <span class="track-artist">Chico Buarque</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="widget">
+        <h3>Categorias</h3>
+        <div class="categories">
+          <a href="#">Resenhas</a>
+          <a href="#">MPB</a>
+          <a href="#">Rock</a>
+          <a href="#">Playlists</a>
+          <a href="#">Vinil</a>
+          <a href="#">Produção</a>
+        </div>
+      </div>
+    </aside>
+
+  </main>
+
+  <!-- Rodapé -->
+  <footer>
+    <div class="container">
+      <p>© 2026 Notas & Acordes — Feito com música e café.</p>
+    </div>
+  </footer>
+
+</body>
+</html>
