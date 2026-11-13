@@ -1,308 +1,246 @@
 
-// Dados armazenados no navegador
-let livros = JSON.parse(
-    localStorage.getItem("livros") || "[]"
-);
+const API = "/api";
 
-let alunos = JSON.parse(
-    localStorage.getItem("alunos") || "[]"
-);
-
-let emprestimos = JSON.parse(
-    localStorage.getItem("emprestimos") || "[]"
-);
-
-// Salvar dados
-function salvar() {
-    localStorage.setItem("livros", JSON.stringify(livros));
-    localStorage.setItem("alunos", JSON.stringify(alunos));
-    localStorage.setItem("emprestimos", JSON.stringify(emprestimos));
-
-    atualizarPainel();
-}
-
-// Navegação
-function mostrar(id) {
-    document.querySelectorAll(".pagina").forEach(p => {
-        p.classList.add("escondido");
+async function requisicao(url, opcoes = {}) {
+    const resposta = await fetch(API + url, {
+        ...opcoes,
+        headers: {
+            "Content-Type": "application/json",
+            ...opcoes.headers
+        }
     });
 
-    document.getElementById(id).classList.remove("escondido");
-
-    listarLivros();
-    listarAlunos();
-    listarEmprestimos();
-    atualizarSelects();
-}
-
-// Cadastro de livros
-document.getElementById("formLivro").onsubmit = function(e) {
-    e.preventDefault();
-
-    livros.push({
-        id: Date.now(),
-        titulo: document.getElementById("titulo").value,
-        autor: document.getElementById("autor").value,
-        editora: document.getElementById("editora").value,
-        quantidade: Number(
-            document.getElementById("quantidade").value
-        ),
-        disponiveis: Number(
-            document.getElementById("quantidade").value
-        )
-    });
-
-    salvar();
-    listarLivros();
-    this.reset();
-
-    alert("Livro cadastrado com sucesso!");
-};
-
-// Listar livros
-function listarLivros() {
-    let tbody = document.getElementById("listaLivros");
-    if (!tbody) return;
-
-    tbody.innerHTML = "";
-
-    let busca = document.getElementById("pesquisaLivro")
-        .value.toLowerCase();
-
-    livros.filter(l =>
-        l.titulo.toLowerCase().includes(busca) ||
-        l.autor.toLowerCase().includes(busca)
-    ).forEach(livro => {
-        tbody.innerHTML += `
-        <tr>
-            <td>${escapar(livro.titulo)}</td>
-            <td>${escapar(livro.autor)}</td>
-            <td>${livro.disponiveis}</td>
-            <td>
-                <button onclick="excluirLivro(${livro.id})">
-                    Excluir
-                </button>
-            </td>
-        </tr>`;
-    });
-}
-
-// Excluir livro
-function excluirLivro(id) {
-    let livro = livros.find(l => l.id === id);
-
-    if (emprestimos.some(e =>
-        e.livroId === id && e.status === "Emprestado"
-    )) {
-        alert("Não é possível excluir um livro emprestado.");
-        return;
+    if (!resposta.ok) {
+        const erro = await resposta.json();
+        throw new Error(erro.erro || "Erro na operação.");
     }
 
-    if (confirm("Deseja excluir este livro?")) {
-        livros = livros.filter(l => l.id !== id);
-        salvar();
-        listarLivros();
-    }
+    return resposta.json();
 }
 
-// Cadastro de alunos
-document.getElementById("formAluno").onsubmit = function(e) {
-    e.preventDefault();
-
-    alunos.push({
-        id: Date.now(),
-        nome: document.getElementById("nomeAluno").value,
-        matricula: document.getElementById("matricula").value,
-        turma: document.getElementById("turma").value
-    });
-
-    salvar();
-    listarAlunos();
-    this.reset();
-
-    alert("Aluno cadastrado com sucesso!");
-};
-
-// Listar alunos
-function listarAlunos() {
-    let tbody = document.getElementById("listaAlunos");
-    if (!tbody) return;
-
-    tbody.innerHTML = "";
-
-    alunos.forEach(aluno => {
-        tbody.innerHTML += `
-        <tr>
-            <td>${escapar(aluno.nome)}</td>
-            <td>${escapar(aluno.matricula)}</td>
-            <td>${escapar(aluno.turma)}</td>
-            <td>
-                <button onclick="excluirAluno(${aluno.id})">
-                    Excluir
-                </button>
-            </td>
-        </tr>`;
-    });
-}
-
-// Excluir aluno
-function excluirAluno(id) {
-    if (emprestimos.some(e =>
-        e.alunoId === id && e.status === "Emprestado"
-    )) {
-        alert("O aluno possui empréstimo ativo.");
-        return;
-    }
-
-    if (confirm("Deseja excluir este aluno?")) {
-        alunos = alunos.filter(a => a.id !== id);
-        salvar();
-        listarAlunos();
-    }
-}
-
-// Atualizar listas de seleção
-function atualizarSelects() {
-    let selectAluno = document.getElementById("alunoEmprestimo");
-    let selectLivro = document.getElementById("livroEmprestimo");
-
-    selectAluno.innerHTML =
-        '<option value="">Selecione o aluno</option>';
-
-    selectLivro.innerHTML =
-        '<option value="">Selecione o livro</option>';
-
-    alunos.forEach(a => {
-        selectAluno.innerHTML += `
-            <option value="${a.id}">
-                ${escapar(a.nome)}
-            </option>`;
-    });
-
-    livros.filter(l => l.disponiveis > 0).forEach(l => {
-        selectLivro.innerHTML += `
-            <option value="${l.id}">
-                ${escapar(l.titulo)}
-            </option>`;
-    });
-}
-
-// Registrar empréstimo
-document.getElementById("formEmprestimo").onsubmit =
-function(e) {
-    e.preventDefault();
-
-    let alunoId = Number(
-        document.getElementById("alunoEmprestimo").value
-    );
-
-    let livroId = Number(
-        document.getElementById("livroEmprestimo").value
-    );
-
-    let livro = livros.find(l => l.id === livroId);
-
-    if (!livro || livro.disponiveis <= 0) {
-        alert("Livro indisponível!");
-        return;
-    }
-
-    emprestimos.push({
-        id: Date.now(),
-        alunoId,
-        livroId,
-        data: new Date().toLocaleDateString("pt-BR"),
-        status: "Emprestado"
-    });
-
-    livro.disponiveis--;
-
-    salvar();
-    listarEmprestimos();
-    atualizarSelects();
-    this.reset();
-
-    alert("Empréstimo registrado!");
-};
-
-// Listar empréstimos
-function listarEmprestimos() {
-    let tbody = document.getElementById("listaEmprestimos");
-    if (!tbody) return;
-
-    tbody.innerHTML = "";
-
-    emprestimos.forEach(e => {
-        let aluno = alunos.find(a => a.id === e.alunoId);
-        let livro = livros.find(l => l.id === e.livroId);
-
-        tbody.innerHTML += `
-        <tr>
-            <td>${escapar(aluno?.nome || "Aluno removido")}</td>
-            <td>${escapar(livro?.titulo || "Livro removido")}</td>
-            <td>${e.data}</td>
-            <td>${e.status}</td>
-            <td>
-                ${e.status === "Emprestado" ?
-                `<button onclick="devolver(${e.id})">
-                    Devolver
-                </button>` : "Concluído"}
-            </td>
-        </tr>`;
-    });
-}
-
-// Registrar devolução
-function devolver(id) {
-    let emprestimo = emprestimos.find(e => e.id === id);
-
-    if (!emprestimo || emprestimo.status !== "Emprestado") {
-        return;
-    }
-
-    let livro = livros.find(l => l.id === emprestimo.livroId);
-
-    emprestimo.status = "Devolvido";
-
-    if (livro) {
-        livro.disponiveis++;
-    }
-
-    salvar();
-    listarEmprestimos();
-    atualizarSelects();
-
-    alert("Devolução realizada com sucesso!");
-}
-
-// Atualizar painel
-function atualizarPainel() {
-    document.getElementById("totalLivros").textContent =
-        livros.reduce((s, l) => s + l.quantidade, 0);
-
-    document.getElementById("totalAlunos").textContent =
-        alunos.length;
-
-    document.getElementById("totalEmprestimos").textContent =
-        emprestimos.filter(e =>
-            e.status === "Emprestado"
-        ).length;
-}
-
-// Evitar interpretação de HTML em dados cadastrados
 function escapar(valor) {
-    return String(valor).replace(/[&<>"']/g, c => ({
+    return String(valor ?? "").replace(/[&<>"']/g, letra => ({
         "&": "&amp;",
         "<": "&lt;",
         ">": "&gt;",
         '"': "&quot;",
         "'": "&#39;"
-    })[c]);
+    })[letra]);
 }
 
-// Inicialização
-atualizarPainel();
-listarLivros();
-listarAlunos();
-listarEmprestimos();
-atualizarSelects();
+function mostrar(id) {
+    document.querySelectorAll(".secao").forEach(secao => {
+        secao.hidden = secao.id !== id;
+    });
+
+    atualizar();
+}
+
+async function atualizar() {
+    try {
+        await Promise.all([
+            carregarLivros(),
+            carregarAlunos(),
+            carregarEmprestimos()
+        ]);
+    } catch (erro) {
+        alert(erro.message);
+    }
+}
+
+// CADASTRO DE LIVROS
+
+document.getElementById("formLivro").addEventListener("submit", async e => {
+    e.preventDefault();
+
+    const dados = Object.fromEntries(new FormData(e.target));
+    dados.quantidade = Number(dados.quantidade);
+
+    try {
+        await requisicao("/livros", {
+            method: "POST",
+            body: JSON.stringify(dados)
+        });
+
+        e.target.reset();
+        await atualizar();
+        alert("Livro cadastrado com sucesso!");
+    } catch (erro) {
+        alert(erro.message);
+    }
+});
+
+async function carregarLivros() {
+    const livros = await requisicao("/livros");
+    const pesquisa = document.getElementById("pesquisaLivro").value
+        .toLowerCase();
+
+    const filtrados = livros.filter(l =>
+        (l.titulo + " " + l.autor + " " + l.categoria)
+        .toLowerCase().includes(pesquisa)
+    );
+
+    document.getElementById("listaLivros").innerHTML =
+        filtrados.map(l => `
+        <tr>
+            <td>${escapar(l.titulo)}</td>
+            <td>${escapar(l.autor)}</td>
+            <td>${escapar(l.categoria)}</td>
+            <td>${l.disponiveis}</td>
+            <td>
+                <button class="acoes"
+                    onclick="excluirLivro(${l.id})">
+                    Excluir
+                </button>
+            </td>
+        </tr>
+    `).join("");
+
+    document.getElementById("totalLivros").textContent =
+        livros.reduce((s, l) => s + l.quantidade, 0);
+
+    document.getElementById("livroSelect").innerHTML =
+        '<option value="">Selecione o livro</option>' +
+        livros.filter(l => l.disponiveis > 0).map(l =>
+            `<option value="${l.id}">
+                ${escapar(l.titulo)}
+            </option>`
+        ).join("");
+}
+
+async function excluirLivro(id) {
+    if (!confirm("Deseja excluir este livro?")) return;
+
+    try {
+        await requisicao("/livros/" + id, { method: "DELETE" });
+        await atualizar();
+    } catch (erro) {
+        alert(erro.message);
+    }
+}
+
+// CADASTRO DE ALUNOS
+
+document.getElementById("formAluno").addEventListener("submit", async e => {
+    e.preventDefault();
+
+    const dados = Object.fromEntries(new FormData(e.target));
+
+    try {
+        await requisicao("/alunos", {
+            method: "POST",
+            body: JSON.stringify(dados)
+        });
+
+        e.target.reset();
+        await atualizar();
+        alert("Aluno cadastrado com sucesso!");
+    } catch (erro) {
+        alert(erro.message);
+    }
+});
+
+async function carregarAlunos() {
+    const alunos = await requisicao("/alunos");
+
+    document.getElementById("listaAlunos").innerHTML =
+        alunos.map(a => `
+        <tr>
+            <td>${escapar(a.nome)}</td>
+            <td>${escapar(a.matricula)}</td>
+            <td>${escapar(a.turma)}</td>
+            <td>
+                <button class="acoes"
+                    onclick="excluirAluno(${a.id})">
+                    Excluir
+                </button>
+            </td>
+        </tr>
+    `).join("");
+
+    document.getElementById("totalAlunos").textContent = alunos.length;
+
+    document.getElementById("alunoSelect").innerHTML =
+        '<option value="">Selecione o aluno</option>' +
+        alunos.map(a =>
+            `<option value="${a.id}">
+                ${escapar(a.nome)}
+            </option>`
+        ).join("");
+}
+
+async function excluirAluno(id) {
+    if (!confirm("Deseja excluir este aluno?")) return;
+
+    try {
+        await requisicao("/alunos/" + id, { method: "DELETE" });
+        await atualizar();
+    } catch (erro) {
+        alert(erro.message);
+    }
+}
+
+// EMPRÉSTIMOS
+
+document.getElementById("formEmprestimo")
+.addEventListener("submit", async e => {
+    e.preventDefault();
+
+    const dados = Object.fromEntries(new FormData(e.target));
+    dados.alunoId = Number(dados.alunoId);
+    dados.livroId = Number(dados.livroId);
+
+    try {
+        await requisicao("/emprestimos", {
+            method: "POST",
+            body: JSON.stringify(dados)
+        });
+
+        e.target.reset();
+        await atualizar();
+        alert("Empréstimo realizado com sucesso!");
+    } catch (erro) {
+        alert(erro.message);
+    }
+});
+
+async function carregarEmprestimos() {
+    const emprestimos = await requisicao("/emprestimos");
+
+    document.getElementById("listaEmprestimos").innerHTML =
+        emprestimos.map(e => `
+        <tr>
+            <td>${escapar(e.aluno)}</td>
+            <td>${escapar(e.livro)}</td>
+            <td>${escapar(e.data)}</td>
+            <td>${escapar(e.status)}</td>
+            <td>
+                ${e.status === "ATIVO" ?
+                    `<button class="acoes devolver"
+                        onclick="devolver(${e.id})">
+                        Devolver
+                    </button>` : "Concluído"}
+            </td>
+        </tr>
+    `).join("");
+
+    document.getElementById("totalEmprestimos").textContent =
+        emprestimos.filter(e => e.status === "ATIVO").length;
+}
+
+async function devolver(id) {
+    try {
+        await requisicao("/emprestimos/" + id + "/devolver", {
+            method: "PUT"
+        });
+
+        await atualizar();
+        alert("Devolução registrada com sucesso!");
+    } catch (erro) {
+        alert(erro.message);
+    }
+}
+
+// CARREGAMENTO INICIAL
+
+atualizar();
