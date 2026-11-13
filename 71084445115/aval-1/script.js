@@ -45,3 +45,16 @@ if (!produto || quantidade <1) {
 produto.quantidade += quantidade;
 }
 
+// Testando o sistema 
+try {
+    cadastrarProduto("Mouse Logitech", 10, 99);
+cadastrarProduto("Teclado Gamer", 5, 150);
+
+atualizarValor(1, 89);
+atualizarQuantidade(1, 5);
+
+listarProdutos();
+} catch (erro) {
+   console.log(erro.message);
+
+}
