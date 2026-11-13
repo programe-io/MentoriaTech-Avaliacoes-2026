@@ -1,106 +1,107 @@
-let products = JSON.parse(localStorage.getItem('stock_products')) || [];
+// Seletores do DOM
+const form = document.getElementById('produtoForm');
+const inputId = document.getElementById('produtoId');
+const inputNome = document.getElementById('nome');
+const inputQuantidade = document.getElementById('quantidade');
+const inputPreco = document.getElementById('preco');
+const btnSalvar = document.getElementById('btnSalvar');
+const tabelaProdutos = document.getElementById('tabelaProdutos');
+const totalProdutosEl = document.getElementById('totalProdutos');
+const totalItensEl = document.getElementById('totalItens');
 
-const form = document.getElementById('product-form');
-const productIdInput = document.getElementById('product-id');
-const nameInput = document.getElementById('name');
-const quantityInput = document.getElementById('quantity');
-const priceInput = document.getElementById('price');
-const tableBody = document.getElementById('product-table-body');
-const formTitle = document.getElementById('form-title');
-const saveBtn = document.getElementById('save-btn');
+// Carregar produtos do localStorage ou iniciar array vazio
+let produtos = JSON.parse(localStorage.getItem('estoque_produtos')) || [];
 
-function saveToLocalStorage() {
-    localStorage.setItem('stock_products', JSON.stringify(products));
-\}
+// Função para salvar no localStorage e atualizar a tela
+function atualizarSistema() {
+    localStorage.setItem('estoque_produtos', JSON.stringify(produtos));
+    renderizarTabela();
+    atualizarEstatisticas();
+}
 
-function renderTable() {
-    tableBody.innerHTML = '';
-    
-    if (products.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-light);">Nenhum produto cadastrado.</td></tr>`;
+// Renderizar a tabela na tela
+function renderizarTabela() {
+    tabelaProdutos.innerHTML = '';
+
+    if (produtos.length === 0) {
+        tabelaProdutos.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #6b7280;">Nenhum produto cadastrado.</td></tr>`;
         return;
-    \}
+    }
 
-    products.forEach((product) => {
-        const total = product.quantity * product.price;
-        const isLow = product.quantity < 5;
+    produtos.forEach((produto, index) => {
+        const valorTotal = produto.quantidade * produto.preco;
         
         const tr = document.createElement('tr');
         tr.innerHTML = `
-            <td>\${escapeHtml(product.name)\}</td>
-            <td>\${product.quantity\}</td>
-            <td>R\$ \${Number(product.price).toFixed(2)\}</td>
-            <td>R\$ \${total.toFixed(2)\}</td>
-            <td><span class="badge \${isLow ? 'badge-low' : 'badge-ok'\}">\${isLow ? 'Baixo Estoque' : 'Normal'\}</span></td>
-            <td class="actions">
-                <button onclick="editProduct('\${product.id\}')">Editar</button>
-                <button class="btn-danger" onclick="deleteProduct('\${product.id\}')">Excluir</button>
+            <td>${produto.nome}</td>
+            <td>${produto.quantidade}</td>
+            <td>R$ ${Number(produto.preco).toFixed(2)}</td>
+            <td>R$ ${valorTotal.toFixed(2)}</td>
+            <td class="acoes">
+                <button class="btn-edit" onclick="carregarEdicao(${index})">Editar</button>
+                <button class="btn-danger" onclick="deletarProduto(${index})">Excluir</button>
             </td>
         `;
-        tableBody.appendChild(tr);
-    \});
-\}
+        tabelaProdutos.appendChild(tr);
+    });
+}
 
+// Atualizar cards de estatísticas
+function atualizarEstatisticas() {
+    totalProdutosEl.textContent = produtos.length;
+    const totalItens = produtos.reduce((acc, curr) => acc + Number(curr.quantidade), 0);
+    totalItensEl.textContent = totalItens;
+}
+
+// CREATE / UPDATE (Manipular envio do formulário)
 form.addEventListener('submit', (e) => {
     e.preventDefault();
-    
-    const id = productIdInput.value;
-    const name = nameInput.value.trim();
-    const quantity = parseInt(quantityInput.value);
-    const price = parseFloat(priceInput.value);
 
-    if (id) {
-        // Edição
-        products = products.map(p => p.id === id ? { id, name, quantity, price \} : p);
-    \} else {
-        // Criação
-        const newProduct = {
-            id: Date.now().toString(),
-            name,
-            quantity,
-            price
-        \};
-        products.push(newProduct);
-    \}
+    const id = inputId.value;
+    const nome = inputNome.value.trim();
+    const quantidade = parseInt(inputQuantidade.value);
+    const preco = parseFloat(inputPreco.value);
 
-    saveToLocalStorage();
-    renderTable();
-    resetForm();
-\});
+    if (id === '') {
+        // Criar novo produto
+        produtos.push({ nome, quantidade, preco });
+    } else {
+        // Atualizar produto existente
+        produtos[id] = { nome, quantidade, preco };
+        inputId.value = '';
+        btnSalvar.textContent = 'Adicionar';
+    }
 
-function editProduct(id) {
-    const product = products.find(p => p.id === id);
-    if (product) {
-        productIdInput.value = product.id;
-        nameInput.value = product.name;
-        quantityInput.value = product.quantity;
-        priceInput.value = product.price;
-        
-        formTitle.textContent = "Editar Produto";
-        saveBtn.textContent = "Atualizar Produto";
-        window.scrollTo({ top: 0, behavior: 'smooth' \});
-    \}
-\}
-
-function deleteProduct(id) {
-    if (confirm('Tem certeza que deseja excluir este produto?')) {
-        products = products.filter(p => p.id !== id);
-        saveToLocalStorage();
-        renderTable();
-    \}
-\}
-
-function resetForm() {
     form.reset();
-    productIdInput.value = '';
-    formTitle.textContent = "Adicionar Novo Produto";
-    saveBtn.textContent = "Salvar Produto";
-\}
+    atualizarSistema();
+});
 
-function escapeHtml(text) {
-    const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' \};
-    return text.replace(/[&<>"']/g, m => map[m]);
-\}
+// READ - Preparar para Edição (Carregar dados no form)
+function carregarEdicao(index) {
+    const produto = produtos[index];
+    inputId.value = index;
+    inputNome.value = produto.nome;
+    inputQuantidade.value = produto.quantidade;
+    inputPreco.value = produto.preco;
+    btnSalvar.textContent = 'Atualizar';
+    inputNome.focus();
+}
 
-// Inicialização
-renderTable();$0
+// DELETE - Excluir produto
+function deletarProduto(index) {
+    if (confirm(`Tem certeza que deseja excluir o produto "${produtos[index].nome}"?`)) {
+        produtos.splice(index, 1);
+        
+        // Se estiver editando o item que foi excluído, limpa o form
+        if(inputId.value == index) {
+            form.reset();
+            inputId.value = '';
+            btnSalvar.textContent = 'Adicionar';
+        }
+        
+        atualizarSistema();
+    }
+}
+
+// Inicializar a aplicação ao carregar a página
+atualizarSistema();
