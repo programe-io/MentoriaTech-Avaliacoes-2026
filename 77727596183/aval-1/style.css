@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minecraft em CSS Puro</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+        body {
+            background-color: #2b2b2b;
+            background-image: 
+                linear-gradient(rgba(0,0,0,0.3) 50%, transparent 50%),
+                linear-gradient(90deg, rgba(0,0,0,0.3) 50%, transparent 50%);
+            background-size: 4px 4px;
+            font-family: 'Press Start 2P', monospace;
+            color: white;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        h1 {
+            color: #55ff55;
+            font-size: 1.5rem;
+            text-shadow: 3px 3px #000;
+            margin-bottom: 10px;
+        }
+
+        p {
+            font-size: 0.7rem;
+            color: #aaa;
+            margin-bottom: 30px;
+        }
+
+        /* Cena do Mundo */
+        .scene {
+            position: relative;
+            width: 320px;
+            height: 250px;
+            background: linear-gradient(to bottom, #78a7ff 0%, #b8d2ff 100%);
+            border: 4px solid #000;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.8);
+            overflow: hidden;
+        }
+
+        /* Bloco de Grama (Bloco 1) */
+        .block-grass {
+            position: absolute;
+            bottom: 40px;
+            left: 50px;
+            width: 64px;
+            height: 64px;
+            background-color: #5d8a34; /* Verde base */
+            border: 4px solid #283d16;
+            box-shadow: inset 0 12px 0 #73be42; /* Camada superior de grama */
+            animation: float 2s ease-in-out infinite alternate;
+        }
+
+        /* Bloco de Terra (Bloco 2) */
+        .block-dirt {
+            position: absolute;
+            bottom: 40px;
+            right: 50px;
+            width: 64px;
+            height: 64px;
+            background-color: #866043;
+            border: 4px solid #3b2818;
+            box-shadow: inset 8px 8px 0 #9c6e4d, inset -8px -8px 0 #6e4e35;
+            animation: float 2s ease-in-out infinite alternate-reverse;
+        }
+
+        /* Chão do Mundo */
+        .ground {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 40px;
+            background-color: #3b2818;
+            border-top: 4px solid #283d16;
+            background-image: repeating-linear-gradient(45deg, #4d3623 0, #4d3623 10px, #3b2818 10px, #3b2818 20px);
+        }
+
+        /* Espada de Ferro Feita em CSS (Pixel Art com box-shadow) */
+        .pixel-sword {
+            position: absolute;
+            top: 40px;
+            left: 140px;
+            width: 4px;
+            height: 4px;
+            background: transparent;
+            /* Cada pixel da espada é desenhado usando o box-shadow */
+            box-shadow: 
+                /* Lâmina */
+                0px -40px 0 #fff, 4px -40px 0 #ccc,
+                0px -36px 0 #fff, 4px -36px 0 #ccc,
+                0px -32px 0 #fff, 4px -32px 0 #ccc,
+                0px -28px 0 #fff, 4px -28px 0 #ccc,
+                0px -24px 0 #fff, 4px -24px 0 #ccc,
+                0px -20px 0 #fff, 4px -20px 0 #ccc,
+                0px -16px 0 #fff, 4px -16px 0 #ccc,
+                /* Guarda-mão */
+                -8px -12px 0 #888, -4px -12px 0 #555, 0px -12px 0 #555, 4px -12px 0 #555, 8px -12px 0 #888,
+                /* Cabo */
+                0px -8px 0 #613d12, 4px -8px 0 #3a230a,
+                0px -4px 0 #613d12, 4px -4px 0 #3a230a,
+                /* Pomel */
+                0px 0px 0 #f3c254, 4px 0px 0 #c29532;
+            transform: rotate(-45deg);
+            animation: spin-sword 4s linear infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-8px); }
+        }
+
+        @keyframes spin-sword {
+            0% { transform: rotate(-45deg) translateY(0); }
+            50% { transform: rotate(-35deg) translateY(-5px); }
+            100% { transform: rotate(-45deg) translateY(0); }
+        }
+
+        .inventory-bar {
+            margin-top: 20px;
+            background: #8c8c8c;
+            border: 4px solid #373737;
+            padding: 6px;
+            display: flex;
+            gap: 6px;
+            box-shadow: inset 3px 3px 0 #fff, inset -3px -3px 0 #555;
+        }
+
+        .slot {
+            width: 32px;
+            height: 32px;
+            background: #8b8b8b;
+            border: 3px solid #373737;
+            box-shadow: inset 2px 2px 0 #555;
+        }
+
+        .slot.active {
+            border-color: #fff;
+            box-shadow: inset 2px 2px 0 #000;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>MINECRAFT CSS</h1>
+    <p>Criado puramente com HTML e CSS</p>
+
+    <div class="scene">
+        <!-- Espada flutuando -->
+        <div class="pixel-sword"></div>
+
+        <!-- Bloco de grama -->
+        <div class="block-grass"></div>
+
+        <!-- Bloco de terra -->
+        <div class="block-dirt"></div>
+
+        <!-- Chão -->
+        <div class="ground"></div>
+    </div>
+
+    <!-- Barra de Inventário Estilo Minecraft -->
+    <div class="inventory-bar">
+        <div class="slot active"></div>
+        <div class="slot"></div>
+        <div class="slot"></div>
+        <div class="slot"></div>
+        <div class="slot"></div>
+        <div class="slot"></div>
+        <div class="slot"></div>
+        <div class="slot"></div>
+        <div class="slot"></div>
+    </div>
+
+</body>
+</html>
