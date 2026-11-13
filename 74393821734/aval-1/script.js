@@ -1,67 +1,62 @@
 
-// Lista para armazenar os produtos
 let produtos = [];
 
-// Cadastrar produto
+// CADASTRAR PRODUTO
 function cadastrarProduto() {
 
     let codigo = Number(document.getElementById("codigo").value);
-    let descricao = document.getElementById("descricao").value.trim();
+    let descricao = document.getElementById("descricao").value;
     let quantidade = Number(document.getElementById("quantidade").value);
     let valor = Number(document.getElementById("valor").value);
 
-    // Validar campos
+    // Verificar campos
     if (
         document.getElementById("codigo").value === "" ||
-        descricao === "" ||
+        descricao.trim() === "" ||
         document.getElementById("quantidade").value === "" ||
         document.getElementById("valor").value === "" ||
-        !Number.isInteger(codigo) ||
         codigo <= 0 ||
-        !Number.isInteger(quantidade) ||
         quantidade < 0 ||
-        !Number.isFinite(valor) ||
-        valor < 0
+        valor < 0 ||
+        !Number.isInteger(codigo) ||
+        !Number.isInteger(quantidade) ||
+        !Number.isFinite(valor)
     ) {
         alert("Preencha todos os campos corretamente!");
         return;
     }
 
-    // Verificar código repetido
-    let existe = produtos.find(p => p.codigo === codigo);
-
-    if (existe) {
-        alert("Esse código já está cadastrado!");
-        return;
+    // Verificar se o código já existe
+    for (let i = 0; i < produtos.length; i++) {
+        if (produtos[i].codigo === codigo) {
+            alert("Código já cadastrado!");
+            return;
+        }
     }
 
-    // Criar produto
-    let produto = {
+    // Adicionar produto
+    produtos.push({
         codigo: codigo,
         descricao: descricao,
         quantidade: quantidade,
         valor: valor
-    };
+    });
 
-    produtos.push(produto);
-
-    alert("Produto cadastrado com sucesso!");
+    alert("Produto cadastrado!");
 
     limparCampos();
     listarProdutos();
 }
 
-// Limpar campos
+// LIMPAR CAMPOS
 function limparCampos() {
-
     document.getElementById("codigo").value = "";
     document.getElementById("descricao").value = "";
     document.getElementById("quantidade").value = "";
     document.getElementById("valor").value = "";
-
 }
 
-// Listar produtos
+// LISTAR PRODUTOS
 function listarProdutos() {
 
     let tabela = document.getElementById("listaProdutos");
@@ -69,48 +64,33 @@ function listarProdutos() {
     tabela.innerHTML = "";
 
     if (produtos.length === 0) {
-        tabela.innerHTML = `
-            <tr>
-                <td colspan="5" class="vazio">
-                    Nenhum produto cadastrado.
-                </td>
-            </tr>
-        `;
+        tabela.innerHTML = "<tr><td colspan='5'>Nenhum produto cadastrado.</td></tr>";
         return;
     }
 
-    produtos.forEach((produto, index) => {
+    for (let i = 0; i < produtos.length; i++) {
+
+        let p = produtos[i];
 
         tabela.innerHTML += `
             <tr>
-                <td>${produto.codigo}</td>
-                <td>${produto.descricao}</td>
-                <td>${produto.quantidade}</td>
-                <td>R$ ${produto.valor.toFixed(2)}</td>
+                <td>${p.codigo}</td>
+                <td>${p.descricao}</td>
+                <td>${p.quantidade}</td>
+                <td>R$ ${p.valor.toFixed(2)}</td>
                 <td>
-                    <button class="editar"
-                        onclick="alterarValor(${index})">
-                        Alterar Valor
-                    </button>
+                    <button onclick="alterarValor(${i})">Alterar Valor</button>
 
-                    <button class="editar"
-                        onclick="alterarQuantidade(${index})">
-                        Alterar Quantidade
-                    </button>
+                    <button onclick="alterarQuantidade(${i})">Alterar Quantidade</button>
 
-                    <button class="excluir"
-                        onclick="excluirProduto(${index})">
-                        Excluir
-                    </button>
+                    <button onclick="excluirProduto(${i})">Excluir</button>
                 </td>
             </tr>
         `;
-
-    });
-
+    }
 }
 
-// Alterar valor
+// ALTERAR VALOR
 function alterarValor(index) {
 
     let novoValor = prompt("Digite o novo valor:");
@@ -122,18 +102,17 @@ function alterarValor(index) {
     novoValor = Number(novoValor);
 
     if (!Number.isFinite(novoValor) || novoValor < 0) {
-        alert("Digite um valor válido!");
+        alert("Valor inválido!");
         return;
     }
 
     produtos[index].valor = novoValor;
 
-    alert("Valor alterado com sucesso!");
-
+    alert("Valor alterado!");
     listarProdutos();
 }
 
-// Alterar quantidade
+// ALTERAR QUANTIDADE
 function alterarQuantidade(index) {
 
     let novaQuantidade = prompt("Digite a nova quantidade:");
@@ -145,30 +124,25 @@ function alterarQuantidade(index) {
     novaQuantidade = Number(novaQuantidade);
 
     if (!Number.isInteger(novaQuantidade) || novaQuantidade < 0) {
-        alert("Digite uma quantidade válida!");
+        alert("Quantidade inválida!");
         return;
     }
 
     produtos[index].quantidade = novaQuantidade;
 
-    alert("Quantidade alterada com sucesso!");
-
+    alert("Quantidade alterada!");
     listarProdutos();
 }
 
-// Excluir produto
+// EXCLUIR PRODUTO
 function excluirProduto(index) {
 
-    let confirmar = confirm("Deseja excluir este produto?");
-
-    if (confirmar) {
+    if (confirm("Deseja excluir este produto?")) {
 
         produtos.splice(index, 1);
 
-        alert("Produto excluído com sucesso!");
+        alert("Produto excluído!");
 
         listarProdutos();
-
     }
-
 }
