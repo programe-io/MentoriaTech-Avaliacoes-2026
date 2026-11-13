@@ -1,0 +1,230 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>MiniFeed - Ladybug</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/script.js"></script>
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+    <header>
+        <div class="header-content">
+            <h1>MiniFeed</h1>
+            <nav>
+                <a href="#">Início</a>
+                <a href="#">Perfil</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+
+        <section class="new-post">
+            <div class="user">
+                <div class="avatar">M</div>
+                <div>
+                    <strong>Marinette</strong>
+                    <span>Compartilhe suas aventuras de Miraculous!</span>
+                </div>
+            </div>
+            <button>Publicar</button>
+        </section>
+
+        <article class="post">
+            <div class="post-header">
+                <div class="avatar">L</div>
+                <div>
+                    <strong>Ladybug</strong>
+                    <span>Há 15 minutos</span>
+                </div>
+            </div>
+            <div class="post-test">
+                Mais um dia protegendo Paris! Ser uma heroína é uma grande responsabilidade! 🐞❤️
+            </div>
+            <img src="https://miraculousladybug.com/wp-content/uploads/2023/11/Ladybug.png" alt="Ladybug">
+            <div class="post-actions">
+                <button>Curtir</button>
+                <button>Comentar</button>
+            </div>
+        </article>
+
+        <article class="post">
+            <div class="post-header">
+                <div class="avatar">C</div>
+                <div>
+                    <strong>Cat Noir</strong>
+                    <span>Há 10 minutos</span>
+                </div>
+            </div>
+            <div class="post-test">
+                Paris está segura quando o seu herói favorito está por perto! 🐈‍⬛💚
+            </div>
+            <img src="https://miraculousladybug.com/wp-content/uploads/2023/11/Cat-Noir.png" alt="Cat Noir">
+            <div class="post-actions">
+                <button>Curtir</button>
+                <button>Comentar</button>
+            </div>
+        </article>
+
+        <article class="post">
+            <div class="post-header">
+                <div class="avatar">A</div>
+                <div>
+                    <strong>Adrien Agreste</strong>
+                    <span>Há 17 minutos</span>
+                </div>
+            </div>
+            <div class="post-test">
+                Um dia cheio de compromissos, mas sempre encontro tempo para meus amigos! 💚✨
+            </div>
+            <img src="https://static.wikia.nocookie.net/miraculousladybug/images/0/0e/Adrien_Agreste.png" alt="Adrien Agreste">
+            <div class="post-actions">
+                <button>Curtir</button>
+                <button>Comentar</button>
+            </div>
+        </article>
+
+        <article class="post">
+            <div class="post-header">
+                <div class="avatar">R</div>
+                <div>
+                    <strong>Rena Rouge</strong>
+                    <span>Há 10 horas</span>
+                </div>
+            </div>
+            <div class="post-test">
+                A criatividade e a coragem são nossas maiores armas! 🦊🧡
+            </div>
+            <img src="https://static.wikia.nocookie.net/miraculousladybug/images/8/8f/Rena_Rouge.png" alt="Rena Rouge">
+            <div class="post-actions">
+                <button>Curtir</button>
+                <button>Comentar</button>
+            </div>
+        </article>
+
+        <article class="post">
+            <div class="post-header">
+                <div class="avatar">H</div>
+                <div>
+                    <strong>Hawk Moth</strong>
+                    <span>Há 1 dia</span>
+                </div>
+            </div>
+            <div class="post-test">
+                Meu próximo plano será inesquecível! Paris ainda ouvirá falar de mim! 🦋💜
+            </div>
+            <img src="https://static.wikia.nocookie.net/miraculousladybug/images/2/2c/Shadow_Moth.png" alt="Hawk Moth">
+            <div class="post-actions">
+                <button>Curtir</button>
+                <button>Comentar</button>
+            </div>
+        </article>
+
+    </main>
+
+    <footer>
+        <p>MiniFeed - Todos os Direitos Reservados - 2026</p>
+    </footer>
+
+<script>
+    const botoesCurtir = document.querySelectorAll(".post-actions button:first-child");
+
+    botoesCurtir.forEach(botao => {
+
+        let curtidas = 0;
+        let curtido = false;
+
+        botao.innerText = "Curtir (0)";
+
+        botao.addEventListener("click", function() {
+
+            if (curtido) {
+
+                curtidas--;
+                curtido = false;
+
+                botao.innerText = `Curtir (${curtidas})`;
+                botao.style.backgroundColor = "#2563eb";
+
+            } else {
+
+                curtidas++;
+                curtido = true;
+
+                botao.innerText = `Curtido (${curtidas})`;
+                botao.style.backgroundColor = "#f97316";
+
+            }
+
+        });
+
+    });
+
+    const botoesComentar = document.querySelectorAll(".post-actions button:last-child");
+
+    botoesComentar.forEach(botao => {
+
+        botao.addEventListener("click", function() {
+
+            const post = botao.closest(".post");
+
+            let areaComentarios = post.querySelector(".comentarios");
+
+            if (!areaComentarios) {
+
+                areaComentarios = document.createElement("div");
+                areaComentarios.classList.add("comentarios");
+
+                areaComentarios.innerHTML = `
+                    <input type="text" placeholder="Escreva um comentário...">
+                    <button class="enviar-comentario">Enviar</button>
+                    <div class="lista-comentarios"></div>
+                `;
+
+                post.appendChild(areaComentarios);
+
+                const input = areaComentarios.querySelector("input");
+                const enviar = areaComentarios.querySelector(".enviar-comentario");
+                const lista = areaComentarios.querySelector(".lista-comentarios");
+
+                enviar.addEventListener("click", function() {
+
+                    if (input.value.trim() !== "") {
+
+                        const comentario = document.createElement("p");
+
+                        comentario.innerText = input.value;
+
+                        lista.appendChild(comentario);
+
+                        input.value = "";
+
+                    }
+
+                });
+
+                input.addEventListener("keypress", function(event) {
+
+                    if (event.key === "Enter") {
+                        enviar.click();
+                    }
+
+                });
+
+            } else {
+
+                areaComentarios.style.display =
+                    areaComentarios.style.display === "none" ? "block" : "none";
+
+            }
+
+        });
+
+    });
+
+</script>
+</body>
+</html>
