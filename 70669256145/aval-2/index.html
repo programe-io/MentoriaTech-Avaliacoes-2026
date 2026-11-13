@@ -1,70 +1,164 @@
 
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meu Site - Pérola</title>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Controle Financeiro</title>
+
     <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="style.css" rel="stylesheet"></head>
+
 <body>
 
-    <header>
-        <h1>🌸 Pérola 🌸</h1>
+    <div class="container">
 
-        <nav>
-            <a href="#inicio">Início</a>
-            <a href="#sobre">Sobre mim</a>
-            <a href="#escola">Minha escola</a>
-            <a href="#sonhos">Meus sonhos</a>
-        </nav>
-    </header>
+        <header>
+            <h1>Meu Controle Financeiro</h1>
+            <p>Organize suas receitas e despesas</p>
+        </header>
 
-    <section id="inicio" class="inicio">
-        <h2>Olá! Seja bem-vindo(a) ao meu site!</h2>
-        <h1>Eu sou Pérola</h1>
-        <p>Estudante do 2º ano do Ensino Médio.</p>
+        <!-- PAINEL FINANCEIRO -->
 
-        <button onclick="mostrarMensagem()">
-            Clique aqui!
-        </button>
+        <section class="dashboard">
 
-        <p id="mensagem"></p>
-    </section>
+            <div class="card">
+                <h3>Total de Receitas</h3>
+                <p id="total-receitas">R$ 0,00</p>
+            </div>
 
-    <section id="sobre" class="sobre">
-        <h2>Sobre mim 💕</h2>
+            <div class="card">
+                <h3>Total de Despesas</h3>
+                <p id="total-despesas">R$ 0,00</p>
+            </div>
 
-        <p>
-            Meu nome é Pérola e sou estudante do 2º ano
-            do Ensino Médio. Gosto de aprender coisas novas,
-            descobrir conhecimentos, conhecer pessoas e
-            aproveitar cada oportunidade para crescer.
-        </p>
-    </section>
+            <div class="card saldo">
+                <h3>Saldo Atual</h3>
+                <p id="saldo-total">R$ 0,00</p>
+            </div>
 
-    <section id="escola" class="escola">
-        <h2>Minha escola 🎓</h2>
+        </section>
 
-        <p><strong>Nome:</strong> Pérola</p>
-        <p><strong>Série:</strong> 2º ano do Ensino Médio</p>
-        <p><strong>Escola:</strong> CETI Francisca Trindade</p>
-    </section>
+        <!-- FORMULÁRIO -->
 
-    <section id="sonhos" class="sonhos">
-        <h2>Meus sonhos ✨</h2>
+        <section class="formulario">
 
-        <p>
-            Quero alcançar meus objetivos, continuar estudando,
-            realizar meus sonhos e construir um futuro
-            cheio de conquistas e felicidade.
-        </p>
-    </section>
+            <h2>Cadastrar movimentação</h2>
 
-    <footer>
-        <p>© 2026 - Pérola | Meu Site Pessoal</p>
-    </footer>
+            <form id="form-financeiro">
 
-    <script src="script.js"></script>
+                <input type="hidden" id="id">
+
+                <label>Descrição:</label>
+                <input
+                    type="text"
+                    id="descricao"
+                    placeholder="Ex: Pagamento de salário"
+                    required
+                >
+
+                <label>Valor (R$):</label>
+                <input
+                    type="number"
+                    id="valor"
+                    placeholder="Ex: 1500"
+                    min="0.01"
+                    step="0.01"
+                    required
+                >
+
+                <label>Tipo:</label>
+                <select id="tipo" required>
+                    <option value="receita">Receita</option>
+                    <option value="despesa">Despesa</option>
+                </select>
+
+                <label>Categoria:</label>
+                <select id="categoria" required>
+                    <option value="Salário">Salário</option>
+                    <option value="Alimentação">Alimentação</option>
+                    <option value="Transporte">Transporte</option>
+                    <option value="Moradia">Moradia</option>
+                    <option value="Educação">Educação</option>
+                    <option value="Saúde">Saúde</option>
+                    <option value="Lazer">Lazer</option>
+                    <option value="Outros">Outros</option>
+                </select>
+
+                <label>Data:</label>
+                <input
+                    type="date"
+                    id="data"
+                    required
+                >
+
+                <button type="submit" id="btn-salvar">
+                    Cadastrar movimentação
+                </button>
+
+                <button
+                    type="button"
+                    id="btn-cancelar"
+                    hidden
+                >
+                    Cancelar edição
+                </button>
+
+            </form>
+
+        </section>
+
+        <!-- LISTAGEM -->
+
+        <section class="listagem">
+
+            <h2>Histórico financeiro</h2>
+
+            <div class="filtros">
+
+                <button data-filtro="todos">
+                    Todos
+                </button>
+
+                <button data-filtro="receita">
+                    Receitas
+                </button>
+
+                <button data-filtro="despesa">
+                    Despesas
+                </button>
+
+            </div>
+
+            <div class="tabela-container">
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Descrição</th>
+                            <th>Categoria</th>
+                            <th>Tipo</th>
+                            <th>Valor</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="lista-financeira">
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+    </div>
+
 <script src="script.js"></script></body>
 </html>
