@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aesthetica Journal | Tendências do Mundo da Estética</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+  <!-- Barra de Progresso de Leitura -->
+  <div class="reading-progress" id="readingProgress"></div>
+
+  <!-- Cabeçalho -->
+  <header>
+    <div class="container nav-wrapper">
+      <a href="#" class="logo">Aesthetica<span>.</span></a>
+      <nav class="nav-links">
+        <a href="#artigos">Tendências</a>
+        <a href="#artigos" data-quick-cat="Estética Regenerativa">Regenerativa</a>
+        <a href="#artigos" data-quick-cat="Tecnologias">Tecnologias</a>
+        <a href="#newsletter">Newsletter</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="theme-toggle" id="themeToggle" aria-label="Alternar tema">
+          <span id="themeIcon">🌙</span> <span id="themeText">Modo Escuro</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container hero-grid">
+      <div>
+        <span class="hero-tag">Edição 2026 • Beleza &amp; Ciência</span>
+        <h1>O futuro da estética é <em>regenerativo</em>, sutil e inteligente.</h1>
+        <p>Descubra como exossomos, bioestimuladores de nova geração, lasers não ablativos e o skinimalismo estão substituindo os exageros por resultados naturais e celulares.</p>
+        <div class="hero-cta">
+          <a href="#artigos" class="btn-primary">Explorar Tendências</a>
+          <button class="btn-outline" id="openFeaturedBtn">Ler Artigo em Destaque</button>
+        </div>
+      </div>
+      <div class="hero-image-box">
+        <img src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=1000&q=85" alt="Tratamento estético moderno com luz suave e cuidados com a pele" />
+        <div class="hero-floating-card">
+          <strong>+78% de busca</strong>
+          <span>Por procedimentos regenerativos e sem tempo de recuperação</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Seção Principal de Artigos -->
+  <main class="container" id="artigos">
+    <!-- Barra de Busca e Filtros -->
+    <div class="controls-bar">
+      <div class="filter-pills" id="categoryFilters">
+        <button class="pill active" data-category="Todos">Todos</button>
+        <button class="pill" data-category="Estética Regenerativa">Estética Regenerativa</button>
+        <button class="pill" data-category="Tecnologias">Tecnologias</button>
+        <button class="pill" data-category="Skincare & Biohacking">Skincare &amp; Biohacking</button>
+        <button class="pill" data-category="Bem-Estar Holístico">Bem-Estar Holístico</button>
+      </div>
+      <div class="search-box">
+        <span>🔍</span>
+        <input type="text" id="searchInput" placeholder="Buscar exossomos, laser, PDRN..." />
+      </div>
+    </div>
+
+    <!-- Grid Dinâmico de Posts -->
+    <div class="articles-grid" id="articlesGrid"></div>
+    <div class="empty-state" id="emptyState" style="display: none;">
+      Nenhum artigo encontrado para essa busca. Tente outro termo ou categoria.
+    </div>
+
+    <!-- Newsletter -->
+    <section class="newsletter-section" id="newsletter">
+      <div class="newsletter-box">
+        <span class="hero-tag">Curadoria Semanal</span>
+        <h2>Receba protocolos e inovações no seu e-mail</h2>
+        <p>Análises científicas traduzidas de forma clara sobre ativos, equipamentos e tendências globais de clínicas dermatológicas.</p>
+        <form class="newsletter-form" id="newsletterForm">
+          <input type="email" id="newsletterEmail" placeholder="Seu melhor e-mail..." required />
+          <button type="submit">Inscrever-se</button>
+        </form>
+        <div class="newsletter-feedback" id="newsletterFeedback"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Rodapé -->
+  <footer>
+    <div class="container">
+      <p><strong>ketlen maria </strong> — Conteúdo informativo sobre ciência, dermatologia e tendências estéticas.</p>
+    </div>
+  </footer>
+
+  <!-- Modal de Leitura Completa + Comentários -->
+  <div class="modal-backdrop" id="articleModal" aria-hidden="true">
+    <div class="modal-content" role="dialog" aria-modal="true">
+      <div class="modal-header">
+        <img id="modalImg" src="" alt="" />
+        <button class="modal-close" id="closeModalBtn" aria-label="Fechar artigo">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-meta">
+          <span class="card-category" id="modalCategory"></span>
+          <span id="modalDate"></span>
+          <span id="modalReadTime"></span>
+        </div>
+        <h2 id="modalTitle"></h2>
+        <div class="modal-article-text" id="modalText"></div>
+
+        <!-- Barra de Interação no Modal -->
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:2rem; padding-top:1.5rem; border-top:1px solid var(--border);">
+          <button class="like-btn" id="modalLikeBtn" style="font-size:1rem; padding:0.5rem 1.1rem;">
+            <span id="modalLikeIcon">🤍</span> <span id="modalLikeCount">0</span> curtidas
+          </button>
+          <span style="font-size:0.85rem; color:var(--text-muted);" id="modalAuthor"></span>
+        </div>
+
+        <!-- Seção de Comentários -->
+        <div class="comments-section">
+          <h3>Comentários (<span id="commentCount">0</span>)</h3>
+          <form class="comment-form" id="commentForm">
+            <input type="text" id="commentAuthor" placeholder="Seu nome" required />
+            <textarea id="commentInput" rows="3" placeholder="Compartilhe sua opinião ou dúvida sobre esta tendência..." required></textarea>
+            <button type="submit" class="btn-primary" style="align-self: flex-start;">Publicar Comentário</button>
+          </form>
+          <div class="comment-list" id="commentList"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+<script src="script.js"></script></body>
+</html>
