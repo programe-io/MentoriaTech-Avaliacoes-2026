@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gerenciador de tarefas</title>
+  <link rel="stylesheet" href="style.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+  <main class="container">
+    <h1>Gerenciador de tarefas</h1>
+
+    <form id="form-tarefa">
+      <label for="titulo">Título da tarefa</label>
+      <input id="titulo" type="text" placeholder="Digite o título">
+
+      <label for="prioridade">Prioridade</label>
+      <select id="prioridade">
+        <option value="1">1 - Alta</option>
+        <option value="2" selected>2 - Média</option>
+        <option value="3">3 - Baixa</option>
+      </select>
+
+      <button type="submit">Cadastrar tarefa</button>
+      <p id="mensagem"></p>
+    </form>
+
+    <h2>Tarefas cadastradas</h2>
+    <div id="lista-tarefas"></div>
+  </main>
+
+  <script>
+    const tarefas = [];
+    let proximoCodigo = 1;
+
+    const formulario = document.getElementById("form-tarefa");
+    const campoTitulo = document.getElementById("titulo");
+    const campoPrioridade = document.getElementById("prioridade");
+    const lista = document.getElementById("lista-tarefas");
+    const mensagem = document.getElementById("mensagem");
+
+    function nomePrioridade(valor) {
+      if (valor === 1) return "Alta";
+      if (valor === 2) return "Média";
+      return "Baixa";
+    }
+
+    formulario.addEventListener("submit", function(evento) {
+      evento.preventDefault();
+
+      const titulo = campoTitulo.value.trim();
+      const prioridade = Number(campoPrioridade.value);
+
+      if (titulo.length < 5) {
+        mensagem.textContent = "O título precisa ter pelo menos 5 caracteres.";
+        return;
+      }
+
+      if (prioridade < 1 || prioridade > 3) {
+        mensagem.textContent = "A prioridade deve ser de 1 a 3.";
+        return;
+      }
+
+      tarefas.push({
+        codigo: proximoCodigo,
+        titulo: titulo,
+        prioridade: prioridade,
+        concluida: false
+      });
+
+      proximoCodigo++;
+      campoTitulo.value = "";
+      campoPrioridade.value = "2";
+      mensagem.textContent = "";
+
+      mostrarTarefas();
+    });
+
+    function mostrarTarefas() {
+      lista.innerHTML = "";
+
+      if (tarefas.length === 0) {
+        lista.textContent = "Nenhuma tarefa cadastrada.";
+        return;
+      }
+
+      tarefas.forEach(function(tarefa) {
+        const item = document.createElement("div");
+        item.className = "tarefa";
+
+        const informacoes = document.createElement("div");
+        informacoes.innerHTML =
+          `<strong>${tarefa.titulo}</strong><br>
+           Código: ${tarefa.codigo} |
+           Prioridade: ${tarefa.prioridade} - ${nomePrioridade(tarefa.prioridade)} |
+           Status: ${tarefa.concluida ? "Concluída" : "Pendente"}`;
+
+        const seletor = document.createElement("select");
+        seletor.innerHTML = `
+          <option value="1">Prioridade 1 - Alta</option>
+          <option value="2">Prioridade 2 - Média</option>
+          <option value="3">Prioridade 3 - Baixa</option>
+        `;
+        seletor.value = tarefa.prioridade;
+
+        seletor.addEventListener("change", function() {
+          tarefa.prioridade = Number(seletor.value);
+          mostrarTarefas();
+        });
+
+        const botao = document.createElement("button");
+        botao.textContent = tarefa.concluida ? "Concluída" : "Concluir";
+        botao.disabled = tarefa.concluida;
+
+        botao.addEventListener("click", function() {
+          tarefa.concluida = true;
+          mostrarTarefas();
+        });
+
+        item.append(informacoes, seletor, botao);
+        lista.appendChild(item);
+      });
+    }
+
+    mostrarTarefas();
+  </script>
+<script src="script.js"></script></body>
+</html>
