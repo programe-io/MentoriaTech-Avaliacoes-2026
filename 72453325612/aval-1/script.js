@@ -1,0 +1,120 @@
+
+// =====================================================
+// AVALIAÇÃO 1 - SISTEMA DE ESTOQUE
+// Tema: Loja de Informática
+// =====================================================
+
+// Lista que guarda os produtos
+let estoque = [];
+
+// -----------------------------------------------------
+// FUNÇÃO PARA VALIDAR OS DADOS DO PRODUTO
+// -----------------------------------------------------
+function validarProduto(descricao, quantidade, valor) {
+  if (descricao.length < 3) {
+    throw new Error("A descrição precisa ter pelo menos 3 caracteres");
+  }
+
+  if (quantidade < 1) {
+    throw new Error("Informe uma quantidade válida para o estoque");
+  }
+
+  if (valor < 0) {
+    throw new Error("O preço não pode ser negativo");
+  }
+}
+
+// -----------------------------------------------------
+// FUNÇÃO PARA CADASTRAR UM NOVO PRODUTO
+// -----------------------------------------------------
+function cadastrarProduto(descricao, quantidade, valor) {
+  validarProduto(descricao, quantidade, valor);
+
+  let novoProduto = {
+    codigo: estoque.length + 1,
+    descricao: descricao,
+    quantidade: quantidade,
+    valor: valor
+  };
+
+  estoque.push(novoProduto);
+}
+
+// -----------------------------------------------------
+// FUNÇÃO PARA LISTAR OS PRODUTOS CADASTRADOS
+// -----------------------------------------------------
+function listarProdutos() {
+  console.log(estoque);
+}
+
+// -----------------------------------------------------
+// FUNÇÃO PARA ATUALIZAR O PREÇO DE UM PRODUTO
+// O novo preço substitui o anterior
+// -----------------------------------------------------
+function atualizarValor(codigoProduto, novoValor) {
+  if (novoValor < 0) {
+    throw new Error("O preço informado é inválido");
+  }
+
+  const produtoEncontrado = estoque.find((prod) => prod.codigo === codigoProduto);
+
+  if (produtoEncontrado) {
+    produtoEncontrado.valor = novoValor;
+  } else {
+    throw new Error("Não existe produto com esse código");
+  }
+}
+
+// -----------------------------------------------------
+// FUNÇÃO PARA ADICIONAR QUANTIDADE AO ESTOQUE
+// A nova quantidade é somada à quantidade existente
+// -----------------------------------------------------
+function atualizarQuantidade(codigoProduto, novaQuantidade) {
+  if (novaQuantidade < 1) {
+    throw new Error("A quantidade adicionada deve ser maior que zero");
+  }
+
+  const produtoEncontrado = estoque.find((prod) => prod.codigo === codigoProduto);
+
+  if (produtoEncontrado) {
+    produtoEncontrado.quantidade = produtoEncontrado.quantidade + novaQuantidade;
+  } else {
+    throw new Error("Produto não localizado no estoque");
+  }
+}
+
+// =====================================================
+// TESTES DO SISTEMA
+// =====================================================
+
+// Consultando o estoque inicialmente
+listarProdutos();
+
+// Cadastrando produtos da loja de informática
+cadastrarProduto("Teclado Redragon", 20, 150);
+listarProdutos();
+
+cadastrarProduto("Mouse Logitech", 35, 89);
+listarProdutos();
+
+cadastrarProduto("Monitor Samsung", 10, 899);
+listarProdutos();
+
+// Alterando o preço do produto de código 2
+atualizarValor(2, 79);
+listarProdutos();
+
+// Adicionando 5 unidades ao produto de código 1
+atualizarQuantidade(1, 5);
+listarProdutos();
+
+// -----------------------------------------------------
+// TESTES DE ERRO
+// Retire o comentário de uma linha por vez para testar
+// -----------------------------------------------------
+
+// cadastrarProduto("TV", 5, 1500);             // descrição curta
+// cadastrarProduto("Mouse Logitech", 0, 99);   // quantidade inválida
+// cadastrarProduto("Monitor Samsung", 10, -5); // preço negativo
+// atualizarValor(8, 100);                      // produto inexistente
+// atualizarQuantidade(9, 5);                   // produto inexistente
