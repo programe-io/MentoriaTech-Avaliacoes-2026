@@ -1,0 +1,446 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Instagram</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #fff;
+    color: #262626;
+}
+
+.sidebar {
+    width: 245px;
+    height: 100vh;
+    position: fixed;
+    border-right: 1px solid #dbdbdb;
+    padding: 35px 22px;
+}
+
+.logo {
+    font-family: cursive;
+    font-size: 30px;
+    margin-bottom: 45px;
+}
+
+.menu a {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 8px;
+    margin-bottom: 8px;
+    text-decoration: none;
+    color: #262626;
+    border-radius: 8px;
+}
+
+.menu a:hover {
+    background: #f2f2f2;
+}
+
+.menu strong {
+    font-size: 23px;
+    width: 25px;
+    text-align: center;
+}
+
+.main {
+    margin-left: 245px;
+    display: flex;
+    justify-content: center;
+    gap: 55px;
+    padding: 35px 20px;
+}
+
+.content {
+    width: 470px;
+    max-width: 100%;
+}
+
+.stories {
+    display: flex;
+    gap: 17px;
+    overflow-x: auto;
+    padding: 10px 0 25px;
+    margin-bottom: 15px;
+}
+
+.story {
+    min-width: 65px;
+    text-align: center;
+    font-size: 12px;
+}
+
+.story-circle {
+    width: 62px;
+    height: 62px;
+    border-radius: 50%;
+    padding: 3px;
+    margin: auto auto 6px;
+    background: linear-gradient(45deg,#feda75,#fa7e1e,#d62976,#962fbf);
+}
+
+.story-circle img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid white;
+}
+
+.story-circle.empty {
+    background: #eee;
+    border: 1px solid #ddd;
+}
+
+.post {
+    border-bottom: 1px solid #dbdbdb;
+    margin-bottom: 22px;
+    padding-bottom: 18px;
+}
+
+.post-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    font-size: 14px;
+}
+
+.avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.post-image {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+}
+
+.actions {
+    display: flex;
+    gap: 17px;
+    padding: 9px 0;
+}
+
+.actions button {
+    border: none;
+    background: none;
+    font-size: 26px;
+    cursor: pointer;
+}
+
+.like.active {
+    color: red;
+}
+
+.likes {
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.caption {
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.comment {
+    width: 100%;
+    border: none;
+    border-top: 1px solid #eee;
+    padding: 12px 0 4px;
+    outline: none;
+}
+
+.suggestions {
+    width: 300px;
+    padding-top: 30px;
+    font-size: 14px;
+}
+
+.my-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 25px;
+}
+
+.empty-avatar {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: #f2f2f2;
+    border: 1px solid #dbdbdb;
+}
+
+.suggestion {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 18px 0;
+}
+
+.suggestion img {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.blue {
+    color: #0095f6;
+    font-weight: bold;
+    margin-left: auto;
+    font-size: 12px;
+}
+
+@media(max-width:1000px) {
+    .sidebar {
+        width: 75px;
+        padding: 25px 15px;
+    }
+
+    .logo {
+        font-size: 0;
+    }
+
+    .logo:after {
+        content: "◎";
+        font-size: 30px;
+    }
+
+    .menu span {
+        display: none;
+    }
+
+    .menu a {
+        justify-content: center;
+    }
+
+    .main {
+        margin-left: 75px;
+    }
+
+    .suggestions {
+        display: none;
+    }
+}
+
+@media(max-width:600px) {
+    .sidebar {
+        display: none;
+    }
+
+    .main {
+        margin: 0;
+        padding: 10px;
+    }
+
+    .content {
+        width: 100%;
+    }
+}
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body>
+
+<aside class="sidebar">
+    <div class="logo">Instagram</div>
+
+    <nav class="menu">
+        <a href="#"><strong>⌂</strong><span>Início</span></a>
+        <a href="#"><strong>⌕</strong><span>Pesquisa</span></a>
+        <a href="#"><strong>◉</strong><span>Explorar</span></a>
+        <a href="#"><strong>▶</strong><span>Reels</span></a>
+        <a href="#"><strong>✉</strong><span>Mensagens</span></a>
+        <a href="#"><strong>♡</strong><span>Notificações</span></a>
+        <a href="#"><strong>⊕</strong><span>Criar</span></a>
+        <a href="#"><strong>○</strong><span>Perfil</span></a>
+    </nav>
+</aside>
+
+<main class="main">
+
+<section class="content">
+
+    <!-- STORIES -->
+    <div class="stories">
+
+        <div class="story">
+            <div class="story-circle empty"></div>
+            Você
+        </div>
+
+        <div class="story">
+            <div class="story-circle">
+                <img src="https://i.pravatar.cc/100?img=47" alt="Maria">
+            </div>
+            maria
+        </div>
+
+        <div class="story">
+            <div class="story-circle">
+                <img src="https://i.pravatar.cc/100?img=12" alt="João">
+            </div>
+            joao
+        </div>
+
+        <div class="story">
+            <div class="story-circle">
+                <img src="https://i.pravatar.cc/100?img=44" alt="Ana">
+            </div>
+            ana
+        </div>
+
+        <div class="story">
+            <div class="story-circle">
+                <img src="https://i.pravatar.cc/100?img=59" alt="Pedro">
+            </div>
+            pedro
+        </div>
+
+    </div>
+
+    <!-- PUBLICAÇÃO DA MARIA -->
+    <article class="post">
+
+        <div class="post-header">
+            <img class="avatar"
+            src="https://i.pravatar.cc/100?img=47"
+            alt="Maria">
+
+            <strong>maria_silva</strong>
+            <span> • 2 h</span>
+        </div>
+
+        <img class="post-image"
+        src="https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=700"
+        alt="Flores">
+
+        <div class="actions">
+            <button class="like" onclick="curtir(this)">♡</button>
+            <button>♧</button>
+            <button>➤</button>
+        </div>
+
+        <div class="likes">1.245 curtidas</div>
+
+        <p class="caption">
+            <strong>maria_silva</strong>
+            Um dia lindo para aproveitar! 🌸
+        </p>
+
+        <input class="comment"
+        placeholder="Adicione um comentário...">
+
+    </article>
+
+    <!-- PUBLICAÇÃO DO PEDRO -->
+    <article class="post">
+
+        <div class="post-header">
+            <img class="avatar"
+            src="https://i.pravatar.cc/100?img=59"
+            alt="Pedro">
+
+            <strong>pedro123</strong>
+            <span> • 5 h</span>
+        </div>
+
+        <img class="post-image"
+        src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=700"
+        alt="Paisagem">
+
+        <div class="actions">
+            <button class="like" onclick="curtir(this)">♡</button>
+            <button>♧</button>
+            <button>➤</button>
+        </div>
+
+        <div class="likes">856 curtidas</div>
+
+        <p class="caption">
+            <strong>pedro123</strong>
+            Vivendo cada momento! ✨
+        </p>
+
+        <input class="comment"
+        placeholder="Adicione um comentário...">
+
+    </article>
+
+</section>
+
+<!-- SUGESTÕES -->
+<aside class="suggestions">
+
+    <div class="my-profile">
+        <div class="empty-avatar"></div>
+
+        <div>
+            <strong>voce</strong><br>
+            <span style="color:gray">Você</span>
+        </div>
+
+        <span class="blue">Alternar</span>
+    </div>
+
+    <p style="color:gray;font-weight:bold">
+        Sugestões para você
+    </p>
+
+    <div class="suggestion">
+        <img src="https://i.pravatar.cc/100?img=47"
+        alt="Maria">
+        <strong>maria_silva</strong>
+        <span class="blue">Seguir</span>
+    </div>
+
+    <div class="suggestion">
+        <img src="https://i.pravatar.cc/100?img=59"
+        alt="Pedro">
+        <strong>pedro123</strong>
+        <span class="blue">Seguir</span>
+    </div>
+
+    <div class="suggestion">
+        <img src="https://i.pravatar.cc/100?img=44"
+        alt="Ana">
+        <strong>ana_lima</strong>
+        <span class="blue">Seguir</span>
+    </div>
+
+</aside>
+
+</main>
+
+<script>
+function curtir(botao) {
+    botao.classList.toggle("active");
+
+    if (botao.classList.contains("active")) {
+        botao.innerHTML = "♥";
+    } else {
+        botao.innerHTML = "♡";
+    }
+}
+</script>
+
+</body>
+</html>
