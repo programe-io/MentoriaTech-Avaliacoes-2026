@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>MiniFeed</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/script.js"></script>
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+    <header>
+        <div class="header-content">
+            <h1>MiniFeed</h1>
+            <nav>
+                <a href="#">Início</a>
+                <a href="#">Perfil</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+
+        <section class="new-post">
+            <div class="user">
+                <div class="avatar">A</div>
+                <div>
+                    <strong>Ana Luiza</strong>
+                    <span>Compartilhe suas novidades com os amigos!</span>
+                </div>
+            </div>
+            <button>Publicar</button>
+        </section>
+
+        <article class="post">
+            <div class="post-header">
+                <div class="avatar">L</div>
+                <div>
+                    <strong>Lucas</strong>
+                    <span>Há 5 minutos</span>
+                </div>
+            </div>
+            <div class="post-test">
+                Testando códigos novos e tomando um bom café! ☕💻
+            </div>
+            <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800" alt="Ambiente de programação">
+            <div class="post-actions">
+                <button>Curtir</button>
+                <button>Comentar</button>
+            </div>
+        </article>
+
+        <article class="post">
+            <div class="post-header">
+                <div class="avatar">M</div>
+                <div>
+                    <strong>Mariana</strong>
+                    <span>Há 30 minutos</span>
+                </div>
+            </div>
+            <div class="post-test">
+                Explorando novas trilhas e curtindo a natureza! 🌲⛰️
+            </div>
+            <img src="https://images.unsplash.com/photo-1454496522488-7a8e488e8606?w=800" alt="Montanhas e natureza">
+            <div class="post-actions">
+                <button>Curtir</button>
+                <button>Comentar</button>
+            </div>
+        </article>
+
+        <article class="post">
+            <div class="post-header">
+                <div class="avatar">R</div>
+                <div>
+                    <strong>Rafael</strong>
+                    <span>Há 2 horas</span>
+                </div>
+            </div>
+            <div class="post-test">
+                Fim de tarde produtivo no escritório. Foco total nos objetivos! 🚀
+            </div>
+            <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=800" alt="Escritório moderno">
+            <div class="post-actions">
+                <button>Curtir</button>
+                <button>Comentar</button>
+            </div>
+        </article>
+
+        <article class="post">
+            <div class="post-header">
+                <div class="avatar">B</div>
+                <div>
+                    <strong>Beatriz</strong>
+                    <span>Há 5 horas</span>
+                </div>
+            </div>
+            <div class="post-test">
+                Receita nova testada e aprovada! Quem quer um pedaço? 🍰😋
+            </div>
+            <img src="https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=800" alt="Bolo delicioso">
+            <div class="post-actions">
+                <button>Curtir</button>
+                <button>Comentar</button>
+            </div>
+        </article>
+
+        <article class="post">
+            <div class="post-header">
+                <div class="avatar">T</div>
+                <div>
+                    <strong>Thiago</strong>
+                    <span>Há 1 dia</span>
+                </div>
+            </div>
+            <div class="post-test">
+                Noite de muito som e boas energias com a galera! 🎸🎶
+            </div>
+            <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=800" alt="Instrumentos musicais e show">
+            <div class="post-actions">
+                <button>Curtir</button>
+                <button>Comentar</button>
+            </div>
+        </article>
+
+    </main>
+
+    <footer>
+        <p>MiniFeed - Todos os Direitos Reservados - 2026</p>
+    </footer>
+
+<script>
+    const botoesCurtir = document.querySelectorAll(".post-actions button:first-child");
+
+    botoesCurtir.forEach(botao => {
+
+        let curtidas = 0;
+        let curtido = false;
+
+        botao.innerText = "Curtir (0)";
+
+        botao.addEventListener("click", function() {
+
+            if (curtido) {
+
+                curtidas--;
+                curtido = false;
+
+                botao.innerText = `Curtir (${curtidas})`;
+                botao.style.backgroundColor = "#2563eb";
+
+            } else {
+
+                curtidas++;
+                curtido = true;
+
+                botao.innerText = `Curtido (${curtidas})`;
+                botao.style.backgroundColor = "#f97316";
+
+            }
+
+        });
+
+    });
+
+    const botoesComentar = document.querySelectorAll(".post-actions button:last-child");
+
+    botoesComentar.forEach(botao => {
+
+        botao.addEventListener("click", function() {
+
+            const post = botao.closest(".post");
+
+            let areaComentarios = post.querySelector(".comentarios");
+
+            if (!areaComentarios) {
+
+                areaComentarios = document.createElement("div");
+                areaComentarios.classList.add("comentarios");
+
+                areaComentarios.innerHTML = `
+                    <input type="text" placeholder="Escreva um comentário...">
+                    <button class="enviar-comentario">Enviar</button>
+                    <div class="lista-comentarios"></div>
+                `;
+
+                post.appendChild(areaComentarios);
+
+                const input = areaComentarios.querySelector("input");
+                const enviar = areaComentarios.querySelector(".enviar-comentario");
+                const lista = areaComentarios.querySelector(".lista-comentarios");
+
+                enviar.addEventListener("click", function() {
+
+                    if (input.value.trim() !== "") {
+
+                        const comentario = document.createElement("p");
+
+                        comentario.innerText = input.value;
+
+                        lista.appendChild(comentario);
+
+                        input.value = "";
+
+                    }
+
+                });
+
+                input.addEventListener("keypress", function(event) {
+
+                    if (event.key === "Enter") {
+                        enviar.click();
+                    }
+
+                });
+
+            } else {
+
+                areaComentarios.style.display =
+                    areaComentarios.style.display === "none" ? "block" : "none";
+
+            }
+
+        });
+
+    });
+
+</script>
+</body>
+</html>
