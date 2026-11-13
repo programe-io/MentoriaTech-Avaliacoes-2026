@@ -1,215 +1,313 @@
-<html lang="pt-PT">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jogo: Apanha a Bola</title>
-    <style>
-        /* --- ESTILOS CSS DO JOGO --- */
-        body {
-            margin: 0;
-            padding: 0;
-            background: linear-gradient(135deg, #1e1e2f, #0f0f1a);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            color: #fff;
-            overflow: hidden;
-        }
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
-        #placar {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 15px;
-            text-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
-        }
+body {
+    background: radial-gradient(circle, #2b3a67 0%, #161d33 100%);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: white;
+    overflow: hidden;
+}
 
-        /* Área onde o jogo acontece */
-        #tela-jogo {
-            width: 400px;
-            height: 500px;
-            background-color: #252538;
-            border: 4px solid #00ffcc;
-            border-radius: 8px;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-        }
+h1 {
+    margin-bottom: 10px;
+    font-size: 24px;
+    color: #a8e6cf;
+    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+}
 
-        /* O jogador (barra inferior) */
-        #jogador {
-            width: 80px;
-            height: 15px;
-            background: linear-gradient(90deg, #00ffcc, #00bfff);
-            position: absolute;
-            bottom: 10px;
-            left: 160px; /* Posição inicial centralizada */
-            border-radius: 10px;
-            box-shadow: 0 0 15px #00ffcc;
-            transition: left 0.1s ease-out;
-        }
+p {
+    margin-bottom: 30px;
+    font-size: 14px;
+    color: #dcedc1;
+}
 
-        /* O objeto que cai (bola) */
-        #bola {
-            width: 20px;
-            height: 20px;
-            background: linear-gradient(135deg, #ff007f, #ff0033);
-            border-radius: 50%;
-            position: absolute;
-            top: 0px;
-            left: 190px;
-            box-shadow: 0 0 15px #ff007f;
-        }
+/* Contentor principal do bichinho */
+.cenario {
+    position: relative;
+    width: 300px;
+    height: 320px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
 
-        /* Ecrã de Fim de Jogo */
-        #fim-de-jogo {
-            display: none;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(15, 15, 26, 0.95);
-            padding: 30px;
-            border-radius: 10px;
-            border: 2px solid #ff007f;
-            text-align: center;
-            box-shadow: 0 0 25px rgba(255, 0, 127, 0.4);
-        }
+/* Animação de respiração/flutuação */
+.terencio {
+    position: relative;
+    width: 210px;
+    height: 220px;
+    animation: respirar 2.5s infinite ease-in-out;
+    transition: transform 0.2s;
+}
 
-        #fim-de-jogo h2 {
-            color: #ff007f;
-            margin-top: 0;
-        }
+.terencio:active {
+    transform: scale(0.95);
+}
 
-        #fim-de-jogo button {
-            background: #00ffcc;
-            color: #1e1e2f;
-            border: none;
-            padding: 10px 20px;
-            font-size: 16px;
-            font-weight: bold;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 15px;
-            transition: 0.2s;
-        }
+/* Corpo peludo verde */
+.corpo {
+    position: absolute;
+    bottom: 20px;
+    width: 210px;
+    height: 185px;
+    background: radial-gradient(circle at 35% 30%, #7ed957, #388e3c);
+    border-radius: 50% 50% 45% 45% / 55% 55% 40% 40%;
+    box-shadow: 
+        inset -10px -15px 25px rgba(0, 40, 0, 0.4),
+        0 15px 25px rgba(0, 0, 0, 0.4);
+    z-index: 2;
+}
 
-        #fim-de-jogo button:hover {
-            background: #00bfff;
-            transform: scale(1.05);
-        }
+/* Tufos de pelo no topo da cabeça */
+.pelo-topo {
+    position: absolute;
+    top: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 25px;
+    height: 35px;
+    background: #5cb85c;
+    border-radius: 50% 50% 0 0;
+    z-index: 1;
+}
 
-        /* Instruções na base */
-        .instrucoes {
-            margin-top: 15px;
-            font-size: 14px;
-            color: #8888a0;
-        }
-    </style>
-</head>
-<body>
+.pelo-topo::before,
+.pelo-topo::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 30px;
+    background: #4cae4c;
+    border-radius: 50% 50% 0 0;
+    top: 5px;
+}
 
-    <div id="placar">Pontos: <span id="pontos">0</span></div>
+.pelo-topo::before {
+    left: -18px;
+    transform: rotate(-25deg);
+}
 
-    <!-- ESTRUTURA HTML DO JOGO -->
-    <div id="tela-jogo">
-        <div id="jogador"></div>
-        <div id="bola"></div>
+.pelo-topo::after {
+    right: -18px;
+    transform: rotate(25deg);
+}
 
-        <div id="fim-de-jogo">
-            <h2>Fim de Jogo!</h2>
-            <p>A bola caiu no chão.</p>
-            <button onclick="reiniciarJogo()">Jogar Novamente</button>
-        </div>
-    </div>
+/* Orelhinhas */
+.orelha {
+    position: absolute;
+    top: 45px;
+    width: 45px;
+    height: 55px;
+    background: #43a047;
+    border-radius: 50% 50% 20% 20%;
+    z-index: 1;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+}
 
-    <div class="instrucoes">Usa as setas ⬅️ e ➡️ do teclado para mover a barra.</div>
+.orelha.esq {
+    left: 5px;
+    transform: rotate(-35deg);
+}
 
-    <!-- LÓGICA JAVASCRIPT DO JOGO -->
-    <script>
-        const jogador = document.getElementById('jogador');
-        const bola = document.getElementById('bola');
-        const pontosSpan = document.getElementById('pontos');
-        const telaJogo = document.getElementById('tela-jogo');
-        const painelFimJogo = document.getElementById('fim-de-jogo');
+.orelha.dir {
+    right: 5px;
+    transform: rotate(35deg);
+}
 
-        let jogadorX = 160;
-        let bolaX = 190;
-        let bolaY = 0;
-        let velocidadeBola = 4;
-        let pontos = 0;
-        let jogoAtivo = true;
+/* Olhões grandes característicos do Wunggy */
+.olhos {
+    position: absolute;
+    top: 32px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    z-index: 4;
+}
 
-        // Movimento do Jogador com as Setas do Teclado
-        document.addEventListener('keydown', (e) => {
-            if (!jogoAtivo) return;
-            
-            if (e.key === 'ArrowLeft' && jogadorX > 0) {
-                jogadorX -= 25;
-            } else if (e.key === 'ArrowRight' && jogadorX < 320) { // 400 largura - 80 da barra
-                jogadorX += 25;
-            }
-            jogador.style.left = jogadorX + 'px';
-        });
+.olho {
+    width: 68px;
+    height: 74px;
+    background: #ffffff;
+    border-radius: 50%;
+    border: 4px solid #2e7d32;
+    position: relative;
+    overflow: hidden;
+    box-shadow: inset 0 -5px 10px rgba(0, 0, 0, 0.15);
+}
 
-        // Loop Principal do Jogo (Atualização Física)
-        function atualizarJogo() {
-            if (!jogoAtivo) return;
+.pupila {
+    position: absolute;
+    width: 34px;
+    height: 34px;
+    background: #1a1a1a;
+    border-radius: 50%;
+    top: 20px;
+    left: 15px;
+    transition: transform 0.1s ease-out;
+}
 
-            // Fazer a bola cair
-            bolaY += velocidadeBola;
-            bola.style.top = bolaY + 'px';
+/* Brilho nos olhos */
+.pupila::after {
+    content: '';
+    position: absolute;
+    width: 11px;
+    height: 11px;
+    background: white;
+    border-radius: 50%;
+    top: 5px;
+    left: 6px;
+}
 
-            // Detetar quando a bola chega à altura da barra do jogador
-            if (bolaY >= 465 && bolaY <= 480) {
-                // Verificar se a bola bateu na barra do jogador
-                if (bolaX + 20 >= jogadorX && bolaX <= jogadorX + 80) {
-                    pontos++;
-                    pontosSpan.innerText = pontos;
-                    resetarBola();
-                    
-                    // Aumentar a velocidade gradualmente para ficar mais difícil
-                    if (pontos % 3 === 0) {
-                        velocidadeBola += 1;
-                    }
-                }
-            }
+/* Narizinho */
+.nariz {
+    position: absolute;
+    top: 102px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 24px;
+    height: 14px;
+    background: #1b5e20;
+    border-radius: 50%;
+    z-index: 4;
+}
 
-            // Detetar se a bola passou do limite inferior (Game Over)
-            if (bolaY > 500) {
-                jogoAtivo = false;
-                painelFimJogo.style.display = 'block';
-            }
+/* Boca grande e simpática */
+.boca {
+    position: absolute;
+    top: 120px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 110px;
+    height: 45px;
+    background: #4a0e17;
+    border-radius: 15px 15px 50px 50px;
+    border: 3px solid #2e7d32;
+    overflow: hidden;
+    z-index: 3;
+}
 
-            requestAnimationFrame(atualizarJogo);
-        }
+/* Língua */
+.lingua {
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 25px;
+    background: #ff6b81;
+    border-radius: 50%;
+}
 
-        // Coloca a bola de volta no topo numa posição aleatória
-        function resetarBola() {
-            bolaY = 0;
-            bolaX = Math.floor(Math.random() * 380); // 400 largura - 20 da bola
-            bola.style.left = bolaX + 'px';
-        }
+/* Dentinhos */
+.dente {
+    position: absolute;
+    top: 0;
+    width: 14px;
+    height: 12px;
+    background: #fffdf0;
+    border-radius: 0 0 5px 5px;
+}
 
-        // Reiniciar as variáveis para um novo jogo
-        function reiniciarJogo() {
-            pontos = 0;
-            velocidadeBola = 4;
-            jogadorX = 160;
-            jogoAtivo = true;
-            pontosSpan.innerText = pontos;
-            jogador.style.left = jogadorX + 'px';
-            painelFimJogo.style.display = 'none';
-            resetarBola();
-            atualizarJogo();
-        }
+.dente.esq {
+    left: 22px;
+}
 
-        // Iniciar o jogo pela primeira vez
-        resetarBola();
-        atualizarJogo();
-    </script>
-</body>
-</html>
+.dente.dir {
+    right: 22px;
+}
 
+/* A famosa baba de gosma verde! */
+.baba {
+    position: absolute;
+    top: 158px;
+    right: 58px;
+    width: 14px;
+    height: 25px;
+    background: #aeea00;
+    border-radius: 0 0 10px 10px;
+    z-index: 5;
+    opacity: 0.9;
+    box-shadow: 0 0 8px #aeea00;
+    animation: babar 3s infinite ease-in-out;
+}
+
+/* Patinhas */
+.pata {
+    position: absolute;
+    bottom: 8px;
+    width: 50px;
+    height: 28px;
+    background: #2e7d32;
+    border-radius: 25px 25px 10px 10px;
+    z-index: 1;
+}
+
+.pata.esq {
+    left: 35px;
+}
+
+.pata.dir {
+    right: 35px;
+}
+
+/* Botão de interação (Brócolis) */
+button {
+    margin-top: 20px;
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: bold;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+    transition: transform 0.2s, background-color 0.2s;
+}
+
+button:hover {
+    background-color: #43a047;
+    transform: scale(1.05);
+}
+
+/* Animações */
+@keyframes respirar {
+    0%, 100% {
+        transform: translateY(0) scale(1, 1);
+    }
+    50% {
+        transform: translateY(-6px) scale(1.02, 0.98);
+    }
+}
+
+@keyframes babar {
+    0%, 100% {
+        height: 15px;
+    }
+    50% {
+        height: 42px;
+    }
+}
+
+.pular {
+    animation: saltoFeliz 0.5s ease;
+}
+
+@keyframes saltoFeliz {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-35px) scale(1.05);
+    }
+}
