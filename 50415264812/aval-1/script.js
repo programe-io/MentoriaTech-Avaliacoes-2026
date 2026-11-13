@@ -1,20 +1,30 @@
 
-// Recuperar produtos salvos
+"use strict";
+
+// Recuperar os produtos armazenados
 let produtos = [];
 
 try {
-    produtos = JSON.parse(localStorage.getItem("estoqueProdutos")) || [];
+    const dados = localStorage.getItem("meuEstoque");
+
+    if (dados) {
+        const recuperados = JSON.parse(dados);
+
+        if (Array.isArray(recuperados)) {
+            produtos = recuperados;
+        }
+    }
 } catch (erro) {
-    produtos = [];
+    console.error("Erro ao recuperar produtos:", erro);
 }
 
-// Elementos da página
+// Elementos HTML
 const formulario = document.getElementById("formProduto");
-const lista = document.getElementById("listaProdutos");
-const pesquisa = document.getElementById("pesquisa");
+const tabela = document.getElementById("listaProdutos");
+const campoPesquisa = document.getElementById("pesquisa");
 
-// Formatar valores em reais
-function formatarMoeda(valor) {
+// Formatar dinheiro
+function moeda(valor) {
     return Number(valor).toLocaleString("pt-BR", {
         style: "currency",
         currency: "BRL"
@@ -22,21 +32,20 @@ function formatarMoeda(valor) {
 }
 
 // Salvar produtos
-function salvarProdutos() {
+function salvar() {
     try {
         localStorage.setItem(
-            "estoqueProdutos",
+            "meuEstoque",
             JSON.stringify(produtos)
         );
     } catch (erro) {
-        alert("Não foi possível salvar os dados neste navegador.");
+        alert("Não foi possível salvar os dados.");
     }
 }
 
 // Cadastrar produto
-formulario.addEventListener("submit", function(event) {
-
-    event.preventDefault();
+formulario.addEventListener("submit", function(evento) {
+    evento.preventDefault();
 
     const codigo = Number(document.getElementById("codigo").value);
     const descricao = document.getElementById("descricao").value.trim();
@@ -44,106 +53,106 @@ formulario.addEventListener("submit", function(event) {
     const valor = Number(document.getElementById("valor").value);
 
     if (
-        !Number.isSafeInteger(codigo) ||
-        codigo <= 0 ||
+        !Number.isSafeInteger(codigo) || codigo <= 0 ||
         descricao === "" ||
-        !Number.isSafeInteger(quantidade) ||
-        quantidade < 0 ||
-        !Number.isFinite(valor) ||
-        valor < 0
+        !Number.isSafeInteger(quantidade) || quantidade < 0 ||
+        !Number.isFinite(valor) || valor < 0
     ) {
-        alert("Preencha todos os campos corretamente!");
+        alert("Verifique os dados informados!");
         return;
     }
 
-    const codigoExiste = produtos.some(
-        produto => produto.codigo === codigo
-    );
+    const existe = produtos.some(function(produto) {
+        return produto.codigo === codigo;
+    });
 
-    if (codigoExiste) {
-        alert("Este código já está cadastrado!");
+    if (existe) {
+        alert("Este código já existe!");
         return;
     }
 
-    const novoProduto = {
+    produtos.push({
         codigo: codigo,
         descricao: descricao,
         quantidade: quantidade,
         valor: valor
-    };
+    });
 
-    produtos.push(novoProduto);
-
-    salvarProdutos();
-    mostrarProdutos();
+    salvar();
+    listarProdutos();
 
     formulario.reset();
 
     alert("Produto cadastrado com sucesso!");
 });
 
+// Criar célula da tabela
+function criarCelula(texto) {
+    const td = document.createElement("td");
+    td.textContent = texto;
+    return td;
+}
+
 // Listar produtos
-function mostrarProdutos() {
+function listarProdutos() {
 
-    lista.innerHTML = "";
+    tabela.innerHTML = "";
 
-    const termo = pesquisa.value.toLowerCase().trim();
+    const termo = campoPesquisa.value.toLowerCase().trim();
 
-    const filtrados = produtos.filter(produto =>
-        String(produto.codigo).includes(termo) ||
-        produto.descricao.toLowerCase().includes(termo)
-    );
+    const encontrados = produtos.filter(function(produto) {
+        return (
+            String(produto.codigo).includes(termo) ||
+            produto.descricao.toLowerCase().includes(termo)
+        );
+    });
 
-    filtrados.forEach(produto => {
+    encontrados.forEach(function(produto) {
 
-        const linha = document.createElement("tr");
+        const tr = document.createElement("tr");
 
-        function criarCelula(conteudo) {
-            const celula = document.createElement("td");
-            celula.textContent = conteudo;
-            return celula;
-        }
-
-        linha.appendChild(criarCelula(produto.codigo));
-        linha.appendChild(criarCelula(produto.descricao));
-        linha.appendChild(criarCelula(produto.quantidade));
-        linha.appendChild(criarCelula(formatarMoeda(produto.valor)));
+        tr.appendChild(criarCelula(produto.codigo));
+        tr.appendChild(criarCelula(produto.descricao));
+        tr.appendChild(criarCelula(produto.quantidade));
+        tr.appendChild(criarCelula(moeda(produto.valor)));
 
         const acoes = document.createElement("td");
 
-        const botaoValor = document.createElement("button");
-        botaoValor.textContent = "Valor";
-        botaoValor.className = "btn-valor";
-        botaoValor.addEventListener("click", () => {
+        // Botão alterar valor
+        const btnValor = document.createElement("button");
+        btnValor.textContent = "Valor";
+        btnValor.className = "btn-valor";
+
+        btnValor.addEventListener("click", function() {
             alterarValor(produto.codigo);
         });
 
-        const botaoQuantidade = document.createElement("button");
-        botaoQuantidade.textContent = "Quantidade";
-        botaoQuantidade.className = "btn-quantidade";
-        botaoQuantidade.addEventListener("click", () => {
+        // Botão alterar quantidade
+        const btnQuantidade = document.createElement("button");
+        btnQuantidade.textContent = "Quantidade";
+        btnQuantidade.className = "btn-quantidade";
+
+        btnQuantidade.addEventListener("click", function() {
             alterarQuantidade(produto.codigo);
         });
 
-        const botaoExcluir = document.createElement("button");
-        botaoExcluir.textContent = "Excluir";
-        botaoExcluir.className = "btn-excluir";
-        botaoExcluir.addEventListener("click", () => {
+        // Botão excluir
+        const btnExcluir = document.createElement("button");
+        btnExcluir.textContent = "Excluir";
+        btnExcluir.className = "btn-excluir";
+
+        btnExcluir.addEventListener("click", function() {
             excluirProduto(produto.codigo);
         });
 
-        acoes.append(
-            botaoValor,
-            botaoQuantidade,
-            botaoExcluir
-        );
+        acoes.append(btnValor, btnQuantidade, btnExcluir);
 
-        linha.appendChild(acoes);
-        lista.appendChild(linha);
+        tr.appendChild(acoes);
+        tabela.appendChild(tr);
     });
 
     document.getElementById("mensagemVazia").style.display =
-        filtrados.length === 0 ? "block" : "none";
+        encontrados.length === 0 ? "block" : "none";
 
     atualizarResumo();
 }
@@ -151,106 +160,98 @@ function mostrarProdutos() {
 // Alterar valor
 function alterarValor(codigo) {
 
-    const produto = produtos.find(p => p.codigo === codigo);
+    const produto = produtos.find(function(p) {
+        return p.codigo === codigo;
+    });
 
     if (!produto) return;
 
-    const resposta = prompt(
-        "Digite o novo valor do produto:"
-    );
+    const resposta = prompt("Digite o novo valor:");
 
     if (resposta === null || resposta.trim() === "") return;
 
     const novoValor = Number(resposta.replace(",", "."));
 
     if (!Number.isFinite(novoValor) || novoValor < 0) {
-        alert("Digite um valor válido!");
+        alert("Valor inválido!");
         return;
     }
 
     produto.valor = novoValor;
 
-    salvarProdutos();
-    mostrarProdutos();
+    salvar();
+    listarProdutos();
 
-    alert("Valor atualizado com sucesso!");
+    alert("Valor alterado com sucesso!");
 }
 
 // Alterar quantidade
 function alterarQuantidade(codigo) {
 
-    const produto = produtos.find(p => p.codigo === codigo);
+    const produto = produtos.find(function(p) {
+        return p.codigo === codigo;
+    });
 
     if (!produto) return;
 
-    const resposta = prompt(
-        "Digite a nova quantidade do produto:"
-    );
+    const resposta = prompt("Digite a nova quantidade:");
 
     if (resposta === null || resposta.trim() === "") return;
 
     const novaQuantidade = Number(resposta);
 
     if (!Number.isSafeInteger(novaQuantidade) || novaQuantidade < 0) {
-        alert("Digite uma quantidade válida!");
+        alert("Quantidade inválida!");
         return;
     }
 
     produto.quantidade = novaQuantidade;
 
-    salvarProdutos();
-    mostrarProdutos();
+    salvar();
+    listarProdutos();
 
-    alert("Quantidade atualizada com sucesso!");
+    alert("Quantidade alterada com sucesso!");
 }
 
 // Excluir produto
 function excluirProduto(codigo) {
 
-    const confirmar = confirm(
-        "Deseja realmente excluir este produto?"
-    );
+    const confirmar = confirm("Deseja excluir este produto?");
 
     if (!confirmar) return;
 
-    produtos = produtos.filter(
-        produto => produto.codigo !== codigo
-    );
+    produtos = produtos.filter(function(p) {
+        return p.codigo !== codigo;
+    });
 
-    salvarProdutos();
-    mostrarProdutos();
+    salvar();
+    listarProdutos();
 
     alert("Produto excluído com sucesso!");
 }
 
-// Atualizar cartões do painel
+// Atualizar os cartões
 function atualizarResumo() {
 
-    const totalProdutos = produtos.length;
+    const total = produtos.length;
 
-    const totalUnidades = produtos.reduce(
-        (total, produto) => total + produto.quantidade,
-        0
-    );
+    const quantidade = produtos.reduce(function(soma, p) {
+        return soma + p.quantidade;
+    }, 0);
 
-    const valorTotal = produtos.reduce(
-        (total, produto) =>
-            total + produto.quantidade * produto.valor,
-        0
-    );
+    const valor = produtos.reduce(function(soma, p) {
+        return soma + (p.quantidade * p.valor);
+    }, 0);
 
-    document.getElementById("totalProdutos").textContent =
-        totalProdutos;
+    document.getElementById("totalProdutos").textContent = total;
 
-    document.getElementById("totalUnidades").textContent =
-        totalUnidades;
+    document.getElementById("totalQuantidade").textContent = quantidade;
 
-    document.getElementById("valorEstoque").textContent =
-        formatarMoeda(valorTotal);
+    document.getElementById("valorTotal").textContent = moeda(valor);
 }
 
-// Pesquisar produtos
-pesquisa.addEventListener("input", mostrarProdutos);
+// Pesquisa
+campoPesquisa.addEventListener("input", listarProdutos);
 
-// Carregar produtos ao abrir a página
-mostrarProdutos();
+// Inicialização
+listarProdutos();
