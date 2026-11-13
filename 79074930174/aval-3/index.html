@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clone Instagram</title>
+    <!-- Tailwind CSS Play CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Boxicons CDN -->
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <!-- CSS Personalizado -->
+    <link rel="stylesheet" href="style.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body class="min-h-screen bg-gray-100 text-slate-900">
+
+    <!-- Cabeçalho (Header) -->
+    <header class="sticky top-0 z-50 bg-white border-b border-gray-200">
+        <div class="max-w-5xl mx-auto px-4">
+            <div class="flex items-center justify-between h-14 md:h-16">
+                <!-- Logo do Instagram -->
+                <a href="#" class="text-xl font-semibold tracking-tight">Instagram</a>
+
+                <!-- Campo de pesquisa no cabeçalho (Desktop md+) -->
+                <div class="hidden md:flex items-center">
+                    <div class="relative">
+                        <input type="text" id="search-input" placeholder="Pesquisar" 
+                               class="w-64 h-9 bg-gray-100 px-4 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-gray-300">
+                    </div>
+                </div>
+
+                <!-- Botão de menu hambúrguer (Mobile) -->
+                <button id="mobile-menu-btn" class="md:hidden text-2xl flex items-center justify-center p-1 hover:opacity-75" aria-label="Menu">
+                    <i class="bx bx-menu"></i>
+                </button>
+
+                <!-- Menu de opções e ícone de perfil no desktop (md+) -->
+                <div class="hidden md:flex items-center gap-5">
+                    <button class="text-xl hover:opacity-70 transition-opacity" title="Início">
+                        <i class="bx bxs-home"></i>
+                    </button>
+                    <button class="text-xl hover:opacity-70 transition-opacity" title="Mensagens">
+                        <i class="bx bx-send"></i>
+                    </button>
+                    <button id="desktop-new-post-btn" class="text-xl hover:opacity-70 transition-opacity" title="Nova Publicação">
+                        <i class="bx bx-plus-circle"></i>
+                    </button>
+                    <button class="text-xl hover:opacity-70 transition-opacity" title="Explorar">
+                        <i class="bx bx-compass"></i>
+                    </button>
+                    <button class="text-xl hover:opacity-70 transition-opacity" title="Notificações">
+                        <i class="bx bx-heart"></i>
+                    </button>
+                    <!-- Círculo colorido de perfil no desktop -->
+                    <button class="w-7 h-7 rounded-full p-0.5 bg-gradient-to-br from-pink-500 via-red-500 to-yellow-500 flex items-center justify-center" title="Perfil frojo_dev">
+                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" 
+                             alt="Perfil" class="w-full h-full object-cover rounded-full bg-white">
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Conteúdo Principal (Main) -->
+    <main class="max-w-5xl mx-auto md:mx-auto py-4 md:py-8 md:px-8 pb-20">
+        <div class="flex gap-8">
+            
+            <!-- Feed Principal -->
+            <div class="flex-1 max-w-lg mx-auto md:mx-0">
+                
+                <!-- Seção de Stories -->
+                <section class="bg-white border border-gray-200 rounded-lg p-4 mb-4">
+                    <div class="flex gap-4 overflow-x-auto stories-scroll pb-1">
+                        
+                        <!-- Adicionar Story -->
+                        <div class="flex flex-col items-center flex-shrink-0 cursor-pointer group" onclick="adicionarStory()">
+                            <div class="w-16 h-16 md:w-20 md:h-20 rounded-full p-0.5 bg-gray-100">
+                                <div class="w-full h-full rounded-full bg-white p-0.5">
+                                    <div class="w-full h-full rounded-full bg-gray-100 flex items-center justify-center group-hover:bg-gray-200 transition-colors">
+                                        <span class="text-2xl text-gray-500">+</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <span class="text-xs mt-1 w-16 md:w-20 text-center truncate">Seu story</span>
+                        </div>
+
+                        <!-- Story de Contato 1 -->
+                        <div class="flex flex-col items-center flex-shrink-0 cursor-pointer story-item" data-user="João">
+                            <div class="w-16 h-16 md:w-20 md:h-20 rounded-full p-0.5 bg-gray-100">
+                                <div class="w-full h-full rounded-full bg-gradient-to-br from-pink-500 via-red-500 to-yellow-500 p-0.5">
+                                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80" 
+                                         alt="João" class="w-full h-full object-cover rounded-full bg-white p-0.5">
+                                </div>
+                            </div>
+                            <span class="text-xs mt-1 w-16 md:w-20 text-center truncate">Jesus</span>
+                        </div>
+
+                        <!-- Story de Contato 2 -->
+                        <div class="flex flex-col items-center flex-shrink-0 cursor-pointer story-item" data-user="Maria">
+                            <div class="w-16 h-16 md:w-20 md:h-20 rounded-full p-0.5 bg-gray-100">
+                                <div class="w-full h-full rounded-full bg-gradient-to-br from-pink-500 via-red-500 to-yellow-500 p-0.5">
+                                    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&q=80" 
+                                         alt="Maria" class="w-full h-full object-cover rounded-full bg-white p-0.5">
+                                </div>
+                            </div>
+                            <span class="text-xs mt-1 w-16 md:w-20 text-center truncate">Maria</span>
+                        </div>
+
+                        <!-- Story de Contato 3 -->
+                        <div class="flex flex-col items-center flex-shrink-0 cursor-pointer story-item" data-user="Pedro">
+                            <div class="w-16 h-16 md:w-20 md:h-20 rounded-full p-0.5 bg-gray-100">
+                                <div class="w-full h-full rounded-full bg-gradient-to-br from-pink-500 via-red-500 to-yellow-500 p-0.5">
+                                    <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80" 
+                                         alt="Pedro" class="w-full h-full object-cover rounded-full bg-white p-0.5">
+                                </div>
+                            </div>
+                            <span class="text-xs mt-1 w-16 md:w-20 text-center truncate">Pedro</span>
+                        </div>
+
+                        <!-- Story de Contato 4 -->
+                        <div class="flex flex-col items-center flex-shrink-0 cursor-pointer story-item" data-user="Keliane">
+                            <div class="w-16 h-16 md:w-20 md:h-20 rounded-full p-0.5 bg-gray-100">
+                                <div class="w-full h-full rounded-full bg-gradient-to-br from-pink-500 via-red-500 to-yellow-500 p-0.5">
+                                    <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=150&q=80" 
+                                         alt="Keliane" class="w-full h-full object-cover rounded-full bg-white p-0.5">
+                                </div>
+                            </div>
+                            <span class="text-xs mt-1 w-16 md:w-20 text-center truncate">Keliane</span>
+                        </div>
+
+                        <!-- Story de Contato 5 -->
+                        <div class="flex flex-col items-center flex-shrink-0 cursor-pointer story-item" data-user="Lucas">
+                            <div class="w-16 h-16 md:w-20 md:h-20 rounded-full p-0.5 bg-gray-100">
+                                <div class="w-full h-full rounded-full bg-gradient-to-br from-pink-500 via-red-500 to-yellow-500 p-0.5">
+                                    <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=150&q=80" 
+                                         alt="Lucas" class="w-full h-full object-cover rounded-full bg-white p-0.5">
+                                </div>
+                            </div>
+                            <span class="text-xs mt-1 w-16 md:w-20 text-center truncate">Lucas</span>
+                        </div>
+
+                    </div>
+                </section>
+
+                <!-- Container do Feed de Postagens -->
+                <div id="feed-posts">
+                    
+                    <!-- Postagem 1 -->
+                    <article class="bg-white border border-gray-200 rounded-lg mb-4 post-card">
+                        <!-- Cabeçalho da Postagem -->
+                        <header class="flex items-center justify-between p-3">
+                            <div class="flex items-center gap-3">
+                                <!-- Estrutura circular reaproveitada com tamanho w-10 h-10 -->
+                                <div class="w-10 h-10 rounded-full p-0.5 bg-gray-100">
+                                    <div class="w-full h-full rounded-full bg-gradient-to-br from-pink-500 via-red-500 to-yellow-500 p-0.5">
+                                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" 
+                                             alt="frojo_dev" class="w-full h-full object-cover rounded-full bg-white">
+                                    </div>
+                                </div>
+                                <!-- Informações do usuário na postagem -->
+                                <div>
+                                    <p class="text-sm font-semibold leading-tight">frojo_dev</p>
+                                    <p class="text-xs text-gray-500">Parnaíba-PI</p>
+                                </div>
+                            </div>
+                            <!-- Botão de opções (3 pontos) -->
+                            <button class="text-xl text-slate-900 hover:opacity-60 options-btn" aria-label="Mais opções">
+                                <i class="bx bx-dots-horizontal-rounded"></i>
+                            </button>
+                        </header>
+
+                        <!-- Imagem principal da postagem -->
+                        <div class="bg-gray-100 relative aspect-square overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=800&q=80" 
+                                 alt="imagem do meu projeto" class="w-full h-full object-cover post-image">
+                        </div>
+
+                        <!-- Área de interação e descrição -->
+                        <div class="p-3">
+                            <!-- Ícones de interação -->
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center gap-4">
+                                    <button class="text-2xl hover:opacity-60 transition-transform active:scale-125 like-btn" aria-label="Curtir">
+                                        <i class="bx bx-heart"></i>
+                                    </button>
+                                    <button class="text-2xl hover:opacity-60 comment-focus-btn" aria-label="Comentar">
+                                        <i class="bx bx-message-rounded"></i>
+                                    </button>
+                                    <button class="text-2xl hover:opacity-60 share-btn" aria-label="Compartilhar">
+                                        <i class="bx bx-send"></i>
+                                    </button>
+                                </div>
+                                <button class="text-2xl hover:opacity-60 save-btn" aria-label="Salvar">
+                                    <i class="bx bx-bookmark"></i>
+                                </button>
+                            </div>
+
+                            <!-- Texto de curtidas -->
+                            <p class="font-semibold text-sm mb-2 likes-text">mil e poucas curtidas</p>
+
+                            <!-- Descrição da postagem -->
+                            <p class="text-sm">
+                                <span class="font-semibold">frojo_dev</span>
+                                <span class="text-slate-900 opacity-90">Finalizando o projeto prático do Clone do Instagram com Tailwind CSS! 🚀💻 #webdesign #tailwindcss #frontend</span>
+                            </p>
+
+                            <!-- Botão de comentários -->
+                            <button class="text-sm text-gray-500 mt-1 block hover:underline view-comments-btn">
+                                Ver todos os 42 comentários
+                            </button>
+
+                            <!-- Horário da postagem -->
+                            <p class="text-xs text-gray-500 mt-2 uppercase">há duas horas</p>
+                        </div>
+                    </article>
+
+                    <!-- Postagem 2 (Duplicada conforme instrução da Parte 2) -->
+                    <article class="bg-white border border-gray-200 rounded-lg mb-4 post-card">
+                        <header class="flex items-center justify-between p-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-full p-0.5 bg-gray-100">
+                                    <div class="w-full h-full rounded-full bg-gradient-to-br from-pink-500 via-red-500 to-yellow-500 p-0.5">
+                                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" 
+                                             alt="frojo_dev" class="w-full h-full object-cover rounded-full bg-white">
+                                    </div>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-semibold leading-tight">frojo_dev</p>
+                                    <p class="text-xs text-gray-500">Parnaíba-PI</p>
+                                </div>
+                            </div>
+                            <button class="text-xl text-slate-900 hover:opacity-60 options-btn" aria-label="Mais opções">
+                                <i class="bx bx-dots-horizontal-rounded"></i>
+                            </button>
+                        </header>
+
+                        <div class="bg-gray-100 relative aspect-square overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80" 
+                                 alt="imagem do meu projeto" class="w-full h-full object-cover post-image">
+                        </div>
+
+                        <div class="p-3">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center gap-4">
+                                    <button class="text-2xl hover:opacity-60 transition-transform active:scale-125 like-btn" aria-label="Curtir">
+                                        <i class="bx bx-heart"></i>
+                                    </button>
+                                    <button class="text-2xl hover:opacity-60 comment-focus-btn" aria-label="Comentar">
+                                        <i class="bx bx-message-rounded"></i>
+                                    </button>
+                                    <button class="text-2xl hover:opacity-60 share-btn" aria-label="Compartilhar">
+                                        <i class="bx bx-send"></i>
+                                    </button>
+                                </div>
+                                <button class="text-2xl hover:opacity-60 save-btn" aria-label="Salvar">
+                                    <i class="bx bx-bookmark"></i>
+                                </button>
+                            </div>
+
+                            <p class="font-semibold text-sm mb-2 likes-text">mil e poucas curtidas</p>
+
+                            <p class="text-sm">
+                                <span class="font-semibold">frojo_dev</span>
+                                <span class="text-slate-900 opacity-90">Final de tarde incrível pelo litoral do Piauí. Recarregando as energias para os próximos códigos! 🌊☀️</span>
+                            </p>
+
+                            <button class="text-sm text-gray-500 mt-1 block hover:underline view-comments-btn">
+                                Ver todos os 19 comentários
+                            </button>
+
+                            <p class="text-xs text-gray-500 mt-2 uppercase">há duas horas</p>
+                        </div>
+                    </article>
+
+                    <!-- Postagem 3 (Duplicada conforme instrução da Parte 2) -->
+                    <article class="bg-white border border-gray-200 rounded-lg mb-4 post-card">
+                        <header class="flex items-center justify-between p-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-full p-0.5 bg-gray-100">
+                                    <div class="w-full h-full rounded-full bg-gradient-to-br from-pink-500 via-red-500 to-yellow-500 p-0.5">
+                                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" 
+                                             alt="frojo_dev" class="w-full h-full object-cover rounded-full bg-white">
+                                    </div>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-semibold leading-tight">frojo_dev</p>
+                                    <p class="text-xs text-gray-500">Parnaíba-PI</p>
+                                </div>
+                            </div>
+                            <button class="text-xl text-slate-900 hover:opacity-60 options-btn" aria-label="Mais opções">
+                                <i class="bx bx-dots-horizontal-rounded"></i>
+                            </button>
+                        </header>
+
+                        <div class="bg-gray-100 relative aspect-square overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=800&q=80" 
+                                 alt="imagem do meu projeto" class="w-full h-full object-cover post-image">
+                        </div>
+
+                        <div class="p-3">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center gap-4">
+                                    <button class="text-2xl hover:opacity-60 transition-transform active:scale-125 like-btn" aria-label="Curtir">
+                                        <i class="bx bx-heart"></i>
+                                    </button>
+                                    <button class="text-2xl hover:opacity-60 comment-focus-btn" aria-label="Comentar">
+                                        <i class="bx bx-message-rounded"></i>
+                                    </button>
+                                    <button class="text-2xl hover:opacity-60 share-btn" aria-label="Compartilhar">
+                                        <i class="bx bx-send"></i>
+                                    </button>
+                                </div>
+                                <button class="text-2xl hover:opacity-60 save-btn" aria-label="Salvar">
+                                    <i class="bx bx-bookmark"></i>
+                                </button>
+                            </div>
+
+                            <p class="font-semibold text-sm mb-2 likes-text">mil e poucas curtidas</p>
+
+                            <p class="text-sm">
+                                <span class="font-semibold">frojo_dev</span>
+                                <span class="text-slate-900 opacity-90">Responsividade Mobile First na prática: estruturando layouts adaptáveis para qualquer tela. 📱🖥️</span>
+                            </p>
+
+                            <button class="text-sm text-gray-500 mt-1 block hover:underline view-comments-btn">
+                                Ver todos os 28 comentários
+                            </button>
+
+                            <p class="text-xs text-gray-500 mt-2 uppercase">há duas horas</p>
+                        </div>
+                    </article>
+
+                </div>
+            </div>
+
+            <!-- Barra Lateral (Aside - Desktop md+) -->
+            <aside class="hidden md:block w-80 flex-shrink-0">
+                <div class="sticky top-20">
+                    
+                    <!-- Bloco 1: Perfil do Usuário -->
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="flex items-center gap-3">
+                            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" 
+                                 alt="frojo_dev" class="w-14 h-14 object-cover rounded-full border border-gray-200">
+                            <div>
+                                <p class="text-sm font-semibold">frojo_dev</p>
+                                <p class="text-sm text-gray-500">Jesus Rafael</p>
+                            </div>
+                        </div>
+                        <button class="text-blue-500 text-sm font-semibold hover:text-blue-700" onclick="mostrarNotificacao('Alternar conta indisponível no modo demonstração')">
+                            Trocar
+                        </button>
+                    </div>
+
+                    <!-- Bloco 2: Sugestões para você -->
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-sm font-semibold text-gray-500">Sugestões para você</span>
+                            <button class="text-xs font-semibold text-slate-900 hover:opacity-60">Ver tudo</button>
+                        </div>
+
+                        <div class="space-y-3">
+                            <!-- Sugestão 1 -->
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80" 
+                                         alt="João" class="w-9 h-9 object-cover rounded-full">
+                                    <div>
+                                        <p class="text-sm font-semibold leading-tight">João</p>
+                                        <p class="text-xs text-gray-500">Sugerido para você</p>
+                                    </div>
+                                </div>
+                                <button class="text-blue-500 text-xs font-semibold hover:text-blue-700 follow-btn">Seguir</button>
+                            </div>
+
+                            <!-- Sugestão 2 -->
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&q=80" 
+                                         alt="João" class="w-9 h-9 object-cover rounded-full">
+                                    <div>
+                                        <p class="text-sm font-semibold leading-tight">João</p>
+                                        <p class="text-xs text-gray-500">Sugerido para você</p>
+                                    </div>
+                                </div>
+                                <button class="text-blue-500 text-xs font-semibold hover:text-blue-700 follow-btn">Seguir</button>
+                            </div>
+
+                            <!-- Sugestão 3 -->
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=100&q=80" 
+                                         alt="João" class="w-9 h-9 object-cover rounded-full">
+                                    <div>
+                                        <p class="text-sm font-semibold leading-tight">João</p>
+                                        <p class="text-xs text-gray-500">Sugerido para você</p>
+                                    </div>
+                                </div>
+                                <button class="text-blue-500 text-xs font-semibold hover:text-blue-700 follow-btn">Seguir</button>
+                            </div>
+
+                            <!-- Sugestão 4 -->
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=100&q=80" 
+                                         alt="João" class="w-9 h-9 object-cover rounded-full">
+                                    <div>
+                                        <p class="text-sm font-semibold leading-tight">João</p>
+                                        <p class="text-xs text-gray-500">Sugerido para você</p>
+                                    </div>
+                                </div>
+                                <button class="text-blue-500 text-xs font-semibold hover:text-blue-700 follow-btn">Seguir</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bloco 3: Rodapé informativo da barra lateral -->
+                    <footer class="mt-8">
+                        <p class="text-xs text-gray-500 opacity-75 leading-relaxed">
+                            Sobre &middot; Ajuda &middot; Imprensa &middot; API &middot; Carreiras &middot; Privacidade &middot; Termos &middot; Localizações &middot; Idioma
+                        </p>
+                        <p class="text-xs text-gray-500 opacity-75 mt-4 uppercase">
+                            &copy; 2026 INSTAGRAM CLONE BY FROJO_DEV
+                        </p>
+                    </footer>
+
+                </div>
+            </aside>
+
+        </div>
+    </main>
+
+    <!-- Menu de Navegação Inferior (Mobile - oculto em md+) -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 md:hidden">
+        <div class="flex items-center justify-around px-4 h-12">
+            <button class="text-2xl text-slate-900" aria-label="Início">
+                <i class="bx bxs-home"></i>
+            </button>
+            <button class="text-2xl text-slate-900" aria-label="Pesquisar">
+                <i class="bx bx-search"></i>
+            </button>
+            <button id="mobile-new-post-btn" class="text-2xl text-slate-900" aria-label="Nova postagem">
+                <i class="bx bx-plus-circle"></i>
+            </button>
+            <button class="text-2xl text-slate-900" aria-label="Curtidas">
+                <i class="bx bx-heart"></i>
+            </button>
+            <button class="text-2xl text-slate-900" aria-label="Perfil">
+                <i class="bx bx-user"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Toast de Feedback Interativo -->
+    <div id="toast-notification" class="fixed bottom-16 md:bottom-6 right-4 bg-slate-900 text-white text-xs px-4 py-2.5 rounded-lg shadow-lg opacity-0 pointer-events-none transition-opacity duration-300 z-50">
+    </div>
+
+    <!-- JavaScript Separado -->
+    <script src="script.js"></script>
+<script src="script.js"></script></body>
+</html>
