@@ -1,92 +1,205 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Código JavaScript</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
-  <style>body{margin:0;background:#0d1117}pre{margin:0}code.hljs{padding:1.5rem;min-height:100vh;box-sizing:border-box}</style>
-</head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Estoque de produtos</title>
+  <link rel="stylesheet" href="style.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
 <body>
-  <pre><code class="language-javascript">const produtos = [];
-let opcao;
+  <main class="container">
+    <h1>Estoque de produtos</h1>
 
-do {
-  opcao = prompt(
-    "ESTOQUE DE PRODUTOS\n" +
-    "1 - Cadastrar produto\n" +
-    "2 - Listar produtos\n" +
-    "3 - Alterar valor\n" +
-    "4 - Alterar quantidade\n" +
-    "0 - Sair"
-  );
+    <section class="painel">
+      <h2>Cadastrar produto</h2>
 
-  switch (opcao) {
-    case "1": {
-      const codigo = prompt("Código do produto:");
-      const descricao = prompt("Descrição do produto:");
-      const quantidade = Number(prompt("Quantidade:"));
-      const valor = Number(prompt("Valor:"));
+      <form id="form-cadastro">
+        <label for="codigo">Código</label>
+        <input id="codigo" type="text" required>
 
-      produtos.push({ codigo, descricao, quantidade, valor });
-      alert("Produto cadastrado!");
-      break;
+        <label for="descricao">Descrição</label>
+        <input id="descricao" type="text" required>
+
+        <label for="quantidade">Quantidade</label>
+        <input id="quantidade" type="number" min="0" required>
+
+        <label for="valor">Valor</label>
+        <input id="valor" type="number" min="0" step="0.01" required>
+
+        <button type="submit">Cadastrar produto</button>
+      </form>
+    </section>
+
+    <section class="painel">
+      <h2>Alterar valor</h2>
+
+      <form id="form-valor">
+        <label for="codigo-valor">Código do produto</label>
+        <input id="codigo-valor" type="text" required>
+
+        <label for="novo-valor">Novo valor</label>
+        <input id="novo-valor" type="number" min="0" step="0.01" required>
+
+        <button type="submit">Alterar valor</button>
+      </form>
+    </section>
+
+    <section class="painel">
+      <h2>Alterar quantidade</h2>
+
+      <form id="form-quantidade">
+        <label for="codigo-quantidade">Código do produto</label>
+        <input id="codigo-quantidade" type="text" required>
+
+        <label for="nova-quantidade">Nova quantidade</label>
+        <input id="nova-quantidade" type="number" min="0" required>
+
+        <button type="submit">Alterar quantidade</button>
+      </form>
+    </section>
+
+    <p id="mensagem" role="status"></p>
+
+    <section class="painel">
+      <h2>Produtos cadastrados</h2>
+
+      <div class="tabela-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Descrição</th>
+              <th>Quantidade</th>
+              <th>Valor</th>
+            </tr>
+          </thead>
+          <tbody id="lista-produtos"></tbody>
+        </table>
+      </div>
+
+      <p id="lista-vazia">Nenhum produto cadastrado.</p>
+    </section>
+  </main>
+
+  <script>
+    const produtos = [];
+
+    const formCadastro = document.getElementById("form-cadastro");
+    const formValor = document.getElementById("form-valor");
+    const formQuantidade = document.getElementById("form-quantidade");
+    const listaProdutos = document.getElementById("lista-produtos");
+    const listaVazia = document.getElementById("lista-vazia");
+    const mensagem = document.getElementById("mensagem");
+
+    function mostrarMensagem(texto) {
+      mensagem.textContent = texto;
     }
 
-    case "2": {
-      if (produtos.length === 0) {
-        alert("Nenhum produto cadastrado.");
-      } else {
-        let lista = "PRODUTOS CADASTRADOS:\n\n";
+    function buscarProduto(codigo) {
+      return produtos.find(function(produto) {
+        return produto.codigo === codigo;
+      });
+    }
 
-        for (const produto of produtos) {
-          lista +=
-            `Código: ${produto.codigo}\n` +
-            `Descrição: ${produto.descricao}\n` +
-            `Quantidade: ${produto.quantidade}\n` +
-            `Valor: R$ ${produto.valor.toFixed(2)}\n\n`;
-        }
+    function listarProdutos() {
+      listaProdutos.innerHTML = "";
 
-        alert(lista);
+      produtos.forEach(function(produto) {
+        const linha = document.createElement("tr");
+
+        const celulaCodigo = document.createElement("td");
+        celulaCodigo.textContent = produto.codigo;
+
+        const celulaDescricao = document.createElement("td");
+        celulaDescricao.textContent = produto.descricao;
+
+        const celulaQuantidade = document.createElement("td");
+        celulaQuantidade.textContent = produto.quantidade;
+
+        const celulaValor = document.createElement("td");
+        celulaValor.textContent = produto.valor.toLocaleString("pt-BR", {
+          style: "currency",
+          currency: "BRL"
+        });
+
+        linha.append(
+          celulaCodigo,
+          celulaDescricao,
+          celulaQuantidade,
+          celulaValor
+        );
+
+        listaProdutos.appendChild(linha);
+      });
+
+      listaVazia.style.display = produtos.length === 0 ? "block" : "none";
+    }
+
+    formCadastro.addEventListener("submit", function(evento) {
+      evento.preventDefault();
+
+      const codigo = document.getElementById("codigo").value.trim();
+      const descricao = document.getElementById("descricao").value.trim();
+      const quantidade = Number(document.getElementById("quantidade").value);
+      const valor = Number(document.getElementById("valor").value);
+
+      if (buscarProduto(codigo)) {
+        mostrarMensagem("Já existe um produto com esse código.");
+        return;
       }
-      break;
-    }
 
-    case "3": {
-      const codigo = prompt("Digite o código do produto:");
-      const produto = produtos.find(item =&gt; item.codigo === codigo);
+      produtos.push({
+        codigo: codigo,
+        descricao: descricao,
+        quantidade: quantidade,
+        valor: valor
+      });
 
-      if (produto) {
-        produto.valor = Number(prompt("Digite o novo valor:"));
-        alert("Valor alterado!");
-      } else {
-        alert("Produto não encontrado.");
+      formCadastro.reset();
+      listarProdutos();
+      mostrarMensagem("Produto cadastrado com sucesso.");
+    });
+
+    formValor.addEventListener("submit", function(evento) {
+      evento.preventDefault();
+
+      const codigo = document.getElementById("codigo-valor").value.trim();
+      const novoValor = Number(document.getElementById("novo-valor").value);
+      const produto = buscarProduto(codigo);
+
+      if (!produto) {
+        mostrarMensagem("Produto não encontrado.");
+        return;
       }
-      break;
-    }
 
-    case "4": {
-      const codigo = prompt("Digite o código do produto:");
-      const produto = produtos.find(item =&gt; item.codigo === codigo);
+      produto.valor = novoValor;
+      formValor.reset();
+      listarProdutos();
+      mostrarMensagem("Valor do produto alterado.");
+    });
 
-      if (produto) {
-        produto.quantidade = Number(prompt("Digite a nova quantidade:"));
-        alert("Quantidade alterada!");
-      } else {
-        alert("Produto não encontrado.");
+    formQuantidade.addEventListener("submit", function(evento) {
+      evento.preventDefault();
+
+      const codigo = document.getElementById("codigo-quantidade").value.trim();
+      const novaQuantidade = Number(
+        document.getElementById("nova-quantidade").value
+      );
+      const produto = buscarProduto(codigo);
+
+      if (!produto) {
+        mostrarMensagem("Produto não encontrado.");
+        return;
       }
-      break;
-    }
 
-    case "0":
-      alert("Programa encerrado.");
-      break;
+      produto.quantidade = novaQuantidade;
+      formQuantidade.reset();
+      listarProdutos();
+      mostrarMensagem("Quantidade do produto alterada.");
+    });
 
-    default:
-      alert("Opção inválida.");
-  }
-} while (opcao !== "0");</code></pre>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-  <script>hljs.highlightAll();</script>
-</body>
+    listarProdutos();
+  </script>
+<script src="script.js"></script></body>
 </html>
