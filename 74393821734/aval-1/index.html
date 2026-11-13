@@ -1,0 +1,364 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Estoque</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f0f2f5;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #263b5e;
+            margin-bottom: 25px;
+        }
+
+        h2 {
+            color: #263b5e;
+            margin-bottom: 15px;
+        }
+
+        .formulario {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        input {
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 15px;
+            width: 100%;
+        }
+
+        button {
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            color: white;
+            background: #2864c5;
+        }
+
+        button:hover {
+            opacity: 0.85;
+        }
+
+        .cadastrar {
+            grid-column: span 2;
+            background: #16834a;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            text-align: center;
+        }
+
+        th {
+            background: #263b5e;
+            color: white;
+        }
+
+        .editar {
+            background: #e39b16;
+            margin: 3px;
+        }
+
+        .excluir {
+            background: #d93636;
+            margin: 3px;
+        }
+
+        .vazio {
+            text-align: center;
+            padding: 20px;
+            color: #777;
+        }
+
+        @media (max-width: 650px) {
+            body {
+                padding: 10px;
+            }
+
+            .formulario {
+                grid-template-columns: 1fr;
+            }
+
+            .cadastrar {
+                grid-column: span 1;
+            }
+
+            .container {
+                padding: 15px;
+                overflow-x: auto;
+            }
+
+            table {
+                min-width: 650px;
+            }
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+    <div class="container">
+
+        <h1>📦 Sistema de Estoque</h1>
+
+        <h2>Cadastrar Produto</h2>
+
+        <div class="formulario">
+
+            <input type="number" id="codigo" placeholder="Código do produto">
+
+            <input type="text" id="descricao" placeholder="Descrição do produto">
+
+            <input type="number" id="quantidade" placeholder="Quantidade">
+
+            <input type="number" id="valor" placeholder="Valor do produto" step="0.01">
+
+            <button class="cadastrar" onclick="cadastrarProduto()">
+                Cadastrar Produto
+            </button>
+
+        </div>
+
+        <h2>Produtos Cadastrados</h2>
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Descrição</th>
+                    <th>Quantidade</th>
+                    <th>Valor</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+
+            <tbody id="listaProdutos">
+                <tr>
+                    <td colspan="5" class="vazio">
+                        Nenhum produto cadastrado.
+                    </td>
+                </tr>
+            </tbody>
+
+        </table>
+
+    </div>
+
+    <script>
+
+        // Lista para armazenar os produtos
+        let produtos = [];
+
+        // Função para cadastrar produtos
+        function cadastrarProduto() {
+
+            let codigo = Number(document.getElementById("codigo").value);
+            let descricao = document.getElementById("descricao").value.trim();
+            let quantidade = Number(document.getElementById("quantidade").value);
+            let valor = Number(document.getElementById("valor").value);
+
+            if (
+                document.getElementById("codigo").value === "" ||
+                descricao === "" ||
+                document.getElementById("quantidade").value === "" ||
+                document.getElementById("valor").value === "" ||
+                !Number.isInteger(codigo) ||
+                codigo <= 0 ||
+                !Number.isInteger(quantidade) ||
+                quantidade < 0 ||
+                !Number.isFinite(valor) ||
+                valor < 0
+            ) {
+                alert("Preencha todos os campos corretamente!");
+                return;
+            }
+
+            // Verifica se o código já existe
+            let existe = produtos.find(p => p.codigo === codigo);
+
+            if (existe) {
+                alert("Esse código já está cadastrado!");
+                return;
+            }
+
+            // Cria o produto
+            let produto = {
+                codigo: codigo,
+                descricao: descricao,
+                quantidade: quantidade,
+                valor: valor
+            };
+
+            produtos.push(produto);
+
+            alert("Produto cadastrado com sucesso!");
+
+            limparCampos();
+            listarProdutos();
+        }
+
+        // Limpar formulário
+        function limparCampos() {
+
+            document.getElementById("codigo").value = "";
+            document.getElementById("descricao").value = "";
+            document.getElementById("quantidade").value = "";
+            document.getElementById("valor").value = "";
+
+        }
+
+        // Listar produtos
+        function listarProdutos() {
+
+            let tabela = document.getElementById("listaProdutos");
+
+            tabela.innerHTML = "";
+
+            if (produtos.length === 0) {
+                tabela.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="vazio">
+                            Nenhum produto cadastrado.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            produtos.forEach((produto, index) => {
+
+                tabela.innerHTML += `
+                    <tr>
+                        <td>${produto.codigo}</td>
+                        <td>${produto.descricao}</td>
+                        <td>${produto.quantidade}</td>
+                        <td>R$ ${produto.valor.toFixed(2)}</td>
+                        <td>
+                            <button class="editar"
+                                onclick="alterarValor(${index})">
+                                Alterar Valor
+                            </button>
+
+                            <button class="editar"
+                                onclick="alterarQuantidade(${index})">
+                                Alterar Quantidade
+                            </button>
+
+                            <button class="excluir"
+                                onclick="excluirProduto(${index})">
+                                Excluir
+                            </button>
+                        </td>
+                    </tr>
+                `;
+
+            });
+
+        }
+
+        // Alterar valor do produto
+        function alterarValor(index) {
+
+            let novoValor = prompt("Digite o novo valor do produto:");
+
+            if (novoValor === null || novoValor.trim() === "") {
+                return;
+            }
+
+            novoValor = Number(novoValor);
+
+            if (!Number.isFinite(novoValor) || novoValor < 0) {
+                alert("Digite um valor válido!");
+                return;
+            }
+
+            produtos[index].valor = novoValor;
+
+            alert("Valor alterado com sucesso!");
+
+            listarProdutos();
+        }
+
+        // Alterar quantidade do produto
+        function alterarQuantidade(index) {
+
+            let novaQuantidade = prompt("Digite a nova quantidade:");
+
+            if (novaQuantidade === null || novaQuantidade.trim() === "") {
+                return;
+            }
+
+            novaQuantidade = Number(novaQuantidade);
+
+            if (!Number.isInteger(novaQuantidade) || novaQuantidade < 0) {
+                alert("Digite uma quantidade válida!");
+                return;
+            }
+
+            produtos[index].quantidade = novaQuantidade;
+
+            alert("Quantidade alterada com sucesso!");
+
+            listarProdutos();
+        }
+
+        // Excluir produto
+        function excluirProduto(index) {
+
+            let confirmar = confirm("Deseja realmente excluir este produto?");
+
+            if (confirmar) {
+
+                produtos.splice(index, 1);
+
+                alert("Produto excluído com sucesso!");
+
+                listarProdutos();
+
+            }
+
+        }
+
+    </script>
+
+<script src="script.js"></script></body>
+</html>
