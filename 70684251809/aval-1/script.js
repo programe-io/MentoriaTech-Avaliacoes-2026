@@ -45,5 +45,16 @@ if (!produto || quantidade <1) {
 produto.quantidade += quantidade;
 }
 
+// Testando o sistema
+try  {
+     cadastrarProduto("Muse Logitech", 10, 99)
+cadastrarProduto("Teclado Game " , 5, 150);
+     
+     atualizarValor(1, 89);
+     atualizarQuantidade(1, 5);
 
+      listarprodutos();
+     } catch (erro) {
+     console.log(erro.messege);
 
+     }
