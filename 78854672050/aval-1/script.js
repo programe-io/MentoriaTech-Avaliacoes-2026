@@ -1,18 +1,35 @@
 
-function jogar() {
-    alert("🔥 BOOYAH! A batalha vai começar!");
-}
+// Animação ao aparecer na tela
 
-function mensagem() {
-    alert("Você está pronto para ser o campeão do Free Fire! 🏆");
-}
+const elementos = document.querySelectorAll(
+    ".album, .song, .about"
+);
 
-// Efeito de entrada nos personagens
-const cards = document.querySelectorAll(".card");
+const observador = new IntersectionObserver((entradas) => {
+    entradas.forEach(entrada => {
+        if (entrada.isIntersecting) {
+            entrada.target.classList.add("visivel");
+        }
+    });
+}, {
+    threshold: 0.2
+});
 
-cards.forEach(card => {
-    card.addEventListener("click", () => {
-        alert("🔥 Você selecionou: " +
-            card.querySelector("h3").textContent);
+elementos.forEach(elemento => {
+    observador.observe(elemento);
+});
+
+// Clique nas músicas
+
+const musicas = document.querySelectorAll(".song");
+
+musicas.forEach(musica => {
+    musica.addEventListener("click", () => {
+        alert("🎧 Música selecionada: " +
+            musica.textContent);
     });
 });
+
+// Mensagem de boas-vindas
+
+console.log("Welcome to Frank Ocean's world!");
