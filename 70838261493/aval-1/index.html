@@ -1,0 +1,345 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GAME ZONE - Portal de Jogos</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: #080b16;
+    color: white;
+    font-family: Arial, sans-serif;
+}
+
+header {
+    background: #11172a;
+    padding: 20px 7%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    border-bottom: 2px solid #00e5ff;
+}
+
+.logo {
+    font-size: 28px;
+    font-weight: bold;
+    color: #00e5ff;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    margin: 10px;
+    transition: .3s;
+}
+
+nav a:hover {
+    color: #00e5ff;
+}
+
+.hero {
+    text-align: center;
+    padding: 90px 20px;
+    background: linear-gradient(135deg, #101c40, #300b50);
+}
+
+.hero h1 {
+    font-size: 45px;
+    margin-bottom: 15px;
+}
+
+.hero span {
+    color: #00e5ff;
+}
+
+.hero p {
+    color: #ccc;
+    margin-bottom: 25px;
+}
+
+.botao {
+    display: inline-block;
+    background: #00e5ff;
+    color: #080b16;
+    padding: 14px 28px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+}
+
+.botao:hover {
+    background: white;
+    transform: scale(1.05);
+}
+
+.container {
+    padding: 45px 7%;
+}
+
+.titulo {
+    font-size: 27px;
+    margin-bottom: 25px;
+    border-left: 5px solid #00e5ff;
+    padding-left: 12px;
+}
+
+.search {
+    width: 100%;
+    padding: 15px;
+    background: #151d32;
+    color: white;
+    border: 1px solid #263553;
+    border-radius: 8px;
+    margin-bottom: 25px;
+    outline: none;
+    font-size: 16px;
+}
+
+.categorias {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 30px;
+}
+
+.categorias button {
+    background: #19243c;
+    color: white;
+    border: 1px solid #00e5ff;
+    padding: 10px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+.categorias button:hover,
+.categorias button.active {
+    background: #00e5ff;
+    color: #080b16;
+}
+
+.jogos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 25px;
+}
+
+.card {
+    background: #141d31;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: .3s;
+    border: 1px solid #25344e;
+}
+
+.card:hover {
+    transform: translateY(-8px);
+    border-color: #00e5ff;
+    box-shadow: 0 5px 25px #00e5ff22;
+}
+
+.card img {
+    width: 100%;
+    height: 155px;
+    object-fit: cover;
+}
+
+.card-info {
+    padding: 18px;
+}
+
+.card h3 {
+    margin-bottom: 10px;
+}
+
+.card p {
+    color: #aaa;
+    font-size: 14px;
+    margin-bottom: 15px;
+}
+
+.card button {
+    width: 100%;
+}
+
+footer {
+    text-align: center;
+    background: #11172a;
+    padding: 30px;
+    margin-top: 40px;
+    color: #aaa;
+}
+
+#resultado {
+    color: #00e5ff;
+    margin-bottom: 20px;
+}
+
+@media(max-width:600px) {
+    .hero h1 {
+        font-size: 32px;
+    }
+
+    header {
+        justify-content: center;
+    }
+}
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+<header>
+    <div class="logo">🎮 GAME ZONE</div>
+
+    <nav>
+        <a href="#inicio">Início</a>
+        <a href="#jogos">Jogos</a>
+        <a href="#categorias">Categorias</a>
+    </nav>
+</header>
+
+<section class="hero" id="inicio">
+    <h1>BEM-VINDO À <span>GAME ZONE</span></h1>
+    <p>Seu universo de jogos começa aqui!</p>
+    <a href="#jogos" class="botao">EXPLORAR JOGOS</a>
+</section>
+
+<main class="container" id="jogos">
+
+    <h2 class="titulo">🔥 Explore nossos jogos</h2>
+
+    <input
+        type="text"
+        class="search"
+        id="pesquisa"
+        placeholder="🔍 Pesquisar jogo..."
+    >
+
+    <div class="categorias" id="categorias">
+        <button class="active" data-categoria="Todos">Todos</button>
+        <button data-categoria="Ação">Ação</button>
+        <button data-categoria="Corrida">Corrida</button>
+        <button data-categoria="Estratégia">Estratégia</button>
+        <button data-categoria="Clássico">Clássico</button>
+    </div>
+
+    <p id="resultado"></p>
+
+    <div class="jogos" id="listaJogos">
+
+        <article class="card" data-categoria="Ação">
+            <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=600" alt="Jogo de ação">
+            <div class="card-info">
+                <h3>⚔️ Arena de Batalha</h3>
+                <p>Entre em uma arena e teste suas habilidades.</p>
+                <button class="botao" onclick="abrirJogo('Arena de Batalha')">JOGAR</button>
+            </div>
+        </article>
+
+        <article class="card" data-categoria="Corrida">
+            <img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=600" alt="Carro de corrida">
+            <div class="card-info">
+                <h3>🏎️ Super Corrida</h3>
+                <p>Prepare seu motor e acelere até a vitória.</p>
+                <button class="botao" onclick="abrirJogo('Super Corrida')">JOGAR</button>
+            </div>
+        </article>
+
+        <article class="card" data-categoria="Estratégia">
+            <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?w=600" alt="Jogo de estratégia">
+            <div class="card-info">
+                <h3>🧠 Mestre da Estratégia</h3>
+                <p>Use sua inteligência para vencer desafios.</p>
+                <button class="botao" onclick="abrirJogo('Mestre da Estratégia')">JOGAR</button>
+            </div>
+        </article>
+
+        <article class="card" data-categoria="Clássico">
+            <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=600" alt="Videogame clássico">
+            <div class="card-info">
+                <h3>👾 Mundo Retrô</h3>
+                <p>Reviva a diversão dos jogos clássicos.</p>
+                <button class="botao" onclick="abrirJogo('Mundo Retrô')">JOGAR</button>
+            </div>
+        </article>
+
+    </div>
+</main>
+
+<footer>
+    <h3>🎮 GAME ZONE</h3>
+    <p>© 2026 GAME ZONE - Todos os direitos reservados.</p>
+    <p>Feito para quem ama jogar!</p>
+</footer>
+
+<script>
+const pesquisa = document.getElementById("pesquisa");
+const cards = document.querySelectorAll(".card");
+const botoes = document.querySelectorAll(".categorias button");
+const resultado = document.getElementById("resultado");
+
+let categoriaAtual = "Todos";
+
+function filtrarJogos() {
+    const termo = pesquisa.value.toLowerCase();
+    let encontrados = 0;
+
+    cards.forEach(card => {
+        const nome = card.querySelector("h3").textContent.toLowerCase();
+        const categoria = card.dataset.categoria;
+
+        const correspondeNome = nome.includes(termo);
+        const correspondeCategoria =
+            categoriaAtual === "Todos" ||
+            categoria === categoriaAtual;
+
+        if (correspondeNome && correspondeCategoria) {
+            card.style.display = "block";
+            encontrados++;
+        } else {
+            card.style.display = "none";
+        }
+    });
+
+    resultado.textContent = encontrados + " jogo(s) encontrado(s).";
+}
+
+pesquisa.addEventListener("input", filtrarJogos);
+
+botoes.forEach(botao => {
+    botao.addEventListener("click", () => {
+        botoes.forEach(b => b.classList.remove("active"));
+
+        botao.classList.add("active");
+        categoriaAtual = botao.dataset.categoria;
+
+        filtrarJogos();
+    });
+});
+
+function abrirJogo(nome) {
+    alert(
+        "Você selecionou: " + nome +
+        "\n\nEste jogo ainda precisa ser integrado ao portal."
+    );
+}
+
+filtrarJogos();
+</script>
+
+<script src="script.js"></script></body>
+</html>
