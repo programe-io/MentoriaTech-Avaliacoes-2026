@@ -1,43 +1,156 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <link href="style.css" rel="stylesheet">
-</head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biblioteca Escolar</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
 <body>
-  
-<form id="formLivro" class="formulario">
-    <label for="tituloLivro">Título do livro</label>
-    <input id="tituloLivro" type="text" required>
 
-    <label for="autorLivro">Autor</label>
-    <input id="autorLivro" type="text" required>
+<header>
+    <h1>📚 Biblioteca Escolar</h1>
+    <p>Sistema de Cadastro e Gerenciamento</p>
+</header>
 
-    <label for="categoriaLivro">Categoria</label>
-    <select id="categoriaLivro" required>
-        <option value="Literatura" selected>Literatura</option>
-        <option value="Ciências">Ciências</option>
-        <option value="História">História</option>
-        <option value="Geografia">Geografia</option>
-        <option value="Matemática">Matemática</option>
-        <option value="Informática">Informática</option>
-        <option value="Outros">Outros</option>
-    </select>
+<nav>
+    <button data-tela="inicio">Início</button>
+    <button data-tela="livros">Livros</button>
+    <button data-tela="alunos">Alunos</button>
+    <button data-tela="emprestimos">Empréstimos</button>
+</nav>
 
-    <label for="isbnLivro">ISBN (opcional)</label>
-    <input id="isbnLivro" type="text">
+<main>
 
-    <label for="quantidadeLivro">Quantidade</label>
-    <input id="quantidadeLivro" type="number" min="1" value="1" required>
+    <section id="inicio" class="tela ativa">
+        <h2>Painel Principal</h2>
 
-    <button type="submit">Cadastrar livro</button>
-</form>
+        <div class="resumos">
+            <div class="card">
+                <h3>Livros</h3>
+                <strong id="totalLivros">0</strong>
+            </div>
+            <div class="card">
+                <h3>Alunos</h3>
+                <strong id="totalAlunos">0</strong>
+            </div>
+            <div class="card">
+                <h3>Empréstimos ativos</h3>
+                <strong id="totalAtivos">0</strong>
+            </div>
+            <div class="card">
+                <h3>Devoluções</h3>
+                <strong id="totalDevolvidos">0</strong>
+            </div>
+        </div>
 
-<div id="listaLivros"></div>
+        <div class="painel">
+            <h3>Últimos empréstimos</h3>
+            <div id="ultimos"></div>
+        </div>
+    </section>
 
+    <section id="livros" class="tela">
+        <h2>Cadastro de Livros</h2>
 
-  <script src="script.js"></script>
-  
-</body>
+        <form id="formLivro">
+            <label>Título do livro</label>
+            <input id="titulo" required minlength="2">
+
+            <label>Autor</label>
+            <input id="autor" required>
+
+            <label>Categoria</label>
+            <select id="categoria" required>
+                <option value="">Selecione</option>
+                <option>Literatura</option>
+                <option>História</option>
+                <option>Ciências</option>
+                <option>Geografia</option>
+                <option>Matemática</option>
+                <option>Informática</option>
+                <option>Outros</option>
+            </select>
+
+            <label>ISBN (opcional)</label>
+            <input id="isbn">
+
+            <label>Quantidade</label>
+            <input id="quantidade" type="number" min="1" value="1" required>
+
+            <button type="submit" id="btnLivro">Cadastrar livro</button>
+            <button type="button" id="cancelarLivro" hidden>Cancelar edição</button>
+        </form>
+
+        <div class="painel">
+            <h3>Livros cadastrados</h3>
+            <input id="buscaLivro" placeholder="Pesquisar livro ou autor">
+            <div id="listaLivros"></div>
+        </div>
+    </section>
+
+    <section id="alunos" class="tela">
+        <h2>Cadastro de Alunos</h2>
+
+        <form id="formAluno">
+            <label>Nome completo</label>
+            <input id="nomeAluno" required>
+
+            <label>Matrícula</label>
+            <input id="matricula" required>
+
+            <label>Turma</label>
+            <input id="turma" required>
+
+            <button type="submit" id="btnAluno">Cadastrar aluno</button>
+            <button type="button" id="cancelarAluno" hidden>Cancelar edição</button>
+        </form>
+
+        <div class="painel">
+            <h3>Alunos cadastrados</h3>
+            <input id="buscaAluno" placeholder="Pesquisar aluno">
+            <div id="listaAlunos"></div>
+        </div>
+    </section>
+
+    <section id="emprestimos" class="tela">
+        <h2>Empréstimos e Devoluções</h2>
+
+        <form id="formEmprestimo">
+            <label>Aluno</label>
+            <select id="alunoSelect" required>
+                <option value="">Selecione um aluno</option>
+            </select>
+
+            <label>Livro</label>
+            <select id="livroSelect" required>
+                <option value="">Selecione um livro</option>
+            </select>
+
+            <label>Data do empréstimo</label>
+            <input id="dataEmprestimo" type="date" required>
+
+            <label>Data prevista para devolução</label>
+            <input id="dataDevolucao" type="date" required>
+
+            <button type="submit">Registrar empréstimo</button>
+        </form>
+
+        <div class="painel">
+            <h3>Histórico de empréstimos</h3>
+            <input id="buscaEmprestimo" placeholder="Pesquisar aluno ou livro">
+            <div id="listaEmprestimos"></div>
+        </div>
+    </section>
+
+</main>
+
+<footer>
+    <p>Biblioteca Escolar - Sistema de Gerenciamento</p>
+</footer>
+
+<script src="script.js"></script></body>
 </html>
