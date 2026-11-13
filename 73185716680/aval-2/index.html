@@ -6,69 +6,89 @@
   <link href="style.css" rel="stylesheet">
 </head>
 <body>
-  
-let clientes = [];
-let agendamentos = [];
+  let produtos = [];
+let proximoCodigo = 1;
 
-// 1. Cadastrar cliente
-function cadastrarCliente(nome, telefone) {
-    if (!nome || !telefone) {
-            console.log("Preencha todos os dados!");
-                    return;
-                        }
+function validarProduto(descricao, quantidade, valor) {
+if (!descricao || descricao.trim() === "") {
+console.log("Descrição inválida!");
+return false;
+}
+if (quantidade < 0 || isNaN(quantidade)) {
+console.log("Quantidade inválida!");
+return false;
+}
+if (valor < 0 || isNaN(valor)) {
+console.log("Valor inválido!");
+return false;
+}
+return true;
+}
 
-                            clientes.push({
-                                    codigo: clientes.length + 1,
-                                            nome: nome,
-                                                    telefone: telefone
-                                                        });
+function cadastrarProduto(descricao, quantidade, valor) {
+if (!validarProduto(descricao, quantidade, valor)) {
+return;
+}
 
-                                                            console.log("Cliente cadastrado com sucesso!");
-                                                            }
+let produto = {
+codigo: proximoCodigo,
+descricao: descricao,
+quantidade: quantidade,
+valor: valor
+};
 
-                                                            // 2. Listar clientes
-                                                            function listarClientes() {
-                                                                console.table(clientes);
-                                                                }
+produtos.push(produto);
+proximoCodigo++;
+console.log("Produto cadastrado: ", produto);
+}
 
-                                                                // 3. Criar agendamento
-                                                                function criarAgendamento(codigoCliente, servico, data) {
-                                                                    let cliente = clientes.find(c => c.codigo === codigoCliente);
+function listarProdutos() {
+if (produtos.length === 0) {
+console.log("Nenhum produto cadastrado.");
+return;
+}
+console.log("--- Lista de Produtos ---");
+for (let p of produtos) {
+console.log(Código: ${p.codigo} | Descrição: ${p.descricao} | Quantidade: ${p.quantidade} | Valor: R$ ${p.valor});
+}
+}
 
-                                                                        if (!cliente || !servico || !data) {
-                                                                                console.log("Dados do agendamento inválidos!");
-                                                                                        return;
-                                                                                            }
+function atualizarValor(codigoProduto, novoValor) {
+let produto = produtos.find(p => p.codigo === codigoProduto);
+if (!produto) {
+console.log("Produto não encontrado!");
+return;
+}
+if (novoValor < 0 || isNaN(novoValor)) {
+console.log("Novo valor inválido!");
+return;
+}
+produto.valor = novoValor;
+console.log("Valor atualizado: ", produto);
+}
 
-                                                                                                agendamentos.push({
-                                                                                                        codigo: agendamentos.length + 1,
-                                                                                                                cliente: cliente.nome,
-                                                                                                                        servico: servico,
-                                                                                                                                data: data
-                                                                                                                                    });
+function atualizarQuantidade(codigoProduto, novaQuantidade) {
+let produto = produtos.find(p => p.codigo === codigoProduto);
+if (!produto) {
+console.log("Produto não encontrado!");
+return;
+}
+if (novaQuantidade < 0 || isNaN(novaQuantidade)) {
+console.log("Nova quantidade inválida!");
+return;
+}
+produto.quantidade = novaQuantidade;
+console.log("Quantidade atualizada: ", produto);
+}
 
-                                                                                                                                        console.log("Agendamento realizado!");
-                                                                                                                                        }
-
-                                                                                                                                        // 4. Listar agendamentos
-                                                                                                                                        function listarAgendamentos() {
-                                                                                                                                            console.table(agendamentos);
-                                                                                                                                            }
-
-                                                                                                                                            // 5. Cancelar agendamento
-                                                                                                                                            function cancelarAgendamento(codigo) {
-                                                                                                                                                let indice = agendamentos.findIndex(a => a.codigo === codigo);
-
-                                                                                                                                                    if (indice === -1) {
-                                                                                                                                                            console.log("Agendamento não encontrado!");
-                                                                                                                                                                    return;
-                                                                                                                                                                        }
-
-                                                                                                                                                                            agendamentos.splice(indice, 1);
-                                                                                                                                                                                console.log("Agendamento cancelado!");
-                                                                                                                                                                                }
-                                                                                                                                                                                
-  
+// Teste:
+cadastrarProduto("Arroz", 10, 25.50);
+cadastrarProduto("Feijão", 5, 12.00);
+listarProdutos();
+atualizarValor(1, 30.00);
+atualizarQuantidade(2, 8);
+listarProdutos();
+  <script src="script.js"></script>
   
 </body>
 </html>
