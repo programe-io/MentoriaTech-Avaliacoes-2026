@@ -1,67 +1,182 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Subaru no WRC - A Era de Ouro</title>
+    <title>TaskFlow - Gerenciador de Tarefas</title>
     <link rel="stylesheet" href="style.css">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="style.css" rel="stylesheet"></head>
 <body>
 
-    <header>
-        <h1>Subaru World Rally Team</h1>
-        <p>A lenda dos motores Boxer e da tração Symmetrical AWD no WRC</p>
+<div class="sidebar" id="sidebar">
+    <h2>✓ TaskFlow</h2>
+
+    <nav>
+        <a href="#inicio">🏠 Visão geral</a>
+        <a href="#tarefas">📋 Minhas tarefas</a>
+        <a href="#estatisticas">📊 Estatísticas</a>
+    </nav>
+
+    <div class="sidebar-footer">
+        Organize seu dia!
+    </div>
+</div>
+
+<main class="main">
+
+    <header class="topbar">
+        <button class="menu-btn" onclick="toggleMenu()">☰</button>
+        <div>
+            <h1>Gerenciador de Tarefas</h1>
+            <p>Organize suas atividades e alcance seus objetivos.</p>
+        </div>
     </header>
 
-    <main>
-        <!-- História -->
-        <section class="card">
-            <h2>A Conquista dos Ralis</h2>
-            <p>
-                Nos anos 90, a Subaru transformou o cenário do automobilismo mundial. Com a preparação da Prodrive, 
-                o modelo **Impreza 555** e a pintura azul azul-metálico com rodas douradas da <em>State Express 555</em> 
-                tornaram-se ícones instantâneos.
-            </p>
-            <p>
-                Com pilotos lendários como **Colin McRae**, **Carlos Sainz**, **Richard Burns** e **Petter Solberg**, 
-                a equipe conquistou 3 Títulos de Construtores (1995, 1996, 1997) e 3 Títulos de Pilotos.
-            </p>
-            <div class="acoes-botoes">
-                <button id="btn-frase">Frase de Colin McRae</button>
-                <button id="btn-cor" class="btn-subaru">Mudar para Azul 555</button>
+    <section id="inicio">
+        <div class="welcome">
+            <div>
+                <h2>Olá! 👋</h2>
+                <p>Vamos organizar suas tarefas de hoje?</p>
             </div>
-        </section>
+            <span id="dataAtual"></span>
+        </div>
 
-        <!-- Pilotos / Títulos -->
-        <section class="card">
-            <h2>Galeria de Campeões</h2>
-            <p>Digite e adicione momentos ou carros marcantes dessa trajetória:</p>
-            
-            <div class="input-grupo">
-                <input 
-                    type="text" 
-                    id="nova-tarefa" 
-                    placeholder="Ex: Título de Colin McRae (1995)..." 
-                    aria-label="Adicionar modelo ou conquista"
-                >
-                <button id="btn-adicionar">Adicionar</button>
+        <div class="stats">
+            <div class="stat-card">
+                <span>📋 Total de tarefas</span>
+                <h2 id="total">0</h2>
             </div>
 
-            <ul id="lista-tarefas">
-                <li>1995 - Campeão de Construtores & Pilotos (Colin McRae)</li>
-                <li>1996 - Campeão de Construtores</li>
-                <li>1997 - Campeão de Construtores (Impreza WRC97)</li>
-                <li>2001 - Campeão de Pilotos (Richard Burns)</li>
-                <li>2003 - Campeão de Pilotos (Petter Solberg)</li>
-            </ul>
-        </section>
-    </main>
+            <div class="stat-card">
+                <span>⏳ Pendentes</span>
+                <h2 id="pendentes">0</h2>
+            </div>
 
-    <footer>
-        <p>&copy; 2026 - Homenagem à Subaru World Rally Team (SWRT).</p>
-    </footer>
+            <div class="stat-card">
+                <span>✅ Concluídas</span>
+                <h2 id="concluidas">0</h2>
+            </div>
 
-    <script src="script.js"></script>
+            <div class="stat-card">
+                <span>🔥 Alta prioridade</span>
+                <h2 id="prioritarias">0</h2>
+            </div>
+        </div>
+    </section>
+
+    <section id="tarefas" class="panel">
+
+        <div class="section-header">
+            <div>
+                <h2>Minhas tarefas</h2>
+                <p>Gerencie suas atividades.</p>
+            </div>
+
+            <button class="primary-btn" onclick="abrirModal()">
+                + Nova tarefa
+            </button>
+        </div>
+
+        <div class="filters">
+            <input
+                type="search"
+                id="pesquisa"
+                placeholder="🔎 Pesquisar tarefa..."
+                oninput="renderizar()"
+            >
+
+            <select id="filtro" onchange="renderizar()">
+                <option value="todas">Todas</option>
+                <option value="pendentes">Pendentes</option>
+                <option value="concluidas">Concluídas</option>
+            </select>
+
+            <select id="filtroPrioridade" onchange="renderizar()">
+                <option value="todas">Todas prioridades</option>
+                <option value="alta">Alta</option>
+                <option value="media">Média</option>
+                <option value="baixa">Baixa</option>
+            </select>
+        </div>
+
+        <div id="listaTarefas" class="task-list"></div>
+
+        <div id="vazio" class="empty">
+            <span>📝</span>
+            <h3>Nenhuma tarefa encontrada</h3>
+            <p>Adicione uma tarefa para começar!</p>
+        </div>
+
+    </section>
+
+    <section id="estatisticas" class="panel">
+        <h2>Seu progresso</h2>
+        <p>Acompanhe seu desempenho.</p>
+
+        <div class="progress-info">
+            <span>Progresso geral</span>
+            <strong id="porcentagem">0%</strong>
+        </div>
+
+        <div class="progress-bar">
+            <div id="barraProgresso"></div>
+        </div>
+    </section>
+
+</main>
+
+<!-- MODAL -->
+
+<div class="modal" id="modal">
+    <div class="modal-content">
+
+        <div class="modal-header">
+            <h2 id="tituloModal">Nova tarefa</h2>
+            <button class="close-btn" onclick="fecharModal()">✕</button>
+        </div>
+
+        <form id="formTarefa">
+
+            <input type="hidden" id="tarefaId">
+
+            <label>Nome da tarefa</label>
+            <input
+                type="text"
+                id="titulo"
+                placeholder="Ex: Estudar matemática"
+                maxlength="100"
+                required
+            >
+
+            <label>Descrição</label>
+            <textarea
+                id="descricao"
+                placeholder="Descreva sua tarefa..."
+                rows="3"
+                maxlength="500"
+            ></textarea>
+
+            <label>Prioridade</label>
+            <select id="prioridade">
+                <option value="baixa">Baixa</option>
+                <option value="media" selected>Média</option>
+                <option value="alta">Alta</option>
+            </select>
+
+            <label>Data de entrega</label>
+            <input type="date" id="dataEntrega">
+
+            <button type="submit" class="primary-btn full">
+                Salvar tarefa
+            </button>
+
+        </form>
+    </div>
+</div>
+
+<script src="script.js"></script>
+
 <script src="script.js"></script></body>
-</html>$0
+</html>
