@@ -1,37 +1,45 @@
-const btnPublicar = document.getElementById('btnPublicar');
-const postInput = document.getElementById('postInput');
-const feedContainer = document.getElementById('feedContainer');
+const modal = document.getElementById('post-modal');
+const modalImg = document.getElementById('modal-img');
+const modalCaptionText = document.getElementById('modal-caption-text');
+const modalLikes = document.getElementById('modal-likes');
+const modalViews = document.getElementById('modal-views');
+const modalCommentsContainer = document.getElementById('modal-comments-container');
+const modalCommentInput = document.getElementById('modal-comment-input');
+const modalCommentBtn = document.getElementById('modal-comment-btn');
 
-btnPublicar.addEventListener('click', function() {
-    const textoPost = postInput.value.trim();
-    
-    if (textoPost === '') {
-        alert('Escreva alguma coisa antes de publicar!');
-        return;
+function openModal(imgSrc, caption, likes, views) {
+    modal.style.display = 'flex';
+    modalImg.src = imgSrc;
+    modalCaptionText.innerHTML = `<strong>paisagens.paradisiacas</strong> ${caption}`;
+    modalLikes.textContent = `❤️ ${likes} curtidas`;
+    modalViews.textContent = `👁️ ${views} visualizações`;
+}
+
+function closeModal() {
+    modal.style.display = 'none';
+}
+
+window.onclick = function(event) {
+    if (event.target == modal) {
+        closeModal();
     }
+}
 
-    // Criar o novo card de postagem dinamicamente
-    const novoCard = document.createElement('div');
-    novoCard.classList.add('feed-card');
-    
-    novoCard.innerHTML = `
-        <div class="feed-header">
-            <div class="avatar">M</div>
-            <div class="feed-user-details">
-                <strong>Maria</strong>
-                <span class="time">Agora mesmo</span>
-            </div>
-        </div>
-        <p class="feed-text">${textoPost}</p>
-        <div class="feed-actions">
-            <button class="action-btn">Curtir</button>
-            <button class="action-btn">Comentar</button>
-        </div>
-    `;
+function addModalComment() {
+    const text = modalCommentInput.value.trim();
+    if (text !== '') {
+        const newC = document.createElement('div');
+        newC.classList.add('comment');
+        newC.innerHTML = `<strong>paisagens.paradisiacas</strong> ${text}`;
+        modalCommentsContainer.appendChild(newC);
+        modalCommentInput.value = '';
+        modalCommentsContainer.scrollTop = modalCommentsContainer.scrollHeight;
+    }
+}
 
-    // Adicionar o post no topo do feed
-    feedContainer.prepend(novoCard);
-
-    // Limpar a caixa de texto
-    postInput.value = '';
+modalCommentBtn.addEventListener('click', addModalComment);
+modalCommentInput.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        addModalComment();
+    }
 });
