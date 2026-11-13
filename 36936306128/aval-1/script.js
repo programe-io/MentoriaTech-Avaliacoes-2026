@@ -44,3 +44,17 @@ function atualizarquantidade(codigo,quantidade) {
 
     produto.quantidade += quantidade;
 }
+
+// Testando o sistema
+try {
+    cadastrarproduto("mouse logitech"), 10, 99);
+    cadastrarproduto("Teclado Gamer" , 5, 150);
+
+    atualizarValor(1, 89);
+    atualizarQuantidade(1, 5);
+
+    listarproduto();
+
+} catch (erro) {
+    console.log(erro.message);
+}
