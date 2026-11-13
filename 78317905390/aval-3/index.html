@@ -1,44 +1,81 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fuga do Dragão</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Fuja do Dragão</title>
+<link rel="stylesheet" href="style.css" />
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="style.css" rel="stylesheet"></head>
 <body>
-  <div id="container">
-    <h1>🐉 Fuga do Dragão</h1>
-    <div id="hud">
-      <span>Pontos: <b id="score">0</b></span>
-      <span>Recorde: <b id="best">0</b></span>
-    </div>
 
-    <div id="stage">
-      <canvas id="game" width="800" height="400"></canvas>
+<div id="game-container">
+  <canvas id="game" width="900" height="500"></canvas>
 
-      <div id="menu" class="overlay">
-        <h2>Escolha seu personagem</h2>
-        <div id="skins">
-          <button class="skin selected" data-skin="bruxa">🧙 Bruxa</button>
-          <button class="skin" data-skin="soldado">🛡️ Soldado</button>
-          <button class="skin" data-skin="fada">🧚 Fada</button>
-        </div>
-        <p class="controls">ESPAÇO = pular &nbsp;|&nbsp; S = correr &nbsp;|&nbsp; D = abaixar</p>
-        <p class="tip">Pegue moedas para ganhar velocidade. O dragão só aparece com 100 pontos!</p>
-        <button id="start" class="action">Começar (ou ENTER)</button>
-      </div>
+    <!-- ===== HUD ===== -->
+      <div id="hud">
+          <div class="hud-item"><span class="ico">⭐</span><span id="hud-score">0</span></div>
+              <div class="hud-item"><span class="ico">🪙</span><span id="hud-coins">0</span></div>
+                  <div id="danger-wrap" title="Distância do dragão">
+                        <span class="ico">🐉</span>
+                              <div id="danger-bar"><div id="danger-fill"></div></div>
+                                  </div>
+                                      <button id="btn-speed">⚡ Velocidade <small id="speed-cost">50 🪙</small></button>
+                                        </div>
 
-      <div id="over" class="overlay hidden">
-        <h2>Fim de jogo!</h2>
-        <p id="reason"></p>
-        <p>Pontos: <b id="finalScore">0</b></p>
-        <button id="restart" class="action">Jogar novamente</button>
-        <button id="back" class="action secondary">Trocar personagem</button>
-      </div>
-    </div>
-  </div>
-  <script src="script.js"></script>
-<script src="script.js"></script></body>
-</html>
+                                          <!-- ===== MENU ===== -->
+                                            <div id="menu" class="overlay">
+                                                <h1>Fuja do Dragão</h1>
+                                                    <p class="subtitle">Um dragão te persegue. Corra, pule e colete moedas!</p>
+                                                        <p class="choose">Escolha seu personagem</p>
+
+                                                            <div class="chars">
+                                                                  <div class="char-card selected" data-char="witch">
+                                                                          <canvas width="100" height="120"></canvas>
+                                                                                  <span>Bruxa</span>
+                                                                                        </div>
+                                                                                              <div class="char-card" data-char="soldier">
+                                                                                                      <canvas width="100" height="120"></canvas>
+                                                                                                              <span>Soldado</span>
+                                                                                                                    </div>
+                                                                                                                          <div class="char-card" data-char="fairy">
+                                                                                                                                  <canvas width="100" height="120"></canvas>
+                                                                                                                                          <span>Fada</span>
+                                                                                                                                                </div>
+                                                                                                                                                    </div>
+
+                                                                                                                                                        <button id="btn-start" class="big-btn">▶ Começar a Corrida</button>
+
+                                                                                                                                                            <div class="controls-help">
+                                                                                                                                                                  <p><b>ESPAÇO</b> pular &nbsp;·&nbsp; <b>S</b> correr &nbsp;·&nbsp; <b>D</b> abaixar &nbsp;·&nbsp; <b>A</b> comprar velocidade</p>
+                                                                                                                                                                        <p class="mobile-hint">📱 No celular use as setas ▲ ▶ ▼</p>
+                                                                                                                                                                              <p class="goal">🎯 O dragão aparece com <b>1000 pontos</b>. Colete moedas para mantê-lo longe!</p>
+                                                                                                                                                                                  </div>
+                                                                                                                                                                                    </div>
+
+                                                                                                                                                                                      <!-- ===== GAME OVER ===== -->
+                                                                                                                                                                                        <div id="gameover" class="overlay hidden">
+                                                                                                                                                                                            <h2>🔥 O dragão te pegou! 🔥</h2>
+                                                                                                                                                                                                <div class="stats">
+                                                                                                                                                                                                      <p>Pontuação: <b id="final-score">0</b></p>
+                                                                                                                                                                                                            <p>Moedas: <b id="final-coins">0</b></p>
+                                                                                                                                                                                                                </div>
+                                                                                                                                                                                                                    <button id="btn-restart" class="big-btn">🔄 Jogar de novo</button>
+                                                                                                                                                                                                                        <button id="btn-menu" class="small-btn">Menu principal</button>
+                                                                                                                                                                                                                          </div>
+
+                                                                                                                                                                                                                            <!-- ===== CONTROLES MOBILE ===== -->
+                                                                                                                                                                                                                              <div id="mobile-controls">
+                                                                                                                                                                                                                                  <div class="pad pad-left">
+                                                                                                                                                                                                                                        <button class="mbtn" data-key="s">▶</button>
+                                                                                                                                                                                                                                              <button class="mbtn" data-key="d">▼</button>
+                                                                                                                                                                                                                                                  </div>
+                                                                                                                                                                                                                                                      <div class="pad pad-right">
+                                                                                                                                                                                                                                                            <button class="mbtn jump" data-key=" ">▲</button>
+                                                                                                                                                                                                                                                                </div>
+                                                                                                                                                                                                                                                                  </div>
+                                                                                                                                                                                                                                                                  </div>
+
+                                                                                                                                                                                                                                                                  <script src="game.js"></script>
+                                                                                                                                                                                                                                                                  <script src="script.js"></script></body>
+                                                                                                                                                                                                                                                                  </html>

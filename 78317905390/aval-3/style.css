@@ -1,81 +1,297 @@
-* { box-sizing: border-box; }
+/* ============================================
+   FUJA DO DRAGÃO - style.css
+      ============================================ */
 
-body {
-  margin: 0;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: radial-gradient(circle at top, #2e5e2e, #0f2a12);
-  font-family: Arial, sans-serif;
-  color: #fff;
-}
+      * {
+        margin: 0;
+          padding: 0;
+            box-sizing: border-box;
+            }
 
-#container { width: 100%; max-width: 820px; padding: 10px; text-align: center; }
+            html, body {
+              height: 100%;
+              }
 
-h1 { margin: 6px 0; color: #ffd54f; text-shadow: 2px 2px #000; }
-h2 { margin: 0; }
-p { margin: 0; }
+              body {
+                background: radial-gradient(circle at 50% 0%, #16321f 0%, #08120c 60%, #040806 100%);
+                  font-family: 'Trebuchet MS', 'Segoe UI', system-ui, sans-serif;
+                    display: flex;
+                      align-items: center;
+                        justify-content: center;
+                          overflow: hidden;
+                            user-select: none;
+                              -webkit-user-select: none;
+                                -webkit-tap-highlight-color: transparent;
+                                  touch-action: manipulation;
+                                  }
 
-#hud {
-  display: flex;
-  justify-content: space-between;
-  font-size: 18px;
-  padding: 0 4px 6px;
-}
+                                  /* ---------- Container ---------- */
+                                  #game-container {
+                                    position: relative;
+                                      width: min(97vw, 900px);
+                                        aspect-ratio: 900 / 500;
+                                          border-radius: 18px;
+                                            overflow: hidden;
+                                              box-shadow:
+                                                  0 0 0 3px rgba(120, 200, 120, 0.15),
+                                                      0 25px 70px rgba(0, 0, 0, 0.85);
+                                                        background: #7ec8e3;
+                                                        }
 
-#stage { position: relative; }
+                                                        canvas#game {
+                                                          display: block;
+                                                            width: 100%;
+                                                              height: 100%;
+                                                              }
 
-canvas {
-  display: block;
-  width: 100%;
-  height: auto;
-  border: 4px solid #3b2a14;
-  border-radius: 10px;
-  background: #000;
-}
+                                                              /* ---------- HUD ---------- */
+                                                              #hud {
+                                                                position: absolute;
+                                                                  top: 0;
+                                                                    left: 0;
+                                                                      right: 0;
+                                                                        display: none;
+                                                                          align-items: center;
+                                                                            gap: 10px;
+                                                                              padding: 10px 14px;
+                                                                                pointer-events: none;
+                                                                                  font-weight: bold;
+                                                                                    color: #fff;
+                                                                                      font-size: clamp(12px, 1.9vw, 18px);
+                                                                                        text-shadow: 0 2px 5px rgba(0, 0, 0, 0.85);
+                                                                                        }
 
-.overlay {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  padding: 16px;
-  background: rgba(0, 0, 0, 0.72);
-  border-radius: 10px;
-  overflow: auto;
-}
+                                                                                        #game-container.playing #hud {
+                                                                                          display: flex;
+                                                                                          }
 
-.hidden { display: none; }
+                                                                                          .hud-item {
+                                                                                            display: flex;
+                                                                                              align-items: center;
+                                                                                                gap: 5px;
+                                                                                                  background: rgba(0, 0, 0, 0.35);
+                                                                                                    border: 2px solid rgba(255, 255, 255, 0.15);
+                                                                                                      border-radius: 999px;
+                                                                                                        padding: 4px 14px;
+                                                                                                          backdrop-filter: blur(4px);
+                                                                                                          }
 
-#skins { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+                                                                                                          .ico {
+                                                                                                            font-size: 1.1em;
+                                                                                                            }
 
-.skin {
-  padding: 12px 18px;
-  font-size: 18px;
-  border: 3px solid transparent;
-  border-radius: 10px;
-  background: #fff;
-  cursor: pointer;
-}
+                                                                                                            /* barra de perigo */
+                                                                                                            #danger-wrap {
+                                                                                                              display: flex;
+                                                                                                                align-items: center;
+                                                                                                                  gap: 6px;
+                                                                                                                    background: rgba(0, 0, 0, 0.35);
+                                                                                                                      border: 2px solid rgba(255, 255, 255, 0.15);
+                                                                                                                        border-radius: 999px;
+                                                                                                                          padding: 5px 12px;
+                                                                                                                            backdrop-filter: blur(4px);
+                                                                                                                              flex: 0 1 200px;
+                                                                                                                                max-width: 220px;
+                                                                                                                                }
 
-.skin.selected { border-color: #ffd54f; background: #ffe082; }
+                                                                                                                                #danger-bar {
+                                                                                                                                  flex: 1;
+                                                                                                                                    height: 11px;
+                                                                                                                                      background: rgba(0, 0, 0, 0.55);
+                                                                                                                                        border-radius: 999px;
+                                                                                                                                          overflow: hidden;
+                                                                                                                                            min-width: 50px;
+                                                                                                                                            }
 
-.action {
-  padding: 12px 28px;
-  font-size: 18px;
-  font-weight: bold;
-  border: none;
-  border-radius: 8px;
-  background: #43a047;
-  color: #fff;
-  cursor: pointer;
-}
+                                                                                                                                            #danger-fill {
+                                                                                                                                              height: 100%;
+                                                                                                                                                width: 0%;
+                                                                                                                                                  border-radius: 999px;
+                                                                                                                                                    background: linear-gradient(90deg, #4caf50, #ffc107, #ff3b30);
+                                                                                                                                                      transition: width 0.12s linear;
+                                                                                                                                                      }
 
-.action.secondary { background: #6d4c41; }
+                                                                                                                                                      /* botão de velocidade */
+                                                                                                                                                      #btn-speed {
+                                                                                                                                                        pointer-events: auto;
+                                                                                                                                                          margin-left: auto;
+                                                                                                                                                            font-family: inherit;
+                                                                                                                                                              font-weight: bold;
+                                                                                                                                                                font-size: clamp(10px, 1.5vw, 14px);
+                                                                                                                                                                  color: #1a1a1a;
+                                                                                                                                                                    background: linear-gradient(180deg, #ffe066, #f0b429);
+                                                                                                                                                                      border: 2px solid #fff4c2;
+                                                                                                                                                                        border-radius: 999px;
+                                                                                                                                                                          padding: 6px 14px;
+                                                                                                                                                                            cursor: pointer;
+                                                                                                                                                                              box-shadow: 0 4px 0 #a9781a, 0 6px 14px rgba(0, 0, 0, 0.45);
+                                                                                                                                                                                transition: transform 0.08s, box-shadow 0.08s;
+                                                                                                                                                                                  white-space: nowrap;
+                                                                                                                                                                                  }
 
-.controls { color: #ffe082; font-weight: bold; }
-.tip { font-size: 14px; opacity: 0.85; }
+                                                                                                                                                                                  #btn-speed:active {
+                                                                                                                                                                                    transform: translateY(3px);
+                                                                                                                                                                                      box-shadow: 0 1px 0 #a9781a, 0 3px 8px rgba(0, 0, 0, 0.45);
+                                                                                                                                                                                      }
+
+                                                                                                                                                                                      #btn-speed small {
+                                                                                                                                                                                        font-size: 0.85em;
+                                                                                                                                                                                          opacity: 0.8;
+                                                                                                                                                                                          }
+
+                                                                                                                                                                                          #btn-speed.disabled {
+                                                                                                                                                                                            filter: grayscale(0.7) brightness(0.8);
+                                                                                                                                                                                              cursor: not-allowed;
+                                                                                                                                                                                              }
+
+                                                                                                                                                                                              /* ---------- Overlays ---------- */
+                                                                                                                                                                                              .overlay {
+                                                                                                                                                                                                position: absolute;
+                                                                                                                                                                                                  inset: 0;
+                                                                                                                                                                                                    display: flex;
+                                                                                                                                                                                                      flex-direction: column;
+                                                                                                                                                                                                        align-items: center;
+                                                                                                                                                                                                          justify-content: center;
+                                                                                                                                                                                                            gap: 10px;
+                                                                                                                                                                                                              padding: 16px;
+                                                                                                                                                                                                                text-align: center;
+                                                                                                                                                                                                                  color: #fff;
+                                                                                                                                                                                                                    background: radial-gradient(circle at 50% 40%, rgba(10, 30, 18, 0.88), rgba(3, 8, 6, 0.96));
+                                                                                                                                                                                                                      backdrop-filter: blur(6px);
+                                                                                                                                                                                                                        overflow-y: auto;
+                                                                                                                                                                                                                          z-index: 10;
+                                                                                                                                                                                                                            animation: fadeIn 0.35s ease;
+                                                                                                                                                                                                                            }
+
+                                                                                                                                                                                                                            @keyframes fadeIn {
+                                                                                                                                                                                                                              from { opacity: 0; }
+                                                                                                                                                                                                                                to { opacity: 1; }
+                                                                                                                                                                                                                                }
+
+                                                                                                                                                                                                                                .hidden {
+                                                                                                                                                                                                                                  display: none !important;
+                                                                                                                                                                                                                                  }
+
+                                                                                                                                                                                                                                  .overlay h1 {
+                                                                                                                                                                                                                                    font-size: clamp(26px, 5.5vw, 52px);
+                                                                                                                                                                                                                                      letter-spacing: 1px;
+                                                                                                                                                                                                                                        background: linear-gradient(180deg, #fff2a8, #ff9f43 55%, #e63946);
+                                                                                                                                                                                                                                          -webkit-background-clip: text;
+                                                                                                                                                                                                                                            background-clip: text;
+                                                                                                                                                                                                                                              -webkit-text-fill-color: transparent;
+                                                                                                                                                                                                                                                filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.7));
+                                                                                                                                                                                                                                                  margin-bottom: 2px;
+                                                                                                                                                                                                                                                  }
+
+                                                                                                                                                                                                                                                  .overlay h2 {
+                                                                                                                                                                                                                                                    font-size: clamp(20px, 4vw, 38px);
+                                                                                                                                                                                                                                                      color: #ff6b5b;
+                                                                                                                                                                                                                                                        text-shadow: 0 3px 10px rgba(0, 0, 0, 0.8);
+                                                                                                                                                                                                                                                        }
+
+                                                                                                                                                                                                                                                        .subtitle {
+                                                                                                                                                                                                                                                          font-size: clamp(11px, 1.8vw, 16px);
+                                                                                                                                                                                                                                                            opacity: 0.8;
+                                                                                                                                                                                                                                                              max-width: 520px;
+                                                                                                                                                                                                                                                              }
+
+                                                                                                                                                                                                                                                              .choose {
+                                                                                                                                                                                                                                                                margin-top: 4px;
+                                                                                                                                                                                                                                                                  font-size: clamp(12px, 1.9vw, 17px);
+                                                                                                                                                                                                                                                                    font-weight: bold;
+                                                                                                                                                                                                                                                                      color: #a8e6a1;
+                                                                                                                                                                                                                                                                        letter-spacing: 0.5px;
+                                                                                                                                                                                                                                                                        }
+
+                                                                                                                                                                                                                                                                        /* ---------- Cartões de personagem ---------- */
+                                                                                                                                                                                                                                                                        .chars {
+                                                                                                                                                                                                                                                                          display: flex;
+                                                                                                                                                                                                                                                                            gap: clamp(8px, 2vw, 22px);
+                                                                                                                                                                                                                                                                              margin: 4px 0 6px;
+                                                                                                                                                                                                                                                                              }
+
+                                                                                                                                                                                                                                                                              .char-card {
+                                                                                                                                                                                                                                                                                cursor: pointer;
+                                                                                                                                                                                                                                                                                  background: rgba(255, 255, 255, 0.06);
+                                                                                                                                                                                                                                                                                    border: 3px solid rgba(255, 255, 255, 0.15);
+                                                                                                                                                                                                                                                                                      border-radius: 16px;
+                                                                                                                                                                                                                                                                                        padding: 6px 6px 4px;
+                                                                                                                                                                                                                                                                                          transition: transform 0.15s, border-color 0.15s, background 0.15s;
+                                                                                                                                                                                                                                                                                            display: flex;
+                                                                                                                                                                                                                                                                                              flex-direction: column;
+                                                                                                                                                                                                                                                                                                align-items: center;
+                                                                                                                                                                                                                                                                                                }
+
+                                                                                                                                                                                                                                                                                                .char-card canvas {
+                                                                                                                                                                                                                                                                                                  width: clamp(60px, 10vw, 92px);
+                                                                                                                                                                                                                                                                                                    height: auto;
+                                                                                                                                                                                                                                                                                                      display: block;
+                                                                                                                                                                                                                                                                                                      }
+
+                                                                                                                                                                                                                                                                                                      .char-card span {
+                                                                                                                                                                                                                                                                                                        font-size: clamp(10px, 1.6vw, 14px);
+                                                                                                                                                                                                                                                                                                          font-weight: bold;
+                                                                                                                                                                                                                                                                                                            margin-top: 2px;
+                                                                                                                                                                                                                                                                                                              opacity: 0.9;
+                                                                                                                                                                                                                                                                                                              }
+
+                                                                                                                                                                                                                                                                                                              .char-card:hover {
+                                                                                                                                                                                                                                                                                                                transform: translateY(-4px);
+                                                                                                                                                                                                                                                                                                                  background: rgba(255, 255, 255, 0.12);
+                                                                                                                                                                                                                                                                                                                  }
+
+                                                                                                                                                                                                                                                                                                                  .char-card.selected {
+                                                                                                                                                                                                                                                                                                                    border-color: #ffd93d;
+                                                                                                                                                                                                                                                                                                                      background: rgba(255, 217, 61, 0.15);
+                                                                                                                                                                                                                                                                                                                        box-shadow: 0 0 22px rgba(255, 217, 61, 0.45);
+                                                                                                                                                                                                                                                                                                                          transform: translateY(-4px);
+                                                                                                                                                                                                                                                                                                                          }
+
+                                                                                                                                                                                                                                                                                                                          /* ---------- Botões ---------- */
+                                                                                                                                                                                                                                                                                                                          .big-btn {
+                                                                                                                                                                                                                                                                                                                            font-family: inherit;
+                                                                                                                                                                                                                                                                                                                              font-weight: bold;
+                                                                                                                                                                                                                                                                                                                                font-size: clamp(14px, 2.2vw, 20px);
+                                                                                                                                                                                                                                                                                                                                  color: #10300f;
+                                                                                                                                                                                                                                                                                                                                    background: linear-gradient(180deg, #b6f36b, #5cb82a);
+                                                                                                                                                                                                                                                                                                                                      border: 3px solid #e2ffc0;
+                                                                                                                                                                                                                                                                                                                                        border-radius: 999px;
+                                                                                                                                                                                                                                                                                                                                          padding: clamp(8px, 1.4vw, 13px) clamp(24px, 5vw, 50px);
+                                                                                                                                                                                                                                                                                                                                            cursor: pointer;
+                                                                                                                                                                                                                                                                                                                                              box-shadow: 0 6px 0 #3a7a19, 0 10px 22px rgba(0, 0, 0, 0.5);
+                                                                                                                                                                                                                                                                                                                                                transition: transform 0.08s, box-shadow 0.08s;
+                                                                                                                                                                                                                                                                                                                                                  margin-top: 4px;
+                                                                                                                                                                                                                                                                                                                                                  }
+
+                                                                                                                                                                                                                                                                                                                                                  .big-btn:active {
+                                                                                                                                                                                                                                                                                                                                                    transform: translateY(4px);
+                                                                                                                                                                                                                                                                                                                                                      box-shadow: 0 2px 0 #3a7a19, 0 5px 12px rgba(0, 0, 0, 0.5);
+                                                                                                                                                                                                                                                                                                                                                      }
+
+                                                                                                                                                                                                                                                                                                                                                      .small-btn {
+                                                                                                                                                                                                                                                                                                                                                        font-family: inherit;
+                                                                                                                                                                                                                                                                                                                                                          font-weight: bold;
+                                                                                                                                                                                                                                                                                                                                                            font-size: clamp(11px, 1.7vw, 15px);
+                                                                                                                                                                                                                                                                                                                                                              color: #fff;
+                                                                                                                                                                                                                                                                                                                                                                background: rgba(255, 255, 255, 0.12);
+                                                                                                                                                                                                                                                                                                                                                                  border: 2px solid rgba(255, 255, 255, 0.35);
+                                                                                                                                                                                                                                                                                                                                                                    border-radius: 999px;
+                                                                                                                                                                                                                                                                                                                                                                      padding: 7px 22px;
+                                                                                                                                                                                                                                                                                                                                                                        cursor: pointer;
+                                                                                                                                                                                                                                                                                                                                                                          transition: background 0.15s;
+                                                                                                                                                                                                                                                                                                                                                                          }
+
+                                                                                                                                                                                                                                                                                                                                                                          .small-btn:hover {
+                                                                                                                                                                                                                                                                                                                                                                            background: rgba(255, 255, 255, 0.22);
+                                                                                                                                                                                                                                                                                                                                                                            }
+
+                                                                                                                                                                                                                                                                                                                                                                            .controls-help {
+                                                                                                                                                                                                                                                                                                                                                                              margin-top: 6px;
+                                                                                                                                                                                                                                                                                                                                                                                font-size: clamp(10px, 1.5vw, 14px);
+                                                                                                                                                                                                                                                                                                                                                                                  line-height: 1.7;
+                                                                                                                                                                                                                                                                                                                                                                                    opacity: 0.85;
+                                                                                                                                                                                                                                                                                                                                                                                    }
+
+                                                                                                                                                                                                                                                                                                                                                                                    .controls-help b {
+                                                                                                                                                                                                                                                                                                                                                                                      color: #ffd93d;
+                                                                                                                                                                                                                                                                                                                                                                                        background: rgba(255, 255, 255, 0.1);
