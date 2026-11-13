@@ -45,4 +45,3 @@ if (!produto || quantidade <1) {
 produto.quantidade += quantidade;
 }
 
-
