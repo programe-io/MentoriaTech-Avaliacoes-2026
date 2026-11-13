@@ -1,284 +1,186 @@
 
-// Carregar dados salvos
-let livros = JSON.parse(localStorage.getItem("livros")) || [];
-let alunos = JSON.parse(localStorage.getItem("alunos")) || [];
-let emprestimos = JSON.parse(
-    localStorage.getItem("emprestimos")
-) || [];
+const API = "/api/livros";
 
-function salvar() {
-    localStorage.setItem("livros", JSON.stringify(livros));
-    localStorage.setItem("alunos", JSON.stringify(alunos));
-    localStorage.setItem(
-        "emprestimos",
-        JSON.stringify(emprestimos)
-    );
+const formulario = document.getElementById("livroForm");
+const lista = document.getElementById("listaLivros");
+const pesquisa = document.getElementById("pesquisa");
+
+let livros = [];
+
+// Carregar livros do banco de dados
+async function carregarLivros() {
+    try {
+        const resposta = await fetch(API);
+        if (!resposta.ok) throw new Error("Erro ao carregar livros");
+
+        livros = await resposta.json();
+        atualizarTela();
+    } catch (erro) {
+        alert("Não foi possível conectar ao servidor Java.");
+        console.error(erro);
+    }
 }
 
-function mostrar(id) {
-    document.querySelectorAll(".pagina").forEach(p => {
-        p.classList.add("oculto");
+// Atualizar tabela e indicadores
+function atualizarTela() {
+    lista.innerHTML = "";
+
+    const termo = pesquisa.value.toLowerCase();
+
+    const filtrados = livros.filter(livro =>
+        livro.titulo.toLowerCase().includes(termo) ||
+        livro.autor.toLowerCase().includes(termo)
+    );
+
+    filtrados.forEach(livro => {
+        const linha = document.createElement("tr");
+
+        const dados = [
+            livro.titulo,
+            livro.autor,
+            livro.categoria,
+            livro.quantidade
+        ];
+
+        dados.forEach(valor => {
+            const celula = document.createElement("td");
+            celula.textContent = valor;
+            linha.appendChild(celula);
+        });
+
+        const acoes = document.createElement("td");
+
+        const editar = document.createElement("button");
+        editar.textContent = "Editar";
+        editar.className = "editar";
+        editar.onclick = () => editarLivro(livro.id);
+
+        const excluir = document.createElement("button");
+        excluir.textContent = "Excluir";
+        excluir.className = "excluir";
+        excluir.onclick = () => excluirLivro(livro.id);
+
+        acoes.append(editar, excluir);
+        linha.appendChild(acoes);
+        lista.appendChild(linha);
     });
 
-    document.getElementById(id).classList.remove("oculto");
-    atualizar();
+    document.getElementById("total").textContent =
+        livros.length;
+
+    document.getElementById("disponiveis").textContent =
+        livros.reduce((soma, livro) =>
+            soma + livro.quantidade, 0);
+
+    document.getElementById("emprestados").textContent =
+        livros.filter(livro => livro.quantidade === 0).length;
 }
 
-// Cadastrar livros
-document.getElementById("formLivro")
-.addEventListener("submit", function(e) {
-    e.preventDefault();
+// Cadastrar ou atualizar livro
+formulario.addEventListener("submit", async function(event) {
+    event.preventDefault();
 
-    const titulo = document.getElementById("titulo").value;
-    const autor = document.getElementById("autor").value;
-    const isbn = document.getElementById("isbn").value;
-    const quantidade = Number(
-        document.getElementById("quantidade").value
-    );
+    const id = document.getElementById("livroId").value;
 
-    if (livros.some(l => l.isbn === isbn)) {
-        alert("Este ISBN já está cadastrado!");
+    const livro = {
+        titulo: document.getElementById("titulo").value.trim(),
+        autor: document.getElementById("autor").value.trim(),
+        categoria: document.getElementById("categoria").value.trim(),
+        isbn: document.getElementById("isbn").value.trim(),
+        quantidade: Number(document.getElementById("quantidade").value)
+    };
+
+    if (!livro.titulo || !livro.autor ||
+        !livro.categoria || !Number.isInteger(livro.quantidade) ||
+        livro.quantidade < 0) {
+        alert("Preencha os campos corretamente.");
         return;
     }
 
-    livros.push({
-        id: Date.now(),
-        titulo,
-        autor,
-        isbn,
-        quantidade,
-        disponiveis: quantidade
-    });
+    try {
+        const resposta = await fetch(
+            id ? `${API}/${id}` : API,
+            {
+                method: id ? "PUT" : "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(livro)
+            }
+        );
 
-    salvar();
-    this.reset();
-    atualizar();
+        if (!resposta.ok) throw new Error("Erro ao salvar");
 
-    alert("Livro cadastrado com sucesso!");
+        alert(id ? "Livro atualizado!" : "Livro cadastrado!");
+
+        formulario.reset();
+        document.getElementById("livroId").value = "";
+        document.getElementById("botaoSalvar").textContent =
+            "Cadastrar Livro";
+        document.getElementById("cancelar").hidden = true;
+
+        carregarLivros();
+
+    } catch (erro) {
+        alert("Erro ao salvar o livro.");
+        console.error(erro);
+    }
 });
 
-// Cadastrar alunos
-document.getElementById("formAluno")
-.addEventListener("submit", function(e) {
-    e.preventDefault();
+// Editar livro
+function editarLivro(id) {
+    const livro = livros.find(item => item.id === id);
 
-    const nome = document.getElementById("nomeAluno").value;
-    const matricula =
-        document.getElementById("matricula").value;
-    const turma = document.getElementById("turma").value;
+    if (!livro) return;
 
-    if (alunos.some(a => a.matricula === matricula)) {
-        alert("Matrícula já cadastrada!");
-        return;
-    }
+    document.getElementById("livroId").value = livro.id;
+    document.getElementById("titulo").value = livro.titulo;
+    document.getElementById("autor").value = livro.autor;
+    document.getElementById("categoria").value = livro.categoria;
+    document.getElementById("isbn").value = livro.isbn || "";
+    document.getElementById("quantidade").value =
+        livro.quantidade;
 
-    alunos.push({
-        id: Date.now(),
-        nome,
-        matricula,
-        turma
+    document.getElementById("botaoSalvar").textContent =
+        "Salvar Alterações";
+
+    document.getElementById("cancelar").hidden = false;
+
+    document.getElementById("cadastro").scrollIntoView({
+        behavior: "smooth"
     });
-
-    salvar();
-    this.reset();
-    atualizar();
-
-    alert("Aluno cadastrado com sucesso!");
-});
-
-// Registrar empréstimo
-document.getElementById("formEmprestimo")
-.addEventListener("submit", function(e) {
-    e.preventDefault();
-
-    const alunoId = Number(
-        document.getElementById("alunoEmprestimo").value
-    );
-
-    const livroId = Number(
-        document.getElementById("livroEmprestimo").value
-    );
-
-    const aluno = alunos.find(a => a.id === alunoId);
-    const livro = livros.find(l => l.id === livroId);
-
-    if (!aluno || !livro || livro.disponiveis <= 0) {
-        alert("Não foi possível realizar o empréstimo.");
-        return;
-    }
-
-    livro.disponiveis--;
-
-    const data = new Date();
-    const devolucao = new Date();
-    devolucao.setDate(devolucao.getDate() + 7);
-
-    emprestimos.push({
-        id: Date.now(),
-        alunoId,
-        livroId,
-        data: data.toLocaleDateString("pt-BR"),
-        devolucao: devolucao.toLocaleDateString("pt-BR"),
-        ativo: true
-    });
-
-    salvar();
-    this.reset();
-    atualizar();
-
-    alert("Empréstimo registrado com sucesso!");
-});
-
-// Devolver livro
-function devolver(id) {
-    const emprestimo = emprestimos.find(
-        e => e.id === id && e.ativo
-    );
-
-    if (!emprestimo) return;
-
-    const livro = livros.find(
-        l => l.id === emprestimo.livroId
-    );
-
-    if (livro) {
-        livro.disponiveis++;
-    }
-
-    emprestimo.ativo = false;
-
-    salvar();
-    atualizar();
-
-    alert("Devolução realizada com sucesso!");
 }
 
 // Excluir livro
-function excluirLivro(id) {
-    const possuiEmprestimo = emprestimos.some(
-        e => e.livroId === id && e.ativo
-    );
+async function excluirLivro(id) {
+    if (!confirm("Deseja realmente excluir este livro?")) return;
 
-    if (possuiEmprestimo) {
-        alert("Não é possível excluir um livro emprestado.");
-        return;
+    try {
+        const resposta = await fetch(`${API}/${id}`, {
+            method: "DELETE"
+        });
+
+        if (!resposta.ok) throw new Error("Erro ao excluir");
+
+        alert("Livro excluído com sucesso!");
+        carregarLivros();
+
+    } catch (erro) {
+        alert("Não foi possível excluir o livro.");
     }
-
-    livros = livros.filter(l => l.id !== id);
-    salvar();
-    atualizar();
 }
 
-// Excluir aluno
-function excluirAluno(id) {
-    const possuiEmprestimo = emprestimos.some(
-        e => e.alunoId === id && e.ativo
-    );
+// Cancelar edição
+document.getElementById("cancelar").addEventListener("click", () => {
+    formulario.reset();
+    document.getElementById("livroId").value = "";
+    document.getElementById("botaoSalvar").textContent =
+        "Cadastrar Livro";
+    document.getElementById("cancelar").hidden = true;
+});
 
-    if (possuiEmprestimo) {
-        alert("Este aluno possui empréstimo ativo.");
-        return;
-    }
+// Pesquisa
+pesquisa.addEventListener("input", atualizarTela);
 
-    alunos = alunos.filter(a => a.id !== id);
-    salvar();
-    atualizar();
-}
-
-// Atualizar informações da tela
-function atualizar() {
-
-    document.getElementById("totalLivros").textContent =
-        livros.reduce((s, l) => s + l.quantidade, 0);
-
-    document.getElementById("totalAlunos").textContent =
-        alunos.length;
-
-    document.getElementById("totalEmprestimos").textContent =
-        emprestimos.filter(e => e.ativo).length;
-
-    // Lista de livros
-    document.getElementById("listaLivros").innerHTML =
-        livros.map(l => `
-        <tr>
-            <td>${escapeHTML(l.titulo)}</td>
-            <td>${escapeHTML(l.autor)}</td>
-            <td>${escapeHTML(l.isbn)}</td>
-            <td>${l.disponiveis}</td>
-            <td>
-                <button onclick="excluirLivro(${l.id})">
-                    Excluir
-                </button>
-            </td>
-        </tr>
-    `).join("");
-
-    // Lista de alunos
-    document.getElementById("listaAlunos").innerHTML =
-        alunos.map(a => `
-        <tr>
-            <td>${escapeHTML(a.nome)}</td>
-            <td>${escapeHTML(a.matricula)}</td>
-            <td>${escapeHTML(a.turma)}</td>
-            <td>
-                <button onclick="excluirAluno(${a.id})">
-                    Excluir
-                </button>
-            </td>
-        </tr>
-    `).join("");
-
-    // Atualizar opções dos alunos
-    document.getElementById("alunoEmprestimo").innerHTML =
-        '<option value="">Selecione o aluno</option>' +
-        alunos.map(a => `
-            <option value="${a.id}">
-                ${escapeHTML(a.nome)}
-            </option>
-        `).join("");
-
-    // Atualizar opções dos livros
-    document.getElementById("livroEmprestimo").innerHTML =
-        '<option value="">Selecione o livro</option>' +
-        livros.filter(l => l.disponiveis > 0).map(l => `
-            <option value="${l.id}">
-                ${escapeHTML(l.titulo)}
-            </option>
-        `).join("");
-
-    // Lista de empréstimos
-    document.getElementById("listaEmprestimos").innerHTML =
-        emprestimos.map(e => {
-            const aluno = alunos.find(a => a.id === e.alunoId);
-            const livro = livros.find(l => l.id === e.livroId);
-
-            return `
-            <tr>
-                <td>${aluno ? escapeHTML(aluno.nome) : "Aluno removido"}</td>
-                <td>${livro ? escapeHTML(livro.titulo) : "Livro removido"}</td>
-                <td>${e.data}</td>
-                <td>
-                    ${e.ativo
-                        ? `<button onclick="devolver(${e.id})">
-                             Devolver
-                           </button>`
-                        : "Devolvido"}
-                </td>
-            </tr>
-            `;
-        }).join("");
-}
-
-// Evitar interpretar dados cadastrados como HTML
-function escapeHTML(valor) {
-    return String(valor).replace(/[&<>"']/g, c => ({
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#39;"
-    })[c]);
-}
-
-// Inicialização
-atualizar();
+// Inicializar sistema
+carregarLivros();
