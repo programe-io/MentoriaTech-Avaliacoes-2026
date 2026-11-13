@@ -1,0 +1,282 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biblioteca Escolar</title>
+    <link rel="stylesheet" href="style.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+<div class="layout">
+
+    <aside class="sidebar">
+        <div class="logo">
+            <span>📚</span>
+            <div>
+                <h2>Biblioteca</h2>
+                <small>Gestão Escolar</small>
+            </div>
+        </div>
+
+        <nav>
+            <button class="nav-btn active" data-page="dashboard">🏠 Início</button>
+            <button class="nav-btn" data-page="books">📚 Livros</button>
+            <button class="nav-btn" data-page="students">👨‍🎓 Alunos</button>
+            <button class="nav-btn" data-page="loans">📖 Empréstimos</button>
+            <button class="nav-btn" data-page="history">📋 Histórico</button>
+        </nav>
+
+        <div class="sidebar-footer">
+            <p>Biblioteca Escolar</p>
+            <small>Sistema de gerenciamento</small>
+        </div>
+    </aside>
+
+    <main class="main">
+
+        <header class="topbar">
+            <div>
+                <h1 id="pageTitle">Painel Inicial</h1>
+                <p>Bem-vindo ao sistema de gerenciamento da biblioteca!</p>
+            </div>
+            <span class="user">👤 Administrador</span>
+        </header>
+
+        <!-- PAINEL INICIAL -->
+        <section class="page active" id="dashboard">
+
+            <div class="welcome">
+                <h2>Bem-vindo à Biblioteca Escolar! 📚</h2>
+                <p>Gerencie livros, alunos e empréstimos em um só lugar.</p>
+            </div>
+
+            <div class="stats">
+                <div class="stat-card blue">
+                    <span>📚</span>
+                    <p>Total de livros cadastrados</p>
+                    <h2 id="totalBooks">0</h2>
+                </div>
+
+                <div class="stat-card green">
+                    <span>👨‍🎓</span>
+                    <p>Alunos cadastrados</p>
+                    <h2 id="totalStudents">0</h2>
+                </div>
+
+                <div class="stat-card orange">
+                    <span>📖</span>
+                    <p>Empréstimos ativos</p>
+                    <h2 id="totalLoans">0</h2>
+                </div>
+
+                <div class="stat-card purple">
+                    <span>✅</span>
+                    <p>Livros disponíveis</p>
+                    <h2 id="availableBooks">0</h2>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h2>Empréstimos recentes</h2>
+                <div id="recentLoans"></div>
+            </div>
+
+        </section>
+
+        <!-- LIVROS -->
+        <section class="page" id="books">
+
+            <div class="panel">
+                <h2>📚 Cadastrar livro</h2>
+
+                <form id="bookForm">
+                    <input type="hidden" id="bookId">
+
+                    <div class="form-grid">
+                        <div>
+                            <label>Título do livro</label>
+                            <input id="bookTitle" required minlength="2"
+                                   placeholder="Digite o título">
+                        </div>
+
+                        <div>
+                            <label>Autor</label>
+                            <input id="bookAuthor" required
+                                   placeholder="Nome do autor">
+                        </div>
+
+                        <div>
+                            <label>Categoria</label>
+                            <select id="bookCategory" required>
+                                <option value="">Selecione</option>
+                                <option>Literatura</option>
+                                <option>Matemática</option>
+                                <option>História</option>
+                                <option>Geografia</option>
+                                <option>Ciências</option>
+                                <option>Português</option>
+                                <option>Informática</option>
+                                <option>Outros</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label>Ano de publicação</label>
+                            <input type="number" id="bookYear"
+                                   min="1" max="2100" placeholder="Ex: 2024">
+                        </div>
+
+                        <div>
+                            <label>Quantidade de exemplares</label>
+                            <input type="number" id="bookQuantity"
+                                   min="1" required placeholder="Ex: 5">
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary" id="bookSubmit">
+                            Cadastrar livro
+                        </button>
+                        <button type="button" class="btn-secondary"
+                                id="cancelBook">Limpar</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="panel">
+                <div class="panel-heading">
+                    <h2>Livros cadastrados</h2>
+                    <input class="search" id="searchBooks"
+                           placeholder="🔍 Pesquisar livro ou autor...">
+                </div>
+                <div id="booksList"></div>
+            </div>
+
+        </section>
+
+        <!-- ALUNOS -->
+        <section class="page" id="students">
+
+            <div class="panel">
+                <h2>👨‍🎓 Cadastrar aluno</h2>
+
+                <form id="studentForm">
+                    <input type="hidden" id="studentId">
+
+                    <div class="form-grid">
+                        <div>
+                            <label>Nome completo</label>
+                            <input id="studentName" required minlength="3"
+                                   placeholder="Nome do aluno">
+                        </div>
+
+                        <div>
+                            <label>Matrícula</label>
+                            <input id="studentRegistration" required
+                                   placeholder="Número da matrícula">
+                        </div>
+
+                        <div>
+                            <label>Turma</label>
+                            <input id="studentClass" required
+                                   placeholder="Ex: 2º Ano A">
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary" id="studentSubmit">
+                            Cadastrar aluno
+                        </button>
+                        <button type="button" class="btn-secondary"
+                                id="cancelStudent">Limpar</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="panel">
+                <div class="panel-heading">
+                    <h2>Alunos cadastrados</h2>
+                    <input class="search" id="searchStudents"
+                           placeholder="🔍 Pesquisar aluno...">
+                </div>
+                <div id="studentsList"></div>
+            </div>
+
+        </section>
+
+        <!-- EMPRÉSTIMOS -->
+        <section class="page" id="loans">
+
+            <div class="panel">
+                <h2>📖 Registrar empréstimo</h2>
+
+                <form id="loanForm">
+
+                    <div class="form-grid">
+                        <div>
+                            <label>Selecionar aluno</label>
+                            <select id="loanStudent" required>
+                                <option value="">Selecione um aluno</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label>Selecionar livro</label>
+                            <select id="loanBook" required>
+                                <option value="">Selecione um livro</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label>Data do empréstimo</label>
+                            <input type="date" id="loanDate" required>
+                        </div>
+
+                        <div>
+                            <label>Data prevista para devolução</label>
+                            <input type="date" id="loanDue" required>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">
+                            Confirmar empréstimo
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="panel">
+                <h2>Empréstimos em andamento</h2>
+                <div id="activeLoans"></div>
+            </div>
+
+        </section>
+
+        <!-- HISTÓRICO -->
+        <section class="page" id="history">
+
+            <div class="panel">
+                <h2>📋 Histórico de empréstimos</h2>
+                <input class="search" id="searchHistory"
+                       placeholder="🔍 Pesquisar aluno ou livro...">
+                <div id="historyList"></div>
+            </div>
+
+        </section>
+
+        <footer>
+            Biblioteca Escolar © 2026 - Sistema de gerenciamento
+        </footer>
+
+    </main>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script src="script.js"></script>
+<script src="script.js"></script></body>
+</html>
