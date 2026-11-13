@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manipulação de Atributos - JavaScript</title>
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background-color: #f4f4f9;
+      display: flex;
+      justify-content: center;
+      padding-top: 50px;
+      margin: 0;
+    }
+
+    main {
+      background-color: #ffffff;
+      padding: 25px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      width: 320px;
+    }
+
+    h1 {
+      font-size: 1.4rem;
+      margin-top: 0;
+      color: #333;
+      text-align: center;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+
+    .botoes {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    button {
+      flex: 1;
+      padding: 10px;
+      font-size: 1rem;
+      cursor: pointer;
+      border: none;
+      border-radius: 4px;
+      color: white;
+      transition: opacity 0.2s;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    #btnSomar {
+      background-color: #28a745;
+    }
+
+    #btnLimpar {
+      background-color: #dc3545;
+    }
+
+    #resultado {
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin-top: 20px;
+      min-height: 24px;
+    }
+
+    /* Estilização dinâmica usando o dataset data-paridade */
+    #resultado[data-paridade="par"] {
+      color: green;
+    }
+
+    #resultado[data-paridade="ímpar"] {
+      color: blue;
+    }
+
+    #info {
+      font-size: 0.9rem;
+      color: #555;
+      background-color: #eee;
+      padding: 8px;
+      border-radius: 4px;
+      min-height: 18px;
+    }
+  </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+  <main id="main">
+    <h1>Soma de dois valores</h1>
+    
+    <input type="number" id="N1" placeholder="Primeiro valor">
+    <input type="number" id="N2" placeholder="Segundo valor">
+    
+    <div class="botoes">
+      <button id="btnSomar">Somar</button>
+      <button id="btnLimpar">Limpar</button>
+    </div>
+
+    <p id="resultado"></p>
+    <p id="info"></p>
+  </main>
+
+  <script>
+    // 7. Captura dos elementos no JavaScript
+    const N1 = document.getElementById('N1');
+    const N2 = document.getElementById('N2');
+    const resultado = document.getElementById('resultado');
+    const info = document.getElementById('info');
+    const btnSomar = document.getElementById('btnSomar');
+    const btnLimpar = document.getElementById('btnLimpar');
+
+    // 8. Lógica do botão somar
+    btnSomar.addEventListener('click', () => {
+      if (N1.value === '' || N2.value === '') {
+        resultado.textContent = 'Preencha os dois valores';
+        resultado.removeAttribute('data-paridade');
+        info.textContent = '';
+        return;
+      }
+
+      const soma = Number(N1.value) + Number(N2.value);
+      resultado.textContent = 'Resultado: ' + soma;
+
+      // 9. Verificação de paridade e uso do setAttribute
+      if (soma % 2 === 0) {
+        resultado.setAttribute('data-paridade', 'par');
+      } else {
+        resultado.setAttribute('data-paridade', 'ímpar');
+      }
+
+      // 10. Exibição da informação do atributo
+      info.textContent = 'Valor de data-paridade: ' + resultado.getAttribute('data-paridade');
+    });
+
+    // 11. Lógica do botão limpar
+    btnLimpar.addEventListener('click', () => {
+      N1.value = '';
+      N2.value = '';
+      resultado.textContent = '';
+      resultado.removeAttribute('data-paridade');
+      info.textContent = 'Valor de data-paridade: ' + resultado.getAttribute('data-paridade');
+    });
+  </script>
+
+<script src="script.js"></script></body>
+</html>
