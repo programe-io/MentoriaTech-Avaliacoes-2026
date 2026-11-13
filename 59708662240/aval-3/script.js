@@ -1,7 +1,6 @@
 
 "use strict";
 
-// DADOS SALVOS NO NAVEGADOR
 const CHAVE = "biblioteca_escolar";
 
 function carregarDados() {
@@ -305,7 +304,7 @@ function renderAlunos() {
     });
 }
 
-// OPÇÕES DOS EMPRÉSTIMOS
+// SELETORES
 function atualizarSeletores() {
     const alunoSelect = el("alunoSelect");
     const livroSelect = el("livroSelect");
@@ -342,7 +341,7 @@ function atualizarSeletores() {
     livroSelect.value = livroAnterior;
 }
 
-// REGISTRAR EMPRÉSTIMO
+// EMPRÉSTIMOS
 el("dataEmprestimo").value = dataHoje();
 el("dataDevolucao").value = dataHoje();
 
@@ -411,7 +410,7 @@ function devolver(id) {
     alert("Devolução registrada com sucesso!");
 }
 
-// LISTA DE EMPRÉSTIMOS
+// HISTÓRICO
 function renderEmprestimos() {
     const lista = el("listaEmprestimos");
     const busca = el("buscaEmprestimo").value.toLowerCase().trim();
@@ -459,7 +458,7 @@ function renderEmprestimos() {
     });
 }
 
-// PAINEL PRINCIPAL
+// PAINEL
 function atualizarPainel() {
     el("totalLivros").textContent = dados.livros.reduce(
         (total, livro) => total + livro.quantidade, 0
@@ -497,7 +496,7 @@ function atualizarPainel() {
     });
 }
 
-// ATUALIZA TUDO
+// ATUALIZAÇÃO GERAL
 function atualizar() {
     atualizarPainel();
     atualizarSeletores();
@@ -511,7 +510,7 @@ el("buscaLivro").addEventListener("input", renderLivros);
 el("buscaAluno").addEventListener("input", renderAlunos);
 el("buscaEmprestimo").addEventListener("input", renderEmprestimos);
 
-// INICIAR SISTEMA
+// INICIAR
 atualizar();
 
-console.log("Sistema da Biblioteca Escolar iniciado!");
+console.log("Biblioteca Escolar iniciada!");
