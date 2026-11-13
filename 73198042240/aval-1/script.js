@@ -25,7 +25,7 @@ function listarProdutos() {
 
 // Atualizal valor
 function AtualizarValor(codigo, novoValor) {
-    let produto = produtos.find(p =>.codigo === codigo);
+    let produto = produtos.find(p =>codigo === codigo);
 
         if (!produto|| novoValor< 0) {
             throw new Error("Produto ou valor inválido!")
@@ -44,4 +44,17 @@ function AtualizarQuantidade(codigo, quantidade) {
 
     produto.quantidade+= quantidade 
 } 
+// Testando o sistema
+try {
+    cadastrarProduto("Mouse logitech", 10, 99);
+    cadastrarProduto("Teclado Gamer , 5, 150");
 
+    atualizarValor(1, 89);
+    atualizarQuantidade(1, 5);
+
+
+    listarProdutos();
+
+} catch (error) {
+    console.log(error.message);
+}
