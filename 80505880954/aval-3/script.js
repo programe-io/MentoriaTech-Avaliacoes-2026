@@ -1,36 +1,36 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const buttons = document.querySelectorAll(".bottom-nav button");
+// SELECIONAR TODAS AS PUBLICAÇÕES
+const posts = document.querySelectorAll(".post");
 
-    // Identifica os botões da navegação
-    const pages = ["Home", "Search", "Explore", "Reels", "Profile"];
+// CURTIR PUBLICAÇÕES
+posts.forEach(post => {
 
-    buttons.forEach((button, index) => {
-        button.addEventListener("click", () => {
+    const actions = post.querySelectorAll(".actions span");
 
-            // Remove a seleção anterior
-            buttons.forEach(btn => {
-                btn.classList.remove("active");
-            \});
+    if (actions.length > 0) {
 
-            // Ativa o botão selecionado
-            button.classList.add("active");
+        const likeButton = actions[0];
 
-            // Identifica a página selecionada
-            console.log("Página selecionada:", pages[index]);
+        likeButton.addEventListener("click", function() {
 
-            // Evento personalizado para trocar de página
-            document.dispatchEvent(
-                new CustomEvent("pageChange", {
-                    detail: {
-                        page: pages[index]
-                    \}
-                \})
-            );
+            if (this.classList.contains("liked")) {
+                this.classList.remove("liked");
+                this.textContent = "♡";
+            \} else {
+                this.classList.add("liked");
+                this.textContent = "♥";
+            \}
+
         \});
-    \});
-\});
 
-// Recebe a mudança de página
-document.addEventListener("pageChange", (event) => {
-    console.log("Navegando para:", event.detail.page);
-\});$0
+        // SALVAR PUBLICAÇÃO
+        const saveButton = post.querySelector(".save");
+
+        if (saveButton) {
+            saveButton.addEventListener("click", function() {
+
+                this.classList.toggle("saved");
+
+                if (this.classList.contains("saved")) {
+                    this.textContent = "▣";
+                    alert("Publicação salva!");
+                \} else {$0
