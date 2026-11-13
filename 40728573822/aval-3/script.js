@@ -1,799 +1,675 @@
-/* =====================================================
-   SISTEMA DE ESTOQUE - STOCKPRO
-===================================================== */
+
+// ======================================
+// ECOTRACK - SISTEMA DE RECICLAGEM
+// ======================================
 
 
-/* =====================================================
-   VARIÁVEIS
-===================================================== */
+// CARREGAR REGISTROS SALVOS
 
-let produtos = JSON.parse(
-    localStorage.getItem("stockpro_produtos")
-) || [];
+let coletas = JSON.parse(
+    localStorage.getItem("ecotrack") || "[]"
+);
 
-let tipoEdicao = "valor";
+let coletaEditando = null;
+
+let filtroAtual = "Todos";
 
 
-/* =====================================================
-   ELEMENTOS
-===================================================== */
+// ELEMENTOS DO HTML
 
-const form = document.getElementById("produtoForm");
+const formulario = document.getElementById("formColeta");
 
-const tabela = document.getElementById("tabelaProdutos");
+const codigo = document.getElementById("codigo");
 
-const emptyState = document.getElementById("emptyState");
+const material = document.getElementById("material");
+
+const quantidade = document.getElementById("quantidade");
+
+const localColeta = document.getElementById("local");
+
+const data = document.getElementById("data");
+
+const destino = document.getElementById("destino");
+
+const status = document.getElementById("status");
 
 const pesquisa = document.getElementById("pesquisa");
 
-const modal = document.getElementById("modal");
+const listaColetas = document.getElementById("listaColetas");
 
-const produtoId = document.getElementById("produtoId");
+const botaoSalvar = document.getElementById("botaoSalvar");
 
-const novoValor = document.getElementById("novoValor");
-
-const editLabel = document.getElementById("editLabel");
-
-const editIcon = document.getElementById("editIcon");
-
-const btnValor = document.getElementById("btnValor");
-
-const btnQuantidade = document.getElementById("btnQuantidade");
+const botaoCancelar = document.getElementById("botaoCancelar");
 
 
-/* =====================================================
-   FORMATADORES
-===================================================== */
+// SALVAR DADOS NO NAVEGADOR
 
-function formatarMoeda(valor) {
-
-    return Number(valor).toLocaleString("pt-BR", {
-
-        style: "currency",
-
-        currency: "BRL"
-
-    });
-
-}
-
-
-function escaparHTML(texto) {
-
-    const div = document.createElement("div");
-
-    div.textContent = texto;
-
-    return div.innerHTML;
-
-}
-
-
-/* =====================================================
-   SALVAR NO LOCAL STORAGE
-===================================================== */
-
-function salvarProdutos() {
+function salvarDados() {
 
     localStorage.setItem(
-        "stockpro_produtos",
-        JSON.stringify(produtos)
+        "ecotrack",
+        JSON.stringify(coletas)
     );
 
 }
 
 
-/* =====================================================
-   CADASTRAR PRODUTO
-===================================================== */
+// LIMPAR FORMULÁRIO
 
-form.addEventListener("submit", function(event) {
+function limparFormulario() {
+
+    formulario.reset();
+
+    coletaEditando = null;
+
+    document.getElementById("tituloFormulario").textContent =
+        "＋ Nova coleta";
+
+    botaoSalvar.textContent =
+        "＋ Cadastrar coleta";
+
+    botaoCancelar.hidden = true;
+
+}
+
+
+// CANCELAR EDIÇÃO
+
+botaoCancelar.addEventListener("click", function() {
+
+    limparFormulario();
+
+});
+
+
+// FORMATAR DATA
+
+function formatarData(dataColeta) {
+
+    const partes = dataColeta.split("-");
+
+    return `${partes[2]}/${partes[1]}/${partes[0]}`;
+
+}
+
+
+// CADASTRAR OU EDITAR COLETA
+
+formulario.addEventListener("submit", function(event) {
 
     event.preventDefault();
 
+    const novaColeta = {
 
-    const codigo = document
-        .getElementById("codigo")
-        .value
-        .trim();
+        codigo: codigo.value.trim(),
 
-    const descricao = document
-        .getElementById("descricao")
-        .value
-        .trim();
+        material: material.value,
 
-    const quantidade = Number(
-        document.getElementById("quantidade").value
-    );
+        quantidade: Number(quantidade.value),
 
-    const valor = Number(
-        document.getElementById("valor").value
-    );
+        local: localColeta.value.trim(),
 
+        data: data.value,
 
-    /* Validação */
+        destino: destino.value.trim(),
 
-    if (!codigo || !descricao) {
-
-        mostrarToast(
-            "Atenção",
-            "Preencha todos os campos obrigatórios.",
-            false
-        );
-
-        return;
-
-    }
-
-
-    if (quantidade < 0 || valor < 0) {
-
-        mostrarToast(
-            "Valor inválido",
-            "Quantidade e valor não podem ser negativos.",
-            false
-        );
-
-        return;
-
-    }
-
-
-    /* Verifica código duplicado */
-
-    const codigoExiste = produtos.some(
-        produto =>
-            produto.codigo.toLowerCase() === codigo.toLowerCase()
-    );
-
-
-    if (codigoExiste) {
-
-        mostrarToast(
-            "Código duplicado",
-            "Já existe um produto com esse código.",
-            false
-        );
-
-        return;
-
-    }
-
-
-    /* Cria produto */
-
-    const produto = {
-
-        id: Date.now(),
-
-        codigo: codigo,
-
-        descricao: descricao,
-
-        quantidade: quantidade,
-
-        valor: valor
+        status: status.value
 
     };
 
 
-    produtos.push(produto);
+    // VALIDAR CÓDIGO
 
-    salvarProdutos();
+    if (!novaColeta.codigo) {
 
-    renderizarProdutos();
+        alert("Informe o código da coleta!");
 
-    atualizarDashboard();
+        codigo.focus();
 
-    form.reset();
+        return;
 
-
-    mostrarToast(
-        "Produto cadastrado",
-        `${descricao} foi adicionado ao estoque.`
-    );
+    }
 
 
-    /* Scroll para produtos */
+    // VALIDAR MATERIAL
 
-    setTimeout(() => {
+    const materiaisValidos = [
+        "Papel",
+        "Plástico",
+        "Vidro",
+        "Metal",
+        "Eletrônicos",
+        "Orgânicos",
+        "Outros"
+    ];
 
-        document
-            .getElementById("produtos")
-            .scrollIntoView({
-                behavior: "smooth"
-            });
+    if (!materiaisValidos.includes(novaColeta.material)) {
 
-    }, 300);
+        alert("Selecione um material válido!");
 
-});
+        material.focus();
 
+        return;
 
-/* =====================================================
-   RENDERIZAR PRODUTOS
-===================================================== */
-
-function renderizarProdutos() {
-
-    const termo = pesquisa.value
-        .toLowerCase()
-        .trim();
+    }
 
 
-    const produtosFiltrados = produtos.filter(produto => {
+    // VALIDAR QUANTIDADE
+
+    if (
+        !Number.isFinite(novaColeta.quantidade) ||
+        novaColeta.quantidade <= 0
+    ) {
+
+        alert("A quantidade deve ser maior que zero!");
+
+        quantidade.focus();
+
+        return;
+
+    }
+
+
+    // VALIDAR LOCAL
+
+    if (!novaColeta.local) {
+
+        alert("Informe o local da coleta!");
+
+        localColeta.focus();
+
+        return;
+
+    }
+
+
+    // VALIDAR DATA
+
+    if (!novaColeta.data) {
+
+        alert("Informe a data da coleta!");
+
+        data.focus();
+
+        return;
+
+    }
+
+
+    // VALIDAR DESTINO
+
+    if (!novaColeta.destino) {
+
+        alert("Informe o destino do material!");
+
+        destino.focus();
+
+        return;
+
+    }
+
+
+    // VALIDAR STATUS
+
+    const statusValidos = [
+        "Pendente",
+        "Em processamento",
+        "Reciclado"
+    ];
+
+    if (!statusValidos.includes(novaColeta.status)) {
+
+        alert("Selecione um status válido!");
+
+        status.focus();
+
+        return;
+
+    }
+
+
+    // VERIFICAR CÓDIGO DUPLICADO
+
+    const codigoExiste = coletas.some(coleta => {
 
         return (
-
-            produto.codigo.toLowerCase().includes(termo) ||
-
-            produto.descricao.toLowerCase().includes(termo)
-
+            coleta.codigo.toLowerCase() ===
+            novaColeta.codigo.toLowerCase() &&
+            coleta.id !== coletaEditando
         );
 
     });
 
+    if (codigoExiste) {
 
-    tabela.innerHTML = "";
+        alert("Este código já está cadastrado!");
 
-
-    if (produtosFiltrados.length === 0) {
-
-        tabela.style.display = "none";
-
-        emptyState.style.display = "block";
+        codigo.focus();
 
         return;
 
     }
 
 
-    tabela.style.display = "table";
+    // VERIFICAR EDIÇÃO
 
-    emptyState.style.display = "none";
+    if (coletaEditando !== null) {
 
+        const coleta = coletas.find(
+            item => item.id === coletaEditando
+        );
 
-    produtosFiltrados.forEach(produto => {
+        if (coleta) {
 
-        const tr = document.createElement("tr");
-
-
-        /* Status */
-
-        let statusTexto;
-
-        let statusClasse;
-
-
-        if (produto.quantidade === 0) {
-
-            statusTexto = "Sem estoque";
-
-            statusClasse = "empty";
+            Object.assign(coleta, novaColeta);
 
         }
 
-        else if (produto.quantidade <= 5) {
+        alert("Coleta atualizada com sucesso!");
 
-            statusTexto = "Estoque baixo";
+    } else {
 
-            statusClasse = "low";
+        // CRIAR NOVA COLETA
 
-        }
+        const registro = {
 
-        else {
+            id: Date.now().toString() +
+                Math.random().toString(36).slice(2),
 
-            statusTexto = "Disponível";
+            ...novaColeta
 
-            statusClasse = "available";
+        };
 
-        }
+        coletas.push(registro);
 
-
-        /* Valor total */
-
-        const valorTotal =
-            produto.quantidade * produto.valor;
-
-
-        tr.innerHTML = `
-
-            <td>
-                <span class="product-code">
-                    ${escaparHTML(produto.codigo)}
-                </span>
-            </td>
-
-            <td>
-                <span class="product-name">
-                    ${escaparHTML(produto.descricao)}
-                </span>
-            </td>
-
-            <td>
-                <span class="quantity">
-                    ${produto.quantidade}
-                </span>
-            </td>
-
-            <td>
-                <span class="money">
-                    ${formatarMoeda(produto.valor)}
-                </span>
-            </td>
-
-            <td>
-                <span class="money">
-                    ${formatarMoeda(valorTotal)}
-                </span>
-            </td>
-
-            <td>
-                <span class="status ${statusClasse}">
-                    ${statusTexto}
-                </span>
-            </td>
-
-            <td>
-
-                <div class="actions">
-
-                    <button
-                        class="action-btn"
-                        title="Editar valor"
-                        onclick="abrirEdicao(${produto.id}, 'valor')"
-                    >
-                        <i class="fa-solid fa-dollar-sign"></i>
-                    </button>
-
-
-                    <button
-                        class="action-btn"
-                        title="Editar quantidade"
-                        onclick="abrirEdicao(${produto.id}, 'quantidade')"
-                    >
-                        <i class="fa-solid fa-cubes"></i>
-                    </button>
-
-
-                    <button
-                        class="action-btn delete"
-                        title="Excluir produto"
-                        onclick="excluirProduto(${produto.id})"
-                    >
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-
-                </div>
-
-            </td>
-
-        `;
-
-
-        tabela.appendChild(tr);
-
-    });
-
-}
-
-
-/* =====================================================
-   PESQUISA
-===================================================== */
-
-pesquisa.addEventListener(
-    "input",
-    renderizarProdutos
-);
-
-
-/* =====================================================
-   ABRIR MODAL DE EDIÇÃO
-===================================================== */
-
-function abrirEdicao(id, tipo) {
-
-    const produto = produtos.find(
-        produto => produto.id === id
-    );
-
-
-    if (!produto) return;
-
-
-    produtoId.value = id;
-
-
-    document.getElementById(
-        "previewDescricao"
-    ).textContent = produto.descricao;
-
-
-    document.getElementById(
-        "previewCodigo"
-    ).textContent = `Código: ${produto.codigo}`;
-
-
-    selecionarEdicao(tipo);
-
-
-    if (tipo === "valor") {
-
-        novoValor.value = produto.valor;
-
-    }
-
-    else {
-
-        novoValor.value = produto.quantidade;
+        alert("Coleta cadastrada com sucesso!");
 
     }
 
 
-    modal.classList.add("show");
+    salvarDados();
 
-}
+    limparFormulario();
 
-
-/* =====================================================
-   SELECIONAR TIPO DE EDIÇÃO
-===================================================== */
-
-function selecionarEdicao(tipo) {
-
-    tipoEdicao = tipo;
-
-
-    if (tipo === "valor") {
-
-        btnValor.classList.add("active");
-
-        btnQuantidade.classList.remove("active");
-
-
-        editLabel.textContent =
-            "Novo valor unitário";
-
-
-        editIcon.className =
-            "fa-solid fa-brazilian-real-sign";
-
-
-        novoValor.step = "0.01";
-
-        novoValor.placeholder =
-            "Digite o novo valor";
-
-    }
-
-    else {
-
-        btnQuantidade.classList.add("active");
-
-        btnValor.classList.remove("active");
-
-
-        editLabel.textContent =
-            "Nova quantidade";
-
-
-        editIcon.className =
-            "fa-solid fa-cubes";
-
-
-        novoValor.step = "1";
-
-        novoValor.placeholder =
-            "Digite a nova quantidade";
-
-    }
-
-}
-
-
-/* =====================================================
-   SALVAR ALTERAÇÃO
-===================================================== */
-
-function salvarAlteracao() {
-
-    const id = Number(produtoId.value);
-
-    const produto = produtos.find(
-        produto => produto.id === id
-    );
-
-
-    if (!produto) return;
-
-
-    const novo = Number(novoValor.value);
-
-
-    if (
-        novoValor.value === "" ||
-        novo < 0 ||
-        !Number.isFinite(novo)
-    ) {
-
-        mostrarToast(
-            "Valor inválido",
-            "Informe um valor válido.",
-            false
-        );
-
-        return;
-
-    }
-
-
-    if (
-        tipoEdicao === "quantidade" &&
-        !Number.isInteger(novo)
-    ) {
-
-        mostrarToast(
-            "Quantidade inválida",
-            "A quantidade deve ser um número inteiro.",
-            false
-        );
-
-        return;
-
-    }
-
-
-    if (tipoEdicao === "valor") {
-
-        produto.valor = novo;
-
-        mostrarToast(
-            "Valor atualizado",
-            "O valor do produto foi alterado."
-        );
-
-    }
-
-    else {
-
-        produto.quantidade = novo;
-
-        mostrarToast(
-            "Quantidade atualizada",
-            "A quantidade do produto foi alterada."
-        );
-
-    }
-
-
-    salvarProdutos();
-
-    renderizarProdutos();
-
-    atualizarDashboard();
-
-    fecharModal();
-
-}
-
-
-/* =====================================================
-   FECHAR MODAL
-===================================================== */
-
-function fecharModal() {
-
-    modal.classList.remove("show");
-
-    novoValor.value = "";
-
-}
-
-
-/* Fecha ao clicar fora do modal */
-
-modal.addEventListener("click", function(event) {
-
-    if (event.target === modal) {
-
-        fecharModal();
-
-    }
+    atualizarLista();
 
 });
 
 
-/* =====================================================
-   EXCLUIR PRODUTO
-===================================================== */
+// EDITAR COLETA
 
-function excluirProduto(id) {
+function editarColeta(id) {
 
-    const produto = produtos.find(
-        produto => produto.id === id
+    const coleta = coletas.find(
+        item => item.id === id
     );
 
+    if (!coleta) return;
 
-    if (!produto) return;
+    codigo.value = coleta.codigo;
 
+    material.value = coleta.material;
 
-    const confirmar = confirm(
-        `Deseja realmente excluir o produto "${produto.descricao}"?`
-    );
+    quantidade.value = coleta.quantidade;
 
+    localColeta.value = coleta.local;
 
-    if (!confirmar) return;
+    data.value = coleta.data;
 
+    destino.value = coleta.destino;
 
-    produtos = produtos.filter(
-        produto => produto.id !== id
-    );
+    status.value = coleta.status;
 
+    coletaEditando = id;
 
-    salvarProdutos();
+    document.getElementById("tituloFormulario").textContent =
+        "✎ Editar coleta";
 
-    renderizarProdutos();
+    botaoSalvar.textContent =
+        "Salvar alterações";
 
-    atualizarDashboard();
+    botaoCancelar.hidden = false;
 
-
-    mostrarToast(
-        "Produto removido",
-        `${produto.descricao} foi excluído do estoque.`
-    );
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
 
 }
 
 
-/* =====================================================
-   DASHBOARD
-===================================================== */
+// ALTERAR STATUS
 
-function atualizarDashboard() {
+function alterarStatus(id) {
 
-    const totalProdutos = produtos.length;
-
-
-    const totalItens = produtos.reduce(
-        (total, produto) => {
-
-            return total + produto.quantidade;
-
-        },
-        0
+    const coleta = coletas.find(
+        item => item.id === id
     );
 
+    if (!coleta) return;
 
-    const valorEstoque = produtos.reduce(
-        (total, produto) => {
+    const sequencia = [
+        "Pendente",
+        "Em processamento",
+        "Reciclado"
+    ];
 
-            return total +
-                produto.quantidade * produto.valor;
+    const indiceAtual = sequencia.indexOf(coleta.status);
 
-        },
-        0
-    );
+    coleta.status = sequencia[
+        (indiceAtual + 1) % sequencia.length
+    ];
 
+    salvarDados();
 
-    document.getElementById(
-        "totalProdutos"
-    ).textContent = totalProdutos;
-
-
-    document.getElementById(
-        "totalItens"
-    ).textContent = totalItens;
-
-
-    document.getElementById(
-        "valorEstoque"
-    ).textContent = formatarMoeda(valorEstoque);
+    atualizarLista();
 
 }
 
 
-/* =====================================================
-   TOAST
-===================================================== */
+// EXCLUIR COLETA
 
-let toastTimeout;
+function excluirColeta(id) {
 
+    const confirmacao = confirm(
+        "Deseja realmente excluir este registro?"
+    );
 
-function mostrarToast(
-    titulo,
-    mensagem,
-    sucesso = true
-) {
+    if (!confirmacao) return;
 
-    const toast =
-        document.getElementById("toast");
+    coletas = coletas.filter(
+        item => item.id !== id
+    );
 
+    if (coletaEditando === id) {
 
-    const toastTitulo =
-        document.getElementById("toastTitulo");
-
-
-    const toastMensagem =
-        document.getElementById("toastMensagem");
-
-
-    const toastIcon =
-        document.querySelector(".toast-icon");
-
-
-    toastTitulo.textContent = titulo;
-
-    toastMensagem.textContent = mensagem;
-
-
-    if (sucesso) {
-
-        toastIcon.style.background =
-            "#dcfce7";
-
-        toastIcon.style.color =
-            "#16a34a";
-
-        toastIcon.innerHTML =
-            '<i class="fa-solid fa-check"></i>';
+        limparFormulario();
 
     }
 
-    else {
+    salvarDados();
 
-        toastIcon.style.background =
-            "#fee2e2";
+    atualizarLista();
 
-        toastIcon.style.color =
-            "#dc2626";
-
-        toastIcon.innerHTML =
-            '<i class="fa-solid fa-xmark"></i>';
-
-    }
-
-
-    toast.classList.add("show");
-
-
-    clearTimeout(toastTimeout);
-
-
-    toastTimeout = setTimeout(() => {
-
-        toast.classList.remove("show");
-
-    }, 3500);
+    alert("Registro excluído com sucesso!");
 
 }
 
 
-/* =====================================================
-   MENU LATERAL
-===================================================== */
+// ATUALIZAR INDICADORES
 
-document.querySelectorAll(".menu-item").forEach(item => {
+function atualizarResumo() {
 
-    item.addEventListener("click", function() {
+    const total = coletas.length;
 
-        document
-            .querySelectorAll(".menu-item")
-            .forEach(menu =>
-                menu.classList.remove("active")
-            );
+    const peso = coletas.reduce(
+        (soma, coleta) => soma + coleta.quantidade,
+        0
+    );
+
+    const pendentes = coletas.filter(
+        coleta => coleta.status === "Pendente"
+    ).length;
+
+    const recicladas = coletas.filter(
+        coleta => coleta.status === "Reciclado"
+    ).length;
 
 
-        this.classList.add("active");
+    document.getElementById("totalColetas").textContent =
+        total;
+
+    document.getElementById("pesoTotal").textContent =
+        peso.toLocaleString("pt-BR", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }) + " kg";
+
+    document.getElementById("coletasPendentes").textContent =
+        pendentes;
+
+    document.getElementById("coletasRecicladas").textContent =
+        recicladas;
+
+}
+
+
+// CRIAR BOTÕES
+
+function criarBotao(texto, classe, acao) {
+
+    const botao = document.createElement("button");
+
+    botao.type = "button";
+
+    botao.textContent = texto;
+
+    botao.className = classe;
+
+    botao.addEventListener("click", acao);
+
+    return botao;
+
+}
+
+
+// CRIAR ETIQUETAS
+
+function criarEtiqueta(texto, classe) {
+
+    const etiqueta = document.createElement("span");
+
+    etiqueta.className = "etiqueta " + classe;
+
+    etiqueta.textContent = texto;
+
+    return etiqueta;
+
+}
+
+
+// LISTAR COLETAS
+
+function atualizarLista() {
+
+    listaColetas.innerHTML = "";
+
+    const termo = pesquisa.value.toLowerCase().trim();
+
+
+    // PESQUISA E FILTROS
+
+    const coletasFiltradas = coletas.filter(coleta => {
+
+        const correspondePesquisa =
+            coleta.material.toLowerCase().includes(termo) ||
+            coleta.local.toLowerCase().includes(termo) ||
+            coleta.codigo.toLowerCase().includes(termo) ||
+            coleta.destino.toLowerCase().includes(termo);
+
+        const correspondeFiltro =
+            filtroAtual === "Todos" ||
+            coleta.status === filtroAtual;
+
+        return correspondePesquisa && correspondeFiltro;
+
+    });
+
+
+    // MENSAGEM DE LISTA VAZIA
+
+    document.getElementById("mensagemVazia").style.display =
+        coletasFiltradas.length === 0 ? "block" : "none";
+
+
+    // ORDENAR POR DATA
+
+    coletasFiltradas.sort((a, b) =>
+        b.data.localeCompare(a.data)
+    );
+
+
+    // EXIBIR COLETAS
+
+    coletasFiltradas.forEach(coleta => {
+
+        const linha = document.createElement("tr");
+
+
+        // CÓDIGO
+
+        const celulaCodigo = document.createElement("td");
+
+        celulaCodigo.textContent = coleta.codigo;
+
+
+        // MATERIAL
+
+        const celulaMaterial = document.createElement("td");
+
+        celulaMaterial.textContent = coleta.material;
+
+
+        // QUANTIDADE
+
+        const celulaQuantidade = document.createElement("td");
+
+        celulaQuantidade.textContent =
+            coleta.quantidade.toLocaleString("pt-BR") + " kg";
+
+
+        // LOCAL
+
+        const celulaLocal = document.createElement("td");
+
+        celulaLocal.textContent = coleta.local;
+
+
+        // STATUS
+
+        const celulaStatus = document.createElement("td");
+
+        let classeStatus = "pendente";
+
+        if (coleta.status === "Em processamento") {
+
+            classeStatus = "processamento";
+
+        } else if (coleta.status === "Reciclado") {
+
+            classeStatus = "reciclado";
+
+        }
+
+        const etiqueta = criarEtiqueta(
+            coleta.status,
+            classeStatus
+        );
+
+        celulaStatus.appendChild(etiqueta);
+
+
+        // AÇÕES
+
+        const celulaAcoes = document.createElement("td");
+
+        const acoes = document.createElement("div");
+
+        acoes.className = "acoes";
+
+
+        // BOTÃO EDITAR
+
+        const botaoEditar = criarBotao(
+            "Editar",
+            "editar",
+            () => editarColeta(coleta.id)
+        );
+
+
+        // BOTÃO ALTERAR STATUS
+
+        const botaoStatus = criarBotao(
+            "Próximo status",
+            "status-btn",
+            () => alterarStatus(coleta.id)
+        );
+
+
+        // BOTÃO EXCLUIR
+
+        const botaoExcluir = criarBotao(
+            "Excluir",
+            "excluir",
+            () => excluirColeta(coleta.id)
+        );
+
+
+        acoes.appendChild(botaoEditar);
+
+        acoes.appendChild(botaoStatus);
+
+        acoes.appendChild(botaoExcluir);
+
+        celulaAcoes.appendChild(acoes);
+
+
+        // ADICIONAR À TABELA
+
+        linha.appendChild(celulaCodigo);
+
+        linha.appendChild(celulaMaterial);
+
+        linha.appendChild(celulaQuantidade);
+
+        linha.appendChild(celulaLocal);
+
+        linha.appendChild(celulaStatus);
+
+        linha.appendChild(celulaAcoes);
+
+        listaColetas.appendChild(linha);
+
+    });
+
+
+    atualizarResumo();
+
+}
+
+
+// PESQUISAR COLETAS
+
+pesquisa.addEventListener("input", function() {
+
+    atualizarLista();
+
+});
+
+
+// FILTRAR COLETAS
+
+document.querySelectorAll(".filtro").forEach(botao => {
+
+    botao.addEventListener("click", function() {
+
+        document.querySelectorAll(".filtro").forEach(item => {
+
+            item.classList.remove("ativo");
+
+        });
+
+        this.classList.add("ativo");
+
+        filtroAtual = this.dataset.filtro;
+
+        atualizarLista();
 
     });
 
 });
 
 
-/* =====================================================
-   INICIALIZAÇÃO
-===================================================== */
+// INICIALIZAR SISTEMA
 
-renderizarProdutos();
-
-atualizarDashboard();
+atualizarLista();
