@@ -1,12 +1,27 @@
-// Seleciona os elementos no HTML
-const contadorElemento = document.getElementById('contador');
-const botaoAumentar = document.getElementById('btnAumentar');
+function toggleLike(element) {
+    // Alterna a classe 'liked' para mudar a cor do coração
+    element.classList.toggle('liked');
 
-// Variável para armazenar o valor
-let cliques = 0;
+    // Alterna o ícone entre coração vazio e coração preenchido
+    if (element.classList.contains('liked')) {
+        element.classList.remove('fa-regular');
+        element.classList.add('fa-solid');
+    } else {
+        element.classList.remove('fa-solid');
+        element.classList.add('fa-regular');
+    }
 
-// Adiciona um evento de clique ao botão
-botaoAumentar.addEventListener('click', () => {
-    cliques++;
-    contadorElemento.textContent = cliques;
-});
+    // Localiza o contador de curtidas do post correspondente
+    const postContainer = element.closest('.post');
+    const likeCountElem = postContainer.querySelector('.like-count');
+    
+    // Converte o texto para número e incrementa/decrementa
+    let currentLikes = parseInt(likeCountElem.innerText.replace(/\./g, ''));
+    if (element.classList.contains('liked')) {
+        currentLikes += 1;
+    } else {
+        currentLikes -= 1;
+    }
+    
+    likeCountElem.innerText = currentLikes.toLocaleString('pt-BR');
+}
