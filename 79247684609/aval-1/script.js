@@ -1,45 +1,48 @@
-// ESPERAR O HTML CARREGAR
+
+// =====================================
+// 1. ESPERAR O HTML CARREGAR
+// =====================================
+
 document.addEventListener("DOMContentLoaded", function() {
 
-    // 1. MENSAGEM DE BOAS-VINDAS
-    console.log("Bem-vindo ao FitBlog!");
-
+    // MENSAGEM DE BOAS-VINDAS
     alert("Bem-vindo ao FitBlog! Conheça os melhores tipos de treino.");
 
+    console.log("FitBlog carregado com sucesso!");
 
+    
+    // =====================================
     // 2. ANIMAÇÃO DOS CARDS
+    // =====================================
+
     const cards = document.querySelectorAll(".card");
 
-    if ("IntersectionObserver" in window) {
+    const observador = new IntersectionObserver(function(entradas) {
 
-        const observador = new IntersectionObserver(function(entradas) {
+        entradas.forEach(function(entrada) {
 
-            entradas.forEach(function(entrada) {
+            if (entrada.isIntersecting) {
+                entrada.target.classList.add("mostrar");
 
-                if (entrada.isIntersecting) {
-                    entrada.target.classList.add("mostrar");
-                    observador.unobserve(entrada.target);
-                }
+                observador.unobserve(entrada.target);
+            }
 
-            });
-
-        }, {
-            threshold: 0.2
         });
 
-        cards.forEach(function(card) {
-            card.classList.add("aparecer");
-            observador.observe(card);
-        });
+    }, {
+        threshold: 0.2
+    });
 
-    } else {
-        cards.forEach(function(card) {
-            card.classList.add("mostrar");
-        });
-    }
+    cards.forEach(function(card) {
+        card.classList.add("aparecer");
+        observador.observe(card);
+    });
 
 
-    // 3. CLIQUE NOS CARDS
+    // =====================================
+    // 3. INTERAÇÃO COM OS CARDS
+    // =====================================
+
     cards.forEach(function(card) {
 
         card.addEventListener("click", function() {
@@ -47,8 +50,11 @@ document.addEventListener("DOMContentLoaded", function() {
             const titulo = card.querySelector("h3");
 
             if (titulo) {
-                alert("Você selecionou: " + titulo.textContent +
-                "\nContinue explorando o FitBlog!");
+                alert(
+                    "Você selecionou: " +
+                    titulo.textContent +
+                    "\nContinue explorando o FitBlog!"
+                );
             }
 
         });
@@ -56,7 +62,10 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
 
+    // =====================================
     // 4. BOTÃO VOLTAR AO TOPO
+    // =====================================
+
     const botaoTopo = document.createElement("button");
 
     botaoTopo.textContent = "↑";
@@ -66,7 +75,10 @@ document.addEventListener("DOMContentLoaded", function() {
     document.body.appendChild(botaoTopo);
 
 
-    // 5. CLIQUE NO BOTÃO
+    // =====================================
+    // 5. AÇÃO DO BOTÃO
+    // =====================================
+
     botaoTopo.addEventListener("click", function() {
 
         window.scrollTo({
@@ -77,7 +89,10 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
 
+    // =====================================
     // 6. MOSTRAR BOTÃO AO ROLAR A PÁGINA
+    // =====================================
+
     window.addEventListener("scroll", function() {
 
         if (window.scrollY > 300) {
@@ -89,14 +104,16 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
 
+    // =====================================
     // 7. ATUALIZAR ANO DO RODAPÉ
+    // =====================================
+
     const ano = new Date().getFullYear();
 
-    const rodape = document.querySelector("footer p");
+    const elementoAno = document.getElementById("ano");
 
-    if (rodape) {
-        rodape.innerHTML = "© " + ano +
-        ' <span>FitBlog</span> - Todos os direitos reservados.';
+    if (elementoAno) {
+        elementoAno.textContent = ano;
     }
 
 });
