@@ -1,161 +1,256 @@
 
-let produtos = JSON.parse(localStorage.getItem("produtos")) || [];
+// Recuperar produtos salvos
+let produtos = [];
+
+try {
+    produtos = JSON.parse(localStorage.getItem("estoqueProdutos")) || [];
+} catch (erro) {
+    produtos = [];
+}
+
+// Elementos da página
+const formulario = document.getElementById("formProduto");
+const lista = document.getElementById("listaProdutos");
+const pesquisa = document.getElementById("pesquisa");
+
+// Formatar valores em reais
+function formatarMoeda(valor) {
+    return Number(valor).toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL"
+    });
+}
+
+// Salvar produtos
+function salvarProdutos() {
+    try {
+        localStorage.setItem(
+            "estoqueProdutos",
+            JSON.stringify(produtos)
+        );
+    } catch (erro) {
+        alert("Não foi possível salvar os dados neste navegador.");
+    }
+}
 
 // Cadastrar produto
-document.getElementById("formProduto").addEventListener("submit", function(event) {
+formulario.addEventListener("submit", function(event) {
 
     event.preventDefault();
 
-    let codigo = Number(document.getElementById("codigo").value);
-    let descricao = document.getElementById("descricao").value.trim();
-    let quantidade = Number(document.getElementById("quantidade").value);
-    let valor = Number(document.getElementById("valor").value);
+    const codigo = Number(document.getElementById("codigo").value);
+    const descricao = document.getElementById("descricao").value.trim();
+    const quantidade = Number(document.getElementById("quantidade").value);
+    const valor = Number(document.getElementById("valor").value);
 
-    if (!Number.isSafeInteger(codigo) || codigo <= 0 ||
-        !descricao || !Number.isInteger(quantidade) ||
-        quantidade < 0 || !Number.isFinite(valor) || valor < 0) {
-        alert("Preencha os campos corretamente!");
+    if (
+        !Number.isSafeInteger(codigo) ||
+        codigo <= 0 ||
+        descricao === "" ||
+        !Number.isSafeInteger(quantidade) ||
+        quantidade < 0 ||
+        !Number.isFinite(valor) ||
+        valor < 0
+    ) {
+        alert("Preencha todos os campos corretamente!");
         return;
     }
 
-    if (produtos.some(p => p.codigo === codigo)) {
-        alert("Esse código já está cadastrado!");
+    const codigoExiste = produtos.some(
+        produto => produto.codigo === codigo
+    );
+
+    if (codigoExiste) {
+        alert("Este código já está cadastrado!");
         return;
     }
 
-    let produto = {
+    const novoProduto = {
         codigo: codigo,
         descricao: descricao,
         quantidade: quantidade,
         valor: valor
     };
 
-    produtos.push(produto);
+    produtos.push(novoProduto);
 
-    salvarDados();
-    listarProdutos();
+    salvarProdutos();
+    mostrarProdutos();
 
-    document.getElementById("formProduto").reset();
+    formulario.reset();
 
     alert("Produto cadastrado com sucesso!");
 });
 
 // Listar produtos
-function listarProdutos() {
+function mostrarProdutos() {
 
-    let tabela = document.getElementById("listaProdutos");
+    lista.innerHTML = "";
 
-    tabela.innerHTML = "";
+    const termo = pesquisa.value.toLowerCase().trim();
 
-    produtos.forEach((produto, index) => {
+    const filtrados = produtos.filter(produto =>
+        String(produto.codigo).includes(termo) ||
+        produto.descricao.toLowerCase().includes(termo)
+    );
 
-        let linha = document.createElement("tr");
+    filtrados.forEach(produto => {
 
-        let codigo = document.createElement("td");
-        codigo.textContent = produto.codigo;
+        const linha = document.createElement("tr");
 
-        let descricao = document.createElement("td");
-        descricao.textContent = produto.descricao;
+        function criarCelula(conteudo) {
+            const celula = document.createElement("td");
+            celula.textContent = conteudo;
+            return celula;
+        }
 
-        let quantidade = document.createElement("td");
-        quantidade.textContent = produto.quantidade;
+        linha.appendChild(criarCelula(produto.codigo));
+        linha.appendChild(criarCelula(produto.descricao));
+        linha.appendChild(criarCelula(produto.quantidade));
+        linha.appendChild(criarCelula(formatarMoeda(produto.valor)));
 
-        let valor = document.createElement("td");
-        valor.textContent = produto.valor.toLocaleString("pt-BR", {
-            style: "currency",
-            currency: "BRL"
+        const acoes = document.createElement("td");
+
+        const botaoValor = document.createElement("button");
+        botaoValor.textContent = "Valor";
+        botaoValor.className = "btn-valor";
+        botaoValor.addEventListener("click", () => {
+            alterarValor(produto.codigo);
         });
 
-        let acoes = document.createElement("td");
+        const botaoQuantidade = document.createElement("button");
+        botaoQuantidade.textContent = "Quantidade";
+        botaoQuantidade.className = "btn-quantidade";
+        botaoQuantidade.addEventListener("click", () => {
+            alterarQuantidade(produto.codigo);
+        });
 
-        let botaoValor = document.createElement("button");
-        botaoValor.textContent = "Alterar valor";
-        botaoValor.className = "editar";
-        botaoValor.onclick = () => alterarValor(index);
-
-        let botaoQuantidade = document.createElement("button");
-        botaoQuantidade.textContent = "Alterar quantidade";
-        botaoQuantidade.className = "editar";
-        botaoQuantidade.onclick = () => alterarQuantidade(index);
-
-        let botaoExcluir = document.createElement("button");
+        const botaoExcluir = document.createElement("button");
         botaoExcluir.textContent = "Excluir";
-        botaoExcluir.className = "excluir";
-        botaoExcluir.onclick = () => excluirProduto(index);
+        botaoExcluir.className = "btn-excluir";
+        botaoExcluir.addEventListener("click", () => {
+            excluirProduto(produto.codigo);
+        });
 
-        acoes.append(botaoValor, botaoQuantidade, botaoExcluir);
+        acoes.append(
+            botaoValor,
+            botaoQuantidade,
+            botaoExcluir
+        );
 
-        linha.append(codigo, descricao, quantidade, valor, acoes);
-
-        tabela.appendChild(linha);
+        linha.appendChild(acoes);
+        lista.appendChild(linha);
     });
 
-    document.getElementById("totalProdutos").textContent = produtos.length;
+    document.getElementById("mensagemVazia").style.display =
+        filtrados.length === 0 ? "block" : "none";
+
+    atualizarResumo();
 }
 
 // Alterar valor
-function alterarValor(index) {
+function alterarValor(codigo) {
 
-    let novoValor = prompt("Digite o novo valor do produto:");
+    const produto = produtos.find(p => p.codigo === codigo);
 
-    if (novoValor === null || novoValor.trim() === "") return;
+    if (!produto) return;
 
-    novoValor = Number(novoValor.replace(",", "."));
+    const resposta = prompt(
+        "Digite o novo valor do produto:"
+    );
+
+    if (resposta === null || resposta.trim() === "") return;
+
+    const novoValor = Number(resposta.replace(",", "."));
 
     if (!Number.isFinite(novoValor) || novoValor < 0) {
-        alert("Valor inválido!");
+        alert("Digite um valor válido!");
         return;
     }
 
-    produtos[index].valor = novoValor;
+    produto.valor = novoValor;
 
-    salvarDados();
-    listarProdutos();
+    salvarProdutos();
+    mostrarProdutos();
 
-    alert("Valor alterado com sucesso!");
+    alert("Valor atualizado com sucesso!");
 }
 
 // Alterar quantidade
-function alterarQuantidade(index) {
+function alterarQuantidade(codigo) {
 
-    let novaQuantidade = prompt("Digite a nova quantidade:");
+    const produto = produtos.find(p => p.codigo === codigo);
 
-    if (novaQuantidade === null || novaQuantidade.trim() === "") return;
+    if (!produto) return;
 
-    novaQuantidade = Number(novaQuantidade);
+    const resposta = prompt(
+        "Digite a nova quantidade do produto:"
+    );
+
+    if (resposta === null || resposta.trim() === "") return;
+
+    const novaQuantidade = Number(resposta);
 
     if (!Number.isSafeInteger(novaQuantidade) || novaQuantidade < 0) {
-        alert("Quantidade inválida!");
+        alert("Digite uma quantidade válida!");
         return;
     }
 
-    produtos[index].quantidade = novaQuantidade;
+    produto.quantidade = novaQuantidade;
 
-    salvarDados();
-    listarProdutos();
+    salvarProdutos();
+    mostrarProdutos();
 
-    alert("Quantidade alterada com sucesso!");
+    alert("Quantidade atualizada com sucesso!");
 }
 
 // Excluir produto
-function excluirProduto(index) {
+function excluirProduto(codigo) {
 
-    let confirmar = confirm("Deseja realmente excluir este produto?");
+    const confirmar = confirm(
+        "Deseja realmente excluir este produto?"
+    );
 
-    if (confirmar) {
-        produtos.splice(index, 1);
+    if (!confirmar) return;
 
-        salvarDados();
-        listarProdutos();
+    produtos = produtos.filter(
+        produto => produto.codigo !== codigo
+    );
 
-        alert("Produto excluído!");
-    }
+    salvarProdutos();
+    mostrarProdutos();
+
+    alert("Produto excluído com sucesso!");
 }
 
-// Salvar dados no navegador
-function salvarDados() {
-    localStorage.setItem("produtos", JSON.stringify(produtos));
+// Atualizar cartões do painel
+function atualizarResumo() {
+
+    const totalProdutos = produtos.length;
+
+    const totalUnidades = produtos.reduce(
+        (total, produto) => total + produto.quantidade,
+        0
+    );
+
+    const valorTotal = produtos.reduce(
+        (total, produto) =>
+            total + produto.quantidade * produto.valor,
+        0
+    );
+
+    document.getElementById("totalProdutos").textContent =
+        totalProdutos;
+
+    document.getElementById("totalUnidades").textContent =
+        totalUnidades;
+
+    document.getElementById("valorEstoque").textContent =
+        formatarMoeda(valorTotal);
 }
 
-// Mostrar produtos ao abrir a página
-listarProdutos();
+// Pesquisar produtos
+pesquisa.addEventListener("input", mostrarProdutos);
+
+// Carregar produtos ao abrir a página
+mostrarProdutos();
