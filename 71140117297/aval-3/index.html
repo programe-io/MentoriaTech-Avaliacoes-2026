@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Biblioteca Escolar | Gestão</title>
+  <link rel="stylesheet" href="style.css">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="brand-icon">📚</span>
+      <div>
+        <strong>Biblioteca</strong>
+        <small>GESTÃO ESCOLAR</small>
+      </div>
+    </div>
+
+    <nav>
+      <a class="active" href="#inicio">▦ Visão geral</a>
+      <a href="#livros">▤ Acervo de livros</a>
+      <a href="#emprestimos">⇄ Empréstimos</a>
+    </nav>
+
+    <div class="side-note">
+      Sistema demonstrativo<br>
+      Dados salvos neste navegador.
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">PAINEL DE CONTROLE</p>
+        <h1>Biblioteca Escolar</h1>
+        <p class="muted">
+          Cadastre livros e acompanhe empréstimos e devoluções.
+        </p>
+      </div>
+      <span class="today" id="today"></span>
+    </header>
+
+    <section class="stats" id="inicio">
+      <article class="stat">
+        <div class="stat-icon purple">📚</div>
+        <p>Total de livros</p>
+        <strong id="totalBooks">0</strong>
+        <small>Exemplares cadastrados</small>
+      </article>
+
+      <article class="stat">
+        <div class="stat-icon green">✓</div>
+        <p>Disponíveis</p>
+        <strong id="availableBooks">0</strong>
+        <small>Prontos para empréstimo</small>
+      </article>
+
+      <article class="stat">
+        <div class="stat-icon orange">⇄</div>
+        <p>Emprestados</p>
+        <strong id="loanedBooks">0</strong>
+        <small>Com estudantes</small>
+      </article>
+
+      <article class="stat">
+        <div class="stat-icon blue">👥</div>
+        <p>Empréstimos ativos</p>
+        <strong id="activeLoans">0</strong>
+        <small>Registros em andamento</small>
+      </article>
+    </section>
+
+    <section class="panel" id="livros">
+      <div class="panel-heading">
+        <div>
+          <h2>Acervo de livros</h2>
+          <p class="muted">Adicione, pesquise, edite ou remova títulos.</p>
+        </div>
+        <button class="primary" id="newBookBtn">
+          ＋ Cadastrar livro
+        </button>
+      </div>
+
+      <div class="toolbar">
+        <input id="searchBook" type="search"
+          placeholder="⌕ Buscar por título, autor ou categoria...">
+
+        <select id="filterBook">
+          <option value="all">Todos os status</option>
+          <option value="available">Disponíveis</option>
+          <option value="loaned">Emprestados</option>
+        </select>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Livro</th>
+              <th>Autor</th>
+              <th>Categoria</th>
+              <th>Ano</th>
+              <th>Status</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="booksTable"></tbody>
+        </table>
+      </div>
+
+      <p class="empty hidden" id="booksEmpty">
+        Nenhum livro encontrado. Cadastre um título para começar.
+      </p>
+    </section>
+
+    <section class="panel" id="emprestimos">
+      <div class="panel-heading">
+        <div>
+          <h2>Empréstimos e devoluções</h2>
+          <p class="muted">
+            Controle os livros emprestados aos estudantes.
+          </p>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Livro</th>
+              <th>Estudante</th>
+              <th>Data do empréstimo</th>
+              <th>Devolução prevista</th>
+              <th>Status</th>
+              <th>Ação</th>
+            </tr>
+          </thead>
+          <tbody id="loansTable"></tbody>
+        </table>
+      </div>
+
+      <p class="empty hidden" id="loansEmpty">
+        Ainda não há empréstimos registrados.
+      </p>
+    </section>
+
+    <footer>
+      Biblioteca Escolar • Projeto educacional • Aplicação sem banco de dados
+    </footer>
+  </main>
+
+  <dialog id="bookDialog">
+    <form id="bookForm" method="dialog">
+      <div class="dialog-head">
+        <div>
+          <h2 id="dialogTitle">Cadastrar livro</h2>
+          <p class="muted">Preencha as informações do livro.</p>
+        </div>
+        <button type="button" class="close" id="closeBook">×</button>
+      </div>
+
+      <input type="hidden" id="bookId">
+
+      <label>
+        Título do livro
+        <input id="title" required maxlength="120"
+          placeholder="Ex.: O Pequeno Príncipe">
+      </label>
+
+      <div class="two">
+        <label>
+          Autor
+          <input id="author" required maxlength="100"
+            placeholder="Nome do autor">
+        </label>
+
+        <label>
+          Categoria
+          <select id="category" required>
+            <option value="">Selecione uma categoria</option>
+            <option>Literatura</option>
+            <option>Ciências</option>
+            <option>História</option>
+            <option>Geografia</option>
+            <option>Matemática</option>
+            <option>Fantasia</option>
+            <option>Contos e Fábulas</option>
+            <option>Biografia</option>
+            <option>Histórias em Quadrinhos</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="two">
+        <label>
+          Ano de publicação
+          <input id="year" type="number" min="0" max="2100"
+            placeholder="Ex.: 1943">
+        </label>
+
+        <label>
+          Quantidade
+          <input id="quantity" type="number" min="1" max="500"
+            value="1" required>
+        </label>
+      </div>
+
+      <div class="dialog-actions">
+        <button type="button" class="secondary" id="cancelBook">
+          Cancelar
+        </button>
+        <button class="primary" type="submit">
+          Salvar livro
+        </button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="loanDialog">
+    <form id="loanForm" method="dialog">
+      <div class="dialog-head">
+        <div>
+          <h2>Registrar empréstimo</h2>
+          <p class="muted" id="loanBookName"></p>
+        </div>
+        <button type="button" class="close" id="closeLoan">×</button>
+      </div>
+
+      <input type="hidden" id="loanBookId">
+
+      <label>
+        Nome do estudante
+        <input id="student" required maxlength="100"
+          placeholder="Nome completo">
+      </label>
+
+      <div class="two">
+        <label>
+          Data do empréstimo
+          <input id="loanDate" type="date" required>
+        </label>
+
+        <label>
+          Devolução prevista
+          <input id="dueDate" type="date" required>
+        </label>
+      </div>
+
+      <div class="dialog-actions">
+        <button type="button" class="secondary" id="cancelLoan">
+          Cancelar
+        </button>
+        <button class="primary" type="submit">
+          Confirmar empréstimo
+        </button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="script.js"></script>
+<script src="script.js"></script></body>
+</html>
