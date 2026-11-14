@@ -1,5 +1,56 @@
-function clicou() {
-        document.getElementById("mensagem").innerHTML = "🎉 Deu certo! Aprendendo programação! 🎉";
-        }
-        
-}
+let produtos = [];
+let proximoCodigo = 1;
+
+function validarProduto(descricao, quantidade, valor) {
+  if (!descricao || descricao.trim() === "") {
+      alert("Descrição inválida!");
+          return false;
+            }
+              if (isNaN(quantidade) || quantidade < 0) {
+                  alert("Quantidade inválida!");
+                      return false;
+                        }
+                          if (isNaN(valor) || valor < 0) {
+                              alert("Valor inválido!");
+                                  return false;
+                                    }
+                                      return true;
+                                      }
+
+                                      function cadastrarProduto(descricao, quantidade, valor) {
+                                        if (!validarProduto(descricao, quantidade, valor)) return;
+
+                                          let produto = {
+                                              codigo: proximoCodigo,
+                                                  descricao: descricao,
+                                                      quantidade: quantidade,
+                                                          valor: valor
+                                                            };
+
+                                                              produtos.push(produto);
+                                                                proximoCodigo++;
+                                                                  alert("Produto cadastrado com sucesso!");
+                                                                  }
+
+                                                                  function listarProdutos() {
+                                                                    if (produtos.length === 0) {
+                                                                        alert("Nenhum produto cadastrado.");
+                                                                            return;
+                                                                              }
+
+                                                                                let lista = "--- LISTA DE PRODUTOS ---\n";
+                                                                                  for (let p of produtos) {
+                                                                                      lista += `Código: ${p.codigo} | ${p.descricao} | Qtd: ${p.quantidade} | Valor: R$ ${p.valor}\n`;
+                                                                                        }
+                                                                                          alert(lista);
+                                                                                          }
+
+                                                                                          function atualizarValor(codigoProduto, novoValor) {
+                                                                                            let produto = produtos.find(p => p.codigo === codigoProduto);
+                                                                                              if (!produto) {
+                                                                                                  alert("Produto não encontrado!");
+                                                                                                      return;
+                                                                                                        }
+                                                                                                          if (isNaN(novoValor) || novoValor < 0) {
+                                                                                                              alert("Novo valor inválido!");
+                                                                                                                  return;
