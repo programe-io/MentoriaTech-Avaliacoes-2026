@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link href="style.css" rel="stylesheet">
+</head>
+<body>
+  let produtos = [];
+let proximoCodigo = 1;
+
+function validarProduto(descricao, quantidade, valor) {
+  if (!descricao || descricao.trim() === "") {
+      console.log("Descrição inválida!");
+          return false;
+            }
+              if (quantidade < 0 || isNaN(quantidade)) {
+                  console.log("Quantidade inválida!");
+                      return false;
+                        }
+                          if (valor < 0 || isNaN(valor)) {
+                              console.log("Valor inválido!");
+                                  return false;
+                                    }
+                                      return true;
+                                      }
+
+                                      function cadastrarProduto(descricao, quantidade, valor) {
+                                        if (!validarProduto(descricao, quantidade, valor)) {
+                                            return;
+                                              }
+
+                                                let produto = {
+                                                    codigo: proximoCodigo,
+                                                        descricao: descricao,
+                                                            quantidade: quantidade,
+                                                                valor: valor
+                                                                  };
+
+                                                                    produtos.push(produto);
+                                                                      proximoCodigo++;
+                                                                        console.log("Produto cadastrado: ", produto);
+                                                                        }
+
+                                                                        function listarProdutos() {
+                                                                          if (produtos.length === 0) {
+                                                                              console.log("Nenhum produto cadastrado.");
+                                                                                  return;
+                                                                                    }
+                                                                                      console.log("--- Lista de Produtos ---");
+                                                                                        for (let p of produtos) {
+                                                                                            console.log(`Código: ${p.codigo} | Descrição: ${p.descricao} | Quantidade: ${p.quantidade} | Valor: R$ ${p.valor}`);
+                                                                                              }
+                                                                                              }
+
+                                                                                              function atualizarValor(codigoProduto, novoValor) {
+                                                                                                let produto = produtos.find(p => p.codigo === codigoProduto);
+                                                                                                  if (!produto) {
+                                                                                                      console.log("Produto não encontrado!");
+                                                                                                          return;
+                                                                                                            }
+                                                                                                              if (novoValor < 0 || isNaN(novoValor)) {
+                                                                                                                  console.log("Novo valor inválido!");
+                                                                                                                      return;
+                                                                                                                        }
+                                                                                                                          produto.valor = novoValor;
+                                                                                                                            console.log("Valor atualizado: ", produto);
+                                                                                                                            }
+
+                                                                                                                            function atualizarQuantidade(codigoProduto, novaQuantidade) {
+                                                                                                                              let produto = produtos.find(p => p.codigo === codigoProduto);
+                                                                                                                                if (!produto) {
+                                                                                                                                    console.log("Produto não encontrado!");
+                                                                                                                                        return;
+                                                                                                                                          }
+                                                                                                                                            if (novaQuantidade < 0 || isNaN(novaQuantidade)) {
+                                                                                                                                                console.log("Nova quantidade inválida!");
+                                                                                                                                                    return;
+                                                                                                                                                      }
+                                                                                                                                                        produto.quantidade = novaQuantidade;
+                                                                                                                                                          console.log("Quantidade atualizada: ", produto);
+                                                                                                                                                          }
+
+                                                                                                                                                          // Teste:
+                                                                                                                                                          cadastrarProduto("Arroz", 10, 25.50);
+                                                                                                                                                          cadastrarProduto("Feijão", 5, 12.00);
+                                                                                                                                                          listarProdutos();
+                                                                                                                                                          atualizarValor(1, 30.00);
+                                                                                                                                                          atualizarQuantidade(2, 8);
+                                                                                                                                                          listarProdutos();
+  <script src="script.js"></script>
+  
+</body>
+</html>
