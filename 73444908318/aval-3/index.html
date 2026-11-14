@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link href="style.css" rel="stylesheet">
+</head>
+<body>
+  import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.patches as patches
+
+# Configuração da figura principal com fundo escuro/abstrato
+fig = plt.figure(figsize=(14, 8), facecolor='#1a1a1a')
+
+# 1. Definição do painel de fundo (Background)
+ax_bg = fig.add_axes([0, 0, 1, 1])
+ax_bg.set_facecolor('#2b2b2b')
+# Adiciona um gradiente ou padrão de linhas verticais ao fundo
+x_bg = np.linspace(0, 10, 100)
+for i in range(20):
+    ax_bg.axvline(x=i*0.5, color='#3b3b3b', alpha=0.3, linewidth=np.random.uniform(1, 5))
+    ax_bg.axis('off')
+
+    # 2. Geração de dados de textura abstrata (simulando as formas das imagens)
+    y, x = np.ogrid[-3:3:300j, -3:3:300j]
+    z_fractal = np.sin(x**2 + y**2) / (x**2 + y**2 + 0.5)
+    z_noise = np.random.randn(150, 150)
+
+    # 3. Criação de subplots sobrepostos em coordenadas manuais [left, bottom, width, height]
+    # Painel Superior Esquerdo
+    ax1 = fig.add_axes([0.05, 0.55, 0.4, 0.4])
+    ax1.imshow(z_fractal, cmap='twilight_r', aspect='auto')
+    ax1.text(0.1, 0.8, "Xø1_mpæ\nLµmïn", color='white', fontsize=12, transform=ax1.transAxes, weight='bold')
+    ax1.axis('off')
+
+    # Painel Central Grande (Sobreposto)
+    ax2 = fig.add_axes([0.25, 0.2, 0.45, 0.7])
+    # Inverte os eixos para criar distorção visual
+    ax2.imshow(z_fractal.T, cmap='gist_earth', aspect='auto', alpha=0.9)
+    ax2.text(0.5, 0.2, "§trætæ_Vïsuæl", color='black', fontsize=14, transform=ax2.transAxes, 
+             bbox=dict(facecolor='white', alpha=0.7, edgecolor='none'))
+             ax2.axis('off')
+
+             # Painel Inferior Esquerdo (Textura de Ruído Estático)
+             ax3 = fig.add_axes([0.08, 0.08, 0.3, 0.35])
+             ax3.imshow(z_noise, cmap='bone_r', aspect='auto')
+             ax3.text(0.2, 0.5, "p§eudø_nøïse", color='red', fontsize=10, transform=ax3.transAxes)
+             ax3.axis('off')
+
+             # Painel Lateral Direito (Vertical e Estrito)
+             ax4 = fig.add_axes([0.72, 0.15, 0.23, 0.75])
+             ax4.imshow(z_fractal, cmap='magma', aspect='auto')
+             # Adiciona pequenas formas geométricas flutuantes
+             rect = patches.Rectangle((50, 50), 80, 100, linewidth=2, edgecolor='cyan', facecolor='none', alpha=0.6)
+             ax4.add_patch(rect)
+             ax4.text(0.1, 0.9, "Æthêr_46", color='yellow', fontsize=11, transform=ax4.transAxes)
+             ax4.axis('off')
+
+             # 4. Elementos de sobreposição global (Adiciona linhas de grade desconexas e vetores)
+             ax_overlay = fig.add_axes([0, 0, 1, 1], frameon=False)
+             ax_overlay.axis('off')
+             # Desenha linhas aleatórias cruzando os painéis
+             ax_overlay.plot([0.1, 0.9], [0.4, 0.4], color='white', alpha=0.3, linestyle='--')
+             ax_overlay.plot([0.7, 0.7], [0.1, 0.9], color='yellow', alpha=0.2, linewidth=3)
+
+             # Exibe o resultado final da composição abstrata
+             plt.show()
+             
+  
+  
+</body>
+</html>
