@@ -1,0 +1,91 @@
+
+/* Array que vai armazenar todas as tarefas */
+let tarefas = [];
+
+let geradorCodigo = 0;
+
+/* Valida os dados informados para a tarefa */
+function validarDadosTarefa(titulo, prioridade) {
+    if (titulo.length < 5) {
+        throw new Error("O título deve ter no mínimo 5 caracteres.");
+    }
+
+    if (prioridade < 1 || prioridade > 3) {
+        throw new Error("Informe uma prioridade entre 1 e 3.");
+    }
+}
+
+/* Busca uma tarefa pelo código */
+function buscarTarefa(codigoTarefa) {
+    const tarefaBuscada = tarefas.find(
+        tarefa => tarefa.codigo === codigoTarefa
+    );
+
+    if (!tarefaBuscada) {
+        throw new Error("Código de tarefa não encontrado.");
+    }
+
+    return tarefaBuscada;
+}
+
+/* Cadastra uma nova tarefa */
+function cadastrarTarefa(titulo, prioridade) {
+    validarDadosTarefa(titulo, prioridade);
+
+    const tarefa = {
+        codigo: ++geradorCodigo,
+        titulo: titulo,
+        prioridade: prioridade,
+        status: true
+    };
+
+    tarefas.push(tarefa);
+
+    console.log("Tarefa cadastrada com sucesso!");
+}
+
+/* Lista todas as tarefas */
+function listarTarefas() {
+    return tarefas;
+}
+
+/* Conclui uma tarefa */
+function concluirTarefa(codigo) {
+    const tarefa = buscarTarefa(codigo);
+
+    if (tarefa.status === false) {
+        throw new Error("Tarefa já estava como concluída.");
+    }
+
+    tarefa.status = false;
+
+    console.log("Tarefa concluída com sucesso!");
+}
+
+/* Altera a prioridade de uma tarefa */
+function alterarPrioridade(codigo, novaPrioridade) {
+    const tarefa = buscarTarefa(codigo);
+
+    validarDadosTarefa(tarefa.titulo, novaPrioridade);
+
+    tarefa.prioridade = novaPrioridade;
+
+    console.log("Prioridade alterada com sucesso!");
+}
+
+/* Testes */
+
+cadastrarTarefa("Cadastrar Clientes", 1);
+
+console.log("Lista inicial:");
+console.log(listarTarefas());
+
+alterarPrioridade(1, 2);
+
+console.log("Lista após alteração:");
+console.log(listarTarefas());
+
+concluirTarefa(1);
+
+console.log("Lista após conclusão:");
+console.log(listarTarefas());
