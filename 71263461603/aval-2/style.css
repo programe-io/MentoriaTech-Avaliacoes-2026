@@ -1,0 +1,59 @@
+/* Array que vai guardar o conjunto de todas as tarefas */
+let tarefas = [];
+
+function validarDadosTarefa(titulo, prioridade){
+    if(titulo.length < 5){
+        throw new Error("O titulo deve ter no minimo 5 caracteres");
+    }
+    if(prioridade < 1 || prioridade > 3){
+        throw new Error("Informe uma prioridade entre 1 e 3");
+    }
+}
+
+function cadastrarTarefa(titulo, prioridade){
+    validarDadosTarefa(titulo, prioridade);
+
+    let tarefa = {
+        'codigo': tarefas.length + 1,
+        'titulo': titulo,
+        'prioridade': prioridade,
+        'status': 'pendente'
+    };
+
+    tarefas.push(tarefa);
+}
+
+function listarTarefas(){
+    console.log(tarefas);
+}
+
+function concluirTarefa(codigoTarefa){
+    const tarefa = tarefas.find(t => t.codigo === codigoTarefa);
+    if(tarefa){
+        tarefa.status = 'concluida';
+    } else {
+        throw new Error("Tarefa nao encontrada");
+    }
+}
+
+function removerTarefa(codigoTarefa){
+    const indice = tarefas.findIndex(t => t.codigo === codigoTarefa);
+    if(indice !== -1){
+        tarefas.splice(indice, 1);
+    } else {
+        throw new Error("Tarefa nao encontrada");
+    }
+}
+
+// Teste
+listarTarefas();
+
+cadastrarTarefa("Estudar JavaScript", 1);
+cadastrarTarefa("Fazer revisao", 2);
+cadastrarTarefa("Fazer exercicios", 3);
+
+listarTarefas();
+
+concluirTarefa(1);
+
+listarTarefas();
