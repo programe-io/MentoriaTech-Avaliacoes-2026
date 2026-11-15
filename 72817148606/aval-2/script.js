@@ -1,79 +1,51 @@
-const perguntas = [
-  {
-    pergunta: "O que significa HTML?",
-    opcoes: [
-      "HyperText Markup Language",
-      "High Text Machine Language",
-      "Home Tool Markup Language"
-    ],
-    resposta: 0
-  },
-  {
-    pergunta: "Qual linguagem estiliza páginas?",
-    opcoes: ["Java", "CSS", "Python"],
-    resposta: 1
-  },
-  {
-    pergunta: "Qual linguagem adiciona interatividade?",
-    opcoes: ["JavaScript", "HTML", "SQL"],
-    resposta: 0
-  }
-];
+let tarefas = [];
+let idCounter = 1;
 
-let atual = 0;
-let pontos = 0;
-let respondeu = false;
+function cadastrarTarefa() {
+  const titulo = document.getElementById("titulo").value.trim();
+    const prioridade = parseInt(document.getElementById("prioridade").value);
+      const msg = document.getElementById("mensagem");
+        
+          msg.textContent = "";
 
-function mostrar() {
-  respondeu = false;
+            if (titulo.length < 5) {
+                msg.textContent = "Erro: O título deve ter no mínimo 5 caracteres[span_4](start_span)[span_4](end_span).";
+                    return;
+                      }
+                        if (prioridade < 1 || prioridade > 3 || isNaN(prioridade)) {
+                            msg.textContent = "Erro: A prioridade deve estar entre 1 e 3[span_5](start_span)[span_5](end_span).";
+                                return;
+                                  }
 
-  const p = perguntas[atual];
-  document.getElementById("pergunta").textContent = p.pergunta;
+                                    tarefas.push({ codigo: idCounter++, titulo, prioridade, concluida: false });
+                                      renderizar();
+                                        
+                                          document.getElementById("titulo").value = "";
+                                            document.getElementById("prioridade").value = "";
+                                            }
 
-  const opcoes = document.getElementById("opcoes");
-  opcoes.innerHTML = "";
+                                            function alternarConclusao(codigo) {
+                                              const tarefa = tarefas.find(t => t.codigo === codigo);
+                                                if (tarefa) {
+                                                    tarefa.concluida = !tarefa.concluida;
+                                                        renderizar();
+                                                          }
+                                                          }
 
-  p.opcoes.forEach((opcao, i) => {
-    const botao = document.createElement("button");
-    botao.textContent = opcao;
+                                                          function renderizar() {
+                                                            const container = document.getElementById("containerTarefas");
+                                                              container.innerHTML = "";
 
-    botao.onclick = () => responder(i);
-
-    opcoes.appendChild(botao);
-  });
-
-  document.getElementById("resultado").textContent =
-    "Pontuação: " + pontos;
-}
-
-function responder(escolha) {
-  if (respondeu) return;
-  respondeu = true;
-
-  if (escolha === perguntas[atual].resposta) {
-    pontos++;
-    document.getElementById("resultado").textContent = "Resposta correta!";
-  } else {
-    document.getElementById("resultado").textContent = "Resposta incorreta!";
-  }
-}
-
-function proxima() {
-  if (!respondeu) {
-    alert("Responda à pergunta primeiro!");
-    return;
-  }
-
-  atual++;
-
-  if (atual >= perguntas.length) {
-    document.querySelector(".quiz").innerHTML =
-      "<h1>Quiz finalizado!</h1><h2>Pontuação: " +
-      pontos + "/" + perguntas.length + "</h2>";
-    return;
-  }
-
-  mostrar();
-}
-
-mostrar();
+                                                                tarefas.forEach(t => {
+                                                                    const div = document.createElement("div");
+                                                                        div.className = `card-tarefa ${t.concluida ? "concluida" : ""}`;
+                                                                            div.innerHTML = `
+                                                                                  <span><b>#${t.codigo}</b> - ${t.titulo} (Prioridade: ${t.prioridade})</span>
+                                                                                        <button class="btn-acao" onclick="alternarConclusao(${t.codigo})">
+                                                                                                ${t.concluida ? "Desfazer" : "Concluir"}
+                                                                                                      </button>
+                                                                                                          `;
+                                                                                                              container.appendChild(div);
+                                                                                                                });
+                                                                                                                }
+                                                                                                                
