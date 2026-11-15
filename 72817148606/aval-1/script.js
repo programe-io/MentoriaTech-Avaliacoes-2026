@@ -1,33 +1,48 @@
-let segundos = 0;
-let intervalo = null;
+let tarefas = [];
+let contadorCodigo = 1;
 
-function atualizar() {
-  let h = Math.floor(segundos / 3600);
-  let m = Math.floor((segundos % 3600) / 60);
-  let s = segundos % 60;
+function cadastrarTarefa() {
+  const tituloInput = document.getElementById("titulo");
+    const prioridadeInput = document.getElementById("prioridade");
+      const mensagemDiv = document.getElementById("mensagem");
+        
+          mensagemDiv.textContent = "";
 
-  document.getElementById("tempo").textContent =
-    String(h).padStart(2, "0") + ":" +
-    String(m).padStart(2, "0") + ":" +
-    String(s).padStart(2, "0");
-}
+            const titulo = tituloInput.value.trim();
+              const prioridade = parseInt(prioridadeInput.value);
 
-function iniciar() {
-  if (intervalo !== null) return;
+                // Regras de validação da imagem[span_2](start_span)[span_2](end_span)
+                  if (titulo.length < 5) {
+                      mensagemDiv.textContent = "O título deve ter no mínimo 5 caracteres.";
+                          return;
+                            }
+                              if (isNaN(prioridade) || prioridade < 1 || prioridade > 3) {
+                                  mensagemDiv.textContent = "A prioridade deve ser um valor entre 1 (alta) e 3 (baixa).";
+                                      return;
+                                        }
 
-  intervalo = setInterval(() => {
-    segundos++;
-    atualizar();
-  }, 1000);
-}
+                                          const novaTarefa = {
+                                              codigo: contadorCodigo++,
+                                                  titulo: titulo,
+                                                      prioridade: prioridade,
+                                                          concluida: false // status de conclusão inicial
+                                                            };
 
-function pausar() {
-  clearInterval(intervalo);
-  intervalo = null;
-}
+                                                              tarefas.push(novaTarefa);
+                                                                listarTarefas();
+                                                                  
+                                                                    tituloInput.value = "";
+                                                                      prioridadeInput.value = "";
+                                                                      }
 
-function zerar() {
-  pausar();
-  segundos = 0;
-  atualizar();
-}
+                                                                      function listarTarefas() {
+                                                                        const lista = document.getElementById("listaTarefas");
+                                                                          lista.innerHTML = "";
+
+                                                                            tarefas.forEach(t => {
+                                                                                const item = document.createElement("li");
+                                                                                    item.textContent = `Cód: ${t.codigo} | Título: ${t.titulo} | Prioridade: ${t.prioridade} | Status: ${t.concluida ? "Concluída" : "Pendente"}`;
+                                                                                        lista.appendChild(item);
+                                                                                          });
+                                                                                          }
+                                                                                          
