@@ -1,106 +1,98 @@
-
 const profileImage = "https://geekcitytoys.com/cdn/shop/files/SF03.jpg?v=1717531715";
 
 const posts = [
-  {
-    id: 1,
-    image: "https://i5.walmartimages.com/asr/0d82913c-6ed3-40f7-b0ce-13d59494b78c.e96e9e252f2dfdc17ea89442f362bd08.jpeg?odnBg=FFFFFF&odnHeight=576&odnWidth=576",
-    caption: "Batman da McFarlane! Essa versão é muito bonita 🦇",
-    likes: 1248,
-    date: "HÁ 2 HORAS",
-    comments: [
-      ["marina.dc", "Essa figura é linda!!"],
-      ["gui.collector", "A capa ficou muito boa nessa versão."]
-    ]
-  },
-  {
-    id: 2,
-    image: "https://geekcitytoys.com/cdn/shop/files/SF03.jpg?v=1717531715",
-    caption: "Olha essa Estelar!! Minha personagem favorita ⭐💗",
-    likes: 986,
-    date: "ONTEM",
-    comments: [
-      ["ana.comics", "ELA É PERFEITA"],
-      ["rafael.hqs", "Muito bonita essa figure!"]
-    ]
-  },
-  {
-    id: 3,
-    image: "https://forums.marvelousnews.com/uploads/monthly_2024_08/Marvel_Legends_Series_The_Cabal_By_MCUcollector24_16.jpg.82f9ba0208cf45971ef9bcbf540de448.jpg",
-    caption: "Uma coleção dessas seria um sonho 😭❤️",
-    likes: 2031,
-    date: "HÁ 2 DIAS",
-    comments: [
-      ["marvel.fan", "Marvel Legends é muito bom!"],
-      ["luizinho", "Queria todos kkkkk"]
-    ]
-  },
-  {
-    id: 4,
-    image: "https://lede-admin.popheist.com/wp-content/uploads/sites/63/2024/11/marvel-legends-action-figures.jpg",
-    caption: "Olhem o tanto de personagem junto! Qual vocês escolheriam?",
-    likes: 754,
-    date: "HÁ 3 DIAS",
-    comments: [
-      ["bia.nerd", "Wolverine com certeza!"],
-      ["pedro.marvel", "Essa coleção é absurda."]
-    ]
-  },
-  {
-    id: 5,
-    image: "https://media.karousell.com/media/photos/products/2023/2/26/hasbro_marvel_legends_spiderma_1677404824_de433b7c.jpg",
-    caption: "As figuras Marvel Legends têm cada detalhe!!",
-    likes: 1102,
-    date: "HÁ 4 DIAS",
-    comments: [
-      ["carlos.figures", "Muito legais!"],
-      ["maria.hqs", "A organização ficou ótima."]
-    ]
-  },
-  {
-    id: 6,
-    image: "https://i.ebayimg.com/images/g/ym0AAeSwr5Fp2sve/s-l1200.webp",
-    caption: "Mais uma foto de figuras para a coleção 💙",
-    likes: 642,
-    date: "HÁ 5 DIAS",
-    comments: [
-      ["gui.collector", "Essa versão é clássica!"]
-    ]
-  },
-  {
-    id: 7,
-    image: "https://forums.marvelousnews.com/uploads/monthly_2020_11/Ms-Marvel-Spidey-Cosplay-06.JPG.fb3355f8ebd1c542559b2485c9741fc6.JPG",
-    caption: "A variedade de personagens é o que eu mais gosto!",
-    likes: 895,
-    date: "HÁ 6 DIAS",
-    comments: [
-      ["ana.comics", "Adorei a foto!"]
-    ]
-  },
-  {
-    id: 8,
-    image: "https://geekcitytoys.com/cdn/shop/files/SF03.jpg?v=1717531715",
-    caption: "Estelar merece muito mais destaque nas coleções ⭐",
-    likes: 1570,
-    date: "HÁ 1 SEMANA",
-    comments: [
-      ["bia.nerd", "Concordo muito!"],
-      ["marina.dc", "Minha favorita dos Titãs."]
-    ]
-  },
-  {
-    id: 9,
-    image: "https://i5.walmartimages.com/asr/0d82913c-6ed3-40f7-b0ce-13d59494b78c.e96e9e252f2dfdc17ea89442f362bd08.jpeg?odnBg=FFFFFF&odnHeight=576&odnWidth=576",
-    caption: "Batman sempre será um dos meus favoritos 🦇",
-    likes: 2180,
-    date: "HÁ 1 SEMANA",
-    comments: [
-      ["gui.collector", "O melhor da DC!"]
-    ]
-  }
+  { id: 1, image: "https://i5.walmartimages.com/asr/0d82913c-6ed3-40f7-b0ce-13d59494b78c.e96e9e252f2dfdc17ea89442f362bd08.jpeg?odnBg=FFFFFF&odnHeight=576&odnWidth=576", caption: "Batman da McFarlane! Essa versão é muito bonita 🦇", likes: 1248, date: "HÁ 2 HORAS", comments: [["marina.dc", "Essa figura é linda!!"], ["gui.collector", "A capa ficou muito boa nessa versão."]] },
+  { id: 2, image: "https://geekcitytoys.com/cdn/shop/files/SF03.jpg?v=1717531715", caption: "Olha essa Estelar!! Minha personagem favorita ⭐💗", likes: 986, date: "ONTEM", comments: [["ana.comics", "ELA É PERFEITA"], ["rafael.hqs", "Muito bonita essa figure!"]] },
+  { id: 3, image: "https://forums.marvelousnews.com/uploads/monthly_2024_08/Marvel_Legends_Series_The_Cabal_By_MCUcollector24_16.jpg.82f9ba0208cf45971ef9bcbf540de448.jpg", caption: "Uma coleção dessas seria um sonho 😭❤️", likes: 2031, date: "HÁ 2 DIAS", comments: [["marvel.fan", "Marvel Legends é muito bom!"], ["luizinho", "Queria todos kkkkk"]] },
+  { id: 4, image: "https://lede-admin.popheist.com/wp-content/uploads/sites/63/2024/11/marvel-legends-action-figures.jpg", caption: "Olhem o tanto de personagem junto! Qual vocês escolheriam?", likes: 754, date: "HÁ 3 DIAS", comments: [["bia.nerd", "Wolverine com certeza!"], ["pedro.marvel", "Essa coleção é absurda."]] },
+  { id: 5, image: "https://media.karousell.com/media/photos/products/2023/2/26/hasbro_marvel_legends_spiderma_1677404824_de433b7c.jpg", caption: "As figuras Marvel Legends têm cada detalhe!!", likes: 1102, date: "HÁ 4 DIAS", comments: [["carlos.figures", "Muito legais!"], ["maria.hqs", "A organização ficou ótima."]] },
+  { id: 6, image: "https://i.ebayimg.com/images/g/ym0AAeSwr5Fp2sve/s-l1200.webp", caption: "Mais uma foto de figuras para a coleção 💙", likes: 642, date: "HÁ 5 DIAS", comments: [["gui.collector", "Essa versão é clássica!"]] },
+  { id: 7, image: "https://forums.marvelousnews.com/uploads/monthly_2020_11/Ms-Marvel-Spidey-Cosplay-06.JPG.fb3355f8ebd1c542559b2485c9741fc6.JPG", caption: "A variedade de personagens é o que eu mais gosto!", likes: 895, date: "HÁ 6 DIAS", comments: [["ana.comics", "Adorei a foto!"]] },
+  { id: 8, image: "https://geekcitytoys.com/cdn/shop/files/SF03.jpg?v=1717531715", caption: "Estelar merece muito mais destaque nas coleções ⭐", likes: 1570, date: "HÁ 1 SEMANA", comments: [["bia.nerd", "Concordo muito!"], ["marina.dc", "Minha favorita dos Titãs."]] },
+  { id: 9, image: "https://i5.walmartimages.com/asr/0d82913c-6ed3-40f7-b0ce-13d59494b78c.e96e9e252f2dfdc17ea89442f362bd08.jpeg?odnBg=FFFFFF&odnHeight=576&odnWidth=576", caption: "Batman sempre será um dos meus favoritos 🦇", likes: 2180, date: "HÁ 1 SEMANA", comments: [["gui.collector", "O melhor da DC!"]] }
 ];
 
+// Comentários extras para deixar as publicações mais movimentadas.
+const extraComments = {
+  1: [
+    ["geovanna", "EDUARDA, QUE PERFEIÇÃO 😭💗"],
+    ["vini_figs", "Essa versão do Batman é muito bonita!"],
+    ["marina.dc", "A McFarlane não decepciona 🦇"],
+    ["ana.comics", "Preciso de uma dessas na minha coleção"],
+    ["pedro.action", "A pose ficou incrível kkkkk"],
+    ["geovanna", "Já quero ver as próximas fotos!!"]
+  ],
+  2: [
+    ["geovanna", "MINHA ESTELAR FAVORITA ⭐"],
+    ["vini_figs", "Essa figure é muito bem feita"],
+    ["marina.dc", "Os detalhes do cabelo!!"],
+    ["bia.nerd", "Ela merece muito mais reconhecimento"],
+    ["ana.comics", "Perfeita demais 💗"],
+    ["luizinho", "Os Jovens Titãs são muito bons"]
+  ],
+  3: [
+    ["vini_figs", "Uma coleção dessas é o sonho de qualquer colecionador"],
+    ["geovanna", "EU QUERIA TODASSS"],
+    ["marvel.fan", "Marvel Legends sempre entregando"],
+    ["carlos.figures", "Imagina organizar tudo isso"],
+    ["gui.collector", "Que coleção absurda!!"],
+    ["ana.comics", "Qual personagem é o seu favorito?"]
+  ],
+  4: [
+    ["geovanna", "Eu escolheria a Wanda ❤️"],
+    ["vini_figs", "Wolverine sem pensar duas vezes"],
+    ["marina.dc", "MUITAS FIGURES KKKKK"],
+    ["pedro.marvel", "Essa coleção está incrível"],
+    ["bia.nerd", "Quero ver mais fotos assim"],
+    ["luizinho", "A Marvel tem personagens demais"]
+  ],
+  5: [
+    ["geovanna", "AMEI ESSA FOTO"],
+    ["vini_figs", "Marvel Legends é outro nível"],
+    ["carlos.figures", "Os detalhes são muito bons"],
+    ["ana.comics", "Qual foi sua primeira figure?"],
+    ["marvel.fan", "Muito bonita essa coleção"],
+    ["gui.collector", "Essa merece ficar na estante"]
+  ],
+  6: [
+    ["geovanna", "Sua coleção está ficando linda 💗"],
+    ["vini_figs", "Essa versão é clássica mesmo"],
+    ["marina.dc", "Mais uma para a lista de desejos"],
+    ["bia.nerd", "Amei os detalhes"],
+    ["pedro.action", "Colecionar é um caminho sem volta kkkkk"],
+    ["ana.comics", "Posta mais da coleção!!"]
+  ],
+  7: [
+    ["geovanna", "A variedade é muito legal"],
+    ["vini_figs", "Essa foto ficou muito boa"],
+    ["marvel.fan", "Personagens incríveis!"],
+    ["gui.collector", "Qual é a próxima figure que você quer?"],
+    ["bia.nerd", "Amei demais ✨"],
+    ["marina.dc", "Precisamos de mais posts"]
+  ],
+  8: [
+    ["geovanna", "ESTELAR SUPREMACY ⭐💗"],
+    ["vini_figs", "Uma das melhores personagens dos Titãs"],
+    ["marina.dc", "Ela merece mais figures"],
+    ["ana.comics", "Minha personagem favorita também!"],
+    ["bia.nerd", "Essa foto ficou perfeita"],
+    ["pedro.action", "DC deveria lançar mais versões dela"]
+  ],
+  9: [
+    ["geovanna", "Batman é simplesmente lendário 🦇"],
+    ["vini_figs", "O melhor personagem da DC"],
+    ["gui.collector", "Essa figure é muito bonita"],
+    ["marina.dc", "Bruce Wayne sempre!!"],
+    ["ana.comics", "Quero uma dessa"],
+    ["carlos.figures", "A coleção está ficando incrível"]
+  ]
+};
+
+posts.forEach(post => post.comments.push(...(extraComments[post.id] || [])));
+
 const suggestions = [
+  { name: "geovanna", detail: "Seguido por 8 pessoas", emoji: "💗" },
+  { name: "vini_figs", detail: "Colecionador de action figures", emoji: "🤖" },
   { name: "marina.dc", detail: "Seguido por 2 pessoas", emoji: "🦇" },
   { name: "ana.comics", detail: "Nova sugestão", emoji: "📚" },
   { name: "gui.collector", detail: "Seguido por você", emoji: "🤖" },
@@ -117,11 +109,7 @@ const stories = [
 ];
 
 let currentPostId = null;
-let following = false;
 let followerCount = 1248;
-
-
-// FUNÇÕES AUXILIARES
 
 function formatNumber(number) {
   return number.toLocaleString("pt-BR");
@@ -143,13 +131,11 @@ function showToast(message) {
   toast.classList.add("show");
 
   clearTimeout(showToast.timer);
+
   showToast.timer = setTimeout(() => {
     toast.classList.remove("show");
   }, 2200);
 }
-
-
-// NAVEGAÇÃO ENTRE PÁGINAS
 
 function showPage(pageName) {
   document.querySelectorAll(".page").forEach(page => {
@@ -158,9 +144,7 @@ function showPage(pageName) {
 
   const page = document.getElementById(pageName + "Page");
 
-  if (page) {
-    page.classList.add("active-page");
-  }
+  if (page) page.classList.add("active-page");
 
   document.querySelectorAll(".nav-item[data-page]").forEach(item => {
     item.classList.toggle("active", item.dataset.page === pageName);
@@ -170,23 +154,14 @@ function showPage(pageName) {
 }
 
 document.querySelectorAll("[data-page]").forEach(button => {
-  button.addEventListener("click", () => {
-    showPage(button.dataset.page);
-  });
+  button.addEventListener("click", () => showPage(button.dataset.page));
 });
 
-
-// STORIES
-
 function renderStories() {
-  const container = document.getElementById("stories");
-
-  container.innerHTML = stories.map((story, index) => `
+  document.getElementById("stories").innerHTML = stories.map((story, index) => `
     <button class="story" data-story-index="${index}">
       <div class="story-ring">
-        <div class="story-image">
-          ${story.own ? "+" : story.emoji}
-        </div>
+        <div class="story-image">${story.own ? "+" : story.emoji}</div>
       </div>
       <span class="story-name">${story.name}</span>
     </button>
@@ -194,30 +169,20 @@ function renderStories() {
 }
 
 function openStory(name, emoji) {
-  const modal = document.getElementById("storyModal");
-  const content = document.getElementById("storyViewerContent");
-
-  content.innerHTML = `
+  document.getElementById("storyViewerContent").innerHTML = `
     <div style="font-size:65px">${emoji}</div>
     <strong>${escapeHTML(name)}</strong>
     <p style="font-size:15px">Um pouquinho do meu universo geek 💗</p>
   `;
 
-  modal.classList.add("open");
+  document.getElementById("storyModal").classList.add("open");
 }
 
-
-// SUGESTÕES
-
 function renderSuggestions() {
-  const container = document.getElementById("suggestions");
-
-  container.innerHTML = suggestions.map(person => `
+  document.getElementById("suggestions").innerHTML = suggestions.map(person => `
     <div class="suggestion">
       <div class="suggestion-person">
-        <div class="story-image" style="width:36px;height:36px;font-size:17px">
-          ${person.emoji}
-        </div>
+        <div class="story-image" style="width:36px;height:36px;font-size:17px">${person.emoji}</div>
         <div>
           <b>${person.name}</b>
           <small>${person.detail}</small>
@@ -228,13 +193,9 @@ function renderSuggestions() {
   `).join("");
 }
 
-
-// CRIAR CARD DE PUBLICAÇÃO
-
 function createPostCard(post) {
   return `
     <article class="post" data-post-id="${post.id}">
-
       <div class="post-header">
         <div class="post-author" data-open-profile>
           <img class="author-avatar" src="${profileImage}" alt="Estelar">
@@ -249,15 +210,14 @@ function createPostCard(post) {
       </div>
 
       <div class="post-image" data-open-post="${post.id}">
-        <img src="${post.image}" alt="Action figure e colecionável"
-             loading="lazy"
-             onerror="this.src='https://placehold.co/700x700/f1e6f1/745080?text=Foto+indisponivel'">
+        <img src="${post.image}" alt="Action figure e colecionável" loading="lazy"
+          onerror="this.src='https://placehold.co/700x700/f1e6f1/745080?text=Foto+indisponivel'">
       </div>
 
       <div class="post-actions">
         <div class="action-group">
-          <button class="action-button like-button" data-like="${post.id}" aria-label="Curtir">
-            <i class="fa-regular fa-heart"></i>
+          <button class="action-button like-button ${post.liked ? "liked" : ""}" data-like="${post.id}" aria-label="Curtir">
+            <i class="${post.liked ? "fa-solid" : "fa-regular"} fa-heart"></i>
           </button>
           <button class="action-button" data-open-post="${post.id}" aria-label="Comentar">
             <i class="fa-regular fa-comment"></i>
@@ -266,27 +226,19 @@ function createPostCard(post) {
             <i class="fa-regular fa-paper-plane"></i>
           </button>
         </div>
+
         <button class="action-button save-button" data-save="${post.id}" aria-label="Salvar">
           <i class="fa-regular fa-bookmark"></i>
         </button>
       </div>
 
       <div class="post-info">
-        <span class="like-count" id="likes-${post.id}">
-          ${formatNumber(post.likes)} curtidas
-        </span>
-
-        <p class="caption">
-          <strong>eduarda.lima</strong>
-          ${escapeHTML(post.caption)}
-        </p>
-
+        <span class="like-count" id="likes-${post.id}">${formatNumber(post.likes)} curtidas</span>
+        <p class="caption"><strong>eduarda.lima</strong> ${escapeHTML(post.caption)}</p>
         <p class="hashtags">#Marvel #DC #ActionFigures #Geek</p>
-
         <button class="view-comments" data-open-post="${post.id}">
           Ver todos os ${post.comments.length} comentários
         </button>
-
         <span class="post-date">${post.date}</span>
       </div>
 
@@ -294,60 +246,48 @@ function createPostCard(post) {
         <input type="text" placeholder="Adicione um comentário..." aria-label="Comentário">
         <button type="submit">Publicar</button>
       </form>
-
     </article>
   `;
 }
 
-
-// MOSTRAR PUBLICAÇÕES
-
 function renderFeed() {
-  document.getElementById("feedPosts").innerHTML =
-    posts.map(createPostCard).join("");
+  document.getElementById("feedPosts").innerHTML = posts.map(createPostCard).join("");
 }
 
 function renderProfileGrid() {
-  document.getElementById("profileGrid").innerHTML =
-    posts.map(post => `
-      <button class="grid-item" data-open-post="${post.id}">
-        <img src="${post.image}" alt="Publicação de Eduarda" loading="lazy"
-             onerror="this.src='https://placehold.co/600x600/f1e6f1/745080?text=Foto+indisponivel'">
-        <span class="grid-overlay">
-          <span><i class="fa-solid fa-heart"></i> ${formatNumber(post.likes)}</span>
-          <span><i class="fa-solid fa-comment"></i> ${post.comments.length}</span>
-        </span>
-      </button>
-    `).join("");
+  document.getElementById("profileGrid").innerHTML = posts.map(post => `
+    <button class="grid-item" data-open-post="${post.id}">
+      <img src="${post.image}" alt="Publicação de Eduarda" loading="lazy"
+        onerror="this.src='https://placehold.co/600x600/f1e6f1/745080?text=Foto+indisponivel'">
+      <span class="grid-overlay">
+        <span><i class="fa-solid fa-heart"></i> ${formatNumber(post.likes)}</span>
+        <span><i class="fa-solid fa-comment"></i> ${post.comments.length}</span>
+      </span>
+    </button>
+  `).join("");
 
   document.getElementById("postCount").textContent = posts.length;
 }
 
 function renderExplore() {
-  document.getElementById("exploreGrid").innerHTML =
-    posts.slice().reverse().map(post => `
-      <button class="grid-item" data-open-post="${post.id}">
-        <img src="${post.image}" alt="Figura colecionável" loading="lazy"
-             onerror="this.src='https://placehold.co/600x600/f1e6f1/745080?text=Foto+indisponivel'">
-        <span class="grid-overlay">
-          <span><i class="fa-solid fa-heart"></i> ${formatNumber(post.likes)}</span>
-        </span>
-      </button>
-    `).join("");
+  document.getElementById("exploreGrid").innerHTML = posts.slice().reverse().map(post => `
+    <button class="grid-item" data-open-post="${post.id}">
+      <img src="${post.image}" alt="Figura colecionável" loading="lazy"
+        onerror="this.src='https://placehold.co/600x600/f1e6f1/745080?text=Foto+indisponivel'">
+      <span class="grid-overlay">
+        <span><i class="fa-solid fa-heart"></i> ${formatNumber(post.likes)}</span>
+      </span>
+    </button>
+  `).join("");
 }
-
-
-// LOCALIZAR PUBLICAÇÃO
 
 function findPost(id) {
   return posts.find(post => post.id === Number(id));
 }
 
-
-// CURTIDAS
-
 function toggleLike(id, button) {
   const post = findPost(id);
+
   if (!post) return;
 
   post.liked = !post.liked;
@@ -360,21 +300,21 @@ function toggleLike(id, button) {
     : '<i class="fa-regular fa-heart"></i>';
 
   const count = document.getElementById("likes-" + id);
+
   if (count) {
     count.textContent = formatNumber(post.likes) + " curtidas";
   }
 
   const modalCount = document.getElementById("modalLikeCount");
+
   if (modalCount) {
     modalCount.textContent = formatNumber(post.likes) + " curtidas";
   }
 }
 
-
-// ABRIR DETALHES E COMENTÁRIOS
-
 function openPost(id) {
   const post = findPost(id);
+
   if (!post) return;
 
   currentPostId = post.id;
@@ -419,63 +359,76 @@ function openPost(id) {
   document.getElementById("postModal").classList.add("open");
 }
 
-
-// COMENTAR
-
 function addComment(id, text) {
   const post = findPost(id);
+
   if (!post || !text.trim()) return;
 
   post.comments.push(["eduarda.lima", text.trim()]);
 
   renderFeed();
   renderProfileGrid();
+  renderExplore();
 
   showToast("Comentário publicado! 💗");
 }
 
-
-// EVENTOS GERAIS
+// CLIQUES E INTERAÇÕES
 
 document.addEventListener("click", event => {
-
   const likeButton = event.target.closest("[data-like]");
+
   if (likeButton) {
     toggleLike(likeButton.dataset.like, likeButton);
     return;
   }
 
   const openButton = event.target.closest("[data-open-post]");
+
   if (openButton) {
     openPost(openButton.dataset.openPost);
     return;
   }
 
   const profileButton = event.target.closest("[data-open-profile]");
+
   if (profileButton) {
     showPage("profile");
     return;
   }
 
   const followButton = event.target.closest("[data-follow]");
+
   if (followButton) {
     const isFollowing = followButton.classList.toggle("following");
+
     followButton.textContent = isFollowing ? "Seguindo" : "Seguir";
-    showToast(isFollowing ? "Você está seguindo esse perfil!" : "Você deixou de seguir.");
+
+    showToast(
+      isFollowing
+        ? `Você está seguindo @${followButton.dataset.follow}!`
+        : "Você deixou de seguir."
+    );
+
     return;
   }
 
   const saveButton = event.target.closest("[data-save]");
+
   if (saveButton) {
     const saved = saveButton.classList.toggle("saved");
+
     saveButton.innerHTML = saved
       ? '<i class="fa-solid fa-bookmark"></i>'
       : '<i class="fa-regular fa-bookmark"></i>';
+
     showToast(saved ? "Publicação salva!" : "Publicação removida dos salvos.");
+
     return;
   }
 
   const storyButton = event.target.closest("[data-story-index]");
+
   if (storyButton) {
     const story = stories[Number(storyButton.dataset.storyIndex)];
 
@@ -484,44 +437,44 @@ document.addEventListener("click", event => {
     } else {
       openStory(story.name, story.emoji);
     }
+
     return;
   }
 
   const highlightButton = event.target.closest("[data-story]");
+
   if (highlightButton) {
     openStory(highlightButton.dataset.story, "⭐");
     return;
   }
 
   const shareButton = event.target.closest(".share-button");
+
   if (shareButton) {
     showToast("Compartilhamento demonstrativo 💌");
   }
-
 });
 
-
-// FORMULÁRIOS DE COMENTÁRIOS DO FEED
+// COMENTÁRIOS NO FEED
 
 document.addEventListener("submit", event => {
   const form = event.target.closest("[data-comment-form]");
+
   if (!form) return;
 
   event.preventDefault();
 
   const input = form.querySelector("input");
-  const id = form.dataset.commentForm;
 
   if (!input.value.trim()) {
     showToast("Escreva um comentário primeiro.");
     return;
   }
 
-  addComment(id, input.value);
+  addComment(form.dataset.commentForm, input.value);
 });
 
-
-// COMENTÁRIO DENTRO DO MODAL
+// COMENTÁRIOS NA JANELA DA PUBLICAÇÃO
 
 document.addEventListener("submit", event => {
   if (event.target.id !== "detailCommentForm") return;
@@ -535,7 +488,6 @@ document.addEventListener("submit", event => {
   addComment(currentPostId, input.value);
   openPost(currentPostId);
 });
-
 
 // CRIAR PUBLICAÇÃO
 
@@ -560,16 +512,14 @@ document.getElementById("publishPost").addEventListener("click", () => {
       return;
     }
 
-    const newPost = {
+    posts.unshift({
       id: Date.now(),
       image: url.href,
       caption,
       likes: 0,
       date: "AGORA",
       comments: []
-    };
-
-    posts.unshift(newPost);
+    });
 
     renderFeed();
     renderProfileGrid();
@@ -587,20 +537,17 @@ document.getElementById("publishPost").addEventListener("click", () => {
   }
 });
 
-
 // FOTO DE PERFIL
 
 document.getElementById("profilePhotoButton").addEventListener("click", () => {
   document.getElementById("avatarModal").classList.add("open");
 });
 
-
 // EDITAR PERFIL
 
 document.getElementById("editProfile").addEventListener("click", () => {
   showToast("Perfil de demonstração: edição não conectada.");
 });
-
 
 // FECHAR MODAIS
 
@@ -626,7 +573,6 @@ document.addEventListener("keydown", event => {
   }
 });
 
-
 // INICIALIZAÇÃO
 
 renderStories();
@@ -635,6 +581,4 @@ renderFeed();
 renderProfileGrid();
 renderExplore();
 
-document.getElementById("followerCount").textContent =
-  formatNumber(followerCount);
-
+document.getElementById("followerCount").textContent = formatNumber(followerCount);
