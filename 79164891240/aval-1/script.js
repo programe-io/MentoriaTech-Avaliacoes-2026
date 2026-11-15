@@ -1,70 +1,95 @@
-// BOTÕES DOS PERSONAGENS
 
-const botoes = document.querySelectorAll(".btn-info");
+// ===================================
+// UNIVERSO ACTION FIGURES
+// JAVASCRIPT - VINI E DUARDA
+// ===================================
 
-botoes.forEach((botao) => {
-    botao.addEventListener("click", () => {
+// FUNÇÃO DE PESQUISA
 
-        const card = botao.closest(".card");
-        const informacao = card.querySelector(".extra");
+function pesquisarFigura() {
 
-        if (informacao.hidden) {
-            informacao.hidden = false;
-            botao.textContent = "VER MENOS -";
+    // Captura o texto digitado pelo usuário
+    const campo = document.getElementById("campoBusca");
+
+    const pesquisa = campo.value
+        .toLowerCase()
+        .trim();
+
+    // Seleciona todos os cartões
+    const figuras = document.querySelectorAll(".card");
+
+    let encontrados = 0;
+
+    // Verifica cada personagem
+    figuras.forEach(function(figura) {
+
+        const nome = figura.querySelector("h3")
+            .textContent.toLowerCase();
+
+        const descricao = figura.querySelector("p")
+            .textContent.toLowerCase();
+
+        // Verifica se o termo aparece no nome ou descrição
+        if (
+            nome.includes(pesquisa) ||
+            descricao.includes(pesquisa)
+        ) {
+
+            figura.style.display = "block";
+            encontrados++;
+
         } else {
-            informacao.hidden = true;
-            botao.textContent = "CONHECER MAIS +";
-        }
 
-    });
-});
+            figura.style.display = "none";
 
-// ESCOLHA DO UNIVERSO FAVORITO
-
-const botaoVoto = document.getElementById("botaoVoto");
-const resultado = document.getElementById("resultado");
-
-botaoVoto.addEventListener("click", () => {
-
-    const escolha = prompt(
-        "Qual universo você prefere?\n\n1 - Marvel\n2 - DC Comics"
-    );
-
-    if (escolha === "1") {
-        resultado.textContent =
-            "Você escolheu MARVEL! Que comece a aventura!";
-    }
-
-    else if (escolha === "2") {
-        resultado.textContent =
-            "Você escolheu DC COMICS! Um universo lendário!";
-    }
-
-    else if (escolha !== null) {
-        resultado.textContent =
-            "Opção inválida. Escolha 1 ou 2.";
-    }
-
-});
-
-// ANIMAÇÃO DOS PERSONAGENS
-
-const observador = new IntersectionObserver((entradas) => {
-
-    entradas.forEach((entrada) => {
-
-        if (entrada.isIntersecting) {
-            entrada.target.classList.add("visivel");
-            observador.unobserve(entrada.target);
         }
 
     });
 
-}, {
-    threshold: 0.1
-});
+    // Exibe o resultado da pesquisa
+    if (encontrados === 0) {
 
-document.querySelectorAll(".card, .curiosidade").forEach((elemento) => {
-    observador.observe(elemento);
-});
+        alert("Nenhuma Action Figure encontrada!");
 
+    } else if (pesquisa !== "") {
+
+        alert(
+            "Encontramos " +
+            encontrados +
+            " Action Figure(s)!"
+        );
+
+    }
+
+}
+
+
+// PERMITE PESQUISAR PRESSIONANDO ENTER
+
+document.getElementById("campoBusca")
+    .addEventListener("keydown", function(event) {
+
+        if (event.key === "Enter") {
+            pesquisarFigura();
+        }
+
+    });
+
+
+// MOSTRA TODAS AS FIGURAS AO LIMPAR A PESQUISA
+
+document.getElementById("campoBusca")
+    .addEventListener("input", function() {
+
+        if (this.value.trim() === "") {
+
+            document.querySelectorAll(".card")
+                .forEach(function(figura) {
+
+                    figura.style.display = "block";
+
+                });
+
+        }
+
+    });
