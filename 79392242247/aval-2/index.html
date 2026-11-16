@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kauê's Mini Feed</title>
+    <link rel="stylesheet" href="style.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+    <div class="app-wrapper">
+        <!-- Banner Superior em Degradê -->
+        <header class="hero-banner">
+            <div class="banner-content">
+                <span class="top-brand">Kauê's Mini Feed</span>
+                <div class="profile-info">
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop" alt="Foto do Kauê" class="profile-avatar">
+                    <div class="profile-text">
+                        <h1>Kauê</h1>
+                        <p class="handle">@KaueCodes</p>
+                        <p class="bio">Desenvolvedor Full Stack Java | @UTFPR</p>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Container Central do Feed -->
+        <main class="feed-container">
+            
+            <!-- Caixa "Criar nova publicação, Kauê?" -->
+            <section class="create-post-card">
+                <div class="input-row">
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop" alt="Avatar" class="mini-avatar">
+                    <input type="text" id="postText" placeholder="Criar nova publicação, Kauê?" onkeypress="handleEnter(event)">
+                    <button onclick="publicar()" class="btn-publish">Publicar</button>
+                </div>
+                <div class="extra-row">
+                    <input type="text" id="postImage" placeholder="Cole a URL de uma imagem (opcional)...">
+                </div>
+            </section>
+
+            <!-- Lista de Posts -->
+            <div id="feedList" class="feed-list"></div>
+
+            <!-- Toast Verde Flutuante -->
+            <div id="toastSuccess" class="toast-success">Postado com sucesso!</div>
+        </main>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:8080/api/posts';
+
+        // Dados iniciais (usados automaticamente se o back-end Java estiver desligado)
+        let postsLocais = [
+            {
+                autor: "Kauê",
+                tempo: "15min atrás",
+                avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop",
+                conteudo: "Fala pessoal! Acabei de lançar a versão 1.1 do meu mini feed! Implementei o backend com Java Spring Boot, o frontend com HTML5 e CSS3 moderno. Tá fluindo bem! 💻🚀\n<span class='hashtags'>#JavaDev #WebDevelopment #CodingLife #FeedProject</span>",
+                imagemUrl: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&q=80"
+            },
+            {
+                autor: "Julia",
+                tempo: "@dev_julia",
+                avatarUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop",
+                conteudo: "O feed tá muito massa, Kauê! Ótimo trampo! 👏",
+                imagemUrl: null
+            }
+        ];
+
+        async function carregarFeed() {
+            try {
+                const res = await fetch(API_URL);
+                if (!res.ok) throw new Error();
+                const dados = await res.json();
+                renderizar(dados);
+            } catch {
+                renderizar(postsLocais);
+            }
+        }
+
+        async function publicar() {
+            const inputTexto = document.getElementById('postText');
+            const inputImg = document.getElementById('postImage');
+            const texto = inputTexto.value.trim();
+            const img = inputImg.value.trim();
+
+            if (!texto) return;
+
+            const novoPost = {
+                autor: "Kauê",
+                tempo: "Agora mesmo",
+                avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop",
+                conteudo: formatarHashtags(texto),
+                imagemUrl: img || null
+            };
+
+            try {
+                await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(novoPost)
+                });
+                carregarFeed();
+            } catch {
+                postsLocais.unshift(novoPost);
+                renderizar(postsLocais);
+            }
+
+            inputTexto.value = '';
+            inputImg.value = '';
+            mostrarToast();
+        }
+
+        function formatarHashtags(texto) {
+            return texto.replace(/(#[a-zA-Z0-9_]+)/g, "<span class='hashtags'>$1</span>");
+        }
+
+        function handleEnter(e) {
+            if (e.key === 'Enter') publicar();
+        }
+
+        function mostrarToast() {
+            const toast = document.getElementById('toastSuccess');
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        function renderizar(lista) {
+            const container = document.getElementById('feedList');
+            container.innerHTML = lista.map(post => `
+                <article class="post-card">
+                    <div class="post-top">
+                        <img src="${post.avatarUrl}" alt="${post.autor}" class="post-avatar">
+                        <div class="post-meta">
+                            <strong>${post.autor}</strong>
+                            <span>${post.tempo}</span>
+                        </div>
+                        <span class="dots">•••</span>
+                    </div>
+                    <p class="post-body">${post.conteudo.replace(/\n/g, '<br>')}</p>
+                    ${post.imagemUrl ? `<img src="${post.imagemUrl}" alt="Imagem do post" class="post-image">` : ''}
+                    <div class="post-actions">
+                        <button onclick="this.classList.toggle('liked')">👍 Curtir</button>
+                        <button>💬 Comentar</button>
+                        <button>🔗 Compartilhar</button>
+                    </div>
+                </article>
+            `).join('');
+        }
+
+        carregarFeed();
+    </script>
+<script src="script.js"></script></body>
+</html>
