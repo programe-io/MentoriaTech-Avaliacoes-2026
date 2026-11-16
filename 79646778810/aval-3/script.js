@@ -1,5 +1,11 @@
-// Exibe uma caixa de diálogo com a mensagem
-alert("Olá, mundo!");
+// Seleciona o botão e o parágrafo pelo ID
+const botao = document.getElementById('meuBotao');
+const mensagem = document.getElementById('mensagem');
 
-// Ou imprime uma mensagem no console do navegador (F12)
-console.log("Olá, mundo!");
+// Adiciona um evento de clique ao botão
+botao.addEventListener('click', function() {
+    mensagem.textContent = 'Você clicou no botão! O JavaScript funcionou com sucesso.';
+        mensagem.style.color = '#28a745';
+            mensagem.style.fontWeight = 'bold';
+            });
+            
