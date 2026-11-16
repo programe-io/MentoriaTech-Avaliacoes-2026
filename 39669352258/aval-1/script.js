@@ -1,0 +1,100 @@
+Criação da lista de produtos (Array vazio)
+let produtos = [];
+
+  Função para validar os dados do produto
+function validarProduto(descricao, quantidade, valor) {
+    if (descricao.length < 
+            throw new Error("Descrição deve ter, no mínimo, cinco caracteres");
+                }
+                    if (quantidade < ) {
+                            throw new Error"Quantidade deve ser maior que zero");
+                                }
+                                    if (valor < ) {
+                                            throw new Error"Valor deve ser maior ou igual a zero");
+                                                }
+                                                }
+
+                                                produto
+                                                function cadastrarProduto(descricao, quantidade, valor) {
+                                                
+                                                        validarProduto(descricao, quantidade, valor);
+
+                                            do código
+                                                            
+                                                                        codigo: produtos.length +
+                                                                                descricao: descricao,
+                                                                                        quantidade: quantidade,
+                                                                                                valor: valor
+                                                                                                    };
+
+                                                                                                        // 13. Adição do produto ao array
+                                                                                                            produtos.push(novoProduto);
+                                                                                                                console.log(`Produto "${descricao}" cadastrado com sucesso!`);
+                                                                                                                }
+
+                                                                                                                // 14. Função para listar todos os produtos
+                                                                                                                function listarProdutos() {
+                                                                                                                    console.log("--- LISTA DE PRODUTOS NO ESTOQUE ---");
+                                                                                                                        console.log(produtos);
+                                                                                                                        }
+
+                                                                                                                        // 16. Função para atualizar o valor de um produto
+                                                                                                                        function atualizarValor(codigoProduto, novoValor) {
+                                                                                                                            if (novoValor < 0) {
+                                                                                                                                    throw new Error("Valor deve ser maior ou igual a zero");
+                                                                                                                                        }
+
+                                                                                                                                            // 17. Busca do produto utilizando o método find
+                                                                                                                                                const produto = produtos.find((prod) => prod.codigo === codigoProduto);
+
+                                                                                                                                                    // 18. Tratamento de produto não encontrado
+                                                                                                                                                        if (produto) {
+                                                                                                                                                                produto.valor = novoValor;
+                                                                                                                                                                        console.log(`Valor do produto de código ${codigoProduto} atualizado para R$ ${novoValor}.`);
+                                                                                                                                                                            } else {
+                                                                                                                                                                                    throw new Error("Produto não encontrado");
+                                                                                                                                                                                        }
+                                                                                                                                                                                        }
+
+                                                                                                                                                                                    // 19. Função para atualizar (somar) a quantidade do produto
+                                                                                                                                                                                        function atualizarQuantidade(codigoProduto, novaQuantidade) {
+                                                                                                                                                                                            if (novaQuantidade < 1) {
+                                                                                                                                                                                                    throw new Error("Quantidade deve ser maior que zero");
+                                                                                                                                                                                                        }
+
+                                                                                                                                                                                                            const produto = produtos.find((prod) => prod.codigo === codigoProduto);
+
+                                                                                                                                                                                                                if (produto) {
+                                                                                                                                                                                                                        // 20. Soma a nova quantidade ao estoque existente
+                                                                                                                                                                                                                                produto.quantidade = produto.quantidade + novaQuantidade;
+                                                                                                                                                                                                                                        console.log(`Adicionadas ${novaQuantidade unidades ao produto. Total em estoque: ${produto.quantidade}.`);
+                                                                                                                                                                                                                                            } else {
+                                                                                                                                                                                                                                                    throw new Error("Produto não encontrado");
+                                                                                                                                                                                                                                                        }
+                                                                                                                                                                                                                                                        }
+
+
+                                                                                                                                                                                                                                                        // ==========================================
+                                                                                                                                                                                                                                                        // 15. ÁREA DE TESTES (Exemplos de Execução)
+                                                                                                                                                                                                                                                        // ==========================================
+
+                                                                                                                                                                                                                                                        try {
+                                                                                                                                                                                                                                                            // Cadastrando produtos
+                                                                                                                                                                                                                                                                cadastrarProduto("Cadeira gamer", 12, 699);
+                                                                                                                                                                                                                                                                    cadastrarProduto("Mouse Logitech", 38, 99);
+
+                                                                                                                                                                                                                                                                        // Listando os produtos cadastrados
+                                                                                                                                                                                                                                                                            listarProdutos();
+
+                                                                                                                                                                                                                                                                                // Atualizando o valor de um produto (Ex: Cadeira gamer - código 1)
+                                                                                                                                                                                                                                                                                    atualizarValor(1, 649.99);
+
+                                                                                                                                                                                                                                                                                        // Adicionando mais quantidade ao estoque (Ex: Mouse Logitech - código 2)
+                                                                                                                                                                                                                                                                                            atualizarQuantidade(2, 15);
+
+                                                                                                                                                                                                                                                                                                // Listando novamente para ver as alterações
+                                                                                                                                                                                                                                                                                                    listarProdutos();
+
+                                                                                                                                                                                                                                                                                                    } catch (erro) {
+                                                                                                                                                                                                                                                                                                        console.error("Erro capturado: " + erro.message);
+                                                                                                                                                                                                                                                                                                        }
