@@ -14,6 +14,7 @@ function salvarDados() {
 }
 
 // CADASTRAR LIVRO
+
 function cadastrarLivro(event) {
     event.preventDefault();
 
@@ -35,7 +36,11 @@ function cadastrarLivro(event) {
     }
 
     livros.push({
-        codigo, titulo, autor, categoria, ano,
+        codigo,
+        titulo,
+        autor,
+        categoria,
+        ano,
         disponivel: true
     });
 
@@ -47,6 +52,7 @@ function cadastrarLivro(event) {
 }
 
 // CADASTRAR ALUNO
+
 function cadastrarAluno(event) {
     event.preventDefault();
 
@@ -72,7 +78,8 @@ function cadastrarAluno(event) {
     alert("Aluno cadastrado com sucesso!");
 }
 
-// EMPRÉSTIMO
+// REGISTRAR EMPRÉSTIMO
+
 function registrarEmprestimo(event) {
     event.preventDefault();
 
@@ -83,7 +90,7 @@ function registrarEmprestimo(event) {
     const aluno = alunos.find(a => a.matricula === matriculaAluno);
 
     if (!livro || !aluno) {
-        alert("Selecione um livro e um aluno!");
+        alert("Selecione um livro e um aluno válidos!");
         return;
     }
 
@@ -95,8 +102,8 @@ function registrarEmprestimo(event) {
     livro.disponivel = false;
 
     emprestimos.push({
-        codigoLivro,
-        matriculaAluno,
+        codigoLivro: livro.codigo,
+        matriculaAluno: aluno.matricula,
         data: new Date().toLocaleDateString("pt-BR")
     });
 
@@ -104,12 +111,15 @@ function registrarEmprestimo(event) {
     atualizarSistema();
     formEmprestimo.reset();
 
-    alert("Empréstimo realizado com sucesso!");
+    alert("Empréstimo registrado com sucesso!");
 }
 
-// DEVOLUÇÃO
+// DEVOLVER LIVRO
+
 function devolverLivro(codigoLivro) {
-    if (!confirm("Deseja registrar a devolução?")) return;
+    const confirmar = confirm("Deseja registrar a devolução?");
+
+    if (!confirmar) return;
 
     const emprestimo = emprestimos.find(
         e => e.codigoLivro === codigoLivro
@@ -119,7 +129,9 @@ function devolverLivro(codigoLivro) {
 
     const livro = livros.find(l => l.codigo === codigoLivro);
 
-    if (livro) livro.disponivel = true;
+    if (livro) {
+        livro.disponivel = true;
+    }
 
     emprestimos = emprestimos.filter(
         e => e.codigoLivro !== codigoLivro
@@ -128,31 +140,36 @@ function devolverLivro(codigoLivro) {
     salvarDados();
     atualizarSistema();
 
-    alert("Devolução registrada!");
+    alert("Devolução registrada com sucesso!");
 }
 
 // EDITAR LIVRO
+
 function editarLivro(codigo) {
     const livro = livros.find(l => l.codigo === codigo);
 
-    const titulo = prompt("Novo título:", livro.titulo);
-    if (titulo === null) return;
+    const novoTitulo = prompt("Novo título:", livro.titulo);
 
-    if (titulo.trim().length < 2) {
-        alert("Título inválido!");
+    if (novoTitulo === null) return;
+
+    const titulo = novoTitulo.trim();
+
+    if (titulo.length < 2) {
+        alert("Informe um título válido!");
         return;
     }
 
-    const autor = prompt("Novo autor:", livro.autor);
-    if (autor === null) return;
+    const novoAutor = prompt("Novo autor:", livro.autor);
 
-    if (autor.trim().length < 2) {
-        alert("Autor inválido!");
+    if (novoAutor === null) return;
+
+    if (novoAutor.trim().length < 2) {
+        alert("Informe um autor válido!");
         return;
     }
 
-    livro.titulo = titulo.trim();
-    livro.autor = autor.trim();
+    livro.titulo = titulo;
+    livro.autor = novoAutor.trim();
 
     salvarDados();
     atualizarSistema();
@@ -161,6 +178,7 @@ function editarLivro(codigo) {
 }
 
 // EXCLUIR LIVRO
+
 function excluirLivro(codigo) {
     if (emprestimos.some(e => e.codigoLivro === codigo)) {
         alert("Não é possível excluir um livro emprestado!");
@@ -176,6 +194,7 @@ function excluirLivro(codigo) {
 }
 
 // EXCLUIR ALUNO
+
 function excluirAluno(matricula) {
     if (emprestimos.some(e => e.matriculaAluno === matricula)) {
         alert("Este aluno possui empréstimo ativo!");
@@ -191,6 +210,7 @@ function excluirAluno(matricula) {
 }
 
 // LISTAR LIVROS
+
 function mostrarLivros(filtro = "") {
     const lista = document.getElementById("listaLivros");
     lista.innerHTML = "";
@@ -204,21 +224,29 @@ function mostrarLivros(filtro = "") {
     encontrados.forEach(livro => {
         const linha = document.createElement("tr");
 
-        [
+        const dados = [
             livro.codigo,
             livro.titulo,
             livro.autor,
             livro.categoria,
             livro.ano
-        ].forEach(dado => {
+        ];
+
+        dados.forEach(dado => {
             const td = document.createElement("td");
             td.textContent = dado;
             linha.appendChild(td);
         });
 
         const status = document.createElement("td");
-        status.textContent = livro.disponivel ? "Disponível" : "Emprestado";
-        status.className = livro.disponivel ? "disponivel" : "emprestado";
+        status.textContent = livro.disponivel
+            ? "Disponível"
+            : "Emprestado";
+
+        status.className = livro.disponivel
+            ? "disponivel"
+            : "emprestado";
+
         linha.appendChild(status);
 
         const acoes = document.createElement("td");
@@ -233,13 +261,16 @@ function mostrarLivros(filtro = "") {
         excluir.className = "excluir";
         excluir.onclick = () => excluirLivro(livro.codigo);
 
-        acoes.append(editar, excluir);
+        acoes.appendChild(editar);
+        acoes.appendChild(excluir);
+
         linha.appendChild(acoes);
         lista.appendChild(linha);
     });
 }
 
 // LISTAR ALUNOS
+
 function mostrarAlunos() {
     const lista = document.getElementById("listaAlunos");
     lista.innerHTML = "";
@@ -247,39 +278,52 @@ function mostrarAlunos() {
     alunos.forEach(aluno => {
         const linha = document.createElement("tr");
 
-        const matricula = document.createElement("td");
-        matricula.textContent = aluno.matricula;
+        const tdMatricula = document.createElement("td");
+        tdMatricula.textContent = aluno.matricula;
 
-        const nome = document.createElement("td");
-        nome.textContent = aluno.nome;
+        const tdNome = document.createElement("td");
+        tdNome.textContent = aluno.nome;
 
-        const acoes = document.createElement("td");
+        const tdAcoes = document.createElement("td");
 
         const excluir = document.createElement("button");
         excluir.textContent = "Excluir";
         excluir.className = "excluir";
         excluir.onclick = () => excluirAluno(aluno.matricula);
 
-        acoes.appendChild(excluir);
-        linha.append(matricula, nome, acoes);
+        tdAcoes.appendChild(excluir);
+
+        linha.append(tdMatricula, tdNome, tdAcoes);
         lista.appendChild(linha);
     });
 }
 
 // LISTAR EMPRÉSTIMOS
+
 function mostrarEmprestimos() {
     const lista = document.getElementById("listaEmprestimos");
     lista.innerHTML = "";
 
     emprestimos.forEach(emprestimo => {
-        const livro = livros.find(l => l.codigo === emprestimo.codigoLivro);
-        const aluno = alunos.find(a => a.matricula === emprestimo.matriculaAluno);
+        const livro = livros.find(
+            l => l.codigo === emprestimo.codigoLivro
+        );
+
+        const aluno = alunos.find(
+            a => a.matricula === emprestimo.matriculaAluno
+        );
 
         if (!livro || !aluno) return;
 
         const linha = document.createElement("tr");
 
-        [livro.titulo, aluno.nome, emprestimo.data].forEach(dado => {
+        const dados = [
+            livro.titulo,
+            aluno.nome,
+            emprestimo.data
+        ];
+
+        dados.forEach(dado => {
             const td = document.createElement("td");
             td.textContent = dado;
             linha.appendChild(td);
@@ -294,11 +338,13 @@ function mostrarEmprestimos() {
 
         acoes.appendChild(devolver);
         linha.appendChild(acoes);
+
         lista.appendChild(linha);
     });
 }
 
-// ATUALIZAR SISTEMA
+// ATUALIZAR INDICADORES E SELEÇÕES
+
 function atualizarSistema() {
     document.getElementById("totalLivros").textContent = livros.length;
 
@@ -307,8 +353,6 @@ function atualizarSistema() {
 
     document.getElementById("emprestados").textContent =
         livros.filter(l => !l.disponivel).length;
-
-    document.getElementById("totalAlunos").textContent = alunos.length;
 
     const selectLivro = document.getElementById("livroEmprestimo");
     const selectAluno = document.getElementById("alunoEmprestimo");
@@ -336,14 +380,20 @@ function atualizarSistema() {
 }
 
 // PESQUISA
-document.getElementById("pesquisaLivro").addEventListener("input", function() {
-    mostrarLivros(this.value);
-});
 
-// EVENTOS
+document.getElementById("pesquisaLivro").addEventListener(
+    "input",
+    function() {
+        mostrarLivros(this.value);
+    }
+);
+
+// EVENTOS DOS FORMULÁRIOS
+
 formLivro.addEventListener("submit", cadastrarLivro);
 formAluno.addEventListener("submit", cadastrarAluno);
 formEmprestimo.addEventListener("submit", registrarEmprestimo);
 
-// INICIAR
+// INICIAR SISTEMA
+
 atualizarSistema();
