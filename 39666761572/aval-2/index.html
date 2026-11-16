@@ -8,304 +8,89 @@
   <style>body{margin:0;background:#0d1117}pre{margin:0}code.hljs{padding:1.5rem;min-height:100vh;box-sizing:border-box}</style>
 </head>
 <body>
-  <pre><code class="language-javascript">
-let produtos = JSON.parse(
-    localStorage.getItem("produtosEstoque")
-) || [];
-
-let proximoCodigo = Number(
-    localStorage.getItem("proximoCodigo")
-) || 1;
-
-// Salvar os dados
-function salvarDados() {
-    localStorage.setItem(
-        "produtosEstoque",
-        JSON.stringify(produtos)
-    );
-
-    localStorage.setItem(
-        "proximoCodigo",
-        proximoCodigo
-    );
-}
-
-// Validar produto
-function validarProduto(descricao, quantidade, valor) {
-
-    if (descricao.trim().length &lt; 5) {
-        throw new Error(
-            "A descrição deve ter no mínimo cinco caracteres."
-        );
-    }
-
-    if (!Number.isInteger(quantidade) || quantidade &lt; 1) {
-        throw new Error(
-            "A quantidade deve ser maior que zero."
-        );
-    }
-
-    if (!Number.isFinite(valor) || valor &lt; 0) {
-        throw new Error(
-            "O valor deve ser maior ou igual a zero."
-        );
-    }
-}
-
-// Cadastrar produto
-function cadastrarProduto(descricao, quantidade, valor) {
-
-    validarProduto(descricao, quantidade, valor);
-
-    let novoProduto = {
-        codigo: proximoCodigo++,
-        descricao: descricao.trim(),
-        quantidade: quantidade,
-        valor: valor
-    };
-
-    produtos.push(novoProduto);
-
-    salvarDados();
-    listarProdutos();
-}
-
-// Listar produtos
-function listarProdutos(filtro = "") {
-
-    let lista = document.getElementById("listaProdutos");
-
-    let filtrados = produtos.filter(produto =&gt;
-        produto.descricao.toLowerCase().includes(
-            filtro.toLowerCase()
-        )
-    );
-
-    lista.innerHTML = "";
-
-    if (filtrados.length === 0) {
-        lista.innerHTML = `
-            &lt;tr&gt;
-                &lt;td colspan="6"&gt;
-                    Nenhum produto encontrado.
-                &lt;/td&gt;
-            &lt;/tr&gt;
-        `;
-    }
-
-    filtrados.forEach(produto =&gt; {
-
-        let linha = document.createElement("tr");
-
-        let codigo = document.createElement("td");
-        codigo.textContent = produto.codigo;
-
-        let descricao = document.createElement("td");
-        descricao.textContent = produto.descricao;
-
-        let quantidade = document.createElement("td");
-        quantidade.textContent = produto.quantidade;
-
-        let valor = document.createElement("td");
-        valor.textContent = formatarMoeda(produto.valor);
-
-        let subtotal = document.createElement("td");
-        subtotal.textContent = formatarMoeda(
-            produto.quantidade * produto.valor
-        );
-
-        let acoes = document.createElement("td");
-
-        let botaoValor = document.createElement("button");
-        botaoValor.textContent = "Alterar valor";
-        botaoValor.onclick = () =&gt; alterarValor(produto.codigo);
-
-        let botaoQuantidade = document.createElement("button");
-        botaoQuantidade.textContent = "Entrada";
-        botaoQuantidade.onclick = () =&gt; atualizarQuantidade(produto.codigo);
-
-        let botaoExcluir = document.createElement("button");
-        botaoExcluir.textContent = "Excluir";
-        botaoExcluir.onclick = () =&gt; excluirProduto(produto.codigo);
-
-        acoes.append(
-            botaoValor,
-            botaoQuantidade,
-            botaoExcluir
-        );
-
-        linha.append(
-            codigo,
-            descricao,
-            quantidade,
-            valor,
-            subtotal,
-            acoes
-        );
-
-        lista.appendChild(linha);
-    });
-
-    atualizarResumo();
-}
-
-// Buscar produto pelo código
-function buscarProdutoPorCodigo(codigo) {
-    return produtos.find(
-        produto =&gt; produto.codigo === codigo
-    );
-}
-
-// Atualizar valor
-function atualizarValor(codigoProduto, novoValor) {
-
-    if (!Number.isFinite(novoValor) || novoValor &lt; 0) {
-        throw new Error("Valor inválido.");
-    }
-
-    let produto = buscarProdutoPorCodigo(codigoProduto);
-
-    if (produto) {
-        produto.valor = novoValor;
-        salvarDados();
-        listarProdutos(document.getElementById("busca").value);
-    } else {
-        throw new Error("Produto não encontrado.");
-    }
-}
-
-// Alterar valor pelo botão
-function alterarValor(codigo) {
-
-    let produto = buscarProdutoPorCodigo(codigo);
-
-    let novoValor = prompt("Digite o novo valor:");
-
-    if (novoValor === null || novoValor.trim() === "") return;
-
-    try {
-        atualizarValor(codigo, Number(novoValor.replace(",", ".")));
-    } catch (erro) {
-        alert(erro.message);
-    }
-}
-
-// Atualizar quantidade
-function atualizarQuantidade(codigoProduto) {
-
-    let quantidade = prompt("Quantas unidades deseja adicionar?");
-
-    if (quantidade === null || quantidade.trim() === "") return;
-
-    let novaQuantidade = Number(quantidade);
-
-    if (!Number.isInteger(novaQuantidade) || novaQuantidade &lt; 1) {
-        alert("Digite uma quantidade inteira maior que zero.");
-        return;
-    }
-
-    let produto = buscarProdutoPorCodigo(codigoProduto);
-
-    if (produto) {
-        produto.quantidade += novaQuantidade;
-
-        salvarDados();
-        listarProdutos(document.getElementById("busca").value);
-    } else {
-        alert("Produto não encontrado.");
-    }
-}
-
-// Excluir produto
-function excluirProduto(codigo) {
-
-    let confirmar = confirm("Deseja excluir este produto?");
-
-    if (!confirmar) return;
-
-    produtos = produtos.filter(
-        produto =&gt; produto.codigo !== codigo
-    );
-
-    salvarDados();
-    listarProdutos(document.getElementById("busca").value);
-}
-
-// Resumo do estoque
-function atualizarResumo() {
-
-    document.getElementById("totalProdutos").textContent =
-        produtos.length;
-
-    let unidades = produtos.reduce(
-        (total, produto) =&gt; total + produto.quantidade,
-        0
-    );
-
-    document.getElementById("totalUnidades").textContent =
-        unidades;
-
-    let valorTotal = produtos.reduce(
-        (total, produto) =&gt;
-            total + produto.quantidade * produto.valor,
-        0
-    );
-
-    document.getElementById("valorEstoque").textContent =
-        formatarMoeda(valorTotal);
-}
-
-// Formatar dinheiro
-function formatarMoeda(valor) {
-    return valor.toLocaleString("pt-BR", {
-        style: "currency",
-        currency: "BRL"
-    });
-}
-
-// Evento de cadastro
-document.getElementById("formProduto").addEventListener(
-    "submit",
-    function(evento) {
-
-        evento.preventDefault();
-
-        let descricao =
-            document.getElementById("descricao").value;
-
-        let quantidade =
-            Number(document.getElementById("quantidade").value);
-
-        let valor =
-            Number(document.getElementById("valor").value);
-
-        try {
-            cadastrarProduto(descricao, quantidade, valor);
-
-            this.reset();
-
-            document.getElementById("mensagem").textContent =
-                "Produto cadastrado com sucesso!";
-
-        } catch (erro) {
-
-            document.getElementById("mensagem").textContent =
-                erro.message;
-        }
-    }
-);
-
-// Pesquisa de produtos
-document.getElementById("busca").addEventListener(
-    "input",
-    function() {
-        listarProdutos(this.value);
-    }
-);
-
-// Iniciar sistema
-listarProdutos();
-</code></pre>
+  <pre><code class="language-javascript">&lt;!DOCTYPE html&gt;
+&lt;html lang="pt-BR"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+  &lt;title&gt;Gerenciador de Tarefas&lt;/title&gt;
+  &lt;link rel="stylesheet" href="style.css"&gt;
+  &lt;script src="script.js" defer&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;main class="container"&gt;
+    &lt;header class="topo"&gt;
+      &lt;div&gt;
+        &lt;p class="subtitulo"&gt;ORGANIZE SUA ROTINA&lt;/p&gt;
+        &lt;h1&gt;Gerenciador de Tarefas&lt;/h1&gt;
+        &lt;p class="descricao"&gt;Cadastre, consulte e acompanhe suas tarefas.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="icone-topo"&gt;✓&lt;/div&gt;
+    &lt;/header&gt;
+
+    &lt;section class="painel"&gt;
+      &lt;h2&gt;Nova tarefa&lt;/h2&gt;
+      &lt;form id="formTarefa" class="formulario"&gt;
+        &lt;div class="campo campo-titulo"&gt;
+          &lt;label for="titulo"&gt;Título da tarefa&lt;/label&gt;
+          &lt;input id="titulo" type="text" placeholder="Ex.: Estudar JavaScript" minlength="5" required&gt;
+          &lt;small&gt;O título deve ter pelo menos 5 caracteres.&lt;/small&gt;
+        &lt;/div&gt;
+        &lt;div class="campo"&gt;
+          &lt;label for="prioridade"&gt;Prioridade&lt;/label&gt;
+          &lt;select id="prioridade" required&gt;
+            &lt;option value="1"&gt;1 - Alta&lt;/option&gt;
+            &lt;option value="2" selected&gt;2 - Média&lt;/option&gt;
+            &lt;option value="3"&gt;3 - Baixa&lt;/option&gt;
+          &lt;/select&gt;
+        &lt;/div&gt;
+        &lt;button class="botao botao-principal" type="submit"&gt;+ Cadastrar tarefa&lt;/button&gt;
+      &lt;/form&gt;
+      &lt;p id="mensagem" class="mensagem" role="status" aria-live="polite"&gt;&lt;/p&gt;
+    &lt;/section&gt;
+
+    &lt;section class="resumo"&gt;
+      &lt;article class="resumo-card"&gt;
+        &lt;span class="resumo-icone"&gt;▤&lt;/span&gt;
+        &lt;div&gt;&lt;strong id="totalTarefas"&gt;0&lt;/strong&gt;&lt;span&gt;Total de tarefas&lt;/span&gt;&lt;/div&gt;
+      &lt;/article&gt;
+      &lt;article class="resumo-card"&gt;
+        &lt;span class="resumo-icone pendente"&gt;◷&lt;/span&gt;
+        &lt;div&gt;&lt;strong id="totalPendentes"&gt;0&lt;/strong&gt;&lt;span&gt;Em andamento&lt;/span&gt;&lt;/div&gt;
+      &lt;/article&gt;
+      &lt;article class="resumo-card"&gt;
+        &lt;span class="resumo-icone concluida"&gt;✓&lt;/span&gt;
+        &lt;div&gt;&lt;strong id="totalConcluidas"&gt;0&lt;/strong&gt;&lt;span&gt;Concluídas&lt;/span&gt;&lt;/div&gt;
+      &lt;/article&gt;
+    &lt;/section&gt;
+
+    &lt;section class="painel"&gt;
+      &lt;div class="titulo-lista"&gt;
+        &lt;div&gt;
+          &lt;h2&gt;Minhas tarefas&lt;/h2&gt;
+          &lt;p class="descricao"&gt;Consulte e atualize suas atividades.&lt;/p&gt;
+        &lt;/div&gt;
+        &lt;div class="busca"&gt;
+          &lt;label class="visualmente-oculto" for="codigoBusca"&gt;Buscar por código&lt;/label&gt;
+          &lt;input id="codigoBusca" type="number" min="1" placeholder="Buscar por código"&gt;
+          &lt;button id="buscarBtn" class="botao botao-secundario" type="button"&gt;Buscar&lt;/button&gt;
+          &lt;button id="limparBuscaBtn" class="botao botao-texto" type="button"&gt;Limpar&lt;/button&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+
+      &lt;div id="listaTarefas" class="lista-tarefas"&gt;
+        &lt;div class="vazio"&gt;
+          &lt;span&gt;✦&lt;/span&gt;
+          &lt;strong&gt;Nenhuma tarefa cadastrada&lt;/strong&gt;
+          &lt;p&gt;Cadastre sua primeira tarefa para começar.&lt;/p&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/section&gt;
+
+    &lt;footer&gt;Gerenciador de Tarefas • Projeto desenvolvido com HTML, CSS e JavaScript&lt;/footer&gt;
+  &lt;/main&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
   <script>hljs.highlightAll();</script>
 </body>
