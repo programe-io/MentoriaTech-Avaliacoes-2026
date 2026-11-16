@@ -1,149 +1,165 @@
 
-function publicarPost() {
-    const texto = document.getElementById("textoPost").value.trim();
-    const imagem = document.getElementById("imagemPost").value.trim();
+const botaoPublicar = document.getElementById("publicar");
+const textoPost = document.getElementById("texto-post");
+const imagemPost = document.getElementById("imagem-post");
+const listaPosts = document.getElementById("lista-posts");
+
+// PUBLICAR UMA NOVA POSTAGEM
+
+botaoPublicar.addEventListener("click", function() {
+
+    const texto = textoPost.value.trim();
+    const imagem = imagemPost.value.trim();
 
     if (texto === "") {
-        alert("Escreva alguma coisa antes de publicar!");
+        alert("Digite alguma coisa antes de publicar!");
+        textoPost.focus();
         return;
     }
 
+    // Criar postagem
     const post = document.createElement("article");
-    post.className = "post card";
+    post.className = "post";
 
+    // Cabeçalho
     const cabecalho = document.createElement("div");
     cabecalho.className = "post-header";
-
-    const usuario = document.createElement("div");
-    usuario.className = "user";
 
     const avatar = document.createElement("div");
     avatar.className = "avatar";
     avatar.textContent = "K";
 
-    const informacoes = document.createElement("div");
+    const usuario = document.createElement("div");
+    usuario.className = "user-info";
 
     const nome = document.createElement("strong");
     nome.textContent = "Meu Perfil";
 
-    const data = document.createElement("span");
-    data.textContent = "Agora";
+    const tempo = document.createElement("span");
+    tempo.textContent = "Agora";
 
-    informacoes.append(nome, data);
-    usuario.append(avatar, informacoes);
-    cabecalho.appendChild(usuario);
+    usuario.append(nome, tempo);
+    cabecalho.append(avatar, usuario);
 
-    const mensagem = document.createElement("p");
-    mensagem.className = "post-text";
-    mensagem.textContent = texto;
+    // Texto
+    const paragrafo = document.createElement("p");
+    paragrafo.className = "post-text";
+    paragrafo.textContent = texto;
 
-    post.append(cabecalho, mensagem);
+    post.append(cabecalho, paragrafo);
 
+    // Imagem opcional
     if (imagem !== "") {
-        try {
-            const endereco = new URL(imagem);
 
-            if (endereco.protocol !== "https:" &&
-                endereco.protocol !== "http:") {
+        try {
+            const url = new URL(imagem);
+
+            if (!["http:", "https:"].includes(url.protocol)) {
                 throw new Error("Endereço inválido");
             }
 
             const foto = document.createElement("img");
             foto.className = "post-image";
-            foto.src = endereco.href;
+            foto.src = url.href;
             foto.alt = "Imagem da publicação";
-
             foto.onerror = function() {
                 foto.remove();
                 alert("Não foi possível carregar essa imagem.");
             };
 
             post.appendChild(foto);
-        } catch {
+
+        } catch (erro) {
             alert("Digite um link de imagem válido.");
             return;
         }
     }
 
+    // Botões de ação
     const acoes = document.createElement("div");
     acoes.className = "post-actions";
 
     const curtir = document.createElement("button");
-    curtir.innerHTML = "♥ Curtir <span>0</span>";
-    curtir.onclick = function() {
-        curtirPost(curtir);
-    };
+    curtir.className = "like-button";
+    curtir.innerHTML = "♡ Curtir <span>0</span>";
 
     const comentar = document.createElement("button");
+    comentar.className = "comment-button";
     comentar.textContent = "💬 Comentar";
-    comentar.onclick = function() {
-        mostrarComentario(comentar);
-    };
 
     acoes.append(curtir, comentar);
+    post.appendChild(acoes);
 
+    // Área dos comentários
     const comentarios = document.createElement("div");
-    comentarios.className = "comentarios";
+    comentarios.className = "comments";
 
-    post.append(acoes, comentarios);
+    post.appendChild(comentarios);
 
-    document.getElementById("listaPosts").prepend(post);
+    // Adicionar ao início do feed
+    listaPosts.prepend(post);
 
-    document.getElementById("textoPost").value = "";
-    document.getElementById("imagemPost").value = "";
+    // Limpar campos
+    textoPost.value = "";
+    imagemPost.value = "";
 
     alert("Publicação realizada com sucesso!");
-}
 
-function curtirPost(botao) {
-    const contador = botao.querySelector("span");
-    let quantidade = Number(contador.textContent);
+});
 
-    if (botao.classList.contains("curtiu")) {
-        quantidade--;
-        botao.classList.remove("curtiu");
-    } else {
-        quantidade++;
-        botao.classList.add("curtiu");
-    }
+// CURTIR PUBLICAÇÕES
 
-    contador.textContent = quantidade;
-}
+document.addEventListener("click", function(event) {
 
-function mostrarComentario(botao) {
-    const post = botao.closest(".post");
-    const area = post.querySelector(".comentarios");
+    if (event.target.closest(".like-button")) {
 
-    if (area.querySelector(".comentario-input")) {
-        return;
-    }
+        const botao = event.target.closest(".like-button");
+        const contador = botao.querySelector("span");
 
-    const formulario = document.createElement("div");
-    formulario.className = "comentario-input";
+        let quantidade = Number(contador.textContent);
 
-    const campo = document.createElement("input");
-    campo.type = "text";
-    campo.placeholder = "Escreva um comentário...";
+        if (botao.classList.contains("liked")) {
 
-    const enviar = document.createElement("button");
-    enviar.textContent = "Enviar";
+            quantidade--;
+            botao.classList.remove("liked");
+            botao.firstChild.textContent = "♡ Curtir ";
 
-    enviar.onclick = function() {
-        const texto = campo.value.trim();
+        } else {
 
-        if (texto === "") {
-            alert("Digite um comentário!");
-            return;
+            quantidade++;
+            botao.classList.add("liked");
+            botao.firstChild.textContent = "♥ Curtido ";
+
         }
 
-        const comentario = document.createElement("div");
-        comentario.className = "comentario";
-        comentario.textContent = "Você: " + texto;
+        contador.textContent = quantidade;
+    }
 
-        area.insertBefore(comentario, formulario);
-        campo.value = "";
-    };
+});
 
-    formulario.append(campo, enviar);
-    area.appendChild(formulario);
-}
+// COMENTAR PUBLICAÇÕES
+
+document.addEventListener("click", function(event) {
+
+    if (event.target.closest(".comment-button")) {
+
+        const botao = event.target.closest(".comment-button");
+        const post = botao.closest(".post");
+        const comentarios = post.querySelector(".comments");
+
+        const texto = prompt("Digite seu comentário:");
+
+        if (texto && texto.trim() !== "") {
+
+            const comentario = document.createElement("div");
+            comentario.className = "comment-item";
+
+            comentario.textContent = "Você: " + texto.trim();
+
+            comentarios.appendChild(comentario);
+
+        }
+
+    }
+
+});
