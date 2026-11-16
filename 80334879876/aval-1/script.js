@@ -1,66 +1,56 @@
 
-function adicionarPost() {
-    const titulo = document.getElementById("titulo").value.trim();
-    const categoria = document.getElementById("categoria").value;
-    const descricao = document.getElementById("descricao").value.trim();
+const pesquisa = document.getElementById("pesquisa");
+const posts = document.querySelectorAll(".post");
+const mensagem = document.getElementById("sem-resultados");
 
-    if (titulo === "" || categoria === "" || descricao === "") {
-        alert("Preencha todos os campos!");
-        return;
-    }
+// PESQUISAR PUBLICAÇÕES
 
-    const novoPost = document.createElement("article");
-    novoPost.className = "post";
+pesquisa.addEventListener("input", function() {
 
-    const conteudo = document.createElement("div");
-    conteudo.className = "post-conteudo";
-
-    const nomeCategoria = document.createElement("span");
-    nomeCategoria.className = "categoria";
-    nomeCategoria.textContent = categoria;
-
-    const tituloPost = document.createElement("h3");
-    tituloPost.textContent = titulo;
-
-    const textoPost = document.createElement("p");
-    textoPost.textContent = descricao;
-
-    const data = document.createElement("small");
-    data.textContent = "Publicado em " +
-        new Date().toLocaleDateString("pt-BR");
-
-    conteudo.append(nomeCategoria, tituloPost, textoPost, data);
-    novoPost.appendChild(conteudo);
-
-    document.getElementById("listaPosts").prepend(novoPost);
-
-    document.getElementById("titulo").value = "";
-    document.getElementById("categoria").value = "";
-    document.getElementById("descricao").value = "";
-
-    document.getElementById("mensagemVazia").hidden = true;
-
-    alert("Publicação adicionada com sucesso!");
-}
-
-function pesquisarPosts() {
-    const pesquisa = document.getElementById("pesquisa")
-        .value.toLowerCase().trim();
-
-    const posts = document.querySelectorAll("#listaPosts .post");
+    const texto = pesquisa.value.toLowerCase();
     let encontrados = 0;
 
-    posts.forEach(post => {
-        const texto = post.textContent.toLowerCase();
+    posts.forEach(function(post) {
 
-        if (texto.includes(pesquisa)) {
-            post.style.display = "";
+        const conteudo = post.innerText.toLowerCase();
+
+        if (conteudo.includes(texto)) {
+            post.style.display = "block";
             encontrados++;
         } else {
             post.style.display = "none";
         }
+
     });
 
-    document.getElementById("mensagemVazia").hidden =
-        encontrados > 0;
-}
+    mensagem.hidden = encontrados !== 0;
+
+});
+
+// CURTIR PUBLICAÇÕES
+
+const botoesCurtir = document.querySelectorAll(".curtir");
+
+botoesCurtir.forEach(function(botao) {
+
+    let curtido = false;
+    let quantidade = 0;
+
+    botao.addEventListener("click", function() {
+
+        if (!curtido) {
+            quantidade++;
+            botao.firstChild.textContent = "♥ Curtido ";
+            curtido = true;
+
+        } else {
+            quantidade--;
+            botao.firstChild.textContent = "♡ Curtir ";
+            curtido = false;
+        }
+
+        botao.querySelector("span").textContent = quantidade;
+
+    });
+
+});
