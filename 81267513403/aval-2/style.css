@@ -1,0 +1,281 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Insta Verso</title>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial;background:#fafafa;color:#262626;padding-bottom:70px}
+header{height:60px;background:white;border-bottom:1px solid #ddd;display:flex;align-items:center;justify-content:space-between;padding:0 18px;position:sticky;top:0;z-index:5}
+.logo{font-size:28px;font-family:cursive;font-weight:bold}
+.header-icons{display:flex;gap:20px;font-size:25px}
+button{cursor:pointer}
+.stories{display:flex;overflow-x:auto;gap:15px;background:white;padding:16px 10px}
+.story{text-align:center;min-width:68px;font-size:12px}
+.story img{width:65px;height:65px;border-radius:50%;padding:3px;border:3px solid #e1306c;object-fit:cover}
+.post{background:white;max-width:550px;margin:12px auto;border-bottom:1px solid #ddd}
+.post-header{display:flex;align-items:center;justify-content:space-between;padding:12px}
+.profile{display:flex;align-items:center;gap:10px}
+.profile img{width:40px;height:40px;border-radius:50%;object-fit:cover}
+.username{font-weight:bold;font-size:14px}
+.location{font-size:11px;color:gray;margin-top:3px}
+.post-photo{width:100%;display:block;max-height:650px;object-fit:cover}
+.actions{display:flex;justify-content:space-between;padding:10px 13px}
+.actions-left{display:flex;gap:17px}
+.actions button,.save{border:0;background:none;font-size:27px}
+.likes,.caption,.comments{padding:4px 13px;font-size:14px}
+.caption{padding-bottom:10px}
+.comments{color:#888}
+.comment-box{display:flex;padding:12px;border-top:1px solid #eee}
+.comment-box input{flex:1;border:0;outline:none}
+.comment-box button{border:0;background:none;color:#0095f6;font-weight:bold}
+nav{position:fixed;bottom:0;background:white;width:100%;height:60px;border-top:1px solid #ddd;display:flex;align-items:center;justify-content:space-around;z-index:10}
+nav button{border:0;background:none;font-size:25px}
+nav img{width:28px;height:28px;border-radius:50%}
+#profilePage,#explorePage,#messagesPage{display:none;max-width:550px;margin:auto;padding:20px}
+.profile-top{display:flex;align-items:center;gap:25px}
+.profile-top img{width:90px;height:90px;border-radius:50%}
+.stats{display:flex;justify-content:space-around;text-align:center;margin:25px 0}
+.follow{background:#0095f6;color:white;border:0;border-radius:7px;padding:9px 20px;margin-top:10px}
+#profileGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;margin-top:15px}
+#profileGrid img{width:100%;aspect-ratio:1;object-fit:cover}
+.explore-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:5px}
+.explore-grid img{width:100%;aspect-ratio:1;object-fit:cover}
+@media(min-width:700px){.post{border:1px solid #ddd;border-radius:8px;overflow:hidden}}
+</style>
+</head>
+
+<body>
+
+<header>
+ <div class="logo">Insta Verso</div>
+  <div class="header-icons">
+    <span onclick="newPost()">＋</span>
+      <span onclick="showMessages()">➤</span>
+       </div>
+       </header>
+
+       <section class="stories" id="stories">
+        <div class="story"><img src="https://i.pravatar.cc/100?img=12"><p>Seu story</p></div>
+         <div class="story"><img src="https://i.pravatar.cc/100?img=5"><p>mariana</p></div>
+          <div class="story"><img src="https://i.pravatar.cc/100?img=8"><p>pedro</p></div>
+           <div class="story"><img src="https://i.pravatar.cc/100?img=15"><p>ana.ofc</p></div>
+            <div class="story"><img src="https://i.pravatar.cc/100?img=20"><p>lucas</p></div>
+             <div class="story"><img src="https://i.pravatar.cc/100?img=25"><p>sofia</p></div>
+             </section>
+
+             <main id="feed">
+
+             <div class="post">
+              <div class="post-header">
+                <div class="profile">
+                   <img src="https://i.pravatar.cc/100?img=12">
+                      <div><div class="username">insta_verso</div><div class="location">Brasil 🇧🇷</div></div>
+                        </div>•••
+                         </div>
+                          <img class="post-photo" src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=900">
+                           <div class="actions">
+                             <div class="actions-left">
+                                <button onclick="like(this)">♡</button>
+                                   <button onclick="focusComment(this)">💬</button>
+                                      <button onclick="sharePost(this)">➤</button>
+                                        </div>
+                                          <button class="save" onclick="savePost(this)">♧</button>
+                                           </div>
+                                            <div class="likes"><b class="count">1245</b> curtidas</div>
+                                             <div class="caption"><b>insta_verso</b> Vivendo cada momento! 🔥❤️</div>
+                                              <div class="comments">Ver todos os comentários</div>
+                                               <div class="comment-box"><input placeholder="Adicione um comentário..."><button onclick="sendComment(this)">Publicar</button></div>
+                                               </div>
+
+                                               <div class="post">
+                                                <div class="post-header">
+                                                  <div class="profile">
+                                                     <img src="https://i.pravatar.cc/100?img=8">
+                                                        <div><div class="username">mariana.ofc</div><div class="location">Praia 🌊</div></div>
+                                                          </div>•••
+                                                           </div>
+                                                            <img class="post-photo" src="https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=900">
+                                                             <div class="actions">
+                                                               <div class="actions-left">
+                                                                  <button onclick="like(this)">♡</button>
+                                                                     <button onclick="focusComment(this)">💬</button>
+                                                                        <button onclick="sharePost(this)">➤</button>
+                                                                          </div>
+                                                                            <button class="save" onclick="savePost(this)">♧</button>
+                                                                             </div>
+                                                                              <div class="likes"><b class="count">853</b> curtidas</div>
+                                                                               <div class="caption"><b>mariana.ofc</b> Que lugar perfeito! ❤️</div>
+                                                                                <div class="comments">Ver todos os comentários</div>
+                                                                                 <div class="comment-box"><input placeholder="Adicione um comentário..."><button onclick="sendComment(this)">Publicar</button></div>
+                                                                                 </div>
+
+                                                                                 </main>
+
+                                                                                 <section id="profilePage">
+                                                                                  <div class="profile-top">
+                                                                                    <img src="https://i.pravatar.cc/200?img=12">
+                                                                                      <div>
+                                                                                         <h3>insta_verso</h3>
+                                                                                            <p>Meu espaço na internet 😎</p>
+                                                                                               <button class="follow" onclick="editProfile()">Editar perfil</button>
+                                                                                                 </div>
+                                                                                                  </div>
+                                                                                                   <div class="stats">
+                                                                                                     <div><b id="postCount">2</b><br>Publicações</div>
+                                                                                                       <div><b>1.5 mil</b><br>Seguidores</div>
+                                                                                                         <div><b>850</b><br>Seguindo</div>
+                                                                                                          </div>
+                                                                                                           <hr>
+                                                                                                            <h3 style="margin-top:20px">Publicações</h3>
+                                                                                                             <div id="profileGrid"></div>
+                                                                                                             </section>
+
+                                                                                                             <section id="explorePage">
+                                                                                                              <h2>Explorar 🔎</h2>
+                                                                                                               <div class="explore-grid">
+                                                                                                                 <img src="https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=500">
+                                                                                                                   <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=500">
+                                                                                                                     <img src="https://images.unsplash.com/photo-1519608487953-e999c86e7455?w=500">
+                                                                                                                       <img src="https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=500">
+                                                                                                                        </div>
+                                                                                                                        </section>
+
+                                                                                                                        <section id="messagesPage">
+                                                                                                                         <h2>Mensagens</h2>
+                                                                                                                          <p style="margin-top:15px">📩 Você não tem novas mensagens.</p>
+                                                                                                                          </section>
+
+                                                                                                                          <input type="file" id="fileInput" accept="image/*" hidden>
+
+                                                                                                                          <nav>
+                                                                                                                           <button onclick="showHome()">⌂</button>
+                                                                                                                            <button onclick="showPage('explorePage')">⌕</button>
+                                                                                                                             <button onclick="newPost()">＋</button>
+                                                                                                                              <button onclick="showMessages()">➤</button>
+                                                                                                                               <button onclick="showPage('profilePage')"><img src="https://i.pravatar.cc/100?img=12"></button>
+                                                                                                                               </nav>
+
+                                                                                                                               <script>
+                                                                                                                               function like(button){
+                                                                                                                                const post=button.closest(".post");
+                                                                                                                                 const count=post.querySelector(".count");
+                                                                                                                                  let liked=button.dataset.liked==="true";
+                                                                                                                                   let number=Number(count.innerText);
+                                                                                                                                    count.innerText=liked?number-1:number+1;
+                                                                                                                                     button.innerText=liked?"♡":"❤️";
+                                                                                                                                      button.dataset.liked=String(!liked);
+                                                                                                                                      }
+
+                                                                                                                                      function focusComment(button){
+                                                                                                                                       button.closest(".post").querySelector("input").focus();
+                                                                                                                                       }
+
+                                                                                                                                       function sendComment(button){
+                                                                                                                                        const input=button.previousElementSibling;
+                                                                                                                                         const value=input.value.trim();
+                                                                                                                                          if(!value)return;
+                                                                                                                                           const comments=button.closest(".post").querySelector(".comments");
+                                                                                                                                            const p=document.createElement("p");
+                                                                                                                                             p.innerText="insta_verso: "+value;
+                                                                                                                                              comments.appendChild(p);
+                                                                                                                                               input.value="";
+                                                                                                                                               }
+
+                                                                                                                                               function savePost(button){
+                                                                                                                                                const saved=button.dataset.saved==="true";
+                                                                                                                                                 button.innerText=saved?"♧":"🔖";
+                                                                                                                                                  button.dataset.saved=String(!saved);
+                                                                                                                                                   alert(saved?"Publicação removida dos salvos":"Publicação salva!");
+                                                                                                                                                   }
+
+                                                                                                                                                   function sharePost(){
+                                                                                                                                                    alert("Compartilhamento de demonstração!");
+                                                                                                                                                    }
+
+                                                                                                                                                    function showHome(){
+                                                                                                                                                     showPage("feed");
+                                                                                                                                                      document.getElementById("stories").style.display="flex";
+                                                                                                                                                      }
+
+                                                                                                                                                      function showMessages(){
+                                                                                                                                                       showPage("messagesPage");
+                                                                                                                                                       }
+
+                                                                                                                                                       function showPage(id){
+                                                                                                                                                        ["feed","profilePage","explorePage","messagesPage"].forEach(page=>{
+                                                                                                                                                          document.getElementById(page).style.display=page===id?(id==="feed"?"block":"block"):"none";
+                                                                                                                                                           });
+                                                                                                                                                            document.getElementById("stories").style.display=id==="feed"?"flex":"none";
+                                                                                                                                                            }
+
+                                                                                                                                                            function editProfile(){
+                                                                                                                                                             const name=prompt("Digite o novo nome de usuário:");
+                                                                                                                                                              if(name && name.trim()){
+                                                                                                                                                                document.querySelector("#profilePage h3").innerText=name.trim();
+                                                                                                                                                                  document.querySelectorAll(".username").forEach(el=>{
+                                                                                                                                                                     if(el.innerText==="insta_verso")el.innerText=name.trim();
+                                                                                                                                                                       });
+                                                                                                                                                                        }
+                                                                                                                                                                        }
+
+                                                                                                                                                                        function newPost(){
+                                                                                                                                                                         document.getElementById("fileInput").click();
+                                                                                                                                                                         }
+
+                                                                                                                                                                         document.getElementById("fileInput").addEventListener("change",function(){
+                                                                                                                                                                          const file=this.files[0];
+                                                                                                                                                                           if(!file)return;
+                                                                                                                                                                            const url=URL.createObjectURL(file);
+                                                                                                                                                                             const post=document.createElement("div");
+                                                                                                                                                                              post.className="post";
+
+                                                                                                                                                                               const header=document.createElement("div");
+                                                                                                                                                                                header.className="post-header";
+                                                                                                                                                                                 header.innerHTML='<div class="profile"><img src="https://i.pravatar.cc/100?img=12"><b>insta_verso</b></div>';
+
+                                                                                                                                                                                  const img=document.createElement("img");
+                                                                                                                                                                                   img.className="post-photo";
+                                                                                                                                                                                    img.src=url;
+
+                                                                                                                                                                                     const actions=document.createElement("div");
+                                                                                                                                                                                      actions.className="actions";
+                                                                                                                                                                                       actions.innerHTML='<div class="actions-left"><button onclick="like(this)">♡</button><button onclick="focusComment(this)">💬</button><button onclick="sharePost()">➤</button></div><button class="save" onclick="savePost(this)">♧</button>';
+
+                                                                                                                                                                                        const likes=document.createElement("div");
+                                                                                                                                                                                         likes.className="likes";
+                                                                                                                                                                                          likes.innerHTML='<b class="count">0</b> curtidas';
+
+                                                                                                                                                                                           const caption=document.createElement("div");
+                                                                                                                                                                                            caption.className="caption";
+                                                                                                                                                                                             caption.innerText="insta_verso Nova publicação! ❤️";
+
+                                                                                                                                                                                              const comments=document.createElement("div");
+                                                                                                                                                                                               comments.className="comments";
+                                                                                                                                                                                                comments.innerText="Comentários";
+
+                                                                                                                                                                                                 const box=document.createElement("div");
+                                                                                                                                                                                                  box.className="comment-box";
+                                                                                                                                                                                                   box.innerHTML='<input placeholder="Adicione um comentário..."><button onclick="sendComment(this)">Publicar</button>';
+
+                                                                                                                                                                                                    post.append(header,img,actions,likes,caption,comments,box);
+                                                                                                                                                                                                     document.getElementById("feed").prepend(post);
+
+                                                                                                                                                                                                      const gridImg=document.createElement("img");
+                                                                                                                                                                                                       gridImg.src=url;
+                                                                                                                                                                                                        document.getElementById("profileGrid").prepend(gridImg);
+
+                                                                                                                                                                                                         document.getElementById("postCount").innerText=
+                                                                                                                                                                                                          Number(document.getElementById("postCount").innerText)+1;
+
+                                                                                                                                                                                                           showHome();
+                                                                                                                                                                                                            this.value="";
+                                                                                                                                                                                                            });
+                                                                                                                                                                                                            </script>
+
+                                                                                                                                                                                                            </body>
+                                                                                                                                                                                                            </html>
+                                                                                                                                                                                                            
