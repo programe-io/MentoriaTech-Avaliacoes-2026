@@ -2,21 +2,21 @@
 const menuToggle = document.getElementById("menuToggle");
 const mainNav = document.getElementById("mainNav");
 
-// Abrir e fechar menu
+// Abrir e fechar o menu
 menuToggle.addEventListener("click", () => {
 
-  const isOpen = mainNav.classList.toggle("open");
+  const opened = mainNav.classList.toggle("open");
 
     menuToggle.setAttribute(
         "aria-expanded",
-            String(isOpen)
+            String(opened)
               );
 
-                menuToggle.textContent = isOpen ? "✕" : "☰";
+                menuToggle.textContent = opened ? "✕" : "☰";
 
                 });
 
-                // Fechar menu ao clicar em um link
+                // Fechar o menu ao clicar em um link
                 mainNav.querySelectorAll("a").forEach((link) => {
 
                   link.addEventListener("click", () => {
