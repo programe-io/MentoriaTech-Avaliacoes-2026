@@ -1,47 +1,55 @@
 
-function adicionarPost() {
-    const titulo = document.getElementById("titulo").value.trim();
-    const categoria = document.getElementById("categoria").value;
-    const descricao = document.getElementById("descricao").value.trim();
+const pesquisa = document.getElementById("pesquisa");
+const posts = document.querySelectorAll(".post");
+const mensagem = document.getElementById("sem-resultados");
 
-    if (!titulo || !categoria || !descricao) {
-        alert("Preencha todos os campos!");
-        return;
-    }
+// PESQUISAR POSTS
 
-    const artigo = document.createElement("article");
-    artigo.className = "post";
+pesquisa.addEventListener("input", function() {
 
-    const conteudo = document.createElement("div");
-    conteudo.className = "post-info";
+    const texto = pesquisa.value.toLowerCase();
+    let encontrados = 0;
 
-    const categoriaTexto = document.createElement("span");
-    categoriaTexto.textContent = categoria;
+    posts.forEach(function(post) {
 
-    const tituloTexto = document.createElement("h3");
-    tituloTexto.textContent = titulo;
+        const conteudo = post.innerText.toLowerCase();
 
-    const descricaoTexto = document.createElement("p");
-    descricaoTexto.textContent = descricao;
+        if (conteudo.includes(texto)) {
+            post.style.display = "";
+            encontrados++;
+        } else {
+            post.style.display = "none";
+        }
 
-    const data = document.createElement("small");
-    data.textContent = "Publicado em " +
-        new Date().toLocaleDateString("pt-BR");
+    });
 
-    conteudo.append(
-        categoriaTexto,
-        tituloTexto,
-        descricaoTexto,
-        data
-    );
+    mensagem.hidden = encontrados !== 0;
 
-    artigo.appendChild(conteudo);
+});
 
-    document.querySelector(".posts").prepend(artigo);
+// CURTIR POSTS
 
-    document.getElementById("titulo").value = "";
-    document.getElementById("categoria").value = "";
-    document.getElementById("descricao").value = "";
+document.querySelectorAll(".curtir").forEach(function(botao) {
 
-    alert("Artigo publicado com sucesso!");
-}
+    let curtido = false;
+    let quantidade = 0;
+
+    botao.addEventListener("click", function() {
+
+        const contador = botao.querySelector("span");
+
+        if (!curtido) {
+            quantidade++;
+            botao.firstChild.textContent = "♥ Curtido ";
+            curtido = true;
+        } else {
+            quantidade--;
+            botao.firstChild.textContent = "♡ Curtir ";
+            curtido = false;
+        }
+
+        contador.textContent = quantidade;
+
+    });
+
+});
