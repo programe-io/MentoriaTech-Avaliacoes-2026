@@ -1,0 +1,396 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Doce Encanto | Loja de Bolos</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background: #fff8f3;
+    color: #4a2929;
+}
+
+header {
+    background: #8b3e50;
+    color: white;
+    padding: 20px 8%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.logo {
+    font-size: 26px;
+    font-weight: bold;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    margin-left: 20px;
+}
+
+nav a:hover {
+    color: #ffd6d6;
+}
+
+.hero {
+    min-height: 400px;
+    background: linear-gradient(
+        rgba(0,0,0,.35),
+        rgba(0,0,0,.35)
+    ), url("https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=1400")
+    center/cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: white;
+    padding: 30px;
+}
+
+.hero h1 {
+    font-size: 48px;
+    margin-bottom: 15px;
+}
+
+.hero p {
+    font-size: 20px;
+    margin-bottom: 25px;
+}
+
+.btn {
+    background: #d66b82;
+    color: white;
+    border: none;
+    padding: 13px 25px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 16px;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn:hover {
+    background: #a9435d;
+}
+
+section {
+    padding: 55px 8%;
+}
+
+.titulo {
+    text-align: center;
+    font-size: 32px;
+    margin-bottom: 35px;
+    color: #8b3e50;
+}
+
+.produtos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 25px;
+}
+
+.card {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px #00000015;
+    text-align: center;
+    transition: .3s;
+}
+
+.card:hover {
+    transform: translateY(-6px);
+}
+
+.card img {
+    width: 100%;
+    height: 210px;
+    object-fit: cover;
+}
+
+.card h3 {
+    margin: 15px 0 8px;
+}
+
+.card p {
+    color: #777;
+    padding: 0 12px;
+}
+
+.preco {
+    color: #a9435d;
+    font-size: 21px;
+    font-weight: bold;
+    margin: 15px;
+}
+
+.card button {
+    margin-bottom: 20px;
+}
+
+.carrinho {
+    background: #fce9e9;
+    border-radius: 15px;
+    padding: 25px;
+    max-width: 700px;
+    margin: auto;
+}
+
+.item-carrinho {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 12px 0;
+    border-bottom: 1px solid #e5caca;
+}
+
+.remover {
+    background: #b83b50;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.total {
+    text-align: right;
+    font-size: 23px;
+    font-weight: bold;
+    margin: 20px 0;
+}
+
+footer {
+    background: #8b3e50;
+    color: white;
+    text-align: center;
+    padding: 25px;
+}
+
+@media(max-width: 600px) {
+    header {
+        justify-content: center;
+        gap: 15px;
+    }
+
+    nav a {
+        margin: 0 7px;
+        font-size: 14px;
+    }
+
+    .hero h1 {
+        font-size: 32px;
+    }
+
+    .hero p {
+        font-size: 16px;
+    }
+}
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+<header>
+    <div class="logo">🍰 Doce Encanto</div>
+
+    <nav>
+        <a href="#inicio">Início</a>
+        <a href="#bolos">Bolos</a>
+        <a href="#carrinho">Carrinho 🛒</a>
+    </nav>
+</header>
+
+<section class="hero" id="inicio">
+    <div>
+        <h1>O sabor que encanta!</h1>
+        <p>Bolos deliciosos feitos com amor para você.</p>
+        <a href="#bolos" class="btn">Ver nossos bolos</a>
+    </div>
+</section>
+
+<section id="bolos">
+    <h2 class="titulo">Nossos Bolos 🍓</h2>
+
+    <div class="produtos" id="listaProdutos"></div>
+</section>
+
+<section id="carrinho">
+    <h2 class="titulo">🛒 Meu Carrinho</h2>
+
+    <div class="carrinho">
+        <div id="itensCarrinho">
+            Seu carrinho está vazio.
+        </div>
+
+        <div class="total" id="total">
+            Total: R$ 0,00
+        </div>
+
+        <button class="btn" onclick="finalizarPedido()">
+            Finalizar pelo WhatsApp
+        </button>
+    </div>
+</section>
+
+<footer>
+    <p>🍰 Doce Encanto - Bolos feitos com amor!</p>
+    <p>© 2026 - Todos os direitos reservados.</p>
+</footer>
+
+<script>
+const produtos = [
+    {
+        id: 1,
+        nome: "Bolo de Chocolate",
+        descricao: "Massa fofinha com cobertura de chocolate.",
+        preco: 55.00,
+        imagem: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=500"
+    },
+    {
+        id: 2,
+        nome: "Bolo de Morango",
+        descricao: "Delicioso bolo com creme e morangos.",
+        preco: 65.00,
+        imagem: "https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=500"
+    },
+    {
+        id: 3,
+        nome: "Bolo Red Velvet",
+        descricao: "Massa vermelha com recheio cremoso.",
+        preco: 75.00,
+        imagem: "https://images.unsplash.com/photo-1586788680434-30d324b2d46f?w=500"
+    },
+    {
+        id: 4,
+        nome: "Bolo de Cenoura",
+        descricao: "Bolo caseiro com cobertura de chocolate.",
+        preco: 40.00,
+        imagem: "https://images.unsplash.com/photo-1621303837174-89787a7d4729?w=500"
+    }
+];
+
+let carrinho = [];
+
+function formatarPreco(valor) {
+    return valor.toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL"
+    });
+}
+
+function mostrarProdutos() {
+    const lista = document.getElementById("listaProdutos");
+
+    lista.innerHTML = produtos.map(produto => `
+        <div class="card">
+            <img src="${produto.imagem}" alt="${produto.nome}">
+            <h3>${produto.nome}</h3>
+            <p>${produto.descricao}</p>
+            <div class="preco">${formatarPreco(produto.preco)}</div>
+            <button class="btn" onclick="adicionarCarrinho(${produto.id})">
+                Adicionar ao carrinho
+            </button>
+        </div>
+    `).join("");
+}
+
+function adicionarCarrinho(id) {
+    const produto = produtos.find(p => p.id === id);
+    const item = carrinho.find(p => p.id === id);
+
+    if (item) {
+        item.quantidade++;
+    } else {
+        carrinho.push({
+            ...produto,
+            quantidade: 1
+        });
+    }
+
+    atualizarCarrinho();
+}
+
+function removerCarrinho(id) {
+    carrinho = carrinho.filter(p => p.id !== id);
+    atualizarCarrinho();
+}
+
+function atualizarCarrinho() {
+    const lista = document.getElementById("itensCarrinho");
+    const totalElemento = document.getElementById("total");
+
+    if (carrinho.length === 0) {
+        lista.innerHTML = "Seu carrinho está vazio.";
+    } else {
+        lista.innerHTML = carrinho.map(item => `
+            <div class="item-carrinho">
+                <span>
+                    ${item.nome} (${item.quantidade}x)
+                    - ${formatarPreco(item.preco * item.quantidade)}
+                </span>
+                <button class="remover"
+                    onclick="removerCarrinho(${item.id})">
+                    Remover
+                </button>
+            </div>
+        `).join("");
+    }
+
+    const total = carrinho.reduce(
+        (soma, item) => soma + item.preco * item.quantidade,
+        0
+    );
+
+    totalElemento.innerText = "Total: " + formatarPreco(total);
+}
+
+function finalizarPedido() {
+    if (carrinho.length === 0) {
+        alert("Adicione algum bolo ao carrinho!");
+        return;
+    }
+
+    let mensagem = "Olá! Gostaria de fazer um pedido:%0A%0A";
+
+    carrinho.forEach(item => {
+        mensagem += `- ${item.nome} (${item.quantidade}x): ${formatarPreco(item.preco * item.quantidade)}%0A`;
+    });
+
+    const total = carrinho.reduce(
+        (soma, item) => soma + item.preco * item.quantidade,
+        0
+    );
+
+    mensagem += `%0ATotal: ${formatarPreco(total)}`;
+
+    // Troque pelo número da sua loja, com DDI e DDD.
+    const telefone = "5599999999999";
+
+    window.open(
+        `https://wa.me/${telefone}?text=${mensagem}`,
+        "_blank"
+    );
+}
+
+mostrarProdutos();
+</script>
+
+</body>
+</html>
+chocolate
