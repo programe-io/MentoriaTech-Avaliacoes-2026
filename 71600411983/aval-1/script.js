@@ -1,21 +1,10 @@
-const fases = [
-  "nebulosa",
-  "protoestrela",
-  "sequencia",
-  "gigante",
-  "ana_branca"
-];
 
-let faseAtual = 0;
+alert("Olá, mundo!");
 
-function proximaFase() {
-  const estrela = document.getElementById("estrela");
+let nome = "João";
 
-  estrela.className = fases[faseAtual];
+console.log("Bem-vindo, " + nome);
 
-  faseAtual++;
-
-  if (faseAtual >= fases.length) {
-    faseAtual = 0;
-  }
+function saudacao() {
+    alert("Seja bem-vindo ao meu site!");
 }
