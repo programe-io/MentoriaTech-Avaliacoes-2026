@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>minifeed</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Tahoma', 'Segoe UI', sans-serif;
+      font-size: 11px;
+      user-select: none;
+    }
+    body {
+      background-color: #acc4bb;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .msn-window {
+      width: 580px;
+      height: 680px;
+      background: linear-gradient(180deg, #96c9d8 0%, #FFFFFF 40%, #bce2e2 100%);
+      border: 1px solid #091125;
+      border-radius: 8px 8px 0 0;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+    }
+    .titlebar {
+      background: linear-gradient(180deg, #68e9de 5%, #66f0e9 6%, #29d1dd 12%, #75dfdf 50%, #07D2E9 85%, #88e1e7 100%);
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 6px;
+      color: rgb(0, 0, 0);
+      font-weight: bold;
+    }
+    .titlebar-controls {
+      display: flex;
+      gap: 2px;
+    }
+    .win-btn {
+      width: 21px;
+      height: 21px;
+      border-radius: 3px;
+      border: 1px solid #5fb5ca7e;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgb(0, 0, 0);
+      font-weight: bold;
+      font-size: 10px;
+      box-shadow: inset 0 0 2px rgba(255,255,255,0.8);
+      cursor: pointer;
+    }
+    .btn-min { background: linear-gradient(180deg, #9ec8d6, #2f9bb6); }
+    .btn-max { background: linear-gradient(180deg, #26a3b9, #409ea5); }
+    .btn-close { background: linear-gradient(180deg, #448692, #1dcae9); }
+    
+    .menubar {
+      background: #b7e8ff;
+      border-bottom: 1px solid #f9fbff;
+      padding: 2px 5px;
+      display: flex;
+      gap: 12px;
+      color: #000;
+    }
+    .menubar span { cursor: pointer; }
+    .menubar span:first-letter { text-decoration: underline; }
+
+    .top-toolbar {
+      height: 42px;
+      padding: 4px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #abbbcc;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-weight: bold;
+      font-size: 20px;
+      color: #003399;
+      font-style: italic;
+    }
+    .nav-buttons {
+      display: flex;
+      gap: 15px;
+    }
+    .nav-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: #003366;
+      cursor: pointer;
+      font-size: 10px;
+    }
+    .main-body {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+      padding: 4px;
+      gap: 4px;
+    }
+    .sidebar {
+      width: 170px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .search-box {
+      background: #fff;
+      border: 1px solid #4c5864;
+      border-radius: 2px;
+      padding: 2px 4px;
+      display: flex;
+      align-items: center;
+    }
+    .search-box input {
+      border: none;
+      outline: none;
+      width: 100%;
+      font-size: 10px;
+      color: #23a3df85;
+    }
+    .contact-list {
+      background: #ffffff;
+      border: 1px solid #4786c0;
+      flex: 1;
+      overflow-y: auto;
+      padding: 2px;
+    }
+    .group-header {
+      font-weight: bold;
+      color: #000;
+      padding: 3px 2px;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px;
+      cursor: pointer;
+    }
+    .contact-item:hover {
+      background-color: #717880;
+    }
+    .avatar-mini {
+      width: 30px;
+      height: 30px;
+      border: 1px solid #999;
+      object-fit: cover;
+    }
+    .contact-info {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .contact-name {
+      font-weight: bold;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .contact-status {
+      color: #666;
+      font-size: 9px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .my-avatar-box {
+      background: #fff;
+      border: 1px solid #4d565f;
+      padding: 4px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .my-avatar-box img {
+      width: 140px;
+      height: 120px;
+      object-fit: cover;
+      border: 1px solid #999;
+    }
+    .my-avatar-box .my-name {
+      font-weight: bold;
+      margin-top: 10px;
+      color: #000;
+    }
+    .chat-area {
+      flex: 10; 
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .chat-header {
+      background: #ffffff;
+      border: 1px solid #435260;
+      border-radius: 4px;
+      padding: 6px;
+      display: flex;
+      gap: 8px;
+    }
+    .chat-header img {
+      width: 48px;
+      height: 48px;
+      border: 1px solid #999;
+      object-fit: cover;
+    }
+    .chat-header-info {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .chat-header-info .name {
+      font-size: 14px;
+      font-weight: bold;
+      color: #000;
+    }
+    .chat-header-info .sub {
+      color: #444;
+      font-size: 10px;
+    }
+
+    .chat-tabs {
+      display: flex;
+      gap: 2px;
+      margin-bottom: -1px;
+      z-index: 1;
+    }
+    .tab {
+      background: #d0e1f4;
+      border: 1px solid #5a646d;
+      border-bottom: none;
+      padding: 2px 8px;
+      border-radius: 4px 4px 0 0;
+      font-size: 10px;
+    }
+    .tab.active {
+      background: #ffffff;
+      font-weight: bold;
+    }
+    .messages-container {
+      background: #ffffff;
+      border: 1px solid #4a535b;
+      flex: 1;
+      padding: 28px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .msg-bubble {
+      max-width: 90%;
+      padding: 12px 7px;
+      border-radius: 10px;
+      font-size: 12px;
+      position: relative;
+    }
+    .msg-left {
+      align-self: flex-start;
+      background-color: #ffe7bb;
+      border: 1px solid #e66c1b;
+      border-bottom-left-radius: 0;
+    }
+    .msg-right {
+      align-self: flex-end;
+      background-color: #6b7279;
+      border: 2px solid #777e83;
+      border-bottom-right-radius:0;
+    }
+    .nudge-msg {
+      align-self: flex-start;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: bold;
+      color: #333;
+      margin: 5px 0;
+    }
+    .input-toolbar {
+      display: flex;
+      gap: 6px;
+      padding: 2px 0;
+    }
+    .tool-icon {
+      cursor: pointer;
+      font-size: 12px;
+    }
+    .input-box-container {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+    }
+    .chat-input {
+      flex: 1;
+      height: 40px;
+      border: 1px solid #b9bec3;
+      padding: 4px;
+      resize: none;
+      outline: none;
+      font-family: inherit;
+    }
+    .now-playing {
+      background: #ffffff;
+      border: 1px solid #7f8286;
+      border-radius: 4px;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .now-playing img {
+      width: 45px;
+      height: 36px;
+      object-fit: cover;
+    }
+    .now-playing-text {
+      display: flex;
+      flex-direction: column;
+    }
+    .now-playing-text .title {
+      font-weight: bold;
+      color: #000;
+    }
+    .xp-taskbar {
+      width: 580px;
+      height: 30px;
+      background: linear-gradient(180deg, #89d6d1 0%, #9bf5e1 9%, #00F1F5 18%, #48FEFE 92%, #ffffff 100%);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 4px;
+      color: white;
+      border-top: 1px solid #4699c0;
+    }
+    .start-button {
+      background: linear-gradient(180deg, #125c99, #0073c0);
+      border: 1px solid #fff;
+      border-radius: 0 8px 8px 0;
+      padding: 2px 12px 2px 8px;
+      font-weight: bold;
+      font-style: italic;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      box-shadow: inset 0 1px 0 rgba(116, 113, 113, 0.5);
+      cursor: pointer;
+    }
+    .taskbar-item {
+      background: #014666;
+      border: 1px solid #002147;
+      border-radius: 2px;
+      padding: 2px 8px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      width: 140px;
+    }
+    .tray {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #0a6e9c;
+      border-left: 1px solid #407994;
+      padding: 0 8px;
+      height: 100%;
+      font-size: 10px;
+    }
+  </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+  <div class="msn-window">
+
+    <div class="titlebar">
+      <span>minifeed</span>
+      <div class="titlebar-controls">
+        <div class="win-btn btn-min">_</div>
+        <div class="win-btn btn-max">□</div>
+        <div class="win-btn btn-close">X</div>
+      </div>
+    </div>
+
+    <div class="menubar">
+      <span><u>A</u>rquivos</span>
+      <span><u>E</u>ditar</span>
+      <span><u>V</u>isão</span>
+      <span><u>C</u>omandos</span>
+      <span><u>A</u>juda</span>
+    </div>
+
+    <div class="top-toolbar">
+      <div class="logo-area">
+        <span style="color: #2d1210;">mensagem 💬</span>
+      </div>
+      <div class="nav-buttons">
+        <div class="nav-btn">👥 <span>Contatos</span></div>
+        <div class="nav-btn">☢️ <span>Ajuda</span></div>
+        <div class="nav-btn">📁 <span>Arquivos</span></div>
+      </div>
+    </div>
+
+    <div class="main-body">
+
+      <div class="sidebar">
+        <div class="search-box">
+          🔍 <input type="text" placeholder="Pesquisar">
+        </div>
+
+        <div class="contact-list">
+          <div class="group-header">➕ todos os amigos</div>
+          <div class="group-header">▼ 🟢 amigos </div>
+          <div style="padding-left: 10px; color: #555; font-size: 9px;">▼ costomize suas mensagens</div>
+
+          <div class="contact-item">
+            <img class="avatar-mini" src="https://i.pinimg.com/736x/51/80/77/518077ea9eb109fc9e9cade553d3242b.jpg" alt="avatar 1">
+            <div class="contact-info">
+              <span class="contact-name" style="color: #000080;">Santos</span>
+              <span class="contact-status">não vem hoje, matuto</span>
+            </div>
+          </div>
+
+          <div class="contact-item">
+            <img class="avatar-mini" src="https://i.pinimg.com/736x/bb/13/6c/bb136cd084577d9da09920a0bf5db87b.jpg" alt="avatar 2">
+            <div class="contact-info">
+              <span class="contact-name" style="color: #800080;">Mel</span>
+              <span class="contact-status">😊​</span>
+            </div>
+          </div>
+
+          <div class="contact-item">
+            <img class="avatar-mini" src="https://i.pinimg.com/736x/37/bb/d1/37bbd1eec102c7dcd6a371047ec886bf.jpg" alt="avatar 3">
+            <div class="contact-info">
+              <span class="contact-name" style="color: #008000;">Dana</span>
+              <span class="contact-status">tem plantão hoje?</span>
+            </div>
+          </div>
+
+          <div class="contact-item">
+            <img class="avatar-mini" src="https://i.pinimg.com/1200x/38/af/70/38af704941ddb0eceb399b65c9159061.jpg" alt="avatar 4">
+            <div class="contact-info">
+              <span class="contact-name" style="color: #000080;">Amy</span>
+              <span class="contact-status">Theo perguntou se você vem hoje 3+</span>
+            </div>
+          </div>
+
+          <div class="contact-item">
+            <img class="avatar-mini" src="https://i.pinimg.com/736x/14/f4/a8/14f4a8198205206d913ecce22770475e.jpg" alt="avatar 5">
+            <div class="contact-info">
+              <span class="contact-name">Robby</span>
+              <span class="contact-status">digitando...</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="my-avatar-box">
+          <img src="https://i.pinimg.com/736x/76/8e/b4/768eb49493d0debfae4f0f55abd4bb8e.jpg" alt="My Photo">
+          <span class="my-name">Dennis Whitaker</span>
+        </div>
+      </div>
+
+      <div class="chat-area">
+
+        <div class="chat-header">
+          <img src="https://i.pinimg.com/736x/14/f4/a8/14f4a8198205206d913ecce22770475e.jpg" alt="robby">
+          <div class="chat-header-info">
+            <span class="name">Dr.Robby</span>
+            <span class="sub"> não perturbar</span>
+          </div>
+        </div>
+
+        <div>
+          <div class="chat-tabs">
+            <div class="tab active">👥 Contatos</div>
+            <div class="tab">📁 Arquivos</div>
+          </div>
+        </div>
+ 
+        <div class="messages-container">
+          <div class="msg-bubble msg-left">A chave está debaixo do carpete </div>    
+          <div class="msg-bubble msg-right">Ok, dou uma passada por lá depois</div>     
+          <div style="align-self: flex-start;"><strong>Robby</strong></div>
+          <div class="msg-bubble msg-left">Vai dormir lá?</div>
+          <div style="align-self: flex-end;"><strong>Dennis</strong></div>
+          <div class="msg-bubble msg-right">Sim, a Santos tem alguém com ela</div>   
+          <div class="msg-bubble msg-left">pode dormir no meu quarto, o de visitas é só pra bagunça</div>
+          <div class="msg-bubble msg-right">Vai voltar quando?</div>
+          <div class="msg-bubble msg-left">Talvez em 3 meses, ou menos</div>
+          <div class="msg-bubble msg-left">ou mais, realmente não sei</div>
+          <div style="align-self: flex-end;"><strong>Dennis</strong></div>
+          <div class="msg-bubble msg-right">onde vai dormir? em hoteis? onde vai guardar a comida?</div>
+          <div style="align-self: flex-start;"><strong>Robby</strong></div>
+          <div class="msg-bubble msg-left">hotel na estrada, tenho uma boa reserva financeira</div>
+          <div class="msg-bubble msg-left">não se preocupa, ok? vou ficar bem.</div>
+          <div class="msg-bubble msg-right">como vou saber quando estiver voltando? tem dinheiro fisico? se for online vai ter wi-fi?</div>
+          <div class="msg-bubble msg-left">Planejei, eu vejo se aviso. Só quero que fique confortável na minha casa.</div>
+          <div class="msg-bubble msg-right">mesmo assim, é necessário ter cuidado </div>
+          <div class="msg-bubble msg-right">me liga qualquer coisa, por favor</div>
+          <div class="msg-bubble msg-left">fica tranquilo, o que te deixaria mais em paz?</div>
+      
+
+          <div class="nudge-msg">
+            <span>▶ digitando ...</span>
+          </div>
+        </div>
+
+        <div class="input-toolbar">
+          <span class="tool-icon">😃 ▾</span>
+          <span class="tool-icon">🟡 ▾</span>
+          <span class="tool-icon">📄 ▾</span>
+        </div>
+
+        <div class="input-box-container">
+          <textarea class="chat-input">digite sua mensagem</textarea>
+          <span style="font-size: 16px; cursor: pointer;">🙂</span>
+        </div>
+
+        <div class="now-playing">
+          <img src="https://i.pinimg.com/736x/35/1b/58/351b5874854670a4d6834d1badca7c76.jpg" alt="Album">
+          <div class="now-playing-text">
+            <span style="color: #666; font-size: 9px;">ouvindo agora</span>
+            <span class="title">Dr.Robby está ouvindo:</span>
+            <span><b>Forró dos gay</b> -O Clone</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <div class="xp-taskbar">
+    <div class="start-button">
+      <span style="color: #2ee9d0;">🌟</span> 
+    </div>
+    <div class="taskbar-item">
+      msg ...
+    </div> 
+    <div class="tray">
+  
+      <span>11:10 PM</span>
+    </div>
+  </div>
+
+</body>
+</html>
