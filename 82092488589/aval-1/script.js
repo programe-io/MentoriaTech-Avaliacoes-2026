@@ -1,3 +1,96 @@
+html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vida Saudável - Guia de Saúde e Bem-Estar</title>
+  <!-- Conecta o arquivo CSS -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header>
+    <h1>Portal Vida Saudável</h1>
+    <p>Informação e ferramentas simples para cuidar do seu corpo e mente</p>
+  </header>
+
+  <nav>
+    <a href="#pilares">Pilares da Saúde</a>
+    <a href="#calculadora">Calculadora de IMC</a>
+    <a href="#dica-extra">Dica Rápida</a>
+  </nav>
+
+  <main>
+    <!-- Seção 1: Pilares da Saúde -->
+    <section id="pilares">
+      <h2>4 Pilares Essenciais para a Saúde</h2>
+      <div class="grid-dicas">
+        <div class="card">
+          <h3>Alimentação Equilibrada</h3>
+          <p>Priorize alimentos naturais como frutas, verduras, legumes e grãos integrais. Evite o excesso de açúcar e ultraprocessados.</p>
+        </div>
+        <div class="card">
+          <h3>Atividade Física</h3>
+          <p>Pratique pelo menos 150 minutos de exercícios moderados por semana para fortalecer o coração e melhorar a disposição.</p>
+        </div>
+        <div class="card">
+          <h3>Hidratação</h3>
+          <p>Beba água regularmente ao longo do dia. A hidratação mantém o bom funcionamento dos órgãos e regula a temperatura corporal.</p>
+        </div>
+        <div class="card">
+          <h3>Sono de Qualidade</h3>
+          <p>Durma entre 7 e 9 horas por noite. O descanso adequado ajuda na recuperação muscular e na saúde mental.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Seção 2: Calculadora de IMC Interativa -->
+    <section id="calculadora">
+      <h2>Calculadora de IMC</h2>
+      <p>Preencha os campos abaixo para calcular o seu Índice de Massa Corporal.</p>
+      <br>
+      <div class="form-group">
+        <label for="peso">Peso (em kg):</label>
+        <input type="number" id="peso" placeholder="Ex: 70.5" step="0.1">
+      </div>
+      <div class="form-group">
+        <label for="altura">Altura (em metros):</label>
+        <input type="number" id="altura" placeholder="Ex: 1.75" step="0.01">
+      </div>
+      <button onclick="calcularIMC()">Calcular IMC</button>
+
+      <div id="resultado-imc"></div>
+    </section>
+
+    <!-- Seção 3: Gerador de Dicas -->
+    <section id="dica-extra">
+      <h2>Precisa de motivação hoje?</h2>
+      <p id="texto-dica">Clique no botão abaixo para receber uma dica rápida de bem-estar.</p>
+      <br>
+      <button onclick="novaDica()">Gerar Dica de Saúde</button>
+    </section>
+  </main>
+
+  <footer>
+    <p>Projeto Educacional sobre Saúde &copy; 2026 - Consulte sempre um profissional de saúde.</p>
+  </footer>
+
+  <!-- Conecta o arquivo JavaScript -->
+  <script src="script.js"></script>
+
+</body>
+</html>
+Use o código com cuidado.
+Assim que você copiar e salvar o index.html, me avise aqui para eu te mandar o próximo código (style.css)!
+
+CSS
+
+Aqui está o segundo arquivo, que deve ser salvo na mesma pasta com o nome style.css:
+css
+/* Estilos Gerais */
+* {
+  margin: 0;
   padding: 0;
   box-sizing: border-box;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
