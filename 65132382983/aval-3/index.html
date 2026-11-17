@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Controle de IMC</title>
+
+    <link rel="stylesheet" href="style.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+<header>
+    <div class="header-content">
+
+        <div class="brand">
+            <div class="brand-icon">⚖️</div>
+
+            <div>
+                <h1>Controle de IMC</h1>
+                <p>Gerencie e acompanhe os índices de massa corporal</p>
+            </div>
+        </div>
+
+        <button
+            class="theme-btn"
+            id="themeBtn"
+            title="Alternar tema"
+        >
+            🌙
+        </button>
+
+    </div>
+</header>
+
+
+<main class="container">
+
+    <!-- ESTATÍSTICAS -->
+
+    <section class="stats">
+
+        <div class="stat-card">
+            <div class="stat-icon icon-total">👥</div>
+
+            <div>
+                <div class="stat-label">Total de pessoas</div>
+                <div class="stat-value" id="totalPessoas">0</div>
+            </div>
+        </div>
+
+
+        <div class="stat-card">
+            <div class="stat-icon icon-normal">✓</div>
+
+            <div>
+                <div class="stat-label">Peso normal</div>
+                <div class="stat-value" id="totalNormal">0</div>
+            </div>
+        </div>
+
+
+        <div class="stat-card">
+            <div class="stat-icon icon-over">⚠</div>
+
+            <div>
+                <div class="stat-label">Sobrepeso</div>
+                <div class="stat-value" id="totalSobrepeso">0</div>
+            </div>
+        </div>
+
+
+        <div class="stat-card">
+            <div class="stat-icon icon-obesity">!</div>
+
+            <div>
+                <div class="stat-label">Obesidade</div>
+                <div class="stat-value" id="totalObesidade">0</div>
+            </div>
+        </div>
+
+    </section>
+
+
+    <!-- FORMULÁRIO -->
+
+    <section class="card">
+
+        <div class="card-header">
+
+            <div>
+                <div class="card-title">
+                    👤 Adicionar pessoa
+                </div>
+
+                <div class="card-description">
+                    Informe os dados para calcular o IMC automaticamente.
+                </div>
+            </div>
+
+        </div>
+
+
+        <form class="form-grid" id="formPessoa">
+
+            <div class="field">
+
+                <label for="nome">Nome</label>
+
+                <input
+                    type="text"
+                    id="nome"
+                    placeholder="Ex.: João da Silva"
+                    maxlength="80"
+                    required
+                >
+
+            </div>
+
+
+            <div class="field">
+
+                <label for="peso">Peso (kg)</label>
+
+                <input
+                    type="number"
+                    id="peso"
+                    placeholder="70"
+                    min="1"
+                    max="500"
+                    step="0.1"
+                    required
+                >
+
+            </div>
+
+
+            <div class="field">
+
+                <label for="altura">Altura (m)</label>
+
+                <input
+                    type="number"
+                    id="altura"
+                    placeholder="1.75"
+                    min="0.5"
+                    max="2.5"
+                    step="0.01"
+                    required
+                >
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="btn btn-primary"
+            >
+                + Adicionar
+            </button>
+
+        </form>
+
+    </section>
+
+
+    <!-- TABELA -->
+
+    <section class="card">
+
+        <div class="card-header">
+
+            <div>
+                <div class="card-title">
+                    📋 Pessoas cadastradas
+                </div>
+
+                <div class="card-description">
+                    Consulte, pesquise ou edite os registros.
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="toolbar">
+
+            <div class="search">
+
+                <span class="search-icon">🔎</span>
+
+                <input
+                    type="text"
+                    id="busca"
+                    placeholder="Pesquisar por nome..."
+                >
+
+            </div>
+
+
+            <div class="filter">
+
+                <select id="filtro">
+
+                    <option value="todos">
+                        Todos os status
+                    </option>
+
+                    <option value="abaixo">
+                        🔵 Abaixo do peso
+                    </option>
+
+                    <option value="normal">
+                        🟢 Peso normal
+                    </option>
+
+                    <option value="sobrepeso">
+                        🟡 Sobrepeso
+                    </option>
+
+                    <option value="obesidade">
+                        🔴 Obesidade
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>Pessoa</th>
+                        <th>Peso</th>
+                        <th>Altura</th>
+                        <th>IMC</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+
+                </thead>
+
+                <tbody id="tabela"></tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<footer>
+    Sistema de controle de IMC • Dados armazenados localmente no navegador
+</footer>
+
+
+<!-- MODAL DE EDIÇÃO -->
+
+<div class="modal" id="modal">
+
+    <div class="modal-content">
+
+        <div class="modal-header">
+
+            <div class="card-title">
+                ✏️ Editar pessoa
+            </div>
+
+            <button
+                class="close"
+                id="closeModal"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <div class="field">
+            <label for="editNome">Nome</label>
+
+            <input
+                type="text"
+                id="editNome"
+            >
+        </div>
+
+
+        <div class="field modal-field">
+            <label for="editPeso">Peso (kg)</label>
+
+            <input
+                type="number"
+                id="editPeso"
+                step="0.1"
+            >
+        </div>
+
+
+        <div class="field modal-field">
+            <label for="editAltura">Altura (m)</label>
+
+            <input
+                type="number"
+                id="editAltura"
+                step="0.01"
+            >
+        </div>
+
+
+        <div class="modal-actions">
+
+            <button
+                class="btn btn-secondary"
+                id="cancelModal"
+            >
+                Cancelar
+            </button>
+
+            <button
+                class="btn btn-primary"
+                id="saveEdit"
+            >
+                Salvar alterações
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script src="script.js"></script>
+
+<script src="script.js"></script></body>
+</html>
