@@ -1,333 +1,128 @@
 
-const feed = document.getElementById("feed");
+let seguidores = 120;
+let quantidadePosts = 0;
 
-let publicacoes = JSON.parse(
-    localStorage.getItem("lorrane_posts") || "[]"
-);
+function mostrarAba(nome) {
+  document.querySelectorAll(".aba").forEach(aba => {
+    aba.classList.add("escondido");
+  });
 
-// PUBLICAÇÕES DE EXEMPLO
-
-const exemplos = [
-    {
-        id: "exemplo1",
-        usuario: "Maria",
-        legenda: "Aproveitando cada momento! 💗✨",
-        imagem: "https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=800",
-        tipo: "imagem",
-        curtidas: 120,
-        comentarios: []
-    },
-    {
-        id: "exemplo2",
-        usuario: "João",
-        legenda: "Um dia incrível! 😎🔥",
-        imagem: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=800",
-        tipo: "imagem",
-        curtidas: 85,
-        comentarios: []
-    }
-];
-
-// SALVAR PUBLICAÇÕES
-
-function salvar() {
-    localStorage.setItem(
-        "lorrane_posts",
-        JSON.stringify(publicacoes)
-    );
+  document.getElementById(nome).classList.remove("escondido");
 }
 
-// MOSTRAR PUBLICAÇÕES
-
-function mostrarPublicacoes() {
-
-    feed.innerHTML = "";
-
-    const todas = [
-        ...publicacoes,
-        ...exemplos
-    ];
-
-    document.getElementById("numeroPosts").textContent =
-        publicacoes.length;
-
-    todas.slice().reverse().forEach(post => {
-
-        const card = document.createElement("article");
-        card.className = "post";
-        card.dataset.id = post.id;
-        card.dataset.usuario = post.usuario.toLowerCase();
-
-        const topo = document.createElement("div");
-        topo.className = "post-topo";
-
-        topo.innerHTML = `
-            <div class="post-avatar">💗</div>
-            <strong>${post.usuario === "Lorrane" ? "Lorrane" : post.usuario}</strong>
-        `;
-
-        const legenda = document.createElement("p");
-        legenda.className = "post-legenda";
-        legenda.textContent = post.legenda;
-
-        const acoes = document.createElement("div");
-        acoes.className = "post-acoes";
-
-        const curtir = document.createElement("button");
-        curtir.className = "curtir";
-        curtir.innerHTML = `❤️ Curtir <span>${post.curtidas}</span>`;
-
-        const comentar = document.createElement("button");
-        comentar.className = "abrir-comentarios";
-        comentar.textContent = "💬 Comentar";
-
-        const compartilhar = document.createElement("button");
-        compartilhar.className = "compartilhar";
-        compartilhar.textContent = "↗ Compartilhar";
-
-        acoes.append(curtir, comentar, compartilhar);
-
-        const comentarios = document.createElement("div");
-        comentarios.className = "comentarios";
-
-        post.comentarios.forEach(texto => {
-            const p = document.createElement("p");
-            p.textContent = "👤 " + texto;
-            comentarios.appendChild(p);
-        });
-
-        const formulario = document.createElement("div");
-        formulario.className = "form-comentario";
-        formulario.style.display = "none";
-
-        const campo = document.createElement("input");
-        campo.placeholder = "Escreva um comentário...";
-
-        const enviar = document.createElement("button");
-        enviar.textContent = "Enviar";
-
-        formulario.append(campo, enviar);
-
-        enviar.onclick = () => adicionarComentario(post.id, campo);
-
-        campo.addEventListener("keydown", event => {
-            if (event.key === "Enter") {
-                adicionarComentario(post.id, campo);
-            }
-        });
-
-        card.append(topo);
-
-        if (post.imagem) {
-            let media;
-
-            if (post.tipo === "video") {
-                media = document.createElement("video");
-                media.controls = true;
-                media.loop = true;
-                media.playsInline = true;
-            } else {
-                media = document.createElement("img");
-                media.alt = "Publicação de " + post.usuario;
-            }
-
-            media.src = post.imagem;
-            media.className = "post-media";
-            card.appendChild(media);
-        }
-
-        card.append(
-            acoes,
-            legenda,
-            comentarios,
-            formulario
-        );
-
-        feed.appendChild(card);
-
-        curtir.onclick = () => curtirPost(post.id);
-
-        comentar.onclick = () => {
-            formulario.style.display =
-                formulario.style.display === "none"
-                ? "flex"
-                : "none";
-        };
-
-        compartilhar.onclick = () => compartilharPost(post);
-    });
+function seguir() {
+  seguidores++;
+  document.getElementById("seguidores").textContent = seguidores;
+  document.getElementById("seguidoresPerfil").textContent = seguidores;
 }
-
-// CURTIR PUBLICAÇÃO
-
-function curtirPost(id) {
-
-    const post = publicacoes.find(p => p.id === id);
-
-    if (!post) {
-        const exemplo = exemplos.find(p => p.id === id);
-        if (!exemplo) return;
-
-        exemplo.curtidas++;
-    } else {
-        post.curtidas++;
-        salvar();
-    }
-
-    mostrarPublicacoes();
-}
-
-// COMENTAR PUBLICAÇÃO
-
-function adicionarComentario(id, campo) {
-
-    const texto = campo.value.trim();
-
-    if (!texto) {
-        alert("Digite um comentário!");
-        return;
-    }
-
-    const post = publicacoes.find(p => p.id === id);
-
-    if (post) {
-        post.comentarios.push("Lorrane: " + texto);
-        salvar();
-    } else {
-        const exemplo = exemplos.find(p => p.id === id);
-        exemplo.comentarios.push("Lorrane: " + texto);
-    }
-
-    mostrarPublicacoes();
-}
-
-// PUBLICAR FOTO OU VÍDEO
 
 function publicar() {
+  const legenda = document.getElementById("legenda").value;
+  const arquivo = document.getElementById("arquivo").files[0];
 
-    const legenda = document.getElementById("legenda").value.trim();
-    const arquivo = document.getElementById("arquivo").files[0];
+  if (!legenda.trim() && !arquivo) {
+    alert("Escreva algo ou escolha uma imagem ou vídeo!");
+    return;
+  }
 
-    if (!arquivo) {
-        alert("Escolha uma foto ou vídeo!");
-        return;
+  const post = document.createElement("article");
+  post.className = "post";
+
+  const titulo = document.createElement("h3");
+  titulo.textContent = "Lorrane";
+  post.appendChild(titulo);
+
+  if (legenda.trim()) {
+    const texto = document.createElement("p");
+    texto.textContent = legenda;
+    post.appendChild(texto);
+  }
+
+  if (arquivo) {
+    const url = URL.createObjectURL(arquivo);
+    let midia;
+
+    if (arquivo.type.startsWith("image/")) {
+      midia = document.createElement("img");
+    } else if (arquivo.type.startsWith("video/")) {
+      midia = document.createElement("video");
+      midia.controls = true;
+    } else {
+      alert("Escolha uma imagem ou vídeo válido.");
+      return;
     }
 
-    if (!arquivo.type.startsWith("image/") &&
-        !arquivo.type.startsWith("video/")) {
-        alert("Escolha uma imagem ou vídeo válido!");
-        return;
-    }
+    midia.src = url;
+    post.appendChild(midia);
+  }
 
-    if (arquivo.size > 20 * 1024 * 1024) {
-        alert("O arquivo deve ter no máximo 20 MB!");
-        return;
-    }
+  const acoes = document.createElement("div");
+  acoes.className = "acoes";
 
-    const endereco = URL.createObjectURL(arquivo);
+  const curtida = document.createElement("button");
+  let curtidas = 0;
+  curtida.textContent = "♡ Curtir (0)";
 
-    const novaPublicacao = {
-        id: "post_" + Date.now(),
-        usuario: "Lorrane",
-        legenda: legenda || "Nova publicação! 💗",
-        imagem: endereco,
-        tipo: arquivo.type.startsWith("video/") ? "video" : "imagem",
-        curtidas: 0,
-        comentarios: []
-    };
+  curtida.onclick = () => {
+    curtidas++;
+    curtida.textContent = `❤️ Curtir (${curtidas})`;
+  };
 
-    // A publicação com arquivo fica disponível nesta sessão.
-    publicacoes.push(novaPublicacao);
+  acoes.appendChild(curtida);
+  post.appendChild(acoes);
 
-    document.getElementById("legenda").value = "";
-    document.getElementById("arquivo").value = "";
+  const areaComentarios = document.createElement("div");
+  areaComentarios.className = "comentarios";
 
-    mostrarPublicacoes();
+  const campo = document.createElement("input");
+  campo.placeholder = "Escreva um comentário...";
 
-    alert("Sua publicação foi criada! 💗");
+  const botao = document.createElement("button");
+  botao.textContent = "Comentar";
 
-    document.getElementById("explorar").scrollIntoView();
+  const lista = document.createElement("div");
+
+  botao.onclick = () => {
+    if (!campo.value.trim()) return;
+
+    const comentario = document.createElement("p");
+    comentario.className = "comentario";
+    comentario.textContent = "Visitante: " + campo.value;
+    lista.appendChild(comentario);
+    campo.value = "";
+  };
+
+  areaComentarios.append(campo, botao, lista);
+  post.appendChild(areaComentarios);
+
+  document.getElementById("feed").prepend(post);
+
+  quantidadePosts++;
+  document.getElementById("totalPosts").textContent =
+    quantidadePosts + " publicações";
+
+  document.getElementById("legenda").value = "";
+  document.getElementById("arquivo").value = "";
 }
 
-// COMPARTILHAR
+function enviarMensagem() {
+  const campo = document.getElementById("mensagem");
 
-async function compartilharPost(post) {
+  if (!campo.value.trim()) return;
 
-    try {
-        if (navigator.share) {
-            await navigator.share({
-                title: "Lorrane",
-                text: post.legenda
-            });
-        } else {
-            await navigator.clipboard.writeText(post.legenda);
-            alert("Legenda copiada!");
-        }
-    } catch (erro) {
-        console.log("Compartilhamento cancelado.");
-    }
+  const texto = document.createElement("p");
+  texto.textContent = "Você: " + campo.value;
+
+  document.getElementById("conversa").appendChild(texto);
+  campo.value = "";
 }
-
-// CRIAR STORY
-
-function criarStory() {
-
-    const texto = prompt("O que deseja publicar no seu story?");
-
-    if (!texto || !texto.trim()) return;
-
-    const story = document.createElement("div");
-    story.className = "story";
-
-    story.innerHTML = `
-        <div class="story-foto">💗</div>
-        <span>Lorrane</span>
-    `;
-
-    story.onclick = () => verStory("Lorrane", texto);
-
-    document.getElementById("listaStories").prepend(story);
-
-    alert("Story publicado com sucesso!");
-}
-
-// VISUALIZAR STORY
-
-function verStory(nome, texto) {
-
-    document.getElementById("storyNome").textContent = nome;
-
-    document.getElementById("storyTexto").textContent = texto;
-
-    document.getElementById("modalStory").style.display = "flex";
-}
-
-// FECHAR STORY
-
-function fecharStory() {
-    document.getElementById("modalStory").style.display = "none";
-}
-
-// PESQUISAR
 
 document.getElementById("pesquisa").addEventListener("input", function() {
+  const busca = this.value.toLowerCase();
 
-    const pesquisa = this.value.toLowerCase();
-
-    document.querySelectorAll(".post").forEach(post => {
-
-        const usuario = post.dataset.usuario;
-        const legenda = post.querySelector(".post-legenda")
-            .textContent.toLowerCase();
-
-        post.style.display =
-            usuario.includes(pesquisa) ||
-            legenda.includes(pesquisa)
-            ? "block"
-            : "none";
-    });
+  document.querySelectorAll(".post").forEach(post => {
+    post.style.display = post.textContent.toLowerCase().includes(busca)
+      ? "block"
+      : "none";
+  });
 });
-
-// INICIAR SITE
-
-mostrarPublicacoes();
