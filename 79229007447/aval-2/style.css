@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MilFeed - Exército Brasileiro</title>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  background: #17251c;
+  color: white;
+  font-family: Arial, sans-serif;
+}
+header {
+  background: #263c2b;
+  padding: 25px;
+  text-align: center;
+  border-bottom: 3px solid #9aaf42;
+}
+header h1 { font-size: 30px; }
+header p {
+  color: #c4d4bd;
+  margin-top: 8px;
+}
+.container {
+  max-width: 650px;
+  margin: 25px auto;
+  padding: 15px;
+}
+.card {
+  background: #263c2b;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+.card h2 { margin-bottom: 12px; }
+textarea {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  resize: vertical;
+  min-height: 90px;
+  font-family: Arial;
+}
+button {
+  background: #879b38;
+  color: white;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+button:hover { background: #a4b94c; }
+.post {
+  background: #314a36;
+  padding: 18px;
+  border-radius: 10px;
+  margin-bottom: 15px;
+}
+.post h3 {
+  color: #c4d69a;
+  margin-bottom: 8px;
+}
+.post p { line-height: 1.5; }
+.actions {
+  display: flex;
+  gap: 15px;
+  margin-top: 12px;
+}
+.actions button { margin: 0; }
+footer {
+  text-align: center;
+  padding: 25px;
+  color: #b9c9b4;
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>🇧🇷 MILFEED</h1>
+  <p>Exército Brasileiro</p>
+  <p>Braço forte, mão amiga!</p>
+</header>
+<div class="container">
+  <div class="card">
+    <h2>Compartilhe uma publicação</h2>
+    <textarea id="texto"
+      placeholder="O que você quer compartilhar?"></textarea>
+    <button onclick="publicar()">Publicar</button>
+  </div>
+  <h2 style="margin-bottom:15px">
+    📰 Feed de publicações
+  </h2>
+  <div id="feed">
+    <div class="post">
+      <h3>🇧🇷 Exército Brasileiro</h3>
+      <p>Braço forte, mão amiga!
+      O Exército Brasileiro trabalha
+      em defesa da Pátria.</p>
+      <div class="actions">
+        <button onclick="curtir(this)">
+          ❤️ Curtir <span>245</span>
+        </button>
+      </div>
+    </div>
+    <div class="post">
+      <h3>📚 Curiosidades Militares</h3>
+      <p>O Dia do Exército Brasileiro
+      é comemorado em 19 de abril.</p>
+      <div class="actions">
+        <button onclick="curtir(this)">
+          ❤️ Curtir <span>182</span>
+        </button>
+      </div>
+    </div>
+    <div class="post">
+      <h3>🪖 Defesa Nacional</h3>
+      <p>Disciplina, liderança e espírito
+      de equipe fazem parte da formação militar.</p>
+      <div class="actions">
+        <button onclick="curtir(this)">
+          ❤️ Curtir <span>136</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<footer>
+  🇧🇷 MILFEED - Exército Brasileiro
+  <p>Braço forte, mão amiga!</p>
+</footer>
+<script>
+function publicar() {
+  const texto = document.getElementById("texto");
+  const feed = document.getElementById("feed");
+  if (texto.value.trim() === "") {
+    alert("Digite alguma coisa!");
+    return;
+  }
+  const post = document.createElement("div");
+  post.className = "post";
+  const titulo = document.createElement("h3");
+  titulo.textContent = "🇧🇷 Visitante";
+  const mensagem = document.createElement("p");
+  mensagem.textContent = texto.value;
+  const acoes = document.createElement("div");
+  acoes.className = "actions";
+  const botao = document.createElement("button");
+  botao.innerHTML = '❤️ Curtir <span>0</span>';
+  botao.onclick = function() {
+    curtir(botao);
+  };
+  acoes.appendChild(botao);
+  post.appendChild(titulo);
+  post.appendChild(mensagem);
+  post.appendChild(acoes);
+  feed.prepend(post);
+  texto.value = "";
+}
+function curtir(botao) {
+  const contador = botao.querySelector("span");
+  contador.textContent =
+    Number(contador.textContent) + 1;
+}
+</script>
+</body>
+</html>
