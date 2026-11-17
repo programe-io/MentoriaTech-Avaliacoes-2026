@@ -1,0 +1,105 @@
+
+function curtir(botao) {
+    const post = botao.closest(".post");
+        const curtidas = post.querySelector(".curtidas");
+
+            let quantidade = Number(
+                    curtidas.textContent.split(" ")[0]
+                        );
+
+                            if (botao.classList.contains("curtido")) {
+                                    quantidade--;
+                                            botao.classList.remove("curtido");
+                                                    botao.innerHTML = "♡";
+                                                            botao.style.color = "black";
+                                                                } else {
+                                                                        quantidade++;
+                                                                                botao.classList.add("curtido");
+                                                                                        botao.innerHTML = "♥";
+                                                                                                botao.style.color = "red";
+                                                                                                    }
+
+                                                                                                        curtidas.textContent = quantidade + " curtidas";
+                                                                                                        }
+
+                                                                                                        function comentar(botao) {
+                                                                                                            const texto = prompt("Digite seu comentário:");
+
+                                                                                                                if (texto && texto.trim() !== "") {
+                                                                                                                        const post = botao.closest(".post");
+                                                                                                                                const comentarios = post.querySelector(".comentarios");
+
+                                                                                                                                        const novoComentario = document.createElement("p");
+                                                                                                                                                novoComentario.textContent = "💬 " + texto;
+
+                                                                                                                                                        comentarios.appendChild(novoComentario);
+                                                                                                                                                            }
+                                                                                                                                                            }
+
+                                                                                                                                                            function mostrarFormulario() {
+                                                                                                                                                                const formulario = document.getElementById("formulario");
+
+                                                                                                                                                                    formulario.style.display =
+                                                                                                                                                                            formulario.style.display === "block"
+                                                                                                                                                                                    ? "none"
+                                                                                                                                                                                            : "block";
+
+                                                                                                                                                                                                formulario.scrollIntoView({ behavior: "smooth" });
+                                                                                                                                                                                                }
+
+                                                                                                                                                                                                function criarPost() {
+                                                                                                                                                                                                    const usuario = document.getElementById("usuario").value.trim();
+                                                                                                                                                                                                        const imagem = document.getElementById("imagem").value.trim();
+                                                                                                                                                                                                            const legenda = document.getElementById("legenda").value.trim();
+
+                                                                                                                                                                                                                if (!usuario || !imagem || !legenda) {
+                                                                                                                                                                                                                        alert("Preencha todos os campos!");
+                                                                                                                                                                                                                                return;
+                                                                                                                                                                                                                                    }
+
+                                                                                                                                                                                                                                        try {
+                                                                                                                                                                                                                                                const url = new URL(imagem);
+
+                                                                                                                                                                                                                                                        if (!["http:", "https:"].includes(url.protocol)) {
+                                                                                                                                                                                                                                                                    throw new Error("URL inválida");
+                                                                                                                                                                                                                                                                            }
+                                                                                                                                                                                                                                                                                } catch {
+                                                                                                                                                                                                                                                                                        alert("Digite uma URL de imagem válida!");
+                                                                                                                                                                                                                                                                                                return;
+                                                                                                                                                                                                                                                                                                    }
+
+                                                                                                                                                                                                                                                                                                        const post = document.createElement("article");
+                                                                                                                                                                                                                                                                                                            post.className = "post";
+
+                                                                                                                                                                                                                                                                                                                post.innerHTML = `
+                                                                                                                                                                                                                                                                                                                        <div class="usuario">
+                                                                                                                                                                                                                                                                                                                                    <img src="https://i.pravatar.cc/100?img=10" alt="Perfil">
+                                                                                                                                                                                                                                                                                                                                                <strong></strong>
+                                                                                                                                                                                                                                                                                                                                                        </div>
+
+                                                                                                                                                                                                                                                                                                                                                                <img class="foto" alt="Publicação">
+
+                                                                                                                                                                                                                                                                                                                                                                        <div class="acoes">
+                                                                                                                                                                                                                                                                                                                                                                                    <button onclick="curtir(this)">♡</button>
+                                                                                                                                                                                                                                                                                                                                                                                                <button onclick="comentar(this)">💬</button>
+                                                                                                                                                                                                                                                                                                                                                                                                            <button>↗</button>
+                                                                                                                                                                                                                                                                                                                                                                                                                    </div>
+
+                                                                                                                                                                                                                                                                                                                                                                                                                            <p class="curtidas">0 curtidas</p>
+                                                                                                                                                                                                                                                                                                                                                                                                                                    <p class="legenda"></p>
+                                                                                                                                                                                                                                                                                                                                                                                                                                            <div class="comentarios"></div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                `;
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                    post.querySelector(".usuario strong").textContent = usuario;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        post.querySelector(".foto").src = imagem;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                            post.querySelector(".legenda").textContent = legenda;
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                document.getElementById("feed").prepend(post);
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                    document.getElementById("usuario").value = "";
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                        document.getElementById("imagem").value = "";
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                            document.getElementById("legenda").value = "";
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                document.getElementById("formulario").style.display = "none";
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
