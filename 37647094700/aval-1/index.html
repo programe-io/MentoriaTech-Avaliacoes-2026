@@ -1,0 +1,177 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Produtos</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+            background-color: #f2f2f2;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        input, button {
+            display: block;
+            margin: 10px 0;
+            padding: 10px;
+            width: 300px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        table {
+            margin-top: 20px;
+            border-collapse: collapse;
+            width: 100%;
+            background: white;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+    <h1>Cadastro de Produtos</h1>
+
+    <label>Descrição:</label>
+    <input type="text" id="descricao" placeholder="Nome do produto">
+
+    <label>Quantidade:</label>
+    <input type="number" id="quantidade" placeholder="Quantidade">
+
+    <label>Valor:</label>
+    <input type="number" id="valor" placeholder="Valor">
+
+    <button onclick="cadastrarProduto()">
+        Cadastrar Produto
+    </button>
+
+    <p id="mensagem"></p>
+
+    <h2>Produtos Cadastrados</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Código</th>
+                <th>Descrição</th>
+                <th>Quantidade</th>
+                <th>Valor</th>
+            </tr>
+        </thead>
+
+        <tbody id="listaProdutos"></tbody>
+    </table>
+
+    <script>
+
+        // Lista (Array) de Produtos
+        let produtos = [];
+
+        // Função para validar produto
+        function validarProduto(descricao, quantidade, valor) {
+
+            if (descricao.length < 5) {
+                throw new Error(
+                    "Descrição deve ter no mínimo 5 caracteres"
+                );
+            }
+
+            if (quantidade < 1) {
+                throw new Error(
+                    "Quantidade deve ser maior que zero"
+                );
+            }
+
+            if (valor < 0) {
+                throw new Error(
+                    "Valor deve ser maior ou igual a zero"
+                );
+            }
+        }
+
+        // Função para cadastrar produto
+        function cadastrarProduto() {
+
+            let descricao = document.getElementById("descricao").value;
+            let quantidade = Number(document.getElementById("quantidade").value);
+            let valor = Number(document.getElementById("valor").value);
+
+            try {
+
+                validarProduto(descricao, quantidade, valor);
+
+                let novoProduto = {
+                    codigo: produtos.length + 1,
+                    descricao: descricao,
+                    quantidade: quantidade,
+                    valor: valor
+                };
+
+                produtos.push(novoProduto);
+
+                atualizarLista();
+
+                document.getElementById("mensagem").innerHTML =
+                    "Produto cadastrado com sucesso!";
+
+                document.getElementById("descricao").value = "";
+                document.getElementById("quantidade").value = "";
+                document.getElementById("valor").value = "";
+
+            } catch (erro) {
+
+                document.getElementById("mensagem").innerHTML =
+                    erro.message;
+
+            }
+        }
+
+        // Função para atualizar a tabela
+        function atualizarLista() {
+
+            let tabela = document.getElementById("listaProdutos");
+
+            tabela.innerHTML = "";
+
+            produtos.forEach(function(produto) {
+
+                tabela.innerHTML += `
+                    <tr>
+                        <td>${produto.codigo}</td>
+                        <td>${produto.descricao}</td>
+                        <td>${produto.quantidade}</td>
+                        <td>R$ ${produto.valor.toFixed(2)}</td>
+                    </tr>
+                `;
+
+            });
+        }
+
+    </script>
+
+<script src="script.js"></script></body>
+</html>
