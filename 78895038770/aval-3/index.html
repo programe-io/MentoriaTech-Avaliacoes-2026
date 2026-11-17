@@ -1,0 +1,343 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TikTok - Meu Feed</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: #080808;
+    color: white;
+    font-family: Arial, sans-serif;
+}
+
+header {
+    height: 65px;
+    background: #111;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30px;
+    border-bottom: 1px solid #292929;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 10;
+}
+
+.logo {
+    font-size: 27px;
+    font-weight: bold;
+    color: white;
+}
+
+.logo span {
+    color: #fe2c55;
+}
+
+.search {
+    background: #252525;
+    padding: 12px 20px;
+    border-radius: 25px;
+    border: none;
+    color: white;
+    width: 280px;
+    outline: none;
+}
+
+.profile {
+    background: #fe2c55;
+    padding: 10px 20px;
+    border-radius: 7px;
+    cursor: pointer;
+    border: none;
+    color: white;
+}
+
+main {
+    display: flex;
+    justify-content: center;
+    padding-top: 75px;
+}
+
+.sidebar {
+    position: fixed;
+    left: 20px;
+    top: 100px;
+    width: 210px;
+}
+
+.sidebar div {
+    padding: 17px;
+    margin-bottom: 8px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.sidebar div:hover {
+    background: #252525;
+}
+
+.feed {
+    width: 430px;
+}
+
+.video-card {
+    height: 570px;
+    background: #202020;
+    margin: 10px 0 25px;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+}
+
+.video-card video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    background: #222;
+}
+
+.video-info {
+    position: absolute;
+    bottom: 15px;
+    left: 15px;
+    right: 75px;
+    text-shadow: 1px 1px 4px black;
+}
+
+.username {
+    font-size: 17px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.description {
+    font-size: 14px;
+}
+
+.actions {
+    position: absolute;
+    right: 12px;
+    bottom: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+}
+
+.action {
+    cursor: pointer;
+    text-align: center;
+    font-size: 25px;
+    text-shadow: 1px 1px 4px black;
+}
+
+.action small {
+    display: block;
+    font-size: 12px;
+}
+
+.liked {
+    color: #fe2c55;
+}
+
+.bottom-nav {
+    display: none;
+}
+
+@media(max-width: 700px) {
+    header {
+        padding: 0 15px;
+    }
+
+    .search {
+        width: 130px;
+    }
+
+    .sidebar {
+        display: none;
+    }
+
+    .feed {
+        width: 100%;
+    }
+
+    .video-card {
+        height: calc(100vh - 135px);
+        min-height: 450px;
+        margin: 0 0 15px;
+        border-radius: 0;
+    }
+
+    .bottom-nav {
+        position: fixed;
+        bottom: 0;
+        background: #111;
+        width: 100%;
+        height: 55px;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        z-index: 20;
+    }
+
+    .bottom-nav span {
+        cursor: pointer;
+    }
+}
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+<header>
+    <div class="logo">Tik<span>Tok</span> ♪</div>
+    <input class="search" placeholder="Pesquisar...">
+    <button class="profile" onclick="alert('Bem-vindo ao seu perfil!')">
+        Entrar
+    </button>
+</header>
+
+<main>
+
+<aside class="sidebar">
+    <div>🏠 Para você</div>
+    <div>👥 Seguindo</div>
+    <div>🔍 Explorar</div>
+    <div>🎥 Ao vivo</div>
+    <div>👤 Perfil</div>
+    <div>➕ Publicar</div>
+</aside>
+
+<section class="feed" id="feed">
+
+    <article class="video-card">
+        <video
+            src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4"
+            autoplay muted loop playsinline>
+        </video>
+
+        <div class="video-info">
+            <div class="username">@natureza</div>
+            <div class="description">
+                A beleza da natureza! 🌸 #natureza #vida
+            </div>
+        </div>
+
+        <div class="actions">
+            <div class="action like" onclick="like(this)">
+                ❤️ <small>1.2K</small>
+            </div>
+            <div class="action" onclick="comment()">
+                💬 <small>120</small>
+            </div>
+            <div class="action" onclick="share()">
+                ↗️ <small>Compartilhar</small>
+            </div>
+            <div class="action" onclick="toggleSound(this)">
+                🔇 <small>Áudio</small>
+            </div>
+        </div>
+    </article>
+
+    <article class="video-card">
+        <video
+            src="https://www.w3schools.com/html/mov_bbb.mp4"
+            autoplay muted loop playsinline>
+        </video>
+
+        <div class="video-info">
+            <div class="username">@diversao</div>
+            <div class="description">
+                Confira esse vídeo incrível! 😂🔥 #viral
+            </div>
+        </div>
+
+        <div class="actions">
+            <div class="action like" onclick="like(this)">
+                ❤️ <small>5.8K</small>
+            </div>
+            <div class="action" onclick="comment()">
+                💬 <small>340</small>
+            </div>
+            <div class="action" onclick="share()">
+                ↗️ <small>Compartilhar</small>
+            </div>
+            <div class="action" onclick="toggleSound(this)">
+                🔇 <small>Áudio</small>
+            </div>
+        </div>
+    </article>
+
+</section>
+
+</main>
+
+<nav class="bottom-nav">
+    <span>🏠 Início</span>
+    <span>🔍 Buscar</span>
+    <span>➕ Criar</span>
+    <span>👤 Perfil</span>
+</nav>
+
+<script>
+function like(element) {
+    const count = element.querySelector("small");
+
+    element.classList.toggle("liked");
+
+    let number = parseFloat(count.innerText);
+
+    if (element.classList.contains("liked")) {
+        number += 1;
+    } else {
+        number -= 1;
+    }
+
+    count.innerText = number.toLocaleString("pt-BR");
+}
+
+function comment() {
+    const message = prompt("Escreva seu comentário:");
+
+    if (message && message.trim()) {
+        alert("Comentário enviado: " + message);
+    }
+}
+
+function share() {
+    if (navigator.share) {
+        navigator.share({
+            title: "Meu vídeo",
+            text: "Confira este vídeo!"
+        });
+    } else {
+        alert("Compartilhamento não disponível neste navegador.");
+    }
+}
+
+function toggleSound(element) {
+    const card = element.closest(".video-card");
+    const video = card.querySelector("video");
+
+    video.muted = !video.muted;
+
+    element.innerHTML = video.muted
+        ? '🔇 <small>Áudio</small>'
+        : '🔊 <small>Áudio</small>';
+}
+</script>
+
+<script src="script.js"></script></body>
+</html>
