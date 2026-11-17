@@ -1,295 +1,238 @@
-// ==================================
-// 🍓 SABOR & ARTE - JAVASCRIPT
-// ==================================
-
-// MENSAGEM INICIAL
-window.addEventListener("load", function() {
-    console.log("Bem-vindo ao Sabor & Arte! 🍓");
-});
-
-// ==================================
-// 1. PESQUISAR RECEITAS
-// ==================================
-
-const campoPesquisa = document.createElement("input");
-
-campoPesquisa.type = "text";
-campoPesquisa.placeholder = "🔎 Pesquisar receitas...";
-
-const titulo = document.querySelector("#receitas h2");
-
-titulo.after(campoPesquisa);
-
-campoPesquisa.style.width = "100%";
-campoPesquisa.style.padding = "13px";
-campoPesquisa.style.marginBottom = "25px";
-campoPesquisa.style.border = "1px solid #ddd";
-campoPesquisa.style.borderRadius = "8px";
-
-campoPesquisa.addEventListener("input", function() {
-
-    const pesquisa = campoPesquisa.value.toLowerCase();
-
-    const receitas = document.querySelectorAll(".card");
-
-    receitas.forEach(function(receita) {
-
-        const nome = receita.querySelector("h3")
-            .textContent.toLowerCase();
-
-        const descricao = receita.querySelector("p")
-            .textContent.toLowerCase();
-
-        receita.style.display =
-            nome.includes(pesquisa) ||
-            descricao.includes(pesquisa)
-            ? "block"
-            : "none";
-
-    });
-
-});
-
-// ==================================
-// 2. FAVORITAR RECEITAS
-// ==================================
-
-let favoritos = JSON.parse(
-    localStorage.getItem("favoritos")
-) || [];
-
-document.querySelectorAll(".card").forEach(function(card, index) {
-
-    const botao = document.createElement("button");
-
-    botao.className = "botao-favorito";
-
-    const nome = card.querySelector("h3").textContent;
-
-    function atualizarBotao() {
-        botao.textContent = favoritos.includes(nome)
-            ? "❤️ Favoritado"
-            : "🤍 Favoritar";
-    }
-
-    atualizarBotao();
-
-    botao.addEventListener("click", function() {
-
-        if (favoritos.includes(nome)) {
-
-            favoritos = favoritos.filter(
-                item => item !== nome
-            );
-
-        } else {
-
-            favoritos.push(nome);
-
-        }
-
-        localStorage.setItem(
-            "favoritos",
-            JSON.stringify(favoritos)
-        );
-
-        atualizarBotao();
-
-    });
-
-    card.appendChild(botao);
-
-});
-
-// ==================================
-// 3. AVALIAR RECEITAS
-// ==================================
-
-document.querySelectorAll(".card").forEach(function(card) {
-
-    const avaliacao = document.createElement("div");
-
-    avaliacao.className = "avaliacao";
-
-    const texto = document.createElement("p");
-    texto.textContent = "Avalie esta receita:";
-
-    avaliacao.appendChild(texto);
-
-    for (let i = 1; i <= 5; i++) {
-
-        const estrela = document.createElement("button");
-
-        estrela.textContent = "☆";
-        estrela.style.fontSize = "23px";
-        estrela.style.color = "#e5a000";
-        estrela.style.border = "none";
-        estrela.style.background = "transparent";
-        estrela.style.cursor = "pointer";
-
-        estrela.addEventListener("click", function() {
-
-            const estrelas = avaliacao.querySelectorAll("button");
-
-            estrelas.forEach(function(botao, indice) {
-
-                botao.textContent = indice < i ? "★" : "☆";
-
-            });
-
-            texto.textContent =
-                "Você avaliou com " + i + " estrelas!";
-
-        });
-
-        avaliacao.appendChild(estrela);
-
-    }
-
-    card.appendChild(avaliacao);
-
-});
-
-// ==================================
-// 4. FORMULÁRIO DE CONTATO
-// ==================================
-
-const formulario = document.querySelector(".contato form");
-
-formulario.addEventListener("submit", function(event) {
-
-    event.preventDefault();
-
-    const nome = formulario.querySelector(
-        'input[type="text"]'
-    ).value.trim();
-
-    const email = formulario.querySelector(
-        'input[type="email"]'
-    ).value.trim();
-
-    const mensagem = formulario.querySelector(
-        "textarea"
-    ).value.trim();
-
-    if (!nome || !email || !mensagem) {
-
-        alert("Preencha todos os campos!");
-
-        return;
-
-    }
-
-    alert(
-        "🍓 Obrigado, " + nome +
-        "! Sua mensagem foi recebida."
+/* RESET */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background: #fffaf3;
+    color: #333;
+}
+
+/* CABEÇALHO */
+header {
+    background: #e76f32;
+    color: white;
+    padding: 25px 8%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.logo {
+    font-size: 28px;
+    font-weight: bold;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    margin-left: 20px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+nav a:hover {
+    color: #ffe1bd;
+}
+
+/* BANNER PRINCIPAL */
+.hero {
+    background: linear-gradient(#0007, #0007),
+    url("https://images.unsplash.com/photo-1498837167922-ddd27525d352?w=1600");
+
+    background-size: cover;
+    background-position: center;
+
+    text-align: center;
+    color: white;
+    padding: 110px 20px;
+}
+
+.hero h1 {
+    font-size: 45px;
+    margin-bottom: 15px;
+}
+
+.hero p {
+    font-size: 18px;
+    margin-bottom: 25px;
+}
+
+.hero a {
+    display: inline-block;
+    background: #e76f32;
+    color: white;
+    padding: 13px 28px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.hero a:hover {
+    background: #c7521d;
+    transform: scale(1.05);
+}
+
+/* CONTEÚDO */
+.container {
+    padding: 50px 8%;
+}
+
+.section-title {
+    text-align: center;
+    color: #d85e26;
+    font-size: 30px;
+    margin-bottom: 30px;
+}
+
+/* PESQUISA */
+.search {
+    display: block;
+    width: 100%;
+    max-width: 500px;
+    padding: 14px 20px;
+    margin: 0 auto 35px;
+    border: 1px solid #ddd;
+    border-radius: 25px;
+    outline: none;
+    font-size: 16px;
+    transition: 0.3s;
+}
+
+.search:focus {
+    border-color: #e76f32;
+    box-shadow: 0 0 8px #e76f3240;
+}
+
+/* CARDS DE RECEITAS */
+.recipes {
+    display: grid;
+    grid-template-columns: repeat(
+        auto-fit,
+        minmax(250px, 1fr)
     );
+    gap: 25px;
+}
 
-    formulario.reset();
+.card {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px #0001;
+    transition: 0.3s;
+}
 
-});
+.card:hover {
+    transform: translateY(-7px);
+    box-shadow: 0 8px 20px #0002;
+}
 
-// ==================================
-// 5. MOSTRAR E ESCONDER RECEITAS
-// ==================================
+.card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
 
-document.querySelectorAll(".botao-card").forEach(function(botao) {
+.card-content {
+    padding: 20px;
+}
 
-    botao.addEventListener("click", function(event) {
+.card h3 {
+    color: #d85e26;
+    margin-bottom: 10px;
+    font-size: 21px;
+}
 
-        const link = botao.getAttribute("href");
+.card p {
+    line-height: 1.5;
+    color: #666;
+}
 
-        const receita = document.querySelector(link);
+.info {
+    margin-top: 15px;
+    color: #999;
+    font-size: 14px;
+}
 
-        if (receita) {
+/* BOTÕES */
+.card button {
+    background: #e76f32;
+    border: none;
+    color: white;
+    padding: 11px 18px;
+    border-radius: 20px;
+    margin-top: 15px;
+    cursor: pointer;
+    transition: 0.3s;
+}
 
-            receita.style.transition = "0.5s";
-            receita.style.background = "#fff0e8";
+.card button:hover {
+    background: #c7521d;
+    transform: scale(1.05);
+}
 
-            setTimeout(function() {
+/* SOBRE */
+.about {
+    background: #ffecd9;
+    text-align: center;
+    padding: 55px 15%;
+    line-height: 1.8;
+}
 
-                receita.style.background = "white";
+.about p {
+    font-size: 17px;
+    color: #555;
+}
 
-            }, 1500);
+/* RODAPÉ */
+footer {
+    background: #333;
+    color: white;
+    text-align: center;
+    padding: 25px;
+    line-height: 1.8;
+}
 
-        }
+/* RESPONSIVIDADE */
+@media (max-width: 600px) {
 
-    });
+    header {
+        justify-content: center;
+        text-align: center;
+    }
 
-});
+    nav a {
+        margin: 8px;
+        display: inline-block;
+    }
 
-// ==================================
-// 6. ANIMAÇÕES AO ROLAR A PÁGINA
-// ==================================
+    .hero {
+        padding: 80px 20px;
+    }
 
-const elementos = document.querySelectorAll(
-    ".card, .categoria, .dica, .receita-detalhada"
-);
+    .hero h1 {
+        font-size: 32px;
+    }
 
-const observador = new IntersectionObserver(function(entradas) {
+    .container {
+        padding: 35px 5%;
+    }
 
-    entradas.forEach(function(entrada) {
+    .about {
+        padding: 40px 8%;
+    }
 
-        if (entrada.isIntersecting) {
-
-            entrada.target.classList.add("aparecer");
-
-            observador.unobserve(entrada.target);
-
-        }
-
-    });
-
-}, {
-    threshold: 0.15
-});
-
-elementos.forEach(function(elemento) {
-
-    elemento.classList.add("animacao");
-
-    observador.observe(elemento);
-
-});
-
-// ==================================
-// 7. BOTÃO VOLTAR AO TOPO
-// ==================================
-
-const voltarTopo = document.createElement("button");
-
-voltarTopo.textContent = "⬆";
-
-voltarTopo.title = "Voltar ao topo";
-
-voltarTopo.style.position = "fixed";
-voltarTopo.style.bottom = "25px";
-voltarTopo.style.right = "25px";
-voltarTopo.style.width = "45px";
-voltarTopo.style.height = "45px";
-voltarTopo.style.border = "none";
-voltarTopo.style.borderRadius = "50%";
-voltarTopo.style.background = "#b83245";
-voltarTopo.style.color = "white";
-voltarTopo.style.fontSize = "22px";
-voltarTopo.style.cursor = "pointer";
-voltarTopo.style.display = "none";
-voltarTopo.style.zIndex = "999";
-
-document.body.appendChild(voltarTopo);
-
-window.addEventListener("scroll", function() {
-
-    voltarTopo.style.display =
-        window.scrollY > 300 ? "block" : "none";
-
-});
-
-voltarTopo.addEventListener("click", function() {
-
-    window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-    });
-
-});
+    .section-title {
+        font-size: 25px;
+    }
+}
