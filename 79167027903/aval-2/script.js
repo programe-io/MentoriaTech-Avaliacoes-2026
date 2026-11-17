@@ -1,115 +1,186 @@
 
-function curtir(botao) {
-    const numero = botao.querySelector("span");
+const feed = document.getElementById("feed");
+const perfil = document.getElementById("perfil");
 
-    if (!numero) return;
-
-    if (botao.dataset.curtido === "sim") {
-        numero.textContent = Number(numero.textContent) - 1;
-        botao.dataset.curtido = "nao";
-    } else {
-        numero.textContent = Number(numero.textContent) + 1;
-        botao.dataset.curtido = "sim";
-    }
+// ABRIR PERFIL
+function abrirPerfil() {
+    perfil.classList.remove("escondido");
 }
 
-function comentar() {
-    const comentario = prompt("Digite seu comentário:");
-
-    if (comentario && comentario.trim() !== "") {
-        alert("Comentário publicado: " + comentario);
-    }
-}
-
-function compartilhar() {
-    const link = window.location.href;
-
-    if (navigator.share) {
-        navigator.share({
-            title: "Tok Mania",
-            text: "Confira esta rede social!",
-            url: link
-        }).catch(() => {});
-    } else if (navigator.clipboard) {
-        navigator.clipboard.writeText(link)
-            .then(() => alert("Link copiado para compartilhar!"))
-            .catch(() => alert("Não foi possível copiar o link."));
-    } else {
-        prompt("Copie o link:", link);
-    }
-}
-
-function mostrarPerfil() {
-    document.getElementById("perfil").style.display = "block";
-}
-
+// FECHAR PERFIL
 function fecharPerfil() {
-    document.getElementById("perfil").style.display = "none";
+    perfil.classList.add("escondido");
 }
 
-function inicio() {
+document.getElementById("abrirPerfil").addEventListener("click", abrirPerfil);
+
+document.getElementById("perfilRodape").addEventListener("click", abrirPerfil);
+
+document.getElementById("fecharPerfil").addEventListener("click", fecharPerfil);
+
+// VOLTAR AO INÍCIO
+document.getElementById("inicio").addEventListener("click", function() {
     fecharPerfil();
 
-    document.getElementById("feed").scrollIntoView({
+    window.scrollTo({
+        top: 0,
         behavior: "smooth"
     });
-}
+});
 
-function novoVideo() {
-    const arquivo = document.createElement("input");
+// CURTIR E COMENTAR
+feed.addEventListener("click", function(event) {
+    const botao = event.target.closest("button");
 
-    arquivo.type = "file";
-    arquivo.accept = "video/*";
+    if (!botao) return;
 
-    arquivo.onchange = function() {
-        const videoSelecionado = arquivo.files[0];
+    const publicacao = botao.closest(".video");
 
-        if (!videoSelecionado) return;
+    if (!publicacao) return;
 
-        const url = URL.createObjectURL(videoSelecionado);
+    // CURTIR
+    if (botao.classList.contains("curtir")) {
+        const numero = botao.querySelector("span");
+        let curtidas = Number(numero.textContent);
 
-        const novoPost = document.createElement("article");
-        novoPost.className = "video";
+        if (botao.dataset.curtido === "sim") {
+            curtidas--;
+            botao.dataset.curtido = "nao";
+            botao.style.color = "white";
+        } else {
+            curtidas++;
+            botao.dataset.curtido = "sim";
+            botao.style.color = "#fe2c55";
+        }
+
+        numero.textContent = curtidas;
+    }
+
+    // COMENTAR
+    if (botao.classList.contains("comentar")) {
+        const texto = prompt("Digite seu comentário:");
+
+        if (texto && texto.trim() !== "") {
+            const comentario = document.createElement("p");
+            comentario.className = "comentario";
+            comentario.textContent = "💬 Você: " + texto.trim();
+
+            publicacao.appendChild(comentario);
+
+            const numero = botao.querySelector("span");
+            numero.textContent = Number(numero.textContent) + 1;
+        }
+    }
+
+    // COMPARTILHAR
+    if (botao.classList.contains("compartilhar")) {
+        const link = window.location.href;
+
+        if (navigator.share) {
+            navigator.share({
+                title: "Tok Mania",
+                text: "Confira este vídeo no Tok Mania!",
+                url: link
+            }).catch(function() {});
+        } else if (navigator.clipboard) {
+            navigator.clipboard.writeText(link)
+                .then(function() {
+                    alert("Link copiado com sucesso!");
+                })
+                .catch(function() {
+                    alert("Não foi possível copiar o link.");
+                });
+        } else {
+            prompt("Copie o link:", link);
+        }
+    }
+});
+
+// PUBLICAR VÍDEO
+document.getElementById("publicar").addEventListener("click", function() {
+    const seletor = document.createElement("input");
+
+    seletor.type = "file";
+    seletor.accept = "video/*";
+
+    seletor.addEventListener("change", function() {
+        const arquivo = seletor.files[0];
+
+        if (!arquivo) return;
+
+        if (!arquivo.type.startsWith("video/")) {
+            alert("Escolha um arquivo de vídeo válido!");
+            return;
+        }
+
+        const endereco = URL.createObjectURL(arquivo);
+
+        const publicacao = document.createElement("article");
+        publicacao.className = "video";
 
         const video = document.createElement("video");
-        video.src = url;
+        video.src = endereco;
         video.controls = true;
         video.loop = true;
         video.playsInline = true;
+        video.preload = "metadata";
 
         const informacoes = document.createElement("div");
         informacoes.className = "informacoes";
 
-        const usuario = document.createElement("h3");
-        usuario.textContent = "@meu_usuario";
+        const nome = document.createElement("h3");
+        nome.textContent = "@meu_usuario";
 
         const legenda = document.createElement("p");
         legenda.textContent = "Meu novo vídeo! 🎵";
 
-        informacoes.appendChild(usuario);
+        informacoes.appendChild(nome);
         informacoes.appendChild(legenda);
 
         const acoes = document.createElement("div");
         acoes.className = "acoes";
 
         acoes.innerHTML = `
-            <button onclick="curtir(this)">
+            <button class="curtir">
                 ❤️ <span>0</span>
             </button>
-            <button onclick="comentar()">💬 Comentar</button>
-            <button onclick="compartilhar()">↗️ Compartilhar</button>
+
+            <button class="comentar">
+                💬 <span>0</span>
+            </button>
+
+            <button class="compartilhar">
+                ↗️ Compartilhar
+            </button>
         `;
 
-        novoPost.appendChild(video);
-        novoPost.appendChild(informacoes);
-        novoPost.appendChild(acoes);
+        publicacao.appendChild(video);
+        publicacao.appendChild(informacoes);
+        publicacao.appendChild(acoes);
 
-        document.getElementById("feed").prepend(novoPost);
+        feed.prepend(publicacao);
 
-        novoPost.scrollIntoView({
+        publicacao.scrollIntoView({
             behavior: "smooth"
         });
-    };
 
-    arquivo.click();
-}
+        alert("Vídeo publicado com sucesso!");
+    });
+
+    seletor.click();
+});
+
+// PESQUISAR VÍDEOS
+document.getElementById("pesquisa").addEventListener("input", function() {
+    const pesquisa = this.value.toLowerCase();
+
+    const videos = document.querySelectorAll(".video");
+
+    videos.forEach(function(video) {
+        const conteudo = video.textContent.toLowerCase();
+
+        video.style.display = conteudo.includes(pesquisa)
+            ? "block"
+            : "none";
+    });
+});
