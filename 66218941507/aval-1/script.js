@@ -1,0 +1,101 @@
+
+let produtos = [];
+let codigo = 1;
+
+function esperar() {
+    return new Promise(resolve => setTimeout(resolve, 100));
+    }
+
+    async function cadastrar() {
+        let descricao = prompt("Descrição:");
+            if (!descricao) return;
+
+                let quantidade = Number(prompt("Quantidade:"));
+                    let valor = Number(prompt("Valor:"));
+
+                        produtos.push({
+                                codigo: codigo++,
+                                        descricao,
+                                                quantidade,
+                                                        valor
+                                                            });
+
+                                                                alert("Produto cadastrado!");
+                                                                    await esperar();
+                                                                    }
+
+                                                                    async function listar() {
+                                                                        if (produtos.length === 0) {
+                                                                                alert("Estoque vazio!");
+                                                                                        return;
+                                                                                            }
+
+                                                                                                let lista = produtos.map(p =>
+                                                                                                        `Código: ${p.codigo}\n` +
+                                                                                                                `Descrição: ${p.descricao}\n` +
+                                                                                                                        `Quantidade: ${p.quantidade}\n` +
+                                                                                                                                `Valor: R$ ${p.valor}`
+                                                                                                                                    ).join("\n\n");
+
+                                                                                                                                        alert(lista);
+                                                                                                                                            await esperar();
+                                                                                                                                            }
+
+                                                                                                                                            async function alterar(campo) {
+                                                                                                                                                let cod = Number(prompt("Código do produto:"));
+                                                                                                                                                    let produto = produtos.find(p => p.codigo === cod);
+
+                                                                                                                                                        if (!produto) {
+                                                                                                                                                                alert("Produto não encontrado!");
+                                                                                                                                                                        return;
+                                                                                                                                                                            }
+
+                                                                                                                                                                                let novo = Number(prompt("Digite o novo valor:"));
+
+                                                                                                                                                                                    produto[campo] = novo;
+
+                                                                                                                                                                                        alert("Alteração realizada!");
+                                                                                                                                                                                            await esperar();
+                                                                                                                                                                                            }
+
+                                                                                                                                                                                            async function menu() {
+                                                                                                                                                                                                let opcao;
+
+                                                                                                                                                                                                    do {
+                                                                                                                                                                                                            opcao = prompt(
+                                                                                                                                                                                                                        "SISTEMA DE ESTOQUE\n" +
+                                                                                                                                                                                                                                    "1 - Cadastrar\n" +
+                                                                                                                                                                                                                                                "2 - Listar\n" +
+                                                                                                                                                                                                                                                            "3 - Alterar valor\n" +
+                                                                                                                                                                                                                                                                        "4 - Alterar quantidade\n" +
+                                                                                                                                                                                                                                                                                    "0 - Sair"
+                                                                                                                                                                                                                                                                                            );
+
+                                                                                                                                                                                                                                                                                                    switch (opcao) {
+                                                                                                                                                                                                                                                                                                                case "1":
+                                                                                                                                                                                                                                                                                                                                await cadastrar();
+                                                                                                                                                                                                                                                                                                                                                break;
+                                                                                                                                                                                                                                                                                                                                                            case "2":
+                                                                                                                                                                                                                                                                                                                                                                            await listar();
+                                                                                                                                                                                                                                                                                                                                                                                            break;
+                                                                                                                                                                                                                                                                                                                                                                                                        case "3":
+                                                                                                                                                                                                                                                                                                                                                                                                                        await alterar("valor");
+                                                                                                                                                                                                                                                                                                                                                                                                                                        break;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                    case "4":
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                    await alterar("quantidade");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    break;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                case "0":
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                alert("Sistema encerrado!");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                break;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            case null:
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            opcao = "0";
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            break;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        default:
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        alert("Opção inválida!");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                }
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    } while (opcao !== "0");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    }
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    menu();
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
