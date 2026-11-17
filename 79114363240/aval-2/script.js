@@ -1,160 +1,110 @@
-// =====================================
-// CURTIR PUBLICAÇÃO
-// =====================================
 
-const likeButtons = document.querySelectorAll(".like-button");
+const form = document.getElementById("post-form");
+const texto = document.getElementById("post-text");
+const feed = document.getElementById("feed");
 
-likeButtons.forEach((button) => {
+// Criar publicação
+form.addEventListener("submit", function(event) {
+    event.preventDefault();
 
-    button.addEventListener("click", () => {
+    const mensagem = texto.value.trim();
 
-        const post = button.closest(".post");
-        const likes = post.querySelector(".likes");
+    if (mensagem === "") {
+        alert("Digite uma publicação!");
+        return;
+    }
 
-        let number = parseInt(
-            likes.textContent.replace(/\D/g, "")
-        );
+    const post = document.createElement("article");
+    post.classList.add("post");
 
-        if (button.classList.contains("liked")) {
+    const cabecalho = document.createElement("div");
+    cabecalho.classList.add("post-header");
 
-            button.classList.remove("liked");
-            button.textContent = "♡";
+    cabecalho.innerHTML = `
+        <div class="avatar">M</div>
+        <div>
+            <strong>Meu Perfil</strong>
+            <span>Estudante de Tecnologia</span>
+            <span>Agora mesmo</span>
+        </div>
+    `;
 
-            number--;
+    const paragrafo = document.createElement("p");
+    paragrafo.classList.add("post-text");
+    paragrafo.textContent = mensagem;
 
-        } else {
+    const acoes = document.createElement("div");
+    acoes.classList.add("post-actions");
 
-            button.classList.add("liked");
-            button.textContent = "♥";
+    acoes.innerHTML = `
+        <button class="like-button">👍 Curtir</button>
+        <button class="comment-button">💬 Comentar</button>
+    `;
 
-            number++;
-        }
+    const comentarios = document.createElement("div");
+    comentarios.classList.add("comments");
 
-        likes.textContent = `${number.toLocaleString("pt-BR")} curtidas`;
+    post.append(cabecalho, paragrafo, acoes, comentarios);
 
-    });
+    feed.prepend(post);
 
+    texto.value = "";
 });
 
+// Curtir e comentar
+feed.addEventListener("click", function(event) {
 
-// =====================================
-// COMENTÁRIOS
-// =====================================
+    if (event.target.classList.contains("like-button")) {
+        const botao = event.target;
 
-const commentForms =
-    document.querySelectorAll(".comment-form");
+        botao.classList.toggle("liked");
 
-commentForms.forEach((form) => {
+        botao.textContent = botao.classList.contains("liked")
+            ? "👍 Curtido"
+            : "👍 Curtir";
+    }
 
-    form.addEventListener("submit", (event) => {
+    if (event.target.classList.contains("comment-button")) {
+        const post = event.target.closest(".post");
+        const comentarios = post.querySelector(".comments");
 
-        event.preventDefault();
+        if (comentarios.querySelector("form")) return;
 
-        const input = form.querySelector("input");
-        const text = input.value.trim();
+        const formulario = document.createElement("form");
 
-        if (!text) {
-            return;
-        }
+        formulario.innerHTML = `
+            <input type="text"
+                placeholder="Escreva um comentário..."
+                required>
 
-        const comments =
-            form.closest(".post-content")
-                .querySelector(".comments");
-
-        const comment = document.createElement("p");
-
-        comment.innerHTML = `
-            <strong>meu_usuario</strong>
-            ${text}
+            <button type="submit">Enviar</button>
         `;
 
-        comments.appendChild(comment);
+        formulario.style.display = "flex";
+        formulario.style.gap = "8px";
+        formulario.style.marginTop = "10px";
 
-        input.value = "";
-
-    });
-
+        comentarios.appendChild(formulario);
+    }
 });
 
+// Enviar comentário
+feed.addEventListener("submit", function(event) {
 
-// =====================================
-// BOTÃO SEGUIR
-// =====================================
+    if (!event.target.matches(".comments form")) return;
 
-const followButtons =
-    document.querySelectorAll(".suggestion button");
+    event.preventDefault();
 
-followButtons.forEach((button) => {
+    const formulario = event.target;
+    const campo = formulario.querySelector("input");
+    const mensagem = campo.value.trim();
 
-    button.addEventListener("click", () => {
+    if (mensagem === "") return;
 
-        if (button.textContent === "Seguir") {
+    const comentario = document.createElement("div");
+    comentario.classList.add("comment-item");
+    comentario.textContent = "Você: " + mensagem;
 
-            button.textContent = "Seguindo";
-            button.style.color = "#777";
-
-        } else {
-
-            button.textContent = "Seguir";
-            button.style.color = "#0095f6";
-        }
-
-    });
-
-});
-
-
-// =====================================
-// PESQUISA
-// =====================================
-
-const searchInput =
-    document.querySelector("#searchInput");
-
-const posts =
-    document.querySelectorAll(".post");
-
-searchInput.addEventListener("input", () => {
-
-    const search =
-        searchInput.value.toLowerCase().trim();
-
-    posts.forEach((post) => {
-
-        const content =
-            post.textContent.toLowerCase();
-
-        if (content.includes(search)) {
-            post.style.display = "";
-        } else {
-            post.style.display = "none";
-        }
-
-    });
-
-});
-
-
-// =====================================
-// DUPLO CLIQUE PARA CURTIR
-// =====================================
-
-const postImages =
-    document.querySelectorAll(".post-image img");
-
-postImages.forEach((image) => {
-
-    image.addEventListener("dblclick", () => {
-
-        const post = image.closest(".post");
-
-        const button =
-            post.querySelector(".like-button");
-
-        if (!button.classList.contains("liked")) {
-            button.click();
-        }
-
-    });
-
+    formulario.parentElement.appendChild(comentario);
+    formulario.remove();
 });
