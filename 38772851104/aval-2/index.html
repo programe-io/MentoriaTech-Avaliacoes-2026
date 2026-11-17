@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Vinte e Um — Blackjack</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --felt:#0f5b4a; --felt-deep:#093a30; --ink:#1b1a17; --paper:#fbf8f1;
+  --red:#c42b3a; --brass:#e0b04a; --brass-ink:#3a2a05; --text:#f2efe6; --muted:#a9cdbf;
+  --win:#8de3a8; --lose:#ff9a9a;
+  --serif:"Fraunces", Georgia, "Times New Roman", serif;
+  --sans:system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+\}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){ --felt:#0c4a3c; --felt-deep:#062a23; \}
+\}
+:root[data-theme="dark"]{ --felt:#0c4a3c; --felt-deep:#062a23; \}
+*,*::before,*::after{box-sizing:inherit\}
+html,body{margin:0;min-height:100%\}
+body{
+  background:radial-gradient(ellipse at 50% 30%, var(--felt) 0%, var(--felt-deep) 85%) fixed var(--felt-deep);
+  color:var(--text); font-family:var(--sans); display:flex; justify-content:center;
+\}
+main{width:100%; max-width:720px; padding:16px 16px 28px; display:flex; flex-direction:column; gap:14px; min-height:100vh\}
+header{display:flex; justify-content:space-between; align-items:flex-end; gap:12px\}
+h1{font-family:var(--serif); font-weight:800; font-size:clamp(1.6rem,6vw,2.3rem); margin:0; letter-spacing:-.01em\}
+.stats{display:flex; gap:18px; text-align:right\}
+.stat small{display:block; color:var(--muted); font-size:.78rem\}
+.stat b{font-family:var(--serif); font-size:1.4rem; color:var(--brass)\}
+.hand{display:flex; flex-direction:column; gap:8px\}
+.hand-head{display:flex; align-items:baseline; gap:10px\}
+.hand-head h2{margin:0; font-size:1rem; font-weight:600; color:var(--muted)\}
+.score{font-family:var(--serif); font-weight:800; font-size:1.3rem; min-width:2ch\}
+.cards{display:flex; min-height:132px; padding-left:8px\}
+.card{
+  width:86px; height:122px; margin-left:-30px; border-radius:9px; background:var(--paper); color:var(--ink);
+  position:relative; box-shadow:0 3px 10px rgba(0,0,0,.35); font-family:var(--serif); font-weight:800;
+  flex:none; border:1px solid rgba(0,0,0,.15);
+\}
+.card:first-child{margin-left:0\}
+.card.red{color:var(--red)\}
+.card .c{position:absolute; line-height:1; font-size:1.15rem; text-align:center\}
+.card .tl{top:7px; left:8px\}
+.card .br{bottom:7px; right:8px; transform:rotate(180deg)\}
+.card .mid{position:absolute; inset:0; display:grid; place-items:center; font-size:2.6rem\}
+.card.back{
+  background:repeating-linear-gradient(45deg,#8c2432 0 6px,#a62d3d 6px 12px);
+  border:5px solid var(--paper);
+\}
+.card.fresh{animation:deal .32s ease-out\}
+@keyframes deal{from{transform:translateY(-34px) rotate(-6deg); opacity:0\} to{transform:none; opacity:1\}\}
+.msg{
+  min-height:3.2rem; text-align:center; font-family:var(--serif); font-weight:600;
+  font-size:clamp(1.1rem,4vw,1.5rem); display:grid; place-items:center;
+\}
+.msg.win{color:var(--win)\} .msg.lose{color:var(--lose)\} .msg.push{color:var(--brass)\}
+.panel{display:flex; flex-direction:column; gap:12px; align-items:center; margin-top:auto\}
+.row{display:flex; flex-wrap:wrap; gap:10px; justify-content:center\}
+button{
+  font:inherit; cursor:pointer; border:0; border-radius:999px; padding:12px 22px; font-weight:700;
+  background:var(--brass); color:var(--brass-ink); min-height:46px; transition:transform .1s, opacity .15s;
+\}
+button:hover:not(:disabled){transform:translateY(-1px)\}
+button:active:not(:disabled){transform:translateY(1px)\}
+button:disabled{opacity:.4; cursor:not-allowed\}
+button.alt{background:transparent; color:var(--text); border:2px solid var(--muted)\}
+button:focus-visible{outline:3px solid #fff; outline-offset:3px\}
+.chip{
+  width:64px; height:64px; padding:0; border-radius:50%; font-family:var(--serif); font-size:1.1rem;
+  background:var(--paper); color:var(--ink); border:6px dashed var(--brass); box-shadow:0 0 0 3px var(--paper) inset;
+\}
+.chip[data-v="20"]{border-color:#6fb7e8\} .chip[data-v="50"]{border-color:#e07a8a\} .chip[data-v="100"]{border-color:#9b8cf0\}
+.hint{color:var(--muted); font-size:.85rem; margin:0; text-align:center\}
+@media (max-width:420px){ .card{width:70px; height:100px; margin-left:-26px\} .card .mid{font-size:2rem\} .cards{min-height:110px\} \}
+@media (prefers-reduced-motion:reduce){ .card.fresh{animation:none\} button{transition:none\} \}
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+<main>
+  <header>
+    <h1>Vinte e Um</h1>
+    <div class="stats">
+      <div class="stat"><small>Saldo</small><b id="bal">500</b></div>
+      <div class="stat"><small>Aposta</small><b id="bet">0</b></div>
+    </div>
+  </header>
+
+  <section class="hand" aria-label="Mão da banca">
+    <div class="hand-head"><h2>Banca</h2><span class="score" id="dscore"></span></div>
+    <div class="cards" id="dealer"></div>
+  </section>
+
+  <div class="msg" id="msg" role="status" aria-live="polite">Escolha sua aposta</div>
+
+  <section class="hand" aria-label="Sua mão">
+    <div class="hand-head"><h2>Você</h2><span class="score" id="pscore"></span></div>
+    <div class="cards" id="player"></div>
+  </section>
+
+  <div class="panel">
+    <div class="row" id="betRow">
+      <button class="chip" data-v="10">10</button>
+      <button class="chip" data-v="20">20</button>
+      <button class="chip" data-v="50">50</button>
+      <button class="chip" data-v="100">100</button>
+    </div>
+    <div class="row" id="betActions">
+      <button id="clear" class="alt">Limpar aposta</button>
+      <button id="deal">Distribuir</button>
+    </div>
+    <div class="row" id="playActions" hidden>
+      <button id="hit">Pedir carta</button>
+      <button id="stand">Parar</button>
+      <button id="double" class="alt">Dobrar</button>
+    </div>
+    <p class="hint">Chegue o mais perto de 21 sem passar. Blackjack paga 3 para 2. A banca para no 17.</p>
+  </div>
+</main>
+
+<script>
+(function(){
+  const SUITS=['♠','♥','♦','♣'], RANKS=['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
+  const \$=id=>document.getElementById(id);
+  let balance=500, bet=0, deck=[], player=[], dealer=[], phase='bet';
+
+  try{ const s=localStorage.getItem('vinteum-saldo'); if(s && +s>0) balance=+s; \}catch(e){\}
+  const save=()=>{ try{ localStorage.setItem('vinteum-saldo', String(balance)); \}catch(e){\} \};
+  const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+
+  function newDeck(){
+    const d=[];
+    for(const s of SUITS) for(const r of RANKS) d.push({r,s\});
+    for(let i=d.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [d[i],d[j]]=[d[j],d[i]]; \}
+    return d;
+  \}
+  function draw(hand){
+    if(deck.length<15) deck=newDeck();
+    const c=deck.pop(); c.fresh=true; hand.push(c); return c;
+  \}
+  const val=c=>c.r==='A'?11:('JQK'.includes(c.r)?10:+c.r);
+  function score(h){
+    let t=0,a=0;
+    for(const c of h){ t+=val(c); if(c.r==='A') a++; \}
+    while(t>21&&a){ t-=10; a--; \}
+    return t;
+  \}
+  const isBJ=h=>h.length===2&&score(h)===21;
+
+  function cardEl(c,hidden){
+    const el=document.createElement('div');
+    if(hidden){ el.className='card back'; el.setAttribute('aria-label','Carta virada'); return el; \}
+    el.className='card'+(c.s==='♥'||c.s==='♦'?' red':'')+(c.fresh?' fresh':'');
+    c.fresh=false;
+    el.setAttribute('aria-label',c.r+' de '+c.s);
+    el.innerHTML='<span class="c tl">'+c.r+'<br>'+c.s+'</span><span class="mid">'+c.s+'</span><span class="c br">'+c.r+'<br>'+c.s+'</span>';
+    return el;
+  \}
+  function render(){
+    \$('bal').textContent=balance; \$('bet').textContent=bet;
+    const pe=\$('player'), de=\$('dealer');
+    pe.replaceChildren(...player.map(c=>cardEl(c,false)));
+    de.replaceChildren(...dealer.map((c,i)=>cardEl(c, phase==='play' && i===1)));
+    \$('pscore').textContent=player.length?score(player):'';
+    \$('dscore').textContent=dealer.length?(phase==='play'?val(dealer[0]):score(dealer)):'';
+    const betting=phase==='bet', playing=phase==='play';
+    \$('betRow').hidden=!betting; \$('betActions').hidden=!betting; \$('playActions').hidden=!playing;
+    document.querySelectorAll('.chip').forEach(b=>b.disabled=(+b.dataset.v>balance));
+    \$('deal').disabled=bet===0; \$('clear').disabled=bet===0;
+    \$('double').disabled=!(playing&&player.length===2&&balance>=bet);
+  \}
+  function say(t,cls){ const m=\$('msg'); m.textContent=t; m.className='msg'+(cls?' '+cls:''); \}
+
+  function addBet(v){ if(phase!=='bet'||v>balance) return; bet+=v; balance-=v; say('Aposta: '+bet); render(); \}
+  function clearBet(){ if(phase!=='bet') return; balance+=bet; bet=0; say('Escolha sua aposta'); render(); \}
+
+  async function startRound(){
+    if(bet===0) return;
+    phase='play'; player=[]; dealer=[];
+    say('Distribuindo…'); render();
+    for(let i=0;i<2;i++){ draw(player); render(); await sleep(220); draw(dealer); render(); await sleep(220); \}
+    if(isBJ(player)||isBJ(dealer)) return finish();
+    say('Sua vez');
+    render();
+  \}
+  async function hit(){
+    if(phase!=='play') return;
+    draw(player); render();
+    const s=score(player);
+    if(s>21) return finish();
+    if(s===21) return stand();
+  \}
+  async function stand(){ if(phase==='play') return finish(); \}
+  async function doubleDown(){
+    if(phase!=='play'||player.length!==2||balance<bet) return;
+    balance-=bet; bet*=2; draw(player); render();
+    await sleep(350); finish();
+  \}
+  async function finish(){
+    phase='dealer'; render();
+    const ps=score(player);
+    const pBJ=isBJ(player), dBJ=isBJ(dealer);
+    say('Banca revela…'); render();
+    await sleep(500);
+    if(ps<=21 && !pBJ && !dBJ){
+      while(score(dealer)<17){ draw(dealer); render(); await sleep(600); \}
+    \}
+    const ds=score(dealer);
+    let payout=0, text, cls;
+    if(ps>21){ text='Estourou! A banca vence.'; cls='lose'; \}
+    else if(pBJ&&!dBJ){ payout=bet*2.5; text='Blackjack! Você ganhou '+(bet*1.5)+'.'; cls='win'; \}
+    else if(dBJ&&!pBJ){ text='Blackjack da banca.'; cls='lose'; \}
+    else if(ds>21){ payout=bet*2; text='A banca estourou! Você ganhou '+bet+'.'; cls='win'; \}
+    else if(ps>ds){ payout=bet*2; text='Você venceu! +'+bet; cls='win'; \}
+    else if(ps<ds){ text='A banca vence com '+ds+'.'; cls='lose'; \}
+    else { payout=bet; text='Empate. Aposta devolvida.'; cls='push'; \}
+    balance+=payout; save();
+    phase='done'; render();
+    say(text,cls);
+    await sleep(1400);
+    bet=0; phase='bet';
+    if(balance<=0){ balance=500; save(); say('Fichas acabaram. Saldo reiniciado em 500.','push'); \}
+    else say('Escolha sua aposta para a próxima rodada');
+    render();
+  \}
+
+  document.querySelectorAll('.chip').forEach(b=>b.addEventListener('click',()=>addBet(+b.dataset.v)));
+  \$('clear').addEventListener('click',clearBet);
+  \$('deal').addEventListener('click',startRound);
+  \$('hit').addEventListener('click',hit);
+  \$('stand').addEventListener('click',stand);
+  \$('double').addEventListener('click',doubleDown);
+
+  deck=newDeck(); render();
+\})();
+</script>
+<script src="script.js"></script></body>
+</html>$0
