@@ -3,13 +3,13 @@ let produtos = [];
 
 function cadastrar() {
     let codigo = Number(document.getElementById("codigo").value);
-    let descricao = document.getElementById("descricao").value;
-    let quantidade = Number(document.getElementById("quantidade").value);
-    let valor = Number(document.getElementById("valor").value);
+    let descricao = document.getElementById("descricao").value.trim();
+    let quantidade = document.getElementById("quantidade").value;
+    let valor = document.getElementById("valor").value;
 
-    if (!codigo || !descricao || quantidade < 0 ||
-        document.getElementById("quantidade").value === "" ||
-        valor < 0 || document.getElementById("valor").value === "") {
+    if (!codigo || !descricao || quantidade === "" ||
+        valor === "" || Number(quantidade) < 0 ||
+        Number(valor) < 0) {
         alert("Preencha todos os campos corretamente!");
         return;
     }
@@ -19,7 +19,12 @@ function cadastrar() {
         return;
     }
 
-    produtos.push({ codigo, descricao, quantidade, valor });
+    produtos.push({
+        codigo: codigo,
+        descricao: descricao,
+        quantidade: Number(quantidade),
+        valor: Number(valor)
+    });
 
     alert("Produto cadastrado com sucesso!");
 
@@ -49,8 +54,9 @@ function listar() {
 
 function alterarValor() {
     let codigo = Number(document.getElementById("codigoAlterar").value);
-    let produto = produtos.find(p => p.codigo === codigo);
     let valor = document.getElementById("novoValor").value;
+
+    let produto = produtos.find(p => p.codigo === codigo);
 
     if (!produto) {
         alert("Produto não encontrado!");
@@ -70,8 +76,9 @@ function alterarValor() {
 
 function alterarQuantidade() {
     let codigo = Number(document.getElementById("codigoAlterar").value);
-    let produto = produtos.find(p => p.codigo === codigo);
     let quantidade = document.getElementById("novaQuantidade").value;
+
+    let produto = produtos.find(p => p.codigo === codigo);
 
     if (!produto) {
         alert("Produto não encontrado!");
