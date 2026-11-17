@@ -1,0 +1,239 @@
+
+/* CONFIGURAÇÕES GERAIS */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f1f5f9;
+    color: #1e293b;
+}
+
+.container {
+    width: 90%;
+    max-width: 1150px;
+    margin: 30px auto;
+}
+
+/* CABEÇALHO */
+
+header {
+    background: #123b32;
+    color: white;
+    padding: 30px;
+    border-radius: 12px;
+    margin-bottom: 25px;
+}
+
+header h1 {
+    margin-bottom: 10px;
+}
+
+/* PAINEL FINANCEIRO */
+
+.dashboard {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.card {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px #00000010;
+    border-left: 5px solid #16a34a;
+}
+
+.card h3 {
+    font-size: 16px;
+    margin-bottom: 15px;
+}
+
+.card p {
+    font-size: 24px;
+    font-weight: bold;
+    color: #16a34a;
+}
+
+.saldo {
+    border-left-color: #2563eb;
+    
+}
+
+.saldo p {
+    color: #2567eb;
+}
+
+.negative {
+    color: #dc2626 !important;
+}
+
+/* FORMULÁRIO */
+
+.formulario,
+.listagem {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    margin-bottom: 25px;
+    box-shadow: 0 3px 10px #00000010;
+}
+
+h2 {
+    margin-bottom: 20px;
+    color: #123b32;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+label {
+    font-weight: bold;
+}
+
+input,
+select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 7px;
+    font-size: 15px;
+}
+
+input:focus,
+select:focus {
+    outline: 2px solid #16a34a;
+    border-color: transparent;
+}
+
+/* BOTÕES */
+
+button {
+    padding: 12px 18px;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+#btn-salvar {
+    background: #15803d;
+    color: white;
+}
+
+#btn-salvar:hover {
+    background: #166534;
+}
+
+#btn-cancelar {
+    background: #64748b;
+    color: white;
+}
+
+button[hidden] {
+    display: none;
+}
+
+/* FILTROS */
+
+.filtros {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.filtros button {
+    background: #e2e8f0;
+    color: #1e293b;
+}
+
+.filtros button.ativo {
+    background: #15803d;
+    color: white;
+}
+
+/* TABELA */
+
+.tabela-container {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 650px;
+}
+
+th, td {
+    padding: 14px;
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+th {
+    background: #123b32;
+    color: white;
+}
+
+.receita {
+    color: #15803d;
+    font-weight: bold;
+}
+
+.despesa {
+    color: #dc2626;
+    font-weight: bold;
+}
+
+/* AÇÕES */
+
+.btn-editar {
+    background: #2563eb;
+    color: white;
+    margin: 3px;
+}
+
+.btn-excluir {
+    background: #dc2626;
+    color: white;
+    margin: 3px;
+}
+
+.btn-editar:hover,
+.btn-excluir:hover {
+    opacity: 0.8;
+}
+
+/* RESPONSIVIDADE */
+
+@media (max-width: 768px) {
+
+    .dashboard {
+        grid-template-columns: 1fr;
+    }
+
+    .container {
+        width: 95%;
+    }
+
+    header {
+        padding: 20px;
+    }
+
+    .formulario,
+    .listagem {
+        padding: 15px;
+    }
+
+}
