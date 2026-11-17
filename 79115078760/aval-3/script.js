@@ -1,334 +1,177 @@
 
-// ===================================
-// ICHAT - REDE SOCIAL DE MENSAGENS
-// ===================================
+// CURTIR PUBLICAÇÃO
+function curtir(element) {
+    let post = element.closest(".post");
+    let likes = post.querySelector(".likes");
 
-const defaultChats = [
-    {
-        id: 1,
-        name: "Ana Clara",
-        avatar: "https://i.pravatar.cc/150?img=47",
-        online: true,
-        messages: [
-            { text: "Oi! Tudo bem? ❤️", type: "received", time: "10:20" },
-            { text: "Tudo sim, e você?", type: "sent", time: "10:22" }
-        ]
-    },
-    {
-        id: 2,
-        name: "Lucas Santos",
-        avatar: "https://i.pravatar.cc/150?img=12",
-        online: true,
-        messages: [
-            { text: "Vamos jogar hoje? 🎮", type: "received", time: "09:45" }
-        ]
-    },
-    {
-        id: 3,
-        name: "Mariana",
-        avatar: "https://i.pravatar.cc/150?img=44",
-        online: false,
-        messages: [
-            { text: "Boa noite! 😊", type: "received", time: "Ontem" }
-        ]
-    },
-    {
-        id: 4,
-        name: "Pedro Henrique",
-        avatar: "https://i.pravatar.cc/150?img=11",
-        online: true,
-        messages: [
-            { text: "Me chama depois!", type: "received", time: "Ontem" }
-        ]
+    let quantidade = parseInt(likes.innerText);
+
+    if (element.classList.contains("like")) {
+        element.classList.remove("like");
+        element.innerText = "♡";
+        quantidade--;
+    } else {
+        element.classList.add("like");
+        element.innerText = "♥";
+        quantidade++;
     }
-];
 
-let chats;
-
-try {
-    const saved = JSON.parse(localStorage.getItem("ichat_chats"));
-    chats = Array.isArray(saved) ? saved : defaultChats;
-} catch {
-    chats = defaultChats;
+    likes.innerText = quantidade + " curtidas";
 }
 
-let activeChat = null;
+// ENVIAR COMENTÁRIO
+function enviarComentario(button) {
+    let post = button.closest(".post");
 
-// ===================================
-// ELEMENTOS
-// ===================================
+    let input = post.querySelector(".comment-input");
+    let comentarios = post.querySelector(".comments");
 
-const chatList = document.getElementById("chat-list");
-const messages = document.getElementById("messages");
-const input = document.getElementById("message-input");
-const form = document.getElementById("message-form");
-
-// ===================================
-// SEGURANÇA DE TEXTO
-// ===================================
-
-function escapeHTML(text) {
-    return String(text).replace(/[&<>"']/g, char => ({
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#039;"
-    })[char]);
-}
-
-// ===================================
-// SALVAR CONVERSAS
-// ===================================
-
-function saveChats() {
-    localStorage.setItem("ichat_chats", JSON.stringify(chats));
-}
-
-// ===================================
-// HORÁRIO
-// ===================================
-
-function getTime() {
-    return new Date().toLocaleTimeString("pt-BR", {
-        hour: "2-digit",
-        minute: "2-digit"
-    });
-}
-
-// ===================================
-// MOSTRAR LISTA DE CONVERSAS
-// ===================================
-
-function renderChats(filter = "") {
-
-    chatList.innerHTML = "";
-
-    const filtered = chats.filter(chat =>
-        chat.name.toLowerCase().includes(filter.toLowerCase())
-    );
-
-    if (!filtered.length) {
-        chatList.innerHTML = "<p style='padding:20px;color:#888'>Nenhuma conversa encontrada.</p>";
+    if (input.value.trim() === "") {
+        alert("Digite um comentário!");
         return;
     }
 
-    filtered.forEach(chat => {
+    let novoComentario = document.createElement("p");
 
-        const lastMessage = chat.messages.at(-1);
+    let usuario = document.createElement("b");
+    usuario.innerText = "meu_perfil ";
 
-        const preview = lastMessage
-            ? lastMessage.text
-            : "Comece uma conversa";
+    novoComentario.appendChild(usuario);
 
-        const time = lastMessage
-            ? lastMessage.time
-            : "";
+    novoComentario.appendChild(
+        document.createTextNode(input.value)
+    );
 
-        const item = document.createElement("div");
-        item.className = "chat-item";
-
-        item.innerHTML = `
-            <img class="avatar"
-                src="${escapeHTML(chat.avatar)}"
-                alt="Foto de ${escapeHTML(chat.name)}">
-
-            <div class="chat-details">
-                <h3>${escapeHTML(chat.name)}</h3>
-                <p>${escapeHTML(preview)}</p>
-            </div>
-
-            <div class="chat-meta">
-                <span>${escapeHTML(time)}</span>
-                <br>
-                ${chat.online
-                    ? '<span class="online">● Online</span>'
-                    : ''}
-            </div>
-        `;
-
-        item.addEventListener("click", () => openChat(chat.id));
-
-        chatList.appendChild(item);
-
-    });
-
-}
-
-// ===================================
-// ABRIR CONVERSA
-// ===================================
-
-function openChat(id) {
-
-    activeChat = chats.find(chat => chat.id === id);
-
-    if (!activeChat) return;
-
-    document.getElementById("home-screen").classList.add("hidden");
-
-    document.getElementById("conversation-screen").classList.remove("hidden");
-
-    document.getElementById("chat-avatar").src = activeChat.avatar;
-
-    document.getElementById("chat-name").textContent = activeChat.name;
-
-    document.getElementById("chat-status").textContent =
-        activeChat.online ? "online" : "offline";
-
-    renderMessages();
-
-}
-
-// ===================================
-// MOSTRAR MENSAGENS
-// ===================================
-
-function renderMessages() {
-
-    if (!activeChat) return;
-
-    messages.innerHTML = "";
-
-    activeChat.messages.forEach(message => {
-
-        const bubble = document.createElement("div");
-
-        bubble.className = `message ${message.type}`;
-
-        bubble.innerHTML = `
-            ${escapeHTML(message.text)}
-            <span class="message-time">
-                ${escapeHTML(message.time)}
-                ${message.type === "sent" ? " ✓✓" : ""}
-            </span>
-        `;
-
-        messages.appendChild(bubble);
-
-    });
-
-    messages.scrollTop = messages.scrollHeight;
-
-}
-
-// ===================================
-// ENVIAR MENSAGEM
-// ===================================
-
-form.addEventListener("submit", function(event) {
-
-    event.preventDefault();
-
-    const text = input.value.trim();
-
-    if (!text || !activeChat) return;
-
-    activeChat.messages.push({
-        text: text,
-        type: "sent",
-        time: getTime()
-    });
+    comentarios.appendChild(novoComentario);
 
     input.value = "";
-
-    saveChats();
-
-    renderMessages();
-
-    renderChats();
-
-});
-
-// ===================================
-// VOLTAR PARA CONVERSAS
-// ===================================
-
-function goBack() {
-
-    document.getElementById("conversation-screen").classList.add("hidden");
-
-    document.getElementById("home-screen").classList.remove("hidden");
-
-    activeChat = null;
-
-    renderChats();
-
 }
 
-// ===================================
-// PESQUISAR CONTATOS
-// ===================================
+// FOCAR NO CAMPO DE COMENTÁRIO
+function comentar(element) {
+    let input = element.closest(".post")
+        .querySelector(".comment-input");
 
-document.getElementById("search").addEventListener("input", function() {
+    input.focus();
+}
 
-    renderChats(this.value);
+// SEGUIR USUÁRIOS
+function seguir(button) {
+    if (button.innerText === "Seguir") {
+        button.innerText = "Seguindo";
+    } else {
+        button.innerText = "Seguir";
+    }
+}
 
-});
+// CRIAR PUBLICAÇÃO
+function criarPost() {
 
-// ===================================
-// NOVA CONVERSA
-// ===================================
+    let imagem = prompt("Cole o endereço de uma imagem:");
 
-function newChat() {
+    if (!imagem || imagem.trim() === "") {
+        return;
+    }
 
-    const name = prompt("Digite o nome do contato:");
+    let legenda = prompt("Digite uma legenda:");
 
-    if (!name || !name.trim()) return;
+    let post = document.createElement("article");
+    post.className = "post";
 
-    const cleanName = name.trim();
+    // Cabeçalho
+    let cabecalho = document.createElement("div");
+    cabecalho.className = "post-header";
+    cabecalho.innerText = "👤 meu_perfil";
 
-    let existing = chats.find(chat =>
-        chat.name.toLowerCase() === cleanName.toLowerCase()
+    // Imagem
+    let foto = document.createElement("img");
+    foto.className = "post-image";
+    foto.src = imagem;
+
+    foto.onerror = function() {
+        alert("Não foi possível carregar essa imagem.");
+        post.remove();
+    };
+
+    // Botões
+    let acoes = document.createElement("div");
+    acoes.className = "actions";
+
+    let curtirBtn = document.createElement("span");
+    curtirBtn.innerText = "♡";
+
+    curtirBtn.onclick = function() {
+        curtir(curtirBtn);
+    };
+
+    let comentarBtn = document.createElement("span");
+    comentarBtn.innerText = "💬";
+
+    comentarBtn.onclick = function() {
+        comentar(comentarBtn);
+    };
+
+    acoes.append(curtirBtn, comentarBtn);
+
+    // Descrição
+    let descricao = document.createElement("div");
+    descricao.className = "description";
+
+    let likes = document.createElement("b");
+    likes.className = "likes";
+    likes.innerText = "0 curtidas";
+
+    let texto = document.createElement("p");
+
+    let usuario = document.createElement("b");
+    usuario.innerText = "meu_perfil";
+
+    texto.appendChild(usuario);
+    texto.appendChild(
+        document.createTextNode(" " + (legenda || "Minha publicação!"))
     );
 
-    if (existing) {
-        openChat(existing.id);
-        return;
-    }
+    descricao.append(likes, texto);
 
-    const newContact = {
-        id: Date.now(),
-        name: cleanName,
-        avatar: "https://i.pravatar.cc/150?u=" + Date.now(),
-        online: false,
-        messages: []
+    // Comentários
+    let comentarios = document.createElement("div");
+    comentarios.className = "comments";
+
+    let input = document.createElement("input");
+    input.className = "comment-input";
+    input.placeholder = "Adicione um comentário...";
+
+    let botao = document.createElement("button");
+    botao.innerText = "Publicar";
+
+    botao.onclick = function() {
+        enviarComentario(botao);
     };
 
-    chats.unshift(newContact);
+    // Adicionar tudo ao post
+    post.append(
+        cabecalho,
+        foto,
+        acoes,
+        descricao,
+        comentarios,
+        input,
+        botao
+    );
 
-    saveChats();
-
-    renderChats();
-
-    openChat(newContact.id);
-
+    document.getElementById("feed").prepend(post);
 }
 
-// ===================================
-// MENU INFERIOR
-// ===================================
+// MENSAGEM DE NOTIFICAÇÃO
+function notificacao() {
+    alert("Você não tem novas notificações! ❤️");
+}
 
-function changeTab(tab) {
+// PESQUISAR USUÁRIOS
+function pesquisar() {
+    let nome = prompt("Digite o nome do usuário:");
 
-    if (tab === "home") {
-        goBack();
-        return;
+    if (nome) {
+        alert("Pesquisando por: " + nome);
     }
-
-    const tabs = {
-        status: "Atualizações",
-        calls: "Ligações",
-        communities: "Comunidades",
-        settings: "Configurações"
-    };
-
-    alert(tabs[tab] + "\n\nÁrea demonstrativa do iChat.");
-
 }
-
-// ===================================
-// INICIALIZAR
-// ===================================
-
-renderChats();
