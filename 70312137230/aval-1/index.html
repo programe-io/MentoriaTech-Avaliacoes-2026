@@ -1,38 +1,20 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>StockFlow Pro — Controle de Estoque</title>
-  <!-- Tailwind CSS via CDN -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Ícones Lucide -->
-  <script src="https://unpkg.com/lucide@latest"></script>
-  <style>
-    body {
-      background-image: linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.92)),
-        url('https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1920&q=80');
-      background-size: cover;
-      background-position: center;
-      background-attachment: fixed;
-      font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    }
-    .glass {
-      background: rgba(30, 41, 59, 0.65);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    ::-webkit-scrollbar { width: 8px; height: 8px; }
-    ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.5); }
-    ::-webkit-scrollbar-thumb { background: rgba(99, 102, 241, 0.5); border-radius: 4px; }
-  </style>
-<script src="https://cdn.tailwindcss.com"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="style.css" rel="stylesheet"></head>
-<body class="text-slate-100 min-h-screen p-4 md:p-8">
+<link href="style.css" rel="stylesheet">
+</head>
+<body>
+  <!-- Carregamento de Estilos e Ícones -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
 
+<div class="pagina-estoque text-slate-100 min-h-screen p-4 md:p-8">
   <div class="max-w-7xl mx-auto space-y-6">
+    
     <!-- Cabeçalho -->
     <header class="glass rounded-2xl p-6 flex flex-col md:flex-row justify-between items-center gap-4 shadow-xl">
       <div class="flex items-center gap-3">
@@ -44,49 +26,79 @@
           <p class="text-sm text-slate-400">Gerenciamento inteligente de inventário</p>
         </div>
       </div>
+
       <div class="flex flex-wrap items-center gap-3">
-        <button onclick="exportarCSV()" class="flex items-center gap-2 bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/30 px-4 py-2.5 rounded-xl text-sm font-medium transition">
-          <i data-lucide="download" class="w-4 h-4"></i> Exportar CSV
+        <button type="button" onclick="exportarCSV()" class="flex items-center gap-2 bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/30 px-4 py-2.5 rounded-xl text-sm font-medium transition">
+          <i data-lucide="download" class="w-4 h-4"></i>
+          Exportar CSV
         </button>
-        <button onclick="limparTudo()" class="flex items-center gap-2 bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 border border-rose-500/30 px-4 py-2.5 rounded-xl text-sm font-medium transition">
-          <i data-lucide="trash-2" class="w-4 h-4"></i> Resetar Dados
+        <button type="button" onclick="limparTudo()" class="flex items-center gap-2 bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 border border-rose-500/30 px-4 py-2.5 rounded-xl text-sm font-medium transition">
+          <i data-lucide="trash-2" class="w-4 h-4"></i>
+          Resetar Dados
         </button>
       </div>
     </header>
 
-    <!-- Cards de Resumo -->
+    <!-- Cards de Resumo (KPIs) -->
     <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       <div class="glass rounded-2xl p-5 flex items-center justify-between">
-        <div><p class="text-sm text-slate-400">Total de Produtos</p><h3 id="kpi-produtos" class="text-2xl font-bold mt-1">0</h3></div>
-        <div class="p-3 bg-indigo-500/20 rounded-xl text-indigo-400"><i data-lucide="package" class="w-6 h-6"></i></div>
+        <div>
+          <p class="text-sm text-slate-400">Total de Produtos</p>
+          <h3 id="kpi-produtos" class="text-2xl font-bold mt-1">0</h3>
+        </div>
+        <div class="p-3 bg-indigo-500/20 rounded-xl text-indigo-400">
+          <i data-lucide="package" class="w-6 h-6"></i>
+        </div>
       </div>
+
       <div class="glass rounded-2xl p-5 flex items-center justify-between">
-        <div><p class="text-sm text-slate-400">Itens em Estoque</p><h3 id="kpi-itens" class="text-2xl font-bold mt-1">0</h3></div>
-        <div class="p-3 bg-sky-500/20 rounded-xl text-sky-400"><i data-lucide="layers" class="w-6 h-6"></i></div>
+        <div>
+          <p class="text-sm text-slate-400">Itens em Estoque</p>
+          <h3 id="kpi-itens" class="text-2xl font-bold mt-1">0</h3>
+        </div>
+        <div class="p-3 bg-sky-500/20 rounded-xl text-sky-400">
+          <i data-lucide="layers" class="w-6 h-6"></i>
+        </div>
       </div>
+
       <div class="glass rounded-2xl p-5 flex items-center justify-between">
-        <div><p class="text-sm text-slate-400">Valor Patrimonial</p><h3 id="kpi-valor" class="text-2xl font-bold mt-1 text-emerald-400">R$ 0,00</h3></div>
-        <div class="p-3 bg-emerald-500/20 rounded-xl text-emerald-400"><i data-lucide="dollar-sign" class="w-6 h-6"></i></div>
+        <div>
+          <p class="text-sm text-slate-400">Valor Patrimonial</p>
+          <h3 id="kpi-valor" class="text-2xl font-bold mt-1 text-emerald-400">R$ 0,00</h3>
+        </div>
+        <div class="p-3 bg-emerald-500/20 rounded-xl text-emerald-400">
+          <i data-lucide="dollar-sign" class="w-6 h-6"></i>
+        </div>
       </div>
+
       <div class="glass rounded-2xl p-5 flex items-center justify-between">
-        <div><p class="text-sm text-slate-400">Alertas de Reposição</p><h3 id="kpi-alertas" class="text-2xl font-bold mt-1 text-amber-400">0</h3></div>
-        <div class="p-3 bg-amber-500/20 rounded-xl text-amber-400"><i data-lucide="alert-triangle" class="w-6 h-6"></i></div>
+        <div>
+          <p class="text-sm text-slate-400">Alertas de Reposição</p>
+          <h3 id="kpi-alertas" class="text-2xl font-bold mt-1 text-amber-400">0</h3>
+        </div>
+        <div class="p-3 bg-amber-500/20 rounded-xl text-amber-400">
+          <i data-lucide="alert-triangle" class="w-6 h-6"></i>
+        </div>
       </div>
     </section>
 
-    <!-- Conteúdo Principal -->
+    <!-- Conteúdo Principal: Cadastro + Tabela -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <!-- Formulário -->
+      
+      <!-- Formulário de Cadastro -->
       <aside class="glass rounded-2xl p-6 h-fit shadow-xl">
         <h2 class="text-lg font-semibold mb-4 flex items-center gap-2">
-          <i data-lucide="plus-circle" class="w-5 h-5 text-indigo-400"></i> Cadastrar Produto
+          <i data-lucide="plus-circle" class="w-5 h-5 text-indigo-400"></i>
+          Cadastrar Produto
         </h2>
-        <form id="form-produto" class="space-y-4">
+        
+        <div class="space-y-4">
           <div>
             <label class="block text-xs font-medium text-slate-300 uppercase mb-1">Nome do Produto *</label>
-            <input type="text" id="nome" required placeholder="Ex: Teclado Mecânico RGB"
+            <input type="text" id="nome" placeholder="Ex: Teclado Mecânico RGB"
               class="w-full bg-slate-900/70 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500">
           </div>
+
           <div class="grid grid-cols-2 gap-3">
             <div>
               <label class="block text-xs font-medium text-slate-300 uppercase mb-1">Código / SKU</label>
@@ -105,15 +117,16 @@
               </select>
             </div>
           </div>
+
           <div class="grid grid-cols-3 gap-3">
             <div>
               <label class="block text-xs font-medium text-slate-300 uppercase mb-1">Valor (R$) *</label>
-              <input type="number" id="preco" step="0.01" min="0" required placeholder="0.00"
+              <input type="number" id="preco" step="0.01" min="0" placeholder="0.00"
                 class="w-full bg-slate-900/70 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500">
             </div>
             <div>
               <label class="block text-xs font-medium text-slate-300 uppercase mb-1">Qtd *</label>
-              <input type="number" id="quantidade" min="0" required placeholder="0"
+              <input type="number" id="quantidade" min="0" placeholder="0"
                 class="w-full bg-slate-900/70 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500">
             </div>
             <div>
@@ -122,14 +135,16 @@
                 class="w-full bg-slate-900/70 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500">
             </div>
           </div>
-          <button type="submit"
-            class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-3 rounded-xl shadow-lg shadow-indigo-600/30 transition flex items-center justify-center gap-2">
-            <i data-lucide="save" class="w-4 h-4"></i> Adicionar ao Estoque
+
+          <button type="button" onclick="cadastrarProduto()"
+            class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-3 rounded-xl shadow-lg shadow-indigo-600/30 transition flex items-center justify-center gap-2 cursor-pointer">
+            <i data-lucide="save" class="w-4 h-4"></i>
+            Adicionar ao Estoque
           </button>
-        </form>
+        </div>
       </aside>
 
-      <!-- Tabela -->
+      <!-- Lista de Produtos -->
       <main class="glass rounded-2xl p-6 lg:col-span-2 shadow-xl flex flex-col">
         <div class="flex flex-col sm:flex-row gap-3 justify-between items-center mb-5">
           <div class="relative w-full sm:w-72">
@@ -137,6 +152,7 @@
             <input type="text" id="busca" oninput="renderizarTabela()" placeholder="Buscar por nome ou SKU..."
               class="w-full bg-slate-900/70 border border-slate-700 rounded-xl pl-10 pr-4 py-2 text-sm text-white focus:outline-none focus:border-indigo-500">
           </div>
+
           <select id="filtro-status" onchange="renderizarTabela()"
             class="w-full sm:w-48 bg-slate-900/70 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500">
             <option value="todos">Todos os Status</option>
@@ -145,6 +161,7 @@
             <option value="zerado">Esgotados</option>
           </select>
         </div>
+
         <div class="overflow-x-auto">
           <table class="w-full text-left border-collapse">
             <thead>
@@ -160,6 +177,7 @@
             <tbody id="tabela-produtos" class="divide-y divide-slate-800 text-sm"></tbody>
           </table>
         </div>
+
         <div id="estado-vazio" class="hidden text-center py-12 text-slate-400">
           <i data-lucide="inbox" class="w-12 h-12 mx-auto mb-3 opacity-50"></i>
           <p>Nenhum produto encontrado.</p>
@@ -168,227 +186,54 @@
     </div>
   </div>
 
-  <!-- Modal -->
+  <!-- Modal de Edição -->
   <div id="modal-editar" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
     <div class="glass rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-700">
       <div class="flex justify-between items-center mb-4">
         <h3 class="text-lg font-bold text-white">Editar Produto</h3>
-        <button onclick="fecharModal()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+        <button type="button" onclick="fecharModal()" class="text-slate-400 hover:text-white">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
       </div>
-      <form id="form-editar" class="space-y-4">
+
+      <div class="space-y-4">
         <input type="hidden" id="edit-id">
+        
         <div>
           <label class="block text-xs text-slate-400 uppercase mb-1">Produto</label>
-          <input type="text" id="edit-nome" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white">
+          <input type="text" id="edit-nome" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white">
         </div>
+
         <div class="grid grid-cols-2 gap-4">
           <div>
             <label class="block text-xs text-slate-400 uppercase mb-1">Novo Valor (R$)</label>
-            <input type="number" id="edit-preco" step="0.01" min="0" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white">
+            <input type="number" id="edit-preco" step="0.01" min="0" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white">
           </div>
           <div>
             <label class="block text-xs text-slate-400 uppercase mb-1">Nova Quantidade</label>
-            <input type="number" id="edit-quantidade" min="0" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white">
+            <input type="number" id="edit-quantidade" min="0" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white">
           </div>
         </div>
+
         <div class="flex justify-end gap-3 pt-2">
-          <button type="button" onclick="fecharModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-sm">Cancelar</button>
-          <button type="submit" class="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium">Salvar Alterações</button>
+          <button type="button" onclick="fecharModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-sm">
+            Cancelar
+          </button>
+          <button type="button" onclick="salvarEdicao()" class="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium">
+            Salvar Alterações
+          </button>
         </div>
-      </form>
+      </div>
     </div>
   </div>
 
-  <!-- Toast -->
+  <!-- Toast de Notificação -->
   <div id="toast" class="fixed bottom-5 right-5 bg-indigo-600 text-white px-5 py-3 rounded-xl shadow-2xl transform translate-y-20 opacity-0 transition-all duration-300 flex items-center gap-2 text-sm font-medium z-50">
     <i data-lucide="check-circle" class="w-4 h-4"></i>
     <span id="toast-msg">Ação realizada!</span>
   </div>
-
-  <script>
-    const dadosIniciais = [
-      { id: 1, nome: "Notebook Dell Inspiron 15", sku: "NB-001", categoria: "Eletrônicos", preco: 3850.00, quantidade: 8, minimo: 3 },
-      { id: 2, nome: "Mouse Logitech MX Master 3S", sku: "MS-042", categoria: "Periféricos", preco: 549.90, quantidade: 3, minimo: 5 },
-      { id: 3, nome: "Monitor LG UltraWide 29\"", sku: "MN-109", categoria: "Eletrônicos", preco: 1299.00, quantidade: 0, minimo: 2 }
-    ];
-
-    let produtos = JSON.parse(localStorage.getItem('stockflow_produtos')) || dadosIniciais;
-
-    function salvarLocalStorage() {
-      localStorage.setItem('stockflow_produtos', JSON.stringify(produtos));
-      atualizarKPIs();
-      renderizarTabela();
-    }
-
-    function formatarMoeda(valor) {
-      return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-    }
-
-    function mostrarToast(mensagem) {
-      const toast = document.getElementById('toast');
-      document.getElementById('toast-msg').textContent = mensagem;
-      toast.classList.remove('translate-y-20', 'opacity-0');
-      setTimeout(() => toast.classList.add('translate-y-20', 'opacity-0'), 3000);
-    }
-
-    function atualizarKPIs() {
-      document.getElementById('kpi-produtos').textContent = produtos.length;
-      document.getElementById('kpi-itens').textContent = produtos.reduce((acc, p) => acc + p.quantidade, 0);
-      document.getElementById('kpi-valor').textContent = formatarMoeda(produtos.reduce((acc, p) => acc + (p.preco * p.quantidade), 0));
-      document.getElementById('kpi-alertas').textContent = produtos.filter(p => p.quantidade <= p.minimo).length;
-    }
-
-    document.getElementById('form-produto').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const novoProduto = {
-        id: Date.now(),
-        nome: document.getElementById('nome').value.trim(),
-        sku: document.getElementById('sku').value.trim() || `PRD-${Math.floor(100 + Math.random() * 900)}`,
-        categoria: document.getElementById('categoria').value,
-        preco: parseFloat(document.getElementById('preco').value),
-        quantidade: parseInt(document.getElementById('quantidade').value),
-        minimo: parseInt(document.getElementById('minimo').value) || 0
-      };
-      produtos.unshift(novoProduto);
-      salvarLocalStorage();
-      e.target.reset();
-      document.getElementById('minimo').value = 5;
-      mostrarToast('Produto cadastrado com sucesso!');
-    });
-
-    function alterarQuantidadeRapida(id, delta) {
-      const produto = produtos.find(p => p.id === id);
-      if (!produto) return;
-      const novaQtd = produto.quantidade + delta;
-      if (novaQtd < 0) return;
-      produto.quantidade = novaQtd;
-      salvarLocalStorage();
-    }
-
-    function abrirModalEdicao(id) {
-      const produto = produtos.find(p => p.id === id);
-      if (!produto) return;
-      document.getElementById('edit-id').value = produto.id;
-      document.getElementById('edit-nome').value = produto.nome;
-      document.getElementById('edit-preco').value = produto.preco;
-      document.getElementById('edit-quantidade').value = produto.quantidade;
-      const modal = document.getElementById('modal-editar');
-      modal.classList.remove('hidden');
-      modal.classList.add('flex');
-    }
-
-    function fecharModal() {
-      const modal = document.getElementById('modal-editar');
-      modal.classList.add('hidden');
-      modal.classList.remove('flex');
-    }
-
-    document.getElementById('form-editar').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const id = Number(document.getElementById('edit-id').value);
-      const produto = produtos.find(p => p.id === id);
-      if (produto) {
-        produto.nome = document.getElementById('edit-nome').value.trim();
-        produto.preco = parseFloat(document.getElementById('edit-preco').value);
-        produto.quantidade = parseInt(document.getElementById('edit-quantidade').value);
-        salvarLocalStorage();
-        fecharModal();
-        mostrarToast('Produto atualizado!');
-      }
-    });
-
-    function excluirProduto(id) {
-      if (confirm('Deseja realmente excluir este produto?')) {
-        produtos = produtos.filter(p => p.id !== id);
-        salvarLocalStorage();
-        mostrarToast('Produto removido.');
-      }
-    }
-
-    function renderizarTabela() {
-      const termo = document.getElementById('busca').value.toLowerCase();
-      const filtroStatus = document.getElementById('filtro-status').value;
-      const tbody = document.getElementById('tabela-produtos');
-      const estadoVazio = document.getElementById('estado-vazio');
-
-      const filtrados = produtos.filter(p => {
-        const bateBusca = p.nome.toLowerCase().includes(termo) || p.sku.toLowerCase().includes(termo);
-        if (!bateBusca) return false;
-        if (filtroStatus === 'zerado') return p.quantidade === 0;
-        if (filtroStatus === 'baixo') return p.quantidade > 0 && p.quantidade <= p.minimo;
-        if (filtroStatus === 'ok') return p.quantidade > p.minimo;
-        return true;
-      });
-
-      tbody.innerHTML = '';
-      if (filtrados.length === 0) {
-        estadoVazio.classList.remove('hidden');
-        return;
-      }
-      estadoVazio.classList.add('hidden');
-
-      filtrados.forEach(p => {
-        let badgeStatus = '';
-        if (p.quantidade === 0) {
-          badgeStatus = '<span class="px-2.5 py-1 text-xs font-medium rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30">Esgotado</span>';
-        } else if (p.quantidade <= p.minimo) {
-          badgeStatus = '<span class="px-2.5 py-1 text-xs font-medium rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">Estoque Baixo</span>';
-        } else {
-          badgeStatus = '<span class="px-2.5 py-1 text-xs font-medium rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Em Dia</span>';
-        }
-
-        const tr = document.createElement('tr');
-        tr.className = 'hover:bg-slate-800/40 transition';
-        tr.innerHTML = `
-          <td class="py-3.5 px-4">
-            <div class="font-medium text-white">${p.nome}</div>
-            <div class="text-xs text-slate-400">${p.sku} • ${p.categoria}</div>
-          </td>
-          <td class="py-3.5 px-4 font-medium text-slate-200">${formatarMoeda(p.preco)}</td>
-          <td class="py-3.5 px-4">
-            <div class="flex items-center justify-center gap-2">
-              <button onclick="alterarQuantidadeRapida(${p.id}, -1)" class="w-7 h-7 rounded-lg bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-300 transition">-</button>
-              <span class="w-8 text-center font-semibold">${p.quantidade}</span>
-              <button onclick="alterarQuantidadeRapida(${p.id}, 1)" class="w-7 h-7 rounded-lg bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-300 transition">+</button>
-            </div>
-          </td>
-          <td class="py-3.5 px-4 font-medium text-emerald-400">${formatarMoeda(p.preco * p.quantidade)}</td>
-          <td class="py-3.5 px-4">${badgeStatus}</td>
-          <td class="py-3.5 px-4 text-right space-x-1">
-            <button onclick="abrirModalEdicao(${p.id})" title="Editar" class="p-2 rounded-lg bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 transition"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
-            <button onclick="excluirProduto(${p.id})" title="Excluir" class="p-2 rounded-lg bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 transition"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
-      lucide.createIcons();
-    }
-
-    function exportarCSV() {
-      if (produtos.length === 0) return alert('Não há produtos para exportar.');
-      const cabecalho = ['SKU;Produto;Categoria;Valor Unitario;Quantidade;Valor Total'];
-      const linhas = produtos.map(p => `${p.sku};"${p.nome}";${p.categoria};${p.preco.toFixed(2).replace('.', ',')};${p.quantidade};${(p.preco * p.quantidade).toFixed(2).replace('.', ',')}`);
-      const csvContent = "data:text/csv;charset=utf-8,\uFEFF" + [cabecalho, ...linhas].join("\n");
-      const link = document.createElement("a");
-      link.setAttribute("href", encodeURI(csvContent));
-      link.setAttribute("download", "estoque_produtos.csv");
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      mostrarToast('Planilha CSV exportada!');
-    }
-
-    function limparTudo() {
-      if (confirm('Deseja restaurar os dados de exemplo?')) {
-        produtos = [...dadosIniciais];
-        salvarLocalStorage();
-        mostrarToast('Dados restaurados.');
-      }
-    }
-
-    lucide.createIcons();
-    atualizarKPIs();
-    renderizarTabela();
-  </script>
-<script src="script.js"></script></body>
+</div>
+  <script src="script.js"></script>
+  
+</body>
 </html>
