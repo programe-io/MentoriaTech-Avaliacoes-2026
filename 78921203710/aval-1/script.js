@@ -2,69 +2,74 @@
 const telefone = "5586989046527";
 
 const produtos = [
+
     {
-        id: 1,
         nome: "Vestido Floral",
         preco: 129.90,
         imagem: "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=600"
     },
+
     {
-        id: 2,
         nome: "Vestido Elegante",
         preco: 149.90,
         imagem: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=600"
     },
+
     {
-        id: 3,
         nome: "Blusa Feminina",
         preco: 69.90,
         imagem: "https://images.unsplash.com/photo-1551163943-3f6a855d1153?w=600"
     },
+
     {
-        id: 4,
         nome: "Conjunto Feminino",
         preco: 159.90,
         imagem: "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600"
     },
+
     {
-        id: 5,
         nome: "Saia Moderna",
         preco: 89.90,
         imagem: "https://images.unsplash.com/photo-1583496661160-fb5886a0aaaa?w=600"
     },
+
     {
-        id: 6,
         nome: "Look Casual",
         preco: 119.90,
         imagem: "https://images.unsplash.com/photo-1485230895905-ec40ba36b9bc?w=600"
     },
+
     {
-        id: 7,
         nome: "Vestido de Festa",
         preco: 189.90,
         imagem: "https://images.unsplash.com/photo-1566174053879-31528523f8ae?w=600"
     },
+
     {
-        id: 8,
         nome: "Look Fashion",
         preco: 139.90,
         imagem: "https://images.unsplash.com/photo-1509631179647-0177331693ae?w=600"
     }
+
 ];
 
-const listaProdutos = document.getElementById("listaProdutos");
+const vitrine = document.getElementById("vitrine");
 
 function mostrarProdutos(lista) {
-    listaProdutos.innerHTML = "";
+
+    vitrine.innerHTML = "";
 
     if (lista.length === 0) {
-        listaProdutos.innerHTML = "<p>Nenhuma roupa encontrada.</p>";
+        vitrine.innerHTML = "<p>Nenhum produto encontrado.</p>";
         return;
     }
 
-    lista.forEach(produto => {
-        listaProdutos.innerHTML += `
+    lista.forEach((produto, index) => {
+
+        vitrine.innerHTML += `
+
             <div class="produto">
+
                 <img
                     src="${produto.imagem}"
                     alt="${produto.nome}"
@@ -77,19 +82,26 @@ function mostrarProdutos(lista) {
                     R$ ${produto.preco.toFixed(2).replace(".", ",")}
                 </p>
 
-                <button onclick="comprar(${produto.id})">
-                    Comprar pelo WhatsApp
+                <button onclick="comprar(${index})">
+                    Comprar agora
                 </button>
+
             </div>
+
         `;
+
     });
+
 }
 
-function comprar(id) {
-    const produto = produtos.find(item => item.id === id);
+function comprar(index) {
+
+    const produto = produtos.find(
+        (item, i) => i === index
+    );
 
     const mensagem =
-        `Olá! Tenho interesse em comprar:\n` +
+        `Olá! Gostaria de comprar:\n` +
         `Produto: ${produto.nome}\n` +
         `Preço: R$ ${produto.preco.toFixed(2).replace(".", ",")}`;
 
@@ -97,16 +109,24 @@ function comprar(id) {
         `https://wa.me/${telefone}?text=${encodeURIComponent(mensagem)}`;
 
     window.open(link, "_blank");
+
 }
 
-document.getElementById("pesquisa").addEventListener("input", function() {
-    const busca = this.value.toLowerCase();
+// PESQUISA DE PRODUTOS
+
+document.getElementById("pesquisa")
+.addEventListener("input", function() {
+
+    const pesquisa = this.value.toLowerCase();
 
     const resultado = produtos.filter(produto =>
-        produto.nome.toLowerCase().includes(busca)
+        produto.nome.toLowerCase().includes(pesquisa)
     );
 
     mostrarProdutos(resultado);
+
 });
+
+// CARREGAR PRODUTOS NA TELA
 
 mostrarProdutos(produtos);
