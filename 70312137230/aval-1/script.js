@@ -1,24 +1,10 @@
-const dadosIniciais = [
-  { id: 1, nome: "Notebook Dell Inspiron 15", sku: "NB-001", categoria: "Eletrônicos", preco: 3850.00, quantidade: 8, minimo: 3 },
-  { id: 2, nome: "Mouse Logitech MX Master 3S", sku: "MS-042", categoria: "Periféricos", preco: 549.90, quantidade: 3, minimo: 5 },
-  { id: 3, nome: "Monitor LG UltraWide 29\"", sku: "MN-109", categoria: "Eletrônicos", preco: 1299.00, quantidade: 0, minimo: 2 }
-];
-
-// Carrega dados com proteção caso a plataforma escolar bloqueie localStorage
+// Array inicial vazio (zero produtos)
 let produtos = [];
-try {
-  const salvos = localStorage.getItem('stockflow_produtos');
-  produtos = salvos ? JSON.parse(salvos) : [...dadosIniciais];
-} catch (e) {
-  produtos = [...dadosIniciais];
-}
 
 function atualizarSistema() {
   try {
     localStorage.setItem('stockflow_produtos', JSON.stringify(produtos));
-  } catch (e) {
-    // Continua funcionando na memória mesmo se a plataforma bloquear armazenamento
-  }
+  } catch (e) {}
   atualizarKPIs();
   renderizarTabela();
 }
@@ -45,7 +31,6 @@ function atualizarKPIs() {
   document.getElementById('kpi-alertas').textContent = produtos.filter(p => p.quantidade <= p.minimo).length;
 }
 
-// Função chamada diretamente pelo clique do botão "Adicionar ao Estoque"
 window.cadastrarProduto = function() {
   const nomeInput = document.getElementById('nome');
   const skuInput = document.getElementById('sku');
@@ -76,7 +61,6 @@ window.cadastrarProduto = function() {
   produtos.unshift(novoProduto);
   atualizarSistema();
 
-  // Limpa os campos
   nomeInput.value = '';
   skuInput.value = '';
   precoInput.value = '';
@@ -228,12 +212,11 @@ window.exportarCSV = function() {
 };
 
 window.limparTudo = function() {
-  produtos = [...dadosIniciais];
+  produtos = [];
   atualizarSistema();
-  mostrarToast('Dados restaurados.');
+  mostrarToast('Estoque zerado com sucesso!');
 };
 
-// Inicialização segura após carregar a página
 setTimeout(() => {
   atualizarSistema();
   if (typeof lucide !== 'undefined') {
