@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet">
+</head>
+<body>
+  html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ficha de Anamnese Digital</title>
+  <style>
+    :root {
+      --primary: #0f766e;
+      --primary-hover: #115e59;
+      --bg: #f1f5f9;
+      --card: #ffffff;
+      --text: #1e293b;
+      --border: #cbd5e1;
+      --muted: #64748b;
+    }
+
+    * { box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
+    
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 20px;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 850px;
+      margin: 0 auto;
+      background: var(--card);
+      padding: 32px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    header {
+      border-bottom: 2px solid var(--primary);
+      padding-bottom: 16px;
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    h1 { margin: 0; font-size: 1.6rem; color: var(--primary); }
+    .subtitle { color: var(--muted); font-size: 0.9rem; margin: 4px 0 0; }
+
+    fieldset {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    legend {
+      font-weight: 600;
+      color: var(--primary);
+      padding: 0 8px;
+      font-size: 1.05rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .form-group { display: flex; flex-direction: column; }
+    .full-width { grid-column: 1 / -1; }
+
+    label {
+      font-size: 0.88rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    input, select, textarea {
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.95rem;
+      color: var(--text);
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.15);
+    }
+
+    textarea { resize: vertical; min-height: 80px; }
+
+    .checkbox-group {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: normal;
+      font-size: 0.92rem;
+      cursor: pointer;
+    }
+
+    .checkbox-item input { width: 16px; height: 16px; accent-color: var(--primary); }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      margin-top: 24px;
+    }
+
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-primary:hover { background: var(--primary-hover); }
+    .btn-secondary { background: #e2e8f0; color: var(--text); }
+    .btn-secondary:hover { background: #cbd5e1; }
+    .btn-danger { background: #fee2e2; color: #b91c1c; }
+    .btn-danger:hover { background: #fecaca; }
+
+    .status-msg {
+      margin-top: 15px;
+      padding: 12px;
+      border-radius: 6px;
+      background: #dcfce7;
+      color: #166534;
+      font-weight: 500;
+      display: none;
+      text-align: center;
+    }
+
+    @media print {
+      body { background: white; padding: 0; }
+      .container { box-shadow: none; padding: 0; max-width: 100%; }
+      .actions, .status-msg { display: none !important; }
+      fieldset { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <div>
+      <h1>Ficha de Anamnese</h1>
+      <p class="subtitle">Avaliação Inicial e Histórico Clínico do Paciente</p>
+    </div>
+    <div class="form-group">
+      <label for="dataAtendimento">Data do Atendimento</label>
+      <input type="date" id="dataAtendimento" name="dataAtendimento" required>
+    </div>
+  </header>
+
+  <form id="anamneseForm">
+    <!-- 1. Identificação -->
+    <fieldset>
+      <legend>1. Identificação do Paciente</legend>
+      <div class="grid">
+        <div class="form-group full-width">
+          <label for="nome">Nome Completo *</label>
+          <input type="text" id="nome" name="nome" required placeholder="Ex: Maria da Silva">
+        </div>
+        <div class="form-group">
+          <label for="nascimento">Data de Nascimento *</label>
+          <input type="date" id="nascimento" name="nascimento" required>
+        </div>
+        <div class="form-group">
+          <label for="cpf">CPF</label>
+          <input type="text" id="cpf" name="cpf" placeholder="000.000.000-00">
+        </div>
+        <div class="form-group">
+          <label for="telefone">Telefone / WhatsApp *</label>
+          <input type="tel" id="telefone" name="telefone" required placeholder="(00) 00000-0000">
+        </div>
+        <div class="form-group">
+          <label for="profissao">Profissão</label>
+          <input type="text" id="profissao" name="profissao">
+        </div>
+      </div>
+    </fieldset>
+
+    <!-- 2. Queixa Principal -->
+    <fieldset>
+      <legend>2. Queixa Principal e Histórico Atual</legend>
+      <div class="grid">
+        <div class="form-group full-width">
+          <label for="queixa">Queixa Principal (Motivo da consulta) *</label>
+          <textarea id="queixa" name="queixa" required placeholder="Descreva o motivo principal do atendimento nas palavras do paciente..."></textarea>
+        </div>
+        <div class="form-group full-width">
+          <label for="hda">História da Moléstia Atual (Início, duração, intensidade, fatores de melhora/piora)</label>
+          <textarea id="hda" name="hda"></textarea>
+        </div>
+      </div>
+    </fieldset>
+
+    <!-- 3. Histórico de Saúde -->
+    <fieldset>
+      <legend>3. Antecedentes Pessoais e Condições de Saúde</legend>
+      <div class="checkbox-group">
+        <label class="checkbox-item"><input type="checkbox" name="condicoes" value="Hipertensão"> Hipertensão</label>
+        <label class="checkbox-item"><input type="checkbox" name="condicoes" value="Diabetes"> Diabetes</label>
+        <label class="checkbox-item"><input type="checkbox" name="condicoes" value="Cardiopatia"> Cardiopatia</label>
+        <label class="checkbox-item"><input type="checkbox" name="condicoes" value="Asma/Bronquite"> Asma / Bronquite</label>
+        <label class="checkbox-item"><input type="checkbox" name="condicoes" value="Gestante"> Gestante / Lactante</label>
+        <label class="checkbox-item"><input type="checkbox" name="condicoes" value="Cirurgia Prévia"> Cirurgia Prévia</label>
+      </div>
+      <div class="grid" style="margin-top: 16px;">
+        <div class="form-group">
+          <label for="alergias">Alergias (Medicamentos, alimentos, substâncias)</label>
+          <input type="text" id="alergias" name="alergias" placeholder="Nenhuma ou especifique">
+        </div>
+        <div class="form-group">
+          <label for="medicamentos">Medicamentos em uso contínuo</label>
+          <input type="text" id="medicamentos" name="medicamentos" placeholder="Nome e dosagem">
+        </div>
+      </div>
+    </fieldset>
+
+    <!-- 4. Hábitos de Vida -->
+    <fieldset>
+      <legend>4. Hábitos de Vida</legend>
+      <div class="grid">
+        <div class="form-group">
+          <label for="atividadeFisica">Atividade Física</label>
+          <select id="atividadeFisica" name="atividadeFisica">
+            <option value="Sedentário">Sedentário</option>
+            <option value="1 a 2x por semana">1 a 2x por semana</option>
+            <option value="3 ou mais vezes por semana">3 ou mais vezes por semana</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="tabagismo">Tabagismo</label>
+          <select id="tabagismo" name="tabagismo">
+            <option value="Não">Não</option>
+            <option value="Sim">Sim</option>
+            <option value="Ex-fumante">Ex-fumante</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="etilismo">Consumo de Álcool</label>
+          <select id="etilismo" name="etilismo">
+            <option value="Não">Não</option>
+            <option value="Socialmente">Socialmente</option>
+            <option value="Frequente">Frequente</option>
+          </select>
+        </div>
+      </div>
+    </fieldset>
+
+    <!-- 5. Consentimento -->
+    <fieldset>
+      <legend>5. Declaração e Consentimento (LGPD)</legend>
+      <label class="checkbox-item">
+        <input type="checkbox" id="consentimento" name="consentimento" required>
+        Declaro que as informações acima são verdadeiras e autorizo o armazenamento destes dados para fins de atendimento clínico. *
+      </label>
+    </fieldset>
+
+    <div class="actions">
+      <button type="button" class="btn-danger" onclick="limparFormulario()">Limpar Campos</button>
+      <button type="button" class="btn-secondary" onclick="window.print()">Imprimir / Salvar PDF</button>
+      <button type="submit" class="btn-primary">Salvar Ficha</button>
+    </div>
+
+    <div id="statusMsg" class="status-msg"></div>
+  </form>
+</div>
+
+<script>
+  const form = document.getElementById('anamneseForm');
+  const dataInput = document.getElementById('dataAtendimento');
+  const statusMsg = document.getElementById('statusMsg');
+
+  // Define a data de hoje por padrão
+  dataInput.valueAsDate = new Date();
+
+  // Carrega rascunho salvo no navegador ao abrir
+  window.addEventListener('DOMContentLoaded', () => {
+    const salvo = localStorage.getItem('fichaAnamneseRascunho');
+    if (salvo) {
+      const dados = JSON.parse(salvo);
+      Object.keys(dados).forEach(key => {
+        const el = form.elements[key];
+        if (!el) return;
+        if (el instanceof RadioNodeList) {
+  <script src="script.js"></script>
+  
+</body>
+</html>
