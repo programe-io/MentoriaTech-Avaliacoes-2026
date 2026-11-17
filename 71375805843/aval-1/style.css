@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demonstração de Sistema em CSS Moderno</title>
+    <style>
+        /* --- RESET E VARIÁVEIS DE DESIGN TOKENS --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        \}
+
+        :root {
+            --bg-primary: #0f172a;
+            --bg-card: #1e293b;
+            --bg-input: #334155;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #6366f1;
+            --accent-hover: #4f46e5;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --border: #334155;
+            --radius: 12px;
+            --transition: all 0.3s ease;
+        \}
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        \}
+
+        /* --- LAYOUT PRINCIPAL (CSS GRID) --- */
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            grid-template-rows: auto 1fr;
+            gap: 24px;
+            width: 100%;
+            max-width: 1100px;
+            height: 700px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.4);
+        \}
+
+        /* --- BARRA LATERAL (SIDEBAR) --- */
+        .sidebar {
+            grid-row: span 2;
+            background: rgba(15, 23, 42, 0.6);
+            border-right: 1px solid var(--border);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        \}
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 32px;
+        \}
+
+        .logo-icon {
+            background: var(--accent);
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        \}
+
+        .nav-menu {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        \}
+
+        .nav-item a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            color: var(--text-muted);
+            text-decoration: none;
+            border-radius: var(--radius);
+            font-weight: 500;
+            transition: var(--transition);
+        \}
+
+        .nav-item.active a, .nav-item a:hover {
+            background: var(--accent);
+            color: var(--text-main);
+            transform: translateX(4px);
+        \}
+
+        /* --- CABEÇALHO DO PAINEL --- */
+        .header {
+            grid-column: 2;
+            padding: 24px 32px 0 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        \}
+
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        \}
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        \}
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        \}
+
+        /* --- CONTEÚDO DINÂMICO (GRID INTERNO) --- */
+        .main-content {
+            grid-column: 2;
+            padding: 24px 32px 32px 32px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        \}
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        \}
+
+        .metric-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            padding: 20px;
+            border-radius: var(--radius);
+            transition: var(--transition);
+        \}
+
+        .metric-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        \}
+
+        .metric-title {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 8px;
+        \}
+
+        .metric-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+        \}
+
+        .metric-value.success { color: var(--success); \}
+        .metric-value.warning { color: var(--warning); \}
+
+        /* --- FORMULÁRIO ESTILIZADO COM CSS --- */
+        .form-section {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            padding: 24px;
+            border-radius: var(--radius);
+        \}
+
+        .form-section h3 {
+            margin-bottom: 16px;
+            font-size: 1.1rem;
+        \}
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        \}
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        \}
+
+        .form-group.full {
+            grid-column: span 2;
+        \}
+
+        label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        \}
+
+        input {
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            padding: 10px 14px;
+            border-radius: 8px;
+            color: var(--text-main);
+            outline: none;
+            transition: var(--transition);
+        \}
+
+        input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        \}
+
+        .btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 16px;
+        \}
+
+        .btn:hover {
+            background: var(--accent-hover);
+        \}
+
+        /* --- RESPONSIVIDADE PARA TELAS MENORES --- */
+        @media (max-width: 768px) {
+            .dashboard-container {
+                grid-template-columns: 1fr;
+                height: auto;
+            \}
+            .sidebar {
+                display: none;
+            \}
+            .header, .main-content {
+                grid-column: 1;
+            \}
+            .cards-grid, .form-grid {
+                grid-template-columns: 1fr;
+            \}
+            .form-group.full {
+                grid-column: span 1;
+            \}
+        \}
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-container">
+        <!-- Barra Lateral -->
+        <aside class="sidebar">
+            <div>
+                <div class="logo-area">
+                    <div class="logo-icon">🎨</div>
+                    <span>CSS Studio</span>
+                </div>
+                <ul class="nav-menu">
+                    <li class="nav-item active"><a href="#">📊 Visão Geral</a></li>
+                    <li class="nav-item"><a href="#">⚙️ Configurações</a></li>
+                    <li class="nav-item"><a href="#">👥 Usuários</a></li>
+                    <li class="nav-item"><a href="#">📂 Projetos</a></li>
+                </ul>
+            </div>
+            <div style="font-size: 0.8rem; color: var(--text-muted);">
+                Design 100% puro em CSS
+            </div>
+        </aside>
+
+        <!-- Cabeçalho -->
+        <header class="header">
+            <h1>Painel de Controle</h1>
+            <div class="user-profile">
+                <div class="avatar">JS</div>
+                <div>
+                    <div style="font-weight: 600; font-size: 0.9rem;">Jhonatan Silva</div>
+                    <div style="font-size: 0.75rem; color: var(--text-muted);">Desenvolvedor Front-end</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Conteúdo Principal -->
+        <main class="main-content">
+            <!-- Cards de Métricas -->
+            <div class="cards-grid">
+                <div class="metric-card">
+                    <div class="metric-title">Visitas Totais</div>
+                    <div class="metric-value">48.2K</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-title">Taxa de Conversão</div>
+                    <div class="metric-value success">12.4%</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-title">Alertas do Sistema</div>
+                    <div class="metric-value warning">02</div>
+                </div>
+            </div>
+
+            <!-- Seção de Formulário Estilizado -->
+            <div class="form-section">
+                <h3>Atualizar Perfil (Exemplo de Inputs CSS)</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Nome Completo</label>
+                        <input type="text" value="Jhonatan Silva">
+                    </div>
+                    <div class="form-group">
+                        <label>E-mail Corporativo</label>
+                        <input type="email" value="jhonatan@exemplo.com">
+                    </div>
+                    <div class="form-group full">
+                        <label>Cargo / Profissão</label>
+                        <input type="text" value="Engenheiro de Software & UI Designer">
+                    </div>
+                </div>
+                <button class="btn">Salvar Alterações</button>
+            </div>
+        </main>
+    </div>
+
+</body>
+</html>$0
