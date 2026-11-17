@@ -1,443 +1,362 @@
-/* ==========================================
-   ÁREA DE ENTREGA - AVALIAÇÕES
-   CONFIGURAÇÕES INICIAIS
-========================================== */
+/ ==========================================
+// 🍔 MUNDO DAS COMIDAS
+// Sistema completo de interatividade
+// ==========================================
 
-// Capturando os elementos HTML
-const campoHTML = document.getElementById("html");
-const campoCSS = document.getElementById("css");
-const campoJS = document.getElementById("js");
+// MENSAGEM DE BOAS-VINDAS
+window.addEventListener("load", function() {
+    console.log("Mundo das Comidas carregado!");
 
-const resultado = document.getElementById("resultado");
+    console.log("Bem-vindo ao nosso site!");
 
-const editorHTML = document.getElementById("editor-html");
-const editorCSS = document.getElementById("editor-css");
-const editorJS = document.getElementById("editor-js");
+    const titulo = document.querySelector("header h1");
 
-// Tempo para atualizar a pré-visualização
-let temporizador = null;
-
-
-/* ==========================================
-   ATUALIZAÇÃO DA PRÉ-VISUALIZAÇÃO
-========================================== */
-
-function atualizarPreview() {
-
-    if (!resultado) return;
-
-    const codigoHTML = campoHTML.value;
-    const codigoCSS = campoCSS.value;
-    const codigoJS = campoJS.value;
-
-    const documento = `
-        <!DOCTYPE html>
-        <html lang="pt-BR">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport"
-            content="width=device-width, initial-scale=1.0">
-
-            <style>
-                \${codigoCSS\}
-            </style>
-        </head>
-
-        <body>
-
-            \${codigoHTML\}
-
-            <script>
-                \${codigoJS\}
-            <\\/script>
-
-        </body>
-        </html>
-    `;
-
-    resultado.srcdoc = documento;
-
-    console.log("Pré-visualização atualizada!");
-\}
-
-
-/* ==========================================
-   ATUALIZAÇÃO AUTOMÁTICA
-========================================== */
-
-function programarAtualizacao() {
-
-    clearTimeout(temporizador);
-
-    temporizador = setTimeout(() => {
-        atualizarPreview();
-    \}, 300);
-\}
-
-campoHTML.addEventListener("input", programarAtualizacao);
-campoCSS.addEventListener("input", programarAtualizacao);
-campoJS.addEventListener("input", programarAtualizacao);
-
-
-/* ==========================================
-   MAXIMIZAR E RESTAURAR EDITORES
-========================================== */
-
-function maximizar(id) {
-
-    const editor = document.getElementById(id);
-
-    if (!editor) return;
-
-    editor.classList.toggle("maximizado");
-
-    const botao = editor.querySelector("button");
-
-    if (editor.classList.contains("maximizado")) {
-
-        botao.textContent = "Restaurar";
-
-    \} else {
-
-        botao.textContent = "Maximizar";
-
+    if (titulo) {
+        titulo.title = "Bem-vindo ao Mundo das Comidas!";
     \}
-\}
-
-
-/* ==========================================
-   CONTADOR DE CARACTERES
-========================================== */
-
-function contarCaracteres() {
-
-    const totalHTML = campoHTML.value.length;
-    const totalCSS = campoCSS.value.length;
-    const totalJS = campoJS.value.length;
-
-    const total = totalHTML + totalCSS + totalJS;
-
-    console.log("Caracteres HTML:", totalHTML);
-    console.log("Caracteres CSS:", totalCSS);
-    console.log("Caracteres JavaScript:", totalJS);
-    console.log("Total de caracteres:", total);
-
-    return total;
-\}
-
-campoHTML.addEventListener("input", contarCaracteres);
-campoCSS.addEventListener("input", contarCaracteres);
-campoJS.addEventListener("input", contarCaracteres);
-
-
-/* ==========================================
-   LIMPAR EDITORES
-========================================== */
-
-function limparEditor(id) {
-
-    const campo = document.getElementById(id);
-
-    if (!campo) return;
-
-    const confirmar = confirm(
-        "Tem certeza que deseja apagar este código?"
-    );
-
-    if (confirmar) {
-
-        campo.value = "";
-
-        programarAtualizacao();
-
-        salvarAutomaticamente();
-
-        alert("Código apagado com sucesso!");
-
-    \}
-\}
-
-
-/* ==========================================
-   LIMPAR TODOS OS EDITORES
-========================================== */
-
-function limparTudo() {
-
-    const confirmar = confirm(
-        "Deseja apagar todos os códigos?"
-    );
-
-    if (confirmar) {
-
-        campoHTML.value = "";
-        campoCSS.value = "";
-        campoJS.value = "";
-
-        atualizarPreview();
-
-        salvarAutomaticamente();
-
-        alert("Todos os campos foram limpos!");
-
-    \}
-\}
-
-
-/* ==========================================
-   SALVAMENTO AUTOMÁTICO
-========================================== */
-
-function salvarAutomaticamente() {
-
-    const projeto = {
-
-        html: campoHTML.value,
-        css: campoCSS.value,
-        javascript: campoJS.value
-
-    \};
-
-    try {
-
-        localStorage.setItem(
-            "meuProjeto",
-            JSON.stringify(projeto)
-        );
-
-        console.log("Projeto salvo automaticamente!");
-
-    \} catch (erro) {
-
-        console.error("Não foi possível salvar:", erro);
-
-    \}
-\}
-
-
-/* ==========================================
-   CARREGAR PROJETO SALVO
-========================================== */
-
-function carregarProjeto() {
-
-    try {
-
-        const projetoSalvo =
-            localStorage.getItem("meuProjeto");
-
-        if (!projetoSalvo) return;
-
-        const projeto = JSON.parse(projetoSalvo);
-
-        campoHTML.value = projeto.html || "";
-        campoCSS.value = projeto.css || "";
-        campoJS.value = projeto.javascript || "";
-
-        atualizarPreview();
-
-        console.log("Projeto carregado!");
-
-    \} catch (erro) {
-
-        console.error("Erro ao carregar projeto:", erro);
-
-    \}
-\}
-
-
-/* ==========================================
-   EVENTOS DE SALVAMENTO
-========================================== */
-
-campoHTML.addEventListener(
-    "input",
-    salvarAutomaticamente
-);
-
-campoCSS.addEventListener(
-    "input",
-    salvarAutomaticamente
-);
-
-campoJS.addEventListener(
-    "input",
-    salvarAutomaticamente
-);
-
-
-/* ==========================================
-   VALIDAR CAMPOS
-========================================== */
-
-function validarCampos() {
-
-    if (
-        campoHTML.value.trim() === "" &&
-        campoCSS.value.trim() === "" &&
-        campoJS.value.trim() === ""
-    ) {
-
-        alert("Digite algum código antes de continuar!");
-
-        return false;
-
-    \}
-
-    return true;
-\}
-
-
-/* ==========================================
-   PUBLICAR PROJETO
-========================================== */
-
-function publicarProjeto() {
-
-    if (!validarCampos()) return;
-
-    salvarAutomaticamente();
-
-    alert(
-        "Seu projeto está salvo! Agora você pode compartilhar seu código com o professor."
-    );
-
-\}
-
-
-/* ==========================================
-   COPIAR CÓDIGO
-========================================== */
-
-function copiarCodigo(id) {
-
-    const campo = document.getElementById(id);
-
-    if (!campo) return;
-
-    navigator.clipboard.writeText(campo.value)
-        .then(() => {
-
-            alert("Código copiado com sucesso!");
-
-        \})
-        .catch(() => {
-
-            alert("Não foi possível copiar o código.");
-
-        \});
-
-\}
-
-
-/* ==========================================
-   BAIXAR PROJETO
-========================================== */
-
-function baixarProjeto() {
-
-    const conteudo = `
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-
-<style>
-\${campoCSS.value\}
-</style>
-
-</head>
-
-<body>
-
-\${campoHTML.value\}
-
-<script>
-\${campoJS.value\}
-<\\/script>
-
-</body>
-</html>
-`;
-
-    const arquivo = new Blob(
-        [conteudo],
-        { type: "text/html" \}
-    );
-
-    const endereco = URL.createObjectURL(arquivo);
-
-    const link = document.createElement("a");
-
-    link.href = endereco;
-    link.download = "meu-projeto.html";
-
-    document.body.appendChild(link);
-
-    link.click();
-
-    link.remove();
-
-    URL.revokeObjectURL(endereco);
-
-\}
-
-
-/* ==========================================
-   DETECTAR ALTERAÇÕES
-========================================== */
-
-function detectarAlteracoes() {
-
-    console.log("O código foi modificado!");
-
-\}
-
-
-/* ==========================================
-   INICIALIZAÇÃO DO SISTEMA
-========================================== */
-
-document.addEventListener("DOMContentLoaded", () => {
-
-    carregarProjeto();
-
-    atualizarPreview();
-
-    console.log(
-        "Área de Entrega iniciada com sucesso!"
-    );
-
 \});
 
 
-/* ==========================================
-   ATALHOS DO TECLADO
-========================================== */
+// ==========================================
+// 🍕 LISTA DE COMIDAS
+// ==========================================
 
-document.addEventListener("keydown", (evento) => {
+const comidas = [
+    {
+        nome: "Pizza",
+        preco: 35,
+        categoria: "Salgado",
+        emoji: "🍕"
+    \},
+    {
+        nome: "Hambúrguer",
+        preco: 20,
+        categoria: "Salgado",
+        emoji: "🍔"
+    \},
+    {
+        nome: "Macarrão",
+        preco: 18,
+        categoria: "Salgado",
+        emoji: "🍝"
+    \},
+    {
+        nome: "Frango Assado",
+        preco: 30,
+        categoria: "Salgado",
+        emoji: "🍗"
+    \},
+    {
+        nome: "Salada",
+        preco: 15,
+        categoria: "Saudável",
+        emoji: "🥗"
+    \},
+    {
+        nome: "Hot Dog",
+        preco: 12,
+        categoria: "Salgado",
+        emoji: "🌭"
+    \},
+    {
+        nome: "Batata Frita",
+        preco: 14,
+        categoria: "Acompanhamento",
+        emoji: "🍟"
+    \}
+];
 
-    // Ctrl + S para salvar
-    if (
-        evento.ctrlKey &&
-        evento.key.toLowerCase() === "s"
-    ) {
 
-        evento.preventDefault();
+// ==========================================
+// 🍰 LISTA DE SOBREMESAS
+// ==========================================
 
-        salvarAutomaticamente();
+const sobremesas = [
+    "🍰 Bolo de chocolate",
+    "🍦 Sorvete de morango",
+    "🍮 Pudim de leite",
+    "🍫 Brigadeiro",
+    "🍓 Salada de frutas",
+    "🧁 Cupcake",
+    "🍩 Donuts",
+    "🍪 Biscoitos"
+];
 
-        alert("Projeto salvo!");
 
+// ==========================================
+// 📋 MOSTRAR TODAS AS COMIDAS
+// ==========================================
+
+function mostrarComidas() {
+    let mensagem = "🍽️ NOSSO CARDÁPIO 🍽️\\n\\n";
+
+    comidas.forEach(function(comida) {
+        mensagem += comida.emoji + " " +
+        comida.nome + " - R\$ " +
+        comida.preco.toFixed(2) + "\\n";
+    \});
+
+    alert(mensagem);
+\}
+
+
+// ==========================================
+// 🍰 MOSTRAR SOBREMESAS
+// ==========================================
+
+function mostrarSobremesas() {
+    let mensagem = "🍰 NOSSAS SOBREMESAS 🍰\\n\\n";
+
+    sobremesas.forEach(function(item) {
+        mensagem += item + "\\n";
+    \});
+
+    alert(mensagem);
+\}
+
+
+// ==========================================
+// 🔎 PESQUISAR COMIDA
+// ==========================================
+
+function pesquisarComida() {
+    const pesquisa = prompt(
+        "Digite o nome de uma comida:"
+    );
+
+    if (!pesquisa) {
+        alert("Você não digitou nenhuma comida!");
+        return;
     \}
 
-    // F5 para atualizar a pré-visualização
-    if (evento.key === "F5") {
+    const resultado = comidas.find(function(comida) {
+        return comida.nome.toLowerCase() ===
+        pesquisa.trim().toLowerCase();
+    \});
 
-        evento.preventDefault();
+    if (resultado) {
+        alert(
+            "Comida encontrada! 😋\\n\\n" +
+            resultado.emoji + " " + resultado.nome +
+            "\\nPreço: R\$ " + resultado.preco.toFixed(2)
+        );
+    \} else {
+        alert("Desculpe! Essa comida não está no cardápio.");
+    \}
+\}
 
-        atualizarPreview();
 
+// ==========================================
+// 💰 CALCULAR PREÇO
+// ==========================================
+
+function calcularPreco() {
+    const nome = prompt(
+        "Qual comida você deseja consultar?"
+    );
+
+    if (!nome) return;
+
+    const comida = comidas.find(function(item) {
+        return item.nome.toLowerCase() === nome.trim().toLowerCase();
+    \});
+
+    if (comida) {
+        alert(
+            "O preço de " + comida.nome +
+            " é R\$ " + comida.preco.toFixed(2)
+        );
+    \} else {
+        alert("Comida não encontrada!");
+    \}
+\}
+
+
+// ==========================================
+// ❤️ MENSAGEM DE AGRADECIMENTO
+// ==========================================
+
+function mensagem() {
+    alert(
+        "❤️ Muito obrigado por visitar o Mundo das Comidas!\\n\\n" +
+        "Esperamos que tenha gostado do nosso site!"
+    );
+\}
+
+
+// ==========================================
+// ⭐ SISTEMA DE AVALIAÇÃO
+// ==========================================
+
+function avaliarSite() {
+    const nota = prompt(
+        "De 1 a 5, qual nota você dá ao nosso site?"
+    );
+
+    const numero = Number(nota);
+
+    if (nota === null || nota.trim() === "") {
+        return;
     \}
 
-\});$0
+    if (Number.isInteger(numero) && numero >= 1 && numero <= 5) {
+        alert(
+            "⭐ Você deu nota " + numero +
+            " ao nosso site!\\n\\nObrigado pela avaliação!"
+        );
+    \} else {
+        alert("Digite uma nota válida entre 1 e 5.");
+    \}
+\}
+
+
+// ==========================================
+// 🍔 SUGESTÃO DE COMIDA
+// ==========================================
+
+function sugerirComida() {
+    const indice = Math.floor(
+        Math.random() * comidas.length
+    );
+
+    const comida = comidas[indice];
+
+    alert(
+        "😋 NOSSA SUGESTÃO PARA VOCÊ!\\n\\n" +
+        comida.emoji + " " + comida.nome +
+        "\\nPreço: R\$ " + comida.preco.toFixed(2) +
+        "\\n\\nQue tal experimentar?"
+    );
+\}
+
+
+// ==========================================
+// 🍬 SUGESTÃO DE SOBREMESA
+// ==========================================
+
+function sugerirSobremesa() {
+    const indice = Math.floor(
+        Math.random() * sobremesas.length
+    );
+
+    alert(
+        "🍰 Que tal experimentar?\\n\\n" +
+        sobremesas[indice]
+    );
+\}
+
+
+// ==========================================
+// 📞 CONTATO
+// ==========================================
+
+function contato() {
+    alert(
+        "📞 ENTRE EM CONTATO!\\n\\n" +
+        "Email: contato@mundodascomidas.com\\n\\n" +
+        "Obrigado pela visita!"
+    );
+\}
+
+
+// ==========================================
+// 🕒 MOSTRAR DATA E HORÁRIO
+// ==========================================
+
+function mostrarData() {
+    const agora = new Date();
+
+    const data = agora.toLocaleDateString("pt-BR");
+    const horario = agora.toLocaleTimeString("pt-BR");
+
+    alert(
+        "📅 Data: " + data +
+        "\\n🕒 Horário: " + horario
+    );
+\}
+
+
+// ==========================================
+// 🛒 CALCULADORA DE PEDIDOS
+// ==========================================
+
+function fazerPedido() {
+    let nome = prompt(
+        "Qual comida você deseja pedir?"
+    );
+
+    if (!nome) return;
+
+    const comida = comidas.find(function(item) {
+        return item.nome.toLowerCase() === nome.trim().toLowerCase();
+    \});
+
+    if (!comida) {
+        alert("Desculpe, não encontramos essa comida!");
+        return;
+    \}
+
+    let quantidade = Number(
+        prompt("Quantas unidades você deseja?")
+    );
+
+    if (!Number.isInteger(quantidade) || quantidade <= 0) {
+        alert("Digite uma quantidade válida!");
+        return;
+    \}
+
+    let total = comida.preco * quantidade;
+
+    alert(
+        "🛒 RESUMO DO PEDIDO\\n\\n" +
+        "Comida: " + comida.nome +
+        "\\nQuantidade: " + quantidade +
+        "\\nPreço unitário: R\$ " + comida.preco.toFixed(2) +
+        "\\nTotal: R\$ " + total.toFixed(2) +
+        "\\n\\nObrigado pela preferência! ❤️"
+    );
+\}
+
+
+// ==========================================
+// 🎉 MENSAGEM ALEATÓRIA
+// ==========================================
+
+function mensagemAleatoria() {
+    const mensagens = [
+        "🍕 A vida fica melhor com pizza!",
+        "🍔 Um hambúrguer deixa o dia mais feliz!",
+        "🍰 Sempre existe espaço para sobremesa!",
+        "🍟 Compartilhar comida é compartilhar amor!",
+        "🥗 Comer bem também é cuidar de você!",
+        "🍫 Um doce pode alegrar o dia!"
+    ];
+
+    const indice = Math.floor(
+        Math.random() * mensagens.length
+    );
+
+    alert(mensagens[indice]);
+\}
+
+
+// ==========================================
+// 🔝 VOLTAR AO INÍCIO
+// ==========================================
+
+function voltarInicio() {
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    \});
+\}
+
+
+// ==========================================
+// 🖱️ INTERAÇÃO COM OS BOTÕES
+// ==========================================
+
+console.log("🍔 Mundo das Comidas está funcionando!");
+console.log("🍕 Explore nosso cardápio!");
+console.log("🍰 Experimente nossas sobremesas!");
+Adicione estes botões no seu HTML$0
