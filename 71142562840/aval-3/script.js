@@ -1,63 +1,101 @@
+const formulario = document.getElementById('form-imc');
+const btnLimpar = document.getElementById('btn-limpar');
+const estadoVazio = document.getElementById('estado-vazio');
+const caixaResultado = document.getElementById('resultado');
 
-const formulario = document.getElementById("formIMC");
+formulario.addEventListener('submit', function(evento) {
+    evento.preventDefault();
 
-formulario.addEventListener("submit", function(event) {
+    const nome = document.getElementById('nome').value.trim();
+    const peso = parseFloat(document.getElementById('peso').value);
+    const altura = parseFloat(document.getElementById('altura').value);
 
-    event.preventDefault();
-
-    // Receber os dados do paciente
-    const nome = document.getElementById("nome").value.trim();
-    const peso = parseFloat(document.getElementById("peso").value);
-    const altura = parseFloat(document.getElementById("altura").value);
-
-    const resultado = document.getElementById("resultado");
-
-    // Validar os campos
-    if (nome === "" || isNaN(peso) || isNaN(altura)) {
-        resultado.className = "resultado erro";
-        resultado.innerHTML = "Preencha todos os campos corretamente!";
+    if (!nome || isNaN(peso) || isNaN(altura) || peso <= 0 || altura <= 0) {
+        alert('Por favor, preencha todos os campos corretamente.');
         return;
     }
 
-    if (peso <= 0 || altura <= 0) {
-        resultado.className = "resultado erro";
-        resultado.innerHTML = "Peso e altura devem ser maiores que zero!";
-        return;
-    }
-
-    // Calcular o IMC
     const imc = peso / (altura * altura);
+    const imcFormatado = imc.toFixed(2);
 
-    // Classificação do IMC para adultos
-    let classificacao = "";
+    // Cálculo da posição do marcador na régua (escala visual de 15 a 42)
+    const percentualPosicao = Math.min(Math.max(((imc - 15) / (42 - 15)) * 100, 4), 96);
+
+    let classificacao = '';
+    let orientacao = '';
+    let temaClasse = '';
 
     if (imc < 18.5) {
-        classificacao = "Abaixo do peso";
+        classificacao = 'Abaixo do peso';
+        orientacao = 'O índice indica peso abaixo do recomendado para a altura. É importante avaliar a ingestão nutricional.';
+        temaClasse = 'tema-baixo';
     } else if (imc < 25) {
-        classificacao = "Peso normal";
+        classificacao = 'Peso normal (Eutrofia)';
+        orientacao = 'O índice está dentro da faixa considerada saudável. Mantenha hábitos equilibrados e atividade física.';
+        temaClasse = 'tema-normal';
     } else if (imc < 30) {
-        classificacao = "Sobrepeso";
+        classificacao = 'Sobrepeso';
+        orientacao = 'O índice indica excesso de peso moderado. Atenção à alimentação e à prática regular de exercícios.';
+        temaClasse = 'tema-sobrepeso';
     } else if (imc < 35) {
-        classificacao = "Obesidade grau I";
+        classificacao = 'Obesidade Grau I';
+        orientacao = 'O índice aponta obesidade inicial. Recomenda-se acompanhamento médico e nutricional.';
+        temaClasse = 'tema-obesidade';
     } else if (imc < 40) {
-        classificacao = "Obesidade grau II";
+        classificacao = 'Obesidade Grau II';
+        orientacao = 'O índice indica obesidade severa, com maior risco metabólico. Procure orientação profissional.';
+        temaClasse = 'tema-obesidade';
     } else {
-        classificacao = "Obesidade grau III";
+        classificacao = 'Obesidade Grau III';
+        orientacao = 'O índice aponta obesidade mórbida. É fundamental buscar acompanhamento médico especializado.';
+        temaClasse = 'tema-obesidade';
     }
 
-    // Exibir informações
-    resultado.className = "resultado sucesso";
+    estadoVazio.classList.add('oculto');
+    caixaResultado.classList.remove('oculto');
 
-    resultado.innerHTML = `
-        <h2>Resultado do Paciente</h2>
+    caixaResultado.innerHTML = `
+        <div class="paciente-info">
+            <span>Paciente Avaliado</span>
+            <h2>${nome}</h2>
+        </div>
 
-        <p><strong>Nome:</strong> ${nome}</p>
-        <p><strong>Peso:</strong> ${peso} kg</p>
-        <p><strong>Altura:</strong> ${altura} m</p>
+        <div class="metricas-grid">
+            <div class="metrica-box">
+                <small>Peso</small>
+                <strong>${peso.toFixed(1)} kg</strong>
+            </div>
+            <div class="metrica-box">
+                <small>Altura</small>
+                <strong>${altura.toFixed(2)} m</strong>
+            </div>
+            <div class="metrica-box">
+                <small>IMC</small>
+                <strong>${imcFormatado}</strong>
+            </div>
+        </div>
 
-        <p><strong>IMC:</strong> ${imc.toFixed(2)}</p>
+        <div class="diagnostico-card ${temaClasse}">
+            <span class="badge-status">${classificacao}</span>
+            <p>${orientacao}</p>
+        </div>
 
-        <p><strong>Classificação:</strong> ${classificacao}</p>
+        <div class="escala-container">
+            <div class="escala-barra">
+                <div class="escala-marcador" style="left: ${percentualPosicao}%;"></div>
+            </div>
+            <div class="escala-legendas">
+                <span>Baixo</span>
+                <span>Normal</span>
+                <span>Sobrepeso</span>
+                <span>Obesidade</span>
+            </div>
+        </div>
     `;
+});
 
+btnLimpar.addEventListener('click', function() {
+    formulario.reset();
+    caixaResultado.classList.add('oculto');
+    estadoVazio.classList.remove('oculto');
 });

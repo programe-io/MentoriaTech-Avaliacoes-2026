@@ -1,101 +1,308 @@
+:root {
+    --bg-gradiente: linear-gradient(135deg, #e0f2fe 0%, #f1f5f9 100%);
+    --card-bg: #ffffff;
+    --texto-principal: #0f172a;
+    --texto-secundario: #64748b;
+    --primaria: #0284c7;
+    --primaria-hover: #0369a1;
+    --borda: #e2e8f0;
+}
 
 * {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
 }
 
 body {
-    font-family: Arial, sans-serif;
-    background: linear-gradient(135deg, #dbeafe, #eff6ff);
+    background: var(--bg-gradiente);
+    color: var(--texto-principal);
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 20px;
+    padding: 24px;
 }
 
-.container {
-    background: white;
+.app-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
     width: 100%;
-    max-width: 450px;
-    padding: 35px;
-    border-radius: 15px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.12);
+    max-width: 920px;
 }
 
-h1 {
-    text-align: center;
-    color: #1e40af;
-    margin-bottom: 10px;
+.card {
+    background-color: var(--card-bg);
+    border-radius: 16px;
+    padding: 32px;
+    box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.8);
 }
 
-.subtitulo {
-    text-align: center;
-    color: #666;
-    margin-bottom: 25px;
+/* Cabeçalho do Formulário */
+.badge-topo {
+    display: inline-block;
+    background-color: #e0f2fe;
+    color: #0369a1;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 4px 10px;
+    border-radius: 20px;
+    margin-bottom: 12px;
+}
+
+.header h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--texto-principal);
+    margin-bottom: 6px;
+}
+
+.header p {
+    color: var(--texto-secundario);
+    font-size: 0.92rem;
+    margin-bottom: 24px;
+}
+
+/* Campos do Formulário */
+.campo {
+    margin-bottom: 18px;
+}
+
+.linha-dupla {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
 }
 
 label {
     display: block;
-    margin-bottom: 7px;
-    margin-top: 15px;
-    color: #333;
-    font-weight: bold;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 6px;
 }
 
 input {
     width: 100%;
-    padding: 12px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    font-size: 15px;
-    outline: none;
+    padding: 12px 14px;
+    border: 1.5px solid var(--borda);
+    border-radius: 10px;
+    font-size: 0.95rem;
+    color: var(--texto-principal);
+    background-color: #f8fafc;
+    transition: all 0.2s ease;
 }
 
 input:focus {
-    border-color: #2563eb;
+    outline: none;
+    border-color: var(--primaria);
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+}
+
+/* Botões */
+.acoes {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
 }
 
 button {
-    width: 100%;
-    padding: 14px;
-    margin-top: 25px;
-    background: #2563eb;
-    color: white;
+    padding: 13px 18px;
     border: none;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: bold;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 600;
     cursor: pointer;
+    transition: all 0.2s ease;
 }
 
-button:hover {
-    background: #1d4ed8;
+.btn-primario {
+    flex: 2;
+    background-color: var(--primaria);
+    color: #ffffff;
 }
 
-.resultado {
-    margin-top: 20px;
-    padding: 15px;
-    border-radius: 8px;
+.btn-primario:hover {
+    background-color: var(--primaria-hover);
+    transform: translateY(-1px);
+}
+
+.btn-secundario {
+    flex: 1;
+    background-color: #f1f5f9;
+    color: #475569;
+}
+
+.btn-secundario:hover {
+    background-color: #e2e8f0;
+}
+
+/* Área de Resultado */
+.result-section {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.estado-vazio {
     text-align: center;
-    display: none;
-    line-height: 1.8;
-    overflow-wrap: anywhere;
+    padding: 20px;
+    color: var(--texto-secundario);
 }
 
-.resultado.sucesso {
+.icone-vazio {
+    font-size: 2.8rem;
+    margin-bottom: 12px;
+    opacity: 0.8;
+}
+
+.estado-vazio h3 {
+    color: var(--texto-principal);
+    margin-bottom: 8px;
+    font-size: 1.15rem;
+}
+
+.estado-vazio p {
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.oculto {
+    display: none !important;
+}
+
+/* Cartão de Relatório Gerado */
+.resultado {
+    animation: surgir 0.35s ease-out;
+}
+
+@keyframes surgir {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.paciente-info {
+    border-bottom: 1px solid var(--borda);
+    padding-bottom: 14px;
+    margin-bottom: 18px;
+}
+
+.paciente-info span {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    color: var(--texto-secundario);
+    font-weight: 600;
+}
+
+.paciente-info h2 {
+    font-size: 1.35rem;
+    color: var(--texto-principal);
+    margin-top: 2px;
+}
+
+.metricas-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.metrica-box {
+    background-color: #f8fafc;
+    padding: 12px;
+    border-radius: 10px;
+    text-align: center;
+    border: 1px solid var(--borda);
+}
+
+.metrica-box small {
     display: block;
-    background: #dbeafe;
-    color: #1e3a8a;
+    font-size: 0.75rem;
+    color: var(--texto-secundario);
+    margin-bottom: 4px;
 }
 
-.resultado.erro {
-    display: block;
-    background: #fee2e2;
-    color: #991b1b;
+.metrica-box strong {
+    font-size: 1.1rem;
+    color: var(--texto-principal);
 }
 
-.resultado h2 {
-    margin-bottom: 10px;
+.diagnostico-card {
+    padding: 16px;
+    border-radius: 12px;
+    margin-bottom: 16px;
+}
+
+.badge-status {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.diagnostico-card p {
+    font-size: 0.9rem;
+    line-height: 1.55;
+    color: #334155;
+}
+
+/* Barra Visual de Escala */
+.escala-container {
+    margin-top: 12px;
+}
+
+.escala-barra {
+    height: 10px;
+    border-radius: 6px;
+    background: linear-gradient(90deg, #3b82f6 0%, #22c55e 30%, #eab308 60%, #f97316 80%, #ef4444 100%);
+    position: relative;
+    margin-bottom: 6px;
+}
+
+.escala-marcador {
+    width: 16px;
+    height: 16px;
+    background-color: #0f172a;
+    border: 3px solid #ffffff;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    transition: left 0.4s ease;
+}
+
+.escala-legendas {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.72rem;
+    color: var(--texto-secundario);
+}
+
+/* Temas de Classificação */
+.tema-baixo { background-color: #eff6ff; border: 1px solid #bfdbfe; }
+.tema-baixo .badge-status { background-color: #dbeafe; color: #1d4ed8; }
+
+.tema-normal { background-color: #f0fdf4; border: 1px solid #bbf7d0; }
+.tema-normal .badge-status { background-color: #dcfce7; color: #15803d; }
+
+.tema-sobrepeso { background-color: #fefce8; border: 1px solid #fef08a; }
+.tema-sobrepeso .badge-status { background-color: #fef9c3; color: #a16207; }
+
+.tema-obesidade { background-color: #fef2f2; border: 1px solid #fecaca; }
+.tema-obesidade .badge-status { background-color: #fee2e2; color: #b91c1c; }
+
+/* Responsividade para Celular */
+@media (max-width: 768px) {
+    .app-wrapper {
+        grid-template-columns: 1fr;
+    }
 }
