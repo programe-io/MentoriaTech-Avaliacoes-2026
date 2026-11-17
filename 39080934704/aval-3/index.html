@@ -1,115 +1,294 @@
+Aqui está o projeto completo, seguindo exatamente o que o PDF pede, do 1 ao 16. São 3 arquivos:
+
+1. `index.html`
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Código JavaScript</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
-  <style>body{margin:0;background:#0d1117}pre{margin:0}code.hljs{padding:1.5rem;min-height:100vh;box-sizing:border-box}</style>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>Controle de IMC</title>
+ <link rel="stylesheet" href="style.css">
+<script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
-  <pre><code class="language-javascript">// 4. Criação da lista de produtos
-let produtos = [];
+ <h1>Controle de IMC</h1>
 
-// 6. Função para validar produto
-function validarProduto(descricao, quantidade, valor) {
-  // 7. Validação da descrição
-  if (descricao.length &lt; 5) {
-    throw new Error("Descrição deve ter, no mínimo, cinco caracteres");
-  }
+ <form id="form-pessoa">
+ <label>
+ Nome:
+ <input type="text" id="nome" placeholder="Ex: Francisco">
+ </label>
 
-  // 8. Validação da quantidade
-  if (quantidade &lt; 1) {
-    throw new Error("Quantidade deve ser maior que zero");
-  }
+ <label>
+ Idade:
+ <input type="number" id="idade" placeholder="Ex: 30">
+ </label>
 
-  // 9. Validação do valor
-  if (valor &lt; 0) {
-    throw new Error("Valor deve ser maior ou igual a zero");
-  }
-}
+ <label>
+ Peso (KG):
+ <input type="number" id="peso" step="0.01" placeholder="Ex: 85">
+ </label>
 
-// 10. Função para cadastrar produto
-function cadastrarProduto(descricao, quantidade, valor) {
-  validarProduto(descricao, quantidade, valor);
+ <label>
+ Altura (m):
+ <input type="number" id="altura" step="0.01" placeholder="Ex: 1.70">
+ </label>
 
-  // 11. Criação do objeto produto
-  // 12. Geração automática do código
-  let novoProduto = {
-    codigo: produtos.length + 1,
-    descricao: descricao,
-    quantidade: quantidade,
-    valor: valor
-  };
+ <p id="erro" hidden></p>
 
-  // 13. Adição de produtos ao array
-  produtos.push(novoProduto);
-}
+ <button type="submit">Salvar</button>
+ </form>
 
-// 14. Função para listar produtos
-function listarProdutos() {
-  for (let produto of produtos) {
-    console.log(
-      `Código: ${produto.codigo} | Descrição: ${produto.descricao} | Quantidade: ${produto.quantidade} | Valor: R$ ${produto.valor}`
-    );
-  }
-}
+ <table>
+ <thead>
+ <tr>
+ <th>Código</th>
+ <th>Nome</th>
+ <th>Idade</th>
+ <th>Peso</th>
+ <th>Altura</th>
+ <th>IMC</th>
+ <th>Classificação</th>
+ </tr>
+ </thead>
+ <tbody id="tabela-pessoas"></tbody>
+ </table>
 
-// 17. Busca de produto por código
-function buscarProduto(codigoProduto) {
-  let produto = produtos.find(function (p) {
-    return p.codigo === codigoProduto;
-  });
-
-  // 18. Tratamento de produto não encontrado
-  if (!produto) {
-    throw new Error("Produto não encontrado");
-  }
-
-  return produto;
-}
-
-// 15 / 19 / 20. Função para atualizar o valor do produto
-// Aqui ALTERA o valor, não soma
-function atualizarValor(codigoProduto, novoValor) {
-  if (novoValor &lt; 0) {
-    throw new Error("Valor deve ser maior ou igual a zero");
-  }
-
-  let produto = buscarProduto(codigoProduto);
-  produto.valor = novoValor;
-}
-
-// 19 / 20. Função para atualizar a quantidade do produto
-// Aqui ALTERA a quantidade, não soma
-function atualizarQuantidade(codigoProduto, novaQuantidade) {
-  if (novaQuantidade &lt; 1) {
-    throw new Error("Quantidade deve ser maior que zero");
-  }
-
-  let produto = buscarProduto(codigoProduto);
-  produto.quantidade = novaQuantidade;
-}
-
-// 15. Testando o cadastro e a listagem
-try {
-  cadastrarProduto("Mouse Logitech", 38, 99);
-  cadastrarProduto("Cadeira gamer", 12, 699);
-  cadastrarProduto("Teclado mecânico", 20, 350);
-
-  listarProdutos();
-
-  console.log("--- Atualizando ---");
-  atualizarValor(1, 119);
-  atualizarQuantidade(2, 10);
-
-  listarProdutos();
-
-} catch (erro) {
-  // 16. Tratamento de erro na listagem / cadastro
-  console.log("Erro: " + erro.message);
-}</code></pre>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-  <script>hljs.highlightAll();</script>
+ <script src="script.js"></script>
 </body>
 </html>
+
+2. `style.css`
+
+body {
+ font-family: Arial, sans-serif;
+ max-width: 900px;
+ margin: 0 auto;
+ padding: 20px;
+}
+
+form {
+ display: flex;
+ flex-direction: column;
+ gap: 10px;
+ margin-bottom: 20px;
+}
+
+label { display: flex; flex-direction: column; gap: 5px; }
+input { padding: 8px; }
+button { padding: 10px; cursor: pointer; }
+
+#erro { color: red; font-weight: bold; }
+
+table { width: 100%; border-collapse: collapse; }
+th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+thead { background: #eee; }
+
+/* Selo de classificação */
+.selo {
+ padding: 5px 10px;
+ border-radius: 20px;
+ color: white;
+ font-weight: bold;
+}
+.abaixo { background: #; }
+.normal { background: #; }
+.sobrepeso { background: #; color: #333; }
+.obesidade { background: #; }
+
+3. `script.js` - o principal
+
+// 12. Chave do localStorage
+const chavePessoas = "pessoas";
+
+// Referências do DOM
+const form = document.getElementById("form-pessoa");
+const inputNome = document.getElementById("nome");
+const inputIdade = document.getElementById("idade");
+const inputPeso = document.getElementById("peso");
+const inputAltura = document.getElementById("altura");
+const paragrafoErro = document.getElementById("erro");
+const tbody = document.getElementById("tabela-pessoas");
+
+// Lista inicial - carregada do localStorage
+let pessoas = carregarPessoas();
+
+// Funções das aulas anteriores
+function formatar(valor, casas) {
+ return valor.toFixed(casas);
+}
+
+function calcularIMC(peso, altura) {
+ return peso / (altura * altura);
+}
+
+// 6. Classificar IMC - retorna objeto com texto e classe
+function classificarIMC(imc) {
+ if (imc < 18.5) return { texto: "Abaixo do peso", classe: "abaixo" };
+ if (imc < 25) return { texto: "Peso normal", classe: "normal" };
+ if (imc < 30) return { texto: "Sobrepeso", classe: "sobrepeso" };
+ return { texto: "Obesidade", classe: "obesidade" };
+}
+
+function criarCelula(conteudo) {
+ const td = document.createElement("td");
+ td.textContent = conteudo;
+ return td;
+}
+
+// 2, 3 e 4. Criar linha completa
+function criarLinha(pessoa) {
+ const tr = document.createElement("tr");
+
+ // 2. IMC e classificação
+ const imc = calcularIMC(pessoa.peso, pessoa.altura);
+ const classificacao = classificarIMC(imc);
+
+ tr.appendChild(criarCelula(pessoa.codigo));
+ tr.appendChild(criarCelula(pessoa.nome));
+ tr.appendChild(criarCelula(pessoa.idade));
+
+ // 3. Formatação de peso e altura
+ tr.appendChild(criarCelula(formatar(pessoa.peso, 2) + " KG"));
+ tr.appendChild(criarCelula(formatar(pessoa.altura, 2) + " m"));
+
+ tr.appendChild(criarCelula(formatar(imc, 2)));
+
+ // 4. Coluna de classificação com selo
+ const tdClassificacao = document.createElement("td");
+ const selo = document.createElement("span");
+ selo.classList.add("selo", classificacao.classe);
+ selo.textContent = classificacao.texto;
+ tdClassificacao.appendChild(selo);
+ tr.appendChild(tdClassificacao);
+
+ return tr;
+}
+
+// Renderizar na tela
+function render() {
+ tbody.innerHTML = "";
+ for (const pessoa of pessoas) {
+ tbody.appendChild(criarLinha(pessoa));
+ }
+}
+
+// 6. Ler formulário
+function lerFormulario() {
+ return {
+ nome: inputNome.value,
+ idade: Number(inputIdade.value),
+ peso: Number(inputPeso.value),
+ altura: Number(inputAltura.value)
+ };
+}
+
+// 7. Adicionar pessoa
+function adicionarPessoa(dados) {
+ const codigo = ajustarContador() + 1;
+ pessoas.push({
+ codigo: codigo,
+ nome: dados.nome,
+ idade: dados.idade,
+ peso: dados.peso,
+ altura: dados.altura
+ });
+}
+
+// 9. Validar dados
+function validarDados(dados) {
+ if (dados.nome.length < 2) {
+ return "Informe o nome com no mínimo de duas letras";
+ }
+ if (!Number.isInteger(dados.idade) || dados.idade < 1 || dados.idade > 120) {
+ return "A idade deve ser um número inteiro entre 1 e 120";
+ }
+ if (dados.peso < 0.5 || dados.peso > 2.5) { // Altura no PDF estava trocada, aqui corrigido
+ // Na verdade a validação correta é abaixo:
+ }
+ if (dados.altura < 0.5 || dados.altura > 2.5) {
+ return "A altura deve ser um número entre 0.5 e 2.5";
+ }
+ if (dados.peso < 2 || dados.peso > 500) {
+ return "O peso deve ser um número entre 2 e 500";
+ }
+ return "";
+}
+
+// 10. Mostrar / Limpar erro
+function mostrarErro(mensagem) {
+ paragrafoErro.textContent = mensagem;
+ paragrafoErro.hidden = false;
+}
+
+function limparErro() {
+ paragrafoErro.textContent = "";
+ paragrafoErro.hidden = true;
+}
+
+// 12. Salvar no localStorage
+function salvar() {
+ localStorage.setItem(chavePessoas, JSON.stringify(pessoas));
+}
+
+// 13. Carregar do localStorage
+function carregarPessoas() {
+ const dadosSalvos = localStorage.getItem(chavePessoas);
+ if (dadosSalvos === null) {
+ return [];
+ }
+ try {
+ const lista = JSON.parse(dadosSalvos);
+ if (Array.isArray(lista)) {
+ return lista;
+ }
+ return [];
+ } catch (e) {
+ mostrarErro("Erro ao carregar dados salvos");
+ return [];
+ }
+}
+
+// 14. Ajustar contador de código
+function ajustarContador() {
+ let maior = 0;
+ for (const pessoa of pessoas) {
+ if (pessoa.codigo > maior) {
+ maior = pessoa.codigo;
+ }
+ }
+ return maior;
+}
+
+// 8 e 11. Evento submit + Integração
+form.addEventListener("submit", function (event) {
+ event.preventDefault();
+
+ const dados = lerFormulario();
+ const erro = validarDados(dados);
+
+ // 11. Se tem erro, mostra e interrompe
+ if (erro !== "") {
+ mostrarErro(erro);
+ return;
+ }
+
+ limparErro();
+ adicionarPessoa(dados);
+
+ // 15. Integração final
+ salvar();
+ render();
+
+ form.reset();
+ inputNome.focus();
+});
+
+// 15. Carregamento inicial
+render();
+
+*Como testar igual o PDF pede:*
+Digite `Francisco`, idade `30`, altura `1.70` e peso `85` > Salvar > Recarrega a página e os dados continuam lá, porque estão no `localStorage`.
+
+Quer que eu já te mande isso num arquivo `.zip` pronto pra entregar, ou só colar assim mesmo no VS Code?
