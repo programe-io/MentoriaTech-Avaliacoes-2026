@@ -1,15 +1,12 @@
-function mostrarDica() {
 
-        const dicas = [
-                "Sempre leve tochas para explorar cavernas.",
-                        "Construa sua casa antes da primeira noite.",
-                                "Diamantes aparecem com mais frequência nas camadas profundas.",
-                                        "Leve comida para recuperar sua vida.",
-                                                "Use um escudo para se proteger dos ataques."
-                                                    ];
+function tocarMusica(nome) {
 
-                                                        const numero = Math.floor(Math.random() * dicas.length);
+    const mensagem = document.getElementById("mensagem-musica");
 
-                                                            document.getElementById("dica").innerHTML = dicas[numero];
-                                                            }
+    mensagem.innerText =
+        "🎵 Você selecionou a faixa: " + nome;
+
+    mensagem.style.color = "#c084fc";
+
+    mensagem.style.fontSize = "20px";
 }
