@@ -1,216 +1,295 @@
 
-let tarefas = JSON.parse(localStorage.getItem("tarefas")) || [];
-
-const form = document.getElementById("formTarefa");
-
-const codigo = document.getElementById("codigo");
-const titulo = document.getElementById("titulo");
-const prioridade = document.getElementById("prioridade");
-
-const lista = document.getElementById("listaTarefas");
-
-// Cadastrar nova tarefa
-form.addEventListener("submit", function(event) {
-    event.preventDefault();
-
-    const novaTarefa = {
-        codigo: codigo.value.trim(),
-        titulo: titulo.value.trim(),
-        prioridade: Number(prioridade.value),
-        concluida: false
-    };
-
-    // Validar título
-    if (novaTarefa.titulo.length < 5) {
-        alert("O título precisa ter pelo menos 5 caracteres!");
-        return;
-    }
-
-    // Validar prioridade
-    if (![1, 2, 3].includes(novaTarefa.prioridade)) {
-        alert("A prioridade deve ser 1, 2 ou 3!");
-        return;
-    }
-
-    // Verificar código repetido
-    const existe = tarefas.some(function(tarefa) {
-        return tarefa.codigo.toLowerCase() ===
-            novaTarefa.codigo.toLowerCase();
-    });
-
-    if (existe) {
-        alert("Este código já está cadastrado!");
-        return;
-    }
-
-    tarefas.push(novaTarefa);
-
-    salvarTarefas();
-
-    form.reset();
-
-    alert("Tarefa cadastrada com sucesso!");
-});
-
-// Salvar tarefas no navegador
-function salvarTarefas() {
-    localStorage.setItem("tarefas", JSON.stringify(tarefas));
-    mostrarTarefas();
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-// Listar tarefas
-function mostrarTarefas() {
-    lista.innerHTML = "";
-
-    let pendentes = 0;
-    let concluidas = 0;
-
-    tarefas.forEach(function(tarefa, index) {
-
-        if (tarefa.concluida) {
-            concluidas++;
-        } else {
-            pendentes++;
-        }
-
-        let nomePrioridade = "";
-        let classePrioridade = "";
-
-        if (tarefa.prioridade === 1) {
-            nomePrioridade = "Alta";
-            classePrioridade = "prioridade-alta";
-        } else if (tarefa.prioridade === 2) {
-            nomePrioridade = "Média";
-            classePrioridade = "prioridade-media";
-        } else {
-            nomePrioridade = "Baixa";
-            classePrioridade = "prioridade-baixa";
-        }
-
-        const linha = document.createElement("tr");
-
-        linha.innerHTML = `
-            <td>${escaparHTML(tarefa.codigo)}</td>
-
-            <td>${escaparHTML(tarefa.titulo)}</td>
-
-            <td>
-                <span class="${classePrioridade}">
-                    ${nomePrioridade}
-                </span>
-            </td>
-
-            <td>
-                <span class="status ${tarefa.concluida ? 'concluida' : 'pendente'}">
-                    ${tarefa.concluida ? 'Concluída' : 'Pendente'}
-                </span>
-            </td>
-
-            <td>
-                <div class="acoes">
-
-                    <button class="btn-concluir"
-                        onclick="marcarConcluida(${index})"
-                        ${tarefa.concluida ? 'disabled' : ''}>
-                        ${tarefa.concluida ? 'Concluída ✓' : 'Concluir'}
-                    </button>
-
-                    <button class="btn-prioridade"
-                        onclick="alterarPrioridade(${index})">
-                        Prioridade
-                    </button>
-
-                    <button class="btn-excluir"
-                        onclick="excluirTarefa(${index})">
-                        Excluir
-                    </button>
-
-                </div>
-            </td>
-        `;
-
-        lista.appendChild(linha);
-    });
-
-    // Atualizar os indicadores
-    document.getElementById("totalTarefas").textContent =
-        tarefas.length;
-
-    document.getElementById("tarefasPendentes").textContent =
-        pendentes;
-
-    document.getElementById("tarefasConcluidas").textContent =
-        concluidas;
-
-    // Mensagem quando não houver tarefas
-    document.getElementById("mensagemVazia").style.display =
-        tarefas.length === 0 ? "block" : "none";
+body {
+    font-family: Arial, sans-serif;
+    background: #eef3f5;
+    color: #183247;
 }
 
-// Proteger textos inseridos pelo usuário
-function escaparHTML(texto) {
-    return String(texto).replace(/[&<>"']/g, function(caractere) {
-        return {
-            "&": "&amp;",
-            "<": "&lt;",
-            ">": "&gt;",
-            '"': "&quot;",
-            "'": "&#39;"
-        }[caractere];
-    });
+.topo {
+    background: #102d42;
+    color: white;
+    padding: 25px 8%;
+    border-bottom: 4px solid #00c99a;
 }
 
-// Marcar tarefa como concluída
-function marcarConcluida(index) {
-
-    tarefas[index].concluida = true;
-
-    salvarTarefas();
-
-    alert("Tarefa marcada como concluída!");
+.logo {
+    font-size: 28px;
+    font-weight: bold;
 }
 
-// Alterar prioridade
-function alterarPrioridade(index) {
+.logo span {
+    color: #00c99a;
+}
 
-    const novaPrioridade = prompt(
-        "Digite a nova prioridade:\n1 - Alta\n2 - Média\n3 - Baixa",
-        tarefas[index].prioridade
-    );
+.topo p {
+    margin-top: 7px;
+    color: #c3d5df;
+    font-size: 13px;
+}
 
-    if (novaPrioridade === null || novaPrioridade.trim() === "") {
-        return;
+.container {
+    width: 90%;
+    max-width: 1000px;
+    margin: 35px auto;
+}
+
+.boas-vindas {
+    background: #173d56;
+    color: white;
+    padding: 30px;
+    border-radius: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.boas-vindas h1 {
+    font-size: 27px;
+    margin-bottom: 9px;
+}
+
+.boas-vindas p {
+    color: #c5d9e4;
+}
+
+.icone {
+    background: #00c99a;
+    color: #102d42;
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    font-weight: bold;
+}
+
+.estatisticas {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin-bottom: 25px;
+}
+
+.card-stat {
+    background: white;
+    padding: 23px;
+    border-radius: 12px;
+    border-left: 5px solid #00c99a;
+    box-shadow: 0 3px 12px #102d4210;
+}
+
+.card-stat span {
+    display: block;
+    color: #718391;
+    font-size: 14px;
+    margin-bottom: 12px;
+}
+
+.card-stat strong {
+    font-size: 30px;
+    color: #173d56;
+}
+
+.painel, .lista {
+    background: white;
+    padding: 27px;
+    border-radius: 13px;
+    margin-bottom: 25px;
+    box-shadow: 0 3px 12px #102d4210;
+}
+
+h2 {
+    font-size: 20px;
+    margin-bottom: 22px;
+}
+
+#formTarefa {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 18px;
+}
+
+.campo label {
+    display: block;
+    margin-bottom: 9px;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.campo input, .campo select, #filtro {
+    width: 100%;
+    padding: 13px;
+    border: 1px solid #d6e0e6;
+    border-radius: 8px;
+    font-size: 14px;
+    outline: none;
+    background: #fbfdfe;
+}
+
+.campo input:focus, .campo select:focus {
+    border-color: #00b98c;
+}
+
+.btn-adicionar {
+    grid-column: 1 / -1;
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    background: #00b98c;
+    color: white;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-adicionar:hover {
+    background: #009c76;
+}
+
+.lista-topo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+}
+
+.lista-topo h2 {
+    margin-bottom: 0;
+}
+
+#filtro {
+    width: 150px;
+}
+
+.tarefa {
+    border: 1px solid #e1e9ed;
+    border-left: 5px solid #00b98c;
+    padding: 18px;
+    border-radius: 9px;
+    margin-top: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.tarefa.concluida {
+    border-left-color: #8a9aa4;
+    background: #f6f8f9;
+}
+
+.tarefa.concluida .titulo-tarefa {
+    text-decoration: line-through;
+    color: #82919a;
+}
+
+.info-tarefa h3 {
+    margin-bottom: 8px;
+    font-size: 16px;
+}
+
+.info-tarefa p {
+    font-size: 12px;
+    color: #778995;
+    margin-top: 5px;
+}
+
+.acoes {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.acoes button, .acoes select {
+    padding: 9px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.btn-concluir {
+    background: #d8f7ed;
+    color: #087c5d;
+}
+
+.btn-excluir {
+    background: #ffe4e4;
+    color: #bd3333;
+}
+
+.acoes select {
+    background: #eaf0f4;
+    color: #183247;
+}
+
+.prioridade {
+    font-size: 11px;
+    font-weight: bold;
+    padding: 5px 9px;
+    border-radius: 20px;
+}
+
+.alta {
+    background: #ffe0e0;
+    color: #c03939;
+}
+
+.media {
+    background: #fff0cf;
+    color: #a56a00;
+}
+
+.baixa {
+    background: #d9f4e9;
+    color: #16805c;
+}
+
+.vazio {
+    text-align: center;
+    color: #8999a3;
+    padding: 30px 10px;
+}
+
+footer {
+    background: #102d42;
+    color: #b9cbd5;
+    text-align: center;
+    padding: 20px;
+    font-size: 13px;
+}
+
+@media (max-width: 650px) {
+    .estatisticas {
+        grid-template-columns: 1fr;
     }
 
-    const numero = Number(novaPrioridade);
-
-    if (![1, 2, 3].includes(numero)) {
-        alert("Prioridade inválida! Escolha 1, 2 ou 3.");
-        return;
+    #formTarefa {
+        grid-template-columns: 1fr;
     }
 
-    tarefas[index].prioridade = numero;
+    .boas-vindas h1 {
+        font-size: 21px;
+    }
 
-    salvarTarefas();
+    .lista-topo {
+        align-items: flex-start;
+        flex-direction: column;
+    }
 
-    alert("Prioridade alterada com sucesso!");
-}
-
-// Excluir tarefa
-function excluirTarefa(index) {
-
-    const confirmar = confirm(
-        "Deseja realmente excluir esta tarefa?"
-    );
-
-    if (confirmar) {
-        tarefas.splice(index, 1);
-
-        salvarTarefas();
-
-        alert("Tarefa excluída com sucesso!");
+    #filtro {
+        width: 100%;
     }
 }
-
-// Carregar tarefas ao abrir o sistema
-mostrarTarefas();
