@@ -3,114 +3,129 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Código JavaScript</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
-  <style>body{margin:0;background:#0d1117}pre{margin:0}code.hljs{padding:1.5rem;min-height:100vh;box-sizing:border-box}</style>
+  
 </head>
 <body>
-  <pre><code class="language-javascript">
-// 3. Armazenamento das tarefas com arrays
-let tarefas = [];
+  // 12. Chave do localStorage
+const chavePessoas = "pessoas";
 
-// 7. Geração automática de códigos
-// Contador independente, iniciado em zero
-let proximoCodigo = 0;
+// Referências do DOM
+const form = document.getElementById("form-pessoa");
+const inputNome = document.getElementById("nome");
+const inputIdade = document.getElementById("idade");
+const inputPeso = document.getElementById("peso");
+const inputAltura = document.getElementById("altura");
+const paragrafoErro = document.getElementById("erro");
+const tbody = document.getElementById("tabela-pessoas");
 
-// 5. Validação dos dados da tarefa
-function validarDadosDaTarefa(titulo, prioridade) {
-  // Validação do título
-  if (titulo.length &lt; 5) {
-    throw new Error("Título deve ter no mínimo cinco caracteres");
-  }
+// Lista inicial - carregada do localStorage
+let pessoas = carregarPessoas();
 
-  // Validação da prioridade
-  // Prioridade deve estar entre 1 e 3, sendo 1 a mais alta e 3 a mais baixa
-  if (prioridade &lt; 1 || prioridade &gt; 3) {
-    throw new Error("Prioridade deve estar entre 1 e 3");
+// Funções das aulas anteriores
+function formatar(valor, casas) {
+  return valor.toFixed(casas);
+}
+
+function calcularIMC(peso, altura) {
+  return peso / (altura * altura);
+}
+
+// 6. Classificar IMC - retorna objeto com texto e classe
+function classificarIMC(imc) {
+  if (imc < 18.5) return { texto: "Abaixo do peso", classe: "abaixo" };
+  if (imc < 25) return { texto: "Peso normal", classe: "normal" };
+  if (imc < 30) return { texto: "Sobrepeso", classe: "sobrepeso" };
+  return { texto: "Obesidade", classe: "obesidade" };
+}
+
+function criarCelula(conteudo) {
+  const td = document.createElement("td");
+  td.textContent = conteudo;
+  return td;
+}
+
+// 2, 3 e 4. Criar linha completa
+function criarLinha(pessoa) {
+  const tr = document.createElement("tr");
+
+  // 2. IMC e classificação
+  const imc = calcularIMC(pessoa.peso, pessoa.altura);
+  const classificacao = classificarIMC(imc);
+
+  tr.appendChild(criarCelula(pessoa.codigo));
+  tr.appendChild(criarCelula(pessoa.nome));
+  tr.appendChild(criarCelula(pessoa.idade));
+
+  // 3. Formatação de peso e altura
+  tr.appendChild(criarCelula(formatar(pessoa.peso, 2) + " KG"));
+  tr.appendChild(criarCelula(formatar(pessoa.altura, 2) + " m"));
+
+  tr.appendChild(criarCelula(formatar(imc, 2)));
+
+  // 4. Coluna de classificação com selo
+  const tdClassificacao = document.createElement("td");
+  const selo = document.createElement("span");
+  selo.classList.add("selo", classificacao.classe);
+  selo.textContent = classificacao.texto;
+  tdClassificacao.appendChild(selo);
+  tr.appendChild(tdClassificacao);
+
+  return tr;
+}
+
+// Renderizar na tela
+function render() {
+  tbody.innerHTML = "";
+  for (const pessoa of pessoas) {
+    tbody.appendChild(criarLinha(pessoa));
   }
 }
 
-// 6. Cadastro e modelagem de uma tarefa
-function cadastrarTarefa(titulo, prioridade) {
-  validarDadosDaTarefa(titulo, prioridade);
-
-  // Incrementa o código antes de atribuir
-  proximoCodigo++;
-
-  // Objeto como representação da tarefa
-  // status = true -&gt; ainda em execução / não concluída
-  // status = false -&gt; concluída
-  let novaTarefa = {
-    codigo: proximoCodigo,
-    titulo: titulo,
-    prioridade: prioridade,
-    status: true
+// 6. Ler formulário
+function lerFormulario() {
+  return {
+    nome: inputNome.value,
+    idade: Number(inputIdade.value),
+    peso: Number(inputPeso.value),
+    altura: Number(inputAltura.value)
   };
-
-  // Inserção no array
-  tarefas.push(novaTarefa);
 }
 
-// 8. Listagem das tarefas cadastradas
-// Retornar não é o mesmo que exibir
-function listarTarefas() {
-  return tarefas;
-}
-
-// 9. Busca de tarefas com find
-function buscarTarefa(codigo) {
-  let tarefa = tarefas.find(function (t) {
-    return t.codigo === codigo;
+// 7. Adicionar pessoa
+function adicionarPessoa(dados) {
+  const codigo = ajustarContador() + 1;
+  pessoas.push({
+    codigo: codigo,
+    nome: dados.nome,
+    idade: dados.idade,
+    peso: dados.peso,
+    altura: dados.altura
   });
+}
 
-  // Tratamento de tarefa inexistente
-  if (!tarefa) {
-    throw new Error("Código não foi encontrado");
+// 9. Validar dados
+function validarDados(dados) {
+  if (dados.nome.length < 2) {
+    return "Informe o nome com no mínimo de duas letras";
   }
-
-  return tarefa;
-}
-
-// 10. Conclusão de uma tarefa
-function concluirTarefa(codigo) {
-  let tarefa = buscarTarefa(codigo);
-
-  // Validação de conclusão duplicada
-  if (tarefa.status === false) {
-    throw new Error("A tarefa já estava concluída");
+  if (!Number.isInteger(dados.idade) || dados.idade < 1 || dados.idade > 120) {
+    return "A idade deve ser um número inteiro entre 1 e 120";
   }
-
-  tarefa.status = false;
+  if (dados.peso < 0.5 || dados.peso > 2.5) { // Altura no PDF estava trocada, aqui corrigido
+    // Na verdade a validação correta é abaixo:
+  }
+  if (dados.altura < 0.5 || dados.altura > 2.5) {
+    return "A altura deve ser um número entre 0.5 e 2.5";
+  }
+  if (dados.peso < 2 || dados.peso > 500) {
+    return "O peso deve ser um número entre 2 e 500";
+  }
+  return "";
 }
 
-// 11. Alteração da prioridade
-function alterarPrioridade(codigo, novaPrioridade) {
-  let tarefa = buscarTarefa(codigo);
-
-  // Reaproveitamento da validação
-  // Reutiliza o próprio título já validado da tarefa
-  validarDadosDaTarefa(tarefa.titulo, novaPrioridade);
-
-  tarefa.prioridade = novaPrioridade;
-}
-
-// Testes
-try {
-  cadastrarTarefa("Estudar JavaScript", 1);
-  cadastrarTarefa("Fazer exercícios", 2);
-  cadastrarTarefa("Revisar projeto", 3);
-
-  console.log(listarTarefas());
-
-  concluirTarefa(1);
-  alterarPrioridade(2, 1);
-
-  console.log(listarTarefas());
-
-} catch (erro) {
-  console.log("Erro: " + erro.message);
-}</code></pre>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-  <script>hljs.highlightAll();</script>
+// 10. Mostrar / Limpar erro
+function mostrarErro(mensagem
+  
+  
 </body>
 </html>
