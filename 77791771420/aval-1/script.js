@@ -1,11 +1,16 @@
 
-function explorar() {
-    document.getElementById("inspiracoes").scrollIntoView({
-            behavior: "smooth"
-                });
-                }
+function mostrarMensagem() {
+    alert("Bem-vinda ao Fashion Blog! Descubra as novidades da moda.");
+    }
 
-                function mensagem() {
-                    alert("Seja bem-vinda ao Pink Nails! 💗 Obrigada por visitar nosso blog!");
-                    }
-                    
+    function enviarMensagem() {
+        let nome = document.getElementById("nome").value;
+
+            if (nome === "") {
+                    alert("Digite seu nome!");
+                        } else {
+                                document.getElementById("resultado").innerHTML =
+                                            "Olá, " + nome + "! Seja bem-vinda ao nosso blog!";
+                                                }
+                                                }
+                                                
