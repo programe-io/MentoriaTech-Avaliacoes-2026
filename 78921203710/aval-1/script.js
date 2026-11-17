@@ -1,188 +1,112 @@
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+const telefone = "5586989046527";
 
-body {
-    font-family: Arial, sans-serif;
-    background: #fffaf8;
-    color: #333;
-}
+const produtos = [
+    {
+        id: 1,
+        nome: "Vestido Floral",
+        preco: 129.90,
+        imagem: "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=600"
+    },
+    {
+        id: 2,
+        nome: "Vestido Elegante",
+        preco: 149.90,
+        imagem: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=600"
+    },
+    {
+        id: 3,
+        nome: "Blusa Feminina",
+        preco: 69.90,
+        imagem: "https://images.unsplash.com/photo-1551163943-3f6a855d1153?w=600"
+    },
+    {
+        id: 4,
+        nome: "Conjunto Feminino",
+        preco: 159.90,
+        imagem: "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600"
+    },
+    {
+        id: 5,
+        nome: "Saia Moderna",
+        preco: 89.90,
+        imagem: "https://images.unsplash.com/photo-1583496661160-fb5886a0aaaa?w=600"
+    },
+    {
+        id: 6,
+        nome: "Look Casual",
+        preco: 119.90,
+        imagem: "https://images.unsplash.com/photo-1485230895905-ec40ba36b9bc?w=600"
+    },
+    {
+        id: 7,
+        nome: "Vestido de Festa",
+        preco: 189.90,
+        imagem: "https://images.unsplash.com/photo-1566174053879-31528523f8ae?w=600"
+    },
+    {
+        id: 8,
+        nome: "Look Fashion",
+        preco: 139.90,
+        imagem: "https://images.unsplash.com/photo-1509631179647-0177331693ae?w=600"
+    }
+];
 
-header {
-    background: #fff;
-    padding: 20px 7%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 15px;
-}
+const listaProdutos = document.getElementById("listaProdutos");
 
-header h1 {
-    color: #b76e79;
-    font-size: 30px;
-}
+function mostrarProdutos(lista) {
+    listaProdutos.innerHTML = "";
 
-nav a {
-    text-decoration: none;
-    color: #444;
-    margin: 10px;
-    font-weight: bold;
-}
-
-nav a:hover {
-    color: #b76e79;
-}
-
-button, .botao {
-    background: #b76e79;
-    color: white;
-    border: none;
-    padding: 12px 20px;
-    border-radius: 6px;
-    cursor: pointer;
-    text-decoration: none;
-}
-
-button:hover, .botao:hover {
-    background: #914d59;
-}
-
-.banner {
-    min-height: 400px;
-    background:
-      linear-gradient(#0005, #0005),
-      url("https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1600")
-      center/cover;
-    display: flex;
-    align-items: center;
-    padding: 50px 10%;
-    color: white;
-}
-
-.banner h2 {
-    font-size: 42px;
-    margin-bottom: 15px;
-}
-
-.banner p {
-    font-size: 19px;
-    margin-bottom: 25px;
-}
-
-section {
-    padding: 60px 8%;
-    text-align: center;
-}
-
-section h2 {
-    color: #b76e79;
-    margin-bottom: 25px;
-}
-
-#pesquisa {
-    padding: 12px;
-    width: 90%;
-    max-width: 400px;
-    margin-bottom: 30px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-}
-
-.produtos {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 25px;
-}
-
-.produto {
-    background: white;
-    border-radius: 10px;
-    padding: 15px;
-    box-shadow: 0 3px 12px #0001;
-}
-
-.produto img {
-    width: 100%;
-    height: 250px;
-    object-fit: cover;
-    border-radius: 8px;
-}
-
-.produto h3 {
-    margin: 12px 0;
-}
-
-.preco {
-    color: #b76e79;
-    font-weight: bold;
-    margin-bottom: 12px;
-}
-
-#sobre p {
-    max-width: 700px;
-    margin: auto;
-    line-height: 1.8;
-}
-
-.carrinho {
-    position: fixed;
-    right: 20px;
-    top: 80px;
-    background: white;
-    padding: 25px;
-    width: 320px;
-    max-height: 80vh;
-    overflow-y: auto;
-    box-shadow: 0 4px 20px #0003;
-    border-radius: 10px;
-    z-index: 10;
-}
-
-.carrinho h2, .carrinho h3 {
-    margin-bottom: 15px;
-}
-
-.escondido {
-    display: none;
-}
-
-.item-carrinho {
-    padding: 12px 0;
-    border-bottom: 1px solid #ddd;
-}
-
-.item-carrinho button {
-    padding: 5px 10px;
-    margin-top: 5px;
-}
-
-footer {
-    background: #b76e79;
-    color: white;
-    text-align: center;
-    padding: 25px;
-}
-
-@media (max-width: 600px) {
-    header {
-        flex-direction: column;
+    if (lista.length === 0) {
+        listaProdutos.innerHTML = "<p>Nenhuma roupa encontrada.</p>";
+        return;
     }
 
-    nav a {
-        display: inline-block;
-        margin: 5px;
-    }
+    lista.forEach(produto => {
+        listaProdutos.innerHTML += `
+            <div class="produto">
+                <img
+                    src="${produto.imagem}"
+                    alt="${produto.nome}"
+                    loading="lazy"
+                >
 
-    .banner h2 {
-        font-size: 30px;
-    }
+                <h3>${produto.nome}</h3>
 
-    .carrinho {
-        width: calc(100% - 30px);
-        right: 15px;
-    }
+                <p class="preco">
+                    R$ ${produto.preco.toFixed(2).replace(".", ",")}
+                </p>
+
+                <button onclick="comprar(${produto.id})">
+                    Comprar pelo WhatsApp
+                </button>
+            </div>
+        `;
+    });
 }
+
+function comprar(id) {
+    const produto = produtos.find(item => item.id === id);
+
+    const mensagem =
+        `Olá! Tenho interesse em comprar:\n` +
+        `Produto: ${produto.nome}\n` +
+        `Preço: R$ ${produto.preco.toFixed(2).replace(".", ",")}`;
+
+    const link =
+        `https://wa.me/${telefone}?text=${encodeURIComponent(mensagem)}`;
+
+    window.open(link, "_blank");
+}
+
+document.getElementById("pesquisa").addEventListener("input", function() {
+    const busca = this.value.toLowerCase();
+
+    const resultado = produtos.filter(produto =>
+        produto.nome.toLowerCase().includes(busca)
+    );
+
+    mostrarProdutos(resultado);
+});
+
+mostrarProdutos(produtos);
