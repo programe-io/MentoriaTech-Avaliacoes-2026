@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FinanControl Pro — CSS Puro</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"><link href="style.css" rel="stylesheet"></head>
+<body>
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="container navbar-content">
+      <div class="brand">
+        <div class="brand-icon">
+          <i class="fa-solid fa-wallet"></i>
+        </div>
+        <div>
+          <h1 class="brand-title">FinanControl <span>Pro</span></h1>
+          <p class="brand-subtitle">Gestão Financeira & Fluxo de Caixa</p>
+        </div>
+      </div>
+
+      <div class="navbar-actions">
+        <button onclick="exportarCSV()" class="btn btn-dark" title="Exportar para Excel/CSV">
+          <i class="fa-solid fa-file-csv text-emerald"></i>
+          <span class="hide-mobile">Exportar CSV</span>
+        </button>
+        <button onclick="exportarJSON()" class="btn btn-dark" title="Backup em JSON">
+          <i class="fa-solid fa-download text-sky"></i>
+          <span class="hide-mobile">Backup JSON</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Conteúdo Principal -->
+  <main class="container main-content">
+
+    <!-- Cards de Resumo -->
+    <section class="summary-grid">
+      <div class="card summary-card">
+        <div>
+          <p class="summary-label">Saldo Total</p>
+          <h2 id="card-saldo" class="summary-value">R\$ 0,00</h2>
+          <p class="summary-hint">Balanço consolidado</p>
+        </div>
+        <div class="summary-icon icon-sky">
+          <i class="fa-solid fa-scale-balanced"></i>
+        </div>
+      </div>
+
+      <div class="card summary-card">
+        <div>
+          <p class="summary-label">Total de Entradas</p>
+          <h2 id="card-entradas" class="summary-value text-emerald">R\$ 0,00</h2>
+          <p id="count-entradas" class="summary-hint">0 lançamentos</p>
+        </div>
+        <div class="summary-icon icon-emerald">
+          <i class="fa-solid fa-arrow-trend-up"></i>
+        </div>
+      </div>
+
+      <div class="card summary-card">
+        <div>
+          <p class="summary-label">Total de Saídas</p>
+          <h2 id="card-saidas" class="summary-value text-rose">R\$ 0,00</h2>
+          <p id="count-saidas" class="summary-hint">0 lançamentos</p>
+        </div>
+        <div class="summary-icon icon-rose">
+          <i class="fa-solid fa-arrow-trend-down"></i>
+        </div>
+      </div>
+    </section>
+
+    <!-- Grid: Formulário + Gráfico -->
+    <section class="workspace-grid">
+      
+      <!-- Formulário -->
+      <div class="card form-section">
+        <div class="card-header">
+          <h3 id="form-titulo" class="card-title">
+            <i class="fa-solid fa-circle-plus text-emerald"></i> Novo Lançamento
+          </h3>
+          <button id="btn-cancelar-edicao" onclick="cancelarEdicao()" class="btn-link hidden">
+            Cancelar edição
+          </button>
+        </div>
+
+        <form id="form-transacao" class="form-stack">
+          <input type="hidden" id="transacao-id" />
+
+          <!-- Seletor de Tipo -->
+          <div class="type-selector">
+            <label class="type-option">
+              <input type="radio" name="tipo" value="entrada" checked onchange="atualizarCategoriasForm()" />
+              <span class="type-box type-entrada">
+                <i class="fa-solid fa-plus-circle"></i> Entrada
+              </span>
+            </label>
+            <label class="type-option">
+              <input type="radio" name="tipo" value="saida" onchange="atualizarCategoriasForm()" />
+              <span class="type-box type-saida">
+                <i class="fa-solid fa-minus-circle"></i> Saída
+              </span>
+            </label>
+          </div>
+
+          <div class="form-group">
+            <label for="descricao">Descrição</label>
+            <input type="text" id="descricao" required placeholder="Ex: Venda de serviço, Aluguel, Salário..." />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="valor">Valor (R\$)</label>
+              <input type="number" id="valor" step="0.01" min="0.01" required placeholder="0,00" />
+            </div>
+            <div class="form-group">
+              <label for="data">Data</label>
+              <input type="date" id="data" required />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="categoria">Categoria</label>
+            <select id="categoria" required></select>
+          </div>
+
+          <button type="submit" id="btn-submit" class="btn btn-primary btn-block">
+            <i class="fa-solid fa-check"></i>
+            <span>Salvar Lançamento</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- Painel Gráfico -->
+      <div class="card chart-section">
+        <div class="chart-header">
+          <div>
+            <h3 class="card-title">Visão Analítica</h3>
+            <p class="card-subtitle">Distribuição financeira baseada nos filtros atuais</p>
+          </div>
+          <div class="tabs">
+            <button id="tab-comparativo" onclick="mudarModoGrafico('comparativo')" class="tab-btn active">
+              Entradas vs Saídas
+            </button>
+            <button id="tab-categorias" onclick="mudarModoGrafico('categorias')" class="tab-btn">
+              Por Categoria
+            </button>
+          </div>
+        </div>
+
+        <div class="canvas-wrapper">
+          <canvas id="financeChart"></canvas>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Tabela de Histórico -->
+    <section class="card table-section">
+      <div class="table-header">
+        <div>
+          <h3 class="card-title">Histórico de Movimentações</h3>
+          <p class="card-subtitle">Gerencie, edite ou filtre suas transações</p>
+        </div>
+
+        <div class="filters-bar">
+          <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="filtro-busca" oninput="renderizarTudo()" placeholder="Buscar descrição..." />
+          </div>
+
+          <select id="filtro-tipo" onchange="renderizarTudo()">
+            <option value="todos">Todos os tipos</option>
+            <option value="entrada">Somente Entradas</option>
+            <option value="saida">Somente Saídas</option>
+          </select>
+
+          <select id="filtro-categoria" onchange="renderizarTudo()">
+            <option value="todas">Todas categorias</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Descrição</th>
+              <th>Categoria</th>
+              <th class="text-right">Valor</th>
+              <th class="text-center">Ações</th>
+            </tr>
+          </thead>
+          <tbody id="tabela-corpo"></tbody>
+        </table>
+      </div>
+
+      <div id="estado-vazio" class="empty-state hidden">
+        <div class="empty-icon">
+          <i class="fa-solid fa-receipt"></i>
+        </div>
+        <h4>Nenhum lançamento encontrado</h4>
+        <p>Adicione uma nova movimentação ou ajuste os filtros acima.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Modal de Confirmação -->
+  <div id="modal-excluir" class="modal-overlay hidden">
+    <div class="modal-box">
+      <div class="modal-icon">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+      </div>
+      <h3>Excluir Lançamento?</h3>
+      <p>Esta ação removerá permanentemente o registro do seu fluxo de caixa.</p>
+      <div class="modal-actions">
+        <button onclick="fecharModalExcluir()" class="btn btn-ghost">Cancelar</button>
+        <button id="btn-confirmar-exclusao" class="btn btn-danger">Sim, Excluir</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast">
+    <i id="toast-icon" class="fa-solid fa-circle-check text-emerald"></i>
+    <span id="toast-msg">Operação realizada!</span>
+  </div>
+
+  <script>
+    const CATEGORIAS = {
+      entrada: ['Vendas / Serviços', 'Salário', 'Investimentos', 'Reembolso', 'Outras Receitas'],
+      saida: ['Alimentação', 'Moradia / Aluguel', 'Transporte', 'Fornecedores', 'Impostos / Taxas', 'Lazer', 'Saúde', 'Outras Despesas']
+    \};
+
+    const STORAGE_KEY = 'financontrol_pro_css_v1';
+    let transacoes = [];
+    let modoGrafico = 'comparativo';
+    let idParaExcluir = null;
+
+    const DADOS_EXEMPLO = [
+      { id: '1', tipo: 'entrada', descricao: 'Consultoria de Desenvolvimento Web', valor: 4500.00, data: obterDataHoje(-5), categoria: 'Vendas / Serviços' \},
+      { id: '2', tipo: 'saida', descricao: 'Aluguel Escritório / Coworking', valor: 1200.00, data: obterDataHoje(-4), categoria: 'Moradia / Aluguel' \},
+      { id: '3', tipo: 'saida', descricao: 'Supermercado e Mantimentos', valor: 485.50, data: obterDataHoje(-2), categoria: 'Alimentação' \},
+      { id: '4', tipo: 'entrada', descricao: 'Rendimentos Aplicação CDB', valor: 320.40, data: obterDataHoje(-1), categoria: 'Investimentos' \},
+      { id: '5', tipo: 'saida', descricao: 'Assinatura Softwares & Cloud', valor: 189.90, data: obterDataHoje(0), categoria: 'Fornecedores' \}
+    ];
+
+    function obterDataHoje(diasOffset = 0) {
+      const d = new Date();
+      d.setDate(d.getDate() + diasOffset);
+      return d.toISOString().split('T')[0];
+    \}
+
+    document.addEventListener('DOMContentLoaded', () => {
+      carregarDados();
+      document.getElementById('data').value = obterDataHoje(0);
+      atualizarCategoriasForm();
+      popularFiltroCategorias();
+      renderizarTudo();
+      window.addEventListener('resize', desenharGrafico);
+    \});
+
+    function carregarDados() {
+      const salvos = localStorage.getItem(STORAGE_KEY);
+      if (salvos) {
+        transacoes = JSON.parse(salvos);
+      \} else {
+        transacoes = [...DADOS_EXEMPLO];
+        salvarDados();
+      \}
+    \}
+
+    function salvarDados() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(transacoes));
+    \}
+
+    function atualizarCategoriasForm() {
+      const tipo = document.querySelector('input[name="tipo"]:checked').value;
+      const select = document.getElementById('categoria');
+      select.innerHTML = CATEGORIAS[tipo].map(cat => `<option value="\${cat\}">\${cat\}</option>`).join('');
+    \}
+
+    function popularFiltroCategorias() {
+      const select = document.getElementById('filtro-categoria');
+      const todas = [...new Set([...CATEGORIAS.entrada, ...CATEGORIAS.saida])];
+      select.innerHTML = `<option value="todas">Todas categorias</option>` +
+        todas.map(cat => `<option value="\${cat\}">\${cat\}</option>`).join('');
+    \}
+
+    document.getElementById('form-transacao').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const id = document.getElementById('transacao-id').value;
+      const tipo = document.querySelector('input[name="tipo"]:checked').value;
+      const descricao = document.getElementById('descricao').value.trim();
+      const valor = parseFloat(document.getElementById('valor').value);
+      const data = document.getElementById('data').value;
+      const categoria = document.getElementById('categoria').value;
+
+      if (!descricao || isNaN(valor) || valor <= 0 || !data) return;
+
+      if (id) {
+        const index = transacoes.findIndex(t => t.id === id);
+        if (index !== -1) {
+          transacoes[index] = { id, tipo, descricao, valor, data, categoria \};
+          mostrarToast('Lançamento atualizado com sucesso!');
+        \}
+        cancelarEdicao();
+      \} else {
+        transacoes.unshift({ id: Date.now().toString(), tipo, descricao, valor, data, categoria \});
+        mostrarToast('Lançamento adicionado!');
+        e.target.reset();
+        document.getElementById('data').value = obterDataHoje(0);
+        atualizarCategoriasForm();
+      \}
+
+      salvarDados();
+      renderizarTudo();
+    \});
+
+    function editarTransacao(id) {
+      const item = transacoes.find(t => t.id === id);
+      if (!item) return;
+
+      document.getElementById('transacao-id').value = item.id;
+      document.querySelector(`input[name="tipo"][value="\${item.tipo\}"]`).checked = true;
+      atualizarCategoriasForm();
+
+      document.getElementById('descricao').value = item.descricao;
+      document.getElementById('valor').value = item.valor;
+      document.getElementById('data').value = item.data;
+      document.getElementById('categoria').value = item.categoria;
+
+      document.getElementById('form-titulo').innerHTML = `<i class="fa-solid fa-pen-to-square text-amber"></i> Editando Lançamento`;
+      document.getElementById('btn-submit').innerHTML = `<i class="fa-solid fa-save"></i> <span>Atualizar Lançamento</span>`;
+      document.getElementById('btn-cancelar-edicao').classList.remove('hidden');
+
+      window.scrollTo({ top: 0, behavior: 'smooth' \});
+    \}
+
+    function cancelarEdicao() {
+      document.getElementById('form-transacao').reset();
+      document.getElementById('transacao-id').value = '';
+      document.getElementById('data').value = obterDataHoje(0);
+      atualizarCategoriasForm();
+
+      document.getElementById('form-titulo').innerHTML = `<i class="fa-solid fa-circle-plus text-emerald"></i> Novo Lançamento`;
+      document.getElementById('btn-submit').innerHTML = `<i class="fa-solid fa-check"></i> <span>Salvar Lançamento</span>`;
+      document.getElementById('btn-cancelar-edicao').classList.add('hidden');
+    \}
+
+    function abrirModalExcluir(id) {
+      idParaExcluir = id;
+      document.getElementById('modal-excluir').classList.remove('hidden');
+    \}
+
+    function fecharModalExcluir() {
+      idParaExcluir = null;
+      document.getElementById('modal-excluir').classList.add('hidden');
+    \}
+
+    document.getElementById('btn-confirmar-exclusao').addEventListener('click', () => {
+      if (idParaExcluir) {
+        transacoes = transacoes.filter(t => t.id !== idParaExcluir);
+        salvarDados();
+        renderizarTudo();
+        mostrarToast('Lançamento excluído.', 'rose');
+        fecharModalExcluir();
+      \}
+    \});
+
+    function obterTransacoesFiltradas() {
+      const busca = document.getElementById('filtro-busca').value.toLowerCase().trim();
+      const tipo = document.getElementById('filtro-tipo').value;
+      const categoria = document.getElementById('filtro-categoria').value;
+
+      return transacoes
+        .filter(t => {
+          const matchBusca = t.descricao.toLowerCase().includes(busca) || t.categoria.toLowerCase().includes(busca);
+          const matchTipo = tipo === 'todos' || t.tipo === tipo;
+          const matchCat = categoria === 'todas' || t.categoria === categoria;
+          return matchBusca && matchTipo && matchCat;
+        \})
+        .sort((a, b) => new Date(b.data) - new Date(a.data));
+    \}
+
+    function renderizarTudo() {
+      const filtradas = obterTransacoesFiltradas();
+      atualizarCards(filtradas);
+      atualizarTabela(filtradas);
+      desenharGrafico();
+    \}
+
+    function formatarMoeda(valor) {
+      return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' \});
+    \}
+
+    function formatarDataBR(dataISO) {
+      const [ano, mes, dia] = dataISO.split('-');
+      return `\${dia\}/\${mes\}/\${ano\}`;
+    \}
+
+    function atualizarCards(lista) {
+      let entradas = 0, saidas = 0, qtdEntradas = 0, qtdSaidas = 0;
+
+      lista.forEach(t => {
+        if (t.tipo === 'entrada') {
+          entradas += t.valor;
+          qtdEntradas++;
+        \} else {
+          saidas += t.valor;
+          qtdSaidas++;
+        \}
+      \});
+
+      const saldo = entradas - saidas;
+      const elSaldo = document.getElementById('card-saldo');
+      elSaldo.textContent = formatarMoeda(saldo);
+      elSaldo.className = `summary-value \${saldo < 0 ? 'text-rose' : ''\}`;
+
+      document.getElementById('card-entradas').textContent = formatarMoeda(entradas);
+      document.getElementById('count-entradas').textContent = `\${qtdEntradas\} \${qtdEntradas === 1 ? 'lançamento' : 'lançamentos'\}`;
+
+      document.getElementById('card-saidas').textContent = formatarMoeda(saidas);
+      document.getElementById('count-saidas').textContent = `\${qtdSaidas\} \${qtdSaidas === 1 ? 'lançamento' : 'lançamentos'\}`;
+    \}
+
+    function atualizarTabela(lista) {
+      const tbody = document.getElementById('tabela-corpo');
+      const vazio = document.getElementById('estado-vazio');
+
+      if (lista.length === 0) {
+        tbody.innerHTML = '';
+        vazio.classList.remove('hidden');
+        return;
+      \}
+
+      vazio.classList.add('hidden');
+      tbody.innerHTML = lista.map(t => {
+        const isEntrada = t.tipo === 'entrada';
+        const badgeClass = isEntrada ? 'badge-entrada' : 'badge-saida';
+        const valorClass = isEntrada ? 'text-emerald' : 'text-rose';
+        const sinal = isEntrada ? '+' : '-';
+
+        return `
+          <tr>
+            <td class="text-muted">\${formatarDataBR(t.data)\}</td>
+            <td class="font-medium">\${escapeHTML(t.descricao)\}</td>
+            <td><span class="badge \${badgeClass\}">\${escapeHTML(t.categoria)\}</span></td>
+            <td class="text-right font-bold \${valorClass\}">\${sinal\} \${formatarMoeda(t.valor)\}</td>
+            <td class="text-center">
+              <div class="action-buttons">
+                <button onclick="editarTransacao('\${t.id\}')" class="btn-icon edit" title="Editar">
+                  <i class="fa-solid fa-pen"></i>
+                </button>
+                <button onclick="abrirModalExcluir('\${t.id\}')" class="btn-icon delete" title="Excluir">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      \}).join('');
+    \}
+
+    function mudarModoGrafico(modo) {
+      modoGrafico = modo;
+      document.getElementById('tab-comparativo').classList.toggle('active', modo === 'comparativo');
+      document.getElementById('tab-categorias').classList.toggle('active', modo === 'categorias');
+      desenharGrafico();
+    \}
+
+    function desenharGrafico() {
+      const canvas = document.getElementById('financeChart');
+      const ctx = canvas.getContext('2d');
+      const dpr = window.devicePixelRatio || 1;
+      const rect = canvas.parentElement.getBoundingClientRect();
+
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.scale(dpr, dpr);
+
+      const width = rect.width;
+      const height = rect.height;
+      ctx.clearRect(0, 0, width, height);
+
+      const lista = obterTransacoesFiltradas();
+      if (lista.length === 0) {
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = '13px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Sem dados suficientes para exibir o gráfico', width / 2, height / 2);
+        return;
+      \}
+
+      if (modoGrafico === 'comparativo') {
+        const entradas = lista.filter(t => t.tipo === 'entrada').reduce((acc, t) => acc + t.valor, 0);
+        const saidas = lista.filter(t => t.tipo === 'saida').reduce((acc, t) => acc + t.valor, 0);
+        const saldo = Math.max(0, entradas - saidas);
+
+        const itens = [
+          { label: 'Entradas', valor: entradas, cor: '#10b981' \},
+          { label: 'Saídas', valor: saidas, cor: '#f43f5e' \},
+          { label: 'Saldo Positivo', valor: saldo, cor: '#0ea5e9' \}
+        ];
+
+        const maxVal = Math.max(...itens.map(i => i.valor), 1);
+        const paddingBottom = 35;
+        const paddingTop = 30;
+        const areaUtilAltura = height - paddingBottom - paddingTop;
+        const barWidth = Math.min(70, (width / itens.length) * 0.45);
+        const espaco = width / itens.length;
+
+        ctx.strokeStyle = '#f1f5f9';
+        ctx.lineWidth = 1;
+        for (let i = 0; i <= 4; i++) {
+          const y = paddingTop + (areaUtilAltura / 4) * i;
+          ctx.beginPath();
+          ctx.moveTo(20, y);
+          ctx.lineTo(width - 20, y);
+          ctx.stroke();
+        \}
+
+        itens.forEach((item, index) => {
+          const barHeight = (item.valor / maxVal) * areaUtilAltura;
+          const x = espaco * index + (espaco - barWidth) / 2;
+          const y = height - paddingBottom - barHeight;
+
+          ctx.fillStyle = item.cor;
+          ctx.beginPath();
+          ctx.roundRect(x, y, barWidth, barHeight, [8, 8, 0, 0]);
+          ctx.fill();
+
+          ctx.fillStyle = '#334155';
+          ctx.font = 'bold 11px Inter, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText(formatarMoeda(item.valor), x + barWidth / 2, y - 8);
+
+          ctx.fillStyle = '#64748b';
+          ctx.font = '12px Inter, sans-serif';
+          ctx.fillText(item.label, x + barWidth / 2, height - 12);
+        \});
+      \} else {
+        const mapa = {\};
+        lista.forEach(t => {
+          if (!mapa[t.categoria]) mapa[t.categoria] = { valor: 0, tipo: t.tipo \};
+          mapa[t.categoria].valor += t.valor;
+        \});
+
+        const ordenadas = Object.entries(mapa)
+          .map(([nome, info]) => ({ nome, ...info \}))
+          .sort((a, b) => b.valor - a.valor)
+          .slice(0, 6);
+
+        const maxVal = Math.max(...ordenadas.map(i => i.valor), 1);
+        const rowHeight = Math.min(38, (height - 20) / ordenadas.length);
+        const labelWidth = 135;
+        const valueWidth = 95;
+        const maxBarWidth = Math.max(40, width - labelWidth - valueWidth - 20);
+
+        ordenadas.forEach((item, idx) => {
+          const y = 12 + idx * rowHeight;
+          const barW = (item.valor / maxVal) * maxBarWidth;
+
+          ctx.fillStyle = '#475569';
+          ctx.font = '12px Inter, sans-serif';
+          ctx.textAlign = 'left';
+          const nomeCurto = item.nome.length > 18 ? item.nome.slice(0, 17) + '…' : item.nome;
+          ctx.fillText(nomeCurto, 5, y + 16);
+
+          ctx.fillStyle = '#f1f5f9';
+          ctx.beginPath();
+          ctx.roundRect(labelWidth, y + 4, maxBarWidth, 16, 6);
+          ctx.fill();
+
+          ctx.fillStyle = item.tipo === 'entrada' ? '#10b981' : '#f43f5e';
+          ctx.beginPath();
+          ctx.roundRect(labelWidth, y + 4, Math.max(6, barW), 16, 6);
+          ctx.fill();
+
+          ctx.fillStyle = '#1e293b';
+          ctx.font = 'bold 11px Inter, sans-serif';
+          ctx.textAlign = 'right';
+          ctx.fillText(formatarMoeda(item.valor), width - 5, y + 16);
+        \});
+      \}
+    \}
+
+    function exportarCSV() {
+      const lista = obterTransacoesFiltradas();
+      if (lista.length === 0) return mostrarToast('Nenhum dado para exportar.', 'rose');
+
+      const cabecalho = ['Data', 'Tipo', 'Categoria', 'Descricao', 'Valor'];
+      const linhas = lista.map(t => [
+        formatarDataBR(t.data),
+        t.tipo.toUpperCase(),
+        `"\${t.categoria\}"`,
+        `"\${t.descricao.replace(/"/g, '""')\}"`,
+        t.valor.toFixed(2).replace('.', ',')
+      ]);
+
+      const csvContent = '\\uFEFF' + [cabecalho.join(';'), ...linhas.map(e => e.join(';'))].join('\\n');
+      baixarArquivo(csvContent, `fluxo_caixa_\${obterDataHoje(0)\}.csv`, 'text/csv;charset=utf-8;');
+      mostrarToast('Relatório CSV exportado!');
+    \}
+
+    function exportarJSON() {
+      baixarArquivo(JSON.stringify(transacoes, null, 2), `backup_financontrol_\${obterDataHoje(0)\}.json`, 'application/json');
+      mostrarToast('Backup JSON baixado!');
+    \}
+
+    function baixarArquivo(conteudo, nomeArquivo, tipoMime) {
+      const blob = new Blob([conteudo], { type: tipoMime \});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = nomeArquivo;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    \}
+
+    function mostrarToast(mensagem, cor = 'emerald') {
+      const toast = document.getElementById('toast');
+      const icon = document.getElementById('toast-icon');
+      document.getElementById('toast-msg').textContent = mensagem;
+      icon.className = cor === 'emerald' ? 'fa-solid fa-circle-check text-emerald' : 'fa-solid fa-circle-info text-rose';
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    \}
+
+    function escapeHTML(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    \}
+  </script>
+<script src="script.js"></script></body>
+</html>$0
