@@ -1,234 +1,70 @@
 
-let alunos = [];
-let proximaMatricula = 1;
+const formulario = document.getElementById("formulario");
+const resultado = document.getElementById("resultado");
 
-// ELEMENTOS HTML
-const formulario = document.getElementById("formAluno");
-const nome = document.getElementById("nome");
-const turma = document.getElementById("turma");
-const nota = document.getElementById("nota");
-const listaAlunos = document.getElementById("listaAlunos");
-
-// CADASTRAR ALUNO
 formulario.addEventListener("submit", function(event) {
+
+    // Impede que a página seja recarregada
     event.preventDefault();
 
-    const nomeAluno = nome.value.trim();
-    const turmaAluno = turma.value.trim();
-    const notaAluno = Number(nota.value);
+    // Recebe os dados do paciente
+    const nome = document.getElementById("nome").value.trim();
+    const peso = Number(document.getElementById("peso").value);
+    const altura = Number(document.getElementById("altura").value);
 
-    // VALIDAR NOME
-    if (nomeAluno.length < 5) {
-        alert("O nome deve ter no mínimo 5 caracteres!");
+    // Validação dos dados
+    if (nome === "" || peso <= 0 || altura <= 0 ||
+        !Number.isFinite(peso) || !Number.isFinite(altura)) {
+
+        resultado.style.display = "block";
+        resultado.textContent = "Por favor, informe dados válidos.";
         return;
     }
 
-    // VALIDAR TURMA
-    if (turmaAluno === "") {
-        alert("Informe a turma do aluno!");
-        return;
-    }
+    // Calcula o IMC
+    const imc = peso / (altura * altura);
 
-    // VALIDAR NOTA
-    if (
-        nota.value === "" ||
-        !Number.isFinite(notaAluno) ||
-        notaAluno < 0 ||
-        notaAluno > 10
-    ) {
-        alert("A nota deve estar entre 0 e 10!");
-        return;
-    }
+    // Define a classificação
+    let classificacao;
 
-    // CRIAR ALUNO
-    const aluno = {
-        matricula: proximaMatricula,
-        nome: nomeAluno,
-        turma: turmaAluno,
-        nota: notaAluno
-    };
-
-    alunos.push(aluno);
-    proximaMatricula++;
-
-    listarAlunos();
-    atualizarResumo();
-
-    formulario.reset();
-
-    alert("Aluno cadastrado com sucesso!");
-});
-
-// VERIFICAR SITUAÇÃO
-function verificarSituacao(nota) {
-    if (nota >= 7) {
-        return "Aprovado";
-    } else if (nota >= 5) {
-        return "Recuperação";
+    if (imc < 18.5) {
+        classificacao = "Abaixo do peso";
+    } else if (imc < 25) {
+        classificacao = "Peso normal";
+    } else if (imc < 30) {
+        classificacao = "Sobrepeso";
+    } else if (imc < 35) {
+        classificacao = "Obesidade grau I";
+    } else if (imc < 40) {
+        classificacao = "Obesidade grau II";
     } else {
-        return "Reprovado";
-    }
-}
-
-// LISTAR ALUNOS
-function listarAlunos() {
-    listaAlunos.innerHTML = "";
-
-    if (alunos.length === 0) {
-        const mensagem = document.createElement("p");
-        mensagem.textContent = "Nenhum aluno cadastrado.";
-        mensagem.className = "vazio";
-        listaAlunos.appendChild(mensagem);
-        return;
+        classificacao = "Obesidade grau III";
     }
 
-    alunos.forEach(function(aluno) {
-        const situacao = verificarSituacao(aluno.nota);
+    // Limpa o resultado anterior
+    resultado.innerHTML = "";
 
-        const elemento = document.createElement("div");
-        elemento.className = "aluno";
+    // Cria os elementos do resultado
+    const titulo = document.createElement("h3");
+    titulo.textContent = "Resultado do paciente";
 
-        const titulo = document.createElement("h3");
-        titulo.textContent = aluno.nome;
+    const paragrafoNome = document.createElement("p");
+    paragrafoNome.textContent = "Nome: " + nome;
 
-        const matricula = document.createElement("p");
-        matricula.textContent = "Matrícula: " + aluno.matricula;
+    const paragrafoImc = document.createElement("p");
+    paragrafoImc.textContent = "Seu IMC: " + imc.toFixed(2);
 
-        const turmaAluno = document.createElement("p");
-        turmaAluno.textContent = "Turma: " + aluno.turma;
+    const paragrafoClassificacao = document.createElement("p");
+    paragrafoClassificacao.textContent =
+        "Classificação: " + classificacao;
 
-        const notaAluno = document.createElement("p");
-        notaAluno.textContent = "Nota: " + aluno.nota.toFixed(1);
+    // Adiciona os elementos na página
+    resultado.appendChild(titulo);
+    resultado.appendChild(paragrafoNome);
+    resultado.appendChild(paragrafoImc);
+    resultado.appendChild(paragrafoClassificacao);
 
-        const status = document.createElement("span");
-        status.textContent = situacao;
-        status.className = "status";
+    // Exibe o resultado
+    resultado.style.display = "block";
 
-        if (situacao === "Aprovado") {
-            status.classList.add("aprovado");
-        } else if (situacao === "Recuperação") {
-            status.classList.add("recuperacao");
-        } else {
-            status.classList.add("reprovado");
-        }
-
-        // BOTÕES
-        const acoes = document.createElement("div");
-        acoes.className = "acoes";
-
-        const botaoEditar = document.createElement("button");
-        botaoEditar.textContent = "Alterar nota";
-        botaoEditar.className = "editar";
-
-        botaoEditar.addEventListener("click", function() {
-            alterarNota(aluno.matricula);
-        });
-
-        const botaoExcluir = document.createElement("button");
-        botaoExcluir.textContent = "Excluir aluno";
-        botaoExcluir.className = "excluir";
-
-        botaoExcluir.addEventListener("click", function() {
-            excluirAluno(aluno.matricula);
-        });
-
-        acoes.appendChild(botaoEditar);
-        acoes.appendChild(botaoExcluir);
-
-        elemento.appendChild(titulo);
-        elemento.appendChild(matricula);
-        elemento.appendChild(turmaAluno);
-        elemento.appendChild(notaAluno);
-        elemento.appendChild(status);
-        elemento.appendChild(acoes);
-
-        listaAlunos.appendChild(elemento);
-    });
-}
-
-// ALTERAR NOTA
-function alterarNota(matricula) {
-    const aluno = alunos.find(function(item) {
-        return item.matricula === matricula;
-    });
-
-    if (!aluno) {
-        alert("Aluno não encontrado!");
-        return;
-    }
-
-    const novaNota = prompt(
-        "Digite a nova nota entre 0 e 10:",
-        aluno.nota
-    );
-
-    if (novaNota === null) {
-        return;
-    }
-
-    const valor = novaNota.trim().replace(",", ".");
-    const notaAtualizada = Number(valor);
-
-    if (
-        valor === "" ||
-        !Number.isFinite(notaAtualizada) ||
-        notaAtualizada < 0 ||
-        notaAtualizada > 10
-    ) {
-        alert("Digite uma nota válida entre 0 e 10!");
-        return;
-    }
-
-    aluno.nota = notaAtualizada;
-
-    listarAlunos();
-    atualizarResumo();
-
-    alert("Nota alterada com sucesso!");
-}
-
-// EXCLUIR ALUNO
-function excluirAluno(matricula) {
-    const confirmar = confirm(
-        "Deseja realmente excluir este aluno?"
-    );
-
-    if (!confirmar) {
-        return;
-    }
-
-    alunos = alunos.filter(function(aluno) {
-        return aluno.matricula !== matricula;
-    });
-
-    listarAlunos();
-    atualizarResumo();
-
-    alert("Aluno excluído com sucesso!");
-}
-
-// ATUALIZAR RESUMO
-function atualizarResumo() {
-    const total = alunos.length;
-
-    const aprovados = alunos.filter(function(aluno) {
-        return aluno.nota >= 7;
-    }).length;
-
-    const recuperacao = alunos.filter(function(aluno) {
-        return aluno.nota >= 5 && aluno.nota < 7;
-    }).length;
-
-    const reprovados = alunos.filter(function(aluno) {
-        return aluno.nota < 5;
-    }).length;
-
-    document.getElementById("totalAlunos").textContent = total;
-    document.getElementById("totalAprovados").textContent = aprovados;
-    document.getElementById("totalRecuperacao").textContent = recuperacao;
-    document.getElementById("totalReprovados").textContent = reprovados;
-}
-
-// INICIAR SISTEMA
-listarAlunos();
-atualizarResumo();
+});
