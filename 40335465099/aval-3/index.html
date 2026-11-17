@@ -1,51 +1,189 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Ficha de Anamnese - Controle de IMC</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&display=swap" rel="stylesheet">
+  <meta name="theme-color" content="#145c3b">
+  <meta
+    name="description"
+    content="Ficha simples para cadastro de pacientes e acompanhamento do IMC."
+  >
+
+  <title>Ficha de Anamnese | Controle de IMC</title>
+
+  <!-- Arquivo de estilos -->
   <link rel="stylesheet" href="style.css">
+
+  <!-- Arquivo JavaScript -->
+  <script src="script.js" defer></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="style.css" rel="stylesheet"></head>
+
 <body>
-  <main>
-    <h1>Ficha de Anamnese</h1>
-    <p class="sub">Controle de IMC dos pacientes</p>
+  <main class="container">
 
-    <form id="form-pessoa" novalidate>
-      <label>Nome
-        <input id="nome" type="text" placeholder="Ex.: Francisco" autocomplete="off">
-      </label>
-      <label>Idade
-        <input id="idade" type="number" placeholder="30">
-      </label>
-      <label>Altura (m)
-        <input id="altura" type="number" step="0.01" placeholder="1.70">
-      </label>
-      <label>Peso (kg)
-        <input id="peso" type="number" step="0.1" placeholder="65">
-      </label>
-      <button type="submit">Salvar</button>
-    </form>
+    <header class="page-header">
+      <p class="eyebrow">ACOMPANHAMENTO DE SAÚDE</p>
 
-    <p id="erro" role="alert" hidden></p>
+      <h1>Ficha de Anamnese</h1>
 
-    <div class="tabela-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Nome</th><th>Idade</th><th>Altura</th><th>Peso</th>
-            <th>IMC</th><th>Classificação</th><th>Ação</th>
-          </tr>
-        </thead>
-        <tbody id="tabela"></tbody>
-      </table>
-      <p id="vazio">Nenhum paciente cadastrado. Preencha o formulário acima.</p>
-    </div>
+      <p class="subtitle">
+        Controle de IMC dos pacientes
+      </p>
+    </header>
+
+    <section class="form-card" aria-labelledby="form-title">
+
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow eyebrow-light">NOVO REGISTRO</p>
+
+          <h2 id="form-title">
+            Dados do paciente
+          </h2>
+        </div>
+
+        <span class="accent-mark" aria-hidden="true"></span>
+      </div>
+
+      <form id="form-pessoa" novalidate>
+
+        <label class="field field-name" for="nome">
+          <span>Nome</span>
+
+          <input
+            id="nome"
+            name="nome"
+            type="text"
+            placeholder="Ex.: Francisco Silva"
+            autocomplete="off"
+          >
+        </label>
+
+        <label class="field" for="idade">
+          <span>Idade</span>
+
+          <input
+            id="idade"
+            name="idade"
+            type="number"
+            min="1"
+            max="120"
+            step="1"
+            placeholder="30"
+            inputmode="numeric"
+          >
+        </label>
+
+        <label class="field" for="altura">
+          <span>
+            Altura <small>(m)</small>
+          </span>
+
+          <input
+            id="altura"
+            name="altura"
+            type="number"
+            min="0.5"
+            max="2.5"
+            step="0.01"
+            placeholder="1.70"
+            inputmode="decimal"
+          >
+        </label>
+
+        <label class="field" for="peso">
+          <span>
+            Peso <small>(kg)</small>
+          </span>
+
+          <input
+            id="peso"
+            name="peso"
+            type="number"
+            min="2"
+            max="500"
+            step="0.1"
+            placeholder="65"
+            inputmode="decimal"
+          >
+        </label>
+
+        <button class="button button-save" type="submit">
+          Salvar paciente
+        </button>
+      </form>
+
+      <p
+        id="erro"
+        class="message message-error"
+        role="alert"
+        aria-live="polite"
+        hidden
+      ></p>
+
+      <p
+        id="sucesso"
+        class="message message-success"
+        role="status"
+        aria-live="polite"
+        hidden
+      ></p>
+    </section>
+
+    <section class="records" aria-labelledby="records-title">
+
+      <div class="records-heading">
+        <div>
+          <p class="eyebrow">REGISTROS</p>
+
+          <h2 id="records-title">
+            Pacientes cadastrados
+          </h2>
+        </div>
+
+        <span
+          class="count"
+          id="contador"
+          aria-live="polite"
+        >
+          0 pacientes
+        </span>
+      </div>
+
+      <div class="table-wrap">
+
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Nome</th>
+              <th scope="col">Idade</th>
+              <th scope="col">Altura</th>
+              <th scope="col">Peso</th>
+              <th scope="col">IMC</th>
+              <th scope="col">Classificação</th>
+              <th scope="col">Ação</th>
+            </tr>
+          </thead>
+
+          <tbody id="tabela"></tbody>
+        </table>
+
+        <p id="vazio" class="empty-state">
+          Nenhum paciente cadastrado.
+          Preencha o formulário acima.
+        </p>
+      </div>
+
+      <p class="note">
+        Os dados ficam salvos neste navegador e neste dispositivo.
+      </p>
+    </section>
+
+    <footer class="page-footer">
+      Ficha de acompanhamento · Controle de IMC
+    </footer>
+
   </main>
-  <script src="script.js"></script>
 <script src="script.js"></script></body>
 </html>

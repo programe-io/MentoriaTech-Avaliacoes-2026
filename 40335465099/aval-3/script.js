@@ -1,163 +1,190 @@
 "use strict";
 
-/* ---------- Referências do DOM ---------- */
-const formPessoa = document.getElementById("form-pessoa");
-const inputNome = document.getElementById("nome");
-const inputIdade = document.getElementById("idade");
-const inputAltura = document.getElementById("altura");
-const inputPeso = document.getElementById("peso");
-const mensagemDeErro = document.getElementById("erro");
-const tabela = document.getElementById("tabela");
-const vazio = document.getElementById("vazio");
+const form = document.getElementById("form-pessoa");
+const nomeInput = document.getElementById("nome");
+const idadeInput = document.getElementById("idade");
+const alturaInput = document.getElementById("altura");
+const pesoInput = document.getElementById("peso");
+const errorMessage = document.getElementById("erro");
+const successMessage = document.getElementById("sucesso");
+const tableBody = document.getElementById("tabela");
+const emptyState = document.getElementById("vazio");
+const counter = document.getElementById("contador");
 
-/* ---------- Estado ---------- */
-const chavePessoas = "pessoas";
-let proximoId = 1;
-let pessoas = carregarPessoas();
-ajustarContador();
+const STORAGE_KEY = "ficha-anamnese-imc-pacientes-v1";
+let patients = loadPatients();
+let nextId = patients.reduce((largest, patient) => Math.max(largest, patient.id), 0) + 1;
 
-/* ---------- Cálculos e formatação ---------- */
-const formatar = (valor, casas) => Number(valor).toFixed(casas);
+const numberFormat = new Intl.NumberFormat("pt-BR", {
+  minimumFractionDigits: 1,
+  maximumFractionDigits: 1,
+});
 
-function calcularIMC(peso, altura) {
-  return peso / (altura * altura);
+function calculateBmi(weight, height) {
+  return weight / (height * height);
 }
 
-function classificarIMC(imc) {
-  if (imc < 18.5) return { texto: "Abaixo do peso", classe: "abaixo" };
-  if (imc < 25) return { texto: "Peso normal", classe: "normal" };
-  if (imc < 30) return { texto: "Sobrepeso", classe: "sobrepeso" };
-  return { texto: "Obesidade", classe: "obesidade" };
+function classifyBmi(bmi) {
+  if (bmi < 18.5) return { label: "Abaixo do peso", className: "badge-under" };
+  if (bmi < 25) return { label: "Peso normal", className: "badge-normal" };
+  if (bmi < 30) return { label: "Sobrepeso", className: "badge-overweight" };
+  return { label: "Obesidade", className: "badge-obesity" };
 }
 
-/* ---------- Renderização ---------- */
-function criarTd(texto) {
-  const td = document.createElement("td");
-  td.textContent = texto;
-  return td;
-}
-
-function criarLinha(pessoa) {
-  const imc = calcularIMC(pessoa.peso, pessoa.altura);
-  const classificacao = classificarIMC(imc);
-
-  const tr = document.createElement("tr");
-  tr.append(
-    criarTd(pessoa.nome),
-    criarTd(pessoa.idade),
-    criarTd(formatar(pessoa.altura, 2) + " m"),
-    criarTd(formatar(pessoa.peso, 1) + " KG"),
-    criarTd(formatar(imc, 1))
-  );
-
-  const tdClassificacao = document.createElement("td");
-  const selo = document.createElement("span");
-  selo.classList.add("selo", classificacao.classe);
-  selo.textContent = classificacao.texto;
-  tdClassificacao.appendChild(selo);
-  tr.appendChild(tdClassificacao);
-
-  const tdAcao = document.createElement("td");
-  const btnApagar = document.createElement("button");
-  btnApagar.type = "button";
-  btnApagar.className = "btn-apagar";
-  btnApagar.textContent = "Apagar";
-  btnApagar.addEventListener("click", () => apagarPessoa(pessoa.id));
-  tdAcao.appendChild(btnApagar);
-  tr.appendChild(tdAcao);
-
-  return tr;
-}
-
-function render() {
-  tabela.replaceChildren(...pessoas.map(criarLinha));
-  vazio.hidden = pessoas.length > 0;
-}
-
-/* ---------- Formulário ---------- */
-function lerFormulario() {
+function readForm() {
   return {
-    nome: inputNome.value.trim(),
-    idade: Number(inputIdade.value),
-    altura: Number(inputAltura.value),
-    peso: Number(inputPeso.value),
+    name: nomeInput.value.trim(),
+    age: Number(idadeInput.value),
+    height: Number(alturaInput.value),
+    weight: Number(pesoInput.value),
   };
 }
 
-function validarDados({ nome, idade, altura, peso }) {
-  if (nome.length < 2) return "Informe o nome com no mínimo duas letras.";
-  if (!Number.isInteger(idade) || idade < 1 || idade > 120)
+function validate(patient) {
+  if (patient.name.length < 2) {
+    return "Informe o nome com pelo menos duas letras.";
+  }
+  if (!Number.isInteger(patient.age) || patient.age < 1 || patient.age > 120) {
     return "A idade deve ser um número inteiro entre 1 e 120.";
-  if (!(altura >= 0.5 && altura <= 2.5))
+  }
+  if (!Number.isFinite(patient.height) || patient.height < 0.5 || patient.height > 2.5) {
     return "A altura deve estar entre 0,5 m e 2,5 m.";
-  if (!(peso >= 2 && peso <= 500))
+  }
+  if (!Number.isFinite(patient.weight) || patient.weight < 2 || patient.weight > 500) {
     return "O peso deve estar entre 2 kg e 500 kg.";
+  }
   return "";
 }
 
-function mostrarErro(texto) {
-  mensagemDeErro.textContent = texto;
-  mensagemDeErro.hidden = false;
+function makeCell(value) {
+  const cell = document.createElement("td");
+  cell.textContent = value;
+  return cell;
 }
 
-function limparErro() {
-  mensagemDeErro.hidden = true;
+function makePatientRow(patient) {
+  const bmi = calculateBmi(patient.weight, patient.height);
+  const classification = classifyBmi(bmi);
+  const row = document.createElement("tr");
+
+  row.append(
+    makeCell(patient.name),
+    makeCell(String(patient.age)),
+    makeCell(`${patient.height.toFixed(2).replace(".", ",")} m`),
+    makeCell(`${patient.weight.toFixed(1).replace(".", ",")} kg`),
+    makeCell(numberFormat.format(bmi)),
+  );
+
+  const classificationCell = document.createElement("td");
+  const badge = document.createElement("span");
+  badge.className = `badge ${classification.className}`;
+  badge.textContent = classification.label;
+  classificationCell.append(badge);
+  row.append(classificationCell);
+
+  const actionCell = document.createElement("td");
+  const deleteButton = document.createElement("button");
+  deleteButton.type = "button";
+  deleteButton.className = "btn-delete";
+  deleteButton.textContent = "Apagar";
+  deleteButton.setAttribute("aria-label", `Apagar o registro de ${patient.name}`);
+  deleteButton.addEventListener("click", () => deletePatient(patient.id));
+  actionCell.append(deleteButton);
+  row.append(actionCell);
+
+  return row;
 }
 
-function adicionarPessoa({ nome, idade, altura, peso }) {
-  pessoas.push({ id: proximoId++, nome, idade, altura, peso });
+function render() {
+  tableBody.replaceChildren(...patients.map(makePatientRow));
+  emptyState.hidden = patients.length > 0;
+
+  const label = patients.length === 1 ? "paciente" : "pacientes";
+  counter.textContent = `${patients.length} ${label}`;
 }
 
-function apagarPessoa(id) {
-  pessoas = pessoas.filter((p) => p.id !== id);
-  salvar();
-  render();
+function showError(message) {
+  errorMessage.textContent = message;
+  errorMessage.hidden = false;
+  successMessage.hidden = true;
 }
 
-/* ---------- localStorage ---------- */
-function salvar() {
-  localStorage.setItem(chavePessoas, JSON.stringify(pessoas));
+function showSuccess(message) {
+  successMessage.textContent = message;
+  successMessage.hidden = false;
+  errorMessage.hidden = true;
 }
 
-function carregarPessoas() {
-  const texto = localStorage.getItem(chavePessoas);
-  if (texto === null) return [];
+function clearMessages() {
+  errorMessage.hidden = true;
+  successMessage.hidden = true;
+}
+
+function loadPatients() {
   try {
-    const dados = JSON.parse(texto);
-    if (!Array.isArray(dados)) throw new Error("Formato inválido");
-    return dados;
-  } catch (e) {
-    console.error("Erro ao carregar pessoas salvas:", e);
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (!saved) return [];
+
+    const parsed = JSON.parse(saved);
+    if (!Array.isArray(parsed)) return [];
+
+    return parsed.filter((patient) =>
+      patient &&
+      Number.isInteger(patient.id) &&
+      typeof patient.name === "string" &&
+      Number.isInteger(patient.age) &&
+      Number.isFinite(patient.height) &&
+      Number.isFinite(patient.weight)
+    );
+  } catch (error) {
+    console.warn("Não foi possível carregar os pacientes salvos.", error);
     return [];
   }
 }
 
-function ajustarContador() {
-  let maior = 0;
-  pessoas.forEach((p) => {
-    if (p.id > maior) maior = p.id;
-  });
-  proximoId = maior + 1;
+function savePatients() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(patients));
+    return true;
+  } catch (error) {
+    console.error("Não foi possível salvar os pacientes.", error);
+    showError("O navegador não permitiu salvar os dados neste dispositivo.");
+    return false;
+  }
 }
 
-/* ---------- Eventos ---------- */
-formPessoa.addEventListener("submit", (e) => {
-  e.preventDefault();
+function deletePatient(id) {
+  const patient = patients.find((item) => item.id === id);
+  patients = patients.filter((item) => item.id !== id);
+  savePatients();
+  render();
 
-  const dados = lerFormulario();
-  const erro = validarDados(dados);
-  if (erro !== "") {
-    mostrarErro(erro);
+  if (patient) showSuccess(`Registro de ${patient.name} apagado.`);
+}
+
+form.addEventListener("submit", (event) => {
+  event.preventDefault();
+  clearMessages();
+
+  const patient = readForm();
+  const validationError = validate(patient);
+  if (validationError) {
+    showError(validationError);
     return;
   }
 
-  limparErro();
-  adicionarPessoa(dados);
-  salvar();
-  formPessoa.reset();
-  inputNome.focus();
+  patients.push({ id: nextId++, ...patient });
+  if (!savePatients()) {
+    patients.pop();
+    nextId -= 1;
+    render();
+    return;
+  }
+
+  form.reset();
   render();
+  nomeInput.focus();
+  showSuccess(`${patient.name} foi cadastrado(a) com sucesso.`);
 });
 
-/* ---------- Início ---------- */
 render();
