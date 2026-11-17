@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Área de Entrega - Avaliações</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+\}
+
+body {
+    background: #000;
+    color: white;
+    font-family: Arial, sans-serif;
+    padding: 15px 8px;
+\}
+
+header {
+    text-align: center;
+    margin-bottom: 50px;
+\}
+
+header h1 {
+    font-size: 24px;
+    margin-bottom: 12px;
+\}
+
+header p {
+    font-size: 12px;
+    line-height: 21px;
+\}
+
+.editores {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 13px;
+\}
+
+.editor {
+    min-width: 0;
+\}
+
+.editor-topo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 7px;
+\}
+
+.editor-topo h3 {
+    font-size: 14px;
+\}
+
+button {
+    background: white;
+    color: black;
+    border: none;
+    border-radius: 7px;
+    padding: 8px 13px;
+    cursor: pointer;
+    font-weight: bold;
+\}
+
+button:hover {
+    background: #ddd;
+\}
+
+textarea {
+    width: 100%;
+    height: 300px;
+    resize: none;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: white;
+    color: black;
+    padding: 12px;
+    font-family: monospace;
+    font-size: 13px;
+    outline: none;
+\}
+
+.preview {
+    margin-top: 18px;
+\}
+
+.preview h3 {
+    font-size: 14px;
+    margin-bottom: 7px;
+\}
+
+iframe {
+    width: 100%;
+    height: 500px;
+    border: none;
+    border-radius: 6px;
+    background: white;
+\}
+
+.maximizado {
+    position: fixed;
+    inset: 10px;
+    z-index: 10;
+    background: #000;
+    padding: 15px;
+\}
+
+.maximizado textarea {
+    height: calc(100vh - 100px);
+\}
+
+@media (max-width: 700px) {
+    .editores {
+        grid-template-columns: 1fr;
+    \}
+
+    header {
+        margin-bottom: 30px;
+    \}
+\}
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+<header>
+    <h1>Área de Entrega - Avaliações</h1>
+
+    <p>
+        Aqui você envia seus códigos para correção. Revise antes de publicar e garanta que sua avaliação esteja completa.<br>
+        Finalize seu trabalho, publique seu código e compartilhe sua solução com o professor para ser avaliada.
+    </p>
+</header>
+
+<main>
+
+<section class="editores">
+
+    <div class="editor" id="editor-html">
+        <div class="editor-topo">
+            <h3>HTML</h3>
+            <button onclick="maximizar('editor-html')">Maximizar</button>
+        </div>
+        <textarea id="html" placeholder="Digite seu código HTML aqui..."></textarea>
+    </div>
+
+    <div class="editor" id="editor-css">
+        <div class="editor-topo">
+            <h3>CSS</h3>
+            <button onclick="maximizar('editor-css')">Maximizar</button>
+        </div>
+        <textarea id="css" placeholder="Digite seu código CSS aqui..."></textarea>
+    </div>
+
+    <div class="editor" id="editor-js">
+        <div class="editor-topo">
+            <h3>JavaScript</h3>
+            <button onclick="maximizar('editor-js')">Maximizar</button>
+        </div>
+        <textarea id="js" placeholder="Digite seu código JavaScript aqui..."></textarea>
+    </div>
+
+</section>
+
+<section class="preview">
+    <h3>Pré-visualização do Código</h3>
+    <iframe id="resultado"></iframe>
+</section>
+
+</main>
+
+<script>
+const html = document.getElementById("html");
+const css = document.getElementById("css");
+const js = document.getElementById("js");
+const resultado = document.getElementById("resultado");
+
+function atualizarPreview() {
+    const codigo = `
+        \${html.value\}
+        <style>\${css.value\}</style>
+        <script>
+            \${js.value\}
+        <\\/script>
+    `;
+
+    resultado.srcdoc = codigo;
+\}
+
+html.addEventListener("input", atualizarPreview);
+css.addEventListener("input", atualizarPreview);
+js.addEventListener("input", atualizarPreview);
+
+function maximizar(id) {
+    const editor = document.getElementById(id);
+
+    editor.classList.toggle("maximizado");
+
+    const botao = editor.querySelector("button");
+
+    botao.textContent = editor.classList.contains("maximizado")
+        ? "Restaurar"
+        : "Maximizar";
+\}
+</script>
+
+<script src="script.js"></script></body>
+</html>$0
