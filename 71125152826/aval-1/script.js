@@ -1,80 +1,75 @@
-let produtos = [];
+let ultimoCodigo = 0;
+let tarefas = [];
 
-function validarProduto(descricao, quantidade, valor) {
-    if (descricao.length < 5) {
-        throw new Error("Descrição deve ter, no mínimo, cinco caracteres");
-    }
-    if (quantidade < 1) {
-        throw new Error("Quantidade deve ser maior que zero");
-    }
-    if (valor < 0) {
-        throw new Error("Valor deve ser maior ou igual a zero");   
-    }
+function validarDadosDaTarefa(titulo, prioridade) {
+  if (!titulo || titulo.length < 5) {
+     throw new Error(" O titulo da tarefa deve possuir no minimo 5 caracteres.");
+  }
+
+  if (prioridade < 1 || prioridade > 3) {
+    throw new Error(" A prioridade deve estar entre 1 e 3.");
+  }
+}  
+
+function buscarTarefa(codigo) {
+      const tarefa = tarefas.find(t =>t.codigo === codigo);
+
+  if (!tarefa) {
+    throw new Error("Tarefa nao encontrada.");
+  }
+  
+  return tarefa;
+}  
+  
+function cadastrarTarefa(titulo, prioridade) {
+   validarDadosDaTarefa(titulo, prioridade);
+
+    ultimoCodigo++;
+
+  const novaTarefa = {
+    codigo: ultimoCodigo,
+    titulo: titulo,
+    prioridade: prioridade,
+    status: true
+    
+  };
+tarefas.push(novaTarefa)
+return tarefas;
+
+  }
+function listarTarefas() {
+  return tarefas;
 }
 
-function cadastrarProduto(descricao, quantidade, valor) {
-    validarProduto(descricao, quantidade, valor);
+function concluirTarefa(codigo){
+  const tarefa = buscarTarefa(codigo);
 
-    let novoProduto = {
-        codigo: produtos.length + 1,
-        descricao: descricao,
-        quantidade: quantidade,
-        valor: valor
-    };
-
-    produtos.push(novoProduto);
+if(tarefa.status === false){
+throw new Error("Esta Tarefa já está concluida.");
+  
+}
+tarefa.status = false;
+return tarefa;
 }
 
-function listarProdutos() {
-    console.log(produtos);
+function alterarPrioridade(codigo, novaPrioridade){
+
+
+const tarefa = buscarTarefa(codigo);
+
+ validarDadosDaTarefa(tarefa.titulo,novaPrioridade);
+
+tarefa.prioridade = novaPrioridade;
+return tarefa;
 }
 
-function atualizarValor(codigoProduto, novoValor) {
-    if (novoValor < 0) {
-        throw new Error("Valor deve ser maior ou igual a zero");
-    }
 
-    const produto = produtos.find((prod) => prod.codigo === codigoProduto);
+cadastrarTarefa("Cadastrar Clientes",1);
+cadastrarTarefa("Cadastrar Clientes",2);
 
-    if (produto) {
-        produto.valor = novoValor;
-    } else {
-        throw new Error("Produto não encontrado");
-    }
-}
+console.log(listarTarefas());
 
-function atualizarQuantidade(codigoProduto, novaQuantidade) {
-    if (novaQuantidade < 1) {
-        throw new Error("Quantidade deve ser maior que zero");
-    }
+alterarPrioridade(1,3);
 
-    const produto = produtos.find((prod) => prod.codigo === codigoProduto);
+console.log(listarTarefas());
 
-    if (produto) {
-        produto.quantidade = produto.quantidade + novaQuantidade;
-    } else {
-        throw new Error("Produto não encontrado");
-    }
-}
-
-// ======================================================
-// TESTES E EXECUÇÃO DO SISTEMA
-// ======================================================
-
-try {
-    console.log("---1. Cadastrando produtos ---");
-    cadastrarProduto("Cadeira gamer", 12, 699);
-    cadastrarProduto("Mouse logitech", 38, 99);
-    listarProdutos();
-
-    console.log("\n---2. Atualizando Quantidade ---");
-    atualizarQuantidade(1, 3); // soma 3 unidades na cadeira gamer
-    listarProdutos();
-
-    console.log("\n---3. Atualizando Valor ---");
-    atualizarValor(2, 120); // altera o valor do mouse logitech para 120
-    listarProdutos();
-
-} catch (erro) {
-    console.error("Erro capturado:", erro.message);
-}
