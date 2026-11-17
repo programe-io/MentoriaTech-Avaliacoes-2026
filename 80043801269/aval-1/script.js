@@ -1,61 +1,23 @@
+// script.js - Interatividade para o Blog Pessoal
+document.addEventListener("DOMContentLoaded", () => {
+    console.log("Página carregada e script executado com sucesso!");
 
-window.onload = function(){
-
-    alert("Bem-vindo ao Meu Blog!");
-
-}
-
-
-const tema = document.getElementById("tema");
-
-tema.addEventListener("click", () => {
-
-    document.body.classList.toggle("dark-mode");
-
-    if(document.body.classList.contains("dark-mode")){
-
-        tema.innerHTML = "☀️";
-
-    }else{
-
-        tema.innerHTML = "🌙";
-
-    }
-
-});
-
-
-const formulario =
-document.getElementById("formContato");
-
-formulario.addEventListener("submit", function(e){
-
-    e.preventDefault();
-
-    let nome =
-    document.getElementById("nome").value;
-
-    let email =
-    document.getElementById("email").value;
-    let mensagem=
-    document.getElementById("mensagem").value;
-    if(
-        mome==="" ||
-        email === "" ||
-        mensagem === ""
-
-    ){
-        alert("precha todos os campos !");
-        return;
+    // Adiciona interatividade aos itens de listas (Tecnologias e Formações)
+    const itens = document.querySelectorAll("ul li, ol li");
+    
+    itens.forEach(item => {
+        item.style.cursor = "pointer";
+        item.title = "Clique para destacar";
         
-
-    }
-    alert(
-        "mensagem enviada com sucesso,"+
-        nome+
-        "!"
-    );
-    formulario.reset();
-
-
-   });
+        item.addEventListener("click", () => {
+            // Alterna a cor do texto ao clicar
+            if (item.style.color === "rgb(52, 152, 219)") {
+                item.style.color = "#333";
+                item.style.fontWeight = "500";
+            } else {
+                item.style.color = "#3498db";
+                item.style.fontWeight = "bold";
+            }
+        });
+    });
+});
