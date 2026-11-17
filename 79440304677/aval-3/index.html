@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>InstaWeb</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: #fafafa;
+    font-family: Arial, sans-serif;
+    color: #262626;
+}
+
+header {
+    height: 65px;
+    background: white;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.logo {
+    font-size: 28px;
+    font-weight: bold;
+    color: #d62976;
+}
+
+.search {
+    padding: 10px;
+    border: none;
+    background: #efefef;
+    border-radius: 8px;
+}
+
+nav {
+    display: flex;
+    gap: 20px;
+    font-size: 23px;
+}
+
+nav span {
+    cursor: pointer;
+}
+
+.container {
+    max-width: 600px;
+    margin: 25px auto;
+}
+
+.stories {
+    background: white;
+    padding: 15px;
+    display: flex;
+    gap: 18px;
+    overflow-x: auto;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.story {
+    text-align: center;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.story img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 3px solid #e1306c;
+    padding: 2px;
+    object-fit: cover;
+}
+
+.post {
+    background: white;
+    border: 1px solid #ddd;
+    margin-top: 20px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.post-header {
+    padding: 13px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.post-header img {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.post-image {
+    width: 100%;
+    display: block;
+    max-height: 600px;
+    object-fit: cover;
+}
+
+.actions {
+    padding: 12px;
+    font-size: 25px;
+}
+
+.actions span {
+    cursor: pointer;
+    margin-right: 12px;
+}
+
+.likes, .caption, .comments {
+    padding: 0 12px 10px;
+    font-size: 14px;
+}
+
+.caption b {
+    margin-right: 5px;
+}
+
+.comment-box {
+    display: flex;
+    border-top: 1px solid #eee;
+}
+
+.comment-box input {
+    flex: 1;
+    padding: 13px;
+    border: none;
+    outline: none;
+}
+
+.comment-box button {
+    border: none;
+    background: white;
+    color: #0095f6;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.create {
+    background: white;
+    padding: 15px;
+    margin-top: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.create input {
+    width: 100%;
+    padding: 10px;
+    margin: 7px 0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.create button {
+    background: #0095f6;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+@media(max-width: 650px) {
+    header {
+        padding: 0 12px;
+    }
+
+    .search {
+        width: 100px;
+    }
+
+    nav {
+        gap: 10px;
+    }
+
+    .container {
+        margin: 10px auto;
+    }
+
+    .post, .stories {
+        border-radius: 0;
+    }
+}
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+<header>
+    <div class="logo">InstaWeb</div>
+    <input class="search" placeholder="Pesquisar">
+    <nav>
+        <span>🏠</span>
+        <span onclick="document.getElementById('foto').click()">➕</span>
+        <span>❤️</span>
+        <span>👤</span>
+    </nav>
+</header>
+
+<div class="container">
+
+    <div class="stories">
+        <div class="story">
+            <img src="https://i.pravatar.cc/100?img=12">
+            <p>Seu story</p>
+        </div>
+        <div class="story">
+            <img src="https://i.pravatar.cc/100?img=5">
+            <p>Maria</p>
+        </div>
+        <div class="story">
+            <img src="https://i.pravatar.cc/100?img=8">
+            <p>Pedro</p>
+        </div>
+        <div class="story">
+            <img src="https://i.pravatar.cc/100?img=9">
+            <p>Ana</p>
+        </div>
+        <div class="story">
+            <img src="https://i.pravatar.cc/100?img=15">
+            <p>Lucas</p>
+        </div>
+    </div>
+
+    <div class="create">
+        <h3>➕ Criar publicação</h3>
+        <input id="nome" placeholder="Seu nome">
+        <input id="foto" type="file" accept="image/*">
+        <input id="legenda" placeholder="Escreva uma legenda...">
+        <button onclick="publicar()">Publicar</button>
+    </div>
+
+    <div id="feed">
+
+        <div class="post">
+            <div class="post-header">
+                <img src="https://i.pravatar.cc/100?img=12">
+                <b>mariana.oficial</b>
+            </div>
+
+            <img class="post-image"
+            src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=700">
+
+            <div class="actions">
+                <span onclick="curtir(this)">🤍</span>
+                <span onclick="comentar(this)">💬</span>
+                <span>📤</span>
+            </div>
+
+            <div class="likes">❤️ <b>1.250 curtidas</b></div>
+            <div class="caption">
+                <b>mariana.oficial</b>
+                Aproveitando o dia! ✨
+            </div>
+
+            <div class="comments"></div>
+
+            <div class="comment-box">
+                <input placeholder="Adicione um comentário...">
+                <button onclick="enviarComentario(this)">Publicar</button>
+            </div>
+        </div>
+
+        <div class="post">
+            <div class="post-header">
+                <img src="https://i.pravatar.cc/100?img=8">
+                <b>pedro.fotos</b>
+            </div>
+
+            <img class="post-image"
+            src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=700">
+
+            <div class="actions">
+                <span onclick="curtir(this)">🤍</span>
+                <span>💬</span>
+                <span>📤</span>
+            </div>
+
+            <div class="likes">❤️ <b>845 curtidas</b></div>
+            <div class="caption">
+                <b>pedro.fotos</b>
+                Que lugar incrível! 🌍
+            </div>
+
+            <div class="comments"></div>
+
+            <div class="comment-box">
+                <input placeholder="Adicione um comentário...">
+                <button onclick="enviarComentario(this)">Publicar</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+
+function curtir(elemento) {
+    if(elemento.innerText === "🤍") {
+        elemento.innerText = "❤️";
+    } else {
+        elemento.innerText = "🤍";
+    }
+}
+
+function enviarComentario(botao) {
+    const input = botao.previousElementSibling;
+    const texto = input.value.trim();
+
+    if(texto === "") return;
+
+    const comentarios = botao.closest(".post")
+        .querySelector(".comments");
+
+    const novo = document.createElement("p");
+    novo.style.padding = "5px 12px";
+    novo.innerHTML = "<b>Você:</b> ";
+    novo.appendChild(document.createTextNode(texto));
+
+    comentarios.appendChild(novo);
+    input.value = "";
+}
+
+function comentar(elemento) {
+    const input = elemento.closest(".post")
+        .querySelector(".comment-box input");
+
+    input.focus();
+}
+
+function publicar() {
+    const nome = document.getElementById("nome").value.trim();
+    const legenda = document.getElementById("legenda").value;
+    const arquivo = document.getElementById("foto").files[0];
+
+    if(!nome || !arquivo) {
+        alert("Digite seu nome e escolha uma foto!");
+        return;
+    }
+
+    const imagem = URL.createObjectURL(arquivo);
+
+    const post = document.createElement("div");
+    post.className = "post";
+
+    const cabecalho = document.createElement("div");
+    cabecalho.className = "post-header";
+
+    const avatar = document.createElement("img");
+    avatar.src = "https://i.pravatar.cc/100?img=12";
+
+    const usuario = document.createElement("b");
+    usuario.textContent = nome;
+
+    cabecalho.append(avatar, usuario);
+
+    const foto = document.createElement("img");
+    foto.className = "post-image";
+    foto.src = imagem;
+
+    const acoes = document.createElement("div");
+    acoes.className = "actions";
+
+    const like = document.createElement("span");
+    like.textContent = "🤍";
+    like.onclick = () => curtir(like);
+
+    acoes.append(like, document.createTextNode(" 💬  📤"));
+
+    const textoCurtidas = document.createElement("div");
+    textoCurtidas.className = "likes";
+    textoCurtidas.textContent = "❤️ ";
+
+    const legendaPost = document.createElement("div");
+    legendaPost.className = "caption";
+
+    const nomeLegenda = document.createElement("b");
+    nomeLegenda.textContent = nome;
+
+    legendaPost.append(nomeLegenda,
+        document.createTextNode(" " + legenda));
+
+    const comentarios = document.createElement("div");
+    comentarios.className = "comments";
+
+    const caixa = document.createElement("div");
+    caixa.className = "comment-box";
+
+    const campo = document.createElement("input");
+    campo.placeholder = "Adicione um comentário...";
+
+    const enviar = document.createElement("button");
+    enviar.textContent = "Publicar";
+    enviar.onclick = () => enviarComentario(enviar);
+
+    caixa.append(campo, enviar);
+
+    post.append(cabecalho, foto, acoes,
+        textoCurtidas, legendaPost, comentarios, caixa);
+
+    document.getElementById("feed").prepend(post);
+
+    document.getElementById("nome").value = "";
+    document.getElementById("legenda").value = "";
+    document.getElementById("foto").value = "";
+}
+
+</script>
+
+<script src="script.js"></script></body>
+</html>
