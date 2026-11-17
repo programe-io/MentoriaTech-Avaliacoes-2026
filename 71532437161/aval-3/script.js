@@ -1,4 +1,6 @@
 
+// LISTA DE ALUNOS
+
 let alunos = [];
 
 let proximaMatricula = 1;
@@ -7,9 +9,13 @@ let proximaMatricula = 1;
 // ELEMENTOS HTML
 
 const formulario = document.getElementById("formAluno");
-const nome = document.getElementById("nome");
-const turma = document.getElementById("turma");
-const nota = document.getElementById("nota");
+
+const campoNome = document.getElementById("nome");
+
+const campoTurma = document.getElementById("turma");
+
+const campoNota = document.getElementById("nota");
+
 const listaAlunos = document.getElementById("listaAlunos");
 
 
@@ -19,16 +25,19 @@ formulario.addEventListener("submit", function(event) {
 
     event.preventDefault();
 
-    const nomeAluno = nome.value.trim();
-    const turmaAluno = turma.value.trim();
-    const notaAluno = Number(nota.value);
+    const nomeAluno = campoNome.value.trim();
+
+    const turmaAluno = campoTurma.value.trim();
+
+    const notaAluno = Number(campoNota.value);
 
 
     // VALIDAR NOME
 
     if (nomeAluno.length < 5) {
 
-        alert("O nome deve possuir no mínimo 5 caracteres!");
+        alert("O nome deve ter pelo menos 5 caracteres!");
+
         return;
 
     }
@@ -36,9 +45,10 @@ formulario.addEventListener("submit", function(event) {
 
     // VALIDAR TURMA
 
-    if (turmaAluno === "") {
+    if (turmaAluno.length === 0) {
 
         alert("Informe a turma do aluno!");
+
         return;
 
     }
@@ -47,25 +57,29 @@ formulario.addEventListener("submit", function(event) {
     // VALIDAR NOTA
 
     if (
-        nota.value.trim() === "" ||
+        campoNota.value === "" ||
         !Number.isFinite(notaAluno) ||
         notaAluno < 0 ||
         notaAluno > 10
     ) {
 
-        alert("A nota deve ser um valor entre 0 e 10!");
+        alert("A nota deve estar entre 0 e 10!");
+
         return;
 
     }
 
 
-    // CRIAR ALUNO
+    // CRIAR OBJETO ALUNO
 
     const aluno = {
 
         matricula: proximaMatricula,
+
         nome: nomeAluno,
+
         turma: turmaAluno,
+
         nota: notaAluno
 
     };
@@ -77,9 +91,15 @@ formulario.addEventListener("submit", function(event) {
 
     proximaMatricula++;
 
+
+    // ATUALIZAR SISTEMA
+
     listarAlunos();
 
     atualizarResumo();
+
+
+    // LIMPAR FORMULÁRIO
 
     formulario.reset();
 
@@ -96,15 +116,15 @@ function verificarSituacao(nota) {
 
         return "Aprovado";
 
-    } else if (nota >= 5) {
+    }
+
+    if (nota >= 5) {
 
         return "Recuperação";
 
-    } else {
-
-        return "Reprovado";
-
     }
+
+    return "Reprovado";
 
 }
 
@@ -114,6 +134,7 @@ function verificarSituacao(nota) {
 function listarAlunos() {
 
     listaAlunos.innerHTML = "";
+
 
     if (alunos.length === 0) {
 
@@ -139,34 +160,62 @@ function listarAlunos() {
         elemento.className = "aluno";
 
 
+        // NOME
+
         const titulo = document.createElement("h3");
 
         titulo.textContent = aluno.nome;
 
 
+        // MATRÍCULA
+
         const matricula = document.createElement("p");
 
-        matricula.textContent = "Matrícula: " + aluno.matricula;
+        matricula.textContent =
+            "Matrícula: " + aluno.matricula;
 
 
-        const turmaAluno = document.createElement("p");
+        // TURMA
 
-        turmaAluno.textContent = "Turma: " + aluno.turma;
+        const turma = document.createElement("p");
+
+        turma.textContent =
+            "Turma: " + aluno.turma;
 
 
-        const notaAluno = document.createElement("p");
+        // NOTA
 
-        notaAluno.textContent = "Nota: " + aluno.nota.toFixed(1);
+        const nota = document.createElement("p");
 
+        nota.textContent =
+            "Nota: " + aluno.nota.toFixed(1);
+
+
+        // SITUAÇÃO
 
         const status = document.createElement("span");
 
         status.textContent = situacao;
 
-        status.className = "status " +
-            situacao.toLowerCase().normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "");
+        status.className = "status";
 
+
+        if (situacao === "Aprovado") {
+
+            status.classList.add("aprovado");
+
+        } else if (situacao === "Recuperação") {
+
+            status.classList.add("recuperacao");
+
+        } else {
+
+            status.classList.add("reprovado");
+
+        }
+
+
+        // ÁREA DOS BOTÕES
 
         const acoes = document.createElement("div");
 
@@ -203,18 +252,22 @@ function listarAlunos() {
         });
 
 
+        // ADICIONAR BOTÕES
+
         acoes.appendChild(botaoEditar);
 
         acoes.appendChild(botaoExcluir);
 
 
+        // MONTAR CARTÃO DO ALUNO
+
         elemento.appendChild(titulo);
 
         elemento.appendChild(matricula);
 
-        elemento.appendChild(turmaAluno);
+        elemento.appendChild(turma);
 
-        elemento.appendChild(notaAluno);
+        elemento.appendChild(nota);
 
         elemento.appendChild(status);
 
@@ -228,7 +281,7 @@ function listarAlunos() {
 }
 
 
-// ALTERAR NOTA
+// ALTERAR NOTA DO ALUNO
 
 function alterarNota(matricula) {
 
@@ -249,7 +302,7 @@ function alterarNota(matricula) {
 
 
     const novaNota = prompt(
-        "Digite a nova nota do aluno (0 a 10):",
+        "Digite a nova nota entre 0 e 10:",
         aluno.nota
     );
 
@@ -261,10 +314,12 @@ function alterarNota(matricula) {
     }
 
 
-    const valor = novaNota.trim();
+    const valor = novaNota.trim().replace(",", ".");
 
     const notaAtualizada = Number(valor);
 
+
+    // VALIDAR NOVA NOTA
 
     if (
         valor === "" ||
@@ -273,20 +328,23 @@ function alterarNota(matricula) {
         notaAtualizada > 10
     ) {
 
-        alert("Nota inválida! Digite um valor entre 0 e 10.");
+        alert("Digite uma nota válida entre 0 e 10!");
 
         return;
 
     }
 
 
+    // ATUALIZAR NOTA
+
     aluno.nota = notaAtualizada;
+
 
     listarAlunos();
 
     atualizarResumo();
 
-    alert("Nota atualizada com sucesso!");
+    alert("Nota alterada com sucesso!");
 
 }
 
@@ -332,21 +390,21 @@ function atualizarResumo() {
 
     const aprovados = alunos.filter(function(aluno) {
 
-        return verificarSituacao(aluno.nota) === "Aprovado";
+        return aluno.nota >= 7;
 
     }).length;
 
 
     const recuperacao = alunos.filter(function(aluno) {
 
-        return verificarSituacao(aluno.nota) === "Recuperação";
+        return aluno.nota >= 5 && aluno.nota < 7;
 
     }).length;
 
 
     const reprovados = alunos.filter(function(aluno) {
 
-        return verificarSituacao(aluno.nota) === "Reprovado";
+        return aluno.nota < 5;
 
     }).length;
 
