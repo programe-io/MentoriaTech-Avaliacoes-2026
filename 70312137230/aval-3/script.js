@@ -1,3 +1,4 @@
+// Variável em memória temporária (sem localStorage)
 let historicoIMC = [];
 
 function atualizarSistema() {
@@ -15,25 +16,20 @@ function mostrarToast(mensagem) {
   }, 3000);
 }
 
-// Função principal de cálculo do IMC
 window.calcularIMC = function() {
   const nomeInput = document.getElementById('nome');
   const pesoInput = document.getElementById('peso');
   const alturaInput = document.getElementById('altura');
-  const idadeInput = document.getElementById('idade');
-  const generoInput = document.getElementById('genero');
 
   const nome = nomeInput.value.trim() || 'Anônimo';
   const peso = parseFloat(pesoInput.value);
   const altura = parseFloat(alturaInput.value);
 
-  // Validações básicas
   if (isNaN(peso) || peso <= 0 || isNaN(altura) || altura <= 0) {
     alert('Por favor, informe valores válidos para peso e altura!');
     return;
   }
 
-  // Fórmula do IMC: Peso / (Altura * Altura)
   const imc = peso / (altura * altura);
   const imcArredondado = imc.toFixed(2);
 
@@ -67,7 +63,6 @@ window.calcularIMC = function() {
     dica = 'Atenção médica prioritária necessária. Obesidade grau mórbido requer acompanhamento clínico multidisciplinar contínuo.';
   }
 
-  // Exibir card de resultado instantâneo
   const cardRes = document.getElementById('card-resultado');
   document.getElementById('res-imc').textContent = imcArredondado;
   const badgeClass = document.getElementById('res-classificacao');
@@ -76,7 +71,6 @@ window.calcularIMC = function() {
   document.getElementById('res-dica').textContent = dica;
   cardRes.classList.remove('hidden');
 
-  // Adicionar ao Histório/Relatório
   const novoRegistro = {
     id: Date.now(),
     nome: nome,
@@ -92,7 +86,6 @@ window.calcularIMC = function() {
   mostrarToast(`IMC de ${nome} calculado: ${imcArredondado}`);
 };
 
-// Renderizar Tabela do Histórico
 window.renderizarHistorico = function() {
   const tbody = document.getElementById('tabela-historico');
   const estadoVazio = document.getElementById('estado-vazio-hist');
@@ -135,7 +128,6 @@ window.excluirRegistro = function(id) {
   mostrarToast('Registro removido do relatório.');
 };
 
-// Botão de apagar / limpar tudo
 window.limparTudo = function() {
   historicoIMC = [];
   document.getElementById('nome').value = '';
@@ -147,7 +139,6 @@ window.limparTudo = function() {
   mostrarToast('Dados limpos com sucesso!');
 };
 
-// Inicialização
 setTimeout(() => {
   atualizarSistema();
   if (typeof lucide !== 'undefined') {
