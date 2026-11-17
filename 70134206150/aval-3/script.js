@@ -1,771 +1,502 @@
 
-// ======================================
-// MEU UNIVERSO ♡
-// Sistema de organização e autocuidado
-// ======================================
-
-const STORAGE_KEY = "meuUniverso_v1";
-
-const defaultData = {
-    profile: {
-        name: "",
-        bio: "",
-        photo: ""
+const posts = [
+    {
+        id: 1,
+        name: "Dra. Mariana Costa",
+        username: "@psicologamariana",
+        avatar: "https://i.pravatar.cc/100?img=47",
+        image: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=1000",
+        category: "Profissionais",
+        caption: "Cuidar da saúde emocional também é uma forma de amor próprio. Respeite seu tempo e não tenha medo de pedir ajuda. 💗",
+        likes: 1250,
+        liked: false,
+        verified: true,
+        time: "Há 20 minutos",
+        comments: []
     },
-    diary: [],
-    tasks: [],
-    notes: [],
-    goals: [],
-    travels: []
-};
-
-function loadData() {
-    try {
-        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
-        return saved ? { ...defaultData, ...saved } : structuredClone(defaultData);
-    } catch {
-        return structuredClone(defaultData);
+    {
+        id: 2,
+        name: "Dra. Camila Oliveira",
+        username: "@camilamedica",
+        avatar: "https://i.pravatar.cc/100?img=44",
+        image: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=1000",
+        category: "Profissionais",
+        caption: "A prevenção é sempre o melhor caminho! Não deixe de cuidar da sua saúde e manter seus exames em dia. 🩺",
+        likes: 890,
+        liked: false,
+        verified: true,
+        time: "Há 1 hora",
+        comments: []
+    },
+    {
+        id: 3,
+        name: "Lucas Ferreira",
+        username: "@lucas.adv",
+        avatar: "https://i.pravatar.cc/100?img=12",
+        image: "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=1000",
+        category: "Profissionais",
+        caption: "Conhecer seus direitos é essencial! Informação também é uma forma de proteção. ⚖️",
+        likes: 643,
+        liked: false,
+        verified: true,
+        time: "Há 2 horas",
+        comments: []
+    },
+    {
+        id: 4,
+        name: "Closet da Bella",
+        username: "@closetdabella",
+        avatar: "https://i.pravatar.cc/100?img=49",
+        image: "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1000",
+        category: "Lojas",
+        caption: "Novidades chegando por aqui! ✨ Peças lindas para deixar seus looks ainda mais especiais. Qual é a sua favorita?",
+        likes: 2340,
+        liked: false,
+        verified: false,
+        time: "Há 3 horas",
+        comments: []
+    },
+    {
+        id: 5,
+        name: "Doce Encanto",
+        username: "@doceencanto",
+        avatar: "https://i.pravatar.cc/100?img=32",
+        image: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=1000",
+        category: "Lojas",
+        caption: "Um pedacinho de felicidade em forma de bolo! 🎂 Feito com carinho para deixar seus momentos mais doces.",
+        likes: 1870,
+        liked: false,
+        verified: false,
+        time: "Há 4 horas",
+        comments: []
+    },
+    {
+        id: 6,
+        name: "Natureza Viva",
+        username: "@naturezaviva",
+        avatar: "https://i.pravatar.cc/100?img=5",
+        image: "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=1000",
+        category: "Natureza",
+        caption: "Às vezes tudo que precisamos é de um lugar tranquilo, uma paisagem bonita e um momento para respirar. 🌿",
+        likes: 5420,
+        liked: false,
+        verified: false,
+        time: "Há 5 horas",
+        comments: []
+    },
+    {
+        id: 7,
+        name: "Mundo dos Pets",
+        username: "@mundodospets",
+        avatar: "https://i.pravatar.cc/100?img=15",
+        image: "https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=1000",
+        category: "Animais",
+        caption: "Uma dose de fofura para melhorar o seu dia! 🐶 Quem também ama esses companheiros?",
+        likes: 7800,
+        liked: false,
+        verified: false,
+        time: "Há 6 horas",
+        comments: []
+    },
+    {
+        id: 8,
+        name: "Diário de Viagem",
+        username: "@diariodeviagem",
+        avatar: "https://i.pravatar.cc/100?img=20",
+        image: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=1000",
+        category: "Viagens",
+        caption: "Colecionando momentos, conhecendo lugares e criando histórias que merecem ser lembradas. ✈️",
+        likes: 3190,
+        liked: false,
+        verified: false,
+        time: "Ontem",
+        comments: []
+    },
+    {
+        id: 9,
+        name: "Flores & Jardins",
+        username: "@floresjardins",
+        avatar: "https://i.pravatar.cc/100?img=25",
+        image: "https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=1000",
+        category: "Natureza",
+        caption: "Que a vida floresça nos pequenos detalhes. 🌸",
+        likes: 1560,
+        liked: false,
+        verified: false,
+        time: "Ontem",
+        comments: []
     }
-}
-
-let data = loadData();
-
-function saveData() {
-    try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-        return true;
-    } catch (error) {
-        showToast("Não foi possível salvar. O armazenamento pode estar cheio.");
-        return false;
-    }
-}
-
-function createId() {
-    return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
-}
-
-function escapeHTML(value = "") {
-    return String(value).replace(/[&<>"']/g, char => ({
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#039;"
-    })[char]);
-}
-
-function showToast(message) {
-    const toast = document.getElementById("toast");
-    toast.textContent = message;
-    toast.classList.add("show");
-
-    clearTimeout(showToast.timer);
-    showToast.timer = setTimeout(() => {
-        toast.classList.remove("show");
-    }, 2600);
-}
-
-function today() {
-    const date = new Date();
-    const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
-    return localDate.toISOString().slice(0, 10);
-}
-
-function formatDate(value) {
-    if (!value) return "Sem data";
-    const parts = value.split("-");
-    if (parts.length !== 3) return value;
-    return `${parts[2]}/${parts[1]}/${parts[0]}`;
-}
-
-function emptyMessage(message) {
-    return `<div class="empty-state">${escapeHTML(message)}</div>`;
-}
-
-// ======================================
-// NAVEGAÇÃO
-// ======================================
-
-const pageTitles = {
-    inicio: "Meu cantinho especial ♡",
-    perfil: "Meu perfil",
-    diario: "Meu diário",
-    tarefas: "Minha organização",
-    saude: "Um carinho para sua mente",
-    notas: "Minhas notas",
-    metas: "Meus sonhos e objetivos",
-    viagens: "Minhas memórias pelo mundo"
-};
-
-function openPage(page) {
-    const target = document.getElementById(`page-${page}`);
-    if (!target) return;
-
-    document.querySelectorAll(".page").forEach(section => {
-        section.classList.remove("active");
-    });
-
-    target.classList.add("active");
-
-    document.querySelectorAll(".nav-link").forEach(link => {
-        link.classList.toggle("active", link.dataset.page === page);
-    });
-
-    document.getElementById("top-title").textContent = pageTitles[page] || "Meu Universo";
-
-    window.location.hash = page;
-    window.scrollTo({ top: 0, behavior: "smooth" });
-}
-
-document.addEventListener("click", event => {
-    const button = event.target.closest("[data-page]");
-    if (!button) return;
-
-    event.preventDefault();
-    openPage(button.dataset.page);
-});
-
-function initializeNavigation() {
-    const initialPage = location.hash.replace("#", "");
-    openPage(pageTitles[initialPage] ? initialPage : "inicio");
-}
-
-// ======================================
-// DATA ATUAL
-// ======================================
-
-function initializeDate() {
-    const date = new Date();
-
-    document.getElementById("current-date").textContent =
-        date.toLocaleDateString("pt-BR", {
-            weekday: "long",
-            day: "numeric",
-            month: "long",
-            year: "numeric"
-        });
-
-    document.getElementById("diary-date").value = today();
-}
-
-// ======================================
-// PERFIL
-// ======================================
-
-const defaultPhoto =
-    "https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=400";
-
-function updateProfileDisplay() {
-    const name = data.profile.name || "Minha conta";
-    const photo = data.profile.photo || defaultPhoto;
-
-    document.getElementById("sidebar-name").textContent = name;
-    document.getElementById("welcome-name").textContent =
-        data.profile.name || "flores";
-
-    document.getElementById("profile-name").value = data.profile.name || "";
-    document.getElementById("profile-bio").value = data.profile.bio || "";
-
-    document.getElementById("sidebar-photo").src = photo;
-    document.getElementById("top-photo").src = photo;
-    document.getElementById("profile-preview").src = photo;
-}
-
-document.getElementById("profile-file").addEventListener("change", event => {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    if (!file.type.startsWith("image/")) {
-        showToast("Escolha um arquivo de imagem.");
-        return;
-    }
-
-    if (file.size > 1.5 * 1024 * 1024) {
-        showToast("Escolha uma imagem de até 1,5 MB.");
-        event.target.value = "";
-        return;
-    }
-
-    const reader = new FileReader();
-
-    reader.onload = () => {
-        data.profile.photo = reader.result;
-
-        if (saveData()) {
-            updateProfileDisplay();
-            showToast("Foto atualizada! ♡");
-        }
-    };
-
-    reader.readAsDataURL(file);
-});
-
-document.getElementById("profile-form").addEventListener("submit", event => {
-    event.preventDefault();
-
-    data.profile.name = document.getElementById("profile-name").value.trim();
-    data.profile.bio = document.getElementById("profile-bio").value.trim();
-
-    if (saveData()) {
-        updateProfileDisplay();
-        showToast("Seu perfil foi atualizado! ♡");
-    }
-});
-
-// ======================================
-// FRASES INSPIRADORAS
-// ======================================
-
-const quotes = [
-    "Você está florescendo, mesmo nos dias em que não percebe.",
-    "Seu caminho não precisa ser igual ao de ninguém.",
-    "Pequenos passos também levam a lugares incríveis.",
-    "Você merece o mesmo carinho que oferece aos outros.",
-    "Não tenha pressa para viver a sua própria história.",
-    "Cada novo dia é uma oportunidade de recomeçar.",
-    "Permita-se descansar e aproveitar o presente.",
-    "A sua história ainda tem muitos capítulos bonitos.",
-    "Celebre também as pequenas conquistas.",
-    "Você não precisa ser perfeita para ser incrível.",
-    "Cuide dos seus sonhos com paciência e carinho.",
-    "Um dia de cada vez também é uma forma de avançar."
 ];
 
-function newQuote(elementId) {
-    const element = document.getElementById(elementId);
-    let index = Math.floor(Math.random() * quotes.length);
+const storiesData = [
+    { name: "Mariana", avatar: "https://i.pravatar.cc/100?img=47", image: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=900", caption: "Um novo dia de atendimentos! 💗" },
+    { name: "Bella", avatar: "https://i.pravatar.cc/100?img=49", image: "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=900", caption: "Novidades na loja! ✨" },
+    { name: "Natureza", avatar: "https://i.pravatar.cc/100?img=5", image: "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=900", caption: "Um lugar para renovar as energias 🌿" },
+    { name: "Doces", avatar: "https://i.pravatar.cc/100?img=32", image: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=900", caption: "Doçura do dia! 🎂" },
+    { name: "Pets", avatar: "https://i.pravatar.cc/100?img=15", image: "https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=900", caption: "Olha quem veio desejar um bom dia! 🐶" },
+    { name: "Viagens", avatar: "https://i.pravatar.cc/100?img=20", image: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=900", caption: "Paisagens inesquecíveis! ✈️" }
+];
 
-    if (element.textContent.includes(quotes[index])) {
-        index = (index + 1) % quotes.length;
-    }
+let currentFilter = "Todos";
+let searchTerm = "";
+let sortMode = "recent";
 
-    element.textContent = quotes[index];
-}
+const feed = document.getElementById("feed");
+const emptyMessage = document.getElementById("emptyMessage");
 
-document.getElementById("home-new-quote").addEventListener("click", () => {
-    newQuote("home-quote");
-});
+// MOSTRAR STORIES
 
-document.getElementById("mental-new-quote").addEventListener("click", () => {
-    newQuote("mental-quote");
-});
+function renderStories() {
+    const container = document.getElementById("stories");
 
-// ======================================
-// DIÁRIO
-// ======================================
-
-document.getElementById("save-diary").addEventListener("click", () => {
-    const date = document.getElementById("diary-date").value;
-    const mood = document.getElementById("diary-mood").value;
-    const content = document.getElementById("diary-content").value.trim();
-
-    if (!date || !content) {
-        showToast("Preencha a data e escreva sobre seu dia.");
-        return;
-    }
-
-    data.diary.unshift({
-        id: createId(),
-        date,
-        mood,
-        content
-    });
-
-    if (saveData()) {
-        document.getElementById("diary-content").value = "";
-        renderDiary();
-        updateDashboard();
-        showToast("Seu registro foi guardado! ♡");
-    }
-});
-
-function renderDiary() {
-    const list = document.getElementById("diary-list");
-
-    document.getElementById("diary-total").textContent =
-        `${data.diary.length} registros`;
-
-    if (!data.diary.length) {
-        list.innerHTML = emptyMessage("Seu diário ainda está vazio. Que tal registrar seu primeiro dia? 🌷");
-        return;
-    }
-
-    list.innerHTML = data.diary.map(entry => `
-        <article class="record-item">
-            <div class="record-meta">${formatDate(entry.date)} · ${escapeHTML(entry.mood)}</div>
-            <p>${escapeHTML(entry.content)}</p>
-            <div class="item-actions">
-                <button class="delete-button" data-action="delete-diary" data-id="${entry.id}">Excluir</button>
+    container.innerHTML = storiesData.map((story, index) => `
+        <div class="story" onclick="openStory(${index})">
+            <div class="story-photo">
+                <img src="${story.avatar}" alt="${story.name}">
             </div>
-        </article>
-    `).join("");
-}
-
-// ======================================
-// TAREFAS
-// ======================================
-
-let currentFilter = "all";
-
-document.getElementById("task-form").addEventListener("submit", event => {
-    event.preventDefault();
-
-    const input = document.getElementById("task-input");
-    const title = input.value.trim();
-
-    if (!title) return;
-
-    data.tasks.unshift({
-        id: createId(),
-        title,
-        category: document.getElementById("task-category").value,
-        date: document.getElementById("task-date").value,
-        done: false
-    });
-
-    if (saveData()) {
-        event.target.reset();
-        renderTasks();
-        updateDashboard();
-        showToast("Tarefa adicionada! ♡");
-    }
-});
-
-document.querySelectorAll(".filter-button").forEach(button => {
-    button.addEventListener("click", () => {
-        currentFilter = button.dataset.filter;
-
-        document.querySelectorAll(".filter-button").forEach(item => {
-            item.classList.toggle("active", item === button);
-        });
-
-        renderTasks();
-    });
-});
-
-function renderTasks() {
-    const list = document.getElementById("task-list");
-
-    const completed = data.tasks.filter(task => task.done).length;
-    const total = data.tasks.length;
-    const percent = total ? Math.round(completed / total * 100) : 0;
-
-    document.getElementById("task-total").textContent =
-        `${total} tarefas`;
-
-    document.getElementById("task-completed").textContent =
-        `${completed} concluídas`;
-
-    document.getElementById("task-progress-fill").style.width =
-        `${percent}%`;
-
-    let tasks = data.tasks;
-
-    if (currentFilter === "pending") {
-        tasks = tasks.filter(task => !task.done);
-    }
-
-    if (currentFilter === "done") {
-        tasks = tasks.filter(task => task.done);
-    }
-
-    if (!tasks.length) {
-        list.innerHTML = emptyMessage("Nenhuma tarefa por aqui. Aproveite esse momento! ☁");
-        return;
-    }
-
-    list.innerHTML = tasks.map(task => `
-        <div class="task-item ${task.done ? "done" : ""}">
-            <input type="checkbox"
-                data-action="toggle-task"
-                data-id="${task.id}"
-                ${task.done ? "checked" : ""}
-                aria-label="Concluir tarefa">
-
-            <div class="task-info">
-                <strong>${escapeHTML(task.title)}</strong>
-                <small>${escapeHTML(task.category)}${task.date ? " · " + formatDate(task.date) : ""}</small>
-            </div>
-
-            <button class="delete-button"
-                data-action="delete-task"
-                data-id="${task.id}">Excluir</button>
+            <span>${story.name}</span>
         </div>
     `).join("");
 }
 
-// ======================================
-// NOTAS
-// ======================================
+// MOSTRAR PUBLICAÇÕES
 
-document.getElementById("note-form").addEventListener("submit", event => {
-    event.preventDefault();
+function renderPosts() {
+    let filtered = posts.filter(post => {
+        const categoryMatch =
+            currentFilter === "Todos" || post.category === currentFilter;
 
-    const title = document.getElementById("note-title").value.trim();
-    const content = document.getElementById("note-content").value.trim();
+        const text = (
+            post.name + " " +
+            post.username + " " +
+            post.caption + " " +
+            post.category
+        ).toLowerCase();
 
-    if (!title || !content) {
-        showToast("Preencha o título e o conteúdo da nota.");
-        return;
-    }
+        const searchMatch = text.includes(searchTerm.toLowerCase());
 
-    data.notes.unshift({
-        id: createId(),
-        title,
-        content,
-        category: document.getElementById("note-category").value,
-        date: today()
+        return categoryMatch && searchMatch;
     });
 
-    if (saveData()) {
-        event.target.reset();
-        renderNotes();
-        showToast("Nota salva com carinho! ♡");
-    }
-});
-
-function renderNotes() {
-    const grid = document.getElementById("notes-grid");
-
-    if (!data.notes.length) {
-        grid.innerHTML = emptyMessage("Suas anotações aparecerão aqui. ✎");
-        return;
+    if (sortMode === "popular") {
+        filtered.sort((a, b) => b.likes - a.likes);
+    } else {
+        filtered.sort((a, b) => b.id - a.id);
     }
 
-    grid.innerHTML = data.notes.map(note => `
-        <article class="note-card">
-            <span class="soft-tag">${escapeHTML(note.category)}</span>
-            <h3>${escapeHTML(note.title)}</h3>
-            <div class="record-meta">${formatDate(note.date)}</div>
-            <p>${escapeHTML(note.content)}</p>
-            <div class="item-actions">
-                <button class="delete-button" data-action="delete-note" data-id="${note.id}">Excluir</button>
-            </div>
-        </article>
-    `).join("");
-}
+    feed.innerHTML = filtered.map(post => `
+        <article class="post">
 
-// ======================================
-// METAS
-// ======================================
+            <div class="post-header">
+                <img class="post-avatar" src="${post.avatar}" alt="${post.name}">
 
-document.getElementById("goal-form").addEventListener("submit", event => {
-    event.preventDefault();
-
-    const name = document.getElementById("goal-name").value.trim();
-    if (!name) return;
-
-    data.goals.unshift({
-        id: createId(),
-        name,
-        category: document.getElementById("goal-category").value,
-        date: document.getElementById("goal-date").value,
-        done: false
-    });
-
-    if (saveData()) {
-        event.target.reset();
-        renderGoals();
-        updateDashboard();
-        showToast("Nova meta criada! ⭐");
-    }
-});
-
-function renderGoals() {
-    const list = document.getElementById("goals-list");
-    const done = data.goals.filter(goal => goal.done).length;
-
-    document.getElementById("goal-total").textContent = data.goals.length;
-    document.getElementById("goal-done").textContent = done;
-
-    if (!data.goals.length) {
-        list.innerHTML = emptyMessage("Seus sonhos merecem um lugar especial. Adicione sua primeira meta! ⭐");
-        return;
-    }
-
-    list.innerHTML = data.goals.map(goal => `
-        <article class="goal-card ${goal.done ? "completed" : ""}">
-            <span class="soft-tag">${escapeHTML(goal.category)}</span>
-            <h3>${escapeHTML(goal.name)}</h3>
-            <small>${goal.date ? "Prazo: " + formatDate(goal.date) : "Sem prazo definido"}</small>
-            <div class="item-actions">
-                <button class="small-button" data-action="toggle-goal" data-id="${goal.id}">
-                    ${goal.done ? "Desmarcar" : "Concluir"}
-                </button>
-                <button class="delete-button" data-action="delete-goal" data-id="${goal.id}">Excluir</button>
-            </div>
-        </article>
-    `).join("");
-}
-
-// ======================================
-// VIAGENS
-// ======================================
-
-document.getElementById("travel-form").addEventListener("submit", async event => {
-    event.preventDefault();
-
-    const place = document.getElementById("travel-place").value.trim();
-    const file = document.getElementById("travel-photo").files[0];
-
-    if (!place) {
-        showToast("Informe o nome do lugar.");
-        return;
-    }
-
-    if (file && !file.type.startsWith("image/")) {
-        showToast("Escolha um arquivo de imagem válido.");
-        return;
-    }
-
-    if (file && file.size > 1.5 * 1024 * 1024) {
-        showToast("A foto precisa ter até 1,5 MB.");
-        return;
-    }
-
-    let photo = "";
-
-    if (file) {
-        try {
-            photo = await readImage(file);
-        } catch {
-            showToast("Não foi possível carregar essa foto.");
-            return;
-        }
-    }
-
-    data.travels.unshift({
-        id: createId(),
-        place,
-        region: document.getElementById("travel-region").value.trim(),
-        date: document.getElementById("travel-date").value,
-        description: document.getElementById("travel-description").value.trim(),
-        photo
-    });
-
-    if (saveData()) {
-        event.target.reset();
-        renderTravels();
-        updateDashboard();
-        showToast("Lembrança guardada! ✈");
-    }
-});
-
-function readImage(file) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-    });
-}
-
-function renderTravels() {
-    const grid = document.getElementById("travel-grid");
-
-    if (!data.travels.length) {
-        grid.innerHTML = emptyMessage("Suas aventuras e lembranças aparecerão aqui. 🌍");
-        return;
-    }
-
-    grid.innerHTML = data.travels.map(trip => `
-        <article class="travel-card">
-            ${trip.photo ? `<img src="${trip.photo}" alt="Foto de ${escapeHTML(trip.place)}">` : `
-                <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=600" alt="Paisagem de viagem">
-            `}
-            <div class="travel-card-content">
-                <div class="record-meta">${trip.date ? formatDate(trip.date) : "Uma lembrança especial"}</div>
-                <h3>${escapeHTML(trip.place)}</h3>
-                <p>${escapeHTML(trip.region)}</p>
-                <p>${escapeHTML(trip.description)}</p>
-                <div class="item-actions">
-                    <button class="delete-button" data-action="delete-travel" data-id="${trip.id}">Excluir</button>
+                <div class="post-user">
+                    <strong>
+                        ${post.name}
+                        ${post.verified ? '<span class="verified">✓</span>' : ''}
+                    </strong>
+                    <span>${post.username} · ${post.time}</span>
                 </div>
+
+                <button class="post-menu" title="Opções">•••</button>
             </div>
+
+            <img class="post-image"
+                src="${post.image}"
+                alt="Publicação de ${post.name}"
+                onerror="this.src='https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=1000'">
+
+            <div class="post-content">
+
+                <div class="post-actions">
+                    <button
+                        class="action-btn ${post.liked ? 'liked' : ''}"
+                        onclick="toggleLike(${post.id})">
+                        ${post.liked ? '♥' : '♡'}
+                    </button>
+
+                    <button class="action-btn"
+                        onclick="document.getElementById('comment-${post.id}').focus()">
+                        ♧
+                    </button>
+
+                    <button class="action-btn" onclick="sharePost(${post.id})">
+                        ↗
+                    </button>
+                </div>
+
+                <div class="likes">
+                    ${post.likes.toLocaleString('pt-BR')} curtidas
+                </div>
+
+                <p class="caption">
+                    <strong>${post.username}</strong>
+                    ${post.caption}
+                </p>
+
+                <span class="post-category">${post.category}</span>
+
+                <span class="post-time">${post.time}</span>
+            </div>
+
+            <div class="comments-area">
+                <div class="comments-list">
+                    ${post.comments.map(comment => `
+                        <p><strong>${comment.name}:</strong> ${comment.text}</p>
+                    `).join("")}
+                </div>
+
+                <form class="comment-form" onsubmit="addComment(event, ${post.id})">
+                    <input id="comment-${post.id}" type="text"
+                        placeholder="Adicione um comentário..." required>
+                    <button type="submit">Publicar</button>
+                </form>
+            </div>
+
         </article>
+    `).join("");
+
+    emptyMessage.hidden = filtered.length !== 0;
+}
+
+// CURTIR
+
+function toggleLike(id) {
+    const post = posts.find(item => item.id === id);
+
+    if (!post) return;
+
+    post.liked = !post.liked;
+    post.likes += post.liked ? 1 : -1;
+
+    renderPosts();
+}
+
+// COMENTAR
+
+function addComment(event, id) {
+    event.preventDefault();
+
+    const post = posts.find(item => item.id === id);
+    const input = document.getElementById(`comment-${id}`);
+    const text = input.value.trim();
+
+    if (!text || !post) return;
+
+    post.comments.push({
+        name: "Você",
+        text: text
+    });
+
+    renderPosts();
+}
+
+// COMPARTILHAR
+
+function sharePost(id) {
+    const post = posts.find(item => item.id === id);
+
+    if (!post) return;
+
+    const text = `Confira esta publicação de ${post.name}: ${post.caption}`;
+
+    if (navigator.share) {
+        navigator.share({ title: "Socially", text: text })
+            .catch(() => {});
+    } else if (navigator.clipboard) {
+        navigator.clipboard.writeText(text)
+            .then(() => alert("Texto da publicação copiado!"))
+            .catch(() => alert(text));
+    } else {
+        alert(text);
+    }
+}
+
+// PESQUISA
+
+document.getElementById("searchInput").addEventListener("input", event => {
+    searchTerm = event.target.value;
+    renderPosts();
+});
+
+// FILTROS
+
+function setFilter(filter) {
+    currentFilter = filter;
+
+    document.querySelectorAll("[data-filter]").forEach(button => {
+        button.classList.toggle(
+            "active",
+            button.dataset.filter === filter
+        );
+    });
+
+    renderPosts();
+}
+
+document.querySelectorAll("[data-filter]").forEach(button => {
+    button.addEventListener("click", () => {
+        setFilter(button.dataset.filter);
+    });
+});
+
+// ORDENAÇÃO
+
+document.getElementById("sortSelect").addEventListener("change", event => {
+    sortMode = event.target.value;
+    renderPosts();
+});
+
+// SUGESTÕES DE PERFIS
+
+const suggestions = [
+    {
+        name: "Dra. Mariana",
+        username: "@psicologamariana",
+        avatar: "https://i.pravatar.cc/100?img=47"
+    },
+    {
+        name: "Closet da Bella",
+        username: "@closetdabella",
+        avatar: "https://i.pravatar.cc/100?img=49"
+    },
+    {
+        name: "Natureza Viva",
+        username: "@naturezaviva",
+        avatar: "https://i.pravatar.cc/100?img=5"
+    },
+    {
+        name: "Mundo dos Pets",
+        username: "@mundodospets",
+        avatar: "https://i.pravatar.cc/100?img=15"
+    }
+];
+
+function renderSuggestions() {
+    const container = document.getElementById("suggestions");
+
+    container.innerHTML = suggestions.map((person, index) => `
+        <div class="suggestion">
+            <img src="${person.avatar}" alt="${person.name}">
+
+            <div class="suggestion-info">
+                <strong>${person.name}</strong>
+                <span>${person.username}</span>
+            </div>
+
+            <button class="follow-btn" onclick="followProfile(this)">
+                Seguir
+            </button>
+        </div>
     `).join("");
 }
 
-// ======================================
-// AUTOCUIDADO E RESPIRAÇÃO
-// ======================================
+function followProfile(button) {
+    const following = button.classList.toggle("following");
 
-const pauseSuggestions = [
-    "Prepare uma bebida que você gosta e aproveite alguns minutos de tranquilidade. ☕",
-    "Coloque uma música calma e faça uma pausa das telas. 🎵",
-    "Observe o ambiente ao seu redor e perceba pequenos detalhes. 🌷",
-    "Faça um alongamento leve, respeitando seu corpo. 🌿",
-    "Converse com alguém de confiança ou envie uma mensagem carinhosa. 💗"
-];
-
-const hobbySuggestions = [
-    "Que tal desenhar ou pintar alguma coisa? 🎨",
-    "Você pode ouvir suas músicas favoritas. 🎧",
-    "Experimente escrever uma história ou um poema. 📖",
-    "Separe um tempinho para cuidar de uma plantinha. 🪴",
-    "Faça uma receita simples que você goste. 🍓"
-];
-
-document.getElementById("pause-button").addEventListener("click", () => {
-    const suggestion = pauseSuggestions[Math.floor(Math.random() * pauseSuggestions.length)];
-    showToast(suggestion);
-});
-
-document.getElementById("hobby-button").addEventListener("click", () => {
-    const suggestion = hobbySuggestions[Math.floor(Math.random() * hobbySuggestions.length)];
-    showToast(suggestion);
-});
-
-let breathingInterval = null;
-let breathingStep = 0;
-
-const breathingStages = [
-    { text: "Inspire", instruction: "Inspire suavemente, sem forçar.", duration: 4000, expand: true },
-    { text: "Solte o ar", instruction: "Solte o ar devagar, no seu ritmo.", duration: 6000, expand: false }
-];
-
-function showBreathingStage() {
-    const stage = breathingStages[breathingStep];
-
-    document.getElementById("breathing-text").textContent = stage.text;
-    document.getElementById("breathing-instruction").textContent = stage.instruction;
-
-    document.getElementById("breathing-circle")
-        .classList.toggle("expand", stage.expand);
-
-    breathingStep = (breathingStep + 1) % breathingStages.length;
+    button.textContent = following ? "Seguindo" : "Seguir";
 }
 
-document.getElementById("breathing-start").addEventListener("click", () => {
-    const card = document.getElementById("breathing-card");
-    card.hidden = false;
-    card.scrollIntoView({ behavior: "smooth", block: "center" });
+// STORIES
 
-    clearInterval(breathingInterval);
-    breathingStep = 0;
-    showBreathingStage();
+function openStory(index) {
+    const story = storiesData[index];
 
-    breathingInterval = setInterval(() => {
-        showBreathingStage();
-    }, 5000);
-});
-
-document.getElementById("breathing-stop").addEventListener("click", () => {
-    clearInterval(breathingInterval);
-    breathingInterval = null;
-
-    document.getElementById("breathing-card").hidden = true;
-    document.getElementById("breathing-circle").classList.remove("expand");
-
-    showToast("Exercício encerrado. Cuide de você! ♡");
-});
-
-// ======================================
-// AÇÕES DE EXCLUIR E CONCLUIR
-// ======================================
-
-document.addEventListener("click", event => {
-    const button = event.target.closest("[data-action]");
-    if (!button) return;
-
-    const action = button.dataset.action;
-    const id = button.dataset.id;
-
-    if (!id) return;
-
-    if (action === "delete-diary") {
-        data.diary = data.diary.filter(item => item.id !== id);
-        if (saveData()) renderDiary();
-    }
-
-    if (action === "delete-task") {
-        data.tasks = data.tasks.filter(item => item.id !== id);
-        if (saveData()) {
-            renderTasks();
-            updateDashboard();
-        }
-    }
-
-    if (action === "delete-note") {
-        data.notes = data.notes.filter(item => item.id !== id);
-        if (saveData()) renderNotes();
-    }
-
-    if (action === "delete-goal") {
-        data.goals = data.goals.filter(item => item.id !== id);
-        if (saveData()) {
-            renderGoals();
-            updateDashboard();
-        }
-    }
-
-    if (action === "delete-travel") {
-        data.travels = data.travels.filter(item => item.id !== id);
-        if (saveData()) {
-            renderTravels();
-            updateDashboard();
-        }
-    }
-
-    if (action === "toggle-task") {
-        const task = data.tasks.find(item => item.id === id);
-        if (task) {
-            task.done = button.checked;
-            if (saveData()) {
-                renderTasks();
-                updateDashboard();
-            }
-        }
-    }
-
-    if (action === "toggle-goal") {
-        const goal = data.goals.find(item => item.id === id);
-        if (goal) {
-            goal.done = !goal.done;
-            if (saveData()) {
-                renderGoals();
-                updateDashboard();
-            }
-        }
-    }
-});
-
-// ======================================
-// PAINEL INICIAL
-// ======================================
-
-function updateDashboard() {
-    const completedTasks = data.tasks.filter(task => task.done).length;
-    const completedGoals = data.goals.filter(goal => goal.done).length;
-
-    document.getElementById("stat-diary").textContent = data.diary.length;
-    document.getElementById("stat-tasks").textContent = completedTasks;
-    document.getElementById("stat-goals").textContent = completedGoals;
-    document.getElementById("stat-trips").textContent = data.travels.length;
-
-    const totalTasks = data.tasks.length;
-    const percentage = totalTasks
-        ? Math.round(completedTasks / totalTasks * 100)
-        : 0;
-
-    document.getElementById("home-task-percent").textContent = `${percentage}%`;
-    document.getElementById("home-task-bar").style.width = `${percentage}%`;
+    document.getElementById("storyImage").src = story.image;
+    document.getElementById("storyCaption").textContent = story.caption;
+    document.getElementById("storyModal").classList.add("show");
 }
 
-// ======================================
-// INICIALIZAÇÃO
-// ======================================
+document.getElementById("closeStory").addEventListener("click", () => {
+    document.getElementById("storyModal").classList.remove("show");
+});
 
-function initializeApp() {
-    initializeDate();
-    updateProfileDisplay();
-    renderDiary();
-    renderTasks();
-    renderNotes();
-    renderGoals();
-    renderTravels();
-    updateDashboard();
-    initializeNavigation();
+// CRIAR PUBLICAÇÃO
+
+const postModal = document.getElementById("postModal");
+
+function openPostModal() {
+    postModal.classList.add("show");
 }
 
-initializeApp();
+function closePostModal() {
+    postModal.classList.remove("show");
+}
+
+document.getElementById("createButton").addEventListener("click", openPostModal);
+document.getElementById("createSide").addEventListener("click", openPostModal);
+document.getElementById("closeModal").addEventListener("click", closePostModal);
+
+document.getElementById("publishButton").addEventListener("click", () => {
+    const name = document.getElementById("newName").value.trim();
+    const username = document.getElementById("newUsername").value.trim();
+    const category = document.getElementById("newCategory").value;
+    const caption = document.getElementById("newCaption").value.trim();
+    const image = document.getElementById("newImage").value.trim();
+
+    if (!name || !username || !caption || !image) {
+        alert("Preencha todos os campos para publicar!");
+        return;
+    }
+
+    try {
+        const url = new URL(image);
+
+        if (!["http:", "https:"].includes(url.protocol)) {
+            throw new Error("URL inválida");
+        }
+    } catch {
+        alert("Insira um link válido de imagem.");
+        return;
+    }
+
+    posts.unshift({
+        id: Date.now(),
+        name: name,
+        username: username.startsWith("@") ? username : "@" + username,
+        avatar: "https://i.pravatar.cc/100?img=68",
+        image: image,
+        category: category,
+        caption: caption,
+        likes: 0,
+        liked: false,
+        verified: false,
+        time: "Agora",
+        comments: []
+    });
+
+    document.getElementById("newName").value = "";
+    document.getElementById("newUsername").value = "";
+    document.getElementById("newCaption").value = "";
+    document.getElementById("newImage").value = "";
+
+    closePostModal();
+    setFilter("Todos");
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+});
+
+// BOTÕES DE NAVEGAÇÃO
+
+document.getElementById("homeButton").addEventListener("click", () => {
+    document.getElementById("searchInput").value = "";
+    searchTerm = "";
+    setFilter("Todos");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+});
+
+document.getElementById("exploreButton").addEventListener("click", () => {
+    setFilter("Todos");
+    document.querySelector(".feed-area").scrollIntoView({
+        behavior: "smooth"
+    });
+});
+
+// INICIAR SITE
+
+renderStories();
+renderPosts();
+renderSuggestions();
