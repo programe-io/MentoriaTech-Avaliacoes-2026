@@ -1,63 +1,98 @@
-document.getElementById('form-imc').addEventListener('submit', function(event) {
-    // Evita que a página recarregue ao enviar o formulário
+
+const formulario = document.getElementById("formIMC");
+
+const resultado = document.getElementById("resultado");
+const resultadoInicial = document.getElementById("resultadoInicial");
+
+formulario.addEventListener("submit", function(event) {
+
     event.preventDefault();
 
-    // 1. Receber os dados do paciente
-    const nome = document.getElementById('nome').value.trim();
-    const peso = parseFloat(document.getElementById('peso').value);
-    const altura = parseFloat(document.getElementById('altura').value);
+    const nome = document.getElementById("nome").value.trim();
+    const peso = Number(document.getElementById("peso").value);
+    const altura = Number(document.getElementById("altura").value);
 
-    // Validação simples
-    if (!nome || isNaN(peso) || isNaN(altura) || altura <= 0 || peso <= 0) {
-        alert('Por favor, preencha todos os campos com valores válidos.');
+    if (!nome || !Number.isFinite(peso) ||
+        !Number.isFinite(altura) || peso <= 0 ||
+        altura < 0.5 || altura > 2.8) {
+
+        alert("Verifique os dados informados!");
         return;
     }
 
-    // 2. Calcular o IMC
+    // Cálculo do IMC
     const imc = peso / (altura * altura);
 
-    // 3. Definir classificação e orientação
-    let classificacao = '';
-    let classeCor = '';
-    let mensagem = '';
+    let classificacao = "";
+    let mensagem = "";
+    let cor = "";
 
+    // Classificação
     if (imc < 18.5) {
-        classificacao = 'Abaixo do peso';
-        classeCor = 'baixo-peso';
-        mensagem = 'O paciente está abaixo da faixa recomendada. Sugere-se avaliação nutricional.';
+
+        classificacao = "Abaixo do peso";
+        mensagem = "O resultado está abaixo da faixa de referência. Procure orientação profissional.";
+        cor = "#278bc9";
+
     } else if (imc < 25) {
-        classificacao = 'Peso normal';
-        classeCor = 'peso-normal';
-        mensagem = 'O paciente está dentro da faixa de peso considerada saudável.';
+
+        classificacao = "Peso adequado";
+        mensagem = "Seu resultado está na faixa de referência considerada adequada para adultos.";
+        cor = "#159c69";
+
     } else if (imc < 30) {
-        classificacao = 'Sobrepeso';
-        classeCor = 'sobrepeso';
-        mensagem = 'Atenção: o paciente apresenta sobrepeso. Hábitos saudáveis são recomendados.';
+
+        classificacao = "Sobrepeso";
+        mensagem = "O resultado está acima da faixa de referência. Converse com um profissional de saúde.";
+        cor = "#d99a19";
+
     } else if (imc < 35) {
-        classificacao = 'Obesidade Grau I';
-        classeCor = 'obesidade';
-        mensagem = 'Alerta: obesidade grau I identificada. Recomenda-se acompanhamento médico.';
+
+        classificacao = "Obesidade grau I";
+        mensagem = "O resultado indica uma faixa de obesidade grau I. Procure acompanhamento profissional.";
+        cor = "#e47b36";
+
     } else if (imc < 40) {
-        classificacao = 'Obesidade Grau II';
-        classeCor = 'obesidade';
-        mensagem = 'Alerta: obesidade grau II (severa). Necessário acompanhamento profissional.';
+
+        classificacao = "Obesidade grau II";
+        mensagem = "O resultado indica uma faixa de obesidade grau II. Procure acompanhamento profissional.";
+        cor = "#df5b4c";
+
     } else {
-        classificacao = 'Obesidade Grau III';
-        classeCor = 'obesidade';
-        mensagem = 'Alerta crítico: obesidade grau III (mórbida). Procure orientação médica especializada.';
+
+        classificacao = "Obesidade grau III";
+        mensagem = "O resultado indica uma faixa de obesidade grau III. Procure acompanhamento profissional.";
+        cor = "#c83e52";
+
     }
 
-    // 4. Exibir as informações na tela
-    document.getElementById('res-nome').textContent = nome;
-    document.getElementById('res-imc').textContent = imc.toFixed(2).replace('.', ',') + ' kg/m²';
-    
-    const badgeClassificacao = document.getElementById('res-classificacao');
-    badgeClassificacao.textContent = classificacao;
-    badgeClassificacao.className = 'badge ' + classeCor;
+    // Mostrar resultado
+    resultadoInicial.style.display = "none";
+    resultado.hidden = false;
 
-    document.getElementById('res-mensagem').textContent = mensagem;
+    document.getElementById("nomeResultado").textContent =
+        "Paciente: " + nome;
 
-    // Mostra a caixa de resultado
-    const caixaResultado = document.getElementById('resultado');
-    caixaResultado.classList.remove('oculto');
+    document.getElementById("valorIMC").textContent =
+        imc.toFixed(2);
+
+    document.getElementById("classificacao").textContent =
+        classificacao;
+
+    document.getElementById("classificacao").style.color = cor;
+
+    document.getElementById("classificacao").style.background =
+        cor + "20";
+
+    document.getElementById("mensagem").textContent =
+        mensagem;
+
+});
+
+// Limpar formulário
+formulario.addEventListener("reset", function() {
+
+    resultado.hidden = true;
+    resultadoInicial.style.display = "block";
+
 });
