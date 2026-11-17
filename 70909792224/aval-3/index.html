@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Código JavaScript</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <style>body{margin:0;background:#0d1117}pre{margin:0}code.hljs{padding:1.5rem;min-height:100vh;box-sizing:border-box}</style>
+</head>
+<body>
+  <pre><code class="language-javascript">&lt;!DOCTYPE html&gt;
+&lt;html lang="pt-BR"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;Calculadora de IMC&lt;/title&gt;
+    &lt;style&gt;
+        /* Estilização básica inspirada na aula */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f4f6f9;
+            color: #333;
+            padding: 20px;
+        }
+
+        main {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        .card {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .card h2 {
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+            color: #34495e;
+        }
+
+        .input-group {
+            margin-bottom: 12px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-group label {
+            margin-bottom: 5px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .input-group input {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .botoes {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        #salvar {
+            background-color: #27ae60;
+            color: white;
+        }
+
+        #cancelar {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        #erro {
+            color: #e74c3c;
+            font-size: 0.85rem;
+            margin-top: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        table th, table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        table th {
+            background-color: #f8f9fa;
+        }
+
+        .vazio {
+            font-style: italic;
+            color: #777;
+        }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+    &lt;main&gt;
+        &lt;h1&gt;Sistema de Gestão de Controle de IMC&lt;/h1&gt;
+
+        &lt;!-- Card do Formulário --&gt;
+        &lt;section class="card"&gt;
+            &lt;h2&gt;Cadastrar Paciente&lt;/h2&gt;
+            &lt;form id="form-pessoa"&gt;
+                &lt;div class="input-group"&gt;
+                    &lt;label for="nome"&gt;Nome&lt;/label&gt;
+                    &lt;input type="text" id="nome" placeholder="Digite o nome completo" maxlength="50"&gt;
+                &lt;/div&gt;
+
+                &lt;div class="input-group"&gt;
+                    &lt;label for="idade"&gt;Idade&lt;/label&gt;
+                    &lt;input type="number" id="idade" min="1" max="120" placeholder="Ex: 25"&gt;
+                &lt;/div&gt;
+
+                &lt;div class="input-group"&gt;
+                    &lt;label for="altura"&gt;Altura (m)&lt;/label&gt;
+                    &lt;input type="number" id="altura" step="0.01" min="0.5" max="2.5" placeholder="Ex: 1.75"&gt;
+                &lt;/div&gt;
+
+                &lt;div class="input-group"&gt;
+                    &lt;label for="peso"&gt;Peso (kg)&lt;/label&gt;
+                    &lt;input type="number" id="peso" step="0.1" min="2" max="500" placeholder="Ex: 70.5"&gt;
+                &lt;/div&gt;
+
+                &lt;div class="botoes"&gt;
+                    &lt;button type="button" id="salvar"&gt;Salvar&lt;/button&gt;
+                    &lt;button type="button" id="cancelar"&gt;Cancelar&lt;/button&gt;
+                &lt;/div&gt;
+
+                &lt;div id="erro"&gt;&lt;/div&gt;
+            &lt;/form&gt;
+        &lt;/section&gt;
+
+        &lt;!-- Card da Tabela --&gt;
+        &lt;section class="card"&gt;
+            &lt;h2&gt;Pacientes Cadastrados&lt;/h2&gt;
+            &lt;table&gt;
+                &lt;thead&gt;
+                    &lt;tr&gt;
+                        &lt;th&gt;Nome&lt;/th&gt;
+                        &lt;th&gt;Idade&lt;/th&gt;
+                        &lt;th&gt;Altura&lt;/th&gt;
+                        &lt;th&gt;Peso&lt;/th&gt;
+                        &lt;th&gt;IMC&lt;/th&gt;
+                        &lt;th&gt;Classificação&lt;/th&gt;
+                        &lt;th&gt;Ações&lt;/th&gt;
+                    &lt;/tr&gt;
+                &lt;/thead&gt;
+                &lt;tbody id="tabela-pessoas"&gt;
+                    &lt;!-- Conteúdo gerado dinamicamente via JS --&gt;
+                    &lt;tr&gt;
+                        &lt;td colspan="7" class="vazio"&gt;Nenhuma pessoa cadastrada ainda&lt;/td&gt;
+                    &lt;/tr&gt;
+                &lt;/tbody&gt;
+            &lt;/table&gt;
+        &lt;/section&gt;
+    &lt;/main&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+</body>
+</html>
