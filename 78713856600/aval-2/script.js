@@ -2,7 +2,6 @@ const textoPost = document.getElementById('texto-post');
 const btnPublicar = document.getElementById('btn-publicar');
 const feed = document.getElementById('feed');
 
-// Função para carregar posts salvos
 function carregarPosts() {
     const postsSalvos = localStorage.getItem('posts');
         if (postsSalvos) {
@@ -12,7 +11,6 @@ function carregarPosts() {
                                         }
                                         }
 
-                                        // Função para criar elemento do post
                                         function criarElementoPost(texto, data) {
                                             const postDiv = document.createElement('div');
                                                 postDiv.classList.add('post');
@@ -26,7 +24,6 @@ function carregarPosts() {
                                                                                     feed.insertBefore(postDiv, feed.firstChild);
                                                                                     }
 
-                                                                                    // Salvar post no localStorage
                                                                                     function salvarPost(texto, data) {
                                                                                         let posts = [];
                                                                                             const postsSalvos = localStorage.getItem('posts');
@@ -37,7 +34,6 @@ function carregarPosts() {
                                                                                                                     localStorage.setItem('posts', JSON.stringify(posts));
                                                                                                                     }
 
-                                                                                                                    // Publicar novo post
                                                                                                                     btnPublicar.addEventListener('click', () => {
                                                                                                                         const texto = textoPost.value.trim();
                                                                                                                             
@@ -54,6 +50,5 @@ function carregarPosts() {
                                                                                                                                                                             textoPost.value = '';
                                                                                                                                                                             });
 
-                                                                                                                                                                            // Carregar posts ao abrir a página
                                                                                                                                                                             carregarPosts();
                                                                                                                                                                             
