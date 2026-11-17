@@ -1,9 +1,9 @@
 
 let produtos = [];
 
-// Cadastrar produto
-document.getElementById("formProduto")
-.addEventListener("submit", function(event) {
+const formulario = document.getElementById("formulario");
+
+formulario.addEventListener("submit", function(event) {
 
     event.preventDefault();
 
@@ -12,73 +12,104 @@ document.getElementById("formProduto")
     const quantidade = Number(document.getElementById("quantidade").value);
     const valor = Number(document.getElementById("valor").value);
 
-    // Verificar código duplicado
-    if (produtos.some(p => p.codigo === codigo)) {
-        alert("Esse código já está cadastrado!");
+    if (codigo <= 0 || !Number.isInteger(codigo)) {
+        alert("Digite um código válido!");
         return;
     }
 
-    const produto = {
-        codigo,
-        descricao,
-        quantidade,
-        valor
-    };
+    if (quantidade < 0 || !Number.isInteger(quantidade)) {
+        alert("Digite uma quantidade válida!");
+        return;
+    }
 
-    produtos.push(produto);
+    if (valor < 0 || !Number.isFinite(valor)) {
+        alert("Digite um valor válido!");
+        return;
+    }
+
+    if (produtos.some(p => p.codigo === codigo)) {
+        alert("Este código já existe!");
+        return;
+    }
+
+    produtos.push({
+        codigo: codigo,
+        descricao: descricao,
+        quantidade: quantidade,
+        valor: valor
+    });
 
     alert("Produto cadastrado com sucesso!");
 
-    this.reset();
+    formulario.reset();
 
     listarProdutos();
 });
 
 
-// Listar produtos
 function listarProdutos() {
 
-    const tabela = document.getElementById("listaProdutos");
+    const tabela = document.getElementById("tabelaProdutos");
 
     tabela.innerHTML = "";
 
-    produtos.forEach(produto => {
+    produtos.forEach(function(produto) {
 
         const linha = document.createElement("tr");
 
-        linha.innerHTML = `
-            <td>${produto.codigo}</td>
-            <td>${produto.descricao}</td>
-            <td>${produto.quantidade}</td>
-            <td>${produto.valor.toLocaleString("pt-BR", {
-                style: "currency",
-                currency: "BRL"
-            })}</td>
+        const codigo = document.createElement("td");
+        codigo.textContent = produto.codigo;
 
-            <td>
-                <button class="btn-valor"
-                    onclick="alterarValor(${produto.codigo})">
-                    Alterar Valor
-                </button>
+        const descricao = document.createElement("td");
+        descricao.textContent = produto.descricao;
 
-                <button class="btn-quantidade"
-                    onclick="alterarQuantidade(${produto.codigo})">
-                    Alterar Quantidade
-                </button>
-            </td>
-        `;
+        const quantidade = document.createElement("td");
+        quantidade.textContent = produto.quantidade;
+
+        const valor = document.createElement("td");
+        valor.textContent = produto.valor.toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL"
+        });
+
+        const acoes = document.createElement("td");
+
+        const botaoValor = document.createElement("button");
+        botaoValor.textContent = "Alterar Valor";
+        botaoValor.className = "alterar";
+
+        botaoValor.addEventListener("click", function() {
+            alterarValor(produto.codigo);
+        });
+
+        const botaoQuantidade = document.createElement("button");
+        botaoQuantidade.textContent = "Alterar Quantidade";
+
+        botaoQuantidade.addEventListener("click", function() {
+            alterarQuantidade(produto.codigo);
+        });
+
+        acoes.appendChild(botaoValor);
+        acoes.appendChild(botaoQuantidade);
+
+        linha.appendChild(codigo);
+        linha.appendChild(descricao);
+        linha.appendChild(quantidade);
+        linha.appendChild(valor);
+        linha.appendChild(acoes);
 
         tabela.appendChild(linha);
+
     });
+
 }
 
 
-// Alterar valor do produto
 function alterarValor(codigo) {
 
     const produto = produtos.find(p => p.codigo === codigo);
 
-    const novoValor = prompt("Digite o novo valor do produto:");
+    const novoValor = prompt("Digite o novo valor:");
 
     if (novoValor === null || novoValor.trim() === "") {
         return;
@@ -87,7 +118,7 @@ function alterarValor(codigo) {
     const valor = Number(novoValor.replace(",", "."));
 
     if (!Number.isFinite(valor) || valor < 0) {
-        alert("Digite um valor válido!");
+        alert("Valor inválido!");
         return;
     }
 
@@ -99,7 +130,6 @@ function alterarValor(codigo) {
 }
 
 
-// Alterar quantidade do produto
 function alterarQuantidade(codigo) {
 
     const produto = produtos.find(p => p.codigo === codigo);
@@ -113,7 +143,7 @@ function alterarQuantidade(codigo) {
     const quantidade = Number(novaQuantidade);
 
     if (!Number.isInteger(quantidade) || quantidade < 0) {
-        alert("Digite uma quantidade válida!");
+        alert("Quantidade inválida!");
         return;
     }
 
