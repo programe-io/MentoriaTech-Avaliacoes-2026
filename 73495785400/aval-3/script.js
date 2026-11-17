@@ -1,97 +1,36 @@
 
-let produtos = [];
+function calcularIMC() {
 
-function cadastrar() {
-    let codigo = Number(document.getElementById("codigo").value);
-    let descricao = document.getElementById("descricao").value.trim();
-    let quantidade = document.getElementById("quantidade").value;
-    let valor = document.getElementById("valor").value;
+    let nome = document.getElementById("nome").value.trim();
+    let peso = Number(document.getElementById("peso").value);
+    let altura = Number(document.getElementById("altura").value);
 
-    if (!codigo || !descricao || quantidade === "" ||
-        valor === "" || Number(quantidade) < 0 ||
-        Number(valor) < 0) {
+    if (nome === "" || peso <= 0 || altura <= 0 ||
+        document.getElementById("peso").value === "" ||
+        document.getElementById("altura").value === "") {
+
         alert("Preencha todos os campos corretamente!");
         return;
     }
 
-    if (produtos.some(p => p.codigo === codigo)) {
-        alert("Código já cadastrado!");
-        return;
+    let imc = peso / (altura * altura);
+
+    let classificacao = "";
+
+    if (imc < 18.5) {
+        classificacao = "Abaixo do peso";
+    } else if (imc < 25) {
+        classificacao = "Faixa de peso considerada adequada";
+    } else if (imc < 30) {
+        classificacao = "Acima da faixa de peso adequada";
+    } else {
+        classificacao = "IMC elevado";
     }
 
-    produtos.push({
-        codigo: codigo,
-        descricao: descricao,
-        quantidade: Number(quantidade),
-        valor: Number(valor)
-    });
-
-    alert("Produto cadastrado com sucesso!");
-
-    document.getElementById("codigo").value = "";
-    document.getElementById("descricao").value = "";
-    document.getElementById("quantidade").value = "";
-    document.getElementById("valor").value = "";
-
-    listar();
-}
-
-function listar() {
-    let lista = document.getElementById("lista");
-    lista.innerHTML = "";
-
-    produtos.forEach(produto => {
-        lista.innerHTML += `
-            <tr>
-                <td>${produto.codigo}</td>
-                <td>${produto.descricao}</td>
-                <td>${produto.quantidade}</td>
-                <td>R$ ${produto.valor.toFixed(2)}</td>
-            </tr>
-        `;
-    });
-}
-
-function alterarValor() {
-    let codigo = Number(document.getElementById("codigoAlterar").value);
-    let valor = document.getElementById("novoValor").value;
-
-    let produto = produtos.find(p => p.codigo === codigo);
-
-    if (!produto) {
-        alert("Produto não encontrado!");
-        return;
-    }
-
-    if (valor === "" || Number(valor) < 0) {
-        alert("Digite um valor válido!");
-        return;
-    }
-
-    produto.valor = Number(valor);
-
-    alert("Valor alterado com sucesso!");
-    listar();
-}
-
-function alterarQuantidade() {
-    let codigo = Number(document.getElementById("codigoAlterar").value);
-    let quantidade = document.getElementById("novaQuantidade").value;
-
-    let produto = produtos.find(p => p.codigo === codigo);
-
-    if (!produto) {
-        alert("Produto não encontrado!");
-        return;
-    }
-
-    if (quantidade === "" || Number(quantidade) < 0) {
-        alert("Digite uma quantidade válida!");
-        return;
-    }
-
-    produto.quantidade = Number(quantidade);
-
-    alert("Quantidade alterada com sucesso!");
-    listar();
+    document.getElementById("resultado").innerHTML = `
+        <h3>Resultado do Paciente</h3>
+        <p><strong>Nome:</strong> ${nome}</p>
+        <p><strong>IMC:</strong> ${imc.toFixed(2)}</p>
+        <p><strong>Classificação:</strong> ${classificacao}</p>
+    `;
 }
