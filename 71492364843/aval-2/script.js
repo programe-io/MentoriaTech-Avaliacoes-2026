@@ -1,68 +1,47 @@
 
 const slides = document.querySelectorAll(".slide");
 
-const botaoAnterior = document.getElementById("anterior");
-const botaoProximo = document.getElementById("proximo");
+const anterior = document.getElementById("anterior");
+const proximo = document.getElementById("proximo");
 const contador = document.getElementById("contador");
 
-let slideAtual = 0;
+let atual = 0;
 
 function mostrarSlide() {
 
     slides.forEach((slide, index) => {
-        slide.classList.remove("ativo");
-
-        if (index === slideAtual) {
-            slide.classList.add("ativo");
-        }
+        slide.classList.toggle("ativo", index === atual);
     });
 
     contador.textContent =
-        `${slideAtual + 1} / ${slides.length}`;
+        `${String(atual + 1).padStart(2, "0")} / ${String(slides.length).padStart(2, "0")}`;
 
-    botaoAnterior.disabled = slideAtual === 0;
-
-    botaoProximo.disabled =
-        slideAtual === slides.length - 1;
+    anterior.disabled = atual === 0;
+    proximo.disabled = atual === slides.length - 1;
 }
 
-function proximoSlide() {
-
-    if (slideAtual < slides.length - 1) {
-        slideAtual++;
+proximo.addEventListener("click", () => {
+    if (atual < slides.length - 1) {
+        atual++;
         mostrarSlide();
     }
+});
 
-}
-
-function slideAnterior() {
-
-    if (slideAtual > 0) {
-        slideAtual--;
+anterior.addEventListener("click", () => {
+    if (atual > 0) {
+        atual--;
         mostrarSlide();
     }
+});
 
-}
-
-botaoProximo.addEventListener(
-    "click",
-    proximoSlide
-);
-
-botaoAnterior.addEventListener(
-    "click",
-    slideAnterior
-);
-
-// Navegação pelo teclado
 document.addEventListener("keydown", (event) => {
 
     if (event.key === "ArrowRight") {
-        proximoSlide();
+        proximo.click();
     }
 
     if (event.key === "ArrowLeft") {
-        slideAnterior();
+        anterior.click();
     }
 
 });
