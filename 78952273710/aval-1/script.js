@@ -1,12 +1,36 @@
 
-function tocarMusica(nome) {
+// Efeito de boas-vindas
 
-    const mensagem = document.getElementById("mensagem-musica");
+window.addEventListener("load", function() {
+    console.log("Bem-vindo ao blog do Matuê!");
+});
 
-    mensagem.innerText =
-        "🎵 Você selecionou a faixa: " + nome;
+// Efeito nas músicas
 
-    mensagem.style.color = "#c084fc";
+const faixas = document.querySelectorAll(".faixa");
 
-    mensagem.style.fontSize = "20px";
-}
+faixas.forEach(function(faixa) {
+
+    faixa.addEventListener("click", function() {
+
+        const nome = faixa.querySelector("p").innerText;
+
+        alert("🎵 Você selecionou: " + nome);
+
+    });
+
+});
+
+// Efeito de clique nas fotos
+
+const fotos = document.querySelectorAll(".galeria img");
+
+fotos.forEach(function(foto) {
+
+    foto.addEventListener("click", function() {
+
+        alert("Foto selecionada da galeria do Matuê!");
+
+    });
+
+});
