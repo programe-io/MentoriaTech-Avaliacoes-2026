@@ -1,115 +1,167 @@
 
-let contatoAtual = "Ana";
+const pessoas = [
+    {
+        nome: "Ana",
+        foto: "https://randomuser.me/api/portraits/women/1.jpg",
+        mensagens: [
+            ["Oii amiga! 💜", "received"],
+            ["Tudo bem com você?", "received"]
+        ]
+    },
+    {
+        nome: "Lucas",
+        foto: "https://randomuser.me/api/portraits/men/2.jpg",
+        mensagens: [
+            ["Vamos sair hoje? 😎", "received"]
+        ]
+    },
+    {
+        nome: "Julia",
+        foto: "https://randomuser.me/api/portraits/women/3.jpg",
+        mensagens: [
+            ["Amiga, tenho uma novidade!", "received"]
+        ]
+    },
+    {
+        nome: "Pedro",
+        foto: "https://randomuser.me/api/portraits/men/4.jpg",
+        mensagens: [
+            ["Bom dia! ☀️", "received"]
+        ]
+    },
+    {
+        nome: "Mariana",
+        foto: "https://randomuser.me/api/portraits/women/5.jpg",
+        mensagens: [
+            ["Saudades de você ❤️", "received"]
+        ]
+    },
+    {
+        nome: "Gabriel",
+        foto: "https://randomuser.me/api/portraits/men/6.jpg",
+        mensagens: [
+            ["Está por aí?", "received"]
+        ]
+    },
+    {
+        nome: "Beatriz",
+        foto: "https://randomuser.me/api/portraits/women/7.jpg",
+        mensagens: [
+            ["Vamos fazer alguma coisa?", "received"]
+        ]
+    },
+    {
+        nome: "Rafael",
+        foto: "https://randomuser.me/api/portraits/men/8.jpg",
+        mensagens: [
+            ["Oi! Como foi seu dia?", "received"]
+        ]
+    },
+    {
+        nome: "Sofia",
+        foto: "https://randomuser.me/api/portraits/women/9.jpg",
+        mensagens: [
+            ["Amei sua foto! 😍", "received"]
+        ]
+    },
+    {
+        nome: "Miguel",
+        foto: "https://randomuser.me/api/portraits/men/10.jpg",
+        mensagens: [
+            ["Depois vamos conversar!", "received"]
+        ]
+    }
+];
 
-const conversas = {
-    Ana: [
-        { texto: "Oii! Tudo bem? 💜", tipo: "received" },
-        { texto: "Oi Ana! Tudo sim e você?", tipo: "sent" },
-        { texto: "Estou ótima! ❤️", tipo: "received" }
-    ],
-    Lucas: [
-        { texto: "Vamos sair hoje?", tipo: "received" }
-    ],
-    Julia: [
-        { texto: "Adorei a foto! 😍", tipo: "received" }
-    ],
-    Pedro: [
-        { texto: "Bom dia! ☀️", tipo: "received" }
-    ],
-    Mariana: [
-        { texto: "Até amanhã ❤️", tipo: "received" }
-    ],
-    Gabriel: [
-        { texto: "Me chama depois!", tipo: "received" }
-    ]
-};
+let contatoAtual = 0;
 
-const respostas = {
-    Ana: [
-        "Oii amiga! 💜",
-        "Que legal! Me conta mais!",
-        "Também acho! ❤️",
-        "Kkkkk verdade!",
-        "Estou com saudades!"
-    ],
-    Lucas: [
-        "Bora sim! 😎",
-        "Que horas?",
-        "Fechado!",
-        "Kkkkk pode deixar!"
-    ],
-    Julia: [
-        "Amei conversar com você!",
-        "Você é incrível! 💜",
-        "Vamos marcar alguma coisa?"
-    ],
-    Pedro: [
-        "Tudo certo por aqui!",
-        "Kkkkk verdade!",
-        "Depois te conto!"
-    ],
-    Mariana: [
-        "Também te adoro! ❤️",
-        "Combinado!",
-        "Até mais!"
-    ],
-    Gabriel: [
-        "Pode deixar!",
-        "Estou online!",
-        "Beleza 😁"
-    ]
-};
+const respostas = [
+    "Oii! 💜",
+    "Tudo bem sim!",
+    "Kkkkk verdade 😂",
+    "Que legal!",
+    "Também acho! ❤️",
+    "Me conta mais!",
+    "Estou com saudades!",
+    "Vamos sim! 😍",
+    "Combinado!",
+    "Hahaha adorei!"
+];
 
-function mostrarMensagens() {
-    const area = document.getElementById("mensagens");
-
-    area.innerHTML = "";
-
-    conversas[contatoAtual].forEach(msg => {
-        const div = document.createElement("div");
-
-        div.className = "message " + msg.tipo;
-
-        const texto = document.createElement("span");
-        texto.textContent = msg.texto;
-
-        const horario = document.createElement("span");
-        horario.className = "time";
-        horario.textContent = msg.hora || horaAtual();
-
-        div.appendChild(texto);
-        div.appendChild(horario);
-
-        area.appendChild(div);
-    });
-
-    area.scrollTop = area.scrollHeight;
-}
-
-function horaAtual() {
+function hora() {
     return new Date().toLocaleTimeString("pt-BR", {
         hour: "2-digit",
         minute: "2-digit"
     });
 }
 
-function abrirChat(nome, emoji) {
-    contatoAtual = nome;
+// Criar lista de contatos
+function carregarContatos() {
+    const lista = document.getElementById("contatos");
+    lista.innerHTML = "";
 
-    document.getElementById("nomeContato").textContent = nome;
-    document.getElementById("fotoContato").textContent = emoji;
+    pessoas.forEach((pessoa, indice) => {
+        const div = document.createElement("div");
+        div.className = "contact";
 
-    document.querySelectorAll(".contact").forEach(c => {
-        c.classList.remove("active");
+        div.innerHTML = `
+            <img src="${pessoa.foto}" alt="Foto de perfil">
+            <div>
+                <strong>${pessoa.nome}</strong>
+                <p class="previa"></p>
+            </div>
+        `;
 
-        if (c.querySelector("strong").textContent === nome) {
-            c.classList.add("active");
-        }
+        div.addEventListener("click", () => abrirChat(indice));
+
+        lista.appendChild(div);
+    });
+}
+
+// Abrir conversa
+function abrirChat(indice) {
+    contatoAtual = indice;
+
+    const pessoa = pessoas[indice];
+
+    document.getElementById("nomeContato").textContent = pessoa.nome;
+    document.getElementById("fotoContato").src = pessoa.foto;
+    document.getElementById("statusContato").textContent = "Online";
+
+    document.querySelectorAll(".contact").forEach((c, i) => {
+        c.classList.toggle("active", i === indice);
     });
 
     mostrarMensagens();
 }
 
+// Mostrar mensagens
+function mostrarMensagens() {
+    const area = document.getElementById("mensagens");
+    area.innerHTML = "";
+
+    const pessoa = pessoas[contatoAtual];
+
+    pessoa.mensagens.forEach(msg => {
+        const div = document.createElement("div");
+        div.className = "message " + msg.tipo;
+
+        const texto = document.createElement("div");
+        texto.textContent = msg.texto;
+
+        const horario = document.createElement("span");
+        horario.className = "time";
+        horario.textContent = msg.hora || hora();
+
+        div.appendChild(texto);
+        div.appendChild(horario);
+        area.appendChild(div);
+    });
+
+    area.scrollTop = area.scrollHeight;
+}
+
+// Enviar mensagem
 document.getElementById("formMensagem")
 .addEventListener("submit", function(event) {
     event.preventDefault();
@@ -119,81 +171,67 @@ document.getElementById("formMensagem")
 
     if (!texto) return;
 
-    conversas[contatoAtual].push({
+    const pessoa = pessoas[contatoAtual];
+
+    pessoa.mensagens.push({
         texto: texto,
         tipo: "sent",
-        hora: horaAtual()
+        hora: hora()
     });
 
     campo.value = "";
+
     mostrarMensagens();
+    atualizarContatos();
 
-    // Simula uma resposta do contato
-    const contato = contatoAtual;
+    const indiceResposta = contatoAtual;
 
+    // Resposta automática
     setTimeout(() => {
-        if (contato !== contatoAtual) {
-            // A resposta será exibida ao abrir a conversa
-        }
-
-        const lista = respostas[contato];
-
-        const resposta = lista[
-            Math.floor(Math.random() * lista.length)
+        const resposta = respostas[
+            Math.floor(Math.random() * respostas.length)
         ];
 
-        conversas[contato].push({
+        pessoas[indiceResposta].mensagens.push({
             texto: resposta,
             tipo: "received",
-            hora: horaAtual()
+            hora: hora()
         });
 
-        if (contato === contatoAtual) {
+        atualizarContatos();
+
+        if (contatoAtual === indiceResposta) {
             mostrarMensagens();
         }
 
-        atualizarPrevia(contato, resposta);
-
-    }, 1200);
+    }, 1500);
 });
 
-function atualizarPrevia(nome, texto) {
-    document.querySelectorAll(".contact").forEach(c => {
-        if (c.querySelector("strong").textContent === nome) {
-            c.querySelector("p").textContent = texto;
-        }
+// Atualizar prévias
+function atualizarContatos() {
+    document.querySelectorAll(".contact").forEach((div, i) => {
+        const mensagens = pessoas[i].mensagens;
+        const ultima = mensagens[mensagens.length - 1];
+
+        div.querySelector(".previa").textContent = ultima
+            ? ultima.texto
+            : "Nenhuma mensagem";
     });
 }
 
-function verStatus(nome) {
-    if (nome === "Seu status") {
-        alert("Aqui você poderá publicar seu próprio status! 💜");
-        return;
-    }
-
-    const status = {
-        Ana: "Oi gente! 💜 Aproveitando o dia!",
-        Lucas: "Um dia incrível! 😎",
-        Julia: "Espalhando alegria! ✨"
-    };
-
-    alert(nome + ": " + (status[nome] || "Novo status!"));
-}
-
-// Pesquisa de contatos
+// Pesquisar pessoas
 document.getElementById("pesquisa")
 .addEventListener("input", function() {
     const busca = this.value.toLowerCase();
 
-    document.querySelectorAll(".contact").forEach(c => {
-        const nome = c.querySelector("strong")
-        .textContent.toLowerCase();
-
-        c.style.display = nome.includes(busca)
-            ? "flex"
-            : "none";
+    document.querySelectorAll(".contact").forEach((div, i) => {
+        div.style.display = pessoas[i].nome
+            .toLowerCase()
+            .includes(busca) ? "flex" : "none";
     });
 });
 
-// Abre a conversa inicial
-mostrarMensagens();
+// Inicializar
+carregarContatos();
+abrirChat(0);
+atualizarContatos();
