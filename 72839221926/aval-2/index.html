@@ -1,0 +1,112 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciador de Tarefas</title>
+    <link rel="stylesheet" href="/style.css">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+    <header>
+        <h1>Gerenciador de Tarefas</h1>
+        <p>Organize suas atividades de maneira simples!</p>
+    </header>
+
+    <main>
+
+        <section class="cadastro">
+            <h2>Cadastrar Nova Tarefa</h2>
+
+            <p class="erro" th:if="${erro}" th:text="${erro}"></p>
+            <p class="sucesso" th:if="${sucesso}" th:text="${sucesso}"></p>
+
+            <form action="/cadastrar" method="post">
+
+                <label>Código:</label>
+                <input type="text" name="codigo" required>
+
+                <label>Título da tarefa:</label>
+                <input type="text" name="titulo"
+                       minlength="5" required>
+
+                <label>Prioridade:</label>
+                <select name="prioridade" required>
+                    <option value="1">1 - Alta</option>
+                    <option value="2">2 - Média</option>
+                    <option value="3">3 - Baixa</option>
+                </select>
+
+                <button type="submit">Cadastrar tarefa</button>
+
+            </form>
+        </section>
+
+        <section class="lista">
+            <h2>Tarefas Cadastradas</h2>
+
+            <p th:if="${#lists.isEmpty(tarefas)}">
+                Nenhuma tarefa cadastrada.
+            </p>
+
+            <div class="tarefa"
+                 th:each="tarefa : ${tarefas}">
+
+                <h3 th:text="${tarefa.titulo}"></h3>
+
+                <p>
+                    Código:
+                    <span th:text="${tarefa.codigo}"></span>
+                </p>
+
+                <p>
+                    Prioridade:
+                    <span th:text="${tarefa.prioridade}"></span>
+                </p>
+
+                <p>
+                    Status:
+                    <span th:text="${tarefa.concluida ? 'Concluída' : 'Pendente'}"
+                          th:class="${tarefa.concluida ? 'concluida' : 'pendente'}">
+                    </span>
+                </p>
+
+                <form th:if="${!tarefa.concluida}"
+                      th:action="@{/concluir/{codigo}(codigo=${tarefa.codigo})}"
+                      method="post">
+
+                    <button type="submit">
+                        Marcar como concluída
+                    </button>
+
+                </form>
+
+                <form th:action="@{/prioridade/{codigo}(codigo=${tarefa.codigo})}"
+                      method="post">
+
+                    <select name="prioridade">
+                        <option value="1">1 - Alta</option>
+                        <option value="2">2 - Média</option>
+                        <option value="3">3 - Baixa</option>
+                    </select>
+
+                    <button type="submit">
+                        Alterar prioridade
+                    </button>
+
+                </form>
+
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>Projeto de Fundamentos Lógicos com Programação</p>
+    </footer>
+
+<script src="script.js"></script></body>
+</html>
