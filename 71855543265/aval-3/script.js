@@ -1,87 +1,63 @@
-
-const formulario = document.getElementById("formIMC");
-const resultado = document.getElementById("resultado");
-
-formulario.addEventListener("submit", function(event) {
-
+document.getElementById('form-imc').addEventListener('submit', function(event) {
+    // Evita que a página recarregue ao enviar o formulário
     event.preventDefault();
 
-    // Receber os dados do paciente
-    const nome = document.getElementById("nome").value.trim();
-    const peso = parseFloat(document.getElementById("peso").value);
-    const altura = parseFloat(document.getElementById("altura").value);
+    // 1. Receber os dados do paciente
+    const nome = document.getElementById('nome').value.trim();
+    const peso = parseFloat(document.getElementById('peso').value);
+    const altura = parseFloat(document.getElementById('altura').value);
 
-    // Verificar os dados
-    if (!nome || peso <= 0 || altura <= 0 ||
-        !Number.isFinite(peso) || !Number.isFinite(altura)) {
-
-        alert("Por favor, informe dados válidos!");
+    // Validação simples
+    if (!nome || isNaN(peso) || isNaN(altura) || altura <= 0 || peso <= 0) {
+        alert('Por favor, preencha todos os campos com valores válidos.');
         return;
     }
 
-    // Calcular o IMC
+    // 2. Calcular o IMC
     const imc = peso / (altura * altura);
 
-    // Classificar o IMC
-    let classificacao;
-    let mensagem;
+    // 3. Definir classificação e orientação
+    let classificacao = '';
+    let classeCor = '';
+    let mensagem = '';
 
     if (imc < 18.5) {
-        classificacao = "Abaixo do peso";
-        mensagem = "Procure orientação de um profissional de saúde.";
+        classificacao = 'Abaixo do peso';
+        classeCor = 'baixo-peso';
+        mensagem = 'O paciente está abaixo da faixa recomendada. Sugere-se avaliação nutricional.';
+    } else if (imc < 25) {
+        classificacao = 'Peso normal';
+        classeCor = 'peso-normal';
+        mensagem = 'O paciente está dentro da faixa de peso considerada saudável.';
+    } else if (imc < 30) {
+        classificacao = 'Sobrepeso';
+        classeCor = 'sobrepeso';
+        mensagem = 'Atenção: o paciente apresenta sobrepeso. Hábitos saudáveis são recomendados.';
+    } else if (imc < 35) {
+        classificacao = 'Obesidade Grau I';
+        classeCor = 'obesidade';
+        mensagem = 'Alerta: obesidade grau I identificada. Recomenda-se acompanhamento médico.';
+    } else if (imc < 40) {
+        classificacao = 'Obesidade Grau II';
+        classeCor = 'obesidade';
+        mensagem = 'Alerta: obesidade grau II (severa). Necessário acompanhamento profissional.';
+    } else {
+        classificacao = 'Obesidade Grau III';
+        classeCor = 'obesidade';
+        mensagem = 'Alerta crítico: obesidade grau III (mórbida). Procure orientação médica especializada.';
     }
-    else if (imc < 25) {
-        classificacao = "Peso adequado";
-        mensagem = "Seu IMC está na faixa considerada adequada.";
-    }
-    else if (imc < 30) {
-        classificacao = "Sobrepeso";
-        mensagem = "Procure orientação para avaliar sua saúde.";
-    }
-    else if (imc < 35) {
-        classificacao = "Obesidade grau I";
-        mensagem = "É recomendado procurar acompanhamento profissional.";
-    }
-    else if (imc < 40) {
-        classificacao = "Obesidade grau II";
-        mensagem = "É importante buscar acompanhamento profissional.";
-    }
-    else {
-        classificacao = "Obesidade grau III";
-        mensagem = "Procure acompanhamento de um profissional de saúde.";
-    }
 
-    // Exibir o resultado
-    resultado.style.display = "block";
+    // 4. Exibir as informações na tela
+    document.getElementById('res-nome').textContent = nome;
+    document.getElementById('res-imc').textContent = imc.toFixed(2).replace('.', ',') + ' kg/m²';
+    
+    const badgeClassificacao = document.getElementById('res-classificacao');
+    badgeClassificacao.textContent = classificacao;
+    badgeClassificacao.className = 'badge ' + classeCor;
 
-    resultado.innerHTML = `
-        <h3>Resultado do Paciente</h3>
+    document.getElementById('res-mensagem').textContent = mensagem;
 
-        <p><strong>Nome:</strong> ${nome.replace(/[&<>"']/g, function(c) {
-            return {
-                "&": "&amp;",
-                "<": "&lt;",
-                ">": "&gt;",
-                '"': "&quot;",
-                "'": "&#39;"
-            }[c];
-        })}</p>
-
-        <p><strong>Peso:</strong> ${peso.toFixed(1)} kg</p>
-
-        <p><strong>Altura:</strong> ${altura.toFixed(2)} m</p>
-
-        <p><strong>IMC:</strong> ${imc.toFixed(2)}</p>
-
-        <p><strong>Classificação:</strong> ${classificacao}</p>
-
-        <p>${mensagem}</p>
-    `;
-
-});
-
-// Limpar resultado quando clicar em limpar
-formulario.addEventListener("reset", function() {
-    resultado.style.display = "none";
-    resultado.innerHTML = "";
+    // Mostra a caixa de resultado
+    const caixaResultado = document.getElementById('resultado');
+    caixaResultado.classList.remove('oculto');
 });
