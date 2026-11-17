@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Feed ArraialConecta</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@700;800&family=Nunito+Sans:wght@400;600;700;800&display=swap">
+<style>
+/* Layout: app de fotos em coluna única (máx. 470px) — topo fixo, stories, posts quadrados, barra inferior fixa */
+:root{
+  --bg:#ffffff; --fg:#14201a; --muted:#6b7a70; --line:#e3e8e4; --soft:#f2f5f3;
+  --accent:#1f7a4d; --sun:#e8a317; --like:#e0383e; --scrim:rgba(10,20,15,.55);
+  --display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --body:"Nunito Sans",ui-sans-serif,system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0e1411; --fg:#e8efea; --muted:#94a59a; --line:#26322b; --soft:#18211c;
+  --accent:#4cc38a; --sun:#f0b84a; --like:#f2575c; --scrim:rgba(0,0,0,.7); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0e1411; --fg:#e8efea; --muted:#94a59a; --line:#26322b; --soft:#18211c;
+  --accent:#4cc38a; --sun:#f0b84a; --like:#f2575c; --scrim:rgba(0,0,0,.7); color-scheme:dark}
+html,body{background:var(--bg)}
+body{color:var(--fg);font-family:var(--body);font-size:14px;line-height:1.45}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
+svg.i{width:26px;height:26px;display:block}
+.wrap{max-width:470px;margin:0 auto}
+.pad{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
+.top{display:flex;align-items:center;justify-content:space-between;padding-block:10px}
+.logo{font-family:var(--display);font-weight:800;font-size:1.45rem;letter-spacing:-.03em;color:var(--accent)}
+.logo span{color:var(--sun)}
+.top .icons{display:flex;gap:18px}
+.dot{position:relative}
+.dot::after{content:"";position:absolute;top:0;right:-1px;width:8px;height:8px;border-radius:50%;background:var(--like);border:2px solid var(--bg)}
+
+/* stories */
+.stories{display:flex;gap:14px;overflow-x:auto;padding-block:12px;border-bottom:1px solid var(--line);scrollbar-width:none}
+.stories::-webkit-scrollbar{display:none}
+.story{display:flex;flex-direction:column;align-items:center;gap:4px;flex:none;width:66px}
+.ring{width:62px;height:62px;border-radius:50%;padding:2.5px;background:conic-gradient(from 200deg,var(--sun),var(--accent),#2d8fb8,var(--sun))}
+.ring.seen{background:var(--line)}
+.ring .av{width:100%;height:100%;border:2.5px solid var(--bg);box-sizing:border-box;font-size:1rem}
+.story small{font-size:.72rem;max-width:66px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mine{position:relative}
+.mine .plus{position:absolute;right:0;bottom:0;width:20px;height:20px;border-radius:50%;background:var(--accent);color:var(--bg);display:grid;place-items:center;font-weight:800;border:2px solid var(--bg);font-size:14px;line-height:1}
+
+.av{border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:800;font-family:var(--display);flex:none}
+.av.s{width:32px;height:32px;font-size:.78rem}
+.av.xs{width:22px;height:22px;font-size:.55rem}
+
+/* post */
+main{padding-bottom:calc(70px + env(safe-area-inset-bottom,0px))}
+.post{border-bottom:1px solid var(--line);padding-bottom:12px}
+.ph{display:flex;align-items:center;gap:10px;padding-block:10px}
+.ph .who{flex:1;min-width:0;line-height:1.2}
+.ph b{font-weight:800}
+.ph small{display:block;color:var(--muted);font-size:.75rem}
+.photo{position:relative;aspect-ratio:1/1;max-width:100%;background:var(--soft);overflow:hidden;user-select:none;-webkit-user-select:none}
+.photo svg.pic,.photo img{width:100%;height:100%;display:block;object-fit:cover}
+.pop{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none;opacity:0}
+.pop svg{width:96px;height:96px;color:#fff;filter:drop-shadow(0 4px 14px rgba(0,0,0,.35))}
+.pop.go{animation:pop .8s ease-out}
+@keyframes pop{0%{opacity:0;transform:scale(.4)}25%{opacity:1;transform:scale(1.1)}45%{transform:scale(.95)}80%{opacity:1}100%{opacity:0;transform:scale(1)}}
+.acts{display:flex;align-items:center;gap:16px;padding-block:8px 4px}
+.acts .sp{flex:1}
+.like.on{color:var(--like)}
+.like.on svg{animation:beat .3s}
+@keyframes beat{50%{transform:scale(1.25)}}
+.likes{font-weight:800}
+.cap{margin-top:3px;overflow-wrap:anywhere}
+.cap b,.cm b{font-weight:800;margin-right:4px}
+.tag{color:var(--accent);font-weight:700;text-decoration:none}
+.more{color:var(--muted);margin-top:4px;display:block}
+.cm{margin-top:3px;overflow-wrap:anywhere}
+.when{color:var(--muted);font-size:.7rem;letter-spacing:.04em;text-transform:uppercase;margin-top:6px}
+.cform{display:flex;gap:8px;align-items:center;margin-top:8px}
+.cform input{flex:1;min-width:0;font:inherit;background:none;border:0;color:var(--fg);padding:6px 0}
+.cform input::placeholder{color:var(--muted)}
+.cform button{color:var(--accent);font-weight:800}
+.cform button:disabled{opacity:.4;cursor:default}
+.empty{text-align:center;color:var(--muted);padding:40px 16px}
+.filter{display:flex;gap:10px;align-items:center;padding-block:10px;border-bottom:1px solid var(--line)}
+.filter b{font-family:var(--display);font-size:1.1rem}
+.filter button{margin-left:auto;color:var(--accent);font-weight:800}
+
+/* barra inferior */
+nav{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--bg);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+nav .wrap{display:flex;justify-content:space-around;padding-block:10px}
+nav .me{width:28px;height:28px;font-size:.68rem;outline:2px solid var(--fg);outline-offset:1px}
+
+/* modal nova publicação */
+.modal{position:fixed;inset:0;z-index:20;background:var(--scrim);display:grid;place-items:center;
+  padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.sheet{background:var(--bg);border-radius:16px;width:100%;max-width:420px;max-height:100%;overflow:auto;display:flex;flex-direction:column}
+.sheet .hd{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--line)}
+.sheet .hd b{font-family:var(--display);font-size:1.05rem}
+.sheet .hd .go{color:var(--accent);font-weight:800}
+.sheet .hd .go:disabled{opacity:.4;cursor:default}
+.pick{aspect-ratio:1/1;max-width:100%;background:var(--soft);display:grid;place-items:center;position:relative;overflow:hidden}
+.pick img{width:100%;height:100%;object-fit:cover}
+.pick label{display:flex;flex-direction:column;align-items:center;gap:10px;color:var(--muted);cursor:pointer;text-align:center;padding:16px}
+.pick label span{background:var(--accent);color:var(--bg);font-weight:800;padding:8px 16px;border-radius:10px}
+.pick input{position:absolute;width:1px;height:1px;opacity:0}
+.bg-opts{display:flex;gap:8px;padding:10px 16px 0;flex-wrap:wrap;align-items:center;color:var(--muted);font-size:.8rem}
+.bg-opts button{width:30px;height:30px;border-radius:8px;border:2px solid var(--line);overflow:hidden}
+.bg-opts button svg{width:100%;height:100%;display:block}
+.sheet textarea{font:inherit;color:var(--fg);background:none;border:0;padding:12px 16px;resize:none;min-height:80px}
+.sheet textarea::placeholder{color:var(--muted)}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(80px + env(safe-area-inset-bottom,0px));z-index:30;background:var(--fg);color:var(--bg);padding:8px 16px;border-radius:999px;font-weight:700;font-size:.85rem}
+@media (prefers-reduced-motion:reduce){.pop.go,.like.on svg{animation:none}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap pad top">
+    <div class="logo">Arraial<span>Conecta</span></div>
+    <div class="icons">
+      <button aria-label="Notificações" class="dot"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20.5s-7.5-4.6-9.7-9.1C.8 8.2 2.9 4.5 6.6 4.5c2.3 0 4 1.3 5.4 3.2 1.4-1.9 3.1-3.2 5.4-3.2 3.7 0 5.8 3.7 4.3 6.9-2.2 4.5-9.7 9.1-9.7 9.1z"/></svg></button>
+      <button aria-label="Mensagens" class="dot"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M22 3 9.2 10.6M22 3l-6.5 18-4.3-8.4L2.8 8.2z"/></svg></button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="stories pad" id="stories"></div>
+  <div class="filter pad" id="filter" hidden><b id="tagName"></b><span class="more" id="tagCount" style="margin:0"></span><button id="clearTag">Ver tudo</button></div>
+  <div id="feed"></div>
+</main>
+
+<nav aria-label="Navegação">
+  <div class="wrap">
+    <button aria-label="Início" id="navHome"><svg class="i" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.8 2.5 10.5V21h6.8v-6.2h5.4V21h6.8V10.5z"/></svg></button>
+    <button aria-label="Buscar"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="10.5" cy="10.5" r="7"/><path d="m16 16 5.5 5.5"/></svg></button>
+    <button aria-label="Nova publicação" id="navNew"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><path d="M12 8v8M8 12h8"/></svg></button>
+    <button aria-label="Vídeos"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><path d="M10 8.5v7l6-3.5z"/></svg></button>
+    <button aria-label="Perfil"><div class="av me" style="background:#1f7a4d">ML</div></button>
+  </div>
+</nav>
+
+<div class="modal" id="modal" hidden role="dialog" aria-modal="true" aria-labelledby="mTitle">
+  <div class="sheet">
+    <div class="hd"><button id="mClose">Cancelar</button><b id="mTitle">Nova publicação</b><button class="go" id="mShare" disabled>Compartilhar</button></div>
+    <div class="pick" id="pick">
+      <label for="file">
+        <svg class="i" style="width:56px;height:56px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-9 9"/></svg>
+        Escolha uma foto do seu aparelho<span>Selecionar foto</span>
+      </label>
+      <input type="file" id="file" accept="image/*">
+    </div>
+    <div class="bg-opts" id="bgOpts">ou use uma arte:</div>
+    <textarea id="mCap" maxlength="2200" placeholder="Escreva uma legenda… use #hashtags"></textarea>
+  </div>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+/* ---------- usuários ---------- */
+const U = {
+  maria:{name:"maria.lima", ini:"ML", color:"#1f7a4d"},
+  joao:{name:"joaopedro", ini:"JP", color:"#c0661b"},
+  ana:{name:"ana.lima", ini:"AL", color:"#6a4fb3"},
+  ceti:{name:"ceti.silvestre", ini:"CS", color:"#2d6fa8"},
+  eq3:{name:"equipe3.1c", ini:"E3", color:"#b8375a"},
+  prof:{name:"prof.arimatea", ini:"PA", color:"#3c6e5a"}
+};
+
+/* ---------- "fotos" desenhadas (SVG) ---------- */
+const ART = {
+  porDoSol:`<svg class="pic" viewBox="0 0 400 400"><defs><linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3b2a6b"/><stop offset=".45" stop-color="#e2683c"/><stop offset=".75" stop-color="#f6b54a"/></linearGradient></defs>
+    <rect width="400" height="400" fill="url(#g1)"/><circle cx="200" cy="255" r="58" fill="#ffd877"/>
+    <path d="M0 270q70-40 140-10t130-5 130 15v130H0z" fill="#7a3b2e"/><path d="M0 310q100-30 200 0t200-5v95H0z" fill="#3e2420"/>
+    <g fill="#24140f"><rect x="78" y="190" width="6" height="125"/><path d="M81 192q-40-5-55 15q30-12 55-10q-30 0-40 25q22-22 40-20q5-18 30-25q-20-8-30 15q20-30 45-28q-25-12-45 28"/>
+    <rect x="318" y="210" width="5" height="105"/><path d="M320 212q-35-4-48 12q25-10 48-8q-25 2-34 22q18-18 34-16q4-16 26-22q-17-7-26 12q17-25 38-24q-21-10-38 24"/></g></svg>`,
+  cartolina:`<svg class="pic" viewBox="0 0 400 400"><rect width="400" height="400" fill="#2f6fa3"/>
+    <rect x="48" y="40" width="304" height="320" rx="4" fill="#fbf7ec" transform="rotate(-3 200 200)"/>
+    <g transform="rotate(-3 200 200)" font-family="Comic Sans MS,cursive" fill="#1f7a4d">
+    <text x="200" y="80" text-anchor="middle" font-size="24" font-weight="700">ArraialConecta</text>
+    <g fill="none" stroke="#333" stroke-width="2.5"><rect x="72" y="100" width="110" height="200" rx="12"/><rect x="218" y="100" width="110" height="200" rx="12"/>
+    <circle cx="94" cy="122" r="9"/><rect x="82" y="140" width="90" height="80"/><path d="M82 236h60M82 250h80M82 264h40"/>
+    <path d="M232 120h80M232 145h60M232 160h75M232 185h55M232 200h70M232 225h65M232 240h50"/><path d="M182 200h36" stroke-dasharray="4 4"/><path d="m210 194 8 6-8 6"/></g>
+    <text x="127" y="325" text-anchor="middle" font-size="15" fill="#c0661b">Feed</text><text x="273" y="325" text-anchor="middle" font-size="15" fill="#c0661b">Mensagens</text></g>
+    <circle cx="60" cy="48" r="7" fill="#e0383e"/><circle cx="342" cy="40" r="7" fill="#e8a317"/></svg>`,
+  codigo:`<svg class="pic" viewBox="0 0 400 400"><rect width="400" height="400" fill="#1b2430"/><rect width="400" height="34" fill="#141b24"/>
+    <circle cx="20" cy="17" r="6" fill="#e0574f"/><circle cx="40" cy="17" r="6" fill="#e8b23c"/><circle cx="60" cy="17" r="6" fill="#4cbf6a"/>
+    <text x="200" y="22" text-anchor="middle" fill="#8996a6" font-family="monospace" font-size="13">notas.py</text>
+    <g font-family="monospace" font-size="16"><text x="20" y="80" fill="#5f6d7d">1</text><text x="20" y="110" fill="#5f6d7d">2</text><text x="20" y="140" fill="#5f6d7d">3</text><text x="20" y="170" fill="#5f6d7d">4</text><text x="20" y="200" fill="#5f6d7d">5</text><text x="20" y="230" fill="#5f6d7d">6</text>
+    <text x="50" y="80"><tspan fill="#c792ea">notas</tspan><tspan fill="#d6deeb"> = [</tspan><tspan fill="#f78c6c">8.5, 7, 9.5</tspan><tspan fill="#d6deeb">]</tspan></text>
+    <text x="50" y="110"><tspan fill="#c792ea">for</tspan><tspan fill="#d6deeb"> n </tspan><tspan fill="#c792ea">in</tspan><tspan fill="#d6deeb"> notas:</tspan></text>
+    <text x="80" y="140"><tspan fill="#c792ea">if</tspan><tspan fill="#d6deeb"> n &gt;= </tspan><tspan fill="#f78c6c">7</tspan><tspan fill="#d6deeb">:</tspan></text>
+    <text x="110" y="170"><tspan fill="#82aaff">print</tspan><tspan fill="#d6deeb">(</tspan><tspan fill="#c3e88d">"Aprovado"</tspan><tspan fill="#d6deeb">)</tspan></text>
+    <text x="80" y="200"><tspan fill="#c792ea">else</tspan><tspan fill="#d6deeb">:</tspan></text>
+    <text x="110" y="230"><tspan fill="#82aaff">print</tspan><tspan fill="#d6deeb">(</tspan><tspan fill="#c3e88d">"Recuperação"</tspan><tspan fill="#d6deeb">)</tspan></text></g>
+    <rect x="0" y="280" width="400" height="120" fill="#10161e"/><g font-family="monospace" font-size="15"><text x="20" y="310" fill="#4cbf6a">$ python notas.py</text>
+    <text x="20" y="336" fill="#d6deeb">Aprovado</text><text x="20" y="358" fill="#d6deeb">Aprovado</text><text x="20" y="380" fill="#d6deeb">Aprovado</text></g></svg>`,
+  feira:`<svg class="pic" viewBox="0 0 400 400"><rect width="400" height="400" fill="#f3c64a"/>
+    <g fill="#1f7a4d" opacity=".18"><circle cx="40" cy="60" r="70"/><circle cx="380" cy="360" r="90"/></g>
+    <text x="200" y="120" text-anchor="middle" font-family="Bricolage Grotesque,sans-serif" font-weight="800" font-size="30" fill="#14201a">FEIRA DE</text>
+    <text x="200" y="175" text-anchor="middle" font-family="Bricolage Grotesque,sans-serif" font-weight="800" font-size="52" fill="#1f7a4d">TECNOLOGIA</text>
+    <rect x="80" y="200" width="240" height="44" rx="22" fill="#14201a"/><text x="200" y="229" text-anchor="middle" font-family="sans-serif" font-weight="700" font-size="18" fill="#f3c64a">CETI Silvestre Rocha</text>
+    <text x="200" y="290" text-anchor="middle" font-family="sans-serif" font-size="20" fill="#14201a">Sexta-feira · 8h às 12h</text>
+    <text x="200" y="320" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#14201a">Arraial · Piauí</text>
+    <g fill="#14201a"><rect x="150" y="345" width="16" height="16" rx="3"/><rect x="176" y="345" width="16" height="16" rx="8"/><rect x="202" y="345" width="16" height="16" rx="3" transform="rotate(45 210 353)"/><rect x="232" y="345" width="16" height="16" rx="3"/></g></svg>`,
+  banco:`<svg class="pic" viewBox="0 0 400 400"><rect width="400" height="400" fill="#eaf2ee"/>
+    <g fill="#1f7a4d"><ellipse cx="200" cy="90" rx="90" ry="26"/><rect x="110" y="90" width="180" height="120"/><ellipse cx="200" cy="210" rx="90" ry="26"/></g>
+    <g fill="none" stroke="#eaf2ee" stroke-width="3"><path d="M110 130q90 30 180 0M110 170q90 30 180 0"/></g><ellipse cx="200" cy="90" rx="90" ry="26" fill="#2f9a65"/>
+    <rect x="40" y="260" width="320" height="110" rx="10" fill="#fff" stroke="#c9d8cf"/>
+    <g font-family="monospace" font-size="15"><text x="58" y="292" fill="#2d6fa8">SELECT</text><text x="128" y="292" fill="#14201a">nome, turma</text>
+    <text x="58" y="318" fill="#2d6fa8">FROM</text><text x="110" y="318" fill="#14201a">alunos</text>
+    <text x="58" y="344" fill="#2d6fa8">WHERE</text><text x="120" y="344" fill="#14201a">turma =</text><text x="200" y="344" fill="#c0661b">'1C'</text><text x="242" y="344" fill="#14201a">;</text></g></svg>`
+};
+
+/* ---------- dados ---------- */
+const MIN = 60000, now = Date.now();
+let posts = [
+  {id:5, by:"eq3", place:"CETI Silvestre Rocha", art:"cartolina", t:now-25*MIN, likes:48, liked:false, saved:false,
+   cap:"Protótipo da nossa rede pronto na cartolina! Sprint 3 concluída 💪 #MetodosAgeis #1anoC",
+   cm:[{by:"prof",text:"Parabéns, equipe! Muito bem organizado."},{by:"ana",text:"A tela de mensagens ficou top"},{by:"joao",text:"Arrasaram 👏"}]},
+  {id:4, by:"maria", place:"Arraial, Piauí", art:"porDoSol", t:now-3*60*MIN, likes:112, liked:true, saved:false,
+   cap:"Fim de tarde em Arraial 🌅 #Arraial #Piaui", cm:[{by:"joao",text:"Que foto linda!"}]},
+  {id:3, by:"ceti", place:"Arraial, Piauí", art:"feira", t:now-7*60*MIN, likes:87, liked:false, saved:true,
+   cap:"Vem aí a nossa Feira de Tecnologia! Tragam seus projetos. #CETI #Tecnologia", cm:[]},
+  {id:2, by:"joao", place:"Laboratório de Informática", art:"codigo", t:now-26*60*MIN, likes:35, liked:false, saved:false,
+   cap:"Primeiro programa com for e if funcionando 😎 #Python #1anoC", cm:[{by:"maria",text:"Agora faz a média!"}]},
+  {id:1, by:"ana", place:"", art:"banco", t:now-3*24*60*MIN, likes:29, liked:false, saved:false,
+   cap:"Banco de dados da turma criado e consulta rodando. #BancoDeDados #SQL", cm:[]}
+];
+let nextId = 6, tag = null, expanded = new Set();
+const viewedStories = new Set();
+
+/* ---------- utilidades ---------- */
+const esc = s => s.replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fmt = s => esc(s).replace(/#([\wÀ-ú]+)/g,'<a href="#" class="tag" data-tag="$1">#$1</a>');
+const av = (u,cls="s") => `<div class="av ${cls}" style="background:${u.color}">${u.ini}</div>`;
+function ago(t){const m=Math.floor((Date.now()-t)/MIN); if(m<1)return"agora"; if(m<60)return`há ${m} minuto${m>1?"s":""}`;
+  const h=Math.floor(m/60); if(h<24)return`há ${h} hora${h>1?"s":""}`; const d=Math.floor(h/24); return`há ${d} dia${d>1?"s":""}`;}
+const nf = n => n.toLocaleString("pt-BR");
+const I = {
+  heart:on=>`<svg class="i" viewBox="0 0 24 24" fill="${on?"currentColor":"none"}" stroke="currentColor" stroke-width="1.8"><path d="M12 20.5s-7.5-4.6-9.7-9.1C.8 8.2 2.9 4.5 6.6 4.5c2.3 0 4 1.3 5.4 3.2 1.4-1.9 3.1-3.2 5.4-3.2 3.7 0 5.8 3.7 4.3 6.9-2.2 4.5-9.7 9.1-9.7 9.1z"/></svg>`,
+  comment:`<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M20.7 16.4A9 9 0 1 0 17 20.3L21.5 21z"/></svg>`,
+  send:`<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M22 3 9.2 10.6M22 3l-6.5 18-4.3-8.4L2.8 8.2z"/></svg>`,
+  save:on=>`<svg class="i" viewBox="0 0 24 24" fill="${on?"currentColor":"none"}" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V4a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1z"/></svg>`,
+  dots:`<svg class="i" style="width:22px" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>`
+};
+function toast(msg){const t=document.getElementById("toast"); t.textContent=msg; t.hidden=false; clearTimeout(toast.h); toast.h=setTimeout(()=>t.hidden=true,1800);}
+
+/* ---------- stories ---------- */
+function renderStories(){
+  const ids=["joao","ana","ceti","eq3","prof"];
+  document.getElementById("stories").innerHTML =
+    `<button class="story" aria-label="Seu story"><div class="mine"><div class="ring seen">${av(U.maria)}</div><div class="plus">+</div></div><small>Seu story</small></button>`+
+    ids.map(k=>`<button class="story" data-story="${k}"><div class="ring${viewedStories.has(k)?" seen":""}">${av(U[k])}</div><small>${U[k].name}</small></button>`).join("");
+}
+document.getElementById("stories").addEventListener("click",e=>{
+  const s=e.target.closest("[data-story]"); if(!s){openModal();return;}
+  viewedStories.add(s.dataset.story); renderStories(); toast(`Story de ${U[s.dataset.story].name} visto`);
+});
+
+/* ---------- feed ---------- */
+function renderFeed(){
+  const list = tag ? posts.filter(p=>p.cap.toLowerCase().includes("#"+tag.toLowerCase())) : posts;
+  const f=document.getElementById("filter"); f.hidden=!tag;
+  if(tag){document.getElementById("tagName").textContent="#"+tag; document.getElementById("tagCount").textContent=`${list.length} publicaç${list.length===1?"ão":"ões"}`;}
+  document.getElementById("stories").hidden=!!tag;
+  const feed=document.getElementById("feed");
+  if(!list.length){feed.innerHTML='<p class="empty">Nenhuma publicação com essa hashtag.</p>';return;}
+  feed.innerHTML=list.map(p=>{
+    const u=U[p.by], open=expanded.has(p.id), shown=open?p.cm:p.cm.slice(-2);
+    const liker = p.cm.length ? U[p.cm[0].by].name : "joaopedro";
+    return `<article class="post" data-id="${p.id}">
+      <div class="ph pad">${av(u)}<div class="who"><b>${u.name}</b>${p.place?`<small>${esc(p.place)}</small>`:""}</div><button aria-label="Mais opções">${I.dots}</button></div>
+      <div class="photo" data-photo>${p.img?`<img src="${p.img}" alt="Foto publicada por ${u.name}">`:ART[p.art]}<div class="pop">${I.heart(true)}</div></div>
+      <div class="pad">
+        <div class="acts">
+          <button class="like${p.liked?" on":""}" data-act="like" aria-label="${p.liked?"Descurtir":"Curtir"}" aria-pressed="${p.liked}">${I.heart(p.liked)}</button>
+          <button data-act="comment" aria-label="Comentar">${I.comment}</button>
+          <button data-act="share" aria-label="Enviar">${I.send}</button>
+          <span class="sp"></span>
+          <button data-act="save" aria-label="${p.saved?"Remover dos salvos":"Salvar"}" aria-pressed="${p.saved}">${I.save(p.saved)}</button>
+        </div>
+        <div class="likes">${p.likes===0?"Seja o primeiro a curtir":p.likes===1?"1 curtida":`Curtido por <b>${liker}</b> e outras ${nf(p.likes-1)} pessoas`}</div>
+        <div class="cap"><b>${u.name}</b>${fmt(p.cap)}</div>
+        ${p.cm.length>2&&!open?`<button class="more" data-act="more">Ver todos os ${p.cm.length} comentários</button>`:""}
+        ${shown.map(c=>`<div class="cm"><b>${U[c.by].name}</b>${esc(c.text)}</div>`).join("")}
+        <div class="when">${ago(p.t)}</div>
+        <form class="cform">${av(U.maria,"xs")}<input type="text" id="c-${p.id}" maxlength="300" placeholder="Adicione um comentário…" aria-label="Adicionar comentário"><button type="submit" disabled>Publicar</button></form>
+      </div>
+    </article>`;
+  }).join("");
+}
+
+function toggleLike(p,force){
+  if(force && p.liked) return;
+  p.liked=!p.liked; p.likes+=p.liked?1:-1;
+}
+const feedEl=document.getElementById("feed");
+feedEl.addEventListener("click",e=>{
+  const t=e.target.closest(".tag");
+  if(t){e.preventDefault(); tag=t.dataset.tag; renderFeed(); window.scrollTo({top:0}); return;}
+  const b=e.target.closest("[data-act]"); if(!b) return;
+  const art=b.closest(".post"), p=posts.find(x=>x.id==art.dataset.id);
+  const a=b.dataset.act;
+  if(a==="like"){toggleLike(p);}
+  else if(a==="save"){p.saved=!p.saved; toast(p.saved?"Salvo na sua coleção":"Removido dos salvos");}
+  else if(a==="more"){expanded.add(p.id);}
+  else if(a==="comment"){document.getElementById("c-"+p.id).focus(); return;}
+  else if(a==="share"){toast("Link copiado para enviar"); return;}
+  renderFeed();
+  if(a==="like"||a==="save") document.querySelector(`.post[data-id="${p.id}"] [data-act="${a}"]`)?.focus();
+});
+/* curtir com dois toques na foto */
+let lastTap=0;
+feedEl.addEventListener("pointerup",e=>{
+  const ph=e.target.closest("[data-photo]"); if(!ph) return;
+  const t=Date.now();
+  if(t-lastTap<320){
+    const id=ph.closest(".post").dataset.id, p=posts.find(x=>x.id==id);
+    toggleLike(p,true); renderFeed();
+    const pop=document.querySelector(`.post[data-id="${id}"] .pop`); pop.classList.add("go");
+    lastTap=0;
+  } else lastTap=t;
+});
+feedEl.addEventListener("dblclick",e=>{if(e.target.closest("[data-photo]"))e.preventDefault();});
+feedEl.addEventListener("input",e=>{
+  if(e.target.matches(".cform input")) e.target.nextElementSibling.disabled=!e.target.value.trim();
+});
+feedEl.addEventListener("submit",e=>{
+  e.preventDefault();
+  const p=posts.find(x=>x.id==e.target.closest(".post").dataset.id), inp=e.target.querySelector("input"), v=inp.value.trim();
+  if(!v) return; p.cm.push({by:"maria",text:v}); expanded.add(p.id); renderFeed();
+});
+document.getElementById("clearTag").addEventListener("click",()=>{tag=null; renderFeed();});
+document.getElementById("navHome").addEventListener("click",()=>{tag=null; renderFeed(); window.scrollTo({top:0,behavior:"smooth"});});
+
+/* ---------- nova publicação ---------- */
+const modal=document.getElementById("modal"), pick=document.getElementById("pick"), cap=document.getElementById("mCap"), share=document.getElementById("mShare");
+const pickHTML=pick.innerHTML;
+let draft={img:null,art:null};
+function openModal(){draft={img:null,art:null}; pick.innerHTML=pickHTML; bindFile(); cap.value=""; share.disabled=true; modal.hidden=false;}
+function closeModal(){modal.hidden=true;}
+function setPreview(html){pick.innerHTML=html; share.disabled=false;}
+function bindFile(){
+  document.getElementById("file").addEventListener("change",e=>{
+    const f=e.target.files[0]; if(!f) return;
+    const r=new FileReader(); r.onload=()=>{draft={img:r.result,art:null}; setPreview(`<img src="${r.result}" alt="Prévia da foto escolhida">`);}; r.readAsDataURL(f);
+  });
+}
+document.getElementById("bgOpts").insertAdjacentHTML("beforeend",
+  Object.keys(ART).map(k=>`<button data-art="${k}" aria-label="Usar arte ${k}">${ART[k]}</button>`).join(""));
+document.getElementById("bgOpts").addEventListener("click",e=>{
+  const b=e.target.closest("[data-art]"); if(!b) return;
+  draft={img:null,art:b.dataset.art}; setPreview(ART[b.dataset.art]);
+});
+document.getElementById("navNew").addEventListener("click",openModal);
+document.getElementById("mClose").addEventListener("click",closeModal);
+modal.addEventListener("click",e=>{if(e.target===modal)closeModal();});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!modal.hidden)closeModal();});
+share.addEventListener("click",()=>{
+  posts.unshift({id:nextId++, by:"maria", place:"Arraial, Piauí", img:draft.img, art:draft.art, t:Date.now(), likes:0, liked:false, saved:false,
+    cap:cap.value.trim(), cm:[]});
+  closeModal(); tag=null; renderFeed(); window.scrollTo({top:0,behavior:"smooth"}); toast("Publicação compartilhada");
+});
+
+renderStories(); renderFeed();
+</script>
+</body>
+</html>
