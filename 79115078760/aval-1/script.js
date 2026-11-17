@@ -1,151 +1,268 @@
-const produtos = [
+
+// ================================
+// PRODUTOS DA LOJA
+// ================================
+
+const products = [
     {
-        nome: "PlayStation 5",
-        preco: 3499.90,
-        categoria: "Consoles",
-        imagem: "https://placehold.co/300x200/19192a/ffffff?text=PlayStation+5"
+        id: 1,
+        name: "Headset Gamer RGB",
+        price: 249.90,
+        image: "https://images.unsplash.com/photo-1599669454699-248893623440?w=500"
     },
     {
-        nome: "Controle Xbox",
-        preco: 399.90,
-        categoria: "Acessórios",
-        imagem: "https://placehold.co/300x200/19192a/ffffff?text=Controle+Xbox"
+        id: 2,
+        name: "Mouse Gamer RGB",
+        price: 159.90,
+        image: "https://images.unsplash.com/photo-1527814050087-3793815479db?w=500"
     },
     {
-        nome: "Headset Gamer",
-        preco: 249.90,
-        categoria: "Acessórios",
-        imagem: "https://placehold.co/300x200/19192a/ffffff?text=Headset"
+        id: 3,
+        name: "Teclado Mecânico",
+        price: 299.90,
+        image: "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=500"
     },
     {
-        nome: "Teclado Gamer",
-        preco: 299.90,
-        categoria: "Acessórios",
-        imagem: "https://placehold.co/300x200/19192a/ffffff?text=Teclado"
+        id: 4,
+        name: "Controle Gamer",
+        price: 199.90,
+        image: "https://images.unsplash.com/photo-1600080972464-8e5f35f63d08?w=500"
     },
     {
-        nome: "Jogo de Aventura",
-        preco: 199.90,
-        categoria: "Jogos",
-        imagem: "https://placehold.co/300x200/19192a/ffffff?text=Jogo"
+        id: 5,
+        name: "Monitor Gamer",
+        price: 1299.90,
+        image: "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=500"
     },
     {
-        nome: "Nintendo Switch",
-        preco: 1899.90,
-        categoria: "Consoles",
-        imagem: "https://placehold.co/300x200/19192a/ffffff?text=Nintendo+Switch"
+        id: 6,
+        name: "Cadeira Gamer",
+        price: 899.90,
+        image: "https://images.unsplash.com/photo-1598550476439-6847785fcea6?w=500"
     }
 ];
 
-let carrinho = [];
-let categoriaAtual = "Todos";
+let cart = [];
 
-function mostrarProdutos(lista = produtos) {
-    const area = document.getElementById("lista-produtos");
+// ================================
+// FORMATAÇÃO DE PREÇO
+// ================================
 
-    area.innerHTML = "";
+function formatPrice(price) {
+    return price.toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL"
+    });
+}
 
-    lista.forEach((produto) => {
-        const indice = produtos.indexOf(produto);
+// ================================
+// MOSTRAR PRODUTOS
+// ================================
 
-        area.innerHTML += `
-            <div class="produto">
-                <img src="${produto.imagem}" alt="${produto.nome}">
-                <h3>${produto.nome}</h3>
-                <p>${produto.preco.toLocaleString("pt-BR", {
-                    style: "currency",
-                    currency: "BRL"
-                })}</p>
-                <button onclick="adicionarCarrinho(${indice})">
-                    Adicionar ao carrinho
+function showProducts(list = products) {
+
+    const productList = document.getElementById("product-list");
+
+    if (!productList) return;
+
+    productList.innerHTML = "";
+
+    list.forEach(product => {
+
+        productList.innerHTML += `
+            <div class="product">
+
+                <img src="${product.image}" alt="${product.name}">
+
+                <h3>${product.name}</h3>
+
+                <div class="price">
+                    ${formatPrice(product.price)}
+                </div>
+
+                <button class="btn"
+                    onclick="addToCart(${product.id})">
+                    ADICIONAR AO CARRINHO
                 </button>
+
             </div>
         `;
-    });
-}
 
-function filtrarCategoria(categoria) {
-    categoriaAtual = categoria;
-    filtrarProdutos();
-}
-
-function filtrarProdutos() {
-    const busca = document.getElementById("pesquisa")
-        .value.toLowerCase();
-
-    const resultado = produtos.filter(produto => {
-        const nomeCorresponde = produto.nome.toLowerCase()
-            .includes(busca);
-
-        const categoriaCorresponde =
-            categoriaAtual === "Todos" ||
-            produto.categoria === categoriaAtual;
-
-        return nomeCorresponde && categoriaCorresponde;
     });
 
-    mostrarProdutos(resultado);
 }
 
-function adicionarCarrinho(indice) {
-    carrinho.push(produtos[indice]);
-    atualizarCarrinho();
-}
+// ================================
+// ADICIONAR AO CARRINHO
+// ================================
 
-function atualizarCarrinho() {
-    document.getElementById("quantidade").textContent =
-        carrinho.length;
+function addToCart(id) {
 
-    const area = document.getElementById("itens-carrinho");
-    let total = 0;
+    const product = products.find(item => item.id === id);
 
-    area.innerHTML = "";
+    if (!product) return;
 
-    carrinho.forEach((produto, indice) => {
-        total += produto.preco;
+    const existing = cart.find(item => item.id === id);
 
-        area.innerHTML += `
-            <div class="item-carrinho">
-                <span>${produto.nome} - ${produto.preco.toLocaleString(
-                    "pt-BR", {
-                        style: "currency",
-                        currency: "BRL"
-                    })}</span>
-                <button onclick="removerCarrinho(${indice})">
-                    Remover
-                </button>
-            </div>
-        `;
-    });
-
-    document.getElementById("total").textContent =
-        "Total: " + total.toLocaleString("pt-BR", {
-            style: "currency",
-            currency: "BRL"
+    if (existing) {
+        existing.quantity++;
+    } else {
+        cart.push({
+            ...product,
+            quantity: 1
         });
+    }
+
+    updateCart();
+
+    alert(product.name + " adicionado ao carrinho!");
+
 }
 
-function removerCarrinho(indice) {
-    carrinho.splice(indice, 1);
-    atualizarCarrinho();
+// ================================
+// ATUALIZAR CARRINHO
+// ================================
+
+function updateCart() {
+
+    const cartItems = document.getElementById("cart-items");
+    const totalElement = document.getElementById("total");
+
+    if (!cartItems || !totalElement) return;
+
+    cartItems.innerHTML = "";
+
+    let total = 0;
+    let quantityTotal = 0;
+
+    if (cart.length === 0) {
+
+        cartItems.innerHTML = "<p>Seu carrinho está vazio.</p>";
+
+    }
+
+    cart.forEach(item => {
+
+        const subtotal = item.price * item.quantity;
+
+        total += subtotal;
+        quantityTotal += item.quantity;
+
+        cartItems.innerHTML += `
+            <div class="cart-item">
+
+                <span>
+                    ${item.name}
+                    (x${item.quantity})
+                </span>
+
+                <span>
+                    ${formatPrice(subtotal)}
+
+                    <button onclick="removeItem(${item.id})">
+                        ❌
+                    </button>
+                </span>
+
+            </div>
+        `;
+
+    });
+
+    totalElement.innerHTML = `
+        Total: ${formatPrice(total)}
+        <br>
+        <small>Produtos: ${quantityTotal}</small>
+    `;
+
 }
 
-function abrirCarrinho() {
-    document.getElementById("carrinho").style.display = "flex";
+// ================================
+// REMOVER PRODUTO
+// ================================
+
+function removeItem(id) {
+
+    const item = cart.find(product => product.id === id);
+
+    if (!item) return;
+
+    if (item.quantity > 1) {
+        item.quantity--;
+    } else {
+        cart = cart.filter(product => product.id !== id);
+    }
+
+    updateCart();
+
 }
 
-function fecharCarrinho() {
-    document.getElementById("carrinho").style.display = "none";
+// ================================
+// LIMPAR CARRINHO
+// ================================
+
+function clearCart() {
+
+    cart = [];
+
+    updateCart();
+
 }
 
-function finalizarCompra() {
-    if (carrinho.length === 0) {
+// ================================
+// PESQUISAR PRODUTOS
+// ================================
+
+function searchProducts() {
+
+    const search = document
+        .getElementById("search")
+        .value
+        .toLowerCase();
+
+    const filtered = products.filter(product =>
+        product.name.toLowerCase().includes(search)
+    );
+
+    showProducts(filtered);
+
+}
+
+// ================================
+// FINALIZAR COMPRA
+// ================================
+
+function checkout() {
+
+    if (cart.length === 0) {
+
         alert("Seu carrinho está vazio!");
+
         return;
     }
 
-    alert("Compra demonstrativa! O pagamento não foi realizado.");
+    const total = cart.reduce((sum, item) => {
+        return sum + item.price * item.quantity;
+    }, 0);
+
+    alert(
+        "PEDIDO REALIZADO COM SUCESSO!\n\n" +
+        "Total: " + formatPrice(total) +
+        "\n\nObrigado por comprar na GTA 6 STORE!"
+    );
+
+    clearCart();
+
 }
 
-mostrarProdutos();
+// ================================
+// INICIALIZAR LOJA
+// ================================
 
+document.addEventListener("DOMContentLoaded", () => {
+
+    showProducts();
+
+    updateCart();
+
+});
