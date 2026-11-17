@@ -1,10 +1,8 @@
+// Apenas memória temporária (sem localStorage)
 let tarefas = [];
-let dataSelecionada = new Date().toISOString().split('T')[0]; // Inicia na data de hoje (YYYY-MM-DD)
+let dataSelecionada = new Date().toISOString().split('T')[0];
 
 function atualizarSistema() {
-  try {
-    localStorage.setItem('notion_calendario_tarefas', JSON.stringify(tarefas));
-  } catch (e) {}
   atualizarKPIs();
   renderizarCalendario();
   renderizarBoletimEDados();
@@ -26,7 +24,6 @@ function atualizarKPIs() {
   document.getElementById('kpi-concluidas').textContent = tarefas.filter(t => t.concluida).length;
 }
 
-// Cadastrar com regras exigidas (título min 5 caracteres, prioridade 1 a 3)
 window.cadastrarTarefa = function() {
   const codigoInput = document.getElementById('codigo');
   const tituloInput = document.getElementById('titulo');
@@ -58,7 +55,7 @@ window.cadastrarTarefa = function() {
   };
 
   tarefas.unshift(novaTarefa);
-  dataSelecionada = dataTarefa; // Seleciona automaticamente o dia da nova tarefa
+  dataSelecionada = dataTarefa;
   atualizarSistema();
 
   codigoInput.value = '';
@@ -90,14 +87,12 @@ window.excluirTarefa = function(id) {
   mostrarToast('Tarefa excluída.');
 };
 
-// Selecionar dia ao clicar no calendário
 window.selecionarDia = function(dataStr) {
   dataSelecionada = dataStr;
   renderizarCalendario();
   renderizarBoletimEDados();
 };
 
-// Renderizar o Mini Calendário Personalizado
 window.renderizarCalendario = function() {
   const grid = document.getElementById('grid-calendario');
   const labelMes = document.getElementById('mes-atual-label');
@@ -113,12 +108,10 @@ window.renderizarCalendario = function() {
   labelMes.textContent = agora.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
 
   let html = '';
-  // Espaços vazios iniciais
   for (let i = 0; i < primeiroDiaDoMes; i++) {
     html += `<div></div>`;
   }
 
-  // Dias do mês
   for (let dia = 1; dia <= ultimoDiaDoMes; dia++) {
     const diaStr = String(dia).padStart(2, '0');
     const mesStr = String(mes + 1).padStart(2, '0');
@@ -148,7 +141,6 @@ window.renderizarCalendario = function() {
   if (typeof lucide !== 'undefined') lucide.createIcons();
 };
 
-// Renderizar Boletim Diário e Tarefas do Dia
 window.renderizarBoletimEDados = function() {
   const labelData = document.getElementById('data-selecionada-label');
   const contador = document.getElementById('contador-tarefas-data');
@@ -164,7 +156,6 @@ window.renderizarBoletimEDados = function() {
   const tarefasDoDia = tarefas.filter(t => t.data === dataSelecionada);
   contador.textContent = tarefasDoDia.length;
 
-  // Emissão do Boletim Diário
   const totalDia = tarefasDoDia.length;
   const concluidasDia = tarefasDoDia.filter(t => t.concluida).length;
   const pendentesDia = totalDia - concluidasDia;
@@ -183,7 +174,6 @@ window.renderizarBoletimEDados = function() {
     boletimDiv.innerHTML = `<p class="text-stone-700">Você tem <strong>${pendentesDia}</strong> tarefa(s) pendente(s) e <strong>${concluidasDia}</strong> concluída(s) para hoje. Foco no objetivo!</p>`;
   }
 
-  // Listagem na tela
   lista.innerHTML = tarefasDoDia.length === 0
     ? `<div class="text-center py-8 text-stone-400 text-xs border border-dashed border-stone-200 rounded-xl">Sem registros para esta data.</div>`
     : tarefasDoDia.map(t => `
@@ -211,7 +201,7 @@ window.renderizarBoletimEDados = function() {
             <option value="2" ${t.prioridade === 2 ? 'selected' : ''}>2 - Média</option>
             <option value="3" ${t.prioridade === 3 ? 'selected' : ''}>3 - Baixa</option>
           </select>
-          <button type="button" onclick="excluirTarefa(${t.id})" class="text-stone-400 hover:text-rose-600 p-1">
+          <button type="button" onclick="excluirTarefa(${t.id})" class="text-stone-400 hover:text-rose-600 p-1 cursor-pointer">
             <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
           </button>
         </div>
@@ -227,7 +217,6 @@ window.limparTudo = function() {
   mostrarToast('Agenda zerada!');
 };
 
-// Inicialização
 setTimeout(() => {
   const inputData = document.getElementById('data-tarefa');
   if (inputData) inputData.value = dataSelecionada;
