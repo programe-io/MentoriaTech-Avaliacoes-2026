@@ -1,37 +1,33 @@
 
-let produtos = [];
+let tarefas = [];
 
 function cadastrar() {
     let codigo = Number(document.getElementById("codigo").value);
-    let descricao = document.getElementById("descricao").value.trim();
-    let quantidade = document.getElementById("quantidade").value;
-    let valor = document.getElementById("valor").value;
+    let titulo = document.getElementById("titulo").value.trim();
+    let prioridade = document.getElementById("prioridade").value;
 
-    if (!codigo || !descricao || quantidade === "" ||
-        valor === "" || Number(quantidade) < 0 ||
-        Number(valor) < 0) {
-        alert("Preencha todos os campos corretamente!");
+    if (!codigo || titulo.length < 5 || prioridade === "") {
+        alert("Preencha os campos corretamente!");
         return;
     }
 
-    if (produtos.some(p => p.codigo === codigo)) {
+    if (tarefas.some(t => t.codigo === codigo)) {
         alert("Código já cadastrado!");
         return;
     }
 
-    produtos.push({
+    tarefas.push({
         codigo: codigo,
-        descricao: descricao,
-        quantidade: Number(quantidade),
-        valor: Number(valor)
+        titulo: titulo,
+        prioridade: Number(prioridade),
+        concluida: false
     });
 
-    alert("Produto cadastrado com sucesso!");
+    alert("Tarefa cadastrada com sucesso!");
 
     document.getElementById("codigo").value = "";
-    document.getElementById("descricao").value = "";
-    document.getElementById("quantidade").value = "";
-    document.getElementById("valor").value = "";
+    document.getElementById("titulo").value = "";
+    document.getElementById("prioridade").value = "";
 
     listar();
 }
@@ -40,58 +36,52 @@ function listar() {
     let lista = document.getElementById("lista");
     lista.innerHTML = "";
 
-    produtos.forEach(produto => {
+    tarefas.forEach(tarefa => {
         lista.innerHTML += `
             <tr>
-                <td>${produto.codigo}</td>
-                <td>${produto.descricao}</td>
-                <td>${produto.quantidade}</td>
-                <td>R$ ${produto.valor.toFixed(2)}</td>
+                <td>${tarefa.codigo}</td>
+                <td>${tarefa.titulo}</td>
+                <td>${tarefa.prioridade}</td>
+                <td>${tarefa.concluida ? "Concluída" : "Pendente"}</td>
             </tr>
         `;
     });
 }
 
-function alterarValor() {
-    let codigo = Number(document.getElementById("codigoAlterar").value);
-    let valor = document.getElementById("novoValor").value;
+function concluir() {
+    let codigo = Number(document.getElementById("codigoConcluir").value);
 
-    let produto = produtos.find(p => p.codigo === codigo);
+    let tarefa = tarefas.find(t => t.codigo === codigo);
 
-    if (!produto) {
-        alert("Produto não encontrado!");
+    if (!tarefa) {
+        alert("Tarefa não encontrada!");
         return;
     }
 
-    if (valor === "" || Number(valor) < 0) {
-        alert("Digite um valor válido!");
-        return;
-    }
+    tarefa.concluida = true;
 
-    produto.valor = Number(valor);
-
-    alert("Valor alterado com sucesso!");
+    alert("Tarefa concluída com sucesso!");
     listar();
 }
 
-function alterarQuantidade() {
+function alterarPrioridade() {
     let codigo = Number(document.getElementById("codigoAlterar").value);
-    let quantidade = document.getElementById("novaQuantidade").value;
+    let prioridade = document.getElementById("novaPrioridade").value;
 
-    let produto = produtos.find(p => p.codigo === codigo);
+    let tarefa = tarefas.find(t => t.codigo === codigo);
 
-    if (!produto) {
-        alert("Produto não encontrado!");
+    if (!tarefa) {
+        alert("Tarefa não encontrada!");
         return;
     }
 
-    if (quantidade === "" || Number(quantidade) < 0) {
-        alert("Digite uma quantidade válida!");
+    if (prioridade === "") {
+        alert("Selecione uma prioridade!");
         return;
     }
 
-    produto.quantidade = Number(quantidade);
+    tarefa.prioridade = Number(prioridade);
 
-    alert("Quantidade alterada com sucesso!");
+    alert("Prioridade alterada com sucesso!");
     listar();
 }
