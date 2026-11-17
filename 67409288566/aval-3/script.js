@@ -1,96 +1,80 @@
-// Array principal que guarda os produtos do estoque
-const estoque = [];
+const form = document.getElementById('form-imc');
+const btnLimpar = document.getElementById('btn-limpar');
+const caixaResultado = document.getElementById('resultado');
 
-// 1. FUNÇÃO PARA CADASTRAR UM NOVO PRODUTO
-document.getElementById('form-cadastro').addEventListener('submit', function(event) {
-  event.preventDefault();
+form.addEventListener('submit', function (evento) {
+    evento.preventDefault();
 
-  const codigo = document.getElementById('cad-codigo').value.trim();
-  const descricao = document.getElementById('cad-descricao').value.trim();
-  const quantidade = parseInt(document.getElementById('cad-quantidade').value);
-  const valor = parseFloat(document.getElementById('cad-valor').value);
+    // 1. Receber os dados
+    const nome = document.getElementById('nome').value.trim();
+    const peso = parseFloat(document.getElementById('peso').value);
+    const altura = parseFloat(document.getElementById('altura').value);
 
-  // Verifica se o código já foi cadastrado
-  const produtoExistente = estoque.find(item => item.codigo === codigo);
-  if (produtoExistente) {
-    alert('Erro: Já existe um produto com esse código!');
-    return;
-  }
+    // Validação simples
+    if (!nome || isNaN(peso) || isNaN(altura) || altura <= 0 || peso <= 0) {
+        alert('Por favor, preencha todos os campos com valores válidos.');
+        return;
+    }
 
-  // Adiciona o novo objeto ao estoque
-  estoque.push({
-    codigo: codigo,
-    descricao: descricao,
-    quantidade: quantidade,
-    valor: valor
-  });
+    // 2. Calcular o IMC
+    const imc = peso / (altura * altura);
+    const dadosClassificacao = obterClassificacaoIMC(imc);
 
-  alert('Produto cadastrado com sucesso!');
-  this.reset();
-  listarProdutos();
+    // 3. Exibir informações do paciente
+    exibirResultado(nome, imc, dadosClassificacao);
 });
 
-// 2. FUNÇÃO PARA LISTAR OS PRODUTOS CADASTRADOS
-function listarProdutos() {
-  const corpoTabela = document.getElementById('corpo-tabela');
-  corpoTabela.innerHTML = '';
+btnLimpar.addEventListener('click', function () {
+    form.reset();
+    caixaResultado.classList.add('oculto');
+});
 
-  if (estoque.length === 0) {
-    corpoTabela.innerHTML = '<tr><td colspan="4" class="vazio">Nenhum produto cadastrado.</td></tr>';
-    return;
-  }
-
-  estoque.forEach(produto => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${produto.codigo}</td>
-      <td>${produto.descricao}</td>
-      <td>${produto.quantidade}</td>
-      <td>R$ ${produto.valor.toFixed(2).replace('.', ',')}</td>
-    `;
-    corpoTabela.appendChild(tr);
-  });
+function obterClassificacaoIMC(imc) {
+    if (imc < 18.5) {
+        return {
+            texto: 'Abaixo do peso',
+            classeCss: 'abaixo',
+            orientacao: 'O índice indica peso abaixo do ideal para a altura. Recomenda-se avaliação nutricional para ganho de massa saudável.'
+        };
+    } else if (imc < 25) {
+        return {
+            texto: 'Peso normal (Eutrofia)',
+            classeCss: 'normal',
+            orientacao: 'Parabéns! O peso está adequado para a altura. Mantenha hábitos alimentares equilibrados e prática regular de exercícios.'
+        };
+    } else if (imc < 30) {
+        return {
+            texto: 'Sobrepeso',
+            classeCss: 'sobrepeso',
+            orientacao: 'Atenção: índice acima da faixa ideal. Ajustes na alimentação e aumento da atividade física ajudam a prevenir riscos futuros.'
+        };
+    } else if (imc < 35) {
+        return {
+            texto: 'Obesidade Grau I',
+            classeCss: 'obesidade',
+            orientacao: 'Sinal de alerta para a saúde. É importante buscar acompanhamento médico e nutricional para controle de peso.'
+        };
+    } else if (imc < 40) {
+        return {
+            texto: 'Obesidade Grau II',
+            classeCss: 'obesidade',
+            orientacao: 'Risco elevado para condições metabólicas e cardiovasculares. Recomenda-se acompanhamento multidisciplinar.'
+        };
+    } else {
+        return {
+            texto: 'Obesidade Grau III',
+            classeCss: 'obesidade',
+            orientacao: 'Risco muito elevado. Procure orientação médica especializada para um plano de cuidado individualizado.'
+        };
+    }
 }
 
-// Botão manual para listar
-document.getElementById('btn-listar').addEventListener('click', listarProdutos);
+function exibirResultado(nome, imc, dados) {
+    document.getElementById('res-paciente').textContent = `Paciente: ${nome}`;
+    document.getElementById('res-valor').textContent = imc.toFixed(2).replace('.', ',');
+    document.getElementById('res-classificacao').textContent = dados.texto;
+    document.getElementById('res-info').textContent = dados.orientacao;
 
-// 3. FUNÇÃO PARA ALTERAR O VALOR DE UM PRODUTO
-document.getElementById('form-valor').addEventListener('submit', function(event) {
-  event.preventDefault();
-
-  const codigoBusca = document.getElementById('val-codigo').value.trim();
-  const novoValor = parseFloat(document.getElementById('val-novo').value);
-
-  const produto = estoque.find(item => item.codigo === codigoBusca);
-
-  if (!produto) {
-    alert('Produto não encontrado! Verifique o código digitado.');
-    return;
-  }
-
-  produto.valor = novoValor;
-  alert(`Valor do produto "${produto.descricao}" atualizado!`);
-  this.reset();
-  listarProdutos();
-});
-
-// 4. FUNÇÃO PARA ALTERAR A QUANTIDADE DE UM PRODUTO
-document.getElementById('form-quantidade').addEventListener('submit', function(event) {
-  event.preventDefault();
-
-  const codigoBusca = document.getElementById('qtd-codigo').value.trim();
-  const novaQuantidade = parseInt(document.getElementById('qtd-nova').value);
-
-  const produto = estoque.find(item => item.codigo === codigoBusca);
-
-  if (!produto) {
-    alert('Produto não encontrado! Verifique o código digitado.');
-    return;
-  }
-
-  produto.quantidade = novaQuantidade;
-  alert(`Quantidade do produto "${produto.descricao}" atualizada!`);
-  this.reset();
-  listarProdutos();
-});
+    // Atualiza a cor da borda/fundo conforme o resultado
+    caixaResultado.className = `resultado ${dados.classeCss}`;
+}
