@@ -1,0 +1,80 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de IMC</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<main>
+    <h1>Ficha de Anamnese - Controle de IMC</h1>
+
+    <section class="card">
+        <h2>Cadastro de Paciente</h2>
+
+        <form id="form-pessoa">
+
+            <div class="campo">
+                <label for="nome">Nome:</label>
+                <input type="text" id="nome" maxlength="50"
+                    placeholder="Digite o nome" required>
+            </div>
+
+            <div class="campo">
+                <label for="idade">Idade:</label>
+                <input type="number" id="idade" min="1" max="120"
+                    placeholder="Digite a idade" required>
+            </div>
+
+            <div class="campo">
+                <label for="altura">Altura (metros):</label>
+                <input type="number" id="altura" min="0.5" max="2.5"
+                    step="0.01" placeholder="Ex: 1.70" required>
+            </div>
+
+            <div class="campo">
+                <label for="peso">Peso (kg):</label>
+                <input type="number" id="peso" min="1" max="500"
+                    step="0.1" placeholder="Ex: 70" required>
+            </div>
+
+            <p id="erro"></p>
+
+            <div class="botoes">
+                <button type="submit">Salvar</button>
+                <button type="reset" class="cancelar">Cancelar</button>
+            </div>
+
+        </form>
+    </section>
+
+    <section class="card">
+        <h2>Pacientes Cadastrados</h2>
+
+        <div class="tabela-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Idade</th>
+                        <th>Altura</th>
+                        <th>Peso</th>
+                        <th>IMC</th>
+                        <th>Classificação</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+
+                <tbody id="tabela-pessoas">
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>
