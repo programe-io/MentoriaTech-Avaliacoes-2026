@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Instagram</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<link href="https://cdn.boxicons.com/3.0.8/fonts/basic/boxicons.min.css" rel="stylesheet">
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+    background: #fafafa;
+    font-family: Arial, sans-serif;
+}
+
+.story-ring {
+    background: linear-gradient(45deg,#ffb800,#ff0069,#d300c5,#7638fa);
+    padding: 3px;
+}
+
+.story-ring img {
+    border: 3px solid white;
+}
+
+.post {
+    background: white;
+    border: 1px solid #e8e8e8;
+    border-radius: 13px;
+    overflow: hidden;
+    margin-bottom: 24px;
+}
+
+.post-photo {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+}
+
+.action {
+    font-size: 27px;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.action:hover {
+    transform: scale(1.12);
+}
+
+.liked {
+    color: #ed3157;
+}
+
+.story {
+    flex-shrink: 0;
+    text-align: center;
+    cursor: pointer;
+}
+
+.story img {
+    width: 65px;
+    height: 65px;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.comment-area { display: none; }
+.comment-area.show { display: block; }
+
+.nav-icon {
+    font-size: 26px;
+    cursor: pointer;
+}
+
+@media(min-width:768px) {
+    .mobile-nav { display: none; }
+}
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="text-gray-900">
+
+<!-- CABEÇALHO -->
+<header class="sticky top-0 z-50 bg-white border-b border-gray-200">
+    <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
+
+        <h1 class="text-2xl font-bold tracking-tight">
+            Instagram<span class="text-pink-500">.</span>
+        </h1>
+
+        <div class="hidden md:block">
+            <input type="search" placeholder="Pesquisar"
+            class="bg-gray-100 rounded-xl px-4 py-2 w-64 outline-none">
+        </div>
+
+        <div class="flex items-center gap-5">
+            <i class="bx bx-home nav-icon"></i>
+            <i class="bx bx-message-circle nav-icon"></i>
+            <i class="bx bx-plus-square nav-icon"></i>
+            <img class="w-9 h-9 rounded-full object-cover"
+            src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100"
+            alt="Meu perfil">
+        </div>
+    </div>
+</header>
+
+<main class="max-w-5xl mx-auto px-3 md:px-5 py-6">
+
+<div class="flex gap-8">
+
+<!-- FEED -->
+<div class="w-full max-w-xl mx-auto">
+
+<!-- STORIES -->
+<section class="bg-white border border-gray-200 rounded-xl p-4 mb-6">
+
+<div class="flex gap-5 overflow-x-auto pb-1">
+
+<div class="story" onclick="alert('Criar story!')">
+    <div class="w-[65px] h-[65px] rounded-full bg-gray-100 flex items-center justify-center">
+        <i class="bx bx-plus text-3xl"></i>
+    </div>
+    <p class="text-xs mt-2">Seu story</p>
+</div>
+
+<div class="story">
+    <div class="story-ring rounded-full">
+        <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150">
+    </div>
+    <p class="text-xs mt-2">João</p>
+</div>
+
+<div class="story">
+    <div class="story-ring rounded-full">
+        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150">
+    </div>
+    <p class="text-xs mt-2">Evelyn</p>
+</div>
+
+<div class="story">
+    <div class="story-ring rounded-full">
+        <img src="https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=150">
+    </div>
+    <p class="text-xs mt-2">Maria</p>
+</div>
+
+<div class="story">
+    <div class="story-ring rounded-full">
+        <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150">
+    </div>
+    <p class="text-xs mt-2">Lucas</p>
+</div>
+
+<div class="story">
+    <div class="story-ring rounded-full">
+        <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=150">
+    </div>
+    <p class="text-xs mt-2">Ana</p>
+</div>
+
+<div class="story">
+    <div class="story-ring rounded-full">
+        <img src="https://images.unsplash.com/photo-1501196354995-cbb51c65aaea?w=150">
+    </div>
+    <p class="text-xs mt-2">Pedro</p>
+</div>
+
+</div>
+</section>
+
+<!-- PUBLICAÇÕES -->
+<div id="feed"></div>
+
+</div>
+
+<!-- SUGESTÕES -->
+<aside class="hidden lg:block w-72 pt-4">
+
+<div class="flex items-center gap-3 mb-6">
+    <img class="w-12 h-12 rounded-full object-cover"
+    src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100">
+
+    <div class="flex-1">
+        <p class="text-sm font-bold">adao.oficial</p>
+        <p class="text-xs text-gray-500">Adão</p>
+    </div>
+    <span class="text-xs text-blue-500 font-bold">Mudar</span>
+</div>
+
+<div class="flex justify-between mb-4">
+    <p class="text-sm font-bold text-gray-500">Sugestões para você</p>
+    <p class="text-xs font-bold">Ver tudo</p>
+</div>
+
+<div id="suggestions"></div>
+
+<p class="text-xs text-gray-400 mt-8 leading-6">
+    Sobre · Ajuda · Imprensa · API · Privacidade · Termos
+    <br><br>
+    © 2026 INSTAGRAM
+</p>
+
+</aside>
+
+</div>
+</main>
+
+<!-- MENU INFERIOR -->
+<nav class="mobile-nav fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50">
+<div class="flex justify-around items-center py-3">
+    <i class="bx bx-home nav-icon"></i>
+    <i class="bx bx-search nav-icon"></i>
+    <i class="bx bx-plus-square nav-icon"></i>
+    <i class="bx bx-heart nav-icon"></i>
+    <i class="bx bx-user nav-icon"></i>
+</div>
+</nav>
+
+<script>
+
+const posts = [
+
+{
+user:"cristiano",
+location:"Portugal 🇵🇹",
+avatar:"https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150",
+photo:"https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=900",
+likes:"1.267.890",
+caption:"Vivendo cada momento. O trabalho nunca para! ⚽",
+comment:"Que inspiração! ❤️",
+time:"HÁ 1 HORA"
+},
+
+{
+user:"neymarjr",
+location:"Brasil 🇧🇷",
+avatar:"https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150",
+photo:"https://images.unsplash.com/photo-1517466787929-bc90951d0974?w=900",
+likes:"850.234",
+caption:"A alegria de jogar futebol não tem preço! ⚽🔥",
+comment:"Craque demais!",
+time:"HÁ 3 HORAS"
+},
+
+{
+user:"virginia",
+location:"Rio de Janeiro",
+avatar:"https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150",
+photo:"https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=900",
+likes:"125.890",
+caption:"Um dia especial merece uma foto especial! ✨💕",
+comment:"Maravilhosa!",
+time:"HÁ 5 HORAS"
+},
+
+{
+user:"vinijr",
+location:"Madrid, Espanha",
+avatar:"https://images.unsplash.com/photo-1501196354995-cbb51c65aaea?w=150",
+photo:"https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=900",
+likes:"967.321",
+caption:"Nunca desista dos seus sonhos. Vamos pra cima! 🏆",
+comment:"Orgulho do Brasil! 🇧🇷",
+time:"HÁ 7 HORAS"
+},
+
+{
+user:"anitta",
+location:"São Paulo",
+avatar:"https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=150",
+photo:"https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=900",
+likes:"456.890",
+caption:"Música, alegria e muita energia! 🎤❤️",
+comment:"Você é incrível!",
+time:"HÁ 9 HORAS"
+},
+
+{
+user:"leomessi",
+location:"Miami, EUA",
+avatar:"https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150",
+photo:"https://images.unsplash.com/photo-1518091043644-c1d4457512c6?w=900",
+likes:"2.345.678",
+caption:"O futebol é uma paixão que nunca acaba! 🐐⚽",
+comment:"Lenda!",
+time:"HÁ 12 HORAS"
+}
+
+];
+
+const feed = document.getElementById("feed");
+
+function renderPosts() {
+
+posts.forEach(post => {
+
+const article = document.createElement("article");
+article.className = "post";
+
+article.innerHTML = `
+
+<header class="flex items-center justify-between p-3">
+
+<div class="flex items-center gap-3">
+<img src="${post.avatar}" class="w-10 h-10 rounded-full object-cover">
+
+<div>
+<p class="text-sm font-bold">${post.user}</p>
+<p class="text-xs text-gray-500">${post.location}</p>
+</div>
+</div>
+
+<button onclick="alert('Mais opções da publicação')">
+<i class="bx bx-dots-horizontal-rounded text-2xl"></i>
+</button>
+
+</header>
+
+<img src="${post.photo}" class="post-photo" loading="lazy">
+
+<div class="p-3">
+
+<div class="flex justify-between mb-3">
+
+<div class="flex gap-4">
+
+<button onclick="likePost(this)">
+<i class="bx bx-heart action"></i>
+</button>
+
+<button onclick="toggleComments(this)">
+<i class="bx bx-message-circle action"></i>
+</button>
+
+<button onclick="sharePost()">
+<i class="bx bx-paper-plane action"></i>
+</button>
+
+</div>
+
+<button onclick="savePost(this)">
+<i class="bx bx-bookmark action"></i>
+</button>
+
+</div>
+
+<p class="font-bold text-sm mb-2">${post.likes} curtidas</p>
+
+<p class="text-sm">
+<strong>${post.user}</strong> ${post.caption}
+</p>
+
+<p class="text-sm text-gray-500 mt-2">
+Ver todos os comentários
+</p>
+
+<div class="comment-area mt-3">
+
+<div class="comments text-sm"></div>
+
+<div class="flex items-center gap-2 mt-3 border-t pt-3">
+
+<input class="comment-input flex-1 outline-none text-sm"
+placeholder="Adicione um comentário...">
+
+<button onclick="addComment(this)"
+class="text-blue-500 font-bold text-sm">
+Publicar
+</button>
+
+</div>
+</div>
+
+<p class="text-[10px] text-gray-400 mt-3">${post.time}</p>
+
+</div>
+`;
+
+feed.appendChild(article);
+
+});
+
+}
+
+function likePost(button) {
+
+const icon = button.querySelector("i");
+
+icon.classList.toggle("bx-heart");
+icon.classList.toggle("bxs-heart");
+icon.classList.toggle("liked");
+
+}
+
+function savePost(button) {
+
+const icon = button.querySelector("i");
+
+icon.classList.toggle("bx-bookmark");
+icon.classList.toggle("bxs-bookmark");
+
+}
+
+function toggleComments(button) {
+
+const article = button.closest("article");
+const area = article.querySelector(".comment-area");
+
+area.classList.toggle("show");
+
+}
+
+function addComment(button) {
+
+const area = button.closest(".comment-area");
+const input = area.querySelector(".comment-input");
+const text = input.value.trim();
+
+if(!text) {
+alert("Digite um comentário!");
+return;
+}
+
+const p = document.createElement("p");
+const strong = document.createElement("strong");
+
+strong.textContent = "adao.oficial: ";
+p.appendChild(strong);
+p.appendChild(document.createTextNode(text));
+
+area.querySelector(".comments").appendChild(p);
+
+input.value = "";
+
+}
+
+function sharePost() {
+
+if(navigator.share) {
+navigator.share({
+title:"Instagram",
+text:"Olha essa publicação!"
+}).catch(()=>{});
+} else {
+alert("Compartilhamento não disponível neste navegador.");
+}
+
+}
+
+// SUGESTÕES
+const suggestions = [
+["joao","https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100"],
+["maria","https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100"],
+["lucas","https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100"],
+["ana","https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=100"]
+];
+
+const suggestionBox = document.getElementById("suggestions");
+
+suggestions.forEach(person => {
+
+suggestionBox.innerHTML += `
+<div class="flex items-center gap-3 mb-4">
+<img src="${person[1]}" class="w-9 h-9 rounded-full object-cover">
+<p class="text-sm font-bold flex-1">${person[0]}</p>
+<button class="text-xs font-bold text-blue-500"
+onclick="this.textContent='Seguindo'">
+Seguir
+</button>
+</div>
+`;
+
+});
+
+renderPosts();
+
+</script>
+
+</body>
+</html>
