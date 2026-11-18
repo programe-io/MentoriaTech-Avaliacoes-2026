@@ -55,7 +55,64 @@ function listar(){
 }
 
 // Buscar tarefa
-function</code></pre>
+function buscar(codigo) {
+    const tarefa = tarefas.find(t =&gt; t.codigo === codigo);
+
+    if (!tarefa) {
+        throw new Error("Tarefa não encontrada!");
+    }
+
+    return tarefa;
+}
+
+// Concluir tarefa
+function concluir(codigo) {
+    const tarefa = buscar(codigo);
+
+    if (!tarefa.status) {
+        throw new Error("Tarefa já concluída!");
+    }
+
+    tarefas.status = false;
+     console.log("Tarefa concluída!");
+}
+
+// Alterar prioridade
+function alterar(codigo,prioridade) {
+    const tarefa = buscar(codigo);
+
+    validar(tarefa.titulo, prioridade);
+    tarefa.prioridade = prioridade;
+
+    console.log("Prioridade alterada!");
+}
+
+// Menu principal
+async function menu() {
+    const rl = require("readline").createInterface({
+        input: process.stdin,
+        output: process.stdout
+    });
+
+    const perguntar = mensagem =&gt; new Promise(resolve =&gt;
+    rl.question(mensagem, resolve)
+    );
+
+    let opcao;
+
+    do {
+        console.log(`
+===== GERENCIADOR DE TAREFAS =====
+1 - Cadastrar tarefa
+2 - Listar tarefa
+3 - Concluir tarefa
+4 - Alterar prioridade
+0 - Sair
+`);
+
+    opcao = await perguntar("Escolha: ");
+    }
+};</code></pre>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
   <script>hljs.highlightAll();</script>
 </body>
