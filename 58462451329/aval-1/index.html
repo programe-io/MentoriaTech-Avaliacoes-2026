@@ -1,0 +1,832 @@
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mundo Felino - Seu Blog sobre Gatos</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Plus Jakarta Sans e Lora -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Configuração Personalizada do Tailwind -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        serif: ['"Lora"', 'serif'],
+                    },
+                    colors: {
+                        cream: {
+                            50: '#FDFBF7',
+                            100: '#F8F4EC',
+                            200: '#EFE7D8',
+                        },
+                        terracotta: {
+                            100: '#F5E3DC',
+                            400: '#DF8A6B',
+                            500: '#D4724E',
+                            600: '#B85A38',
+                        },
+                        charcoal: {
+                            700: '#3D3A38',
+                            800: '#2A2827',
+                            900: '#1C1B1A',
+                        },
+                        sage: {
+                            100: '#E7ECE8',
+                            600: '#5A7360',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body class="bg-cream-50 text-charcoal-800 font-sans antialiased selection:bg-terracotta-100 selection:text-terracotta-600 flex flex-col min-h-screen">
+
+    <!-- Notificação Toast (Substituto elegante para alert) -->
+    <div id="toast-notification" class="fixed bottom-5 right-5 z-50 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none">
+        <div class="bg-charcoal-800 text-cream-50 px-6 py-3.5 rounded-2xl shadow-xl flex items-center gap-3 border border-charcoal-700">
+            <i data-lucide="check-circle-2" class="w-5 h-5 text-terracotta-400"></i>
+            <span id="toast-message" class="text-sm font-medium">Ação realizada com sucesso!</span>
+        </div>
+    </div>
+
+    <!-- Cabeçalho / Navegação -->
+    <header class="sticky top-0 z-40 bg-cream-50/90 backdrop-blur-md border-b border-cream-200 transition-all">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo -->
+                <a href="#" onclick="resetFilters(event)" class="flex items-center gap-3 group">
+                    <div class="w-11 h-11 bg-terracotta-500 rounded-2xl flex items-center justify-center text-white shadow-sm group-hover:bg-terracotta-600 transition-colors">
+                        <!-- Ícone SVG Estilizado de Gato -->
+                        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 5c.67 0 1.35.09 2 .26 1.78-2 5.03-2.84 6.42-2.26 1.4.58-.42 7-.42 7 .57 1.07 1 2.24 1 3.44C21 17.9 16.97 21 12 21s-9-3-9-7.56c0-1.25.5-2.4 1-3.44 0 0-1.89-6.42-.5-7 1.39-.58 4.72.23 6.5 2.23A9.04 9.04 0 0 1 12 5Z"/>
+                            <path d="M8 14v.5"/>
+                            <path d="M16 14v.5"/>
+                            <path d="M11.25 16.25h1.5L12 17l-.75-.75Z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <span class="font-serif font-semibold text-2xl tracking-tight text-charcoal-900 block leading-none">Mundo Felino</span>
+                        <span class="text-xs text-charcoal-700/70 font-medium">Amor & Bigodes</span>
+                    </div>
+                </a>
+
+                <!-- Menu Desktop -->
+                <nav class="hidden md:flex items-center space-x-1 lg:space-x-2">
+                    <button onclick="filterByCategory('Todos')" class="nav-btn px-4 py-2 rounded-xl text-sm font-semibold text-terracotta-600 bg-terracotta-100/60 transition-all" data-category="Todos">Início</button>
+                    <button onclick="filterByCategory('Curiosidades')" class="nav-btn px-4 py-2 rounded-xl text-sm font-medium text-charcoal-700 hover:bg-cream-200/70 transition-all" data-category="Curiosidades">Curiosidades</button>
+                    <button onclick="filterByCategory('Cuidados')" class="nav-btn px-4 py-2 rounded-xl text-sm font-medium text-charcoal-700 hover:bg-cream-200/70 transition-all" data-category="Cuidados">Cuidados</button>
+                    <button onclick="filterByCategory('Raças')" class="nav-btn px-4 py-2 rounded-xl text-sm font-medium text-charcoal-700 hover:bg-cream-200/70 transition-all" data-category="Raças">Raças</button>
+                    <a href="#contato" class="px-4 py-2 rounded-xl text-sm font-medium text-charcoal-700 hover:bg-cream-200/70 transition-all">Contato</a>
+                </nav>
+
+                <!-- Botão Menu Mobile -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" class="p-2.5 rounded-xl text-charcoal-800 hover:bg-cream-200 focus:outline-none transition-colors" aria-label="Abrir Menu">
+                        <i data-lucide="menu" class="w-6 h-6"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Menu Mobile Dropdown -->
+        <div id="mobile-menu" class="hidden md:hidden bg-cream-100 border-b border-cream-200 px-4 pt-2 pb-5 space-y-1">
+            <button onclick="filterByCategory('Todos'); toggleMobileMenu()" class="block w-full text-left px-4 py-3 rounded-xl text-base font-medium text-charcoal-800 hover:bg-cream-200">Início</button>
+            <button onclick="filterByCategory('Curiosidades'); toggleMobileMenu()" class="block w-full text-left px-4 py-3 rounded-xl text-base font-medium text-charcoal-800 hover:bg-cream-200">Curiosidades</button>
+            <button onclick="filterByCategory('Cuidados'); toggleMobileMenu()" class="block w-full text-left px-4 py-3 rounded-xl text-base font-medium text-charcoal-800 hover:bg-cream-200">Cuidados</button>
+            <button onclick="filterByCategory('Raças'); toggleMobileMenu()" class="block w-full text-left px-4 py-3 rounded-xl text-base font-medium text-charcoal-800 hover:bg-cream-200">Raças</button>
+            <a href="#contato" onclick="toggleMobileMenu()" class="block w-full text-left px-4 py-3 rounded-xl text-base font-medium text-charcoal-800 hover:bg-cream-200">Contato</a>
+        </div>
+    </header>
+
+    <!-- Hero Banner (Seção de Destaque) -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-12">
+        <div class="bg-cream-100 rounded-3xl p-6 sm:p-10 lg:p-14 border border-cream-200 shadow-sm relative overflow-hidden">
+            <!-- Elemento decorativo de fundo -->
+            <div class="absolute -right-20 -top-20 w-72 h-72 bg-terracotta-100/60 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -left-20 -bottom-20 w-72 h-72 bg-sage-100/80 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center relative z-10">
+                <!-- Texto Principal -->
+                <div class="lg:col-span-7 space-y-6">
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-terracotta-100 text-terracotta-600 text-xs font-bold uppercase tracking-wider">
+                        <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                        <span>Bem-vindo ao universo dos bichanos</span>
+                    </div>
+                    <h1 class="font-serif text-3xl sm:text-4xl lg:text-5xl font-semibold text-charcoal-900 leading-tight">
+                        Descubra os segredos, manias e encantos do mundo dos gatos.
+                    </h1>
+                    <p class="text-charcoal-700 text-base sm:text-lg leading-relaxed max-w-2xl">
+                        De dicas práticas de saúde e bem-estar até as curiosidades mais fascinantes sobre o comportamento felino. Tudo feito com carinho para gateiros apaixonados.
+                    </p>
+                    <div class="flex flex-wrap items-center gap-4 pt-2">
+                        <a href="#artigos" class="px-6 py-3.5 bg-terracotta-500 hover:bg-terracotta-600 text-white font-semibold rounded-2xl shadow-sm hover:shadow transition-all inline-flex items-center gap-2">
+                            <span>Explorar Artigos</span>
+                            <i data-lucide="arrow-down" class="w-4 h-4"></i>
+                        </a>
+                        <button onclick="openArticle(1)" class="px-6 py-3.5 bg-white hover:bg-cream-200/60 text-charcoal-800 font-semibold rounded-2xl border border-cream-200 transition-all">
+                            Ler Destaque da Semana
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Ilustração / Imagem Estilizada -->
+                <div class="lg:col-span-5 flex justify-center">
+                    <div class="relative w-full max-w-md">
+                        <div class="aspect-[4/3] rounded-3xl overflow-hidden shadow-md border-4 border-white bg-terracotta-100">
+                            <img 
+                                src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=800&q=80" 
+                                alt="Gato fofo olhando curiosamente" 
+                                onerror="this.onerror=null; this.src='https://placehold.co/800x600/F5E3DC/B85A38?text=Mundo+Felino';"
+                                class="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
+                            >
+                        </div>
+                        <!-- Card Flutuante Decorativo -->
+                        <div class="absolute -bottom-4 -left-4 sm:-left-6 bg-white p-4 rounded-2xl shadow-lg border border-cream-200 flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-sage-100 text-sage-600 flex items-center justify-center">
+                                <i data-lucide="heart" class="w-5 h-5 fill-current"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-charcoal-700/70 font-medium">Comunidade</p>
+                                <p class="text-sm font-bold text-charcoal-900">+15 mil gateiros</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Conteúdo Principal (Lista de Posts + Sidebar) -->
+    <main id="artigos" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
+        
+        <!-- Barra de Controle: Título da Seção, Filtros Rápidos e Pesquisa -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-8 border-b border-cream-200 mb-8">
+            <div>
+                <h2 id="section-title" class="font-serif text-2xl sm:text-3xl font-semibold text-charcoal-900">Últimas Publicações</h2>
+                <p id="results-count" class="text-sm text-charcoal-700/80 mt-1">Mostrando todos os artigos disponíveis</p>
+            </div>
+
+            <!-- Barra de Pesquisa -->
+            <div class="relative w-full md:w-80">
+                <input 
+                    type="text" 
+                    id="search-input" 
+                    placeholder="Buscar artigos, dicas, raças..." 
+                    class="w-full pl-11 pr-10 py-3 bg-white border border-cream-200 rounded-2xl text-sm text-charcoal-800 placeholder-charcoal-700/50 focus:outline-none focus:border-terracotta-400 focus:ring-2 focus:ring-terracotta-100 transition-all shadow-sm"
+                >
+                <i data-lucide="search" class="w-4 h-4 text-charcoal-700/50 absolute left-4 top-1/2 -translate-y-1/2"></i>
+                <button id="clear-search" onclick="clearSearch()" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-charcoal-700/50 hover:text-charcoal-900 p-1">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Pills de Filtro Mobile/Tablet -->
+        <div class="flex items-center gap-2 overflow-x-auto pb-4 mb-6 no-scrollbar">
+            <button onclick="filterByCategory('Todos')" class="filter-pill px-4 py-2 rounded-full text-xs font-semibold bg-charcoal-800 text-white whitespace-nowrap transition-all" data-category="Todos">Todos</button>
+            <button onclick="filterByCategory('Curiosidades')" class="filter-pill px-4 py-2 rounded-full text-xs font-semibold bg-cream-100 text-charcoal-700 hover:bg-cream-200 whitespace-nowrap transition-all" data-category="Curiosidades">Curiosidades</button>
+            <button onclick="filterByCategory('Cuidados')" class="filter-pill px-4 py-2 rounded-full text-xs font-semibold bg-cream-100 text-charcoal-700 hover:bg-cream-200 whitespace-nowrap transition-all" data-category="Cuidados">Cuidados</button>
+            <button onclick="filterByCategory('Raças')" class="filter-pill px-4 py-2 rounded-full text-xs font-semibold bg-cream-100 text-charcoal-700 hover:bg-cream-200 whitespace-nowrap transition-all" data-category="Raças">Raças</button>
+            <button onclick="filterByCategory('Comportamento')" class="filter-pill px-4 py-2 rounded-full text-xs font-semibold bg-cream-100 text-charcoal-700 hover:bg-cream-200 whitespace-nowrap transition-all" data-category="Comportamento">Comportamento</button>
+        </div>
+
+        <!-- Grid Principal: 8 colunas para Posts, 4 colunas para Sidebar -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10">
+            
+            <!-- Coluna de Artigos -->
+            <div class="lg:col-span-8">
+                <!-- Container onde os cards serão injetados via JS -->
+                <div id="posts-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
+                    <!-- Cards gerados dinamicamente -->
+                </div>
+
+                <!-- Estado Vazio (Quando a busca não encontra nada) -->
+                <div id="empty-state" class="hidden bg-cream-100 rounded-3xl p-12 text-center border border-cream-200">
+                    <div class="w-16 h-16 bg-terracotta-100 text-terracotta-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <i data-lucide="cat" class="w-8 h-8"></i>
+                    </div>
+                    <h3 class="font-serif text-xl font-semibold text-charcoal-900 mb-2">Nenhum gatinho encontrado por aqui!</h3>
+                    <p class="text-charcoal-700/80 text-sm max-w-md mx-auto mb-6">
+                        Não encontramos nenhum artigo com os termos pesquisados. Tente buscar por outras palavras ou limpe os filtros.
+                    </p>
+                    <button onclick="resetFilters()" class="px-5 py-2.5 bg-terracotta-500 hover:bg-terracotta-600 text-white text-sm font-semibold rounded-xl transition-colors">
+                        Ver todos os artigos
+                    </button>
+                </div>
+            </div>
+
+            <!-- Barra Lateral (Sidebar) -->
+            <aside class="lg:col-span-4 space-y-8">
+                
+                <!-- Card Perfil do Autor -->
+                <div class="bg-cream-100 rounded-3xl p-6 sm:p-7 border border-cream-200 text-center">
+                    <div class="relative w-24 h-24 mx-auto mb-4">
+                        <img 
+                            src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=300&q=80" 
+                            alt="Foto da autora Clara Mendes" 
+                            onerror="this.onerror=null; this.src='https://placehold.co/300x300/DF8A6B/FFFFFF?text=CM';"
+                            class="w-full h-full object-cover rounded-full border-4 border-white shadow-sm"
+                        >
+                        <span class="absolute bottom-0 right-0 w-7 h-7 bg-terracotta-500 text-white rounded-full flex items-center justify-center border-2 border-white">
+                            <i data-lucide="pen-tool" class="w-3.5 h-3.5"></i>
+                        </span>
+                    </div>
+                    <h3 class="font-serif text-xl font-semibold text-charcoal-900">Clara Mendes</h3>
+                    <p class="text-xs font-semibold text-terracotta-600 uppercase tracking-wider mt-1 mb-3">Especialista em Comportamento Felino</p>
+                    <p class="text-sm text-charcoal-700 leading-relaxed mb-5">
+                        Gateira assumida, mãe de três SRDs (Pipoca, Bento e Luna) e apaixonada por traduzir os miados e ronronados para os humanos.
+                    </p>
+                    <div class="flex justify-center gap-3">
+                        <a href="#contato" class="p-2.5 bg-white hover:bg-terracotta-100 text-charcoal-700 hover:text-terracotta-600 rounded-xl border border-cream-200 transition-colors" aria-label="Instagram">
+                            <i data-lucide="instagram" class="w-4 h-4"></i>
+                        </a>
+                        <a href="#contato" class="p-2.5 bg-white hover:bg-terracotta-100 text-charcoal-700 hover:text-terracotta-600 rounded-xl border border-cream-200 transition-colors" aria-label="Twitter">
+                            <i data-lucide="twitter" class="w-4 h-4"></i>
+                        </a>
+                        <a href="#contato" class="p-2.5 bg-white hover:bg-terracotta-100 text-charcoal-700 hover:text-terracotta-600 rounded-xl border border-cream-200 transition-colors" aria-label="Email">
+                            <i data-lucide="mail" class="w-4 h-4"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Categorias Populares -->
+                <div class="bg-white rounded-3xl p-6 sm:p-7 border border-cream-200 shadow-sm">
+                    <h3 class="font-serif text-lg font-semibold text-charcoal-900 mb-4 flex items-center gap-2">
+                        <i data-lucide="folder-heart" class="w-5 h-5 text-terracotta-500"></i>
+                        <span>Categorias Populares</span>
+                    </h3>
+                    <ul class="space-y-2.5" id="sidebar-categories">
+                        <!-- Preenchido dinamicamente para manter contagens exatas -->
+                    </ul>
+                </div>
+
+                <!-- Formulário de Newsletter -->
+                <div class="bg-charcoal-800 text-cream-50 rounded-3xl p-6 sm:p-7 relative overflow-hidden">
+                    <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-terracotta-500/20 rounded-full blur-2xl pointer-events-none"></div>
+                    
+                    <div class="w-11 h-11 bg-terracotta-500/20 text-terracotta-400 rounded-2xl flex items-center justify-center mb-4">
+                        <i data-lucide="mail-open" class="w-5 h-5"></i>
+                    </div>
+                    <h3 class="font-serif text-xl font-semibold text-white mb-2">Cartas Felinas</h3>
+                    <p class="text-sm text-cream-200/80 leading-relaxed mb-5">
+                        Receba toda semana dicas exclusivas de cuidados, receitas de petiscos caseiros e histórias fofas direto no seu e-mail.
+                    </p>
+                    <form id="newsletter-form" class="space-y-3">
+                        <div>
+                            <label for="newsletter-email" class="sr-only">Seu melhor e-mail</label>
+                            <input 
+                                type="email" 
+                                id="newsletter-email" 
+                                required 
+                                placeholder="seuemail@exemplo.com" 
+                                class="w-full px-4 py-3 bg-charcoal-900/80 border border-charcoal-700 rounded-xl text-sm text-white placeholder-cream-200/40 focus:outline-none focus:border-terracotta-400 transition-colors"
+                            >
+                        </div>
+                        <button type="submit" class="w-full py-3 px-4 bg-terracotta-500 hover:bg-terracotta-600 text-white font-semibold text-sm rounded-xl transition-colors shadow-sm flex items-center justify-center gap-2">
+                            <span>Inscrever-se Grátis</span>
+                            <i data-lucide="send" class="w-4 h-4"></i>
+                        </button>
+                    </form>
+                    <p class="text-[11px] text-cream-200/50 mt-3 text-center">Zero spam. Apenas amor por gatos.</p>
+                </div>
+
+            </aside>
+        </div>
+    </main>
+
+    <!-- Modal de Leitura Completa do Artigo -->
+    <div id="article-modal" class="fixed inset-0 z-50 hidden overflow-y-auto bg-charcoal-900/60 backdrop-blur-sm transition-opacity" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="min-h-screen px-4 text-center flex items-center justify-center py-8">
+            <!-- Overlay clicável para fechar -->
+            <div class="fixed inset-0" onclick="closeModal()"></div>
+
+            <!-- Conteúdo do Modal -->
+            <div class="relative bg-cream-50 w-full max-w-3xl rounded-3xl shadow-2xl border border-cream-200 text-left overflow-hidden transform transition-all z-10">
+                
+                <!-- Barra Superior do Modal -->
+                <div class="sticky top-0 z-20 bg-cream-50/95 backdrop-blur-md px-6 py-4 border-b border-cream-200 flex items-center justify-between">
+                    <button onclick="closeModal()" class="inline-flex items-center gap-2 text-sm font-semibold text-charcoal-700 hover:text-terracotta-600 px-3 py-1.5 rounded-xl hover:bg-cream-200/60 transition-colors">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        <span>Voltar para o blog</span>
+                    </button>
+                    <button onclick="closeModal()" class="p-2 text-charcoal-700 hover:text-charcoal-900 hover:bg-cream-200 rounded-xl transition-colors" aria-label="Fechar">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+
+                <!-- Corpo do Artigo -->
+                <div id="modal-body" class="p-6 sm:p-10 space-y-6 max-h-[80vh] overflow-y-auto">
+                    <!-- Conteúdo injetado via JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rodapé -->
+    <footer id="contato" class="bg-cream-100 border-t border-cream-200 mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 pb-8 border-b border-cream-200">
+                <!-- Coluna 1: Marca -->
+                <div class="space-y-3">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-9 h-9 bg-terracotta-500 rounded-xl flex items-center justify-center text-white">
+                            <i data-lucide="cat" class="w-5 h-5"></i>
+                        </div>
+                        <span class="font-serif font-semibold text-xl text-charcoal-900">Mundo Felino</span>
+                    </div>
+                    <p class="text-sm text-charcoal-700/80 leading-relaxed max-w-xs">
+                        Um espaço acolhedor dedicado a fortalecer os laços entre humanos e seus companheiros felinos através de informação de qualidade.
+                    </p>
+                </div>
+
+                <!-- Coluna 2: Navegação Rápida -->
+                <div>
+                    <h4 class="font-semibold text-charcoal-900 mb-4 text-sm uppercase tracking-wider">Navegação</h4>
+                    <ul class="space-y-2.5 text-sm text-charcoal-700">
+                        <li><a href="#" onclick="resetFilters(event)" class="hover:text-terracotta-600 transition-colors">Início</a></li>
+                        <li><button onclick="filterByCategory('Curiosidades')" class="hover:text-terracotta-600 transition-colors">Curiosidades</button></li>
+                        <li><button onclick="filterByCategory('Cuidados')" class="hover:text-terracotta-600 transition-colors">Cuidados & Saúde</button></li>
+                        <li><button onclick="filterByCategory('Raças')" class="hover:text-terracotta-600 transition-colors">Guia de Raças</button></li>
+                    </ul>
+                </div>
+
+                <!-- Coluna 3: Contato -->
+                <div>
+                    <h4 class="font-semibold text-charcoal-900 mb-4 text-sm uppercase tracking-wider">Fale Conosco</h4>
+                    <ul class="space-y-2.5 text-sm text-charcoal-700">
+                        <li class="flex items-center gap-2">
+                            <i data-lucide="mail" class="w-4 h-4 text-terracotta-500"></i>
+                            <span>contato@mundofelino.com.br</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i data-lucide="map-pin" class="w-4 h-4 text-terracotta-500"></i>
+                            <span>São Paulo, SP - Brasil</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="pt-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-charcoal-700/70">
+                <p>&copy; 2026 Blog Mundo Felino. Todos os direitos reservados.</p>
+                <p class="flex items-center gap-1">
+                    Feito com <i data-lucide="heart" class="w-3.5 h-3.5 text-terracotta-500 fill-current"></i> para todos os gatos do mundo.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Lógica JavaScript -->
+    <script>
+        // Banco de dados simulado dos artigos do blog
+        const blogPosts = [
+            {
+                id: 1,
+                title: "Por que os gatos ronronam? A ciência por trás desse som mágico",
+                category: "Curiosidades",
+                date: "15 Nov, 2026",
+                readTime: "4 min de leitura",
+                image: "https://images.unsplash.com/photo-1513245543132-31f507417b26?auto=format&fit=crop&w=800&q=80",
+                summary: "Descubra como funciona o mecanismo do ronronar e por que esse som vibrante vai muito além de um simples sinal de felicidade.",
+                content: `
+                    <p class="text-lg text-charcoal-700 leading-relaxed mb-4">Poucos sons no mundo são tão reconfortantes quanto o ronronar suave de um gato aninhado no colo. Durante séculos, os humanos acreditaram que esse som significava apenas que o animal estava feliz e satisfeito. No entanto, a ciência moderna revelou que o ronronar é uma ferramenta multifuncional fascinante.</p>
+                    
+                    <h3 class="font-serif text-xl font-semibold text-charcoal-900 mt-6 mb-3">Como o som é produzido?</h3>
+                    <p class="text-charcoal-700 leading-relaxed mb-4">Os gatos não possuem um órgão específico para ronronar. O som é gerado através de contrações muito rápidas dos músculos da laringe (caixa vocal), que fazem as cordas vocais vibrarem tanto na inspiração quanto na expiração, em uma frequência que varia entre 25 e 150 Hertz.</p>
+                    
+                    <h3 class="font-serif text-xl font-semibold text-charcoal-900 mt-6 mb-3">Um mecanismo de autocura</h3>
+                    <p class="text-charcoal-700 leading-relaxed mb-4">Você sabia que os gatos também ronronam quando estão com dor, assustados ou até mesmo dando à luz? Estudos em bioacústica mostram que frequências sonoras entre 25 e 50 Hz estimulam a regeneração óssea, aliviam dores musculares e reduzem o inchaço. Ou seja, o ronronar funciona como uma fisioterapia natural para o próprio gato — e também ajuda a reduzir o estresse e a pressão arterial dos humanos por perto!</p>
+                    
+                    <div class="bg-terracotta-100/60 border-l-4 border-terracotta-500 p-4 rounded-r-2xl my-6">
+                        <p class="text-sm font-medium text-charcoal-800"><strong>Dica da Clara:</strong> Preste atenção ao contexto! Se o seu gato ronrona enquanto amassa pãozinho e pisca lentamente, é puro amor. Se ele estiver escondido e ronronando sem apetite, vale consultar um veterinário.</p>
+                    </div>
+                `
+            },
+            {
+                id: 2,
+                title: "Dicas essenciais para cuidar do seu gatinho nos primeiros meses",
+                category: "Cuidados",
+                date: "12 Nov, 2026",
+                readTime: "6 min de leitura",
+                image: "https://images.unsplash.com/photo-1574158622682-e40e69881006?auto=format&fit=crop&w=800&q=80",
+                summary: "Acabou de adotar um filhote? Preparamos um guia prático sobre alimentação, caixinha de areia, telas de proteção e enriquecimento ambiental.",
+                content: `
+                    <p class="text-lg text-charcoal-700 leading-relaxed mb-4">Trazer um filhote de gato para casa é uma experiência transformadora, repleta de brincadeiras acrobáticas e sonecas adoráveis. Para garantir que ele cresça saudável e seguro, alguns cuidados básicos são indispensáveis desde o primeiro dia.</p>
+                    
+                    <h3 class="font-serif text-xl font-semibold text-charcoal-900 mt-6 mb-3">1. Segurança em primeiro lugar</h3>
+                    <p class="text-charcoal-700 leading-relaxed mb-4">Antes mesmo da chegada do bichano, instale redes de proteção em todas as janelas, sacadas e basculantes. Gatos são exploradores natos e não têm noção de altura, podendo sofrer acidentes graves ao tentar caçar um inseto ou pássaro.</p>
+                    
+                    <h3 class="font-serif text-xl font-semibold text-charcoal-900 mt-6 mb-3">2. A regra da caixa de areia</h3>
+                    <p class="text-charcoal-700 leading-relaxed mb-4">Posicione a caixa de areia em um local tranquilo, arejado e longe dos potes de água e comida (gatos são muito higiênicos e não gostam de comer perto do banheiro). A regra de ouro dos especialistas é ter sempre uma caixa a mais do que o número de gatos na casa.</p>
+                    
+                    <h3 class="font-serif text-xl font-semibold text-charcoal-900 mt-6 mb-3">3. Hidratação constante</h3>
+                    <p class="text-charcoal-700 leading-relaxed mb-4">Gatos têm tendência a beber pouca água. Invista em fontes de água corrente, espalhe potes largos de cerâmica ou inox pela casa e inclua sachês úmidos na rotina alimentar para proteger a saúde renal do seu pequeno.</p>
+                `
+            },
+            {
+                id: 3,
+                title: "As 5 raças de gatos mais carinhosas e companheiras",
+                category: "Raças",
+                date: "08 Nov, 2026",
+                readTime: "5 min de leitura",
+                image: "https://images.unsplash.com/photo-1519052537078-e6302a4968d4?auto=format&fit=crop&w=800&q=80",
+                summary: "Esqueça o mito de que gatos são distantes! Conheça as raças (e nossos amados SRDs) que adoram seguir seus tutores pela casa.",
+                content: `
+                    <p class="text-lg text-charcoal-700 leading-relaxed mb-4">Embora cada gato tenha sua própria personalidade única, algumas raças são mundialmente famosas por seu temperamento extremamente dócil, sociável e apegado aos humanos.</p>
+                    
+                    <ul class="space-y-4 text-charcoal-700 leading-relaxed my-6">
+                        <li><strong class="text-charcoal-900">1. Ragdoll:</strong> O próprio nome significa "boneca de pano", pois eles relaxam completamente quando pegos no colo. São calmos, gentis e ótimos com crianças.</li>
+                        <li><strong class="text-charcoal-900">2. Maine Coon:</strong> Conhecidos como os "gigantes gentis", esses gatos enormes têm personalidade semelhante à de cães, seguindo seus tutores por todos os cômodos.</li>
+                        <li><strong class="text-charcoal-900">3. Siamês:</strong> Muito comunicativos e leais, adoram conversar com miados expressivos e exigem atenção constante.</li>
+                        <li><strong class="text-charcoal-900">4. Sphynx:</strong> Sem pelos, eles buscam calor humano o tempo todo, sendo extremamente extrovertidos, brincalhões e carentes.</li>
+                        <li><strong class="text-charcoal-900">5. SRD (Sem Raça Definida):</strong> Não poderiam faltar! Os nossos vira-latas brasileiros combinam o melhor de todas as genéticas e costumam ser eternamente gratos e carinhosos com quem os adota.</li>
+                    </ul>
+                `
+            },
+            {
+                id: 4,
+                title: "Como entender a linguagem corporal dos felinos",
+                category: "Comportamento",
+                date: "03 Nov, 2026",
+                readTime: "5 min de leitura",
+                image: "https://images.unsplash.com/photo-1495360010541-f48722b34f7d?auto=format&fit=crop&w=800&q=80",
+                summary: "O movimento da cauda, a posição das orelhas e o piscar lento: aprenda a ler os sinais silenciosos que seu gato envia todos os dias.",
+                content: `
+                    <p class="text-lg text-charcoal-700 leading-relaxed mb-4">Os gatos são mestres da comunicação silenciosa. Enquanto os humanos dependem muito das palavras, os felinos conversam através de microexpressões, postura corporal e movimentos sutis da cauda.</p>
+                    
+                    <h3 class="font-serif text-xl font-semibold text-charcoal-900 mt-6 mb-3">O famoso "Beijo de Gato"</h3>
+                    <p class="text-charcoal-700 leading-relaxed mb-4">Quando o seu gato olha para você e fecha os olhos bem devagar, ele está enviando o sinal máximo de confiança e afeto. Experimente devolver o gesto piscando lentamente de volta — você verá como ele relaxa imediatamente!</p>
+                    
+                    <h3 class="font-serif text-xl font-semibold text-charcoal-900 mt-6 mb-3">O termômetro da cauda</h3>
+                    <p class="text-charcoal-700 leading-relaxed mb-4">Uma cauda erguida verticalmente com a pontinha dobrada como um ponto de interrogação significa alegria e disposição para interagir. Já uma cauda batendo rapidamente de um lado para o outro indica irritação ou excesso de estímulo — é o momento ideal para dar um pouco de espaço ao bichano.</p>
+                `
+            },
+            {
+                id: 5,
+                title: "Enriquecimento ambiental: como deixar sua casa divertida para gatos",
+                category: "Cuidados",
+                date: "28 Out, 2026",
+                readTime: "4 min de leitura",
+                image: "https://images.unsplash.com/photo-1533738363-b7f9aef128ce?auto=format&fit=crop&w=800&q=80",
+                summary: "Gatos que vivem em apartamentos precisam gastar energia física e mental. Veja ideias simples de gatificação para transformar seu lar.",
+                content: `
+                    <p class="text-lg text-charcoal-700 leading-relaxed mb-4">Na natureza, os gatos passam grande parte do tempo caçando, escalando árvores e observando o território do alto. Em ambientes internos, a falta de estímulos pode levar ao tédio, estresse e até obesidade.</p>
+                    
+                    <h3 class="font-serif text-xl font-semibold text-charcoal-900 mt-6 mb-3">Verticalize o espaço</h3>
+                    <p class="text-charcoal-700 leading-relaxed mb-4">Prateleiras, nichos na parede e arranhadores altos permitem que o gato observe o ambiente de cima, onde se sente seguro e no controle. Não precisa gastar muito: até o topo de um guarda-roupa acessível pode virar um ótimo mirante.</p>
+                    
+                    <h3 class="font-serif text-xl font-semibold text-charcoal-900 mt-6 mb-3">Simule a caça</h3>
+                    <p class="text-charcoal-700 leading-relaxed mb-4">Reserve 15 minutos por dia para brincar com varinhas com penas. Deixe o gato "capturar" a presa no final da brincadeira para evitar frustração e, em seguida, ofereça uma pequena refeição para completar o ciclo natural de caça.</p>
+                `
+            },
+            {
+                id: 6,
+                title: "Por que os gatos amam tanto caixas de papelão?",
+                category: "Curiosidades",
+                date: "21 Out, 2026",
+                readTime: "3 min de leitura",
+                image: "https://images.unsplash.com/photo-1526336024174-e58f5cdd8e13?auto=format&fit=crop&w=800&q=80",
+                summary: "Você compra a cama mais cara do pet shop, mas ele prefere a embalagem. Entenda o instinto de proteção e conforto térmico por trás disso.",
+                content: `
+                    <p class="text-lg text-charcoal-700 leading-relaxed mb-4">É uma cena clássica na vida de qualquer gateiro: chega uma encomenda em casa e, em segundos, a caixa de papelão se torna o brinquedo favorito da semana. Mas qual é o segredo desse material tão simples?</p>
+                    
+                    <h3 class="font-serif text-xl font-semibold text-charcoal-900 mt-6 mb-3">Refúgio contra o estresse</h3>
+                    <p class="text-charcoal-700 leading-relaxed mb-4">Pesquisadores da Universidade de Utrecht, na Holanda, descobriram que gatos recém-chegados a abrigos que tinham acesso a caixas de papelão se adaptavam muito mais rápido e apresentavam níveis menores de estresse. As paredes fechadas oferecem segurança contra possíveis "predadores".</p>
+                    
+                    <h3 class="font-serif text-xl font-semibold text-charcoal-900 mt-6 mb-3">Isolamento térmico perfeito</h3>
+                    <p class="text-charcoal-700 leading-relaxed mb-4">A temperatura termoneutra ideal para um gato doméstico fica entre 30°C e 36°C — bem mais alta que a nossa! O papelão ondulado funciona como um excelente isolante térmico, conservando o calor do corpo do felino enquanto ele tira suas longas sonecas.</p>
+                `
+            }
+        ];
+
+        // Estado atual da aplicação
+        let currentCategory = 'Todos';
+        let currentSearchQuery = '';
+
+        // Inicialização quando o DOM estiver pronto
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            renderSidebarCategories();
+            renderPosts();
+            setupEventListeners();
+        });
+
+        // Configura ouvintes de eventos
+        function setupEventListeners() {
+            // Barra de pesquisa em tempo real
+            const searchInput = document.getElementById('search-input');
+            const clearBtn = document.getElementById('clear-search');
+
+            searchInput.addEventListener('input', (e) => {
+                currentSearchQuery = e.target.value.trim().toLowerCase();
+                if (currentSearchQuery.length > 0) {
+                    clearBtn.classList.remove('hidden');
+                } else {
+                    clearBtn.classList.add('hidden');
+                }
+                renderPosts();
+            });
+
+            // Menu Mobile Toggle
+            document.getElementById('mobile-menu-btn').addEventListener('click', toggleMobileMenu);
+
+            // Formulário Newsletter
+            document.getElementById('newsletter-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const emailInput = document.getElementById('newsletter-email');
+                if (emailInput.value) {
+                    showToast('Inscrição confirmada! Bem-vindo às Cartas Felinas 🐾');
+                    emailInput.value = '';
+                }
+            });
+
+            // Fechar modal com a tecla ESC
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    closeModal();
+                }
+            });
+        }
+
+        // Alterna visibilidade do menu mobile
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        // Renderiza os cards de postagens filtrados
+        function renderPosts() {
+            const grid = document.getElementById('posts-grid');
+            const emptyState = document.getElementById('empty-state');
+            const resultsCount = document.getElementById('results-count');
+            const sectionTitle = document.getElementById('section-title');
+
+            // Filtra os posts
+            const filteredPosts = blogPosts.filter(post => {
+                const matchesCategory = currentCategory === 'Todos' || post.category === currentCategory;
+                const matchesSearch = post.title.toLowerCase().includes(currentSearchQuery) ||
+                                      post.summary.toLowerCase().includes(currentSearchQuery) ||
+                                      post.category.toLowerCase().includes(currentSearchQuery);
+                return matchesCategory && matchesSearch;
+            });
+
+            // Atualiza títulos e contadores
+            sectionTitle.textContent = currentCategory === 'Todos' ? 'Últimas Publicações' : `Categoria: ${currentCategory}`;
+            resultsCount.textContent = filteredPosts.length === 1 
+                ? '1 artigo encontrado' 
+                : `${filteredPosts.length} artigos encontrados`;
+
+            // Limpa o grid
+            grid.innerHTML = '';
+
+            if (filteredPosts.length === 0) {
+                grid.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+            } else {
+                grid.classList.remove('hidden');
+                emptyState.classList.add('hidden');
+
+                filteredPosts.forEach(post => {
+                    const card = document.createElement('article');
+                    card.className = 'bg-white rounded-3xl border border-cream-200 overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col group';
+                    
+                    card.innerHTML = `
+                        <div class="relative aspect-[16/10] overflow-hidden bg-cream-100 cursor-pointer" onclick="openArticle(${post.id})">
+                            <img 
+                                src="${post.image}" 
+                                alt="${post.title}" 
+                                onerror="this.onerror=null; this.src='https://placehold.co/800x500/F5E3DC/B85A38?text=${encodeURIComponent(post.category)}';"
+                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            >
+                            <span class="absolute top-4 left-4 px-3 py-1 bg-cream-50/95 backdrop-blur-sm text-terracotta-600 text-xs font-bold rounded-full shadow-sm">
+                                ${post.category}
+                            </span>
+                        </div>
+                        
+                        <div class="p-6 flex flex-col flex-grow">
+                            <div class="flex items-center gap-3 text-xs text-charcoal-700/70 mb-3">
+                                <span class="flex items-center gap-1">
+                                    <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
+                                    ${post.date}
+                                </span>
+                                <span>•</span>
+                                <span class="flex items-center gap-1">
+                                    <i data-lucide="clock" class="w-3.5 h-3.5"></i>
+                                    ${post.readTime}
+                                </span>
+                            </div>
+
+                            <h3 onclick="openArticle(${post.id})" class="font-serif text-xl font-semibold text-charcoal-900 mb-3 group-hover:text-terracotta-600 transition-colors cursor-pointer line-clamp-2">
+                                ${post.title}
+                            </h3>
+
+                            <p class="text-sm text-charcoal-700/90 leading-relaxed mb-6 line-clamp-3 flex-grow">
+                                ${post.summary}
+                            </p>
+
+                            <div class="pt-4 border-t border-cream-100 flex items-center justify-between">
+                                <button onclick="openArticle(${post.id})" class="inline-flex items-center gap-2 text-sm font-bold text-terracotta-600 hover:text-terracotta-500 transition-colors group/btn">
+                                    <span>Ler mais</span>
+                                    <i data-lucide="arrow-right" class="w-4 h-4 transform group-hover/btn:translate-x-1 transition-transform"></i>
+                                </button>
+                                
+                                <button onclick="sharePost('${post.title.replace(/'/g, "\\'")}')" class="p-2 text-charcoal-700/60 hover:text-terracotta-600 hover:bg-cream-100 rounded-xl transition-colors" title="Compartilhar artigo">
+                                    <i data-lucide="share-2" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+            }
+
+            // Re-inicializa os ícones recém-criados
+            lucide.createIcons();
+        }
+
+        // Renderiza lista de categorias na sidebar com contagem real
+        function renderSidebarCategories() {
+            const container = document.getElementById('sidebar-categories');
+            const categories = ['Curiosidades', 'Cuidados', 'Raças', 'Comportamento'];
+
+            container.innerHTML = categories.map(cat => {
+                const count = blogPosts.filter(p => p.category === cat).length;
+                return `
+                    <li>
+                        <button onclick="filterByCategory('${cat}')" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm text-charcoal-700 hover:bg-cream-100 hover:text-terracotta-600 transition-colors group">
+                            <span class="font-medium">${cat}</span>
+                            <span class="px-2.5 py-0.5 text-xs font-semibold bg-cream-100 group-hover:bg-terracotta-100 text-charcoal-700 group-hover:text-terracotta-600 rounded-full transition-colors">
+                                ${count}
+                            </span>
+                        </button>
+                    </li>
+                `;
+            }).join('');
+        }
+
+        // Filtra por categoria e atualiza estados visuais dos botões
+        function filterByCategory(category) {
+            currentCategory = category;
+
+            // Atualiza botões do menu superior
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                if (btn.dataset.category === category) {
+                    btn.className = 'nav-btn px-4 py-2 rounded-xl text-sm font-semibold text-terracotta-600 bg-terracotta-100/60 transition-all';
+                } else {
+                    btn.className = 'nav-btn px-4 py-2 rounded-xl text-sm font-medium text-charcoal-700 hover:bg-cream-200/70 transition-all';
+                }
+            });
+
+            // Atualiza pills de filtro
+            document.querySelectorAll('.filter-pill').forEach(pill => {
+                if (pill.dataset.category === category) {
+                    pill.className = 'filter-pill px-4 py-2 rounded-full text-xs font-semibold bg-charcoal-800 text-white whitespace-nowrap transition-all';
+                } else {
+                    pill.className = 'filter-pill px-4 py-2 rounded-full text-xs font-semibold bg-cream-100 text-charcoal-700 hover:bg-cream-200 whitespace-nowrap transition-all';
+                }
+            });
+
+            renderPosts();
+
+            // Rola suavemente até a seção de artigos se o usuário estiver no topo
+            const articlesSection = document.getElementById('artigos');
+            if (window.scrollY > articlesSection.offsetTop) {
+                articlesSection.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // Limpa pesquisa
+        function clearSearch() {
+            const searchInput = document.getElementById('search-input');
+            searchInput.value = '';
+            currentSearchQuery = '';
+            document.getElementById('clear-search').classList.add('hidden');
+            renderPosts();
+        }
+
+        // Reseta todos os filtros
+        function resetFilters(e) {
+            if (e) e.preventDefault();
+            clearSearch();
+            filterByCategory('Todos');
+        }
+
+        // Abre o modal com o conteúdo completo do artigo
+        function openArticle(postId) {
+            const post = blogPosts.find(p => p.id === postId);
+            if (!post) return;
+
+            const modal = document.getElementById('article-modal');
+            const modalBody = document.getElementById('modal-body');
+
+            modalBody.innerHTML = `
+                <div class="space-y-4">
+                    <div class="flex flex-wrap items-center gap-3">
+                        <span class="px-3.5 py-1 bg-terracotta-100 text-terracotta-600 text-xs font-bold rounded-full">
+                            ${post.category}
+                        </span>
+                        <span class="text-xs text-charcoal-700/70 flex items-center gap-1">
+                            <i data-lucide="calendar" class="w-3.5 h-3.5"></i> ${post.date}
+                        </span>
+                        <span class="text-xs text-charcoal-700/70 flex items-center gap-1">
+                            <i data-lucide="clock" class="w-3.5 h-3.5"></i> ${post.readTime}
+                        </span>
+                    </div>
+
+                    <h2 id="modal-title" class="font-serif text-2xl sm:text-3xl lg:text-4xl font-semibold text-charcoal-900 leading-tight">
+                        ${post.title}
+                    </h2>
+
+                    <div class="flex items-center gap-3 pt-2 pb-4 border-b border-cream-200">
+                        <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=100&q=80" alt="Clara Mendes" class="w-10 h-10 rounded-full object-cover">
+                        <div>
+                            <p class="text-sm font-semibold text-charcoal-900">Por Clara Mendes</p>
+                            <p class="text-xs text-charcoal-700/70">Especialista em Comportamento Felino</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="aspect-[16/9] rounded-2xl overflow-hidden bg-cream-100 my-6">
+                    <img 
+                        src="${post.image}" 
+                        alt="${post.title}" 
+                        onerror="this.onerror=null; this.src='https://placehold.co/800x450/F5E3DC/B85A38?text=Mundo+Felino';"
+                        class="w-full h-full object-cover"
+                    >
+                </div>
+
+                <div class="prose max-w-none text-charcoal-800">
+                    ${post.content}
+                </div>
+
+                <div class="pt-8 mt-8 border-t border-cream-200 flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <button onclick="closeModal()" class="w-full sm:w-auto px-6 py-3 bg-cream-200/80 hover:bg-cream-200 text-charcoal-900 font-semibold text-sm rounded-xl transition-colors inline-flex items-center justify-center gap-2">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        <span>Voltar para todos os artigos</span>
+                    </button>
+
+                    <button onclick="sharePost('${post.title.replace(/'/g, "\\'")}')" class="w-full sm:w-auto px-6 py-3 bg-terracotta-500 hover:bg-terracotta-600 text-white font-semibold text-sm rounded-xl transition-colors inline-flex items-center justify-center gap-2">
+                        <i data-lucide="share-2" class="w-4 h-4"></i>
+                        <span>Compartilhar Artigo</span>
+                    </button>
+                </div>
+            `;
+
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden'; // Impede scroll da página de fundo
+            modalBody.scrollTop = 0;
+            lucide.createIcons();
+        }
+
+        // Fecha o modal
+        function closeModal() {
+            const modal = document.getElementById('article-modal');
+            modal.classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        // Simula compartilhamento copiando o título/link
+        function sharePost(title) {
+            const dummyInput = document.createElement('input');
+            dummyInput.value = `Confira este artigo no Mundo Felino: "${title}"`;
+            document.body.appendChild(dummyInput);
+            dummyInput.select();
+            try {
+                document.execCommand('copy');
+                showToast('Link do artigo copiado para a área de transferência!');
+            } catch (err) {
+                showToast('Pronto para compartilhar com seus amigos gateiros!');
+            }
+            document.body.removeChild(dummyInput);
+        }
+
+        // Exibe notificação Toast suave
+        let toastTimeout;
+        function showToast(message) {
+            const toast = document.getElementById('toast-notification');
+            const toastMsg = document.getElementById('toast-message');
+            
+            toastMsg.textContent = message;
+            toast.classList.remove('translate-y-24', 'opacity-0');
+            
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.add('translate-y-24', 'opacity-0');
+            }, 3500);
+        }
+    </script>
+</body>
+</html>
+```
