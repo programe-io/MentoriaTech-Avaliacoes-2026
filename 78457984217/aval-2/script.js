@@ -1,36 +1,26 @@
 
-const botao = document.getElementById("botaoMissao");
-const missao = document.getElementById("missao");
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Saudação</title>
+</head>
+<body>
+    <h1>Olá! Qual é o seu nome?</h1>
 
-const missoes = [
-  "🐉 Derrote o dragão que ameaça o reino!",
-  "⚔️ Encontre a espada lendária perdida.",
-  "💎 Descubra o tesouro escondido na montanha.",
-  "🧙 Encontre o mago desaparecido.",
-  "🏰 Defenda o castelo de uma invasão!",
-  "🛡️ Recupere o escudo dos antigos reis.",
-  "🌲 Explore a floresta encantada."
-];
+    <input type="text" id="nome" placeholder="Digite seu nome">
 
-botao.addEventListener("click", () => {
-  const numero = Math.floor(Math.random() * missoes.length);
+    <button onclick="saudar()">Enviar</button>
 
-  missao.textContent = missoes[numero];
+    <h2 id="resultado"></h2>
 
-  botao.textContent = "NOVA MISSÃO";
-});
+    <script>
+        function saudar() {
+            let nome = document.getElementById("nome").value;
 
-function criarParticula() {
-  const particula = document.createElement("div");
-
-  particula.classList.add("particula");
-
-  particula.style.left = Math.random() * 100 + "vw";
-  particula.style.top = Math.random() * 100 + "vh";
-
-  document.getElementById("particulas").appendChild(particula);
-}
-
-for (let i = 0; i < 50; i++) {
-  criarParticula();
-}
+            document.getElementById("resultado").innerHTML =
+                "Seja bem-vindo(a), " + nome + "!";
+        }
+    </script>
+</body>
+</html>
