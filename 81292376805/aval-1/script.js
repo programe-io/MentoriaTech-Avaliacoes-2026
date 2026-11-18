@@ -1,26 +1,33 @@
 
-window.addEventListener("load", function() {
-    console.log("Bem-vindo à MOBILE TECH!");
-});
+// MENU E NAVEGAÇÃO
+console.log("Bem-vindo à Yan Celulares!");
 
-// Efeito nos botões
-const botoes = document.querySelectorAll(".botao");
+// ANIMAÇÃO DOS PRODUTOS
+const cards = document.querySelectorAll(".card");
 
-botoes.forEach(function(botao) {
-    botao.addEventListener("click", function() {
-        console.log("Obrigado por visitar a MOBILE TECH!");
+cards.forEach((card) => {
+    card.addEventListener("click", () => {
+        console.log("Produto selecionado!");
     });
 });
 
-// Efeito ao rolar a página
-const secoes = document.querySelectorAll("section");
+// BOTÃO DE WHATSAPP
+function comprar(produto) {
+    const numero = "5500000000000";
 
-window.addEventListener("scroll", function() {
-    secoes.forEach(function(secao) {
-        const posicao = secao.getBoundingClientRect().top;
+    const mensagem = `Olá! Tenho interesse no ${produto}. Gostaria de saber o preço!`;
 
-        if (posicao < window.innerHeight - 100) {
-            secao.style.opacity = "1";
-        }
-    });
-});
+    const link = `https://wa.me/${numero}?text=${encodeURIComponent(mensagem)}`;
+
+    window.open(link, "_blank");
+}
+
+// ANO AUTOMÁTICO NO RODAPÉ
+const ano = document.querySelector("#ano");
+
+if (ano) {
+    ano.textContent = new Date().getFullYear();
+}
+
+// MENSAGEM DE BOAS-VINDAS
+console.log("Sua loja online está pronta!");
