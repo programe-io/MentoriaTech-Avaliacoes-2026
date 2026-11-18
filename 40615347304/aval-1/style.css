@@ -1,0 +1,127 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+\}
+
+body {
+    background: #151515;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+\}
+
+.calculadora {
+    background: #252525;
+    padding: 25px;
+    border-radius: 20px;
+    width: 320px;
+    box-shadow: 0 10px 30px #0008;
+\}
+
+#display {
+    width: 100%;
+    height: 75px;
+    background: #111;
+    border: none;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    color: white;
+    font-size: 32px;
+    text-align: right;
+    padding: 15px;
+\}
+
+.botoes {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+\}
+
+button {
+    height: 60px;
+    border: none;
+    border-radius: 12px;
+    background: #3b3b3b;
+    color: white;
+    font-size: 22px;
+    cursor: pointer;
+    transition: 0.2s;
+\}
+
+button:hover {
+    background: #555;
+\}
+
+.operador {
+    background: #ff9500;
+\}
+
+.operador:hover {
+    background: #e08700;
+\}
+
+.limpar {
+    background: #d94343;
+\}
+
+.igual {
+    background: #219653;
+\}
+
+.zero {
+    grid-column: span 2;
+\}
+3. JavaScript — script.js
+
+javascript
+
+const display = document.getElementById("display");
+
+function adicionar(valor) {
+    if (display.value === "0" || display.value === "Erro") {
+        display.value = valor;
+    \} else {
+        display.value += valor;
+    \}
+\}
+
+function limpar() {
+    display.value = "0";
+\}
+
+function apagar() {
+    display.value = display.value.slice(0, -1) || "0";
+\}
+
+function porcentagem() {
+    display.value = String(Number(display.value) / 100);
+\}
+
+function calcular() {
+    try {
+        const expressao = display.value;
+
+        if (!/^[0-9+\\-*/.() ]+\$/.test(expressao)) {
+            throw new Error();
+        \}
+
+        const resultado = Function(
+            '"use strict"; return (' + expressao + ')'
+        )();
+
+        if (!Number.isFinite(resultado)) {
+            throw new Error();
+        \}
+
+        display.value = String(
+            Number(resultado.toPrecision(12))
+        );
+
+    \} catch {
+        display.value = "Erro";
+    \}
+\}$0
