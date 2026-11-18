@@ -1,0 +1,315 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TikTok Clone</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: #000;
+    color: white;
+    font-family: Arial, sans-serif;
+}
+
+.app {
+    width: 100%;
+    max-width: 450px;
+    height: 100vh;
+    margin: auto;
+    background: #111;
+    position: relative;
+    overflow: hidden;
+}
+
+.top {
+    position: absolute;
+    top: 20px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    z-index: 5;
+    font-size: 17px;
+    font-weight: bold;
+}
+
+.top span {
+    cursor: pointer;
+    opacity: .7;
+}
+
+.top .active {
+    opacity: 1;
+    border-bottom: 3px solid white;
+    padding-bottom: 6px;
+}
+
+.video {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    background-size: cover;
+    background-position: center;
+    display: none;
+}
+
+.video.active {
+    display: block;
+}
+
+.overlay {
+    position: absolute;
+    bottom: 80px;
+    left: 15px;
+    right: 75px;
+    text-shadow: 1px 1px 4px black;
+}
+
+.username {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.description {
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.music {
+    font-size: 13px;
+}
+
+.actions {
+    position: absolute;
+    right: 12px;
+    bottom: 110px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 22px;
+}
+
+.action {
+    text-align: center;
+    cursor: pointer;
+    font-size: 28px;
+}
+
+.action small {
+    display: block;
+    font-size: 12px;
+}
+
+.action button {
+    background: none;
+    border: none;
+    font-size: 30px;
+    cursor: pointer;
+}
+
+.liked {
+    color: #fe2c55;
+}
+
+.bottom {
+    position: absolute;
+    bottom: 0;
+    height: 60px;
+    width: 100%;
+    background: #080808;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    z-index: 10;
+}
+
+.bottom div {
+    text-align: center;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.bottom strong {
+    display: block;
+    font-size: 22px;
+}
+
+.plus {
+    background: white;
+    color: black;
+    border-radius: 8px;
+    padding: 3px 13px;
+    font-size: 23px !important;
+}
+
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+<div class="app">
+
+    <div class="top">
+        <span>Seguindo</span>
+        <span class="active">Para você</span>
+    </div>
+
+    <div class="video active"
+    style="background-image:url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=900')">
+
+        <div class="overlay">
+            <div class="username">@criador</div>
+            <div class="description">
+                Bem-vindo ao meu TikTok! 🔥
+                #viral #paravoce
+            </div>
+            <div class="music">♫ Som original - Criador</div>
+        </div>
+
+        <div class="actions">
+            <div class="action">
+                👤
+                <small>Perfil</small>
+            </div>
+
+            <div class="action">
+                <button onclick="like(this)">❤️</button>
+                <small class="likes">12.5K</small>
+            </div>
+
+            <div class="action">
+                <button onclick="comment()">💬</button>
+                <small>Comentários</small>
+            </div>
+
+            <div class="action">
+                <button onclick="share()">↗️</button>
+                <small>Compartilhar</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="video"
+    style="background-image:url('https://images.unsplash.com/photo-1500534623283-312aade485b7?w=900')">
+
+        <div class="overlay">
+            <div class="username">@natureza</div>
+            <div class="description">
+                Que lugar incrível! 🌎
+                #natureza #viagem
+            </div>
+            <div class="music">♫ Música relaxante</div>
+        </div>
+
+        <div class="actions">
+            <div class="action">
+                <button onclick="like(this)">❤️</button>
+                <small class="likes">8.2K</small>
+            </div>
+            <div class="action">
+                <button onclick="comment()">💬</button>
+                <small>Comentários</small>
+            </div>
+            <div class="action">
+                <button onclick="share()">↗️</button>
+                <small>Compartilhar</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom">
+        <div><strong>⌂</strong>Início</div>
+        <div><strong>⌕</strong>Descobrir</div>
+        <div><strong class="plus">+</strong></div>
+        <div><strong>✉</strong>Inbox</div>
+        <div><strong>♙</strong>Perfil</div>
+    </div>
+
+</div>
+
+<script>
+function like(button) {
+    button.classList.toggle("liked");
+
+    let counter = button.nextElementSibling;
+    let number = parseFloat(counter.innerText);
+
+    if (button.classList.contains("liked")) {
+        button.innerText = "❤️";
+        counter.innerText = (number + 0.1).toFixed(1) + "K";
+    } else {
+        button.innerText = "🤍";
+        counter.innerText = (number - 0.1).toFixed(1) + "K";
+    }
+}
+
+function comment() {
+    let text = prompt("Digite seu comentário:");
+
+    if (text) {
+        alert("Comentário enviado: " + text);
+    }
+}
+
+function share() {
+    if (navigator.share) {
+        navigator.share({
+            title: "Meu TikTok",
+            text: "Confira este vídeo!"
+        });
+    } else {
+        alert("Compartilhe este vídeo com seus amigos!");
+    }
+}
+
+// Navegação entre vídeos usando a roda do mouse
+let currentVideo = 0;
+let videos = document.querySelectorAll(".video");
+
+document.querySelector(".app").addEventListener("wheel", function(e) {
+    if (e.deltaY > 0) {
+        currentVideo = (currentVideo + 1) % videos.length;
+    } else {
+        currentVideo = (currentVideo - 1 + videos.length) % videos.length;
+    }
+
+    videos.forEach(v => v.classList.remove("active"));
+    videos[currentVideo].classList.add("active");
+});
+
+// Navegação por toque
+let startY = 0;
+
+document.querySelector(".app").addEventListener("touchstart", e => {
+    startY = e.touches[0].clientY;
+});
+
+document.querySelector(".app").addEventListener("touchend", e => {
+    let endY = e.changedTouches[0].clientY;
+
+    if (startY - endY > 50) {
+        currentVideo = (currentVideo + 1) % videos.length;
+    } else if (endY - startY > 50) {
+        currentVideo = (currentVideo - 1 + videos.length) % videos.length;
+    } else {
+        return;
+    }
+
+    videos.forEach(v => v.classList.remove("active"));
+    videos[currentVideo].classList.add("active");
+});
+</script>
+
+<script src="script.js"></script></body>
+</html>
