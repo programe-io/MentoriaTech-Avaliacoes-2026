@@ -1,0 +1,760 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Ficha de Anamnese</title>
+
+<style>
+
+/* CONFIGURAÇÕES GERAIS */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f1f4f9;
+    color: #333;
+}
+
+/* CABEÇALHO */
+
+header {
+    background: #2563a6;
+    color: white;
+    text-align: center;
+    padding: 25px;
+}
+
+header h1 {
+    margin-bottom: 8px;
+}
+
+/* CONTAINER */
+
+.container {
+    max-width: 1000px;
+    margin: 30px auto;
+    padding: 15px;
+}
+
+/* FORMULÁRIO */
+
+.formulario {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    margin-bottom: 25px;
+    box-shadow: 0 3px 10px #00000012;
+}
+
+h2 {
+    color: #2563a6;
+    margin-bottom: 20px;
+}
+
+.grupo {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: bold;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 7px;
+    font-size: 15px;
+}
+
+/* BOTÕES */
+
+button {
+    padding: 11px 18px;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.btn-salvar {
+    background: #2563a6;
+    color: white;
+    width: 100%;
+}
+
+.btn-salvar:hover {
+    background: #174b80;
+}
+
+.btn-apagar {
+    background: #dc3545;
+    color: white;
+}
+
+.btn-apagar:hover {
+    background: #b52a37;
+}
+
+/* MENSAGEM DE ERRO */
+
+#erro {
+    background: #ffe0e0;
+    color: #b00020;
+    padding: 12px;
+    border-radius: 7px;
+    margin-bottom: 15px;
+}
+
+/* TABELA */
+
+.tabela-container {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px #00000012;
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 650px;
+}
+
+th, td {
+    padding: 13px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background: #2563a6;
+    color: white;
+}
+
+tr:hover {
+    background: #f5f7fa;
+}
+
+/* SELOS DE CLASSIFICAÇÃO */
+
+.selo {
+    padding: 6px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.baixo {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.normal {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.sobrepeso {
+    background: #fef3c7;
+    color: #a16207;
+}
+
+.obesidade {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+/* RESPONSIVIDADE */
+
+@media (max-width: 600px) {
+    .container {
+        margin: 15px auto;
+    }
+
+    .formulario,
+    .tabela-container {
+        padding: 15px;
+    }
+}
+
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+<header>
+    <h1>Ficha de Anamnese</h1>
+    <p>Sistema de cadastro e controle de IMC</p>
+</header>
+
+<main class="container">
+
+    <!-- FORMULÁRIO -->
+
+    <section class="formulario">
+
+        <h2>Cadastrar Pessoa</h2>
+
+        <form id="formPessoa">
+
+            <div class="grupo">
+                <label for="nome">Nome:</label>
+                <input type="text" id="nome"
+                    placeholder="Digite o nome">
+            </div>
+
+            <div class="grupo">
+                <label for="idade">Idade:</label>
+                <input type="number" id="idade"
+                    placeholder="Digite a idade">
+            </div>
+
+            <div class="grupo">
+                <label for="altura">Altura (m):</label>
+                <input type="number" id="altura"
+                    step="0.01"
+                    placeholder="Exemplo: 1.70">
+            </div>
+
+            <div class="grupo">
+                <label for="peso">Peso (kg):</label>
+                <input type="number" id="peso"
+                    step="0.1"
+                    placeholder="Exemplo: 65">
+            </div>
+
+            <p id="erro" hidden></p>
+
+            <button type="submit" class="btn-salvar">
+                Salvar Cadastro
+            </button>
+
+        </form>
+
+    </section>
+
+    <!-- TABELA -->
+
+    <section class="tabela-container">
+
+        <h2>Pessoas Cadastradas</h2>
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Idade</th>
+                    <th>Altura</th>
+                    <th>Peso</th>
+                    <th>IMC</th>
+                    <th>Classificação</th>
+                    <th>Ação</th>
+                </tr>
+            </thead>
+
+            <tbody id="tabelaPessoas">
+            </tbody>
+
+        </table>
+
+    </section>
+
+</main>
+
+
+<script>
+
+// =====================================
+// 1. REFERÊNCIAS DO HTML
+// =====================================
+
+const formPessoa = document.getElementById("formPessoa");
+
+const inputNome = document.getElementById("nome");
+
+const inputIdade = document.getElementById("idade");
+
+const inputAltura = document.getElementById("altura");
+
+const inputPeso = document.getElementById("peso");
+
+const tabelaPessoas = document.getElementById("tabelaPessoas");
+
+const mensagemDeErro = document.getElementById("erro");
+
+
+// =====================================
+// 2. VARIÁVEIS DO SISTEMA
+// =====================================
+
+const chavePessoas = "pessoas";
+
+let proximoCodigo = 0;
+
+
+// =====================================
+// 3. CALCULAR IMC
+// =====================================
+
+function calcularIMC(peso, altura) {
+
+    return peso / (altura * altura);
+
+}
+
+
+// =====================================
+// 4. CLASSIFICAR IMC
+// =====================================
+
+// Referências adultas apenas para fins
+// didáticos. Não são classificação adequada
+// para crianças e adolescentes.
+
+function classificarIMC(imc) {
+
+    if (imc < 18.5) {
+
+        return {
+            texto: "Abaixo da referência",
+            classe: "baixo"
+        };
+
+    } else if (imc < 25) {
+
+        return {
+            texto: "Faixa de referência",
+            classe: "normal"
+        };
+
+    } else if (imc < 30) {
+
+        return {
+            texto: "Sobrepeso",
+            classe: "sobrepeso"
+        };
+
+    } else {
+
+        return {
+            texto: "Obesidade",
+            classe: "obesidade"
+        };
+
+    }
+
+}
+
+
+// =====================================
+// 5. FORMATAR NÚMEROS
+// =====================================
+
+function formatar(valor, casas) {
+
+    return valor.toFixed(casas);
+
+}
+
+
+// =====================================
+// 6. CRIAR LINHA DA TABELA
+// =====================================
+
+function criarLinha(pessoa) {
+
+    const linha = document.createElement("tr");
+
+    const imc = calcularIMC(
+        pessoa.peso,
+        pessoa.altura
+    );
+
+    const classificacao = classificarIMC(imc);
+
+    // Nome
+
+    const tdNome = document.createElement("td");
+    tdNome.textContent = pessoa.nome;
+
+    // Idade
+
+    const tdIdade = document.createElement("td");
+    tdIdade.textContent = pessoa.idade;
+
+    // Altura
+
+    const tdAltura = document.createElement("td");
+    tdAltura.textContent =
+        formatar(pessoa.altura, 2) + " m";
+
+    // Peso
+
+    const tdPeso = document.createElement("td");
+    tdPeso.textContent =
+        formatar(pessoa.peso, 1) + " KG";
+
+    // IMC
+
+    const tdIMC = document.createElement("td");
+    tdIMC.textContent = formatar(imc, 1);
+
+    // Classificação
+
+    const tdClassificacao = document.createElement("td");
+
+    const selo = document.createElement("span");
+
+    selo.classList.add("selo", classificacao.classe);
+
+    selo.textContent = classificacao.texto;
+
+    tdClassificacao.appendChild(selo);
+
+    // Botão apagar
+
+    const tdAcao = document.createElement("td");
+
+    const botaoApagar = document.createElement("button");
+
+    botaoApagar.textContent = "Apagar";
+
+    botaoApagar.classList.add("btn-apagar");
+
+    botaoApagar.addEventListener("click", function() {
+
+        apagarPessoa(pessoa.id);
+
+    });
+
+    tdAcao.appendChild(botaoApagar);
+
+    // Adicionar elementos à linha
+
+    linha.appendChild(tdNome);
+    linha.appendChild(tdIdade);
+    linha.appendChild(tdAltura);
+    linha.appendChild(tdPeso);
+    linha.appendChild(tdIMC);
+    linha.appendChild(tdClassificacao);
+    linha.appendChild(tdAcao);
+
+    return linha;
+
+}
+
+
+// =====================================
+// 7. RENDERIZAR A TABELA
+// =====================================
+
+function render() {
+
+    tabelaPessoas.innerHTML = "";
+
+    pessoas.forEach(function(pessoa) {
+
+        const linha = criarLinha(pessoa);
+
+        tabelaPessoas.appendChild(linha);
+
+    });
+
+}
+
+
+// =====================================
+// 8. LER FORMULÁRIO
+// =====================================
+
+function lerFormulario() {
+
+    return {
+
+        nome: inputNome.value.trim(),
+
+        idade: Number(inputIdade.value),
+
+        altura: Number(inputAltura.value),
+
+        peso: Number(inputPeso.value)
+
+    };
+
+}
+
+
+// =====================================
+// 9. VALIDAR DADOS
+// =====================================
+
+function validarDados(dados) {
+
+    if (dados.nome.length < 2) {
+
+        return "Informe o nome com no mínimo duas letras.";
+
+    }
+
+    if (
+        !Number.isInteger(dados.idade) ||
+        dados.idade < 1 ||
+        dados.idade > 120
+    ) {
+
+        return "A idade deve ser um número inteiro entre 1 e 120.";
+
+    }
+
+    if (
+        !Number.isFinite(dados.altura) ||
+        dados.altura < 0.5 ||
+        dados.altura > 2.5
+    ) {
+
+        return "A altura deve estar entre 0,5 e 2,5 metros.";
+
+    }
+
+    if (
+        !Number.isFinite(dados.peso) ||
+        dados.peso < 2 ||
+        dados.peso > 500
+    ) {
+
+        return "O peso deve estar entre 2 e 500 kg.";
+
+    }
+
+    return "";
+
+}
+
+
+// =====================================
+// 10. MOSTRAR ERRO
+// =====================================
+
+function mostrarErro(mensagem) {
+
+    mensagemDeErro.textContent = mensagem;
+
+    mensagemDeErro.hidden = false;
+
+}
+
+
+// =====================================
+// 11. LIMPAR ERRO
+// =====================================
+
+function limparErro() {
+
+    mensagemDeErro.textContent = "";
+
+    mensagemDeErro.hidden = true;
+
+}
+
+
+// =====================================
+// 12. ADICIONAR PESSOA
+// =====================================
+
+function adicionarPessoa(dados) {
+
+    proximoCodigo++;
+
+    const pessoa = {
+
+        id: proximoCodigo,
+
+        nome: dados.nome,
+
+        idade: dados.idade,
+
+        altura: dados.altura,
+
+        peso: dados.peso
+
+    };
+
+    pessoas.push(pessoa);
+
+}
+
+
+// =====================================
+// 13. SALVAR NO LOCALSTORAGE
+// =====================================
+
+function salvar() {
+
+    localStorage.setItem(
+
+        chavePessoas,
+
+        JSON.stringify(pessoas)
+
+    );
+
+}
+
+
+// =====================================
+// 14. CARREGAR PESSOAS
+// =====================================
+
+function carregarPessoas() {
+
+    const dados = localStorage.getItem(chavePessoas);
+
+    if (dados === null) {
+
+        return [];
+
+    }
+
+    try {
+
+        const lista = JSON.parse(dados);
+
+        if (Array.isArray(lista)) {
+
+            return lista;
+
+        }
+
+        return [];
+
+    } catch (erro) {
+
+        console.error("Erro ao carregar pessoas:", erro);
+
+        return [];
+
+    }
+
+}
+
+
+// =====================================
+// 15. AJUSTAR CONTADOR DE CÓDIGO
+// =====================================
+
+function ajustarContadorCodigo() {
+
+    let maior = 0;
+
+    pessoas.forEach(function(pessoa) {
+
+        if (
+            Number.isInteger(pessoa.id) &&
+            pessoa.id > maior
+        ) {
+
+            maior = pessoa.id;
+
+        }
+
+    });
+
+    proximoCodigo = maior;
+
+}
+
+
+// =====================================
+// 16. APAGAR PESSOA
+// =====================================
+
+function apagarPessoa(id) {
+
+    const confirmar = window.confirm(
+        "Deseja realmente apagar este cadastro?"
+    );
+
+    if (!confirmar) {
+
+        return;
+
+    }
+
+    pessoas = pessoas.filter(function(pessoa) {
+
+        return pessoa.id !== id;
+
+    });
+
+    salvar();
+
+    render();
+
+}
+
+
+// =====================================
+// 17. EVENTO DE ENVIO DO FORMULÁRIO
+// =====================================
+
+formPessoa.addEventListener("submit", function(e) {
+
+    e.preventDefault();
+
+    const dados = lerFormulario();
+
+    const erro = validarDados(dados);
+
+    if (erro !== "") {
+
+        mostrarErro(erro);
+
+        return;
+
+    }
+
+    limparErro();
+
+    adicionarPessoa(dados);
+
+    salvar();
+
+    formPessoa.reset();
+
+    inputNome.focus();
+
+    render();
+
+});
+
+
+// =====================================
+// 18. INICIALIZAÇÃO DO SISTEMA
+// =====================================
+
+let pessoas = carregarPessoas();
+
+ajustarContadorCodigo();
+
+render();
+
+</script>
+
+</body>
+</html>
