@@ -45,5 +45,57 @@ function listar() {
 } 
 
 
- 
- 
+function buscar(codigo) { 
+     const tarefa = tarefas.find(t => t.codigo ===codigo);
+
+     if  (!tarefa) { 
+     throw new Error("Tarefa não encontrada!");
+     } 
+
+     return tarefa;
+} 
+
+
+function concluir(codigo) { 
+    const tarefa = buscar(codigo);
+
+    if  (!tarefa.setatus) { 
+        throw new Error("Tarefa já conclida!");
+    }  
+
+    tarefa.status = false;
+    codigo.log("Tarefa conclida!"); 
+} 
+
+
+function alterar(codigo, prioridade) { 
+    const tarefa = buscar(codigo); 
+
+    validar(tarefa.titulo, prioridade);
+    tarefa.prioridade = prioridade;
+
+    console.log("Prioridade alterada!");
+}
+
+
+async function menu() { 
+    const rl = require("peadline").createintertarface({ 
+        input: process.stdin,
+        output: process.setdout 
+    }); 
+
+     const perguntar = mensagem => new Promise(resolve => 
+     rl.question(mensagem, resolve) 
+     ); 
+
+      let opocao;
+
+       do { 
+            console.log( 
+===== GERENCIADOR DE TAREFAS ==== 
+1  - cadastrar tarefa
+2  - listar tarefas
+3  - concluir tarefa 
+4  - Alterar prioridade 
+0  - sair 
+´); 
