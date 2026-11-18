@@ -1,16 +1,18 @@
 
 window.addEventListener("load", function() {
-    console.log("Bem-vindo à PNEU CAR!");
+    console.log("Bem-vindo à MOBILE TECH!");
 });
 
+// Efeito nos botões
 const botoes = document.querySelectorAll(".botao");
 
 botoes.forEach(function(botao) {
     botao.addEventListener("click", function() {
-        console.log("Obrigado por visitar a PNEU CAR!");
+        console.log("Obrigado por visitar a MOBILE TECH!");
     });
 });
 
+// Efeito ao rolar a página
 const secoes = document.querySelectorAll("section");
 
 window.addEventListener("scroll", function() {
