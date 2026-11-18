@@ -3,28 +3,36 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Calculadora</title>
+    <title>Tabuada</title>
 </head>
 <body>
-    <h1>Calculadora de Soma</h1>
+    <h1>Gerador de Tabuada</h1>
 
-    <input type="number" id="n1" placeholder="Primeiro número">
+    <input type="number" id="numero"
+    placeholder="Digite um número">
 
-    <input type="number" id="n2" placeholder="Segundo número">
+    <button onclick="gerar()">Gerar tabuada</button>
 
-    <button onclick="somar()">Somar</button>
-
-    <h2 id="resultado">Resultado: </h2>
+    <div id="resultado"></div>
 
     <script>
-        function somar() {
-            let a = Number(document.getElementById("n1").value);
-            let b = Number(document.getElementById("n2").value);
+        function gerar() {
+            let numero = Number(
+                document.getElementById("numero").value
+            );
 
-            let soma = a + b;
+            let texto = "";
 
-            document.getElementById("resultado").innerHTML =
-                "Resultado: " + soma;
+            if (document.getElementById("numero").value === "") {
+                texto = "Digite um número!";
+            } else {
+                for (let i = 1; i <= 10; i++) {
+                    texto += numero + " x " + i +
+                    " = " + (numero * i) + "<br>";
+                }
+            }
+
+            document.getElementById("resultado").innerHTML = texto;
         }
     </script>
 </body>
