@@ -1,41 +1,48 @@
 const tarefas = [];
 let codigo = 0;
 
-//validar dados
-function validar(titulo, prioridade) {
-    if (titilo.trim().length < 5) {
-     throw new error("o titulo deve ter no mínimo 5 caracteres!");
-     {
+// Validar dados
+function validar(titulo,prioridade) {
+    if (titulo.trim().length < 5) {
+        throw new Error("O titulo deve ter no minimo 5 caracteres!");
+    }
 
-  if (prioridade < 1 || prioridade < 3 ||)
-      !Number.isInteger(prioridade)) {
-        throw new error("prioridade deve ser de 1 a 3!");
+    if (prioridade < 1 || prioridade > 3 ||
+        !Number.isInteger(prioridade)) {
+            throw new Error("Prioridade deve ser de 1 a 3!");
         }
-} 
+}
 
-\\ cadastrar tarefas
+// Cadastrar tarefa
 function cadastrar(titulo, prioridade) {
-    valida(titulo, prioridade);
+    validar(titulo, prioridade);
 
     const tarefa = {
         codigo: ++codigo,
         titulo: titulo.trim(),
         prioridade,
         status: true
-        };
+    };
 
-        tarefas.push(tarefa);
-        console.log("tarefa cadastrada com sucesso!");
-        }
+    tarefas.push(tarefa);
+    console.log("Tarefa cadastrada com sucesso!");
+}
 
-        // Listar tarefas
-        function listar() {
-            if (tarefas.length === 0) {
-                console.log("nenhuma tarefa cadastrada!");
-                return;
-            {
+// Listar tarefas
+function listar(){
+    if (tarefas.length === 0) {
+        console.log("Nenhuma tarefa cadastrada!");
+        return;
+    }
 
-                tarefas.forEach(t =>) {
-                    console.log(
-                        `´codigo: ${t.codigo}` | Tìtulo: ${t.titulo} |
-                        prioridade: ${t.codigo} | Título
+    tarefas.forEach(t => {
+        console.log(
+             `Código: ${t.codigo} | Título: ${t.titulo} |
+             Prioridade: ${t.prioridade} |
+             Status: ${t.status ? "Em andamento" : "Concluida"}`
+          );
+    });
+}
+
+// Buscar tarefa
+function
