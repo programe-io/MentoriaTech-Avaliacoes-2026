@@ -1,51 +1,31 @@
-let saldo = 0;
 
-function spin() {
-  let result = document.getElementById("result");
-  let prize = document.getElementById("prize");
-  let money = document.getElementById("money");
+function calcular(operacao) {
+    let n1 = Number(document.getElementById("numero1").value);
+        let n2 = Number(document.getElementById("numero2").value);
+            let resultado;
 
-  // animação de giro
-  result.classList.remove("spin");
-  void result.offsetWidth;
-  result.classList.add("spin");
+                if (operacao === "+") {
+                        resultado = n1 + n2;
+                            } else if (operacao === "-") {
+                                    resultado = n1 - n2;
+                                        } else if (operacao === "*") {
+                                                resultado = n1 * n2;
+                                                    } else if (operacao === "/") {
+                                                            if (n2 === 0) {
+                                                                        document.getElementById("resultado").innerText =
+                                                                                        "Não é possível dividir por zero!";
+                                                                                                    return;
+                                                                                                            }
+                                                                                                                    resultado = n1 / n2;
+                                                                                                                        }
 
-  setTimeout(() => {
-    let number = Math.floor(Math.random() * 100) + 1;
+                                                                                                                            document.getElementById("resultado").innerText =
+                                                                                                                                    "Resultado: " + resultado;
+                                                                                                                                    }
 
-    result.textContent = "🎲";
-
-    // 🎰 sistema de prêmios
-    if (number <= 20) {
-      saldo += 10;
-      prize.textContent = "🍬 Você ganhou R$10";
-    } 
-    else if (number <= 40) {
-      saldo += 20;
-      prize.textContent = "🍫 Você ganhou R$20";
-    } 
-    else if (number <= 60) {
-      saldo += 50;
-      prize.textContent = "🎮 Você ganhou R$50";
-    } 
-    else if (number <= 85) {
-      saldo -= 30;
-      prize.textContent = "💀 Você perdeu R$30";
-    } 
-    else if (number <= 99) {
-      saldo += 100;
-      prize.textContent = "💰 JACKPOT R$100!";
-    } 
-    else {
-      saldo += 500;
-      prize.textContent = "🏆 MEGA JACKPOT R$500!!!";
-    }
-
-    // não deixar saldo negativo
-    if (saldo < 0) saldo = 0;
-
-    // atualizar tela
-    money.textContent = "💰 Saldo: R$ " + saldo;
-
-  }, 400);
-}
+                                                                                                                                    function limpar() {
+                                                                                                                                        document.getElementById("numero1").value = "";
+                                                                                                                                            document.getElementById("numero2").value = "";
+                                                                                                                                                document.getElementById("resultado").innerText = "Resultado: 0";
+                                                                                                                                                }
+                                                                                                                                                
