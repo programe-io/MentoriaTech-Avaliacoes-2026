@@ -3,23 +3,23 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Saudação</title>
+    <title>Sorteador</title>
 </head>
 <body>
-    <h1>Olá! Qual é o seu nome?</h1>
+    <h1>Sorteador de Números</h1>
 
-    <input type="text" id="nome" placeholder="Digite seu nome">
+    <p>Clique para sortear um número de 1 a 100.</p>
 
-    <button onclick="saudar()">Enviar</button>
+    <button onclick="sortear()">Sortear</button>
 
     <h2 id="resultado"></h2>
 
     <script>
-        function saudar() {
-            let nome = document.getElementById("nome").value;
+        function sortear() {
+            let numero = Math.floor(Math.random() * 100) + 1;
 
             document.getElementById("resultado").innerHTML =
-                "Seja bem-vindo(a), " + nome + "!";
+                "Número sorteado: " + numero;
         }
     </script>
 </body>
