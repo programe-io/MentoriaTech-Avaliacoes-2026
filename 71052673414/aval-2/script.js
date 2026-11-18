@@ -45,4 +45,57 @@ function validar(titulo, prioriedade) {
         }
 
         //buscar tarefa
-    
+    function buscar(codigo) {
+        const tarefa = tarefas.find(t => t.codigo === codigo);
+
+        if (!tarefa) {
+            throw new error("tarefa nao encontrada!");
+        }
+
+        return tarefa;
+    }
+
+    // concluir tarefa 
+    function concluir(codigo) {
+        const tarefa = buscar(codigo);
+
+        if (!tarefa.status) {
+            throw new error("tarefa ja concluida!");
+        }
+
+        tarefa.status = false;
+        console.log("tarefa concluida!");
+
+
+    }
+
+    //alterar prioridade
+    function alterar(codigo, prioridade)  {
+        const tarefa = buscar(codigo);
+
+        validar(tarefa.titulo, prioridade);
+        tarefa.prioridade = prioridade;
+        console.log("prioridade alterada!");
+    }
+    //menu principal
+    async function menu() {
+        const rl = require("readline").createInterface({
+        input: process.stdin,
+        output: process.stdout
+        });
+
+        const perguntar = mensagem => new Promise(resolve =>
+        rl.question(mensagem, resolve)
+        );
+
+        let opcao;
+
+        do {
+            console.log(
+        ===== GERENCIADOR DE TAREFAS =====
+        1 - cadastrar tarefa
+        2 - listar tarefas 
+        3 - concluir tarefas 
+        4 - alterar prioridade 
+        0 - sair 
+            )
