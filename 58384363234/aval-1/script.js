@@ -1,4 +1,3 @@
-
 let produtos = [];
 
 function validarProduto(descricao, quantidade, valor) {
@@ -121,5 +120,4 @@ function mostrarMensagem(texto, cor) {
     mensagem.style.color = cor;
 }
 
-// Exibe a lista inicialmente vazia
 listarProdutos();
