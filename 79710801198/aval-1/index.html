@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapéu Seletor - Hogwarts</title>
+    <!-- Importando uma fonte com estilo clássico/mágico -->
+    <link href="https://googleapis.com" rel="stylesheet">
+    
+    <style>
+        /* --- ESTILOS CSS --- */
+        :root {
+            --cor-fundo: #1a1a2e;
+            --cor-cartao: #16213e;
+            --cor-destaque: #e94560;
+            --cor-texto: #f1f1f1;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Lato', sans-serif;
+            background-color: var(--cor-fundo);
+            color: var(--cor-texto);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            transition: background-color 0.8s ease;
+        }
+
+        .container {
+            background-color: var(--cor-cartao);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+            text-align: center;
+            max-width: 450px;
+            width: 90%;
+            border: 2px solid #d4af37; /* Borda dourada */
+            transition: all 0.8s ease;
+        }
+
+        h1 {
+            font-family: 'Cinzel', serif;
+            color: #d4af37;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        p {
+            font-size: 1.1rem;
+            line-height: 1.5;
+            margin-bottom: 25px;
+        }
+
+        input[type="text"] {
+            width: 80%;
+            padding: 12px;
+            font-size: 1rem;
+            border: 2px solid #d4af37;
+            border-radius: 8px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            margin-bottom: 20px;
+            outline: none;
+            text-align: center;
+        }
+
+        input[type="text"]::placeholder {
+            color: #bbb;
+        }
+
+        button {
+            background-color: #d4af37;
+            color: #1a1a2e;
+            font-family: 'Cinzel', serif;
+            font-weight: bold;
+            font-size: 1.1rem;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #f3ce56;
+            transform: scale(1.05);
+        }
+
+        #resultado {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(212, 175, 55, 0.3);
+            display: none; /* Escondido inicialmente */
+        }
+
+        #nome-casa {
+            font-family: 'Cinzel', serif;
+            font-size: 2.2rem;
+            margin: 10px 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .brasao {
+            font-size: 4rem;
+            margin: 10px 0;
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"><link href="style.css" rel="stylesheet"></head>
+<body>
+
+    <!-- --- ESTRUTURA HTML --- -->
+    <div class="container" id="cartao">
+        <h1>🎩 Chapéu Seletor</h1>
+        <p>Digite seu nome, coloque o chapéu na cabeça e descubra qual é a sua verdadeira casa em Hogwarts!</p>
+        
+        <input type="text" id="nome-bruxo" placeholder="Seu nome de bruxo(a)...">
+        <br>
+        <button onclick="sortearCasa()">Descobrir Minha Casa</button>
+
+        <div id="resultado">
+            <p id="mensagem-boas-vindas"></p>
+            <div class="brasao" id="icone-casa"></div>
+            <h2 id="nome-casa"></h2>
+            <p id="descricao-casa"></p>
+        </div>
+    </div>
+
+    <!-- --- LÓGICA JAVASCRIPT --- -->
+    <script>
+        const casas = [
+            {
+                nome: "Grifinória",
+                icone: "🦁",
+                corFundo: "#4a0e0e",
+                corCartao: "#740001",
+                corTexto: "#eeba30",
+                descricao: "Onde habitam os corações indômitos. Ousadia, sangue-frio e nobreza destacam os alunos da Grifinória."
+            },
+            {
+                nome: "Sonserina",
+                icone: "🐍",
+                corFundo: "#0d2618",
+                corCartao: "#1a472a",
+                corTexto: "#aaaaaa",
+                descricao: "Você fará grandes amigos aqui. Pessoas astutas que usam quaisquer meios para atingir os fins que colimaram."
+            },
+            {
+                nome: "Corvinal",
+                icone: "🦅",
+                corFundo: "#081226",
+                corCartao: "#0e1a40",
+                corTexto: "#946b2d",
+                descricao: "A casa dos que têm a mente sempre alerta, onde os homens de grande espírito e saber sempre encontrarão companheiros."
+            },
+            {
+                nome: "Lufa-Lufa",
+                icone: "🦡",
+                corFundo: "#4d3e00",
+                corCartao: "#ecb939",
+                corTexto: "#111111",
+                descricao: "Onde eles são justos e leais. Pacientes, sinceros e sem medo da dor do trabalho."
+            }
+        ];
+
+        function sortearCasa() {
+            const inputNome = document.getElementById("nome-bruxo").value.trim();
+            
+            if (inputNome === "") {
+                alert("Por favor, diga seu nome ao Chapéu Seletor primeiro!");
+                return;
+            }
+
+            // Escolhe uma casa aleatória
+            const indiceAleatorio = Math.floor(Math.random() * casas.length);
+            const casaEscolhida = casas[indiceAleatorio];
+
+            // Atualiza os textos na tela
+            document.getElementById("mensagem-boas-vindas").innerText = `Hmm, difícil... muito difícil, ${inputNome}. Mas já sei onde colocar você:`;
+            document.getElementById("icone-casa").innerText = casaEscolhida.icone;
+            document.getElementById("nome-casa").innerText = casaEscolhida.nome;
+            document.getElementById("descricao-casa").innerText = casaEscolhida.descricao;
+
+            // Muda as cores da página para combinar com a casa
+            document.body.style.backgroundColor = casaEscolhida.corFundo;
+            const cartao = document.getElementById("cartao");
+            cartao.style.backgroundColor = casaEscolhida.corCartao;
+            cartao.style.color = casaEscolhida.corTexto;
+            document.getElementById("nome-casa").style.color = casaEscolhida.corTexto;
+
+            // Mostra a div de resultado
+            document.getElementById("resultado").style.display = "block";
+        }
+    </script>
+
+<script src="script.js"></script></body>
+</html>
