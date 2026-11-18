@@ -1,335 +1,609 @@
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Instagram</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Instagram</title>
 
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+<link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #fafafa;
+    color: #262626;
+}
+
+/* MENU LATERAL */
+.sidebar {
+    position: fixed;
+    width: 220px;
+    height: 100vh;
+    border-right: 1px solid #ddd;
+    padding: 30px 20px;
+    background: white;
+}
+
+.logo {
+    font-family: cursive;
+    font-size: 30px;
+    margin-bottom: 35px;
+}
+
+.menu a {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 14px 5px;
+    text-decoration: none;
+    color: #222;
+    font-size: 17px;
+}
+
+.menu a i {
+    font-size: 25px;
+}
+
+.menu a:hover {
+    background: #eee;
+    border-radius: 8px;
+}
+
+/* CONTEÚDO */
+main {
+    margin-left: 220px;
+    padding: 30px;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    max-width: 1050px;
+    margin: auto;
+}
+
+.feed {
+    width: 480px;
+    max-width: 100%;
+}
+
+/* STORIES */
+.stories {
+    display: flex;
+    gap: 15px;
+    background: white;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin-bottom: 25px;
+}
+
+.story {
+    text-align: center;
+    font-size: 12px;
+    min-width: 65px;
+}
+
+.story img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 3px solid #e1306c;
+    padding: 2px;
+    object-fit: cover;
+    margin-bottom: 5px;
+}
+
+/* PUBLICAÇÕES */
+.post {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 25px;
+    overflow: hidden;
+}
+
+.post-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+}
+
+.post-header img {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.post-header strong {
+    flex: 1;
+}
+
+.post-header i {
+    font-size: 24px;
+}
+
+.post-photo {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background: #eee;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+}
+
+.post-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.post-actions {
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.post-actions div {
+    display: flex;
+    gap: 15px;
+}
+
+.post-actions i {
+    font-size: 27px;
+    cursor: pointer;
+}
+
+.post-actions i:hover {
+    color: #777;
+}
+
+.caption {
+    padding: 0 12px 15px;
+    font-size: 14px;
+}
+
+.caption p {
+    margin-top: 7px;
+}
+
+.comment {
+    display: flex;
+    padding: 10px;
+    border-top: 1px solid #eee;
+}
+
+.comment input {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 8px;
+}
+
+.comment button {
+    border: none;
+    color: #0095f6;
+    background: none;
+    cursor: pointer;
+}
+
+/* ESPAÇO PARA FOTO */
+.photo-label {
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #777;
+    gap: 8px;
+}
+
+.photo-label i {
+    font-size: 65px;
+}
+
+.photo-label span {
+    font-size: 13px;
+}
+
+.photo-input {
+    display: none;
+}
+
+/* SUGESTÕES */
+.right {
+    width: 270px;
+    padding-top: 15px;
+}
+
+.profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 25px;
+}
+
+.profile img {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.suggestion {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 18px 0;
+}
+
+.suggestion img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.suggestion div {
+    flex: 1;
+    font-size: 13px;
+}
+
+.follow {
+    border: none;
+    background: none;
+    color: #0095f6;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.following {
+    color: #555;
+}
+
+/* RESPONSIVO */
+@media(max-width: 950px) {
+    .right {
+        display: none;
+    }
+}
+
+@media(max-width: 600px) {
+    .sidebar {
+        position: fixed;
+        bottom: 0;
+        top: auto;
+        width: 100%;
+        height: 60px;
+        padding: 5px;
+        z-index: 10;
+    }
+
+    .logo {
+        display: none;
+    }
+
+    .menu {
+        display: flex;
+        justify-content: space-around;
+    }
+
+    .menu a {
+        padding: 10px;
+    }
+
+    .menu a span {
+        display: none;
+    }
+
+    main {
+        margin: 0;
+        padding: 10px;
+        padding-bottom: 75px;
+    }
+
+    .feed {
+        width: 100%;
+    }
+}
+</style>
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
-<body class="min-h-screen bg-gray-100 text-slate-900">
+<body>
 
-    <!-- CABEÇALHO -->
-    <header class="sticky top-0 z-50 bg-white border-b border-gray-200">
-        <div class="max-w-5xl mx-auto px-4">
-            <div class="flex items-center justify-between h-14">
-                <h1 class="text-xl font-bold">Instagram</h1>
-                <button type="button">
-                    <i class="bx bx-menu text-2xl"></i>
-                </button>
-            </div>
+<!-- MENU -->
+<aside class="sidebar">
+    <h1 class="logo">Instagram</h1>
+
+    <nav class="menu">
+        <a href="#"><i class='bx bx-home'></i><span>Início</span></a>
+        <a href="#"><i class='bx bx-search'></i><span>Pesquisar</span></a>
+        <a href="#"><i class='bx bx-compass'></i><span>Explorar</span></a>
+        <a href="#"><i class='bx bx-video'></i><span>Reels</span></a>
+        <a href="#"><i class='bx bx-message-rounded'></i><span>Mensagens</span></a>
+        <a href="#"><i class='bx bx-heart'></i><span>Notificações</span></a>
+        <a href="#"><i class='bx bx-plus-square'></i><span>Criar</span></a>
+        <a href="#"><i class='bx bx-user-circle'></i><span>Perfil</span></a>
+    </nav>
+</aside>
+
+<main>
+<div class="container">
+
+<section class="feed">
+
+<!-- STORIES -->
+<div class="stories">
+
+    <div class="story">
+        <img src="https://i.pinimg.com/736x/73/ae/7c/73ae7c3c954d0738cad096b40021d819.jpg">
+        <p>Seu story</p>
+    </div>
+
+    <div class="story">
+        <img src="https://i.pinimg.com/736x/6c/0d/ab/6c0dabdafcfcf613001afd0fdde729a5.jpg">
+        <p>Luzivania</p>
+    </div>
+
+    <div class="story">
+        <img src="https://i.pinimg.com/736x/aa/3b/06/aa3b0604ce00290af896e5164a8f4963.jpg">
+        <p>Rafaela</p>
+    </div>
+
+    <div class="story">
+        <img src="https://i.pinimg.com/736x/14/ab/94/14ab94ad4c5321f0fafc3c6afe671aa7.jpg">
+        <p>amelia</p>
+    </div>
+
+    <div class="story">
+        <img src="https://i.pinimg.com/736x/af/b9/f0/afb9f0a9c27fded0fd05ed605fef67f2.jpg">
+        <p>Samyra</p>
+    </div>
+
+    <div class="story">
+        <img src="https://i.pinimg.com/736x/06/31/69/063169c409f475434e557233cf526c2e.jpg">
+        <p>kellen</p>
+    </div>
+
+    <div class="story">
+        <img src="https://i.pinimg.com/1200x/16/cc/53/16cc531f56bbdca1b843e440264cc24f.jpg">
+        <p>julia</p>
+    </div>
+
+</div>
+
+<!-- POST 1 -->
+<div class="post">
+
+    <div class="post-header">
+        <img src="https://i.pinimg.com/736x/87/db/ea/87dbea1739ef3b6f41e3f9daedb21bdc.jpg">
+        <strong>kamila_oliveira</strong>
+        <i class='bx bx-dots-horizontal-rounded'></i>
+    </div>
+
+    <div class="post-photo">
+        <img src="https://i.pinimg.com/736x/26/ce/36/26ce36dca928ff26fb69d39cb1f31120.jpg">
+    </div>
+
+    <div class="post-actions">
+        <div>
+            <i class='bx bx-heart' onclick="like(this)"></i>
+            <i class='bx bx-comment' onclick="focusComment(this)"></i>
+            <i class='bx bx-send'></i>
         </div>
-    </header>
+        <i class='bx bx-bookmark' onclick="save(this)"></i>
+    </div>
 
-    <main class="max-w-5xl mx-auto px-4 py-4 pb-20">
-        <div class="flex gap-8">
-            <div class="flex-1 max-w-lg mx-auto">
+    <div class="caption">
+        <strong><span class="likes">120</span></strong> curtidas
+        <p><strong>kamila</strong></p>
+        <div class="comments"></div>
+    </div>
 
-                <!-- STORIES -->
-                <section class="bg-white border border-gray-200 rounded-lg p-4 mb-5">
-                    <div class="flex gap-4 overflow-x-auto pb-2">
+    <div class="comment">
+        <input type="text" placeholder="Adicione um comentário...">
+        <button onclick="comment(this)">Publicar</button>
+    </div>
 
-                        <div class="flex flex-col items-center flex-shrink-0">
-                            <div class="w-16 h-16 rounded-full p-0.5 bg-gray-200 relative overflow-hidden">
-                                <img src="https://i.pinimg.com/736x/73/ae/7c/73ae7c3c954d0738cad096b40021d819.jpg"
-                                     alt="Seu story"
-                                     class="w-full h-full rounded-full object-cover border-2 border-white">
-                                <span class="absolute bottom-0 right-0 bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center border-2 border-white text-lg">+</span>
-                            </div>
-                            <span class="text-xs mt-1">Seu story</span>
-                        </div>
+</div>
 
-                        <div class="flex flex-col items-center flex-shrink-0">
-                            <div class="w-16 h-16 rounded-full p-0.5 bg-gradient-to-tr from-yellow-400 via-red-500 to-purple-600 overflow-hidden">
-                                <img src="https://i.pinimg.com/736x/6c/0d/ab/6c0dabdafcfcf613001afd0fdde729a5.jpg"
-                                     class="w-full h-full rounded-full object-cover border-2 border-white" alt="Story 2">
-                            </div>
-                            <span class="text-xs mt-1">Luzivania</span>
-                        </div>
+<!-- POST 2 -->
+<div class="post">
 
-                        <div class="flex flex-col items-center flex-shrink-0">
-                            <div class="w-16 h-16 rounded-full p-0.5 bg-gradient-to-tr from-yellow-400 via-red-500 to-purple-600 overflow-hidden">
-                                <img src="https://i.pinimg.com/736x/aa/3b/06/aa3b0604ce00290af896e5164a8f4963.jpg"
-                                     class="w-full h-full rounded-full object-cover border-2 border-white" alt="Story 3">
-                            </div>
-                            <span class="text-xs mt-1">Rafaela</span>
-                        </div>
+    <div class="post-header">
+        <img src="https://i.pinimg.com/1200x/16/cc/53/16cc531f56bbdca1b843e440264cc24f.jpg">
+        <strong>maria_leal</strong>
+        <i class='bx bx-dots-horizontal-rounded'></i>
+    </div>
 
-                        <div class="flex flex-col items-center flex-shrink-0">
-                            <div class="w-16 h-16 rounded-full p-0.5 bg-gradient-to-tr from-yellow-400 via-red-500 to-purple-600 overflow-hidden">
-                                <img src="https://i.pinimg.com/736x/14/ab/94/14ab94ad4c5321f0fafc3c6afe671aa7.jpg"
-                                     class="w-full h-full rounded-full object-cover border-2 border-white" alt="Story 4">
-                            </div>
-                            <span class="text-xs mt-1">amelia</span>
-                        </div>
+    <div class="post-photo">
 
-                        <div class="flex flex-col items-center flex-shrink-0">
-                            <div class="w-16 h-16 rounded-full p-0.5 bg-gradient-to-tr from-yellow-400 via-red-500 to-purple-600 overflow-hidden">
-                                <img src="https://i.pinimg.com/736x/af/b9/f0/afb9f0a9c27fded0fd05ed605fef67f2.jpg"
-                                     class="w-full h-full rounded-full object-cover border-2 border-white" alt="Story 5">
-                            </div>
-                            <span class="text-xs mt-1">Samyra</span>
-                        </div>
+        <img id="fotoPublicacao" class="hidden" alt="Minha publicação">
 
-                        <div class="flex flex-col items-center flex-shrink-0">
-                            <div class="w-16 h-16 rounded-full p-0.5 bg-gradient-to-tr from-yellow-400 via-red-500 to-purple-600 overflow-hidden">
-                                <img src="https://i.pinimg.com/736x/06/31/69/063169c409f475434e557233cf526c2e.jpg"
-                                     class="w-full h-full rounded-full object-cover border-2 border-white" alt="Story 6">
-                            </div>
-                            <span class="text-xs mt-1">kellen</span>
-                        </div>
+        <label id="espacoFoto" for="escolherFoto" class="photo-label">
+            <i class='bx bx-image-add'></i>
+            <span>Clique para adicionar uma foto</span>
+        </label>
 
-                        <div class="flex flex-col items-center flex-shrink-0">
-                            <div class="w-16 h-16 rounded-full p-0.5 bg-gradient-to-tr from-yellow-400 via-red-500 to-purple-600 overflow-hidden">
-                                <img src="https://i.pinimg.com/1200x/16/cc/53/16cc531f56bbdca1b843e440264cc24f.jpg"
-                                     class="w-full h-full rounded-full object-cover border-2 border-white" alt="Story 7">
-                            </div>
-                            <span class="text-xs mt-1">julia</span>
-                        </div>
+        <input
+            type="file"
+            id="escolherFoto"
+            accept="image/*"
+            class="photo-input"
+            onchange="addPhoto(event)"
+        >
 
-                    </div>
-                </section>
+    </div>
 
-                <!-- PUBLICAÇÃO 1 -->
-                <article class="bg-white border border-gray-200 rounded-lg mb-5">
-
-                    <div class="flex items-center justify-between p-3">
-                        <div class="flex items-center gap-2">
-                            <div class="w-9 h-9 rounded-full overflow-hidden bg-gray-200">
-                                <img src="https://i.pinimg.com/736x/87/db/ea/87dbea1739ef3b6f41e3f9daedb21bdc.jpg"
-                                     alt="Foto de perfil"
-                                     class="w-full h-full object-cover">
-                            </div>
-                            <strong>kamila_oliveira</strong>
-                        </div>
-                        <i class="bx bx-dots-horizontal-rounded text-2xl"></i>
-                    </div>
-
-                    <div class="w-full aspect-square bg-gray-200 overflow-hidden">
-                        <img src="https://i.pinimg.com/736x/26/ce/36/26ce36dca928ff26fb69d39cb1f31120.jpg"
-                             alt="Publicação de Kamila"
-                             class="w-full h-full object-cover">
-                    </div>
-
-                    <div class="p-3">
-                        <div class="flex justify-between text-2xl">
-                            <div class="flex gap-4">
-                                <button type="button" onclick="curtir(this)">
-                                    <i class="bx bx-heart"></i>
-                                </button>
-
-                                <button type="button" onclick="focarComentario(this)">
-                                    <i class="bx bx-message-rounded"></i>
-                                </button>
-
-                                <i class="bx bx-send"></i>
-                            </div>
-
-                            <button type="button" onclick="salvar(this)">
-                                <i class="bx bx-bookmark"></i>
-                            </button>
-                        </div>
-
-                        <p class="text-sm mt-2">
-                            <strong class="curtidas">120</strong> curtidas
-                        </p>
-
-                        <p class="text-sm mt-2">
-                            <strong>kamila</strong>
-                        </p>
-
-                        <div class="comentarios text-sm mt-2"></div>
-
-                        <div class="flex border-t mt-3 pt-3 gap-2">
-                            <input type="text"
-                                   placeholder="Adicione um comentário..."
-                                   class="flex-1 outline-none text-sm">
-
-                            <button type="button"
-                                    onclick="comentar(this)"
-                                    class="text-blue-500 font-semibold text-sm">
-                                Publicar
-                            </button>
-                        </div>
-                    </div>
-                </article>
-
-                <!-- PUBLICAÇÃO 2 -->
-                <article class="bg-white border border-gray-200 rounded-lg mb-5">
-
-                    <div class="flex items-center justify-between p-3">
-                        <div class="flex items-center gap-2">
-                            <div class="w-9 h-9 rounded-full overflow-hidden bg-gray-200">
-                                <img src="https://i.pinimg.com/1200x/16/cc/53/16cc531f56bbdca1b843e440264cc24f.jpg"
-                                     alt="post"
-                                     class="w-full h-full object-cover">
-                            </div>
-                            <strong>maria_leal</strong>
-                        </div>
-
-                        <i class="bx bx-dots-horizontal-rounded text-2xl"></i>
-                    </div>
-
-                    <!-- ESPAÇO PARA COLOCAR FOTO NO SEGUNDO POST -->
-                    <div class="w-full aspect-square bg-gray-200 overflow-hidden relative flex items-center justify-center">
-
-                        <img id="fotoPublicacao"
-                             src="https://i.pinimg.com/1200x/16/cc/53/16cc531f56bbdca1b843e440264cc24f.jpg"
-                             alt="Minha publicação"
-                             class="w-full h-full object-cover hidden">
-
-                        <label id="espacoFoto"
-                               for="escolherFoto"
-                               class="cursor-pointer flex flex-col items-center justify-center text-gray-500">
-                            <i class="bx bx-image-add text-6xl"></i>
-                            <span class="text-sm">Clique para adicionar uma foto</span>
-                        </label>
-
-                        <input type="file"
-                               id="escolherFoto"
-                               accept="image/*"
-                               class="hidden"
-                               onchange="adicionarFoto(event)">
-                    </div>
-
-                    <div class="p-3">
-                        <div class="flex justify-between text-2xl">
-                            <div class="flex gap-4">
-                                <button type="button" onclick="curtir(this)">
-                                    <i class="bx bx-heart"></i>
-                                </button>
-
-                                <button type="button" onclick="focarComentario(this)">
-                                    <i class="bx bx-message-rounded"></i>
-                                </button>
-
-                                <i class="bx bx-send"></i>
-                            </div>
-
-                            <button type="button" onclick="salvar(this)">
-                                <i class="bx bx-bookmark"></i>
-                            </button>
-                        </div>
-
-                        <p class="text-sm mt-2">
-                            <strong class="curtidas">85</strong> curtidas
-                        </p>
-
-                        <p class="text-sm mt-2">
-                            <strong>kamila</strong>
-                        </p>
-
-                        <div class="comentarios text-sm mt-2"></div>
-
-                        <div class="flex border-t mt-3 pt-3 gap-2">
-                            <input type="text"
-                                   placeholder="Adicione um comentário..."
-                                   class="flex-1 outline-none text-sm">
-
-                            <button type="button"
-                                    onclick="comentar(this)"
-                                    class="text-blue-500 font-semibold text-sm">
-                                Publicar
-                            </button>
-                        </div>
-                    </div>
-                </article>
-
-            </div>
+    <div class="post-actions">
+        <div>
+            <i class='bx bx-heart' onclick="like(this)"></i>
+            <i class='bx bx-comment' onclick="focusComment(this)"></i>
+            <i class='bx bx-send'></i>
         </div>
-    </main>
+        <i class='bx bx-bookmark' onclick="save(this)"></i>
+    </div>
 
-    <!-- MENU INFERIOR -->
-    <footer class="fixed bottom-0 left-0 w-full bg-white border-t border-gray-200">
-        <div class="max-w-lg mx-auto flex justify-around py-3 text-2xl">
-            <i class="bx bx-home"></i>
-            <i class="bx bx-search"></i>
-            <i class="bx bx-plus-square"></i>
-            <i class="bx bx-video"></i>
-            <i class="bx bx-user-circle"></i>
+    <div class="caption">
+        <strong><span class="likes">85</span></strong> curtidas
+        <p><strong>kamila</strong></p>
+        <div class="comments"></div>
+    </div>
+
+    <div class="comment">
+        <input type="text" placeholder="Adicione um comentário...">
+        <button onclick="comment(this)">Publicar</button>
+    </div>
+
+</div>
+
+</section>
+
+<!-- SUGESTÕES -->
+<aside class="right">
+
+    <div class="profile">
+        <img src="https://i.pinimg.com/736x/87/db/ea/87dbea1739ef3b6f41e3f9daedb21bdc.jpg">
+        <div>
+            <strong>kamila_oliveira</strong>
+            <p>Kamila</p>
         </div>
-    </footer>
+    </div>
 
-    <!-- FUNÇÕES -->
-    <script>
+    <strong>Sugestões para você</strong>
 
-        // CURTIR PUBLICAÇÃO
-        function curtir(botao) {
-            const icone = botao.querySelector("i");
-            const artigo = botao.closest("article");
-            const numero = artigo.querySelector(".curtidas");
+    <div class="suggestion">
+        <img src="https://i.pinimg.com/736x/6c/0d/ab/6c0dabdafcfcf613001afd0fdde729a5.jpg">
+        <div><strong>Luzivania</strong><p>Seguido por amigos</p></div>
+        <button class="follow" onclick="follow(this)">Seguir</button>
+    </div>
 
-            let curtido = botao.dataset.curtido === "true";
+    <div class="suggestion">
+        <img src="https://i.pinimg.com/736x/aa/3b/06/aa3b0604ce00290af896e5164a8f4963.jpg">
+        <div><strong>Rafaela</strong><p>Para você</p></div>
+        <button class="follow" onclick="follow(this)">Seguir</button>
+    </div>
 
-            if (!curtido) {
-                icone.className = "bx bxs-heart text-red-500";
-                numero.textContent = Number(numero.textContent) + 1;
-                botao.dataset.curtido = "true";
-            } else {
-                icone.className = "bx bx-heart";
-                numero.textContent = Number(numero.textContent) - 1;
-                botao.dataset.curtido = "false";
-            }
-        }
+    <div class="suggestion">
+        <img src="https://i.pinimg.com/736x/14/ab/94/14ab94ad4c5321f0fafc3c6afe671aa7.jpg">
+        <div><strong>amelia</strong><p>Novo no Instagram</p></div>
+        <button class="follow" onclick="follow(this)">Seguir</button>
+    </div>
 
-        // COMENTAR
-        function comentar(botao) {
-            const artigo = botao.closest("article");
-            const input = artigo.querySelector('input[type="text"]');
-            const comentarios = artigo.querySelector(".comentarios");
+    <div class="suggestion">
+        <img src="https://i.pinimg.com/736x/af/b9/f0/afb9f0a9c27fded0fd05ed605fef67f2.jpg">
+        <div><strong>Samyra</strong><p>Para você</p></div>
+        <button class="follow" onclick="follow(this)">Seguir</button>
+    </div>
 
-            if (input.value.trim() !== "") {
-                const novoComentario = document.createElement("p");
-                const nome = document.createElement("strong");
+    <div class="suggestion">
+        <img src="https://i.pinimg.com/736x/06/31/69/063169c409f475434e557233cf526c2e.jpg">
+        <div><strong>kellen</strong><p>Seguido por amigos</p></div>
+        <button class="follow" onclick="follow(this)">Seguir</button>
+    </div>
 
-                nome.textContent = "kamila ";
+</aside>
 
-                novoComentario.appendChild(nome);
-                novoComentario.appendChild(
-                    document.createTextNode(input.value.trim())
-                );
+</div>
+</main>
 
-                comentarios.appendChild(novoComentario);
-                input.value = "";
-            }
-        }
+<script>
 
-        // ABRIR CAMPO DE COMENTÁRIO
-        function focarComentario(botao) {
-            botao.closest("article")
-                 .querySelector('input[type="text"]').focus();
-        }
+// CURTIR
+function like(icon) {
+    const post = icon.closest(".post");
+    const likes = post.querySelector(".likes");
 
-        // SALVAR PUBLICAÇÃO
-        function salvar(botao) {
-            const icone = botao.querySelector("i");
+    let count = Number(likes.innerText);
 
-            if (icone.classList.contains("bxs-bookmark")) {
-                icone.className = "bx bx-bookmark";
-            } else {
-                icone.className = "bx bxs-bookmark";
-            }
-        }
+    if (icon.classList.contains("bxs-heart")) {
+        icon.classList.replace("bxs-heart", "bx-heart");
+        icon.style.color = "#262626";
+        likes.innerText = count - 1;
+    } else {
+        icon.classList.replace("bx-heart", "bxs-heart");
+        icon.style.color = "red";
+        likes.innerText = count + 1;
+    }
+}
 
-        // ADICIONAR FOTO NO SEGUNDO POST
-        function adicionarFoto(event) {
-            const arquivo = event.target.files[0];
+// SEGUIR
+function follow(button) {
+    if (button.innerText === "Seguir") {
+        button.innerText = "Seguindo";
+        button.classList.add("following");
+    } else {
+        button.innerText = "Seguir";
+        button.classList.remove("following");
+    }
+}
 
-            if (arquivo && arquivo.type.startsWith("image/")) {
-                const imagem = document.getElementById("fotoPublicacao");
-                const espaco = document.getElementById("espacoFoto");
+// COMENTAR
+function comment(button) {
+    const post = button.closest(".post");
+    const input = button.previousElementSibling;
 
-                imagem.src = URL.createObjectURL(arquivo);
-                imagem.classList.remove("hidden");
-                espaco.classList.add("hidden");
-            }
-        }
+    if (input.value.trim() === "") return;
 
-    </script>
+    const p = document.createElement("p");
+    const strong = document.createElement("strong");
+
+    strong.textContent = "kamila ";
+
+    p.appendChild(strong);
+    p.appendChild(document.createTextNode(input.value.trim()));
+
+    post.querySelector(".comments").appendChild(p);
+
+    input.value = "";
+}
+
+// ABRIR COMENTÁRIO
+function focusComment(icon) {
+    icon.closest(".post")
+        .querySelector('input[type="text"]').focus();
+}
+
+// SALVAR
+function save(icon) {
+    if (icon.classList.contains("bxs-bookmark")) {
+        icon.classList.replace("bxs-bookmark", "bx-bookmark");
+    } else {
+        icon.classList.replace("bx-bookmark", "bxs-bookmark");
+    }
+}
+
+// ADICIONAR FOTO
+function addPhoto(event) {
+    const file = event.target.files[0];
+
+    if (file && file.type.startsWith("image/")) {
+        const image = document.getElementById("fotoPublicacao");
+        const space = document.getElementById("espacoFoto");
+
+        image.src = URL.createObjectURL(file);
+        image.classList.remove("hidden");
+        space.style.display = "none";
+    }
+}
+
+</script>
 
 </body>
 </html>
