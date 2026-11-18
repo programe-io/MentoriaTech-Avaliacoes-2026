@@ -1,0 +1,1 @@
+if (!window.confirm(`Remover "${alvo.descricao}"?`)) return;
