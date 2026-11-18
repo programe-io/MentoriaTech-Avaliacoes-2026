@@ -3,21 +3,31 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Contador</title>
+    <title>Verificador de Idade</title>
 </head>
 <body>
-    <h1>Contador de Cliques</h1>
+    <h1>Verifique sua idade</h1>
 
-    <p id="numero">0</p>
+    <input type="number" id="idade" placeholder="Digite sua idade">
 
-    <button onclick="contar()">Clique aqui</button>
+    <button onclick="verificar()">Verificar</button>
+
+    <h2 id="resultado"></h2>
 
     <script>
-        let contador = 0;
+        function verificar() {
+            let idade = Number(document.getElementById("idade").value);
 
-        function contar() {
-            contador++;
-            document.getElementById("numero").innerHTML = contador;
+            if (idade >= 18) {
+                document.getElementById("resultado").innerHTML =
+                    "Você é maior de idade!";
+            } else if (idade > 0) {
+                document.getElementById("resultado").innerHTML =
+                    "Você é menor de idade!";
+            } else {
+                document.getElementById("resultado").innerHTML =
+                    "Digite uma idade válida!";
+            }
         }
     </script>
 </body>
