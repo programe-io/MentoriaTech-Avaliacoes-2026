@@ -3,12 +3,13 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Verificador de Idade</title>
+    <title>Número Par ou Ímpar</title>
 </head>
 <body>
-    <h1>Verifique sua idade</h1>
+    <h1>Par ou Ímpar?</h1>
 
-    <input type="number" id="idade" placeholder="Digite sua idade">
+    <input type="number" id="numero"
+    placeholder="Digite um número">
 
     <button onclick="verificar()">Verificar</button>
 
@@ -16,17 +17,19 @@
 
     <script>
         function verificar() {
-            let idade = Number(document.getElementById("idade").value);
+            let numero = Number(
+                document.getElementById("numero").value
+            );
 
-            if (idade >= 18) {
+            if (document.getElementById("numero").value === "") {
                 document.getElementById("resultado").innerHTML =
-                    "Você é maior de idade!";
-            } else if (idade > 0) {
+                    "Digite um número!";
+            } else if (numero % 2 === 0) {
                 document.getElementById("resultado").innerHTML =
-                    "Você é menor de idade!";
+                    "O número é PAR!";
             } else {
                 document.getElementById("resultado").innerHTML =
-                    "Digite uma idade válida!";
+                    "O número é ÍMPAR!";
             }
         }
     </script>
