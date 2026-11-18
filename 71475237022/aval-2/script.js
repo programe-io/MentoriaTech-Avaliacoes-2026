@@ -45,4 +45,34 @@ function listar(){
 }
 
 // Buscar tarefa
-function
+function buscar(codigo) {
+    const Tarefa = tarefas.find(t => t.codigo === codigo);
+
+    if (!tarefa) {
+        throw new Error("Tarefa não encontrada!");
+    }
+
+    return tarefa;
+}
+
+// Concluir tarefa
+function concluir(codigo) {
+    const tarefa = buscar(codigo);
+
+    if (!tarefa.status) {
+        throw new Error("Tarefa já concluída!");
+    }
+
+    tarefa.status = false;
+    console.log("Tarefa concluída!");
+}
+
+// Alterar prioridade
+function alterar(codigo, prioridade) {
+    const tarefa = buscar(codigo);
+
+    validar(tarefa.titulo, prioridade);
+    tarefa.prioridade = prioridade;
+
+    console.log("Prioridade alterada!");
+}
