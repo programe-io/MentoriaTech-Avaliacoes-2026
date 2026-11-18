@@ -1,28 +1,24 @@
 
-// Efeito de boas-vindas
 window.addEventListener("load", function() {
-    console.log("Bem-vindo ao site E SP!");
+    console.log("Bem-vindo à PNEU CAR!");
 });
 
-// Botão de apresentação
-const botao = document.querySelector(".botao");
+const botoes = document.querySelectorAll(".botao");
 
-if (botao) {
+botoes.forEach(function(botao) {
     botao.addEventListener("click", function() {
-        console.log("Conheça o perfume E SP!");
+        console.log("Obrigado por visitar a PNEU CAR!");
     });
-}
+});
 
-// Animação ao rolar a página
+const secoes = document.querySelectorAll("section");
+
 window.addEventListener("scroll", function() {
-    const secoes = document.querySelectorAll("section");
-
     secoes.forEach(function(secao) {
         const posicao = secao.getBoundingClientRect().top;
 
         if (posicao < window.innerHeight - 100) {
             secao.style.opacity = "1";
-            secao.style.transform = "translateY(0)";
         }
     });
 });
