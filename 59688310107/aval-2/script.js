@@ -1,3 +1,4 @@
+
 const tarefas = {}
 let codigo = 0; 
 
@@ -39,4 +40,4 @@ function listar() {
         console.log(
               Codigo: $(t.codigo} | Titulo: $ (t. titulo} |
               prioridade: $(t.prioridade} | 
-              Status: $(t,status ?
+              Status: $(t.status} ? "Em andamento" : "concluida"}
