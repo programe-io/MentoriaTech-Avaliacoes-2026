@@ -1,55 +1,65 @@
-// Função para calcular aproveitamento do time
-function calcularAproveitamento() {
-    let vitorias = parseInt(prompt("Digite o número de vitórias:"));
-    let empates = parseInt(prompt("Digite o número de empates:"));
-    let derrotas = parseInt(prompt("Digite o número de derrotas:"));
 
-    let jogos = vitorias + empates + derrotas;
-    let pontos = (vitorias * 3) + (empates * 1);
+let timeCasa = "Flamengo";
+let timeVisitante = "Real Madrid";
 
-    let aproveitamento = (pontos / (jogos * 3)) * 100;
+let golsCasa = 0;
+let golsVisitante = 0;
 
-    document.getElementById("resultado").innerHTML =
-        "Aproveitamento: " + aproveitamento.toFixed(2) + "%";
+let minuto = 0;
+
+// Função para adicionar gol
+function golCasa() {
+    golsCasa++;
+    atualizarPlacar();
+
+    console.log("GOOOOOOL DO " + timeCasa + "!");
 }
 
-// Função para classificar desempenho
-function classificarTime() {
-    let golsMarcados = parseInt(prompt("Gols marcados:"));
-    let golsSofridos = parseInt(prompt("Gols sofridos:"));
+function golVisitante() {
+    golsVisitante++;
+    atualizarPlacar();
 
-    let saldo = golsMarcados - golsSofridos;
-    let classificacao = "";
+    console.log("GOOOOOOL DO " + timeVisitante + "!");
+}
 
-    if (saldo > 10) {
-        classificacao = "Excelente desempenho 🏆";
-    } else if (saldo > 0) {
-        classificacao = "Bom desempenho 👍";
-    } else if (saldo === 0) {
-        classificacao = "Desempenho equilibrado ⚖️";
+// Atualizar placar
+function atualizarPlacar() {
+    console.log("----------------------");
+    console.log(timeCasa + " " + golsCasa +
+        " x " + golsVisitante + " " + timeVisitante);
+    console.log("Minuto: " + minuto + "'");
+    console.log("----------------------");
+}
+
+// Cronômetro
+function passarMinuto() {
+    minuto++;
+    console.log("Tempo de jogo: " + minuto + "'");
+}
+
+// Mostrar resultado
+function resultadoFinal() {
+    console.log("FIM DE JOGO!");
+
+    if (golsCasa > golsVisitante) {
+        console.log("Vitória do " + timeCasa + "!");
+    } else if (golsVisitante > golsCasa) {
+        console.log("Vitória do " + timeVisitante + "!");
     } else {
-        classificacao = "Precisa melhorar ⚠️";
+        console.log("O jogo terminou empatado!");
     }
 
-    document.getElementById("resultado").innerHTML =
-        "Saldo de gols: " + saldo + "<br>" + classificacao;
+    atualizarPlacar();
 }
 
-// Função simples de simulação de partida
-function simularPartida() {
-    let golsTimeA = Math.floor(Math.random() * 5);
-    let golsTimeB = Math.floor(Math.random() * 5);
+// Simulação de uma partida
+golCasa();
+passarMinuto();
 
-    let resultado = "";
+golVisitante();
+passarMinuto();
 
-    if (golsTimeA > golsTimeB) {
-        resultado = "Time A venceu!";
-    } else if (golsTimeB > golsTimeA) {
-        resultado = "Time B venceu!";
-    } else {
-        resultado = "Empate!";
-    }
+golCasa();
+passarMinuto();
 
-    document.getElementById("resultado").innerHTML =
-        `Placar: ${golsTimeA} x ${golsTimeB} <br> ${resultado}`;
-}
+resultadoFinal();
