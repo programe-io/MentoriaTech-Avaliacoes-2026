@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet">
+</head>
+<body>
+  <!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestão Acadêmica | CETI Paulo Freire - Salvadora da Trindade de Souza</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Container de Notificações Toast -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <div class="app-layout">
+    <!-- Barra Lateral (Sidebar) -->
+    <aside class="sidebar">
+      <div class="sidebar-topo">
+        <div class="logo-escola">
+          <div class="logo-icone">PF</div>
+          <div>
+            <span class="logo-sigla">CETI PAULO FREIRE</span>
+            <p class="logo-sub">Ensino Médio Integral</p>
+          </div>
+        </div>
+
+        <div class="perfil-card">
+          <div class="perfil-avatar">ST</div>
+          <div class="perfil-dados">
+            <strong>Salvadora da Trindade de Souza</strong>
+            <span>Estudante • Turno Integral</span>
+          </div>
+        </div>
+
+        <nav class="menu-nav" id="menu-filtros">
+          <button type="button" class="nav-item ativo" data-filtro="todas">
+            <span>📊 Visão Geral</span>
+            <span class="nav-count" id="nav-todas">0</span>
+          </button>
+          <button type="button" class="nav-item" data-filtro="pendentes">
+            <span>⏳ Pendentes</span>
+            <span class="nav-count" id="nav-pendentes">0</span>
+          </button>
+          <button type="button" class="nav-item" data-filtro="alta">
+            <span>🔥 Urgentes (Alta)</span>
+            <span class="nav-count" id="nav-alta">0</span>
+          </button>
+          <button type="button" class="nav-item" data-filtro="concluidas">
+            <span>✅ Concluídas</span>
+            <span class="nav-count" id="nav-concluidas">0</span>
+          </button>
+        </nav>
+      </div>
+
+      <div class="sidebar-rodape">
+        <div class="meta-box">
+          <div class="meta-header">
+            <span>Progresso Geral</span>
+            <strong id="porcentagem-texto">0%</strong>
+          </div>
+          <div class="barra-fundo">
+            <div id="barra-preenchimento" class="barra-preenchimento"></div>
+          </div>
+          <small id="texto-progresso">0 de 0 tarefas finalizadas</small>
+        </div>
+
+        <div class="sidebar-acoes">
+          <button type="button" id="btn-tema" class="btn-sidebar">🌙 Tema Escuro</button>
+          <button type="button" id="btn-limpar-concluidas" class="btn-sidebar perigo">🧹 Limpar Feitas</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Conteúdo Principal -->
+    <main class="main-content">
+      <header class="topbar">
+        <div>
+          <h1>Painel de Produtividade & Estudos</h1>
+          <p id="data-atual">Organize suas entregas, provas e projetos escolares</p>
+        </div>
+        <button type="button" id="btn-exportar" class="btn-exportar">
+          ⬇ Exportar Relatório (.txt)
+        </button>
+      </header>
+
+      <!-- Cards de Métricas -->
+      <section class="kpis-grid">
+        <div class="kpi-card">
+          <span class="kpi-titulo">Total de Tarefas</span>
+          <div class="kpi-numero-box">
+            <strong id="kpi-total">0</strong>
+            <span class="kpi-tag roxo">Ativas</span>
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <span class="kpi-titulo">Prioridade Alta (1)</span>
+          <div class="kpi-numero-box">
+            <strong id="kpi-alta">0</strong>
+            <span class="kpi-tag vermelho">Foco Total</span>
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <span class="kpi-titulo">Aguardando Entrega</span>
+          <div class="kpi-numero-box">
+            <strong id="kpi-pendentes">0</strong>
+            <span class="kpi-tag ambar">Pendentes</span>
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <span class="kpi-titulo">Taxa de Conclusão</span>
+          <div class="kpi-numero-box">
+            <strong id="kpi-concluidas">0</strong>
+            <span class="kpi-tag verde">Finalizadas</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Formulário de Cadastro -->
+      <section class="panel-card">
+        <div class="panel-header">
+          <div>
+            <h2>Nova Tarefa Escolar</h2>
+            <p>O título deve conter no mínimo 5 caracteres e prioridade entre 1 e 3</p>
+          </div>
+          <span id="contador-caracteres" class="pill-contador">0 / 5 caracteres</span>
+        </div>
+
+        <form id="form-tarefa" class="form-grid" novalidate>
+          <div class="campo">
+            <label for="titulo">Título da Tarefa *</label>
+            <input 
+              type="text" 
+              id="titulo" 
+              placeholder="Digite a atividade, matéria ou trabalho..." 
+              autocomplete="off"
+            >
+          </div>
+
+          <div class="campo">
+            <label for="prioridade">Prioridade (1 a 3) *</label>
+            <select id="prioridade">
+              <option value="1">🔴 1 - Alta Prioridade</option>
+              <option value="2" selected>🟡 2 - Média Prioridade</option>
+              <option value="3">🟢 3 - Baixa Prioridade</option>
+            </select>
+          </div>
+
+          <button type="submit" class="btn-cadastrar">+ Cadastrar</button>
+        </form>
+  <script src="script.js"></script>
+  
+</body>
+</html>
