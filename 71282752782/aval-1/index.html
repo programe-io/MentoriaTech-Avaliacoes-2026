@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Código JavaScript</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <style>body{margin:0;background:#0d1117}pre{margin:0}code.hljs{padding:1.5rem;min-height:100vh;box-sizing:border-box}</style>
+</head>
+<body>
+  <pre><code class="language-javascript">import java.util.ArrayList;
+import java.util.List;
+
+// 3 e 11. Estrutura dos dados e criação do objeto Produto
+class Produto {
+    int codigo;
+    String descricao;
+    int quantidade;
+    double valor;
+
+    public Produto(int codigo, String descricao, int quantidade, double valor) {
+        this.codigo = codigo;
+        this.descricao = descricao;
+        this.quantidade = quantidade;
+        this.valor = valor;
+    }
+
+    @Override
+    public String toString() {
+        return String.format(
+            "{ codigo: %d, descricao: \"%s\", quantidade: %d, valor: R$ %.2f }",
+            codigo, descricao, quantidade, valor
+        );
+    }
+}
+
+public class SistemaEstoque {
+
+    // 4. Criação da lista de produtos (equivalente ao let produtos = [])
+    static List&lt;Produto&gt; produtos = new ArrayList&lt;&gt;();
+
+    // 6 a 9. Função (método) para validar os dados do produto
+    public static void validarProduto(String descricao, int quantidade, double valor) {
+        if (descricao == null || descricao.trim().length() &lt; 5) {
+            throw new IllegalArgumentException("Descrição deve ter, no mínimo, cinco caracteres");
+        }
+        if (quantidade &lt; 1) {
+            throw new IllegalArgumentException("Quantidade deve ser maior que zero");
+        }
+        if (valor &lt; 0) {
+            throw new IllegalArgumentException("Valor deve ser maior ou igual a zero");
+        }
+    }
+
+    // 10 a 13. Função para cadastrar produto
+    public static void cadastrarProduto(String descricao, int quantidade, double valor) {
+        validarProduto(descricao, quantidade, valor);
+
+        int codigoGerado = produtos.size() + 1; // Geração automática do código
+        Produto novoProduto = new Produto(codigoGerado, descricao.trim(), quantidade, valor);
+
+        produtos.add(novoProduto);
+        System.out.println("Produto cadastrado: " + novoProduto.descricao);
+    }
+
+    // 14. Função para listar produtos
+    public static void listarProdutos() {
+        System.out.println("\n--- LISTA DE PRODUTOS ---");
+        if (produtos.isEmpty()) {
+            System.out.println("[] (Nenhum produto cadastrado)");
+            return;
+        }
+
+        for (Produto p : produtos) {
+            System.out.println(p);
+        }
+    }
+
+    // 17. Método auxiliar de busca (equivalente ao .find() do JavaScript)
+    public static Produto buscarPorCodigo(int codigoProduto) {
+        for (Produto p : produtos) {
+            if (p.codigo == codigoProduto) {
+                return p;
+            }
+        }
+        return null; // Equivalente ao undefined do JS
+    }
+
+    // 16 a 18. Função para atualizar o valor do produto
+    public static void atualizarValor(int codigoProduto, double novoValor) {
+        if (novoValor &lt; 0) {
+            throw new IllegalArgumentException("Valor deve ser maior ou igual a zero");
+        }
+
+        Produto produtoEncontrado = buscarPorCodigo(codigoProduto);
+
+        if (produtoEncontrado == null) {
+            throw new IllegalArgumentException("Produto não encontrado");
+        }
+
+        produtoEncontrado.valor = novoValor; // Substituição do valor
+        System.out.printf("Valor de '%s' atualizado para R$ %.2f%n", produtoEncontrado.descricao, novoValor);
+    }
+
+    // 19 e 20. Função para atualizar (somar/subtrair) a quantidade do produto
+    public static void atualizarQuantidade(int codigoProduto, int novaQuantidade) {
+        Produto produtoEncontrado = buscarPorCodigo(codigoProduto);
+
+        if (produtoEncontrado == null) {
+            throw new IllegalArgumentException("Produto não encontrado");
+        }
+
+        if (produtoEncontrado.quantidade + novaQuantidade &lt; 0) {
+            throw new IllegalArgumentException("Quantidade insuficiente em estoque");
+        }
+
+        produtoEncontrado.quantidade += novaQuantidade; // Soma ao saldo atual
+        System.out.printf("Estoque de '%s' atualizado para %d unidades%n", produtoEncontrado.descricao, produtoEncontrado.quantidade);
+    }
+
+    // 15. Testando o sistema no método principal
+    public static void main(String[] args) {
+        try {
+            cadastrarProduto("Cadeira gamer", 12, 699.00);
+            cadastrarProduto("Mouse Logitech", 38, 99.00);
+
+            listarProdutos();
+
+            atualizarValor(1, 749.90);       // Altera o preço da Cadeira gamer
+            atualizarQuantidade(2, 10);      // Soma +10 ao Mouse (vai para 48)
+            atualizarQuantidade(2, -5);      // Retira 5 do Mouse (vai para 43)
+
+            listarProdutos();
+
+            // Exemplo de teste inválido (descomente para testar a exceção):
+            // cadastrarProduto("TV", 5, 1200.00);
+
+        } catch (IllegalArgumentException erro) {
+            System.err.println("Erro na operação: " + erro.getMessage());
+        }
+    }
+}
+</code></pre>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+</body>
+</html>
