@@ -1,57 +1,31 @@
 
-const botao = document.getElementById("iniciar");
-const combustivel = document.getElementById("combustivel");
-const estado = document.getElementById("estado");
-const mensagem = document.getElementById("mensagem");
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Calculadora</title>
+</head>
+<body>
+    <h1>Calculadora de Soma</h1>
 
-let lancamento = false;
+    <input type="number" id="n1" placeholder="Primeiro número">
 
-botao.addEventListener("click", () => {
+    <input type="number" id="n2" placeholder="Segundo número">
 
-  if (lancamento) return;
+    <button onclick="somar()">Somar</button>
 
-  lancamento = true;
-  botao.disabled = true;
+    <h2 id="resultado">Resultado: </h2>
 
-  let segundos = 5;
+    <script>
+        function somar() {
+            let a = Number(document.getElementById("n1").value);
+            let b = Number(document.getElementById("n2").value);
 
-  estado.textContent = "PREPARANDO";
-  mensagem.textContent = "Preparando motores...";
+            let soma = a + b;
 
-  const contagem = setInterval(() => {
-
-    mensagem.textContent = `LANÇAMENTO EM ${segundos}...`;
-    segundos--;
-
-    if (segundos < 0) {
-      clearInterval(contagem);
-
-      combustivel.textContent = "85%";
-      estado.textContent = "EM ÓRBITA";
-      mensagem.textContent = "🚀 Decolagem concluída! Boa viagem, astronauta!";
-
-      botao.textContent = "MISSÃO CONCLUÍDA";
-    }
-
-  }, 1000);
-});
-
-// Criar estrelas
-const area = document.getElementById("estrelas");
-
-for (let i = 0; i < 100; i++) {
-  const estrela = document.createElement("div");
-
-  estrela.className = "estrela";
-  estrela.style.left = Math.random() * 100 + "vw";
-  estrela.style.top = Math.random() * 100 + "vh";
-
-  const tamanho = Math.random() * 3 + 1;
-
-  estrela.style.width = tamanho + "px";
-  estrela.style.height = tamanho + "px";
-
-  estrela.style.animationDelay = Math.random() * 3 + "s";
-
-  area.appendChild(estrela);
-}
+            document.getElementById("resultado").innerHTML =
+                "Resultado: " + soma;
+        }
+    </script>
+</body>
+</html>
