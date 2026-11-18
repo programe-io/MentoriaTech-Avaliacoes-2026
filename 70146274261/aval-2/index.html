@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Gerenciamento de Tarefas</title>
+<style>
+*{box-sizing:border-box;font-family:Segoe UI,Arial}
+body{background:#0f2447;color:#fff;padding:20px}
+.card{background:#fff;color:#333;padding:20px;border-radius:12px;max-width:700px;margin:20px auto;box-shadow:0 8px 20px rgba(0,0,0,.3)}
+input,button{padding:10px;margin:5px 0;width:100%;border-radius:8px;border:1px solid #ccc}
+button{background:#00d1a0;color:#0f2447;font-weight:bold;cursor:pointer;border:none}
+table{width:100%;border-collapse:collapse;margin-top:10px}
+th,td{border:1px solid #ddd;padding:8px} th{background:#0f2447;color:#fff}
+.concluida{text-decoration:line-through;opacity:.6}
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+<div class="card">
+<h2>FUNDAMENTOS LÓGICOS COM JAVASCRIPT - PROJETO TAREFAS</h2>
+<input id="codigo" type="number" placeholder="Código">
+<input id="titulo" type="text" placeholder="Título (mín. 5 caracteres)">
+<input id="prioridade" type="number" placeholder="Prioridade 1=alta 2=média 3=baixa" min="1" max="3">
+<button onclick="cadastrar()">Cadastrar nova tarefa</button>
+<input id="codigoConcluir" type="number" placeholder="Código para concluir">
+<button onclick="concluir()">Marcar como concluída</button>
+<input id="codigoPrio" type="number" placeholder="Código para alterar prioridade">
+<input id="novaPrio" type="number" placeholder="Nova prioridade 1-3" min="1" max="3">
+<button onclick="alterar()">Alterar prioridade</button>
+<button onclick="listar()" style="background:#0f2447;color:#fff;margin-top:10px">Listar tarefas</button>
+<table id="tabela"><thead><tr><th>Código</th><th>Título</th><th>Prioridade</th><th>Status</th></tr></thead><tbody></tbody></table>
+</div>
+<script>
+let tarefas=[];
+function cadastrar(){
+  let c=Number(codigo.value), t=titulo.value, p=Number(prioridade.value);
+    if(t.length<5) return alert("Título mínimo 5 caracteres!");
+      if(p<1||p>3) return alert("Prioridade 1 a 3!");
+        if(tarefas.find(x=>x.codigo===c)) return alert("Código já existe!");
+          tarefas.push({codigo:c,titulo:t,prioridade:p,concluida:false}); listar();
+          }
+          function listar(){
+            let tbody=document.querySelector('#tabela tbody'); tbody.innerHTML='';
+              tarefas.forEach(task=>{
+                  tbody.innerHTML+=`<tr class="${task.concluida?'concluida':''}"><td>${task.codigo}</td><td>${task.titulo}</td><td>${task.prioridade}</td><td>${task.concluida?'Concluída':'Pendente'}</td></tr>`;
+                    });
+                    }
+                    function concluir(){ let c=Number(codigoConcluir.value); let t=tarefas.find(x=>x.codigo===c); if(t) t.concluida=true; listar(); }
+                    function alterar(){ let c=Number(codigoPrio.value), p=Number(novaPrio.value); if(p<1||p>3) return alert("Prioridade 1-3!"); let t=tarefas.find(x=>x.codigo===c); if(t) t.prioridade=p; listar(); }
+                    </script>
+                    <script src="script.js"></script></body>
+                    </html>
