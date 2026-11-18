@@ -1,273 +1,173 @@
 
-const produtos = [
-    {
-        id: 1,
-        nome: "Vaso Decorativo Elegance",
-        preco: 89.90,
-        categoria: "decoracao",
-        imagem: "https://images.unsplash.com/photo-1578500494198-246f612d3b3d?w=600"
-    },
-    {
-        id: 2,
-        nome: "Luminária Moderna",
-        preco: 159.90,
-        categoria: "sala",
-        imagem: "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=600"
-    },
-    {
-        id: 3,
-        nome: "Almofada Premium",
-        preco: 59.90,
-        categoria: "sala",
-        imagem: "https://images.unsplash.com/photo-1584100936595-c0654b55a2e2?w=600"
-    },
-    {
-        id: 4,
-        nome: "Espelho Decorativo",
-        preco: 199.90,
-        categoria: "decoracao",
-        imagem: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=600"
-    },
-    {
-        id: 5,
-        nome: "Abajur de Mesa",
-        preco: 119.90,
-        categoria: "quarto",
-        imagem: "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=600"
-    },
-    {
-        id: 6,
-        nome: "Vaso Minimalista",
-        preco: 69.90,
-        categoria: "decoracao",
-        imagem: "https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?w=600"
-    },
-    {
-        id: 7,
-        nome: "Decoração para Quarto",
-        preco: 139.90,
-        categoria: "quarto",
-        imagem: "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=600"
-    },
-    {
-        id: 8,
-        nome: "Mesa Decorativa",
-        preco: 249.90,
-        categoria: "sala",
-        imagem: "https://images.unsplash.com/photo-1499933374294-4584851497cc?w=600"
-    }
+let produtos = [
+    { id: 1, nome: "Camiseta", preco: 49.90, quantidade: 20, imagem: "👕" },
+    { id: 2, nome: "Calça Jeans", preco: 99.90, quantidade: 15, imagem: "👖" },
+    { id: 3, nome: "Vestido", preco: 89.90, quantidade: 10, imagem: "👗" },
+    { id: 4, nome: "Blusa", preco: 59.90, quantidade: 25, imagem: "👚" },
+    { id: 5, nome: "Short", preco: 45.90, quantidade: 15, imagem: "🩳" },
+    { id: 6, nome: "Tênis", preco: 129.90, quantidade: 8, imagem: "👟" }
 ];
 
-// RECUPERAR CARRINHO SALVO
 let carrinho = [];
 
-try {
-    const salvo = JSON.parse(localStorage.getItem("carrinho"));
+function mostrarProdutos() {
+    let lista = document.getElementById("produtos");
 
-    if (Array.isArray(salvo)) {
-        carrinho = salvo
-            .filter(item =>
-                produtos.some(p => p.id === item.id) &&
-                Number.isInteger(item.quantidade) &&
-                item.quantidade > 0
-            )
-            .map(item => ({
-                ...produtos.find(p => p.id === item.id),
-                quantidade: item.quantidade
-            }));
-    }
-} catch (erro) {
-    carrinho = [];
-}
+    lista.innerHTML = "";
 
-// FORMATAR PREÇO
-function formatarPreco(valor) {
-    return valor.toLocaleString("pt-BR", {
-        style: "currency",
-        currency: "BRL"
-    });
-}
-
-// MOSTRAR PRODUTOS
-function mostrarProdutos(lista = produtos) {
-    const area = document.getElementById("lista-produtos");
-
-    if (!area) return;
-
-    area.innerHTML = lista.map(produto => `
-        <div class="produto">
-            <img src="${produto.imagem}" alt="${produto.nome}">
-
-            <div class="produto-info">
-                <span class="categoria">${produto.categoria}</span>
+    produtos.forEach(produto => {
+        lista.innerHTML += `
+            <div class="card">
+                <div class="emoji">${produto.imagem}</div>
                 <h3>${produto.nome}</h3>
-                <p class="preco">${formatarPreco(produto.preco)}</p>
+                <div class="preco">
+                    R$ ${produto.preco.toFixed(2).replace(".", ",")}
+                </div>
+                <p>Estoque: ${produto.quantidade} unidades</p>
 
-                <button class="adicionar"
-                    onclick="adicionarCarrinho(${produto.id})">
-                    🛒 Adicionar ao carrinho
+                <button onclick="adicionarCarrinho(${produto.id})"
+                    ${produto.quantidade === 0 ? "disabled" : ""}>
+                    Adicionar ao carrinho
                 </button>
             </div>
-        </div>
-    `).join("");
-}
-
-// FILTRAR PRODUTOS
-function filtrar(categoria, botao) {
-    document.querySelectorAll(".filtro").forEach(f => {
-        f.classList.remove("ativo");
+        `;
     });
 
-    if (botao) botao.classList.add("ativo");
-
-    const lista = categoria === "todos"
-        ? produtos
-        : produtos.filter(p => p.categoria === categoria);
-
-    mostrarProdutos(lista);
+    mostrarEstoque();
 }
 
-// ADICIONAR AO CARRINHO
 function adicionarCarrinho(id) {
-    const produto = produtos.find(p => p.id === id);
+    let produto = produtos.find(p => p.id === id);
 
-    if (!produto) return;
+    let item = carrinho.find(p => p.id === id);
 
-    const existente = carrinho.find(p => p.id === id);
+    let quantidadeCarrinho = item ? item.quantidade : 0;
 
-    if (existente) {
-        existente.quantidade++;
+    if (quantidadeCarrinho >= produto.quantidade) {
+        alert("Quantidade máxima disponível no estoque!");
+        return;
+    }
+
+    if (item) {
+        item.quantidade++;
     } else {
         carrinho.push({
-            ...produto,
+            id: produto.id,
+            nome: produto.nome,
+            preco: produto.preco,
             quantidade: 1
         });
     }
 
-    atualizarCarrinho();
-    abrirCarrinho();
+    mostrarCarrinho();
 }
 
-// REMOVER PRODUTO
-function removerProduto(id) {
-    carrinho = carrinho.filter(p => p.id !== id);
-    atualizarCarrinho();
+function mostrarCarrinho() {
+    let lista = document.getElementById("itensCarrinho");
+
+    lista.innerHTML = "";
+
+    if (carrinho.length === 0) {
+        lista.innerHTML = "<p>Seu carrinho está vazio.</p>";
+    }
+
+    carrinho.forEach(item => {
+        lista.innerHTML += `
+            <div class="item-carrinho">
+                <span>${item.nome}</span>
+
+                <input type="number"
+                    min="1"
+                    max="${produtos.find(p => p.id === item.id).quantidade}"
+                    value="${item.quantidade}"
+                    onchange="alterarQuantidade(${item.id}, this.value)">
+
+                <span>
+                    R$ ${(item.preco * item.quantidade).toFixed(2).replace(".", ",")}
+                </span>
+
+                <button onclick="removerCarrinho(${item.id})">
+                    Remover
+                </button>
+            </div>
+        `;
+    });
+
+    let total = carrinho.reduce(
+        (soma, item) => soma + item.preco * item.quantidade, 0
+    );
+
+    document.getElementById("total").innerText =
+        "Total: R$ " + total.toFixed(2).replace(".", ",");
 }
 
-// ALTERAR QUANTIDADE
 function alterarQuantidade(id, valor) {
-    const item = carrinho.find(p => p.id === id);
+    let quantidade = Number(valor);
+
+    let produto = produtos.find(p => p.id === id);
+    let item = carrinho.find(p => p.id === id);
 
     if (!item) return;
 
-    item.quantidade += valor;
-
-    if (item.quantidade <= 0) {
-        removerProduto(id);
-    } else {
-        atualizarCarrinho();
-    }
-}
-
-// ATUALIZAR CARRINHO
-function atualizarCarrinho() {
-    const area = document.getElementById("itens-carrinho");
-    const contador = document.getElementById("contador");
-    const totalElemento = document.getElementById("total");
-
-    localStorage.setItem("carrinho", JSON.stringify(carrinho));
-
-    const quantidadeTotal = carrinho.reduce(
-        (total, item) => total + item.quantidade, 0
-    );
-
-    const valorTotal = carrinho.reduce(
-        (total, item) => total + item.preco * item.quantidade, 0
-    );
-
-    if (contador) {
-        contador.textContent = quantidadeTotal;
-    }
-
-    if (totalElemento) {
-        totalElemento.textContent = formatarPreco(valorTotal);
-    }
-
-    if (!area) return;
-
-    if (carrinho.length === 0) {
-        area.innerHTML = `
-            <div class="vazio">
-                <h3>Seu carrinho está vazio!</h3>
-                <p>Adicione produtos para continuar.</p>
-            </div>
-        `;
+    if (!Number.isInteger(quantidade) || quantidade < 1 ||
+        quantidade > produto.quantidade) {
+        alert("Quantidade inválida ou estoque insuficiente!");
+        mostrarCarrinho();
         return;
     }
 
-    area.innerHTML = carrinho.map(item => `
-        <div class="item-carrinho">
-
-            <img src="${item.imagem}" alt="${item.nome}">
-
-            <div class="item-detalhes">
-                <h4>${item.nome}</h4>
-                <p>${formatarPreco(item.preco)}</p>
-
-                <div class="quantidade">
-                    <button onclick="alterarQuantidade(${item.id}, -1)">-</button>
-                    <span>${item.quantidade}</span>
-                    <button onclick="alterarQuantidade(${item.id}, 1)">+</button>
-                </div>
-            </div>
-
-            <button class="remover"
-                onclick="removerProduto(${item.id})">
-                🗑
-            </button>
-
-        </div>
-    `).join("");
+    item.quantidade = quantidade;
+    mostrarCarrinho();
 }
 
-// ABRIR CARRINHO
-function abrirCarrinho() {
-    document.getElementById("carrinho").classList.add("aberto");
-    document.getElementById("overlay").classList.add("aberto");
+function removerCarrinho(id) {
+    carrinho = carrinho.filter(item => item.id !== id);
+    mostrarCarrinho();
 }
 
-// FECHAR CARRINHO
-function fecharCarrinho() {
-    document.getElementById("carrinho").classList.remove("aberto");
-    document.getElementById("overlay").classList.remove("aberto");
-}
-
-// FINALIZAR COMPRA
 function finalizarCompra() {
     if (carrinho.length === 0) {
         alert("Seu carrinho está vazio!");
         return;
     }
 
-    const total = carrinho.reduce(
-        (soma, item) => soma + item.preco * item.quantidade, 0
-    );
+    for (let item of carrinho) {
+        let produto = produtos.find(p => p.id === item.id);
 
-    const confirmar = confirm(
-        "Deseja finalizar sua compra?\nTotal: " + formatarPreco(total)
-    );
-
-    if (confirmar) {
-        alert("Compra realizada com sucesso! Obrigado por escolher a Casa Elegance!");
-
-        carrinho = [];
-        atualizarCarrinho();
-        fecharCarrinho();
+        if (!produto || produto.quantidade < item.quantidade) {
+            alert("Estoque insuficiente para " + item.nome);
+            return;
+        }
     }
+
+    carrinho.forEach(item => {
+        let produto = produtos.find(p => p.id === item.id);
+
+        produto.quantidade -= item.quantidade;
+    });
+
+    alert("Compra realizada com sucesso! Obrigado pela preferência.");
+
+    carrinho = [];
+
+    mostrarCarrinho();
+    mostrarProdutos();
 }
 
-// INICIAR A LOJA
-document.addEventListener("DOMContentLoaded", function() {
-    mostrarProdutos();
-    atualizarCarrinho();
-});
+function mostrarEstoque() {
+    let lista = document.getElementById("listaEstoque");
+
+    lista.innerHTML = "";
+
+    produtos.forEach(produto => {
+        lista.innerHTML += `
+            <div class="item-estoque">
+                <span>${produto.nome}</span>
+                <strong>${produto.quantidade} unidades</strong>
+            </div>
+        `;
+    });
+}
+
+mostrarProdutos();
+mostrarCarrinho();
