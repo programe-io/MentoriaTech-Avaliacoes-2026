@@ -1,123 +1,105 @@
 
-const tabuleiro = document.getElementById("tabuleiro");
-const pontosEl = document.getElementById("pontos");
-const tentativasEl = document.getElementById("tentativas");
-const mensagem = document.getElementById("mensagem");
-const botaoReiniciar = document.getElementById("reiniciar");
+const arena = document.getElementById("arena");
+const target = document.getElementById("target");
+const scoreText = document.getElementById("score");
+const timeText = document.getElementById("time");
+const recordText = document.getElementById("record");
+const message = document.getElementById("message");
+const startButton = document.getElementById("start");
 
-const figuras = [
-    "🍓", "🎀", "🌸", "🧁",
-    "🍒", "🦋", "💗", "🐰"
-];
+let score = 0;
+let time = 30;
+let playing = false;
+let timer = null;
 
-let primeiraCarta = null;
-let segundaCarta = null;
-let bloqueado = false;
-let pontos = 0;
-let tentativas = 0;
-let pares = 0;
+let record = 0;
 
-function iniciarJogo() {
-    tabuleiro.innerHTML = "";
+try {
+    record = Number(localStorage.getItem("meuRecorde")) || 0;
+} catch (e) {}
 
-    primeiraCarta = null;
-    segundaCarta = null;
-    bloqueado = false;
+recordText.textContent = record;
 
-    pontos = 0;
-    tentativas = 0;
-    pares = 0;
+function moveTarget() {
+    const maxX = arena.clientWidth - target.offsetWidth;
+    const maxY = arena.clientHeight - target.offsetHeight;
 
-    atualizarPainel();
+    const x = Math.random() * maxX;
+    const y = Math.random() * maxY;
 
-    mensagem.textContent = "Encontre os pares fofinhos! 💗";
-
-    const cartas = [...figuras, ...figuras];
-
-    // Embaralhar cartas
-    cartas.sort(() => Math.random() - 0.5);
-
-    cartas.forEach(figura => {
-        const carta = document.createElement("button");
-
-        carta.className = "carta";
-        carta.textContent = "❔";
-        carta.dataset.figura = figura;
-
-        carta.addEventListener("click", () => {
-            virarCarta(carta);
-        });
-
-        tabuleiro.appendChild(carta);
-    });
+    target.style.left = x + "px";
+    target.style.top = y + "px";
 }
 
-function virarCarta(carta) {
-    if (bloqueado) return;
-    if (carta.classList.contains("aberta")) return;
-    if (carta.classList.contains("acertada")) return;
+function startGame() {
+    if (playing) return;
 
-    carta.textContent = carta.dataset.figura;
-    carta.classList.add("aberta");
+    score = 0;
+    time = 30;
+    playing = true;
 
-    if (primeiraCarta === null) {
-        primeiraCarta = carta;
-        return;
-    }
+    scoreText.textContent = score;
+    timeText.textContent = time;
 
-    segundaCarta = carta;
-    tentativas++;
+    message.textContent = "Vai! Clique rápido! 🔥";
+    startButton.textContent = "JOGANDO...";
 
-    atualizarPainel();
+    target.style.display = "block";
+    target.style.width = "55px";
+    target.style.height = "55px";
 
-    if (
-        primeiraCarta.dataset.figura ===
-        segundaCarta.dataset.figura
-    ) {
-        primeiraCarta.classList.add("acertada");
-        segundaCarta.classList.add("acertada");
+    moveTarget();
 
-        primeiraCarta = null;
-        segundaCarta = null;
+    timer = setInterval(() => {
+        time--;
+        timeText.textContent = time;
 
-        pontos += 10;
-        pares++;
-
-        atualizarPainel();
-
-        if (pares === figuras.length) {
-            mensagem.textContent =
-                "🎉 Parabéns! Você encontrou todos os pares! 💖";
-        } else {
-            mensagem.textContent = "Muito bem! Você acertou! 💕";
+        if (time <= 0) {
+            endGame();
         }
+    }, 1000);
+}
 
+function endGame() {
+    playing = false;
+
+    clearInterval(timer);
+
+    target.style.display = "none";
+    startButton.textContent = "JOGAR NOVAMENTE";
+
+    if (score > record) {
+        record = score;
+
+        try {
+            localStorage.setItem("meuRecorde", record);
+        } catch (e) {}
+
+        recordText.textContent = record;
+
+        message.textContent =
+            "🏆 NOVO RECORDE! Você fez " + score + " pontos!";
     } else {
-        bloqueado = true;
-
-        mensagem.textContent = "Ops! Tente novamente! 🌸";
-
-        setTimeout(() => {
-            primeiraCarta.textContent = "❔";
-            segundaCarta.textContent = "❔";
-
-            primeiraCarta.classList.remove("aberta");
-            segundaCarta.classList.remove("aberta");
-
-            primeiraCarta = null;
-            segundaCarta = null;
-
-            bloqueado = false;
-        }, 900);
+        message.textContent =
+            "⏰ Fim de jogo! Você fez " + score + " pontos!";
     }
 }
 
-function atualizarPainel() {
-    pontosEl.textContent = pontos;
-    tentativasEl.textContent = tentativas;
-}
+target.addEventListener("click", () => {
+    if (!playing) return;
 
-botaoReiniciar.addEventListener("click", iniciarJogo);
+    score++;
+    scoreText.textContent = score;
 
-// Começar o jogo automaticamente
-iniciarJogo();
+    const size = Math.max(
+        25,
+        55 - Math.floor(score / 5) * 3
+    );
+
+    target.style.width = size + "px";
+    target.style.height = size + "px";
+
+    moveTarget();
+});
+
+startButton.addEventListener("click", startGame);
