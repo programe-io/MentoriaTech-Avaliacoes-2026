@@ -1,0 +1,202 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Space Shooter</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: #05051a;
+    color: white;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    overflow: hidden;
+}
+
+h1 {
+    margin: 15px;
+    color: #00eaff;
+}
+
+#score {
+    font-size: 22px;
+    margin: 10px;
+}
+
+canvas {
+    background: linear-gradient(#080824, #171744);
+    border: 3px solid #00eaff;
+    max-width: 95vw;
+    max-height: 75vh;
+}
+
+button {
+    background: #00d9ff;
+    color: #000;
+    border: none;
+    padding: 12px 25px;
+    margin: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 10px;
+    cursor: pointer;
+}
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+<h1>🚀 SPACE SHOOTER</h1>
+<div id="score">Pontos: 0</div>
+
+<canvas id="game" width="400" height="550"></canvas>
+
+<br>
+<button onclick="startGame()">JOGAR / REINICIAR</button>
+
+<script>
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+
+let player, enemies, bullets, score, gameOver;
+let keys = {};
+let playing = false;
+
+function startGame() {
+    player = { x: 180, y: 480, w: 35, h: 35 };
+    enemies = [];
+    bullets = [];
+    score = 0;
+    gameOver = false;
+    playing = true;
+    document.getElementById("score").innerText = "Pontos: 0";
+    loop();
+}
+
+document.addEventListener("keydown", e => {
+    keys[e.key] = true;
+    if (e.key === " ") shoot();
+});
+
+document.addEventListener("keyup", e => {
+    keys[e.key] = false;
+});
+
+canvas.addEventListener("touchmove", e => {
+    e.preventDefault();
+    const rect = canvas.getBoundingClientRect();
+    const touch = e.touches[0];
+    player.x = (touch.clientX - rect.left) *
+        canvas.width / rect.width - player.w / 2;
+}, { passive: false });
+
+canvas.addEventListener("click", shoot);
+
+function shoot() {
+    if (playing && !gameOver) {
+        bullets.push({
+            x: player.x + 15,
+            y: player.y,
+            w: 5,
+            h: 12
+        });
+    }
+}
+
+function loop() {
+    if (!playing) return;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Jogador
+    if (keys["ArrowLeft"] || keys["a"])
+        player.x -= 5;
+
+    if (keys["ArrowRight"] || keys["d"])
+        player.x += 5;
+
+    player.x = Math.max(0, Math.min(365, player.x));
+
+    ctx.font = "32px Arial";
+    ctx.fillText("🚀", player.x, player.y + 30);
+
+    // Inimigos
+    if (Math.random() < 0.025) {
+        enemies.push({
+            x: Math.random() * 360,
+            y: -30,
+            w: 30,
+            h: 30
+        });
+    }
+
+    enemies.forEach((enemy, i) => {
+        enemy.y += 2.5;
+
+        ctx.font = "28px Arial";
+        ctx.fillText("👾", enemy.x, enemy.y + 25);
+
+        if (
+            enemy.x < player.x + player.w &&
+            enemy.x + enemy.w > player.x &&
+            enemy.y < player.y + player.h &&
+            enemy.y + enemy.h > player.y
+        ) {
+            gameOver = true;
+        }
+
+        if (enemy.y > 550) {
+            enemies.splice(i, 1);
+        }
+    });
+
+    // Tiros
+    bullets.forEach((bullet, i) => {
+        bullet.y -= 7;
+
+        ctx.fillStyle = "#00ffff";
+        ctx.fillRect(bullet.x, bullet.y, bullet.w, bullet.h);
+
+        if (bullet.y < 0) bullets.splice(i, 1);
+
+        enemies.forEach((enemy, j) => {
+            if (
+                bullet.x < enemy.x + enemy.w &&
+                bullet.x + bullet.w > enemy.x &&
+                bullet.y < enemy.y + enemy.h &&
+                bullet.y + bullet.h > enemy.y
+            ) {
+                enemies.splice(j, 1);
+                bullets.splice(i, 1);
+                score += 10;
+                document.getElementById("score").innerText =
+                    "Pontos: " + score;
+            }
+        });
+    });
+
+    if (gameOver) {
+        playing = false;
+        ctx.fillStyle = "white";
+        ctx.font = "35px Arial";
+        ctx.fillText("GAME OVER", 90, 260);
+        ctx.font = "20px Arial";
+        ctx.fillText("Pontuação: " + score, 125, 300);
+        return;
+    }
+
+    requestAnimationFrame(loop);
+}
+</script>
+
+<script src="script.js"></script></body>
+</html>
