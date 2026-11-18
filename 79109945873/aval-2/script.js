@@ -1,25 +1,45 @@
-h3>🔥 FREE FIRE FAN SITE</h3>
-    <p>Projeto demonstrativo feito em HTML, CSS e JavaScript.</p>
-        <p>Não é um site oficial da Garena.</p>
-        </footer>
 
-        <script>
-        function mensagem(texto) {
-            document.getElementById("mensagem").innerText = "🔥 " + texto;
-            }
+let pontos = 0;
+let partidas = 0;
 
-            function inicio() {
-                document.getElementById("inicio").scrollIntoView({
-                        behavior: "smooth"
-                            });
-                            }
+function jogar(nome) {
+    partidas++;
 
-                            function mostrar(id) {
-                                document.getElementById(id).scrollIntoView({
-                                        behavior: "smooth"
-                                            });
-                                            }
-                                            </script>
+        alert(
+                "🎮 BEM-VINDO AO GAME CENTER!\n\n" +
+                        "🧩 Jogo escolhido: " + nome +
+                                "\n🏆 Partida número: " + partidas +
+                                        "\n\n🔥 Boa sorte!"
+                                            );
 
-                                            </body>
-                                            </html>
+                                                const card = document.querySelector(".card");
+
+                                                    card.style.transform = "scale(1.08)";
+                                                        card.style.boxShadow = "0 0 30px #00eaff";
+
+                                                            setTimeout(() => {
+                                                                    card.style.transform = "scale(1)";
+                                                                            card.style.boxShadow = "";
+                                                                                }, 500);
+                                                                                }
+
+                                                                                // Sistema de pontuação
+                                                                                function adicionarPontos(valor) {
+                                                                                    pontos += valor;
+                                                                                        alert("🏆 Você ganhou " + valor +
+                                                                                                  " pontos!\nTotal: " + pontos);
+                                                                                                  }
+
+                                                                                                  // Mostrar estatísticas
+                                                                                                  function estatisticas() {
+                                                                                                      alert(
+                                                                                                              "📊 ESTATÍSTICAS\n\n" +
+                                                                                                                      "🎮 Partidas: " + partidas +
+                                                                                                                              "\n🏆 Pontos: " + pontos
+                                                                                                                                  );
+                                                                                                                                  }
+
+                                                                                                                                  // Mensagem de boas-vindas
+                                                                                                                                  console.log("🔥 GAME CENTER carregado!");
+                                                                                                                                  console.log("🧩 Quebra-cabeça disponível!");
+                                                                                                                                  
