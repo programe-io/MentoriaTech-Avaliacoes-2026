@@ -33,14 +33,14 @@ function cadastrarProduto() {
 
         listarProdutos();
 
-        mostrarMensagem("Produto cadastrado com sucesso!", "green");
+        mostrarMensagem("Produto cadastrado com sucesso!", "#38bdf8", "rgba(56, 189, 248, 0.15)");
 
         document.getElementById("descricao").value = "";
         document.getElementById("quantidade").value = "";
         document.getElementById("valor").value = "";
 
     } catch (erro) {
-        mostrarMensagem(erro.message, "red");
+        mostrarMensagem(erro.message, "#f43f5e", "rgba(244, 63, 94, 0.15)");
     }
 }
 
@@ -48,6 +48,11 @@ function listarProdutos() {
     const lista = document.getElementById("listaProdutos");
 
     lista.innerHTML = "";
+
+    if (produtos.length === 0) {
+        lista.innerHTML = '<p style="color: #94a3b8; text-align: center; padding: 10px;">Nenhum produto cadastrado.</p>';
+        return;
+    }
 
     produtos.forEach(produto => {
         lista.innerHTML += `
@@ -80,10 +85,13 @@ function atualizarValor() {
 
         listarProdutos();
 
-        mostrarMensagem("Valor atualizado com sucesso!", "green");
+        mostrarMensagem("Valor atualizado com sucesso!", "#38bdf8", "rgba(56, 189, 248, 0.15)");
+
+        document.getElementById("codigoValor").value = "";
+        document.getElementById("novoValor").value = "";
 
     } catch (erro) {
-        mostrarMensagem(erro.message, "red");
+        mostrarMensagem(erro.message, "#f43f5e", "rgba(244, 63, 94, 0.15)");
     }
 }
 
@@ -106,18 +114,22 @@ function atualizarQuantidade() {
 
         listarProdutos();
 
-        mostrarMensagem("Estoque atualizado com sucesso!", "green");
+        mostrarMensagem("Estoque atualizado com sucesso!", "#38bdf8", "rgba(56, 189, 248, 0.15)");
+
+        document.getElementById("codigoQuantidade").value = "";
+        document.getElementById("novaQuantidade").value = "";
 
     } catch (erro) {
-        mostrarMensagem(erro.message, "red");
+        mostrarMensagem(erro.message, "#f43f5e", "rgba(244, 63, 94, 0.15)");
     }
 }
 
-function mostrarMensagem(texto, cor) {
+function mostrarMensagem(texto, cor, fundo) {
     const mensagem = document.getElementById("mensagem");
 
     mensagem.textContent = texto;
     mensagem.style.color = cor;
+    mensagem.style.backgroundColor = fundo;
 }
 
 listarProdutos();
