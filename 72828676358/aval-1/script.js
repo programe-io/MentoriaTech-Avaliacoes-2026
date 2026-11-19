@@ -1,115 +1,126 @@
 
 let produtos = [];
 
-// Cadastrar produto
+// CADASTRAR PRODUTO
 function cadastrarProduto() {
 
     let codigo = document.getElementById("codigo").value;
     let descricao = document.getElementById("descricao").value;
-    let quantidade = document.getElementById("quantidade").value;
-    let valor = document.getElementById("valor").value;
+    let quantidade = Number(document.getElementById("quantidade").value);
+    let valor = Number(document.getElementById("valor").value);
 
-    if (!codigo || !descricao || quantidade === "" || valor === "") {
-        alert("Preencha todos os campos!");
+    if (codigo === "" || descricao === "" ||
+        document.getElementById("quantidade").value === "" ||
+        document.getElementById("valor").value === "" ||
+        quantidade < 0 || valor < 0) {
+
+        alert("Preencha todos os campos corretamente!");
         return;
     }
 
-    if (produtos.some(p => p.codigo === codigo)) {
-        alert("Esse código já está cadastrado!");
-        return;
-    }
+    let existe = produtos.find(p => p.codigo === codigo);
 
-    if (Number(quantidade) < 0 || Number(valor) < 0) {
-        alert("Quantidade e valor não podem ser negativos!");
+    if (existe) {
+        alert("Este código já está cadastrado!");
         return;
     }
 
     let produto = {
         codigo: codigo,
         descricao: descricao,
-        quantidade: Number(quantidade),
-        valor: Number(valor)
+        quantidade: quantidade,
+        valor: valor
     };
 
     produtos.push(produto);
 
     alert("Produto cadastrado com sucesso!");
 
-    listarProdutos();
-
     document.getElementById("codigo").value = "";
     document.getElementById("descricao").value = "";
     document.getElementById("quantidade").value = "";
     document.getElementById("valor").value = "";
+
+    listarProdutos();
 }
 
-// Listar produtos
+
+// LISTAR PRODUTOS
 function listarProdutos() {
 
-    let tabela = document.getElementById("listaProdutos");
+    let lista = document.getElementById("listaProdutos");
 
-    tabela.innerHTML = "";
+    lista.innerHTML = "";
 
-    produtos.forEach((produto, index) => {
+    if (produtos.length === 0) {
+        lista.innerHTML = "Nenhum produto cadastrado.";
+        return;
+    }
 
-        tabela.innerHTML += `
-            <tr>
-                <td>${produto.codigo}</td>
-                <td>${produto.descricao}</td>
-                <td>${produto.quantidade}</td>
-                <td>R$ ${produto.valor.toFixed(2)}</td>
-                <td>
-                    <button onclick="alterarValor(${index})">
-                        Alterar Valor
-                    </button>
+    produtos.forEach(function(produto) {
 
-                    <button onclick="alterarQuantidade(${index})">
-                        Alterar Quantidade
-                    </button>
-                </td>
-            </tr>
+        lista.innerHTML += `
+            <div class="produto">
+                <p><strong>Código:</strong> ${produto.codigo}</p>
+                <p><strong>Descrição:</strong> ${produto.descricao}</p>
+                <p><strong>Quantidade:</strong> ${produto.quantidade}</p>
+                <p><strong>Valor:</strong> R$ ${produto.valor.toFixed(2)}</p>
+            </div>
         `;
+
     });
 }
 
-// Alterar valor do produto
-function alterarValor(index) {
 
-    let novoValor = prompt("Digite o novo valor:");
+// ALTERAR VALOR
+function alterarValor() {
 
-    if (novoValor === null || novoValor.trim() === "") return;
+    let codigo = document.getElementById("codigoAlterar").value;
+    let novoValor = document.getElementById("novoValor").value;
 
-    novoValor = Number(novoValor);
+    let produto = produtos.find(p => p.codigo === codigo);
 
-    if (!Number.isFinite(novoValor) || novoValor < 0) {
-        alert("Digite um valor válido!");
+    if (!produto) {
+        alert("Produto não encontrado!");
         return;
     }
 
-    produtos[index].valor = novoValor;
+    if (novoValor === "" || Number(novoValor) < 0) {
+        alert("Informe um valor válido!");
+        return;
+    }
 
-    listarProdutos();
+    produto.valor = Number(novoValor);
 
     alert("Valor alterado com sucesso!");
+
+    listarProdutos();
 }
 
-// Alterar quantidade do produto
-function alterarQuantidade(index) {
 
-    let novaQuantidade = prompt("Digite a nova quantidade:");
+// ALTERAR QUANTIDADE
+function alterarQuantidade() {
 
-    if (novaQuantidade === null || novaQuantidade.trim() === "") return;
+    let codigo = document.getElementById("codigoAlterar").value;
+    let novaQuantidade = document.getElementById("novaQuantidade").value;
 
-    novaQuantidade = Number(novaQuantidade);
+    let produto = produtos.find(p => p.codigo === codigo);
 
-    if (!Number.isInteger(novaQuantidade) || novaQuantidade < 0) {
-        alert("Digite uma quantidade válida!");
+    if (!produto) {
+        alert("Produto não encontrado!");
         return;
     }
 
-    produtos[index].quantidade = novaQuantidade;
+    if (novaQuantidade === "" || Number(novaQuantidade) < 0 ||
+        !Number.isInteger(Number(novaQuantidade))) {
 
-    listarProdutos();
+        alert("Informe uma quantidade inteira válida!");
+        return;
+    }
+
+    produto.quantidade = Number(novaQuantidade);
 
     alert("Quantidade alterada com sucesso!");
+
+    listarProdutos();
 }
