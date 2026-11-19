@@ -1,0 +1,437 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mini Feed Gamer</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #080d1a;
+    color: #f1f5f9;
+    line-height: 1.6;
+}
+
+header {
+    background: #111827;
+    border-bottom: 2px solid #00d9ff;
+    padding: 18px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+nav {
+    max-width: 950px;
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+nav h2 { color: #00d9ff; }
+
+nav a {
+    color: white;
+    text-decoration: none;
+    margin: 0 8px;
+}
+
+nav a:hover { color: #00d9ff; }
+
+button {
+    background: linear-gradient(135deg, #00d9ff, #6366f1);
+    color: #080d1a;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: .3s;
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 12px #00d9ff88;
+}
+
+main {
+    max-width: 750px;
+    margin: 30px auto;
+    padding: 0 15px;
+}
+
+.apresentacao {
+    text-align: center;
+    padding: 25px 10px;
+    margin-bottom: 20px;
+}
+
+.apresentacao h1 {
+    color: #00d9ff;
+    font-size: 30px;
+    margin-bottom: 8px;
+}
+
+.apresentacao p { color: #94a3b8; }
+
+#pesquisa {
+    width: 100%;
+    padding: 14px;
+    border-radius: 10px;
+    border: 1px solid #00d9ff;
+    background: #111827;
+    color: white;
+    margin-bottom: 22px;
+    outline: none;
+}
+
+#pesquisa:focus { box-shadow: 0 0 12px #00d9ff66; }
+
+.post {
+    background: linear-gradient(145deg, #111c33, #15152d);
+    border: 1px solid #263c60;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 25px;
+    box-shadow: 0 5px 20px #0005;
+    transition: .3s;
+}
+
+.post:hover {
+    border-color: #00d9ff;
+    transform: translateY(-3px);
+}
+
+.post h3 {
+    color: #00d9ff;
+    font-size: 22px;
+    margin-bottom: 5px;
+}
+
+.autor {
+    color: #a78bfa;
+    font-size: 14px;
+    margin-bottom: 12px;
+}
+
+.descricao {
+    color: #dbeafe;
+    margin-bottom: 15px;
+}
+
+.post img {
+    width: 100%;
+    height: 280px;
+    object-fit: cover;
+    border-radius: 11px;
+    margin-bottom: 12px;
+    background: #1e293b;
+}
+
+.acoes {
+    display: flex;
+    gap: 9px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.acoes button { font-size: 13px; }
+
+.excluir {
+    background: #ef4444;
+    color: white;
+}
+
+.comentarios {
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 1px solid #334155;
+    color: #cbd5e1;
+}
+
+.comentarios p {
+    background: #1e293b;
+    padding: 9px;
+    border-radius: 7px;
+    margin-top: 8px;
+    overflow-wrap: anywhere;
+}
+
+#semResultado {
+    display: none;
+    text-align: center;
+    color: #94a3b8;
+    padding: 25px;
+}
+
+footer {
+    text-align: center;
+    padding: 28px;
+    background: #111827;
+    border-top: 2px solid #00d9ff;
+    color: #00d9ff;
+    margin-top: 40px;
+}
+
+footer p { margin: 5px; }
+
+@media (max-width: 600px) {
+    nav { justify-content: center; }
+    nav div { text-align: center; }
+
+    .apresentacao h1 { font-size: 24px; }
+
+    .post img { height: 210px; }
+
+    .acoes button { flex: 1; }
+}
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+<header>
+<nav>
+    <h2>🎮 Mini Feed Gamer</h2>
+    <div>
+        <a href="#inicio">Início</a>
+        <a href="#feed">Jogos</a>
+        <a href="#sobre">Sobre</a>
+        <button onclick="novoPost()">+ Publicar</button>
+    </div>
+</nav>
+</header>
+
+<main id="inicio">
+
+<section class="apresentacao">
+    <h1>🎮 Mundo Gamer</h1>
+    <p>Notícias, novidades e publicações sobre seus jogos favoritos!</p>
+</section>
+
+<input id="pesquisa" type="text"
+placeholder="🔎 Pesquisar jogos ou publicações..."
+oninput="pesquisar()">
+
+<section id="feed">
+
+<article class="post">
+    <h3>⛏️ Minecraft</h3>
+    <p class="autor">Por Lucas Almeida</p>
+    <p class="descricao">
+        Minecraft é um jogo de aventura e construção em mundo aberto.
+        Nele, os jogadores podem explorar diferentes ambientes, construir
+        casas, castelos e cidades, coletar recursos e enfrentar desafios.
+        O jogo oferece os modos sobrevivência e criativo.
+    </p>
+    <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Minecraft_-_1.18_mountains.jpg"
+    alt="Paisagem de montanhas no Minecraft" loading="lazy">
+
+    <div class="acoes">
+        <button onclick="curtir(this)">👍 Curtir <span>0</span></button>
+        <button onclick="comentar(this)">💬 Comentar</button>
+        <button onclick="compartilhar(this)">📤 Compartilhar</button>
+    </div>
+    <div class="comentarios"></div>
+</article>
+
+<article class="post">
+    <h3>🚗 GTA V</h3>
+    <p class="autor">Por Mariana Costa</p>
+    <p class="descricao">
+        GTA V é um jogo de mundo aberto desenvolvido pela Rockstar Games.
+        A história acompanha Michael, Franklin e Trevor. O jogador pode
+        explorar Los Santos, dirigir veículos e realizar missões.
+    </p>
+    <img src="https://gtwfilesie.grandtheftwiki.com/LosSantos-GTAV-firsttrailer.jpg"
+    alt="Cidade de Los Santos em GTA V" loading="lazy">
+
+    <div class="acoes">
+        <button onclick="curtir(this)">👍 Curtir <span>0</span></button>
+        <button onclick="comentar(this)">💬 Comentar</button>
+        <button onclick="compartilhar(this)">📤 Compartilhar</button>
+    </div>
+    <div class="comentarios"></div>
+</article>
+
+<article class="post">
+    <h3>🔥 Free Fire</h3>
+    <p class="autor">Por Pedro Santos</p>
+    <p class="descricao">
+        Free Fire é um jogo de sobrevivência e ação. Os participantes
+        exploram o mapa, encontram equipamentos e desenvolvem estratégias.
+        Também existem personagens com habilidades próprias e diferentes
+        modos de jogo.
+    </p>
+    <img src="https://cdn.wildflamestudio.com/common/web_event/official2.ff.garena.all/img/20228/dae7b76cf83ff3da8cf4069bfa6e61a7.jpg"
+    alt="Imagem de Free Fire" loading="lazy">
+
+    <div class="acoes">
+        <button onclick="curtir(this)">👍 Curtir <span>0</span></button>
+        <button onclick="comentar(this)">💬 Comentar</button>
+        <button onclick="compartilhar(this)">📤 Compartilhar</button>
+    </div>
+    <div class="comentarios"></div>
+</article>
+
+</section>
+
+<p id="semResultado">Nenhuma publicação encontrada. 🔎</p>
+
+</main>
+
+<footer id="sobre">
+    <p>🎮 Mini Feed Gamer</p>
+    <p>Compartilhando o mundo dos jogos!</p>
+    <p>Projeto desenvolvido com HTML, CSS e JavaScript.</p>
+    <p>Desenvolvido por Marcos Pinheiro.</p>
+</footer>
+
+<script>
+function curtir(botao) {
+    const numero = botao.querySelector("span");
+    numero.textContent = Number(numero.textContent) + 1;
+}
+
+function comentar(botao) {
+    const texto = prompt("Digite seu comentário:");
+
+    if (!texto || !texto.trim()) return;
+
+    const area = botao.closest(".post").querySelector(".comentarios");
+    const comentario = document.createElement("p");
+
+    comentario.textContent = "💬 " + texto.trim();
+    area.appendChild(comentario);
+}
+
+function novoPost() {
+    const titulo = prompt("Qual é o nome do jogo?");
+    if (!titulo || !titulo.trim()) return;
+
+    const descricao = prompt("Escreva sobre o jogo:");
+    if (!descricao || !descricao.trim()) return;
+
+    const imagem = prompt("Cole o link de uma imagem (opcional):");
+
+    const post = document.createElement("article");
+    post.className = "post";
+
+    const h3 = document.createElement("h3");
+    h3.textContent = "🎮 " + titulo.trim();
+
+    const autor = document.createElement("p");
+    autor.className = "autor";
+    autor.textContent = "Por Marcos Pinheiro";
+
+    const texto = document.createElement("p");
+    texto.className = "descricao";
+    texto.textContent = descricao.trim();
+
+    post.append(h3, autor, texto);
+
+    if (imagem && imagem.trim()) {
+        try {
+            const url = new URL(imagem.trim());
+
+            if (url.protocol === "https:" || url.protocol === "http:") {
+                const img = document.createElement("img");
+                img.src = url.href;
+                img.alt = "Imagem de " + titulo.trim();
+                img.loading = "lazy";
+                post.appendChild(img);
+            }
+        } catch {
+            alert("Link inválido. Publicação criada sem imagem.");
+        }
+    }
+
+    const acoes = document.createElement("div");
+    acoes.className = "acoes";
+
+    acoes.innerHTML = `
+        <button onclick="curtir(this)">👍 Curtir <span>0</span></button>
+        <button onclick="comentar(this)">💬 Comentar</button>
+        <button onclick="compartilhar(this)">📤 Compartilhar</button>
+        <button class="excluir" onclick="excluir(this)">🗑️ Excluir</button>
+    `;
+
+    const comentarios = document.createElement("div");
+    comentarios.className = "comentarios";
+
+    post.append(acoes, comentarios);
+    document.querySelector("#feed").prepend(post);
+
+    pesquisar();
+}
+
+function excluir(botao) {
+    if (confirm("Deseja excluir esta publicação?")) {
+        botao.closest(".post").remove();
+        pesquisar();
+    }
+}
+
+function pesquisar() {
+    const busca = document.querySelector("#pesquisa").value.toLowerCase().trim();
+    const posts = document.querySelectorAll(".post");
+    let encontrados = 0;
+
+    posts.forEach(post => {
+        const corresponde = post.textContent.toLowerCase().includes(busca);
+        post.style.display = corresponde ? "" : "none";
+
+        if (corresponde) encontrados++;
+    });
+
+    document.querySelector("#semResultado").style.display =
+        encontrados === 0 ? "block" : "none";
+}
+
+// COMPARTILHAMENTO CORRIGIDO
+async function compartilhar(botao) {
+    const post = botao.closest(".post");
+    const titulo = post.querySelector("h3").textContent;
+    const descricao = post.querySelector(".descricao").textContent;
+
+    const dados = {
+        title: titulo,
+        text: titulo + "\n\n" + descricao +
+              "\n\nConfira no Mini Feed Gamer!",
+        url: window.location.href
+    };
+
+    try {
+        if (navigator.share) {
+            await navigator.share(dados);
+        } else if (navigator.clipboard && window.isSecureContext) {
+            await navigator.clipboard.writeText(
+                dados.text + "\n" + dados.url
+            );
+            alert("Publicação copiada com sucesso! 📋");
+        } else {
+            alert("Abra o site em HTTPS ou no localhost para compartilhar.");
+        }
+    } catch (erro) {
+        if (erro.name !== "AbortError") {
+            alert("Não foi possível compartilhar. Tente novamente.");
+        }
+    }
+}
+</script>
+
+</body>
+</html>
