@@ -1,116 +1,93 @@
-let tarefas = [];
-let geradorCodigo = 0;
+const CHAVE = "pessoas";
+let pessoas = JSON.parse(localStorage.getItem(CHAVE)) || [];
+let contadorCodigo = pessoas.reduce((maior, p) => Math.max(maior, p.codigo), 0);
 
-// 5. Validação dos dados da tarefa
-function validarDadosDaTarefa(titulo, prioridade) {
-  if (titulo.length < 5) {
-      throw new Error("O título deve ter no mínimo 5 caracteres.");
-        }
-          if (prioridade < 1 || prioridade > 3) {
-              throw new Error("A prioridade deve ser entre 1 e 3.");
+const form = document.getElementById("form-pessoa");
+const tbody = document.getElementById("tbody-pessoas");
+const erroEl = document.getElementById("erro");
+
+function formatar(valor, casas) {
+  return valor.toLocaleString("pt-BR", { minimumFractionDigits: casas, maximumFractionDigits: casas });
+  }
+  function calcularIMC(peso, altura) { return peso / (altura * altura); }
+
+  function classificarIMC(imc) {
+    if (imc < 18.5) return { texto: "Abaixo do peso", classe: "abaixo" };
+      if (imc < 25) return { texto: "Normal", classe: "normal" };
+        if (imc < 30) return { texto: "Sobrepeso", classe: "sobrepeso" };
+          return { texto: "Obesidade", classe: "obesidade" };
+          }
+
+          function criarCelula(conteudo) {
+            const td = document.createElement("td");
+              td.textContent = conteudo;
+                return td;
                 }
-                }
 
-                // 9. Busca de tarefas com find
-                function buscarTarefa(codigo) {
-                  const tarefa = tarefas.find((t) => t.codigo === codigo);
-                    if (!tarefa) {
-                        throw new Error("Código não encontrado.");
-                          }
-                            return tarefa;
-                            }
+                function criarLinha(pessoa) {
+                  const tr = document.createElement("tr");
+                    tr.appendChild(criarCelula(pessoa.codigo));
+                      tr.appendChild(criarCelula(pessoa.nome));
+                        tr.appendChild(criarCelula(formatar(pessoa.peso, 1) + " kg"));
+                          tr.appendChild(criarCelula(formatar(pessoa.altura, 2) + " m"));
+                            tr.appendChild(criarCelula(formatar(pessoa.imc, 2)));
 
-                            // 6. Cadastro e modelagem de uma tarefa
-                            function cadastrarTarefa(titulo, prioridade) {
-                              validarDadosDaTarefa(titulo, prioridade);
-                                geradorCodigo++; // 7. Geração automática de códigos
+                              const tdSelo = document.createElement("td");
+                                const span = document.createElement("span");
+                                  span.classList.add("selo", pessoa.classificacao.classe);
+                                    span.textContent = pessoa.classificacao.texto;
+                                      tdSelo.appendChild(span);
+                                        tr.appendChild(tdSelo);
+                                          return tr;
+                                          }
 
-                                  const novaTarefa = {
-                                      codigo: geradorCodigo,
-                                          titulo: titulo,
-                                              prioridade: prioridade,
-                                                  status: true // true = em execução
-                                                    };
-
-                                                      tarefas.push(novaTarefa);
-                                                        return novaTarefa;
-                                                        }
-
-                                                        // 8. Listagem das tarefas cadastradas
-                                                        function listarTarefas() {
-                                                          return tarefas;
-                                                          }
-
-                                                          // 10. Conclusão de uma tarefa
-                                                          function concluirTarefa(codigo) {
-                                                            const tarefa = buscarTarefa(codigo);
-                                                              if (tarefa.status === false) {
-                                                                  throw new Error("A tarefa já estava concluída.");
-                                                                    }
-                                                                      tarefa.status = false;
-                                                                      }
-
-                                                                      // 11. Alteração da prioridade
-                                                                      function alterarPrioridade(codigo, novaPrioridade) {
-                                                                        const tarefa = buscarTarefa(codigo);
-                                                                          validarDadosDaTarefa(tarefa.titulo, novaPrioridade);
-                                                                            tarefa.prioridade = novaPrioridade;
+                                          function render() {
+                                            tbody.innerHTML = "";
+                                              if (pessoas.length === 0) {
+                                                  const tr = document.createElement("tr");
+                                                      const td = document.createElement("td");
+                                                          td.colSpan = 7;
+                                                              td.textContent = "Nenhuma pessoa cadastrada.";
+                                                                  tr.appendChild(td);
+                                                                      tbody.appendChild(tr);
+                                                                          return;
                                                                             }
+                                                                              pessoas.forEach(p => tbody.appendChild(criarLinha(p)));
+                                                                              }
 
-                                                                            // --- Ligação com o HTML ---
-                                                                            const form = document.getElementById("form-tarefa");
-                                                                            const lista = document.getElementById("lista-tarefas");
-                                                                            const mensagem = document.getElementById("mensagem");
-                                                                            const textoVazio = document.getElementById("vazio");
+                                                                              function validarDados(nome, peso, altura) {
+                                                                                if (nome.trim().length < 2) return "Nome deve ter pelo menos 2 letras.";
+                                                                                  if (!peso || peso <= 0) return "Peso inválido.";
+                                                                                    if (!altura || altura <= 0) return "Altura inválida.";
+                                                                                      return "";
+                                                                                      }
 
-                                                                            function mostrarMensagem(texto, tipo) {
-                                                                              mensagem.textContent = texto;
-                                                                                mensagem.className = "mensagem " + tipo;
-                                                                                }
+                                                                                      function mostrarErro(msg) { erroEl.textContent = msg; erroEl.hidden = false; }
+                                                                                      function limparErro() { erroEl.textContent = ""; erroEl.hidden = true; }
 
-                                                                                function renderizar() {
-                                                                                  lista.innerHTML = "";
-                                                                                    textoVazio.style.display = listarTarefas().length === 0 ? "block" : "none";
+                                                                                      function lerFormulario() {
+                                                                                        const nome = document.getElementById("nome").value;
+                                                                                          const peso = Number(document.getElementById("peso").value);
+                                                                                            const altura = Number(document.getElementById("altura").value);
+                                                                                              const imc = calcularIMC(peso, altura);
+                                                                                                return { codigo: ++contadorCodigo, nome: nome.trim(), peso, altura, imc, classificacao: classificarIMC(imc) };
+                                                                                                }
 
-                                                                                      listarTarefas().forEach((t) => {
-                                                                                          const li = document.createElement("li");
-                                                                                              li.className = "tarefa" + (t.status ? "" : " concluida");
-                                                                                                  li.innerHTML = `
-                                                                                                        <div>
-                                                                                                                <span class="titulo"><b>#${t.codigo} - ${t.titulo}</b></span><br>
-                                                                                                                        <span class="badge">Prioridade ${t.prioridade}</span>
-                                                                                                                                <span class="status">${t.status ? "Em execução" : "Concluída"}</span>
-                                                                                                                                      </div>
-                                                                                                                                            <div class="acoes">
-                                                                                                                                                    <button class="btn-concluir">Concluir</button>
-                                                                                                                                                            <button class="btn-prioridade">Prioridade</button>
-                                                                                                                                                                  </div>
-                                                                                                                                                                      `;
-                                                                                                                                                                          li.querySelector(".btn-concluir").onclick = () => {
-                                                                                                                                                                                try { concluirTarefa(t.codigo); mostrarMensagem("Tarefa concluída!", "sucesso"); renderizar(); }
-                                                                                                                                                                                      catch (e) { mostrarMensagem(e.message, "erro"); }
-                                                                                                                                                                                          };
-                                                                                                                                                                                              li.querySelector(".btn-prioridade").onclick = () => {
-                                                                                                                                                                                                    const nova = Number(prompt("Nova prioridade (1 a 3):"));
-                                                                                                                                                                                                          try { alterarPrioridade(t.codigo, nova); mostrarMensagem("Prioridade alterada!", "sucesso"); renderizar(); }
-                                                                                                                                                                                                                catch (e) { mostrarMensagem(e.message, "erro"); }
-                                                                                                                                                                                                                    };
-                                                                                                                                                                                                                        lista.appendChild(li);
-                                                                                                                                                                                                                          });
-                                                                                                                                                                                                                          }
+                                                                                                form.addEventListener("submit", (e) => {
+                                                                                                  e.preventDefault();
+                                                                                                    limparErro();
+                                                                                                      const nome = document.getElementById("nome").value;
+                                                                                                        const peso = Number(document.getElementById("peso").value);
+                                                                                                          const altura = Number(document.getElementById("altura").value);
 
-                                                                                                                                                                                                                          form.addEventListener("submit", (e) => {
-                                                                                                                                                                                                                            e.preventDefault();
-                                                                                                                                                                                                                              const titulo = document.getElementById("titulo").value.trim();
-                                                                                                                                                                                                                                const prioridade = Number(document.getElementById("prioridade").value);
-                                                                                                                                                                                                                                  try {
-                                                                                                                                                                                                                                      cadastrarTarefa(titulo, prioridade);
-                                                                                                                                                                                                                                          mostrarMensagem("Tarefa cadastrada com sucesso!", "sucesso");
-                                                                                                                                                                                                                                              form.reset();
-                                                                                                                                                                                                                                                  renderizar();
-                                                                                                                                                                                                                                                    } catch (erro) {
-                                                                                                                                                                                                                                                        mostrarMensagem(erro.message, "erro");
-                                                                                                                                                                                                                                                          }
-                                                                                                                                                                                                                                                          });
+                                                                                                            const erro = validarDados(nome, peso, altura);
+                                                                                                              if (erro !== "") { mostrarErro(erro); return; }
 
-                                                                                                                                                                                                                                                          renderizar();
+                                                                                                                const pessoa = lerFormulario();
+                                                                                                                  pessoas.push(pessoa);
+                                                                                                                    localStorage.setItem(CHAVE, JSON.stringify(pessoas));
+                                                                                                                      form.reset();
+                                                                                                                        render();
+                                                                                                                        });
+
+                                                                                                                        render();
