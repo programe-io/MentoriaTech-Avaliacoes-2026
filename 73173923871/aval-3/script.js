@@ -1,5 +1,4 @@
 
-
 let contadorCodigo = 0;
 
 const CHAVE_PESSOAS = "pessoas";
@@ -14,9 +13,23 @@ const inputAltura = document.getElementById("input-altura");
 const inputPeso = document.getElementById("input-peso");
 const mensagemErro = document.getElementById("erro");
 
+// Verificar elementos HTML
+if (
+    !tabelaPessoas ||
+    !formPessoa ||
+    !inputNome ||
+    !inputIdade ||
+    !inputAltura ||
+    !inputPeso ||
+    !mensagemErro
+) {
+    throw new Error("Verifique os IDs dos elementos no HTML.");
+}
+
 // Gerar código
 function gerarCodigo() {
-    return ++contadorCodigo;
+    contadorCodigo++;
+    return contadorCodigo;
 }
 
 // Ler formulário
@@ -29,8 +42,43 @@ function lerFormulario() {
     };
 }
 
+// Validar dados
+function validarDados(dados) {
+
+    if (!dados.nome || dados.nome.length < 2) {
+        return "Informe um nome com no mínimo 2 letras.";
+    }
+
+    if (
+        !Number.isInteger(dados.idade) ||
+        dados.idade < 1 ||
+        dados.idade > 120
+    ) {
+        return "A idade deve ser entre 1 e 120 anos.";
+    }
+
+    if (
+        !Number.isFinite(dados.altura) ||
+        dados.altura < 0.5 ||
+        dados.altura > 2.5
+    ) {
+        return "A altura deve estar entre 0,5 e 2,5 metros.";
+    }
+
+    if (
+        !Number.isFinite(dados.peso) ||
+        dados.peso < 2 ||
+        dados.peso > 500
+    ) {
+        return "O peso deve estar entre 2 e 500 kg.";
+    }
+
+    return "";
+}
+
 // Adicionar pessoa
 function adicionarPessoa(dados) {
+
     pessoas.push({
         id: gerarCodigo(),
         nome: dados.nome,
@@ -38,31 +86,6 @@ function adicionarPessoa(dados) {
         altura: dados.altura,
         peso: dados.peso
     });
-}
-
-// Validar dados
-function validarDados(dados) {
-
-    if (dados.nome.length < 2) {
-        return "Informe um nome com no mínimo 2 letras.";
-    }
-
-    if (!Number.isInteger(dados.idade) ||
-        dados.idade < 1 || dados.idade > 120) {
-        return "A idade deve ser entre 1 e 120 anos.";
-    }
-
-    if (!Number.isFinite(dados.altura) ||
-        dados.altura < 0.5 || dados.altura > 2.5) {
-        return "A altura deve estar entre 0,5 e 2,5 metros.";
-    }
-
-    if (!Number.isFinite(dados.peso) ||
-        dados.peso < 2 || dados.peso > 500) {
-        return "O peso deve estar entre 2 e 500 kg.";
-    }
-
-    return "";
 }
 
 // Mostrar erro
@@ -136,8 +159,11 @@ function formatar(valor, casas) {
 
 // Criar célula
 function criarCelula(texto) {
+
     const td = document.createElement("td");
+
     td.textContent = texto;
+
     return td;
 }
 
@@ -145,9 +171,11 @@ function criarCelula(texto) {
 function criarLinha(pessoa) {
 
     const tr = document.createElement("tr");
+
     tr.dataset.id = pessoa.id;
 
     const imc = calcularImc(pessoa.peso, pessoa.altura);
+
     const classificacao = classificarImc(imc);
 
     tr.appendChild(criarCelula(pessoa.nome));
@@ -161,6 +189,7 @@ function criarLinha(pessoa) {
     const selo = document.createElement("span");
 
     selo.classList.add("selo", classificacao.classe);
+
     selo.textContent = classificacao.texto;
 
     tdClassificacao.appendChild(selo);
@@ -172,33 +201,73 @@ function criarLinha(pessoa) {
 
 // Salvar pessoas
 function salvarPessoas() {
-    localStorage.setItem(
-        CHAVE_PESSOAS,
-        JSON.stringify(pessoas)
+
+    try {
+
+        localStorage.setItem(
+            CHAVE_PESSOAS,
+            JSON.stringify(pessoas)
+        );
+
+        return true;
+
+    } catch (erro) {
+
+        console.error("Erro ao salvar pessoas:", erro);
+
+        mostrarErro("Não foi possível salvar os dados.");
+
+        return false;
+    }
+}
+
+// Validar pessoa carregada
+function pessoaValida(pessoa) {
+
+    return (
+        pessoa !== null &&
+        typeof pessoa === "object" &&
+        Number.isInteger(pessoa.id) &&
+        pessoa.id > 0 &&
+        typeof pessoa.nome === "string" &&
+        pessoa.nome.trim().length >= 2 &&
+        Number.isInteger(pessoa.idade) &&
+        pessoa.idade >= 1 &&
+        pessoa.idade <= 120 &&
+        Number.isFinite(pessoa.altura) &&
+        pessoa.altura >= 0.5 &&
+        pessoa.altura <= 2.5 &&
+        Number.isFinite(pessoa.peso) &&
+        pessoa.peso >= 2 &&
+        pessoa.peso <= 500
     );
 }
 
 // Carregar pessoas
 function carregarPessoas() {
 
-    const texto = localStorage.getItem(CHAVE_PESSOAS);
-
-    if (texto === null) {
-        return [];
-    }
-
     try {
-        const dados = JSON.parse(texto);
 
-        if (Array.isArray(dados)) {
-            return dados;
+        const texto = localStorage.getItem(CHAVE_PESSOAS);
+
+        if (texto === null) {
+            return [];
         }
 
-    } catch (erro) {
-        console.log("Dados salvos inválidos:", erro);
-    }
+        const dados = JSON.parse(texto);
 
-    return [];
+        if (!Array.isArray(dados)) {
+            return [];
+        }
+
+        return dados.filter(pessoaValida);
+
+    } catch (erro) {
+
+        console.error("Erro ao carregar pessoas:", erro);
+
+        return [];
+    }
 }
 
 // Ajustar contador
@@ -207,9 +276,11 @@ function ajustarContadorCodigo() {
     let maior = 0;
 
     pessoas.forEach((pessoa) => {
+
         if (pessoa.id > maior) {
             maior = pessoa.id;
         }
+
     });
 
     contadorCodigo = maior;
@@ -223,20 +294,26 @@ function render() {
     if (pessoas.length === 0) {
 
         const tr = document.createElement("tr");
+
         const td = document.createElement("td");
 
         td.colSpan = 6;
+
         td.classList.add("vazio");
+
         td.textContent = "Nenhuma pessoa cadastrada ainda.";
 
         tr.appendChild(td);
+
         tabelaPessoas.appendChild(tr);
 
         return;
     }
 
     pessoas.forEach((pessoa) => {
+
         tabelaPessoas.appendChild(criarLinha(pessoa));
+
     });
 }
 
@@ -250,7 +327,9 @@ formPessoa.addEventListener("submit", (e) => {
     const erro = validarDados(dados);
 
     if (erro !== "") {
+
         mostrarErro(erro);
+
         return;
     }
 
@@ -258,7 +337,18 @@ formPessoa.addEventListener("submit", (e) => {
 
     adicionarPessoa(dados);
 
-    salvarPessoas();
+    const salvo = salvarPessoas();
+
+    if (!salvo) {
+
+        pessoas.pop();
+
+        contadorCodigo--;
+
+        render();
+
+        return;
+    }
 
     formPessoa.reset();
 
