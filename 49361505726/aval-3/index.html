@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet">
+</head>
+<body>
+  <!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Minha Loja Virtual</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f4f4;
+    color: #222;
+}
+
+header {
+    background: #151515;
+    color: white;
+    padding: 22px;
+    text-align: center;
+}
+
+header h1 {
+    margin: 0;
+    color: #00e676;
+}
+
+nav {
+    background: #292929;
+    padding: 15px;
+    text-align: center;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    margin: 15px;
+}
+
+.banner {
+    background: linear-gradient(120deg, #00c853, #00695c);
+    color: white;
+    padding: 55px 15px;
+    text-align: center;
+}
+
+.banner h2 {
+    font-size: 35px;
+}
+
+.container {
+    padding: 25px;
+    max-width: 1100px;
+    margin: auto;
+}
+
+.produtos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 20px;
+}
+
+.produto {
+    background: white;
+    padding: 15px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 3px 10px #0002;
+}
+
+.produto img {
+    width: 100%;
+    height: 170px;
+    object-fit: contain;
+}
+
+.produto h3 {
+    margin: 10px;
+}
+
+.preco {
+    color: #00a84f;
+    font-size: 23px;
+    font-weight: bold;
+}
+
+button {
+    background: #00a84f;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 7px;
+    cursor: pointer;
+    width: 100%;
+    font-weight: bold;
+}
+
+button:hover {
+    background: #007c3b;
+}
+
+.carrinho {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin-top: 35px;
+}
+
+.item-carrinho {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid #ddd;
+    padding: 12px 0;
+}
+
+.remover {
+    width: auto;
+    background: #e53935;
+}
+
+footer {
+    background: #151515;
+    color: white;
+    padding: 25px;
+    text-align: center;
+    margin-top: 40px;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>🛍️ MINHA LOJA</h1>
+    <p>Os melhores produtos estão aqui!</p>
+</header>
+
+<nav>
+    <a href="#">Início</a>
+    <a href="#produtos">Produtos</a>
+    <a href="#carrinho">Carrinho 🛒</a>
+</nav>
+
+<section class="banner">
+    <h2>SUPER OFERTAS!</h2>
+    <p>Encontre os melhores produtos com preços incríveis.</p>
+</section>
+
+<div class="container">
+
+<h2 id="produtos">🔥 Nossos Produtos</h2>
+
+<div class="produtos">
+
+    <div class="produto">
+        <img src="https://placehold.co/300x200?text=Fone" alt="Fone de ouvido">
+        <h3>Fone Bluetooth</h3>
+        <p class="preco">R$ 89,90</p>
+        <button onclick="adicionar('Fone Bluetooth', 89.90)">
+            Adicionar ao carrinho
+        </button>
+    </div>
+
+    <div class="produto">
+        <img src="https://placehold.co/300x200?text=Relogio" alt="Relógio">
+        <h3>Relógio Digital</h3>
+        <p class="preco">R$ 129,90</p>
+        <button onclick="adicionar('Relógio Digital', 129.90)">
+            Adicionar ao carrinho
+        </button>
+    </div>
+
+    <div class="produto">
+        <img src="https://placehold.co/300x200?text=Celular" alt="Celular">
+        <h3>Celular</h3>
+        <p class="preco">R$ 899,90</p>
+        <button onclick="adicionar('Celular', 899.90)">
+            Adicionar ao carrinho
+        </button>
+    </div>
+
+    <div class="produto">
+        <img src="https://placehold.co/300x200?text=Teclado" alt="Teclado">
+        <h3>Teclado Gamer</h3>
+        <p class="preco">R$ 159,90</p>
+        <button onclick="adicionar('Teclado Gamer', 159.90)">
+            Adicionar ao carrinho
+        </button>
+    </div>
+
+</div>
+
+<div class="carrinho" id="carrinho">
+
+    <h2>🛒 Meu Carrinho</h2>
+
+    <div id="lista">
+        Seu carrinho está vazio.
+    </div>
+
+    <h3>Total: <span id="total">R$ 0,00</span></h3>
+
+    <button onclick="finalizar()">
+        FINALIZAR COMPRA
+    </button>
+
+</div>
+
+</div>
+
+<footer>
+    <h3>MINHA LOJA</h3>
+    <p>Obrigado por visitar nossa loja!</p>
+    <p>© 2026 - Todos os direitos reservados.</p>
+</footer>
+
+<script>
+
+let carrinho = [];
+
+function adicionar(nome, preco) {
+
+    carrinho.push({
+        nome: nome,
+        preco: preco
+    });
+
+    atualizarCarrinho();
+}
+
+function atualizarCarrinho() {
+
+    let lista = document.getElementById("lista");
+    let total = 0;
+
+    lista.innerHTML = "";
+
+    if (carrinho.length === 0) {
+        lista.innerHTML = "Seu carrinho está vazio.";
+    }
+
+    carrinho.forEach((item, index) => {
+
+        total += item.preco;
+
+        lista.innerHTML += `
+            <div class="item-carrinho">
+                <span>${item.nome}</span>
+                <span>R$ ${item.preco.toFixed(2).replace(".", ",")}</span>
+                <button class="remover"
+                    onclick="remover(${index})">
+                    X
+                </button>
+            </div>
+        `;
+    });
+
+    document.getElementById("total").innerText =
+        total.toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL"
+        });
+}
+
+function remover(index) {
+    carrinho.splice(index, 1);
+    atualizarCarrinho();
+}
+
+function finalizar() {
+
+    if (carrinho.length === 0) {
+        alert("Seu carrinho está vazio!");
+        return;
+    }
+
+    let total = carrinho.reduce(
+        (soma, item) => soma + item.preco, 0
+    );
+
+    alert(
+        "Compra simulada com sucesso!\n" +
+        "Total: " +
+        total.toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL"
+        })
+    );
+
+}
+
+</script>
+
+  <script src="script.js"></script>
+  
+</body>
+</html>
