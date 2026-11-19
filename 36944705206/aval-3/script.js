@@ -128,4 +128,292 @@
     #persistir() {
       try {
         localStorage.setItem(this.#chave, JSON.stringify(this.#itens));
-      } catch (erro)
+      } catch (erro) {
+        console.error("Não foi possível salvar as pessoas:", erro);
+      }
+    }
+
+    #notificar(persistir) {
+      if (persistir) this.#persistir();
+      const copia = this.todos;
+      this.#ouvintes.forEach((ouvinte) => ouvinte(copia));
+    }
+  }
+
+  /* ============================================================
+   * 3. UTILITÁRIOS DE DOM
+   * ============================================================ */
+  const $ = (seletor, raiz = document) => raiz.querySelector(seletor);
+
+  // Criador de elementos: evita innerHTML (e, com isso, injeção de HTML).
+  const el = (tag, props = {}, ...filhos) => {
+    const no = document.createElement(tag);
+    for (const [chave, valor] of Object.entries(props)) {
+      if (chave === "class") no.className = valor;
+      else if (chave === "dataset") Object.assign(no.dataset, valor);
+      else if (chave in no) no[chave] = valor;
+      else no.setAttribute(chave, valor);
+    }
+    no.append(...filhos);
+    return no;
+  };
+
+  /* ============================================================
+   * 4. REFERÊNCIAS DO DOM
+   * ============================================================ */
+  const dom = {
+    form: $("#formPessoa"),
+    nome: $("#nome"),
+    idade: $("#idade"),
+    altura: $("#altura"),
+    peso: $("#peso"),
+    erro: $("#erro"),
+    corpo: $("#corpoTabela"),
+    cabecalho: $("#tabela thead tr"),
+    topo: $(".principal-topo"),
+    areaTabela: $(".tabela-area"),
+  };
+
+  /* ============================================================
+   * 5. LEITURA DO FORMULÁRIO E MENSAGENS DE ERRO
+   * ============================================================ */
+  const lerNumero = (campo) =>
+    campo.value.trim() === "" ? NaN : Number(campo.value.replace(",", "."));
+
+  const lerFormulario = () => ({
+    nome: dom.nome.value.trim().replace(/\s+/g, " "),
+    idade: lerNumero(dom.idade),
+    altura: lerNumero(dom.altura),
+    peso: lerNumero(dom.peso),
+  });
+
+  const mostrarErro = (mensagem) => {
+    dom.erro.textContent = mensagem;
+    dom.erro.hidden = false;
+  };
+
+  const limparErro = () => {
+    dom.erro.textContent = "";
+    dom.erro.hidden = true;
+  };
+
+  /* ============================================================
+   * 6. VISÃO: ordenação, busca, resumo e tabela
+   * ============================================================ */
+  const COLUNAS = Object.freeze([
+    { chave: "nome",          valor: (p) => normalizar(p.nome) },
+    { chave: "idade",         valor: (p) => p.idade },
+    { chave: "altura",        valor: (p) => p.altura },
+    { chave: "peso",          valor: (p) => p.peso },
+    { chave: "imc",           valor: (p) => p.imc },
+    { chave: "classificacao", valor: (p) => p.imc },
+  ]);
+
+  const estadoDaVisao = { busca: "", ordem: null }; // ordem: { chave, direcao }
+
+  // Acrescenta IMC e classificação sem alterar o objeto salvo.
+  const enriquecer = (p) => {
+    const imc = calcularImc(p.peso, p.altura);
+    return { ...p, imc, classificacao: classificarImc(imc) };
+  };
+
+  const prepararLista = (pessoas) => {
+    const termo = normalizar(estadoDaVisao.busca.trim());
+    let lista = pessoas.map(enriquecer);
+
+    if (termo) {
+      lista = lista.filter(
+        (p) => normalizar(p.nome).includes(termo) || normalizar(p.classificacao.texto).includes(termo)
+      );
+    }
+
+    if (estadoDaVisao.ordem) {
+      const { chave, direcao } = estadoDaVisao.ordem;
+      const { valor } = COLUNAS.find((c) => c.chave === chave);
+      lista.sort((a, b) => {
+        const va = valor(a);
+        const vb = valor(b);
+        return (va < vb ? -1 : va > vb ? 1 : a.id - b.id) * direcao;
+      });
+    }
+    return lista;
+  };
+
+  const criarSelo = ({ texto, classe }) => el("span", { class: `selo ${classe}` }, texto);
+
+  const criarLinha = (p) =>
+    el(
+      "tr",
+      { dataset: { id: p.id } },
+      el("td", {}, p.nome),
+      el("td", {}, String(p.idade)),
+      el("td", {}, `${formatar(p.altura, 2)} m`),
+      el("td", {}, `${formatar(p.peso, 1)} KG`),
+      el("td", {}, formatar(p.imc, 1)),
+      el("td", {}, criarSelo(p.classificacao)),
+      el("td", {}, el("button", { type: "button", class: "btn-apagar", dataset: { acao: "apagar" } }, "Apagar"))
+    );
+
+  const criarLinhaVazia = (temBusca) =>
+    el(
+      "tr",
+      {},
+      el(
+        "td",
+        { class: "vazio", colSpan: COLUNAS.length + 1 },
+        temBusca ? "Nenhum paciente encontrado para essa busca." : "Nenhum paciente cadastrado ainda. Preencha a ficha ao lado."
+      )
+    );
+
+  /* ---- Elementos criados por JS (busca e resumo) ---- */
+  const campoBusca = el("input", {
+    id: "busca",
+    class: "busca",
+    type: "search",
+    placeholder: "Buscar por nome ou classificação",
+    autocomplete: "off",
+    "aria-label": "Buscar pacientes",
+  });
+  dom.topo.append(campoBusca);
+
+  const resumo = el("section", { class: "resumo", "aria-label": "Resumo dos pacientes" });
+  dom.areaTabela.before(resumo);
+
+  const criarCartao = (rotulo, valor, classe = "") =>
+    el("div", { class: `cartao ${classe}`.trim() }, el("strong", {}, valor), el("span", {}, rotulo));
+
+  const atualizarResumo = (pessoas) => {
+    const enriquecidas = pessoas.map(enriquecer);
+    const media = enriquecidas.length
+      ? enriquecidas.reduce((soma, p) => soma + p.imc, 0) / enriquecidas.length
+      : null;
+
+    const cartoes = [
+      criarCartao("pacientes", String(enriquecidas.length)),
+      criarCartao("IMC médio", media === null ? "–" : formatar(media, 1)),
+      ...FAIXAS.map((faixa) =>
+        criarCartao(faixa.texto, String(enriquecidas.filter((p) => p.classificacao === faixa).length), faixa.classe)
+      ),
+    ];
+    resumo.replaceChildren(...cartoes);
+  };
+
+  /* ---- Cabeçalho: colunas ordenáveis e coluna de ações ---- */
+  const prepararCabecalho = () => {
+    [...dom.cabecalho.children].forEach((th, i) => {
+      const coluna = COLUNAS[i];
+      if (!coluna) return;
+      th.classList.add("ordenavel");
+      th.dataset.chave = coluna.chave;
+      th.setAttribute("tabindex", "0");
+      th.setAttribute("aria-sort", "none");
+    });
+    dom.cabecalho.append(el("th", { scope: "col" }, "Ações"));
+  };
+
+  const atualizarIndicadoresDeOrdem = () => {
+    dom.cabecalho.querySelectorAll("th.ordenavel").forEach((th) => {
+      const ativa = estadoDaVisao.ordem?.chave === th.dataset.chave;
+      th.setAttribute("aria-sort", !ativa ? "none" : estadoDaVisao.ordem.direcao === 1 ? "ascending" : "descending");
+    });
+  };
+
+  const alternarOrdem = (chave) => {
+    const atual = estadoDaVisao.ordem;
+    if (!atual || atual.chave !== chave) estadoDaVisao.ordem = { chave, direcao: 1 };
+    else if (atual.direcao === 1) estadoDaVisao.ordem = { chave, direcao: -1 };
+    else estadoDaVisao.ordem = null; // terceiro clique volta à ordem de cadastro
+  };
+
+  /* ---- Renderização ---- */
+  const renderizar = (pessoas) => {
+    const lista = prepararLista(pessoas);
+    const fragmento = document.createDocumentFragment();
+
+    if (lista.length === 0) fragmento.append(criarLinhaVazia(estadoDaVisao.busca.trim() !== ""));
+    else lista.forEach((p) => fragmento.append(criarLinha(p)));
+
+    dom.corpo.replaceChildren(fragmento);
+    atualizarResumo(pessoas);
+    atualizarIndicadoresDeOrdem();
+  };
+
+  /* ============================================================
+   * 7. CONTROLADOR: liga tudo
+   * ============================================================ */
+  const repositorio = new Repositorio(CHAVE_PESSOAS);
+  const redesenhar = () => renderizar(repositorio.todos);
+
+  repositorio.assinar(renderizar);
+
+  // Envio do formulário: ler -> validar -> adicionar.
+  dom.form.addEventListener("submit", (evento) => {
+    evento.preventDefault();
+
+    const dados = lerFormulario();
+    const regraViolada = validar(dados);
+
+    if (regraViolada) {
+      mostrarErro(regraViolada.msg);
+      dom[regraViolada.campo].focus();
+      return;
+    }
+
+    limparErro();
+    repositorio.adicionar(dados);
+    dom.form.reset();
+    dom.nome.focus();
+  });
+
+  // Some com o erro assim que a pessoa volta a digitar.
+  dom.form.addEventListener("input", limparErro);
+
+  // Delegação de eventos: um único ouvinte para todos os botões "Apagar".
+  dom.corpo.addEventListener("click", (evento) => {
+    const botao = evento.target.closest('[data-acao="apagar"]');
+    if (!botao) return;
+
+    // Confirmação em dois cliques: evita apagar sem querer.
+    if (botao.dataset.armado === "sim") {
+      repositorio.remover(Number(botao.closest("tr").dataset.id));
+      return;
+    }
+
+    botao.dataset.armado = "sim";
+    botao.textContent = "Confirmar?";
+    setTimeout(() => {
+      if (!botao.isConnected) return;
+      delete botao.dataset.armado;
+      botao.textContent = "Apagar";
+    }, 3000);
+  });
+
+  // Ordenação por clique ou teclado (Enter/Espaço) no cabeçalho.
+  const aoOrdenar = (evento) => {
+    const th = evento.target.closest("th.ordenavel");
+    if (!th) return;
+    if (evento.type === "keydown" && evento.key !== "Enter" && evento.key !== " ") return;
+    evento.preventDefault();
+    alternarOrdem(th.dataset.chave);
+    redesenhar();
+  };
+  dom.cabecalho.addEventListener("click", aoOrdenar);
+  dom.cabecalho.addEventListener("keydown", aoOrdenar);
+
+  // Busca em tempo real.
+  campoBusca.addEventListener("input", () => {
+    estadoDaVisao.busca = campoBusca.value;
+    redesenhar();
+  });
+
+  // Mantém várias abas abertas sincronizadas.
+  window.addEventListener("storage", (evento) => {
+    if (evento.key === CHAVE_PESSOAS || evento.key === null) repositorio.sincronizar();
+  });
+
+  /* ============================================================
+   * 8. INICIALIZAÇÃO
+   * ============================================================ */
+  prepararCabecalho();
+  redesenhar();
+})();
