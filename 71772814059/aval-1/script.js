@@ -1,0 +1,76 @@
+let tarefas = {};
+let geradorCodigo = 0
+
+function ValidarDadosTarefas(){
+    if(Titulo.length <5){
+throw new Error('O titulo deve ter no mínimo 5 caracteres');
+    }
+
+    if(proridade < 1 || Prioridade> 3 ){
+throw new Error ('Informe uma proridade entre 1 e 3 ');
+    }
+}
+
+   function buscarTarefa(codigoTarefa){
+const tarefaBuscada = tarefas.find( t=> t.codigo === codigoTarefa);
+
+if(!tarefaBuscada){
+   throw new Error ('código de tarefa não encontrado');
+}
+  return tarefaBuscada; 
+   }
+
+
+function cadastrarTarefa(Titulo, Prioridade){
+    ValidarDadosTarefas(Titulo, Prioridade);
+
+    let tarefa = {
+     'codigo': ++ geradorCodigo,
+    'titulo': Titulo ,
+     'proridade': Prioridade ,
+     'status': true
+    }
+
+    tarefas.push(tarefa);
+}
+
+
+function ListarTarefas(){
+    return tarefas;
+}
+
+function concluirTarefa(codigo){
+  let Tarefa = buscarTarefa(codigo);
+  if(Tarefa.status === false){
+    throw new Error ('Tarerfa já estava como concluida');
+  }
+
+Tarefa.status = false ;
+
+}
+
+function alterarPrioridade(codigo , novaPrioridade){
+    let Tarefa = buscarTarefa(codigo);
+
+   ValidarDadosTarefas(Tarefa.Titulo.novaPrioridade)
+   Tarefa.Prioridade = novaPrioridade;
+
+}
+
+
+
+
+cadastrarTarefa('Cadastrar Clientes', 1);
+cadastrarTarefa('Limpar banco de dados', 3);
+console.log(ListarTarefas());
+
+
+concluirTarefa(2);
+
+
+console.log(ListarTarefas());
+
+
+
+alterarPrioridade(4,2);
+console.log(ListarTarefas());
