@@ -1,21 +1,33 @@
 
 let nome = prompt("Digite o nome do paciente:");
 
-let peso = Number(prompt("Digite o peso em kg:"));
-
-let altura = Number(prompt("Digite a altura em metros:"));
-
 if (nome === null || nome.trim() === "") {
-    alert("Nome inválido!");
-} else if (peso <= 0 || altura <= 0 || isNaN(peso) || isNaN(altura)) {
-    alert("Digite valores válidos para peso e altura!");
+    alert("Digite um nome válido!");
 } else {
-    let imc = peso / (altura * altura);
+    let pesoTexto = prompt("Digite o peso em kg:");
+    let alturaTexto = prompt("Digite a altura em metros:");
 
-    let resultado = "Paciente: " + nome +
-        "\nPeso: " + peso + " kg" +
-        "\nAltura: " + altura + " m" +
-        "\nIMC: " + imc.toFixed(2);
+    let peso = parseFloat(pesoTexto.replace(",", "."));
+    let altura = parseFloat(alturaTexto.replace(",", "."));
 
-    alert("RESULTADO DO IMC\n\n" + resultado);
+    if (
+        pesoTexto === null ||
+        alturaTexto === null ||
+        isNaN(peso) ||
+        isNaN(altura) ||
+        peso <= 0 ||
+        altura <= 0
+    ) {
+        alert("Erro! Digite valores válidos.");
+    } else {
+        let imc = peso / (altura * altura);
+
+        alert(
+            "CONTROLE DE IMC\n\n" +
+            "Paciente: " + nome +
+            "\nPeso: " + peso + " kg" +
+            "\nAltura: " + altura + " m" +
+            "\nIMC: " + imc.toFixed(2)
+        );
+    }
 }
