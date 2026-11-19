@@ -4,136 +4,136 @@ let proximoCodigo = 1;
 function cadastrarTarefa() {
     let titulo = prompt("Digite o título da tarefa:");
 
+    if (titulo === null) return;
+
+    while (titulo.trim().length < 5) {
+        alert("O título deve ter no mínimo 5 caracteres!");
+        titulo = prompt("Digite um título válido:");
         if (titulo === null) return;
+    }
 
-            while (titulo.trim().length < 5) {
-                    alert("O título deve ter no mínimo 5 caracteres!");
-                            titulo = prompt("Digite um título válido:");
-                                    if (titulo === null) return;
-                                        }
+    let prioridade = Number(prompt(
+        "Digite a prioridade:\n1 - Alta\n2 - Média\n3 - Baixa"
+    ));
 
-                                            let prioridade = Number(prompt(
-                                                    "Digite a prioridade:\n1 - Alta\n2 - Média\n3 - Baixa"
-                                                        ));
+    while (![1, 2, 3].includes(prioridade)) {
+        alert("Prioridade inválida! Escolha 1, 2 ou 3.");
+        prioridade = Number(prompt(
+            "Digite a prioridade:\n1 - Alta\n2 - Média\n3 - Baixa"
+        ));
+    }
 
-                                                            while (![1, 2, 3].includes(prioridade)) {
-                                                                    alert("Prioridade inválida! Escolha 1, 2 ou 3.");
-                                                                            prioridade = Number(prompt(
-                                                                                        "Digite a prioridade:\n1 - Alta\n2 - Média\n3 - Baixa"
-                                                                                                ));
-                                                                                                    }
+    let tarefa = {
+        codigo: proximoCodigo,
+        titulo: titulo.trim(),
+        prioridade: prioridade,
+        concluida: false
+    };
 
-                                                                                                        let tarefa = {
-                                                                                                                codigo: proximoCodigo,
-                                                                                                                        titulo: titulo.trim(),
-                                                                                                                                prioridade: prioridade,
-                                                                                                                                        concluida: false
-                                                                                                                                            };
+    tarefas.push(tarefa);
+    proximoCodigo++;
 
-                                                                                                                                                tarefas.push(tarefa);
-                                                                                                                                                    proximoCodigo++;
+    alert("Tarefa cadastrada com sucesso!");
+}
 
-                                                                                                                                                        alert("Tarefa cadastrada com sucesso!");
-                                                                                                                                                        }
+function listarTarefas() {
+    if (tarefas.length === 0) {
+        alert("Nenhuma tarefa cadastrada.");
+        return;
+    }
 
-                                                                                                                                                        function listarTarefas() {
-                                                                                                                                                            if (tarefas.length === 0) {
-                                                                                                                                                                    alert("Nenhuma tarefa cadastrada.");
-                                                                                                                                                                            return;
-                                                                                                                                                                                }
+    let mensagem = "LISTA DE TAREFAS\n\n";
 
-                                                                                                                                                                                    let mensagem = "LISTA DE TAREFAS\n\n";
+    for (let tarefa of tarefas) {
+        mensagem +=
+            "Código: " + tarefa.codigo +
+            "\nTítulo: " + tarefa.titulo +
+            "\nPrioridade: " + tarefa.prioridade +
+            "\nStatus: " + (tarefa.concluida ? "Concluída" : "Pendente") +
+            "\n----------------------\n";
+    }
 
-                                                                                                                                                                                        for (let tarefa of tarefas) {
-                                                                                                                                                                                                mensagem +=
-                                                                                                                                                                                                            "Código: " + tarefa.codigo +
-                                                                                                                                                                                                                        "\nTítulo: " + tarefa.titulo +
-                                                                                                                                                                                                                                    "\nPrioridade: " + tarefa.prioridade +
-                                                                                                                                                                                                                                                "\nStatus: " + (tarefa.concluida ? "Concluída" : "Pendente") +
-                                                                                                                                                                                                                                                            "\n----------------------\n";
-                                                                                                                                                                                                                                                                }
+    alert(mensagem);
+}
 
-                                                                                                                                                                                                                                                                    alert(mensagem);
-                                                                                                                                                                                                                                                                    }
+function concluirTarefa() {
+    let codigo = Number(prompt("Digite o código da tarefa:"));
 
-                                                                                                                                                                                                                                                                    function concluirTarefa() {
-                                                                                                                                                                                                                                                                        let codigo = Number(prompt("Digite o código da tarefa:"));
+    let tarefa = tarefas.find(t => t.codigo === codigo);
 
-                                                                                                                                                                                                                                                                            let tarefa = tarefas.find(t => t.codigo === codigo);
+    if (tarefa) {
+        tarefa.concluida = true;
+        alert("Tarefa marcada como concluída!");
+    } else {
+        alert("Tarefa não encontrada.");
+    }
+}
 
-                                                                                                                                                                                                                                                                                if (tarefa) {
-                                                                                                                                                                                                                                                                                        tarefa.concluida = true;
-                                                                                                                                                                                                                                                                                                alert("Tarefa marcada como concluída!");
-                                                                                                                                                                                                                                                                                                    } else {
-                                                                                                                                                                                                                                                                                                            alert("Tarefa não encontrada.");
-                                                                                                                                                                                                                                                                                                                }
-                                                                                                                                                                                                                                                                                                                }
+function alterarPrioridade() {
+    let codigo = Number(prompt("Digite o código da tarefa:"));
 
-                                                                                                                                                                                                                                                                                                                function alterarPrioridade() {
-                                                                                                                                                                                                                                                                                                                    let codigo = Number(prompt("Digite o código da tarefa:"));
+    let tarefa = tarefas.find(t => t.codigo === codigo);
 
-                                                                                                                                                                                                                                                                                                                        let tarefa = tarefas.find(t => t.codigo === codigo);
+    if (!tarefa) {
+        alert("Tarefa não encontrada.");
+        return;
+    }
 
-                                                                                                                                                                                                                                                                                                                            if (!tarefa) {
-                                                                                                                                                                                                                                                                                                                                    alert("Tarefa não encontrada.");
-                                                                                                                                                                                                                                                                                                                                            return;
-                                                                                                                                                                                                                                                                                                                                                }
+    let prioridade = Number(prompt(
+        "Nova prioridade:\n1 - Alta\n2 - Média\n3 - Baixa"
+    ));
 
-                                                                                                                                                                                                                                                                                                                                                    let prioridade = Number(prompt(
-                                                                                                                                                                                                                                                                                                                                                            "Nova prioridade:\n1 - Alta\n2 - Média\n3 - Baixa"
-                                                                                                                                                                                                                                                                                                                                                                ));
+    while (![1, 2, 3].includes(prioridade)) {
+        alert("Prioridade inválida! Escolha 1, 2 ou 3.");
+        prioridade = Number(prompt(
+            "Nova prioridade:\n1 - Alta\n2 - Média\n3 - Baixa"
+        ));
+    }
 
-                                                                                                                                                                                                                                                                                                                                                                    while (![1, 2, 3].includes(prioridade)) {
-                                                                                                                                                                                                                                                                                                                                                                            alert("Prioridade inválida! Escolha 1, 2 ou 3.");
-                                                                                                                                                                                                                                                                                                                                                                                    prioridade = Number(prompt(
-                                                                                                                                                                                                                                                                                                                                                                                                "Nova prioridade:\n1 - Alta\n2 - Média\n3 - Baixa"
-                                                                                                                                                                                                                                                                                                                                                                                                        ));
-                                                                                                                                                                                                                                                                                                                                                                                                            }
+    tarefa.prioridade = prioridade;
+    alert("Prioridade alterada com sucesso!");
+}
 
-                                                                                                                                                                                                                                                                                                                                                                                                                tarefa.prioridade = prioridade;
-                                                                                                                                                                                                                                                                                                                                                                                                                    alert("Prioridade alterada com sucesso!");
-                                                                                                                                                                                                                                                                                                                                                                                                                    }
+let opcao;
 
-                                                                                                                                                                                                                                                                                                                                                                                                                    let opcao;
+do {
+    opcao = prompt(
+        "GERENCIADOR DE TAREFAS\n\n" +
+        "1 - Cadastrar tarefa\n" +
+        "2 - Listar tarefas\n" +
+        "3 - Marcar tarefa como concluída\n" +
+        "4 - Alterar prioridade\n" +
+        "5 - Sair\n\n" +
+        "Escolha uma opção:"
+    );
 
-                                                                                                                                                                                                                                                                                                                                                                                                                    do {
-                                                                                                                                                                                                                                                                                                                                                                                                                        opcao = prompt(
-                                                                                                                                                                                                                                                                                                                                                                                                                                "GERENCIADOR DE TAREFAS\n\n" +
-                                                                                                                                                                                                                                                                                                                                                                                                                                        "1 - Cadastrar tarefa\n" +
-                                                                                                                                                                                                                                                                                                                                                                                                                                                "2 - Listar tarefas\n" +
-                                                                                                                                                                                                                                                                                                                                                                                                                                                        "3 - Marcar tarefa como concluída\n" +
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                "4 - Alterar prioridade\n" +
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                        "5 - Sair\n\n" +
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                "Escolha uma opção:"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    );
+    switch (opcao) {
+        case "1":
+            cadastrarTarefa();
+            break;
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        switch (opcao) {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                case "1":
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            cadastrarTarefa();
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        break;
+        case "2":
+            listarTarefas();
+            break;
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                case "2":
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            listarTarefas();
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        break;
+        case "3":
+            concluirTarefa();
+            break;
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                case "3":
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            concluirTarefa();
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        break;
+        case "4":
+            alterarPrioridade();
+            break;
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                case "4":
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            alterarPrioridade();
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        break;
+        case "5":
+            alert("Sistema encerrado!");
+            break;
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                case "5":
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            alert("Sistema encerrado!");
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        break;
+        case null:
+            opcao = "5";
+            break;
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                case null:
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            opcao = "5";
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        break;
+        default:
+            alert("Opção inválida!");
+    }
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                default:
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            alert("Opção inválida!");
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                }
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                } while (opcao !== "5");
+} while (opcao !== "5");
