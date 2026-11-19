@@ -1,0 +1,2392 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Instagram • Clone Interativo</title>
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Fonte Inter (padrão de interface) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+          },
+          colors: {
+            igBlue: '#0095f6',
+            igBlueHover: '#1877f2',
+            igRed: '#ff3040',
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    /* ==========================================================================
+       VARIÁVEIS DE TEMA & ESTILOS PERSONALIZADOS FIÉIS AO INSTAGRAM
+       ========================================================================== */
+    :root {
+      --bg-primary: #ffffff;
+      --bg-secondary: #fafafa;
+      --bg-elevated: #ffffff;
+      --bg-hover: #f2f2f2;
+      --bg-input: #efefef;
+      --text-primary: #000000;
+      --text-secondary: #737373;
+      --border-color: #dbdbdb;
+      --border-subtle: #efefef;
+      --story-seen: #dbdbdb;
+    }
+
+    html.dark {
+      --bg-primary: #000000;
+      --bg-secondary: #000000;
+      --bg-elevated: #121212;
+      --bg-hover: #1a1a1a;
+      --bg-input: #262626;
+      --text-primary: #f5f5f5;
+      --text-secondary: #a8a8a8;
+      --border-color: #262626;
+      --border-subtle: #1f1f1f;
+      --story-seen: #363636;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    .ig-bg-primary { background-color: var(--bg-primary); }
+    .ig-bg-secondary { background-color: var(--bg-secondary); }
+    .ig-bg-elevated { background-color: var(--bg-elevated); }
+    .ig-bg-input { background-color: var(--bg-input); }
+    .ig-text-primary { color: var(--text-primary); }
+    .ig-text-secondary { color: var(--text-secondary); }
+    .ig-border { border-color: var(--border-color); }
+    .ig-border-subtle { border-color: var(--border-subtle); }
+
+    .ig-nav-item:hover {
+      background-color: var(--bg-hover);
+    }
+
+    /* Anel gradiente clássico dos Stories do Instagram */
+    .story-ring {
+      background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
+      padding: 2.5px;
+      border-radius: 9999px;
+      transition: transform 0.2s ease;
+    }
+
+    .story-ring:active {
+      transform: scale(0.95);
+    }
+
+    .story-ring.seen {
+      background: var(--story-seen);
+      padding: 2px;
+    }
+
+    .story-ring-inner {
+      background-color: var(--bg-primary);
+      padding: 2px;
+      border-radius: 9999px;
+    }
+
+    /* Ocultar scrollbar na barra de stories mantendo rolagem fluida */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    /* Animação do coração grande no duplo clique da imagem */
+    @keyframes igDoubleTapHeart {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.2);
+      }
+      18% {
+        opacity: 0.95;
+        transform: translate(-50%, -50%) scale(1.25);
+      }
+      32% {
+        opacity: 0.95;
+        transform: translate(-50%, -50%) scale(0.95);
+      }
+      45% {
+        opacity: 0.95;
+        transform: translate(-50%, -50%) scale(1.05);
+      }
+      80% {
+        opacity: 0.95;
+        transform: translate(-50%, -50%) scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.8);
+      }
+    }
+
+    .heart-burst {
+      animation: igDoubleTapHeart 0.95s cubic-bezier(0.17, 0.89, 0.32, 1.49) forwards;
+      pointer-events: none;
+    }
+
+    /* Pequeno salto no botão de curtir */
+    @keyframes likePop {
+      0% { transform: scale(1); }
+      35% { transform: scale(1.3); }
+      70% { transform: scale(0.9); }
+      100% { transform: scale(1); }
+    }
+
+    .animate-like-pop {
+      animation: likePop 0.32s ease-out;
+    }
+
+    /* Animação de reação flutuante nos Stories */
+    @keyframes floatReaction {
+      0% {
+        opacity: 1;
+        transform: translateY(0) scale(0.8);
+      }
+      50% {
+        opacity: 1;
+        transform: translateY(-90px) scale(1.3);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(-180px) scale(1.1);
+      }
+    }
+
+    .floating-emoji {
+      animation: floatReaction 1.2s ease-out forwards;
+      pointer-events: none;
+    }
+
+    /* ==========================================================================
+       FILTROS VISUAIS ESTILO INSTAGRAM PARA NOVA PUBLICAÇÃO
+       ========================================================================== */
+    .filter-normal { filter: none; }
+    .filter-clarendon { filter: contrast(1.22) saturate(1.35); }
+    .filter-gingham { filter: brightness(1.06) hue-rotate(-10deg) sepia(0.16); }
+    .filter-pb { filter: grayscale(1) contrast(1.18); }
+    .filter-retro { filter: sepia(0.38) contrast(1.12) brightness(1.04) saturate(1.2); }
+    .filter-quente { filter: contrast(1.08) brightness(1.07) sepia(0.24) saturate(1.3); }
+
+    /* Transição suave de modais */
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: scale(0.96); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .modal-animate {
+      animation: modalFadeIn 0.18s ease-out forwards;
+    }
+  </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="ig-bg-primary ig-text-primary antialiased selection:bg-sky-500 selection:text-white">
+
+  <!-- ========================================================================
+       1. CABEÇALHO SUPERIOR FIXO (MOBILE < 768px)
+       ======================================================================== -->
+  <header class="md:hidden fixed top-0 left-0 right-0 h-14 ig-bg-primary border-b ig-border z-40 px-4 flex items-center justify-between">
+    <button onclick="navigateTo('home')" class="flex items-center focus:outline-none" aria-label="Início Instagram">
+      <!-- Wordmark SVG Oficial Estilizado -->
+      <svg class="h-7 w-auto ig-text-primary" viewBox="0 0 175 50" fill="currentColor">
+        <text x="0" y="38" font-family="'Brush Script MT', 'Segoe Script', cursive" font-size="40" font-weight="600" letter-spacing="-0.5">Instagram</text>
+      </svg>
+    </button>
+
+    <div class="flex items-center gap-3">
+      <!-- Alternador de Tema Mobile -->
+      <button onclick="toggleTheme()" class="p-2 rounded-full ig-nav-item transition" title="Alternar tema" aria-label="Alternar tema">
+        <span class="theme-icon-slot"></span>
+      </button>
+
+      <!-- Notificações Mobile -->
+      <button onclick="toggleNotificationsDrawer()" class="relative p-2 rounded-full ig-nav-item transition" title="Notificações" aria-label="Notificações">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+        </svg>
+        <span id="mobile-notif-dot" class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#ff3040]"></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ========================================================================
+       2. BARRA LATERAL ESQUERDA FIXA (TABLET & DESKTOP >= 768px)
+       ======================================================================== -->
+  <aside class="hidden md:flex fixed top-0 left-0 bottom-0 w-[72px] xl:w-[244px] ig-bg-primary border-r ig-border z-40 flex-col justify-between py-6 px-3">
+    <div>
+      <!-- Logo -->
+      <div class="mb-7 px-3 pt-1">
+        <button onclick="navigateTo('home')" class="flex items-center w-full focus:outline-none group">
+          <!-- Ícone câmera para tablet estreito -->
+          <svg class="w-6 h-6 xl:hidden group-hover:scale-105 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+          </svg>
+          <!-- Wordmark completo para desktop largo -->
+          <div class="hidden xl:flex items-center gap-2">
+            <svg class="w-6 h-6 group-hover:scale-105 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+              <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+            </svg>
+            <span class="text-2xl font-bold tracking-tight italic font-serif">Instagram</span>
+          </div>
+        </button>
+      </div>
+
+      <!-- Menu Principal -->
+      <nav class="space-y-1.5" aria-label="Navegação principal">
+        <button onclick="navigateTo('home')" data-nav="home" class="nav-btn w-full flex items-center gap-4 p-3 rounded-xl ig-nav-item transition group">
+          <svg class="w-6 h-6 group-hover:scale-105 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 10.5L12 3l9 7.5V20a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1v-9.5z" />
+          </svg>
+          <span class="hidden xl:inline text-[15px]">Início</span>
+        </button>
+
+        <button onclick="navigateTo('search')" data-nav="search" class="nav-btn w-full flex items-center gap-4 p-3 rounded-xl ig-nav-item transition group">
+          <svg class="w-6 h-6 group-hover:scale-105 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <circle cx="11" cy="11" r="7"></circle>
+            <path stroke-linecap="round" d="M20 20l-3.5-3.5"></path>
+          </svg>
+          <span class="hidden xl:inline text-[15px]">Pesquisar</span>
+        </button>
+
+        <button onclick="navigateTo('explore')" data-nav="explore" class="nav-btn w-full flex items-center gap-4 p-3 rounded-xl ig-nav-item transition group">
+          <svg class="w-6 h-6 group-hover:scale-105 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="9"></circle>
+            <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
+          </svg>
+          <span class="hidden xl:inline text-[15px]">Explorar</span>
+        </button>
+
+        <button onclick="toggleNotificationsDrawer()" id="desktop-notif-btn" class="w-full flex items-center gap-4 p-3 rounded-xl ig-nav-item transition group relative">
+          <div class="relative">
+            <svg class="w-6 h-6 group-hover:scale-105 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+            </svg>
+            <span id="desktop-notif-dot" class="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-[#ff3040] ring-2 ring-white dark:ring-black"></span>
+          </div>
+          <span class="hidden xl:inline text-[15px]">Notificações</span>
+        </button>
+
+        <button onclick="openCreateModal()" class="w-full flex items-center gap-4 p-3 rounded-xl ig-nav-item transition group">
+          <svg class="w-6 h-6 group-hover:scale-105 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <rect x="3" y="3" width="18" height="18" rx="4"></rect>
+            <path stroke-linecap="round" d="M12 8v8M8 12h8"></path>
+          </svg>
+          <span class="hidden xl:inline text-[15px]">Criar</span>
+        </button>
+
+        <button onclick="navigateTo('profile')" data-nav="profile" class="nav-btn w-full flex items-center gap-4 p-3 rounded-xl ig-nav-item transition group">
+          <img id="sidebar-user-avatar" src="" alt="Seu perfil" class="w-6 h-6 rounded-full object-cover ring-1 ring-neutral-300 dark:ring-neutral-700 group-hover:scale-105 transition-transform" />
+          <span class="hidden xl:inline text-[15px]">Perfil</span>
+        </button>
+      </nav>
+    </div>
+
+    <!-- Alternador de Tema na base da barra lateral -->
+    <div class="pt-4 border-t ig-border-subtle">
+      <button onclick="toggleTheme()" class="w-full flex items-center gap-4 p-3 rounded-xl ig-nav-item transition group">
+        <span class="theme-icon-slot group-hover:scale-105 transition-transform"></span>
+        <span id="theme-label-text" class="hidden xl:inline text-[15px]">Modo escuro</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ========================================================================
+       3. BARRA INFERIOR FIXA (MOBILE < 768px)
+       ======================================================================== -->
+  <nav class="md:hidden fixed bottom-0 left-0 right-0 h-12 ig-bg-primary border-t ig-border z-40 flex items-center justify-around px-2" aria-label="Menu inferior mobile">
+    <button onclick="navigateTo('home')" data-nav="home" class="nav-btn p-2.5 rounded-lg" aria-label="Início">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3 10.5L12 3l9 7.5V20a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1v-9.5z" />
+      </svg>
+    </button>
+
+    <button onclick="navigateTo('search')" data-nav="search" class="nav-btn p-2.5 rounded-lg" aria-label="Pesquisar">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <circle cx="11" cy="11" r="7"></circle>
+        <path stroke-linecap="round" d="M20 20l-3.5-3.5"></path>
+      </svg>
+    </button>
+
+    <button onclick="openCreateModal()" class="p-2.5 rounded-lg" aria-label="Criar publicação">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <rect x="3" y="3" width="18" height="18" rx="4"></rect>
+        <path stroke-linecap="round" d="M12 8v8M8 12h8"></path>
+      </svg>
+    </button>
+
+    <button onclick="navigateTo('explore')" data-nav="explore" class="nav-btn p-2.5 rounded-lg" aria-label="Explorar">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="9"></circle>
+        <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
+      </svg>
+    </button>
+
+    <button onclick="navigateTo('profile')" data-nav="profile" class="nav-btn p-2.5 rounded-lg" aria-label="Perfil">
+      <img id="mobile-nav-avatar" src="" alt="Perfil" class="w-6 h-6 rounded-full object-cover ring-1 ring-neutral-400" />
+    </button>
+  </nav>
+
+  <!-- ========================================================================
+       4. ÁREA PRINCIPAL DE CONTEÚDO
+       ======================================================================== -->
+  <main class="pt-14 pb-16 md:pt-0 md:pb-8 md:pl-[72px] xl:pl-[244px] min-h-screen">
+
+    <!-- ==================== ABA: INÍCIO (FEED + STORIES + SUGESTÕES) ==================== -->
+    <section id="view-home" class="view-section max-w-[960px] mx-auto px-0 sm:px-4 pt-2 md:pt-7 flex justify-center gap-12">
+      <!-- Coluna Central: Stories + Feed -->
+      <div class="w-full max-w-[470px]">
+        <!-- Barra Horizontal de Stories -->
+        <div class="relative mb-5 ig-bg-primary sm:rounded-xl sm:border ig-border py-3 px-2">
+          <div id="stories-container" class="flex items-center gap-3.5 overflow-x-auto no-scrollbar scroll-smooth px-1">
+            <!-- Renderizado dinamicamente via JS -->
+          </div>
+        </div>
+
+        <!-- Lista de Publicações do Feed -->
+        <div id="feed-container" class="space-y-5">
+          <!-- Renderizado dinamicamente via JS -->
+        </div>
+      </div>
+
+      <!-- Coluna Direita Desktop: Resumo do Perfil + Sugestões para você -->
+      <aside class="hidden lg:block w-[319px] pt-3 shrink-0">
+        <!-- Usuário Logado -->
+        <div class="flex items-center justify-between mb-6">
+          <div onclick="navigateTo('profile')" class="flex items-center gap-3 cursor-pointer group">
+            <img id="right-sidebar-avatar" src="" alt="Avatar" class="w-11 h-11 rounded-full object-cover border ig-border" />
+            <div class="leading-tight">
+              <div id="right-sidebar-username" class="text-sm font-semibold group-hover:opacity-80"></div>
+              <div id="right-sidebar-fullname" class="text-sm ig-text-secondary"></div>
+            </div>
+          </div>
+          <button onclick="showToast('Você já está conectado como @lucas.oliveira')" class="text-xs font-semibold text-[#0095f6] hover:text-[#1877f2]">
+            Mudar
+          </button>
+        </div>
+
+        <!-- Cabeçalho Sugestões -->
+        <div class="flex items-center justify-between mb-3.5">
+          <span class="text-sm font-semibold ig-text-secondary">Sugestões para você</span>
+          <button onclick="navigateTo('search')" class="text-xs font-semibold hover:opacity-70">Ver tudo</button>
+        </div>
+
+        <!-- Lista de Sugestões -->
+        <div id="suggestions-container" class="space-y-3.5">
+          <!-- Renderizado dinamicamente via JS -->
+        </div>
+
+        <!-- Rodapé Institucional Estilo Instagram -->
+        <footer class="mt-8 text-[11px] ig-text-secondary space-y-3 leading-relaxed">
+          <p>
+            Sobre • Ajuda • Imprensa • API • Carreiras • Privacidade • Termos • Localizações • Idioma • Meta Verified
+          </p>
+          <p class="uppercase tracking-wide">© 2026 INSTAGRAM CLONE BRASIL</p>
+        </footer>
+      </aside>
+    </section>
+
+    <!-- ==================== ABA: PESQUISAR ==================== -->
+    <section id="view-search" class="view-section hidden max-w-[760px] mx-auto px-4 pt-5 md:pt-8">
+      <div class="mb-6">
+        <h1 class="text-xl font-bold mb-4">Pesquisar</h1>
+        <!-- Campo de Busca -->
+        <div class="relative flex items-center">
+          <svg class="w-5 h-5 ig-text-secondary absolute left-3.5 pointer-events-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <circle cx="11" cy="11" r="7"></circle>
+            <path stroke-linecap="round" d="M20 20l-3.5-3.5"></path>
+          </svg>
+          <input
+            id="search-input"
+            type="text"
+            placeholder="Pesquisar usuários, locais, legendas ou #hashtags..."
+            oninput="handleSearchInput(this.value)"
+            class="w-full pl-11 pr-10 py-2.5 rounded-xl ig-bg-input text-sm focus:outline-none focus:ring-2 focus:ring-[#0095f6]"
+          />
+          <button id="search-clear-btn" onclick="clearSearch()" class="hidden absolute right-3 p-1 rounded-full ig-text-secondary hover:opacity-80" aria-label="Limpar busca">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- Filtros Rápidos -->
+        <div class="flex items-center gap-2 mt-3 overflow-x-auto no-scrollbar">
+          <button onclick="setSearchFilter('all')" data-sfilter="all" class="sfilter-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#0095f6] text-white">Tudo</button>
+          <button onclick="setSearchFilter('users')" data-sfilter="users" class="sfilter-pill px-3.5 py-1.5 rounded-full text-xs font-semibold ig-bg-input">Contas</button>
+          <button onclick="setSearchFilter('posts')" data-sfilter="posts" class="sfilter-pill px-3.5 py-1.5 rounded-full text-xs font-semibold ig-bg-input">Publicações</button>
+          <button onclick="quickTagSearch('#viagem')" class="px-3.5 py-1.5 rounded-full text-xs font-semibold ig-bg-input hover:opacity-80">#viagem</button>
+          <button onclick="quickTagSearch('#cafe')" class="px-3.5 py-1.5 rounded-full text-xs font-semibold ig-bg-input hover:opacity-80">#cafe</button>
+          <button onclick="quickTagSearch('#tecnologia')" class="px-3.5 py-1.5 rounded-full text-xs font-semibold ig-bg-input hover:opacity-80">#tecnologia</button>
+        </div>
+      </div>
+
+      <!-- Resultados da Pesquisa -->
+      <div id="search-results-container" class="space-y-6">
+        <!-- Renderizado dinamicamente via JS -->
+      </div>
+    </section>
+
+    <!-- ==================== ABA: EXPLORAR (MOSAICO) ==================== -->
+    <section id="view-explore" class="view-section hidden max-w-[935px] mx-auto px-1 sm:px-4 pt-3 md:pt-8">
+      <div class="px-2 sm:px-0 mb-4 flex items-center justify-between">
+        <h1 class="text-lg font-bold">Explorar</h1>
+        <span class="text-xs ig-text-secondary">Clique em uma foto para ver detalhes</span>
+      </div>
+      <!-- Grade Mosaico 3 Colunas -->
+      <div id="explore-grid" class="grid grid-cols-3 gap-1 sm:gap-4">
+        <!-- Renderizado dinamicamente via JS -->
+      </div>
+    </section>
+
+    <!-- ==================== ABA: PERFIL ==================== -->
+    <section id="view-profile" class="view-section hidden max-w-[935px] mx-auto px-4 pt-5 md:pt-9">
+      <!-- Cabeçalho do Perfil -->
+      <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6 sm:gap-16 pb-8 border-b ig-border">
+        <!-- Avatar Grande -->
+        <div class="shrink-0">
+          <div class="story-ring p-[3px] cursor-pointer" onclick="openUserOwnStoryOrToast()">
+            <div class="story-ring-inner p-[3px]">
+              <img id="profile-avatar" src="" alt="Foto de perfil" class="w-24 h-24 sm:w-36 sm:h-36 rounded-full object-cover" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Informações e Contadores -->
+        <div class="flex-1 text-center sm:text-left w-full">
+          <div class="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 mb-4">
+            <div class="flex items-center gap-1.5">
+              <h1 id="profile-username" class="text-xl font-normal"></h1>
+              <span class="verified-badge-slot"></span>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="openEditProfileModal()" class="px-4 py-1.5 rounded-lg text-sm font-semibold ig-bg-input hover:opacity-85 transition">
+                Editar perfil
+              </button>
+              <button onclick="openCreateModal()" class="px-4 py-1.5 rounded-lg text-sm font-semibold ig-bg-input hover:opacity-85 transition">
+                Nova publicação
+              </button>
+            </div>
+          </div>
+
+          <!-- Contadores Dinâmicos -->
+          <div class="flex items-center justify-center sm:justify-start gap-8 mb-4 text-sm sm:text-base">
+            <div><span id="stat-posts" class="font-semibold">0</span> <span class="ig-text-secondary sm:text-inherit">publicações</span></div>
+            <div><span id="stat-followers" class="font-semibold">1.420</span> <span class="ig-text-secondary sm:text-inherit">seguidores</span></div>
+            <div><span id="stat-following" class="font-semibold">0</span> <span class="ig-text-secondary sm:text-inherit">seguindo</span></div>
+          </div>
+
+          <!-- Nome, Bio e Link -->
+          <div class="text-sm space-y-1 max-w-md mx-auto sm:mx-0">
+            <div id="profile-fullname" class="font-semibold"></div>
+            <p id="profile-bio" class="whitespace-pre-line leading-snug"></p>
+            <a id="profile-website" href="javascript:void(0)" onclick="showToast('Link externo aberto em nova aba simulada')" class="inline-block font-semibold text-[#00376b] dark:text-[#e0f1ff] hover:underline"></a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Abas do Perfil: PUBLICAÇÕES | SALVOS -->
+      <div class="flex items-center justify-center gap-12 border-b ig-border-subtle">
+        <button onclick="switchProfileTab('posts')" id="tab-btn-posts" class="flex items-center gap-1.5 py-3.5 text-xs font-semibold tracking-widest uppercase border-t-2 border-black dark:border-white -mt-[1px] transition">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <rect x="3" y="3" width="7" height="7"></rect>
+            <rect x="14" y="3" width="7" height="7"></rect>
+            <rect x="14" y="14" width="7" height="7"></rect>
+            <rect x="3" y="14" width="7" height="7"></rect>
+          </svg>
+          Publicações
+        </button>
+
+        <button onclick="switchProfileTab('saved')" id="tab-btn-saved" class="flex items-center gap-1.5 py-3.5 text-xs font-semibold tracking-widest uppercase ig-text-secondary border-t-2 border-transparent -mt-[1px] transition">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+          </svg>
+          Salvos
+        </button>
+      </div>
+
+      <!-- Grade de Publicações ou Salvos do Perfil -->
+      <div id="profile-grid" class="grid grid-cols-3 gap-1 sm:gap-4 py-4">
+        <!-- Renderizado dinamicamente via JS -->
+      </div>
+    </section>
+  </main>
+
+  <!-- ========================================================================
+       5. MODAL VISUALIZADOR DE STORIES EM TELA CHEIA
+       ======================================================================== -->
+  <div id="story-viewer-modal" class="fixed inset-0 z-50 hidden bg-black/95 flex items-center justify-center select-none">
+    <!-- Botão Fechar Geral Desktop -->
+    <button onclick="closeStoryViewer()" class="hidden sm:flex fixed top-5 right-6 text-white/80 hover:text-white p-2 z-50" aria-label="Fechar story">
+      <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+
+    <!-- Seta Anterior Desktop -->
+    <button onclick="prevStorySlide()" class="hidden sm:flex items-center justify-center w-10 h-10 rounded-full bg-white/15 hover:bg-white/30 text-white mr-4 transition" aria-label="Story anterior">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+      </svg>
+    </button>
+
+    <!-- Cartão 9:16 do Story -->
+    <div class="relative w-full h-full sm:w-[400px] sm:h-[710px] sm:max-h-[90vh] sm:rounded-2xl overflow-hidden bg-neutral-900 shadow-2xl flex flex-col justify-between">
+      <!-- Imagem de Fundo do Story -->
+      <img id="story-image" src="" alt="Story" class="absolute inset-0 w-full h-full object-cover" />
+      <!-- Gradientes superior e inferior para leitura perfeita -->
+      <div class="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-black/75 to-transparent pointer-events-none"></div>
+      <div class="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/80 to-transparent pointer-events-none"></div>
+
+      <!-- Zonas Invisíveis de Toque Esquerda / Direita -->
+      <div class="absolute inset-0 flex z-10">
+        <div onclick="prevStorySlide()" class="w-1/3 h-full cursor-pointer" title="Anterior"></div>
+        <div onclick="toggleStoryPause()" class="w-1/3 h-full cursor-pointer" title="Pausar/Continuar"></div>
+        <div onclick="nextStorySlide()" class="w-1/3 h-full cursor-pointer" title="Próximo"></div>
+      </div>
+
+      <!-- Topo: Barras de Progresso + Info do Autor -->
+      <div class="relative z-20 p-3 pt-3.5">
+        <div id="story-progress-bars" class="flex gap-1.5 mb-3">
+          <!-- Barras geradas dinamicamente -->
+        </div>
+
+        <div class="flex items-center justify-between text-white">
+          <div class="flex items-center gap-2.5">
+            <img id="story-user-avatar" src="" alt="" class="w-8 h-8 rounded-full object-cover ring-1 ring-white/40" />
+            <span id="story-username" class="text-sm font-semibold"></span>
+            <span id="story-verified-slot"></span>
+            <span id="story-time" class="text-xs text-white/70"></span>
+          </div>
+          <div class="flex items-center gap-1">
+            <button onclick="toggleStoryPause()" id="story-pause-btn" class="p-1.5 text-white/90 hover:text-white" title="Pausar">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/></svg>
+            </button>
+            <button onclick="closeStoryViewer()" class="p-1.5 text-white/90 hover:text-white" title="Fechar">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Legenda sobreposta opcional no story -->
+      <div id="story-caption-box" class="relative z-20 px-5 text-center pointer-events-none">
+        <span id="story-caption-text" class="inline-block px-3.5 py-1.5 rounded-xl bg-black/50 backdrop-blur-sm text-white text-sm font-medium"></span>
+      </div>
+
+      <!-- Container de Emojis Flutuantes -->
+      <div id="story-floating-reactions" class="absolute bottom-20 right-6 z-30 pointer-events-none"></div>
+
+      <!-- Rodapé: Campo de Resposta + Reações Rápidas -->
+      <div class="relative z-20 p-3.5 space-y-2.5">
+        <!-- Reações rápidas -->
+        <div class="flex items-center justify-center gap-3">
+          <button onclick="sendStoryReaction('😍')" class="text-2xl hover:scale-125 transition-transform">😍</button>
+          <button onclick="sendStoryReaction('🔥')" class="text-2xl hover:scale-125 transition-transform">🔥</button>
+          <button onclick="sendStoryReaction('😂')" class="text-2xl hover:scale-125 transition-transform">😂</button>
+          <button onclick="sendStoryReaction('👏')" class="text-2xl hover:scale-125 transition-transform">👏</button>
+          <button onclick="sendStoryReaction('❤️')" class="text-2xl hover:scale-125 transition-transform">❤️</button>
+        </div>
+
+        <form onsubmit="submitStoryReply(event)" class="flex items-center gap-2">
+          <input
+            id="story-reply-input"
+            type="text"
+            onfocus="pauseStoryForTyping(true)"
+            onblur="pauseStoryForTyping(false)"
+            placeholder="Enviar mensagem..."
+            class="flex-1 bg-transparent border border-white/50 rounded-full px-4 py-2 text-sm text-white placeholder-white/75 focus:outline-none focus:border-white"
+          />
+          <button type="submit" class="p-2 text-white hover:text-[#0095f6] transition" aria-label="Enviar resposta">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
+            </svg>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Seta Próximo Desktop -->
+    <button onclick="nextStorySlide()" class="hidden sm:flex items-center justify-center w-10 h-10 rounded-full bg-white/15 hover:bg-white/30 text-white ml-4 transition" aria-label="Próximo story">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+      </svg>
+    </button>
+  </div>
+
+  <!-- ========================================================================
+       6. MODAL CRIAR NOVA PUBLICAÇÃO (UPLOAD + FILTROS + LEGENDA)
+       ======================================================================== -->
+  <div id="create-post-modal" class="fixed inset-0 z-50 hidden bg-black/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6">
+    <div class="modal-animate ig-bg-elevated w-full max-w-[820px] rounded-2xl overflow-hidden shadow-2xl border ig-border flex flex-col max-h-[92vh]">
+      <!-- Cabeçalho Modal -->
+      <div class="px-4 py-3 border-b ig-border flex items-center justify-between">
+        <button onclick="closeCreateModal()" class="text-sm font-medium ig-text-secondary hover:opacity-80">Cancelar</button>
+        <h2 class="text-base font-semibold">Criar nova publicação</h2>
+        <button onclick="publishNewPost()" class="text-sm font-semibold text-[#0095f6] hover:text-[#1877f2]">Compartilhar</button>
+      </div>
+
+      <!-- Corpo Dividido -->
+      <div class="flex-1 overflow-y-auto grid grid-cols-1 md:grid-cols-12">
+        <!-- Coluna Esquerda: Preview da Imagem & Upload -->
+        <div class="md:col-span-7 bg-neutral-100 dark:bg-neutral-950 flex flex-col items-center justify-center p-4 border-b md:border-b-0 md:border-r ig-border min-h-[280px] sm:min-h-[380px]">
+          <div class="w-full aspect-square max-h-[360px] rounded-xl overflow-hidden bg-neutral-200 dark:bg-neutral-900 relative flex items-center justify-center shadow-inner">
+            <img id="create-preview-img" src="" alt="Pré-visualização" class="w-full h-full object-cover filter-normal transition-all duration-200" />
+          </div>
+
+          <!-- Botão Upload do Computador + Galeria Rápida -->
+          <div class="w-full mt-3 space-y-2.5">
+            <div class="flex items-center justify-between gap-2">
+              <label class="flex-1 cursor-pointer text-center py-2 px-3 rounded-lg bg-[#0095f6] hover:bg-[#1877f2] text-white text-xs font-semibold transition">
+                Selecionar foto do dispositivo
+                <input type="file" id="create-file-input" accept="image/*" onchange="handleCreateImageUpload(event)" class="hidden" />
+              </label>
+              <span class="text-xs ig-text-secondary">ou escolha abaixo:</span>
+            </div>
+
+            <!-- Miniaturas de Exemplo Prontas -->
+            <div id="create-sample-thumbs" class="grid grid-cols-6 gap-1.5">
+              <!-- Preenchido via JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Coluna Direita: Filtros, Legenda e Localização -->
+        <div class="md:col-span-5 p-4 flex flex-col justify-between space-y-4">
+          <div class="space-y-4">
+            <!-- Autor -->
+            <div class="flex items-center gap-2.5">
+              <img id="create-modal-avatar" src="" alt="" class="w-7 h-7 rounded-full object-cover" />
+              <span id="create-modal-username" class="text-sm font-semibold"></span>
+            </div>
+
+            <!-- Seletor de Filtros Visuais -->
+            <div>
+              <label class="block text-xs font-semibold ig-text-secondary uppercase tracking-wider mb-2">Filtros</label>
+              <div id="create-filters-grid" class="grid grid-cols-3 gap-2">
+                <!-- Botões de filtro preenchidos via JS -->
+              </div>
+            </div>
+
+            <!-- Legenda -->
+            <div>
+              <textarea
+                id="create-caption-input"
+                rows="4"
+                maxlength="2200"
+                oninput="updateCreateCharCount(this.value)"
+                placeholder="Escreva uma legenda... (use #hashtags)"
+                class="w-full p-2.5 rounded-xl ig-bg-input text-sm resize-none focus:outline-none focus:ring-2 focus:ring-[#0095f6]"
+              ></textarea>
+              <div class="flex items-center justify-between mt-1">
+                <div class="flex gap-1.5 text-base">
+                  <button type="button" onclick="appendEmojiToCaption('❤️')" class="hover:scale-110">❤️</button>
+                  <button type="button" onclick="appendEmojiToCaption('🔥')" class="hover:scale-110">🔥</button>
+                  <button type="button" onclick="appendEmojiToCaption('✨')" class="hover:scale-110">✨</button>
+                  <button type="button" onclick="appendEmojiToCaption('📸')" class="hover:scale-110">📸</button>
+                  <button type="button" onclick="appendEmojiToCaption('🇧🇷')" class="hover:scale-110">🇧🇷</button>
+                </div>
+                <span id="create-char-count" class="text-[11px] ig-text-secondary">0/2.200</span>
+              </div>
+            </div>
+
+            <!-- Localização -->
+            <div>
+              <label class="block text-xs font-semibold ig-text-secondary mb-1">Adicionar localização</label>
+              <div class="relative flex items-center">
+                <input
+                  id="create-location-input"
+                  type="text"
+                  placeholder="Ex: Rio de Janeiro, Brasil"
+                  class="w-full pl-3 pr-8 py-2 rounded-xl ig-bg-input text-sm focus:outline-none focus:ring-2 focus:ring-[#0095f6]"
+                />
+                <svg class="w-4 h-4 ig-text-secondary absolute right-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       7. MODAL DE DETALHES DA PUBLICAÇÃO (EXPLORAR / PERFIL / VER COMENTÁRIOS)
+       ======================================================================== -->
+  <div id="post-detail-modal" class="fixed inset-0 z-50 hidden bg-black/75 flex items-center justify-center p-2 sm:p-6">
+    <button onclick="closePostDetailModal()" class="fixed top-4 right-5 text-white/85 hover:text-white p-2 z-50" aria-label="Fechar publicação">
+      <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+
+    <div id="post-detail-content" class="modal-animate ig-bg-elevated w-full max-w-[935px] rounded-xl overflow-hidden shadow-2xl border ig-border grid grid-cols-1 md:grid-cols-12 max-h-[90vh]">
+      <!-- Renderizado dinamicamente ao abrir -->
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       8. MODAL EDITAR PERFIL
+       ======================================================================== -->
+  <div id="edit-profile-modal" class="fixed inset-0 z-50 hidden bg-black/70 flex items-center justify-center p-4">
+    <div class="modal-animate ig-bg-elevated w-full max-w-[440px] rounded-2xl border ig-border overflow-hidden shadow-2xl">
+      <div class="px-4 py-3 border-b ig-border flex items-center justify-between">
+        <button onclick="closeEditProfileModal()" class="text-sm ig-text-secondary">Cancelar</button>
+        <h3 class="text-base font-semibold">Editar perfil</h3>
+        <button onclick="saveProfileChanges()" class="text-sm font-semibold text-[#0095f6]">Concluir</button>
+      </div>
+      <div class="p-5 space-y-4">
+        <div>
+          <label class="block text-xs font-semibold ig-text-secondary mb-1">Nome</label>
+          <input id="edit-fullname-input" type="text" class="w-full px-3 py-2 rounded-xl ig-bg-input text-sm focus:outline-none focus:ring-2 focus:ring-[#0095f6]" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold ig-text-secondary mb-1">Nome de usuário</label>
+          <input id="edit-username-input" type="text" class="w-full px-3 py-2 rounded-xl ig-bg-input text-sm focus:outline-none focus:ring-2 focus:ring-[#0095f6]" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold ig-text-secondary mb-1">Bio</label>
+          <textarea id="edit-bio-input" rows="3" class="w-full px-3 py-2 rounded-xl ig-bg-input text-sm resize-none focus:outline-none focus:ring-2 focus:ring-[#0095f6]"></textarea>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold ig-text-secondary mb-1">Site</label>
+          <input id="edit-website-input" type="text" class="w-full px-3 py-2 rounded-xl ig-bg-input text-sm focus:outline-none focus:ring-2 focus:ring-[#0095f6]" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       9. PAINEL DESLIZANTE DE NOTIFICAÇÕES
+       ======================================================================== -->
+  <div id="notifications-drawer" class="fixed inset-0 z-50 hidden">
+    <div onclick="toggleNotificationsDrawer()" class="absolute inset-0 bg-black/40"></div>
+    <div class="relative w-full max-w-[380px] h-full ig-bg-elevated border-r ig-border shadow-2xl p-5 overflow-y-auto z-10">
+      <div class="flex items-center justify-between mb-5">
+        <h2 class="text-xl font-bold">Notificações</h2>
+        <button onclick="toggleNotificationsDrawer()" class="p-1.5 rounded-full ig-nav-item">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <div id="notifications-list" class="space-y-4">
+        <!-- Preenchido dinamicamente -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       10. TOAST DE NOTIFICAÇÃO FLUTUANTE (SUBSTITUI ALERT)
+       ======================================================================== -->
+  <div id="ig-toast" class="fixed bottom-16 md:bottom-6 left-1/2 -translate-x-1/2 z-[60] pointer-events-none opacity-0 transition-all duration-300 translate-y-2">
+    <div id="ig-toast-text" class="px-4 py-2.5 rounded-xl bg-neutral-900 dark:bg-neutral-100 text-white dark:text-black text-xs sm:text-sm font-medium shadow-xl whitespace-nowrap">
+      Link copiado!
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       JAVASCRIPT PURO: ESTADO, DADOS REALISTAS, INTERAÇÕES E RENDERIZAÇÃO
+       ======================================================================== -->
+  <script>
+    /* --------------------------------------------------------------------------
+       GERADOR DE FALLBACK VISUAL SVG (GARANTE 100% DE CARREGAMENTO SEM QUEBRAS)
+       -------------------------------------------------------------------------- */
+    function createFallbackDataUri(label, color1 = '#833ab4', color2 = '#fd1d1d') {
+      const safeLabel = String(label || 'Instagram').slice(0, 22);
+      const svg = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800">
+          <defs>
+            <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="${color1}"/>
+              <stop offset="50%" stop-color="${color2}"/>
+              <stop offset="100%" stop-color="#fcb045"/>
+            </linearGradient>
+          </defs>
+          <rect width="800" height="800" fill="url(#g)"/>
+          <circle cx="400" cy="340" r="110" fill="rgba(255,255,255,0.2)"/>
+          <text x="400" y="510" font-family="sans-serif" font-size="34" font-weight="bold" fill="#ffffff" text-anchor="middle">${safeLabel}</text>
+        </svg>`;
+      return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
+    }
+
+    function handleImgError(imgEl, label) {
+      if (!imgEl.dataset.fallbackApplied) {
+        imgEl.dataset.fallbackApplied = 'true';
+        imgEl.src = createFallbackDataUri(label);
+      }
+    }
+
+    /* --------------------------------------------------------------------------
+       ÍCONES SVG REUTILIZÁVEIS
+       -------------------------------------------------------------------------- */
+    const VERIFIED_BADGE_SVG = `
+      <svg class="w-3.5 h-3.5 text-[#0095f6] inline-block shrink-0" viewBox="0 0 40 40" fill="currentColor" aria-label="Verificado">
+        <path d="M19.998 3.094 14.638 0l-2.972 5.15H5.432v6.354L0 14.64 3.094 20 0 25.359l5.432 3.137v5.905h5.975L14.638 40l5.36-3.094L25.358 40l3.232-5.6h6.162v-6.01L40 25.359 36.905 20 40 14.641l-5.248-3.03v-6.46h-6.419L25.358 0l-5.36 3.094Zm7.415 11.225 2.254 2.287-11.43 11.5-6.835-6.93 2.244-2.258 4.587 4.581 9.18-9.18Z"/>
+      </svg>`;
+
+    const SUN_ICON_SVG = `
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="4"></circle>
+        <path stroke-linecap="round" d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+      </svg>`;
+
+    const MOON_ICON_SVG = `
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
+      </svg>`;
+
+    /* --------------------------------------------------------------------------
+       ESTADO GLOBAL DA APLICAÇÃO
+       -------------------------------------------------------------------------- */
+    const state = {
+      currentView: 'home',
+      profileTab: 'posts',
+      searchQuery: '',
+      searchFilter: 'all',
+      isDark: false,
+      currentUser: {
+        username: 'lucas.oliveira',
+        fullName: 'Lucas Oliveira',
+        avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=300&q=80',
+        bio: 'Fotografia urbana, café especial & código ☕📸\nExplorando o Brasil um clique por vez 🇧🇷',
+        website: 'portfolio.lucasoliveira.dev',
+        verified: true,
+        followersCount: 1420,
+      },
+      /* Stories interativos com múltiplos slides */
+      stories: [
+        {
+          id: 'st-1',
+          username: 'marina.costa',
+          avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=300&q=80',
+          verified: true,
+          seen: false,
+          slides: [
+            {
+              image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=900&q=80',
+              time: '2 h',
+              caption: 'Fim de tarde mágico em Noronha 🌅✨'
+            },
+            {
+              image: 'https://images.unsplash.com/photo-1519046904884-53103b34b206?auto=format&fit=crop&w=900&q=80',
+              time: '1 h',
+              caption: 'Água cristalina hoje!'
+            }
+          ]
+        },
+        {
+          id: 'st-2',
+          username: 'rafael.tech',
+          avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=300&q=80',
+          verified: true,
+          seen: false,
+          slides: [
+            {
+              image: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=900&q=80',
+              time: '4 h',
+              caption: 'Deploy de sexta-feira concluído com sucesso 🚀💻'
+            }
+          ]
+        },
+        {
+          id: 'st-3',
+          username: 'cafe.aurora',
+          avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
+          verified: false,
+          seen: false,
+          slides: [
+            {
+              image: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=900&q=80',
+              time: '5 h',
+              caption: 'Grãos recém-torrados da Serra da Mantiqueira ☕'
+            }
+          ]
+        },
+        {
+          id: 'st-4',
+          username: 'pedro.trilhas',
+          avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80',
+          verified: false,
+          seen: false,
+          slides: [
+            {
+              image: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=900&q=80',
+              time: '7 h',
+              caption: 'Acima das nuvens na Serra Fina 🏔️'
+            }
+          ]
+        },
+        {
+          id: 'st-5',
+          username: 'chef.camila',
+          avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=300&q=80',
+          verified: true,
+          seen: false,
+          slides: [
+            {
+              image: 'https://images.unsplash.com/photo-1473093295043-cdd812d0e601?auto=format&fit=crop&w=900&q=80',
+              time: '9 h',
+              caption: 'Massa fresca artesanal saindo agora 🍝🌿'
+            }
+          ]
+        },
+        {
+          id: 'st-6',
+          username: 'arq.studio',
+          avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=300&q=80',
+          verified: false,
+          seen: true,
+          slides: [
+            {
+              image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=900&q=80',
+              time: '12 h',
+              caption: 'Luz natural e concreto aparente 🏡'
+            }
+          ]
+        }
+      ],
+      /* Sugestões de contas para seguir */
+      suggestions: [
+        {
+          id: 'sug-1',
+          username: 'beatriz.design',
+          fullName: 'Beatriz Almeida',
+          subtitle: 'Seguido(a) por marina.costa e mais 4',
+          avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=300&q=80',
+          verified: true,
+          following: false
+        },
+        {
+          id: 'sug-2',
+          username: 'gabriel.surf',
+          fullName: 'Gabriel Santos',
+          subtitle: 'Seguido(a) por pedro.trilhas',
+          avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=300&q=80',
+          verified: false,
+          following: true
+        },
+        {
+          id: 'sug-3',
+          username: 'galeria.sp',
+          fullName: 'Galeria Arte Urbana SP',
+          subtitle: 'Sugestões para você',
+          avatar: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=300&q=80',
+          verified: true,
+          following: false
+        },
+        {
+          id: 'sug-4',
+          username: 'thiago.runner',
+          fullName: 'Thiago Mendes',
+          subtitle: 'Novo no Instagram',
+          avatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=300&q=80',
+          verified: false,
+          following: false
+        },
+        {
+          id: 'sug-5',
+          username: 'botanica.casa',
+          fullName: 'Botânica & Interiores',
+          subtitle: 'Seguido(a) por arq.studio',
+          avatar: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=300&q=80',
+          verified: false,
+          following: true
+        }
+      ],
+      /* Publicações do Feed (inclui publicações do próprio usuário e da comunidade) */
+      posts: [
+        {
+          id: 'post-1',
+          username: 'marina.costa',
+          avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=300&q=80',
+          verified: true,
+          location: 'Fernando de Noronha, Pernambuco',
+          image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1000&q=85',
+          filter: 'filter-normal',
+          likes: 1842,
+          liked: false,
+          saved: false,
+          timeAgo: 'HÁ 2 HORAS',
+          caption: 'Aquele silêncio dourado antes do sol mergulhar no mar. Um dos lugares mais incríveis do nosso Brasil! 🌅🌊 #viagem #noronha #natureza #pordosol',
+          comments: [
+            { id: 'c-101', username: 'pedro.trilhas', text: 'Que registro absurdo! Cores perfeitas 🔥' },
+            { id: 'c-102', username: 'beatriz.design', text: 'Já quero voltar pra esse paraíso 😍' }
+          ]
+        },
+        {
+          id: 'post-2',
+          username: 'cafe.aurora',
+          avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
+          verified: false,
+          location: 'Pinheiros, São Paulo',
+          image: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1000&q=85',
+          filter: 'filter-quente',
+          likes: 639,
+          liked: true,
+          saved: true,
+          timeAgo: 'HÁ 4 HORAS',
+          caption: 'Começando a manhã com extração perfeita e notas de caramelo e avelã. Qual o seu pedido favorito de hoje? ☕🥐 #cafe #cafeespecial #saopaulo #barista',
+          comments: [
+            { id: 'c-103', username: 'lucas.oliveira', text: 'Passo aí ainda hoje pra tomar um flat white!' }
+          ]
+        },
+        {
+          id: 'post-3',
+          username: 'lucas.oliveira',
+          avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=300&q=80',
+          verified: true,
+          location: 'Avenida Paulista, SP',
+          image: 'https://images.unsplash.com/photo-1514565131-fce0801e5785?auto=format&fit=crop&w=1000&q=85',
+          filter: 'filter-clarendon',
+          likes: 924,
+          liked: false,
+          saved: false,
+          timeAgo: 'HÁ 7 HORAS',
+          caption: 'Luzes da cidade depois da chuva. Adoro como o asfalto molhado transforma cada esquina em um espelho urbano. 🌃📸 #fotografia #urbano #sp #tecnologia',
+          comments: [
+            { id: 'c-104', username: 'rafael.tech', text: 'Ficou cinematográfico demais, Lucas!' },
+            { id: 'c-105', username: 'arq.studio', text: 'Enquadramento impecável 👏' }
+          ]
+        },
+        {
+          id: 'post-4',
+          username: 'rafael.tech',
+          avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=300&q=80',
+          verified: true,
+          location: 'Florianópolis, Santa Catarina',
+          image: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=1000&q=85',
+          filter: 'filter-normal',
+          likes: 1290,
+          liked: false,
+          saved: false,
+          timeAgo: 'HÁ 11 HORAS',
+          caption: 'Setup minimalista pronto para mais uma semana criando interfaces rápidas e acessíveis. Menos distração, mais foco! 💻⚡ #tecnologia #programacao #setup #dev',
+          comments: [
+            { id: 'c-106', username: 'thiago.runner', text: 'Clean demais esse setup!' }
+          ]
+        },
+        {
+          id: 'post-5',
+          username: 'chef.camila',
+          avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=300&q=80',
+          verified: true,
+          location: 'Savassi, Belo Horizonte',
+          image: 'https://images.unsplash.com/photo-1473093295043-cdd812d0e601?auto=format&fit=crop&w=1000&q=85',
+          filter: 'filter-normal',
+          likes: 2150,
+          liked: false,
+          saved: true,
+          timeAgo: 'HÁ 1 DIA',
+          caption: 'Tagliatelle artesanal ao pesto de manjericão fresco, pinoli tostado e parmesão maturado. Receita completa nos destaques! 🍝🌿 #gastronomia #culinaria #massa',
+          comments: [
+            { id: 'c-107', username: 'marina.costa', text: 'Deu água na boca só de olhar 🤤' }
+          ]
+        },
+        {
+          id: 'post-6',
+          username: 'pedro.trilhas',
+          avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80',
+          verified: false,
+          location: 'Chapada Diamantina, Bahia',
+          image: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1000&q=85',
+          filter: 'filter-clarendon',
+          likes: 1518,
+          liked: false,
+          saved: false,
+          timeAgo: 'HÁ 2 DIAS',
+          caption: 'Depois de 4 horas de trilha, a recompensa lá no topo. A natureza sempre supera qualquer expectativa! 🥾⛰️ #viagem #trilha #aventura #chapadadiamantina',
+          comments: []
+        }
+      ],
+      notifications: [
+        {
+          id: 'n-1',
+          username: 'marina.costa',
+          avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=300&q=80',
+          text: 'curtiu sua publicação.',
+          time: '15 min',
+          postThumb: 'https://images.unsplash.com/photo-1514565131-fce0801e5785?auto=format&fit=crop&w=150&q=80'
+        },
+        {
+          id: 'n-2',
+          username: 'rafael.tech',
+          avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=300&q=80',
+          text: 'comentou: "Ficou cinematográfico demais, Lucas!"',
+          time: '1 h',
+          postThumb: 'https://images.unsplash.com/photo-1514565131-fce0801e5785?auto=format&fit=crop&w=150&q=80'
+        },
+        {
+          id: 'n-3',
+          username: 'beatriz.design',
+          avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=300&q=80',
+          text: 'começou a seguir você.',
+          time: '3 h',
+          postThumb: null
+        }
+      ]
+    };
+
+    /* --------------------------------------------------------------------------
+       IMAGENS DE EXEMPLO & FILTROS PARA CRIAÇÃO DE NOVA PUBLICAÇÃO
+       -------------------------------------------------------------------------- */
+    const SAMPLE_CREATE_IMAGES = [
+      { label: 'Praia', url: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1000&q=85' },
+      { label: 'Café', url: 'https://images.unsplash.com/photo-1511920170033-f8396924c348?auto=format&fit=crop&w=1000&q=85' },
+      { label: 'Cidade', url: 'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=1000&q=85' },
+      { label: 'Montanha', url: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1000&q=85' },
+      { label: 'Gastronomia', url: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=1000&q=85' },
+      { label: 'Arquitetura', url: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1000&q=85' }
+    ];
+
+    const CREATE_FILTERS = [
+      { id: 'filter-normal', name: 'Normal' },
+      { id: 'filter-clarendon', name: 'Clarendon' },
+      { id: 'filter-gingham', name: 'Gingham' },
+      { id: 'filter-pb', name: 'P&B' },
+      { id: 'filter-retro', name: 'Retrô' },
+      { id: 'filter-quente', name: 'Quente' }
+    ];
+
+    let createState = {
+      selectedImage: SAMPLE_CREATE_IMAGES[0].url,
+      selectedFilter: 'filter-normal'
+    };
+
+    /* --------------------------------------------------------------------------
+       SISTEMA DE NOTIFICAÇÃO TOAST & CLIPBOARD SEGURO
+       -------------------------------------------------------------------------- */
+    let toastTimeout = null;
+    function showToast(message) {
+      const toastEl = document.getElementById('ig-toast');
+      const textEl = document.getElementById('ig-toast-text');
+      textEl.textContent = message;
+      toastEl.classList.remove('opacity-0', 'translate-y-2');
+      toastEl.classList.add('opacity-100', 'translate-y-0');
+
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toastEl.classList.remove('opacity-100', 'translate-y-0');
+        toastEl.classList.add('opacity-0', 'translate-y-2');
+      }, 2600);
+    }
+
+    function copyTextToClipboard(text) {
+      try {
+        const tempInput = document.createElement('textarea');
+        tempInput.value = text;
+        tempInput.style.position = 'fixed';
+        tempInput.style.opacity = '0';
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        document.execCommand('copy');
+        document.body.removeChild(tempInput);
+        showToast('Link da publicação copiado!');
+      } catch (err) {
+        showToast('Link copiado para compartilhamento!');
+      }
+    }
+
+    /* --------------------------------------------------------------------------
+       TEMA CLARO / ESCURO
+       -------------------------------------------------------------------------- */
+    function toggleTheme() {
+      state.isDark = !state.isDark;
+      document.documentElement.classList.toggle('dark', state.isDark);
+      updateThemeIcons();
+      showToast(state.isDark ? 'Modo escuro ativado' : 'Modo claro ativado');
+    }
+
+    function updateThemeIcons() {
+      const slots = document.querySelectorAll('.theme-icon-slot');
+      slots.forEach(slot => {
+        slot.innerHTML = state.isDark ? SUN_ICON_SVG : MOON_ICON_SVG;
+      });
+      const label = document.getElementById('theme-label-text');
+      if (label) {
+        label.textContent = state.isDark ? 'Modo claro' : 'Modo escuro';
+      }
+    }
+
+    /* --------------------------------------------------------------------------
+       NAVEGAÇÃO ENTRE ABAS (INÍCIO, PESQUISAR, EXPLORAR, PERFIL)
+       -------------------------------------------------------------------------- */
+    function navigateTo(viewName) {
+      state.currentView = viewName;
+
+      // Ocultar todas as seções e exibir a ativa
+      document.querySelectorAll('.view-section').forEach(sec => sec.classList.add('hidden'));
+      const target = document.getElementById(`view-${viewName}`);
+      if (target) target.classList.remove('hidden');
+
+      // Atualizar destaque dos botões de navegação
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        const isActive = btn.dataset.nav === viewName;
+        const label = btn.querySelector('span');
+        if (label) {
+          label.classList.toggle('font-bold', isActive);
+        }
+        btn.classList.toggle('font-bold', isActive);
+      });
+
+      // Renderizar dados específicos da aba
+      if (viewName === 'home') {
+        renderStories();
+        renderFeed();
+        renderSuggestions();
+      } else if (viewName === 'search') {
+        renderSearchResults();
+        setTimeout(() => document.getElementById('search-input')?.focus(), 80);
+      } else if (viewName === 'explore') {
+        renderExploreGrid();
+      } else if (viewName === 'profile') {
+        renderProfile();
+      }
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    /* --------------------------------------------------------------------------
+       RENDERIZAÇÃO DE STORIES & VISUALIZADOR INTERATIVO
+       -------------------------------------------------------------------------- */
+    let storyViewer = {
+      active: false,
+      userIndex: 0,
+      slideIndex: 0,
+      progress: 0,
+      paused: false,
+      typingPaused: false,
+      rafId: null,
+      lastTimestamp: 0,
+      slideDuration: 4500 // 4.5 segundos por slide
+    };
+
+    function renderStories() {
+      const container = document.getElementById('stories-container');
+      if (!container) return;
+
+      container.innerHTML = state.stories.map((story, idx) => `
+        <button onclick="openStoryViewer(${idx})" class="flex flex-col items-center gap-1.5 shrink-0 w-[68px] group focus:outline-none">
+          <div class="story-ring ${story.seen ? 'seen' : ''}">
+            <div class="story-ring-inner">
+              <img
+                src="${story.avatar}"
+                alt="${story.username}"
+                onerror="handleImgError(this, '${story.username}')"
+                class="w-14 h-14 rounded-full object-cover group-hover:scale-[1.03] transition-transform"
+              />
+            </div>
+          </div>
+          <span class="text-[11px] w-full truncate text-center ${story.seen ? 'ig-text-secondary' : 'ig-text-primary'}">
+            ${story.username}
+          </span>
+        </button>
+      `).join('');
+    }
+
+    function openStoryViewer(userIdx) {
+      storyViewer.active = true;
+      storyViewer.userIndex = userIdx;
+      storyViewer.slideIndex = 0;
+      storyViewer.progress = 0;
+      storyViewer.paused = false;
+      storyViewer.typingPaused = false;
+      storyViewer.lastTimestamp = performance.now();
+
+      document.getElementById('story-viewer-modal').classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+
+      loadCurrentStorySlide();
+      cancelAnimationFrame(storyViewer.rafId);
+      storyViewer.rafId = requestAnimationFrame(stepStoryProgress);
+    }
+
+    function closeStoryViewer() {
+      storyViewer.active = false;
+      cancelAnimationFrame(storyViewer.rafId);
+      document.getElementById('story-viewer-modal').classList.add('hidden');
+      document.body.style.overflow = '';
+      renderStories();
+    }
+
+    function loadCurrentStorySlide() {
+      const userStory = state.stories[storyViewer.userIndex];
+      if (!userStory) {
+        closeStoryViewer();
+        return;
+      }
+
+      // Marcar como visualizado
+      userStory.seen = true;
+      const slide = userStory.slides[storyViewer.slideIndex];
+
+      document.getElementById('story-user-avatar').src = userStory.avatar;
+      document.getElementById('story-username').textContent = userStory.username;
+      document.getElementById('story-verified-slot').innerHTML = userStory.verified ? VERIFIED_BADGE_SVG : '';
+      document.getElementById('story-time').textContent = slide.time;
+
+      const storyImg = document.getElementById('story-image');
+      storyImg.dataset.fallbackApplied = '';
+      storyImg.src = slide.image;
+      storyImg.onerror = () => handleImgError(storyImg, userStory.username);
+
+      const captionBox = document.getElementById('story-caption-box');
+      const captionText = document.getElementById('story-caption-text');
+      if (slide.caption) {
+        captionBox.classList.remove('hidden');
+        captionText.textContent = slide.caption;
+      } else {
+        captionBox.classList.add('hidden');
+      }
+
+      // Renderizar barras segmentadas no topo
+      const barsContainer = document.getElementById('story-progress-bars');
+      barsContainer.innerHTML = userStory.slides.map((_, sIdx) => {
+        let initialWidth = sIdx < storyViewer.slideIndex ? '100%' : '0%';
+        return `
+          <div class="flex-1 h-0.5 bg-white/35 rounded-full overflow-hidden">
+            <div id="story-bar-${sIdx}" class="h-full bg-white rounded-full" style="width: ${initialWidth};"></div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function stepStoryProgress(timestamp) {
+      if (!storyViewer.active) return;
+
+      const delta = timestamp - storyViewer.lastTimestamp;
+      storyViewer.lastTimestamp = timestamp;
+
+      if (!storyViewer.paused && !storyViewer.typingPaused) {
+        storyViewer.progress += delta / storyViewer.slideDuration;
+        const bar = document.getElementById(`story-bar-${storyViewer.slideIndex}`);
+        if (bar) {
+          bar.style.width = `${Math.min(storyViewer.progress * 100, 100)}%`;
+        }
+
+        if (storyViewer.progress >= 1) {
+          nextStorySlide();
+          return;
+        }
+      }
+
+      storyViewer.rafId = requestAnimationFrame(stepStoryProgress);
+    }
+
+    function nextStorySlide() {
+      const userStory = state.stories[storyViewer.userIndex];
+      if (!userStory) return;
+
+      if (storyViewer.slideIndex + 1 < userStory.slides.length) {
+        storyViewer.slideIndex++;
+        storyViewer.progress = 0;
+        storyViewer.lastTimestamp = performance.now();
+        loadCurrentStorySlide();
+        storyViewer.rafId = requestAnimationFrame(stepStoryProgress);
+      } else if (storyViewer.userIndex + 1 < state.stories.length) {
+        storyViewer.userIndex++;
+        storyViewer.slideIndex = 0;
+        storyViewer.progress = 0;
+        storyViewer.lastTimestamp = performance.now();
+        loadCurrentStorySlide();
+        storyViewer.rafId = requestAnimationFrame(stepStoryProgress);
+      } else {
+        closeStoryViewer();
+      }
+    }
+
+    function prevStorySlide() {
+      if (storyViewer.slideIndex > 0) {
+        storyViewer.slideIndex--;
+      } else if (storyViewer.userIndex > 0) {
+        storyViewer.userIndex--;
+        storyViewer.slideIndex = state.stories[storyViewer.userIndex].slides.length - 1;
+      }
+      storyViewer.progress = 0;
+      storyViewer.lastTimestamp = performance.now();
+      loadCurrentStorySlide();
+    }
+
+    function toggleStoryPause() {
+      storyViewer.paused = !storyViewer.paused;
+      storyViewer.lastTimestamp = performance.now();
+      const btn = document.getElementById('story-pause-btn');
+      btn.innerHTML = storyViewer.paused
+        ? `<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>`
+        : `<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/></svg>`;
+    }
+
+    function pauseStoryForTyping(isTyping) {
+      storyViewer.typingPaused = isTyping;
+      storyViewer.lastTimestamp = performance.now();
+    }
+
+    function sendStoryReaction(emoji) {
+      const holder = document.getElementById('story-floating-reactions');
+      const el = document.createElement('div');
+      el.className = 'floating-emoji text-3xl absolute right-0 bottom-0';
+      el.textContent = emoji;
+      holder.appendChild(el);
+      setTimeout(() => el.remove(), 1250);
+    }
+
+    function submitStoryReply(e) {
+      e.preventDefault();
+      const input = document.getElementById('story-reply-input');
+      const text = input.value.trim();
+      if (!text) return;
+      const targetUser = state.stories[storyViewer.userIndex]?.username || 'usuário';
+      input.value = '';
+      input.blur();
+      showToast(`Resposta enviada para @${targetUser}`);
+    }
+
+    function openUserOwnStoryOrToast() {
+      openStoryViewer(0);
+    }
+
+    /* --------------------------------------------------------------------------
+       FORMATAÇÃO DE LEGENDA COM HASHTAGS CLICÁVEIS
+       -------------------------------------------------------------------------- */
+    function formatCaptionWithHashtags(text) {
+      const escaped = text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+      return escaped.replace(/(#[\wÀ-ÿ]+)/g, `<button onclick="quickTagSearch('$1')" class="text-[#00376b] dark:text-[#e0f1ff] hover:underline font-normal">$1</button>`);
+    }
+
+    function formatNumberBR(num) {
+      return num.toLocaleString('pt-BR');
+    }
+
+    /* --------------------------------------------------------------------------
+       RENDERIZAÇÃO DO FEED DE PUBLICAÇÕES
+       -------------------------------------------------------------------------- */
+    function renderFeed() {
+      const container = document.getElementById('feed-container');
+      if (!container) return;
+
+      container.innerHTML = state.posts.map(post => {
+        const hasStory = state.stories.some(s => s.username === post.username);
+        const commentsPreview = post.comments.slice(-2);
+
+        return `
+          <article id="article-${post.id}" class="ig-bg-primary border-b sm:border ig-border sm:rounded-xl pb-3.5 transition">
+            <!-- Cabeçalho da Publicação -->
+            <div class="flex items-center justify-between px-3 py-2.5">
+              <div class="flex items-center gap-2.5">
+                <div onclick="${hasStory ? `openStoryByUsername('${post.username}')` : `openPostDetail('${post.id}')`}" class="${hasStory ? 'story-ring p-[2px] cursor-pointer' : 'cursor-pointer'}">
+                  <div class="${hasStory ? 'story-ring-inner p-[1.5px]' : ''}">
+                    <img
+                      src="${post.avatar}"
+                      alt="${post.username}"
+                      onerror="handleImgError(this, '${post.username}')"
+                      class="w-8 h-8 rounded-full object-cover"
+                    />
+                  </div>
+                </div>
+                <div class="leading-tight">
+                  <div class="flex items-center gap-1">
+                    <span onclick="quickUserSearch('${post.username}')" class="text-sm font-semibold cursor-pointer hover:opacity-75">${post.username}</span>
+                    ${post.verified ? VERIFIED_BADGE_SVG : ''}
+                  </div>
+                  ${post.location ? `<div class="text-xs ig-text-secondary">${post.location}</div>` : ''}
+                </div>
+              </div>
+
+              <button onclick="copyTextToClipboard('https://instagram.com/p/${post.id}')" class="p-1.5 rounded-full ig-nav-item ig-text-secondary" title="Opções / Copiar link">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="1.5"></circle>
+                  <circle cx="6" cy="12" r="1.5"></circle>
+                  <circle cx="18" cy="12" r="1.5"></circle>
+                </svg>
+              </button>
+            </div>
+
+            <!-- Imagem com Duplo Clique para Curtir -->
+            <div
+              ondblclick="handleDoubleTapLike('${post.id}', this)"
+              class="relative w-full aspect-square bg-neutral-100 dark:bg-neutral-900 overflow-hidden select-none cursor-pointer"
+            >
+              <img
+                src="${post.image}"
+                alt="Publicação de ${post.username}"
+                onerror="handleImgError(this, '${post.username}')"
+                class="w-full h-full object-cover ${post.filter || 'filter-normal'}"
+                loading="lazy"
+              />
+              <!-- Slot onde o coração branco pulsa no duplo clique -->
+              <div class="double-tap-heart-slot pointer-events-none"></div>
+            </div>
+
+            <!-- Barra de Ações (Curtir, Comentar, Compartilhar, Salvar) -->
+            <div class="px-3 pt-3">
+              <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center gap-3.5">
+                  <!-- Curtir -->
+                  <button onclick="toggleLikePost('${post.id}')" class="focus:outline-none group" aria-label="Curtir">
+                    ${post.liked
+                      ? `<svg class="w-6 h-6 text-[#ff3040] animate-like-pop" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`
+                      : `<svg class="w-6 h-6 group-hover:opacity-60 transition" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/></svg>`
+                    }
+                  </button>
+
+                  <!-- Comentar -->
+                  <button onclick="focusCommentInput('${post.id}')" class="focus:outline-none hover:opacity-60 transition" aria-label="Comentar">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 7.444 3 12c0 2.104.859 4.023 2.273 5.48.432.447.74 1.04.586 1.641a4.483 4.483 0 01-.923 1.785A5.969 5.969 0 006 21c1.282 0 2.47-.402 3.445-1.087.81.22 1.668.337 2.555.337z" />
+                    </svg>
+                  </button>
+
+                  <!-- Compartilhar -->
+                  <button onclick="copyTextToClipboard('https://instagram.com/p/${post.id}')" class="focus:outline-none hover:opacity-60 transition" aria-label="Compartilhar">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
+                    </svg>
+                  </button>
+                </div>
+
+                <!-- Salvar (Bookmark) -->
+                <button onclick="toggleSavePost('${post.id}')" class="focus:outline-none hover:opacity-60 transition" aria-label="Salvar publicação">
+                  ${post.saved
+                    ? `<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M5 3a2 2 0 00-2 2v16l9-4 9 4V5a2 2 0 00-2-2H5z"/></svg>`
+                    : `<svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>`
+                  }
+                </button>
+              </div>
+
+              <!-- Contador de Curtidas -->
+              <div class="text-sm font-semibold mb-1.5">
+                ${formatNumberBR(post.likes)} curtidas
+              </div>
+
+              <!-- Legenda -->
+              <div class="text-sm leading-snug mb-1.5">
+                <span class="font-semibold mr-1">${post.username}</span>
+                <span>${formatCaptionWithHashtags(post.caption)}</span>
+              </div>
+
+              <!-- Ver todos os comentários -->
+              ${post.comments.length > 2 ? `
+                <button onclick="openPostDetail('${post.id}')" class="text-sm ig-text-secondary mb-1 hover:opacity-80">
+                  Ver todos os ${post.comments.length} comentários
+                </button>
+              ` : ''}
+
+              <!-- Últimos comentários -->
+              <div class="space-y-1 mb-1.5">
+                ${commentsPreview.map(c => `
+                  <div class="text-sm leading-snug">
+                    <span class="font-semibold mr-1">${c.username}</span>
+                    <span>${c.text}</span>
+                  </div>
+                `).join('')}
+              </div>
+
+              <!-- Data da Publicação -->
+              <div class="text-[10px] ig-text-secondary tracking-wide uppercase mb-2.5">
+                ${post.timeAgo}
+              </div>
+
+              <!-- Campo para Adicionar Novo Comentário -->
+              <form onsubmit="submitPostComment(event, '${post.id}')" class="flex items-center gap-2 pt-2 border-t ig-border-subtle">
+                <input
+                  id="comment-input-${post.id}"
+                  type="text"
+                  oninput="toggleCommentSubmitBtn('${post.id}', this.value)"
+                  placeholder="Adicione um comentário..."
+                  class="flex-1 bg-transparent text-sm focus:outline-none"
+                />
+                <button
+                  id="comment-btn-${post.id}"
+                  type="submit"
+                  disabled
+                  class="text-sm font-semibold text-[#0095f6] opacity-40 disabled:cursor-default transition"
+                >
+                  Publicar
+                </button>
+              </form>
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    function openStoryByUsername(username) {
+      const idx = state.stories.findIndex(s => s.username === username);
+      if (idx !== -1) openStoryViewer(idx);
+    }
+
+    /* --------------------------------------------------------------------------
+       INTERAÇÕES DAS PUBLICAÇÕES: CURTIR, DUPLO CLIQUE, COMENTAR, SALVAR
+       -------------------------------------------------------------------------- */
+    function toggleLikePost(postId, forceLike = false) {
+      const post = state.posts.find(p => p.id === postId);
+      if (!post) return;
+
+      if (forceLike) {
+        if (!post.liked) {
+          post.liked = true;
+          post.likes++;
+        }
+      } else {
+        post.liked = !post.liked;
+        post.likes += post.liked ? 1 : -1;
+      }
+
+      if (state.currentView === 'home') renderFeed();
+      if (state.currentView === 'explore') renderExploreGrid();
+      if (state.currentView === 'profile') renderProfile();
+
+      // Se modal de detalhes estiver aberto para este post, atualizar também
+      const detailModal = document.getElementById('post-detail-modal');
+      if (!detailModal.classList.contains('hidden') && detailModal.dataset.postId === postId) {
+        openPostDetail(postId);
+      }
+    }
+
+    function handleDoubleTapLike(postId, containerEl) {
+      const slot = containerEl.querySelector('.double-tap-heart-slot');
+      if (slot) {
+        slot.innerHTML = `
+          <svg class="w-24 h-24 text-white drop-shadow-2xl absolute top-1/2 left-1/2 heart-burst" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+          </svg>`;
+      }
+      setTimeout(() => toggleLikePost(postId, true), 260);
+    }
+
+    function toggleSavePost(postId) {
+      const post = state.posts.find(p => p.id === postId);
+      if (!post) return;
+      post.saved = !post.saved;
+      showToast(post.saved ? 'Publicação salva no seu perfil' : 'Removida dos itens salvos');
+
+      if (state.currentView === 'home') renderFeed();
+      if (state.currentView === 'profile') renderProfile();
+
+      const detailModal = document.getElementById('post-detail-modal');
+      if (!detailModal.classList.contains('hidden') && detailModal.dataset.postId === postId) {
+        openPostDetail(postId);
+      }
+    }
+
+    function focusCommentInput(postId) {
+      const input = document.getElementById(`comment-input-${postId}`);
+      if (input) input.focus();
+    }
+
+    function toggleCommentSubmitBtn(postId, val) {
+      const btn = document.getElementById(`comment-btn-${postId}`);
+      if (!btn) return;
+      const hasText = val.trim().length > 0;
+      btn.disabled = !hasText;
+      btn.classList.toggle('opacity-40', !hasText);
+    }
+
+    function submitPostComment(e, postId) {
+      e.preventDefault();
+      const input = document.getElementById(`comment-input-${postId}`);
+      if (!input) return;
+      const text = input.value.trim();
+      if (!text) return;
+
+      const post = state.posts.find(p => p.id === postId);
+      if (!post) return;
+
+      post.comments.push({
+        id: 'c-' + Date.now(),
+        username: state.currentUser.username,
+        text
+      });
+
+      renderFeed();
+      showToast('Comentário publicado');
+    }
+
+    /* --------------------------------------------------------------------------
+       SUGESTÕES DE CONTAS & CONTADOR DINÂMICO DE SEGUINDO
+       -------------------------------------------------------------------------- */
+    function renderSuggestions() {
+      const container = document.getElementById('suggestions-container');
+      if (!container) return;
+
+      container.innerHTML = state.suggestions.map(sug => `
+        <div class="flex items-center justify-between gap-2">
+          <div onclick="quickUserSearch('${sug.username}')" class="flex items-center gap-2.5 min-w-0 cursor-pointer group">
+            <img
+              src="${sug.avatar}"
+              alt="${sug.username}"
+              onerror="handleImgError(this, '${sug.username}')"
+              class="w-9 h-9 rounded-full object-cover border ig-border shrink-0"
+            />
+            <div class="min-w-0 leading-tight">
+              <div class="flex items-center gap-1">
+                <span class="text-sm font-semibold truncate group-hover:opacity-75">${sug.username}</span>
+                ${sug.verified ? VERIFIED_BADGE_SVG : ''}
+              </div>
+              <div class="text-xs ig-text-secondary truncate">${sug.subtitle}</div>
+            </div>
+          </div>
+
+          <button
+            onclick="toggleFollowSuggestion('${sug.id}')"
+            class="text-xs font-semibold shrink-0 transition ${sug.following ? 'ig-text-primary hover:opacity-70' : 'text-[#0095f6] hover:text-[#1877f2]'}"
+          >
+            ${sug.following ? 'Seguindo' : 'Seguir'}
+          </button>
+        </div>
+      `).join('');
+
+      updateFollowingCountStat();
+    }
+
+    function toggleFollowSuggestion(sugId) {
+      const sug = state.suggestions.find(s => s.id === sugId);
+      if (!sug) return;
+      sug.following = !sug.following;
+      showToast(sug.following ? `Você começou a seguir @${sug.username}` : `Deixou de seguir @${sug.username}`);
+      renderSuggestions();
+      if (state.currentView === 'search') renderSearchResults();
+    }
+
+    function updateFollowingCountStat() {
+      const baseFollowing = 318;
+      const extraFollowing = state.suggestions.filter(s => s.following).length;
+      const total = baseFollowing + extraFollowing;
+      const el = document.getElementById('stat-following');
+      if (el) el.textContent = formatNumberBR(total);
+    }
+
+    /* --------------------------------------------------------------------------
+       CRIAR NOVA PUBLICAÇÃO (MODAL, FILE READER, FILTROS & PUBLICAÇÃO)
+       -------------------------------------------------------------------------- */
+    function openCreateModal() {
+      createState.selectedImage = SAMPLE_CREATE_IMAGES[0].url;
+      createState.selectedFilter = 'filter-normal';
+
+      document.getElementById('create-modal-avatar').src = state.currentUser.avatar;
+      document.getElementById('create-modal-username').textContent = state.currentUser.username;
+      document.getElementById('create-caption-input').value = '';
+      document.getElementById('create-location-input').value = '';
+      updateCreateCharCount('');
+
+      renderCreatePreview();
+      renderCreateSampleThumbs();
+      renderCreateFilterButtons();
+
+      document.getElementById('create-post-modal').classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeCreateModal() {
+      document.getElementById('create-post-modal').classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+
+    function renderCreatePreview() {
+      const img = document.getElementById('create-preview-img');
+      img.src = createState.selectedImage;
+      img.className = `w-full h-full object-cover transition-all duration-200 ${createState.selectedFilter}`;
+    }
+
+    function renderCreateSampleThumbs() {
+      const container = document.getElementById('create-sample-thumbs');
+      container.innerHTML = SAMPLE_CREATE_IMAGES.map(item => `
+        <button
+          type="button"
+          onclick="selectSampleCreateImage('${item.url}')"
+          class="aspect-square rounded-lg overflow-hidden border-2 transition ${createState.selectedImage === item.url ? 'border-[#0095f6] scale-95' : 'border-transparent opacity-80 hover:opacity-100'}"
+          title="${item.label}"
+        >
+          <img src="${item.url}" alt="${item.label}" class="w-full h-full object-cover" />
+        </button>
+      `).join('');
+    }
+
+    function renderCreateFilterButtons() {
+      const container = document.getElementById('create-filters-grid');
+      container.innerHTML = CREATE_FILTERS.map(f => {
+        const isSelected = createState.selectedFilter === f.id;
+        return `
+          <button
+            type="button"
+            onclick="selectCreateFilter('${f.id}')"
+            class="flex flex-col items-center p-1.5 rounded-xl border transition ${isSelected ? 'border-[#0095f6] bg-[#0095f6]/10' : 'ig-border hover:opacity-80'}"
+          >
+            <div class="w-full aspect-square rounded-lg overflow-hidden mb-1">
+              <img src="${createState.selectedImage}" alt="${f.name}" class="w-full h-full object-cover ${f.id}" />
+            </div>
+            <span class="text-[11px] font-medium ${isSelected ? 'text-[#0095f6] font-semibold' : ''}">${f.name}</span>
+          </button>
+        `;
+      }).join('');
+    }
+
+    function selectSampleCreateImage(url) {
+      createState.selectedImage = url;
+      renderCreatePreview();
+      renderCreateSampleThumbs();
+      renderCreateFilterButtons();
+    }
+
+    function selectCreateFilter(filterId) {
+      createState.selectedFilter = filterId;
+      renderCreatePreview();
+      renderCreateFilterButtons();
+    }
+
+    function handleCreateImageUpload(event) {
+      const file = event.target.files?.[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        createState.selectedImage = e.target.result;
+        renderCreatePreview();
+        renderCreateSampleThumbs();
+        renderCreateFilterButtons();
+        showToast('Imagem carregada com sucesso!');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function updateCreateCharCount(val) {
+      document.getElementById('create-char-count').textContent = `${val.length}/2.200`;
+    }
+
+    function appendEmojiToCaption(emoji) {
+      const textarea = document.getElementById('create-caption-input');
+      textarea.value += emoji;
+      updateCreateCharCount(textarea.value);
+      textarea.focus();
+    }
+
+    function publishNewPost() {
+      const caption = document.getElementById('create-caption-input').value.trim() || 'Novo momento compartilhado! ✨📸';
+      const location = document.getElementById('create-location-input').value.trim();
+
+      const newPost = {
+        id: 'post-' + Date.now(),
+        username: state.currentUser.username,
+        avatar: state.currentUser.avatar,
+        verified: state.currentUser.verified,
+        location: location || 'Brasil',
+        image: createState.selectedImage,
+        filter: createState.selectedFilter,
+        likes: 1,
+        liked: true,
+        saved: false,
+        timeAgo: 'AGORA MESMO',
+        caption,
+        comments: []
+      };
+
+      state.posts.unshift(newPost);
+      closeCreateModal();
+      navigateTo('home');
+      showToast('Sua publicação foi compartilhada!');
+    }
+
+    /* --------------------------------------------------------------------------
+       ABA PESQUISAR (FILTRO EM TEMPO REAL DE CONTAS E PUBLICAÇÕES)
+       -------------------------------------------------------------------------- */
+    function handleSearchInput(val) {
+      state.searchQuery = val;
+      const clearBtn = document.getElementById('search-clear-btn');
+      clearBtn.classList.toggle('hidden', val.length === 0);
+      renderSearchResults();
+    }
+
+    function clearSearch() {
+      const input = document.getElementById('search-input');
+      if (input) input.value = '';
+      handleSearchInput('');
+    }
+
+    function setSearchFilter(filterType) {
+      state.searchFilter = filterType;
+      document.querySelectorAll('.sfilter-pill').forEach(btn => {
+        const active = btn.dataset.sfilter === filterType;
+        btn.classList.toggle('bg-[#0095f6]', active);
+        btn.classList.toggle('text-white', active);
+        btn.classList.toggle('ig-bg-input', !active);
+      });
+      renderSearchResults();
+    }
+
+    function quickTagSearch(tag) {
+      navigateTo('search');
+      const input = document.getElementById('search-input');
+      if (input) input.value = tag;
+      handleSearchInput(tag);
+    }
+
+    function quickUserSearch(username) {
+      if (username === state.currentUser.username) {
+        navigateTo('profile');
+        return;
+      }
+      navigateTo('search');
+      const input = document.getElementById('search-input');
+      if (input) input.value = username;
+      handleSearchInput(username);
+    }
+
+    function renderSearchResults() {
+      const container = document.getElementById('search-results-container');
+      if (!container) return;
+
+      const q = state.searchQuery.trim().toLowerCase();
+
+      // Filtrar contas (sugestões + autores únicos)
+      const matchedUsers = state.suggestions.filter(u =>
+        !q || u.username.toLowerCase().includes(q) || u.fullName.toLowerCase().includes(q)
+      );
+
+      // Filtrar publicações
+      const matchedPosts = state.posts.filter(p =>
+        !q ||
+        p.username.toLowerCase().includes(q) ||
+        p.caption.toLowerCase().includes(q) ||
+        (p.location && p.location.toLowerCase().includes(q))
+      );
+
+      let html = '';
+
+      if (state.searchFilter === 'all' || state.searchFilter === 'users') {
+        html += `
+          <div>
+            <h2 class="text-sm font-semibold ig-text-secondary mb-3">Contas (${matchedUsers.length})</h2>
+            ${matchedUsers.length === 0
+              ? `<p class="text-sm ig-text-secondary py-4">Nenhuma conta encontrada para "${state.searchQuery}".</p>`
+              : `<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  ${matchedUsers.map(u => `
+                    <div class="flex items-center justify-between p-3 rounded-xl border ig-border ig-bg-elevated">
+                      <div class="flex items-center gap-3 min-w-0">
+                        <img src="${u.avatar}" alt="${u.username}" onerror="handleImgError(this, '${u.username}')" class="w-11 h-11 rounded-full object-cover shrink-0" />
+                        <div class="min-w-0">
+                          <div class="flex items-center gap-1">
+                            <span class="text-sm font-semibold truncate">${u.username}</span>
+                            ${u.verified ? VERIFIED_BADGE_SVG : ''}
+                          </div>
+                          <div class="text-xs ig-text-secondary truncate">${u.fullName}</div>
+                        </div>
+                      </div>
+                      <button
+                        onclick="toggleFollowSuggestion('${u.id}')"
+                        class="px-3.5 py-1.5 rounded-lg text-xs font-semibold transition ${u.following ? 'ig-bg-input' : 'bg-[#0095f6] text-white hover:bg-[#1877f2]'}"
+                      >
+                        ${u.following ? 'Seguindo' : 'Seguir'}
+                      </button>
+                    </div>
+                  `).join('')}
+                </div>`
+            }
+          </div>
+        `;
+      }
+
+      if (state.searchFilter === 'all' || state.searchFilter === 'posts') {
+        html += `
+          <div>
+            <h2 class="text-sm font-semibold ig-text-secondary mb-3">Publicações (${matchedPosts.length})</h2>
+            ${matchedPosts.length === 0
+              ? `<p class="text-sm ig-text-secondary py-4">Nenhuma publicação encontrada.</p>`
+              : `<div class="grid grid-cols-3 gap-1.5 sm:gap-3">
+                  ${matchedPosts.map(p => `
+                    <div onclick="openPostDetail('${p.id}')" class="relative aspect-square rounded-lg overflow-hidden cursor-pointer group bg-neutral-900">
+                      <img src="${p.image}" alt="" onerror="handleImgError(this, '${p.username}')" class="w-full h-full object-cover ${p.filter || ''}" />
+                      <div class="absolute inset-0 bg-black/45 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-4 text-white text-sm font-semibold">
+                        <span>❤️ ${formatNumberBR(p.likes)}</span>
+                        <span>💬 ${p.comments.length}</span>
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>`
+            }
+          </div>
+        `;
+      }
+
+      container.innerHTML = html;
+    }
+
+    /* --------------------------------------------------------------------------
+       ABA EXPLORAR (GRADE MOSAICO ESTILO INSTAGRAM)
+       -------------------------------------------------------------------------- */
+    function renderExploreGrid() {
+      const grid = document.getElementById('explore-grid');
+      if (!grid) return;
+
+      // Combinar posts com fotos extras para formar um mosaico rico
+      const items = [...state.posts];
+
+      grid.innerHTML = items.map((post, idx) => {
+        // Destaque alto a cada 5 itens em telas maiores para efeito mosaico autêntico
+        const isTallMosaic = idx === 2 || idx === 5;
+        return `
+          <div
+            onclick="openPostDetail('${post.id}')"
+            class="relative group cursor-pointer overflow-hidden sm:rounded-lg bg-neutral-200 dark:bg-neutral-900 ${isTallMosaic ? 'row-span-2 aspect-auto' : 'aspect-square'}"
+          >
+            <img
+              src="${post.image}"
+              alt="Explorar ${post.username}"
+              onerror="handleImgError(this, '${post.username}')"
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 ${post.filter || ''}"
+            />
+            <!-- Overlay com estatísticas ao passar o mouse -->
+            <div class="absolute inset-0 bg-black/45 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-5 text-white font-semibold text-sm sm:text-base">
+              <div class="flex items-center gap-1.5">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                <span>${formatNumberBR(post.likes)}</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3c5.5 0 10 3.58 10 8s-4.5 8-10 8c-1.24 0-2.43-.18-3.53-.5C5.55 21 2 21 2 21c2.33-2.33 2.7-3.9 2.75-4.5C3.05 15.07 2 13.13 2 11c0-4.42 4.5-8 10-8z"/></svg>
+                <span>${post.comments.length}</span>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    /* --------------------------------------------------------------------------
+       MODAL DE DETALHES DA PUBLICAÇÃO
+       -------------------------------------------------------------------------- */
+    function openPostDetail(postId) {
+      const post = state.posts.find(p => p.id === postId);
+      if (!post) return;
+
+      const modal = document.getElementById('post-detail-modal');
+      const content = document.getElementById('post-detail-content');
+      modal.dataset.postId = postId;
+
+      content.innerHTML = `
+        <!-- Coluna Esquerda: Foto -->
+        <div
+          ondblclick="handleDoubleTapLike('${post.id}', this)"
+          class="md:col-span-7 bg-black flex items-center justify-center relative select-none cursor-pointer max-h-[50vh] md:max-h-[85vh]"
+        >
+          <img src="${post.image}" alt="" onerror="handleImgError(this, '${post.username}')" class="w-full h-full object-contain ${post.filter || ''}" />
+          <div class="double-tap-heart-slot pointer-events-none"></div>
+        </div>
+
+        <!-- Coluna Direita: Cabeçalho, Comentários e Ações -->
+        <div class="md:col-span-5 flex flex-col justify-between max-h-[42vh] md:max-h-[85vh] ig-bg-elevated">
+          <!-- Header -->
+          <div class="px-4 py-3 border-b ig-border flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+              <img src="${post.avatar}" alt="${post.username}" onerror="handleImgError(this, '${post.username}')" class="w-8 h-8 rounded-full object-cover" />
+              <div class="leading-tight">
+                <div class="flex items-center gap-1">
+                  <span class="text-sm font-semibold">${post.username}</span>
+                  ${post.verified ? VERIFIED_BADGE_SVG : ''}
+                </div>
+                ${post.location ? `<div class="text-[11px] ig-text-secondary">${post.location}</div>` : ''}
+              </div>
+            </div>
+            <button onclick="closePostDetailModal()" class="md:hidden text-xs font-semibold ig-text-secondary">Fechar</button>
+          </div>
+
+          <!-- Lista Rolável de Legenda + Comentários -->
+          <div class="flex-1 overflow-y-auto p-4 space-y-4 text-sm">
+            <div class="flex items-start gap-2.5">
+              <img src="${post.avatar}" alt="" class="w-7 h-7 rounded-full object-cover shrink-0 mt-0.5" />
+              <div>
+                <span class="font-semibold mr-1">${post.username}</span>
+                <span>${formatCaptionWithHashtags(post.caption)}</span>
+                <div class="text-[10px] ig-text-secondary mt-1">${post.timeAgo}</div>
+              </div>
+            </div>
+
+            ${post.comments.length === 0
+              ? `<p class="text-xs ig-text-secondary text-center py-6">Nenhum comentário ainda. Seja o primeiro a comentar!</p>`
+              : post.comments.map(c => `
+                <div class="flex items-start gap-2.5">
+                  <div class="w-7 h-7 rounded-full ig-bg-input flex items-center justify-center text-xs font-bold shrink-0">
+                    ${c.username[0].toUpperCase()}
+                  </div>
+                  <div>
+                    <span class="font-semibold mr-1">${c.username}</span>
+                    <span>${c.text}</span>
+                  </div>
+                </div>
+              `).join('')
+            }
+          </div>
+
+          <!-- Rodapé Ações & Novo Comentário -->
+          <div class="border-t ig-border p-3.5 space-y-2">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3.5">
+                <button onclick="toggleLikePost('${post.id}')" aria-label="Curtir">
+                  ${post.liked
+                    ? `<svg class="w-6 h-6 text-[#ff3040]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`
+                    : `<svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/></svg>`
+                  }
+                </button>
+                <button onclick="copyTextToClipboard('https://instagram.com/p/${post.id}')" aria-label="Compartilhar">
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+                </button>
+              </div>
+              <button onclick="toggleSavePost('${post.id}')" aria-label="Salvar">
+                ${post.saved
+                  ? `<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M5 3a2 2 0 00-2 2v16l9-4 9 4V5a2 2 0 00-2-2H5z"/></svg>`
+                  : `<svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>`
+                }
+              </button>
+            </div>
+
+            <div class="text-sm font-semibold">${formatNumberBR(post.likes)} curtidas</div>
+
+            <form onsubmit="submitModalComment(event, '${post.id}')" class="flex items-center gap-2 pt-2 border-t ig-border-subtle">
+              <input id="modal-comment-input" type="text" placeholder="Adicione um comentário..." class="flex-1 bg-transparent text-sm focus:outline-none" />
+              <button type="submit" class="text-sm font-semibold text-[#0095f6]">Publicar</button>
+            </form>
+          </div>
+        </div>
+      `;
+
+      modal.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closePostDetailModal() {
+      document.getElementById('post-detail-modal').classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+
+    function submitModalComment(e, postId) {
+      e.preventDefault();
+      const input = document.getElementById('modal-comment-input');
+      const text = input?.value.trim();
+      if (!text) return;
+
+      const post = state.posts.find(p => p.id === postId);
+      if (!post) return;
+
+      post.comments.push({
+        id: 'c-' + Date.now(),
+        username: state.currentUser.username,
+        text
+      });
+
+      openPostDetail(postId);
+      if (state.currentView === 'home') renderFeed();
+    }
+
+    /* --------------------------------------------------------------------------
+       ABA PERFIL (PUBLICAÇÕES, SALVOS E EDIÇÃO DE PERFIL)
+       -------------------------------------------------------------------------- */
+    function renderProfile() {
+      const user = state.currentUser;
+      const userPosts = state.posts.filter(p => p.username === user.username);
+      const savedPosts = state.posts.filter(p => p.saved);
+
+      document.getElementById('profile-avatar').src = user.avatar;
+      document.getElementById('profile-username').textContent = user.username;
+      document.querySelectorAll('.verified-badge-slot').forEach(el => {
+        el.innerHTML = user.verified ? VERIFIED_BADGE_SVG : '';
+      });
+
+      document.getElementById('stat-posts').textContent = userPosts.length;
+      document.getElementById('stat-followers').textContent = formatNumberBR(user.followersCount);
+      updateFollowingCountStat();
+
+      document.getElementById('profile-fullname').textContent = user.fullName;
+      document.getElementById('profile-bio').textContent = user.bio;
+      document.getElementById('profile-website').textContent = user.website;
+
+      const itemsToRender = state.profileTab === 'posts' ? userPosts : savedPosts;
+      const grid = document.getElementById('profile-grid');
+
+      if (itemsToRender.length === 0) {
+        grid.className = 'py-12 text-center';
+        grid.innerHTML = `
+          <div class="max-w-xs mx-auto space-y-2">
+            <div class="text-base font-semibold">
+              ${state.profileTab === 'posts' ? 'Nenhuma publicação ainda' : 'Nenhuma publicação salva'}
+            </div>
+            <p class="text-xs ig-text-secondary">
+              ${state.profileTab === 'posts'
+                ? 'Compartilhe fotos para que apareçam no seu perfil.'
+                : 'Salve fotos que você deseja ver novamente tocando no ícone de marcador.'}
+            </p>
+          </div>
+        `;
+        return;
+      }
+
+      grid.className = 'grid grid-cols-3 gap-1 sm:gap-4 py-4';
+      grid.innerHTML = itemsToRender.map(post => `
+        <div onclick="openPostDetail('${post.id}')" class="relative aspect-square group cursor-pointer overflow-hidden sm:rounded-lg bg-neutral-200 dark:bg-neutral-900">
+          <img
+            src="${post.image}"
+            alt=""
+            onerror="handleImgError(this, '${post.username}')"
+            class="w-full h-full object-cover ${post.filter || ''}"
+          />
+          <div class="absolute inset-0 bg-black/45 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-4 text-white font-semibold text-sm">
+            <span>❤️ ${formatNumberBR(post.likes)}</span>
+            <span>💬 ${post.comments.length}</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function switchProfileTab(tabName) {
+      state.profileTab = tabName;
+      const postsBtn = document.getElementById('tab-btn-posts');
+      const savedBtn = document.getElementById('tab-btn-saved');
+
+      if (tabName === 'posts') {
+        postsBtn.classList.remove('ig-text-secondary', 'border-transparent');
+        postsBtn.classList.add('border-black', 'dark:border-white');
+        savedBtn.classList.add('ig-text-secondary', 'border-transparent');
+        savedBtn.classList.remove('border-black', 'dark:border-white');
+      } else {
+        savedBtn.classList.remove('ig-text-secondary', 'border-transparent');
+        savedBtn.classList.add('border-black', 'dark:border-white');
+        postsBtn.classList.add('ig-text-secondary', 'border-transparent');
+        postsBtn.classList.remove('border-black', 'dark:border-white');
+      }
+
+      renderProfile();
+    }
+
+    function openEditProfileModal() {
+      document.getElementById('edit-fullname-input').value = state.currentUser.fullName;
+      document.getElementById('edit-username-input').value = state.currentUser.username;
+      document.getElementById('edit-bio-input').value = state.currentUser.bio;
+      document.getElementById('edit-website-input').value = state.currentUser.website;
+      document.getElementById('edit-profile-modal').classList.remove('hidden');
+    }
+
+    function closeEditProfileModal() {
+      document.getElementById('edit-profile-modal').classList.add('hidden');
+    }
+
+    function saveProfileChanges() {
+      const oldUsername = state.currentUser.username;
+      const newFullName = document.getElementById('edit-fullname-input').value.trim() || oldUsername;
+      const newUsername = document.getElementById('edit-username-input').value.trim().replace(/\s+/g, '.').toLowerCase() || oldUsername;
+      const newBio = document.getElementById('edit-bio-input').value;
+      const newWebsite = document.getElementById('edit-website-input').value.trim();
+
+      state.currentUser.fullName = newFullName;
+      state.currentUser.username = newUsername;
+      state.currentUser.bio = newBio;
+      state.currentUser.website = newWebsite;
+
+      // Atualizar autoria dos posts próprios
+      state.posts.forEach(p => {
+        if (p.username === oldUsername) p.username = newUsername;
+      });
+
+      syncUserIdentityAcrossUI();
+      renderProfile();
+      closeEditProfileModal();
+      showToast('Perfil atualizado com sucesso!');
+    }
+
+    /* --------------------------------------------------------------------------
+       PAINEL DE NOTIFICAÇÕES
+       -------------------------------------------------------------------------- */
+    function toggleNotificationsDrawer() {
+      const drawer = document.getElementById('notifications-drawer');
+      const isHidden = drawer.classList.contains('hidden');
+      drawer.classList.toggle('hidden');
+
+      if (isHidden) {
+        document.getElementById('mobile-notif-dot')?.classList.add('hidden');
+        document.getElementById('desktop-notif-dot')?.classList.add('hidden');
+        renderNotificationsList();
+      }
+    }
+
+    function renderNotificationsList() {
+      const list = document.getElementById('notifications-list');
+      list.innerHTML = state.notifications.map(n => `
+        <div class="flex items-center justify-between gap-3">
+          <div class="flex items-center gap-3 min-w-0">
+            <img src="${n.avatar}" alt="${n.username}" onerror="handleImgError(this, '${n.username}')" class="w-10 h-10 rounded-full object-cover shrink-0" />
+            <p class="text-sm leading-snug">
+              <span class="font-semibold">${n.username}</span>
+              <span> ${n.text}</span>
+              <span class="text-xs ig-text-secondary"> ${n.time}</span>
+            </p>
+          </div>
+          ${n.postThumb
+            ? `<img src="${n.postThumb}" alt="" class="w-10 h-10 rounded-md object-cover shrink-0" />`
+            : `<span class="text-xs font-semibold text-[#0095f6] shrink-0">Novo</span>`
+          }
+        </div>
+      `).join('');
+    }
+
+    /* --------------------------------------------------------------------------
+       INICIALIZAÇÃO DA APLICAÇÃO
+       -------------------------------------------------------------------------- */
+    function syncUserIdentityAcrossUI() {
+      const u = state.currentUser;
+      document.getElementById('sidebar-user-avatar').src = u.avatar;
+      document.getElementById('mobile-nav-avatar').src = u.avatar;
+      document.getElementById('right-sidebar-avatar').src = u.avatar;
+      document.getElementById('right-sidebar-username').textContent = u.username;
+      document.getElementById('right-sidebar-fullname').textContent = u.fullName;
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        if (!document.getElementById('story-viewer-modal').classList.contains('hidden')) closeStoryViewer();
+        if (!document.getElementById('create-post-modal').classList.contains('hidden')) closeCreateModal();
+        if (!document.getElementById('post-detail-modal').classList.contains('hidden')) closePostDetailModal();
+        if (!document.getElementById('edit-profile-modal').classList.contains('hidden')) closeEditProfileModal();
+      }
+    });
+
+    window.onload = function () {
+      updateThemeIcons();
+      syncUserIdentityAcrossUI();
+      navigateTo('home');
+    };
+  </script>
+</body>
+</html>
