@@ -1,102 +1,147 @@
 
-let livros = [];
+function calcularIMC() {
 
-window.cadastrarLivro = function() {
-  const titulo = document.getElementById("titulo").value.trim();
-  const autor = document.getElementById("autor").value.trim();
-  const categoria = document.getElementById("categoria").value;
-  const quantidade = Number(document.getElementById("quantidade").value);
+    // Receber os dados do paciente
 
-  const mensagem = document.getElementById("mensagem");
+    const nome = document.getElementById("nome").value.trim();
 
-  if (titulo === "" || autor === "" || categoria === "" || quantidade < 1 || !Number.isInteger(quantidade)) {
-    mensagem.style.color = "#ff7777";
-    mensagem.textContent = "Preencha todos os campos corretamente!";
-    return;
-  }
+    const peso = Number(document.getElementById("peso").value);
 
-  const livro = {
-    id: Date.now() + Math.random(),
-    titulo: titulo,
-    autor: autor,
-    categoria: categoria,
-    quantidade: quantidade
-  };
+    const altura = Number(document.getElementById("altura").value);
 
-  livros.push(livro);
+    const resultado = document.getElementById("resultado");
 
-  document.getElementById("titulo").value = "";
-  document.getElementById("autor").value = "";
-  document.getElementById("categoria").value = "";
-  document.getElementById("quantidade").value = "";
+    // Validar os campos
 
-  mensagem.style.color = "#7df5a5";
-  mensagem.textContent = "Livro cadastrado com sucesso!";
+    if (
+        nome === "" ||
+        document.getElementById("peso").value === "" ||
+        document.getElementById("altura").value === "" ||
+        !Number.isFinite(peso) ||
+        !Number.isFinite(altura) ||
+        peso <= 0 ||
+        altura <= 0
+    ) {
 
-  listarLivros();
-};
+        alert("Preencha todos os campos corretamente!");
 
-window.listarLivros = function() {
-  const lista = document.getElementById("listaLivros");
-  const pesquisa = document.getElementById("pesquisa").value.toLowerCase();
+        return;
+    }
 
-  const encontrados = livros.filter(function(livro) {
-    return livro.titulo.toLowerCase().includes(pesquisa) ||
-           livro.autor.toLowerCase().includes(pesquisa);
-  });
+    // Calcular o IMC
 
-  document.getElementById("totalLivros").textContent = livros.length;
+    const imc = peso / (altura * altura);
 
-  if (encontrados.length === 0) {
-    lista.innerHTML = '<p class="vazio">Nenhum livro encontrado.</p>';
-    return;
-  }
+    // Classificação do IMC
 
-  lista.innerHTML = "";
+    let classificacao = "";
 
-  encontrados.forEach(function(livro) {
-    const item = document.createElement("div");
-    item.className = "livro";
+    if (imc < 18.5) {
 
-    const titulo = document.createElement("h3");
-    titulo.textContent = "📘 " + livro.titulo;
+        classificacao = "Abaixo do peso";
 
-    const autor = document.createElement("p");
-    autor.textContent = "Autor: " + livro.autor;
+    } else if (imc < 25) {
 
-    const categoria = document.createElement("p");
-    categoria.textContent = "Categoria: " + livro.categoria;
+        classificacao = "Peso normal";
 
-    const quantidade = document.createElement("p");
-    quantidade.textContent = "Exemplares: " + livro.quantidade;
+    } else if (imc < 30) {
 
-    const excluir = document.createElement("button");
-    excluir.className = "botao-excluir";
-    excluir.textContent = "Excluir livro";
+        classificacao = "Sobrepeso";
 
-    excluir.onclick = function() {
-      window.excluirLivro(livro.id);
-    };
+    } else if (imc < 35) {
 
-    item.appendChild(titulo);
-    item.appendChild(autor);
-    item.appendChild(categoria);
-    item.appendChild(quantidade);
-    item.appendChild(excluir);
+        classificacao = "Obesidade grau I";
 
-    lista.appendChild(item);
-  });
-};
+    } else if (imc < 40) {
 
-window.excluirLivro = function(id) {
-  livros = livros.filter(function(livro) {
-    return livro.id !== id;
-  });
+        classificacao = "Obesidade grau II";
 
-  listarLivros();
+    } else {
 
-  document.getElementById("mensagem").style.color = "#7df5a5";
-  document.getElementById("mensagem").textContent = "Livro excluído com sucesso!";
-};
+        classificacao = "Obesidade grau III";
 
-listarLivros();
+    }
+
+    // Exibir resultado
+
+    resultado.style.display = "block";
+
+    resultado.innerHTML = `
+
+        <h3>Resultado do Paciente</h3>
+
+        <p>
+            <strong>Nome:</strong>
+            ${escaparHTML(nome)}
+        </p>
+
+        <p>
+            <strong>Peso:</strong>
+            ${peso} kg
+        </p>
+
+        <p>
+            <strong>Altura:</strong>
+            ${altura} m
+        </p>
+
+        <p>
+            <strong>IMC:</strong>
+            ${imc.toFixed(2)}
+        </p>
+
+        <p>
+            <strong>Classificação:</strong>
+            ${classificacao}
+        </p>
+
+        <hr>
+
+        <p>
+            Resultado calculado com sucesso!
+        </p>
+
+        <p>
+            Procure um profissional de saúde
+            para uma avaliação completa.
+        </p>
+
+    `;
+
+}
+
+// Proteger a exibição do nome
+
+function escaparHTML(texto) {
+
+    return texto.replace(/[&<>"']/g, function (caractere) {
+
+        return {
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;"
+        }[caractere];
+
+    });
+
+}
+
+// Limpar os campos
+
+function limparCampos() {
+
+    document.getElementById("nome").value = "";
+
+    document.getElementById("peso").value = "";
+
+    document.getElementById("altura").value = "";
+
+    const resultado = document.getElementById("resultado");
+
+    resultado.innerHTML = "";
+
+    resultado.style.display = "none";
+
+}
