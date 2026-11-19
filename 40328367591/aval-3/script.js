@@ -1,172 +1,115 @@
-// ===== Referências do DOM =====
-const formPessoa = document.getElementById("form-pessoa");
-const inputNome = document.getElementById("nome");
-const inputIdade = document.getElementById("idade");
-const inputAltura = document.getElementById("altura");
-const inputPeso = document.getElementById("peso");
-const mensagemDeErro = document.getElementById("erro");
-const tabelaCorpo = document.getElementById("tabela-corpo");
+const formulario = document.getElementById("formulario");
+const corpo = document.getElementById("tabela-corpo");
+const vazio = document.getElementById("vazio");
+const mensagem = document.getElementById("mensagem");
+const botaoLimpar = document.getElementById("limpar");
 
-// ===== Estado =====
-const chavePessoas = "pessoas";
-let pessoas = [];
-let proximoId = 1;
+const CHAVE = "fichaAnamneseIMC";
+let registros = carregar();
 
-// ===== Funções de cálculo (aulas anteriores) =====
-function calcularIMC(peso, altura) {
-  return peso / (altura * altura);
-}
-
-function classificarIMC(imc) {
-  if (imc < 18.5) return { texto: "Abaixo do peso", classe: "abaixo" };
-  if (imc < 25) return { texto: "Peso normal", classe: "normal" };
-  if (imc < 30) return { texto: "Sobrepeso", classe: "sobrepeso" };
-  return { texto: "Obesidade", classe: "obesidade" };
-}
-
-function formatar(valor, casas) {
-  return valor.toFixed(casas).replace(".", ",");
-}
-
-// ===== Renderização =====
-function criarLinha(pessoa) {
-  const imc = calcularIMC(pessoa.peso, pessoa.altura);
-  const classificacao = classificarIMC(imc);
-
-  const tr = document.createElement("tr");
-
-  const tdNome = document.createElement("td");
-  tdNome.textContent = pessoa.nome;
-
-  const tdIdade = document.createElement("td");
-  tdIdade.textContent = pessoa.idade;
-
-  const tdAltura = document.createElement("td");
-  tdAltura.textContent = formatar(pessoa.altura, 2) + " m";
-
-  const tdPeso = document.createElement("td");
-  tdPeso.textContent = formatar(pessoa.peso, 1) + " KG";
-
-  const tdIMC = document.createElement("td");
-  tdIMC.textContent = formatar(imc, 1);
-
-  const tdClassificacao = document.createElement("td");
-  const selo = document.createElement("span");
-  selo.classList.add("selo", classificacao.classe);
-  selo.textContent = classificacao.texto;
-  tdClassificacao.appendChild(selo);
-
-  tr.appendChild(tdNome);
-  tr.appendChild(tdIdade);
-  tr.appendChild(tdAltura);
-  tr.appendChild(tdPeso);
-  tr.appendChild(tdIMC);
-  tr.appendChild(tdClassificacao);
-
-  return tr;
-}
-
-function render() {
-  tabelaCorpo.innerHTML = "";
-  pessoas.forEach((pessoa) => {
-    tabelaCorpo.appendChild(criarLinha(pessoa));
-  });
-}
-
-// ===== Formulário =====
-function lerFormulario() {
-  return {
-    nome: inputNome.value.trim(),
-    idade: Number(inputIdade.value),
-    altura: Number(inputAltura.value),
-    peso: Number(inputPeso.value),
-  };
-}
-
-function adicionarPessoa(dados) {
-  pessoas.push({
-    id: proximoId++,
-    nome: dados.nome,
-    idade: dados.idade,
-    altura: dados.altura,
-    peso: dados.peso,
-  });
-}
-
-// ===== Validação =====
-function validarDados(dados) {
-  if (dados.nome.length < 2) {
-    return "Informe o nome com no mínimo duas letras.";
-  }
-  if (!Number.isInteger(dados.idade) || dados.idade < 1 || dados.idade > 120) {
-    return "A idade deve ser um número inteiro entre 1 e 120.";
-  }
-  if (!(dados.altura >= 0.5 && dados.altura <= 2.5)) {
-    return "A altura deve estar entre 0,5 m e 2,5 m.";
-  }
-  if (!(dados.peso >= 2 && dados.peso <= 500)) {
-    return "O peso deve estar entre 2 kg e 500 kg.";
-  }
-  return "";
-}
-
-function mostrarErro(mensagem) {
-  mensagemDeErro.textContent = mensagem;
-  mensagemDeErro.hidden = false;
-}
-
-function limparErro() {
-  mensagemDeErro.hidden = true;
-}
-
-// ===== localStorage =====
-function salvar() {
-  localStorage.setItem(chavePessoas, JSON.stringify(pessoas));
-}
-
-function carregarPessoas() {
-  const texto = localStorage.getItem(chavePessoas);
-  if (texto === null) return [];
-
+function carregar() {
   try {
-    const dados = JSON.parse(texto);
-    if (Array.isArray(dados)) return dados;
-    throw new Error("Formato inválido");
-  } catch (erro) {
-    console.error("Erro ao carregar os dados salvos:", erro);
+    return JSON.parse(localStorage.getItem(CHAVE)) || [];
+  } catch (e) {
     return [];
   }
 }
 
-function ajustarContadorDeCodigo() {
-  let maior = 0;
-  pessoas.forEach((pessoa) => {
-    if (pessoa.id > maior) maior = pessoa.id;
-  });
-  proximoId = maior + 1;
+function salvarStorage() {
+  try {
+    localStorage.setItem(CHAVE, JSON.stringify(registros));
+  } catch (e) {}
 }
 
-// ===== Evento de envio =====
-formPessoa.addEventListener("submit", (e) => {
-  e.preventDefault();
+function paraNumero(texto) {
+  return parseFloat(String(texto).replace(",", "."));
+}
 
-  const dados = lerFormulario();
-  const erro = validarDados(dados);
+function calcularIMC(peso, altura) {
+  return peso / (altura * altura);
+}
 
-  if (erro !== "") {
-    mostrarErro(erro);
+function classificar(imc) {
+  if (imc < 18.5) return { texto: "Abaixo do peso", classe: "abaixo" };
+  if (imc < 25) return { texto: "Peso normal", classe: "normal" };
+  if (imc < 30) return { texto: "Sobrepeso", classe: "sobre" };
+  if (imc < 35) return { texto: "Obesidade grau I", classe: "obeso1" };
+  if (imc < 40) return { texto: "Obesidade grau II", classe: "obeso2" };
+  return { texto: "Obesidade grau III", classe: "obeso3" };
+}
+
+function renderizar() {
+  corpo.innerHTML = "";
+
+  registros.forEach((r) => {
+    const c = classificar(r.imc);
+    const tr = document.createElement("tr");
+
+    const valores = [
+      r.nome,
+      r.idade,
+      r.altura.toFixed(2) + " m",
+      r.peso.toFixed(1) + " kg",
+      r.imc.toFixed(2),
+    ];
+    valores.forEach((v) => {
+      const td = document.createElement("td");
+      td.textContent = v;
+      tr.appendChild(td);
+    });
+
+    const tdClasse = document.createElement("td");
+    const span = document.createElement("span");
+    span.className = "etiqueta " + c.classe;
+    span.textContent = c.texto;
+    tdClasse.appendChild(span);
+    tr.appendChild(tdClasse);
+
+    corpo.appendChild(tr);
+  });
+
+  vazio.style.display = registros.length ? "none" : "block";
+}
+
+formulario.addEventListener("submit", (evento) => {
+  evento.preventDefault();
+  mensagem.textContent = "";
+
+  const nome = document.getElementById("nome").value.trim();
+  const idade = parseInt(document.getElementById("idade").value, 10);
+  const altura = paraNumero(document.getElementById("altura").value);
+  const peso = paraNumero(document.getElementById("peso").value);
+
+  if (!nome) {
+    mensagem.textContent = "Informe o nome.";
+    return;
+  }
+  if (!idade || idade < 1 || idade > 120) {
+    mensagem.textContent = "Informe uma idade válida.";
+    return;
+  }
+  if (!altura || altura < 0.5 || altura > 2.5) {
+    mensagem.textContent = "Informe a altura em metros (ex.: 1.75).";
+    return;
+  }
+  if (!peso || peso < 10 || peso > 400) {
+    mensagem.textContent = "Informe o peso em kg (ex.: 70).";
     return;
   }
 
-  limparErro();
-  adicionarPessoa(dados);
-  salvar();
-  formPessoa.reset();
-  inputNome.focus();
-  render();
+  registros.push({ nome, idade, altura, peso, imc: calcularIMC(peso, altura) });
+  salvarStorage();
+  renderizar();
+  formulario.reset();
+  document.getElementById("nome").focus();
 });
 
-// ===== Inicialização =====
-pessoas = carregarPessoas();
-ajustarContadorDeCodigo();
-render();
+botaoLimpar.addEventListener("click", () => {
+  if (registros.length && confirm("Apagar todos os registros?")) {
+    registros = [];
+    salvarStorage();
+    renderizar();
+  }
+});
+
+renderizar();
