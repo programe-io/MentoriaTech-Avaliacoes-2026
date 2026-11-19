@@ -4,153 +4,141 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Biblioteca Escolar</title>
+    <title>Controle de IMC</title>
     <link rel="stylesheet" href="style.css">
-    <script src="script.js" defer></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="style.css" rel="stylesheet"></head>
 <body>
 
-<header>
-    <h1>📚 Biblioteca Escolar</h1>
-    <p>Sistema de Cadastro e Gerenciamento</p>
-</header>
+    <header class="topo">
+        <div class="logo">⚕</div>
+        <div>
+            <h1>Controle de IMC</h1>
+            <p>Sistema de Cadastro e Avaliação Corporal</p>
+        </div>
+    </header>
 
-<nav>
-    <button data-tela="inicio">Início</button>
-    <button data-tela="livros">Livros</button>
-    <button data-tela="alunos">Alunos</button>
-    <button data-tela="emprestimos">Empréstimos</button>
-</nav>
+    <main class="container">
 
-<main>
+        <section class="apresentacao">
+            <h2>Bem-vindo ao Controle de IMC</h2>
+            <p>
+                Cadastre pacientes, informe peso e altura e
+                calcule o Índice de Massa Corporal automaticamente.
+            </p>
+        </section>
 
-    <section id="inicio" class="tela ativa">
-        <h2>Painel Principal</h2>
+        <section class="painel">
 
-        <div class="resumos">
-            <div class="card">
-                <h3>Livros</h3>
-                <strong id="totalLivros">0</strong>
+            <div class="formulario">
+                <h2>📋 Cadastro de Paciente</h2>
+
+                <form id="formPaciente">
+
+                    <label for="nome">Nome completo</label>
+                    <input
+                        type="text"
+                        id="nome"
+                        placeholder="Digite o nome do paciente"
+                        required
+                    >
+
+                    <label for="peso">Peso (kg)</label>
+                    <input
+                        type="number"
+                        id="peso"
+                        placeholder="Ex: 70"
+                        min="0.1"
+                        step="0.1"
+                        required
+                    >
+
+                    <label for="altura">Altura (metros)</label>
+                    <input
+                        type="number"
+                        id="altura"
+                        placeholder="Ex: 1.75"
+                        min="0.1"
+                        step="0.01"
+                        required
+                    >
+
+                    <button type="submit" class="btn-calcular">
+                        Calcular IMC e Cadastrar
+                    </button>
+
+                </form>
             </div>
-            <div class="card">
-                <h3>Alunos</h3>
-                <strong id="totalAlunos">0</strong>
+
+            <div class="resultado" id="resultado">
+                <div class="icone">📊</div>
+                <h2>Resultado do IMC</h2>
+                <p>Preencha os dados do paciente para realizar o cálculo.</p>
             </div>
-            <div class="card">
-                <h3>Empréstimos ativos</h3>
-                <strong id="totalAtivos">0</strong>
+
+        </section>
+
+        <section class="informacoes">
+            <h2>📚 Sobre o IMC</h2>
+
+            <p>
+                O Índice de Massa Corporal (IMC) é uma medida
+                utilizada para relacionar o peso de uma pessoa
+                com sua altura.
+            </p>
+
+            <div class="formula">
+                <strong>Fórmula utilizada:</strong>
+                <p>IMC = Peso ÷ (Altura × Altura)</p>
             </div>
-            <div class="card">
-                <h3>Devoluções</h3>
-                <strong id="totalDevolvidos">0</strong>
+
+            <p class="aviso">
+                Atenção: o IMC é apenas um indicador inicial.
+                Em crianças e adolescentes, sua interpretação
+                depende da idade e do sexo. O resultado não é
+                um diagnóstico médico.
+            </p>
+        </section>
+
+        <section class="tabela-section">
+
+            <div class="titulo-tabela">
+                <h2>👥 Pacientes Cadastrados</h2>
+                <span id="totalPacientes">0 pacientes</span>
             </div>
-        </div>
 
-        <div class="painel">
-            <h3>Últimos empréstimos</h3>
-            <div id="ultimos"></div>
-        </div>
-    </section>
+            <div class="tabela-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Peso</th>
+                            <th>Altura</th>
+                            <th>IMC</th>
+                            <th>Ação</th>
+                        </tr>
+                    </thead>
 
-    <section id="livros" class="tela">
-        <h2>Cadastro de Livros</h2>
+                    <tbody id="listaPacientes">
+                        <tr>
+                            <td colspan="5">
+                                Nenhum paciente cadastrado.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
-        <form id="formLivro">
-            <label>Título do livro</label>
-            <input id="titulo" required minlength="2">
+        </section>
 
-            <label>Autor</label>
-            <input id="autor" required>
+    </main>
 
-            <label>Categoria</label>
-            <select id="categoria" required>
-                <option value="">Selecione</option>
-                <option>Literatura</option>
-                <option>História</option>
-                <option>Ciências</option>
-                <option>Geografia</option>
-                <option>Matemática</option>
-                <option>Informática</option>
-                <option>Outros</option>
-            </select>
+    <footer>
+        <p>Controle de IMC © 2026 | Projeto Prático</p>
+        <p>Desenvolvido com HTML, CSS e JavaScript</p>
+    </footer>
 
-            <label>ISBN (opcional)</label>
-            <input id="isbn">
-
-            <label>Quantidade</label>
-            <input id="quantidade" type="number" min="1" value="1" required>
-
-            <button type="submit" id="btnLivro">Cadastrar livro</button>
-            <button type="button" id="cancelarLivro" hidden>Cancelar edição</button>
-        </form>
-
-        <div class="painel">
-            <h3>Livros cadastrados</h3>
-            <input id="buscaLivro" placeholder="Pesquisar livro ou autor">
-            <div id="listaLivros"></div>
-        </div>
-    </section>
-
-    <section id="alunos" class="tela">
-        <h2>Cadastro de Alunos</h2>
-
-        <form id="formAluno">
-            <label>Nome completo</label>
-            <input id="nomeAluno" required>
-
-            <label>Matrícula</label>
-            <input id="matricula" required>
-
-            <label>Turma</label>
-            <input id="turma" required>
-
-            <button type="submit" id="btnAluno">Cadastrar aluno</button>
-            <button type="button" id="cancelarAluno" hidden>Cancelar edição</button>
-        </form>
-
-        <div class="painel">
-            <h3>Alunos cadastrados</h3>
-            <input id="buscaAluno" placeholder="Pesquisar aluno">
-            <div id="listaAlunos"></div>
-        </div>
-    </section>
-
-    <section id="emprestimos" class="tela">
-        <h2>Empréstimos e Devoluções</h2>
-
-        <form id="formEmprestimo">
-            <label>Aluno</label>
-            <select id="alunoSelect" required>
-                <option value="">Selecione um aluno</option>
-            </select>
-
-            <label>Livro</label>
-            <select id="livroSelect" required>
-                <option value="">Selecione um livro</option>
-            </select>
-
-            <label>Data do empréstimo</label>
-            <input id="dataEmprestimo" type="date" required>
-
-            <label>Data prevista para devolução</label>
-            <input id="dataDevolucao" type="date" required>
-
-            <button type="submit">Registrar empréstimo</button>
-        </form>
-
-        <div class="painel">
-            <h3>Histórico de empréstimos</h3>
-            <input id="buscaEmprestimo" placeholder="Pesquisar aluno ou livro">
-            <div id="listaEmprestimos"></div>
-        </div>
-    </section>
-
-</main>
-
-<footer>
-    <p>Biblioteca Escolar - Sistema de Gerenciamento</p>
-</footer>
+    <script src="script.js"></script>
 
 <script src="script.js"></script></body>
 </html>
