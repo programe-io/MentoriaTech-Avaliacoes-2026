@@ -1,105 +1,75 @@
 
-const formulario = document.getElementById("formIMC");
-const resultado = document.getElementById("resultado");
-
-// Evento para calcular o IMC
-formulario.addEventListener("submit", function(event) {
-
-    event.preventDefault();
+function calcularIMC() {
 
     // Receber os dados do paciente
-    const nome = document.getElementById("nome").value.trim();
-    const peso = Number(document.getElementById("peso").value);
-    const altura = Number(document.getElementById("altura").value);
+    let nome = document.getElementById("nome").value.trim();
+    let peso = parseFloat(document.getElementById("peso").value);
+    let altura = parseFloat(document.getElementById("altura").value);
 
-    // Validar informações
-    if (nome.length < 2) {
-        alert("Digite um nome válido!");
+    let resultado = document.getElementById("resultado");
+
+    // Verificar se os campos foram preenchidos
+    if (nome === "" || isNaN(peso) || isNaN(altura) ||
+        peso <= 0 || altura <= 0) {
+
+        alert("Preencha todos os campos corretamente!");
         return;
     }
 
-    if (!Number.isFinite(peso) || peso <= 0) {
-        alert("Digite um peso válido!");
-        return;
-    }
+    // Calcular o IMC
+    let imc = peso / (altura * altura);
 
-    if (!Number.isFinite(altura) || altura <= 0) {
-        alert("Digite uma altura válida!");
-        return;
-    }
+    let classificacao = "";
+    let mensagem = "";
 
-    // Calcular IMC
-    const imc = peso / (altura * altura);
-
-    // Classificar o IMC
-    let classificacao;
-    let classe;
-
+    // Classificar o IMC para adultos
     if (imc < 18.5) {
         classificacao = "Abaixo do peso";
-        classe = "baixo";
+        mensagem = "O paciente está abaixo do peso considerado adequado.";
     }
     else if (imc < 25) {
         classificacao = "Peso normal";
-        classe = "normal";
+        mensagem = "O paciente está na faixa de peso considerada adequada.";
     }
     else if (imc < 30) {
         classificacao = "Sobrepeso";
-        classe = "sobrepeso";
+        mensagem = "O paciente está com sobrepeso.";
+    }
+    else if (imc < 35) {
+        classificacao = "Obesidade grau I";
+        mensagem = "O paciente apresenta obesidade grau I.";
+    }
+    else if (imc < 40) {
+        classificacao = "Obesidade grau II";
+        mensagem = "O paciente apresenta obesidade grau II.";
     }
     else {
-        classificacao = "Obesidade";
-        classe = "obesidade";
+        classificacao = "Obesidade grau III";
+        mensagem = "O paciente apresenta obesidade grau III.";
     }
 
-    // Exibir resultado
+    // Exibir o resultado
+    resultado.style.display = "block";
+
     resultado.innerHTML = `
-        <h2>Resultado da Avaliação</h2>
+        <h2>Resultado do Paciente</h2>
 
-        <div class="dados">
-            <strong>Paciente:</strong> ${escaparHTML(nome)} <br>
-            <strong>Peso:</strong> ${peso} kg <br>
-            <strong>Altura:</strong> ${altura} m
+        <p><strong>Nome:</strong> ${nome}</p>
+
+        <p><strong>Peso:</strong> ${peso.toFixed(1)} KG</p>
+
+        <p><strong>Altura:</strong> ${altura.toFixed(2)} M</p>
+
+        <p>Seu IMC é:</p>
+
+        <div class="valor-imc">
+            ${imc.toFixed(2)}
         </div>
 
-        <div class="imc">
-            <h3>Seu IMC é</h3>
-            <p>${imc.toFixed(2)}</p>
-        </div>
-
-        <div class="classificacao ${classe}">
-            Classificação: ${classificacao}
-        </div>
-
-        <p>
-            O resultado representa uma avaliação baseada
-            no Índice de Massa Corporal (IMC).
+        <p class="classificacao">
+            ${classificacao}
         </p>
+
+        <p>${mensagem}</p>
     `;
-
-});
-
-// Evitar interpretar o nome digitado como HTML
-function escaparHTML(texto) {
-    return texto.replace(/[&<>"']/g, function(caractere) {
-        return {
-            "&": "&amp;",
-            "<": "&lt;",
-            ">": "&gt;",
-            '"': "&quot;",
-            "'": "&#39;"
-        }[caractere];
-    });
 }
-
-// Limpar resultado ao limpar o formulário
-formulario.addEventListener("reset", function() {
-
-    resultado.innerHTML = `
-        <h2>Resultado da Avaliação</h2>
-        <p class="mensagem">
-            Preencha os dados do paciente para calcular o IMC.
-        </p>
-    `;
-
-});
