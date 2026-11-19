@@ -1,0 +1,541 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistema de Controle de Estoque</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background: #f1f4f9;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1100px;
+    margin: auto;
+}
+
+header {
+    background: #183153;
+    color: white;
+    padding: 25px;
+    border-radius: 10px;
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+header h1 {
+    margin-bottom: 8px;
+}
+
+.resumo {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+}
+
+.card {
+    flex: 1;
+    min-width: 180px;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px #ddd;
+}
+
+.card h3 {
+    color: #555;
+    margin-bottom: 10px;
+}
+
+.card p {
+    font-size: 24px;
+    font-weight: bold;
+    color: #183153;
+}
+
+.formulario, .tabela {
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    margin-bottom: 25px;
+    box-shadow: 0 2px 8px #ddd;
+}
+
+h2 {
+    color: #183153;
+    margin-bottom: 20px;
+}
+
+.campos {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 15px;
+}
+
+button {
+    border: none;
+    padding: 11px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 12px;
+}
+
+.cadastrar {
+    background: #198754;
+    color: white;
+}
+
+.editar {
+    background: #ffc107;
+    color: #222;
+}
+
+.excluir {
+    background: #dc3545;
+    color: white;
+}
+
+.cancelar {
+    background: #6c757d;
+    color: white;
+}
+
+.pesquisa {
+    margin-bottom: 15px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 650px;
+}
+
+th, td {
+    padding: 13px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+}
+
+th {
+    background: #183153;
+    color: white;
+}
+
+.vazio {
+    text-align: center;
+    padding: 25px;
+    color: #777;
+}
+
+.tabela-conteudo {
+    overflow-x: auto;
+}
+
+@media(max-width: 600px) {
+    .campos {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+<div class="container">
+
+<header>
+    <h1>📦 Controle de Estoque</h1>
+    <p>Sistema de gerenciamento de produtos</p>
+</header>
+
+<section class="resumo">
+
+    <div class="card">
+        <h3>Total de Produtos</h3>
+        <p id="totalProdutos">0</p>
+    </div>
+
+    <div class="card">
+        <h3>Quantidade em Estoque</h3>
+        <p id="totalQuantidade">0</p>
+    </div>
+
+    <div class="card">
+        <h3>Valor do Estoque</h3>
+        <p id="valorEstoque">R$ 0,00</p>
+    </div>
+
+</section>
+
+<section class="formulario">
+
+    <h2 id="tituloFormulario">Cadastrar Novo Produto</h2>
+
+    <form id="formProduto">
+
+        <div class="campos">
+
+            <input
+                type="text"
+                id="nome"
+                placeholder="Nome do produto"
+                required>
+
+            <input
+                type="text"
+                id="categoria"
+                placeholder="Categoria"
+                required>
+
+            <input
+                type="number"
+                id="preco"
+                placeholder="Preço (R$)"
+                min="0"
+                step="0.01"
+                required>
+
+            <input
+                type="number"
+                id="quantidade"
+                placeholder="Quantidade"
+                min="0"
+                step="1"
+                required>
+
+        </div>
+
+        <button type="submit" class="cadastrar" id="btnSalvar">
+            Cadastrar Produto
+        </button>
+
+        <button
+            type="button"
+            class="cancelar"
+            id="btnCancelar"
+            onclick="cancelarEdicao()"
+            style="display:none">
+            Cancelar
+        </button>
+
+    </form>
+
+</section>
+
+<section class="tabela">
+
+    <h2>Produtos Cadastrados</h2>
+
+    <input
+        type="text"
+        id="pesquisa"
+        class="pesquisa"
+        placeholder="Pesquisar produto..."
+        oninput="listarProdutos()">
+
+    <div class="tabela-conteudo">
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Produto</th>
+                    <th>Categoria</th>
+                    <th>Preço</th>
+                    <th>Quantidade</th>
+                    <th>Total</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+
+            <tbody id="listaProdutos"></tbody>
+
+        </table>
+
+    </div>
+
+</section>
+
+</div>
+
+<script>
+
+// Recupera os produtos salvos no navegador
+let produtos = JSON.parse(
+    localStorage.getItem("estoque")
+) || [];
+
+let indiceEdicao = null;
+
+// Formata valores em reais
+function moeda(valor) {
+    return Number(valor).toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL"
+    });
+}
+
+// Salva os produtos
+function salvarDados() {
+    localStorage.setItem(
+        "estoque",
+        JSON.stringify(produtos)
+    );
+}
+
+// Cadastra ou atualiza produtos
+document.getElementById("formProduto")
+.addEventListener("submit", function(event) {
+
+    event.preventDefault();
+
+    const nome = document.getElementById("nome").value.trim();
+    const categoria = document.getElementById("categoria").value.trim();
+    const preco = Number(document.getElementById("preco").value);
+    const quantidade = Number(document.getElementById("quantidade").value);
+
+    if (!nome || !categoria ||
+        !Number.isFinite(preco) || preco < 0 ||
+        !Number.isInteger(quantidade) || quantidade < 0) {
+
+        alert("Preencha todos os campos corretamente!");
+        return;
+    }
+
+    const produto = {
+        id: indiceEdicao !== null
+            ? produtos[indiceEdicao].id
+            : Date.now() + Math.random(),
+
+        nome,
+        categoria,
+        preco,
+        quantidade
+    };
+
+    if (indiceEdicao !== null) {
+
+        produtos[indiceEdicao] = produto;
+
+        alert("Produto atualizado com sucesso!");
+
+    } else {
+
+        produtos.push(produto);
+
+        alert("Produto cadastrado com sucesso!");
+
+    }
+
+    salvarDados();
+    cancelarEdicao();
+    listarProdutos();
+
+});
+
+// Lista os produtos cadastrados
+function listarProdutos() {
+
+    const lista = document.getElementById("listaProdutos");
+
+    const busca = document.getElementById("pesquisa")
+        .value.toLowerCase();
+
+    lista.innerHTML = "";
+
+    const filtrados = produtos.filter(produto =>
+        produto.nome.toLowerCase().includes(busca) ||
+        produto.categoria.toLowerCase().includes(busca)
+    );
+
+    if (filtrados.length === 0) {
+
+        lista.innerHTML = `
+            <tr>
+                <td colspan="7" class="vazio">
+                    Nenhum produto encontrado.
+                </td>
+            </tr>
+        `;
+
+    }
+
+    filtrados.forEach(produto => {
+
+        const indice = produtos.findIndex(
+            p => p.id === produto.id
+        );
+
+        lista.innerHTML += `
+            <tr>
+                <td>${indice + 1}</td>
+
+                <td>${escapar(produto.nome)}</td>
+
+                <td>${escapar(produto.categoria)}</td>
+
+                <td>${moeda(produto.preco)}</td>
+
+                <td>${produto.quantidade}</td>
+
+                <td>${moeda(produto.preco * produto.quantidade)}</td>
+
+                <td>
+                    <button class="editar"
+                        onclick="editarProduto(${indice})">
+                        Editar
+                    </button>
+
+                    <button class="excluir"
+                        onclick="excluirProduto(${indice})">
+                        Excluir
+                    </button>
+                </td>
+            </tr>
+        `;
+
+    });
+
+    atualizarResumo();
+
+}
+
+// Protege a exibição de textos inseridos pelo usuário
+function escapar(texto) {
+    return String(texto).replace(/[&<>"']/g, caractere => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+    })[caractere]);
+}
+
+// Edita o produto selecionado
+function editarProduto(indice) {
+
+    const produto = produtos[indice];
+
+    document.getElementById("nome").value = produto.nome;
+    document.getElementById("categoria").value = produto.categoria;
+    document.getElementById("preco").value = produto.preco;
+    document.getElementById("quantidade").value = produto.quantidade;
+
+    indiceEdicao = indice;
+
+    document.getElementById("tituloFormulario")
+        .textContent = "Alterar Produto";
+
+    document.getElementById("btnSalvar")
+        .textContent = "Salvar Alterações";
+
+    document.getElementById("btnCancelar")
+        .style.display = "inline-block";
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+
+}
+
+// Cancela a edição
+function cancelarEdicao() {
+
+    indiceEdicao = null;
+
+    document.getElementById("formProduto").reset();
+
+    document.getElementById("tituloFormulario")
+        .textContent = "Cadastrar Novo Produto";
+
+    document.getElementById("btnSalvar")
+        .textContent = "Cadastrar Produto";
+
+    document.getElementById("btnCancelar")
+        .style.display = "none";
+
+}
+
+// Exclui um produto
+function excluirProduto(indice) {
+
+    const confirmar = confirm(
+        "Deseja realmente excluir este produto?"
+    );
+
+    if (confirmar) {
+
+        if (indiceEdicao === indice) {
+            cancelarEdicao();
+        } else if (indiceEdicao !== null && indiceEdicao > indice) {
+            indiceEdicao--;
+        }
+
+        produtos.splice(indice, 1);
+
+        salvarDados();
+        listarProdutos();
+
+        alert("Produto excluído com sucesso!");
+
+    }
+
+}
+
+// Atualiza os indicadores do estoque
+function atualizarResumo() {
+
+    const totalProdutos = produtos.length;
+
+    const totalQuantidade = produtos.reduce(
+        (total, produto) =>
+            total + produto.quantidade, 0
+    );
+
+    const valorTotal = produtos.reduce(
+        (total, produto) =>
+            total + produto.preco * produto.quantidade, 0
+    );
+
+    document.getElementById("totalProdutos")
+        .textContent = totalProdutos;
+
+    document.getElementById("totalQuantidade")
+        .textContent = totalQuantidade;
+
+    document.getElementById("valorEstoque")
+        .textContent = moeda(valorTotal);
+
+}
+
+// Inicializa o sistema
+listarProdutos();
+
+</script>
+
+<script src="script.js"></script></body>
+</html>
