@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha de Anamnese - Controle de IMC</title>
+<style>
+  body { font-family: Arial, sans-serif; max-width: 900px; margin: 20px auto; padding: 0 15px; }
+  form { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px; }
+  input { padding: 8px; flex: 1; min-width: 120px; }
+  button { padding: 9px 16px; cursor: pointer; }
+  #erro { color: red; min-height: 20px; }
+  table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+  th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+  .selo { padding: 4px 8px; border-radius: 12px; color: #fff; font-weight: bold; }
+  .abaixo-peso { background: #2196F3; }
+  .peso-normal { background: #4CAF50; }
+  .sobrepeso { background: #FFC107; color: #000; }
+  .obesidade { background: #F44336; }
+  .btn-apagar { background: #f44336; color: #fff; border: none; border-radius: 4px; }
+  #btn-limpar { background: #333; color: #fff; margin-top: 10px; }
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+<h1>Ficha de Anamnese - Controle de IMC</h1>
+
+<form id="formulario">
+  <input type="text" id="nome" placeholder="Nome" />
+  <input type="number" id="idade" placeholder="Idade" />
+  <input type="number" step="0.01" id="altura" placeholder="Altura (ex: 1.70)" />
+  <input type="number" step="0.1" id="peso" placeholder="Peso (ex: 65)" />
+  <button type="submit">Salvar</button>
+</form>
+<p id="erro"></p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Código</th><th>Nome</th><th>Idade</th><th>Altura</th><th>Peso</th><th>IMC</th><th>Classificação</th><th>Ação</th>
+    </tr>
+  </thead>
+  <tbody id="tabela-pessoas"></tbody>
+</table>
+
+<button id="btn-limpar">Apagar todos os dados</button>
+
+<script>
+// 1. Cálculo do IMC
+function calcularIMC(peso, altura) {
+  return peso / (altura * altura);
+}
+
+// 2. Classificação
+function classificarIMC(imc) {
+  if (imc < 18.5) return "Abaixo do peso";
+  if (imc < 25) return "Peso normal";
+  if (imc < 30) return "Sobrepeso";
+  return "Obesidade";
+}
+
+function classeDoSelo(classificacao) {
+  if (classificacao === "Abaixo do peso") return "abaixo-peso";
+  if (classificacao === "Peso normal") return "peso-normal";
+  if (classificacao === "Sobrepeso") return "sobrepeso";
+  return "obesidade";
+}
+
+// 3. Formatação
+function formatarAltura(altura) {
+  return altura.toFixed(2) + " m";
+}
+function formatarPeso(peso) {
+  return peso.toFixed(1) + " KG";
+}
+
+// 4. Criar linha
+function criarLinha(pessoa) {
+  const tr = document.createElement("tr");
+  const imc = calcularIMC(pessoa.peso, pessoa.altura);
+  const classificacao = classificarIMC(imc);
+
+  tr.innerHTML = `
+    <td>${pessoa.id}</td>
+    <td>${pessoa.nome}</td>
+    <td>${pessoa.idade}</td>
+    <td>${formatarAltura(pessoa.altura)}</td>
+    <td>${formatarPeso(pessoa.peso)}</td>
+    <td>${imc.toFixed(2)}</td>
+    <td><span class="selo ${classeDoSelo(classificacao)}">${classificacao}</span></td>
+    <td><button class="btn-apagar" data-id="${pessoa.id}">Apagar</button></td>
+  `;
+  return tr;
+}
+
+function renderizar() {
+  const tbody = document.getElementById("tabela-pessoas");
+  tbody.innerHTML = "";
+  pessoas.forEach(p => tbody.appendChild(criarLinha(p)));
+}
+
+// 5. Formulário
+function lerFormulario() {
+  return {
+    nome: document.getElementById("nome").value.trim(),
+    idade: Number(document.getElementById("idade").value),
+    altura: Number(document.getElementById("altura").value),
+    peso: Number(document.getElementById("peso").value)
+  };
+}
+
+function validarDados(dados) {
+  if (dados.nome.length < 2) return "Informe o nome com no mínimo duas letras";
+  if (!Number.isInteger(dados.idade) || dados.idade < 1 || dados.idade > 120) return "A idade deve ser um número inteiro entre 1 e 120";
+  if (dados.altura < 0.5 || dados.altura > 2.5) return "A altura deve ser entre 0.5 e 2.5";
+  if (dados.peso < 2.5 || dados.peso > 500) return "O peso deve ser entre 2.5 e 500";
+  return "";
+}
+
+function mostrarErro(msg) {
+  const el = document.getElementById("erro");
+  el.textContent = msg;
+  el.hidden = false;
+}
+function limparErro() {
+  const el = document.getElementById("erro");
+  el.textContent = "";
+  el.hidden = true;
+}
+
+// 6. localStorage
+function salvarPessoas() {
+  localStorage.setItem("pessoas", JSON.stringify(pessoas));
+}
+
+function carregarPessoas() {
+  try {
+    const texto = localStorage.getItem("pessoas");
+    if (!texto) return [];
+    const dados = JSON.parse(texto);
+    if (!Array.isArray(dados)) return [];
+    return dados;
+  } catch (e) {
+    mostrarErro("Erro ao carregar dados salvos");
+    return [];
+  }
+}
+
+// 7. Contador de código
+let maior = 0;
+function ajustarContador() {
+  maior = 0;
+  pessoas.forEach(p => { if (p.id > maior) maior = p.id; });
+}
+
+let pessoas = carregarPessoas();
+ajustarContador();
+renderizar();
+
+// 8. Adicionar pessoa
+function adicionarPessoa(dados) {
+  maior++;
+  const nova = { id: maior, ...dados };
+  pessoas.push(nova);
+  salvarPessoas();
+  renderizar();
+}
+
+// 9. Evento submit
+document.getElementById("formulario").addEventListener("submit", function(e) {
+  e.preventDefault();
+  const dados = lerFormulario();
+  const erro = validarDados(dados);
+  if (erro !== "") { mostrarErro(erro); return; }
+  limparErro();
+  adicionarPessoa(dados);
+  e.target.reset();
+  document.getElementById("nome").focus();
+});
+
+// 10. Apagar um / apagar tudo (desafio da conclusão)
+document.getElementById("tabela-pessoas").addEventListener("click", function(e) {
+  if (e.target.classList.contains("btn-apagar")) {
+    const id = Number(e.target.dataset.id);
+    pessoas = pessoas.filter(p => p.id !== id);
+    salvarPessoas();
+    renderizar();
+  }
+});
+
+document.getElementById("btn-limpar").addEventListener("click", function() {
+  pessoas = [];
+  maior = 0;
+  localStorage.removeItem("pessoas");
+  renderizar();
+});
+</script>
+<script src="script.js"></script></body>
+</html>
