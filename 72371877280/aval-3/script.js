@@ -1,349 +1,703 @@
 
-// ======================================
-// 3.01 - INTRODUÇÃO AO DOM
-// ======================================
-
-const taskForm = document.querySelector("#task-form");
-
-const taskInput = document.querySelector("#task-input");
-
-const taskList = document.querySelector("#task-list");
-
-const taskCounter = document.querySelector("#task-counter");
-
-const errorMessage = document.querySelector("#error-message");
-
-const clearCompletedButton = document.querySelector("#clear-completed");
-
-const clearAllButton = document.querySelector("#clear-all");
-
+"use strict";
 
 // ======================================
-// 3.02 - EVENTOS NO JAVASCRIPT
+// 1. ELEMENTOS DO HTML
 // ======================================
 
-// Array que armazena as tarefas.
+const form = document.getElementById("formAnamnese");
 
-let tasks = [];
+const pacienteId = document.getElementById("pacienteId");
+
+const nome = document.getElementById("nome");
+const nascimento = document.getElementById("nascimento");
+const telefone = document.getElementById("telefone");
+const email = document.getElementById("email");
+const profissao = document.getElementById("profissao");
+const estadoCivil = document.getElementById("estadoCivil");
+const queixa = document.getElementById("queixa");
+const historico = document.getElementById("historico");
+const medicamentos = document.getElementById("medicamentos");
+const alergias = document.getElementById("alergias");
+const statusFicha = document.getElementById("status");
+
+const listaPacientes = document.getElementById("listaPacientes");
+
+const pesquisa = document.getElementById("pesquisa");
+const filtroStatus = document.getElementById("filtroStatus");
+
+const totalPacientes = document.getElementById("totalPacientes");
+const totalConcluidas = document.getElementById("totalConcluidas");
+const totalPendentes = document.getElementById("totalPendentes");
+
+const mensagemVazia = document.getElementById("mensagemVazia");
+const mensagem = document.getElementById("mensagem");
+
+const tituloFormulario = document.getElementById("tituloFormulario");
+const btnSalvar = document.getElementById("btnSalvar");
+const btnCancelar = document.getElementById("btnCancelar");
 
 
-// Evento de envio do formulário.
+// ======================================
+// 2. CONFIGURAÇÃO DO LOCALSTORAGE
+// ======================================
 
-taskForm.addEventListener("submit", function(event) {
+const CHAVE_STORAGE = "fichasAnamnese";
+
+let pacientes = carregarPacientes();
+
+
+// ======================================
+// 3. CARREGAR OS DADOS
+// ======================================
+
+function carregarPacientes() {
+
+    try {
+
+        const dados = localStorage.getItem(CHAVE_STORAGE);
+
+        if (!dados) {
+            return [];
+        }
+
+        const resultado = JSON.parse(dados);
+
+        if (!Array.isArray(resultado)) {
+            return [];
+        }
+
+        return resultado.filter(paciente =>
+            paciente &&
+            typeof paciente.id === "string" &&
+            typeof paciente.nome === "string" &&
+            typeof paciente.nascimento === "string" &&
+            typeof paciente.telefone === "string" &&
+            typeof paciente.queixa === "string" &&
+            ["Pendente", "Concluída"].includes(paciente.status)
+        );
+
+    } catch (erro) {
+
+        console.error("Erro ao carregar dados:", erro);
+
+        return [];
+
+    }
+
+}
+
+
+// ======================================
+// 4. SALVAR OS DADOS
+// ======================================
+
+function salvarDados() {
+
+    try {
+
+        localStorage.setItem(
+            CHAVE_STORAGE,
+            JSON.stringify(pacientes)
+        );
+
+        return true;
+
+    } catch (erro) {
+
+        console.error("Erro ao salvar:", erro);
+
+        mostrarMensagem(
+            "Não foi possível salvar os dados. Verifique o armazenamento do navegador.",
+            "erro"
+        );
+
+        return false;
+
+    }
+
+}
+
+
+// ======================================
+// 5. EXIBIR MENSAGENS
+// ======================================
+
+function mostrarMensagem(texto, tipo) {
+
+    mensagem.textContent = texto;
+
+    mensagem.className = "mensagem " + tipo;
+
+}
+
+
+// ======================================
+// 6. GERAR IDENTIFICADOR
+// ======================================
+
+function gerarId() {
+
+    if (window.crypto && crypto.randomUUID) {
+
+        return crypto.randomUUID();
+
+    }
+
+    return Date.now().toString(36) +
+        Math.random().toString(36).slice(2);
+
+
+// ======================================
+// 7. CADASTRAR E EDITAR
+// ======================================
+
+}
+
+form.addEventListener("submit", function(event) {
 
     event.preventDefault();
 
-    addTask();
+    if (!form.reportValidity()) {
+        return;
+    }
+
+    const dadosPaciente = {
+
+        nome: nome.value.trim(),
+
+        nascimento: nascimento.value,
+
+        telefone: telefone.value.trim(),
+
+        email: email.value.trim(),
+
+        profissao: profissao.value.trim(),
+
+        estadoCivil: estadoCivil.value,
+
+        queixa: queixa.value.trim(),
+
+        historico: historico.value.trim(),
+
+        medicamentos: medicamentos.value.trim(),
+
+        alergias: alergias.value.trim(),
+
+        status: statusFicha.value
+
+    };
+
+
+    // VALIDAR CAMPOS OBRIGATÓRIOS
+
+    if (
+        !dadosPaciente.nome ||
+        !dadosPaciente.nascimento ||
+        !dadosPaciente.telefone ||
+        !dadosPaciente.queixa
+    ) {
+
+        mostrarMensagem(
+            "Preencha todos os campos obrigatórios.",
+            "erro"
+        );
+
+        return;
+
+    }
+
+
+    // VALIDAR DATA
+
+    const hoje = new Date().toISOString().slice(0, 10);
+
+    if (
+        dadosPaciente.nascimento > hoje ||
+        !/^\d{4}-\d{2}-\d{2}$/.test(dadosPaciente.nascimento)
+    ) {
+
+        mostrarMensagem(
+            "Informe uma data de nascimento válida.",
+            "erro"
+        );
+
+        return;
+
+    }
+
+
+    // EDITAR PACIENTE
+
+    if (pacienteId.value) {
+
+        const indice = pacientes.findIndex(
+            paciente => paciente.id === pacienteId.value
+        );
+
+        if (indice === -1) {
+
+            mostrarMensagem(
+                "Paciente não encontrado.",
+                "erro"
+            );
+
+            return;
+
+        }
+
+        const pacienteAnterior = pacientes[indice];
+
+        pacientes[indice] = {
+            ...pacienteAnterior,
+            ...dadosPaciente
+        };
+
+        if (!salvarDados()) {
+
+            pacientes[indice] = pacienteAnterior;
+
+            return;
+
+        }
+
+        mostrarMensagem(
+            "Ficha atualizada com sucesso!",
+            "sucesso"
+        );
+
+    } else {
+
+        // NOVO CADASTRO
+
+        const novoPaciente = {
+
+            id: gerarId(),
+
+            ...dadosPaciente,
+
+            dataCadastro: new Date().toISOString()
+
+        };
+
+        pacientes.push(novoPaciente);
+
+        if (!salvarDados()) {
+
+            pacientes.pop();
+
+            return;
+
+        }
+
+        mostrarMensagem(
+            "Paciente cadastrado com sucesso!",
+            "sucesso"
+        );
+
+    }
+
+    atualizarSistema();
+
+    limparFormulario();
 
 });
 
 
 // ======================================
-// 3.03 - CRIAÇÃO E REMOÇÃO DE ELEMENTOS
+// 8. RENDERIZAR PACIENTES
 // ======================================
 
-function addTask() {
+function renderizarPacientes() {
 
-    const taskText = taskInput.value.trim();
+    listaPacientes.innerHTML = "";
 
-    // Verifica se o campo está vazio.
+    const termo = pesquisa.value
+        .trim()
+        .toLocaleLowerCase("pt-BR");
 
-    if (taskText === "") {
+    const filtro = filtroStatus.value;
 
-        errorMessage.textContent =
-            "Digite uma tarefa antes de adicionar.";
 
-        taskInput.focus();
+    // APLICAR PESQUISA E FILTROS
 
-        return;
+    const pacientesFiltrados = pacientes.filter(paciente => {
+
+        const correspondeNome = paciente.nome
+            .toLocaleLowerCase("pt-BR")
+            .includes(termo);
+
+        const correspondeStatus =
+            filtro === "Todos" ||
+            paciente.status === filtro;
+
+        return correspondeNome && correspondeStatus;
+
+    });
+
+
+    // MENSAGEM QUANDO NÃO EXISTIREM RESULTADOS
+
+    mensagemVazia.hidden = pacientesFiltrados.length > 0;
+
+    if (pacientesFiltrados.length === 0) {
+
+        mensagemVazia.textContent =
+            pacientes.length === 0
+                ? "Nenhum paciente cadastrado."
+                : "Nenhum paciente encontrado.";
+
     }
 
-    // Cria um objeto para a tarefa.
 
-    const newTask = {
-        id: Date.now(),
-        text: taskText,
-        completed: false
-    };
+    // CRIAR LINHAS DA TABELA
 
-    // Adiciona a tarefa ao array.
+    pacientesFiltrados.forEach(paciente => {
 
-    tasks.push(newTask);
-
-    // Atualiza a lista na tela.
-
-    renderTasks();
-
-    // Limpa o campo.
-
-    taskInput.value = "";
-
-    errorMessage.textContent = "";
-
-    taskInput.focus();
-
-}
+        const linha = document.createElement("tr");
 
 
-// ======================================
-// 3.04 - CLASSES E ESTILOS VIA JAVASCRIPT
-// ======================================
+        // NOME
 
-function renderTasks() {
+        const tdNome = document.createElement("td");
 
-    // Remove os elementos anteriores.
+        tdNome.textContent = paciente.nome;
 
-    taskList.innerHTML = "";
+        linha.appendChild(tdNome);
 
-    // Percorre o array de tarefas.
 
-    tasks.forEach(function(task) {
+        // TELEFONE
 
-        // Cria um elemento li.
+        const tdTelefone = document.createElement("td");
 
-        const li = document.createElement("li");
+        tdTelefone.textContent = paciente.telefone;
 
-        li.classList.add("task-item");
+        linha.appendChild(tdTelefone);
 
-        // Adiciona classe se estiver concluída.
 
-        if (task.completed) {
+        // DATA DE NASCIMENTO
 
-            li.classList.add("completed");
+        const tdNascimento = document.createElement("td");
 
-        }
+        const data = new Date(
+            paciente.nascimento + "T00:00:00"
+        );
 
-        // Cria o texto da tarefa.
+        tdNascimento.textContent =
+            data.toLocaleDateString("pt-BR");
+
+        linha.appendChild(tdNascimento);
+
+
+        // STATUS
+
+        const tdStatus = document.createElement("td");
 
         const span = document.createElement("span");
 
-        span.textContent = task.text;
+        span.className = "status " +
+            (
+                paciente.status === "Concluída"
+                    ? "concluida"
+                    : "pendente"
+            );
 
-        // Cria a área dos botões.
+        span.textContent = paciente.status;
 
-        const buttons = document.createElement("div");
+        tdStatus.appendChild(span);
 
-        buttons.classList.add("task-buttons");
+        linha.appendChild(tdStatus);
 
-        // Botão de concluir.
 
-        const completeButton = document.createElement("button");
+        // AÇÕES
 
-        completeButton.textContent = task.completed
-            ? "Desfazer"
-            : "Concluir";
+        const tdAcoes = document.createElement("td");
 
-        completeButton.classList.add("complete-btn");
+        tdAcoes.className = "acoes";
 
-        completeButton.dataset.action = "complete";
 
-        completeButton.dataset.id = task.id;
+        // BOTÃO EDITAR
 
-        // Botão de excluir.
+        const btnEditar = document.createElement("button");
 
-        const deleteButton = document.createElement("button");
+        btnEditar.type = "button";
 
-        deleteButton.textContent = "Excluir";
+        btnEditar.textContent = "Editar";
 
-        deleteButton.classList.add("delete-btn");
+        btnEditar.className = "btn-editar";
 
-        deleteButton.dataset.action = "delete";
+        btnEditar.addEventListener("click", function() {
 
-        deleteButton.dataset.id = task.id;
+            editarPaciente(paciente.id);
 
-        // Adiciona os botões ao elemento.
+        });
 
-        buttons.appendChild(completeButton);
 
-        buttons.appendChild(deleteButton);
+        // BOTÃO EXCLUIR
 
-        // Adiciona os elementos à tarefa.
+        const btnExcluir = document.createElement("button");
 
-        li.appendChild(span);
+        btnExcluir.type = "button";
 
-        li.appendChild(buttons);
+        btnExcluir.textContent = "Excluir";
 
-        // Adiciona a tarefa à lista.
+        btnExcluir.className = "btn-excluir";
 
-        taskList.appendChild(li);
+        btnExcluir.addEventListener("click", function() {
+
+            excluirPaciente(paciente.id);
+
+        });
+
+
+        tdAcoes.appendChild(btnEditar);
+
+        tdAcoes.appendChild(btnExcluir);
+
+        linha.appendChild(tdAcoes);
+
+
+        // ADICIONAR LINHA NA TABELA
+
+        listaPacientes.appendChild(linha);
 
     });
-
-    updateCounter();
 
 }
 
 
 // ======================================
-// 3.05 - INPUTS E VALIDAÇÃO SIMPLES
+// 9. ATUALIZAR CONTADORES
 // ======================================
 
-// Valida o campo enquanto o usuário digita.
+function atualizarContadores() {
 
-taskInput.addEventListener("input", function() {
+    const concluidas = pacientes.filter(
+        paciente => paciente.status === "Concluída"
+    ).length;
 
-    errorMessage.textContent = "";
-
-    if (taskInput.value.length > 80) {
-
-        errorMessage.textContent =
-            "A tarefa deve ter no máximo 80 caracteres.";
-
-    }
-
-});
+    const pendentes = pacientes.filter(
+        paciente => paciente.status === "Pendente"
+    ).length;
 
 
-// ======================================
-// 3.06 - DELEGAÇÃO DE EVENTOS
-// ======================================
+    totalPacientes.textContent = pacientes.length;
 
-// Um único evento controla os botões
-// de todas as tarefas.
+    totalConcluidas.textContent = concluidas;
 
-taskList.addEventListener("click", function(event) {
-
-    const button = event.target.closest("button[data-action]");
-
-    // Verifica se o clique foi em um botão.
-
-    if (!button || !taskList.contains(button)) {
-
-        return;
-
-    }
-
-    // Obtém os dados do botão.
-
-    const action = button.dataset.action;
-
-    const id = Number(button.dataset.id);
-
-    // Verifica qual ação deve executar.
-
-    if (action === "complete") {
-
-        toggleTask(id);
-
-    }
-
-    if (action === "delete") {
-
-        deleteTask(id);
-
-    }
-
-});
-
-
-// ======================================
-// 3.07 - ATRIBUTOS E DATASET
-// ======================================
-
-// Os atributos data-action e data-id
-// identificam a ação e a tarefa.
-
-// Alterna o estado da tarefa.
-
-function toggleTask(id) {
-
-    tasks = tasks.map(function(task) {
-
-        if (task.id === id) {
-
-            return {
-                ...task,
-                completed: !task.completed
-            };
-
-        }
-
-        return task;
-
-    });
-
-    renderTasks();
-
-}
-
-
-// Remove uma tarefa.
-
-function deleteTask(id) {
-
-    tasks = tasks.filter(function(task) {
-
-        return task.id !== id;
-
-    });
-
-    renderTasks();
+    totalPendentes.textContent = pendentes;
 
 }
 
 
 // ======================================
-// 3.08 - ARRAYS E RENDERIZAÇÃO
+// 10. EDITAR PACIENTE
 // ======================================
 
-function updateCounter() {
+function editarPaciente(id) {
 
-    const total = tasks.length;
-
-    const completed = tasks.filter(function(task) {
-
-        return task.completed;
-
-    }).length;
-
-    taskCounter.textContent =
-        `${total} tarefas | ${completed} concluídas`;
-
-}
-
-
-// Remove todas as tarefas concluídas.
-
-clearCompletedButton.addEventListener("click", function() {
-
-    tasks = tasks.filter(function(task) {
-
-        return !task.completed;
-
-    });
-
-    renderTasks();
-
-});
-
-
-// Remove todas as tarefas.
-
-clearAllButton.addEventListener("click", function() {
-
-    if (tasks.length === 0) {
-
-        return;
-
-    }
-
-    const confirmation = confirm(
-        "Deseja realmente excluir todas as tarefas?"
+    const paciente = pacientes.find(
+        item => item.id === id
     );
 
-    if (confirmation) {
+    if (!paciente) {
 
-        tasks = [];
+        mostrarMensagem(
+            "Paciente não encontrado.",
+            "erro"
+        );
 
-        renderTasks();
+        return;
 
     }
+
+
+    // PREENCHER FORMULÁRIO
+
+    pacienteId.value = paciente.id;
+
+    nome.value = paciente.nome;
+
+    nascimento.value = paciente.nascimento;
+
+    telefone.value = paciente.telefone;
+
+    email.value = paciente.email || "";
+
+    profissao.value = paciente.profissao || "";
+
+    estadoCivil.value = paciente.estadoCivil || "";
+
+    queixa.value = paciente.queixa;
+
+    historico.value = paciente.historico || "";
+
+    medicamentos.value = paciente.medicamentos || "";
+
+    alergias.value = paciente.alergias || "";
+
+    statusFicha.value = paciente.status;
+
+
+    // ALTERAR TÍTULO E BOTÕES
+
+    tituloFormulario.textContent = "Editar ficha do paciente";
+
+    btnSalvar.textContent = "Atualizar ficha";
+
+    btnCancelar.hidden = false;
+
+    mostrarMensagem(
+        "Editando ficha do paciente.",
+        "sucesso"
+    );
+
+
+    // VOLTAR AO FORMULÁRIO
+
+    window.scrollTo({
+
+        top: 0,
+
+        behavior: "smooth"
+
+    });
+
+}
+
+
+// ======================================
+// 11. EXCLUIR PACIENTE
+// ======================================
+
+function excluirPaciente(id) {
+
+    const confirmar = confirm(
+        "Tem certeza que deseja excluir esta ficha?"
+    );
+
+    if (!confirmar) {
+        return;
+    }
+
+
+    const indice = pacientes.findIndex(
+        paciente => paciente.id === id
+    );
+
+    if (indice === -1) {
+        return;
+    }
+
+
+    // GUARDAR PARA RECUPERAR SE FALHAR
+
+    const pacienteExcluido = pacientes[indice];
+
+
+    pacientes.splice(indice, 1);
+
+
+    if (!salvarDados()) {
+
+        pacientes.splice(indice, 0, pacienteExcluido);
+
+        return;
+
+    }
+
+
+    // LIMPAR FORMULÁRIO SE ESTIVER EDITANDO
+
+    if (pacienteId.value === id) {
+
+        limparFormulario();
+
+    }
+
+
+    atualizarSistema();
+
+    mostrarMensagem(
+        "Ficha excluída com sucesso!",
+        "sucesso"
+    );
+
+}
+
+
+// ======================================
+// 12. LIMPAR FORMULÁRIO
+// ======================================
+
+function limparFormulario() {
+
+    form.reset();
+
+    pacienteId.value = "";
+
+    tituloFormulario.textContent = "Cadastrar paciente";
+
+    btnSalvar.textContent = "Salvar ficha";
+
+    btnCancelar.hidden = true;
+
+}
+
+
+// ======================================
+// 13. CANCELAR EDIÇÃO
+// ======================================
+
+btnCancelar.addEventListener("click", function() {
+
+    limparFormulario();
+
+    mostrarMensagem(
+        "Edição cancelada.",
+        "sucesso"
+    );
 
 });
 
 
 // ======================================
-// INICIALIZAÇÃO DO PROJETO
+// 14. PESQUISAR PACIENTES
 // ======================================
 
-renderTasks();
+pesquisa.addEventListener("input", function() {
+
+    renderizarPacientes();
+
+});
+
+
+// ======================================
+// 15. FILTRAR POR SITUAÇÃO
+// ======================================
+
+filtroStatus.addEventListener("change", function() {
+
+    renderizarPacientes();
+
+});
+
+
+// ======================================
+// 16. ATUALIZAR SISTEMA
+// ======================================
+
+function atualizarSistema() {
+
+    atualizarContadores();
+
+    renderizarPacientes();
+
+}
+
+
+// ======================================
+// 17. INICIALIZAR A APLICAÇÃO
+// ======================================
+
+atualizarSistema();

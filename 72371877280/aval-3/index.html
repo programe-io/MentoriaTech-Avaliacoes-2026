@@ -6,76 +6,250 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Lista de Tarefas</title>
+    <meta name="description" content="Sistema de cadastro e gerenciamento de fichas de anamnese.">
 
-    <link rel="stylesheet" href="style.css">
-    <script src="script.js" defer></script>
+    <title>Ficha de Anamnese</title>
+
+    <!-- Conexão com o CSS -->
+    <link rel="stylesheet" href="./style.css">
+
+    <!-- Conexão com JavaScript -->
+    <script src="./script.js" defer></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="style.css" rel="stylesheet"></head>
 
 <body>
 
+    <header class="header">
+        <div class="header-content">
+            <h1>Ficha de Anamnese</h1>
+            <p>Sistema de cadastro e acompanhamento de pacientes</p>
+        </div>
+    </header>
+
     <main class="container">
 
-        <header>
-            <h1>Minha Lista de Tarefas</h1>
-            <p>Organize suas atividades do dia!</p>
-        </header>
+        <!-- CONTADORES -->
+        <section class="dashboard">
 
-        <section class="card">
-
-            <form id="task-form">
-
-                <label for="task-input">
-                    Nova tarefa
-                </label>
-
-                <div class="input-group">
-
-                    <input
-                        type="text"
-                        id="task-input"
-                        placeholder="Digite uma tarefa..."
-                        maxlength="80"
-                        required
-                    >
-
-                    <button type="submit">
-                        Adicionar
-                    </button>
-
-                </div>
-
-                <p id="error-message" class="error"></p>
-
-            </form>
-
-            <div class="task-info">
-                <h2>Minhas tarefas</h2>
-                <span id="task-counter">0 tarefas</span>
+            <div class="card">
+                <h3>Total de pacientes</h3>
+                <span id="totalPacientes">0</span>
             </div>
 
-            <ul id="task-list"></ul>
+            <div class="card">
+                <h3>Fichas concluídas</h3>
+                <span id="totalConcluidas">0</span>
+            </div>
 
-            <div class="actions">
-
-                <button id="clear-completed" type="button">
-                    Remover concluídas
-                </button>
-
-                <button id="clear-all" type="button">
-                    Limpar tudo
-                </button>
-
+            <div class="card">
+                <h3>Fichas pendentes</h3>
+                <span id="totalPendentes">0</span>
             </div>
 
         </section>
 
-        <footer>
-            <p>Projeto desenvolvido com HTML, CSS e JavaScript.</p>
-        </footer>
+        <!-- FORMULÁRIO -->
+        <section class="form-section">
+
+            <h2 id="tituloFormulario">Cadastrar paciente</h2>
+
+            <form id="formAnamnese">
+
+                <input type="hidden" id="pacienteId">
+
+                <div class="form-grid">
+
+                    <div class="campo">
+                        <label for="nome">Nome completo *</label>
+                        <input
+                            type="text"
+                            id="nome"
+                            placeholder="Nome do paciente"
+                            maxlength="100"
+                            required
+                        >
+                    </div>
+
+                    <div class="campo">
+                        <label for="nascimento">Data de nascimento *</label>
+                        <input
+                            type="date"
+                            id="nascimento"
+                            required
+                        >
+                    </div>
+
+                    <div class="campo">
+                        <label for="telefone">Telefone *</label>
+                        <input
+                            type="tel"
+                            id="telefone"
+                            placeholder="(00) 00000-0000"
+                            maxlength="20"
+                            required
+                        >
+                    </div>
+
+                    <div class="campo">
+                        <label for="email">E-mail</label>
+                        <input
+                            type="email"
+                            id="email"
+                            placeholder="email@exemplo.com"
+                            maxlength="120"
+                        >
+                    </div>
+
+                    <div class="campo">
+                        <label for="profissao">Profissão</label>
+                        <input
+                            type="text"
+                            id="profissao"
+                            placeholder="Profissão"
+                            maxlength="100"
+                        >
+                    </div>
+
+                    <div class="campo">
+                        <label for="estadoCivil">Estado civil</label>
+                        <select id="estadoCivil">
+                            <option value="">Selecione</option>
+                            <option value="Solteiro(a)">Solteiro(a)</option>
+                            <option value="Casado(a)">Casado(a)</option>
+                            <option value="Divorciado(a)">Divorciado(a)</option>
+                            <option value="Viúvo(a)">Viúvo(a)</option>
+                            <option value="União estável">União estável</option>
+                        </select>
+                    </div>
+
+                    <div class="campo completo">
+                        <label for="queixa">Queixa principal *</label>
+                        <textarea
+                            id="queixa"
+                            rows="3"
+                            placeholder="Descreva o motivo da consulta"
+                            maxlength="2000"
+                            required
+                        ></textarea>
+                    </div>
+
+                    <div class="campo completo">
+                        <label for="historico">Histórico de saúde</label>
+                        <textarea
+                            id="historico"
+                            rows="3"
+                            placeholder="Histórico de saúde do paciente"
+                            maxlength="3000"
+                        ></textarea>
+                    </div>
+
+                    <div class="campo">
+                        <label for="medicamentos">Medicamentos em uso</label>
+                        <textarea
+                            id="medicamentos"
+                            rows="3"
+                            maxlength="2000"
+                            placeholder="Medicamentos utilizados"
+                        ></textarea>
+                    </div>
+
+                    <div class="campo">
+                        <label for="alergias">Alergias</label>
+                        <textarea
+                            id="alergias"
+                            rows="3"
+                            maxlength="2000"
+                            placeholder="Informe as alergias"
+                        ></textarea>
+                    </div>
+
+                    <div class="campo">
+                        <label for="status">Situação da ficha</label>
+                        <select id="status">
+                            <option value="Pendente">Pendente</option>
+                            <option value="Concluída">Concluída</option>
+                        </select>
+                    </div>
+
+                </div>
+
+                <div class="botoes">
+
+                    <button type="submit" id="btnSalvar">
+                        Salvar ficha
+                    </button>
+
+                    <button
+                        type="button"
+                        id="btnCancelar"
+                        class="btn-cancelar"
+                        hidden
+                    >
+                        Cancelar edição
+                    </button>
+
+                </div>
+
+                <p id="mensagem" class="mensagem" role="status" aria-live="polite"></p>
+
+            </form>
+
+        </section>
+
+        <!-- PESQUISA E FILTROS -->
+        <section class="lista-section">
+
+            <h2>Pacientes cadastrados</h2>
+
+            <div class="filtros">
+
+                <input
+                    type="search"
+                    id="pesquisa"
+                    placeholder="Pesquisar pelo nome..."
+                    aria-label="Pesquisar paciente pelo nome"
+                >
+
+                <select id="filtroStatus" aria-label="Filtrar por situação">
+                    <option value="Todos">Todas as fichas</option>
+                    <option value="Concluída">Concluídas</option>
+                    <option value="Pendente">Pendentes</option>
+                </select>
+
+            </div>
+
+            <div class="tabela-container">
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>Paciente</th>
+                            <th>Telefone</th>
+                            <th>Nascimento</th>
+                            <th>Situação</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="listaPacientes"></tbody>
+
+                </table>
+
+            </div>
+
+            <p id="mensagemVazia" class="mensagem-vazia">
+                Nenhum paciente cadastrado.
+            </p>
+
+        </section>
 
     </main>
+
+    <footer>
+        <p>Projeto Ficha de Anamnese | HTML, CSS e JavaScript</p>
+    </footer>
 
 <script src="script.js"></script></body>
 </html>
