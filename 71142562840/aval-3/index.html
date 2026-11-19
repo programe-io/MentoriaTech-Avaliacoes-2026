@@ -1,62 +1,260 @@
+
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Controle de IMC - Painel Clínico</title>
-    <link rel="preconnect" href="https://googleapis.com">
-    <link rel="preconnect" href="https://gstatic.com" crossorigin>
-    <link href="https://googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <title>Calculadora de IMC</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #102a43, #087e8b);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            width: 100%;
+            max-width: 450px;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #087e8b;
+            margin-bottom: 10px;
+        }
+
+        .subtitulo {
+            text-align: center;
+            color: #666;
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 7px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 7px;
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            margin-top: 25px;
+            background: #087e8b;
+            color: white;
+            border: none;
+            border-radius: 7px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #065d67;
+        }
+
+        #resultado {
+            display: none;
+            margin-top: 25px;
+            padding: 20px;
+            background: #eaf5f5;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        #resultado h2 {
+            color: #087e8b;
+            margin-bottom: 15px;
+        }
+
+        #valor {
+            font-size: 35px;
+            font-weight: bold;
+            color: #087e8b;
+            margin: 10px;
+        }
+
+        #classificacao {
+            font-size: 20px;
+            font-weight: bold;
+            margin: 10px;
+        }
+
+        .erro {
+            color: red;
+            margin-top: 10px;
+        }
+
+        .limpar {
+            background: #444;
+            margin-top: 10px;
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="style.css" rel="stylesheet"></head>
+
 <body>
-    <main class="app-wrapper">
-        <!-- Coluna Esquerda: Formulário -->
-        <section class="card form-section">
-            <header class="header">
-                <span class="badge-topo">Avaliação Antropométrica</span>
-                <h1>Controle de IMC</h1>
-                <p>Insira os dados do paciente para gerar o diagnóstico.</p>
-            </header>
 
-            <form id="form-imc">
-                <div class="campo">
-                    <label for="nome">Nome Completo do Paciente</label>
-                    <input type="text" id="nome" placeholder="Ex: Carlos Eduardo Santos" required>
-                </div>
+    <div class="container">
 
-                <div class="linha-dupla">
-                    <div class="campo">
-                        <label for="peso">Peso (kg)</label>
-                        <input type="number" id="peso" step="0.1" min="1" placeholder="Ex: 74.5" required>
-                    </div>
+        <h1>Calculadora de IMC</h1>
 
-                    <div class="campo">
-                        <label for="altura">Altura (m)</label>
-                        <input type="number" id="altura" step="0.01" min="0.5" placeholder="Ex: 1.78" required>
-                    </div>
-                </div>
+        <p class="subtitulo">
+            Controle de Índice de Massa Corporal
+        </p>
 
-                <div class="acoes">
-                    <button type="submit" class="btn-primario">Calcular IMC</button>
-                    <button type="button" id="btn-limpar" class="btn-secundario">Limpar</button>
-                </div>
-            </form>
-        </section>
+        <label>Nome do paciente:</label>
+        <input type="text" id="nome" placeholder="Digite seu nome">
 
-        <!-- Coluna Direita: Resultado -->
-        <section class="card result-section">
-            <div id="estado-vazio" class="estado-vazio">
-                <div class="icone-vazio">📊</div>
-                <h3>Aguardando dados</h3>
-                <p>Preencha o formulário ao lado e clique em <strong>Calcular IMC</strong> para visualizar o relatório completo do paciente.</p>
-            </div>
+        <label>Peso (KG):</label>
+        <input type="number" id="peso" placeholder="Ex: 75" step="any">
 
-            <div id="resultado" class="resultado oculto"></div>
-        </section>
-    </main>
+        <label>Altura (Metros):</label>
+        <input type="number" id="altura" placeholder="Ex: 1.75" step="any">
 
-    <script src="script.js"></script>
+        <button type="button" onclick="calcularIMC()">
+            CALCULAR IMC
+        </button>
+
+        <p id="erro" class="erro"></p>
+
+        <div id="resultado">
+
+            <h2>Resultado do Paciente</h2>
+
+            <p id="paciente"></p>
+
+            <p>Seu IMC é:</p>
+
+            <div id="valor"></div>
+
+            <div id="classificacao"></div>
+
+            <p id="mensagem"></p>
+
+            <button type="button" class="limpar" onclick="limparCampos()">
+                NOVO CÁLCULO
+            </button>
+
+        </div>
+
+    </div>
+
+    <script>
+
+        function calcularIMC() {
+
+            let nome = document.getElementById("nome").value.trim();
+
+            let peso = parseFloat(
+                document.getElementById("peso").value
+            );
+
+            let altura = parseFloat(
+                document.getElementById("altura").value
+            );
+
+            let erro = document.getElementById("erro");
+
+            erro.innerHTML = "";
+
+            if (nome === "" || isNaN(peso) ||
+                isNaN(altura) || peso <= 0 || altura <= 0) {
+
+                erro.innerHTML = "Preencha todos os campos corretamente!";
+                return;
+            }
+
+            let imc = peso / (altura * altura);
+
+            let classificacao;
+            let mensagem;
+
+            if (imc < 18.5) {
+
+                classificacao = "Abaixo do peso";
+                mensagem = "Seu peso está abaixo da faixa de referência.";
+
+            } else if (imc < 25) {
+
+                classificacao = "Peso normal";
+                mensagem = "Seu peso está dentro da faixa de referência.";
+
+            } else if (imc < 30) {
+
+                classificacao = "Sobrepeso";
+                mensagem = "Seu peso está acima da faixa de referência.";
+
+            } else if (imc < 35) {
+
+                classificacao = "Obesidade grau I";
+                mensagem = "Resultado indica obesidade grau I.";
+
+            } else if (imc < 40) {
+
+                classificacao = "Obesidade grau II";
+                mensagem = "Resultado indica obesidade grau II.";
+
+            } else {
+
+                classificacao = "Obesidade grau III";
+                mensagem = "Resultado indica obesidade grau III.";
+
+            }
+
+            document.getElementById("paciente").innerHTML =
+                "Paciente: " + nome;
+
+            document.getElementById("valor").innerHTML =
+                imc.toFixed(2);
+
+            document.getElementById("classificacao").innerHTML =
+                classificacao;
+
+            document.getElementById("mensagem").innerHTML =
+                mensagem;
+
+            document.getElementById("resultado").style.display = "block";
+
+        }
+
+        function limparCampos() {
+
+            document.getElementById("nome").value = "";
+            document.getElementById("peso").value = "";
+            document.getElementById("altura").value = "";
+
+            document.getElementById("resultado").style.display = "none";
+
+            document.getElementById("erro").innerHTML = "";
+
+        }
+
+    </script>
+
 <script src="script.js"></script></body>
 </html>
