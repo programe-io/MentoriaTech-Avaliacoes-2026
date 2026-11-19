@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Minecraft 2D</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: #222;
+    color: white;
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
+
+h1 {
+    color: #65e64e;
+    text-shadow: 2px 3px #111;
+}
+
+#game {
+    display: block;
+    margin: 15px auto;
+    border: 5px solid #555;
+    background: #87CEEB;
+    max-width: 96vw;
+    height: auto;
+    image-rendering: pixelated;
+}
+
+.info {
+    margin: 10px;
+}
+
+button {
+    padding: 12px;
+    margin: 4px;
+    background: #55a832;
+    color: white;
+    border: 3px solid #28651c;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+button:hover {
+    background: #76d34c;
+}
+
+#inventory {
+    margin: 10px;
+}
+
+.selected {
+    background: orange;
+    border-color: white;
+}
+
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+<h1>⛏ MINECRAFT 2D</h1>
+
+<div class="info">
+    Use A e D para andar e W para pular.
+    <br>
+    Clique nos blocos para quebrar ou construir.
+</div>
+
+<canvas id="game" width="800" height="450"></canvas>
+
+<div id="inventory">
+    <button onclick="selectBlock(1)" id="b1">🌱 Grama</button>
+    <button onclick="selectBlock(2)" id="b2">🟫 Terra</button>
+    <button onclick="selectBlock(3)" id="b3">🪨 Pedra</button>
+    <button onclick="selectBlock(4)" id="b4">🪵 Madeira</button>
+    <button onclick="selectBlock(5)" id="b5">🍃 Folhas</button>
+</div>
+
+<p id="status">Bloco selecionado: Grama</p>
+
+<script>
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+
+const SIZE = 40;
+const COLS = 50;
+const ROWS = 25;
+
+let world = [];
+let selected = 1;
+
+const colors = {
+    1: "#54b936",
+    2: "#92572d",
+    3: "#888888",
+    4: "#9a6333",
+    5: "#248c37"
+};
+
+let player = {
+    x: 200,
+    y: 100,
+    w: 25,
+    h: 38,
+    vx: 0,
+    vy: 0,
+    ground: false
+};
+
+// Criar mundo
+for (let y = 0; y < ROWS; y++) {
+    world[y] = [];
+
+    for (let x = 0; x < COLS; x++) {
+        if (y > 17) {
+            world[y][x] = y === 18 ? 1 : y < 21 ? 2 : 3;
+        } else {
+            world[y][x] = 0;
+        }
+    }
+}
+
+// Criar árvores
+for (let x of [5, 12, 22, 34, 43]) {
+    world[17][x] = 4;
+    world[16][x] = 4;
+    world[15][x] = 4;
+
+    for (let dx = -1; dx <= 1; dx++) {
+        world[14][x + dx] = 5;
+    }
+
+    world[13][x] = 5;
+}
+
+// Controles
+let keys = {};
+
+document.addEventListener("keydown", e => {
+    keys[e.key.toLowerCase()] = true;
+});
+
+document.addEventListener("keyup", e => {
+    keys[e.key.toLowerCase()] = false;
+});
+
+// Selecionar bloco
+function selectBlock(id) {
+    selected = id;
+
+    document.querySelectorAll("#inventory button")
+        .forEach(b => b.classList.remove("selected"));
+
+    document.getElementById("b" + id).classList.add("selected");
+
+    const names = {
+        1: "Grama",
+        2: "Terra",
+        3: "Pedra",
+        4: "Madeira",
+        5: "Folhas"
+    };
+
+    document.getElementById("status").innerText =
+        "Bloco selecionado: " + names[id];
+}
+
+selectBlock(1);
+
+// Colisão
+function solid(x, y) {
+    if (x < 0 || x >= COLS || y >= ROWS) return true;
+    if (y < 0) return false;
+    return world[y][x] !== 0;
+}
+
+function collision(px, py) {
+    let left = Math.floor(px / SIZE);
+    let right = Math.floor((px + player.w - 1) / SIZE);
+    let top = Math.floor(py / SIZE);
+    let bottom = Math.floor((py + player.h - 1) / SIZE);
+
+    for (let y = top; y <= bottom; y++) {
+        for (let x = left; x <= right; x++) {
+            if (solid(x, y)) return true;
+        }
+    }
+
+    return false;
+}
+
+// Atualizar jogador
+function update() {
+    player.vx = 0;
+
+    if (keys["a"] || keys["arrowleft"]) player.vx = -4;
+    if (keys["d"] || keys["arrowright"]) player.vx = 4;
+
+    if ((keys["w"] || keys["arrowup"] || keys[" "])
+        && player.ground) {
+        player.vy = -11;
+        player.ground = false;
+    }
+
+    player.vy += 0.5;
+    if (player.vy > 12) player.vy = 12;
+
+    let nextX = player.x + player.vx;
+
+    if (!collision(nextX, player.y)) {
+        player.x = nextX;
+    }
+
+    let nextY = player.y + player.vy;
+
+    if (!collision(player.x, nextY)) {
+        player.y = nextY;
+        player.ground = false;
+    } else {
+        if (player.vy > 0) player.ground = true;
+        player.vy = 0;
+    }
+
+    player.x = Math.max(0, Math.min(
+        COLS * SIZE - player.w, player.x
+    ));
+
+    if (player.y > canvas.height + 200) {
+        player.x = 200;
+        player.y = 100;
+        player.vy = 0;
+    }
+}
+
+// Câmera
+function drawWorld() {
+    let cameraX = Math.max(0, Math.min(
+        player.x - canvas.width / 2,
+        COLS * SIZE - canvas.width
+    ));
+
+    // Céu
+    ctx.fillStyle = "#87CEEB";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Sol
+    ctx.fillStyle = "#ffe66d";
+    ctx.beginPath();
+    ctx.arc(680 - cameraX * 0.15, 70, 35, 0, Math.PI * 2);
+    ctx.fill();
+
+    for (let y = 0; y < ROWS; y++) {
+        for (let x = 0; x < COLS; x++) {
+            let block = world[y][x];
+
+            if (block === 0) continue;
+
+            let sx = x * SIZE - cameraX;
+            let sy = y * SIZE;
+
+            if (sx < -SIZE || sx > canvas.width) continue;
+
+            ctx.fillStyle = colors[block];
+            ctx.fillRect(sx, sy, SIZE, SIZE);
+
+            ctx.strokeStyle = "rgba(0,0,0,0.2)";
+            ctx.strokeRect(sx, sy, SIZE, SIZE);
+
+            if (block === 1) {
+                ctx.fillStyle = "#83df45";
+                ctx.fillRect(sx, sy, SIZE, 8);
+            }
+        }
+    }
+
+    // Jogador
+    let px = player.x - cameraX;
+
+    ctx.fillStyle = "#e9b17a";
+    ctx.fillRect(px + 4, player.y, 18, 15);
+
+    ctx.fillStyle = "#2222cc";
+    ctx.fillRect(px + 3, player.y + 15, 20, 15);
+
+    ctx.fillStyle = "#333";
+    ctx.fillRect(px + 3, player.y + 30, 8, 8);
+    ctx.fillRect(px + 15, player.y + 30, 8, 8);
+
+    ctx.fillStyle = "black";
+    ctx.fillRect(px + 8, player.y + 5, 3, 3);
+    ctx.fillRect(px + 17, player.y + 5, 3, 3);
+}
+
+// Quebrar e colocar blocos
+canvas.addEventListener("click", e => {
+    const rect = canvas.getBoundingClientRect();
+
+    const mouseX = (e.clientX - rect.left) *
+        canvas.width / rect.width;
+
+    const mouseY = (e.clientY - rect.top) *
+        canvas.height / rect.height;
+
+    let cameraX = Math.max(0, Math.min(
+        player.x - canvas.width / 2,
+        COLS * SIZE - canvas.width
+    ));
+
+    let bx = Math.floor((mouseX + cameraX) / SIZE);
+    let by = Math.floor(mouseY / SIZE);
+
+    if (bx < 0 || bx >= COLS || by < 0 || by >= ROWS) return;
+
+    // Quebra bloco com botão esquerdo
+    if (world[by][bx] !== 0) {
+        world[by][bx] = 0;
+    } else {
+        // Construir
+        let blockX = bx * SIZE;
+        let blockY = by * SIZE;
+
+        let overlaps =
+            blockX < player.x + player.w &&
+            blockX + SIZE > player.x &&
+            blockY < player.y + player.h &&
+            blockY + SIZE > player.y;
+
+        if (!overlaps) {
+            world[by][bx] = selected;
+        }
+    }
+});
+
+// Loop do jogo
+function gameLoop() {
+    update();
+    drawWorld();
+    requestAnimationFrame(gameLoop);
+}
+
+gameLoop();
+</script>
+
+<script src="script.js"></script></body>
+</html>
