@@ -1,186 +1,419 @@
 
-const API = "/api/livros";
+// ========================================
+// GERENCIADOR INTELIGENTE
+// ESTOQUE E TAREFAS
+// ========================================
 
-const formulario = document.getElementById("livroForm");
-const lista = document.getElementById("listaLivros");
-const pesquisa = document.getElementById("pesquisa");
 
-let livros = [];
+// SALVAR E RECUPERAR DADOS
 
-// Carregar livros do banco de dados
-async function carregarLivros() {
+function carregarDados(chave) {
     try {
-        const resposta = await fetch(API);
-        if (!resposta.ok) throw new Error("Erro ao carregar livros");
-
-        livros = await resposta.json();
-        atualizarTela();
-    } catch (erro) {
-        alert("Não foi possível conectar ao servidor Java.");
-        console.error(erro);
+        return JSON.parse(localStorage.getItem(chave)) || [];
+    } catch {
+        return [];
     }
 }
 
-// Atualizar tabela e indicadores
-function atualizarTela() {
-    lista.innerHTML = "";
+let produtos = carregarDados("produtos");
+let tarefas = carregarDados("tarefas");
 
-    const termo = pesquisa.value.toLowerCase();
-
-    const filtrados = livros.filter(livro =>
-        livro.titulo.toLowerCase().includes(termo) ||
-        livro.autor.toLowerCase().includes(termo)
-    );
-
-    filtrados.forEach(livro => {
-        const linha = document.createElement("tr");
-
-        const dados = [
-            livro.titulo,
-            livro.autor,
-            livro.categoria,
-            livro.quantidade
-        ];
-
-        dados.forEach(valor => {
-            const celula = document.createElement("td");
-            celula.textContent = valor;
-            linha.appendChild(celula);
-        });
-
-        const acoes = document.createElement("td");
-
-        const editar = document.createElement("button");
-        editar.textContent = "Editar";
-        editar.className = "editar";
-        editar.onclick = () => editarLivro(livro.id);
-
-        const excluir = document.createElement("button");
-        excluir.textContent = "Excluir";
-        excluir.className = "excluir";
-        excluir.onclick = () => excluirLivro(livro.id);
-
-        acoes.append(editar, excluir);
-        linha.appendChild(acoes);
-        lista.appendChild(linha);
-    });
-
-    document.getElementById("total").textContent =
-        livros.length;
-
-    document.getElementById("disponiveis").textContent =
-        livros.reduce((soma, livro) =>
-            soma + livro.quantidade, 0);
-
-    document.getElementById("emprestados").textContent =
-        livros.filter(livro => livro.quantidade === 0).length;
+function salvarDados() {
+    localStorage.setItem("produtos", JSON.stringify(produtos));
+    localStorage.setItem("tarefas", JSON.stringify(tarefas));
 }
 
-// Cadastrar ou atualizar livro
-formulario.addEventListener("submit", async function(event) {
+
+// PROTEGER TEXTOS EXIBIDOS
+
+function escapar(texto) {
+    return String(texto).replace(/[&<>"']/g, caractere => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+    })[caractere]);
+}
+
+
+// ========================================
+// MENU DE NAVEGAÇÃO
+// ========================================
+
+const botoesAbas = document.querySelectorAll(".aba");
+const secoes = document.querySelectorAll(".secao");
+
+botoesAbas.forEach(botao => {
+
+    botao.addEventListener("click", function() {
+
+        botoesAbas.forEach(b => b.classList.remove("ativa"));
+        secoes.forEach(s => s.classList.remove("ativa"));
+
+        this.classList.add("ativa");
+
+        const nomeAba = this.dataset.aba;
+
+        document.getElementById(nomeAba).classList.add("ativa");
+
+    });
+
+});
+
+
+// ========================================
+// CONTROLE DE ESTOQUE
+// ========================================
+
+const formProduto = document.getElementById("formProduto");
+const listaProdutos = document.getElementById("listaProdutos");
+const mensagemProdutos = document.getElementById("mensagemProdutos");
+
+
+// CADASTRAR PRODUTO
+
+formProduto.addEventListener("submit", function(event) {
+
     event.preventDefault();
 
-    const id = document.getElementById("livroId").value;
+    const codigo = document.getElementById("codigoProduto").value.trim();
 
-    const livro = {
-        titulo: document.getElementById("titulo").value.trim(),
-        autor: document.getElementById("autor").value.trim(),
-        categoria: document.getElementById("categoria").value.trim(),
-        isbn: document.getElementById("isbn").value.trim(),
-        quantidade: Number(document.getElementById("quantidade").value)
-    };
+    const descricao = document.getElementById("descricaoProduto").value.trim();
 
-    if (!livro.titulo || !livro.autor ||
-        !livro.categoria || !Number.isInteger(livro.quantidade) ||
-        livro.quantidade < 0) {
-        alert("Preencha os campos corretamente.");
+    const quantidade = Number(document.getElementById("quantidadeProduto").value);
+
+    const valor = Number(document.getElementById("valorProduto").value);
+
+    if (!codigo || !descricao) {
+        alert("Preencha o código e a descrição!");
         return;
     }
 
-    try {
-        const resposta = await fetch(
-            id ? `${API}/${id}` : API,
-            {
-                method: id ? "PUT" : "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(livro)
-            }
+    if (!Number.isInteger(quantidade) || quantidade < 0) {
+        alert("Informe uma quantidade inteira válida!");
+        return;
+    }
+
+    if (!Number.isFinite(valor) || valor < 0) {
+        alert("Informe um valor válido!");
+        return;
+    }
+
+    const codigoExiste = produtos.some(
+        produto => produto.codigo.toLowerCase() === codigo.toLowerCase()
+    );
+
+    if (codigoExiste) {
+        alert("Este código já está cadastrado!");
+        return;
+    }
+
+    const novoProduto = {
+        codigo,
+        descricao,
+        quantidade,
+        valor
+    };
+
+    produtos.push(novoProduto);
+
+    salvarDados();
+    mostrarProdutos();
+
+    formProduto.reset();
+
+    alert("Produto cadastrado com sucesso!");
+
+});
+
+
+// LISTAR PRODUTOS
+
+function mostrarProdutos() {
+
+    listaProdutos.innerHTML = "";
+
+    if (produtos.length === 0) {
+        mensagemProdutos.style.display = "block";
+        return;
+    }
+
+    mensagemProdutos.style.display = "none";
+
+    produtos.forEach((produto, indice) => {
+
+        const linha = document.createElement("tr");
+
+        linha.innerHTML = `
+            <td>${escapar(produto.codigo)}</td>
+            <td>${escapar(produto.descricao)}</td>
+            <td>${produto.quantidade}</td>
+            <td>${produto.valor.toLocaleString("pt-BR", {
+                style: "currency",
+                currency: "BRL"
+            })}</td>
+
+            <td>
+                <button class="acao alterar"
+                    data-acao="valor"
+                    data-indice="${indice}">
+                    Alterar valor
+                </button>
+
+                <button class="acao alterar"
+                    data-acao="quantidade"
+                    data-indice="${indice}">
+                    Alterar quantidade
+                </button>
+            </td>
+        `;
+
+        listaProdutos.appendChild(linha);
+
+    });
+
+}
+
+
+// ALTERAR PRODUTOS
+
+listaProdutos.addEventListener("click", function(event) {
+
+    const botao = event.target.closest("button[data-acao]");
+
+    if (!botao) return;
+
+    const indice = Number(botao.dataset.indice);
+    const acao = botao.dataset.acao;
+
+    const produto = produtos[indice];
+
+    if (!produto) return;
+
+    if (acao === "valor") {
+
+        const novoValor = prompt(
+            "Digite o novo valor:",
+            produto.valor
         );
 
-        if (!resposta.ok) throw new Error("Erro ao salvar");
+        if (novoValor === null) return;
 
-        alert(id ? "Livro atualizado!" : "Livro cadastrado!");
+        const valor = Number(novoValor.replace(",", "."));
 
-        formulario.reset();
-        document.getElementById("livroId").value = "";
-        document.getElementById("botaoSalvar").textContent =
-            "Cadastrar Livro";
-        document.getElementById("cancelar").hidden = true;
+        if (novoValor.trim() === "" ||
+            !Number.isFinite(valor) || valor < 0) {
 
-        carregarLivros();
+            alert("Digite um valor válido!");
+            return;
+        }
 
-    } catch (erro) {
-        alert("Erro ao salvar o livro.");
-        console.error(erro);
+        produto.valor = valor;
+
     }
+
+    if (acao === "quantidade") {
+
+        const novaQuantidade = prompt(
+            "Digite a nova quantidade:",
+            produto.quantidade
+        );
+
+        if (novaQuantidade === null) return;
+
+        const quantidade = Number(novaQuantidade);
+
+        if (novaQuantidade.trim() === "" ||
+            !Number.isInteger(quantidade) || quantidade < 0) {
+
+            alert("Digite uma quantidade válida!");
+            return;
+        }
+
+        produto.quantidade = quantidade;
+
+    }
+
+    salvarDados();
+    mostrarProdutos();
+
+    alert("Produto atualizado com sucesso!");
+
 });
 
-// Editar livro
-function editarLivro(id) {
-    const livro = livros.find(item => item.id === id);
 
-    if (!livro) return;
+// ========================================
+// GERENCIADOR DE TAREFAS
+// ========================================
 
-    document.getElementById("livroId").value = livro.id;
-    document.getElementById("titulo").value = livro.titulo;
-    document.getElementById("autor").value = livro.autor;
-    document.getElementById("categoria").value = livro.categoria;
-    document.getElementById("isbn").value = livro.isbn || "";
-    document.getElementById("quantidade").value =
-        livro.quantidade;
+const formTarefa = document.getElementById("formTarefa");
+const listaTarefas = document.getElementById("listaTarefas");
+const mensagemTarefas = document.getElementById("mensagemTarefas");
 
-    document.getElementById("botaoSalvar").textContent =
-        "Salvar Alterações";
 
-    document.getElementById("cancelar").hidden = false;
+// CADASTRAR TAREFA
 
-    document.getElementById("cadastro").scrollIntoView({
-        behavior: "smooth"
+formTarefa.addEventListener("submit", function(event) {
+
+    event.preventDefault();
+
+    const titulo = document.getElementById("tituloTarefa").value.trim();
+
+    const prioridade = Number(
+        document.getElementById("prioridadeTarefa").value
+    );
+
+    if (titulo.length < 5) {
+        alert("O título deve ter no mínimo 5 caracteres!");
+        return;
+    }
+
+    if (![1, 2, 3].includes(prioridade)) {
+        alert("A prioridade deve ser entre 1 e 3!");
+        return;
+    }
+
+    const codigo = tarefas.length > 0
+        ? Math.max(...tarefas.map(t => t.codigo)) + 1
+        : 1;
+
+    const novaTarefa = {
+        codigo,
+        titulo,
+        prioridade,
+        concluida: false
+    };
+
+    tarefas.push(novaTarefa);
+
+    salvarDados();
+    mostrarTarefas();
+
+    formTarefa.reset();
+
+    alert("Tarefa cadastrada com sucesso!");
+
+});
+
+
+// LISTAR TAREFAS
+
+function mostrarTarefas() {
+
+    listaTarefas.innerHTML = "";
+
+    if (tarefas.length === 0) {
+        mensagemTarefas.style.display = "block";
+        return;
+    }
+
+    mensagemTarefas.style.display = "none";
+
+    tarefas.forEach((tarefa, indice) => {
+
+        let nomePrioridade;
+
+        if (tarefa.prioridade === 1) {
+            nomePrioridade = "Alta";
+        } else if (tarefa.prioridade === 2) {
+            nomePrioridade = "Média";
+        } else {
+            nomePrioridade = "Baixa";
+        }
+
+        const status = tarefa.concluida
+            ? "Concluída"
+            : "Pendente";
+
+        const linha = document.createElement("tr");
+
+        linha.innerHTML = `
+            <td>${tarefa.codigo}</td>
+            <td>${escapar(tarefa.titulo)}</td>
+            <td>${tarefa.prioridade} - ${nomePrioridade}</td>
+            <td>${status}</td>
+
+            <td>
+                <button class="acao concluir"
+                    data-acao="concluir"
+                    data-indice="${indice}"
+                    ${tarefa.concluida ? "disabled" : ""}>
+                    ${tarefa.concluida ? "Concluída" : "Concluir"}
+                </button>
+
+                <button class="acao alterar"
+                    data-acao="prioridade"
+                    data-indice="${indice}">
+                    Alterar prioridade
+                </button>
+            </td>
+        `;
+
+        listaTarefas.appendChild(linha);
+
     });
+
 }
 
-// Excluir livro
-async function excluirLivro(id) {
-    if (!confirm("Deseja realmente excluir este livro?")) return;
 
-    try {
-        const resposta = await fetch(`${API}/${id}`, {
-            method: "DELETE"
-        });
+// CONCLUIR TAREFAS E ALTERAR PRIORIDADES
 
-        if (!resposta.ok) throw new Error("Erro ao excluir");
+listaTarefas.addEventListener("click", function(event) {
 
-        alert("Livro excluído com sucesso!");
-        carregarLivros();
+    const botao = event.target.closest("button[data-acao]");
 
-    } catch (erro) {
-        alert("Não foi possível excluir o livro.");
+    if (!botao) return;
+
+    const indice = Number(botao.dataset.indice);
+    const acao = botao.dataset.acao;
+
+    const tarefa = tarefas[indice];
+
+    if (!tarefa) return;
+
+    if (acao === "concluir") {
+
+        if (tarefa.concluida) return;
+
+        tarefa.concluida = true;
+
+        salvarDados();
+        mostrarTarefas();
+
+        alert("Tarefa concluída!");
+
     }
-}
 
-// Cancelar edição
-document.getElementById("cancelar").addEventListener("click", () => {
-    formulario.reset();
-    document.getElementById("livroId").value = "";
-    document.getElementById("botaoSalvar").textContent =
-        "Cadastrar Livro";
-    document.getElementById("cancelar").hidden = true;
+    if (acao === "prioridade") {
+
+        const novaPrioridade = prompt(
+            "Digite a nova prioridade:\n\n1 - Alta\n2 - Média\n3 - Baixa",
+            tarefa.prioridade
+        );
+
+        if (novaPrioridade === null) return;
+
+        if (!["1", "2", "3"].includes(novaPrioridade.trim())) {
+            alert("Digite 1, 2 ou 3!");
+            return;
+        }
+
+        tarefa.prioridade = Number(novaPrioridade);
+
+        salvarDados();
+        mostrarTarefas();
+
+        alert("Prioridade alterada com sucesso!");
+
+    }
+
 });
 
-// Pesquisa
-pesquisa.addEventListener("input", atualizarTela);
 
-// Inicializar sistema
-carregarLivros();
+// ========================================
+// INICIAR SISTEMA
+// ========================================
+
+mostrarProdutos();
+mostrarTarefas();

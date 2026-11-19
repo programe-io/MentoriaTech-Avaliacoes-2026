@@ -3,117 +3,148 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
-    <title>Biblioteca Escolar</title>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciador Inteligente</title>
     <link rel="stylesheet" href="style.css">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="style.css" rel="stylesheet"></head>
-
 <body>
 
 <header>
-    <h1>📚 Biblioteca Escolar</h1>
-    <p>Sistema de Cadastro e Gerenciamento</p>
+    <h1>Gerenciador Inteligente</h1>
+    <p>Controle de Estoque e Gerenciamento de Tarefas</p>
 </header>
 
 <nav>
-    <a href="#inicio">Início</a>
-    <a href="#cadastro">Cadastrar Livro</a>
-    <a href="#acervo">Acervo</a>
+    <button class="aba ativa" data-aba="estoque">
+        📦 Estoque
+    </button>
+
+    <button class="aba" data-aba="tarefas">
+        📋 Tarefas
+    </button>
 </nav>
 
 <main>
 
-<section id="inicio" class="painel">
-    <h2>Painel da Biblioteca</h2>
+    <!-- CONTROLE DE ESTOQUE -->
+    <section id="estoque" class="secao ativa">
 
-    <div class="cards">
-        <div class="card">
-            <h3>Total de Livros</h3>
-            <p id="total">0</p>
+        <h2>Controle de Estoque</h2>
+        <p class="descricao">Cadastre e gerencie seus produtos.</p>
+
+        <div class="formulario">
+            <h3>Cadastrar Produto</h3>
+
+            <form id="formProduto">
+
+                <label for="codigoProduto">Código:</label>
+                <input type="text" id="codigoProduto"
+                    placeholder="Ex: 001" required>
+
+                <label for="descricaoProduto">Descrição:</label>
+                <input type="text" id="descricaoProduto"
+                    placeholder="Nome do produto" required>
+
+                <label for="quantidadeProduto">Quantidade:</label>
+                <input type="number" id="quantidadeProduto"
+                    min="0" step="1" placeholder="Ex: 10" required>
+
+                <label for="valorProduto">Valor (R$):</label>
+                <input type="number" id="valorProduto"
+                    min="0" step="0.01" placeholder="Ex: 25.50" required>
+
+                <button type="submit">Cadastrar Produto</button>
+
+            </form>
         </div>
 
-        <div class="card">
-            <h3>Disponíveis</h3>
-            <p id="disponiveis">0</p>
+        <div class="lista">
+            <h3>Produtos Cadastrados</h3>
+
+            <div class="tabela-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Descrição</th>
+                            <th>Quantidade</th>
+                            <th>Valor</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="listaProdutos"></tbody>
+                </table>
+            </div>
+
+            <p id="mensagemProdutos" class="vazio">
+                Nenhum produto cadastrado.
+            </p>
         </div>
 
-        <div class="card">
-            <h3>Emprestados</h3>
-            <p id="emprestados">0</p>
+    </section>
+
+
+    <!-- GERENCIADOR DE TAREFAS -->
+    <section id="tarefas" class="secao">
+
+        <h2>Gerenciador de Tarefas</h2>
+        <p class="descricao">Organize suas atividades e prioridades.</p>
+
+        <div class="formulario">
+            <h3>Cadastrar Nova Tarefa</h3>
+
+            <form id="formTarefa">
+
+                <label for="tituloTarefa">Título:</label>
+                <input type="text" id="tituloTarefa"
+                    placeholder="Digite o título da tarefa" required>
+
+                <label for="prioridadeTarefa">Prioridade:</label>
+
+                <select id="prioridadeTarefa" required>
+                    <option value="">Selecione</option>
+                    <option value="1">1 - Alta</option>
+                    <option value="2">2 - Média</option>
+                    <option value="3">3 - Baixa</option>
+                </select>
+
+                <button type="submit">Cadastrar Tarefa</button>
+
+            </form>
         </div>
-    </div>
-</section>
 
-<section id="cadastro" class="formulario">
-    <h2>Cadastro de Livros</h2>
+        <div class="lista">
+            <h3>Tarefas Cadastradas</h3>
 
-    <form id="livroForm">
+            <div class="tabela-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Título</th>
+                            <th>Prioridade</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
 
-        <input type="hidden" id="livroId">
+                    <tbody id="listaTarefas"></tbody>
+                </table>
+            </div>
 
-        <label>Título do livro:</label>
-        <input type="text" id="titulo"
-               placeholder="Digite o título" required>
+            <p id="mensagemTarefas" class="vazio">
+                Nenhuma tarefa cadastrada.
+            </p>
+        </div>
 
-        <label>Autor:</label>
-        <input type="text" id="autor"
-               placeholder="Nome do autor" required>
-
-        <label>Categoria:</label>
-        <input type="text" id="categoria"
-               placeholder="Ex: Literatura" required>
-
-        <label>ISBN:</label>
-        <input type="text" id="isbn"
-               placeholder="Código ISBN">
-
-        <label>Quantidade:</label>
-        <input type="number" id="quantidade"
-               min="0" required>
-
-        <button type="submit" id="botaoSalvar">
-            Cadastrar Livro
-        </button>
-
-        <button type="button" id="cancelar"
-                class="cancelar" hidden>
-            Cancelar edição
-        </button>
-
-    </form>
-</section>
-
-<section id="acervo">
-    <h2>Acervo de Livros</h2>
-
-    <input type="text" id="pesquisa"
-           placeholder="Pesquisar por título ou autor...">
-
-    <div class="tabela-container">
-        <table>
-            <thead>
-                <tr>
-                    <th>Título</th>
-                    <th>Autor</th>
-                    <th>Categoria</th>
-                    <th>Quantidade</th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
-
-            <tbody id="listaLivros"></tbody>
-        </table>
-    </div>
-</section>
+    </section>
 
 </main>
 
 <footer>
-    <p>Biblioteca Escolar - Sistema de Gerenciamento</p>
+    <p>Gerenciador Inteligente © 2026</p>
 </footer>
 
 <script src="script.js"></script>
