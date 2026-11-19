@@ -1,4 +1,3 @@
-
 // Interatividade do Clone do Instagram
 
 document.addEventListener('DOMContentLoaded', () => {
