@@ -1,49 +1,52 @@
 
-const slides = document.querySelectorAll(".slide");
+let slideAtual = 0;
 
-const anterior = document.getElementById("anterior");
-const proximo = document.getElementById("proximo");
+const slides = document.querySelectorAll(".slide");
 const contador = document.getElementById("contador");
 
-let atual = 0;
+function mostrarSlide(numero) {
 
-function mostrarSlide() {
-
-    slides.forEach((slide, index) => {
-        slide.classList.toggle("ativo", index === atual);
+    slides.forEach(slide => {
+        slide.classList.remove("active");
     });
 
-    contador.textContent =
-        `${String(atual + 1).padStart(2, "0")} / ${String(slides.length).padStart(2, "0")}`;
+    slides[numero].classList.add("active");
 
-    anterior.disabled = atual === 0;
-    proximo.disabled = atual === slides.length - 1;
+    contador.textContent =
+        `Slide ${numero + 1} / ${slides.length}`;
 }
 
-proximo.addEventListener("click", () => {
-    if (atual < slides.length - 1) {
-        atual++;
-        mostrarSlide();
-    }
-});
+function avancar() {
 
-anterior.addEventListener("click", () => {
-    if (atual > 0) {
-        atual--;
-        mostrarSlide();
-    }
-});
+    slideAtual++;
 
-document.addEventListener("keydown", (event) => {
+    if (slideAtual >= slides.length) {
+        slideAtual = 0;
+    }
+
+    mostrarSlide(slideAtual);
+}
+
+function voltar() {
+
+    slideAtual--;
+
+    if (slideAtual < 0) {
+        slideAtual = slides.length - 1;
+    }
+
+    mostrarSlide(slideAtual);
+}
+
+// Navegação pelo teclado
+document.addEventListener("keydown", function(event) {
 
     if (event.key === "ArrowRight") {
-        proximo.click();
+        avancar();
     }
 
     if (event.key === "ArrowLeft") {
-        anterior.click();
+        voltar();
     }
 
 });
-
-mostrarSlide();
