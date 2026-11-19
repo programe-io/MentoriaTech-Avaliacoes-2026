@@ -1,111 +1,132 @@
 
-let contadorCodigo = 0;
+"use strict";
+
+// ========================================
+// 1. CONFIGURAÇÕES E VARIÁVEIS
+// ========================================
 
 const CHAVE_PESSOAS = "pessoas";
 
+let contadorCodigo = 0;
 let pessoas = [];
 
-const tabelaPessoas = document.getElementById("tabela-pessoas");
-const formPessoa = document.getElementById("form-pessoa");
-const inputNome = document.getElementById("input-nome");
-const inputIdade = document.getElementById("input-idade");
-const inputAltura = document.getElementById("input-altura");
-const inputPeso = document.getElementById("input-peso");
-const mensagemErro = document.getElementById("erro");
+// Elementos HTML
+const elementos = {
+    tabela: document.getElementById("tabela-pessoas"),
+    formulario: document.getElementById("form-pessoa"),
+    nome: document.getElementById("input-nome"),
+    idade: document.getElementById("input-idade"),
+    altura: document.getElementById("input-altura"),
+    peso: document.getElementById("input-peso"),
+    erro: document.getElementById("erro")
+};
 
-// Verificar elementos HTML
-if (
-    !tabelaPessoas ||
-    !formPessoa ||
-    !inputNome ||
-    !inputIdade ||
-    !inputAltura ||
-    !inputPeso ||
-    !mensagemErro
-) {
-    throw new Error("Verifique os IDs dos elementos no HTML.");
+// ========================================
+// 2. FUNÇÕES AUXILIARES
+// ========================================
+
+// Formatar números no padrão brasileiro
+function formatarNumero(valor, casas = 1) {
+    return Number(valor).toLocaleString("pt-BR", {
+        minimumFractionDigits: casas,
+        maximumFractionDigits: casas
+    });
 }
 
-// Gerar código
+// Gerar código único
 function gerarCodigo() {
     contadorCodigo++;
     return contadorCodigo;
 }
 
-// Ler formulário
+// ========================================
+// 3. LEITURA DO FORMULÁRIO
+// ========================================
+
 function lerFormulario() {
     return {
-        nome: inputNome.value.trim(),
-        idade: Number(inputIdade.value),
-        altura: Number(inputAltura.value),
-        peso: Number(inputPeso.value)
+        nome: elementos.nome.value.trim(),
+        idade: Number(elementos.idade.value),
+        altura: Number(elementos.altura.value),
+        peso: Number(elementos.peso.value)
     };
 }
 
-// Validar dados
+// ========================================
+// 4. VALIDAÇÃO DOS DADOS
+// ========================================
+
 function validarDados(dados) {
 
-    if (!dados.nome || dados.nome.length < 2) {
-        return "Informe um nome com no mínimo 2 letras.";
+    if (dados.nome.length < 2) {
+        return "Informe um nome com pelo menos 2 caracteres.";
     }
 
-    if (
-        !Number.isInteger(dados.idade) ||
+    if (!Number.isInteger(dados.idade) ||
         dados.idade < 1 ||
-        dados.idade > 120
-    ) {
-        return "A idade deve ser entre 1 e 120 anos.";
+        dados.idade > 120) {
+
+        return "A idade deve estar entre 1 e 120 anos.";
     }
 
-    if (
-        !Number.isFinite(dados.altura) ||
+    if (!Number.isFinite(dados.altura) ||
         dados.altura < 0.5 ||
-        dados.altura > 2.5
-    ) {
+        dados.altura > 2.5) {
+
         return "A altura deve estar entre 0,5 e 2,5 metros.";
     }
 
-    if (
-        !Number.isFinite(dados.peso) ||
+    if (!Number.isFinite(dados.peso) ||
         dados.peso < 2 ||
-        dados.peso > 500
-    ) {
+        dados.peso > 500) {
+
         return "O peso deve estar entre 2 e 500 kg.";
     }
 
-    return "";
+    return null;
 }
 
-// Adicionar pessoa
+// ========================================
+// 5. CONTROLE DE MENSAGENS
+// ========================================
+
+function mostrarErro(mensagem) {
+    elementos.erro.textContent = mensagem;
+    elementos.erro.hidden = false;
+}
+
+function limparErro() {
+    elementos.erro.textContent = "";
+    elementos.erro.hidden = true;
+}
+
+// ========================================
+// 6. CADASTRO DE PESSOAS
+// ========================================
+
 function adicionarPessoa(dados) {
 
-    pessoas.push({
+    const pessoa = {
         id: gerarCodigo(),
         nome: dados.nome,
         idade: dados.idade,
         altura: dados.altura,
         peso: dados.peso
-    });
+    };
+
+    pessoas.push(pessoa);
+
+    return pessoa;
 }
 
-// Mostrar erro
-function mostrarErro(mensagem) {
-    mensagemErro.textContent = mensagem;
-    mensagemErro.hidden = false;
-}
+// ========================================
+// 7. CÁLCULO E CLASSIFICAÇÃO DO IMC
+// ========================================
 
-// Limpar erro
-function limparErro() {
-    mensagemErro.textContent = "";
-    mensagemErro.hidden = true;
-}
-
-// Calcular IMC
 function calcularImc(peso, altura) {
-    return peso / (altura * altura);
+    return peso / (altura ** 2);
 }
 
-// Classificar IMC
 function classificarImc(imc) {
 
     if (imc < 18.5) {
@@ -149,15 +170,10 @@ function classificarImc(imc) {
     };
 }
 
-// Formatar números
-function formatar(valor, casas) {
-    return valor.toLocaleString("pt-BR", {
-        minimumFractionDigits: casas,
-        maximumFractionDigits: casas
-    });
-}
+// ========================================
+// 8. CRIAÇÃO DOS ELEMENTOS DA TABELA
+// ========================================
 
-// Criar célula
 function criarCelula(texto) {
 
     const td = document.createElement("td");
@@ -167,7 +183,6 @@ function criarCelula(texto) {
     return td;
 }
 
-// Criar linha da tabela
 function criarLinha(pessoa) {
 
     const tr = document.createElement("tr");
@@ -178,17 +193,28 @@ function criarLinha(pessoa) {
 
     const classificacao = classificarImc(imc);
 
+    // Dados da pessoa
     tr.appendChild(criarCelula(pessoa.nome));
     tr.appendChild(criarCelula(pessoa.idade));
-    tr.appendChild(criarCelula(formatar(pessoa.altura, 2) + " m"));
-    tr.appendChild(criarCelula(formatar(pessoa.peso, 1) + " kg"));
-    tr.appendChild(criarCelula(formatar(imc, 1)));
+    tr.appendChild(criarCelula(
+        formatarNumero(pessoa.altura, 2) + " m"
+    ));
+    tr.appendChild(criarCelula(
+        formatarNumero(pessoa.peso, 1) + " kg"
+    ));
+    tr.appendChild(criarCelula(
+        formatarNumero(imc, 1)
+    ));
 
-    const tdClassificacao = document.createElement("td");
+    // Classificação do IMC
+    const tdClassificacao = criarCelula("");
 
     const selo = document.createElement("span");
 
-    selo.classList.add("selo", classificacao.classe);
+    selo.classList.add(
+        "selo",
+        classificacao.classe
+    );
 
     selo.textContent = classificacao.texto;
 
@@ -199,7 +225,44 @@ function criarLinha(pessoa) {
     return tr;
 }
 
-// Salvar pessoas
+// ========================================
+// 9. RENDERIZAÇÃO DA TABELA
+// ========================================
+
+function renderizarTabela() {
+
+    elementos.tabela.innerHTML = "";
+
+    if (pessoas.length === 0) {
+
+        const tr = document.createElement("tr");
+        const td = criarCelula(
+            "Nenhuma pessoa cadastrada ainda."
+        );
+
+        td.colSpan = 6;
+        td.classList.add("vazio");
+
+        tr.appendChild(td);
+
+        elementos.tabela.appendChild(tr);
+
+        return;
+    }
+
+    const fragmento = document.createDocumentFragment();
+
+    pessoas.forEach(pessoa => {
+        fragmento.appendChild(criarLinha(pessoa));
+    });
+
+    elementos.tabela.appendChild(fragmento);
+}
+
+// ========================================
+// 10. ARMAZENAMENTO LOCAL
+// ========================================
+
 function salvarPessoas() {
 
     try {
@@ -215,52 +278,48 @@ function salvarPessoas() {
 
         console.error("Erro ao salvar pessoas:", erro);
 
-        mostrarErro("Não foi possível salvar os dados.");
+        mostrarErro(
+            "Não foi possível salvar os dados no navegador."
+        );
 
         return false;
     }
 }
 
-// Validar pessoa carregada
-function pessoaValida(pessoa) {
-
-    return (
-        pessoa !== null &&
-        typeof pessoa === "object" &&
-        Number.isInteger(pessoa.id) &&
-        pessoa.id > 0 &&
-        typeof pessoa.nome === "string" &&
-        pessoa.nome.trim().length >= 2 &&
-        Number.isInteger(pessoa.idade) &&
-        pessoa.idade >= 1 &&
-        pessoa.idade <= 120 &&
-        Number.isFinite(pessoa.altura) &&
-        pessoa.altura >= 0.5 &&
-        pessoa.altura <= 2.5 &&
-        Number.isFinite(pessoa.peso) &&
-        pessoa.peso >= 2 &&
-        pessoa.peso <= 500
-    );
-}
-
-// Carregar pessoas
 function carregarPessoas() {
 
     try {
 
-        const texto = localStorage.getItem(CHAVE_PESSOAS);
+        const dados = localStorage.getItem(CHAVE_PESSOAS);
 
-        if (texto === null) {
+        if (!dados) {
             return [];
         }
 
-        const dados = JSON.parse(texto);
+        const pessoasSalvas = JSON.parse(dados);
 
-        if (!Array.isArray(dados)) {
+        if (!Array.isArray(pessoasSalvas)) {
             return [];
         }
 
-        return dados.filter(pessoaValida);
+        // Aceitar somente registros válidos
+        return pessoasSalvas.filter(pessoa => {
+
+            return pessoa &&
+                Number.isSafeInteger(pessoa.id) &&
+                pessoa.id > 0 &&
+                typeof pessoa.nome === "string" &&
+                pessoa.nome.trim().length >= 2 &&
+                Number.isInteger(pessoa.idade) &&
+                pessoa.idade >= 1 &&
+                pessoa.idade <= 120 &&
+                Number.isFinite(pessoa.altura) &&
+                pessoa.altura >= 0.5 &&
+                pessoa.altura <= 2.5 &&
+                Number.isFinite(pessoa.peso) &&
+                pessoa.peso >= 2 &&
+                pessoa.peso <= 500;
+        });
 
     } catch (erro) {
 
@@ -270,96 +329,82 @@ function carregarPessoas() {
     }
 }
 
-// Ajustar contador
+// ========================================
+// 11. AJUSTAR CONTADOR DE CÓDIGOS
+// ========================================
+
 function ajustarContadorCodigo() {
 
-    let maior = 0;
-
-    pessoas.forEach((pessoa) => {
-
-        if (pessoa.id > maior) {
-            maior = pessoa.id;
-        }
-
-    });
-
-    contadorCodigo = maior;
+    contadorCodigo = pessoas.reduce(
+        (maior, pessoa) => Math.max(maior, pessoa.id),
+        0
+    );
 }
 
-// Renderizar tabela
-function render() {
+// ========================================
+// 12. LIMPAR FORMULÁRIO
+// ========================================
 
-    tabelaPessoas.innerHTML = "";
+function limparFormulario() {
 
-    if (pessoas.length === 0) {
+    elementos.formulario.reset();
 
-        const tr = document.createElement("tr");
+    elementos.nome.focus();
 
-        const td = document.createElement("td");
-
-        td.colSpan = 6;
-
-        td.classList.add("vazio");
-
-        td.textContent = "Nenhuma pessoa cadastrada ainda.";
-
-        tr.appendChild(td);
-
-        tabelaPessoas.appendChild(tr);
-
-        return;
-    }
-
-    pessoas.forEach((pessoa) => {
-
-        tabelaPessoas.appendChild(criarLinha(pessoa));
-
-    });
+    limparErro();
 }
 
-// Evento do formulário
-formPessoa.addEventListener("submit", (e) => {
+// ========================================
+// 13. EVENTO DE CADASTRO
+// ========================================
 
-    e.preventDefault();
+function cadastrarPessoa(evento) {
+
+    evento.preventDefault();
+
+    limparErro();
 
     const dados = lerFormulario();
 
     const erro = validarDados(dados);
 
-    if (erro !== "") {
-
+    if (erro) {
         mostrarErro(erro);
-
         return;
     }
-
-    limparErro();
 
     adicionarPessoa(dados);
 
-    const salvo = salvarPessoas();
-
-    if (!salvo) {
-
+    // Se não conseguir salvar, desfaz o cadastro em memória
+    if (!salvarPessoas()) {
         pessoas.pop();
-
-        contadorCodigo--;
-
-        render();
-
+        ajustarContadorCodigo();
         return;
     }
 
-    formPessoa.reset();
+    limparFormulario();
 
-    inputNome.focus();
+    renderizarTabela();
+}
 
-    render();
-});
+// ========================================
+// 14. INICIALIZAÇÃO DO SISTEMA
+// ========================================
 
-// Inicialização
-pessoas = carregarPessoas();
+function iniciarSistema() {
 
-ajustarContadorCodigo();
+    pessoas = carregarPessoas();
 
-render();
+    ajustarContadorCodigo();
+
+    renderizarTabela();
+
+    elementos.formulario.addEventListener(
+        "submit",
+        cadastrarPessoa
+    );
+
+}
+
+// Iniciar aplicação
+iniciarSistema();
