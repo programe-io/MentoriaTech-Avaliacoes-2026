@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instagram Clone</title>
+    
+    <!-- Tailwind CSS para Estilização -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- FontAwesome para Ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts para a Logo Clássica do Instagram -->
+    <link href="https://fonts.googleapis.com/css2?family=Grand+Hotel&display=swap" rel="stylesheet">
+
+    <style>
+        /* Ocultar barra de rolagem mas manter a funcionalidade para os Stories */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Estilo da Logo */
+        .insta-logo {
+            font-family: 'Grand Hotel', cursive;
+            font-size: 2.2rem;
+            letter-spacing: 1px;
+        }
+
+        /* Borda Gradiente dos Stories */
+        .story-ring {
+            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+            padding: 2px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .story-ring img {
+            border: 2px solid white;
+        }
+
+        /* Animação do botão de curtir */
+        .like-icon {
+            transition: transform 0.15s ease-in-out;
+        }
+        .like-icon.pop {
+            transform: scale(1.25);
+        }
+
+        /* Animação do coração grande no duplo clique */
+        @keyframes heartBurst {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.2);
+            }
+            20% {
+                opacity: 0.95;
+                transform: translate(-50%, -50%) scale(1.25);
+            }
+            40% {
+                transform: translate(-50%, -50%) scale(0.95);
+            }
+            60% {
+                opacity: 0.95;
+                transform: translate(-50%, -50%) scale(1.05);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+
+        .double-tap-heart {
+            animation: heartBurst 0.85s ease-out forwards;
+            pointer-events: none;
+        }
+
+        /* Barra de progresso do Story */
+        @keyframes storyProgress {
+            from { width: 0%; }
+            to { width: 100%; }
+        }
+        .animate-story-bar {
+            animation: storyProgress 5s linear forwards;
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"></head>
+<body class="bg-gray-50 text-gray-900 font-sans antialiased">
+
+    <div class="flex h-screen overflow-hidden">
+        
+        <!-- ================= NAVEGAÇÃO DESKTOP (Barra Lateral) ================= -->
+        <nav class="hidden md:flex flex-col w-64 border-r border-gray-300 bg-white h-full px-3 py-6 shrink-0 z-40">
+            <div class="mb-8 px-4">
+                <h1 class="insta-logo cursor-pointer">Instagram</h1>
+            </div>
+            
+            <div class="flex-1 space-y-2">
+                <a href="#" class="flex items-center gap-4 p-3 rounded-lg hover:bg-gray-100 transition font-bold">
+                    <i class="fa-solid fa-house text-xl w-6 text-center"></i> Página Inicial
+                </a>
+                <a href="#" class="flex items-center gap-4 p-3 rounded-lg hover:bg-gray-100 transition">
+                    <i class="fa-solid fa-magnifying-glass text-xl w-6 text-center"></i> Pesquisa
+                </a>
+                <a href="#" class="flex items-center gap-4 p-3 rounded-lg hover:bg-gray-100 transition">
+                    <i class="fa-regular fa-compass text-xl w-6 text-center"></i> Explorar
+                </a>
+                <a href="#" class="flex items-center gap-4 p-3 rounded-lg hover:bg-gray-100 transition">
+                    <i class="fa-solid fa-clapperboard text-xl w-6 text-center"></i> Reels
+                </a>
+                <a href="#" class="flex items-center gap-4 p-3 rounded-lg hover:bg-gray-100 transition">
+                    <i class="fa-regular fa-paper-plane text-xl w-6 text-center"></i> Mensagens
+                </a>
+                <a href="#" class="flex items-center gap-4 p-3 rounded-lg hover:bg-gray-100 transition">
+                    <i class="fa-regular fa-heart text-xl w-6 text-center"></i> Notificações
+                </a>
+                <button type="button" onclick="openCreateModal()" class="w-full flex items-center gap-4 p-3 rounded-lg hover:bg-gray-100 transition text-left">
+                    <i class="fa-regular fa-square-plus text-xl w-6 text-center"></i> Criar
+                </button>
+                <a href="#" class="flex items-center gap-4 p-3 rounded-lg hover:bg-gray-100 transition">
+                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80" onerror="this.onerror=null;this.src='https://placehold.co/100x100/333/fff?text=Eu'" class="w-6 h-6 rounded-full object-cover" alt="Perfil">
+                    Perfil
+                </a>
+            </div>
+
+            <div class="mt-auto">
+                <a href="#" class="flex items-center gap-4 p-3 rounded-lg hover:bg-gray-100 transition">
+                    <i class="fa-solid fa-bars text-xl w-6 text-center"></i> Mais
+                </a>
+            </div>
+        </nav>
+
+        <!-- ================= CABEÇALHO MOBILE ================= -->
+        <header class="md:hidden fixed top-0 w-full h-14 bg-white border-b border-gray-300 flex justify-between items-center px-4 z-40">
+            <h1 class="insta-logo">Instagram</h1>
+            <div class="flex gap-4 items-center">
+                <button onclick="openCreateModal()" title="Criar publicação"><i class="fa-regular fa-square-plus text-xl"></i></button>
+                <button title="Notificações"><i class="fa-regular fa-heart text-xl"></i></button>
+                <button title="Mensagens"><i class="fa-regular fa-paper-plane text-xl"></i></button>
+            </div>
+        </header>
+
+        <!-- ================= ÁREA DE CONTEÚDO PRINCIPAL (Feed) ================= -->
+        <main class="flex-1 overflow-y-auto hide-scrollbar mt-14 mb-12 md:mt-0 md:mb-0 bg-gray-50 flex justify-center w-full">
+            <div class="w-full max-w-[630px] md:py-8 lg:mr-8 xl:mr-16">
+                
+                <!-- Stories Section (Renderizada dinamicamente via JS) -->
+                <div class="bg-white md:border border-gray-300 md:rounded-lg pt-4 pb-3 px-4 mb-6 shadow-xs">
+                    <div id="stories-container" class="flex space-x-4 overflow-x-auto hide-scrollbar items-center">
+                        <!-- Stories inseridos via JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Feed de Posts (Renderizado dinamicamente via JS) -->
+                <div id="feed-container" class="space-y-4 md:space-y-6 pb-8">
+                    <!-- Posts inseridos via JavaScript -->
+                </div>
+            </div>
+            
+            <!-- Barra lateral direita com sugestões (Desktop Largas) -->
+            <div class="hidden lg:block w-[320px] pt-12">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center gap-4 cursor-pointer">
+                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80" onerror="this.onerror=null;this.src='https://placehold.co/100x100/333/fff?text=Eu'" class="w-11 h-11 rounded-full object-cover border border-gray-200" alt="Seu Perfil">
+                        <div>
+                            <p class="text-sm font-semibold">camila.rocha</p>
+                            <p class="text-sm text-gray-500">Camila Rocha</p>
+                        </div>
+                    </div>
+                    <button class="text-blue-500 text-xs font-semibold hover:text-blue-700">Mudar</button>
+                </div>
+                
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-sm font-semibold text-gray-500">Sugestões para você</span>
+                    <button class="text-xs font-semibold hover:text-gray-400">Ver tudo</button>
+                </div>
+                
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3 cursor-pointer">
+                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80" onerror="this.onerror=null;this.src='https://placehold.co/100x100/10b981/fff?text=L'" class="w-8 h-8 rounded-full object-cover" alt="Sugestão">
+                            <div>
+                                <p class="text-sm font-semibold">lucas.fotografia</p>
+                                <p class="text-xs text-gray-500">Segue você</p>
+                            </div>
+                        </div>
+                        <button onclick="toggleFollow(this)" class="text-blue-500 text-xs font-semibold hover:text-gray-900">Seguir</button>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3 cursor-pointer">
+                            <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&q=80" onerror="this.onerror=null;this.src='https://placehold.co/100x100/ec4899/fff?text=M'" class="w-8 h-8 rounded-full object-cover" alt="Sugestão">
+                            <div>
+                                <p class="text-sm font-semibold">marina.gastronomia</p>
+                                <p class="text-xs text-gray-500">Sugestão para você</p>
+                            </div>
+                        </div>
+                        <button onclick="toggleFollow(this)" class="text-blue-500 text-xs font-semibold hover:text-gray-900">Seguir</button>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3 cursor-pointer">
+                            <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80" onerror="this.onerror=null;this.src='https://placehold.co/100x100/3b82f6/fff?text=R'" class="w-8 h-8 rounded-full object-cover" alt="Sugestão">
+                            <div>
+                                <p class="text-sm font-semibold">rafael.arq</p>
+                                <p class="text-xs text-gray-500">Seguido por alice_dev</p>
+                            </div>
+                        </div>
+                        <button onclick="toggleFollow(this)" class="text-blue-500 text-xs font-semibold hover:text-gray-900">Seguir</button>
+                    </div>
+                </div>
+
+                <div class="mt-8 text-xs text-gray-400 space-y-2">
+                    <p>Sobre • Ajuda • Imprensa • API • Carreiras • Privacidade • Termos</p>
+                    <p>© 2026 INSTAGRAM CLONE</p>
+                </div>
+            </div>
+        </main>
+
+        <!-- ================= NAVEGAÇÃO INFERIOR MOBILE ================= -->
+        <nav class="md:hidden fixed bottom-0 w-full h-12 bg-white border-t border-gray-300 flex justify-around items-center px-2 z-40">
+            <button class="p-2 text-2xl hover:bg-gray-100 rounded-lg transition"><i class="fa-solid fa-house"></i></button>
+            <button class="p-2 text-2xl hover:bg-gray-100 rounded-lg transition"><i class="fa-solid fa-magnifying-glass"></i></button>
+            <button onclick="openCreateModal()" class="p-2 text-2xl hover:bg-gray-100 rounded-lg transition"><i class="fa-regular fa-square-plus"></i></button>
+            <button class="p-2 text-2xl hover:bg-gray-100 rounded-lg transition"><i class="fa-solid fa-clapperboard"></i></button>
+            <button class="p-2 hover:bg-gray-100 rounded-lg transition">
+                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80" onerror="this.onerror=null;this.src='https://placehold.co/100x100/333/fff?text=Eu'" class="w-7 h-7 rounded-full object-cover border border-gray-300" alt="Perfil">
+            </button>
+        </nav>
+
+    </div>
+
+    <!-- ================= MODAL DE VISUALIZAÇÃO DE STORY ================= -->
+    <div id="story-modal" class="fixed inset-0 bg-black/90 z-50 hidden flex items-center justify-center p-4">
+        <div class="relative w-full max-w-sm h-[82vh] max-h-[700px] bg-gray-900 rounded-2xl overflow-hidden shadow-2xl flex flex-col">
+            <!-- Barra de Progresso -->
+            <div class="absolute top-0 left-0 right-0 p-3 z-20 bg-gradient-to-b from-black/70 to-transparent">
+                <div class="w-full h-1 bg-white/30 rounded-full overflow-hidden mb-3">
+                    <div id="story-progress-bar" class="h-full bg-white rounded-full"></div>
+                </div>
+                <div class="flex items-center justify-between text-white">
+                    <div class="flex items-center gap-2.5">
+                        <img id="story-modal-avatar" src="" class="w-9 h-9 rounded-full object-cover border border-white/50" alt="Avatar">
+                        <div>
+                            <span id="story-modal-username" class="text-sm font-semibold block leading-tight"></span>
+                            <span id="story-modal-time" class="text-xs text-gray-300">2 h</span>
+                        </div>
+                    </div>
+                    <button onclick="closeStoryModal()" class="text-white/80 hover:text-white p-2 text-xl">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Imagem do Story -->
+            <img id="story-modal-image" src="" class="w-full h-full object-cover" alt="Story">
+
+            <!-- Rodapé do Story -->
+            <div class="absolute bottom-0 left-0 right-0 p-4 z-20 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
+                <p id="story-modal-caption" class="text-white text-sm mb-3 drop-shadow"></p>
+                <div class="flex items-center gap-3">
+                    <input type="text" placeholder="Enviar mensagem..." class="flex-1 bg-transparent border border-white/60 rounded-full px-4 py-2 text-sm text-white placeholder-white/75 focus:outline-none focus:border-white">
+                    <button onclick="closeStoryModal()" class="text-white text-xl hover:scale-110 transition">
+                        <i class="fa-regular fa-heart"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Áreas de clique esquerda/direita para navegar entre stories -->
+            <button onclick="prevStory()" class="absolute inset-y-16 left-0 w-1/3 z-10 focus:outline-none" aria-label="Story anterior"></button>
+            <button onclick="nextStory()" class="absolute inset-y-16 right-0 w-1/3 z-10 focus:outline-none" aria-label="Próximo story"></button>
+        </div>
+    </div>
+
+    <!-- ================= MODAL DE CRIAR NOVO POST ================= -->
+    <div id="create-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4 backdrop-blur-xs">
+        <div class="bg-white rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl border border-gray-200 animate-fade-in">
+            <!-- Header do Modal -->
+            <div class="flex items-center justify-between px-4 py-3 border-b border-gray-200">
+                <button onclick="closeCreateModal()" class="text-gray-500 hover:text-gray-800 text-sm font-medium">Cancelar</button>
+                <h2 class="font-semibold text-base">Criar nova publicação</h2>
+                <button onclick="publishNewPost()" class="text-blue-500 hover:text-blue-700 font-semibold text-sm">Compartilhar</button>
+            </div>
+
+            <!-- Corpo do Modal -->
+            <div class="p-4 space-y-4 max-h-[80vh] overflow-y-auto">
+                <!-- Preview da Imagem Selecionada -->
+                <div class="relative w-full h-64 bg-gray-100 rounded-xl overflow-hidden border border-gray-200 flex items-center justify-center">
+                    <img id="new-post-preview" src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80" onerror="this.onerror=null;this.src='https://placehold.co/800x600/e2e8f0/475569?text=Imagem+Indisponivel'" class="w-full h-full object-cover" alt="Pré-visualização">
+                </div>
+
+                <!-- Seleção de Fotos Pré-definidas -->
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Escolha uma foto da galeria:</label>
+                    <div id="preset-photos" class="grid grid-cols-4 gap-2">
+                        <!-- Miniaturas inseridas via JS -->
+                    </div>
+                </div>
+
+                <!-- Ou URL Personalizada -->
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Ou cole a URL de uma imagem:</label>
+                    <input id="new-post-url" type="url" placeholder="https://images.unsplash.com/..." oninput="updatePreviewFromUrl(this.value)" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500">
+                </div>
+
+                <!-- Localização e Legenda -->
+                <div class="grid grid-cols-1 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Localização (opcional):</label>
+                        <input id="new-post-location" type="text" placeholder="Ex: Rio de Janeiro, Brasil" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Legenda:</label>
+                        <textarea id="new-post-caption" rows="3" placeholder="Escreva uma legenda incrível..." class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 resize-none"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast de Notificação (Substitui alert()) -->
+    <div id="toast-notification" class="fixed bottom-16 md:bottom-6 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-sm px-4 py-2.5 rounded-full shadow-lg opacity-0 pointer-events-none transition-opacity duration-300 z-50">
+        Publicação compartilhada!
+    </div>
+
+    <!-- Script para Interatividade e Dados Reais -->
+    <script>
+        // URL de fallback global caso alguma imagem externa falhe
+        const FALLBACK_POST_IMG = 'https://placehold.co/800x800/e2e8f0/475569?text=Foto+Indisponivel';
+        const FALLBACK_AVATAR_IMG = 'https://placehold.co/200x200/cbd5e1/334155?text=User';
+
+        // Dados dos Stories com fotos reais do Unsplash
+        const storiesData = [
+            {
+                id: 0,
+                username: 'Seu story',
+                isOwn: true,
+                avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80',
+                storyImage: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80',
+                caption: 'Fim de tarde perfeito na praia 🌊☀️',
+                time: '1 h'
+            },
+            {
+                id: 1,
+                username: 'alice_dev',
+                isOwn: false,
+                avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&q=80',
+                storyImage: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=800&q=80',
+                caption: 'Codando um projeto novo com café ☕💻',
+                time: '2 h'
+            },
+            {
+                id: 2,
+                username: 'bruno.viagens',
+                isOwn: false,
+                avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80',
+                storyImage: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=800&q=80',
+                caption: 'Trilha nas montanhas hoje cedo 🏔️',
+                time: '4 h'
+            },
+            {
+                id: 3,
+                username: 'carol.chef',
+                isOwn: false,
+                avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=200&q=80',
+                storyImage: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=800&q=80',
+                caption: 'Pizza artesanal saindo do forno! 🍕🔥',
+                time: '5 h'
+            },
+            {
+                id: 4,
+                username: 'daniel_arq',
+                isOwn: false,
+                avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80',
+                storyImage: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=800&q=80',
+                caption: 'Luz natural e arquitetura minimalista ✨',
+                time: '7 h'
+            },
+            {
+                id: 5,
+                username: 'edu.design',
+                isOwn: false,
+                avatar: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=200&q=80',
+                storyImage: 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=800&q=80',
+                caption: 'Inspiração de cores para o novo app 🎨',
+                time: '9 h'
+            }
+        ];
+
+        // Dados iniciais dos Posts no Feed com fotos reais variadas
+        let postsData = [
+            {
+                id: 101,
+                username: 'bruno.viagens',
+                location: 'Dolomitas, Itália',
+                avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80',
+                image: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80',
+                likes: 1452,
+                liked: false,
+                saved: false,
+                caption: 'Aquele silêncio das montanhas que renova todas as energias. Um dos lugares mais incríveis que já visitei! 🏔️🌲 #natureza #viagem #paisagem',
+                timeAgo: 'HÁ 2 HORAS',
+                comments: [
+                    { user: 'alice_dev', text: 'Que lugar surreal! Parece uma pintura 😍' },
+                    { user: 'daniel_arq', text: 'Fotografia impecável, irmão!' }
+                ]
+            },
+            {
+                id: 102,
+                username: 'carol.chef',
+                location: 'São Paulo, Brasil',
+                avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=200&q=80',
+                image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80',
+                likes: 894,
+                liked: true,
+                saved: false,
+                caption: 'Almoço leve, colorido e cheio de sabor para começar bem a semana! 🥗🥑 Quem aí também ama comida saudável?',
+                timeAgo: 'HÁ 4 HORAS',
+                comments: [
+                    { user: 'camila.rocha', text: 'Deu água na boca só de olhar 🤤' }
+                ]
+            },
+            {
+                id: 103,
+                username: 'daniel_arq',
+                location: 'Copenhague, Dinamarca',
+                avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80',
+                image: 'https://images.unsplash.com/photo-1511818966892-d7d671e672a2?auto=format&fit=crop&w=800&q=80',
+                likes: 2310,
+                liked: false,
+                saved: true,
+                caption: 'Geometria, curvas e luz natural na arquitetura contemporânea. Cada ângulo conta uma história diferente. 🏛️📐 #arquitetura #design',
+                timeAgo: 'HÁ 6 HORAS',
+                comments: [
+                    { user: 'edu.design', text: 'Simetria perfeita!' },
+                    { user: 'bruno.viagens', text: 'Preciso conhecer esse prédio pessoalmente.' }
+                ]
+            },
+            {
+                id: 104,
+                username: 'alice_dev',
+                location: 'Lisboa, Portugal',
+                avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&q=80',
+                image: 'https://images.unsplash.com/photo-1555881400-74d7acaacd8b?auto=format&fit=crop&w=800&q=80',
+                likes: 1128,
+                liked: false,
+                saved: false,
+                caption: 'Perdida pelas ruas históricas e encantadoras de Lisboa com esse pôr do sol dourado. 🚋☀️ #portugal #lisboa #europa',
+                timeAgo: 'HÁ 9 HORAS',
+                comments: []
+            }
+        ];
+
+        // Fotos pré-definidas para o modal de criar publicação
+        const presetGalleryPhotos = [
+            { label: 'Paisagem', url: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80' },
+            { label: 'Café & Brunch', url: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=800&q=80' },
+            { label: 'Arquitetura', url: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80' },
+            { label: 'Praia', url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80' }
+        ];
+
+        let currentStoryIndex = 0;
+        let storyTimer = null;
+
+        // ================= RENDERIZAR STORIES =================
+        function renderStories() {
+            const container = document.getElementById('stories-container');
+            container.innerHTML = storiesData.map((story, index) => `
+                <div onclick="openStoryModal(${index})" class="flex flex-col items-center cursor-pointer min-w-[72px] group">
+                    <div class="relative w-[66px] h-[66px] ${story.isOwn ? '' : 'story-ring'} transition-transform group-hover:scale-105">
+                        <img src="${story.avatar}" onerror="this.onerror=null;this.src='${FALLBACK_AVATAR_IMG}'" class="w-full h-full rounded-full object-cover ${story.isOwn ? 'border border-gray-200 p-[2px]' : ''}" alt="${story.username}">
+                        ${story.isOwn ? `
+                            <div class="absolute bottom-0 right-0 bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center border-2 border-white text-xs">
+                                <i class="fa-solid fa-plus"></i>
+                            </div>
+                        ` : ''}
+                    </div>
+                    <span class="text-xs mt-1.5 ${story.isOwn ? 'text-gray-500' : 'text-gray-800'} truncate w-16 text-center">${story.username}</span>
+                </div>
+            `).join('');
+        }
+
+        // ================= RENDERIZAR FEED DE POSTS =================
+        function renderFeed() {
+            const container = document.getElementById('feed-container');
+            container.innerHTML = postsData.map(post => `
+                <article id="post-${post.id}" class="bg-white border-y md:border md:border-gray-300 md:rounded-lg pb-3 shadow-2xs">
+                    <!-- Cabeçalho do Post -->
+                    <div class="flex items-center justify-between p-3">
+                        <div class="flex items-center gap-3 cursor-pointer">
+                            <div class="story-ring w-9 h-9">
+                                <img src="${post.avatar}" onerror="this.onerror=null;this.src='${FALLBACK_AVATAR_IMG}'" class="w-full h-full rounded-full object-cover" alt="${post.username}">
+                            </div>
+                            <div class="flex flex-col">
+                                <span class="text-sm font-semibold hover:text-gray-500 leading-tight">${post.username}</span>
+                                ${post.location ? `<span class="text-xs text-gray-500">${post.location}</span>` : ''}
+                            </div>
+                        </div>
+                        <button class="text-gray-900 hover:text-gray-500 p-1">
+                            <i class="fa-solid fa-ellipsis"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- Imagem Principal do Post (com duplo clique para curtir) -->
+                    <div ondblclick="handleDoubleTapLike(${post.id}, this)" class="relative w-full bg-gray-100 flex items-center justify-center border-y border-gray-100 select-none cursor-pointer overflow-hidden">
+                        <img src="${post.image}" onerror="this.onerror=null;this.src='${FALLBACK_POST_IMG}'" class="w-full object-cover max-h-[620px]" alt="Publicação de ${post.username}">
+                        <!-- Ícone de coração animado no centro -->
+                        <div class="heart-overlay hidden absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white text-7xl drop-shadow-[0_4px_12px_rgba(0,0,0,0.45)]">
+                            <i class="fa-solid fa-heart"></i>
+                        </div>
+                    </div>
+                    
+                    <!-- Barra de Ações -->
+                    <div class="flex justify-between p-3 pb-1.5">
+                        <div class="flex gap-4 items-center">
+                            <button onclick="toggleLike(${post.id})" class="text-2xl hover:opacity-70 focus:outline-none transition">
+                                <i id="like-icon-${post.id}" class="${post.liked ? 'fa-solid fa-heart text-red-500' : 'fa-regular fa-heart'} like-icon"></i>
+                            </button>
+                            <button onclick="focusCommentInput(${post.id})" class="text-2xl hover:opacity-70 focus:outline-none transition">
+                                <i class="fa-regular fa-comment text-[22px]"></i>
+                            </button>
+                            <button onclick="showToast('Link da publicação copiado!')" class="text-2xl hover:opacity-70 focus:outline-none transition">
+                                <i class="fa-regular fa-paper-plane text-[22px]"></i>
+                            </button>
+                        </div>
+                        <button onclick="toggleSave(${post.id})" class="text-2xl hover:opacity-70 focus:outline-none transition">
+                            <i id="save-icon-${post.id}" class="${post.saved ? 'fa-solid fa-bookmark text-gray-900' : 'fa-regular fa-bookmark'} text-[22px]"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- Contagem de Curtidas -->
+                    <div class="px-3 text-sm font-semibold mb-1.5">
+                        <span id="like-count-${post.id}">${post.likes.toLocaleString('pt-BR')}</span> curtidas
+                    </div>
+                    
+                    <!-- Legenda -->
+                    <div class="px-3 text-sm mb-2 leading-snug">
+                        <span class="font-semibold cursor-pointer mr-1">${post.username}</span>
+                        <span>${escapeHTML(post.caption)}</span>
+                    </div>
+                    
+                    <!-- Lista de Comentários -->
+                    <div id="comments-list-${post.id}" class="px-3 space-y-1 mb-2">
+                        ${post.comments.map(c => `
+                            <div class="text-sm leading-snug">
+                                <span class="font-semibold mr-1">${escapeHTML(c.user)}</span>
+                                <span>${escapeHTML(c.text)}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <!-- Tempo da publicação -->
+                    <div class="px-3 text-[11px] text-gray-400 uppercase tracking-wide mb-2">
+                        ${post.timeAgo}
+                    </div>
+                    
+                    <!-- Campo para Adicionar Novo Comentário (Visível em Mobile e Desktop) -->
+                    <form onsubmit="addComment(event, ${post.id})" class="px-3 pt-2.5 mt-1 border-t border-gray-100 flex items-center gap-2.5">
+                        <i class="fa-regular fa-face-smile text-lg text-gray-400"></i>
+                        <input id="comment-input-${post.id}" type="text" placeholder="Adicione um comentário..." class="w-full text-sm outline-none bg-transparent placeholder-gray-400">
+                        <button type="submit" class="text-blue-500 font-semibold text-sm hover:text-blue-700 transition">Publicar</button>
+                    </form>
+                </article>
+            `).join('');
+        }
+
+        // ================= CURTIR & DUPLO CLIQUE =================
+        function toggleLike(postId, forceLike = false) {
+            const post = postsData.find(p => p.id === postId);
+            if (!post) return;
+
+            if (forceLike && post.liked) {
+                return; // Se já estiver curtido no duplo clique, apenas mostra a animação sem descurtir
+            }
+
+            post.liked = !post.liked;
+            post.likes += post.liked ? 1 : -1;
+
+            const icon = document.getElementById(`like-icon-${postId}`);
+            const countEl = document.getElementById(`like-count-${postId}`);
+
+            if (icon) {
+                icon.className = post.liked
+                    ? 'fa-solid fa-heart text-red-500 like-icon pop'
+                    : 'fa-regular fa-heart like-icon';
+                setTimeout(() => icon.classList.remove('pop'), 150);
+            }
+            if (countEl) {
+                countEl.innerText = post.likes.toLocaleString('pt-BR');
+            }
+        }
+
+        function handleDoubleTapLike(postId, container) {
+            toggleLike(postId, true);
+
+            const overlay = container.querySelector('.heart-overlay');
+            if (overlay) {
+                overlay.classList.remove('hidden', 'double-tap-heart');
+                void overlay.offsetWidth; // Reinicia a animação CSS
+                overlay.classList.add('double-tap-heart');
+                setTimeout(() => {
+                    overlay.classList.add('hidden');
+                    overlay.classList.remove('double-tap-heart');
+                }, 850);
+            }
+        }
+
+        // ================= SALVAR POST =================
+        function toggleSave(postId) {
+            const post = postsData.find(p => p.id === postId);
+            if (!post) return;
+
+            post.saved = !post.saved;
+            const icon = document.getElementById(`save-icon-${postId}`);
+            if (icon) {
+                icon.className = post.saved
+                    ? 'fa-solid fa-bookmark text-gray-900 text-[22px]'
+                    : 'fa-regular fa-bookmark text-[22px]';
+            }
+            showToast(post.saved ? 'Salvo na sua coleção!' : 'Removido dos salvos.');
+        }
+
+        // ================= COMENTÁRIOS EM TEMPO REAL =================
+        function focusCommentInput(postId) {
+            const input = document.getElementById(`comment-input-${postId}`);
+            if (input) input.focus();
+        }
+
+        function addComment(event, postId) {
+            event.preventDefault();
+            const input = document.getElementById(`comment-input-${postId}`);
+            const text = input.value.trim();
+            if (!text) return;
+
+            const post = postsData.find(p => p.id === postId);
+            if (!post) return;
+
+            post.comments.push({ user: 'camila.rocha', text });
+
+            const list = document.getElementById(`comments-list-${postId}`);
+            const commentDiv = document.createElement('div');
+            commentDiv.className = 'text-sm leading-snug';
+            commentDiv.innerHTML = `<span class="font-semibold mr-1">camila.rocha</span><span>${escapeHTML(text)}</span>`;
+            list.appendChild(commentDiv);
+
+            input.value = '';
+        }
+
+        // ================= MODAL DE STORIES =================
+        function openStoryModal(index) {
+            currentStoryIndex = index;
+            const story = storiesData[index];
+            if (!story) return;
+
+            const modal = document.getElementById('story-modal');
+            const avatar = document.getElementById('story-modal-avatar');
+            const username = document.getElementById('story-modal-username');
+            const time = document.getElementById('story-modal-time');
+            const image = document.getElementById('story-modal-image');
+            const caption = document.getElementById('story-modal-caption');
+            const progressBar = document.getElementById('story-progress-bar');
+
+            avatar.src = story.avatar;
+            avatar.onerror = () => { avatar.src = FALLBACK_AVATAR_IMG; };
+            username.innerText = story.username;
+            time.innerText = story.time;
+            image.src = story.storyImage;
+            image.onerror = () => { image.src = FALLBACK_POST_IMG; };
+            caption.innerText = story.caption;
+
+            modal.classList.remove('hidden');
+
+            // Reinicia barra de progresso
+            progressBar.classList.remove('animate-story-bar');
+            void progressBar.offsetWidth;
+            progressBar.classList.add('animate-story-bar');
+
+            clearTimeout(storyTimer);
+            storyTimer = setTimeout(() => {
+                nextStory();
+            }, 5000);
+        }
+
+        function closeStoryModal() {
+            clearTimeout(storyTimer);
+            document.getElementById('story-modal').classList.add('hidden');
+        }
+
+        function nextStory() {
+            if (currentStoryIndex < storiesData.length - 1) {
+                openStoryModal(currentStoryIndex + 1);
+            } else {
+                closeStoryModal();
+            }
+        }
+
+        function prevStory() {
+            if (currentStoryIndex > 0) {
+                openStoryModal(currentStoryIndex - 1);
+            } else {
+                openStoryModal(0);
+            }
+        }
+
+        // ================= MODAL DE CRIAR NOVO POST =================
+        function initPresetPhotos() {
+            const container = document.getElementById('preset-photos');
+            container.innerHTML = presetGalleryPhotos.map(item => `
+                <button type="button" onclick="selectPresetPhoto('${item.url}')" class="group relative rounded-lg overflow-hidden border-2 border-transparent hover:border-blue-500 focus:border-blue-500 h-16">
+                    <img src="${item.url}" onerror="this.onerror=null;this.src='${FALLBACK_POST_IMG}'" class="w-full h-full object-cover" alt="${item.label}">
+                    <span class="absolute bottom-0 inset-x-0 bg-black/60 text-white text-[10px] py-0.5 text-center truncate">${item.label}</span>
+                </button>
+            `).join('');
+        }
+
+        function openCreateModal() {
+            document.getElementById('create-modal').classList.remove('hidden');
+            document.getElementById('new-post-url').value = '';
+            document.getElementById('new-post-location').value = '';
+            document.getElementById('new-post-caption').value = '';
+            document.getElementById('new-post-preview').src = presetGalleryPhotos[0].url;
+        }
+
+        function closeCreateModal() {
+            document.getElementById('create-modal').classList.add('hidden');
+        }
+
+        function selectPresetPhoto(url) {
+            document.getElementById('new-post-preview').src = url;
+            document.getElementById('new-post-url').value = url;
+        }
+
+        function updatePreviewFromUrl(url) {
+            const trimmed = url.trim();
+            if (trimmed) {
+                document.getElementById('new-post-preview').src = trimmed;
+            }
+        }
+
+        function publishNewPost() {
+            const customUrl = document.getElementById('new-post-url').value.trim();
+            const previewSrc = document.getElementById('new-post-preview').src;
+            const location = document.getElementById('new-post-location').value.trim();
+            const caption = document.getElementById('new-post-caption').value.trim() || 'Compartilhando um novo momento ✨';
+
+            const finalImage = customUrl || previewSrc || presetGalleryPhotos[0].url;
+
+            const newPost = {
+                id: Date.now(),
+                username: 'camila.rocha',
+                location: location,
+                avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80',
+                image: finalImage,
+                likes: 1,
+                liked: true,
+                saved: false,
+                caption: caption,
+                timeAgo: 'AGORA MESMO',
+                comments: []
+            };
+
+            postsData.unshift(newPost);
+            renderFeed();
+            closeCreateModal();
+            showToast('Publicação compartilhada no feed!');
+        }
+
+        // ================= UTILITÁRIOS =================
+        function toggleFollow(btn) {
+            if (btn.innerText === 'Seguir') {
+                btn.innerText = 'Seguindo';
+                btn.classList.remove('text-blue-500');
+                btn.classList.add('text-gray-800');
+            } else {
+                btn.innerText = 'Seguir';
+                btn.classList.add('text-blue-500');
+                btn.classList.remove('text-gray-800');
+            }
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast-notification');
+            toast.innerText = message;
+            toast.classList.remove('opacity-0');
+            setTimeout(() => {
+                toast.classList.add('opacity-0');
+            }, 2500);
+        }
+
+        function escapeHTML(str) {
+            return str.replace(/[&<>"']/g, match => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            }[match]));
+        }
+
+        // Inicialização ao carregar a página
+        document.addEventListener('DOMContentLoaded', () => {
+            renderStories();
+            renderFeed();
+            initPresetPhotos();
+        });
+    </script>
+</body>
+</html>
