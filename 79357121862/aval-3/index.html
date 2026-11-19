@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Instagram</title>
+
+<link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #fafafa;
+    color: #262626;
+}
+
+/* MENU LATERAL */
+.sidebar {
+    position: fixed;
+    width: 220px;
+    height: 100vh;
+    border-right: 1px solid #ddd;
+    padding: 30px 20px;
+    background: white;
+}
+
+.logo {
+    font-family: cursive;
+    font-size: 30px;
+    margin-bottom: 35px;
+}
+
+.menu a {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 14px 5px;
+    text-decoration: none;
+    color: #222;
+    font-size: 17px;
+}
+
+.menu a i {
+    font-size: 25px;
+}
+
+.menu a:hover {
+    background: #eee;
+    border-radius: 8px;
+}
+
+/* CONTEÚDO */
+main {
+    margin-left: 220px;
+    padding: 30px;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    max-width: 1050px;
+    margin: auto;
+}
+
+.feed {
+    width: 480px;
+    max-width: 100%;
+}
+
+/* STORIES */
+.stories {
+    display: flex;
+    gap: 15px;
+    background: white;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin-bottom: 25px;
+}
+
+.story {
+    text-align: center;
+    font-size: 12px;
+    min-width: 65px;
+}
+
+.story img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 3px solid #e1306c;
+    padding: 2px;
+    object-fit: cover;
+    margin-bottom: 5px;
+}
+
+/* PUBLICAÇÕES */
+.post {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 25px;
+    overflow: hidden;
+}
+
+.post-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+}
+
+.post-header img {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.post-header strong {
+    flex: 1;
+}
+
+.post-header i {
+    font-size: 24px;
+}
+
+.post-photo {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background: #eee;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+}
+
+.post-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.post-actions {
+    padding: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.post-actions div {
+    display: flex;
+    gap: 15px;
+}
+
+.post-actions i {
+    font-size: 27px;
+    cursor: pointer;
+}
+
+.post-actions i:hover {
+    color: #777;
+}
+
+.caption {
+    padding: 0 12px 15px;
+    font-size: 14px;
+}
+
+.caption p {
+    margin-top: 7px;
+}
+
+.comment {
+    display: flex;
+    padding: 10px;
+    border-top: 1px solid #eee;
+}
+
+.comment input {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 8px;
+}
+
+.comment button {
+    border: none;
+    color: #0095f6;
+    background: none;
+    cursor: pointer;
+}
+
+.photo-label {
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #777;
+    gap: 8px;
+}
+
+.photo-label i {
+    font-size: 65px;
+}
+
+.photo-label span {
+    font-size: 13px;
+}
+
+.photo-input {
+    display: none;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* SUGESTÕES */
+.right {
+    width: 270px;
+    padding-top: 15px;
+}
+
+.profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 25px;
+}
+
+.profile img {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.suggestion {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 18px 0;
+}
+
+.suggestion img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.suggestion div {
+    flex: 1;
+    font-size: 13px;
+}
+
+.follow {
+    border: none;
+    background: none;
+    color: #0095f6;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.following {
+    color: #555;
+}
+
+/* RESPONSIVO */
+@media(max-width: 950px) {
+    .right {
+        display: none;
+    }
+}
+
+@media(max-width: 600px) {
+    .sidebar {
+        position: fixed;
+        bottom: 0;
+        top: auto;
+        width: 100%;
+        height: 60px;
+        padding: 5px;
+        z-index: 10;
+    }
+
+    .logo {
+        display: none;
+    }
+
+    .menu {
+        display: flex;
+        justify-content: space-around;
+    }
+
+    .menu a {
+        padding: 10px;
+    }
+
+    .menu a span {
+        display: none;
+    }
+
+    main {
+        margin: 0;
+        padding: 10px;
+        padding-bottom: 75px;
+    }
+
+    .feed {
+        width: 100%;
+    }
+}
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+<!-- MENU -->
+<aside class="sidebar">
+    <h1 class="logo">Instagram</h1>
+
+    <nav class="menu">
+        <a href="#"><i class='bx bx-home'></i><span>Início</span></a>
+        <a href="#"><i class='bx bx-search'></i><span>Pesquisar</span></a>
+        <a href="#"><i class='bx bx-compass'></i><span>Explorar</span></a>
+        <a href="#"><i class='bx bx-video'></i><span>Reels</span></a>
+        <a href="#"><i class='bx bx-message-rounded'></i><span>Mensagens</span></a>
+        <a href="#"><i class='bx bx-heart'></i><span>Notificações</span></a>
+        <a href="#"><i class='bx bx-plus-square'></i><span>Criar</span></a>
+        <a href="#"><i class='bx bx-user-circle'></i><span>Perfil</span></a>
+    </nav>
+</aside>
+
+<main>
+<div class="container">
+
+<section class="feed">
+
+<!-- STORIES -->
+<div class="stories">
+
+    <div class="story">
+        <img src="https://i.pinimg.com/736x/f0/b7/64/f0b7644558e6479632ba97d62cbaae40.jpg">
+        <p>Seu story</p>
+    </div>
+
+    <div class="story">
+        <img src="https://i.pinimg.com/736x/42/d2/7b/42d27bb1ded796673877ef8719ad3d4f.jpg">
+        <p>Jessica</p>
+    </div>
+
+    <div class="story">
+        <img src="https://i.pinimg.com/1200x/98/4e/28/984e283bf6a13fbb0670aaced7b30716.jpg">
+        <p>Kamila</p>
+    </div>
+
+    <div class="story">
+        <img src="https://i.pinimg.com/736x/e9/04/cf/e904cfbd197fb9911f6322f42af6a739.jpg">
+        <p>Clarissa</p>
+    </div>
+
+    <div class="story">
+        <img src="https://i.pinimg.com/1200x/ed/8b/75/ed8b75efeed35cb057d81d228ec4daa9.jpg">
+        <p>Samyra</p>
+    </div>
+
+    <div class="story">
+        <img src="https://i.pinimg.com/736x/74/de/ca/74deca6a6d707fb348c4d66c73d02c23.jpg">
+        <p>kellen</p>
+    </div>
+
+    <div class="story">
+        <img src="https://i.pinimg.com/736x/01/c6/53/01c653305a418e23d18b77936661980d.jpg">
+        <p>luzivania</p>
+    </div>
+
+</div>
+
+<!-- PUBLICAÇÃO 1 -->
+<div class="post">
+
+    <div class="post-header">
+        <img src="https://i.pinimg.com/736x/f0/b7/64/f0b7644558e6479632ba97d62cbaae40.jpg">
+        <strong>Rafaela_leal</strong>
+        <i class='bx bx-dots-horizontal-rounded'></i>
+    </div>
+
+    <div class="post-photo">
+        <img src="https://i.pinimg.com/736x/14/e5/ac/14e5acc937e0e781b964012c4a48eb76.jpg">
+    </div>
+
+    <div class="post-actions">
+        <div>
+            <i class='bx bx-heart' onclick="like(this)"></i>
+            <i class='bx bx-comment' onclick="focusComment(this)"></i>
+            <i class='bx bx-send'></i>
+        </div>
+        <i class='bx bx-bookmark' onclick="save(this)"></i>
+    </div>
+
+    <div class="caption">
+        <strong><span class="likes">120</span></strong> curtidas
+        <p><strong>Rafaela_leal</strong></p>
+        <div class="comments"></div>
+    </div>
+
+    <div class="comment">
+        <input type="text" placeholder="Adicione um comentário...">
+        <button onclick="comment(this)">Publicar</button>
+    </div>
+
+</div>
+
+<!-- PUBLICAÇÃO 2 -->
+<div class="post">
+
+    <div class="post-header">
+        <img src="https://i.pinimg.com/1200x/ed/8b/75/ed8b75efeed35cb057d81d228ec4daa9.jpg">
+        <strong>Samyra</strong>
+        <i class='bx bx-dots-horizontal-rounded'></i>
+    </div>
+
+    <div class="post-photo">
+
+        <img id="fotoPublicacao"
+             src="https://i.pinimg.com/736x/64/23/ea/6423ea37ab06b18cf34aa1e25988be19.jpg"
+             class="hidden"
+             alt="Minha publicação">
+
+        <label id="espacoFoto" for="escolherFoto" class="photo-label">
+            <i class='bx bx-image-add'></i>
+            <span>Clique para adicionar uma foto</span>
+        </label>
+
+        <input type="file"
+               id="escolherFoto"
+               accept="image/*"
+               class="photo-input"
+               onchange="addPhoto(event)">
+    </div>
+
+    <div class="post-actions">
+        <div>
+            <i class='bx bx-heart' onclick="like(this)"></i>
+            <i class='bx bx-comment' onclick="focusComment(this)"></i>
+            <i class='bx bx-send'></i>
+        </div>
+        <i class='bx bx-bookmark' onclick="save(this)"></i>
+    </div>
+
+    <div class="caption">
+        <strong><span class="likes">85</span></strong> curtidas
+        <p><strong>kamila</strong></p>
+        <div class="comments"></div>
+    </div>
+
+    <div class="comment">
+        <input type="text" placeholder="Adicione um comentário...">
+        <button onclick="comment(this)">Publicar</button>
+    </div>
+
+</div>
+
+</section>
+
+<!-- SUGESTÕES -->
+<aside class="right">
+
+    <div class="profile">
+        <img src="https://i.pinimg.com/736x/f0/b7/64/f0b7644558e6479632ba97d62cbaae40.jpg">
+        <div>
+            <strong>Rafaela_leal</strong>
+            <p>Rafaela</p>
+        </div>
+    </div>
+
+    <strong>Sugestões para você</strong>
+
+    <div class="suggestion">
+        <img src="https://i.pinimg.com/1200x/98/4e/28/984e283bf6a13fbb0670aaced7b30716.jpg">
+        <div><strong>Kamila</strong><p>Seguido por amigos</p></div>
+        <button class="follow" onclick="follow(this)">Seguir</button>
+    </div>
+
+    <div class="suggestion">
+        <img src="https://i.pinimg.com/736x/e9/04/cf/e904cfbd197fb9911f6322f42af6a739.jpg">
+        <div><strong>Clarissa</strong><p>Para você</p></div>
+        <button class="follow" onclick="follow(this)">Seguir</button>
+    </div>
+
+    <div class="suggestion">
+        <img src="https://i.pinimg.com/1200x/ed/8b/75/ed8b75efeed35cb057d81d228ec4daa9.jpg">
+        <div><strong>Samyra</strong><p>Novo no Instagram</p></div>
+        <button class="follow" onclick="follow(this)">Seguir</button>
+    </div>
+
+    <div class="suggestion">
+        <img src="https://i.pinimg.com/736x/74/de/ca/74deca6a6d707fb348c4d66c73d02c23.jpg">
+        <div><strong>kellen</strong><p>Para você</p></div>
+        <button class="follow" onclick="follow(this)">Seguir</button>
+    </div>
+
+    <div class="suggestion">
+        <img src="https://i.pinimg.com/736x/01/c6/53/01c653305a418e23d18b77936661980d.jpg">
+        <div><strong>luzivania</strong><p>Seguido por amigos</p></div>
+        <button class="follow" onclick="follow(this)">Seguir</button>
+    </div>
+
+</aside>
+
+</div>
+</main>
+
+<script>
+
+// CURTIR
+function like(icon) {
+    const post = icon.closest(".post");
+    const likes = post.querySelector(".likes");
+
+    let count = Number(likes.innerText);
+
+    if (icon.classList.contains("bxs-heart")) {
+        icon.classList.replace("bxs-heart", "bx-heart");
+        icon.style.color = "#262626";
+        likes.innerText = count - 1;
+    } else {
+        icon.classList.replace("bx-heart", "bxs-heart");
+        icon.style.color = "red";
+        likes.innerText = count + 1;
+    }
+}
+
+// SEGUIR
+function follow(button) {
+    if (button.innerText === "Seguir") {
+        button.innerText = "Seguindo";
+        button.classList.add("following");
+    } else {
+        button.innerText = "Seguir";
+        button.classList.remove("following");
+    }
+}
+
+// COMENTAR
+function comment(button) {
+    const post = button.closest(".post");
+    const input = button.previousElementSibling;
+
+    if (input.value.trim() === "") return;
+
+    const p = document.createElement("p");
+    const strong = document.createElement("strong");
+
+    strong.textContent = "kamila ";
+
+    p.appendChild(strong);
+    p.appendChild(document.createTextNode(input.value.trim()));
+
+    post.querySelector(".comments").appendChild(p);
+
+    input.value = "";
+}
+
+// ABRIR COMENTÁRIO
+function focusComment(icon) {
+    icon.closest(".post")
+        .querySelector('input[type="text"]').focus();
+}
+
+// SALVAR
+function save(icon) {
+    if (icon.classList.contains("bxs-bookmark")) {
+        icon.classList.replace("bxs-bookmark", "bx-bookmark");
+    } else {
+        icon.classList.replace("bx-bookmark", "bxs-bookmark");
+    }
+}
+
+// ADICIONAR FOTO
+function addPhoto(event) {
+    const file = event.target.files[0];
+
+    if (file && file.type.startsWith("image/")) {
+        const image = document.getElementById("fotoPublicacao");
+        const space = document.getElementById("espacoFoto");
+
+        image.src = URL.createObjectURL(file);
+        image.classList.remove("hidden");
+        space.classList.add("hidden");
+    }
+}
+
+</script>
+
+</body>
+</html>
+
