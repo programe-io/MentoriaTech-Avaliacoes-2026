@@ -1,33 +1,30 @@
 
-let nome = prompt("Digite o nome do paciente:");
+function calcularIMC() {
+    let nome = document.getElementById("nome").value.trim();
+    let peso = Number(document.getElementById("peso").value);
+    let altura = Number(document.getElementById("altura").value);
 
-if (nome === null || nome.trim() === "") {
-    alert("Digite um nome válido!");
-} else {
-    let pesoTexto = prompt("Digite o peso em kg:");
-    let alturaTexto = prompt("Digite a altura em metros:");
-
-    let peso = parseFloat(pesoTexto.replace(",", "."));
-    let altura = parseFloat(alturaTexto.replace(",", "."));
+    let resultado = document.getElementById("resultado");
 
     if (
-        pesoTexto === null ||
-        alturaTexto === null ||
-        isNaN(peso) ||
-        isNaN(altura) ||
+        nome === "" ||
+        document.getElementById("peso").value === "" ||
+        document.getElementById("altura").value === "" ||
+        !Number.isFinite(peso) ||
+        !Number.isFinite(altura) ||
         peso <= 0 ||
         altura <= 0
     ) {
-        alert("Erro! Digite valores válidos.");
-    } else {
-        let imc = peso / (altura * altura);
-
-        alert(
-            "CONTROLE DE IMC\n\n" +
-            "Paciente: " + nome +
-            "\nPeso: " + peso + " kg" +
-            "\nAltura: " + altura + " m" +
-            "\nIMC: " + imc.toFixed(2)
-        );
+        resultado.innerHTML = "Preencha todos os campos corretamente!";
+        return;
     }
+
+    let imc = peso / (altura * altura);
+
+    resultado.innerHTML =
+        "<h3>Resultado do cálculo</h3>" +
+        "<p>Paciente: " + nome + "</p>" +
+        "<p>Peso: " + peso + " kg</p>" +
+        "<p>Altura: " + altura + " m</p>" +
+        "<p>IMC: " + imc.toFixed(2) + "</p>";
 }
