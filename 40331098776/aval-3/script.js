@@ -1,5 +1,4 @@
 const formulario = document.getElementById("formulario");
-const resultado = document.getElementById("resultado");
 const listaPessoas = document.getElementById("listaPessoas");
 
 let pessoas = [];
@@ -7,19 +6,17 @@ let pessoas = [];
 formulario.addEventListener("submit", function(event) {
     event.preventDefault();
 
-    const nome = document.getElementById("nome").value;
+    const nome = document.getElementById("nome").value.trim();
     const idade = Number(document.getElementById("idade").value);
     const altura = Number(document.getElementById("altura").value);
     const peso = Number(document.getElementById("peso").value);
 
-    if (altura <= 0 || peso <= 0 || idade <= 0) {
-        alert("Informe valores válidos!");
+    if (!nome || idade <= 0 || altura <= 0 || peso <= 0) {
+        alert("Preencha todos os campos corretamente!");
         return;
     \}
 
-    const alturaMetros = altura / 100;
-
-    const imc = peso / (alturaMetros * alturaMetros);
+    const imc = peso / (altura * altura);
 
     let classificacao;
 
@@ -38,21 +35,15 @@ formulario.addEventListener("submit", function(event) {
     \}
 
     const pessoa = {
-        nome: nome,
-        idade: idade,
-        altura: altura,
-        peso: peso,
-        imc: imc,
-        classificacao: classificacao
+        nome,
+        idade,
+        altura,
+        peso,
+        imc,
+        classificacao
     \};
 
     pessoas.push(pessoa);
-
-    resultado.innerHTML = `
-        <strong>\${nome\}</strong><br>
-        Seu IMC é: <strong>\${imc.toFixed(2)\}</strong><br>
-        Classificação: <strong>\${classificacao\}</strong>
-    `;
 
     atualizarLista();
 
@@ -62,24 +53,50 @@ formulario.addEventListener("submit", function(event) {
 function atualizarLista() {
     listaPessoas.innerHTML = "";
 
-    pessoas.forEach(function(pessoa) {
-        const linha = document.createElement("div");
+    if (pessoas.length === 0) {
+        listaPessoas.innerHTML = `
+            <tr>
+                <td colspan="7" class="vazio">
+                    Nenhuma pessoa cadastrada ainda.
+                </td>
+            </tr>
+        `;
+        return;
+    \}
 
-        linha.classList.add("linha");
+    pessoas.forEach(function(pessoa, index) {
 
-        const dados = [
+        const linha = document.createElement("tr");
+
+        const valores = [
             pessoa.nome,
-            pessoa.idade + " anos",
+            pessoa.idade,
+            pessoa.altura.toFixed(2) + " m",
             pessoa.peso + " kg",
-            pessoa.altura + " cm",
-            pessoa.imc.toFixed(2)
+            pessoa.imc.toFixed(2),
+            pessoa.classificacao
         ];
 
-        dados.forEach(function(dado) {
-            const coluna = document.createElement("span");
-            coluna.textContent = dado;
+        valores.forEach(function(valor) {
+            const coluna = document.createElement("td");
+            coluna.textContent = valor;
             linha.appendChild(coluna);
         \});
+
+        const colunaAcao = document.createElement("td");
+
+        const botaoExcluir = document.createElement("button");
+
+        botaoExcluir.textContent = "Excluir";
+        botaoExcluir.classList.add("excluir");
+
+        botaoExcluir.addEventListener("click", function() {
+            pessoas.splice(index, 1);
+            atualizarLista();
+        \});
+
+        colunaAcao.appendChild(botaoExcluir);
+        linha.appendChild(colunaAcao);
 
         listaPessoas.appendChild(linha);
     \});
