@@ -1,3 +1,4 @@
+
 // Lista (Array) de Produtos
 let produtos = [];
 
@@ -64,12 +65,12 @@ function atualizarQuantidade(codigoProduto, novaQuantidade) {
 
 listarProdutos();
 
-cadastrarProduto("Ingresso Henrique & Juliano", 35, 250.00);
+cadastrarProduto("Ingresso Henrique & Juliano", 12, 699.00);
 cadastrarProduto("Ingresso Luan Santana", 39, 300.00);
 
 listarProdutos();
 
-atualizarValor(2, 150.00);
+atualizarValor(2, 97.00);
 
 listarProdutos();
 
