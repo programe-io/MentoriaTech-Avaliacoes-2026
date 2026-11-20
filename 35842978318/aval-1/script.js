@@ -1,150 +1,98 @@
+
 let produtos = [];
 
-function validarProduto(descricao, quantidade, valor) {
-    if (descricao.length < 5) {
-            alert("A descrição deve ter no mínimo 5 caracteres!");
-                    return false;
-                        }
+function cadastrarProduto() {
+    let codigo = Number(document.getElementById("codigo").value);
+    let descricao = document.getElementById("descricao").value.trim();
+    let quantidade = Number(document.getElementById("quantidade").value);
+    let valor = Number(document.getElementById("valor").value);
 
-                            if (quantidade < 0 || valor < 0) {
-                                    alert("Quantidade e valor não podem ser negativos!");
-                                            return false;
-                                                }
+    if (!codigo || !descricao || quantidade < 0 || valor < 0 ||
+        document.getElementById("quantidade").value === "" ||
+        document.getElementById("valor").value === "") {
+        alert("Preencha todos os campos corretamente!");
+        return;
+    }
 
-                                                    return true;
-                                                    }
+    if (produtos.some(p => p.codigo === codigo)) {
+        alert("Esse código já está cadastrado!");
+        return;
+    }
 
-                                                    function cadastrarProduto() {
-                                                        let descricao = prompt("Digite a descrição do produto:");
-                                                            if (descricao === null) return;
+    produtos.push({
+        codigo,
+        descricao,
+        quantidade,
+        valor
+    });
 
-                                                                let quantidade = Number(prompt("Digite a quantidade:"));
-                                                                    let valor = Number(prompt("Digite o valor do produto:"));
+    alert("Produto cadastrado com sucesso!");
+    limparCampos();
+}
 
-                                                                        if (!validarProduto(descricao, quantidade, valor)) {
-                                                                                return;
-                                                                                    }
+function listarProdutos() {
+    let resultado = document.getElementById("resultado");
 
-                                                                                        let produto = {
-                                                                                                codigo: produtos.length + 1,
-                                                                                                        descricao: descricao,
-                                                                                                                quantidade: quantidade,
-                                                                                                                        valor: valor
-                                                                                                                            };
+    if (produtos.length === 0) {
+        resultado.innerHTML = "Nenhum produto cadastrado.";
+        return;
+    }
 
-                                                                                                                                produtos.push(produto);
+    resultado.innerHTML = "<h3>Produtos cadastrados</h3>";
 
-                                                                                                                                    alert("Produto cadastrado com sucesso!");
-                                                                                                                                    }
+    produtos.forEach(p => {
+        resultado.innerHTML +=
+            "Código: " + p.codigo +
+            "<br>Descrição: " + p.descricao +
+            "<br>Quantidade: " + p.quantidade +
+            "<br>Valor: R$ " + p.valor.toFixed(2) +
+            "<hr>";
+    });
+}
 
-                                                                                                                                    function listarProdutos() {
-                                                                                                                                        if (produtos.length === 0) {
-                                                                                                                                                alert("Nenhum produto cadastrado!");
-                                                                                                                                                        return;
-                                                                                                                                                            }
+function alterarValor() {
+    let codigo = Number(prompt("Digite o código do produto:"));
+    let produto = produtos.find(p => p.codigo === codigo);
 
-                                                                                                                                                                let lista = "";
+    if (!produto) {
+        alert("Produto não encontrado!");
+        return;
+    }
 
-                                                                                                                                                                    for (let produto of produtos) {
-                                                                                                                                                                            lista +=
-                                                                                                                                                                                        "Código: " + produto.codigo +
-                                                                                                                                                                                                    "\nDescrição: " + produto.descricao +
-                                                                                                                                                                                                                "\nQuantidade: " + produto.quantidade +
-                                                                                                                                                                                                                            "\nValor: R$ " + produto.valor.toFixed(2) +
-                                                                                                                                                                                                                                        "\n----------------------\n";
-                                                                                                                                                                                                                                            }
+    let novoValor = Number(prompt("Digite o novo valor:"));
 
-                                                                                                                                                                                                                                                alert(lista);
-                                                                                                                                                                                                                                                }
+    if (isNaN(novoValor) || novoValor < 0) {
+        alert("Valor inválido!");
+        return;
+    }
 
-                                                                                                                                                                                                                                                function alterarValor() {
-                                                                                                                                                                                                                                                    let codigo = Number(prompt("Digite o código do produto:"));
+    produto.valor = novoValor;
+    alert("Valor alterado com sucesso!");
+}
 
-                                                                                                                                                                                                                                                        let produto = produtos.find(p => p.codigo === codigo);
+function alterarQuantidade() {
+    let codigo = Number(prompt("Digite o código do produto:"));
+    let produto = produtos.find(p => p.codigo === codigo);
 
-                                                                                                                                                                                                                                                            if (!produto) {
-                                                                                                                                                                                                                                                                    alert("Produto não encontrado!");
-                                                                                                                                                                                                                                                                            return;
-                                                                                                                                                                                                                                                                                }
+    if (!produto) {
+        alert("Produto não encontrado!");
+        return;
+    }
 
-                                                                                                                                                                                                                                                                                    let novoValor = Number(prompt("Digite o novo valor:"));
+    let novaQuantidade = Number(prompt("Digite a nova quantidade:"));
 
-                                                                                                                                                                                                                                                                                        if (novoValor < 0 || !Number.isFinite(novoValor)) {
-                                                                                                                                                                                                                                                                                                alert("Valor inválido!");
-                                                                                                                                                                                                                                                                                                        return;
-                                                                                                                                                                                                                                                                                                            }
+    if (!Number.isInteger(novaQuantidade) || novaQuantidade < 0) {
+        alert("Quantidade inválida!");
+        return;
+    }
 
-                                                                                                                                                                                                                                                                                                                produto.valor = novoValor;
+    produto.quantidade = novaQuantidade;
+    alert("Quantidade alterada com sucesso!");
+}
 
-                                                                                                                                                                                                                                                                                                                    alert("Valor atualizado com sucesso!");
-                                                                                                                                                                                                                                                                                                                    }
-
-                                                                                                                                                                                                                                                                                                                    function alterarQuantidade() {
-                                                                                                                                                                                                                                                                                                                        let codigo = Number(prompt("Digite o código do produto:"));
-
-                                                                                                                                                                                                                                                                                                                            let produto = produtos.find(p => p.codigo === codigo);
-
-                                                                                                                                                                                                                                                                                                                                if (!produto) {
-                                                                                                                                                                                                                                                                                                                                        alert("Produto não encontrado!");
-                                                                                                                                                                                                                                                                                                                                                return;
-                                                                                                                                                                                                                                                                                                                                                    }
-
-                                                                                                                                                                                                                                                                                                                                                        let novaQuantidade = Number(prompt("Digite a quantidade a adicionar:"));
-
-                                                                                                                                                                                                                                                                                                                                                            if (novaQuantidade < 0 || !Number.isInteger(novaQuantidade)) {
-                                                                                                                                                                                                                                                                                                                                                                    alert("Quantidade inválida!");
-                                                                                                                                                                                                                                                                                                                                                                            return;
-                                                                                                                                                                                                                                                                                                                                                                                }
-
-                                                                                                                                                                                                                                                                                                                                                                                    produto.quantidade += novaQuantidade;
-
-                                                                                                                                                                                                                                                                                                                                                                                        alert("Quantidade atualizada com sucesso!");
-                                                                                                                                                                                                                                                                                                                                                                                        }
-
-                                                                                                                                                                                                                                                                                                                                                                                        function menu() {
-                                                                                                                                                                                                                                                                                                                                                                                            let opcao;
-
-                                                                                                                                                                                                                                                                                                                                                                                                do {
-                                                                                                                                                                                                                                                                                                                                                                                                        opcao = prompt(
-                                                                                                                                                                                                                                                                                                                                                                                                                    "SISTEMA DE ESTOQUE\n\n" +
-                                                                                                                                                                                                                                                                                                                                                                                                                                "1 - Cadastrar produto\n" +
-                                                                                                                                                                                                                                                                                                                                                                                                                                            "2 - Listar produtos\n" +
-                                                                                                                                                                                                                                                                                                                                                                                                                                                        "3 - Alterar valor\n" +
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                    "4 - Alterar quantidade\n" +
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                "0 - Sair\n\n" +
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            "Escolha uma opção:"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    );
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            switch (opcao) {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        case "1":
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        cadastrarProduto();
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        break;
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    case "2":
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    listarProdutos();
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    break;
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                case "3":
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                alterarValor();
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                break;
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            case "4":
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            alterarQuantidade();
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            break;
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        case "0":
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        alert("Sistema encerrado!");
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        break;
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    case null:
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    opcao = "0";
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    break;
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                default:
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                alert("Opção inválida!");
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        }
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            } while (opcao !== "0");
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            }
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            menu();
+function limparCampos() {
+    document.getElementById("codigo").value = "";
+    document.getElementById("descricao").value = "";
+    document.getElementById("quantidade").value = "";
+    document.getElementById("valor").value = "";
+}
