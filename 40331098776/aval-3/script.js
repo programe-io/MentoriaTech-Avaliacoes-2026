@@ -1,23 +1,26 @@
-const formulario = document.getElementById("formIMC");
+const formulario = document.getElementById("formulario");
+const resultado = document.getElementById("resultado");
+const listaPessoas = document.getElementById("listaPessoas");
+
+let pessoas = [];
 
 formulario.addEventListener("submit", function(event) {
     event.preventDefault();
 
-    // Receber os dados do paciente
     const nome = document.getElementById("nome").value;
-    const peso = parseFloat(document.getElementById("peso").value);
-    const altura = parseFloat(document.getElementById("altura").value);
+    const idade = Number(document.getElementById("idade").value);
+    const altura = Number(document.getElementById("altura").value);
+    const peso = Number(document.getElementById("peso").value);
 
-    // Verificar os valores informados
-    if (peso <= 0 || altura <= 0) {
-        alert("Informe valores válidos para peso e altura!");
+    if (altura <= 0 || peso <= 0 || idade <= 0) {
+        alert("Informe valores válidos!");
         return;
     \}
 
-    // Calcular o IMC
-    const imc = peso / (altura * altura);
+    const alturaMetros = altura / 100;
 
-    // Classificar o IMC
+    const imc = peso / (alturaMetros * alturaMetros);
+
     let classificacao;
 
     if (imc < 18.5) {
@@ -34,13 +37,50 @@ formulario.addEventListener("submit", function(event) {
         classificacao = "Obesidade grau III";
     \}
 
-    // Exibir o resultado
-    document.getElementById("resultado").innerHTML = `
-        <h3>Resultado do Paciente</h3>
-        <p>Nome: \${nome.replace(/[&<>"']/g, "")\}</p>
-        <p>Peso: \${peso.toFixed(1)\} kg</p>
-        <p>Altura: \${altura.toFixed(2)\} m</p>
-        <p>Seu IMC é: \${imc.toFixed(2)\}</p>
-        <p>Classificação: \${classificacao\}</p>
+    const pessoa = {
+        nome: nome,
+        idade: idade,
+        altura: altura,
+        peso: peso,
+        imc: imc,
+        classificacao: classificacao
+    \};
+
+    pessoas.push(pessoa);
+
+    resultado.innerHTML = `
+        <strong>\${nome\}</strong><br>
+        Seu IMC é: <strong>\${imc.toFixed(2)\}</strong><br>
+        Classificação: <strong>\${classificacao\}</strong>
     `;
-\});$0
+
+    atualizarLista();
+
+    formulario.reset();
+\});
+
+function atualizarLista() {
+    listaPessoas.innerHTML = "";
+
+    pessoas.forEach(function(pessoa) {
+        const linha = document.createElement("div");
+
+        linha.classList.add("linha");
+
+        const dados = [
+            pessoa.nome,
+            pessoa.idade + " anos",
+            pessoa.peso + " kg",
+            pessoa.altura + " cm",
+            pessoa.imc.toFixed(2)
+        ];
+
+        dados.forEach(function(dado) {
+            const coluna = document.createElement("span");
+            coluna.textContent = dado;
+            linha.appendChild(coluna);
+        \});
+
+        listaPessoas.appendChild(linha);
+    \});
+\}$0
