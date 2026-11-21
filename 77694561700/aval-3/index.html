@@ -1,133 +1,1011 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Animes: Death Note & Tokyo Ghoul</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Georgia', serif;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Vitor Social — rede social</title>
 
-        body {
-            background-color: #1a1a1a;
-            color: #e0e0e0;
-            line-height: 1.6;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
+  <!-- Tailwind CSS (CDN) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Boxicons (CDN) -->
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+  <!-- Fontes -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
-        header {
-            background-color: #0d0d0d;
-            color: #fff;
-            padding: 30px 20px;
-            text-align: center;
-            border-bottom: 3px solid #c00;
-        }
+  <script>
+    tailwind.config = { darkMode: 'class', theme: { extend: { fontFamily: { heading: ['Sora', 'sans-serif'], body: ['Inter', 'sans-serif'] } } } };
+  </script>
 
-        header h1 {
-            font-size: 30px;
-            margin-bottom: 8px;
-        }
+  <style type="text/tailwindcss">
+    @layer components {
+      .card { @apply rounded-[22px] border border-slate-200 bg-white dark:border-white/10 dark:bg-[#12121a]; }
+      .soft { box-shadow: 0 18px 40px -26px rgba(15, 15, 30, .45); }
+      .icon-btn { @apply flex h-9 w-9 items-center justify-center rounded-full text-[22px] text-slate-500 transition hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-white/5; }
+      .btn-primary { @apply rounded-full bg-violet-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-violet-500; }
+      .btn-ghost { @apply rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-100 dark:border-white/10 dark:text-slate-200 dark:hover:bg-white/5; }
+      .field { @apply w-full rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm outline-none placeholder:text-slate-400 focus:border-violet-400 dark:border-white/10 dark:bg-white/5 dark:text-slate-100; }
+      .ring-story { background: conic-gradient(from 150deg, #fb7185, #a855f7, #fb923c, #fb7185); }
+    }
+  </style>
 
-        header p {
-            font-size: 17px;
-            color: #fffdfd;
-        }
-
-        main {
-            flex: 1;
-            padding: 32px 20px;
-            max-width: 900px;
-            margin: 0 auto;
-            width: 100%;
-        }
-
-        .post {
-            background-color: #333;
-            padding: 24px;
-            margin-bottom: 32px;
-            border-radius: 6px;
-            border-left: 4px solid;
-        }
-
-        .death-note {
-            border-color: rgba(255, 0, 13, 0.62);
-        }
-
-        .tokyo-ghoul {
-            border-color: #900;
-        }
-
-        .post h2 {
-            font-size: 24px;
-            margin-bottom: 16px;
-        }
-
-        .death-note h2 {
-            color: #ffffff;
-        }
-
-        .tokyo-ghoul h2 {
-            color: #cc5555;
-        }
-
-       
-        .foto-anime {
-            width: 100%;
-            max-width: 500px;
-            height: auto;
-            margin-bottom: 20px;
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-           
-        }
-
-        .post p {
-            margin-bottom: 12px;
-            font-size: 16px;
-        }
-
-        footer {
-            background-color: #0d0d0d;
-            color: #ffffff;
-            text-align: center;
-            padding: 20px;
-            margin-top: auto;
-            border-top: 1px solid #ffffff;
-        }
-    </style>
+  <style>
+    html { -webkit-tap-highlight-color: transparent; }
+    body { font-family: Inter, sans-serif; transition: background-color .35s ease, color .35s ease; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    .story-bar { animation: storyFill 5s linear forwards; }
+    @keyframes storyFill { from { width: 0%; } to { width: 100%; } }
+    .fade-up { animation: fadeUp .45s cubic-bezier(.22,1,.36,1) both; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
 <script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
 
-    <header>
-        <h1>📖 Death Note</h1>
-        <p>Anime muito bom, e bem louco</p>
+<body class="bg-slate-50 text-slate-900 dark:bg-[#0a0a10] dark:text-slate-100">
+
+  <!-- ===================== BARRA LATERAL (DESKTOP) ===================== -->
+  <aside class="fixed inset-y-0 left-0 z-30 hidden w-[264px] flex-col border-r border-slate-200 bg-white/70 px-4 py-6 backdrop-blur-xl dark:border-white/10 dark:bg-[#12121a]/70 lg:flex">
+    <button data-action="nav" data-view="feed" class="mb-9 flex items-center gap-2.5 px-2">
+      <span class="flex h-9 w-9 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-500 via-rose-500 to-orange-400 text-sm font-bold text-white">V</span>
+      <span class="font-heading text-lg font-bold tracking-tight">vitor<span class="text-slate-400">.social</span></span>
+    </button>
+
+    <nav id="nav-lateral" class="space-y-1"></nav>
+
+    <div class="mt-auto space-y-3">
+      <button data-action="theme" class="flex w-full items-center justify-between rounded-2xl border border-slate-200 px-3.5 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-100 dark:border-white/10 dark:text-slate-300 dark:hover:bg-white/5">
+        <span class="flex items-center gap-3">
+          <i id="theme-icon" class="bx bx-moon text-lg"></i>
+          <span id="theme-label">Modo escuro</span>
+        </span>
+        <span class="relative h-5 w-9 rounded-full bg-slate-200 dark:bg-white/10">
+          <span id="theme-knob" class="absolute top-0.5 h-4 w-4 rounded-full bg-violet-500 transition-all duration-300" style="left:18px"></span>
+        </span>
+      </button>
+
+      <div class="card p-3">
+        <button data-action="profile" id="perfil-lateral" class="flex w-full items-center gap-3 text-left"></button>
+        <button data-action="abrir-troca" class="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-slate-100 py-2 text-xs font-semibold text-slate-700 transition hover:bg-violet-100 hover:text-violet-700 dark:bg-white/5 dark:text-slate-200 dark:hover:bg-violet-500/15 dark:hover:text-violet-300">
+          <i class="bx bx-transfer text-base"></i> Trocar de conta
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ===================== CONTEÚDO ===================== -->
+  <div class="lg:pl-[264px]">
+    <header class="sticky top-0 z-20 flex items-center justify-between border-b border-slate-200 bg-slate-50/85 px-4 py-3 backdrop-blur-xl dark:border-white/10 dark:bg-[#0a0a10]/85 lg:hidden">
+      <button data-action="nav" data-view="feed" class="flex items-center gap-2">
+        <span class="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500 via-rose-500 to-orange-400 text-xs font-bold text-white">V</span>
+        <span class="font-heading text-base font-bold tracking-tight">vitor<span class="text-slate-400">.social</span></span>
+      </button>
+      <button data-action="theme" class="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 text-slate-500 dark:border-white/10 dark:text-slate-300">
+        <i id="theme-icon-mobile" class="bx bx-moon text-lg"></i>
+      </button>
     </header>
 
-    <main>
-        <article class="post death-note">
-            <h2>Death Note: O Caderno da Morte</h2>
-            
-      
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTKmjkBMJNr-kuMDAgpwkfrlb_s2DzmEuvT2UuzZl8TEA&s=10" alt="Cena do anime Death Note com os Protagonistas"class="foto-anime">
-            
-            <p>Em Tóquio, Light Yagami, um estudante brilhante e insatisfeito com o mundo, encontra um caderno misterioso: o Death Note. A regra é simples: se você escrever o nome de alguém enquanto visualiza seu rosto, essa pessoa morre.</p>
-            <p>Com o poder de mudar o mundo em suas mãos, Light decide eliminar todos os criminosos e criar uma nova era — sendo visto como o deus Kira. Mas o detetive L entra em cena para descobrir quem está por trás das mortes. É um jogo de inteligência onde não há heróis perfeitos, apenas escolhas sombrias.</p>
-            <p><strong>Gênero:</strong> Mistério, suspense psicológico, sobrenatural<br>
-            <strong>Personagens principais:</strong> Light Yagami, L, Ryuk, Misa Amane</p>
-        </article>
+    <main class="mx-auto w-full max-w-6xl px-3 pb-28 pt-4 sm:px-5 lg:pb-12 lg:pt-8">
+      <div id="view"></div>
     </main>
+  </div>
 
-    <footer>
-        <p>Site feito por: Vitor — Death Note</p>
-    </footer>
+  <!-- ===================== NAVEGAÇÃO INFERIOR (CELULAR) ===================== -->
+  <nav class="fixed inset-x-0 bottom-0 z-30 border-t border-slate-200 bg-white/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl dark:border-white/10 dark:bg-[#12121a]/90 lg:hidden">
+    <div class="mx-auto flex max-w-md items-center justify-between px-4 py-2">
+      <button data-action="nav" data-view="feed" data-nav="feed" class="flex flex-1 flex-col items-center gap-1 py-1.5 text-[10px] font-medium">
+        <i class="bx bx-home text-xl"></i><span>Início</span>
+      </button>
+      <button data-action="nav" data-view="search" data-nav="search" class="flex flex-1 flex-col items-center gap-1 py-1.5 text-[10px] font-medium">
+        <i class="bx bx-search text-xl"></i><span>Busca</span>
+      </button>
+      <button data-action="nav" data-view="create" data-nav="create" class="flex flex-1 flex-col items-center gap-1 py-1.5 text-[10px] font-medium">
+        <span class="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-violet-600 to-rose-500 text-white shadow-lg shadow-violet-500/25"><i class="bx bx-plus text-xl"></i></span>
+        <span>Criar</span>
+      </button>
+      <button data-action="nav" data-view="notifications" data-nav="notifications" class="relative flex flex-1 flex-col items-center gap-1 py-1.5 text-[10px] font-medium">
+        <i class="bx bx-bell text-xl"></i>
+        <span id="badge-mobile" class="absolute right-4 top-0 hidden h-4 min-w-4 rounded-full bg-rose-500 px-1 text-center text-[9px] font-bold leading-4 text-white"></span>
+        <span>Alertas</span>
+      </button>
+      <button data-action="nav" data-view="profile" data-nav="profile" class="flex flex-1 flex-col items-center gap-1 py-1.5 text-[10px] font-medium">
+        <i class="bx bx-user text-xl"></i><span>Perfil</span>
+      </button>
+    </div>
+  </nav>
 
+  <div id="modal-root"></div>
+
+  <!-- ===================== JAVASCRIPT ===================== -->
+  <script>
+  /* ===========================================================
+     1. UTILITÁRIOS
+     =========================================================== */
+  const KEY = 'vitor-social-html';
+  const VERSION = 2;
+
+  // Fotos reais (Wikimedia Commons: anime, figures, Akihabara, fliperama, café)
+  // e algumas fotos de natureza do Unsplash. Nada de retratos gerados por IA.
+  const wiki = (p) => 'https://upload.wikimedia.org/wikipedia/commons/' + p;
+  const un = (id) => 'https://images.unsplash.com/' + id + '?auto=format&fit=crop&w=900&q=80';
+  const F = {
+    kirishima:('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNzRTs3vcWOQh1cqWeL7woQR7jrnRBENwfoMnrVnfIKA&s=10'),
+    mirai: wiki('3/31/Mirai_Suenaga_Nendoroid_-_7702866944.jpg'),
+    natsumi: wiki('thumb/5/59/Non_Non_Biyori_Natsumi_Koshigaya_Nendoroid.jpg/960px-Non_Non_Biyori_Natsumi_Koshigaya_Nendoroid.jpg'),
+    colecao: wiki('f/f8/Nendoroid_Collection.jpg'),
+    vitrine: wiki('thumb/b/bc/DFC_6089_A_cozy_display_of_colorful_anime_figures_and_a_beckoning_maneki-neko_lit_warmly_against_a_dim_background.jpg/960px-DFC_6089_A_cozy_display_of_colorful_anime_figures_and_a_beckoning_maneki-neko_lit_warmly_against_a_dim_background.jpg'),
+    vocaloid: wiki('thumb/5/59/Vocaloid_products_%284132821358%29.jpg/960px-Vocaloid_products_%284132821358%29.jpg'),
+    arte1: wiki('thumb/d/dc/Anime_Girl_upright_version.jpg/960px-Anime_Girl_upright_version.jpg'),
+    arte2: wiki('thumb/0/08/Anime_Girl.png/960px-Anime_Girl.png'),
+    arte3: wiki('thumb/d/d5/Figure_in_Manga_style_pattern.png/960px-Figure_in_Manga_style_pattern.png'),
+    gunpla: wiki('thumb/0/0f/Gunpla%2C_K%C3%B6nigstra%C3%9Fe_10%2C_D%C3%BCsseldorf%2C_M%C3%A4rz_2026.jpg/960px-Gunpla%2C_K%C3%B6nigstra%C3%9Fe_10%2C_D%C3%BCsseldorf%2C_M%C3%A4rz_2026.jpg'),
+    capsulas: wiki('thumb/e/ef/Capsule_toys_%28521036671%29.jpg/960px-Capsule_toys_%28521036671%29.jpg'),
+    gashapon: wiki('thumb/8/8f/Gashapon_Shop_in_Akihabara%2C_Tokyo%2C_Japan.jpg/960px-Gashapon_Shop_in_Akihabara%2C_Tokyo%2C_Japan.jpg'),
+    livraria: wiki('thumb/6/62/MangaStoreJapan.jpg/960px-MangaStoreJapan.jpg'),
+    livraria2: wiki('thumb/1/19/008_Anime_and_manga_bookshop_in_Japan_-_bookstore_in_Kyoto%2C_Japan.jpg/960px-008_Anime_and_manga_bookshop_in_Japan_-_bookstore_in_Kyoto%2C_Japan.jpg'),
+    livraria3: wiki('thumb/b/b6/009_Anime_book_shop_in_Japan_-_book_store_in_Kyoto%2C_Japan.jpg/960px-009_Anime_book_shop_in_Japan_-_book_store_in_Kyoto%2C_Japan.jpg'),
+    akibaNoite: wiki('thumb/6/60/Sotokanda%2C_Akihabara_Electric_Town_at_night_20231114.png/960px-Sotokanda%2C_Akihabara_Electric_Town_at_night_20231114.png'),
+    akibaRua: wiki('thumb/7/72/Pedestrians_Crossing%2C_Akihabara%2C_Tokyo%2C_Japan.jpg/960px-Pedestrians_Crossing%2C_Akihabara%2C_Tokyo%2C_Japan.jpg'),
+    akibaDenki: wiki('thumb/e/ef/Akiba_denkigai.jpg/960px-Akiba_denkigai.jpg'),
+    garra: wiki('thumb/0/07/Claw_cranes_with_kawaii_stuffed_mascots_and_a_woman_playing%2C_Akihabara%2C_Chiyoda%2C_Tokyo%2C_Japan.jpg/960px-Claw_cranes_with_kawaii_stuffed_mascots_and_a_woman_playing%2C_Akihabara%2C_Chiyoda%2C_Tokyo%2C_Japan.jpg'),
+    arcade1: wiki('thumb/f/f8/Interior_of_amusement_arcade_in_Japan_01.jpg/960px-Interior_of_amusement_arcade_in_Japan_01.jpg'),
+    arcade2: wiki('thumb/a/aa/Interior_of_amusement_arcade_in_Japan_02.jpg/960px-Interior_of_amusement_arcade_in_Japan_02.jpg'),
+    arcadeRetro: wiki('thumb/2/2d/Retro_arcade_in_Japan_-_Tokyo_area_-_Nov_29_2019_various.jpeg/960px-Retro_arcade_in_Japan_-_Tokyo_area_-_Nov_29_2019_various.jpeg'),
+    estadio: wiki('thumb/f/f6/Dasarath_Stadium_during_2022_SAFF_Women%27s_Championship_Final_match.jpg/960px-Dasarath_Stadium_during_2022_SAFF_Women%27s_Championship_Final_match.jpg'),
+    cappuccino: wiki('thumb/d/d6/Cappuccino_with_latte_art_on_Coffee_Right_in_Brno%2C_Brno-City_District.jpg/960px-Cappuccino_with_latte_art_on_Coffee_Right_in_Brno%2C_Brno-City_District.jpg'),
+    cafe: wiki('thumb/7/76/Cup_of_coffee_with_latte_art_2016.jpg/960px-Cup_of_coffee_with_latte_art_2016.jpg'),
+    neblina: un('photo-1470071459604-3b5ec3a7fe05'),
+    floresta: un('photo-1441974231531-c6227db76b6e'),
+    montanha: un('photo-1506905925346-21bda4d32df4'),
+    luz: un('photo-1501785888041-af3ef285b470'),
+    verde: un('photo-1447752875215-b2761acb3c5d'),
+    setup: un('photo-1498050108023-c5249f4df085'),
+    treino: un('photo-1571019613454-1cb2f99b2d8b'),
+    bola: un('photo-1522778119026-d647f0596c20'),
+    arquibancada: un('photo-1579952363873-27f3bade9f55')
+  };
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+  function formatDate(iso) {
+    const d = new Date(iso);
+    const dia = d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', timeZone: 'America/Sao_Paulo' }).replace('.', '');
+    const hora = d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Sao_Paulo' });
+    return dia + ' · ' + hora;
+  }
+
+  function avatar(user, size, ring) {
+    const s = size || 40;
+    const anel = ring === false ? '' : 'p-[2.5px] ring-story';
+    return '<span class="inline-flex shrink-0 rounded-full ' + anel + '" style="width:' + s + 'px;height:' + s + 'px">' +
+      '<img src="' + user.avatar + '" alt="' + esc(user.name) + '" class="h-full w-full rounded-full object-cover ring-2 ring-white dark:ring-[#12121a]" />' +
+      '</span>';
+  }
+
+  /* ===========================================================
+     2. DADOS INICIAIS — 7 PERFIS
+     =========================================================== */
+  const USERS = [
+    {
+      id: 'vitor', name: 'Vt', username: 'Vitin', followers: 1284, following: 312,
+      bio: '⚡ Desenvolvedor em formação | ⚽ Futebol apaixonado| 🕷️ Sempre evoluindo',
+      avatar: F.kirishima,
+      stories: [F.akibaNoite, F.arcade1],
+      highlights: [
+        { label: 'Futebol', emoji: '⚽', cover: F.estadio },
+        { label: 'Tecnologia', emoji: '💻', cover: F.gunpla },
+        { label: 'Amigos', emoji: '👥', cover: F.garra },
+        { label: 'Recordações', emoji: '📸', cover: F.akibaNoite },
+        { label: 'Projetos', emoji: '🚀', cover: F.livraria2 }
+      ]
+    },
+    {
+      id: 'samuel', name: 'Samuel Pedro', username: 'samuel.pedro', followers: 842, following: 401,
+      bio: '🎮 Games & Tecnologia | 📚 Estudante | ✨ Vivendo um dia de cada vez',
+      avatar: F.mirai,
+      stories: [F.arcade2, F.gashapon],
+      highlights: [
+        { label: 'Games', emoji: '🎮', cover: F.arcade2 },
+        { label: 'Estudos', emoji: '📚', cover: F.livraria3 },
+        { label: 'Setup', emoji: '🖥️', cover: F.vocaloid }
+      ]
+    },
+    {
+      id: 'emily', name: 'Emily Gabrielly', username: 'emily.gabrielly', followers: 1637, following: 289,
+      bio: '🎨 Arte & Inspiração | ☀️ Amante da natureza | 💫 Criando beleza no dia a dia',
+      avatar: F.arte1,
+      stories: [F.neblina, F.floresta],
+      highlights: [
+        { label: 'Natureza', emoji: '🌿', cover: F.floresta },
+        { label: 'Arte', emoji: '🎨', cover: F.arte2 },
+        { label: 'Luz', emoji: '☀️', cover: F.neblina }
+      ]
+    },
+    {
+      id: 'sabryna', name: 'Sabryna', username: 'sabryna_', followers: 2210, following: 512,
+      bio: '✨ Moda & Beleza | 📸 Momentos | 🌸 Seja a sua própria flor',
+      avatar: F.arte3,
+      stories: [F.vitrine, F.capsulas],
+      highlights: [
+        { label: 'Moda', emoji: '✨', cover: F.vitrine },
+        { label: 'Looks', emoji: '📸', cover: F.capsulas }
+      ]
+    },
+    {
+      id: 'rebeca', name: 'Rebeca', username: 'rebeca.oficial', followers: 978, following: 233,
+      bio: '📖 Leitora assídua | ☕ Café & livros | 🌙 Noites tranquilas',
+      avatar: F.natsumi,
+      stories: [F.livraria, F.cafe],
+      highlights: [
+        { label: 'Livros', emoji: '📖', cover: F.livraria },
+        { label: 'Café', emoji: '☕', cover: F.cappuccino }
+      ]
+    },
+    {
+      id: 'hugo', name: 'Vitor Hugo', username: 'vitor.hugo', followers: 1452, following: 188,
+      bio: '⚽ Futebol é vida | 💪 Atleta | 🏴 Buscando sempre o melhor',
+      avatar: F.colecao,
+      stories: [F.estadio, F.treino],
+      highlights: [
+        { label: 'Futebol', emoji: '⚽', cover: F.estadio },
+        { label: 'Treino', emoji: '💪', cover: F.treino }
+      ]
+    },
+    {
+      id: 'maria', name: 'Maria Júlia', username: 'maria.julia', followers: 1105, following: 367,
+      bio: '🌿 Vida & Natureza | 🎵 Música | 💛 Espalhando gentileza',
+      avatar: F.arte2,
+      stories: [F.montanha, F.verde],
+      highlights: [
+        { label: 'Natureza', emoji: '🌿', cover: F.montanha },
+        { label: 'Música', emoji: '🎵', cover: F.akibaDenki }
+      ]
+    }
+  ];
+
+  /* ===========================================================
+     3. PUBLICAÇÕES (fotos exclusivas de cada perfil)
+     =========================================================== */
+  const POSTS = [
+    { id: 'p1', userId: 'vitor', image: F.estadio, caption: 'Jogo com a galera hoje ⚽ Nada melhor que terminar o dia com a bola rolando.', date: '2026-11-20T13:20:00.000Z', likes: 214, comments: [{ id: 'c1', userId: 'hugo', text: 'Que jogo, hein! 🔥' }, { id: 'c2', userId: 'samuel', text: 'Me chama na próxima ⚽' }] },
+    { id: 'p2', userId: 'emily', image: F.neblina, caption: 'Manhã de neblina na trilha. Às vezes o silêncio é a melhor companhia. 🌫️', date: '2026-11-20T11:05:00.000Z', likes: 189, comments: [{ id: 'c3', userId: 'maria', text: 'Que paz essa foto 🌿' }] },
+    { id: 'p3', userId: 'samuel', image: F.arcadeRetro, caption: 'Sessão de jogos até tarde 🎮 Amanhã eu recupero o sono (mentira).', date: '2026-11-20T02:40:00.000Z', likes: 96, comments: [{ id: 'c4', userId: 'vitor', text: 'Qual jogo? 👀' }] },
+    { id: 'p4', userId: 'sabryna', image: F.vitrine, caption: 'Domingo de vitrine e ideias novas ✨', date: '2026-11-19T18:15:00.000Z', likes: 152, comments: [] },
+    { id: 'p5', userId: 'vitor', image: F.setup, caption: 'Tarde inteira com o editor aberto 💻 Código novo, ideia nova.', date: '2026-11-19T20:30:00.000Z', likes: 178, comments: [{ id: 'c5', userId: 'emily', text: 'Esse setup é lindo 😍' }] },
+    { id: 'p6', userId: 'rebeca', image: F.livraria2, caption: 'Terminei mais um livro hoje. Alguém tem indicação? 📖', date: '2026-11-19T15:00:00.000Z', likes: 133, comments: [{ id: 'c6', userId: 'maria', text: 'Depende do gênero! Me conta o último 🌙' }] },
+    { id: 'p7', userId: 'hugo', image: F.arquibancada, caption: 'Estádio cheio, coração acelerado ⚽ Não existe sensação igual.', date: '2026-11-18T22:10:00.000Z', likes: 241, comments: [{ id: 'c7', userId: 'vitor', text: 'Inveja boa 🖤' }] },
+    { id: 'p8', userId: 'maria', image: F.montanha, caption: 'Trilha de domingo, cabeça leve e playlist boa 🎵', date: '2026-11-18T09:45:00.000Z', likes: 167, comments: [] },
+    { id: 'p9', userId: 'samuel', image: F.gunpla, caption: 'Setup novo montado 🖥️ Agora sim dá gosto de estudar.', date: '2026-11-17T21:00:00.000Z', likes: 84, comments: [{ id: 'c8', userId: 'hugo', text: 'Ficou top 💪' }] },
+    { id: 'p10', userId: 'emily', image: F.luz, caption: 'A luz do fim de tarde faz qualquer lugar parecer pintura ☀️', date: '2026-11-17T17:30:00.000Z', likes: 145, comments: [] },
+    { id: 'p11', userId: 'sabryna', image: F.capsulas, caption: 'Detalhes que fazem toda a diferença ✨', date: '2026-11-16T14:20:00.000Z', likes: 118, comments: [{ id: 'c9', userId: 'rebeca', text: 'Amei esse look 🌸' }] },
+    { id: 'p12', userId: 'rebeca', image: F.cappuccino, caption: 'Café, página nova e nenhuma pressa ☕🌙', date: '2026-11-16T08:10:00.000Z', likes: 102, comments: [] },
+    { id: 'p13', userId: 'hugo', image: F.treino, caption: 'Treino pago, dever cumprido 💪', date: '2026-11-15T19:40:00.000Z', likes: 156, comments: [] },
+    { id: 'p14', userId: 'maria', image: F.verde, caption: 'Silêncio verde 🌿 Recarregando a semana.', date: '2026-11-15T12:00:00.000Z', likes: 131, comments: [] },
+    { id: 'p15', userId: 'vitor', image: F.vocaloid, caption: 'Projeto novo saindo do forno 🚀 Em breve mostro por aqui.', date: '2026-11-14T23:15:00.000Z', likes: 203, comments: [{ id: 'c10', userId: 'samuel', text: 'Ansioso pra ver 🎮' }] },
+    { id: 'p16', userId: 'emily', image: F.floresta, caption: 'Fim de tarde na floresta, sem filtro. 🌿', date: '2026-11-14T16:45:00.000Z', likes: 122, comments: [] }
+  ];
+
+  /* ===========================================================
+     4. ESTADO E PERSISTÊNCIA (localStorage)
+     =========================================================== */
+  const SEMENTE_INTERACOES = {
+    vitor: { likes: ['p2', 'p7'], saves: ['p5'], following: ['samuel', 'emily', 'hugo'] },
+    samuel: { likes: ['p1', 'p5'], saves: ['p3'], following: ['vitor', 'hugo'] },
+    emily: { likes: ['p1', 'p6', 'p8'], saves: [], following: ['vitor', 'maria'] },
+    sabryna: { likes: ['p10', 'p14'], saves: ['p11'], following: ['emily', 'rebeca'] },
+    rebeca: { likes: ['p6', 'p2'], saves: ['p12'], following: ['maria'] },
+    hugo: { likes: ['p1', 'p13'], saves: [], following: ['vitor', 'samuel'] },
+    maria: { likes: ['p2', 'p7'], saves: ['p14'], following: ['emily', 'rebeca'] }
+  };
+
+  function seedInteractions() {
+    const out = {};
+    USERS.forEach((u) => {
+      const s = SEMENTE_INTERACOES[u.id] || { likes: [], saves: [], following: [] };
+      out[u.id] = { likes: s.likes.slice(), saves: s.saves.slice(), following: s.following.slice() };
+    });
+    return out;
+  }
+
+  function seedNotifications() {
+    const out = {};
+    USERS.forEach((u) => {
+      const outros = USERS.filter((o) => o.id !== u.id);
+      out[u.id] = [
+        { id: u.id + '-n1', actorId: outros[0].id, text: 'curtiu sua publicação', date: '2026-11-20T12:40:00.000Z', read: false },
+        { id: u.id + '-n2', actorId: outros[1].id, text: 'começou a seguir você', date: '2026-11-20T09:12:00.000Z', read: false },
+        { id: u.id + '-n3', actorId: outros[2].id, text: 'comentou: “Que foto incrível!”', date: '2026-11-19T21:05:00.000Z', read: true },
+        { id: u.id + '-n4', actorId: outros[3].id, text: 'salvou sua publicação', date: '2026-11-18T18:20:00.000Z', read: true }
+      ];
+    });
+    return out;
+  }
+
+  function estadoInicial() {
+    return {
+      version: VERSION, theme: 'dark', activeId: 'vitor',
+      users: USERS, posts: POSTS,
+      interactions: seedInteractions(), notifications: seedNotifications()
+    };
+  }
+
+  function carregar() {
+    try {
+      const raw = localStorage.getItem(KEY);
+      if (raw) {
+        const salvo = JSON.parse(raw);
+        if (salvo && salvo.version === VERSION) return salvo;
+      }
+    } catch (e) { /* dados corrompidos: começa do zero */ }
+    return estadoInicial();
+  }
+
+  let state = carregar();
+  let view = 'feed';
+  let perfilAlvo = null;
+  const expandidos = new Set();
+  let story = null;
+  let storyTimer = null;
+
+  function salvar() {
+    try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { /* storage cheio */ }
+  }
+
+  /* ===========================================================
+     5. ATALHOS DE ESTADO
+     =========================================================== */
+  const userById = (id) => state.users.find((u) => u.id === id) || state.users[0];
+  const eu = () => userById(state.activeId);
+  const minhas = () => state.interactions[state.activeId] || { likes: [], saves: [], following: [] };
+  const postsOrdenados = () => state.posts.slice().sort((a, b) => new Date(b.date) - new Date(a.date));
+  const naoLidas = () => (state.notifications[state.activeId] || []).filter((n) => !n.read).length;
+
+  function alternar(lista, id) {
+    return lista.includes(id) ? lista.filter((i) => i !== id) : lista.concat([id]);
+  }
+
+  function atualizarMinhas(patch) {
+    const atuais = minhas();
+    state.interactions[state.activeId] = Object.assign({}, atuais, patch);
+    salvar();
+  }
+
+  /* ===========================================================
+     6. TEMA
+     =========================================================== */
+  function aplicarTema() {
+    const escuro = state.theme === 'dark';
+    document.documentElement.classList.toggle('dark', escuro);
+    const icone = escuro ? 'bx-moon' : 'bx-sun';
+    const rotulo = escuro ? 'Modo escuro' : 'Modo claro';
+    const i1 = document.getElementById('theme-icon');
+    const i2 = document.getElementById('theme-icon-mobile');
+    if (i1) i1.className = 'bx ' + icone + ' text-lg';
+    if (i2) i2.className = 'bx ' + icone + ' text-lg';
+    const label = document.getElementById('theme-label');
+    if (label) label.textContent = rotulo;
+    const knob = document.getElementById('theme-knob');
+    if (knob) knob.style.left = escuro ? '18px' : '2px';
+  }
+
+  /* ===========================================================
+     7. COMPONENTES
+     =========================================================== */
+  function renderNavLateral() {
+    const itens = [
+      { v: 'feed', label: 'Início', icon: 'bx-home' },
+      { v: 'search', label: 'Busca', icon: 'bx-search' },
+      { v: 'create', label: 'Criar', icon: 'bx-plus' },
+      { v: 'notifications', label: 'Notificações', icon: 'bx-bell' },
+      { v: 'profile', label: 'Perfil', icon: 'bx-user' }
+    ];
+    document.getElementById('nav-lateral').innerHTML = itens.map((i) => {
+      const ativo = view === i.v;
+      return '<button data-action="nav" data-view="' + i.v + '" class="flex w-full items-center gap-3 rounded-2xl px-3.5 py-2.5 text-sm font-medium transition ' +
+        (ativo ? 'bg-violet-100 text-violet-700 dark:bg-violet-500/15 dark:text-violet-300' : 'text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-white/5') + '">' +
+        '<i class="bx ' + i.icon + ' text-lg"></i>' + i.label + '</button>';
+    }).join('');
+
+    const perfil = document.getElementById('perfil-lateral');
+    const u = eu();
+    perfil.dataset.user = u.username;
+    perfil.innerHTML = avatar(u, 40) +
+      '<span class="min-w-0 flex-1"><span class="block truncate text-sm font-semibold">' + esc(u.name) + '</span>' +
+      '<span class="block truncate text-xs text-slate-500 dark:text-slate-400">@' + esc(u.username) + '</span></span>';
+
+    document.querySelectorAll('[data-nav]').forEach((btn) => {
+      const ativo = btn.dataset.nav === view;
+      btn.className = btn.className.replace(/(text-violet-600|text-slate-500)/g, '').trim();
+      btn.classList.add(ativo ? 'text-violet-600' : 'text-slate-500', 'dark:text-slate-400');
+      if (ativo) { btn.classList.remove('dark:text-slate-400'); btn.classList.add('dark:text-violet-400'); }
+    });
+
+    const badge = document.getElementById('badge-mobile');
+    const total = naoLidas();
+    if (badge) {
+      badge.textContent = total;
+      badge.classList.toggle('hidden', total === 0);
+    }
+  }
+
+  function storiesBar() {
+    const itens = state.users.map((u, i) =>
+      '<button data-action="story" data-index="' + i + '" class="flex w-[72px] shrink-0 flex-col items-center gap-2">' +
+      avatar(u, 62) +
+      '<span class="w-full truncate text-center text-[11px] font-medium text-slate-500 dark:text-slate-400">' + esc(u.name.split(' ')[0]) + '</span></button>'
+    ).join('');
+
+    return '<section class="card p-3 soft"><div class="no-scrollbar flex gap-3 overflow-x-auto pb-1">' +
+      '<button data-action="nav" data-view="create" class="flex w-[72px] shrink-0 flex-col items-center gap-2">' +
+        '<span class="relative">' + avatar(eu(), 62, false) +
+          '<span class="absolute -bottom-0.5 -right-0.5 flex h-5 w-5 items-center justify-center rounded-full border-2 border-white bg-violet-600 text-white dark:border-[#12121a]"><i class="bx bx-plus text-xs"></i></span>' +
+        '</span><span class="truncate text-[11px] font-medium text-slate-500 dark:text-slate-400">Seu story</span></button>' +
+      itens + '</div></section>';
+  }
+
+  function cartaoPost(post) {
+    const autor = userById(post.userId);
+    const curtido = minhas().likes.includes(post.id);
+    const salvo = minhas().saves.includes(post.id);
+    const comentarios = post.comments || [];
+    const lista = expandidos.has(post.id) ? comentarios : comentarios.slice(-2);
+    const total = post.likes + (curtido ? 1 : 0);
+
+    const verTodos = comentarios.length > 2 && !expandidos.has(post.id)
+      ? '<button data-action="show-comments" data-post="' + post.id + '" class="mt-2 text-xs font-medium text-slate-500 hover:text-violet-600 dark:text-slate-400">Ver todos os ' + comentarios.length + ' comentários</button>'
+      : '';
+
+    return '<article class="card fade-up overflow-hidden soft">' +
+      '<header class="flex items-center gap-3 px-4 py-3.5">' +
+        '<button data-action="profile" data-user="' + esc(autor.username) + '">' + avatar(autor, 40) + '</button>' +
+        '<div class="min-w-0 flex-1">' +
+          '<button data-action="profile" data-user="' + esc(autor.username) + '" class="block max-w-full truncate text-sm font-semibold">' + esc(autor.name) + '</button>' +
+          '<p class="truncate text-[11px] text-slate-500 dark:text-slate-400">@' + esc(autor.username) + ' · ' + formatDate(post.date) + '</p>' +
+        '</div><i class="bx bx-dots-horizontal-rounded text-xl text-slate-400"></i>' +
+      '</header>' +
+      '<div class="aspect-[4/5] w-full overflow-hidden bg-slate-100 dark:bg-white/5 sm:aspect-[5/4]">' +
+        '<img src="' + post.image + '" alt="' + esc(post.caption) + '" class="h-full w-full object-cover transition-transform duration-700 hover:scale-105" loading="lazy" />' +
+      '</div>' +
+      '<div class="px-4 pb-4 pt-2.5">' +
+        '<div class="flex items-center">' +
+          '<button data-action="like" data-post="' + post.id + '" class="icon-btn ' + (curtido ? 'text-rose-500 dark:text-rose-400' : '') + '"><i class="bx ' + (curtido ? 'bxs-heart' : 'bx-heart') + '"></i></button>' +
+          '<button data-action="focus-comment" data-post="' + post.id + '" class="icon-btn"><i class="bx bx-comment"></i></button>' +
+          '<button data-action="share" data-post="' + post.id + '" class="icon-btn"><i class="bx bx-send"></i></button>' +
+          '<div class="ml-auto"><button data-action="save" data-post="' + post.id + '" class="icon-btn ' + (salvo ? 'text-violet-600 dark:text-violet-400' : '') + '"><i class="bx ' + (salvo ? 'bxs-bookmark' : 'bx-bookmark') + '"></i></button></div>' +
+        '</div>' +
+      '<div class="px-4 pb-4">' +
+        '<p class="text-sm font-semibold">' + total.toLocaleString('pt-BR') + ' curtidas</p>' +
+        '<p class="mt-1.5 text-sm leading-relaxed"><button data-action="profile" data-user="' + esc(autor.username) + '" class="mr-1.5 font-semibold">' + esc(autor.username) + '</button>' + esc(post.caption) + '</p>' +
+        verTodos +
+        '<div class="mt-2 space-y-1.5">' + lista.map((c) =>
+          '<p class="text-sm leading-snug"><span class="mr-1.5 font-semibold">' + esc(userById(c.userId).username) + '</span>' + esc(c.text) + '</p>'
+        ).join('') + '</div>' +
+        '<form data-form="comentario" data-post="' + post.id + '" class="mt-3 flex items-center gap-2 border-t border-slate-200 pt-3 dark:border-white/10">' +
+          avatar(eu(), 28, false) +
+          '<input name="texto" id="comment-' + post.id + '" placeholder="Escreva um comentário..." class="flex-1 bg-transparent text-sm outline-none placeholder:text-slate-400" />' +
+          '<button type="submit" class="text-sm font-semibold text-violet-600 dark:text-violet-400">Publicar</button>' +
+        '</form>' +
+      '</div></article>';
+  }
+
+  function sugestoes() {
+    const seguindo = minhas().following;
+    const lista = state.users.filter((u) => u.id !== state.activeId && !seguindo.includes(u.id)).slice(0, 4);
+    const conteudo = lista.length === 0
+      ? '<p class="text-xs leading-relaxed text-slate-500 dark:text-slate-400">Você já segue todo mundo por aqui. Que tal publicar algo novo?</p>'
+      : '<ul class="space-y-3">' + lista.map((u) =>
+          '<li class="flex items-center gap-2.5">' +
+            '<button data-action="profile" data-user="' + esc(u.username) + '">' + avatar(u, 36) + '</button>' +
+            '<button data-action="profile" data-user="' + esc(u.username) + '" class="min-w-0 flex-1 text-left">' +
+              '<span class="block truncate text-[13px] font-semibold">' + esc(u.name) + '</span>' +
+              '<span class="block truncate text-[11px] text-slate-500 dark:text-slate-400">@' + esc(u.username) + '</span></button>' +
+            '<button data-action="follow" data-user="' + u.id + '" class="btn-primary">Seguir</button>' +
+          '</li>').join('') + '</ul>';
+
+    return '<div class="card p-4 soft">' +
+      '<div class="mb-3 flex items-center gap-2"><i class="bx bx-star text-lg text-orange-400"></i><h2 class="text-sm font-semibold">Sugestões para você</h2></div>' +
+      conteudo + '</div>' +
+      '<div class="mt-4 rounded-[22px] border border-slate-200 bg-slate-100/70 p-4 dark:border-white/10 dark:bg-white/5">' +
+      '<p class="text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">Vitor Social · projeto pessoal de Vitor Nogueira.<br />Tema, curtidas e publicações ficam salvos neste navegador.</p></div>';
+  }
+
+  /* ===========================================================
+     8. TELAS
+     =========================================================== */
+  function telaFeed() {
+    const u = eu();
+    return '<div class="flex gap-8">' +
+      '<div class="mx-auto w-full max-w-[620px] space-y-4 sm:space-y-5">' +
+        '<div class="px-1">' +
+          '<p class="text-xs uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">Bem-vindo de volta</p>' +
+          '<h1 class="font-heading text-2xl font-bold tracking-tight sm:text-[28px]">Olá, ' + esc(u.name.split(' ')[0]) + '<span class="text-violet-600 dark:text-violet-400">.</span></h1>' +
+        '</div>' +
+        storiesBar() +
+        '<button data-action="nav" data-view="create" class="flex w-full items-center gap-3 rounded-[22px] border border-slate-200 bg-white px-4 py-3.5 text-left transition hover:border-violet-300 dark:border-white/10 dark:bg-[#12121a]">' +
+          avatar(u, 40) +
+          '<span class="flex-1 text-sm text-slate-500 dark:text-slate-400">No que você está pensando, ' + esc(u.name.split(' ')[0]) + '?</span>' +
+          '<span class="flex items-center gap-1 rounded-full bg-violet-100 px-3 py-1.5 text-xs font-semibold text-violet-700 dark:bg-violet-500/15 dark:text-violet-300"><i class="bx bx-plus"></i>Publicar</span>' +
+        '</button>' +
+        postsOrdenados().map(cartaoPost).join('') +
+      '</div>' +
+      '<aside class="hidden w-[300px] shrink-0 lg:block"><div class="sticky top-8">' + sugestoes() + '</div></aside>' +
+    '</div>';
+  }
+
+  function telaBusca() {
+    return '<div class="mx-auto w-full max-w-[620px] space-y-4">' +
+      '<div><p class="text-xs uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">Descobrir</p>' +
+      '<h1 class="font-heading text-2xl font-bold tracking-tight">Buscar pessoas</h1></div>' +
+      '<div class="flex items-center gap-2.5 rounded-full border border-slate-200 bg-white px-4 py-3 focus-within:border-violet-400 dark:border-white/10 dark:bg-[#12121a]">' +
+        '<i class="bx bx-search text-lg text-slate-400"></i>' +
+        '<input id="campo-busca" value="' + esc(window.__busca || '') + '" placeholder="Busque por nome ou @usuário" class="flex-1 bg-transparent text-sm outline-none placeholder:text-slate-400" />' +
+      '</div>' +
+      '<div id="lista-busca" class="card overflow-hidden soft"></div>' +
+    '</div>';
+  }
+
+  function renderListaBusca() {
+    const termo = (window.__busca || '').trim().toLowerCase();
+    const lista = state.users.filter((u) => !termo || u.name.toLowerCase().includes(termo) || u.username.toLowerCase().includes(termo));
+    const alvo = document.getElementById('lista-busca');
+    if (!alvo) return;
+
+    if (lista.length === 0) {
+      alvo.innerHTML = '<p class="p-8 text-center text-sm text-slate-500 dark:text-slate-400">Ninguém encontrado para “' + esc(window.__busca) + '”.</p>';
+      return;
+    }
+
+    alvo.innerHTML = '<ul class="divide-y divide-slate-200 dark:divide-white/10">' + lista.map((u) => {
+      const proprio = u.id === state.activeId;
+      const seguindo = minhas().following.includes(u.id);
+      return '<li class="flex items-center gap-3 px-4 py-3">' +
+        '<button data-action="profile" data-user="' + esc(u.username) + '">' + avatar(u, 44, !proprio) + '</button>' +
+        '<button data-action="profile" data-user="' + esc(u.username) + '" class="min-w-0 flex-1 text-left">' +
+          '<span class="block truncate text-sm font-semibold">' + esc(u.name) + (proprio ? ' <span class="ml-2 rounded-full bg-violet-100 px-2 py-0.5 text-[10px] font-semibold text-violet-700 dark:bg-violet-500/15 dark:text-violet-300">você</span>' : '') + '</span>' +
+          '<span class="block truncate text-xs text-slate-500 dark:text-slate-400">@' + esc(u.username) + '</span></button>' +
+        (proprio ? '' : '<button data-action="follow" data-user="' + u.id + '" class="' + (seguindo ? 'btn-ghost' : 'btn-primary') + '">' + (seguindo ? 'Seguindo' : 'Seguir') + '</button>') +
+      '</li>';
+    }).join('') + '</ul>';
+  }
+
+  function telaCriar() {
+    const u = eu();
+    const sugestoesImagens = [F.akibaNoite, F.arcade1, F.vitrine, F.gashapon];
+    return '<div class="mx-auto w-full max-w-[620px] space-y-4">' +
+      '<div><p class="text-xs uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">Nova publicação</p>' +
+      '<h1 class="font-heading text-2xl font-bold tracking-tight">Criar</h1></div>' +
+      '<form id="form-criar" class="card space-y-4 p-4 soft sm:p-5">' +
+        '<div class="flex items-center gap-3">' + avatar(u, 42) +
+          '<div><p class="text-sm font-semibold">' + esc(u.name) + '</p><p class="text-xs text-slate-500 dark:text-slate-400">@' + esc(u.username) + '</p></div></div>' +
+        '<textarea name="legenda" rows="3" placeholder="Escreva uma legenda..." class="field resize-none"></textarea>' +
+        '<div class="space-y-2"><label class="flex items-center gap-1.5 text-xs font-medium text-slate-500 dark:text-slate-400"><i class="bx bx-image-add"></i> Endereço da imagem</label>' +
+        '<input name="imagem" id="campo-imagem" placeholder="https://..." class="field" /></div>' +
+        '<div class="space-y-2"><p class="flex items-center gap-1.5 text-xs font-medium text-slate-500 dark:text-slate-400"><i class="bx bx-star text-orange-400"></i> Ou escolha uma foto pronta</p>' +
+          '<div class="grid grid-cols-4 gap-2">' + sugestoesImagens.map((url) =>
+            '<button type="button" data-action="pick-image" data-url="' + url + '" class="aspect-square overflow-hidden rounded-xl border-2 border-transparent opacity-80 transition hover:opacity-100"><img src="' + url + '" alt="Sugestão" class="h-full w-full object-cover" /></button>'
+          ).join('') + '</div></div>' +
+        '<div id="previa" class="hidden overflow-hidden rounded-2xl border border-slate-200 dark:border-white/10">' +
+          '<img id="previa-img" alt="Prévia da publicação" class="max-h-[320px] w-full object-cover" /></div>' +
+        '<button type="submit" class="w-full rounded-full bg-violet-600 py-3 text-sm font-semibold text-white transition hover:bg-violet-500">Publicar</button>' +
+      '</form></div>';
+  }
+
+  function telaNotificacoes() {
+    const lista = state.notifications[state.activeId] || [];
+    const pendentes = lista.filter((n) => !n.read).length;
+    const itens = lista.map((n) => {
+      const ator = userById(n.actorId);
+      return '<li class="flex items-center gap-3 px-4 py-3.5 ' + (n.read ? '' : 'bg-violet-50 dark:bg-violet-500/10') + '">' +
+        '<button data-action="profile" data-user="' + esc(ator.username) + '">' + avatar(ator, 42, !n.read) + '</button>' +
+        '<div class="min-w-0 flex-1"><p class="text-sm leading-snug"><span class="font-semibold">' + esc(ator.name) + '</span> ' + esc(n.text) + '</p>' +
+        '<p class="mt-0.5 text-[11px] text-slate-500 dark:text-slate-400">' + formatDate(n.date) + '</p></div>' +
+        (n.read ? '' : '<span class="h-2 w-2 shrink-0 rounded-full bg-rose-500"></span>') + '</li>';
+    }).join('');
+
+    return '<div class="mx-auto w-full max-w-[620px] space-y-4">' +
+      '<div class="flex items-end justify-between">' +
+        '<div><p class="text-xs uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">Atividade</p>' +
+        '<h1 class="font-heading text-2xl font-bold tracking-tight">Notificações</h1></div>' +
+        (pendentes > 0 ? '<button data-action="mark-read" class="btn-ghost flex items-center gap-1.5"><i class="bx bx-check-double"></i> Marcar como lidas</button>' : '') +
+      '</div>' +
+      '<div class="card overflow-hidden soft"><ul class="divide-y divide-slate-200 dark:divide-white/10">' + itens + '</ul></div>' +
+      '<p class="flex items-center justify-center gap-1.5 pt-2 text-[11px] text-slate-500 dark:text-slate-400"><i class="bx bx-bell"></i> Cada perfil tem a sua própria lista de notificações.</p>' +
+    '</div>';
+  }
+
+  function telaPerfil(username) {
+    const user = state.users.find((u) => u.username === username) || eu();
+    const proprio = user.id === state.activeId;
+    const posts = postsOrdenados().filter((p) => p.userId === user.id);
+    const seguindo = minhas().following.includes(user.id);
+    const totalSeguindo = proprio ? minhas().following.length : user.following;
+
+    const destaques = user.highlights.map((h) =>
+      '<div class="flex w-[68px] shrink-0 flex-col items-center gap-1.5">' +
+        '<span class="ring-story flex h-16 w-16 items-center justify-center rounded-full p-[2.5px]">' +
+          '<span class="relative h-full w-full overflow-hidden rounded-full border-2 border-white dark:border-[#12121a]">' +
+            '<img src="' + h.cover + '" alt="' + esc(h.label) + '" class="h-full w-full object-cover" />' +
+            '<span class="absolute inset-0 flex items-end justify-center bg-black/25 pb-1 text-xs">' + h.emoji + '</span>' +
+          '</span></span>' +
+        '<span class="w-full truncate text-center text-[11px] text-slate-500 dark:text-slate-400">' + esc(h.label) + '</span></div>'
+    ).join('');
+
+    const grade = posts.map((p) =>
+      '<button data-action="post" data-post="' + p.id + '" class="group relative aspect-square overflow-hidden rounded-xl bg-slate-100 dark:bg-white/5">' +
+        '<img src="' + p.image + '" alt="' + esc(p.caption) + '" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" loading="lazy" />' +
+        '<span class="absolute inset-0 flex items-center justify-center gap-4 bg-black/45 text-xs font-semibold text-white opacity-0 transition group-hover:opacity-100">' +
+          '<span><i class="bx bxs-heart"></i> ' + p.likes + '</span><span><i class="bx bxs-comment"></i> ' + (p.comments || []).length + '</span>' +
+        '</span></button>'
+    ).join('');
+
+    const acoes = proprio
+      ? '<button data-action="editar" class="btn-ghost flex items-center gap-1.5"><i class="bx bx-edit"></i> Editar perfil</button>' +
+        '<button data-action="share-profile" data-user="' + esc(user.username) + '" class="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 dark:border-white/10"><i class="bx bx-share-alt"></i></button>'
+      : '<button data-action="follow" data-user="' + user.id + '" class="' + (seguindo ? 'btn-ghost' : 'btn-primary') + ' flex items-center gap-1.5"><i class="bx ' + (seguindo ? 'bx-check' : 'bx-user-plus') + '"></i>' + (seguindo ? 'Seguindo' : 'Seguir') + '</button>';
+
+    return '<div class="mx-auto w-full max-w-[860px] space-y-5">' +
+      '<section class="card overflow-hidden soft">' +
+        '<div class="h-32 bg-gradient-to-br from-violet-400/40 via-rose-400/30 to-orange-300/40 sm:h-40"></div>' +
+        '<div class="px-4 pb-4">' +
+          '<div class="-mt-12 flex items-end justify-between gap-3">' + avatar(user, 96) + '<div class="mb-1 flex gap-2">' + acoes + '</div></div>' +
+          '<div class="mt-3"><h1 class="font-heading text-xl font-bold tracking-tight sm:text-2xl">' + esc(user.name) + '</h1>' +
+          '<p class="text-sm text-slate-500 dark:text-slate-400">@' + esc(user.username) + '</p>' +
+          '<p class="mt-2.5 max-w-xl text-sm leading-relaxed">' + esc(user.bio) + '</p></div>' +
+          '<div class="mt-4 flex gap-6 border-t border-slate-200 pt-3.5 text-sm dark:border-white/10">' +
+            '<span><strong class="font-heading text-base">' + posts.length + '</strong> <span class="text-slate-500 dark:text-slate-400">publicações</span></span>' +
+            '<span><strong class="font-heading text-base">' + user.followers.toLocaleString('pt-BR') + '</strong> <span class="text-slate-500 dark:text-slate-400">seguidores</span></span>' +
+            '<span><strong class="font-heading text-base">' + totalSeguindo + '</strong> <span class="text-slate-500 dark:text-slate-400">seguindo</span></span>' +
+          '</div>' +
+        '</div>' +
+      '</section>' +
+      '<section class="card px-4 py-4 soft sm:px-5">' +
+        '<h2 class="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-slate-500 dark:text-slate-400">Destaques</h2>' +
+        '<div class="no-scrollbar flex gap-4 overflow-x-auto pb-1">' + destaques + '</div></section>' +
+      '<section>' +
+        '<div class="mb-3 flex items-center gap-2 px-1"><i class="bx bx-camera text-slate-500 dark:text-slate-400"></i>' +
+        '<h2 class="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500 dark:text-slate-400">Publicações</h2></div>' +
+        (posts.length === 0
+          ? '<div class="rounded-[24px] border border-dashed border-slate-300 p-10 text-center text-sm text-slate-500 dark:border-white/10 dark:text-slate-400">Nenhuma publicação ainda.</div>'
+          : '<div class="grid grid-cols-3 gap-1.5 sm:gap-2.5">' + grade + '</div>') +
+      '</section></div>';
+  }
+
+  /* ===========================================================
+     9. MODAIS
+     =========================================================== */
+  function renderModais() {
+    const raiz = document.getElementById('modal-root');
+    let html = '';
+
+    // --- Trocar de conta ---
+    if (window.__modal === 'troca') {
+      html += '<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm" data-action="fechar-modal">' +
+        '<div class="card w-full max-w-md overflow-hidden" data-stop="1">' +
+          '<div class="border-b border-slate-200 px-6 pb-4 pt-6 dark:border-white/10">' +
+            '<h2 class="font-heading text-lg font-bold">Trocar de conta</h2>' +
+            '<p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Cada perfil tem suas próprias publicações, curtidas e comentários.</p>' +
+          '</div>' +
+          '<div class="max-h-[60vh] space-y-1 overflow-y-auto p-3">' +
+            state.users.map((u) => {
+              const ativo = u.id === state.activeId;
+              return '<button data-action="trocar" data-user="' + u.id + '" class="flex w-full items-center gap-3 rounded-2xl px-3 py-2.5 text-left transition ' +
+                (ativo ? 'bg-violet-100 dark:bg-violet-500/15' : 'hover:bg-slate-100 dark:hover:bg-white/5') + '">' +
+                avatar(u, 44, ativo) +
+                '<span class="min-w-0 flex-1"><span class="block truncate text-sm font-semibold">' + esc(u.name) + '</span>' +
+                '<span class="block truncate text-xs text-slate-500 dark:text-slate-400">@' + esc(u.username) + '</span></span>' +
+                (ativo ? '<i class="bx bx-check text-lg text-violet-600 dark:text-violet-400"></i>' : '') +
+              '</button>';
+            }).join('') +
+          '</div>' +
+        '</div></div>';
+    }
+
+    // --- Editar perfil ---
+    if (window.__modal === 'editar') {
+      const u = eu();
+      html += '<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm" data-action="fechar-modal">' +
+        '<div class="card w-full max-w-md p-6" data-stop="1">' +
+          '<h2 class="font-heading text-lg font-bold">Editar perfil</h2>' +
+          '<form id="form-editar" class="mt-4 space-y-4">' +
+            '<div class="flex items-center gap-3">' + avatar(u, 56) +
+              '<p class="text-xs leading-relaxed text-slate-500 dark:text-slate-400">Cole o endereço de uma imagem para trocar a foto do perfil.</p></div>' +
+            '<div><label class="text-xs font-medium text-slate-500 dark:text-slate-400">Nome</label>' +
+              '<input name="nome" value="' + esc(u.name) + '" class="field mt-1" /></div>' +
+            '<div><label class="text-xs font-medium text-slate-500 dark:text-slate-400">Usuário</label>' +
+              '<input name="usuario" value="' + esc(u.username) + '" class="field mt-1" /></div>' +
+            '<div><label class="text-xs font-medium text-slate-500 dark:text-slate-400">Biografia</label>' +
+              '<textarea name="bio" rows="3" class="field mt-1 resize-none">' + esc(u.bio) + '</textarea></div>' +
+            '<div><label class="text-xs font-medium text-slate-500 dark:text-slate-400">Foto (URL)</label>' +
+              '<input name="avatar" value="' + esc(u.avatar) + '" class="field mt-1" /></div>' +
+            '<div class="flex justify-end gap-2 pt-1">' +
+              '<button type="button" data-action="fechar" class="btn-ghost">Cancelar</button>' +
+              '<button type="submit" class="btn-primary">Salvar</button>' +
+            '</div>' +
+          '</form>' +
+        '</div></div>';
+    }
+
+    // --- Publicação aberta pela grade do perfil ---
+    if (window.__modal === 'post') {
+      const post = state.posts.find((p) => p.id === window.__post);
+      if (post) {
+        html += '<div class="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/60 p-4 backdrop-blur-sm" data-action="fechar-modal">' +
+          '<div class="w-full max-w-[560px] py-6" data-stop="1">' +
+            '<div class="mb-2 flex justify-end"><button data-action="fechar" class="flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-slate-700 dark:bg-white/10 dark:text-white"><i class="bx bx-x text-xl"></i></button></div>' +
+            cartaoPost(post) +
+          '</div></div>';
+      }
+    }
+
+    // --- Story em tela cheia ---
+    if (story) {
+      const user = state.users[story.u];
+      const stories = user.stories;
+      const barras = stories.map((_, i) => {
+        const cheia = i < story.s ? 'width:100%' : '';
+        const animando = i === story.s ? 'story-bar' : '';
+        return '<span class="h-[3px] flex-1 overflow-hidden rounded-full bg-white/30"><span class="block h-full rounded-full bg-white ' + animando + '" style="' + cheia + '"></span></span>';
+      }).join('');
+
+      html += '<div class="fixed inset-0 z-[60] flex items-center justify-center bg-black/95 p-3">' +
+        '<button data-action="fechar-story" class="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20"><i class="bx bx-x text-xl"></i></button>' +
+        '<div class="relative flex h-full w-full max-w-[420px] flex-col overflow-hidden rounded-[26px] bg-black shadow-2xl">' +
+          '<div class="absolute inset-x-0 top-0 z-10 flex gap-1.5 px-3 pt-3">' + barras + '</div>' +
+          '<div class="absolute inset-x-0 top-7 z-10 flex items-center gap-3 px-4 pt-3">' + avatar(user, 36, false) +
+            '<div class="min-w-0 flex-1"><p class="truncate text-sm font-semibold text-white">' + esc(user.name) + '</p>' +
+            '<p class="truncate text-[11px] text-white/60">@' + esc(user.username) + '</p></div></div>' +
+          '<img src="' + stories[story.s] + '" alt="Story de ' + esc(user.name) + '" class="h-full w-full object-cover" />' +
+          '<button data-action="story-anterior" class="absolute inset-y-0 left-0 w-1/3" aria-label="Anterior"></button>' +
+          '<button data-action="story-proximo" class="absolute inset-y-0 right-0 w-1/3" aria-label="Próximo"></button>' +
+        '</div></div>';
+    }
+
+    raiz.innerHTML = html;
+  }
+
+  /* ===========================================================
+     10. RENDERIZAÇÃO
+     =========================================================== */
+  function render() {
+    aplicarTema();
+    renderNavLateral();
+
+    const alvo = document.getElementById('view');
+    if (view === 'feed') alvo.innerHTML = telaFeed();
+    else if (view === 'search') { alvo.innerHTML = telaBusca(); renderListaBusca(); }
+    else if (view === 'create') alvo.innerHTML = telaCriar();
+    else if (view === 'notifications') alvo.innerHTML = telaNotificacoes();
+    else if (view === 'profile') alvo.innerHTML = telaPerfil(perfilAlvo || eu().username);
+
+    renderModais();
+    controlarStory();
+  }
+
+  function navegar(novaView) {
+    view = novaView;
+    if (novaView === 'profile') perfilAlvo = eu().username;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    render();
+  }
+
+  function abrirPerfil(username) {
+    perfilAlvo = username;
+    view = 'profile';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    render();
+  }
+
+  /* ===========================================================
+     11. STORIES
+     =========================================================== */
+  function abrirStory(index) {
+    story = { u: index, s: 0 };
+    render();
+  }
+
+  function proximoStory() {
+    if (!story) return;
+    const user = state.users[story.u];
+    if (story.s + 1 < user.stories.length) story = { u: story.u, s: story.s + 1 };
+    else if (story.u + 1 < state.users.length) story = { u: story.u + 1, s: 0 };
+    else { story = null; render(); return; }
+    render();
+  }
+
+  function storyAnterior() {
+    if (!story) return;
+    if (story.s > 0) story = { u: story.u, s: story.s - 1 };
+    else if (story.u > 0) {
+      const anterior = story.u - 1;
+      story = { u: anterior, s: state.users[anterior].stories.length - 1 };
+    }
+    render();
+  }
+
+  function controlarStory() {
+    if (storyTimer) { clearTimeout(storyTimer); storyTimer = null; }
+    if (story) storyTimer = setTimeout(proximoStory, 5000);
+  }
+
+  /* ===========================================================
+     12. AÇÕES
+     =========================================================== */
+  function fecharModais() {
+    window.__modal = null;
+    window.__post = null;
+    render();
+  }
+
+  function curtir(id) {
+    atualizarMinhas({ likes: alternar(minhas().likes, id) });
+    render();
+  }
+
+  function salvarPost(id) {
+    atualizarMinhas({ saves: alternar(minhas().saves, id) });
+    render();
+  }
+
+  function seguir(id) {
+    atualizarMinhas({ following: alternar(minhas().following, id) });
+    render();
+  }
+
+  function comentar(postId, texto) {
+    const limpo = texto.trim();
+    if (!limpo) return;
+    state.posts = state.posts.map((p) => p.id === postId
+      ? Object.assign({}, p, { comments: (p.comments || []).concat([{ id: 'c-' + Date.now(), userId: state.activeId, text: limpo }]) })
+      : p);
+    expandidos.add(postId);
+    salvar();
+    render();
+  }
+
+  function publicar(legenda, imagem) {
+    if (!imagem.trim()) { alert('Escolha uma imagem para publicar'); return; }
+    state.posts = [{
+      id: 'p-' + Date.now(),
+      userId: state.activeId,
+      image: imagem.trim(),
+      caption: legenda.trim(),
+      date: new Date().toISOString(),
+      likes: 0,
+      comments: []
+    }].concat(state.posts);
+    salvar();
+    navegar('feed');
+  }
+
+  function trocarConta(id) {
+    state.activeId = id;
+    salvar();
+    window.__modal = null;
+    navegar('feed');
+  }
+
+  function marcarLidas() {
+    state.notifications[state.activeId] = (state.notifications[state.activeId] || []).map((n) => Object.assign({}, n, { read: true }));
+    salvar();
+    render();
+  }
+
+  function compartilhar(post) {
+    const autor = userById(post.userId);
+    const url = location.href.split('#')[0] + '#' + autor.username;
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(url).then(
+        () => alert('Link da publicação copiado!'),
+        () => alert('Link: ' + url)
+      );
+    } else { alert('Link: ' + url); }
+  }
+
+  /* ===========================================================
+     13. EVENTOS (delegação)
+     =========================================================== */
+  document.addEventListener('click', (event) => {
+    const alvo = event.target.closest('[data-action]');
+    if (!alvo) return;
+    if (alvo.dataset.stop) return;
+    const action = alvo.dataset.action;
+    const id = alvo.dataset.post;
+    const userId = alvo.dataset.user;
+
+    if (action === 'nav') { window.__modal = null; navegar(alvo.dataset.view); }
+    else if (action === 'theme') { state.theme = state.theme === 'dark' ? 'light' : 'dark'; salvar(); render(); }
+    else if (action === 'abrir-troca') { window.__modal = 'troca'; renderModais(); }
+    else if (action === 'trocar') { trocarConta(userId); }
+    else if (action === 'editar') { window.__modal = 'editar'; renderModais(); }
+    else if (action === 'fechar-modal') {
+      // clique dentro do cartão não fecha a janela
+      if (event.target.closest('[data-stop]')) return;
+      fecharModais();
+    }
+    else if (action === 'fechar') { fecharModais(); }
+    else if (action === 'profile') { window.__modal = null; abrirPerfil(userId); }
+    else if (action === 'follow') { seguir(userId); }
+    else if (action === 'like') { curtir(id); }
+    else if (action === 'save') { salvarPost(id); }
+    else if (action === 'show-comments') { expandidos.add(id); render(); }
+    else if (action === 'focus-comment') { const campo = document.getElementById('comment-' + id); if (campo) campo.focus(); }
+    else if (action === 'share') { const post = state.posts.find((p) => p.id === id); if (post) compartilhar(post); }
+    else if (action === 'pick-image') {
+      const campo = document.getElementById('campo-imagem');
+      const previa = document.getElementById('previa');
+      const previaImg = document.getElementById('previa-img');
+      if (campo) campo.value = alvo.dataset.url;
+      if (previa && previaImg) { previaImg.src = alvo.dataset.url; previa.classList.remove('hidden'); }
+    }
+    else if (action === 'story') { abrirStory(Number(alvo.dataset.index)); }
+    else if (action === 'story-proximo') { proximoStory(); }
+    else if (action === 'story-anterior') { storyAnterior(); }
+    else if (action === 'fechar-story') { story = null; render(); }
+    else if (action === 'mark-read') { marcarLidas(); }
+    else if (action === 'share-profile') {
+      const url = location.href.split('#')[0] + '#' + userId;
+      if (navigator.clipboard) navigator.clipboard.writeText(url);
+      alert('Link do perfil copiado!');
+    }
+    else if (action === 'post') { window.__post = id; window.__modal = 'post'; renderModais(); }
+  });
+
+  // Envio de formulários (comentário, criar, editar perfil)
+  document.addEventListener('submit', (event) => {
+    const form = event.target;
+    event.preventDefault();
+
+    if (form.dataset.form === 'comentario') {
+      const input = form.querySelector('input[name="texto"]');
+      comentar(form.dataset.post, input.value);
+    } else if (form.id === 'form-criar') {
+      publicar(form.legenda.value, form.imagem.value);
+    } else if (form.id === 'form-editar') {
+      const nome = form.nome.value.trim();
+      const usuario = form.usuario.value.trim().replace(/^@/, '').replace(/\s+/g, '.');
+      if (!nome || !usuario) { alert('Nome e usuário são obrigatórios'); return; }
+      const bio = form.bio.value.trim();
+      const foto = form.avatar.value.trim() || eu().avatar;
+      state.users = state.users.map((u) => u.id === state.activeId ? Object.assign({}, u, { name: nome, username: usuario, bio: bio, avatar: foto }) : u);
+      salvar();
+      window.__modal = null;
+      perfilAlvo = usuario;
+      render();
+    }
+  });
+
+  // Busca em tempo real
+  document.addEventListener('input', (event) => {
+    if (event.target.id === 'campo-busca') {
+      window.__busca = event.target.value;
+      renderListaBusca();
+    }
+    if (event.target.id === 'campo-imagem') {
+      const previa = document.getElementById('previa');
+      const previaImg = document.getElementById('previa-img');
+      const valor = event.target.value.trim();
+      if (previa && previaImg) {
+        if (valor) { previaImg.src = valor; previa.classList.remove('hidden'); }
+        else previa.classList.add('hidden');
+      }
+    }
+  });
+
+  // Teclado nos stories
+  document.addEventListener('keydown', (event) => {
+    if (!story) return;
+    if (event.key === 'Escape') { story = null; render(); }
+    if (event.key === 'ArrowRight') proximoStory();
+    if (event.key === 'ArrowLeft') storyAnterior();
+  });
+
+  /* ===========================================================
+     14. INÍCIO
+     =========================================================== */
+  window.__busca = '';
+  aplicarTema();
+  render();
+  </script>
 </body>
 </html>
