@@ -1,330 +1,301 @@
 
-// Elementos dos formulários
-const formularioParticipante = document.getElementById("participanteForm");
-const formularioAcao = document.getElementById("acaoForm");
+// Elementos do HTML
+const participanteForm = document.getElementById("participanteForm");
+const acaoForm = document.getElementById("acaoForm");
 
-// Elementos das listas e indicadores
+const nomeParticipante = document.getElementById("nomeParticipante");
+const turma = document.getElementById("turma");
+const participanteEscolhido = document.getElementById("participanteEscolhido");
+const nomeAcao = document.getElementById("nomeAcao");
+const categoria = document.getElementById("categoria");
+
 const listaParticipantes = document.getElementById("listaParticipantes");
-const seletorParticipante = document.getElementById("participanteAcao");
-const areaRanking = document.getElementById("ranking");
-const areaHistorico = document.getElementById("historico");
+const ranking = document.getElementById("ranking");
+const historico = document.getElementById("historico");
 const mensagem = document.getElementById("mensagem");
 
-// Botões de edição
-const botaoParticipante = document.getElementById("botaoParticipante");
-const botaoCancelar = document.getElementById("cancelarEdicao");
+const totalParticipantes = document.getElementById("totalParticipantes");
+const totalAcoes = document.getElementById("totalAcoes");
+const totalPontos = document.getElementById("totalPontos");
 
-// Recupera os dados salvos no navegador
+// Chaves de armazenamento
+const CHAVE_PARTICIPANTES = "ecoParticipantes";
+const CHAVE_ACOES = "ecoAcoes";
+
+// Recuperar dados salvos
 function carregarDados(chave) {
     try {
         const dados = JSON.parse(localStorage.getItem(chave));
         return Array.isArray(dados) ? dados : [];
-    } catch {
+    } catch (erro) {
         return [];
     }
 }
 
-let participantes = carregarDados("ecoParticipantes");
-let acoes = carregarDados("ecoAcoes");
+let participantes = carregarDados(CHAVE_PARTICIPANTES);
+let acoes = carregarDados(CHAVE_ACOES);
 
-let participanteEmEdicao = null;
-
-// Garante identificadores e dados válidos
-participantes = participantes.map((pessoa, indice) => ({
-    ...pessoa,
-    id: String(pessoa.id || Date.now() + indice),
-    nome: pessoa.nome || "",
-    turma: pessoa.turma || ""
-}));
-
-acoes = acoes.map((acao, indice) => ({
-    ...acao,
-    id: String(acao.id || Date.now() + indice),
-    pontos: Number(acao.pontos) || 0
-}));
-
-// Salva os dados no navegador
+// Salvar informações
 function salvarDados() {
-    localStorage.setItem("ecoParticipantes", JSON.stringify(participantes));
-    localStorage.setItem("ecoAcoes", JSON.stringify(acoes));
+    try {
+        localStorage.setItem(
+            CHAVE_PARTICIPANTES,
+            JSON.stringify(participantes)
+        );
+
+        localStorage.setItem(
+            CHAVE_ACOES,
+            JSON.stringify(acoes)
+        );
+
+        return true;
+    } catch (erro) {
+        mostrarMensagem("Não foi possível salvar os dados neste navegador.");
+        return false;
+    }
 }
 
-// Exibe mensagens para o usuário
-function mostrarMensagem(texto) {
-    mensagem.textContent = texto;
-}
-
-// Calcula os pontos de cada categoria
-function calcularPontos(categoria) {
-    const tabelaPontos = {
+// Pontuação por categoria
+function calcularPontos(categoriaSelecionada) {
+    const pontuacao = {
         "Reciclagem": 10,
-        "Plantio": 15,
-        "Economia de água": 10,
-        "Economia de energia": 10,
+        "Economia de água": 15,
+        "Economia de energia": 15,
+        "Plantio": 20,
         "Limpeza": 15
     };
 
-    return tabelaPontos[categoria] || 5;
+    return pontuacao[categoriaSelecionada] || 0;
 }
 
-// Atualiza os números do painel
-function atualizarIndicadores() {
-    const quantidadePontos = acoes.reduce(
-        (soma, acao) => soma + (Number(acao.pontos) || 0),
-        0
-    );
+// Exibir mensagem
+let temporizadorMensagem;
 
-    document.getElementById("totalParticipantes").textContent =
-        participantes.length;
+function mostrarMensagem(texto) {
+    mensagem.textContent = texto;
 
-    document.getElementById("totalAcoes").textContent =
-        acoes.length;
+    clearTimeout(temporizadorMensagem);
 
-    document.getElementById("totalPontos").textContent =
-        quantidadePontos;
+    temporizadorMensagem = setTimeout(() => {
+        mensagem.textContent = "";
+    }, 3500);
 }
 
-// Cadastra ou edita participantes
-formularioParticipante.addEventListener("submit", function(evento) {
-    evento.preventDefault();
+// Criar elemento de texto com segurança
+function criarItem(texto) {
+    const elemento = document.createElement("p");
+    elemento.textContent = texto;
+    return elemento;
+}
 
-    const nome = document.getElementById("nomeParticipante").value.trim();
-    const turma = document.getElementById("turma").value.trim();
+// Atualizar opções de participantes
+function atualizarSelecao() {
+    const valorAnterior = participanteEscolhido.value;
 
-    if (!nome || !turma) {
-        mostrarMensagem("Preencha todos os campos!");
-        return;
-    }
-
-    if (participanteEmEdicao !== null) {
-        const pessoa = participantes.find(
-            item => item.id === participanteEmEdicao
-        );
-
-        if (pessoa) {
-            pessoa.nome = nome;
-            pessoa.turma = turma;
-        }
-
-        mostrarMensagem("Participante atualizado com sucesso!");
-
-    } else {
-        participantes.push({
-            id: Date.now().toString(),
-            nome: nome,
-            turma: turma
-        });
-
-        mostrarMensagem("Participante cadastrado com sucesso!");
-    }
-
-    participanteEmEdicao = null;
-
-    formularioParticipante.reset();
-    botaoParticipante.textContent = "Cadastrar participante";
-    botaoCancelar.hidden = true;
-
-    salvarDados();
-    atualizarPagina();
-});
-
-// Registra uma nova ação sustentável
-formularioAcao.addEventListener("submit", function(evento) {
-    evento.preventDefault();
-
-    const idParticipante = seletorParticipante.value;
-    const nomeAcao = document.getElementById("nomeAcao").value.trim();
-    const categoria = document.getElementById("categoria").value;
-
-    const pessoa = participantes.find(
-        item => item.id === idParticipante
-    );
-
-    if (!pessoa || !nomeAcao || !categoria) {
-        mostrarMensagem("Confira os dados da ação!");
-        return;
-    }
-
-    const novaAcao = {
-        id: Date.now().toString(),
-        participanteId: pessoa.id,
-        participante: pessoa.nome,
-        nome: nomeAcao,
-        categoria: categoria,
-        pontos: calcularPontos(categoria),
-        data: new Date().toLocaleDateString("pt-BR")
-    };
-
-    acoes.push(novaAcao);
-
-    formularioAcao.reset();
-
-    salvarDados();
-    atualizarPagina();
-
-    mostrarMensagem("Ação registrada com sucesso! +" +
-        novaAcao.pontos + " pontos.");
-});
-
-// Mostra os participantes cadastrados
-function mostrarParticipantes() {
-    listaParticipantes.replaceChildren();
-    seletorParticipante.replaceChildren();
+    participanteEscolhido.innerHTML = "";
 
     const opcaoInicial = document.createElement("option");
     opcaoInicial.value = "";
     opcaoInicial.textContent = "Selecione um participante";
 
-    seletorParticipante.appendChild(opcaoInicial);
+    participanteEscolhido.appendChild(opcaoInicial);
 
-    if (participantes.length === 0) {
-        const aviso = document.createElement("p");
-        aviso.textContent = "Nenhum participante cadastrado.";
-        listaParticipantes.appendChild(aviso);
-    }
-
-    participantes.forEach(pessoa => {
-        const cartao = document.createElement("div");
-
-        const titulo = document.createElement("h3");
-        titulo.textContent = pessoa.nome;
-
-        const turma = document.createElement("p");
-        turma.textContent = "Turma: " + pessoa.turma;
-
-        const editar = document.createElement("button");
-        editar.type = "button";
-        editar.textContent = "Editar";
-
-        editar.addEventListener("click", function() {
-            document.getElementById("nomeParticipante").value = pessoa.nome;
-            document.getElementById("turma").value = pessoa.turma;
-
-            participanteEmEdicao = pessoa.id;
-
-            botaoParticipante.textContent = "Salvar alterações";
-            botaoCancelar.hidden = false;
-
-            mostrarMensagem("Editando participante: " + pessoa.nome);
-
-            formularioParticipante.scrollIntoView({
-                behavior: "smooth",
-                block: "center"
-            });
-        });
-
-        cartao.append(titulo, turma, editar);
-        listaParticipantes.appendChild(cartao);
-
+    participantes.forEach((participante) => {
         const opcao = document.createElement("option");
-        opcao.value = pessoa.id;
-        opcao.textContent = pessoa.nome;
 
-        seletorParticipante.appendChild(opcao);
+        opcao.value = participante.id;
+        opcao.textContent = participante.nome;
+
+        participanteEscolhido.appendChild(opcao);
     });
+
+    if (participantes.some(p => p.id === valorAnterior)) {
+        participanteEscolhido.value = valorAnterior;
+    }
 }
 
-// Exibe o ranking de pontuação
-function mostrarRanking() {
-    areaRanking.replaceChildren();
+// Mostrar participantes cadastrados
+function atualizarParticipantes() {
+    listaParticipantes.innerHTML = "";
 
     if (participantes.length === 0) {
-        const aviso = document.createElement("p");
-        aviso.textContent = "Nenhum participante no ranking.";
-        areaRanking.appendChild(aviso);
+        listaParticipantes.appendChild(
+            criarItem("Nenhum participante cadastrado.")
+        );
         return;
     }
 
-    const ranking = participantes.map(pessoa => {
-        const pontos = acoes
-            .filter(acao => acao.participanteId === pessoa.id)
-            .reduce((soma, acao) => soma + acao.pontos, 0);
-
-        return {
-            nome: pessoa.nome,
-            turma: pessoa.turma,
-            pontos: pontos
-        };
-    });
-
-    ranking.sort((a, b) => b.pontos - a.pontos);
-
-    ranking.forEach((pessoa, indice) => {
-        const cartao = document.createElement("div");
-
-        const colocacao = document.createElement("h3");
-        colocacao.textContent =
-            (indice + 1) + "º lugar - " + pessoa.nome;
-
-        const turma = document.createElement("p");
-        turma.textContent = "Turma: " + pessoa.turma;
-
-        const pontos = document.createElement("p");
-        pontos.textContent = "Pontuação: " + pessoa.pontos + " pontos";
-
-        cartao.append(colocacao, turma, pontos);
-        areaRanking.appendChild(cartao);
-    });
-}
-
-// Exibe o histórico de ações
-function mostrarHistorico() {
-    areaHistorico.replaceChildren();
-
-    if (acoes.length === 0) {
-        const aviso = document.createElement("p");
-        aviso.textContent = "Nenhuma ação registrada.";
-        areaHistorico.appendChild(aviso);
-        return;
-    }
-
-    [...acoes].reverse().forEach(acao => {
-        const cartao = document.createElement("div");
-
-        const titulo = document.createElement("h3");
-        titulo.textContent = acao.nome || "Ação sustentável";
-
-        const pessoa = participantes.find(
-            item => item.id === acao.participanteId
+    participantes.forEach((participante) => {
+        const item = criarItem(
+            participante.nome +
+            " | Turma: " + participante.turma +
+            " | Pontos: " + participante.pontos
         );
 
-        const participante = document.createElement("p");
-        participante.textContent =
-            "Participante: " + (pessoa?.nome || acao.participante || "Não identificado");
-
-        const categoria = document.createElement("p");
-        categoria.textContent = "Categoria: " + (acao.categoria || "Não informada");
-
-        const pontos = document.createElement("p");
-        pontos.textContent = "Pontos: " + acao.pontos;
-
-        const data = document.createElement("p");
-        data.textContent = "Data: " + (acao.data || "Não informada");
-
-        cartao.append(titulo, participante, categoria, pontos, data);
-        areaHistorico.appendChild(cartao);
+        listaParticipantes.appendChild(item);
     });
 }
 
-// Atualiza todas as áreas do sistema
-function atualizarPagina() {
-    mostrarParticipantes();
-    mostrarRanking();
-    mostrarHistorico();
-    atualizarIndicadores();
+// Organizar e mostrar ranking
+function atualizarRanking() {
+    ranking.innerHTML = "";
+
+    if (participantes.length === 0) {
+        ranking.appendChild(
+            criarItem("O ranking aparecerá aqui.")
+        );
+        return;
+    }
+
+    const classificados = [...participantes].sort(
+        (a, b) => b.pontos - a.pontos
+    );
+
+    classificados.forEach((participante, indice) => {
+        const item = criarItem(
+            (indice + 1) + "º lugar - " +
+            participante.nome + ": " +
+            participante.pontos + " pontos"
+        );
+
+        ranking.appendChild(item);
+    });
 }
 
-// Cancela a edição de um participante
-botaoCancelar.addEventListener("click", function() {
-    participanteEmEdicao = null;
+// Mostrar histórico de ações
+function atualizarHistorico() {
+    historico.innerHTML = "";
 
-    formularioParticipante.reset();
+    if (acoes.length === 0) {
+        historico.appendChild(
+            criarItem("Nenhuma atividade registrada.")
+        );
+        return;
+    }
 
-    botaoParticipante.textContent = "Cadastrar participante";
-    botaoCancelar.hidden = true;
+    [...acoes].reverse().forEach((acao) => {
+        const item = criarItem(
+            acao.participante +
+            " realizou " + acao.nome +
+            " (" + acao.categoria + ")" +
+            " - " + acao.pontos + " pontos"
+        );
 
-    mostrarMensagem("Edição cancelada.");
+        historico.appendChild(item);
+    });
+}
+
+// Atualizar números do resumo
+function atualizarResumo() {
+    totalParticipantes.textContent = participantes.length;
+    totalAcoes.textContent = acoes.length;
+
+    const pontos = participantes.reduce(
+        (soma, participante) => soma + participante.pontos,
+        0
+    );
+
+    totalPontos.textContent = pontos;
+}
+
+// Atualizar todas as partes da página
+function atualizarTela() {
+    atualizarSelecao();
+    atualizarParticipantes();
+    atualizarRanking();
+    atualizarHistorico();
+    atualizarResumo();
+}
+
+// Cadastrar participante
+participanteForm.addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    const nome = nomeParticipante.value.trim();
+    const turmaInformada = turma.value.trim();
+
+    if (!nome || !turmaInformada) {
+        mostrarMensagem("Preencha todos os campos!");
+        return;
+    }
+
+    const duplicado = participantes.some((participante) =>
+        participante.nome.toLowerCase() === nome.toLowerCase() &&
+        participante.turma.toLowerCase() === turmaInformada.toLowerCase()
+    );
+
+    if (duplicado) {
+        mostrarMensagem("Esse participante já está cadastrado nessa turma!");
+        return;
+    }
+
+    const novoParticipante = {
+        id: String(Date.now()) + String(Math.random()),
+        nome: nome,
+        turma: turmaInformada,
+        pontos: 0
+    };
+
+    participantes.push(novoParticipante);
+
+    salvarDados();
+    participanteForm.reset();
+    atualizarTela();
+
+    mostrarMensagem("Participante cadastrado com sucesso!");
 });
 
-// Inicializa o sistema
-atualizarPagina();
+// Registrar ação sustentável
+acaoForm.addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    const idParticipante = participanteEscolhido.value;
+    const descricao = nomeAcao.value.trim();
+    const categoriaSelecionada = categoria.value;
+
+    if (!idParticipante || !descricao || !categoriaSelecionada) {
+        mostrarMensagem("Preencha todos os campos da ação!");
+        return;
+    }
+
+    const participante = participantes.find(
+        (p) => p.id === idParticipante
+    );
+
+    if (!participante) {
+        mostrarMensagem("Selecione um participante válido!");
+        return;
+    }
+
+    const pontos = calcularPontos(categoriaSelecionada);
+
+    if (pontos === 0) {
+        mostrarMensagem("Categoria inválida!");
+        return;
+    }
+
+    // Somar pontos ao participante
+    participante.pontos += pontos;
+
+    // Registrar a atividade
+    acoes.push({
+        participanteId: participante.id,
+        participante: participante.nome,
+        nome: descricao,
+        categoria: categoriaSelecionada,
+        pontos: pontos,
+        data: new Date().toLocaleString("pt-BR")
+    });
+
+    salvarDados();
+    acaoForm.reset();
+    atualizarTela();
+
+    mostrarMensagem(
+        "Ação registrada! " + participante.nome +
+        " ganhou " + pontos + " pontos!"
+    );
+});
+
+// Carregar informações ao abrir a página
+atualizarTela();
