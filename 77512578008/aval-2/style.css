@@ -1,0 +1,111 @@
+:root{
+  --fundo:#1b1416;
+  --superficie:#271d20;
+  --superficie-2:#33262a;
+  --linha:#43333a;
+  --texto:#f4ebe6;
+  --texto-suave:#b9a8a6;
+  --destaque:#e03a52;
+  --destaque-escuro:#b82a40;
+  --raio:18px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--fundo);color:var(--texto);
+  font-family:"Figtree",system-ui,sans-serif;font-size:16px;line-height:1.5;
+  min-height:100vh;
+}
+a{color:inherit;text-decoration:none}
+button,input,textarea{font:inherit;color:inherit}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+:focus-visible{outline:2px solid var(--destaque);outline-offset:2px}
+
+/* topo */
+.topo{position:sticky;top:0;z-index:10;background:rgba(27,20,22,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--linha)}
+.topo__interno{max-width:980px;margin:0 auto;padding:0 20px;height:64px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;font-size:1.6rem;letter-spacing:-.04em}
+.logo span{color:var(--destaque)}
+.abas{display:flex;gap:6px;height:100%}
+.aba{display:flex;align-items:center;padding:0 16px;color:var(--texto-suave);font-weight:500;border-bottom:3px solid transparent;transition:color .2s,border-color .2s}
+.aba:hover{color:var(--texto)}
+.aba--ativa{color:var(--texto);border-bottom-color:var(--destaque)}
+
+/* layout */
+.layout{max-width:980px;margin:32px auto;padding:0 20px;display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:28px;align-items:start}
+.coluna{display:flex;flex-direction:column;gap:20px}
+
+/* avatar */
+.avatar{flex:none;width:42px;height:42px;border-radius:50%;background:var(--destaque);color:#fff;display:grid;place-items:center;font-family:"Bricolage Grotesque",sans-serif;font-weight:700}
+.avatar--grande{width:48px;height:48px;font-size:1.2rem}
+
+/* novo post */
+.novo{display:flex;gap:14px;background:var(--superficie);border:1px solid var(--linha);border-radius:var(--raio);padding:18px;transition:border-color .2s}
+.novo:focus-within{border-color:var(--destaque)}
+.novo__corpo{flex:1;min-width:0}
+.novo textarea{width:100%;background:none;border:0;resize:none;outline:0;padding:10px 0;font-size:1.05rem}
+.novo textarea::placeholder{color:var(--texto-suave)}
+.novo__rodape{display:flex;justify-content:flex-end;align-items:center;gap:14px;border-top:1px solid var(--linha);padding-top:12px}
+.contador{font-size:.85rem;color:var(--texto-suave);font-variant-numeric:tabular-nums}
+.contador--alerta{color:var(--destaque)}
+
+.btn{border:0;border-radius:999px;padding:9px 20px;font-weight:600;cursor:pointer;transition:background .2s,transform .1s,opacity .2s}
+.btn:active{transform:scale(.97)}
+.btn--principal{background:var(--destaque);color:#fff}
+.btn--principal:hover:not(:disabled){background:var(--destaque-escuro)}
+.btn--principal:disabled{opacity:.35;cursor:not-allowed}
+.btn--leve{background:var(--superficie-2);padding:8px 16px}
+.btn--leve:hover{background:var(--linha)}
+
+/* posts */
+.feed{display:flex;flex-direction:column;gap:20px}
+.post{display:flex;gap:14px;background:var(--superficie);border:1px solid var(--linha);border-radius:var(--raio);padding:18px}
+.post--nova{animation:entrada .45s cubic-bezier(.2,.8,.2,1)}
+@keyframes entrada{from{opacity:0;transform:translateY(-14px) scale(.98)}to{opacity:1;transform:none}}
+.post__corpo{flex:1;min-width:0}
+.post__cab{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.tempo{color:var(--texto-suave);font-size:.85rem}
+.post__texto{margin-top:4px;overflow-wrap:anywhere}
+.post__img{display:block;margin-top:14px;width:100%;max-width:260px;border-radius:12px;border:1px solid var(--linha)}
+.excluir{margin-left:auto;background:none;border:0;color:var(--texto-suave);cursor:pointer;font-size:.85rem;padding:2px 8px;border-radius:6px}
+.excluir:hover{color:var(--destaque);background:var(--superficie-2)}
+
+.acoes{display:flex;gap:8px;margin-top:14px}
+.acao{background:none;border:1px solid var(--linha);border-radius:999px;padding:6px 14px;font-size:.9rem;cursor:pointer;color:var(--texto-suave);transition:all .2s}
+.acao b{font-weight:600;margin-left:4px;font-variant-numeric:tabular-nums}
+.acao:hover{color:var(--texto);border-color:var(--texto-suave)}
+.acao[aria-pressed="true"]{background:var(--destaque);border-color:var(--destaque);color:#fff}
+.acao[aria-pressed="true"].pulo{animation:pulo .3s}
+@keyframes pulo{50%{transform:scale(1.12)}}
+.acao[aria-expanded="true"]{color:var(--texto);border-color:var(--texto-suave)}
+
+/* comentários */
+.comentarios{margin-top:14px;padding-top:14px;border-top:1px solid var(--linha)}
+.lista-com{list-style:none;display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+.lista-com li{background:var(--superficie-2);padding:8px 14px;border-radius:4px 14px 14px 14px;font-size:.95rem;overflow-wrap:anywhere}
+.form-com{display:flex;gap:8px}
+.form-com input{flex:1;min-width:0;background:var(--fundo);border:1px solid var(--linha);border-radius:999px;padding:8px 16px;outline:0}
+.form-com input:focus{border-color:var(--destaque)}
+
+/* lateral */
+.lateral{position:sticky;top:88px}
+.perfil{background:var(--superficie);border:1px solid var(--linha);border-radius:var(--raio);padding:22px}
+.perfil h2{font-family:"Bricolage Grotesque",sans-serif;font-size:1.25rem;margin:12px 0 16px;letter-spacing:-.02em}
+.perfil dl{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.perfil dl div{background:var(--superficie-2);border-radius:10px;padding:10px 12px}
+.perfil dt{font-size:.8rem;color:var(--texto-suave)}
+.perfil dd{font-family:"Bricolage Grotesque",sans-serif;font-size:1.5rem;font-weight:700}
+
+.vazio{text-align:center;color:var(--texto-suave);padding:40px 0}
+
+.aviso{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:var(--texto);color:var(--fundo);padding:10px 20px;border-radius:999px;font-weight:600;opacity:0;pointer-events:none;transition:all .3s}
+.aviso--ativo{opacity:1;transform:translate(-50%,0)}
+
+@media (max-width:760px){
+  .layout{grid-template-columns:1fr;margin-top:20px}
+  .lateral{position:static;order:-1}
+  .perfil{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .perfil h2{margin:0;flex:1}
+  .perfil dl{width:100%}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
