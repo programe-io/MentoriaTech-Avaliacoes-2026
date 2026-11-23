@@ -1,0 +1,318 @@
+
+let codigo = 0;
+const chavePessoas = "pessoas";
+
+const tabelaPessoas = document.getElementById("tabelaPessoas");
+const formPessoas = document.getElementById("formPessoas");
+
+const inputNome = document.getElementById("nome");
+const inputIdade = document.getElementById("idade");
+const inputAltura = document.getElementById("altura");
+const inputPeso = document.getElementById("peso");
+
+const mensagemDeErro = document.getElementById("erro");
+
+let pessoas = carregarPessoas();
+
+// Gera um código para cada pessoa
+function gerarCodigo() {
+    return ++codigo;
+}
+
+// Cria uma célula da tabela
+function criarCelula(conteudo) {
+    const td = document.createElement("td");
+    td.textContent = conteudo;
+    return td;
+}
+
+// Cria uma linha da tabela
+function criarLinha(pessoa) {
+    const tr = document.createElement("tr");
+    tr.dataset.id = pessoa.id;
+
+    const imc = calcularIMC(pessoa.peso, pessoa.altura);
+    const classificacao = classificarIMC(imc, pessoa.idade);
+
+    tr.appendChild(criarCelula(pessoa.nome));
+    tr.appendChild(criarCelula(pessoa.idade + " anos"));
+    tr.appendChild(criarCelula(formatar(pessoa.altura, 2) + " m"));
+    tr.appendChild(criarCelula(formatar(pessoa.peso, 1) + " kg"));
+    tr.appendChild(criarCelula(formatar(imc, 1)));
+
+    const tdClassificacao = document.createElement("td");
+
+    const selo = document.createElement("span");
+    selo.classList.add("selo", classificacao.classe);
+    selo.textContent = classificacao.texto;
+
+    tdClassificacao.appendChild(selo);
+    tr.appendChild(tdClassificacao);
+
+    const tdAcoes = document.createElement("td");
+
+    const btnApagar = document.createElement("button");
+    btnApagar.textContent = "Apagar";
+    btnApagar.classList.add("btn-apagar");
+
+    btnApagar.addEventListener("click", function () {
+        apagarPessoa(pessoa.id);
+    });
+
+    tdAcoes.appendChild(btnApagar);
+    tr.appendChild(tdAcoes);
+
+    return tr;
+}
+
+// Mostra os dados na tabela
+function render() {
+    tabelaPessoas.innerHTML = "";
+
+    if (pessoas.length === 0) {
+        const tr = document.createElement("tr");
+        const td = document.createElement("td");
+
+        td.colSpan = 7;
+        td.classList.add("vazio");
+        td.textContent = "Nenhuma pessoa cadastrada ainda.";
+
+        tr.appendChild(td);
+        tabelaPessoas.appendChild(tr);
+
+        return;
+    }
+
+    pessoas.forEach(function (pessoa) {
+        const linha = criarLinha(pessoa);
+        tabelaPessoas.appendChild(linha);
+    });
+}
+
+// Calcula o IMC
+function calcularIMC(peso, altura) {
+    return peso / (altura * altura);
+}
+
+// Classifica o IMC
+function classificarIMC(imc, idade) {
+
+    // As faixas adultas não devem ser aplicadas a menores de 20 anos.
+    if (idade < 20) {
+        return {
+            texto: "Avaliação por idade",
+            classe: "avaliacao"
+        };
+    }
+
+    if (imc < 18.5) {
+        return {
+            texto: "Abaixo do peso",
+            classe: "abaixo"
+        };
+    } else if (imc < 25) {
+        return {
+            texto: "Peso normal",
+            classe: "normal"
+        };
+    } else if (imc < 30) {
+        return {
+            texto: "Sobrepeso",
+            classe: "sobrepeso"
+        };
+    } else if (imc < 35) {
+        return {
+            texto: "Obesidade grau I",
+            classe: "obesidade"
+        };
+    } else if (imc < 40) {
+        return {
+            texto: "Obesidade grau II",
+            classe: "obesidade"
+        };
+    } else {
+        return {
+            texto: "Obesidade grau III",
+            classe: "obesidade"
+        };
+    }
+}
+
+// Formata os números
+function formatar(valor, casasDecimais) {
+    return valor.toLocaleString("pt-BR", {
+        minimumFractionDigits: casasDecimais,
+        maximumFractionDigits: casasDecimais
+    });
+}
+
+// Lê os dados do formulário
+function lerFormulario() {
+    return {
+        nome: inputNome.value.trim(),
+        idade: Number(inputIdade.value),
+        altura: Number(inputAltura.value),
+        peso: Number(inputPeso.value)
+    };
+}
+
+// Adiciona uma pessoa
+function adicionarPessoa(dados) {
+    const pessoa = {
+        id: gerarCodigo(),
+        nome: dados.nome,
+        idade: dados.idade,
+        altura: dados.altura,
+        peso: dados.peso
+    };
+
+    pessoas.push(pessoa);
+}
+
+// Valida os dados
+function validarDados(dados) {
+
+    if (dados.nome.length < 2) {
+        return "Informe um nome com no mínimo duas letras.";
+    }
+
+    if (
+        !Number.isInteger(dados.idade) ||
+        dados.idade < 1 ||
+        dados.idade > 120
+    ) {
+        return "A idade deve ser um número inteiro entre 1 e 120.";
+    }
+
+    if (
+        !Number.isFinite(dados.altura) ||
+        dados.altura < 0.5 ||
+        dados.altura > 2.5
+    ) {
+        return "A altura deve estar entre 0,50 m e 2,50 m.";
+    }
+
+    if (
+        !Number.isFinite(dados.peso) ||
+        dados.peso < 2 ||
+        dados.peso > 500
+    ) {
+        return "O peso deve estar entre 2 kg e 500 kg.";
+    }
+
+    return "";
+}
+
+// Mostra mensagem de erro
+function mostrarErro(mensagem) {
+    mensagemDeErro.textContent = mensagem;
+    mensagemDeErro.hidden = false;
+}
+
+// Limpa mensagem de erro
+function limparErro() {
+    mensagemDeErro.hidden = true;
+    mensagemDeErro.textContent = "";
+}
+
+// Salva os dados no navegador
+function salvar() {
+    try {
+        localStorage.setItem(
+            chavePessoas,
+            JSON.stringify(pessoas)
+        );
+        return true;
+    } catch (erro) {
+        console.error("Erro ao salvar os dados:", erro);
+        mostrarErro("Não foi possível salvar os dados no navegador.");
+        return false;
+    }
+}
+
+// Carrega os dados salvos
+function carregarPessoas() {
+    try {
+        const dadosSalvos = localStorage.getItem(chavePessoas);
+
+        if (dadosSalvos === null) {
+            return [];
+        }
+
+        const dados = JSON.parse(dadosSalvos);
+
+        if (Array.isArray(dados)) {
+            return dados;
+        }
+
+        console.error("Os dados armazenados não são uma lista.");
+        return [];
+
+    } catch (erro) {
+        console.error("Erro ao carregar os dados:", erro);
+        return [];
+    }
+}
+
+// Ajusta o contador de códigos
+function ajustarContadorCodigo() {
+    let maior = 0;
+
+    pessoas.forEach(function (pessoa) {
+        if (Number.isInteger(pessoa.id) && pessoa.id > maior) {
+            maior = pessoa.id;
+        }
+    });
+
+    codigo = maior;
+}
+
+// Apaga uma pessoa
+function apagarPessoa(id) {
+    const confirmar = confirm(
+        "Deseja realmente apagar este cadastro?"
+    );
+
+    if (!confirmar) {
+        return;
+    }
+
+    pessoas = pessoas.filter(function (pessoa) {
+        return pessoa.id !== id;
+    });
+
+    salvar();
+    render();
+}
+
+// Evento de cadastro
+formPessoas.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const dados = lerFormulario();
+    const erro = validarDados(dados);
+
+    if (erro !== "") {
+        mostrarErro(erro);
+        return;
+    }
+
+    limparErro();
+
+    adicionarPessoa(dados);
+    salvar();
+
+    formPessoas.reset();
+    inputNome.focus();
+
+    render();
+});
+
+// Evento de limpar formulário
+formPessoas.addEventListener("reset", function () {
+    limparErro();
+});
+
+// Inicialização
+ajustarContadorCodigo();
+render();
