@@ -1,11 +1,11 @@
-function calcularIMC() {
-  const nome = document.getElementById("nome").value;
+document.getElementById("btnCalcular").addEventListener("click", function () {
+  const nome = document.getElementById("nome").value.trim();
   const peso = parseFloat(document.getElementById("peso").value);
   const altura = parseFloat(document.getElementById("altura").value);
-  const resultadoDiv = document.getElementById("resultado");
+  const divResultado = document.getElementById("resultado");
 
-  if (!nome || isNaN(peso) || isNaN(altura) || altura <= 0 || peso <= 0) {
-    alert("Por favor, preencha todos os campos com valores válidos!");
+  if (!nome || isNaN(peso) || isNaN(altura) || peso <= 0 || altura <= 0) {
+    alert("Por favor, preencha todos os campos com valores válidos.");
     return;
   }
 
@@ -18,18 +18,14 @@ function calcularIMC() {
     classificacao = "Peso normal";
   } else if (imc < 30) {
     classificacao = "Sobrepeso";
-  } else if (imc < 35) {
-    classificacao = "Obesidade grau I";
-  } else if (imc < 40) {
-    classificacao = "Obesidade grau II";
   } else {
-    classificacao = "Obesidade grau III (mórbida)";
+    classificacao = "Obesidade";
   }
 
-  resultadoDiv.style.display = "block";
-  resultadoDiv.innerHTML = `
+  divResultado.classList.remove("oculto");
+  divResultado.innerHTML = `
     <strong>Paciente:</strong> ${nome}<br>
     <strong>IMC:</strong> ${imc.toFixed(2)}<br>
     <strong>Classificação:</strong> ${classificacao}
   `;
-}
+});
