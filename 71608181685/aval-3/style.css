@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Calculadora de IMC</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+    <main>
+
+        <h1>Ficha de Anamnese</h1>
+
+        <!-- CARD DO FORMULÁRIO -->
+
+        <section class="card">
+
+            <h2>Cadastro de Paciente</h2>
+
+            <form id="form-pessoa">
+
+                <!-- NOME -->
+
+                <div class="campo">
+
+                    <label for="nome">Nome:</label>
+
+                    <input
+                        type="text"
+                        id="nome"
+                        placeholder="Digite o nome do paciente"
+                        maxlength="50"
+                        required
+                    >
+
+                </div>
+
+                <!-- IDADE -->
+
+                <div class="campo">
+
+                    <label for="idade">Idade:</label>
+
+                    <input
+                        type="number"
+                        id="idade"
+                        placeholder="Digite a idade"
+                        min="1"
+                        max="120"
+                        required
+                    >
+
+                </div>
+
+                <!-- ALTURA -->
+
+                <div class="campo">
+
+                    <label for="altura">Altura (metros):</label>
+
+                    <input
+                        type="number"
+                        id="altura"
+                        placeholder="Exemplo: 1.70"
+                        min="0.5"
+                        max="2.5"
+                        step="0.01"
+                        required
+                    >
+
+                </div>
+
+                <!-- PESO -->
+
+                <div class="campo">
+
+                    <label for="peso">Peso (KG):</label>
+
+                    <input
+                        type="number"
+                        id="peso"
+                        placeholder="Exemplo: 65"
+                        min="2"
+                        max="500"
+                        step="0.1"
+                        required
+                    >
+
+                </div>
+
+                <!-- BOTÕES -->
+
+                <div class="botoes">
+
+                    <button type="submit">
+                        Salvar
+                    </button>
+
+                    <button type="reset">
+                        Cancelar
+                    </button>
+
+                </div>
+
+                <!-- MENSAGEM DE ERRO -->
+
+                <p id="erro" hidden></p>
+
+            </form>
+
+        </section>
+
+
+        <!-- CARD DA TABELA -->
+
+        <section class="card">
+
+            <h2>Pacientes Cadastrados</h2>
+
+            <div class="tabela-container">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Nome</th>
+
+                            <th>Idade</th>
+
+                            <th>Altura</th>
+
+                            <th>Peso</th>
+
+                            <th>IMC</th>
+
+                            <th>Classificação</th>
+
+                            <th>Ações</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="tabela-pessoas">
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- ARQUIVO JAVASCRIPT -->
+
+    <script src="app.js"></script>
+
+</body>
+
+</html>
+
+/* ===============================
+   CONFIGURAÇÕES GERAIS
+================================ */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #07b0ff;
+    color: #333;
+    padding: 30px;
+}
+
+/* ===============================
+   CONTAINER PRINCIPAL
+================================ */
+
+main {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #1f2937;
+}
+
+/* ===============================
+   CARDS
+================================ */
+
+.card {
+    background-color: #f00a0a98;
+    padding: 25px;
+    margin-bottom: 25px;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+}
+
+h2 {
+    font-size: 22px;
+    margin-bottom: 20px;
+    color: #374151;
+}
+
+/* ===============================
+   FORMULÁRIO
+================================ */
+
+#form-pessoa {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.campo {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+label {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 15px;
+    outline: none;
+}
+
+input:focus {
+    border-color: #fffffff8;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.12);
+}
+
+/* ===============================
+   BOTÕES
+================================ */
+
+.botoes {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+button {
+    padding: 11px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+button:hover {
+    opacity: 0.85;
+}
+
+button[type="submit"] {
+    background-color: #2563eb;
+    color: white;
+}
+
+button[type="reset"] {
+    background-color: #e5e7eb;
+    color: #333;
+}
+
+/* ===============================
+   MENSAGEM DE ERRO
+================================ */
+
+#erro {
+    color: #dc2626;
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+/* ===============================
+   TABELA DE PACIENTES
+================================ */
+
+.tabela-container {
+    width: 100%;
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+thead {
+    background-color: #2563eb;
+    color: white;
+}
+
+th,
+td {
+    padding: 13px;
+    text-align: center;
+    border-bottom: 1px solid #e5e7eb;
+    white-space: nowrap;
+}
+
+tbody tr:hover {
+    background-color: #f9fafb;
+}
+
+/* ===============================
+   TABELA VAZIA
+================================ */
+
+.vazio {
+    text-align: center;
+    color: #6b7280;
+    padding: 25px;
+}
+
+/* ===============================
+   SELOS DE CLASSIFICAÇÃO
+================================ */
+
+.selo {
+    display: inline-block;
+    padding: 6px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.abaixo {
+    background-color: #dbeafe;
+    color: #1d4ed8;
+}
+
+.normal {
+    background-color: #dcfce7;
+    color: #15803d;
+}
+
+.sobrepeso {
+    background-color: #fef3c7;
+    color: #b45309;
+}
+
+.obesidade1 {
+    background-color: #fed7aa;
+    color: #c2410c;
+}
+
+.obesidade2 {
+    background-color: #fecaca;
+    color: #b91c1c;
+}
+
+.obesidade3 {
+    background-color: #991b1b;
+    color: white;
+}
+
+/* ===============================
+   BOTÃO APAGAR
+================================ */
+
+td button {
+    background-color: #dc2626;
+    color: white;
+    padding: 8px 12px;
+}
+
+/* ===============================
+   RESPONSIVIDADE
+================================ */
+
+@media (max-width: 600px) {
+
+    body {
+        padding: 15px;
+    }
+
+    .card {
+        padding: 18px;
+    }
+
+    h1 {
+        font-size: 24px;
+    }
+
+    .botoes {
+        flex-direction: column;
+    }
+
+    .botoes button {
+        width: 100%;
+    }
+
+}
