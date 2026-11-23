@@ -1,0 +1,75 @@
+// =========================================================================
+// PROJETO: REVISÃO DE JAVASCRIPT - PARTE 1
+// Conceitos: tipos de dados, typeof, interpolação, let/const/var,
+// operadores aritméticos/relacionais/lógicos, if/else e switch/case.
+// =========================================================================
+
+console.log("=== 1. TIPOS DE DADOS, VARIÁVEIS E TYPEOF ===");
+
+// Boas práticas: usar const quando não muda e let quando muda; evitar declarar sem palavra-chave
+const nomeAtleta = "Lucas";          // string
+let pesoKg = 72;                     // number (inteiro e decimal compartilham o mesmo tipo 'number')
+const alturaM = 1.72;                // number
+let planoAtivo = true;               // boolean
+let observacaoMedica;                // undefined (criada sem valor definido)
+let cupomDesconto = null;            // null (ausência intencional de valor)
+const operacaoInvalida = "abc" / 2;  // NaN (operação numérica sem número válido)
+
+console.log(`Atleta: ${nomeAtleta} \vert{} Tipo:${typeof nomeAtleta}`);
+console.log(`Peso: ${pesoKg} kg \vert{} Tipo:${typeof pesoKg}`);
+console.log(`Altura: ${alturaM} m \vert{} Tipo:${typeof alturaM}`);
+console.log(`Plano ativo: ${planoAtivo} \vert{} Tipo:${typeof planoAtivo}`);
+console.log(`Observação: ${observacaoMedica} \vert{} Tipo:${typeof observacaoMedica}`);
+console.log(`Cupom (valor): ${cupomDesconto} \vert{} Cupom (typeof):${typeof cupomDesconto}`);
+console.log(`Operação inválida: ${operacaoInvalida} \vert{} Tipo:${typeof operacaoInvalida}`);
+
+// Demonstração de aspas simples vs. crase na interpolação
+const exemploLiteral = 'Peso atual: ${pesoKg}';
+const exemploInterpolado = `Peso atual: \${pesoKg} kg`;
+console.log("Sem crase (literal):", exemploLiteral);
+console.log("Com crase (interpolado):", exemploInterpolado);
+
+// Nota sobre escopo: 'var' vaza para fora de blocos (if/switch/for/while), 'let' fica restrito ao bloco
+if (true) {
+    var vazouDoBloco = "Visível fora do if por causa do var";
+    let restritoAoBloco = "Visível apenas dentro do if";
+    console.log("Dentro do if ->", restritoAoBloco);
+}
+console.log("Fora do if ->", vazouDoBloco);
+// console.log(restritoAoBloco); // Geraria erro de referência fora do bloco
+
+
+console.log("\n=== 2. OPERADORES ARITMÉTICOS, PRECEDÊNCIA E INCREMENTO ===");
+
+// Cálculo de IMC com exponenciação (**) e divisão (/)
+const imc = pesoKg / (alturaM ** 2);
+console.log(`IMC calculado: \${imc}`);
+
+// Precedência: multiplicação ocorre antes da soma (ex.: 10 + 10 * 2 = 30 vs (10 + 10) * 2 = 40)
+const calculoSemParenteses = 10 + 10 * 2;
+const calculoComParenteses = (10 + 10) * 2;
+console.log(`Sem parênteses (10 + 10 * 2): \${calculoSemParenteses}`);
+console.log(`Com parênteses ((10 + 10) * 2): \${calculoComParenteses}`);
+
+// Resto da divisão (%)
+let sessoesRestantes = 7;
+console.log(`Sessões restantes: ${sessoesRestantes} \vert{} Resto por 2:${sessoesRestantes % 2}`);
+
+// Pré e pós-incremento / decremento
+let contador = 5;
+console.log("Valor inicial de contador:", contador);
+console.log("Pós-incremento (contador++):", contador++); // imprime 5, depois vira 6
+console.log("Após pós-incremento:", contador);           // 6
+console.log("Pré-incremento (++contador):", ++contador);  // vira 7 antes de imprimir
+console.log("Pré-decremento (--contador):", --contador);  // vira 6 antes de imprimir
+console.log("Pós-decremento (contador--):", contador--); // imprime 6, depois vira 5
+
+
+console.log("\n=== 3. OPERADORES RELACIONAIS E LÓGICOS ===");
+
+const codigoDigitado = "10"; // string
+const codigoEsperado = 10;   // number
+
+console.log(`Igualdade de valor ('10' == 10): \${codigoDigitado == codigoEsperado}`);
+console.log(`Igualdade estrita ('10' === 10): \${codigoDigitado === codigoEsperado}`);
+console.log(`Diferença estrita ('
