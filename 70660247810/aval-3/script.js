@@ -1,286 +1,267 @@
 
-document.addEventListener("DOMContentLoaded", function () {
+const formPessoa = document.getElementById("form-pessoa");
+const inputNome = document.getElementById("nome");
+const inputIdade = document.getElementById("idade");
+const inputAltura = document.getElementById("altura");
+const inputPeso = document.getElementById("peso");
+const mensagemDeErro = document.getElementById("erro");
+const listaPessoas = document.getElementById("lista-pessoas");
 
-    // 1. Capturando os elementos do DOM
+const CHAVE_PESSOAS = "pessoas";
 
-    const formTarefa = document.getElementById("form-tarefa");
+let pessoas = carregarPessoas();
+let proximoId = ajustarContador();
 
-    const inputTitulo = document.getElementById("input-titulo");
+// CALCULAR IMC
+function calcularIMC(peso, altura) {
+    return peso / (altura * altura);
+}
 
-    const listaTarefas = document.getElementById("lista-tarefas");
+// CLASSIFICAR IMC
+function classificarIMC(imc) {
 
-    const total = document.getElementById("total");
+    if (imc < 18.5) {
+        return {
+            texto: "Baixo peso",
+            classe: "baixo-peso"
+        };
+    }
 
-    const pendentes = document.getElementById("pendentes");
+    if (imc < 25) {
+        return {
+            texto: "Peso normal",
+            classe: "normal"
+        };
+    }
 
-    const concluidas = document.getElementById("concluidas");
+    if (imc < 30) {
+        return {
+            texto: "Sobrepeso",
+            classe: "sobrepeso"
+        };
+    }
 
+    return {
+        texto: "Obesidade",
+        classe: "obesidade"
+    };
+}
 
-    // 2. Criando o array de tarefas
+// FORMATAR NÚMEROS
+function formatar(valor, casas) {
+    return Number(valor).toFixed(casas);
+}
 
-    let tarefas = [];
+// CRIAR LINHA DA TABELA
+function criarLinha(pessoa) {
+
+    const tr = document.createElement("tr");
+
+    const imc = calcularIMC(pessoa.peso, pessoa.altura);
+    const classificacao = classificarIMC(imc);
+
+    const dados = [
+        pessoa.id,
+        pessoa.nome,
+        pessoa.idade,
+        formatar(pessoa.altura, 2) + " m",
+        formatar(pessoa.peso, 1) + " kg",
+        formatar(imc, 1)
+    ];
+
+    dados.forEach(valor => {
+        const td = document.createElement("td");
+        td.textContent = valor;
+        tr.appendChild(td);
+    });
+
+    // COLUNA CLASSIFICAÇÃO
+    const tdClassificacao = document.createElement("td");
+
+    const selo = document.createElement("span");
+
+    selo.classList.add("selo", classificacao.classe);
+    selo.textContent = classificacao.texto;
+
+    tdClassificacao.appendChild(selo);
+    tr.appendChild(tdClassificacao);
+
+    // BOTÃO EXCLUIR
+    const tdAcao = document.createElement("td");
+    const botao = document.createElement("button");
+
+    botao.textContent = "Apagar";
+    botao.classList.add("excluir");
+
+    botao.addEventListener("click", () => {
+        excluirPessoa(pessoa.id);
+    });
+
+    tdAcao.appendChild(botao);
+    tr.appendChild(tdAcao);
+
+    return tr;
+}
+
+// RENDERIZAR TABELA
+function render() {
+
+    listaPessoas.innerHTML = "";
+
+    pessoas.forEach(pessoa => {
+        listaPessoas.appendChild(criarLinha(pessoa));
+    });
+}
+
+// LER FORMULÁRIO
+function lerFormulario() {
+
+    return {
+        nome: inputNome.value.trim(),
+        idade: Number(inputIdade.value),
+        altura: Number(inputAltura.value),
+        peso: Number(inputPeso.value)
+    };
+}
+
+// VALIDAR DADOS
+function validarDados(dados) {
+
+    if (dados.nome.length < 2) {
+        return "Informe o nome com no mínimo duas letras.";
+    }
+
+    if (!Number.isInteger(dados.idade) ||
+        dados.idade < 1 || dados.idade > 120) {
+        return "A idade deve ser um número inteiro entre 1 e 120.";
+    }
+
+    if (!Number.isFinite(dados.altura) ||
+        dados.altura < 0.5 || dados.altura > 2.5) {
+        return "A altura deve estar entre 0,50 m e 2,50 m.";
+    }
+
+    if (!Number.isFinite(dados.peso) ||
+        dados.peso < 2 || dados.peso > 500) {
+        return "O peso deve estar entre 2 e 500 kg.";
+    }
+
+    return "";
+}
+
+// MOSTRAR ERRO
+function mostrarErro(mensagem) {
+    mensagemDeErro.textContent = mensagem;
+    mensagemDeErro.hidden = false;
+}
+
+// LIMPAR ERRO
+function limparErro() {
+    mensagemDeErro.textContent = "";
+    mensagemDeErro.hidden = true;
+}
+
+// ADICIONAR PESSOA
+function adicionarPessoa(dados) {
+
+    const pessoa = {
+        id: proximoId++,
+        nome: dados.nome,
+        idade: dados.idade,
+        altura: dados.altura,
+        peso: dados.peso
+    };
+
+    pessoas.push(pessoa);
+}
+
+// SALVAR NO LOCALSTORAGE
+function salvar() {
+
+    localStorage.setItem(
+        CHAVE_PESSOAS,
+        JSON.stringify(pessoas)
+    );
+}
+
+// CARREGAR PESSOAS
+function carregarPessoas() {
+
+    const dadosSalvos = localStorage.getItem(CHAVE_PESSOAS);
+
+    if (!dadosSalvos) {
+        return [];
+    }
 
     try {
-        const dadosSalvos = JSON.parse(
-            localStorage.getItem("tarefas")
-        );
 
-        if (Array.isArray(dadosSalvos)) {
-            tarefas = dadosSalvos;
+        const dados = JSON.parse(dadosSalvos);
+
+        if (Array.isArray(dados)) {
+            return dados;
         }
+
+        return [];
+
     } catch (erro) {
-        console.error("Erro ao carregar tarefas:", erro);
+
+        console.error("Erro ao carregar pessoas:", erro);
+        return [];
     }
+}
 
+// AJUSTAR CONTADOR
+function ajustarContador() {
 
-    // 3. Gerando códigos automaticamente
+    let maior = 0;
 
-    let contadorCodigo = tarefas.reduce(
-        (maior, tarefa) => Math.max(maior, Number(tarefa.id) || 0),
-        0
-    );
-
-    function gerarCodigo() {
-        contadorCodigo++;
-        return contadorCodigo;
-    }
-
-
-    // 4. Salvando os dados
-
-    function salvarTarefas() {
-        localStorage.setItem(
-            "tarefas",
-            JSON.stringify(tarefas)
-        );
-    }
-
-
-    // 5. Função de renderização
-
-    function render() {
-
-        // Limpa a lista antes de atualizar
-        listaTarefas.innerHTML = "";
-
-        // Percorre o array de tarefas
-        tarefas.forEach(function (tarefa) {
-
-            // Cria um elemento li
-            const li = document.createElement("li");
-
-            li.className = "tarefa";
-
-            if (tarefa.concluida) {
-                li.classList.add("concluida");
-            }
-
-            // Cria a área de informações
-            const info = document.createElement("div");
-
-            info.className = "info";
-
-            // Cria o título
-            const nome = document.createElement("strong");
-
-            nome.className = "nome";
-
-            nome.textContent = tarefa.titulo;
-
-            // Cria as informações adicionais
-            const detalhes = document.createElement("p");
-
-            detalhes.textContent =
-                "Código: " + tarefa.id +
-                " | Status: " +
-                (tarefa.concluida ? "Concluída" : "Pendente");
-
-            info.appendChild(nome);
-
-            info.appendChild(detalhes);
-
-
-            // Cria a área dos botões
-            const acoes = document.createElement("div");
-
-            acoes.className = "acoes";
-
-
-            // Botão concluir
-            const btnConcluir = document.createElement("button");
-
-            btnConcluir.type = "button";
-
-            btnConcluir.className = "concluir";
-
-            btnConcluir.dataset.id = tarefa.id;
-
-            btnConcluir.dataset.acao = "concluir";
-
-            btnConcluir.textContent = tarefa.concluida
-                ? "Reabrir"
-                : "Concluir";
-
-
-            // Botão excluir
-            const btnExcluir = document.createElement("button");
-
-            btnExcluir.type = "button";
-
-            btnExcluir.className = "excluir";
-
-            btnExcluir.dataset.id = tarefa.id;
-
-            btnExcluir.dataset.acao = "excluir";
-
-            btnExcluir.textContent = "Excluir";
-
-
-            // Adiciona os botões
-            acoes.appendChild(btnConcluir);
-
-            acoes.appendChild(btnExcluir);
-
-
-            // Monta o item completo
-            li.appendChild(info);
-
-            li.appendChild(acoes);
-
-
-            // Insere o item na lista
-            listaTarefas.appendChild(li);
-
-        });
-
-
-        // 6. Atualizando os contadores
-
-        total.textContent = tarefas.length;
-
-        pendentes.textContent = tarefas.filter(
-            tarefa => !tarefa.concluida
-        ).length;
-
-        concluidas.textContent = tarefas.filter(
-            tarefa => tarefa.concluida
-        ).length;
-
-    }
-
-
-    // 7. Evento de cadastro de tarefas
-
-    formTarefa.addEventListener("submit", function (event) {
-
-        // Impede o recarregamento da página
-        event.preventDefault();
-
-        // Captura e limpa os espaços do texto
-        const novoTitulo = inputTitulo.value.trim();
-
-        // Verifica se o campo está vazio
-        if (novoTitulo === "") {
-
-            alert("Digite o nome da tarefa!");
-
-            inputTitulo.focus();
-
-            return;
+    pessoas.forEach(pessoa => {
+        if (Number.isInteger(pessoa.id) && pessoa.id > maior) {
+            maior = pessoa.id;
         }
-
-
-        // Cria um novo objeto
-        const novaTarefa = {
-
-            id: gerarCodigo(),
-
-            titulo: novoTitulo,
-
-            concluida: false
-
-        };
-
-
-        // Adiciona a tarefa ao array
-        tarefas.push(novaTarefa);
-
-
-        // Salva os dados
-        salvarTarefas();
-
-
-        // Limpa o campo
-        inputTitulo.value = "";
-
-
-        // Atualiza a interface
-        render();
-
-
-        // Devolve o foco ao input
-        inputTitulo.focus();
-
     });
 
+    return maior + 1;
+}
 
-    // 8. Delegação de eventos na lista
+// EXCLUIR PESSOA
+function excluirPessoa(id) {
 
-    listaTarefas.addEventListener("click", function (event) {
+    pessoas = pessoas.filter(pessoa => pessoa.id !== id);
 
-        const botao = event.target.closest("button[data-acao]");
+    salvar();
+    render();
+}
 
-        if (!botao || !listaTarefas.contains(botao)) {
-            return;
-        }
+// EVENTO SUBMIT
+formPessoa.addEventListener("submit", function(e) {
 
-        const id = Number(botao.dataset.id);
+    e.preventDefault();
 
-        const acao = botao.dataset.acao;
+    const dados = lerFormulario();
 
+    const erro = validarDados(dados);
 
-        // Localiza a tarefa
-        const tarefa = tarefas.find(
-            item => item.id === id
-        );
+    if (erro !== "") {
+        mostrarErro(erro);
+        return;
+    }
 
-        if (!tarefa) return;
+    limparErro();
 
+    adicionarPessoa(dados);
 
-        // Concluir ou reabrir
-        if (acao === "concluir") {
+    salvar();
 
-            tarefa.concluida = !tarefa.concluida;
+    formPessoa.reset();
 
-        }
-
-
-        // Excluir tarefa
-        if (acao === "excluir") {
-
-            if (!confirm("Deseja excluir esta tarefa?")) {
-                return;
-            }
-
-            tarefas = tarefas.filter(
-                item => item.id !== id
-            );
-
-        }
-
-
-        // Salva e atualiza
-        salvarTarefas();
-
-        render();
-
-    });
-
-
-    // 9. Renderização inicial
+    inputNome.focus();
 
     render();
-
-    console.log("Gerenciador de tarefas iniciado!");
-
 });
+
+// LIMPAR MENSAGEM AO DIGITAR
+formPessoa.addEventListener("input", limparErro);
+
+// INICIAR A APLICAÇÃO
+render();
