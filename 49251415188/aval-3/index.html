@@ -1,0 +1,839 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Instagram Clone</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background: #fafafa;
+    color: #262626;
+}
+
+/* MENU LATERAL */
+.sidebar {
+    width: 245px;
+    height: 100vh;
+    background: white;
+    border-right: 1px solid #ddd;
+    position: fixed;
+    padding: 30px 20px;
+    top: 0;
+    left: 0;
+}
+
+.logo {
+    font-family: cursive;
+    font-size: 32px;
+    margin-bottom: 35px;
+}
+
+.menu a {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 14px 8px;
+    margin-bottom: 5px;
+    text-decoration: none;
+    color: #222;
+    font-size: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.menu a:hover {
+    background: #f1f1f1;
+}
+
+.menu span {
+    font-size: 23px;
+}
+
+/* ÁREA PRINCIPAL */
+.container {
+    margin-left: 245px;
+    display: flex;
+    justify-content: center;
+    gap: 50px;
+    padding: 35px 20px;
+}
+
+.feed {
+    width: 470px;
+}
+
+/* STORIES */
+.stories {
+    display: flex;
+    gap: 15px;
+    padding: 15px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    overflow-x: auto;
+    margin-bottom: 25px;
+}
+
+.story {
+    min-width: 65px;
+    text-align: center;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.story img {
+    width: 62px;
+    height: 62px;
+    border-radius: 50%;
+    border: 3px solid #e1306c;
+    padding: 2px;
+    object-fit: cover;
+    margin-bottom: 5px;
+}
+
+/* POSTS */
+.post {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 9px;
+    margin-bottom: 25px;
+    overflow: hidden;
+}
+
+.post-header {
+    display: flex;
+    align-items: center;
+    padding: 13px;
+    gap: 10px;
+}
+
+.post-header img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.post-header strong {
+    font-size: 14px;
+}
+
+.post-header small {
+    display: block;
+    color: #888;
+    margin-top: 3px;
+}
+
+.more {
+    margin-left: auto;
+    cursor: pointer;
+    font-size: 22px;
+}
+
+.post-image {
+    width: 100%;
+    display: block;
+    max-height: 600px;
+    object-fit: cover;
+    cursor: pointer;
+}
+
+.post-actions {
+    padding: 12px;
+}
+
+.action-icons {
+    display: flex;
+    gap: 18px;
+    font-size: 27px;
+    margin-bottom: 12px;
+}
+
+.action-icons span {
+    cursor: pointer;
+}
+
+.action-icons span:hover {
+    opacity: .6;
+}
+
+.save {
+    margin-left: auto;
+}
+
+.likes {
+    font-size: 14px;
+    margin-bottom: 9px;
+}
+
+.caption {
+    font-size: 14px;
+    margin-bottom: 8px;
+    line-height: 1.5;
+}
+
+.comments {
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 10px;
+}
+
+.comment-box {
+    display: flex;
+    padding: 13px;
+    border-top: 1px solid #eee;
+}
+
+.comment-box input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 13px;
+}
+
+.comment-box button {
+    background: none;
+    border: none;
+    color: #0095f6;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* SUGESTÕES */
+.suggestions {
+    width: 290px;
+    margin-top: 20px;
+}
+
+.profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 30px;
+}
+
+.profile img {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.profile p {
+    color: #888;
+    margin-top: 4px;
+    font-size: 13px;
+}
+
+.suggestions h4 {
+    color: #888;
+    margin-bottom: 20px;
+}
+
+.suggestion {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    font-size: 13px;
+}
+
+.suggestion img {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+}
+
+.suggestion button {
+    margin-left: auto;
+    color: #0095f6;
+    background: none;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.following {
+    color: #888 !important;
+}
+
+.footer {
+    color: #bbb;
+    font-size: 11px;
+    line-height: 1.8;
+}
+
+/* MODAL */
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.65);
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+    padding: 15px;
+}
+
+.modal-content {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    width: 350px;
+    max-width: 100%;
+    text-align: center;
+}
+
+.modal-content h2 {
+    margin-bottom: 20px;
+}
+
+.modal-content input {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+}
+
+.modal-content button {
+    background: #0095f6;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 6px;
+    width: 100%;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.close {
+    float: right;
+    cursor: pointer;
+    font-size: 22px;
+}
+
+/* RESPONSIVIDADE */
+@media(max-width: 1000px) {
+    .suggestions {
+        display: none;
+    }
+}
+
+@media(max-width: 650px) {
+    .sidebar {
+        width: 65px;
+        padding: 15px 8px;
+    }
+
+    .logo {
+        font-size: 17px;
+        overflow: hidden;
+    }
+
+    .menu a {
+        justify-content: center;
+        font-size: 0;
+        padding: 13px 0;
+    }
+
+    .menu span {
+        font-size: 22px;
+    }
+
+    .container {
+        margin-left: 65px;
+        padding: 15px 5px;
+    }
+
+    .feed {
+        width: 100%;
+    }
+
+    .post {
+        border-radius: 0;
+    }
+}
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+<!-- MENU -->
+<aside class="sidebar">
+
+    <h1 class="logo">Instagram</h1>
+
+    <nav class="menu">
+        <a href="#"><span>🏠</span> Início</a>
+        <a href="#"><span>🔍</span> Pesquisa</a>
+        <a href="#"><span>🧭</span> Explorar</a>
+        <a href="#"><span>🎬</span> Reels</a>
+        <a href="#"><span>✉️</span> Mensagens</a>
+        <a href="#"><span>❤️</span> Notificações</a>
+        <a href="#" onclick="abrirModal()"><span>➕</span> Criar publicação</a>
+        <a href="#"><span>👤</span> Perfil</a>
+        <a href="#"><span>☰</span> Mais</a>
+    </nav>
+
+</aside>
+
+<!-- CONTEÚDO -->
+<main class="container">
+
+<section class="feed">
+
+    <!-- STORIES -->
+    <div class="stories">
+
+        <div class="story">
+            <img src="https://i.pravatar.cc/100?img=1">
+            <p>Seu story</p>
+        </div>
+
+        <div class="story">
+            <img src="https://i.pravatar.cc/100?img=2">
+            <p>mariana</p>
+        </div>
+
+        <div class="story">
+            <img src="https://i.pravatar.cc/100?img=3">
+            <p>pedro</p>
+        </div>
+
+        <div class="story">
+            <img src="https://i.pravatar.cc/100?img=4">
+            <p>juliana</p>
+        </div>
+
+        <div class="story">
+            <img src="https://i.pravatar.cc/100?img=5">
+            <p>gabriel</p>
+        </div>
+
+        <div class="story">
+            <img src="https://i.pravatar.cc/100?img=6">
+            <p>larissa</p>
+        </div>
+
+    </div>
+
+    <!-- PUBLICAÇÃO 1 -->
+    <article class="post">
+
+        <div class="post-header">
+            <img src="https://i.pravatar.cc/100?img=2">
+            <div>
+                <strong>mariana_silva</strong>
+                <small>São Paulo, Brasil</small>
+            </div>
+            <span class="more">•••</span>
+        </div>
+
+        <img class="post-image"
+        src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=900">
+
+        <div class="post-actions">
+
+            <div class="action-icons">
+                <span onclick="curtir(this)">♡</span>
+                <span onclick="focarComentario(this)">💬</span>
+                <span onclick="compartilhar()">➤</span>
+                <span class="save" onclick="salvar(this)">♧</span>
+            </div>
+
+            <p class="likes"><strong>2.548 curtidas</strong></p>
+
+            <p class="caption">
+                <strong>mariana_silva</strong>
+                Aproveitando a vida e conhecendo novos lugares! 🌎❤️
+            </p>
+
+            <p class="comments">Ver todos os comentários</p>
+
+        </div>
+
+        <div class="comment-box">
+            <input type="text" placeholder="Adicione um comentário...">
+            <button onclick="publicarComentario(this)">Publicar</button>
+        </div>
+
+    </article>
+
+    <!-- PUBLICAÇÃO 2 -->
+    <article class="post">
+
+        <div class="post-header">
+            <img src="https://i.pravatar.cc/100?img=3">
+            <div>
+                <strong>pedro_oficial</strong>
+                <small>Rio de Janeiro</small>
+            </div>
+            <span class="more">•••</span>
+        </div>
+
+        <img class="post-image"
+        src="https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=900">
+
+        <div class="post-actions">
+
+            <div class="action-icons">
+                <span onclick="curtir(this)">♡</span>
+                <span onclick="focarComentario(this)">💬</span>
+                <span onclick="compartilhar()">➤</span>
+                <span class="save" onclick="salvar(this)">♧</span>
+            </div>
+
+            <p class="likes"><strong>1.832 curtidas</strong></p>
+
+            <p class="caption">
+                <strong>pedro_oficial</strong>
+                Que paisagem maravilhosa! 🔥
+            </p>
+
+            <p class="comments">Ver todos os comentários</p>
+
+        </div>
+
+        <div class="comment-box">
+            <input type="text" placeholder="Adicione um comentário...">
+            <button onclick="publicarComentario(this)">Publicar</button>
+        </div>
+
+    </article>
+
+    <!-- PUBLICAÇÃO 3 -->
+    <article class="post">
+
+        <div class="post-header">
+            <img src="https://i.pravatar.cc/100?img=4">
+            <div>
+                <strong>juliana_fotos</strong>
+                <small>Fortaleza, Brasil</small>
+            </div>
+            <span class="more">•••</span>
+        </div>
+
+        <img class="post-image"
+        src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=900">
+
+        <div class="post-actions">
+
+            <div class="action-icons">
+                <span onclick="curtir(this)">♡</span>
+                <span onclick="focarComentario(this)">💬</span>
+                <span onclick="compartilhar()">➤</span>
+                <span class="save" onclick="salvar(this)">♧</span>
+            </div>
+
+            <p class="likes"><strong>5.321 curtidas</strong></p>
+
+            <p class="caption">
+                <strong>juliana_fotos</strong>
+                Momentos especiais! ✨📸
+            </p>
+
+            <p class="comments">Ver todos os comentários</p>
+
+        </div>
+
+        <div class="comment-box">
+            <input type="text" placeholder="Adicione um comentário...">
+            <button onclick="publicarComentario(this)">Publicar</button>
+        </div>
+
+    </article>
+
+    <!-- PUBLICAÇÃO 4 -->
+    <article class="post">
+
+        <div class="post-header">
+            <img src="https://i.pravatar.cc/100?img=5">
+            <div>
+                <strong>gabriel_travel</strong>
+                <small>Praia</small>
+            </div>
+            <span class="more">•••</span>
+        </div>
+
+        <img class="post-image"
+        src="https://images.unsplash.com/photo-1473116763249-2faaef81ccda?w=900">
+
+        <div class="post-actions">
+
+            <div class="action-icons">
+                <span onclick="curtir(this)">♡</span>
+                <span onclick="focarComentario(this)">💬</span>
+                <span onclick="compartilhar()">➤</span>
+                <span class="save" onclick="salvar(this)">♧</span>
+            </div>
+
+            <p class="likes"><strong>987 curtidas</strong></p>
+
+            <p class="caption">
+                <strong>gabriel_travel</strong>
+                Vivendo cada segundo! 🌴
+            </p>
+
+            <p class="comments">Ver todos os comentários</p>
+
+        </div>
+
+        <div class="comment-box">
+            <input type="text" placeholder="Adicione um comentário...">
+            <button onclick="publicarComentario(this)">Publicar</button>
+        </div>
+
+    </article>
+
+</section>
+
+<!-- COLUNA DIREITA -->
+<aside class="suggestions">
+
+    <div class="profile">
+        <img src="https://i.pravatar.cc/100?img=1">
+
+        <div>
+            <strong>meu_perfil</strong>
+            <p>Meu Instagram</p>
+        </div>
+    </div>
+
+    <h4>Sugestões para você</h4>
+
+    <div class="suggestion">
+        <img src="https://i.pravatar.cc/100?img=7">
+        <strong>carla_santos</strong>
+        <button onclick="seguir(this)">Seguir</button>
+    </div>
+
+    <div class="suggestion">
+        <img src="https://i.pravatar.cc/100?img=8">
+        <strong>lucas_oliveira</strong>
+        <button onclick="seguir(this)">Seguir</button>
+    </div>
+
+    <div class="suggestion">
+        <img src="https://i.pravatar.cc/100?img=9">
+        <strong>ana_mendes</strong>
+        <button onclick="seguir(this)">Seguir</button>
+    </div>
+
+    <div class="suggestion">
+        <img src="https://i.pravatar.cc/100?img=10">
+        <strong>rafael_123</strong>
+        <button onclick="seguir(this)">Seguir</button>
+    </div>
+
+    <div class="footer">
+        Sobre · Ajuda · Imprensa · API · Carreiras<br>
+        Privacidade · Termos · Localizações<br><br>
+        © 2026 INSTAGRAM CLONE
+    </div>
+
+</aside>
+
+</main>
+
+<!-- MODAL DE PUBLICAÇÃO -->
+<div class="modal" id="modal">
+
+    <div class="modal-content">
+
+        <span class="close" onclick="fecharModal()">×</span>
+
+        <h2>Criar publicação</h2>
+
+        <input type="text" id="imagem"
+        placeholder="Cole o link da imagem">
+
+        <input type="text" id="legenda"
+        placeholder="Escreva uma legenda">
+
+        <button onclick="criarPost()">Compartilhar</button>
+
+    </div>
+
+</div>
+
+<script>
+
+// CURTIR
+function curtir(elemento) {
+    const post = elemento.closest(".post");
+    const likes = post.querySelector(".likes");
+
+    let numero = parseInt(
+        likes.innerText.replace(/\D/g, "")
+    ) || 0;
+
+    if (elemento.innerText === "♡") {
+        elemento.innerText = "❤️";
+        numero++;
+    } else {
+        elemento.innerText = "♡";
+        numero--;
+    }
+
+    likes.innerHTML = "<strong>" +
+        numero.toLocaleString("pt-BR") +
+        " curtidas</strong>";
+}
+
+// SALVAR
+function salvar(elemento) {
+    elemento.innerText =
+        elemento.innerText === "♧" ? "🔖" : "♧";
+}
+
+// COMENTAR
+function focarComentario(elemento) {
+    elemento.closest(".post")
+    .querySelector("input").focus();
+}
+
+// PUBLICAR COMENTÁRIO
+function publicarComentario(botao) {
+
+    const post = botao.closest(".post");
+    const input = post.querySelector("input");
+    const comentarios = post.querySelector(".comments");
+
+    if (input.value.trim() === "") return;
+
+    const novo = document.createElement("p");
+    novo.className = "caption";
+
+    const usuario = document.createElement("strong");
+    usuario.textContent = "meu_perfil ";
+
+    novo.appendChild(usuario);
+    novo.appendChild(
+        document.createTextNode(input.value)
+    );
+
+    comentarios.after(novo);
+    input.value = "";
+}
+
+// SEGUIR
+function seguir(botao) {
+    if (botao.innerText === "Seguir") {
+        botao.innerText = "Seguindo";
+        botao.classList.add("following");
+    } else {
+        botao.innerText = "Seguir";
+        botao.classList.remove("following");
+    }
+}
+
+// COMPARTILHAR
+function compartilhar() {
+    if (navigator.share) {
+        navigator.share({
+            title: "Instagram Clone",
+            text: "Confira esta publicação!"
+        });
+    } else {
+        alert("Compartilhamento não disponível neste navegador.");
+    }
+}
+
+// ABRIR MODAL
+function abrirModal() {
+    document.getElementById("modal").style.display = "flex";
+}
+
+// FECHAR MODAL
+function fecharModal() {
+    document.getElementById("modal").style.display = "none";
+}
+
+// CRIAR PUBLICAÇÃO
+function criarPost() {
+
+    const imagem = document.getElementById("imagem").value.trim();
+    const legenda = document.getElementById("legenda").value.trim();
+
+    if (!imagem) {
+        alert("Insira o link de uma imagem!");
+        return;
+    }
+
+    try {
+        const url = new URL(imagem);
+
+        if (!["http:", "https:"].includes(url.protocol)) {
+            throw new Error("URL inválida");
+        }
+
+        const post = document.createElement("article");
+        post.className = "post";
+
+        post.innerHTML = `
+            <div class="post-header">
+                <img src="https://i.pravatar.cc/100?img=1">
+                <div>
+                    <strong>meu_perfil</strong>
+                    <small>Agora mesmo</small>
+                </div>
+                <span class="more">•••</span>
+            </div>
+
+            <img class="post-image" src="${url.href.replace(/"/g, "&quot;")}">
+
+            <div class="post-actions">
+                <div class="action-icons">
+                    <span onclick="curtir(this)">♡</span>
+                    <span onclick="focarComentario(this)">💬</span>
+                    <span onclick="compartilhar()">➤</span>
+                    <span class="save" onclick="salvar(this)">♧</span>
+                </div>
+
+                <p class="likes"><strong>0 curtidas</strong></p>
+                <p class="caption"></p>
+                <p class="comments">Ver todos os comentários</p>
+            </div>
+
+            <div class="comment-box">
+                <input type="text" placeholder="Adicione um comentário...">
+                <button onclick="publicarComentario(this)">Publicar</button>
+            </div>
+        `;
+
+        const legendaElement = post.querySelector(".caption");
+        const usuario = document.createElement("strong");
+        usuario.textContent = "meu_perfil ";
+        legendaElement.appendChild(usuario);
+        legendaElement.appendChild(document.createTextNode(legenda));
+
+        document.querySelector(".feed").insertBefore(
+            post,
+            document.querySelector(".stories").nextElementSibling
+        );
+
+        document.getElementById("imagem").value = "";
+        document.getElementById("legenda").value = "";
+        fecharModal();
+
+    } catch (erro) {
+        alert("Digite um link válido de imagem!");
+    }
+}
+
+</script>
+
+</body>
+</html>
