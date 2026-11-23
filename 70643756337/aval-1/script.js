@@ -1,141 +1,24 @@
 
-const formulario = document.getElementById("produtoForm");
-const listaProdutos = document.getElementById("listaProdutos");
-const pesquisa = document.getElementById("pesquisa");
+const formulario = document.getElementById("tarefaForm");
+const listaTarefas = document.getElementById("listaTarefas");
 
-let produtos = JSON.parse(
-    localStorage.getItem("estoqueProdutos") || "[]"
+let tarefas = JSON.parse(
+    localStorage.getItem("gerenciadorTarefas") || "[]"
 );
 
 let editandoId = null;
 
-// Formatação de moeda
-function moeda(valor) {
-    return Number(valor).toLocaleString("pt-BR", {
-        style: "currency",
-        currency: "BRL"
-    });
-}
-
 // Salvar dados
 function salvarDados() {
     localStorage.setItem(
-        "estoqueProdutos",
-        JSON.stringify(produtos)
+        "gerenciadorTarefas",
+        JSON.stringify(tarefas)
     );
 }
 
-// Cadastro e edição
-formulario.addEventListener("submit", function(event) {
-    event.preventDefault();
-
-    const codigo = document.getElementById("codigo").value.trim();
-    const descricao = document.getElementById("descricao").value.trim();
-    const quantidade = Number(document.getElementById("quantidade").value);
-    const valor = Number(document.getElementById("valor").value);
-
-    if (!codigo || !descricao ||
-        !Number.isInteger(quantidade) || quantidade < 0 ||
-        !Number.isFinite(valor) || valor < 0) {
-        alert("Preencha todos os campos corretamente!");
-        return;
-    }
-
-    // Verificar código duplicado
-    const duplicado = produtos.find(p =>
-        p.codigo.toLowerCase() === codigo.toLowerCase() &&
-        p.id !== editandoId
-    );
-
-    if (duplicado) {
-        alert("Já existe um produto com esse código!");
-        return;
-    }
-
-    if (editandoId !== null) {
-
-        const produto = produtos.find(p => p.id === editandoId);
-
-        produto.codigo = codigo;
-        produto.descricao = descricao;
-        produto.quantidade = quantidade;
-        produto.valor = valor;
-
-        alert("Produto atualizado com sucesso!");
-
-    } else {
-
-        produtos.push({
-            id: Date.now(),
-            codigo,
-            descricao,
-            quantidade,
-            valor
-        });
-
-        alert("Produto cadastrado com sucesso!");
-    }
-
-    salvarDados();
-    listarProdutos();
-    atualizarDashboard();
-    cancelarEdicao();
-});
-
-// Listar produtos
-function listarProdutos() {
-
-    const termo = pesquisa.value.toLowerCase();
-
-    listaProdutos.innerHTML = "";
-
-    const filtrados = produtos.filter(p =>
-        p.codigo.toLowerCase().includes(termo) ||
-        p.descricao.toLowerCase().includes(termo)
-    );
-
-    filtrados.forEach(produto => {
-
-        const total = produto.quantidade * produto.valor;
-
-        const status = produto.quantidade <= 5
-            ? '<span class="status-baixo">Estoque baixo</span>'
-            : '<span class="status-normal">Normal</span>';
-
-        const linha = document.createElement("tr");
-
-        linha.innerHTML = `
-            <td>${escaparHTML(produto.codigo)}</td>
-            <td>${escaparHTML(produto.descricao)}</td>
-            <td>${produto.quantidade}</td>
-            <td>${moeda(produto.valor)}</td>
-            <td>${moeda(total)}</td>
-            <td>${status}</td>
-            <td>
-                <div class="acoes">
-                    <button class="btn-editar"
-                        onclick="editarProduto(${produto.id})">
-                        Editar
-                    </button>
-
-                    <button class="btn-excluir"
-                        onclick="excluirProduto(${produto.id})">
-                        Excluir
-                    </button>
-                </div>
-            </td>
-        `;
-
-        listaProdutos.appendChild(linha);
-    });
-
-    document.getElementById("mensagemVazia").hidden =
-        filtrados.length > 0;
-}
-
-// Proteger campos de texto
+// Proteger textos digitados pelo usuário
 function escaparHTML(texto) {
-    return texto.replace(/[&<>"']/g, c => ({
+    return String(texto).replace(/[&<>"']/g, c => ({
         "&": "&amp;",
         "<": "&lt;",
         ">": "&gt;",
@@ -144,22 +27,180 @@ function escaparHTML(texto) {
     })[c]);
 }
 
-// Editar produto
-function editarProduto(id) {
+// Cadastrar ou editar tarefa
+formulario.addEventListener("submit", function(event) {
 
-    const produto = produtos.find(p => p.id === id);
+    event.preventDefault();
 
-    if (!produto) return;
+    const codigo = document.getElementById("codigo").value.trim();
+    const titulo = document.getElementById("titulo").value.trim();
+    const prioridade = document.getElementById("prioridade").value;
+    const status = document.getElementById("status").value;
 
-    document.getElementById("codigo").value = produto.codigo;
-    document.getElementById("descricao").value = produto.descricao;
-    document.getElementById("quantidade").value = produto.quantidade;
-    document.getElementById("valor").value = produto.valor;
+    if (!codigo || !titulo || !prioridade || !status) {
+        alert("Preencha todos os campos!");
+        return;
+    }
+
+    // Verificar código duplicado
+    const duplicado = tarefas.find(t =>
+        t.codigo.toLowerCase() === codigo.toLowerCase() &&
+        t.id !== editandoId
+    );
+
+    if (duplicado) {
+        alert("Já existe uma tarefa com esse código!");
+        return;
+    }
+
+    if (editandoId !== null) {
+
+        const tarefa = tarefas.find(t => t.id === editandoId);
+
+        if (!tarefa) return;
+
+        tarefa.codigo = codigo;
+        tarefa.titulo = titulo;
+        tarefa.prioridade = prioridade;
+        tarefa.status = status;
+
+        alert("Tarefa atualizada com sucesso!");
+
+    } else {
+
+        tarefas.push({
+            id: Date.now(),
+            codigo,
+            titulo,
+            prioridade,
+            status
+        });
+
+        alert("Tarefa cadastrada com sucesso!");
+    }
+
+    salvarDados();
+    listarTarefas();
+    atualizarDashboard();
+    cancelarEdicao();
+
+});
+
+// Listar tarefas
+function listarTarefas() {
+
+    const termo = document.getElementById("pesquisa")
+        .value.toLowerCase();
+
+    const filtroPrioridade =
+        document.getElementById("filtroPrioridade").value;
+
+    const filtroStatus =
+        document.getElementById("filtroStatus").value;
+
+    listaTarefas.innerHTML = "";
+
+    const filtradas = tarefas.filter(t => {
+
+        const pesquisaOk =
+            t.codigo.toLowerCase().includes(termo) ||
+            t.titulo.toLowerCase().includes(termo);
+
+        const prioridadeOk =
+            !filtroPrioridade ||
+            t.prioridade === filtroPrioridade;
+
+        const statusOk =
+            !filtroStatus ||
+            t.status === filtroStatus;
+
+        return pesquisaOk && prioridadeOk && statusOk;
+    });
+
+    filtradas.forEach(tarefa => {
+
+        const linha = document.createElement("tr");
+
+        let classePrioridade = {
+            "Baixa": "prioridade-baixa",
+            "Média": "prioridade-media",
+            "Alta": "prioridade-alta"
+        }[tarefa.prioridade];
+
+        const classeStatus =
+            tarefa.status === "Concluída"
+                ? "status-concluida"
+                : "status-pendente";
+
+        const botaoStatus =
+            tarefa.status === "Pendente"
+                ? `<button class="btn-concluir"
+                    onclick="alternarStatus(${tarefa.id})">
+                    Concluir
+                   </button>`
+                : `<button class="btn-concluir"
+                    onclick="alternarStatus(${tarefa.id})">
+                    Reabrir
+                   </button>`;
+
+        linha.innerHTML = `
+            <td>${escaparHTML(tarefa.codigo)}</td>
+
+            <td>${escaparHTML(tarefa.titulo)}</td>
+
+            <td>
+                <span class="${classePrioridade}">
+                    ${escaparHTML(tarefa.prioridade)}
+                </span>
+            </td>
+
+            <td>
+                <span class="${classeStatus}">
+                    ${escaparHTML(tarefa.status)}
+                </span>
+            </td>
+
+            <td>
+                <div class="acoes">
+                    ${botaoStatus}
+
+                    <button class="btn-editar"
+                        onclick="editarTarefa(${tarefa.id})">
+                        Editar
+                    </button>
+
+                    <button class="btn-excluir"
+                        onclick="excluirTarefa(${tarefa.id})">
+                        Excluir
+                    </button>
+                </div>
+            </td>
+        `;
+
+        listaTarefas.appendChild(linha);
+
+    });
+
+    document.getElementById("mensagemVazia").hidden =
+        filtradas.length > 0;
+}
+
+// Editar tarefa
+function editarTarefa(id) {
+
+    const tarefa = tarefas.find(t => t.id === id);
+
+    if (!tarefa) return;
+
+    document.getElementById("codigo").value = tarefa.codigo;
+    document.getElementById("titulo").value = tarefa.titulo;
+    document.getElementById("prioridade").value = tarefa.prioridade;
+    document.getElementById("status").value = tarefa.status;
 
     editandoId = id;
 
     document.getElementById("tituloFormulario").textContent =
-        "Editar Produto";
+        "Editar Tarefa";
 
     document.getElementById("btnSalvar").textContent =
         "Salvar Alterações";
@@ -180,64 +221,87 @@ function cancelarEdicao() {
     formulario.reset();
 
     document.getElementById("tituloFormulario").textContent =
-        "Cadastrar Produto";
+        "Cadastrar Nova Tarefa";
 
     document.getElementById("btnSalvar").textContent =
-        "Cadastrar Produto";
+        "Cadastrar Tarefa";
 
     document.getElementById("btnCancelar").hidden = true;
 }
 
-// Excluir produto
-function excluirProduto(id) {
+// Concluir ou reabrir tarefa
+function alternarStatus(id) {
 
-    if (confirm("Deseja realmente excluir este produto?")) {
+    const tarefa = tarefas.find(t => t.id === id);
 
-        produtos = produtos.filter(p => p.id !== id);
+    if (!tarefa) return;
 
-        salvarDados();
-        listarProdutos();
-        atualizarDashboard();
+    tarefa.status = tarefa.status === "Pendente"
+        ? "Concluída"
+        : "Pendente";
+
+    salvarDados();
+    listarTarefas();
+    atualizarDashboard();
+}
+
+// Excluir tarefa
+function excluirTarefa(id) {
+
+    if (confirm("Deseja realmente excluir esta tarefa?")) {
+
+        tarefas = tarefas.filter(t => t.id !== id);
 
         if (editandoId === id) {
             cancelarEdicao();
         }
+
+        salvarDados();
+        listarTarefas();
+        atualizarDashboard();
     }
 }
 
 // Atualizar indicadores
 function atualizarDashboard() {
 
-    const totalProdutos = produtos.length;
+    const total = tarefas.length;
 
-    const quantidadeTotal = produtos.reduce(
-        (soma, p) => soma + p.quantidade, 0
-    );
-
-    const valorTotal = produtos.reduce(
-        (soma, p) => soma + p.quantidade * p.valor, 0
-    );
-
-    const estoqueBaixo = produtos.filter(
-        p => p.quantidade <= 5
+    const pendentes = tarefas.filter(
+        t => t.status === "Pendente"
     ).length;
 
-    document.getElementById("totalProdutos").textContent =
-        totalProdutos;
+    const concluidas = tarefas.filter(
+        t => t.status === "Concluída"
+    ).length;
 
-    document.getElementById("quantidadeEstoque").textContent =
-        quantidadeTotal;
+    const altas = tarefas.filter(
+        t => t.prioridade === "Alta" &&
+             t.status === "Pendente"
+    ).length;
 
-    document.getElementById("valorEstoque").textContent =
-        moeda(valorTotal);
+    document.getElementById("totalTarefas").textContent = total;
 
-    document.getElementById("estoqueBaixo").textContent =
-        estoqueBaixo;
+    document.getElementById("tarefasPendentes").textContent =
+        pendentes;
+
+    document.getElementById("tarefasConcluidas").textContent =
+        concluidas;
+
+    document.getElementById("prioridadeAlta").textContent =
+        altas;
 }
 
-// Pesquisa
-pesquisa.addEventListener("input", listarProdutos);
+// Eventos dos filtros
+document.getElementById("pesquisa")
+    .addEventListener("input", listarTarefas);
+
+document.getElementById("filtroPrioridade")
+    .addEventListener("change", listarTarefas);
+
+document.getElementById("filtroStatus")
+    .addEventListener("change", listarTarefas);
 
 // Inicialização
-listarProdutos();
+listarTarefas();
 atualizarDashboard();
