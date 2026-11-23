@@ -1,83 +1,31 @@
-// 2 - Lista (Array) de Produtos
-let produtos = [];
 
-// 5 - Função de Validação
-function validarProduto(descricao, quantidade, valor) {
-  if (descricao.length < 5) {
-      throw new Error("Descricao deve ter no mínimo cinco caracteres");
-        }
-          if (quantidade < 1) {
-              throw new Error("Quantidade deve ser maior que zero");
-                }
-                  if (valor < 0) {
-                      throw new Error("Valor deve maior igual a zero");
-                        }
-                        }
+import java.util.Scanner;
 
-                        // 17 - Cadastrar Produto
-                        function cadastrarProduto(descricao, quantidade, valor) {
-                          validarProduto(descricao, quantidade, valor);
-                            
-                              let novoProduto = {
-                                  "codigo": produtos.length + 1,
-                                      "descricao": descricao,
-                                          "quantidade": quantidade,
-                                              "valor": valor
-                                                };
-                                                  
-                                                    produtos.push(novoProduto);
-                                                    }
+public class CalculadoraIMC {
+    public static void main(String[] args) {
+            Scanner entrada = new Scanner(System.in);
 
-                                                    // 28 - Listar Produtos
-                                                    function listarProdutos() {
-                                                      console.log(produtos);
-                                                      }
+                    System.out.print("Digite seu peso (kg): ");
+                            double peso = entrada.nextDouble();
 
-                                                      // 32 - Atualizar Valor
-                                                      function atualizarValor(codigoProduto, novoValor) {
-                                                        if (novoValor < 0) {
-                                                            throw new Error("Valor deve maior igual a zero");
-                                                              }
+                                    System.out.print("Digite sua altura (m): ");
+                                            double altura = entrada.nextDouble();
 
-                                                                const produto = produtos.find(prod => prod.codigo === codigoProduto);
-                                                                  
-                                                                    if (produto) {
-                                                                        produto.valor = novoValor;
-                                                                          } else {
-                                                                              throw new Error("Produto não encontrado");
-                                                                                }
-                                                                                }
+                                                    double imc = peso / (altura * altura);
 
-                                                                                // 45 - Atualizar Quantidade (Corrigido)
-                                                                                function atualizarQuantidade(codigoProduto, novaQuantidade) {
-                                                                                  if (novaQuantidade < 1) {
-                                                                                      throw new Error("Quantidade deve ser maior que zero");
-                                                                                        }
+                                                            System.out.printf("Seu IMC é: %.2f%n", imc);
 
-                                                                                          const produto = produtos.find(prod => prod.codigo === codigoProduto);
-                                                                                            
-                                                                                              if (produto) {
-                                                                                                  // Linha 51 corrigida: substitui o valor antigo em vez de somar com +=
-                                                                                                      produto.quantidade = novaQuantidade; 
-                                                                                                        } else {
-                                                                                                            throw new Error("Produto não encontrado");
-                                                                                                              }
-                                                                                                              }
+                                                                    if (imc < 18.5) {
+                                                                                System.out.println("Abaixo do peso");
+                                                                                        } else if (imc < 25) {
+                                                                                                    System.out.println("Peso normal");
+                                                                                                            } else if (imc < 30) {
+                                                                                                                        System.out.println("Sobrepeso");
+                                                                                                                                } else {
+                                                                                                                                            System.out.println("Obesidade");
+                                                                                                                                                    }
 
-                                                                                                              // -------------------------------------------------------------
-                                                                                                              // Execução dos Testes (Linhas 62-70)
-                                                                                                              // -------------------------------------------------------------
-                                                                                                              listarProdutos(); // []
-
-                                                                                                              cadastrarProduto("Cadeira Gamer", 12, 699.00);
-                                                                                                              cadastrarProduto("Mouse Logi", 38, 99.00);
-
-                                                                                                              listarProdutos(); // Exibe os dois produtos cadastrados
-
-                                                                                                              atualizarValor(2, 97.00); // Atualiza o preço do Mouse Logi
-
-                                                                                                              listarProdutos(); // Exibe a lista com o preço do mouse atualizado
-
-                                                                                                              atualizarQuantidade(1, 3); // Altera a quantidade da Cadeira Gamer para exatamente 3
-
-                                                                                                              listarProdutos(); // Exibe a lista final com a quantidade corrigida
+                                                                                                                                                            entrada.close();
+                                                                                                                                                                }
+                                                                                                                                                                }
+                                                                                                                                                                
