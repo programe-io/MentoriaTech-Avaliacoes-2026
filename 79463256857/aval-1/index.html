@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blog da Turma</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Inter:wght@400;500;600&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+  <style>
+:root {
+  --bg: #f7f3ec;
+  --surface: #fffdf8;
+  --surface-2: #efe8dc;
+  --text: #1f1b16;
+  --muted: #6b6258;
+  --border: #e2d9cb;
+  --accent: #c2502b;
+  --accent-ink: #ffffff;
+  --accent-soft: #f6e1d6;
+  --shadow: 0 1px 2px rgba(31, 27, 22, .05), 0 8px 24px rgba(31, 27, 22, .06);
+  --font-display: "Fraunces", Georgia, serif;
+  --font-body: "Source Serif 4", Georgia, serif;
+  --font-ui: "Inter", system-ui, -apple-system, sans-serif;
+  --radius: 14px;
+  --max: 1080px;
+}
+
+[data-theme="dark"] {
+  --bg: #15130f;
+  --surface: #1d1a16;
+  --surface-2: #27231d;
+  --text: #f1ebe1;
+  --muted: #a89e90;
+  --border: #353028;
+  --accent: #e8794f;
+  --accent-ink: #1a0f0a;
+  --accent-soft: #3a2419;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 8px 24px rgba(0, 0, 0, .25);
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-ui);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  transition: background .25s ease, color .25s ease;
+}
+
+a { color: inherit; }
+
+.container { width: 100%; max-width: var(--max); margin: 0 auto; padding: 0 24px; }
+main.container { outline: none; min-height: 70vh; padding-top: 40px; padding-bottom: 80px; }
+.muted { color: var(--muted); }
+
+/* ---------- Cabeçalho ---------- */
+.site-header {
+  position: sticky; top: 0; z-index: 20;
+  background: color-mix(in srgb, var(--bg) 85%, transparent);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+}
+.header-inner { display: flex; align-items: center; justify-content: space-between; height: 68px; gap: 16px; }
+.logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.logo-mark {
+  display: grid; place-items: center; width: 34px; height: 34px; border-radius: 10px;
+  background: var(--accent); color: var(--accent-ink);
+  font-family: var(--font-display); font-weight: 700; font-size: 20px;
+}
+.logo-text { font-family: var(--font-display); font-weight: 700; font-size: 20px; letter-spacing: -.01em; }
+.nav { display: flex; align-items: center; gap: 6px; }
+.nav a {
+  text-decoration: none; font-weight: 500; font-size: 15px; padding: 8px 12px;
+  border-radius: 999px; color: var(--muted); transition: color .15s, background .15s;
+}
+.nav a:hover { color: var(--text); background: var(--surface-2); }
+.nav a.active { color: var(--text); }
+.nav a.nav-cta { background: var(--text); color: var(--bg); }
+.nav a.nav-cta:hover { background: var(--accent); color: var(--accent-ink); }
+.icon-btn {
+  display: grid; place-items: center; width: 38px; height: 38px; margin-left: 4px;
+  border: 1px solid var(--border); border-radius: 999px;
+  background: var(--surface); color: var(--text); cursor: pointer;
+}
+.icon-btn:hover { border-color: var(--accent); color: var(--accent); }
+.icon-moon { display: none; }
+[data-theme="dark"] .icon-sun { display: none; }
+[data-theme="dark"] .icon-moon { display: block; }
+
+.eyebrow {
+  font-size: 12px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--accent); margin: 0 0 12px;
+}
+
+/* ---------- Capas ---------- */
+.cover {
+  position: relative; aspect-ratio: 4 / 3; border-radius: var(--radius); overflow: hidden;
+  display: grid; place-items: center; box-shadow: var(--shadow);
+}
+.cover span {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: clamp(48px, 10vw, 110px); color: rgba(255, 255, 255, .92);
+  letter-spacing: -.04em; text-shadow: 0 4px 20px rgba(0, 0, 0, .15);
+}
+.cover::after {
+  content: ""; position: absolute; inset: 0;
+  background-image: radial-gradient(rgba(255,255,255,.18) 1px, transparent 1px);
+  background-size: 14px 14px; mix-blend-mode: overlay;
+}
+
+/* ---------- Barra e busca ---------- */
+.toolbar {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+  gap: 16px; padding: 20px 0; border-top: 1px solid var(--border); margin-bottom: 28px;
+}
+.toolbar h2 { font-family: var(--font-display); font-size: 26px; margin: 0; }
+.search { position: relative; flex: 0 1 320px; }
+.search input {
+  width: 100%; padding: 10px 14px 10px 38px; border-radius: 999px;
+  border: 1px solid var(--border); background: var(--surface); color: var(--text);
+  font: inherit; font-size: 15px;
+}
+.search input:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
+.search svg { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: var(--muted); }
+
+.tag-inline {
+  display: inline-block; font-size: 12px; font-weight: 600; color: var(--accent);
+  background: var(--accent-soft); padding: 3px 9px; border-radius: 999px; margin-right: 6px;
+}
+
+/* ---------- Grade de posts ---------- */
+.grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; }
+.card {
+  display: flex; flex-direction: column; background: var(--surface);
+  border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden;
+  text-decoration: none; transition: transform .2s ease, box-shadow .2s ease, border-color .2s;
+}
+.card:hover { transform: translateY(-4px); box-shadow: var(--shadow); border-color: transparent; }
+.card .cover { aspect-ratio: 16 / 9; border-radius: 0; box-shadow: none; }
+.card .cover span { font-size: 54px; }
+.card-body { padding: 18px 20px 22px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+.card h3 { font-family: var(--font-display); font-size: 21px; line-height: 1.25; margin: 0; }
+.card p { font-family: var(--font-body); color: var(--muted); margin: 0; font-size: 16px; flex: 1; }
+
+.meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; font-size: 13px; color: var(--muted); }
+.meta .dot { width: 3px; height: 3px; border-radius: 50%; background: currentColor; opacity: .6; }
+.badge-local {
+  font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em;
+  color: var(--muted); border: 1px dashed var(--border); padding: 2px 8px; border-radius: 6px;
+}
+.empty {
+  text-align: center; padding: 60px 20px; color: var(--muted);
+  border: 1px dashed var(--border); border-radius: var(--radius);
+}
+
+/* ---------- Página do post ---------- */
+.progress {
+  position: fixed; top: 0; left: 0; height: 3px; width: 0;
+  background: var(--accent); z-index: 30; transition: width .1s linear;
+}
+.article { max-width: 700px; margin: 0 auto; }
+.back {
+  display: inline-flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 500;
+  color: var(--muted); text-decoration: none; margin-bottom: 28px;
+}
+.back:hover { color: var(--accent); }
+.article h1 {
+  font-family: var(--font-display); font-size: clamp(32px, 5vw, 48px);
+  line-height: 1.1; letter-spacing: -.02em; margin: 14px 0 16px;
+}
+.article .lead { font-family: var(--font-body); font-size: 21px; color: var(--muted); margin: 0 0 24px; }
+.article .cover { margin: 32px 0 40px; aspect-ratio: 16 / 8; }
+
+.prose { font-family: var(--font-body); font-size: 19px; line-height: 1.75; }
+.prose p { margin: 0 0 1.3em; }
+.prose h2 { font-family: var(--font-display); font-size: 28px; line-height: 1.25; margin: 1.8em 0 .6em; }
+.prose blockquote {
+  margin: 1.6em 0; padding: 4px 0 4px 22px; border-left: 3px solid var(--accent);
+  font-style: italic; color: var(--muted);
+}
+.prose ul, .prose ol { padding-left: 1.3em; margin: 0 0 1.3em; }
+.prose li { margin-bottom: .4em; }
+.prose code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: .82em;
+  background: var(--surface-2); padding: 2px 6px; border-radius: 5px;
+}
+.prose pre {
+  background: #1f1b16; color: #f1ebe1; padding: 18px 20px; border-radius: 10px;
+  overflow-x: auto; font-size: 15px; line-height: 1.55; margin: 0 0 1.4em;
+}
+.prose pre code { background: none; padding: 0; color: inherit; font-size: inherit; }
+
+.article-actions {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 24px 0;
+  border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); margin: 40px 0;
+}
+
+.btn {
+  display: inline-flex; align-items: center; gap: 8px; font: inherit; font-size: 14px;
+  font-weight: 600; padding: 10px 16px; border-radius: 999px; border: 1px solid var(--border);
+  background: var(--surface); color: var(--text); cursor: pointer; text-decoration: none;
+  transition: all .15s;
+}
+.btn:hover { border-color: var(--accent); color: var(--accent); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn.primary:hover { filter: brightness(1.08); color: var(--accent-ink); }
+.btn.danger:hover { border-color: #c0392b; color: #c0392b; }
+.btn.liked { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+.btn.liked svg { fill: currentColor; }
+
+.pager { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 48px; }
+.pager a {
+  display: block; padding: 18px 20px; border: 1px solid var(--border); border-radius: var(--radius);
+  text-decoration: none; background: var(--surface); transition: border-color .15s;
+}
+.pager a:hover { border-color: var(--accent); }
+.pager small { display: block; font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 4px; }
+.pager strong { font-family: var(--font-display); font-size: 17px; }
+.pager .next { text-align: right; grid-column: 2; }
+
+/* ---------- Comentários ---------- */
+.comments h2 { font-family: var(--font-display); font-size: 26px; margin: 0 0 20px; }
+.comment { padding: 16px 0; border-bottom: 1px solid var(--border); }
+.comment-head { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+.comment-head strong { font-size: 15px; }
+.comment-head time { font-size: 13px; color: var(--muted); }
+.comment p { margin: 0 0 0 42px; font-family: var(--font-body); font-size: 17px; white-space: pre-wrap; overflow-wrap: anywhere; }
+
+/* ---------- Formulários ---------- */
+.form { display: grid; gap: 18px; }
+.form.card-like { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; }
+.field { display: grid; gap: 6px; }
+.field label { font-size: 14px; font-weight: 600; }
+.field .hint { font-size: 13px; color: var(--muted); }
+.field input, .field textarea, .field select {
+  font: inherit; font-size: 16px; padding: 11px 14px; border-radius: 10px;
+  border: 1px solid var(--border); background: var(--bg); color: var(--text); width: 100%;
+}
+.field textarea { min-height: 120px; resize: vertical; font-family: var(--font-body); font-size: 17px; line-height: 1.6; }
+.field textarea.tall { min-height: 280px; }
+.field input:focus, .field textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
+.field select:disabled { opacity: .7; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.form-actions { display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; }
+.error { color: #c0392b; font-size: 14px; margin: 0; min-height: 1em; }
+
+.page-head { max-width: 700px; margin: 0 auto 32px; }
+.page-head h1 { font-family: var(--font-display); font-size: clamp(30px, 4.5vw, 44px); line-height: 1.1; margin: 0 0 10px; letter-spacing: -.02em; }
+.page-head p { font-family: var(--font-body); font-size: 19px; color: var(--muted); margin: 0; }
+.page-title { font-family: var(--font-display); font-size: clamp(30px, 4.5vw, 44px); line-height: 1.1; margin: 0 0 16px; letter-spacing: -.02em; }
+.narrow { max-width: 700px; margin: 0 auto; }
+.preview-box { border: 1px dashed var(--border); border-radius: var(--radius); padding: 24px; margin-top: 28px; }
+.preview-box > .eyebrow { margin-bottom: 16px; }
+
+.stats { display: flex; gap: 32px; margin: 24px 0; flex-wrap: wrap; }
+.stats div strong { display: block; font-family: var(--font-display); font-size: 34px; line-height: 1; }
+.stats div span { font-size: 13px; color: var(--muted); }
+
+/* ---------- Topo da turma ---------- */
+.class-hero { text-align: center; max-width: 760px; margin: 8px auto 56px; }
+.class-hero h1 {
+  font-family: var(--font-display); font-size: clamp(38px, 6vw, 64px);
+  line-height: 1.05; letter-spacing: -.02em; margin: 0 0 14px;
+}
+.class-hero .summary { font-family: var(--font-body); font-size: 20px; color: var(--muted); margin: 0; }
+.class-hero .stats { justify-content: center; }
+.hero-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+#alunos-sec { scroll-margin-top: 84px; }
+
+/* ---------- Avatares ---------- */
+.avatar {
+  display: inline-grid; place-items: center; flex-shrink: 0; width: 32px; height: 32px;
+  border-radius: 50%; color: #fff; font-weight: 600; font-size: 13px; letter-spacing: .02em;
+}
+.avatar.xs { width: 24px; height: 24px; font-size: 10px; }
+.avatar.sm { width: 32px; height: 32px; font-size: 12px; }
+.avatar.md { width: 64px; height: 64px; font-size: 22px; font-family: var(--font-display); }
+.avatar.lg { width: 120px; height: 120px; font-size: 44px; font-family: var(--font-display); box-shadow: var(--shadow); }
+.avatar.pending { background: transparent; color: var(--muted); border: 2px dashed var(--border); }
+
+/* ---------- Grade de alunos ---------- */
+.students { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 16px; }
+.student {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  padding: 22px 12px 18px; text-align: center; text-decoration: none;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  transition: transform .2s ease, box-shadow .2s ease, border-color .2s;
+}
+.student:hover { transform: translateY(-3px); box-shadow: var(--shadow); border-color: transparent; }
+.student.pending { background: transparent; border-style: dashed; }
+.student-name { font-family: var(--font-display); font-weight: 700; font-size: 16px; line-height: 1.2; }
+.student-sub { font-size: 12px; color: var(--muted); }
+
+/* ---------- Perfil ---------- */
+.profile { display: flex; align-items: center; gap: 32px; margin-bottom: 44px; flex-wrap: wrap; }
+.profile h1 {
+  font-family: var(--font-display); font-size: clamp(30px, 5vw, 48px);
+  line-height: 1.08; letter-spacing: -.02em; margin: 0 0 10px;
+}
+.profile .summary { font-family: var(--font-body); font-size: 19px; color: var(--muted); margin: 0 0 18px; }
+.card-author { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; }
+.author-link { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; color: var(--text); }
+.author-link:hover strong { color: var(--accent); }
+
+/* ---------- Rodapé ---------- */
+.site-footer { border-top: 1px solid var(--border); padding: 32px 0; font-size: 14px; }
+.footer-inner { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.footer-inner p { margin: 0; }
+
+/* ---------- Aviso ---------- */
+.toast {
+  position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 20px);
+  background: var(--text); color: var(--bg); padding: 12px 20px; border-radius: 999px;
+  font-size: 14px; font-weight: 500; opacity: 0; pointer-events: none;
+  transition: all .25s ease; z-index: 50; max-width: calc(100% - 32px);
+}
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+.fade-in { animation: fadeIn .35s ease both; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  html { scroll-behavior: auto; }
+}
+
+@media (max-width: 900px) {
+  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 640px) {
+  .container { padding: 0 18px; }
+  .grid { grid-template-columns: 1fr; }
+  .logo-text { display: none; }
+  .nav a { padding: 8px 10px; }
+  .form-row { grid-template-columns: 1fr; }
+  .pager { grid-template-columns: 1fr; }
+  .pager .next { grid-column: 1; }
+  .prose { font-size: 18px; }
+  .form.card-like { padding: 20px; }
+  .search { flex: 1 1 100%; }
+  .students { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .profile { gap: 20px; }
+  .avatar.lg { width: 88px; height: 88px; font-size: 32px; }
+}
+  </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="#inicio" class="logo" aria-label="Página inicial">
+        <span class="logo-mark">T</span>
+        <span class="logo-text" data-turma-nome>Blog da Turma</span>
+      </a>
+      <nav class="nav" aria-label="Navegação principal">
+        <a href="#inicio" data-nav="inicio">Turma</a>
+        <a href="#sobre" data-nav="sobre">Sobre</a>
+        <a href="#escrever" data-nav="escrever" class="nav-cta">Escrever</a>
+        <button id="theme-toggle" class="icon-btn" type="button" aria-label="Alternar tema claro/escuro">
+          <svg class="icon-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main id="app" class="container" tabindex="-1"></main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p><strong data-turma-nome>Blog da Turma</strong> — feito com HTML, CSS e JavaScript puros.</p>
+      <p class="muted">©️ <span id="year"></span> · Sem frameworks, sem dependências.</p>
+    </div>
+  </footer>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script>
+/* ==========================================================
+   DADOS DA TURMA — edite aqui para mudar nomes e textos
+   ========================================================== */
+
+const TURMA = {
+  nome: "Blog da Turma",
+  descricao: "O espaço de cada aluno para publicar textos, trabalhos e ideias.",
+  ano: 2026
+};
+
+const ALUNOS = [
+  { nome: "Alan Ricardo" },
+  { nome: "Aline" },
+  { nome: "Ananda" },
+  { nome: "Larissa" },
+  { nome: "Alisson Vinícius" },
+  { nome: "Cíntia" },
+  { nome: "Lara" },
+  { nome: "Carla" },
+  { nome: "José Eduardo" },
+  { nome: "Willame" },
+  { nome: "Tyson Alves" },
+  { nome: "Victor" },
+  { nome: "Misael" },
+  { nome: "João Anderson" },
+  { nome: "Marcos André" },
+  { nome: "Sábio" },
+  { nome: "Léo Vinícius" },
+  { nome: "Maria Eloá" },
+  { nome: "Tyson Michel" },
+  { nome: "Eric Ricardo" },
+  { nome: "Helder" },
+  { nome: "Weslane" },
+  { nome: "João Guilherme" },
+  { nome: "Isabelle" },
+  { nome: "Gustavo" },
+  { nome: "Maria Clara" },
+  { nome: "Emanuele" },
+  { nome: "Ramalho" },
+  { nome: "Carla (2)" },   // a Carla foi citada duas vezes: troque pelo sobrenome
+  { nome: "Maria Riviane" },
+  { nome: "Maria Lúcia" },
+  { nome: "Luana" },
+  { nome: "Carlos Eduardo" }
+];
+
+/* Posts permanentes (aparecem para todo mundo que abrir o blog).
+   "autor" deve ser exatamente o nome do aluno na lista acima.
+   Exemplo:
+   {
+     autor: "Aline",
+     titulo: "Meu primeiro trabalho",
+     resumo: "Uma frase curta sobre o post.",
+     tags: ["trabalho"],
+     data: "2026-11-23",
+     conteudo: `Texto do post. Use ## para subtítulo e - para listas.`
+   }
+*/
+const POSTS_FIXOS = [];
+  </script>
+
+  <script>
+/* ==========================================================
+   LÓGICA DO BLOG
+   ========================================================== */
+(function () {
+  "use strict";
+
+  const store = {
+    get(key, fallback) {
+      try { const raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : fallback; }
+      catch (e) { return fallback; }
+    },
+    set(key, value) {
+      try { localStorage.setItem(key, JSON.stringify(value)); return true; }
+      catch (e) { return false; }
+    }
+  };
+
+  const KEYS = { posts: "turma.posts", likes: "turma.likes", comments: "turma.comments", theme: "turma.theme" };
+
+  const $ = (sel, root = document) => root.querySelector(sel);
+  const app = $("#app");
+
+  function escapeHTML(str) {
+    return String(str)
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+  }
+
+  function semAcento(text) {
+    return String(text).normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  }
+
+  function slugify(text) {
+    return semAcento(text).toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 60) || "item";
+  }
+
+  const MONTHS = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
+
+  function formatDate(iso) {
+    const [y, m, d] = iso.slice(0, 10).split("-").map(Number);
+    return `${d} ${MONTHS[m - 1]} ${y}`;
+  }
+
+  function formatDateTime(ts) {
+    const d = new Date(ts);
+    const hh = String(d.getHours()).padStart(2, "0");
+    const mm = String(d.getMinutes()).padStart(2, "0");
+    return `${d.getDate()} ${MONTHS[d.getMonth()]} ${d.getFullYear()}, ${hh}:${mm}`;
+  }
+
+  function todayISO() {
+    const t = new Date();
+    return `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, "0")}-${String(t.getDate()).padStart(2, "0")}`;
+  }
+
+  function readingTime(text) {
+    return Math.max(1, Math.round(text.trim().split(/\s+/).length / 200));
+  }
+
+  function hash(str) {
+    let h = 0;
+    for (let i = 0; i < str.length; i++) h = (h * 31 + str.charCodeAt(i)) | 0;
+    return Math.abs(h);
+  }
+
+  const GRADIENTS = [
+    ["#c2502b", "#e9a23b"], ["#2f6f62", "#7fb59a"], ["#3b4a8c", "#8a7fd1"], ["#8c3b5e", "#e17c8f"],
+    ["#5b6b2e", "#c2b84f"], ["#1f5c8a", "#5fb3d9"], ["#6b3b8c", "#c07fd1"], ["#8a5a1f", "#d9a65f"]
+  ];
+
+  function gradientFor(key) {
+    const [a, b] = GRADIENTS[hash(key) % GRADIENTS.length];
+    return `linear-gradient(135deg, ${a}, ${b})`;
+  }
+
+  function initials(name) {
+    const parts = name.split(/\s+/).filter((w) => /^\p{L}/u.test(w));
+    if (!parts.length) return "?";
+    if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+    return (parts[0][0] + parts[1][0]).toUpperCase();
+  }
+
+  /* ---------- Mini Markdown ---------- */
+  function inline(text) {
+    return text
+      .replace(/`([^`]+)`/g, "<code>$1</code>")
+      .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
+      .replace(/(^|[^*])\*([^*]+)\*/g, "$1<em>$2</em>");
+  }
+
+  function markdown(src) {
+    const lines = escapeHTML(src).replace(/\r\n/g, "\n").split("\n");
+    let html = "";
+    let i = 0;
+    while (i < lines.length) {
+      const line = lines[i];
+      if (line.trim().startsWith("```")) {
+        const code = [];
+        i++;
+        while (i < lines.length && !lines[i].trim().startsWith("```")) code.push(lines[i++]);
+        i++;
+        html += `<pre><code>${code.join("\n")}</code></pre>`;
+        continue;
+      }
+      if (/^##\s+/.test(line)) { html += `<h2>${inline(line.replace(/^##\s+/, ""))}</h2>`; i++; continue; }
+      if (/^&gt;\s?/.test(line)) {
+        const q = [];
+        while (i < lines.length && /^&gt;\s?/.test(lines[i])) q.push(lines[i++].replace(/^&gt;\s?/, ""));
+        html += `<blockquote>${inline(q.join(" "))}</blockquote>`;
+        continue;
+      }
+      if (/^[-*]\s+/.test(line)) {
+        const items = [];
+        while (i < lines.length && /^[-*]\s+/.test(lines[i])) items.push(lines[i++].replace(/^[-*]\s+/, ""));
+        html += `<ul>${items.map((t) => `<li>${inline(t)}</li>`).join("")}</ul>`;
+        continue;
+      }
+      if (/^\d+\.\s+/.test(line)) {
+        const items = [];
+        while (i < lines.length && /^\d+\.\s+/.test(lines[i])) items.push(lines[i++].replace(/^\d+\.\s+/, ""));
+        html += `<ol>${items.map((t) => `<li>${inline(t)}</li>`).join("")}</ol>`;
+        continue;
+      }
+      if (line.trim() === "") { i++; continue; }
+      const para = [];
+      while (i < lines.length && lines[i].trim() !== "" && !/^(##\s|&gt;|[-*]\s|\d+\.\s|```)/.test(lines[i].trim())) {
+        para.push(lines[i++]);
+      }
+      html += `<p>${inline(para.join(" "))}</p>`;
+    }
+    return html;
+  }
+
+  function plainSummary(body) {
+    const plain = body
+      .replace(/```[\s\S]*?```/g, " ")
+      .replace(/^(##\s+|>\s?|[-*]\s+|\d+\.\s+)/gm, "")
+      .replace(/[*`]/g, "")
+      .replace(/\s+/g, " ")
+      .trim();
+    return plain.length > 140 ? plain.slice(0, 137).trim() + "…" : plain;
+  }
+
+  /* ---------- Alunos ---------- */
+  const STUDENTS = (function () {
+    const used = new Set();
+    return ALUNOS.map((a, i) => {
+      const pending = !a.nome || a.nome.trim().toLowerCase() === "a definir";
+      let slug = pending ? `vaga-${a.vaga || i + 1}` : slugify(a.nome);
+      const base = slug;
+      let n = 2;
+      while (used.has(slug)) slug = `${base}-${n++}`;
+      used.add(slug);
+      return { numero: i + 1, nome: pending ? `Vaga ${a.vaga || i + 1}` : a.nome.trim(), bio: a.bio || "", slug, pending };
+    });
+  })();
+
+  const studentBySlug = (slug) => STUDENTS.find((s) => s.slug === slug);
+  const studentByName = (name) => STUDENTS.find((s) => !s.pending && s.nome === name);
+  const firstName = (name) => name.split(/\s+/)[0];
+
+  /* ---------- Posts ---------- */
+  const WELCOME_DATE = "2026-11-23";
+
+  function welcomePost(s) {
+    const nome = firstName(s.nome);
+    return {
+      slug: `boas-vindas-${s.slug}`,
+      author: s.slug,
+      title: `Boas-vindas ao blog de ${s.nome}`,
+      summary: `Este é o cantinho de ${nome} no blog da turma. Os próximos posts aparecem aqui.`,
+      tags: ["boas-vindas"],
+      date: WELCOME_DATE,
+      welcome: true,
+      content: `Olá! Este é o espaço de **${s.nome}** no ${TURMA.nome}.
+
+Aqui vão aparecer os textos, trabalhos e ideias que ${nome} publicar ao longo do ano.
+
+## Como publicar
+
+- Clique em **Escrever no meu blog** na página do aluno
+- Escolha um título, escreva o texto e clique em **Publicar**
+
+> Todo blog começa com um primeiro post. Este é o primeiro de ${nome}!`
+    };
+  }
+
+  const FIXED_POSTS = POSTS_FIXOS.map((p) => {
+    const s = studentByName(p.autor);
+    if (!s || !p.titulo) return null;
+    return {
+      slug: `${s.slug}-${slugify(p.titulo)}`,
+      author: s.slug,
+      title: p.titulo,
+      summary: p.resumo || plainSummary(p.conteudo || ""),
+      tags: p.tags && p.tags.length ? p.tags : ["geral"],
+      date: p.data || WELCOME_DATE,
+      content: p.conteudo || ""
+    };
+  }).filter(Boolean);
+
+  const WELCOME_POSTS = STUDENTS.filter((s) => !s.pending).map(welcomePost);
+
+  const localPosts = () => store.get(KEYS.posts, []);
+
+  function allPosts() {
+    const order = (p) => (p.welcome ? 2 : 1);
+    return [...localPosts().map((p) => ({ ...p, local: true })), ...FIXED_POSTS, ...WELCOME_POSTS]
+      .filter((p) => studentBySlug(p.author))
+      .sort((a, b) => order(a) - order(b) || b.date.localeCompare(a.date) || (b.created || 0) - (a.created || 0));
+  }
+
+  const findPost = (slug) => allPosts().find((p) => p.slug === slug);
+  const postsBy = (studentSlug) => allPosts().filter((p) => p.author === studentSlug);
+  const getLikes = () => store.get(KEYS.likes, {});
+  const getComments = (slug) => store.get(KEYS.comments, {})[slug] || [];
+
+  let toastTimer;
+  function toast(msg) {
+    const el = $("#toast");
+    el.textContent = msg;
+    el.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => el.classList.remove("show"), 2400);
+  }
+
+  /* ---------- Componentes ---------- */
+  function avatarHTML(s, size = "") {
+    return `<span class="avatar ${size} ${s.pending ? "pending" : ""}" style="${s.pending ? "" : `background:${gradientFor(s.slug)}`}" aria-hidden="true">${s.pending ? "?" : escapeHTML(initials(s.nome))}</span>`;
+  }
+
+  function coverHTML(post) {
+    const s = studentBySlug(post.author);
+    return `<div class="cover" style="background:${gradientFor(post.slug)}" aria-hidden="true"><span>${escapeHTML(initials(s ? s.nome : post.title))}</span></div>`;
+  }
+
+  function metaHTML(post) {
+    return `
+      <div class="meta">
+        <span>${formatDate(post.date)}</span>
+        <span class="dot"></span>
+        <span>${readingTime(post.content)} min de leitura</span>
+        ${post.local ? `<span class="badge-local">salvo neste navegador</span>` : ""}
+      </div>`;
+  }
+
+  function postCardHTML(post) {
+    const s = studentBySlug(post.author);
+    return `
+      <a class="card fade-in" href="#post-${post.slug}">
+        ${coverHTML(post)}
+        <div class="card-body">
+          <div class="card-author">${avatarHTML(s, "xs")}<span>${escapeHTML(s.nome)}</span></div>
+          <h3>${escapeHTML(post.title)}</h3>
+          <p>${escapeHTML(post.summary)}</p>
+          ${metaHTML(post)}
+        </div>
+      </a>`;
+  }
+
+  function studentCardHTML(s) {
+    const count = s.pending ? 0 : postsBy(s.slug).length;
+    return `
+      <a class="student ${s.pending ? "pending" : ""}" href="#aluno-${s.slug}">
+        ${avatarHTML(s, "md")}
+        <span class="student-name">${escapeHTML(s.nome)}</span>
+        <span class="student-sub">${s.pending ? "nome a definir" : `${count} ${count === 1 ? "post" : "posts"}`}</span>
+      </a>`;
+  }
+
+  /* ---------- Página inicial ---------- */
+  const homeState = { query: "", showAll: false };
+
+  function renderHome() {
+    const named = STUDENTS.filter((s) => !s.pending).length;
+    const posts = allPosts();
+    app.innerHTML = `
+      <section class="class-hero fade-in">
+        <p class="eyebrow">Turma ${TURMA.ano} · ${STUDENTS.length} alunos</p>
+        <h1>${escapeHTML(TURMA.nome)}</h1>
+        <p class="summary">${escapeHTML(TURMA.descricao)}</p>
+        <div class="stats">
+          <div><strong>${STUDENTS.length}</strong><span>alunos</span></div>
+          <div><strong>${posts.length}</strong><span>publicações</span></div>
+          ${named < STUDENTS.length ? `<div><strong>${STUDENTS.length - named}</strong><span>vagas sem nome</span></div>` : ""}
+        </div>
+        <div class="hero-actions">
+          <button class="btn primary" type="button" data-scroll="alunos-sec">Ver os alunos</button>
+          <a class="btn" href="#escrever">Escrever um post</a>
+        </div>
+      </section>
+
+      <section id="alunos-sec">
+        <div class="toolbar">
+          <h2>Alunos</h2>
+          <label class="search">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <input id="search" type="search" placeholder="Buscar aluno..." aria-label="Buscar aluno" value="${escapeHTML(homeState.query)}" />
+          </label>
+        </div>
+        <div class="students" id="students"></div>
+      </section>
+
+      <section style="margin-top:64px">
+        <div class="toolbar"><h2>Últimas publicações</h2></div>
+        <div class="grid" id="feed"></div>
+        <div id="more" style="text-align:center;margin-top:32px"></div>
+      </section>`;
+
+    renderStudents();
+    renderFeed();
+    $("#search").addEventListener("input", (e) => {
+      homeState.query = e.target.value;
+      renderStudents();
+    });
+  }
+
+  function renderStudents() {
+    const el = $("#students");
+    if (!el) return;
+    const q = semAcento(homeState.query.trim().toLowerCase());
+    const list = STUDENTS.filter((s) => !q || semAcento(s.nome.toLowerCase()).includes(q));
+    el.innerHTML = list.length
+      ? list.map(studentCardHTML).join("")
+      : `<div class="empty" style="grid-column:1/-1">Nenhum aluno encontrado.</div>`;
+  }
+
+  function renderFeed() {
+    const posts = allPosts();
+    const limit = homeState.showAll ? posts.length : 9;
+    $("#feed").innerHTML = posts.slice(0, limit).map(postCardHTML).join("");
+    $("#more").innerHTML = posts.length > limit
+      ? `<button class="btn" type="button" data-more>Mostrar todas (${posts.length})</button>`
+      : "";
+  }
+
+  /* ---------- Página do aluno ---------- */
+  function renderStudent(slug) {
+    const s = studentBySlug(slug);
+    if (!s) return renderNotFound();
+    document.title = `${s.nome} — ${TURMA.nome}`;
+
+    if (s.pending) {
+      app.innerHTML = `
+        <div class="narrow fade-in">
+          <a class="back" href="#inicio">← Voltar para a turma</a>
+          <div class="profile">
+            ${avatarHTML(s, "lg")}
+            <div>
+              <p class="eyebrow">Aluno nº ${s.numero}</p>
+              <h1>${escapeHTML(s.nome)}</h1>
+              <p class="muted">Esta vaga ainda não tem nome.</p>
+            </div>
+          </div>
+          <div class="empty">Para preencher, procure <code>const ALUNOS</code> no código e troque <code>"A definir"</code> pelo nome do aluno.</div>
+        </div>`;
+      return;
+    }
+
+    const posts = postsBy(slug);
+    const idx = STUDENTS.indexOf(s);
+    const prev = STUDENTS[idx - 1];
+    const next = STUDENTS[idx + 1];
+
+    app.innerHTML = `
+      <div class="fade-in">
+        <a class="back" href="#inicio">← Voltar para a turma</a>
+        <div class="profile">
+          ${avatarHTML(s, "lg")}
+          <div style="flex:1;min-width:0">
+            <p class="eyebrow">Aluno nº ${s.numero} · ${posts.length} ${posts.length === 1 ? "publicação" : "publicações"}</p>
+            <h1>Blog de ${escapeHTML(s.nome)}</h1>
+            <p class="summary">${escapeHTML(s.bio || `Os textos, trabalhos e ideias de ${firstName(s.nome)}.`)}</p>
+            <a class="btn primary" href="#escrever-${s.slug}">Escrever no meu blog</a>
+          </div>
+        </div>
+        <div class="grid">${posts.map(postCardHTML).join("")}</div>
+        <nav class="pager" aria-label="Outros alunos" style="margin-top:48px">
+          ${prev ? `<a href="#aluno-${prev.slug}"><small>← Aluno anterior</small><strong>${escapeHTML(prev.nome)}</strong></a>` : "<span></span>"}
+          ${next ? `<a class="next" href="#aluno-${next.slug}"><small>Próximo aluno →</small><strong>${escapeHTML(next.nome)}</strong></a>` : ""}
+        </nav>
+      </div>`;
+  }
+
+  /* ---------- Página do post ---------- */
+  function renderPost(slug) {
+    const post = findPost(slug);
+    if (!post) return renderNotFound();
+    const s = studentBySlug(post.author);
+    const liked = !!getLikes()[slug];
+    const siblings = postsBy(s.slug);
+    const i = siblings.findIndex((p) => p.slug === slug);
+    const newer = siblings[i - 1];
+    const older = siblings[i + 1];
+
+    document.title = `${post.title} — ${TURMA.nome}`;
+
+    app.innerHTML = `
+      <div class="progress" id="progress"></div>
+      <article class="article fade-in">
+        <a class="back" href="#aluno-${s.slug}">← Blog de ${escapeHTML(s.nome)}</a>
+        <div>${post.tags.map((t) => `<span class="tag-inline">${escapeHTML(t)}</span>`).join("")}</div>
+        <h1>${escapeHTML(post.title)}</h1>
+        <p class="lead">${escapeHTML(post.summary)}</p>
+        <div class="meta">
+          <a class="author-link" href="#aluno-${s.slug}">${avatarHTML(s, "xs")}<strong>${escapeHTML(s.nome)}</strong></a>
+          <span class="dot"></span>
+          <span>${formatDate(post.date)}</span>
+          <span class="dot"></span>
+          <span>${readingTime(post.content)} min de leitura</span>
+          ${post.local ? `<span class="badge-local">salvo neste navegador</span>` : ""}
+        </div>
+        ${coverHTML(post)}
+        <div class="prose">${markdown(post.content)}</div>
+
+        <div class="article-actions">
+          <button class="btn ${liked ? "liked" : ""}" id="like-btn" type="button" aria-pressed="${liked}">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg>
+            <span>${liked ? "Curtido" : "Curtir"}</span>
+          </button>
+          <button class="btn" id="copy-btn" type="button">Copiar link</button>
+          ${post.local ? `
+            <a class="btn" href="#editar-${post.slug}">Editar</a>
+            <button class="btn danger" id="delete-btn" type="button">Excluir</button>` : ""}
+        </div>
+
+        <nav class="pager" aria-label="Outros posts">
+          ${newer ? `<a href="#post-${newer.slug}"><small>← Mais recente</small><strong>${escapeHTML(newer.title)}</strong></a>` : "<span></span>"}
+          ${older ? `<a class="next" href="#post-${older.slug}"><small>Anterior →</small><strong>${escapeHTML(older.title)}</strong></a>` : ""}
+        </nav>
+
+        <section class="comments" aria-labelledby="comments-title">
+          <h2 id="comments-title">Comentários <span class="muted" id="comment-count"></span></h2>
+          <div id="comment-list"></div>
+          <form class="form" id="comment-form" style="margin-top:24px" novalidate>
+            <div class="field">
+              <label for="c-name">Nome</label>
+              <input id="c-name" maxlength="60" list="nomes-alunos" autocomplete="off" />
+              <datalist id="nomes-alunos">${STUDENTS.filter((x) => !x.pending).map((x) => `<option value="${escapeHTML(x.nome)}">`).join("")}</datalist>
+            </div>
+            <div class="field">
+              <label for="c-text">Comentário</label>
+              <textarea id="c-text" maxlength="1000" placeholder="O que você achou?"></textarea>
+            </div>
+            <p class="error" id="c-error"></p>
+            <div class="form-actions"><button class="btn primary" type="submit">Publicar comentário</button></div>
+            <p class="muted" style="font-size:13px;margin:0">Os comentários ficam salvos apenas neste navegador.</p>
+          </form>
+        </section>
+      </article>`;
+
+    renderComments(slug);
+
+    $("#like-btn").addEventListener("click", (e) => {
+      const likes = getLikes();
+      likes[slug] = !likes[slug];
+      store.set(KEYS.likes, likes);
+      const btn = e.currentTarget;
+      btn.classList.toggle("liked", likes[slug]);
+      btn.setAttribute("aria-pressed", String(likes[slug]));
+      btn.querySelector("span").textContent = likes[slug] ? "Curtido" : "Curtir";
+      if (likes[slug]) toast("Obrigado pela curtida!");
+    });
+
+    $("#copy-btn").addEventListener("click", async () => {
+      try { await navigator.clipboard.writeText(location.href); toast("Link copiado!"); }
+      catch (err) { toast("Não foi possível copiar o link."); }
+    });
+
+    const del = $("#delete-btn");
+    if (del) {
+      let armed = false;
+      del.addEventListener("click", () => {
+        if (!armed) {
+          armed = true;
+          del.textContent = "Clique de novo para confirmar";
+          setTimeout(() => { armed = false; del.textContent = "Excluir"; }, 3000);
+          return;
+        }
+        store.set(KEYS.posts, localPosts().filter((p) => p.slug !== slug));
+        toast("Post excluído.");
+        location.hash = `#aluno-${s.slug}`;
+      });
+    }
+
+    $("#comment-form").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const name = $("#c-name").value.trim();
+      const text = $("#c-text").value.trim();
+      if (!name || !text) { $("#c-error").textContent = "Preencha seu nome e o comentário."; return; }
+      const all = store.get(KEYS.comments, {});
+      all[slug] = [...(all[slug] || []), { id: Date.now(), name, text, ts: Date.now() }];
+      if (!store.set(KEYS.comments, all)) {
+        $("#c-error").textContent = "Não foi possível salvar o comentário neste navegador.";
+        return;
+      }
+      $("#c-error").textContent = "";
+      $("#c-text").value = "";
+      renderComments(slug);
+      toast("Comentário publicado.");
+    });
+  }
+
+  function renderComments(slug) {
+    const list = $("#comment-list");
+    const comments = getComments(slug);
+    $("#comment-count").textContent = comments.length ? `(${comments.length})` : "";
+    list.innerHTML = comments.length
+      ? comments.map((c) => `
+          <div class="comment">
+            <div class="comment-head">
+              <span class="avatar sm" style="background:${gradientFor(c.name)}">${escapeHTML(initials(c.name))}</span>
+              <strong>${escapeHTML(c.name)}</strong>
+              <time>${formatDateTime(c.ts)}</time>
+              <button class="btn" style="margin-left:auto;padding:4px 10px;font-size:12px" data-remove="${c.id}" type="button">Remover</button>
+            </div>
+            <p>${escapeHTML(c.text)}</p>
+          </div>`).join("")
+      : `<p class="muted">Ainda não há comentários. Seja o primeiro!</p>`;
+  }
+
+  /* ---------- Escrever / editar ---------- */
+  function renderEditor({ editSlug = null, authorSlug = null } = {}) {
+    const editing = editSlug ? localPosts().find((p) => p.slug === editSlug) : null;
+    if (editSlug && !editing) return renderNotFound();
+    const selected = editing ? editing.author : authorSlug;
+    const named = STUDENTS.filter((s) => !s.pending);
+
+    document.title = (editing ? "Editar post" : "Escrever") + ` — ${TURMA.nome}`;
+
+    app.innerHTML = `
+      <div class="page-head fade-in">
+        <p class="eyebrow">${editing ? "Editar" : "Novo post"}</p>
+        <h1>${editing ? "Editar post" : "Escreva algo novo"}</h1>
+        <p>Use <code>## </code> para subtítulos, <code>- </code> para listas, <code>&gt; </code> para citações, <code>**negrito**</code> e <code>*itálico*</code>.</p>
+      </div>
+
+      <div class="narrow fade-in">
+        <form class="form card-like" id="post-form" novalidate>
+          <div class="form-row">
+            <div class="field">
+              <label for="f-author">Aluno</label>
+              <select id="f-author" ${editing ? "disabled" : ""}>
+                <option value="">Escolha seu nome…</option>
+                ${named.map((s) => `<option value="${s.slug}" ${s.slug === selected ? "selected" : ""}>${escapeHTML(s.nome)}</option>`).join("")}
+              </select>
+            </div>
+            <div class="field">
+              <label for="f-tags">Tags</label>
+              <input id="f-tags" placeholder="trabalho, ciências" value="${editing ? escapeHTML(editing.tags.join(", ")) : ""}" />
+              <span class="hint">Separe por vírgulas</span>
+            </div>
+          </div>
+          <div class="field">
+            <label for="f-title">Título</label>
+            <input id="f-title" maxlength="120" value="${editing ? escapeHTML(editing.title) : ""}" />
+          </div>
+          <div class="field">
+            <label for="f-summary">Resumo <span class="muted" style="font-weight:400">(opcional)</span></label>
+            <input id="f-summary" maxlength="200" value="${editing ? escapeHTML(editing.summary) : ""}" />
+          </div>
+          <div class="field">
+            <label for="f-content">Texto</label>
+            <textarea id="f-content" class="tall">${editing ? escapeHTML(editing.content) : ""}</textarea>
+          </div>
+          <p class="error" id="f-error"></p>
+          <div class="form-actions">
+            <a class="btn" href="${editing ? "#post-" + editing.slug : selected ? "#aluno-" + selected : "#inicio"}">Cancelar</a>
+            <button class="btn primary" type="submit">${editing ? "Salvar alterações" : "Publicar"}</button>
+          </div>
+          <p class="muted" style="font-size:13px;margin:0">Os posts escritos aqui ficam salvos apenas neste navegador. Para um post ficar no blog para todos, ele precisa ser adicionado em POSTS_FIXOS no código.</p>
+        </form>
+
+        <div class="preview-box">
+          <p class="eyebrow">Pré-visualização</p>
+          <div class="prose" id="preview"></div>
+        </div>
+      </div>`;
+
+    const content = $("#f-content");
+    const preview = $("#preview");
+    const update = () => {
+      preview.innerHTML = content.value.trim()
+        ? markdown(content.value)
+        : `<p class="muted">Comece a escrever para ver a prévia.</p>`;
+    };
+    content.addEventListener("input", update);
+    update();
+
+    $("#post-form").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const author = editing ? editing.author : $("#f-author").value;
+      const title = $("#f-title").value.trim();
+      const summary = $("#f-summary").value.trim();
+      const body = content.value.trim();
+      const tags = $("#f-tags").value.split(",").map((t) => t.trim().toLowerCase()).filter(Boolean).slice(0, 5);
+
+      if (!author) { $("#f-error").textContent = "Escolha o nome do aluno."; return; }
+      if (!title || !body) { $("#f-error").textContent = "Título e texto são obrigatórios."; return; }
+
+      const posts = localPosts();
+      let slug;
+      const data = { author, title, summary: summary || plainSummary(body), tags: tags.length ? tags : ["geral"], content: body };
+
+      if (editing) {
+        slug = editing.slug;
+        const idx = posts.findIndex((p) => p.slug === slug);
+        posts[idx] = { ...editing, ...data };
+      } else {
+        const base = `${author}-${slugify(title)}`;
+        slug = base;
+        let n = 2;
+        while (findPost(slug)) slug = `${base}-${n++}`;
+        posts.push({ ...data, slug, date: todayISO(), created: Date.now() });
+      }
+
+      if (!store.set(KEYS.posts, posts)) {
+        $("#f-error").textContent = "Não foi possível salvar neste navegador.";
+        return;
+      }
+      toast(editing ? "Alterações salvas." : "Post publicado!");
+      location.hash = `#post-${slug}`;
+    });
+  }
+
+  /* ---------- Sobre ---------- */
+  function renderAbout() {
+    document.title = `Sobre — ${TURMA.nome}`;
+    app.innerHTML = `
+      <div class="narrow fade-in">
+        <p class="eyebrow">Sobre</p>
+        <h1 class="page-title">${escapeHTML(TURMA.nome)}</h1>
+        <div class="prose">
+          <p>${escapeHTML(TURMA.descricao)}</p>
+          <p>A turma tem <strong>${STUDENTS.length} alunos</strong>, e cada um tem a sua própria página, que funciona como um blog pessoal dentro do blog da turma.</p>
+          <h2>Como usar</h2>
+          <ol>
+            <li>Na página inicial, clique no seu nome.</li>
+            <li>Clique em <strong>Escrever no meu blog</strong>.</li>
+            <li>Escreva o título e o texto e clique em <strong>Publicar</strong>.</li>
+          </ol>
+          <p>Este site foi feito só com HTML, CSS e JavaScript, sem frameworks.</p>
+        </div>
+      </div>`;
+  }
+
+  function renderNotFound() {
+    document.title = `Página não encontrada — ${TURMA.nome}`;
+    app.innerHTML = `
+      <div class="empty fade-in" style="max-width:520px;margin:40px auto">
+        <h1 style="font-family:var(--font-display);margin:0 0 8px;color:var(--text)">Página não encontrada</h1>
+        <p>O que você procura não existe ou foi removido.</p>
+        <a class="btn primary" href="#inicio">Voltar para o início</a>
+      </div>`;
+  }
+
+  /* ---------- Rotas ---------- */
+  function setActiveNav(name) {
+    document.querySelectorAll("[data-nav]").forEach((a) => a.classList.toggle("active", a.dataset.nav === name));
+  }
+
+  function router() {
+    const h = location.hash.replace(/^#/, "") || "inicio";
+    document.title = TURMA.nome;
+
+    if (h.startsWith("post-")) { setActiveNav(null); renderPost(h.slice(5)); }
+    else if (h.startsWith("aluno-")) { setActiveNav(null); renderStudent(h.slice(6)); }
+    else if (h.startsWith("editar-")) { setActiveNav(null); renderEditor({ editSlug: h.slice(7) }); }
+    else if (h.startsWith("escrever-")) { setActiveNav("escrever"); renderEditor({ authorSlug: h.slice(9) }); }
+    else if (h === "escrever") { setActiveNav("escrever"); renderEditor(); }
+    else if (h === "sobre") { setActiveNav("sobre"); renderAbout(); }
+    else if (h === "inicio") { setActiveNav("inicio"); renderHome(); }
+    else { setActiveNav(null); renderNotFound(); }
+
+    window.scrollTo(0, 0);
+    app.focus({ preventScroll: true });
+  }
+
+  /* ---------- Cliques ---------- */
+  app.addEventListener("click", (e) => {
+    const scrollBtn = e.target.closest("[data-scroll]");
+    if (scrollBtn) {
+      const target = document.getElementById(scrollBtn.dataset.scroll);
+      if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+      return;
+    }
+    if (e.target.closest("[data-more]")) {
+      homeState.showAll = true;
+      renderFeed();
+      return;
+    }
+    const removeBtn = e.target.closest("[data-remove]");
+    if (removeBtn) {
+      const slug = location.hash.replace(/^#post-/, "");
+      const id = Number(removeBtn.dataset.remove);
+      const all = store.get(KEYS.comments, {});
+      all[slug] = (all[slug] || []).filter((c) => c.id !== id);
+      store.set(KEYS.comments, all);
+      renderComments(slug);
+      toast("Comentário removido.");
+    }
+  });
+
+  /* ---------- Barra de leitura ---------- */
+  window.addEventListener("scroll", () => {
+    const bar = $("#progress");
+    if (!bar) return;
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    bar.style.width = max > 0 ? `${(window.scrollY / max) * 100}%` : "0";
+  }, { passive: true });
+
+  /* ---------- Tema claro/escuro ---------- */
+  function initTheme() {
+    let theme = store.get(KEYS.theme, null);
+    if (!theme) {
+      theme = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    }
+    document.documentElement.dataset.theme = theme;
+    $("#theme-toggle").addEventListener("click", () => {
+      const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+      document.documentElement.dataset.theme = next;
+      store.set(KEYS.theme, next);
+    });
+  }
+
+  $("#year").textContent = new Date().getFullYear();
+  document.querySelectorAll("[data-turma-nome]").forEach((el) => (el.textContent = TURMA.nome));
+  initTheme();
+  window.addEventListener("hashchange", router);
+  router();
+})();
+  </script>
+<script src="script.js"></script></body>
+</html>
+
+
