@@ -1,0 +1,137 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Cadastro de Pessoas - IMC</title>
+
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+</head>
+
+<body>
+
+    <header>
+        <h1>Cadastro de Pessoas</h1>
+        <p>Sistema de cadastro e cálculo de IMC</p>
+    </header>
+
+    <main>
+
+        <section class="container">
+
+            <h2>Cadastrar Pessoa</h2>
+
+            <form id="formPessoas">
+
+                <div class="campo">
+                    <label for="nome">Nome:</label>
+                    <input
+                        type="text"
+                        id="nome"
+                        placeholder="Digite o nome"
+                        required
+                    >
+                </div>
+
+                <div class="campo">
+                    <label for="idade">Idade:</label>
+                    <input
+                        type="number"
+                        id="idade"
+                        min="1"
+                        max="120"
+                        placeholder="Digite a idade"
+                        required
+                    >
+                </div>
+
+                <div class="campo">
+                    <label for="altura">Altura (m):</label>
+                    <input
+                        type="number"
+                        id="altura"
+                        min="0.5"
+                        max="2.5"
+                        step="0.01"
+                        placeholder="Ex: 1.70"
+                        required
+                    >
+                </div>
+
+                <div class="campo">
+                    <label for="peso">Peso (kg):</label>
+                    <input
+                        type="number"
+                        id="peso"
+                        min="2"
+                        max="500"
+                        step="0.1"
+                        placeholder="Ex: 70"
+                        required
+                    >
+                </div>
+
+                <p id="erro" class="erro" hidden></p>
+
+                <div class="botoes">
+                    <button type="submit" class="btn-cadastrar">
+                        Cadastrar
+                    </button>
+
+                    <button type="reset" class="btn-limpar">
+                        Limpar
+                    </button>
+                </div>
+
+            </form>
+
+        </section>
+
+        <section class="container">
+
+            <h2>Pessoas Cadastradas</h2>
+
+            <div class="tabela-responsiva">
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Idade</th>
+                            <th>Altura</th>
+                            <th>Peso</th>
+                            <th>IMC</th>
+                            <th>Classificação</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="tabelaPessoas">
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <p class="aviso">
+                O IMC é apenas um indicador educativo.
+                Para menores de 20 anos, a interpretação exige
+                critérios específicos de idade e desenvolvimento.
+                Ele não substitui uma avaliação profissional.
+            </p>
+
+        </section>
+
+    </main>
+
+    <footer>
+        <p>Projeto de Cadastro de Pessoas - 2026</p>
+    </footer>
+
+</body>
+</html>
