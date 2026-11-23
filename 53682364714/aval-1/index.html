@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculadora</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+\}
+
+body {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #15152e, #34346b);
+    font-family: Arial, sans-serif;
+\}
+
+.calculadora {
+    width: 330px;
+    padding: 22px;
+    border-radius: 25px;
+    background: #202038;
+    box-shadow: 0 15px 40px #0008;
+\}
+
+h2 {
+    color: white;
+    text-align: center;
+    margin-bottom: 20px;
+\}
+
+#tela {
+    width: 100%;
+    height: 75px;
+    margin-bottom: 18px;
+    padding: 15px;
+    border: none;
+    border-radius: 12px;
+    background: #111124;
+    color: white;
+    font-size: 30px;
+    text-align: right;
+    outline: none;
+\}
+
+.botoes {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+\}
+
+button {
+    height: 60px;
+    border: none;
+    border-radius: 12px;
+    background: #353552;
+    color: white;
+    font-size: 22px;
+    cursor: pointer;
+    transition: 0.2s;
+\}
+
+button:hover {
+    background: #505078;
+    transform: scale(1.05);
+\}
+
+.operador {
+    background: #7957d5;
+\}
+
+.limpar {
+    background: #e34d68;
+\}
+
+.igual {
+    background: #16a085;
+    grid-column: span 2;
+\}
+
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+<div class="calculadora">
+
+    <h2>Calculadora</h2>
+
+    <input type="text" id="tela" value="0" disabled>
+
+    <div class="botoes">
+
+        <button class="limpar" onclick="limpar()">C</button>
+        <button onclick="apagar()">⌫</button>
+        <button class="operador" onclick="adicionar('/')">÷</button>
+        <button class="operador" onclick="adicionar('*')">×</button>
+
+        <button onclick="adicionar('7')">7</button>
+        <button onclick="adicionar('8')">8</button>
+        <button onclick="adicionar('9')">9</button>
+        <button class="operador" onclick="adicionar('-')">−</button>
+
+        <button onclick="adicionar('4')">4</button>
+        <button onclick="adicionar('5')">5</button>
+        <button onclick="adicionar('6')">6</button>
+        <button class="operador" onclick="adicionar('+')">+</button>
+
+        <button onclick="adicionar('1')">1</button>
+        <button onclick="adicionar('2')">2</button>
+        <button onclick="adicionar('3')">3</button>
+        <button onclick="adicionar('.')">.</button>
+
+        <button onclick="adicionar('0')">0</button>
+        <button class="igual" onclick="calcular()">=</button>
+
+    </div>
+</div>
+
+<script>
+
+let expressao = "";
+
+const tela = document.getElementById("tela");
+
+function atualizar() {
+    tela.value = expressao || "0";
+\}
+
+function adicionar(valor) {
+    expressao += valor;
+    atualizar();
+\}
+
+function limpar() {
+    expressao = "";
+    atualizar();
+\}
+
+function apagar() {
+    expressao = expressao.slice(0, -1);
+    atualizar();
+\}
+
+function calcular() {
+    try {
+        if (!/^[0-9+\\-*/.() ]+\$/.test(expressao)) {
+            throw new Error();
+        \}
+
+        if (!expressao) return;
+
+        const resultado = Function(
+            '"use strict"; return (' + expressao + ')'
+        )();
+
+        if (!Number.isFinite(resultado)) {
+            throw new Error();
+        \}
+
+        expressao = String(
+            Number(resultado.toPrecision(12))
+        );
+
+        atualizar();
+
+    \} catch {
+        tela.value = "Erro";
+        expressao = "";
+    \}
+\}
+
+</script>
+
+<script src="script.js"></script></body>
+</html>$0
