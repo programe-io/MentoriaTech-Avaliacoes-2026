@@ -1,0 +1,113 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Battle Game</title>
+
+    <style>
+        body {
+            background: #080812;
+            color: white;
+            font-family: Arial;
+            text-align: center;
+            padding: 30px;
+        }
+
+        h1 {
+            color: cyan;
+            text-shadow: 0 0 15px cyan;
+        }
+
+        .game {
+            background: #17172b;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 400px;
+            margin: 40px auto;
+            box-shadow: 0 0 20px cyan;
+        }
+
+        button {
+            padding: 15px;
+            margin: 10px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            background: cyan;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: blue;
+            color: white;
+        }
+
+        #mensagem {
+            color: yellow;
+            margin-top: 20px;
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+    <h1>⚔️ BATTLE GAME</h1>
+
+    <div class="game">
+
+        <h2>👤 Jogador</h2>
+        <p>❤️ Vida: <span id="vida">100</span></p>
+
+        <h2>👹 Inimigo</h2>
+        <p>❤️ Vida: <span id="inimigo">100</span></p>
+
+        <button onclick="atacar()">ATACAR</button>
+        <button onclick="reiniciar()">REINICIAR</button>
+
+        <h3 id="mensagem">Prepare-se para lutar!</h3>
+
+    </div>
+
+    <script>
+        let vida = 100;
+        let inimigo = 100;
+
+        function atacar() {
+            if (vida <= 0 || inimigo <= 0) return;
+
+            inimigo -= Math.floor(Math.random() * 20) + 10;
+
+            if (inimigo > 0) {
+                vida -= Math.floor(Math.random() * 15) + 5;
+            }
+
+            if (inimigo < 0) inimigo = 0;
+            if (vida < 0) vida = 0;
+
+            document.getElementById("vida").innerText = vida;
+            document.getElementById("inimigo").innerText = inimigo;
+
+            if (inimigo === 0) {
+                document.getElementById("mensagem").innerText = "🏆 VOCÊ VENCEU!";
+            } else if (vida === 0) {
+                document.getElementById("mensagem").innerText = "💀 VOCÊ PERDEU!";
+            } else {
+                document.getElementById("mensagem").innerText = "⚔️ Continue lutando!";
+            }
+        }
+
+        function reiniciar() {
+            vida = 100;
+            inimigo = 100;
+
+            document.getElementById("vida").innerText = vida;
+            document.getElementById("inimigo").innerText = inimigo;
+            document.getElementById("mensagem").innerText = "Nova batalha!";
+        }
+    </script>
+
+<script src="script.js"></script></body>
+</html>
