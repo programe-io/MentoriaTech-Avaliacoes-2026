@@ -1,14 +1,8 @@
-const botao = document.querySelector("button");
+function mudarCor() {
+    document.body.style.backgroundColor = 
+        "#" + Math.floor(Math.random() * 16777215)
+        .toString(16).padStart(6, "0");
 
-let pontos = 0;
-
-botao.addEventListener("click", function() {
-    pontos++;
-
-    document.querySelector("h2").textContent =
-        "Sua pontuação: " + pontos;
-
-    if (pontos === 10) {
-        alert("Parabéns! Você fez 10 pontos!");
-    \}
-\});$0
+    document.getElementById("mensagem").innerText =
+        "Você clicou no botão! 🎉";
+\}$0
