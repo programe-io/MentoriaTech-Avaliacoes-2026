@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora de IMC</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background-color: #f4f6f9;
+      color: #333;
+      margin: 0;
+      padding: 20px;
+    }
+
+    main {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      text-align: center;
+      color: #1e293b;
+    }
+
+    .card {
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+
+    .campo {
+      margin-bottom: 12px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    label {
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+
+    input {
+      padding: 8px;
+      border: 1px solid #cbd5e1;
+      border-radius: 4px;
+    }
+
+    #erro {
+      color: #dc2626;
+      font-weight: bold;
+      margin: 10px 0;
+    }
+
+    .botoes {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    button {
+      padding: 8px 14px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    button[type="submit"] {
+      background-color: #2563eb;
+      color: white;
+    }
+
+    #btn-cancelar {
+      background-color: #e2e8f0;
+      color: #334155;
+    }
+
+    .btn-apagar {
+      background-color: #dc2626;
+      color: white;
+      padding: 6px 10px;
+      font-size: 0.85em;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th, td {
+      padding: 10px;
+      border-bottom: 1px solid #e2e8f0;
+      text-align: left;
+    }
+
+    .selo {
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 0.85em;
+      font-weight: bold;
+      color: #fff;
+    }
+
+    .abaixo { background-color: #3b82f6; }
+    .normal { background-color: #16a34a; }
+    .sobrepeso { background-color: #eab308; color: #000; }
+    .obesidade { background-color: #dc2626; }
+  </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <main>
+    <h1>Calculadora de IMC</h1>
+
+    <!-- Primeiro Card: Formulário -->
+    <section class="card">
+      <h2>Cadastrar Paciente</h2>
+      <form id="form-pessoa">
+        <div class="campo">
+          <label for="nome">Nome</label>
+          <input type="text" id="nome" maxlength="50" placeholder="Digite o nome">
+        </div>
+
+        <div class="campo">
+          <label for="idade">Idade</label>
+          <input type="number" id="idade" placeholder="Ex: 30">
+        </div>
+
+        <div class="campo">
+          <label for="altura">Altura (m)</label>
+          <input type="number" id="altura" step="0.01" placeholder="Ex: 1.75">
+        </div>
+
+        <div class="campo">
+          <label for="peso">Peso (kg)</label>
+          <input type="number" id="peso" step="0.1" placeholder="Ex: 70.5">
+        </div>
+
+        <p id="erro" hidden></p>
+
+        <div class="botoes">
+          <button type="submit">Salvar</button>
+          <button type="reset" id="btn-cancelar">Cancelar</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Segundo Card: Tabela -->
+    <section class="card">
+      <h2>Pacientes Cadastrados</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Idade</th>
+            <th>Altura</th>
+            <th>Peso</th>
+            <th>IMC</th>
+            <th>Classificação</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="tbody-pessoas"></tbody>
+      </table>
+    </section>
+  </main>
+
+  <script>
+    const formPessoa = document.getElementById("form-pessoa");
+    const tbodyPessoas = document.getElementById("tbody-pessoas");
+    const mensagemDeErro = document.getElementById("erro");
+
+    const CHAVE_PESSOAS = "pessoas";
+    let pessoas = carregarPessoas();
+    let contadorDeCodigo = 0;
+
+    function gerarCodigo() {
+      return ++contadorDeCodigo;
+    }
+
+    function ajustarContadorCodigo() {
+      pessoas.forEach((pessoa) => {
+        if (pessoa.id > contadorDeCodigo) {
+          contadorDeCodigo = pessoa.id;
+        }
+      });
+    }
+
+    function calcularIMC(peso, altura) {
+      return peso / (altura * altura);
+    }
+
+    function classificarIMC(imc) {
+      if (imc < 18.5) return { texto: "Abaixo do peso", classe: "abaixo" };
+      if (imc < 25) return { texto: "Peso normal", classe: "normal" };
+      if (imc < 30) return { texto: "Sobrepeso", classe: "sobrepeso" };
+      if (imc < 35) return { texto: "Obesidade grau I", classe: "obesidade" };
+      if (imc < 40) return { texto: "Obesidade grau II", classe: "obesidade" };
+      return { texto: "Obesidade grau III", classe: "obesidade" };
+    }
+
+    function formatar(valor, casasDecimais) {
+      return valor.toLocaleString("pt-BR", {
+        minimumFractionDigits: casasDecimais,
+        maximumFractionDigits: casasDecimais,
+      });
+    }
+    function salvarPessoas() {
+      localStorage.setItem(CHAVE_PESSOAS, JSON.stringify(pessoas));
+    }
+
+    function carregarPessoas() {
+      const texto = localStorage.getItem(CHAVE_PESSOAS);
+      if (!texto) return [];
+
+      try {
+        const dados = JSON.parse(texto);
+        return Array.isArray(dados) ? dados : [];
+      } catch (erro) {
+        return [];
+      }
+    }
+
+    function lerFormulario() {
+      return {
+        nome: document.getElementById("nome").value.trim(),
+        idade: Number(document.getElementById("idade").value),
+        altura: Number(document.getElementById("altura").value),
+        peso: Number(document.getElementById("peso").value),
+      };
+    }
+
+    function validarDados(dados) {
+      if (dados.nome.length < 2) {
+        return "Informe o nome com no mínimo duas letras.";
+      }
+      if (!Number.isInteger(dados.idade) || dados.idade < 1 || dados.idade > 120) {
+        return "A idade deve ser um número inteiro entre 1 e 120.";
+      }
+      if (isNaN(dados.altura) || dados.altura < 0.5 || dados.altura > 2.5) {
+        return "Informe uma altura válida (entre 0.50m e 2.50m).";
+      }
+      if (isNaN(dados.peso) || dados.peso < 2 || dados.peso > 500) {
+        return "Informe um peso válido (entre 2kg e 500kg).";
+      }
+      return "";
+    }
+
+    function mostrarErro(mensagem) {
+      mensagemDeErro.textContent = mensagem;
+      mensagemDeErro.hidden = false;
+    }
+
+    function limparErro() {
+      mensagemDeErro.textContent = "";
+      mensagemDeErro.hidden = true;
+    }
+
+    // Construção da Tabela
+    function criarCelula(texto) {
+      const td = document.createElement("td");
+      td.textContent = texto;
+      return td;
+    }
+
+    function criarLinha(pessoa) {
+      const tr = document.createElement("tr");
+      tr.dataset.id = pessoa.id;
+
+      tr.appendChild(criarCelula(pessoa.nome));
+      tr.appendChild(criarCelula(pessoa.idade));
+      tr.appendChild(criarCelula(formatar(pessoa.altura, 2) + " m"));
+      tr.appendChild(criarCelula(formatar(pessoa.peso, 1) + " kg"));
+      tr.appendChild(criarCelula(formatar(pessoa.imc, 2)));
+
+      const tdClassificacao = document.createElement("td");
+      const span = document.createElement("span");
+      span.classList.add("selo", pessoa.classificacao.classe);
+      span.textContent = pessoa.classificacao.texto;
+      tdClassificacao.appendChild(span);
+      tr.appendChild(tdClassificacao);
+
+      const tdAcoes = document.createElement("td");
+      const btnApagar = document.createElement("button");
+      btnApagar.type = "button";
+      btnApagar.textContent = "Apagar";
+      btnApagar.classList.add("btn-apagar");
+      btnApagar.addEventListener("click", () => apagarPessoa(pessoa.id));
+      tdAcoes.appendChild(btnApagar);
+      tr.appendChild(tdAcoes);
+
+      return tr;
+    }
+
+    function render() {
+      tbodyPessoas.innerHTML = "";
+
+      if (pessoas.length === 0) {
+        const tr = document.createElement("tr");
+        const td = document.createElement("td");
+        td.colSpan = 7;
+        td.textContent = "Nenhuma pessoa cadastrada.";
+        td.style.textAlign = "center";
+        tr.appendChild(td);
+        tbodyPessoas.appendChild(tr);
+        return;
+      }
+
+      pessoas.forEach((pessoa) => {
+        tbodyPessoas.appendChild(criarLinha(pessoa));
+      });
+    }
+    function adicionarPessoa(dados) {
+      const imc = calcularIMC(dados.peso, dados.altura);
+      const classificacao = classificarIMC(imc);
+
+      pessoas.push({
+        id: gerarCodigo(),
+        nome: dados.nome,
+        idade: dados.idade,
+        altura: dados.altura,
+        peso: dados.peso,
+        imc,
+        classificacao,
+      });
+
+      salvarPessoas();
+      render();
+    }
+
+    function apagarPessoa(id) {
+      pessoas = pessoas.filter((pessoa) => pessoa.id !== id);
+      salvarPessoas();
+      render();
+    }
+  formPessoa.addEventListener("submit", (evento) => {
+      evento.preventDefault();
+
+      const dados = lerFormulario();
+      const erro = validarDados(dados);
+
+      if (erro !== "") {
+        mostrarErro(erro);
+        return;
+      }
+
+      limparErro();
+      adicionarPessoa(dados);
+      formPessoa.reset();
+    });
+
+    formPessoa.addEventListener("reset", limparErro);
+
+    ajustarContadorCodigo();
+    render();
+  </script>
+</body>
+</html>
