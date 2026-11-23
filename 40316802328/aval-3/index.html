@@ -3,108 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora de IMC</title>
+    <title>Painel de IMC</title>
     <link rel="stylesheet" href="style.css">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="style.css" rel="stylesheet"></head>
 <body>
 
-<div class="layout">
+<!-- BARRA SUPERIOR -->
+<header class="topo">
+    <div class="topo-interno">
+        <div class="logo">
+            <span class="logo-marca">IMC</span>
+            <span class="logo-texto">Painel de pacientes</span>
+        </div>
+        <button type="button" id="abrir-form" class="btn-primario">+ Novo paciente</button>
+    </div>
+</header>
 
-    <!-- PAINEL LATERAL: marca + formulário -->
-    <aside class="painel">
+<main class="pagina">
 
-        <header class="marca">
-            <div class="marca-icone">⚕</div>
-            <div>
-                <h1>Calculadora de IMC</h1>
-                <p>Acompanhamento de pacientes</p>
-            </div>
-        </header>
+    <!-- FAIXA DE RESUMO -->
+    <section class="resumo" aria-label="Resumo">
+        <div class="resumo-bloco principal">
+            <span class="rotulo">Pacientes</span>
+            <strong id="total">0</strong>
+        </div>
+        <div class="resumo-bloco principal">
+            <span class="rotulo">IMC médio</span>
+            <strong id="media">0,0</strong>
+        </div>
+        <ul class="distribuicao" id="distribuicao"></ul>
+    </section>
 
-        <form id="form-pessoa" novalidate autocomplete="off">
+    <!-- BUSCA -->
+    <div class="barra-busca">
+        <input type="search" id="busca" placeholder="Buscar paciente pelo nome" aria-label="Buscar paciente">
+        <select id="ordem" aria-label="Ordenar por">
+            <option value="recente">Mais recentes</option>
+            <option value="nome">Nome (A–Z)</option>
+            <option value="imc">Maior IMC</option>
+        </select>
+    </div>
 
-            <h2 id="titulo-form">Nova pessoa</h2>
+    <!-- CARTÕES -->
+    <section id="grade" class="grade"></section>
 
-            <div class="campo">
-                <label for="input-nome">Nome completo</label>
-                <input type="text" id="input-nome" maxlength="50" placeholder="Ex.: Maria Silva" required>
-            </div>
-
-            <div class="campo">
-                <label for="input-idade">Idade (anos)</label>
-                <input type="number" id="input-idade" min="1" max="126" step="1" placeholder="Ex.: 30" required>
-            </div>
-
-            <div class="linha-dupla">
-                <div class="campo">
-                    <label for="input-altura">Altura (m)</label>
-                    <input type="number" id="input-altura" min="0.5" max="2.5" step="0.01" placeholder="1.75" required>
-                </div>
-
-                <div class="campo">
-                    <label for="input-peso">Peso (kg)</label>
-                    <input type="number" id="input-peso" min="1" max="500" step="0.1" placeholder="70" required>
-                </div>
-            </div>
-
-            <p id="erro" class="erro" role="alert" hidden></p>
-
-            <div class="botoes">
-                <button type="submit" id="btn-salvar">+ Salvar pessoa</button>
-                <button type="button" id="btn-cancelar" class="secundario" hidden>Cancelar</button>
-            </div>
-
-        </form>
-
-        <footer>Calculadora de IMC • Projeto Prático</footer>
-
-    </aside>
+</main>
 
 
-    <!-- CONTEÚDO: resumo + lista -->
-    <main class="conteudo">
+<!-- JANELA DO FORMULÁRIO -->
+<dialog id="dialogo">
+    <form id="form" method="dialog" novalidate autocomplete="off">
 
-        <section class="resumo">
-            <div class="resumo-item">
-                <strong id="total-pessoas">0</strong>
-                <p>Pessoas cadastradas</p>
-            </div>
-            <div class="resumo-item">
-                <strong id="media-imc">0,0</strong>
-                <p>Média de IMC</p>
-            </div>
-        </section>
+        <h2 id="titulo">Novo paciente</h2>
 
-        <section class="lista">
+        <label>
+            Nome completo
+            <input type="text" id="f-nome" maxlength="50" placeholder="Ex.: Maria Silva">
+        </label>
 
-            <div class="lista-cabecalho">
-                <h2>Histórico de pacientes</h2>
-                <span class="contador" id="contador">0 registros</span>
-            </div>
+        <div class="trio">
+            <label>
+                Idade
+                <input type="number" id="f-idade" min="1" max="126" step="1" placeholder="30">
+            </label>
+            <label>
+                Altura (m)
+                <input type="number" id="f-altura" min="0.5" max="2.5" step="0.01" placeholder="1.75">
+            </label>
+            <label>
+                Peso (kg)
+                <input type="number" id="f-peso" min="1" max="500" step="0.1" placeholder="70">
+            </label>
+        </div>
 
-            <div class="tabela-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Nome</th>
-                            <th>Idade</th>
-                            <th>Altura</th>
-                            <th>Peso</th>
-                            <th>IMC</th>
-                            <th>Classificação</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tabela-pessoas"></tbody>
-                </table>
-            </div>
+        <p class="previa">IMC calculado: <output id="previa">—</output></p>
 
-        </section>
+        <p id="msg-erro" class="msg-erro" role="alert" hidden></p>
 
-    </main>
+        <div class="form-botoes">
+            <button type="button" id="fechar-form" class="btn-neutro">Cancelar</button>
+            <button type="submit" id="salvar" class="btn-primario">Cadastrar</button>
+        </div>
 
-</div>
+    </form>
+</dialog>
+
+<div id="aviso" class="aviso" role="status" hidden></div>
 
 <script src="app.js"></script>
 <script src="script.js"></script></body>

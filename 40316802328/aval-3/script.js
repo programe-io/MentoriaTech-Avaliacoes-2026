@@ -1,493 +1,315 @@
 /* =================================
-   CONFIGURAÇÕES E ELEMENTOS
+   CONFIGURAÇÃO
+   (mesma chave de antes: os dados já salvos continuam aparecendo)
 ================================= */
 
-const CHAVE_STORAGE = "historico_pessoas_imc";
+const CHAVE = "historico_pessoas_imc";
 
-const tabelaPessoas = document.getElementById("tabela-pessoas");
-const formPessoa = document.getElementById("form-pessoa");
+const FAIXAS = [
+    { limite: 18.5, nome: "Abaixo do peso",     cor: "var(--c-abaixo)" },
+    { limite: 25,   nome: "Peso normal",        cor: "var(--c-normal)" },
+    { limite: 30,   nome: "Sobrepeso",          cor: "var(--c-sobre)"  },
+    { limite: 35,   nome: "Obesidade grau I",   cor: "var(--c-obeso)"  },
+    { limite: 40,   nome: "Obesidade grau II",  cor: "var(--c-obeso)"  },
+    { limite: Infinity, nome: "Obesidade grau III", cor: "var(--c-obeso)" }
+];
 
-const inputNome = document.getElementById("input-nome");
-const inputIdade = document.getElementById("input-idade");
-const inputAltura = document.getElementById("input-altura");
-const inputPeso = document.getElementById("input-peso");
+const $ = id => document.getElementById(id);
 
-const tituloForm = document.getElementById("titulo-form");
-const btnSalvar = document.getElementById("btn-salvar");
-const btnCancelar = document.getElementById("btn-cancelar");
-const erro = document.getElementById("erro");
+const el = {
+    grade: $("grade"), total: $("total"), media: $("media"),
+    distribuicao: $("distribuicao"), busca: $("busca"), ordem: $("ordem"),
+    dialogo: $("dialogo"), form: $("form"), titulo: $("titulo"), salvar: $("salvar"),
+    nome: $("f-nome"), idade: $("f-idade"), altura: $("f-altura"), peso: $("f-peso"),
+    previa: $("previa"), erro: $("msg-erro"), aviso: $("aviso")
+};
 
-const totalPessoas = document.getElementById("total-pessoas");
-const mediaImc = document.getElementById("media-imc");
-const contador = document.getElementById("contador");
+let pessoas = [];
+let editandoId = null;
+let timerAviso = null;
 
 
 /* =================================
-   DADOS E ARMAZENAMENTO
+   ARMAZENAMENTO
 ================================= */
 
-// Carregar pessoas salvas no navegador
-function carregarPessoas() {
+const ler = () => {
     try {
-        const dados = localStorage.getItem(CHAVE_STORAGE);
-
-        if (!dados) {
-            return [];
-        }
-
-        const resultado = JSON.parse(dados);
-
-        if (!Array.isArray(resultado)) {
-            return [];
-        }
-
-        return resultado.filter(pessoa =>
-            pessoa &&
-            typeof pessoa.id === "string" &&
-            typeof pessoa.nome === "string" &&
-            Number.isInteger(pessoa.idade) &&
-            Number.isFinite(pessoa.altura) &&
-            Number.isFinite(pessoa.peso) &&
-            pessoa.altura > 0 &&
-            pessoa.peso > 0
+        const lista = JSON.parse(localStorage.getItem(CHAVE));
+        if (!Array.isArray(lista)) return [];
+        return lista.filter(p =>
+            p && typeof p.id === "string" && typeof p.nome === "string" &&
+            Number.isInteger(p.idade) && p.altura > 0 && p.peso > 0
         );
-    } catch (error) {
-        console.error("Erro ao carregar histórico:", error);
+    } catch {
         return [];
     }
-}
+};
 
-// Lista de pessoas
-let pessoas = carregarPessoas();
-let idEmEdicao = null;
-
-// Salvar dados no navegador
-function salvarStorage(novosDados) {
+const gravar = lista => {
     try {
-        localStorage.setItem(CHAVE_STORAGE, JSON.stringify(novosDados));
+        localStorage.setItem(CHAVE, JSON.stringify(lista));
+        pessoas = lista;
         return true;
-    } catch (error) {
-        console.error("Erro ao salvar:", error);
-        alert("Não foi possível salvar os dados no navegador.");
+    } catch {
+        mostrarAviso("Não foi possível salvar no navegador.");
         return false;
     }
-}
+};
 
-// Gerar identificador único
-function gerarCodigo() {
-    return Date.now().toString() +
-        Math.random().toString(36).substring(2, 7);
+
+/* =================================
+   CÁLCULOS E FORMATO
+================================= */
+
+const imcDe = p => p.peso / (p.altura * p.altura);
+
+const faixaDe = imc => FAIXAS.find(f => imc < f.limite);
+
+const fmt = (n, casas) =>
+    Number(n).toLocaleString("pt-BR", { minimumFractionDigits: casas, maximumFractionDigits: casas });
+
+const posicaoNaEscala = imc => Math.min(100, Math.max(0, ((imc - 15) / 25) * 100));
+
+
+/* =================================
+   AVISO NA TELA
+================================= */
+
+function mostrarAviso(texto) {
+    el.aviso.textContent = texto;
+    el.aviso.hidden = false;
+    clearTimeout(timerAviso);
+    timerAviso = setTimeout(() => { el.aviso.hidden = true; }, 2500);
 }
 
 
 /* =================================
-   FUNÇÕES DE NEGÓCIO
+   CRIAÇÃO DE ELEMENTOS
 ================================= */
 
-// Calcular IMC
-function calcularIMC(peso, altura) {
-    return peso / (altura * altura);
+function criar(tag, classe, texto) {
+    const e = document.createElement(tag);
+    if (classe) e.className = classe;
+    if (texto !== undefined) e.textContent = texto;
+    return e;
 }
 
-// Classificar IMC
-function classificarImc(imc) {
-    if (imc < 18.5) {
-        return { texto: "Abaixo do peso", classe: "abaixo" };
-    }
+function criarCartao(p) {
+    const imc = imcDe(p);
+    const faixa = faixaDe(imc);
 
-    if (imc < 25) {
-        return { texto: "Peso normal", classe: "normal" };
-    }
+    const cartao = criar("article", "cartao");
+    cartao.style.setProperty("--cor", faixa.cor);
 
-    if (imc < 30) {
-        return { texto: "Sobrepeso", classe: "sobrepeso" };
-    }
+    // Topo: nome + IMC
+    const topo = criar("div", "cartao-topo");
+    const dados = criar("div");
+    dados.append(criar("h3", "", p.nome), criar("p", "idade", `${p.idade} anos`));
+    topo.append(dados, criar("span", "imc-valor", fmt(imc, 1)));
 
-    if (imc < 35) {
-        return { texto: "Obesidade grau I", classe: "obesidade" };
-    }
+    // Escala com marcador
+    const escala = criar("div", "escala");
+    const marcador = criar("span", "marcador");
+    marcador.style.left = posicaoNaEscala(imc) + "%";
+    escala.append(marcador);
 
-    if (imc < 40) {
-        return { texto: "Obesidade grau II", classe: "obesidade" };
-    }
+    // Medidas
+    const medidas = criar("div", "medidas");
+    const alt = criar("span", "", "Altura "); alt.append(criar("b", "", `${fmt(p.altura, 2)} m`));
+    const pes = criar("span", "", "Peso ");   pes.append(criar("b", "", `${fmt(p.peso, 1)} kg`));
+    medidas.append(alt, pes);
 
-    return { texto: "Obesidade grau III", classe: "obesidade" };
-}
+    // Ações
+    const acoes = criar("div", "cartao-acoes");
+    const editar = criar("button", "b-editar", "Editar");
+    const excluir = criar("button", "b-excluir", "Excluir");
+    editar.type = excluir.type = "button";
+    editar.addEventListener("click", () => abrirFormulario(p.id));
+    excluir.addEventListener("click", () => excluir_(p.id));
+    acoes.append(editar, excluir);
 
-// Formatar números
-function formatar(valor, casas) {
-    return Number(valor).toLocaleString("pt-BR", {
-        minimumFractionDigits: casas,
-        maximumFractionDigits: casas
-    });
+    cartao.append(topo, criar("span", "etiqueta", faixa.nome), escala, medidas, acoes);
+    return cartao;
 }
 
 
 /* =================================
-   LER FORMULÁRIO
+   DESENHAR A TELA
 ================================= */
 
-function lerFormulario() {
-    return {
-        nome: inputNome.value.trim(),
-        idade: Number(inputIdade.value),
-        altura: Number(inputAltura.value),
-        peso: Number(inputPeso.value)
-    };
+function listaVisivel() {
+    const termo = el.busca.value.trim().toLowerCase();
+    let lista = pessoas.filter(p => p.nome.toLowerCase().includes(termo));
+
+    if (el.ordem.value === "nome") {
+        lista.sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR"));
+    } else if (el.ordem.value === "imc") {
+        lista.sort((a, b) => imcDe(b) - imcDe(a));
+    } else {
+        lista.reverse();
+    }
+    return lista;
+}
+
+function desenharResumo() {
+    el.total.textContent = pessoas.length;
+    el.media.textContent = pessoas.length
+        ? fmt(pessoas.reduce((s, p) => s + imcDe(p), 0) / pessoas.length, 1)
+        : "0,0";
+
+    // Contagem por categoria (agrupa as obesidades)
+    const grupos = [
+        { nome: "Abaixo", cor: FAIXAS[0].cor, teste: i => i < 18.5 },
+        { nome: "Normal", cor: FAIXAS[1].cor, teste: i => i >= 18.5 && i < 25 },
+        { nome: "Sobrepeso", cor: FAIXAS[2].cor, teste: i => i >= 25 && i < 30 },
+        { nome: "Obesidade", cor: FAIXAS[3].cor, teste: i => i >= 30 }
+    ];
+
+    el.distribuicao.replaceChildren(...grupos.map(g => {
+        const qtd = pessoas.filter(p => g.teste(imcDe(p))).length;
+        const li = criar("li");
+        const ponto = criar("span", "ponto");
+        ponto.style.background = g.cor;
+        li.append(ponto, `${g.nome}: ${qtd}`);
+        return li;
+    }));
+}
+
+function desenhar() {
+    desenharResumo();
+
+    const lista = listaVisivel();
+
+    if (lista.length === 0) {
+        const msg = pessoas.length === 0
+            ? "Nenhum paciente cadastrado. Clique em “Novo paciente” para começar."
+            : "Nenhum paciente encontrado para essa busca.";
+        el.grade.replaceChildren(criar("p", "vazio", msg));
+        return;
+    }
+
+    el.grade.replaceChildren(...lista.map(criarCartao));
 }
 
 
 /* =================================
-   VALIDAR FORMULÁRIO
+   FORMULÁRIO (janela)
 ================================= */
 
-function validarFormulario(dados) {
-    if (!dados.nome) {
-        return "Informe o nome do paciente.";
+function atualizarPrevia() {
+    const altura = Number(el.altura.value);
+    const peso = Number(el.peso.value);
+
+    if (altura > 0 && peso > 0) {
+        const imc = peso / (altura * altura);
+        el.previa.textContent = `${fmt(imc, 1)} — ${faixaDe(imc).nome}`;
+    } else {
+        el.previa.textContent = "—";
+    }
+}
+
+function abrirFormulario(id = null) {
+    editandoId = id;
+    el.form.reset();
+    el.erro.hidden = true;
+
+    if (id) {
+        const p = pessoas.find(x => x.id === id);
+        if (!p) return;
+        el.nome.value = p.nome;
+        el.idade.value = p.idade;
+        el.altura.value = p.altura;
+        el.peso.value = p.peso;
+        el.titulo.textContent = "Editar paciente";
+        el.salvar.textContent = "Salvar alterações";
+    } else {
+        el.titulo.textContent = "Novo paciente";
+        el.salvar.textContent = "Cadastrar";
     }
 
-    if (
-        !Number.isInteger(dados.idade) ||
-        dados.idade < 1 ||
-        dados.idade > 126
-    ) {
-        return "Informe uma idade válida entre 1 e 126 anos.";
-    }
+    atualizarPrevia();
+    el.dialogo.showModal();
+    el.nome.focus();
+}
 
-    if (
-        !Number.isFinite(dados.altura) ||
-        dados.altura < 0.5 ||
-        dados.altura > 2.5
-    ) {
-        return "Informe uma altura entre 0,50 m e 2,50 m.";
-    }
+function fecharFormulario() {
+    el.dialogo.close();
+    editandoId = null;
+}
 
-    if (
-        !Number.isFinite(dados.peso) ||
-        dados.peso < 1 ||
-        dados.peso > 500
-    ) {
-        return "Informe um peso entre 1 e 500 kg.";
-    }
-
+function validar(d) {
+    if (!d.nome) return "Informe o nome do paciente.";
+    if (!Number.isInteger(d.idade) || d.idade < 1 || d.idade > 126) return "A idade deve ficar entre 1 e 126 anos.";
+    if (!(d.altura >= 0.5 && d.altura <= 2.5)) return "A altura deve ficar entre 0,50 m e 2,50 m.";
+    if (!(d.peso >= 1 && d.peso <= 500)) return "O peso deve ficar entre 1 e 500 kg.";
     return "";
 }
 
-
-/* =================================
-   CADASTRAR PESSOA
-================================= */
-
-function adicionarPessoa(dados) {
-    const novaPessoa = {
-        id: gerarCodigo(),
-        nome: dados.nome,
-        idade: dados.idade,
-        altura: dados.altura,
-        peso: dados.peso
-    };
-
-    const novaLista = [...pessoas, novaPessoa];
-
-    if (salvarStorage(novaLista)) {
-        pessoas = novaLista;
-        return true;
-    }
-
-    return false;
-}
-
-
-/* =================================
-   EDITAR PESSOA
-================================= */
-
-function editarPessoa(id) {
-    const pessoa = pessoas.find(p => p.id === id);
-
-    if (!pessoa) return;
-
-    idEmEdicao = id;
-
-    inputNome.value = pessoa.nome;
-    inputIdade.value = pessoa.idade;
-    inputAltura.value = pessoa.altura;
-    inputPeso.value = pessoa.peso;
-
-    tituloForm.textContent = "Editar pessoa";
-    btnSalvar.textContent = "Salvar alterações";
-    btnCancelar.hidden = false;
-    erro.hidden = true;
-
-    inputNome.focus();
-
-    window.scrollTo({ top: 0, behavior: "smooth" });
-}
-
-// Atualizar pessoa
-function atualizarPessoa(id, dados) {
-    const novaLista = pessoas.map(pessoa => {
-        if (pessoa.id === id) {
-            return { ...pessoa, ...dados };
-        }
-        return pessoa;
-    });
-
-    if (salvarStorage(novaLista)) {
-        pessoas = novaLista;
-        return true;
-    }
-
-    return false;
-}
-
-
-/* =================================
-   EXCLUIR PESSOA DO HISTÓRICO
-================================= */
-
-function excluirPessoa(id) {
-    const pessoa = pessoas.find(p => p.id === id);
-
-    if (!pessoa) return;
-
-    const confirmar = confirm(
-        `Deseja realmente excluir ${pessoa.nome} do histórico?`
-    );
-
-    if (!confirmar) return;
-
-    const novaLista = pessoas.filter(p => p.id !== id);
-
-    if (!salvarStorage(novaLista)) {
-        return;
-    }
-
-    pessoas = novaLista;
-
-    // Cancelar edição caso seja a pessoa excluída
-    if (idEmEdicao === id) {
-        cancelarEdicao();
-    }
-
-    render();
-
-    alert("Pessoa excluída com sucesso!");
-}
-
-
-/* =================================
-   CANCELAR EDIÇÃO
-================================= */
-
-function cancelarEdicao() {
-    idEmEdicao = null;
-
-    formPessoa.reset();
-
-    tituloForm.textContent = "Nova pessoa";
-    btnSalvar.textContent = "+ Salvar pessoa";
-    btnCancelar.hidden = true;
-    erro.hidden = true;
-}
-
-
-/* =================================
-   CRIAR CÉLULAS DA TABELA
-================================= */
-
-function criarCelula(texto) {
-    const td = document.createElement("td");
-    td.textContent = texto;
-    return td;
-}
-
-
-/* =================================
-   CRIAR LINHA DA TABELA
-================================= */
-
-function criarLinha(pessoa) {
-    const imc = calcularIMC(pessoa.peso, pessoa.altura);
-    const classificacao = classificarImc(imc);
-
-    const tr = document.createElement("tr");
-
-    tr.appendChild(criarCelula(pessoa.nome));
-    tr.appendChild(criarCelula(pessoa.idade + " anos"));
-    tr.appendChild(criarCelula(formatar(pessoa.altura, 2) + " m"));
-    tr.appendChild(criarCelula(formatar(pessoa.peso, 1) + " kg"));
-    tr.appendChild(criarCelula(formatar(imc, 1)));
-
-    // Classificação
-    const tdClassificacao = document.createElement("td");
-    const selo = document.createElement("span");
-
-    selo.classList.add("selo", classificacao.classe);
-    selo.textContent = classificacao.texto;
-
-    tdClassificacao.appendChild(selo);
-    tr.appendChild(tdClassificacao);
-
-    // Ações
-    const tdAcoes = document.createElement("td");
-    const divAcoes = document.createElement("div");
-    divAcoes.classList.add("acoes");
-
-    const btnEditar = document.createElement("button");
-    btnEditar.type = "button";
-    btnEditar.classList.add("btn-editar");
-    btnEditar.textContent = "Editar";
-    btnEditar.dataset.acao = "editar";
-    btnEditar.dataset.id = pessoa.id;
-
-    const btnExcluir = document.createElement("button");
-    btnExcluir.type = "button";
-    btnExcluir.classList.add("btn-excluir");
-    btnExcluir.textContent = "Excluir";
-    btnExcluir.dataset.acao = "excluir";
-    btnExcluir.dataset.id = pessoa.id;
-
-    divAcoes.appendChild(btnEditar);
-    divAcoes.appendChild(btnExcluir);
-    tdAcoes.appendChild(divAcoes);
-    tr.appendChild(tdAcoes);
-
-    return tr;
-}
-
-
-/* =================================
-   ATUALIZAR INDICADORES
-================================= */
-
-function atualizarIndicadores() {
-    const total = pessoas.length;
-
-    totalPessoas.textContent = total;
-
-    contador.textContent =
-        total + (total === 1 ? " registro" : " registros");
-
-    if (total === 0) {
-        mediaImc.textContent = "0,0";
-        return;
-    }
-
-    const somaImc = pessoas.reduce(
-        (soma, pessoa) => soma + calcularIMC(pessoa.peso, pessoa.altura),
-        0
-    );
-
-    mediaImc.textContent = formatar(somaImc / total, 1);
-}
-
-
-/* =================================
-   RENDERIZAR TABELA
-================================= */
-
-function render() {
-    tabelaPessoas.innerHTML = "";
-
-    atualizarIndicadores();
-
-    if (pessoas.length === 0) {
-        const tr = document.createElement("tr");
-        const td = document.createElement("td");
-
-        td.colSpan = 7;
-        td.classList.add("vazio");
-        td.textContent =
-            "Nenhuma pessoa cadastrada ainda. Adicione um paciente ao lado!";
-
-        tr.appendChild(td);
-        tabelaPessoas.appendChild(tr);
-
-        return;
-    }
-
-    pessoas.forEach(pessoa => {
-        tabelaPessoas.appendChild(criarLinha(pessoa));
-    });
-}
-
-
-/* =================================
-   EVENTO DO FORMULÁRIO
-================================= */
-
-formPessoa.addEventListener("submit", function (e) {
+function enviarFormulario(e) {
     e.preventDefault();
 
-    const dados = lerFormulario();
-    const mensagemErro = validarFormulario(dados);
+    const dados = {
+        nome: el.nome.value.trim(),
+        idade: Number(el.idade.value),
+        altura: Number(el.altura.value),
+        peso: Number(el.peso.value)
+    };
 
-    if (mensagemErro) {
-        erro.textContent = mensagemErro;
-        erro.hidden = false;
+    const problema = validar(dados);
+    if (problema) {
+        el.erro.textContent = problema;
+        el.erro.hidden = false;
         return;
     }
 
-    erro.hidden = true;
-
-    let sucesso = false;
-
-    if (idEmEdicao !== null) {
-        sucesso = atualizarPessoa(idEmEdicao, dados);
-
-        if (sucesso) {
-            alert("Dados atualizados com sucesso!");
-        }
+    let ok;
+    if (editandoId) {
+        ok = gravar(pessoas.map(p => p.id === editandoId ? { ...p, ...dados } : p));
     } else {
-        sucesso = adicionarPessoa(dados);
-
-        if (sucesso) {
-            alert("Pessoa cadastrada com sucesso!");
-        }
+        const id = Date.now().toString() + Math.random().toString(36).slice(2, 7);
+        ok = gravar([...pessoas, { id, ...dados }]);
     }
+    if (!ok) return;
 
-    // Se não salvou, manter os dados no formulário
-    if (!sucesso) return;
-
-    cancelarEdicao();
-    render();
-});
+    mostrarAviso(editandoId ? "Dados atualizados." : "Paciente cadastrado.");
+    fecharFormulario();
+    desenhar();
+}
 
 
 /* =================================
-   EVENTOS DOS BOTÕES DA TABELA
+   EXCLUIR
 ================================= */
 
-tabelaPessoas.addEventListener("click", function (e) {
-    const botao = e.target.closest("button");
+function excluir_(id) {
+    const p = pessoas.find(x => x.id === id);
+    if (!p) return;
 
-    if (!botao) return;
+    if (!confirm(`Excluir ${p.nome} do histórico?`)) return;
 
-    const id = botao.dataset.id;
-    const acao = botao.dataset.acao;
-
-    if (acao === "editar") {
-        editarPessoa(id);
+    if (gravar(pessoas.filter(x => x.id !== id))) {
+        mostrarAviso("Paciente excluído.");
+        desenhar();
     }
-
-    if (acao === "excluir") {
-        excluirPessoa(id);
-    }
-});
+}
 
 
 /* =================================
-   BOTÃO CANCELAR
+   EVENTOS E INÍCIO
 ================================= */
 
-btnCancelar.addEventListener("click", function () {
-    cancelarEdicao();
+$("abrir-form").addEventListener("click", () => abrirFormulario());
+$("fechar-form").addEventListener("click", fecharFormulario);
+el.form.addEventListener("submit", enviarFormulario);
+[el.altura, el.peso].forEach(i => i.addEventListener("input", atualizarPrevia));
+el.busca.addEventListener("input", desenhar);
+el.ordem.addEventListener("change", desenhar);
+
+// Fechar ao clicar fora da janela
+el.dialogo.addEventListener("click", e => {
+    if (e.target === el.dialogo) fecharFormulario();
 });
 
-
-/* =================================
-   INICIALIZAR PROJETO
-================================= */
-
-render();
+pessoas = ler();
+desenhar();
