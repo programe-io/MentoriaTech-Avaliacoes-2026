@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rock BR</title>
+
+ <link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"><link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+<header>
+    <h1>ROCK <span>BR</span></h1>
+    <p>Conhecendo a história do rock brasileiro</p>
+</header>
+
+<nav>
+    <a href="#inicio">Início</a>
+    <a href="#feed">Postagens</a>
+</nav>
+
+<section class="intro" id="inicio">
+    <h2>Rock brasileiro</h2>
+
+    <p>
+        O rock brasileiro conquistou gerações com sua diversidade,
+        criatividade e letras marcantes. Conheça artistas, bandas e
+        momentos importantes da música nacional.
+    </p>
+</section>
+
+<main class="feed" id="feed"></main>
+
+<footer>
+    <p><span>ROCK BR</span> | Projeto de música e tecnologia</p>
+    <p>Celebrando a história do rock brasileiro.</p>
+</footer>
+
+<script>
+
+/* POSTAGENS */
+
+const posts = [
+    [
+        "legiao.urbana",
+        "https://i.postimg.cc/4nkhDT2w/386c5dd684efb19bdb854bcedab77101.jpg",
+        "https://i.postimg.cc/YCwtWSmF/Screenshot-20261121-192813-Chat-GPT.jpg",
+        "Nota de falecimento",
+        "Renato Russo",
+        "Hoje nos despedimos de alguém que nunca será apenas uma lembrança. Renato foi voz, poesia e parte da nossa história. Obrigado por manterem viva nossa música. Com amor e saudade, Legião Urbana."
+    ],
+
+    [
+        "padroeiradaliberdade_",
+        "https://i.postimg.cc/J0cPYKPL/04cf029bd72b9f7da625e8bf988cf7f5.jpg",
+        "",
+        "Um belo dia resolvi mudar...",
+        "Meu aniversário",
+        "Nasci em 31 de dezembro, mas nunca tive uma festa só minha. Então escolhi 22 de maio para comemorar meu aniversário sem competir com os fogos. Agora tenho duas datas para celebrar a vida. Beijos, Rita."
+    ],
+
+    [
+        "CAZUZA",
+        "https://i.postimg.cc/pVCW3jyX/589492e4df4c40246031a307ca74d9e4.jpg",
+        "https://i.postimg.cc/1XvNzYHj/56af4b39e50af2b69ae76af3bcb58686.jpg",
+        "Nota de falecimento",
+        "Eterno Cazuza",
+        "Cazuza marcou gerações com sua irreverência, autenticidade e poesia. Sua voz e suas letras permanecerão eternas na história da música brasileira."
+    ],
+
+    [
+        "CHARLIE BROWN JR",
+        "https://i.postimg.cc/XY47Pgkc/bf2664a720a09d697817143bc166574f.jpg",
+        "https://i.postimg.cc/XvZM1Zm2/f0d93c0e896f57d326a77e963ec2f1ea.jpg",
+        "Melhor show galera!",
+        "Show de bola",
+        "Foi uma noite inesquecível, cheia de energia e vozes cantando juntas. Obrigado por fazerem parte dessa história. O rock é eterno!"
+    ],
+
+    [
+        "PITTY",
+        "https://i.postimg.cc/N0VKZH0C/820c126b7f3e897392b626d33da55e09.jpg",
+        "https://i.postimg.cc/sgTQ98Cx/7a27d22e2129a265ebda66eead45391c.jpg",
+        "Novo álbum",
+        "Pessoal, saiu meu novo álbum!",
+        "Meu novo álbum PITTY já está disponível! Coloquei muito de mim em cada faixa. Quero que vocês escutem, sintam e façam desse trabalho um pouquinho de vocês."
+    ],
+
+    [
+        "paralamasdosucesso.",
+        "https://i.postimg.cc/bwtWQXtd/35c5d4cd9852c3c5fd8c516a7cce47cf.jpg",
+        "https://i.postimg.cc/TYSBL2pM/18de983f540d466ae16ebded28000f03.jpg",
+        "Trio insano",
+        "Muito obrigado aos nossos fãs",
+        "São tantos anos de estrada e momentos inesquecíveis. Nada disso teria significado sem vocês. A música nos uniu. Com carinho, Paralamas do Sucesso."
+    ]
+];
+
+/* CRIAÇÃO DAS POSTAGENS */
+
+const feed = document.querySelector(".feed");
+
+posts.forEach(post => {
+    feed.innerHTML += `
+        <article class="post">
+
+            <div class="post-header">
+                <img class="avatar" src="${post[1]}">
+                <strong>${post[0]}</strong>
+            </div>
+
+            ${post[2] ? `<img class="post-image" src="${post[2]}">` : ""}
+
+            <div class="post-content">
+                <span class="category">${post[3]}</span>
+                <h3>${post[4]}</h3>
+                <p>${post[5]}</p>
+            </div>
+
+            <div class="actions">
+                <button onclick="curtir(this)">
+                    ♥ <span>0</span> curtidas
+                </button>
+            </div>
+
+            <div class="comment-area">
+                <input
+                    class="comment-input"
+                    placeholder="Escreva um comentário..."
+                    onkeydown="comentar(event, this)"
+                >
+
+                <div class="comment-list"></div>
+            </div>
+
+        </article>
+    `;
+});
+
+/* CURTIR */
+
+function curtir(botao) {
+    botao.classList.toggle("liked");
+
+    const contador = botao.querySelector("span");
+
+    contador.textContent = botao.classList.contains("liked") ? 1 : 0;
+}
+
+/* COMENTAR */
+
+function comentar(event, input) {
+    if (event.key === "Enter" && input.value.trim() !== "") {
+        const comentario = document.createElement("p");
+
+        comentario.textContent = input.value;
+
+        input.nextElementSibling.appendChild(comentario);
+
+        input.value = "";
+    }
+}
+
+</script>
+
+</body>
+</html>
