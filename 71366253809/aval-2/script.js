@@ -1,248 +1,248 @@
 // ==========================================
-// ESTRUTURA DE DADOS CENTRAL
+// REFERÊNCIAS DO DOM E ESTADO DA APLICAÇÃO
 // ==========================================
-const tarefas = [];
-let proximoCodigo = 1;
+const formPessoa = document.getElementById('form-pessoa');
+const inputNome = document.getElementById('nome');
+const inputIdade = document.getElementById('idade');
+const inputAltura = document.getElementById('altura');
+const inputPeso = document.getElementById('peso');
+const btnCancelar = document.getElementById('btn-cancelar');
+const mensagemDeErro = document.getElementById('erro');
+const tabelaPessoas = document.getElementById('tabela-pessoas');
+
+const CHAVE_PESSOAS = 'pessoas';
+let contadorCodigo = 0;
+let pessoas = [];
 
 // ==========================================
-// REGRAS DE NEGÓCIO E VALIDAÇÕES (LÓGICA)
+// INÍCIO DAS FUNÇÕES DE REGRA DE NEGÓCIO
 // ==========================================
 
-/**
- * Valida o título e a prioridade da tarefa.
- * @param {string} titulo 
- * @param {number} prioridade 
- */
-function validarDadosDaTarefa(titulo, prioridade) {
-    if (!titulo || titulo.trim().length < 5) {
-        throw new Error("O título da tarefa deve possuir no mínimo 5 caracteres.");
+function gerarCodigo() {
+  return ++contadorCodigo;
+}
+
+function ajustarContador() {
+  let maior = 0;
+  pessoas.forEach((pessoa) => {
+    if (pessoa.id > maior) {
+      maior = pessoa.id;
     }
-    
-    if (prioridade < 1 || prioridade > 3) {
-        throw new Error("A prioridade deve estar entre 1 (mais alta) e 3 (mais baixa).");
-    }
+  });
+  contadorCodigo = maior;
 }
 
-/**
- * Cadastra uma nova tarefa no array central.
- * @param {string} titulo 
- * @param {number} prioridade 
- * @returns {Object} Objeto da tarefa criada.
- */
-function cadastrarTarefa(titulo, prioridade) {
-    validarDadosDaTarefa(titulo, prioridade);
-
-    const novaTarefa = {
-        codigo: proximoCodigo++,
-        titulo: titulo.trim(),
-        prioridade: Number(prioridade),
-        status: true // true = Em execução, false = Concluída
-    };
-
-    tarefas.push(novaTarefa);
-    return novaTarefa;
+function calcularIMC(peso, altura) {
+  return peso / (altura * altura);
 }
 
-/**
- * Retorna o array completo com todas as tarefas.
- * @returns {Array}
- */
-function listarTarefas() {
-    return tarefas;
+function classificarIMC(imc) {
+  if (imc < 18.5) {
+    return { texto: 'Abaixo do peso', classe: 'abaixo' };
+  }
+  if (imc < 25) {
+    return { texto: 'Peso normal', classe: 'normal' };
+  }
+  if (imc < 30) {
+    return { texto: 'Sobrepeso', classe: 'sobrepeso' };
+  }
+  if (imc < 35) {
+    return { texto: 'Obesidade grau I', classe: 'obesidade-1' };
+  }
+  if (imc < 40) {
+    return { texto: 'Obesidade grau II', classe: 'obesidade-2' };
+  }
+  return { texto: 'Obesidade grau III', classe: 'obesidade-3' };
 }
 
-/**
- * Localiza uma tarefa pelo código utilizando .find().
- * @param {number} codigo 
- * @returns {Object} Objeto da tarefa encontrada.
- */
-function buscarTarefa(codigo) {
-    const tarefaEncontrada = tarefas.find(t => t.codigo === Number(codigo));
-
-    if (!tarefaEncontrada) {
-        throw new Error(`Código ${codigo} não encontrado.`);
-    }
-
-    return tarefaEncontrada;
-}
-
-/**
- * Conclui uma tarefa alterando o seu status para false.
- * @param {number} codigo 
- * @returns {Object} Tarefa atualizada.
- */
-function concluirTarefa(codigo) {
-    const tarefa = buscarTarefa(codigo);
-
-    if (tarefa.status === false) {
-        throw new Error(`A tarefa de código ${codigo} já se encontrava concluída.`);
-    }
-
-    tarefa.status = false;
-    return tarefa;
-}
-
-/**
- * Altera a prioridade de uma tarefa existente.
- * @param {number} codigo 
- * @param {number} novaPrioridade 
- * @returns {Object} Tarefa atualizada.
- */
-function alterarPrioridade(codigo, novaPrioridade) {
-    const tarefa = buscarTarefa(codigo);
-    
-    // Reutiliza a validação passando o título atual da tarefa
-    validarDadosDaTarefa(tarefa.titulo, Number(novaPrioridade));
-    
-    tarefa.prioridade = Number(novaPrioridade);
-    return tarefa;
+function formatar(valor, casasDecimais) {
+  return valor.toLocaleString('pt-BR', {
+    minimumFractionDigits: casasDecimais,
+    maximumFractionDigits: casasDecimais,
+  });
 }
 
 // ==========================================
-// INTEGRAÇÃO COM A INTERFACE (DOM)
+// FIM DAS FUNÇÕES DE REGRA DE NEGÓCIO
 // ==========================================
 
-document.addEventListener("DOMContentLoaded", () => {
-    const formCadastrar = document.getElementById("form-cadastrar");
-    const inputTitulo = document.getElementById("titulo");
-    const selectPrioridade = document.getElementById("prioridade");
+// ==========================================
+// PERSISTÊNCIA (LOCALSTORAGE)
+// ==========================================
 
-    const btnConcluir = document.getElementById("btn-concluir");
-    const inputCodigoConcluir = document.getElementById("codigo-concluir");
+function salvar() {
+  localStorage.setItem(CHAVE_PESSOAS, JSON.stringify(pessoas));
+}
 
-    const btnAlterarPrioridade = document.getElementById("btn-alterar-prioridade");
-    const inputCodigoPrioridade = document.getElementById("codigo-prioridade");
-    const selectNovaPrioridade = document.getElementById("nova-prioridade");
+function carregarPessoas() {
+  const dadosSalvos = localStorage.getItem(CHAVE_PESSOAS);
+  if (dadosSalvos === null) {
+    return [];
+  }
 
-    const btnBuscar = document.getElementById("btn-buscar");
-    const inputCodigoBuscar = document.getElementById("codigo-buscar");
-
-    const btnAtualizar = document.getElementById("btn-atualizar");
-    const tabelaTarefas = document.getElementById("tabela-tarefas");
-    const mensagemStatus = document.getElementById("mensagem-status");
-
-    // Exibe mensagens de feedback
-    function exibirMensagem(texto, tipo = "success") {
-        mensagemStatus.className = `alert alert-${tipo}`;
-        mensagemStatus.textContent = texto;
-        mensagemStatus.classList.remove("hidden");
-        setTimeout(() => {
-            mensagemStatus.classList.add("hidden");
-        }, 4000);
+  try {
+    const lista = JSON.parse(dadosSalvos);
+    if (Array.isArray(lista)) {
+      return lista;
     }
+    return [];
+  } catch (erro) {
+    console.error('Erro ao carregar dados do localStorage:', erro);
+    return [];
+  }
+}
 
-    // Renderiza a lista na tabela HTML
-    function renderizarTabela() {
-        const lista = listarTarefas();
-        tabelaTarefas.innerHTML = "";
+// ==========================================
+// FORMULÁRIO E VALIDAÇÃO
+// ==========================================
 
-        if (lista.length === 0) {
-            tabelaTarefas.innerHTML = `
-                <tr>
-                    <td colspan="4" style="text-align: center; color: #888;">Nenhuma tarefa cadastrada.</td>
-                </tr>
-            `;
-            return;
-        }
+function lerFormulario() {
+  return {
+    nome: inputNome.value.trim(),
+    idade: Number(inputIdade.value),
+    altura: Number(inputAltura.value),
+    peso: Number(inputPeso.value),
+  };
+}
 
-        lista.forEach(tarefa => {
-            const tr = document.createElement("tr");
+function validarDados(dados) {
+  if (dados.nome.length < 2) {
+    return 'Informe o nome com no mínimo de duas letras.';
+  }
+  if (!Number.isInteger(dados.idade) || dados.idade < 1 || dados.idade > 120) {
+    return 'A idade deve ser um número inteiro entre 1 e 120.';
+  }
+  if (Number.isNaN(dados.altura) || dados.altura < 0.5 || dados.altura > 2.5) {
+    return 'A altura deve ser um valor entre 0,50 m e 2,50 m.';
+  }
+  if (Number.isNaN(dados.peso) || dados.peso < 2 || dados.peso > 500) {
+    return 'O peso deve ser um valor entre 2 kg e 500 kg.';
+  }
+  return '';
+}
 
-            const labelPrioridade = {
-                1: '<span class="badge badge-alta">1 - Alta</span>',
-                2: '<span class="badge badge-media">2 - Média</span>',
-                3: '<span class="badge badge-baixa">3 - Baixa</span>'
-            };
+function mostrarErro(mensagem) {
+  mensagemDeErro.textContent = mensagem;
+  mensagemDeErro.hidden = false;
+}
 
-            const statusHTML = tarefa.status 
-                ? '<span class="badge badge-execucao">Em Execução</span>' 
-                : '<span class="badge badge-concluida">Concluída</span>';
+function limparErro() {
+  mensagemDeErro.textContent = '';
+  mensagemDeErro.hidden = true;
+}
 
-            tr.innerHTML = `
-                <td><strong>#${tarefa.codigo}</strong></td>
-                <td>${tarefa.titulo}</td>
-                <td>${labelPrioridade[tarefa.prioridade]}</td>
-                <td>${statusHTML}</td>
-            `;
+function adicionarPessoa(dados) {
+  const novaPessoa = {
+    id: gerarCodigo(),
+    nome: dados.nome,
+    idade: dados.idade,
+    altura: dados.altura,
+    peso: dados.peso,
+  };
+  pessoas.push(novaPessoa);
+}
 
-            tabelaTarefas.appendChild(tr);
-        });
-    }
+// Desafio da Parte 2: Remover registro
+function removerPessoa(id) {
+  pessoas = pessoas.filter((pessoa) => pessoa.id !== id);
+  salvar();
+  render();
+}
 
-    // Evento: Cadastrar
-    formCadastrar.addEventListener("submit", (e) => {
-        e.preventDefault();
-        try {
-            const titulo = inputTitulo.value;
-            const prioridade = Number(selectPrioridade.value);
-            const novaTarefa = cadastrarTarefa(titulo, prioridade);
+// ==========================================
+// MANIPULAÇÃO DO DOM E RENDERIZAÇÃO
+// ==========================================
 
-            exibirMensagem(`Tarefa #${novaTarefa.codigo} cadastrada com sucesso!`, "success");
-            inputTitulo.value = "";
-            renderizarTabela();
-        } catch (erro) {
-            exibirMensagem(erro.message, "danger");
-        }
-    });
+function criarCelula(texto) {
+  const td = document.createElement('td');
+  td.textContent = texto;
+  return td;
+}
 
-    // Evento: Concluir
-    btnConcluir.addEventListener("click", () => {
-        const codigo = inputCodigoConcluir.value;
-        if (!codigo) {
-            exibirMensagem("Informe o código da tarefa para concluir.", "danger");
-            return;
-        }
-        try {
-            const tarefa = concluirTarefa(codigo);
-            exibirMensagem(`Tarefa #${tarefa.codigo} ("${tarefa.titulo}") concluída com sucesso!`, "success");
-            inputCodigoConcluir.value = "";
-            renderizarTabela();
-        } catch (erro) {
-            exibirMensagem(erro.message, "danger");
-        }
-    });
+function criarLinha(pessoa) {
+  const tr = document.createElement('tr');
+  tr.dataset.id = pessoa.id;
 
-    // Evento: Alterar Prioridade
-    btnAlterarPrioridade.addEventListener("click", () => {
-        const codigo = inputCodigoPrioridade.value;
-        const novaPrioridade = Number(selectNovaPrioridade.value);
+  const imc = calcularIMC(pessoa.peso, pessoa.altura);
+  const classificacao = classificarIMC(imc);
 
-        if (!codigo) {
-            exibirMensagem("Informe o código da tarefa para alterar a prioridade.", "danger");
-            return;
-        }
-        try {
-            const tarefa = alterarPrioridade(codigo, novaPrioridade);
-            exibirMensagem(`Prioridade da tarefa #${tarefa.codigo} alterada para ${novaPrioridade} com sucesso!`, "success");
-            inputCodigoPrioridade.value = "";
-            renderizarTabela();
-        } catch (erro) {
-            exibirMensagem(erro.message, "danger");
-        }
-    });
+  tr.appendChild(criarCelula(pessoa.nome));
+  tr.appendChild(criarCelula(`${pessoa.idade} anos`));
+  tr.appendChild(criarCelula(`${formatar(pessoa.altura, 2)} m`));
+  tr.appendChild(criarCelula(`${formatar(pessoa.peso, 1)} KG`));
+  tr.appendChild(criarCelula(formatar(imc, 1)));
 
-    // Evento: Buscar
-    btnBuscar.addEventListener("click", () => {
-        const codigo = inputCodigoBuscar.value;
-        if (!codigo) {
-            exibirMensagem("Informe um código para realizar a busca.", "danger");
-            return;
-        }
-        try {
-            const tarefa = buscarTarefa(codigo);
-            const statusTexto = tarefa.status ? "Em Execução" : "Concluída";
-            exibirMensagem(`Tarefa Encontrada: [#${tarefa.codigo}] "${tarefa.titulo}" | Prioridade: ${tarefa.prioridade} | Estado: ${statusTexto}`, "success");
-        } catch (erro) {
-            exibirMensagem(erro.message, "danger");
-        }
-    });
+  // Coluna Classificação com Selo colorido
+  const tdClassificacao = document.createElement('td');
+  const selo = document.createElement('span');
+  selo.classList.add('selo', classificacao.classe);
+  selo.textContent = classificacao.texto;
+  tdClassificacao.appendChild(selo);
+  tr.appendChild(tdClassificacao);
 
-    // Evento: Atualizar Lista
-    btnAtualizar.addEventListener("click", () => {
-        renderizarTabela();
-        exibirMensagem("Lista de tarefas atualizada.", "success");
-    });
+  // Coluna Ações (Desafio: Botão Apagar)
+  const tdAcoes = document.createElement('td');
+  const btnApagar = document.createElement('button');
+  btnApagar.type = 'button';
+  btnApagar.classList.add('btn', 'btn-apagar');
+  btnApagar.textContent = 'Apagar';
+  btnApagar.addEventListener('click', () => removerPessoa(pessoa.id));
+  tdAcoes.appendChild(btnApagar);
+  tr.appendChild(tdAcoes);
 
-    // Renderização inicial
-    renderizarTabela();
+  return tr;
+}
+
+function render() {
+  tabelaPessoas.innerHTML = '';
+
+  if (pessoas.length === 0) {
+    const tr = document.createElement('tr');
+    const td = document.createElement('td');
+    td.colSpan = 7;
+    td.classList.add('vazio');
+    td.textContent = 'Nenhuma pessoa cadastrada ainda';
+    tr.appendChild(td);
+    tabelaPessoas.appendChild(tr);
+    return;
+  }
+
+  pessoas.forEach((pessoa) => {
+    const linha = criarLinha(pessoa);
+    tabelaPessoas.appendChild(linha);
+  });
+}
+
+// ==========================================
+// EVENTOS E INICIALIZAÇÃO
+// ==========================================
+
+formPessoa.addEventListener('submit', (e) => {
+  e.preventDefault();
+
+  const dados = lerFormulario();
+  const erro = validarDados(dados);
+
+  if (erro !== '') {
+    mostrarErro(erro);
+    return;
+  }
+
+  limparErro();
+  adicionarPessoa(dados);
+  salvar();
+  formPessoa.reset();
+  inputNome.focus();
+  render();
 });
+
+btnCancelar.addEventListener('click', () => {
+  formPessoa.reset();
+  limparErro();
+  inputNome.focus();
+});
+
+// Inicialização da aplicação
+pessoas = carregarPessoas();
+ajustarContador();
+render();
