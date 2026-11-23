@@ -1,96 +1,149 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Galeria de Raimunda</title>
-
-    <style>
-        *{
-            margin:0;
-            padding:0;
-            box-sizing:border-box;
-        }
-
-        body{
-            font-family: Arial, sans-serif;
-            background: linear-gradient(to right, #87CEEB, #E0F7FA);
-            text-align:center;
-            padding:30px;
-        }
-
-        h1{
-            color:#333;
-            margin-bottom:25px;
-        }
-
-        .galeria{
-            display:flex;
-            justify-content:center;
-            flex-wrap:wrap;
-            gap:25px;
-        }
-
-        .card{
-            width:280px;
-            background:#fff;
-            border-radius:15px;
-            overflow:hidden;
-            box-shadow:0 5px 12px rgba(0,0,0,0.2);
-            transition:0.3s;
-        }
-
-        .card:hover{
-            transform:scale(1.05);
-        }
-
-        .card img{
-            width:100%;
-            height:200px;
-            object-fit:cover;
-        }
-
-        .card h2{
-            padding:15px;
-            color:#444;
-        }
-
-        footer{
-            margin-top:30px;
-            font-size:18px;
-            color:#555;
-            font-weight:bold;
-        }
-    </style>
-<script src="https://cdn.tailwindcss.com"></script>
+    <title>Controle de IMC</title>
+    <link rel="stylesheet" href="style.css">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="style.css" rel="stylesheet"></head>
 <body>
 
-    <h1>🐾 Galeria de Raimunda 🐾</h1>
-
-    <div class="galeria">
-
-        <div class="card">
-            <img src="https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?w=600" alt="Cavalo">
-            <h2>🐴 Cavalo</h2>
+    <header class="header">
+        <div class="container">
+            <h1>⚖️ Controle de IMC</h1>
+            <p>Sistema de cadastro e acompanhamento do Índice de Massa Corporal</p>
         </div>
+    </header>
 
-        <div class="card">
-            <img src="https://images.unsplash.com/photo-1620336655055-b57986f4b2a5?w=600" alt="Abelha">
-            <h2>🐝 Abelha</h2>
-        </div>
+    <main class="container">
 
-        <div class="card">
-            <img src="https://images.unsplash.com/photo-1589656966895-2f33e7653819?w=600" alt="Urso">
-            <h2>🐻 Urso</h2>
-        </div>
+        <!-- INDICADORES -->
+        <section class="dashboard">
 
-    </div>
+            <div class="card indicador">
+                <h3>Pessoas cadastradas</h3>
+                <p id="totalPessoas">0</p>
+            </div>
+
+            <div class="card indicador">
+                <h3>IMC médio</h3>
+                <p id="imcMedio">0.00</p>
+            </div>
+
+            <div class="card indicador">
+                <h3>Último cadastro</h3>
+                <p id="ultimoCadastro">Nenhum</p>
+            </div>
+
+        </section>
+
+        <!-- FORMULÁRIO -->
+        <section class="card">
+
+            <h2 id="tituloFormulario">Cadastrar Pessoa</h2>
+
+            <form id="formIMC">
+
+                <input type="hidden" id="idPessoa">
+
+                <div class="form-grid">
+
+                    <div class="campo">
+                        <label for="nome">Nome completo</label>
+                        <input type="text" id="nome"
+                               placeholder="Digite o nome"
+                               required>
+                    </div>
+
+                    <div class="campo">
+                        <label for="idade">Idade</label>
+                        <input type="number" id="idade"
+                               placeholder="Digite a idade"
+                               min="1" max="120"
+                               required>
+                    </div>
+
+                    <div class="campo">
+                        <label for="peso">Peso (kg)</label>
+                        <input type="number" id="peso"
+                               placeholder="Ex: 75.5"
+                               min="1" step="0.1"
+                               required>
+                    </div>
+
+                    <div class="campo">
+                        <label for="altura">Altura (m)</label>
+                        <input type="number" id="altura"
+                               placeholder="Ex: 1.75"
+                               min="0.5" max="2.5"
+                               step="0.01"
+                               required>
+                    </div>
+
+                </div>
+
+                <div class="botoes-form">
+
+                    <button type="submit" id="btnSalvar">
+                        💾 Salvar Cadastro
+                    </button>
+
+                    <button type="button" id="btnCancelar"
+                            class="btn-cancelar"
+                            onclick="cancelarEdicao()"
+                            hidden>
+                        Cancelar
+                    </button>
+
+                </div>
+
+            </form>
+
+        </section>
+
+        <!-- PESQUISA -->
+        <section class="card pesquisa">
+
+            <h2>Registros cadastrados</h2>
+
+            <input type="text" id="pesquisa"
+                   placeholder="🔎 Pesquisar por nome...">
+
+        </section>
+
+        <!-- TABELA -->
+        <section class="card tabela-container">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Idade</th>
+                        <th>Peso</th>
+                        <th>Altura</th>
+                        <th>IMC</th>
+                        <th>Classificação</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+
+                <tbody id="listaPessoas">
+                </tbody>
+
+            </table>
+
+        </section>
+
+    </main>
 
     <footer>
-        Desenvolvido por <strong>Raimunda</strong> ❤️
+        <p>Projeto Prático CRUD de IMC | HTML, CSS e JavaScript</p>
     </footer>
+
+    <script src="script.js"></script>
 
 <script src="script.js"></script></body>
 </html>
