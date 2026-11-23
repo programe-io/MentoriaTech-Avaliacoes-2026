@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Código JavaScript</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <style>body{margin:0;background:#0d1117}pre{margin:0}code.hljs{padding:1.5rem;min-height:100vh;box-sizing:border-box}</style>
+</head>
+<body>
+  <pre><code class="language-javascript">// 1. Geração sequencial de identificadores
+let ultimoId = 0;
+
+function gerarId() {
+    return ++ultimoId;
+}
+
+// 2. Regras de negócio
+function calcularIMC(peso, altura) {
+    return peso / (altura ** 2);
+}
+
+function classificarIMC(imc) {
+    if (imc &lt; 18.5) {
+        return { texto: "Abaixo do peso", classe: "abaixo-peso" };
+    } else if (imc &lt; 25) {
+        return { texto: "Peso normal", classe: "peso-normal" };
+    } else if (imc &lt; 30) {
+        return { texto: "Sobrepeso", classe: "sobrepeso" };
+    } else if (imc &lt; 35) {
+        return { texto: "Obesidade grau I", classe: "obesidade-1" };
+    } else if (imc &lt; 40) {
+        return { texto: "Obesidade grau II", classe: "obesidade-2" };
+    }
+    return { texto: "Obesidade grau III", classe: "obesidade-3" };
+}
+
+function formatarNumero(valor, casasDecimais = 2) {
+    return valor.toLocaleString("pt-BR", {
+        minimumFractionDigits: casasDecimais,
+        maximumFractionDigits: casasDecimais
+    });
+}
+
+function mensagemObjetivo(objetivo) {
+    switch (objetivo) {
+        case "cutting":
+            return "Foco em défice calórico controlado e manutenção de massa magra.";
+        case "bulking":
+            return "Foco em excedente calórico gradual e progressão de carga.";
+        default:
+            return "Foco em manutenção e consistência.";
+    }
+}
+
+// 3. Dados e processamento
+const registros = [
+    { id: gerarId(), nome: "Beatriz", idade: 24, peso: 62.4, altura: 1.68, objetivo: "manutencao", ativo: true },
+    { id: gerarId(), nome: "Tiago", idade: 31, peso: 84.0, altura: 1.76, objetivo: "cutting", ativo: true }
+];
+
+for (const pessoa of registros) {
+    const imc = calcularIMC(pessoa.peso, pessoa.altura);
+    const classificacao = classificarIMC(imc);
+    const resumoStatus = pessoa.ativo &amp;&amp; imc &gt; 0 ? "Cadastro válido" : "Revisar cadastro";
+
+    console.log(
+        `#${pessoa.id} | ${pessoa.nome} (${pessoa.idade} anos) | ` +
+        `IMC: ${formatarNumero(imc, 2)} (${classificacao.texto}) | ` +
+        `${resumoStatus} | ${mensagemObjetivo(pessoa.objetivo)}`
+    );
+}</code></pre>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+</body>
+</html>
