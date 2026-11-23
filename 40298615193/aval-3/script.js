@@ -1,112 +1,256 @@
 
-function calcularIMC() {
+let pacientes = [];
 
-    // Receber os dados
-    const nome = document.getElementById("nome").value.trim();
+// Adicionar campos para cadastrar outro paciente
+function adicionarCampo() {
 
-    const peso = parseFloat(
-        document.getElementById("peso").value
+    const formulario = document.getElementById(
+        "formularioPacientes"
     );
 
-    const altura = parseFloat(
-        document.getElementById("altura").value
-    );
+    const novoCampo = document.createElement("div");
 
-    const resultado = document.getElementById("resultado");
+    novoCampo.className = "formulario";
 
-    // Validar os campos
-    if (
-        nome === "" ||
-        !Number.isFinite(peso) ||
-        !Number.isFinite(altura) ||
-        peso <= 0 ||
-        altura <= 0
-    ) {
-        resultado.style.display = "block";
-        resultado.className = "erro";
-        resultado.textContent =
-            "Preencha todos os campos corretamente!";
-        return;
+    novoCampo.innerHTML = `
+        <div class="campo">
+            <label>Nome do Paciente</label>
+            <input type="text" class="nome"
+                placeholder="Digite o nome">
+        </div>
+
+        <div class="campo">
+            <label>Peso (kg)</label>
+            <input type="number" class="peso"
+                placeholder="Ex: 70"
+                min="0.1" step="any">
+        </div>
+
+        <div class="campo">
+            <label>Altura (m)</label>
+            <input type="number" class="altura"
+                placeholder="Ex: 1.75"
+                min="0.1" step="any">
+        </div>
+    `;
+
+    formulario.appendChild(novoCampo);
+}
+
+// Classificar o IMC
+function classificarIMC(imc) {
+
+    if (imc < 18.5) {
+        return {
+            nome: "Abaixo do peso",
+            classe: "baixo"
+        };
     }
 
-    // Calcular o IMC
-    const imc = peso / (altura * altura);
+    if (imc < 25) {
+        return {
+            nome: "Peso normal",
+            classe: "normal"
+        };
+    }
 
-    let classificacao;
-    let informacao;
-    let classe;
+    if (imc < 30) {
+        return {
+            nome: "Sobrepeso",
+            classe: "sobrepeso"
+        };
+    }
 
-    // Classificar o IMC
-    if (imc < 18.5) {
+    if (imc < 35) {
+        return {
+            nome: "Obesidade grau I",
+            classe: "obesidade"
+        };
+    }
 
-        classificacao = "Abaixo do peso";
-        informacao = "O paciente está abaixo do peso de referência.";
-        classe = "abaixo";
+    if (imc < 40) {
+        return {
+            nome: "Obesidade grau II",
+            classe: "obesidade"
+        };
+    }
 
-    } else if (imc < 25) {
+    return {
+        nome: "Obesidade grau III",
+        classe: "obesidade"
+    };
+}
 
-        classificacao = "Peso adequado";
-        informacao = "O paciente está dentro da faixa de referência.";
-        classe = "normal";
+// Cadastrar e calcular IMC dos pacientes
+function cadastrarPacientes() {
 
-    } else if (imc < 30) {
+    const nomes = document.querySelectorAll(".nome");
+    const pesos = document.querySelectorAll(".peso");
+    const alturas = document.querySelectorAll(".altura");
 
-        classificacao = "Sobrepeso";
-        informacao = "O paciente apresenta sobrepeso.";
-        classe = "sobrepeso";
+    let novosPacientes = [];
 
-    } else if (imc < 35) {
+    for (let i = 0; i < nomes.length; i++) {
 
-        classificacao = "Obesidade grau I";
-        informacao = "O paciente apresenta obesidade grau I.";
-        classe = "obesidade";
+        const nome = nomes[i].value.trim();
+        const peso = parseFloat(pesos[i].value);
+        const altura = parseFloat(alturas[i].value);
 
-    } else if (imc < 40) {
+        if (
+            !nome ||
+            !Number.isFinite(peso) ||
+            !Number.isFinite(altura) ||
+            peso <= 0 ||
+            altura <= 0
+        ) {
+            alert(
+                "Preencha corretamente todos os campos do paciente " +
+                (i + 1)
+            );
+            return;
+        }
 
-        classificacao = "Obesidade grau II";
-        informacao = "O paciente apresenta obesidade grau II.";
-        classe = "obesidade";
+        const imc = peso / (altura * altura);
+
+        const classificacao = classificarIMC(imc);
+
+        novosPacientes.push({
+
+            id: crypto.randomUUID(),
+
+            nome: nome,
+            peso: peso,
+            altura: altura,
+            imc: imc,
+
+            classificacao: classificacao.nome,
+            classe: classificacao.classe
+
+        });
+    }
+
+    pacientes.push(...novosPacientes);
+
+    exibirPacientes();
+
+    // Limpar formulário após cadastro
+    document.getElementById("formularioPacientes").innerHTML = `
+        <div class="formulario">
+
+            <div class="campo">
+                <label>Nome do Paciente</label>
+                <input type="text" class="nome"
+                    placeholder="Digite o nome">
+            </div>
+
+            <div class="campo">
+                <label>Peso (kg)</label>
+                <input type="number" class="peso"
+                    placeholder="Ex: 70"
+                    min="0.1" step="any">
+            </div>
+
+            <div class="campo">
+                <label>Altura (m)</label>
+                <input type="number" class="altura"
+                    placeholder="Ex: 1.75"
+                    min="0.1" step="any">
+            </div>
+
+        </div>
+    `;
+
+    alert("Pacientes cadastrados com sucesso!");
+}
+
+// Exibir pacientes na tabela
+function exibirPacientes() {
+
+    const lista = document.getElementById("listaPacientes");
+
+    lista.innerHTML = "";
+
+    pacientes.forEach((paciente) => {
+
+        const linha = document.createElement("tr");
+
+        const dados = [
+            paciente.nome,
+            paciente.peso.toFixed(2) + " kg",
+            paciente.altura.toFixed(2) + " m",
+            paciente.imc.toFixed(2),
+            paciente.classificacao
+        ];
+
+        dados.forEach((dado, indice) => {
+
+            const celula = document.createElement("td");
+
+            if (indice === 4) {
+
+                const span = document.createElement("span");
+
+                span.className =
+                    "classificacao " + paciente.classe;
+
+                span.textContent = dado;
+
+                celula.appendChild(span);
+
+            } else {
+
+                celula.textContent = dado;
+
+            }
+
+            linha.appendChild(celula);
+
+        });
+
+        // Botão para excluir paciente
+        const acao = document.createElement("td");
+
+        const botao = document.createElement("button");
+
+        botao.textContent = "Excluir";
+
+        botao.className = "btn-excluir";
+
+        botao.onclick = function() {
+            excluirPaciente(paciente.id);
+        };
+
+        acao.appendChild(botao);
+
+        linha.appendChild(acao);
+
+        lista.appendChild(linha);
+
+    });
+
+}
+
+// Excluir paciente
+function excluirPaciente(id) {
+
+    pacientes = pacientes.filter(
+        paciente => paciente.id !== id
+    );
+
+    if (pacientes.length === 0) {
+
+        document.getElementById("listaPacientes").innerHTML = `
+            <tr>
+                <td colspan="6" class="vazio">
+                    Nenhum paciente cadastrado.
+                </td>
+            </tr>
+        `;
 
     } else {
 
-        classificacao = "Obesidade grau III";
-        informacao = "O paciente apresenta obesidade grau III.";
-        classe = "obesidade";
+        exibirPacientes();
 
     }
-
-    // Mostrar resultado
-    resultado.style.display = "block";
-    resultado.className = classe;
-
-    // Criar resultado sem inserir HTML fornecido pelo usuário
-    resultado.replaceChildren();
-
-    const titulo = document.createElement("h2");
-    titulo.textContent = "Resultado do Paciente";
-    resultado.appendChild(titulo);
-
-    const dados = [
-        ["Nome", nome],
-        ["Peso", peso + " kg"],
-        ["Altura", altura + " m"],
-        ["IMC", imc.toFixed(2)],
-        ["Classificação", classificacao],
-        ["Informação", informacao]
-    ];
-
-    dados.forEach(function(dado) {
-
-        const p = document.createElement("p");
-        const strong = document.createElement("strong");
-
-        strong.textContent = dado[0] + ": ";
-
-        p.appendChild(strong);
-        p.appendChild(document.createTextNode(dado[1]));
-
-        resultado.appendChild(p);
-
-    });
 
 }
