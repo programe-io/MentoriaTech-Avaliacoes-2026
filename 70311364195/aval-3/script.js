@@ -1,379 +1,316 @@
 
-// ==========================================
-// PROJETO: PROGRAMAÇÃO ESTRUTURADA
-// SISTEMA DE ESTUDOS E AVALIAÇÃO
-// ==========================================
+/* =========================================
+   CONTROLE DE IMC - SISTEMA CRUD
+========================================= */
 
-// 1. BANCO DE QUESTÕES
+// Recupera os dados salvos no navegador
+let pessoas = JSON.parse(localStorage.getItem("pessoasIMC")) || [];
 
-const questoes = [
-    {
-        pergunta: "1. O que é programação estruturada?",
-        opcoes: [
-            "Uma linguagem de programação",
-            "Uma metodologia de organização do código",
-            "Um sistema operacional",
-            "Um programa de edição",
-            "Um tipo de computador"
-        ],
-        correta: 1
-    },
-    {
-        pergunta: "2. Qual é o principal objetivo da programação estruturada?",
-        opcoes: [
-            "Deixar o código mais complicado",
-            "Eliminar todas as linguagens",
-            "Organizar e facilitar a compreensão do código",
-            "Aumentar o tamanho dos programas",
-            "Substituir os computadores"
-        ],
-        correta: 2
-    },
-    {
-        pergunta: "3. Quais são as três estruturas fundamentais?",
-        opcoes: [
-            "HTML, CSS e JavaScript",
-            "Entrada, saída e memória",
-            "Sequência, decisão e repetição",
-            "Internet, rede e servidor",
-            "Texto, imagem e vídeo"
-        ],
-        correta: 2
-    },
-    {
-        pergunta: "4. O que representa a estrutura de sequência?",
-        opcoes: [
-            "Execução de comandos em ordem",
-            "Repetição infinita",
-            "Escolha aleatória",
-            "Exclusão de dados",
-            "Criação de imagens"
-        ],
-        correta: 0
-    },
-    {
-        pergunta: "5. Qual estrutura permite escolher entre caminhos diferentes?",
-        opcoes: [
-            "Sequência",
-            "Decisão",
-            "Repetição",
-            "Impressão",
-            "Armazenamento"
-        ],
-        correta: 1
-    },
-    {
-        pergunta: "6. Qual comando é utilizado para decisões em C?",
-        opcoes: [
-            "printf",
-            "include",
-            "if",
-            "return",
-            "break"
-        ],
-        correta: 2
-    },
-    {
-        pergunta: "7. Para que serve uma estrutura de repetição?",
-        opcoes: [
-            "Apagar o programa",
-            "Executar comandos várias vezes",
-            "Desligar o computador",
-            "Criar imagens",
-            "Formatar textos"
-        ],
-        correta: 1
-    },
-    {
-        pergunta: "8. Qual é um exemplo de estrutura de repetição?",
-        opcoes: [
-            "if",
-            "else",
-            "for",
-            "printf",
-            "return"
-        ],
-        correta: 2
-    },
-    {
-        pergunta: "9. O que é modularização?",
-        opcoes: [
-            "Dividir o programa em módulos menores",
-            "Excluir todas as funções",
-            "Aumentar os erros",
-            "Desorganizar o código",
-            "Trocar o sistema operacional"
-        ],
-        correta: 0
-    },
-    {
-        pergunta: "10. O que é uma função?",
-        opcoes: [
-            "Um componente físico",
-            "Um bloco de código que realiza uma tarefa",
-            "Um navegador",
-            "Um tipo de monitor",
-            "Um arquivo de imagem"
-        ],
-        correta: 1
-    },
-    {
-        pergunta: "11. Qual linguagem permite aplicar programação estruturada?",
-        opcoes: [
-            "Somente HTML",
-            "Somente CSS",
-            "C",
-            "Somente Photoshop",
-            "Nenhuma linguagem"
-        ],
-        correta: 2
-    },
-    {
-        pergunta: "12. Qual vantagem a programação estruturada oferece?",
-        opcoes: [
-            "Dificulta a manutenção",
-            "Aumenta a desorganização",
-            "Facilita a identificação de erros",
-            "Impede a criação de funções",
-            "Elimina a lógica"
-        ],
-        correta: 2
-    },
-    {
-        pergunta: "13. O que significa manutenção de software?",
-        opcoes: [
-            "Corrigir e melhorar um programa",
-            "Desligar a internet",
-            "Comprar um computador",
-            "Excluir todos os arquivos",
-            "Trocar o teclado"
-        ],
-        correta: 0
-    },
-    {
-        pergunta: "14. O que é recursão?",
-        opcoes: [
-            "Uma variável global",
-            "Uma função que chama a si mesma",
-            "Um comando de impressão",
-            "Uma estrutura HTML",
-            "Uma operação de soma"
-        ],
-        correta: 1
-    },
-    {
-        pergunta: "15. Por que organizar o código é importante?",
-        opcoes: [
-            "Para dificultar o trabalho",
-            "Para aumentar o tamanho do arquivo",
-            "Para facilitar a leitura, manutenção e compreensão",
-            "Para impedir alterações",
-            "Para eliminar os algoritmos"
-        ],
-        correta: 2
-    }
-];
+// Elementos do HTML
+const form = document.getElementById("formIMC");
+const nomeInput = document.getElementById("nome");
+const idadeInput = document.getElementById("idade");
+const pesoInput = document.getElementById("peso");
+const alturaInput = document.getElementById("altura");
+const idInput = document.getElementById("idPessoa");
 
-// 2. IDENTIFICAR ELEMENTOS DO HTML
+const listaPessoas = document.getElementById("listaPessoas");
+const pesquisaInput = document.getElementById("pesquisa");
 
-const formulario = document.getElementById("quizForm");
-const resultado = document.getElementById("resultado");
+const totalPessoas = document.getElementById("totalPessoas");
+const imcMedio = document.getElementById("imcMedio");
+const ultimoCadastro = document.getElementById("ultimoCadastro");
 
-// 3. CARREGAR AS QUESTÕES
+const tituloFormulario = document.getElementById("tituloFormulario");
+const btnSalvar = document.getElementById("btnSalvar");
+const btnCancelar = document.getElementById("btnCancelar");
 
-function carregarQuestoes() {
+// =========================================
+// SALVAR NO LOCALSTORAGE
+// =========================================
 
-    formulario.innerHTML = "";
-
-    questoes.forEach((questao, indice) => {
-
-        const div = document.createElement("div");
-
-        div.classList.add("questao");
-
-        let conteudo = `<h3>${questao.pergunta}</h3>`;
-
-        questao.opcoes.forEach((opcao, alternativa) => {
-
-            conteudo += `
-                <label>
-                    <input
-                        type="radio"
-                        name="q${indice}"
-                        value="${alternativa}"
-                    >
-                    ${String.fromCharCode(65 + alternativa)})
-                    ${opcao}
-                </label>
-            `;
-
-        });
-
-        div.innerHTML = conteudo;
-
-        formulario.appendChild(div);
-
-    });
-
+function salvarDados() {
+    localStorage.setItem("pessoasIMC", JSON.stringify(pessoas));
 }
 
-// 4. CORRIGIR A AVALIAÇÃO
+// =========================================
+// CALCULAR IMC
+// =========================================
 
-function corrigirQuiz() {
+function calcularIMC(peso, altura) {
+    return peso / (altura * altura);
+}
 
-    let acertos = 0;
-    let respondidas = 0;
+// =========================================
+// CLASSIFICAR IMC
+// =========================================
 
-    questoes.forEach((questao, indice) => {
+function classificarIMC(imc) {
 
-        const resposta = document.querySelector(
-            `input[name="q${indice}"]:checked`
-        );
+    if (imc < 18.5) {
+        return {
+            texto: "Abaixo do peso",
+            classe: "abaixo"
+        };
+    }
 
-        if (resposta) {
+    if (imc < 25) {
+        return {
+            texto: "Peso adequado",
+            classe: "normal"
+        };
+    }
 
-            respondidas++;
+    if (imc < 30) {
+        return {
+            texto: "Sobrepeso",
+            classe: "sobrepeso"
+        };
+    }
 
-            if (Number(resposta.value) === questao.correta) {
-                acertos++;
-            }
+    return {
+        texto: "Obesidade",
+        classe: "obesidade"
+    };
+}
 
-        }
+// =========================================
+// CADASTRAR OU EDITAR
+// =========================================
 
-    });
+form.addEventListener("submit", function(event) {
 
-    // Verificar se todas foram respondidas
+    event.preventDefault();
 
-    if (respondidas !== questoes.length) {
+    const nome = nomeInput.value.trim();
+    const idade = Number(idadeInput.value);
+    const peso = Number(pesoInput.value);
+    const altura = Number(alturaInput.value);
 
-        resultado.innerHTML = `
-            <h3>⚠️ Atenção!</h3>
-            Você respondeu ${respondidas} de 15 questões.
-            Responda todas antes de finalizar.
-        `;
-
+    // Validação dos dados
+    if (!nome || idade <= 0 || peso <= 0 || altura <= 0) {
+        alert("Preencha todos os campos corretamente!");
         return;
     }
 
-    // Calcular nota e percentual
+    const imc = calcularIMC(peso, altura);
 
-    const nota = (acertos / 15) * 10;
-    const percentual = (acertos / 15) * 100;
-    const erros = 15 - acertos;
+    // Verifica se está editando
+    if (idInput.value !== "") {
 
-    let mensagem;
+        const id = Number(idInput.value);
 
-    if (nota >= 9) {
-        mensagem = "🏆 Excelente! Você domina o conteúdo!";
-    } else if (nota >= 7) {
-        mensagem = "👏 Muito bom! Continue assim!";
-    } else if (nota >= 5) {
-        mensagem = "📚 Bom esforço! Continue estudando!";
+        pessoas = pessoas.map(function(pessoa) {
+
+            if (pessoa.id === id) {
+                return {
+                    ...pessoa,
+                    nome,
+                    idade,
+                    peso,
+                    altura,
+                    imc
+                };
+            }
+
+            return pessoa;
+        });
+
+        alert("Cadastro atualizado com sucesso!");
+
     } else {
-        mensagem = "💡 Revise o conteúdo e tente novamente!";
+
+        // Novo cadastro
+        const pessoa = {
+            id: Date.now(),
+            nome,
+            idade,
+            peso,
+            altura,
+            imc
+        };
+
+        pessoas.push(pessoa);
+
+        alert("Pessoa cadastrada com sucesso!");
     }
 
-    // Mostrar resultado
+    salvarDados();
+    form.reset();
+    cancelarEdicao();
+    renderizar();
+});
 
-    resultado.innerHTML = `
-        <h3>📊 Resultado da avaliação</h3>
+// =========================================
+// LISTAR PESSOAS
+// =========================================
 
-        <p>Acertos: ${acertos} de 15</p>
-        <p>Erros: ${erros}</p>
-        <p>Nota final: ${nota.toFixed(1)} / 10</p>
-        <p>Percentual: ${percentual.toFixed(1)}%</p>
+function renderizar() {
 
-        <h3>${mensagem}</h3>
+    listaPessoas.innerHTML = "";
 
-        <button type="button" onclick="mostrarGabarito()">
-            Ver gabarito
-        </button>
+    const termo = pesquisaInput.value.toLowerCase();
 
-        <button type="button" onclick="refazerQuiz()">
-            Refazer avaliação
-        </button>
-
-        <div id="gabarito"></div>
-    `;
-
-    // Bloquear as alternativas após finalizar
-
-    document.querySelectorAll(
-        '#quizForm input[type="radio"]'
-    ).forEach(input => {
-        input.disabled = true;
+    const pessoasFiltradas = pessoas.filter(function(pessoa) {
+        return pessoa.nome.toLowerCase().includes(termo);
     });
 
-    resultado.scrollIntoView({
-        behavior: "smooth"
-    });
+    pessoasFiltradas.forEach(function(pessoa) {
 
-}
+        const classificacao = classificarIMC(pessoa.imc);
 
-// 5. MOSTRAR GABARITO
+        const tr = document.createElement("tr");
 
-function mostrarGabarito() {
+        tr.innerHTML = `
+            <td>${escapeHTML(pessoa.nome)}</td>
+            <td>${pessoa.idade}</td>
+            <td>${pessoa.peso.toFixed(1)} kg</td>
+            <td>${pessoa.altura.toFixed(2)} m</td>
+            <td><strong>${pessoa.imc.toFixed(2)}</strong></td>
 
-    const gabarito = document.getElementById("gabarito");
+            <td>
+                <span class="classificacao ${classificacao.classe}">
+                    ${classificacao.texto}
+                </span>
+            </td>
 
-    let conteudo = "<h3>📖 Gabarito das questões</h3>";
+            <td>
+                <button class="btn-editar"
+                    onclick="editarPessoa(${pessoa.id})">
+                    Editar
+                </button>
 
-    questoes.forEach((questao, indice) => {
-
-        const resposta = document.querySelector(
-            `input[name="q${indice}"]:checked`
-        );
-
-        const acertou =
-            Number(resposta.value) === questao.correta;
-
-        const letra = String.fromCharCode(
-            65 + questao.correta
-        );
-
-        conteudo += `
-            <div class="questao">
-
-                <strong>
-                    ${acertou ? "✅ Resposta correta" : "❌ Resposta incorreta"}
-                </strong>
-
-                <p>${questao.pergunta}</p>
-
-                <p>
-                    Alternativa correta:
-                    <strong>${letra}) ${questao.opcoes[questao.correta]}</strong>
-                </p>
-
-            </div>
+                <button class="btn-excluir"
+                    onclick="excluirPessoa(${pessoa.id})">
+                    Excluir
+                </button>
+            </td>
         `;
 
+        listaPessoas.appendChild(tr);
     });
 
-    gabarito.innerHTML = conteudo;
-
-    gabarito.scrollIntoView({
-        behavior: "smooth"
-    });
-
+    atualizarDashboard();
 }
 
-// 6. REFAZER A AVALIAÇÃO
+// =========================================
+// PROTEÇÃO CONTRA HTML INJETADO
+// =========================================
 
-function refazerQuiz() {
+function escapeHTML(texto) {
+    return String(texto).replace(/[&<>"']/g, function(caractere) {
+        const mapa = {
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;"
+        };
 
-    carregarQuestoes();
+        return mapa[caractere];
+    });
+}
 
-    resultado.innerHTML = "";
+// =========================================
+// EDITAR PESSOA
+// =========================================
+
+function editarPessoa(id) {
+
+    const pessoa = pessoas.find(function(pessoa) {
+        return pessoa.id === id;
+    });
+
+    if (!pessoa) return;
+
+    idInput.value = pessoa.id;
+    nomeInput.value = pessoa.nome;
+    idadeInput.value = pessoa.idade;
+    pesoInput.value = pessoa.peso;
+    alturaInput.value = pessoa.altura;
+
+    tituloFormulario.textContent = "Editar Cadastro";
+    btnSalvar.textContent = "Atualizar Cadastro";
+    btnCancelar.hidden = false;
 
     window.scrollTo({
-        top: document.getElementById("quiz").offsetTop,
+        top: 0,
         behavior: "smooth"
     });
-
 }
 
-// 7. INICIALIZAR O PROJETO
+// =========================================
+// CANCELAR EDIÇÃO
+// =========================================
 
-carregarQuestoes();
+function cancelarEdicao() {
 
+    form.reset();
+    idInput.value = "";
+
+    tituloFormulario.textContent = "Cadastrar Pessoa";
+    btnSalvar.textContent = "💾 Salvar Cadastro";
+    btnCancelar.hidden = true;
+}
+
+// =========================================
+// EXCLUIR PESSOA
+// =========================================
+
+function excluirPessoa(id) {
+
+    const confirmar = confirm(
+        "Deseja realmente excluir este cadastro?"
+    );
+
+    if (!confirmar) return;
+
+    pessoas = pessoas.filter(function(pessoa) {
+        return pessoa.id !== id;
+    });
+
+    salvarDados();
+    renderizar();
+
+    alert("Cadastro excluído!");
+}
+
+// =========================================
+// ATUALIZAR INDICADORES
+// =========================================
+
+function atualizarDashboard() {
+
+    totalPessoas.textContent = pessoas.length;
+
+    if (pessoas.length > 0) {
+
+        const somaIMC = pessoas.reduce(function(total, pessoa) {
+            return total + pessoa.imc;
+        }, 0);
+
+        const media = somaIMC / pessoas.length;
+
+        imcMedio.textContent = media.toFixed(2);
+
+        ultimoCadastro.textContent =
+            pessoas[pessoas.length - 1].nome;
+
+    } else {
+
+        imcMedio.textContent = "0.00";
+        ultimoCadastro.textContent = "Nenhum";
+    }
+}
+
+// =========================================
+// PESQUISAR
+// =========================================
+
+pesquisaInput.addEventListener("input", renderizar);
+
+// =========================================
+// INICIALIZAÇÃO
+// =========================================
+
+renderizar();
