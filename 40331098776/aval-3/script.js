@@ -35,14 +35,11 @@ formulario.addEventListener("submit", function(event) {
     \}
 
     const mensagem = document.getElementById("mensagemVazia");
-
-    if (mensagem) {
-        mensagem.remove();
-    \}
+    if (mensagem) mensagem.remove();
 
     const linha = document.createElement("tr");
 
-    const valores = [
+    const dados = [
         nome,
         idade,
         altura.toFixed(2) + " m",
@@ -51,41 +48,36 @@ formulario.addEventListener("submit", function(event) {
         classificacao
     ];
 
-    valores.forEach(function(valor) {
+    dados.forEach(function(dado) {
         const coluna = document.createElement("td");
-        coluna.textContent = valor;
+        coluna.textContent = dado;
         linha.appendChild(coluna);
     \});
 
     const colunaAcao = document.createElement("td");
-    const botaoExcluir = document.createElement("button");
+    const excluir = document.createElement("button");
 
-    botaoExcluir.textContent = "Excluir";
-    botaoExcluir.className = "excluir";
+    excluir.textContent = "Excluir";
+    excluir.className = "excluir";
 
-    botaoExcluir.addEventListener("click", function() {
+    excluir.addEventListener("click", function() {
         linha.remove();
         verificarLista();
     \});
 
-    colunaAcao.appendChild(botaoExcluir);
+    colunaAcao.appendChild(excluir);
     linha.appendChild(colunaAcao);
 
     lista.appendChild(linha);
-
     formulario.reset();
 \});
 
 function verificarLista() {
     if (lista.children.length === 0) {
-        const linha = document.createElement("tr");
-        linha.id = "mensagemVazia";
-
-        const coluna = document.createElement("td");
-        coluna.colSpan = 7;
-        coluna.textContent = "Nenhuma pessoa cadastrada ainda";
-
-        linha.appendChild(coluna);
-        lista.appendChild(linha);
+        lista.innerHTML = `
+            <tr id="mensagemVazia">
+                <td colspan="7">Nenhuma pessoa cadastrada ainda</td>
+            </tr>
+        `;
     \}
 \}$0
