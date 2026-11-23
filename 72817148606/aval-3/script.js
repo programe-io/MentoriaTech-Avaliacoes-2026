@@ -1,88 +1,155 @@
-let bancoTarefas = [];
-let seqCodigo = 100;
 
-function cadastrar() {
-  const campoTitulo = document.getElementById("inputTitulo");
-    const campoPrioridade = document.getElementById("inputPrioridade");
-      const caixaErro = document.getElementById("erroMsg");
+const campoHTML = document.getElementById("html");
+const campoCSS = document.getElementById("css");
+const campoJS = document.getElementById("js");
 
-        caixaErro.textContent = "";
+const preview = document.getElementById("preview");
+const status = document.getElementById("status");
 
-          const titulo = campoTitulo.value.trim();
-            const prioridade = parseInt(campoPrioridade.value);
+let temporizador;
+let ultimaExecucao = 0;
 
-              // Validações obrigatórias especificadas no projeto[span_7](start_span)[span_7](end_span)
-                if (titulo.length < 5) {
-                    caixaErro.textContent = "Validação falhou: O título deve ter no mínimo 5 caracteres[span_8](start_span)[span_8](end_span).";
-                        return;
-                          }
-                            if (isNaN(prioridade) || prioridade < 1 || prioridade > 3) {
-                                caixaErro.textContent = "Validação falhou: A prioridade deve ser um valor entre 1 (alta) e 3 (baixa)[span_9](start_span)[span_9](end_span).";
-                                    return;
-                                      }
+// Carregar códigos salvos
+function carregar() {
+  campoHTML.value = localStorage.getItem("autoHTML") || "";
+  campoCSS.value = localStorage.getItem("autoCSS") || "";
+  campoJS.value = localStorage.getItem("autoJS") || "";
 
-                                        const nova = {
-                                            codigo: seqCodigo++,
-                                                titulo: titulo,
-                                                    prioridade: prioridade,
-                                                        concluida: false
-                                                          };
+  executar();
+}
 
-                                                            bancoTarefas.push(nova);
-                                                              atualizarInterface();
+// Salvar códigos automaticamente
+function salvar() {
+  localStorage.setItem("autoHTML", campoHTML.value);
+  localStorage.setItem("autoCSS", campoCSS.value);
+  localStorage.setItem("autoJS", campoJS.value);
+}
 
-                                                                campoTitulo.value = "";
-                                                                  campoPrioridade.value = "";
-                                                                  }
+// Executar os códigos
+function executar() {
+  const html = campoHTML.value;
+  const css = campoCSS.value;
+  const js = campoJS.value;
 
-                                                                  function mudarStatus(codigo) {
-                                                                    const t = bancoTarefas.find(item => item.codigo === codigo);
-                                                                      if (t) {
-                                                                          t.concluida = !t.concluida;
-                                                                              atualizarInterface();
-                                                                                }
-                                                                                }
+  salvar();
 
-                                                                                function alterarPrioridade(codigo, novoValor) {
-                                                                                  const t = bancoTarefas.find(item => item.codigo === codigo);
-                                                                                    const p = parseInt(novoValor);
-                                                                                      
-                                                                                        if (t && p >= 1 && p <= 3) {
-                                                                                            t.prioridade = p;
-                                                                                                atualizarInterface();
-                                                                                                  } else {
-                                                                                                      alert("Prioridade inválida! Deve ser entre 1 e 3[span_10](start_span)[span_10](end_span).");
-                                                                                                          atualizarInterface();
-                                                                                                            }
-                                                                                                            }
+  const codigo = `
+    <!DOCTYPE html>
+    <html lang="pt-BR">
+    <head>
+      <meta charset="UTF-8">
+      <style>${css.replace(/<\/style/gi, "<\\/style")}</style>
+    </head>
+    <body>
 
-                                                                                                            function atualizarInterface() {
-                                                                                                              const painel = document.getElementById("painelTarefas");
-                                                                                                                painel.innerHTML = "";
+      ${html}
 
-                                                                                                                  if (bancoTarefas.length === 0) {
-                                                                                                                      painel.innerHTML = "<p>Nenhuma tarefa cadastrada ainda.</p>";
-                                                                                                                          return;
-                                                                                                                            }
+      <script>
+        window.onerror = function(message) {
+          document.getElementById("erro-preview").textContent =
+            "Erro: " + message;
+        };
 
-                                                                                                                              bancoTarefas.forEach(t => {
-                                                                                                                                  const card = document.createElement("div");
-                                                                                                                                      card.className = `tarefa-card ${t.concluida ? "concluida" : ""}`;
-                                                                                                                                          card.innerHTML = `
-                                                                                                                                                <div><b>Código:</b> #${t.codigo} | <b>Título:</b> ${t.titulo}</div>
-                                                                                                                                                      <div class="acoes-linha">
-                                                                                                                                                              <span>Prioridade atual:</span>
-                                                                                                                                                                      <select onchange="alterarPrioridade(${t.codigo}, this.value)">
-                                                                                                                                                                                <option value="1" ${t.prioridade === 1 ? "selected" : ""}>1 - Alta</option>
-                                                                                                                                                                                          <option value="2" ${t.prioridade === 2 ? "selected" : ""}>2 - Média</option>
-                                                                                                                                                                                                    <option value="3" ${t.prioridade === 3 ? "selected" : ""}>3 - Baixa</option>
-                                                                                                                                                                                                            </select>
-                                                                                                                                                                                                                    <button onclick="mudarStatus(${t.codigo})">
-                                                                                                                                                                                                                              ${t.concluida ? "Marcar Pendente" : "Marcar Concluída"}
-                                                                                                                                                                                                                                      </button>
-                                                                                                                                                                                                                                            </div>
-                                                                                                                                                                                                                                                `;
-                                                                                                                                                                                                                                                    painel.appendChild(card);
-                                                                                                                                                                                                                                                      });
-                                                                                                                                                                                                                                                      }
-                                                                                                                                                                                                                                                      
+        try {
+          ${js.replace(/<\/script/gi, "<\\/script")}
+        } catch (erro) {
+          document.getElementById("erro-preview").textContent =
+            erro.message;
+        }
+      <\/script>
+
+      <div id="erro-preview" style="
+        color:red;
+        font-family:Arial;
+        padding:8px;
+      "></div>
+
+    </body>
+    </html>
+  `;
+
+  preview.srcdoc = codigo;
+
+  status.textContent = "● Código executado";
+}
+
+// Executar automaticamente enquanto digita
+function programarExecucao() {
+  status.textContent = "● Atualizando...";
+
+  clearTimeout(temporizador);
+
+  temporizador = setTimeout(() => {
+    executar();
+  }, 400);
+}
+
+[campoHTML, campoCSS, campoJS].forEach(campo => {
+  campo.addEventListener("input", programarExecucao);
+  campo.addEventListener("paste", programarExecucao);
+});
+
+// Limpar códigos
+document.getElementById("limpar").addEventListener("click", () => {
+  if (!confirm("Deseja apagar todos os códigos?")) return;
+
+  campoHTML.value = "";
+  campoCSS.value = "";
+  campoJS.value = "";
+
+  salvar();
+  executar();
+});
+
+// Copiar códigos
+document.getElementById("copiar").addEventListener("click", async () => {
+  const codigo =
+    "HTML:\n" + campoHTML.value +
+    "\n\nCSS:\n" + campoCSS.value +
+    "\n\nJAVASCRIPT:\n" + campoJS.value;
+
+  try {
+    await navigator.clipboard.writeText(codigo);
+    alert("Códigos copiados!");
+  } catch {
+    alert("Não foi possível copiar. Verifique a permissão da área de transferência.");
+  }
+});
+
+// Baixar projeto
+document.getElementById("baixar").addEventListener("click", () => {
+  const html = campoHTML.value;
+  const css = campoCSS.value;
+  const js = campoJS.value;
+
+  const projeto = `
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<style>${css.replace(/<\/style/gi, "<\\/style")}</style>
+</head>
+<body>
+${html}
+<script>
+${js.replace(/<\/script/gi, "<\\/script")}
+<\/script>
+</body>
+</html>`;
+
+  const arquivo = new Blob([projeto], {
+    type: "text/html"
+  });
+
+  const url = URL.createObjectURL(arquivo);
+  const link = document.createElement("a");
+
+  link.href = url;
+  link.download = "meu-projeto.html";
+  link.click();
+
+  URL.revokeObjectURL(url);
+});
+
+// Iniciar editor
+carregar();
