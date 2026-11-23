@@ -1,155 +1,144 @@
 
-const campoHTML = document.getElementById("html");
-const campoCSS = document.getElementById("css");
-const campoJS = document.getElementById("js");
+// Selecionando os elementos do HTML
+const botoesAdicionar = document.querySelectorAll(".adicionar");
+const carrinho = document.getElementById("carrinho");
+const contador = document.getElementById("contador");
+const itensCarrinho = document.getElementById("itens-carrinho");
+const totalElemento = document.getElementById("total");
 
-const preview = document.getElementById("preview");
-const status = document.getElementById("status");
+const botaoAbrir = document.getElementById("abrir-carrinho");
+const botaoFechar = document.getElementById("fechar-carrinho");
+const botaoFinalizar = document.getElementById("finalizar");
 
-let temporizador;
-let ultimaExecucao = 0;
+// Lista de produtos do carrinho
+let produtosCarrinho = [];
 
-// Carregar códigos salvos
-function carregar() {
-  campoHTML.value = localStorage.getItem("autoHTML") || "";
-  campoCSS.value = localStorage.getItem("autoCSS") || "";
-  campoJS.value = localStorage.getItem("autoJS") || "";
-
-  executar();
+// Formatar valores em reais
+function formatarMoeda(valor) {
+    return valor.toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL"
+    });
 }
 
-// Salvar códigos automaticamente
-function salvar() {
-  localStorage.setItem("autoHTML", campoHTML.value);
-  localStorage.setItem("autoCSS", campoCSS.value);
-  localStorage.setItem("autoJS", campoJS.value);
+// Adicionar produto ao carrinho
+botoesAdicionar.forEach(botao => {
+
+    botao.addEventListener("click", () => {
+
+        const nome = botao.dataset.nome;
+        const preco = Number(botao.dataset.preco);
+
+        produtosCarrinho.push({
+            nome: nome,
+            preco: preco
+        });
+
+        atualizarCarrinho();
+
+        alert(nome + " foi adicionado ao carrinho!");
+
+    });
+
+});
+
+// Atualizar informações do carrinho
+function atualizarCarrinho() {
+
+    itensCarrinho.innerHTML = "";
+
+    contador.textContent = produtosCarrinho.length;
+
+    let total = 0;
+
+    if (produtosCarrinho.length === 0) {
+
+        itensCarrinho.textContent = "Seu carrinho está vazio.";
+
+    }
+
+    produtosCarrinho.forEach((produto, indice) => {
+
+        total += produto.preco;
+
+        const item = document.createElement("div");
+        item.classList.add("item-carrinho");
+
+        const informacoes = document.createElement("span");
+        informacoes.textContent =
+            produto.nome + " - " + formatarMoeda(produto.preco);
+
+        const botaoRemover = document.createElement("button");
+        botaoRemover.textContent = "Remover";
+
+        botaoRemover.addEventListener("click", () => {
+            removerProduto(indice);
+        });
+
+        item.appendChild(informacoes);
+        item.appendChild(botaoRemover);
+
+        itensCarrinho.appendChild(item);
+
+    });
+
+    totalElemento.textContent = formatarMoeda(total);
+
 }
 
-// Executar os códigos
-function executar() {
-  const html = campoHTML.value;
-  const css = campoCSS.value;
-  const js = campoJS.value;
+// Remover produto do carrinho
+function removerProduto(indice) {
 
-  salvar();
+    produtosCarrinho.splice(indice, 1);
 
-  const codigo = `
-    <!DOCTYPE html>
-    <html lang="pt-BR">
-    <head>
-      <meta charset="UTF-8">
-      <style>${css.replace(/<\/style/gi, "<\\/style")}</style>
-    </head>
-    <body>
+    atualizarCarrinho();
 
-      ${html}
-
-      <script>
-        window.onerror = function(message) {
-          document.getElementById("erro-preview").textContent =
-            "Erro: " + message;
-        };
-
-        try {
-          ${js.replace(/<\/script/gi, "<\\/script")}
-        } catch (erro) {
-          document.getElementById("erro-preview").textContent =
-            erro.message;
-        }
-      <\/script>
-
-      <div id="erro-preview" style="
-        color:red;
-        font-family:Arial;
-        padding:8px;
-      "></div>
-
-    </body>
-    </html>
-  `;
-
-  preview.srcdoc = codigo;
-
-  status.textContent = "● Código executado";
 }
 
-// Executar automaticamente enquanto digita
-function programarExecucao() {
-  status.textContent = "● Atualizando...";
+// Abrir carrinho
+botaoAbrir.addEventListener("click", () => {
 
-  clearTimeout(temporizador);
+    carrinho.classList.add("ativo");
 
-  temporizador = setTimeout(() => {
-    executar();
-  }, 400);
-}
-
-[campoHTML, campoCSS, campoJS].forEach(campo => {
-  campo.addEventListener("input", programarExecucao);
-  campo.addEventListener("paste", programarExecucao);
 });
 
-// Limpar códigos
-document.getElementById("limpar").addEventListener("click", () => {
-  if (!confirm("Deseja apagar todos os códigos?")) return;
+// Fechar carrinho
+botaoFechar.addEventListener("click", () => {
 
-  campoHTML.value = "";
-  campoCSS.value = "";
-  campoJS.value = "";
+    carrinho.classList.remove("ativo");
 
-  salvar();
-  executar();
 });
 
-// Copiar códigos
-document.getElementById("copiar").addEventListener("click", async () => {
-  const codigo =
-    "HTML:\n" + campoHTML.value +
-    "\n\nCSS:\n" + campoCSS.value +
-    "\n\nJAVASCRIPT:\n" + campoJS.value;
+// Fechar clicando fora do carrinho
+carrinho.addEventListener("click", (evento) => {
 
-  try {
-    await navigator.clipboard.writeText(codigo);
-    alert("Códigos copiados!");
-  } catch {
-    alert("Não foi possível copiar. Verifique a permissão da área de transferência.");
-  }
+    if (evento.target === carrinho) {
+        carrinho.classList.remove("ativo");
+    }
+
 });
 
-// Baixar projeto
-document.getElementById("baixar").addEventListener("click", () => {
-  const html = campoHTML.value;
-  const css = campoCSS.value;
-  const js = campoJS.value;
+// Finalizar compra (simulação)
+botaoFinalizar.addEventListener("click", () => {
 
-  const projeto = `
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<style>${css.replace(/<\/style/gi, "<\\/style")}</style>
-</head>
-<body>
-${html}
-<script>
-${js.replace(/<\/script/gi, "<\\/script")}
-<\/script>
-</body>
-</html>`;
+    if (produtosCarrinho.length === 0) {
 
-  const arquivo = new Blob([projeto], {
-    type: "text/html"
-  });
+        alert("Seu carrinho está vazio!");
 
-  const url = URL.createObjectURL(arquivo);
-  const link = document.createElement("a");
+        return;
 
-  link.href = url;
-  link.download = "meu-projeto.html";
-  link.click();
+    }
 
-  URL.revokeObjectURL(url);
+    alert(
+        "Compra realizada com sucesso!\nTotal: " +
+        totalElemento.textContent +
+        "\n\nEsta é uma simulação de compra."
+    );
+
+    produtosCarrinho = [];
+
+    atualizarCarrinho();
+
+    carrinho.classList.remove("ativo");
+
 });
-
-// Iniciar editor
-carregar();
