@@ -817,3 +817,4 @@ btnCancelar.addEventListener("click", function() {
 // Mostrar histórico ao abrir a página
 
 render();
+
