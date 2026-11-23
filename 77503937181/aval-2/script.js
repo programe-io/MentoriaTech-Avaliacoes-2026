@@ -1,69 +1,54 @@
 
-const feed = document.getElementById("feed");
-const publicar = document.getElementById("publicar");
-const textoPost = document.getElementById("textoPost");
+// Curtir e descurtir publicações
+const botoesCurtir = document.querySelectorAll(".curtir");
 
-// Criar uma nova publicação
-publicar.addEventListener("click", function() {
-    const texto = textoPost.value.trim();
+botoesCurtir.forEach(botao => {
+    botao.addEventListener("click", () => {
+        botao.classList.toggle("ativo");
 
-    if (texto === "") {
-        alert("Digite alguma coisa antes de publicar!");
-        return;
-    }
-
-    const postagem = document.createElement("article");
-    postagem.className = "post";
-
-    postagem.innerHTML = `
-        <div class="post-header">
-            <div class="avatar kayllow">K</div>
-            <div>
-                <h3>Kayllow</h3>
-                <span>Agora</span>
-            </div>
-        </div>
-
-        <p></p>
-
-        <div class="post-actions">
-            <button class="curtir">♡ Curtir</button>
-            <button class="comentar">Comentar</button>
-        </div>
-
-        <div class="comentarios"></div>
-    `;
-
-    postagem.querySelector("p").textContent = texto;
-
-    feed.prepend(postagem);
-    textoPost.value = "";
+        if (botao.classList.contains("ativo")) {
+            botao.innerHTML = "♥ Curtido";
+        } else {
+            botao.innerHTML = "♡ Curtir";
+        }
+    });
 });
 
-// Curtir e comentar
-feed.addEventListener("click", function(event) {
-    const post = event.target.closest(".post");
+// Adicionar comentários
+const botoesPublicar = document.querySelectorAll(".enviar-comentario");
 
-    if (!post) return;
+botoesPublicar.forEach(botao => {
+    botao.addEventListener("click", () => {
+        const post = botao.closest(".post");
+        const campo = post.querySelector(".campo-comentario");
+        const areaComentarios = post.querySelector(".comentarios");
 
-    if (event.target.classList.contains("curtir")) {
-        const botao = event.target;
+        if (campo.value.trim() !== "") {
+            const comentario = document.createElement("p");
+            comentario.innerHTML = `<strong>Kayllow:</strong> ${campo.value}`;
 
-        if (botao.textContent === "♡ Curtir") {
-            botao.textContent = "♥ Curtido";
-        } else {
-            botao.textContent = "♡ Curtir";
+            areaComentarios.appendChild(comentario);
+            campo.value = "";
         }
-    }
+    });
+});
 
-    if (event.target.classList.contains("comentar")) {
-        const comentario = prompt("Digite seu comentário:");
+// Pesquisa de publicações
+const pesquisa = document.querySelector("#pesquisa");
 
-        if (comentario && comentario.trim() !== "") {
-            const novoComentario = document.createElement("p");
-            novoComentario.textContent = "💬 " + comentario.trim();
+pesquisa.addEventListener("input", () => {
+    const texto = pesquisa.value.toLowerCase();
 
-            post.querySelector(".comentarios").append(novoComentario);
-        }
-    }
+    document.querySelectorAll(".post").forEach(post => {
+        post.style.display = post.innerText.toLowerCase().includes(texto)
+            ? "block"
+            : "none";
+    });
+});
+
+// Abrir stories
+document.querySelectorAll(".story").forEach(story => {
+    story.addEventListener("click", () => {
+        alert("Você abriu o story de " + story.querySelector("p").innerText);
+    });
 });
