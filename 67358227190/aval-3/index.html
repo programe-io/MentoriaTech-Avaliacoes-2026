@@ -1,0 +1,586 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Ficha de Anamnese</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f1f4fa;
+    margin: 0;
+    padding: 25px;
+}
+
+.container {
+    max-width: 1000px;
+    margin: auto;
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+}
+
+h1, h2 {
+    text-align: center;
+    color: #294da8;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+}
+
+label {
+    font-weight: bold;
+}
+
+input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+button {
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.salvar {
+    background: #2863e9;
+    color: white;
+}
+
+.tabela {
+    margin-top: 30px;
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 750px;
+    margin-top: 20px;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 12px 8px;
+    text-align: center;
+}
+
+th {
+    background: #294da8;
+    color: white;
+}
+
+.selo {
+    padding: 5px 8px;
+    border-radius: 15px;
+    font-size: 12px;
+}
+
+.verde {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.amarelo {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.vermelho {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.apagar {
+    background: #dc2626;
+    color: white;
+}
+
+#erro {
+    color: red;
+    font-weight: bold;
+}
+
+.sucesso {
+    color: green;
+    font-weight: bold;
+    text-align: center;
+}
+
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+<div class="container">
+
+    <h1>Ficha de Anamnese</h1>
+
+    <h2>Cadastro de Paciente</h2>
+
+    <form id="formPessoa">
+
+        <label for="nome">Nome:</label>
+        <input type="text" id="nome" placeholder="Digite o nome">
+
+        <label for="idade">Idade:</label>
+        <input type="number" id="idade" placeholder="Digite a idade">
+
+        <label for="altura">Altura (m):</label>
+        <input type="number" id="altura" step="0.01" placeholder="Ex: 1.70">
+
+        <label for="peso">Peso (kg):</label>
+        <input type="number" id="peso" step="0.1" placeholder="Ex: 65">
+
+        <p id="erro" hidden></p>
+
+        <p id="sucesso" class="sucesso" hidden></p>
+
+        <button type="submit" class="salvar">
+            Salvar Paciente
+        </button>
+
+    </form>
+
+    <div class="tabela">
+
+        <h2>Pacientes Cadastrados</h2>
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Nome</th>
+                    <th>Idade</th>
+                    <th>Altura</th>
+                    <th>Peso</th>
+                    <th>IMC</th>
+                    <th>Classificação</th>
+                    <th>Ação</th>
+                </tr>
+            </thead>
+
+            <tbody id="listaPessoas"></tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+<script>
+
+// REFERÊNCIAS DO DOM
+
+const formPessoa = document.getElementById("formPessoa");
+const inputNome = document.getElementById("nome");
+const inputIdade = document.getElementById("idade");
+const inputAltura = document.getElementById("altura");
+const inputPeso = document.getElementById("peso");
+
+const mensagemDeErro = document.getElementById("erro");
+const mensagemSucesso = document.getElementById("sucesso");
+const listaPessoas = document.getElementById("listaPessoas");
+
+
+// ARMAZENAMENTO
+
+const chavePessoas = "pessoas";
+
+function carregarPessoas() {
+
+    try {
+        const dados = localStorage.getItem(chavePessoas);
+
+        if (!dados) return [];
+
+        const resultado = JSON.parse(dados);
+
+        return Array.isArray(resultado) ? resultado : [];
+
+    } catch (erro) {
+        console.error(erro);
+        return [];
+    }
+
+}
+
+let pessoas = carregarPessoas();
+
+let proximoId = 1;
+
+
+// CALCULAR IMC
+
+function calcularIMC(peso, altura) {
+    return peso / (altura * altura);
+}
+
+
+// CLASSIFICAR IMC
+
+function classificarIMC(imc) {
+
+    if (imc < 18.5) {
+        return { texto: "Abaixo do peso", classe: "amarelo" };
+    }
+
+    if (imc < 25) {
+        return { texto: "Peso normal", classe: "verde" };
+    }
+
+    if (imc < 30) {
+        return { texto: "Sobrepeso", classe: "amarelo" };
+    }
+
+    if (imc < 35) {
+        return { texto: "Obesidade I", classe: "vermelho" };
+    }
+
+    if (imc < 40) {
+        return { texto: "Obesidade II", classe: "vermelho" };
+    }
+
+    return { texto: "Obesidade III", classe: "vermelho" };
+
+}
+
+
+// FORMATAR
+
+function formatar(valor, casas) {
+    return valor.toFixed(casas);
+}
+
+
+// CRIAR CÉLULA
+
+function criarCelula(valor) {
+
+    const td = document.createElement("td");
+
+    td.textContent = valor;
+
+    return td;
+
+}
+
+
+// CRIAR LINHA
+
+function criarLinha(pessoa) {
+
+    const tr = document.createElement("tr");
+
+    const imc = calcularIMC(pessoa.peso, pessoa.altura);
+
+    const classificacao = classificarIMC(imc);
+
+    tr.appendChild(criarCelula(pessoa.id));
+    tr.appendChild(criarCelula(pessoa.nome));
+    tr.appendChild(criarCelula(pessoa.idade));
+
+    tr.appendChild(
+        criarCelula(formatar(pessoa.altura, 2) + " m")
+    );
+
+    tr.appendChild(
+        criarCelula(formatar(pessoa.peso, 1) + " KG")
+    );
+
+    tr.appendChild(
+        criarCelula(formatar(imc, 1))
+    );
+
+    const tdClassificacao = document.createElement("td");
+
+    const selo = document.createElement("span");
+
+    selo.classList.add("selo", classificacao.classe);
+
+    selo.textContent = classificacao.texto;
+
+    tdClassificacao.appendChild(selo);
+
+    tr.appendChild(tdClassificacao);
+
+    const tdAcao = document.createElement("td");
+
+    const botao = document.createElement("button");
+
+    botao.textContent = "Apagar";
+
+    botao.classList.add("apagar");
+
+    botao.type = "button";
+
+    botao.addEventListener("click", function() {
+        apagarPessoa(pessoa.id);
+    });
+
+    tdAcao.appendChild(botao);
+
+    tr.appendChild(tdAcao);
+
+    return tr;
+
+}
+
+
+// RENDERIZAR
+
+function render() {
+
+    listaPessoas.innerHTML = "";
+
+    pessoas.forEach(function(pessoa) {
+
+        const linha = criarLinha(pessoa);
+
+        listaPessoas.appendChild(linha);
+
+    });
+
+}
+
+
+// LER FORMULÁRIO
+
+function lerFormulario() {
+
+    return {
+
+        nome: inputNome.value.trim(),
+
+        idade: Number(inputIdade.value),
+
+        altura: Number(inputAltura.value),
+
+        peso: Number(inputPeso.value)
+
+    };
+
+}
+
+
+// VALIDAR DADOS
+
+function validarDados(dados) {
+
+    if (dados.nome.length < 2) {
+        return "Informe o nome com no mínimo duas letras.";
+    }
+
+    if (
+        !Number.isInteger(dados.idade) ||
+        dados.idade < 1 ||
+        dados.idade > 120
+    ) {
+        return "A idade deve ser um número inteiro entre 1 e 120.";
+    }
+
+    if (
+        !Number.isFinite(dados.altura) ||
+        dados.altura < 0.5 ||
+        dados.altura > 2.5
+    ) {
+        return "A altura deve estar entre 0.5 e 2.5.";
+    }
+
+    if (
+        !Number.isFinite(dados.peso) ||
+        dados.peso < 2 ||
+        dados.peso > 500
+    ) {
+        return "O peso deve estar entre 2 e 500 kg.";
+    }
+
+    return "";
+
+}
+
+
+// MOSTRAR ERRO
+
+function mostrarErro(mensagem) {
+
+    mensagemDeErro.textContent = mensagem;
+
+    mensagemDeErro.hidden = false;
+
+}
+
+
+// LIMPAR ERRO
+
+function limparErro() {
+
+    mensagemDeErro.textContent = "";
+
+    mensagemDeErro.hidden = true;
+
+}
+
+
+// ADICIONAR PESSOA
+
+function adicionarPessoa(dados) {
+
+    pessoas.push({
+
+        id: proximoId++,
+
+        nome: dados.nome,
+
+        idade: dados.idade,
+
+        altura: dados.altura,
+
+        peso: dados.peso
+
+    });
+
+}
+
+
+// SALVAR
+
+function salvar() {
+
+    localStorage.setItem(
+        chavePessoas,
+        JSON.stringify(pessoas)
+    );
+
+}
+
+
+// APAGAR PESSOA
+
+function apagarPessoa(id) {
+
+    const anterior = pessoas;
+
+    pessoas = pessoas.filter(function(pessoa) {
+        return pessoa.id !== id;
+    });
+
+    try {
+
+        salvar();
+
+        render();
+
+    } catch (erro) {
+
+        pessoas = anterior;
+
+        mostrarErro("Não foi possível apagar o cadastro.");
+
+    }
+
+}
+
+
+// AJUSTAR CONTADOR
+
+function ajustarContador() {
+
+    let maior = 0;
+
+    pessoas.forEach(function(pessoa) {
+
+        if (pessoa.id > maior) {
+            maior = pessoa.id;
+        }
+
+    });
+
+    proximoId = maior + 1;
+
+}
+
+
+// EVENTO DE CADASTRO
+
+formPessoa.addEventListener("submit", function(e) {
+
+    e.preventDefault();
+
+    limparErro();
+
+    mensagemSucesso.hidden = true;
+
+    const dados = lerFormulario();
+
+    const erro = validarDados(dados);
+
+    if (erro !== "") {
+
+        mostrarErro(erro);
+
+        return;
+
+    }
+
+    const tamanhoAnterior = pessoas.length;
+
+    adicionarPessoa(dados);
+
+    try {
+
+        salvar();
+
+        render();
+
+        formPessoa.reset();
+
+        inputNome.focus();
+
+        mensagemSucesso.textContent = "Paciente cadastrado com sucesso!";
+
+        mensagemSucesso.hidden = false;
+
+    } catch (erro) {
+
+        pessoas.pop();
+
+        proximoId--;
+
+        mostrarErro("Erro ao salvar. Verifique o armazenamento do navegador.");
+
+    }
+
+});
+
+
+// INICIAR A APLICAÇÃO
+
+ajustarContador();
+
+render();
+
+</script>
+
+<script src="script.js"></script></body>
+</html>
+
+
