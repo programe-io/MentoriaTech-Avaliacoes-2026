@@ -1,146 +1,52 @@
-// Meu Mundo no Futsal — interações da página
-const root = document.documentElement;
-const themeToggle = document.getElementById("themeToggle");
-const menuToggle = document.getElementById("menuToggle");
-const mainNav = document.getElementById("mainNav");
-const scrollProgress = document.getElementById("scrollProgress");
-const backToTop = document.getElementById("backToTop");
-const searchInput = document.getElementById("searchInput");
-const filterButtons = [...document.querySelectorAll(".filter-btn")];
-const postCards = [...document.querySelectorAll(".post-card")];
-const emptyState = document.getElementById("emptyState");
-const savedNote = document.getElementById("savedNote");
+const $ = (s, root=document) => root.querySelector(s);
+const $$ = (s, root=document) => [...root.querySelectorAll(s)];
+const toast = (message) => { const el=$('#toast'); el.textContent=message; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),1900); };
 
-function applyTheme(theme) {
-  root.dataset.theme = theme;
-  const dark = theme === "dark";
-  themeToggle.textContent = dark ? "☀" : "☾";
-  themeToggle.setAttribute("aria-label", dark ? "Ativar modo claro" : "Ativar modo escuro");
-  document.querySelector('meta[name="theme-color"]')?.setAttribute("content", dark ? "#08111f" : "#f4f7fb");
-  try { localStorage.setItem("futsal-theme", theme); } catch (_) {}
-}
-let initialTheme = "dark";
-try {
-  initialTheme = localStorage.getItem("futsal-theme") ||
-    (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
-} catch (_) {}
-applyTheme(initialTheme);
-themeToggle.addEventListener("click", () => applyTheme(root.dataset.theme === "dark" ? "light" : "dark"));
-
-menuToggle.addEventListener("click", () => {
-  const isOpen = mainNav.classList.toggle("open");
-  menuToggle.setAttribute("aria-expanded", String(isOpen));
-  menuToggle.textContent = isOpen ? "×" : "☰";
+// Curtidas, salvar e comentários
+document.addEventListener('click', (e) => {
+  const like=e.target.closest('.like-btn');
+  if(like){like.classList.toggle('liked');like.querySelector('i').className=like.classList.contains('liked')?'fa-solid fa-heart':'fa-regular fa-heart';const count=like.closest('.post').querySelector('.likes');let n=parseInt(count.textContent)||0;count.textContent=`${n+(like.classList.contains('liked')?1:-1)} curtidas`;}
+  const save=e.target.closest('.save-btn');
+  if(save){save.classList.toggle('saved');save.innerHTML=save.classList.contains('saved')?'<i class="fa-solid fa-bookmark"></i>':'<i class="fa-regular fa-bookmark"></i>';toast(save.classList.contains('saved')?'Publicação salva':'Publicação removida dos salvos');}
+  if(e.target.closest('.share-btn')) toast('Demonstração: link da publicação copiado!');
+  if(e.target.closest('.comment-focus')) e.target.closest('.post').querySelector('.comment-form input').focus();
+  if(e.target.closest('.view-comments')) toast('Os comentários desta publicação estão sendo exibidos.');
 });
-mainNav.querySelectorAll("a").forEach(link => link.addEventListener("click", () => {
-  mainNav.classList.remove("open");
-  menuToggle.setAttribute("aria-expanded", "false");
-  menuToggle.textContent = "☰";
-}));
+$$('.comment-form').forEach(form=>form.addEventListener('submit',e=>{e.preventDefault();const input=$('input',form);if(!input.value.trim())return;const p=document.createElement('p');p.innerHTML=`<strong>samuel</strong> `;p.append(document.createTextNode(input.value.trim()));form.previousElementSibling.prepend(p);input.value='';toast('Comentário publicado!');}));
 
-function updateScrollUI() {
-  const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-  const progress = maxScroll > 0 ? (window.scrollY / maxScroll) * 100 : 0;
-  scrollProgress.style.width = `${progress}%`;
-  backToTop.classList.toggle("visible", window.scrollY > 500);
+// Stories
+const storyImages={'Seu story':'https://d23jzdnitxn12c.cloudfront.net/a4fbb610ae877f872286c1947d7edb2a/v2_e198acb0-03b2-4fc8-8180-949c9e349a77.jpg','Marina':'https://i.pravatar.cc/100?img=47','Lucas':'https://i.pravatar.cc/100?img=11','Ana':'https://i.pravatar.cc/100?img=44','Pedro':'https://i.pravatar.cc/100?img=13','Julia':'https://i.pravatar.cc/100?img=49'};
+$$('.story').forEach(btn=>btn.addEventListener('click',()=>{const name=btn.dataset.story;$('#storyName').textContent=name;$('#storyAvatar').src=storyImages[name]||storyImages.Marინა;$('#storyDialog').showModal();}));
+$$('[data-close]').forEach(btn=>btn.addEventListener('click',()=>$('#'+btn.dataset.close).close()));
+
+// Mensagens demonstrativas
+const messagesPanel=$('#mensagens');
+function openMessages(){messagesPanel.classList.add('open');}
+$('#navMessages').addEventListener('click',e=>{e.preventDefault();openMessages();});
+$('#closeMessages').addEventListener('click',()=>messagesPanel.classList.remove('open'));
+const chatData={
+  'Marina':{img:47,history:[['Oi! Tudo bem?','received'],['Tudo sim! E você?','sent']]},
+  'Lucas':{img:11,history:[['Vamos jogar hoje?','received']]},
+  'Ana Clara':{img:44,history:[['Gostei da foto!','received']]}
+};
+function selectChat(name){
+  const data=chatData[name];$('#chatName').textContent=name;$('#chatAvatar').src=`https://i.pravatar.cc/100?img=${data.img}`;
+  $$('.chat-person').forEach(b=>b.classList.toggle('selected',b.dataset.chat===name));
+  const area=$('#chatMessages');area.innerHTML='';
+  data.history.forEach(([txt,type])=>{const bubble=document.createElement('div');bubble.className=`bubble ${type}`;bubble.textContent=txt;area.append(bubble);});
+  area.scrollTop=area.scrollHeight;
 }
-window.addEventListener("scroll", updateScrollUI, { passive: true });
-updateScrollUI();
-backToTop.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+$$('.chat-person').forEach(btn=>btn.addEventListener('click',()=>selectChat(btn.dataset.chat)));
+$('#messageForm').addEventListener('submit',e=>{e.preventDefault();const input=$('#messageInput');const value=input.value.trim();if(!value)return;const bubble=document.createElement('div');bubble.className='bubble sent';bubble.textContent=value;$('#chatMessages').append(bubble);chatData[$('#chatName').textContent].history.push([value,'sent']);input.value='';$('#chatMessages').scrollTop=$('#chatMessages').scrollHeight;});
 
-// Anima elementos ao entrarem na tela.
-const revealElements = document.querySelectorAll(".reveal");
-if ("IntersectionObserver" in window) {
-  const revealObserver = new IntersectionObserver((entries, observer) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add("is-visible");
-        observer.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.12 });
-  revealElements.forEach((element, index) => {
-    element.style.transitionDelay = `${(index % 3) * 90}ms`;
-    revealObserver.observe(element);
-  });
-} else {
-  revealElements.forEach(element => element.classList.add("is-visible"));
-}
-
-// Pesquisa e filtros de categoria funcionam juntos.
-let activeFilter = "todos";
-function filterPosts() {
-  const query = searchInput.value.trim().toLocaleLowerCase("pt-BR");
-  let visibleCount = 0;
-  postCards.forEach(card => {
-    const text = `${card.dataset.title} ${card.innerText}`.toLocaleLowerCase("pt-BR");
-    const matchesQuery = text.includes(query);
-    const matchesFilter = activeFilter === "todos" || card.dataset.category === activeFilter;
-    const show = matchesQuery && matchesFilter;
-    card.hidden = !show;
-    if (show) visibleCount++;
-  });
-  emptyState.hidden = visibleCount !== 0;
-}
-searchInput.addEventListener("input", filterPosts);
-filterButtons.forEach(button => button.addEventListener("click", () => {
-  activeFilter = button.dataset.filter;
-  filterButtons.forEach(item => item.classList.toggle("active", item === button));
-  filterPosts();
-}));
-
-// Favoritos persistem neste navegador.
-let favorites = [];
-try { favorites = JSON.parse(localStorage.getItem("futsal-favorites") || "[]"); } catch (_) {}
-function renderFavorites() {
-  document.querySelectorAll(".favorite-btn").forEach(button => {
-    const title = button.closest(".post-card").dataset.title;
-    const isFavorite = favorites.includes(title);
-    button.textContent = isFavorite ? "♥" : "♡";
-    button.setAttribute("aria-pressed", String(isFavorite));
-  });
-}
-renderFavorites();
-document.querySelectorAll(".favorite-btn").forEach(button => button.addEventListener("click", () => {
-  const title = button.closest(".post-card").dataset.title;
-  favorites = favorites.includes(title) ? favorites.filter(item => item !== title) : [...favorites, title];
-  try { localStorage.setItem("futsal-favorites", JSON.stringify(favorites)); } catch (_) {}
-  renderFavorites();
-  savedNote.textContent = favorites.length
-    ? `${favorites.length} conteúdo(s) favoritado(s) neste navegador.`
-    : "Você removeu todos os favoritos.";
-}));
-
-// Galeria com visualização ampliada.
-const lightbox = document.getElementById("lightbox");
-const lightboxImage = document.getElementById("lightboxImage");
-const lightboxClose = document.getElementById("lightboxClose");
-function closeLightbox() {
-  lightbox.hidden = true;
-  document.body.style.overflow = "";
-}
-document.querySelectorAll(".gallery-item").forEach(item => item.addEventListener("click", () => {
-  lightboxImage.src = item.dataset.image;
-  lightbox.hidden = false;
-  document.body.style.overflow = "hidden";
-  lightboxClose.focus();
-}));
-lightboxClose.addEventListener("click", closeLightbox);
-lightbox.addEventListener("click", event => { if (event.target === lightbox) closeLightbox(); });
-document.addEventListener("keydown", event => { if (event.key === "Escape" && !lightbox.hidden) closeLightbox(); });
-
-document.getElementById("currentYear").textContent = new Date().getFullYear();
-
-// Destaca no menu a seção que estiver em evidência.
-const sections = [...document.querySelectorAll("main section[id]")];
-if ("IntersectionObserver" in window) {
-  const sectionObserver = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (!entry.isIntersecting) return;
-      document.querySelectorAll(".nav-link").forEach(link => {
-        link.classList.toggle("active", link.getAttribute("href") === `#${entry.target.id}`);
-      });
-    });
-  }, { rootMargin: "-35% 0px -55% 0px" });
-  sections.forEach(section => sectionObserver.observe(section));
-}
+// Criar publicação
+$('#navCreate').addEventListener('click',e=>{e.preventDefault();$('#createDialog').showModal();});
+$('#imageUrl').addEventListener('input',e=>{const url=e.target.value;const preview=$('#imagePreview');preview.innerHTML='';if(url){const img=document.createElement('img');img.src=url;img.alt='Prévia da publicação';img.onerror=()=>preview.textContent='Não foi possível carregar essa imagem.';preview.append(img);}else preview.textContent='A prévia da imagem aparecerá aqui';});
+$('#createForm').addEventListener('submit',e=>{
+  e.preventDefault();const url=$('#imageUrl').value.trim();if(!url)return;
+  const caption=$('#captionInput').value.trim();
+  const post=document.createElement('article');post.className='post';
+  post.innerHTML=`<header class="post-header"><img class="avatar" src="https://d23jzdnitxn12c.cloudfront.net/a4fbb610ae877f872286c1947d7edb2a/v2_e198acb0-03b2-4fc8-8180-949c9e349a77.jpg" alt=""><div><strong>samuel</strong><small>Agora</small></div><button class="more">•••</button></header><img class="post-image" alt="Nova publicação"><div class="post-actions"><button class="like-btn"><i class="fa-regular fa-heart"></i></button><button class="comment-focus"><i class="fa-regular fa-comment"></i></button><button class="share-btn"><i class="fa-regular fa-paper-plane"></i></button><button class="save-btn"><i class="fa-regular fa-bookmark"></i></button></div><div class="post-caption"><strong class="likes">0 curtidas</strong><p><strong>samuel</strong> </p><button class="view-comments">Ver comentários</button><small>AGORA</small></div><form class="comment-form"><input placeholder="Adicione um comentário..." aria-label="Comentário"><button>Publicar</button></form>`;
+  post.querySelector('.post-image').src=url;post.querySelector('.post-caption p').append(document.createTextNode(caption));
+  $('#posts').prepend(post);$('#createDialog').close();e.target.reset();$('#imagePreview').textContent='A prévia da imagem aparecerá aqui';toast('Sua publicação foi adicionada!');
+});
