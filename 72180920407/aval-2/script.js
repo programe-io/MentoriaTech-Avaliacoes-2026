@@ -1,0 +1,270 @@
+
+const readline = require("readline");
+const fs = require("fs");
+
+const arquivo = "revisoes.json";
+
+let revisoes = fs.existsSync(arquivo)
+  ? JSON.parse(fs.readFileSync(arquivo, "utf8"))
+  : [];
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
+
+function salvar() {
+  fs.writeFileSync(arquivo, JSON.stringify(revisoes, null, 2));
+}
+
+function perguntar(texto) {
+  return new Promise(resolve => rl.question(texto, resolve));
+}
+
+function dataAtual() {
+  return new Date().toISOString().split("T")[0];
+}
+
+function validarData(data) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(data)) return false;
+
+  const dataObj = new Date(data + "T00:00:00");
+
+  return !Number.isNaN(dataObj.getTime()) &&
+    dataObj.toISOString().slice(0, 10) === data;
+}
+
+// CADASTRAR REVISÃO
+async function cadastrar() {
+  console.log("\n=== NOVA REVISÃO ===");
+
+  const materia = await perguntar("Matéria: ");
+  const conteudo = await perguntar("Conteúdo: ");
+  const data = await perguntar("Data da revisão (AAAA-MM-DD): ");
+
+  if (!materia.trim() || !conteudo.trim()) {
+    console.log("Preencha todos os campos!");
+    return;
+  }
+
+  if (!validarData(data)) {
+    console.log("Data inválida!");
+    return;
+  }
+
+  revisoes.push({
+    id: Date.now(),
+    materia: materia.trim(),
+    conteudo: conteudo.trim(),
+    data,
+    concluida: false,
+    criadaEm: new Date().toLocaleString("pt-BR")
+  });
+
+  salvar();
+  console.log("Revisão cadastrada!");
+}
+
+// LISTAR REVISÕES
+function listar(lista = revisoes) {
+  console.log("\n=== MINHAS REVISÕES ===");
+
+  if (!lista.length) {
+    console.log("Nenhuma revisão cadastrada.");
+    return;
+  }
+
+  lista.forEach(r => {
+    let status = r.concluida
+      ? "CONCLUÍDA"
+      : r.data < dataAtual()
+        ? "ATRASADA"
+        : "PENDENTE";
+
+    console.log(`
+ID: ${r.id}
+Matéria: ${r.materia}
+Conteúdo: ${r.conteudo}
+Data: ${r.data}
+Status: ${status}
+--------------------------`);
+  });
+}
+
+// CONCLUIR REVISÃO
+async function concluir() {
+  const id = Number(await perguntar("ID da revisão: "));
+
+  const revisao = revisoes.find(r => r.id === id);
+
+  if (!revisao) {
+    console.log("Revisão não encontrada!");
+    return;
+  }
+
+  revisao.concluida = !revisao.concluida;
+
+  salvar();
+
+  console.log(
+    revisao.concluida
+      ? "Revisão concluída!"
+      : "Revisão reaberta!"
+  );
+}
+
+// EDITAR REVISÃO
+async function editar() {
+  const id = Number(await perguntar("ID da revisão: "));
+
+  const revisao = revisoes.find(r => r.id === id);
+
+  if (!revisao) {
+    console.log("Revisão não encontrada!");
+    return;
+  }
+
+  const materia = await perguntar("Nova matéria (Enter mantém): ");
+  const conteudo = await perguntar("Novo conteúdo (Enter mantém): ");
+  const data = await perguntar("Nova data (Enter mantém): ");
+
+  if (materia.trim()) revisao.materia = materia.trim();
+  if (conteudo.trim()) revisao.conteudo = conteudo.trim();
+
+  if (data.trim()) {
+    if (!validarData(data)) {
+      console.log("Data inválida!");
+      return;
+    }
+
+    revisao.data = data;
+  }
+
+  salvar();
+  console.log("Revisão atualizada!");
+}
+
+// EXCLUIR REVISÃO
+async function excluir() {
+  const id = Number(await perguntar("ID da revisão: "));
+
+  const indice = revisoes.findIndex(r => r.id === id);
+
+  if (indice === -1) {
+    console.log("Revisão não encontrada!");
+    return;
+  }
+
+  const confirmar = await perguntar("Confirmar exclusão? (s/n): ");
+
+  if (confirmar.toLowerCase() === "s") {
+    revisoes.splice(indice, 1);
+    salvar();
+    console.log("Revisão excluída!");
+  }
+}
+
+// BUSCAR POR MATÉRIA
+async function buscar() {
+  const nome = (
+    await perguntar("Digite a matéria: ")
+  ).toLowerCase();
+
+  const resultado = revisoes.filter(r =>
+    r.materia.toLowerCase().includes(nome)
+  );
+
+  listar(resultado);
+}
+
+// REVISÕES PENDENTES
+function pendentes() {
+  const resultado = revisoes.filter(r => !r.concluida);
+  listar(resultado);
+}
+
+// REVISÕES ATRASADAS
+function atrasadas() {
+  const resultado = revisoes.filter(r =>
+    !r.concluida && r.data < dataAtual()
+  );
+
+  listar(resultado);
+}
+
+// ESTATÍSTICAS
+function estatisticas() {
+  const total = revisoes.length;
+
+  const concluidas = revisoes.filter(
+    r => r.concluida
+  ).length;
+
+  const pendentes = revisoes.filter(
+    r => !r.concluida
+  ).length;
+
+  const atrasadasTotal = revisoes.filter(
+    r => !r.concluida && r.data < dataAtual()
+  ).length;
+
+  console.log(`
+====== ESTATÍSTICAS ======
+Total de revisões: ${total}
+Concluídas: ${concluidas}
+Pendentes: ${pendentes}
+Atrasadas: ${atrasadasTotal}
+Aproveitamento: ${
+    total ? ((concluidas / total) * 100).toFixed(1) : 0
+  }%
+==========================
+`);
+}
+
+// MENU
+async function menu() {
+  while (true) {
+    console.log(`
+================================
+       SISTEMA DE REVISÃO
+================================
+1 - Cadastrar revisão
+2 - Listar revisões
+3 - Concluir revisão
+4 - Editar revisão
+5 - Excluir revisão
+6 - Buscar por matéria
+7 - Ver revisões pendentes
+8 - Ver revisões atrasadas
+9 - Estatísticas
+0 - Sair
+================================
+`);
+
+    const opcao = await perguntar("Escolha uma opção: ");
+
+    try {
+      switch (opcao) {
+        case "1": await cadastrar(); break;
+        case "2": listar(); break;
+        case "3": await concluir(); break;
+        case "4": await editar(); break;
+        case "5": await excluir(); break;
+        case "6": await buscar(); break;
+        case "7": pendentes(); break;
+        case "8": atrasadas(); break;
+        case "9": estatisticas(); break;
+        case "0":
+          console.log("Bons estudos!");
+          rl.close();
+          return;
+        default:
+          console.log("Opção inválida!");
+      }
+    } catch (erro) {
+      console.log("Erro:", erro.message);
+    }
+  }
+}
+
+menu();
