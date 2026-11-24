@@ -1,136 +1,268 @@
 
-function curtir(botao) {
-    let numero = botao.querySelector("small");
-    let valor = parseInt(numero.textContent);
+const app = document.querySelector(".app");
+const contactList = document.getElementById("contactList");
+const chat = document.getElementById("chat");
+const welcome = document.getElementById("welcome");
+const messages = document.getElementById("messages");
+const messageInput = document.getElementById("messageInput");
+const messageForm = document.getElementById("messageForm");
+const searchInput = document.getElementById("search");
+const chatName = document.getElementById("chatName");
+const chatAvatar = document.getElementById("chatAvatar");
+const chatStatus = document.getElementById("chatStatus");
+const backBtn = document.getElementById("backBtn");
 
-    if (botao.dataset.curtido === "sim") {
-        botao.dataset.curtido = "nao";
-        botao.firstChild.textContent = "🤍";
-        numero.textContent = valor - 1;
-    } else {
-        botao.dataset.curtido = "sim";
-        botao.firstChild.textContent = "❤️";
-        numero.textContent = valor + 1;
-    }
+let currentContactId = null;
+
+// Contactes de demonstração
+const defaultContacts = [
+  {
+    id: 1,
+    name: "Ana Silva",
+    emoji: "👩🏻",
+    status: "online",
+    messages: [
+      { text: "Olá! Tudo bem? 😊", sent: false, time: "10:20" },
+      { text: "Tudo ótimo! E contigo?", sent: true, time: "10:21" },
+      { text: "Também estou bem!", sent: false, time: "10:22" }
+    ]
+  },
+  {
+    id: 2,
+    name: "João Pedro",
+    emoji: "👨🏽",
+    status: "online",
+    messages: [
+      { text: "Vamos jogar mais tarde?", sent: false, time: "09:15" }
+    ]
+  },
+  {
+    id: 3,
+    name: "Maria",
+    emoji: "👩🏼",
+    status: "visto recentemente",
+    messages: [
+      { text: "Manda as fotos depois 📸", sent: false, time: "Ontem" }
+    ]
+  },
+  {
+    id: 4,
+    name: "Grupo Família",
+    emoji: "👨‍👩‍👧‍👦",
+    status: "4 participantes",
+    messages: [
+      { text: "Almoço domingo confirmado!", sent: false, time: "Ontem" }
+    ]
+  },
+  {
+    id: 5,
+    name: "Pedro",
+    emoji: "🧑🏻",
+    status: "offline",
+    messages: [
+      { text: "Obrigado pela ajuda!", sent: false, time: "Segunda" }
+    ]
+  }
+];
+
+// Carregar conversas guardadas
+let contacts;
+
+try {
+  const saved = localStorage.getItem("zapweb_contacts");
+  contacts = saved ? JSON.parse(saved) : defaultContacts;
+} catch {
+  contacts = defaultContacts;
 }
 
-function comentar(botao) {
-    let texto = prompt("Digite seu comentário:");
-
-    if (texto && texto.trim() !== "") {
-        alert("Comentário publicado: " + texto);
-    }
+function saveContacts() {
+  localStorage.setItem("zapweb_contacts", JSON.stringify(contacts));
 }
 
-function compartilhar() {
-    if (navigator.share) {
-        navigator.share({
-            title: "TokPlay",
-            text: "Confira este vídeo no TokPlay!"
-        });
-    } else {
-        alert("Compartilhamento não disponível neste navegador.");
-    }
-}
+// Mostrar lista de contactos
+function renderContacts(filter = "") {
+  contactList.innerHTML = "";
 
-function mostrarUpload() {
-    let upload = document.getElementById("upload");
-    upload.hidden = !upload.hidden;
-}
+  const filtered = contacts.filter(contact =>
+    contact.name.toLowerCase().includes(filter.toLowerCase())
+  );
 
-function publicarVideo() {
-    let usuario = document.getElementById("usuario").value.trim();
-    let descricao = document.getElementById("descricao").value.trim();
-    let videoUrl = document.getElementById("videoUrl").value.trim();
+  filtered.forEach(contact => {
+    const lastMessage = contact.messages.at(-1);
+    const item = document.createElement("div");
 
-    if (!usuario || !descricao || !videoUrl) {
-        alert("Preencha todos os campos!");
-        return;
+    item.className = "contact";
+    if (contact.id === currentContactId) {
+      item.classList.add("active");
     }
 
-    try {
-        let url = new URL(videoUrl);
+    const avatar = document.createElement("div");
+    avatar.className = "avatar";
+    avatar.textContent = contact.emoji;
 
-        if (!["http:", "https:"].includes(url.protocol)) {
-            throw new Error("URL inválida");
-        }
-    } catch {
-        alert("Digite um link válido para o vídeo!");
-        return;
-    }
+    const info = document.createElement("div");
+    info.className = "contact-info";
 
-    let post = document.createElement("article");
-    post.className = "video";
+    const name = document.createElement("h3");
+    name.textContent = contact.name;
 
-    let video = document.createElement("video");
-    video.src = videoUrl;
-    video.controls = true;
-    video.loop = true;
-    video.muted = true;
-    video.playsInline = true;
+    const preview = document.createElement("p");
+    preview.textContent = lastMessage ? lastMessage.text : "Nova conversa";
 
-    let informacoes = document.createElement("div");
-    informacoes.className = "informacoes";
+    info.append(name, preview);
 
-    let nome = document.createElement("h3");
-    nome.textContent = "@" + usuario;
+    const time = document.createElement("span");
+    time.className = "contact-time";
+    time.textContent = lastMessage ? lastMessage.time : "";
 
-    let legenda = document.createElement("p");
-    legenda.textContent = descricao;
+    item.append(avatar, info, time);
 
-    let musica = document.createElement("span");
-    musica.textContent = "🎵 Som original";
-
-    informacoes.append(nome, legenda, musica);
-
-    let acoes = document.createElement("div");
-    acoes.className = "acoes";
-
-    let botaoCurtir = document.createElement("button");
-    botaoCurtir.textContent = "🤍";
-
-    let quantidade = document.createElement("small");
-    quantidade.textContent = "0";
-    botaoCurtir.appendChild(quantidade);
-
-    botaoCurtir.onclick = function() {
-        let valor = parseInt(quantidade.textContent);
-
-        if (botaoCurtir.dataset.curtido === "sim") {
-            botaoCurtir.dataset.curtido = "nao";
-            botaoCurtir.firstChild.textContent = "🤍";
-            quantidade.textContent = valor - 1;
-        } else {
-            botaoCurtir.dataset.curtido = "sim";
-            botaoCurtir.firstChild.textContent = "❤️";
-            quantidade.textContent = valor + 1;
-        }
-    };
-
-    let botaoCompartilhar = document.createElement("button");
-    botaoCompartilhar.textContent = "↗️";
-    botaoCompartilhar.onclick = compartilhar;
-
-    acoes.append(botaoCurtir, botaoCompartilhar);
-
-    post.append(video, informacoes, acoes);
-
-    document.getElementById("feed").prepend(post);
-
-    document.getElementById("usuario").value = "";
-    document.getElementById("descricao").value = "";
-    document.getElementById("videoUrl").value = "";
-
-    mostrarUpload();
-
-    alert("Vídeo publicado com sucesso!");
+    item.addEventListener("click", () => openChat(contact.id));
+    contactList.appendChild(item);
+  });
 }
 
-document.getElementById("pesquisa").addEventListener("input", function() {
-    let pesquisa = this.value.toLowerCase();
+// Abrir conversa
+function openChat(id) {
+  const contact = contacts.find(c => c.id === id);
+  if (!contact) return;
 
-    document.querySelectorAll(".video").forEach(video => {
-        let texto = video.textContent.toLowerCase();
-        video.style.display = texto.includes(pesquisa) ? "" : "none";
-    });
+  currentContactId = id;
+
+  welcome.hidden = true;
+  chat.hidden = false;
+
+  chatName.textContent = contact.name;
+  chatAvatar.textContent = contact.emoji;
+  chatStatus.textContent = contact.status;
+
+  renderMessages(contact);
+  renderContacts(searchInput.value);
+
+  app.classList.add("chat-open");
+  messageInput.focus();
+}
+
+// Renderizar mensagens
+function renderMessages(contact) {
+  messages.innerHTML = "";
+
+  contact.messages.forEach(msg => {
+    const bubble = document.createElement("div");
+    bubble.className = "message " + (msg.sent ? "sent" : "received");
+
+    const text = document.createElement("span");
+    text.textContent = msg.text;
+
+    const time = document.createElement("span");
+    time.className = "message-time";
+    time.textContent = msg.time;
+
+    bubble.append(text, time);
+    messages.appendChild(bubble);
+  });
+
+  messages.scrollTop = messages.scrollHeight;
+}
+
+// Enviar mensagem
+messageForm.addEventListener("submit", function(event) {
+  event.preventDefault();
+
+  const text = messageInput.value.trim();
+  if (!text || currentContactId === null) return;
+
+  const contact = contacts.find(c => c.id === currentContactId);
+  if (!contact) return;
+
+  const now = new Date();
+  const time = now.toLocaleTimeString("pt-BR", {
+    hour: "2-digit",
+    minute: "2-digit"
+  });
+
+  contact.messages.push({
+    text: text,
+    sent: true,
+    time: time
+  });
+
+  messageInput.value = "";
+  saveContacts();
+  renderMessages(contact);
+  renderContacts(searchInput.value);
 });
+
+// Pesquisa
+searchInput.addEventListener("input", function() {
+  renderContacts(this.value);
+});
+
+// Voltar no telemóvel
+backBtn.addEventListener("click", () => {
+  app.classList.remove("chat-open");
+});
+
+// Criar nova conversa
+document.getElementById("newChat").addEventListener("click", () => {
+  const name = prompt("Nome do novo contacto:");
+
+  if (!name || !name.trim()) return;
+
+  const contact = {
+    id: Date.now(),
+    name: name.trim(),
+    emoji: "👤",
+    status: "novo contacto",
+    messages: []
+  };
+
+  contacts.unshift(contact);
+  saveContacts();
+  renderContacts();
+  openChat(contact.id);
+});
+
+// Emojis
+document.getElementById("emojiBtn").addEventListener("click", () => {
+  const emoji = prompt("Escolhe um emoji:", "😊");
+
+  if (emoji) {
+    messageInput.value += emoji;
+    messageInput.focus();
+  }
+});
+
+// Anexar ficheiro
+const fileInput = document.getElementById("fileInput");
+
+document.getElementById("attachBtn").addEventListener("click", () => {
+  fileInput.click();
+});
+
+fileInput.addEventListener("change", () => {
+  const file = fileInput.files[0];
+  if (!file || currentContactId === null) return;
+
+  const contact = contacts.find(c => c.id === currentContactId);
+  if (!contact) return;
+
+  const now = new Date().toLocaleTimeString("pt-BR", {
+    hour: "2-digit",
+    minute: "2-digit"
+  });
+
+  contact.messages.push({
+    text: "📎 Ficheiro enviado: " + file.name,
+    sent: true,
+    time: now
+  });
+
+  saveContacts();
+  renderMessages(contact);
+  renderContacts(searchInput.value);
+  fileInput.value = "";
+});
+
+// Inicializar
+renderContacts();
