@@ -1,0 +1,109 @@
+// ==========================================
+// 1. Variáveis Globais e Chaves
+// ==========================================
+const CHAVE_PESSOAS = "pessoas";
+let contadorId = 0;
+
+// Carrega as pessoas salvas no localStorage (ou inicia array vazio)
+let pessoas = carregarPessoas();
+ajustarContadorCodigo();
+
+// ==========================================
+// 2. Mapeamento dos Elementos do DOM
+// ==========================================
+const formPessoa = document.getElementById("form-pessoa");
+const inputNome = document.getElementById("nome");
+const inputIdade = document.getElementById("idade");
+const inputAltura = document.getElementById("altura");
+const inputPeso = document.getElementById("peso");
+const mensagemDeErro = document.getElementById("erro");
+const corpoTabela = document.getElementById("corpo-tabela"); // ajuste conforme o ID do seu tbody
+
+// ==========================================
+// 3. Funções de Formatação, Cálculo e Classificação IMC
+// (Conforme a Parte 1 do projeto)
+// ==========================================
+function formatar(valor, decimais) {
+    return Number(valor).toFixed(decimais).replace(".", ",");
+    }
+
+    function calcularIMC(peso, altura) {
+        return peso / (altura * altura);
+        }
+
+        function classificarIMC(imc) {
+            if (imc < 18.5) {
+                    return { texto: "Abaixo do peso", classe: "badge-amarelo" };
+                        } else if (imc < 25) {
+                                return { texto: "Peso normal", classe: "badge-verde" };
+                                    } else if (imc < 30) {
+                                            return { texto: "Sobrepeso", classe: "badge-amarelo" };
+                                                } else {
+                                                        return { texto: "Obesidade", classe: "badge-vermelho" };
+                                                            }
+                                                            }
+
+                                                            // ==========================================
+                                                            // 4. Manipulação do LocalStorage e Contador
+                                                            // ==========================================
+                                                            function salvar() {
+                                                                localStorage.setItem(CHAVE_PESSOAS, JSON.stringify(pessoas));
+                                                                }
+
+                                                                function carregarPessoas() {
+                                                                    const dadosSalvos = localStorage.getItem(CHAVE_PESSOAS);
+                                                                        if (!dadosSalvos) return [];
+
+                                                                            try {
+                                                                                    const lista = JSON.parse(dadosSalvos);
+                                                                                            if (Array.isArray(lista)) return lista;
+                                                                                                } catch (e) {
+                                                                                                        console.error("Erro ao carregar dados do localStorage");
+                                                                                                            }
+                                                                                                                return [];
+                                                                                                                }
+
+                                                                                                                function ajustarContadorCodigo() {
+                                                                                                                    let maior = 0;
+                                                                                                                        pessoas.forEach(p => {
+                                                                                                                                if (p.id > maior) maior = p.id;
+                                                                                                                                    });
+                                                                                                                                        contadorId = maior;
+                                                                                                                                        }
+
+                                                                                                                                        // ==========================================
+                                                                                                                                        // 5. Validação dos Dados do Formulário
+                                                                                                                                        // ==========================================
+                                                                                                                                        function validarDados(dados) {
+                                                                                                                                            if (dados.nome.length < 2) {
+                                                                                                                                                    return "informe o nome com no mínimo de duas letras";
+                                                                                                                                                        }
+                                                                                                                                                            if (!Number.isInteger(dados.idade) || dados.idade < 1 || dados.idade > 120) {
+                                                                                                                                                                    return "a idade deve ser um número inteiro entre 1 e 120";
+                                                                                                                                                                        }
+                                                                                                                                                                            if (dados.altura < 0.5 || dados.altura > 2.5) {
+                                                                                                                                                                                    return "a altura deve estar entre 0.5m e 2.5m";
+                                                                                                                                                                                        }
+                                                                                                                                                                                            if (dados.peso < 2 || dados.peso > 500) {
+                                                                                                                                                                                                    return "o peso deve estar entre 2kg e 500kg";
+                                                                                                                                                                                                        }
+                                                                                                                                                                                                            return "";
+                                                                                                                                                                                                            }
+
+                                                                                                                                                                                                            function mostrarErro(mensagem) {
+                                                                                                                                                                                                                mensagemDeErro.textContent = mensagem;
+                                                                                                                                                                                                                    mensagemDeErro.hidden = false;
+                                                                                                                                                                                                                    }
+
+                                                                                                                                                                                                                    function limparErro() {
+                                                                                                                                                                                                                        mensagemDeErro.textContent = "";
+                                                                                                                                                                                                                            mensagemDeErro.hidden = true;
+                                                                                                                                                                                                                            }
+
+                                                                                                                                                                                                                            // ==========================================
+                                                                                                                                                                                                                            // 6. Leitura e Adição de Pessoas
+                                                                                                                                                                                                                            // ==========================================
+                                                                                                                                                                                                                            function lerFormulario() {
+                                                                                                                                                                                                                                return {
+                                                                                                                                                                                                                                        nome: inputNome.value.trim(),
+                                                                                                                                                                                                                                        
