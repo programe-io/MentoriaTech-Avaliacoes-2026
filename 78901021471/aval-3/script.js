@@ -1,253 +1,134 @@
 
-const stories = [
-    {
-        nome: "Lucas",
-        foto: "https://i.pravatar.cc/300?img=12"
-    },
-    {
-        nome: "Gabriel",
-        foto: "https://i.pravatar.cc/300?img=13"
-    },
-    {
-        nome: "Pedro",
-        foto: "https://i.pravatar.cc/300?img=14"
-    },
-    {
-        nome: "Matheus",
-        foto: "https://i.pravatar.cc/300?img=15"
-    },
-    {
-        nome: "Rafael",
-        foto: "https://i.pravatar.cc/300?img=11"
-    }
-];
+const feed = document.getElementById("feed");
 
-const perfis = [
-    {
-        nome: "Lucas Silva",
-        usuario: "@lucasfut",
-        foto: "https://i.pravatar.cc/300?img=12"
-    },
-    {
-        nome: "Gabriel Santos",
-        usuario: "@gabriel10",
-        foto: "https://i.pravatar.cc/300?img=13"
-    },
-    {
-        nome: "Pedro Costa",
-        usuario: "@pedrocosta",
-        foto: "https://i.pravatar.cc/300?img=14"
-    },
-    {
-        nome: "Matheus Lima",
-        usuario: "@matheusfut",
-        foto: "https://i.pravatar.cc/300?img=15"
-    },
-    {
-        nome: "Rafael Alves",
-        usuario: "@rafael7",
-        foto: "https://i.pravatar.cc/300?img=11"
-    }
-];
+// SISTEMA DE CURTIDAS
+document.addEventListener("click", function(event) {
+  const button = event.target.closest(".like");
 
-const videos = [
-    {
-        usuario: "Lucas Silva",
-        foto: "https://i.pravatar.cc/300?img=12",
-        legenda: "⚽ Treino de finalização! Nunca desista dos seus sonhos! #Futebol",
-        arquivo: "videos/futebol1.mp4",
-        curtidas: 1250
-    },
-    {
-        usuario: "Gabriel Santos",
-        foto: "https://i.pravatar.cc/300?img=13",
-        legenda: "🔥 Melhores momentos do nosso jogo de hoje!",
-        arquivo: "videos/futebol2.mp4",
-        curtidas: 890
-    },
-    {
-        usuario: "Pedro Costa",
-        foto: "https://i.pravatar.cc/300?img=14",
-        legenda: "⚽ A paixão pelo futebol nunca acaba!",
-        arquivo: "videos/futebol3.mp4",
-        curtidas: 2100
-    }
-];
+  if (!button) return;
 
-// Mostrar stories
-const listaStories = document.getElementById("listaStories");
+  const numero = button.querySelector("small");
+  let total = Number(numero.textContent);
 
-stories.forEach(story => {
-    const item = document.createElement("div");
-    item.className = "story";
+  const curtido = button.classList.toggle("liked");
 
-    const foto = document.createElement("img");
-    foto.src = story.foto;
-    foto.alt = "Foto de " + story.nome;
-
-    const nome = document.createElement("p");
-    nome.textContent = story.nome;
-
-    item.append(foto, nome);
-
-    item.addEventListener("click", () => {
-        abrirStory(story);
-    });
-
-    listaStories.appendChild(item);
+  numero.textContent = total + (curtido ? 1 : -1);
 });
 
-// Abrir e fechar stories
-function abrirStory(story) {
-    document.getElementById("fotoStory").src = story.foto;
-    document.getElementById("nomeStory").textContent =
-        "Story de " + story.nome;
+// REPRODUÇÃO AUTOMÁTICA
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    const video = entry.target.querySelector("video");
 
-    document.getElementById("janelaStory").classList.add("ativo");
+    if (entry.isIntersecting) {
+      document.querySelectorAll("video").forEach(v => {
+        if (v !== video) v.pause();
+      });
+
+      video.play().catch(() => {});
+    } else {
+      video.pause();
+    }
+  });
+}, {
+  threshold: 0.65
+});
+
+function observarVideos() {
+  document.querySelectorAll(".video-card").forEach(card => {
+    observer.observe(card);
+  });
 }
 
-function fecharStory() {
-    document.getElementById("janelaStory").classList.remove("ativo");
+observarVideos();
+
+// ATIVAR E DESATIVAR SOM
+function alternarSom(button) {
+  const video = button.closest(".video-card")
+                      .querySelector("video");
+
+  video.muted = !video.muted;
+
+  button.innerHTML = video.muted
+    ? "🔇 <small>Som</small>"
+    : "🔊 <small>Som</small>";
 }
 
-// Mostrar vídeos
-const listaVideos = document.getElementById("listaVideos");
+// COMENTÁRIOS
+function comentar() {
+  const texto = prompt("Digite seu comentário:");
 
-videos.forEach((video, index) => {
-    const publicacao = document.createElement("div");
-    publicacao.className = "publicacao";
+  if (texto && texto.trim()) {
+    alert("Comentário enviado: " + texto);
+  }
+}
 
-    const usuario = document.createElement("div");
-    usuario.className = "usuario";
+// COMPARTILHAR
+function compartilhar() {
+  if (navigator.share) {
+    navigator.share({
+      title: "FutebolTok",
+      text: "Assista a este vídeo de futebol!"
+    }).catch(() => {});
+  } else {
+    alert("Compartilhamento não disponível.");
+  }
+}
 
-    const foto = document.createElement("img");
-    foto.src = video.foto;
-    foto.alt = "Foto do usuário";
+// INÍCIO
+function inicio() {
+  feed.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+}
 
-    const nome = document.createElement("h3");
-    nome.textContent = video.usuario;
+// PERFIL
+function perfil() {
+  alert("Bem-vindo ao seu perfil FutebolTok!");
+}
 
-    const identificacao = document.createElement("span");
-    identificacao.textContent = " @FutTok";
+// PUBLICAR VÍDEOS
+function abrirUpload() {
+  document.getElementById("upload").click();
+}
 
-    const dados = document.createElement("div");
-    dados.append(nome, identificacao);
-    usuario.append(foto, dados);
+document.getElementById("upload").addEventListener("change", function(event) {
 
-    const player = document.createElement("video");
-    player.className = "video";
-    player.src = video.arquivo;
-    player.controls = true;
-    player.playsInline = true;
-    player.preload = "metadata";
+  const arquivo = event.target.files[0];
 
-    const legenda = document.createElement("p");
-    legenda.className = "legenda";
-    legenda.textContent = video.legenda;
+  if (!arquivo) return;
 
-    const acoes = document.createElement("div");
-    acoes.className = "acoes";
+  const url = URL.createObjectURL(arquivo);
 
-    const curtir = document.createElement("button");
-    curtir.textContent = "❤️ " + video.curtidas;
+  const card = document.createElement("section");
+  card.className = "video-card";
 
-    let jaCurtiu = false;
+  card.innerHTML = `
+    <video loop muted playsinline autoplay></video>
 
-    curtir.addEventListener("click", () => {
-        jaCurtiu = !jaCurtiu;
+    <div class="info">
+      <h3>@meu_perfil</h3>
+      <p>⚽ Meu vídeo de futebol!</p>
+      <p>#futebol #meuvideo</p>
+    </div>
 
-        video.curtidas += jaCurtiu ? 1 : -1;
+    <div class="actions">
+      <button class="like">❤️ <small>0</small></button>
+      <button onclick="comentar()">💬 <small>Comentários</small></button>
+      <button onclick="compartilhar()">↗️ <small>Enviar</small></button>
+      <button onclick="alternarSom(this)">🔇 <small>Som</small></button>
+    </div>
+  `;
 
-        curtir.textContent = "❤️ " + video.curtidas;
-        curtir.classList.toggle("curtido", jaCurtiu);
-    });
+  card.querySelector("video").src = url;
 
-    const comentar = document.createElement("button");
-    comentar.textContent = "💬 Comentar";
+  feed.prepend(card);
+  observer.observe(card);
 
-    comentar.addEventListener("click", () => {
-        const texto = prompt("Escreva seu comentário:");
+  card.scrollIntoView({
+    behavior: "smooth"
+  });
 
-        if (texto && texto.trim()) {
-            const comentario = document.createElement("p");
-            comentario.textContent = "💬 " + texto.trim();
-            areaComentarios.appendChild(comentario);
-        }
-    });
-
-    const compartilhar = document.createElement("button");
-    compartilhar.textContent = "📤 Compartilhar";
-
-    compartilhar.addEventListener("click", async () => {
-        const texto = "Confira este vídeo no FutTok: " + video.legenda;
-
-        if (navigator.share) {
-            try {
-                await navigator.share({ title: "FutTok", text: texto });
-            } catch (erro) {
-                console.log("Compartilhamento cancelado.");
-            }
-        } else {
-            alert(texto);
-        }
-    });
-
-    acoes.append(curtir, comentar, compartilhar);
-
-    const areaComentarios = document.createElement("div");
-    areaComentarios.className = "comentarios";
-
-    publicacao.append(
-        usuario,
-        player,
-        legenda,
-        acoes,
-        areaComentarios
-    );
-
-    listaVideos.appendChild(publicacao);
-});
-
-// Mostrar perfis
-const listaPerfis = document.getElementById("listaPerfis");
-
-perfis.forEach(perfil => {
-    const card = document.createElement("div");
-    card.className = "perfil";
-
-    const foto = document.createElement("img");
-    foto.src = perfil.foto;
-    foto.alt = perfil.nome;
-
-    const nome = document.createElement("h3");
-    nome.textContent = perfil.nome;
-
-    const usuario = document.createElement("p");
-    usuario.textContent = perfil.usuario;
-
-    const botao = document.createElement("button");
-    botao.textContent = "Seguir";
-
-    botao.addEventListener("click", () => {
-        const seguindo = botao.classList.toggle("seguindo");
-
-        botao.textContent = seguindo ? "Seguindo ✓" : "Seguir";
-    });
-
-    card.append(foto, nome, usuario, botao);
-    listaPerfis.appendChild(card);
-});
-
-// Pesquisa de pessoas
-document.getElementById("pesquisa").addEventListener("input", function() {
-    const termo = this.value.toLowerCase();
-
-    document.querySelectorAll(".perfil").forEach(card => {
-        const nome = card.querySelector("h3").textContent.toLowerCase();
-        const usuario = card.querySelector("p").textContent.toLowerCase();
-
-        card.style.display =
-            nome.includes(termo) || usuario.includes(termo)
-            ? "block" : "none";
-    });
+  event.target.value = "";
 });
