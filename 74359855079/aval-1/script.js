@@ -1,69 +1,85 @@
-let tarefas = [];
+let produtos = [];
 
-const formulario = document.getElementById("formTarefa");
-const lista = document.getElementById("listaTarefas");
+const formulario = document.getElementById("formProduto");
 
 formulario.addEventListener("submit", function(event) {
     event.preventDefault();
 
     const codigo = document.getElementById("codigo").value.trim();
-    const titulo = document.getElementById("titulo").value.trim();
-    const prioridade = document.getElementById("prioridade").value;
+    const descricao = document.getElementById("descricao").value.trim();
+    const quantidade = Number(document.getElementById("quantidade").value);
+    const valor = Number(document.getElementById("valor").value);
 
-    if (tarefas.some(tarefa => tarefa.codigo === codigo)) {
-        alert("Esse código já existe!");
+    if (!codigo || !descricao || quantidade < 0 ||
+        !Number.isFinite(quantidade) ||
+        !Number.isFinite(valor) || valor < 0) {
+        alert("Preencha os dados corretamente!");
         return;
     }
 
-    const tarefa = {
+    const existe = produtos.some(produto => produto.codigo === codigo);
+
+    if (existe) {
+        alert("Já existe um produto com esse código!");
+        return;
+    }
+
+    const produto = {
         codigo: codigo,
-        titulo: titulo,
-        prioridade: prioridade,
-        status: "Pendente"
+        descricao: descricao,
+        quantidade: quantidade,
+        valor: valor
     };
 
-    tarefas.push(tarefa);
+    produtos.push(produto);
 
     formulario.reset();
-    mostrarTarefas();
+    mostrarProdutos();
 });
 
-function mostrarTarefas() {
+function mostrarProdutos() {
+    const lista = document.getElementById("listaProdutos");
+
     lista.innerHTML = "";
 
-    tarefas.forEach((tarefa, indice) => {
-        const item = document.createElement("li");
+    produtos.forEach((produto, indice) => {
+        const item = document.createElement("div");
+        item.className = "produto";
 
-        if (tarefa.status === "Concluída") {
-            item.classList.add("concluida");
-        }
+        const informacoes = document.createElement("p");
 
-        const informacoes = document.createElement("span");
         informacoes.textContent =
-            `Código: ${tarefa.codigo} | Título: ${tarefa.titulo} | Prioridade: ${tarefa.prioridade} | Status: ${tarefa.status}`;
+            `Código: ${produto.codigo} | Descrição: ${produto.descricao} | Quantidade: ${produto.quantidade} | Valor: ${produto.valor.toLocaleString("pt-BR", {style: "currency", currency: "BRL"})}`;
 
-        const botaoConcluir = document.createElement("button");
-        botaoConcluir.textContent = "Concluir";
-        botaoConcluir.className = "concluir";
+        const botao = document.createElement("button");
+        botao.textContent = "Excluir Produto";
+        botao.className = "excluir";
 
-        botaoConcluir.addEventListener("click", function() {
-            tarefa.status = "Concluída";
-            mostrarTarefas();
-        });
-
-        const botaoExcluir = document.createElement("button");
-        botaoExcluir.textContent = "Excluir";
-        botaoExcluir.className = "excluir";
-
-        botaoExcluir.addEventListener("click", function() {
-            tarefas.splice(indice, 1);
-            mostrarTarefas();
+        botao.addEventListener("click", function() {
+            produtos.splice(indice, 1);
+            mostrarProdutos();
         });
 
         item.appendChild(informacoes);
-        item.appendChild(botaoConcluir);
-        item.appendChild(botaoExcluir);
+        item.appendChild(botao);
 
         lista.appendChild(item);
     });
+
+    const totalQuantidade = produtos.reduce(
+        (total, produto) => total + produto.quantidade, 0
+    );
+
+    const valorTotal = produtos.reduce(
+        (total, produto) => total + produto.quantidade * produto.valor, 0
+    );
+
+    document.getElementById("totalEstoque").textContent =
+        "Total de produtos: " + totalQuantidade;
+
+    document.getElementById("valorEstoque").textContent =
+        "Valor total: " + valorTotal.toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL"
+        });
 }
