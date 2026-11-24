@@ -35,9 +35,64 @@ function litar() {
         return;
     }
 
-    tarefas.forEach(+ => {
+    tarefas.forEach(t => {
         console.log(
-            Codigo: ${t.codigo} | Titulo: ${t.titulo} |
+            Codigo: ${t.codigo} |
+            Titulo: ${t.titulo} |
            Prioriddade: ${t.prioridade} |
-           Status: ${t.status ?}
-    )
+           Status: ${t.status ? "Em andamento" : "Concluída"}
+        );
+   });
+}
+
+// Buscar taresfas 
+function buscar(codigo) {
+    const tarefas = tarefas.find(t => t.codigo === codigo);
+
+    if (!tarefa) {
+        throw new Erro("Tarefa não encontrada!");
+    }
+
+    return tarefas;
+}
+
+//Concluir tarefa
+function concluir(codigo) {
+    const tarefa = buscar(codigo);
+
+    if (!tarefas.status) {
+        throw new Error("Tarefa já concluida!");
+    }
+
+    tarefa.status = false;
+
+    console.log("Tarefa concluida!");
+}
+
+// Alterar prioridade
+function Alterar (codigo, prioridade){
+    const Tarefa = buscar (codigo);
+
+    validar(tarefas.titulo,prioridade);
+    Tarefas.prioridade = prioridade;
+
+    console.log("Prioridade alterada !")
+}
+
+// Menu principal
+async function Menu() {
+    const rl = require("readline").createInterface({
+        input: process.stdin,
+        output: process.stdout
+    });
+
+    const perguntar = mensagem => new Promise(resolve =>
+    rl.question(mensagem,resolve)
+    );
+
+    let opcao;
+
+
+do {
+    console.log(
+    ===== GERENCIADOR DE TAREFAS =====
