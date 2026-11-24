@@ -355,4 +355,50 @@ document.addEventListener("DOMContentLoaded", () => {
     animarCartoes();
 
     console.log("Sistema Vida Saudável carregado com sucesso!");
-\});$0
+\});$0function mostrarReceita(tipo) {
+
+    const resultado = document.getElementById("resultado");
+
+    const receitas = {
+        salada: `
+            <h3>🥗 Salada colorida</h3>
+            <p>1. Lave bem as folhas e os vegetais.</p>
+            <p>2. Corte o tomate e a cenoura.</p>
+            <p>3. Misture todos os ingredientes.</p>
+            <p>4. Tempere com azeite e limão.</p>
+            <strong>Pronto! Aproveite sua salada!</strong>
+        `,
+
+        vitamina: `
+            <h3>🍌 Vitamina de banana</h3>
+            <p>1. Descasque uma banana.</p>
+            <p>2. Coloque no liquidificador.</p>
+            <p>3. Acrescente leite e aveia.</p>
+            <p>4. Bata até ficar cremoso.</p>
+            <strong>Sua vitamina está pronta!</strong>
+        `,
+
+        mingau: `
+            <h3>🥣 Mingau de aveia</h3>
+            <p>1. Coloque leite e aveia em uma panela.</p>
+            <p>2. Mexa em fogo baixo.</p>
+            <p>3. Cozinhe até engrossar.</p>
+            <p>4. Acrescente frutas a gosto.</p>
+            <strong>Bom apetite!</strong>
+        `
+    \};
+
+    resultado.innerHTML = receitas[tipo];
+\}
+
+document.getElementById("formulario")
+.addEventListener("submit", function(event) {
+
+    event.preventDefault();
+
+    const nome = document.getElementById("nome").value;
+
+    document.getElementById("resposta").textContent =
+        "Obrigado, " + nome + "! Sua mensagem foi recebida.";
+
+    this.reset();$0
