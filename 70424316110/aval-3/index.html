@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <script src="https://cdn.tailwindcss.com"></script>
-
+<link href="style.css" rel="stylesheet">
 </head>
 <body>
   <div style="font-family: Arial, sans-serif; background-color: #ffffff; padding: 25px; border-radius: 10px; border: 1px solid #d1d5db; box-shadow: 0 4px 10px rgba(0,0,0,0.1); max-width: 380px; margin: 20px auto;">
@@ -12,24 +12,57 @@
 
   <div style="margin-bottom: 15px;">
     <label for="nome" style="display: block; margin-bottom: 5px; color: #374151; font-weight: bold; font-size: 14px;">Nome do Paciente:</label>
-    <input type="text" id="nome" value="Ramon" placeholder="Ex: Ramon" style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 15px; box-sizing: border-box;">
+    <input type="text" id="nome" placeholder="Ex: Ramon" style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 15px; box-sizing: border-box;">
   </div>
 
   <div style="margin-bottom: 15px;">
     <label for="peso" style="display: block; margin-bottom: 5px; color: #374151; font-weight: bold; font-size: 14px;">Peso (kg):</label>
-    <input type="text" id="peso" value="60.6" placeholder="Ex: 60.6" style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 15px; box-sizing: border-box;">
+    <input type="text" id="peso" placeholder="Ex: 60.6" style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 15px; box-sizing: border-box;">
   </div>
 
   <div style="margin-bottom: 15px;">
     <label for="altura" style="display: block; margin-bottom: 5px; color: #374151; font-weight: bold; font-size: 14px;">Altura (m):</label>
-    <input type="text" id="altura" value="1,64" placeholder="Ex: 1,64" style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 15px; box-sizing: border-box;">
+    <input type="text" id="altura" placeholder="Ex: 1,64" style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 15px; box-sizing: border-box;">
   </div>
 
-  <button type="button" onclick="var n=document.getElementById('nome').value.trim();var p=parseFloat(document.getElementById('peso').value.replace(',','.'));var a=parseFloat(document.getElementById('altura').value.replace(',','.'));var r=document.getElementById('resultado');if(!n||isNaN(p)||isNaN(a)||p<=0||a<=0){r.style.display='block';r.style.backgroundColor='#fef2f2';r.style.borderLeftColor='#ef4444';r.style.color='#991b1b';r.innerHTML='Preencha todos os campos corretamente.';return;\}var imc=p/(a*a);var c='';if(imc<18.5){c='Abaixo do peso';\}else if(imc<25){c='Peso normal';\}else if(imc<30){c='Sobrepeso';\}else if(imc<35){c='Obesidade grau I';\}else if(imc<40){c='Obesidade grau II';\}else{c='Obesidade grau III';\}r.style.display='block';r.style.backgroundColor='#ecfdf5';r.style.borderLeftColor='#10b981';r.style.color='#065f46';r.innerHTML='<strong>Paciente:</strong> '+n+'<br><strong>IMC:</strong> '+imc.toFixed(2)+'<br><strong>Classificação:</strong> '+c;" style="width: 100%; padding: 12px; background-color: #10b981; color: #ffffff; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 5px;">Calcular IMC</button>
+  <button type="button" id="btnCalcular" style="width: 100%; padding: 12px; background-color: #10b981; color: #ffffff; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 5px;">Calcular IMC</button>
 
   <div id="resultado" style="margin-top: 18px; padding: 15px; background-color: #ecfdf5; border-left: 5px solid #10b981; border-radius: 6px; color: #065f46; line-height: 1.5; display: none;"></div>
 </div>
-  
+
+<script>
+  let nome, peso, altura, imc, classificacao, res;
+
+  document.getElementById('btnCalcular').onclick = () => (
+    nome = document.getElementById('nome').value.trim(),
+    peso = parseFloat(document.getElementById('peso').value.replace(',', '.')),
+    altura = parseFloat(document.getElementById('altura').value.replace(',', '.')),
+    res = document.getElementById('resultado'),
+    (!nome || isNaN(peso) || isNaN(altura) || peso <= 0 || altura <= 0)
+      ? (
+          res.style.display = 'block',
+          res.style.backgroundColor = '#fef2f2',
+          res.style.borderLeftColor = '#ef4444',
+          res.style.color = '#991b1b',
+          res.innerHTML = 'Preencha todos os campos corretamente.'
+        )
+      : (
+          imc = peso / (altura * altura),
+          classificacao = imc < 18.5 ? 'Abaixo do peso'
+                        : imc < 25 ? 'Peso normal'
+                        : imc < 30 ? 'Sobrepeso'
+                        : imc < 35 ? 'Obesidade grau I'
+                        : imc < 40 ? 'Obesidade grau II'
+                        : 'Obesidade grau III',
+          res.style.display = 'block',
+          res.style.backgroundColor = '#ecfdf5',
+          res.style.borderLeftColor = '#10b981',
+          res.style.color = '#065f46',
+          res.innerHTML = '<strong>Paciente:</strong> ' + nome + '<br><strong>IMC:</strong> ' + imc.toFixed(2) + '<br><strong>Classificação:</strong> ' + classificacao
+        )
+  );
+</script>
+  <script src="script.js"></script>
   
 </body>
 </html>
