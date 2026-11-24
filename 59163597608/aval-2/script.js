@@ -26,27 +26,92 @@ function validar(titulo, prioridade) {
 
       tarefas.push(tarefa);
       console.log("tarefa cadastrar com sucesso!")
+  
+      tarefas.push(tarefa):
+
+      console.log("tarefa cadastrada com sucesso!");
+
+      return tarefa;
   }
 
   // Listar tarefas
-  function listar()
+  function listar() {
       if (tarefas.length === 0) {
         console.log("Nenhuma tarefa cadasstrar!");
         return;
       }
 
-      tarefa.foreach(t=> {
+      tarefa.forEach(t => {
         console.log(
-             codigo: $(t.codigo) | titulo: $(t.titulo) |
-             prioridade: $(t.prioridade) |
-             status: $(t.status ? "Em anadamento" : "concluindo")
+             'codigo: ${t.codigo} | titulo: ${t.titulo} |
+             prioridade: ${t.prioridade} |
+             status: ${t.status ? "Em anadamento" : "concluindo"}'
         );
-      });
+     });
+     
+  }
+
+ // Buscar tarefas
+ function buscar(codigo) {
+    const tarefa = tarefas.find(t => t.codigo === codigo);
+
+    if(!tarefa) {
+        throw new Error("tarefa nao encontrada!");
+    }
+    
+    return tarefa;
  }
+  
+// concluir tarefa
+function concluir(codigo) {
+    const tarefa = buscar(codigo);
 
- // Buscar tarefa
+    if (!tarefa.status) {
+        throw new Error("tarefa ja concluida!");
+    }
+ 
+    tarefas.status = false;
+    
+    console.log("tarefa concluida!")
+}
+
+// Alterar prioridade
+function Alterar (codigo, prioridade){
+    const tarefa = buscar(codigo);
+
+    validar(tarefa.titulo, prioridade);
+    tarefa.proridade = prioridade;
+
+    console.log("prioridade alterada!");
+}
+
+// Menu principal
+async function Menu() {
+    const r1 = require("readline").createinterface({
+        input: process.stdin,
+        output: process.stdout
+    });
+
+    const perguntar = mensagem => new promise(resolve =>
+    r1.question(mensagem, resolve)
+    );
+
+    let opcao;
 
 
-        
-        
+do {
+    console.log(
+
+    ===== GERENCIADOR DE TAREFAS =====
+
+    1 - Cadastrar Tarefas
+    2 - Listar Tarefas
+    3 - Concluir Tarefas
+    4 - Alterar Prioridade
+    0 - StaticRange
+
+    );
+    
+}
+
 
