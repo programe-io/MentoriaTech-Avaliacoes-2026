@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Código JavaScript</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <style>body{margin:0;background:#0d1117}pre{margin:0}code.hljs{padding:1.5rem;min-height:100vh;box-sizing:border-box}</style>
+</head>
+<body>
+  <pre><code class="language-javascript">
+let estoque = [];
+
+function cadastrarProduto() {
+    let nome = prompt("Nome do produto:");
+    let preco = Number(prompt("Preço do produto:"));
+    let quantidade = Number(prompt("Quantidade inicial:"));
+
+    if (!nome || preco &lt;= 0 || quantidade &lt; 0) {
+        alert("Dados inválidos!");
+        return;
+    }
+
+    estoque.push({
+        nome: nome,
+        preco: preco,
+        quantidade: quantidade
+    });
+
+    alert("Produto cadastrado com sucesso!");
+}
+
+function listarProdutos() {
+    if (estoque.length === 0) {
+        alert("Estoque vazio!");
+        return;
+    }
+
+    let lista = "=== PRODUTOS EM ESTOQUE ===\n";
+
+    estoque.forEach((produto, i) =&gt; {
+        lista += `\n${i + 1}. ${produto.nome}`;
+        lista += `\nPreço: R$ ${produto.preco.toFixed(2)}`;
+        lista += `\nQuantidade: ${produto.quantidade}\n`;
+    });
+
+    alert(lista);
+}
+
+function entradaEstoque() {
+    let nome = prompt("Nome do produto:");
+    let produto = estoque.find(p =&gt; 
+        p.nome.toLowerCase() === nome.toLowerCase()
+    );
+
+    if (!produto) {
+        alert("Produto não encontrado!");
+        return;
+    }
+
+    let quantidade = Number(prompt("Quantidade de entrada:"));
+
+    if (quantidade &lt;= 0) {
+        alert("Quantidade inválida!");
+        return;
+    }
+
+    produto.quantidade += quantidade;
+    alert("Entrada registrada!");
+}
+
+function saidaEstoque() {
+    let nome = prompt("Nome do produto:");
+    let produto = estoque.find(p =&gt; 
+        p.nome.toLowerCase() === nome.toLowerCase()
+    );
+
+    if (!produto) {
+        alert("Produto não encontrado!");
+        return;
+    }
+
+    let quantidade = Number(prompt("Quantidade de saída:"));
+
+    if (quantidade &lt;= 0 || quantidade &gt; produto.quantidade) {
+        alert("Quantidade inválida ou estoque insuficiente!");
+        return;
+    }
+
+    produto.quantidade -= quantidade;
+    alert("Saída registrada!");
+}
+
+function valorTotalEstoque() {
+    let total = estoque.reduce((soma, produto) =&gt; {
+        return soma + produto.preco * produto.quantidade;
+    }, 0);
+
+    alert("Valor total do estoque: R$ " + total.toFixed(2));
+}
+
+function menu() {
+    let opcao;
+
+    do {
+        opcao = prompt(
+            "=== SISTEMA DE ESTOQUE ===\n\n" +
+            "1 - Cadastrar produto\n" +
+            "2 - Listar produtos\n" +
+            "3 - Registrar entrada\n" +
+            "4 - Registrar saída\n" +
+            "5 - Valor total do estoque\n" +
+            "0 - Sair\n\n" +
+            "Escolha uma opção:"
+        );
+
+        switch (opcao) {
+            case "1":
+                cadastrarProduto();
+                break;
+            case "2":
+                listarProdutos();
+                break;
+            case "3":
+                entradaEstoque();
+                break;
+            case "4":
+                saidaEstoque();
+                break;
+            case "5":
+                valorTotalEstoque();
+                break;
+            case "0":
+                alert("Sistema encerrado!");
+                break;
+            default:
+                alert("Opção inválida!");
+        }
+    } while (opcao !== "0");
+}
+
+menu();
+</code></pre>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+</body>
+</html>
