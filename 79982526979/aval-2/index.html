@@ -1,0 +1,438 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VYRO — Seu espaço, seu ritmo</title>
+<link rel="stylesheet" href="style.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"><link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+<div class="app">
+
+<aside class="sidebar">
+    <div class="logo">vyro<span>.</span></div>
+    <div class="tagline">Seu espaço. Seu ritmo.</div>
+
+    <nav class="nav">
+        <button class="active" onclick="changeView('feed',this)">
+            <span class="nav-icon">⌂</span> Início
+        </button>
+
+        <button onclick="changeView('explore',this)">
+            <span class="nav-icon">⌕</span> Descobrir
+        </button>
+
+        <button onclick="changeView('saved',this)">
+            <span class="nav-icon">◇</span> Salvos
+        </button>
+
+        <button onclick="changeView('profile',this)">
+            <span class="nav-icon">◉</span> Meu perfil
+        </button>
+    </nav>
+
+    <button class="create-button" onclick="openModal()">＋ Criar publicação</button>
+
+    <div class="sidebar-bottom">
+        <div class="mini-profile">
+            <div class="avatar">🪐</div>
+            <div>
+                <strong>Alex Morgan</strong>
+                <small>@alexm</small>
+            </div>
+        </div>
+    </div>
+</aside>
+
+<main class="main">
+
+    <header class="topbar">
+        <div class="greeting">
+            <h1 id="viewTitle">Seu universo hoje.</h1>
+            <p id="viewSubtitle">Ideias, pessoas e descobertas em um só lugar.</p>
+        </div>
+
+        <div class="search-box">
+            <span>⌕</span>
+            <input type="text" id="searchInput" placeholder="Pesquisar no VYRO...">
+        </div>
+    </header>
+
+    <section id="feedView">
+
+        <div class="stories">
+
+            <div class="story" onclick="showMessage('Você está vendo seu perfil.')">
+                <div class="story-ring">
+                    <div class="avatar">🪐</div>
+                </div>
+                <span>Seu story</span>
+            </div>
+
+            <div class="story">
+                <div class="story-ring">
+                    <div class="avatar orange">🎨</div>
+                </div>
+                <span>marina</span>
+            </div>
+
+            <div class="story">
+                <div class="story-ring">
+                    <div class="avatar purple">🎧</div>
+                </div>
+                <span>leo.wav</span>
+            </div>
+
+            <div class="story">
+                <div class="story-ring">
+                    <div class="avatar yellow">🌻</div>
+                </div>
+                <span>sofia</span>
+            </div>
+
+            <div class="story">
+                <div class="story-ring">
+                    <div class="avatar blue">📷</div>
+                </div>
+                <span>pedro.jpg</span>
+            </div>
+
+            <div class="story">
+                <div class="story-ring seen">
+                    <div class="avatar green">🌿</div>
+                </div>
+                <span>luiza</span>
+            </div>
+
+        </div>
+
+        <div class="section-title">
+            <h2>Seu feed</h2>
+            <button onclick="showMessage('Você está vendo as publicações mais recentes.')">Mais recentes ↗</button>
+        </div>
+
+        <div id="posts">
+
+            <article class="post" data-search="marina arte desenho criatividade sol cores pintura">
+
+                <div class="post-header">
+                    <div class="post-user">
+                        <div class="avatar orange">🎨</div>
+                        <div>
+                            <strong>marina.studio</strong>
+                            <small>há 18 minutos · Arte</small>
+                        </div>
+                    </div>
+                    <button class="more">•••</button>
+                </div>
+
+                <p class="post-text">
+                    Às vezes, tudo que uma ideia precisa é de um pouco de cor e espaço para existir. ☀️
+                </p>
+
+                <div class="art art-sun">
+                    <svg viewBox="0 0 700 460" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="700" height="460" fill="#f5d5b0"/>
+                        <circle cx="540" cy="112" r="75" fill="#ff855e"/>
+                        <path d="M0 300 Q130 190 280 290 T700 220 V460 H0Z" fill="#e49b75"/>
+                        <path d="M0 360 Q200 270 390 340 T700 320 V460 H0Z" fill="#b76e61"/>
+                        <path d="M70 100 Q190 70 300 120" stroke="#fff2db" stroke-width="8" stroke-linecap="round" fill="none"/>
+                        <path d="M100 130 Q220 100 330 150" stroke="#fff2db" stroke-width="4" stroke-linecap="round" fill="none"/>
+                        <path d="M180 460 L240 260 L290 460" fill="#e6c79c"/>
+                        <path d="M390 460 L480 260 L570 460" fill="#d8aa86"/>
+                        <path d="M400 330 Q470 250 550 330" fill="none" stroke="#fff0da" stroke-width="6"/>
+                        <text x="45" y="415" font-family="sans-serif" font-size="24" font-weight="bold" fill="#fff3de">COLOR YOUR DAY.</text>
+                    </svg>
+                </div>
+
+                <div class="post-actions">
+                    <button class="action like-action" onclick="likePost(this)">♡ <span>Curtir</span></button>
+                    <button class="action" onclick="focusComment(this)">◯ <span>Comentar</span></button>
+                    <button class="action save-action" onclick="savePost(this)">◇</button>
+                </div>
+
+                <div class="likes">248 curtidas</div>
+                <div class="comments-preview">Ver todos os 32 comentários</div>
+
+                <div class="comment-box">
+                    <input placeholder="Escreva um comentário..." onkeydown="commentEnter(event,this)">
+                    <button onclick="addComment(this)">Enviar</button>
+                </div>
+            </article>
+
+            <article class="post" data-search="leo música fone audio noite cidade música">
+
+                <div class="post-header">
+                    <div class="post-user">
+                        <div class="avatar purple">🎧</div>
+                        <div>
+                            <strong>leo.wav</strong>
+                            <small>há 46 minutos · Música</small>
+                        </div>
+                    </div>
+                    <button class="more">•••</button>
+                </div>
+
+                <p class="post-text">
+                    A cidade fica diferente quando a gente escolhe a trilha sonora certa.
+                </p>
+
+                <div class="art art-night">
+                    <svg viewBox="0 0 700 460" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="700" height="460" fill="#172d3b"/>
+                        <circle cx="550" cy="90" r="55" fill="#e4dca4"/>
+                        <circle cx="570" cy="75" r="55" fill="#172d3b"/>
+                        <g fill="#d8e7e3">
+                            <circle cx="80" cy="90" r="3"/>
+                            <circle cx="150" cy="170" r="4"/>
+                            <circle cx="300" cy="80" r="3"/>
+                            <circle cx="420" cy="140" r="4"/>
+                            <circle cx="620" cy="200" r="3"/>
+                            <circle cx="220" cy="240" r="3"/>
+                        </g>
+                        <path d="M0 300 L100 210 L170 300 L260 170 L340 300 L450 220 L520 300 L620 180 L700 280 V460 H0Z" fill="#304956"/>
+                        <rect x="45" y="280" width="85" height="180" fill="#233c4b"/>
+                        <rect x="150" y="320" width="70" height="140" fill="#203644"/>
+                        <rect x="250" y="240" width="110" height="220" fill="#203644"/>
+                        <rect x="390" y="290" width="95" height="170" fill="#223846"/>
+                        <rect x="530" y="250" width="120" height="210" fill="#233b49"/>
+                        <g fill="#e7d18b">
+                            <rect x="70" y="310" width="12" height="18"/>
+                            <rect x="105" y="310" width="12" height="18"/>
+                            <rect x="70" y="350" width="12" height="18"/>
+                            <rect x="105" y="350" width="12" height="18"/>
+                            <rect x="275" y="270" width="15" height="20"/>
+                            <rect x="320" y="270" width="15" height="20"/>
+                            <rect x="275" y="315" width="15" height="20"/>
+                            <rect x="320" y="315" width="15" height="20"/>
+                            <rect x="550" y="280" width="14" height="20"/>
+                            <rect x="590" y="280" width="14" height="20"/>
+                            <rect x="550" y="325" width="14" height="20"/>
+                            <rect x="590" y="325" width="14" height="20"/>
+                        </g>
+                        <path d="M0 430 Q150 390 350 430 T700 410 V460 H0Z" fill="#152630"/>
+                        <text x="40" y="55" font-family="sans-serif" font-size="20" fill="#c8d9e1" letter-spacing="4">AFTER HOURS</text>
+                    </svg>
+                </div>
+
+                <div class="post-actions">
+                    <button class="action like-action" onclick="likePost(this)">♡ <span>Curtir</span></button>
+                    <button class="action" onclick="focusComment(this)">◯ <span>Comentar</span></button>
+                    <button class="action save-action" onclick="savePost(this)">◇</button>
+                </div>
+
+                <div class="likes">1.024 curtidas</div>
+                <div class="comments-preview">Ver todos os 84 comentários</div>
+
+                <div class="comment-box">
+                    <input placeholder="Escreva um comentário..." onkeydown="commentEnter(event,this)">
+                    <button onclick="addComment(this)">Enviar</button>
+                </div>
+            </article>
+
+            <article class="post" data-search="sofia natureza flores jardim fotografia plantas">
+
+                <div class="post-header">
+                    <div class="post-user">
+                        <div class="avatar yellow">🌻</div>
+                        <div>
+                            <strong>sofia.nature</strong>
+                            <small>há 2 horas · Natureza</small>
+                        </div>
+                    </div>
+                    <button class="more">•••</button>
+                </div>
+
+                <p class="post-text">
+                    Pequenos lugares, grandes pausas. Um registro de hoje. 🌱
+                </p>
+
+                <div class="art art-green">
+                    <svg viewBox="0 0 700 460" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="700" height="460" fill="#c8d9c4"/>
+                        <circle cx="150" cy="120" r="85" fill="#e8e5b5"/>
+                        <path d="M0 300 Q150 170 300 300 T700 250 V460 H0Z" fill="#94b59b"/>
+                        <path d="M0 370 Q200 260 400 360 T700 320 V460 H0Z" fill="#718f7c"/>
+                        <g stroke="#456b58" stroke-width="6" fill="none">
+                            <path d="M350 460 Q330 350 355 220"/>
+                            <path d="M350 370 Q280 300 235 305"/>
+                            <path d="M350 325 Q430 240 470 255"/>
+                            <path d="M350 280 Q280 210 250 200"/>
+                            <path d="M350 250 Q410 170 455 170"/>
+                        </g>
+                        <g fill="#577e62">
+                            <ellipse cx="250" cy="300" rx="75" ry="28" transform="rotate(25 250 300)"/>
+                            <ellipse cx="465" cy="255" rx="75" ry="30" transform="rotate(-25 465 255)"/>
+                            <ellipse cx="260" cy="195" rx="70" ry="28" transform="rotate(30 260 195)"/>
+                            <ellipse cx="450" cy="165" rx="80" ry="32" transform="rotate(-25 450 165)"/>
+                        </g>
+                        <g fill="#f4df7a">
+                            <circle cx="155" cy="280" r="25"/>
+                            <circle cx="180" cy="280" r="25"/>
+                            <circle cx="168" cy="255" r="25"/>
+                            <circle cx="168" cy="305" r="25"/>
+                            <circle cx="168" cy="280" r="14" fill="#9d7945"/>
+                        </g>
+                        <text x="45" y="420" font-family="sans-serif" font-size="22" fill="#f1f5e8">SLOW DOWN.</text>
+                    </svg>
+                </div>
+
+                <div class="post-actions">
+                    <button class="action like-action" onclick="likePost(this)">♡ <span>Curtir</span></button>
+                    <button class="action" onclick="focusComment(this)">◯ <span>Comentar</span></button>
+                    <button class="action save-action" onclick="savePost(this)">◇</button>
+                </div>
+
+                <div class="likes">562 curtidas</div>
+                <div class="comments-preview">Ver todos os 19 comentários</div>
+
+                <div class="comment-box">
+                    <input placeholder="Escreva um comentário..." onkeydown="commentEnter(event,this)">
+                    <button onclick="addComment(this)">Enviar</button>
+                </div>
+            </article>
+
+        </div>
+    </section>
+
+    <section id="exploreView" class="extra-view">
+        <div class="empty-state">
+            <h2>Explore o VYRO ✦</h2>
+            <p>Descubra novas ideias e publicações.</p>
+        </div>
+        <div id="explorePosts"></div>
+    </section>
+
+    <section id="savedView" class="extra-view">
+        <div class="empty-state">
+            <h2>Suas descobertas</h2>
+            <p>As publicações que você salvar aparecerão aqui.</p>
+        </div>
+        <div id="savedPosts"></div>
+    </section>
+
+    <section id="profileView" class="extra-view">
+        <div class="empty-state">
+            <div class="avatar" style="margin:auto;width:80px;height:80px;font-size:34px;">🪐</div>
+            <h2>Alex Morgan</h2>
+            <p>@alexm · Criando meu próprio caminho.</p>
+            <p id="profileStats">0 publicações</p>
+            <button onclick="openModal()">Criar publicação</button>
+        </div>
+        <div id="profilePosts"></div>
+    </section>
+
+</main>
+
+<aside class="right-panel">
+
+    <div class="panel-block">
+        <div class="panel-heading">
+            <h3>Para conhecer</h3>
+            <button onclick="showMessage('Novas sugestões em breve!')">Ver tudo</button>
+        </div>
+
+        <div class="suggested">
+
+            <div class="suggested-person">
+                <div class="avatar orange">🎨</div>
+                <div class="person-info">
+                    <strong>marina.studio</strong>
+                    <small>Arte & design</small>
+                </div>
+                <button class="follow" onclick="followPerson(this)">Seguir</button>
+            </div>
+
+            <div class="suggested-person">
+                <div class="avatar purple">🎧</div>
+                <div class="person-info">
+                    <strong>leo.wav</strong>
+                    <small>Música</small>
+                </div>
+                <button class="follow" onclick="followPerson(this)">Seguir</button>
+            </div>
+
+            <div class="suggested-person">
+                <div class="avatar yellow">🌻</div>
+                <div class="person-info">
+                    <strong>sofia.nature</strong>
+                    <small>Fotografia</small>
+                </div>
+                <button class="follow" onclick="followPerson(this)">Seguir</button>
+            </div>
+
+            <div class="suggested-person">
+                <div class="avatar blue">📷</div>
+                <div class="person-info">
+                    <strong>pedro.jpg</strong>
+                    <small>Momentos</small>
+                </div>
+                <button class="follow" onclick="followPerson(this)">Seguir</button>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="panel-block">
+        <div class="panel-heading">
+            <h3>Em movimento</h3>
+        </div>
+
+        <div class="trend-card">
+            <small>ASSUNTO EM ALTA</small>
+            <strong>#PequenasDescobertas</strong>
+            <p>+ 340 publicações esta semana</p>
+        </div>
+
+        <div class="trend-card">
+            <small>ASSUNTO EM ALTA</small>
+            <strong>#MeuProcesso</strong>
+            <p>+ 215 publicações esta semana</p>
+        </div>
+
+        <div class="trend-card">
+            <small>ASSUNTO EM ALTA</small>
+            <strong>#ForaDaRotina</strong>
+            <p>+ 182 publicações esta semana</p>
+        </div>
+    </div>
+
+    <div class="highlight-card">
+        <div class="highlight-decoration"></div>
+        <h3>Seu próximo capítulo começa aqui.</h3>
+        <p>Compartilhe ideias, encontre inspiração e faça parte de novas conversas.</p>
+        <button onclick="openModal()">Criar agora ↗</button>
+    </div>
+
+</aside>
+
+</div>
+
+<nav class="mobile-bottom">
+    <button class="active" onclick="mobileView('feed','home')">⌂</button>
+    <button onclick="mobileView('explore','search')">⌕</button>
+    <button class="mobile-create" onclick="openModal()">＋</button>
+    <button onclick="mobileView('saved','saved')">◇</button>
+    <button onclick="mobileView('profile','profile')">◉</button>
+</nav>
+
+<div class="modal" id="postModal">
+    <div class="modal-content">
+        <h2>Nova publicação ✦</h2>
+        <textarea id="postText" placeholder="O que está passando pela sua cabeça?"></textarea>
+        <input id="postCategory" placeholder="Categoria (ex: fotografia, música, ideias)">
+        <div class="modal-actions">
+            <button class="cancel" onclick="closeModal()">Cancelar</button>
+            <button class="publish" onclick="publishPost()">Publicar</button>
+        </div>
+    </div>
+</div>
+
+<script src="script.js"></script>
+
+<script src="script.js"></script></body>
+</html>
