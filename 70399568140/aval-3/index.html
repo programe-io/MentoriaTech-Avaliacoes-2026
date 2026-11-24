@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Clone Instagram - Projeto Completo</title>
+
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+  <!-- Boxicons CDN -->
+  <link href="https://cdn.boxicons.com/3.0.8/fonts/basic/boxicons.min.css" rel="stylesheet" />
+
+  <!-- CSS Customizado -->
+  <link rel="stylesheet" href="style.css" />
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body class="min-h-screen bg-muted text-slate-900 antialiased">
+
+  <!-- ==========================================
+       CABEÇALHO (HEADER)
+  =========================================== -->
+  <header class="sticky top-0 z-40 bg-card border-b border-border">
+    <div class="max-w-5xl mx-auto px-4">
+      <div class="flex items-center justify-between h-14 md:h-16">
+        
+        <!-- Logo -->
+        <a href="#" class="font-bold text-xl tracking-tight select-none">
+          Instagram
+        </a>
+
+        <!-- Campo de Pesquisa (Apenas Desktop - md:flex) -->
+        <div class="hidden md:flex items-center relative">
+          <i class='bx bx-search text-muted absolute left-3 text-lg'></i>
+          <input
+            id="search-input"
+            type="text"
+            placeholder="Pesquisar usuário ou legenda..."
+            class="w-64 h-9 bg-muted pl-10 pr-4 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-gray-300"
+          />
+        </div>
+
+        <!-- Menu de Ícones Mobile (Hambúrguer/Direct) -->
+        <div class="flex md:hidden items-center gap-4">
+          <button onclick="openNewPostModal()" aria-label="Nova postagem" class="text-2xl">
+            <i class='bx bx-plus-circle'></i>
+          </button>
+          <button aria-label="Notificações" class="text-2xl">
+            <i class='bx bx-heart'></i>
+          </button>
+        </div>
+
+        <!-- Menu de Opções Desktop (md:flex) -->
+        <div class="hidden md:flex items-center gap-5">
+          <button aria-label="Início" class="text-xl hover:text-gray-500 transition-colors cursor-pointer">
+            <i class='bx bx-home'></i>
+          </button>
+          <button aria-label="Mensagens" class="text-xl hover:text-gray-500 transition-colors cursor-pointer">
+            <i class='bx bx-send'></i>
+          </button>
+          <button onclick="openNewPostModal()" aria-label="Nova postagem" class="text-xl hover:text-gray-500 transition-colors cursor-pointer">
+            <i class='bx bx-plus-circle'></i>
+          </button>
+          <button aria-label="Explorar" class="text-xl hover:text-gray-500 transition-colors cursor-pointer">
+            <i class='bx bx-compass'></i>
+          </button>
+          <button aria-label="Curtidas" class="text-xl hover:text-gray-500 transition-colors cursor-pointer">
+            <i class='bx bx-heart'></i>
+          </button>
+          
+          <!-- Avatar do usuário no cabeçalho desktop -->
+          <button aria-label="Perfil" class="story-gradient p-0.5 rounded-full cursor-pointer">
+            <img 
+              src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80" 
+              alt="Perfil" 
+              class="w-7 h-7 rounded-full object-cover border border-white"
+            />
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- ==========================================
+       CONTEÚDO PRINCIPAL (FEED + SIDEBAR)
+  =========================================== -->
+  <main class="max-w-5xl mx-auto px-4 py-4 md:py-8 pb-20 md:pb-8">
+    <div class="flex justify-center gap-8">
+      
+      <!-- COLUNA ESQUERDA: STORIES E FEED -->
+      <div class="flex-1 max-w-lg w-full">
+        
+        <!-- Barra de Stories Horizontal -->
+        <section class="bg-card border border-border rounded-lg p-4 mb-4">
+          <div id="stories-container" class="flex gap-4 overflow-x-auto no-scrollbar">
+            <!-- Stories serão inseridos via JavaScript -->
+          </div>
+        </section>
+
+        <!-- Feed de Postagens -->
+        <div id="feed-container">
+          <!-- Postagens serão renderizadas dinamicamente via JavaScript -->
+        </div>
+
+      </div>
+
+      <!-- COLUNA DIREITA: BARRA LATERAL (ASIDE - APENAS DESKTOP) -->
+      <aside class="hidden md:block w-80 flex-shrink-0">
+        <div class="sticky top-20">
+          
+          <!-- Bloco 1: Perfil do Usuário Logado -->
+          <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center gap-3">
+              <img 
+                src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80" 
+                alt="Foto de perfil" 
+                class="w-14 h-14 rounded-full object-cover border border-border"
+              />
+              <div>
+                <p class="font-semibold text-sm">frojo_dev</p>
+                <p class="text-xs text-muted">Jonathan William</p>
+              </div>
+            </div>
+            <button class="text-blue-500 text-xs font-semibold hover:text-blue-700 cursor-pointer">
+              Trocar
+            </button>
+          </div>
+
+          <!-- Bloco 2: Sugestões para você -->
+          <div class="mb-4">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-sm font-semibold text-muted">Sugestões para você</span>
+              <button class="text-xs font-semibold hover:text-gray-500 cursor-pointer">Ver tudo</button>
+            </div>
+
+            <div id="suggestions-container" class="space-y-3">
+              <!-- Sugestões renderizadas via JavaScript -->
+            </div>
+          </div>
+
+          <!-- Bloco 3: Rodapé Informativo -->
+          <footer class="mt-8">
+            <p class="text-xs text-muted opacity-70 leading-relaxed">
+              Sobre · Ajuda · Imprensa · API · Carreiras · Privacidade · Termos · Localizações · Idioma
+            </p>
+            <p class="text-xs text-muted opacity-70 mt-4 uppercase">
+              © 2026 INSTAGRAM CLONE - PROJETO TAILWIND
+            </p>
+          </footer>
+
+        </div>
+      </aside>
+
+    </div>
+  </main>
+
+  <!-- ==========================================
+       MENU DE NAVEGAÇÃO INFERIOR (MOBILE ONLY)
+  =========================================== -->
+  <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-card border-t border-border z-50">
+    <div class="flex items-center justify-around h-14 px-4">
+      <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="p-2 text-2xl hover:text-gray-500 transition-colors" aria-label="Início">
+        <i class='bx bx-home'></i>
+      </button>
+      <button onclick="focusMobileSearch()" class="p-2 text-2xl hover:text-gray-500 transition-colors" aria-label="Pesquisar">
+        <i class='bx bx-search'></i>
+      </button>
+      <button onclick="openNewPostModal()" class="p-2 text-2xl hover:text-gray-500 transition-colors" aria-label="Nova postagem">
+        <i class='bx bx-plus'></i>
+      </button>
+      <button class="p-2 text-2xl hover:text-gray-500 transition-colors" aria-label="Curtidas">
+        <i class='bx bx-heart'></i>
+      </button>
+      <button class="p-2 text-2xl hover:text-gray-500 transition-colors" aria-label="Perfil">
+        <i class='bx bx-user'></i>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ==========================================
+       MODAL PARA NOVA POSTAGEM (EXTRA JS)
+  =========================================== -->
+  <div id="new-post-modal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+    <div class="bg-card rounded-xl max-w-md w-full p-6 shadow-xl">
+      <div class="flex justify-between items-center border-b border-border pb-3 mb-4">
+        <h2 class="font-semibold text-base">Criar nova publicação</h2>
+        <button onclick="closeNewPostModal()" class="text-2xl text-muted hover:text-black cursor-pointer">&times;</button>
+      </div>
+      <form id="new-post-form" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold mb-1">Localização</label>
+          <input type="text" id="post-location" placeholder="Ex: Parnaíba - PI" required class="w-full bg-muted border border-border rounded-lg px-3 py-2 text-sm" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold mb-1">URL da Imagem (Unsplash)</label>
+          <input type="url" id="post-image" placeholder="https://images.unsplash.com/..." value="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&auto=format&fit=crop&q=80" required class="w-full bg-muted border border-border rounded-lg px-3 py-2 text-sm" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold mb-1">Legenda</label>
+          <textarea id="post-caption" rows="3" placeholder="Escreva uma legenda..." required class="w-full bg-muted border border-border rounded-lg px-3 py-2 text-sm"></textarea>
+        </div>
+        <button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 rounded-lg text-sm transition-colors cursor-pointer">
+          Compartilhar
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Script Principal -->
+  <script src="script.js"></script>
+<script src="script.js"></script></body>
+</html>
