@@ -1,0 +1,26 @@
+2 // Lista (Array) de Produtos
+3 let produtos []:
+5-function validar Produto(descricao, quantidade, valor){
+6 if(descricao.length < 5)(
+7
+throw new Error("Descricao deve ter no minimo cinco caracteres");
+} 8
+9
+if(quantidade < 1){
+10
+throw new Error("Quantidade deve ser maior que zero");
+11
+}
+12
+if(valor <0){
+13
+throw new Error("Valor deve maior igual a zero");
+14
+15)
+16
+17- function cadastrarProduto(descricao, quantidade, valor){
+18
+19
+20
+let novoProduto
+21)
