@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Código JavaScript</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <style>body{margin:0;background:#0d1117}pre{margin:0}code.hljs{padding:1.5rem;min-height:100vh;box-sizing:border-box}</style>
+</head>
+<body>
+  <pre><code class="language-javascript">
+let tarefas = [];
+
+function adicionarTarefa(nome, descricao, prazo, prioridade) {
+    const tarefa = {
+        id: Date.now(),
+        nome: nome,
+        descricao: descricao,
+        prazo: prazo,
+        prioridade: prioridade,
+        status: "Pendente"
+    };
+
+    tarefas.push(tarefa);
+    console.log("Tarefa adicionada com sucesso!");
+}
+
+function listarTarefas() {
+    console.log("\n=== LISTA DE TAREFAS ===");
+
+    tarefas.forEach(tarefa =&gt; {
+        console.log("-------------------------");
+        console.log("ID:", tarefa.id);
+        console.log("Nome:", tarefa.nome);
+        console.log("Descrição:", tarefa.descricao);
+        console.log("Prazo:", tarefa.prazo);
+        console.log("Prioridade:", tarefa.prioridade);
+        console.log("Status:", tarefa.status);
+    });
+}
+
+function concluirTarefa(id) {
+    const tarefa = tarefas.find(t =&gt; t.id === id);
+
+    if (tarefa) {
+        tarefa.status = "Concluída";
+        console.log("Tarefa concluída!");
+    } else {
+        console.log("Tarefa não encontrada!");
+    }
+}
+
+function excluirTarefa(id) {
+    const tamanhoAnterior = tarefas.length;
+
+    tarefas = tarefas.filter(t =&gt; t.id !== id);
+
+    if (tarefas.length &lt; tamanhoAnterior) {
+        console.log("Tarefa excluída com sucesso!");
+    } else {
+        console.log("Tarefa não encontrada!");
+    }
+}
+
+function pesquisarTarefa(nome) {
+    const resultado = tarefas.filter(t =&gt;
+        t.nome.toLowerCase().includes(nome.toLowerCase())
+    );
+
+    console.log("Resultado da pesquisa:", resultado);
+}
+
+function filtrarPorStatus(status) {
+    const resultado = tarefas.filter(t =&gt; t.status === status);
+
+    console.log("Tarefas encontradas:", resultado);
+}
+
+function editarTarefa(id, novoNome, novaDescricao, novoPrazo, novaPrioridade) {
+    const tarefa = tarefas.find(t =&gt; t.id === id);
+
+    if (tarefa) {
+        tarefa.nome = novoNome;
+        tarefa.descricao = novaDescricao;
+        tarefa.prazo = novoPrazo;
+        tarefa.prioridade = novaPrioridade;
+
+        console.log("Tarefa editada com sucesso!");
+    } else {
+        console.log("Tarefa não encontrada!");
+    }
+}
+
+function resumoTarefas() {
+    const total = tarefas.length;
+
+    const pendentes = tarefas.filter(
+        t =&gt; t.status === "Pendente"
+    ).length;
+
+    const concluidas = tarefas.filter(
+        t =&gt; t.status === "Concluída"
+    ).length;
+
+    console.log("\n=== RESUMO ===");
+    console.log("Total de tarefas:", total);
+    console.log("Tarefas pendentes:", pendentes);
+    console.log("Tarefas concluídas:", concluidas);
+}
+
+// EXEMPLO DE UTILIZAÇÃO
+
+adicionarTarefa(
+    "Estudar JavaScript",
+    "Estudar funções e arrays",
+    "30/11/2026",
+    "Alta"
+);
+
+adicionarTarefa(
+    "Fazer atividade",
+    "Concluir atividade da faculdade",
+    "28/11/2026",
+    "Média"
+);
+
+listarTarefas();
+
+concluirTarefa(tarefas[0].id);
+
+pesquisarTarefa("JavaScript");
+
+resumoTarefas();
+</code></pre>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+</body>
+</html>
