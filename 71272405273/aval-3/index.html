@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Controle de IMC</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      background-color: #f4f6f8;
+      color: #1f2937;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 16px;
+    }
+
+    .container {
+      background: #ffffff;
+      width: 100%;
+      max-width: 420px;
+      padding: 24px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .campo {
+      margin-bottom: 14px;
+    }
+
+    label {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #10b981;
+      color: #ffffff;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 6px;
+    }
+
+    button:hover {
+      background-color: #059669;
+    }
+
+    .resultado {
+      margin-top: 20px;
+      padding: 16px;
+      border-radius: 8px;
+      background-color: #ecfdf5;
+      border-left: 4px solid #10b981;
+      line-height: 1.6;
+      display: none;
+    }
+  </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+  <main class="container">
+    <h1>Controle de IMC</h1>
+
+    <div class="campo">
+      <label for="nome">Nome do Paciente</label>
+      <input type="text" id="nome" placeholder="Ex.: Maria Silva">
+    </div>
+
+    <div class="campo">
+      <label for="peso">Peso (kg)</label>
+      <input type="text" id="peso" placeholder="Ex.: 70.5 ou 70,5">
+    </div>
+
+    <div class="campo">
+      <label for="altura">Altura (m)</label>
+      <input type="text" id="altura" placeholder="Ex.: 1.75 ou 1,75">
+    </div>
+
+    <button type="button" id="btn-calcular">Calcular IMC</button>
+
+    <section id="resultado" class="resultado"></section>
+  </main>
+
+  <script>
+    const btnCalcular = document.getElementById("btn-calcular");
+    const resultadoDiv = document.getElementById("resultado");
+
+    function classificarIMC(imc) {
+      if (imc < 18.5) return "Abaixo do peso";
+      if (imc < 25) return "Peso normal";
+      if (imc < 30) return "Sobrepeso";
+      if (imc < 35) return "Obesidade grau I";
+      if (imc < 40) return "Obesidade grau II";
+      return "Obesidade grau III";
+    }
+
+    btnCalcular.addEventListener("click", function () {
+      const nome = document.getElementById("nome").value.trim();
+      const peso = parseFloat(document.getElementById("peso").value.replace(",", "."));
+      const altura = parseFloat(document.getElementById("altura").value.replace(",", "."));
+
+      if (!nome || isNaN(peso) || isNaN(altura) || peso <= 0 || altura <= 0) {
+        alert("Preencha o nome, o peso e a altura com valores válidos.");
+        return;
+      }
+
+      const imc = peso / (altura * altura);
+      const classificacao = classificarIMC(imc);
+
+      resultadoDiv.innerHTML = `
+        <p><strong>Paciente:</strong> ${nome}</p>
+        <p><strong>Peso:</strong> ${peso.toFixed(2)} kg | <strong>Altura:</strong> ${altura.toFixed(2)} m</p>
+        <p><strong>IMC:</strong> ${imc.toFixed(2)}</p>
+        <p><strong>Classificação:</strong> ${classificacao}</p>
+      `;
+
+      resultadoDiv.style.display = "block";
+    });
+  </script>
+<script src="script.js"></script></body>
+</html>
