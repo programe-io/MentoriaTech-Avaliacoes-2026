@@ -4,96 +4,151 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BabyStak | Moda Bebê</title>
+  <title>BABYSTILLE | Loja Infantil</title>
   <link rel="stylesheet" href="style.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="style.css" rel="stylesheet"></head>
 <body>
-  <header>
-    <div>
-      <h1>🧸 BabyStak</h1>
-      <p>Carinho e fofura em cada detalhe!</p>
-    </div>
-    <button onclick="abrirCarrinho()">
-      🛒 Carrinho (<span id="contador">0</span>)
-    </button>
-  </header>
 
+<header class="header">
+  <a href="#" class="logo">BABY<span>STILLE</span></a>
   <nav>
     <a href="#inicio">Início</a>
     <a href="#produtos">Produtos</a>
-    <a href="#sobre">Sobre a loja</a>
+    <a href="#sobre">Sobre</a>
   </nav>
+  <button class="cart-button" onclick="toggleCart()">
+    🛒 Carrinho (<span id="cart-count">0</span>)
+  </button>
+</header>
 
-  <section class="banner" id="inicio">
-    <h2>Um mundo de carinho para seu bebê!</h2>
-    <p>Roupinhas e acessórios para momentos especiais.</p>
-    <a class="botao" href="#produtos">Conhecer produtos</a>
-  </section>
+<section class="hero" id="inicio">
+  <div>
+    <p class="tag">CARINHO EM CADA DETALHE</p>
+    <h1>O mundo do bebê<br>com mais <span>amor e estilo.</span></h1>
+    <p>Roupinhas e acessórios especiais para os pequenos.</p>
+    <a href="#produtos" class="main-button">Comprar agora</a>
+  </div>
+</section>
 
-  <main>
-    <section id="produtos">
-      <h2>Nossos produtos 💗</h2>
-      <input id="pesquisa" type="search"
-        placeholder="Pesquisar roupa ou acessório..."
-        oninput="filtrarProdutos()">
+<section class="section" id="produtos">
+  <p class="tag">NOSSA COLEÇÃO</p>
+  <h2>Produtos em destaque</h2>
+  <div class="products" id="products"></div>
+</section>
 
-      <div class="categorias">
-        <button onclick="filtrarCategoria('Todos')">Todos</button>
-        <button onclick="filtrarCategoria('Roupas')">Roupas</button>
-        <button onclick="filtrarCategoria('Acessórios')">Acessórios</button>
-        <button onclick="filtrarCategoria('Calçados')">Calçados</button>
-        <button onclick="filtrarCategoria('Quarto')">Quarto</button>
-        <button onclick="filtrarCategoria('Passeio')">Passeio</button>
-      </div>
+<section class="about" id="sobre">
+  <h2>Bem-vindo à BABYSTILLE!</h2>
+  <p>Selecionamos produtos com carinho para deixar cada momento do bebê ainda mais especial.</p>
+</section>
 
-      <p id="quantidadeProdutos"></p>
-      <div id="listaProdutos" class="produtos"></div>
-    </section>
+<!-- Carrinho -->
+<div class="cart-overlay" id="cart-overlay" onclick="toggleCart()"></div>
 
-    <section id="sobre" class="sobre">
-      <h2>Sobre a BabyStak</h2>
-      <p>
-        Uma loja dedicada ao universo dos bebês, com roupas,
-        calçados e acessórios selecionados com carinho.
-      </p>
-    </section>
-  </main>
-
-  <div id="modalCarrinho" class="modal">
-    <div class="caixa">
-      <button class="fechar" onclick="fecharCarrinho()">✕</button>
-      <h2>Meu carrinho 🛒</h2>
-      <div id="itensCarrinho"></div>
-      <h3>Total: R$ <span id="total">0,00</span></h3>
-
-      <h2>Finalizar pedido</h2>
-      <form id="formPedido">
-        <input id="nome" placeholder="Nome completo" required>
-        <input id="telefone" placeholder="Telefone" required>
-        <input id="endereco" placeholder="Endereço de entrega" required>
-
-        <label for="pagamento">Forma de pagamento</label>
-        <select id="pagamento" required>
-          <option value="">Selecione</option>
-          <option>Pix</option>
-          <option>Cartão de crédito</option>
-          <option>Cartão de débito</option>
-          <option>Dinheiro</option>
-        </select>
-
-        <button class="botao enviar" type="submit">
-          Enviar pedido ao vendedor
-        </button>
-      </form>
-    </div>
+<aside class="cart" id="cart">
+  <div class="cart-header">
+    <h2>Meu carrinho</h2>
+    <button onclick="toggleCart()">✕</button>
   </div>
 
-  <footer>
-    <h3>BabyStak 💕</h3>
-    <p>Moda e acessórios para bebês.</p>
-    <p>© 2026 BabyStak</p>
-  </footer>
+  <div id="cart-items"></div>
 
-  <script src="script.js"></script>
+  <div class="cart-footer">
+    <h3>Total: <span id="cart-total">R$ 0,00</span></h3>
+    <button class="main-button full" onclick="goToCheckout()">
+      Finalizar compra
+    </button>
+  </div>
+</aside>
+
+<!-- Finalização -->
+<section class="checkout section" id="checkout">
+  <p class="tag">ÚLTIMA ETAPA</p>
+  <h2>Finalizar pedido</h2>
+
+  <div class="checkout-layout">
+    <form id="checkout-form">
+      <h3>Informações do comprador</h3>
+
+      <label>Nome completo</label>
+      <input type="text" id="customer-name" required placeholder="Seu nome">
+
+      <label>E-mail</label>
+      <input type="email" id="customer-email" required placeholder="seu@email.com">
+
+      <label>Telefone</label>
+      <input type="tel" id="customer-phone" required placeholder="(00) 00000-0000">
+
+      <label>Endereço de entrega</label>
+      <input type="text" id="customer-address" required placeholder="Rua, número, bairro e cidade">
+
+      <label>CEP</label>
+      <input type="text" id="customer-cep" required placeholder="00000-000">
+
+      <h3>Forma de pagamento</h3>
+
+      <label class="payment-option">
+        <input type="radio" name="payment" value="PIX" required>
+        PIX
+      </label>
+
+      <label class="payment-option">
+        <input type="radio" name="payment" value="Cartão de crédito">
+        Cartão de crédito
+      </label>
+
+      <label class="payment-option">
+        <input type="radio" name="payment" value="Cartão de débito">
+        Cartão de débito
+      </label>
+
+      <label class="payment-option">
+        <input type="radio" name="payment" value="Pagamento na entrega">
+        Pagamento na entrega
+      </label>
+
+      <p class="notice">
+        Demonstração: nenhuma cobrança real será realizada.
+        Não informe dados de cartão neste formulário.
+      </p>
+
+      <label>Observações do pedido (opcional)</label>
+      <textarea id="customer-notes" placeholder="Alguma informação adicional?"></textarea>
+
+      <button type="submit" class="main-button full">
+        Confirmar pedido
+      </button>
+    </form>
+
+    <div class="order-summary">
+      <h3>Resumo do pedido</h3>
+      <div id="checkout-items"></div>
+      <div class="summary-total">
+        <strong>Total</strong>
+        <strong id="checkout-total">R$ 0,00</strong>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Confirmação -->
+<section class="confirmation section" id="confirmation">
+  <div class="confirmation-card">
+    <div class="success-icon">✓</div>
+    <h2>Pedido confirmado!</h2>
+    <p>Seu pedido foi registrado nesta demonstração.</p>
+    <p>Número do pedido: <strong id="order-number"></strong></p>
+    <p>Forma de pagamento: <strong id="order-payment"></strong></p>
+    <p>Total: <strong id="order-total"></strong></p>
+    <p class="notice">Este pedido não representa uma compra paga nem uma cobrança real.</p>
+    <button class="main-button" onclick="newPurchase()">Voltar à loja</button>
+  </div>
+</section>
+
+<footer>
+  <p>© 2026 BABYSTILLE — Feito com carinho.</p>
+</footer>
+
+<script src="script.js"></script>
 <script src="script.js"></script></body>
 </html>
