@@ -1,0 +1,270 @@
+:root {
+  --bg-body: #f1f5f9;
+  --bg-card: #ffffff;
+  --bg-subtle: #f8fafc;
+  --border-color: #e2e8f0;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --primary: #2563eb;
+  --c-under: #3b82f6;
+  --c-normal: #10b981;
+  --c-over: #f59e0b;
+  --c-ob1: #f97316;
+  --c-ob2: #ef4444;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+body {
+  background-color: var(--bg-body);
+  color: var(--text-main);
+  padding: 24px;
+  line-height: 1.5;
+}
+
+.container {
+  max-width: 920px;
+  margin: 0 auto;
+}
+
+/* Oculta os inputs radio nativos */
+.imc-app input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+header {
+  margin-bottom: 24px;
+}
+
+header h1 {
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+
+header p {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.06);
+}
+
+.card h2 {
+  font-size: 1.05rem;
+  margin-bottom: 16px;
+}
+
+.group-label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin: 16px 0 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* Botões de seleção (Labels estilizadas) */
+.options-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.opt-btn {
+  display: block;
+  text-align: center;
+  padding: 10px 8px;
+  background: var(--bg-subtle);
+  border: 1.5px solid var(--border-color);
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.opt-btn:hover {
+  border-color: var(--primary);
+}
+
+/* Destaque do botão selecionado via :checked */
+#h-155:checked ~ .grid label[for="h-155"],
+#h-165:checked ~ .grid label[for="h-165"],
+#h-175:checked ~ .grid label[for="h-175"],
+#h-185:checked ~ .grid label[for="h-185"],
+#w-50:checked ~ .grid label[for="w-50"],
+#w-65:checked ~ .grid label[for="w-65"],
+#w-75:checked ~ .grid label[for="w-75"],
+#w-90:checked ~ .grid label[for="w-90"],
+#w-105:checked ~ .grid label[for="w-105"],
+#w-120:checked ~ .grid label[for="w-120"] {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+}
+
+/* Painel de Resultado */
+.result-box {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  padding: 20px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.result-title {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+/* Todos os cenários ficam ocultos por padrão */
+.scenario {
+  display: none;
+  animation: fadeIn 0.25s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.bmi-number {
+  font-size: 3rem;
+  font-weight: 800;
+  line-height: 1.1;
+  margin: 6px 0 10px;
+}
+
+.badge {
+  display: inline-block;
+  padding: 5px 14px;
+  border-radius: 999px;
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.advice {
+  margin-top: 14px;
+  font-size: 0.88rem;
+  color: var(--text-main);
+}
+
+/* Cores por faixa */
+.under .bmi-number { color: var(--c-under); }
+.under .badge { background: var(--c-under); }
+
+.normal .bmi-number { color: var(--c-normal); }
+.normal .badge { background: var(--c-normal); }
+
+.over .bmi-number { color: var(--c-over); }
+.over .badge { background: var(--c-over); }
+
+.ob1 .bmi-number { color: var(--c-ob1); }
+.ob1 .badge { background: var(--c-ob1); }
+
+.ob2 .bmi-number { color: var(--c-ob2); }
+.ob2 .badge { background: var(--c-ob2); }
+
+/* Barra medidora */
+.gauge {
+  position: relative;
+  height: 14px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    var(--c-under) 0% 18%,
+    var(--c-normal) 18% 45%,
+    var(--c-over) 45% 68%,
+    var(--c-ob1) 68% 85%,
+    var(--c-ob2) 85% 100%
+  );
+  margin: 22px 0 8px;
+}
+
+.pointer {
+  position: absolute;
+  top: -6px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #fff;
+  border: 4px solid var(--text-main);
+  transform: translateX(-50%);
+  transition: left 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+.gauge-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+/* Lógica de exibição combinando Altura (:checked) + Peso (:checked) */
+#h-155:checked ~ #w-50:checked ~ .grid .res-155-50,
+#h-155:checked ~ #w-65:checked ~ .grid .res-155-65,
+#h-155:checked ~ #w-75:checked ~ .grid .res-155-75,
+#h-155:checked ~ #w-90:checked ~ .grid .res-155-90,
+#h-155:checked ~ #w-105:checked ~ .grid .res-155-105,
+#h-155:checked ~ #w-120:checked ~ .grid .res-155-120,
+#h-165:checked ~ #w-50:checked ~ .grid .res-165-50,
+#h-165:checked ~ #w-65:checked ~ .grid .res-165-65,
+#h-165:checked ~ #w-75:checked ~ .grid .res-165-75,
+#h-165:checked ~ #w-90:checked ~ .grid .res-165-90,
+#h-165:checked ~ #w-105:checked ~ .grid .res-165-105,
+#h-165:checked ~ #w-120:checked ~ .grid .res-165-120,
+#h-175:checked ~ #w-50:checked ~ .grid .res-175-50,
+#h-175:checked ~ #w-65:checked ~ .grid .res-175-65,
+#h-175:checked ~ #w-75:checked ~ .grid .res-175-75,
+#h-175:checked ~ #w-90:checked ~ .grid .res-175-90,
+#h-175:checked ~ #w-105:checked ~ .grid .res-175-105,
+#h-175:checked ~ #w-120:checked ~ .grid .res-175-120,
+#h-185:checked ~ #w-50:checked ~ .grid .res-185-50,
+#h-185:checked ~ #w-65:checked ~ .grid .res-185-65,
+#h-185:checked ~ #w-75:checked ~ .grid .res-185-75,
+#h-185:checked ~ #w-90:checked ~ .grid .res-185-90,
+#h-185:checked ~ #w-105:checked ~ .grid .res-185-105,
+#h-185:checked ~ #w-120:checked ~ .grid .res-185-120 {
+  display: block;
+}
+
+/* Movimentação do ponteiro conforme faixa */
+#w-50:checked ~ .grid .pointer { left: 14%; }
+#w-65:checked ~ .grid .pointer { left: 32%; }
+#w-75:checked ~ .grid .pointer { left: 42%; }
+#w-90:checked ~ .grid .pointer { left: 58%; }
+#w-105:checked ~ .grid .pointer { left: 76%; }
+#w-120:checked ~ .grid .pointer { left: 92%; }

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora de IMC Pro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="brand-icon">IMC</div>
+        <div>
+          <h1>Calculadora de IMC Pro</h1>
+          <p>Avaliação corporal completa segundo critérios da OMS</p>
+        </div>
+      </div>
+      <button class="theme-btn" id="themeToggle" type="button">🌙 Modo Escuro</button>
+    </header>
+
+    <div class="main-grid">
+      <!-- Coluna Esquerda: Entradas -->
+      <section class="card">
+        <div class="card-title">
+          <span>Seus Dados</span>
+        </div>
+
+        <div class="unit-switch">
+          <button type="button" class="unit-btn active" data-unit="metric">Métrico (kg / cm)</button>
+          <button type="button" class="unit-btn" data-unit="imperial">Imperial (lbs / ft-in)</button>
+        </div>
+
+        <div class="row-2">
+          <div>
+            <div class="label-row"><span>Sexo (opcional)</span></div>
+            <select id="genderInput" class="select-box">
+              <option value="none">Não informar</option>
+              <option value="F">Feminino</option>
+              <option value="M">Masculino</option>
+            </select>
+          </div>
+          <div>
+            <div class="label-row"><span>Idade (anos)</span></div>
+            <div class="input-box">
+              <input type="number" id="ageInput" value="30" min="5" max="120">
+              <span class="unit-tag">anos</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Entradas Métricas -->
+        <div id="metricFields">
+          <div class="form-group">
+            <div class="label-row">
+              <span>Peso</span>
+              <div class="input-box" style="width: 120px;">
+                <input type="number" id="weightKg" value="72" min="20" max="300" step="0.1">
+                <span class="unit-tag">kg</span>
+              </div>
+            </div>
+            <input type="range" id="weightKgRange" value="72" min="30" max="200" step="0.5">
+          </div>
+
+          <div class="form-group">
+            <div class="label-row">
+              <span>Altura</span>
+              <div class="input-box" style="width: 120px;">
+                <input type="number" id="heightCm" value="175" min="80" max="250" step="1">
+                <span class="unit-tag">cm</span>
+              </div>
+            </div>
+            <input type="range" id="heightCmRange" value="175" min="120" max="220" step="1">
+          </div>
+        </div>
+
+        <!-- Entradas Imperiais -->
+        <div id="imperialFields" class="hidden">
+          <div class="form-group">
+            <div class="label-row">
+              <span>Peso</span>
+              <div class="input-box" style="width: 125px;">
+                <input type="number" id="weightLbs" value="159" min="45" max="660" step="0.5">
+                <span class="unit-tag">lbs</span>
+              </div>
+            </div>
+            <input type="range" id="weightLbsRange" value="159" min="66" max="440" step="1">
+          </div>
+
+          <div class="form-group">
+            <div class="label-row"><span>Altura</span></div>
+            <div class="row-2" style="margin-bottom: 0;">
+              <div class="input-box">
+                <input type="number" id="heightFt" value="5" min="3" max="8">
+                <span class="unit-tag">pés (ft)</span>
+              </div>
+              <div class="input-box">
+                <input type="number" id="heightIn" value="9" min="0" max="11">
+                <span class="unit-tag">pol (in)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button type="button" class="btn-save" id="saveHistoryBtn">Salvar Medição no Histórico</button>
+      </section>
+
+      <!-- Coluna Direita: Resultados -->
+      <section class="card">
+        <div class="card-title">
+          <span>Resultado da Análise</span>
+        </div>
+
+        <div class="result-hero">
+          <div class="bmi-label">Seu Índice de Massa Corporal</div>
+          <div class="bmi-value" id="bmiValue">23,5</div>
+          <span class="bmi-badge" id="bmiBadge">Peso Normal</span>
+        </div>
+
+        <div class="gauge-wrapper">
+          <div class="gauge-bar">
+            <div class="gauge-pointer" id="gaugePointer" style="left: 33%;"></div>
+          </div>
+          <div class="gauge-ticks">
+            <span>15</span>
+            <span>18.5</span>
+            <span>25</span>
+            <span>30</span>
+            <span>35</span>
+            <span>40+</span>
+          </div>
+        </div>
+
+        <div class="metrics-grid">
+          <div class="metric-box">
+            <span>Faixa de Peso Saudável</span>
+            <strong id="idealWeightRange">56.7 kg – 76.3 kg</strong>
+          </div>
+          <div class="metric-box">
+            <span>Distância da Meta</span>
+            <strong id="weightDiffText">Dentro da faixa ideal</strong>
+          </div>
+        </div>
+
+        <div class="advice-box" id="adviceBox">
+          Seu IMC está dentro da faixa recomendada pela Organização Mundial da Saúde. Mantenha hábitos equilibrados e atividade física regular.
+        </div>
+        <div class="age-note" id="ageNote"></div>
+      </section>
+    </div>
+
+    <!-- Seção Inferior -->
+    <div class="bottom-grid">
+      <section class="card">
+        <div class="card-title">
+          <span>Classificação Oficial (OMS)</span>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Classificação</th>
+              <th>IMC (kg/m²)</th>
+              <th>Risco Associado</th>
+            </tr>
+          </thead>
+          <tbody id="omsTableBody">
+            <tr data-cat="under">
+              <td><span class="dot" style="background: var(--c-under);"></span>Abaixo do peso</td>
+              <td>< 18,5</td>
+              <td>Baixo (risco de carências)</td>
+            </tr>
+            <tr data-cat="normal">
+              <td><span class="dot" style="background: var(--c-normal);"></span>Peso normal</td>
+              <td>18,5 – 24,9</td>
+              <td>Médio / Ideal</td>
+            </tr>
+            <tr data-cat="over">
+              <td><span class="dot" style="background: var(--c-over);"></span>Sobrepeso</td>
+              <td>25,0 – 29,9</td>
+              <td>Aumentado</td>
+            </tr>
+            <tr data-cat="ob1">
+              <td><span class="dot" style="background: var(--c-ob1);"></span>Obesidade Grau I</td>
+              <td>30,0 – 34,9</td>
+              <td>Moderado</td>
+            </tr>
+            <tr data-cat="ob2">
+              <td><span class="dot" style="background: var(--c-ob2);"></span>Obesidade Grau II</td>
+              <td>35,0 – 39,9</td>
+              <td>Grave</td>
+            </tr>
+            <tr data-cat="ob3">
+              <td><span class="dot" style="background: var(--c-ob3);"></span>Obesidade Grau III</td>
+              <td>≥ 40,0</td>
+              <td>Muito grave</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="card">
+        <div class="card-title">
+          <span>Histórico Local</span>
+          <button type="button" class="btn-clear" id="clearHistoryBtn">Limpar tudo</button>
+        </div>
+        <div class="history-list" id="historyList"></div>
+      </section>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+<script src="script.js"></script></body>
+</html>
