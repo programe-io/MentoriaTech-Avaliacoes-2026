@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Código JavaScript</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <style>body{margin:0;background:#0d1117}pre{margin:0}code.hljs{padding:1.5rem;min-height:100vh;box-sizing:border-box}</style>
+</head>
+<body>
+  <pre><code class="language-javascript">
+&lt;!DOCTYPE html&gt;
+&lt;html lang="pt-BR"&gt;
+&lt;head&gt;
+&lt;meta charset="UTF-8"&gt;
+&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+&lt;title&gt;Sistema de Estoque&lt;/title&gt;
+&lt;style&gt;
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f1f5f9;
+  color: #1e293b;
+}
+header {
+  background: #172554;
+  color: white;
+  padding: 22px;
+  font-size: 24px;
+  font-weight: bold;
+}
+main { padding: 25px; max-width: 1200px; margin: auto; }
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(180px,1fr));
+  gap: 15px;
+  margin-bottom: 25px;
+}
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px #0001;
+}
+.card span { color: #64748b; font-size: 14px; }
+.card h2 { margin-bottom: 0; color: #2563eb; }
+.panel {
+  background: white;
+  padding: 22px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+input, button {
+  padding: 11px;
+  border-radius: 7px;
+  border: 1px solid #cbd5e1;
+  margin: 5px 2px;
+}
+button {
+  cursor: pointer;
+  background: #2563eb;
+  color: white;
+  border: none;
+}
+button:hover { opacity: .85; }
+.delete { background: #dc2626; }
+.edit { background: #d97706; }
+table { width: 100%; border-collapse: collapse; }
+th, td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #e2e8f0;
+}
+th { background: #f8fafc; }
+.baixo { color: #dc2626; font-weight: bold; }
+.tabela { overflow-x: auto; }
+@media(max-width:600px) {
+  main { padding: 12px; }
+  header { font-size: 20px; }
+}
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;header&gt;📦 Sistema de Controle de Estoque&lt;/header&gt;
+
+&lt;main&gt;
+
+&lt;div class="cards"&gt;
+  &lt;div class="card"&gt;
+    &lt;span&gt;Total de produtos&lt;/span&gt;
+    &lt;h2 id="totalProdutos"&gt;0&lt;/h2&gt;
+  &lt;/div&gt;
+  &lt;div class="card"&gt;
+    &lt;span&gt;Unidades em estoque&lt;/span&gt;
+    &lt;h2 id="totalUnidades"&gt;0&lt;/h2&gt;
+  &lt;/div&gt;
+  &lt;div class="card"&gt;
+    &lt;span&gt;Valor do estoque&lt;/span&gt;
+    &lt;h2 id="valorEstoque"&gt;R$ 0,00&lt;/h2&gt;
+  &lt;/div&gt;
+  &lt;div class="card"&gt;
+    &lt;span&gt;Estoque baixo&lt;/span&gt;
+    &lt;h2 id="estoqueBaixo"&gt;0&lt;/h2&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div class="panel"&gt;
+&lt;h3&gt;➕ Cadastrar produto&lt;/h3&gt;
+
+&lt;form id="formProduto"&gt;
+  &lt;input id="nome" placeholder="Nome do produto" required&gt;
+  &lt;input id="codigo" placeholder="Código" required&gt;
+  &lt;input id="quantidade" type="number" min="0" placeholder="Quantidade" required&gt;
+  &lt;input id="preco" type="number" min="0" step="0.01" placeholder="Preço unitário" required&gt;
+  &lt;input id="minimo" type="number" min="0" value="5" placeholder="Estoque mínimo" required&gt;
+  &lt;button type="submit"&gt;Cadastrar&lt;/button&gt;
+&lt;/form&gt;
+&lt;/div&gt;
+
+&lt;div class="panel"&gt;
+&lt;h3&gt;🔄 Movimentação de estoque&lt;/h3&gt;
+&lt;select id="produtoMovimento"&gt;
+  &lt;option value=""&gt;Selecione um produto&lt;/option&gt;
+&lt;/select&gt;
+&lt;input id="qtdMovimento" type="number" min="1" placeholder="Quantidade"&gt;
+&lt;button onclick="movimentar('entrada')"&gt;Entrada&lt;/button&gt;
+&lt;button class="delete" onclick="movimentar('saida')"&gt;Saída&lt;/button&gt;
+&lt;/div&gt;
+
+&lt;div class="panel"&gt;
+&lt;h3&gt;📋 Produtos cadastrados&lt;/h3&gt;
+&lt;input id="pesquisa" placeholder="Pesquisar produto..." oninput="renderizar()"&gt;
+
+&lt;div class="tabela"&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Código&lt;/th&gt;
+&lt;th&gt;Produto&lt;/th&gt;
+&lt;th&gt;Quantidade&lt;/th&gt;
+&lt;th&gt;Preço&lt;/th&gt;
+&lt;th&gt;Valor total&lt;/th&gt;
+&lt;th&gt;Status&lt;/th&gt;
+&lt;th&gt;Ações&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody id="listaProdutos"&gt;&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;/main&gt;
+
+&lt;script&gt;
+let produtos = JSON.parse(localStorage.getItem("estoque")) || [];
+let editando = null;
+
+const moeda = valor =&gt; valor.toLocaleString("pt-BR", {
+  style: "currency", currency: "BRL"
+});
+
+function salvar() {
+  localStorage.setItem("estoque", JSON.stringify(produtos));
+  renderizar();
+}
+
+document.getElementById("formProduto").addEventListener("submit", function(e) {
+  e.preventDefault();
+
+  const produto = {
+    nome: document.getElementById("nome").value.trim(),
+    codigo: document.getElementById("codigo").value.trim(),
+    quantidade: Number(document.getElementById("quantidade").value),
+    preco: Number(document.getElementById("preco").value),
+    minimo: Number(document.getElementById("minimo").value)
+  };
+
+  if (!produto.nome || !produto.codigo ||
+      !Number.isFinite(produto.quantidade) ||
+      !Number.isFinite(produto.preco) ||
+      !Number.isFinite(produto.minimo) ||
+      produto.quantidade &lt; 0 || produto.preco &lt; 0 ||
+      produto.minimo &lt; 0) {
+    alert("Preencha os campos corretamente.");
+    return;
+  }
+
+  const duplicado = produtos.some((p, i) =&gt;
+    p.codigo.toLowerCase() === produto.codigo.toLowerCase() &amp;&amp;
+    i !== editando
+  );
+
+  if (duplicado) {
+    alert("Este código já está cadastrado!");
+    return;
+  }
+
+  if (editando !== null) {
+    produtos[editando] = produto;
+    editando = null;
+  } else {
+    produtos.push(produto);
+  }
+
+  this.reset();
+  document.getElementById("minimo").value = 5;
+  salvar();
+});
+
+function movimentar(tipo) {
+  const codigo = document.getElementById("produtoMovimento").value;
+  const qtd = Number(document.getElementById("qtdMovimento").value);
+  const produto = produtos.find(p =&gt; p.codigo === codigo);
+
+  if (!produto || !Number.isInteger(qtd) || qtd &lt;= 0) {
+    alert("Selecione um produto e informe uma quantidade válida.");
+    return;
+  }
+
+  if (tipo === "saida" &amp;&amp; qtd &gt; produto.quantidade) {
+    alert("Estoque insuficiente!");
+    return;
+  }
+
+  produto.quantidade += tipo === "entrada" ? qtd : -qtd;
+  document.getElementById("qtdMovimento").value = "";
+  salvar();
+}
+
+function editar(index) {
+  const p = produtos[index];
+
+  document.getElementById("nome").value = p.nome;
+  document.getElementById("codigo").value = p.codigo;
+  document.getElementById("quantidade").value = p.quantidade;
+  document.getElementById("preco").value = p.preco;
+  document.getElementById("minimo").value = p.minimo;
+
+  editando = index;
+  window.scrollTo({top: 0, behavior: "smooth"});
+}
+
+function excluir(index) {
+  if (confirm("Deseja realmente excluir este produto?")) {
+    produtos.splice(index, 1);
+    editando = null;
+    salvar();
+  }
+}
+
+function renderizar() {
+  const busca = document.getElementById("pesquisa").value.toLowerCase();
+  const lista = document.getElementById("listaProdutos");
+
+  lista.innerHTML = "";
+
+  produtos.forEach((p, i) =&gt; {
+    if (!(p.nome + p.codigo).toLowerCase().includes(busca)) return;
+
+    const tr = document.createElement("tr");
+
+    const valores = [
+      p.codigo,
+      p.nome,
+      p.quantidade,
+      moeda(p.preco),
+      moeda(p.quantidade * p.preco)
+    ];
+
+    valores.forEach(valor =&gt; {
+      const td = document.createElement("td");
+      td.textContent = valor;
+      tr.appendChild(td);
+    });
+
+    const status = document.createElement("td");
+    status.textContent = p.quantidade &lt;= p.minimo
+      ? "Estoque baixo" : "Normal";
+    if (p.quantidade &lt;= p.minimo) status.className = "baixo";
+    tr.appendChild(status);
+
+    const acoes = document.createElement("td");
+    const editarBtn = document.createElement("button");
+    editarBtn.textContent = "Editar";
+    editarBtn.className = "edit";
+    editarBtn.onclick = () =&gt; editar(i);
+
+    const excluirBtn = document.createElement("button");
+    excluirBtn.textContent = "Excluir";
+    excluirBtn.className = "delete";
+    excluirBtn.onclick = () =&gt; excluir(i);
+
+    acoes.append(editarBtn, excluirBtn);
+    tr.appendChild(acoes);
+    lista.appendChild(tr);
+  });
+
+  document.getElementById("totalProdutos").textContent = produtos.length;
+  document.getElementById("totalUnidades").textContent =
+    produtos.reduce((s, p) =&gt; s + p.quantidade, 0);
+  document.getElementById("valorEstoque").textContent =
+    moeda(produtos.reduce((s, p) =&gt; s + p.quantidade * p.preco, 0));
+  document.getElementById("estoqueBaixo").textContent =
+    produtos.filter(p =&gt; p.quantidade &lt;= p.minimo).length;
+
+  const select = document.getElementById("produtoMovimento");
+  const selecionado = select.value;
+  select.replaceChildren(new Option("Selecione um produto", ""));
+
+  produtos.forEach(p =&gt; {
+    select.add(new Option(p.nome + " (" + p.codigo + ")", p.codigo));
+  });
+
+  select.value = selecionado;
+}
+
+renderizar();
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+</body>
+</html>
