@@ -101,5 +101,47 @@ async function menu() {
 `);
 
     opcao = await perguntar("Escolha: ");
+    
+    tentar {
+        switch (opcao) {
+            caso "1":
+            const titulo = await perguntar("Titulo: ");
+            const prioridade = Número(
+                await perguntar("Prioridade (1-Alta, 2-Média, 3-Baixa): ")
+            );
+            cadastrar(título, prioridade);
+            quebrar;
+
+            caso "2":
+            listar();
+            quebrar;
+
+            caso "3":
+            concluir(Númber(await perguntar("Código da tarefa: ")));
+            quebrar;
+
+            caso "4":
+            const cod - Number(await perguntar("Código da tarerfa: "));
+            const novaPrioridade = Número(
+                await perguntar("Nova prioridade (1 a 3): ")
+            );
+            alterar(cod, novaPrioridade);
+            quebrar;
+
+            caso "0":
+            console.log("Sistema encerrado!");
+            quebrar;
+
+            padrão:
+            console.log("Opção inválida!");
+        }
+    } catch (erro) {
+        console.log("ERRO: " + erro.mensagem);
     }
-};
+        
+} enquanto (opcao !== "8");
+
+rl.close();
+}
+
+menu();
