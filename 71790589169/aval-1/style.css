@@ -1,343 +1,393 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Estoque</title>
+body {
+    font-family: Arial, Helvetica, sans-serif;
 
-    <style>
-        * {
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
+    background:
+        linear-gradient(135deg, #e3f2fd, #f5f5f5);
 
-        body {
-            background: #f0f2f5;
-            margin: 0;
-            padding: 30px;
-        }
+    min-height: 100vh;
 
-        .container {
-            max-width: 850px;
-            margin: auto;
-            background: white;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 3px 12px #0002;
-        }
+    padding: 30px 15px;
 
-        h1 {
-            text-align: center;
-            color: #263b50;
-        }
+    color: #333;
+}
 
-        h2 {
-            color: #263b50;
-        }
 
-        .formulario {
-            display: grid;
-            gap: 12px;
-        }
+/* CONTAINER */
 
-        input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 15px;
-        }
+.container {
+    width: 100%;
+    max-width: 950px;
 
-        button {
-            padding: 12px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            color: white;
-            font-size: 15px;
-            background: #2563eb;
-        }
+    margin: auto;
+}
 
-        button:hover {
-            opacity: 0.85;
-        }
 
-        .botoes {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin: 15px 0;
-        }
+/* CABEÇALHO */
 
-        .botoes button {
-            flex: 1;
-        }
+header {
+    background: white;
 
-        .verde {
-            background: #16a34a;
-        }
+    padding: 35px;
 
-        .laranja {
-            background: #ea580c;
-        }
+    text-align: center;
 
-        .vermelho {
-            background: #dc2626;
-        }
+    border-radius: 15px;
 
-        .mensagem {
-            margin: 15px 0;
-            font-weight: bold;
-            color: #15803d;
-        }
+    margin-bottom: 20px;
 
-        .tabela {
-            overflow-x: auto;
-        }
+    box-shadow:
+        0 5px 15px rgba(0, 0, 0, 0.1);
+}
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-        }
+header h1 {
+    color: #1565c0;
 
-        th, td {
-            padding: 12px;
-            border-bottom: 1px solid #ddd;
-            text-align: left;
-        }
+    font-size: 32px;
 
-        th {
-            background: #263b50;
-            color: white;
-        }
+    margin-bottom: 10px;
+}
 
-        tr:hover {
-            background: #f1f5f9;
-        }
+header p {
+    color: #666;
 
-        .acoes {
-            display: flex;
-            gap: 5px;
-            flex-wrap: wrap;
-        }
+    font-size: 16px;
+}
 
-        .acoes button {
-            padding: 8px;
-            font-size: 12px;
-        }
 
-        @media (max-width: 600px) {
-            body {
-                padding: 10px;
-            }
+/* CARDS */
 
-            .container {
-                padding: 15px;
-            }
-        }
-    </style>
-</head>
+.card {
+    background: white;
 
-<body>
+    padding: 30px;
 
-<div class="container">
+    border-radius: 15px;
 
-    <h1>📦 Sistema de Estoque</h1>
+    margin-bottom: 20px;
 
-    <h2>Cadastrar Produto</h2>
+    box-shadow:
+        0 5px 15px rgba(0, 0, 0, 0.08);
+}
 
-    <div class="formulario">
-        <input type="text" id="codigo" placeholder="Código do produto">
+.card h2 {
+    color: #333;
 
-        <input type="text" id="descricao" placeholder="Descrição do produto">
+    margin-bottom: 25px;
 
-        <input type="number" id="quantidade" placeholder="Quantidade" min="0">
+    border-left: 5px solid #1565c0;
 
-        <input type="number" id="valor" placeholder="Valor do produto" min="0" step="0.01">
+    padding-left: 12px;
+}
 
-        <button class="verde" onclick="cadastrarProduto()">
-            Cadastrar Produto
-        </button>
-    </div>
 
-    <div class="mensagem" id="mensagem"></div>
+/* FORMULÁRIO */
 
-    <h2>Produtos Cadastrados</h2>
+.formulario {
+    display: grid;
 
-    <div class="botoes">
-        <button onclick="listarProdutos()">Listar Produtos</button>
-    </div>
+    grid-template-columns:
+        repeat(2, 1fr);
 
-    <div class="tabela">
-        <table>
-            <thead>
-                <tr>
-                    <th>Código</th>
-                    <th>Descrição</th>
-                    <th>Quantidade</th>
-                    <th>Valor</th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
+    gap: 20px;
+}
 
-            <tbody id="listaProdutos">
-                <tr>
-                    <td colspan="5">Nenhum produto cadastrado.</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+.campo {
+    display: flex;
 
-</div>
+    flex-direction: column;
+}
 
-<script>
+.campo label {
+    font-weight: bold;
 
-    let produtos = [];
+    margin-bottom: 8px;
+}
 
-    // Cadastrar produto
-    function cadastrarProduto() {
+.campo input {
+    padding: 13px;
 
-        let codigo = document.getElementById("codigo").value.trim();
-        let descricao = document.getElementById("descricao").value.trim();
-        let quantidade = document.getElementById("quantidade").value;
-        let valor = document.getElementById("valor").value;
+    border: 1px solid #ccc;
 
-        quantidade = Number(quantidade);
-        valor = Number(valor);
+    border-radius: 8px;
 
-        if (codigo === "" || descricao === "" ||
-            document.getElementById("quantidade").value === "" ||
-            document.getElementById("valor").value === "") {
+    font-size: 16px;
 
-            mostrarMensagem("Preencha todos os campos!", true);
-            return;
-        }
+    outline: none;
+}
 
-        if (!Number.isInteger(quantidade) || quantidade < 0 ||
-            !Number.isFinite(valor) || valor < 0) {
+.campo input:focus {
+    border-color: #1565c0;
 
-            mostrarMensagem("Quantidade ou valor inválido!", true);
-            return;
-        }
+    box-shadow:
+        0 0 0 3px rgba(21, 101, 192, 0.1);
+}
 
-        if (produtos.some(p => p.codigo === codigo)) {
-            mostrarMensagem("Código já cadastrado!", true);
-            return;
-        }
 
-        produtos.push({
-            codigo: codigo,
-            descricao: descricao,
-            quantidade: quantidade,
-            valor: valor
-        });
+/* BOTÕES */
 
-        mostrarMensagem("Produto cadastrado com sucesso!");
+button {
+    border: none;
 
-        document.getElementById("codigo").value = "";
-        document.getElementById("descricao").value = "";
-        document.getElementById("quantidade").value = "";
-        document.getElementById("valor").value = "";
+    background: #1565c0;
 
-        listarProdutos();
+    color: white;
+
+    padding: 13px 20px;
+
+    border-radius: 8px;
+
+    font-size: 15px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+.card > button {
+    width: 100%;
+
+    margin-top: 25px;
+}
+
+button:hover {
+    background: #0d47a1;
+
+    transform: translateY(-1px);
+}
+
+
+/* BOTÕES DE ALTERAÇÃO */
+
+.botoes {
+    display: flex;
+
+    gap: 15px;
+
+    margin-top: 25px;
+}
+
+.botoes button {
+    flex: 1;
+}
+
+
+/* TÍTULO DA LISTA */
+
+.titulo-lista {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 20px;
+}
+
+.titulo-lista h2 {
+    margin-bottom: 0;
+}
+
+#totalProdutos {
+    background: #e3f2fd;
+
+    color: #1565c0;
+
+    padding: 8px 15px;
+
+    border-radius: 20px;
+
+    font-weight: bold;
+}
+
+
+/* LISTA DE PRODUTOS */
+
+#listaProdutos {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 12px;
+}
+
+
+/* PRODUTO */
+
+.produto {
+    display: grid;
+
+    grid-template-columns:
+        0.7fr 2fr 1fr 1fr;
+
+    align-items: center;
+
+    gap: 15px;
+
+    padding: 18px;
+
+    background: #f8f9fa;
+
+    border: 1px solid #ddd;
+
+    border-radius: 10px;
+
+    transition: 0.2s;
+}
+
+.produto:hover {
+    border-color: #1565c0;
+
+    transform: translateY(-1px);
+}
+
+.produto-item {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 5px;
+}
+
+.produto-item .titulo {
+    font-size: 12px;
+
+    color: #777;
+
+    text-transform: uppercase;
+
+    font-weight: bold;
+}
+
+.produto-item .valor {
+    font-size: 16px;
+
+    font-weight: bold;
+
+    color: #333;
+}
+
+
+/* CÓDIGO */
+
+.codigo {
+    color: #1565c0 !important;
+}
+
+
+/* ESTOQUE */
+
+.quantidade {
+    color: #2e7d32 !important;
+}
+
+
+/* PREÇO */
+
+.preco {
+    color: #d84315 !important;
+}
+
+
+/* MENSAGEM VAZIA */
+
+.mensagem-vazia {
+    text-align: center;
+
+    padding: 30px;
+
+    color: #777;
+
+    background: #f8f9fa;
+
+    border-radius: 10px;
+
+    border: 1px dashed #ccc;
+}
+
+
+/* MENSAGEM DO SISTEMA */
+
+#mensagem {
+    position: fixed;
+
+    bottom: 25px;
+
+    right: 25px;
+
+    max-width: 350px;
+
+    padding: 15px 20px;
+
+    border-radius: 8px;
+
+    color: white;
+
+    font-weight: bold;
+
+    display: none;
+
+    z-index: 1000;
+}
+
+
+/* RODAPÉ */
+
+footer {
+    text-align: center;
+
+    padding: 20px;
+
+    color: #666;
+
+    font-size: 14px;
+}
+
+
+/* RESPONSIVIDADE */
+
+@media (max-width: 700px) {
+
+    body {
+        padding: 15px 10px;
     }
 
-    // Listar produtos
-    function listarProdutos() {
-
-        let tabela = document.getElementById("listaProdutos");
-
-        tabela.innerHTML = "";
-
-        if (produtos.length === 0) {
-            tabela.innerHTML =
-                '<tr><td colspan="5">Nenhum produto cadastrado.</td></tr>';
-            return;
-        }
-
-        produtos.forEach((produto, indice) => {
-
-            tabela.innerHTML += `
-                <tr>
-                    <td>${produto.codigo}</td>
-                    <td>${produto.descricao}</td>
-                    <td>${produto.quantidade}</td>
-                    <td>R$ ${produto.valor.toFixed(2)}</td>
-
-                    <td>
-                        <div class="acoes">
-                            <button class="laranja"
-                                onclick="alterarValor(${indice})">
-                                Valor
-                            </button>
-
-                            <button onclick="alterarQuantidade(${indice})">
-                                Quantidade
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-            `;
-
-        });
+    header {
+        padding: 25px 15px;
     }
 
-    // Alterar valor
-    function alterarValor(indice) {
-
-        let novoValor = prompt("Digite o novo valor:");
-
-        if (novoValor === null || novoValor.trim() === "") return;
-
-        novoValor = Number(novoValor);
-
-        if (!Number.isFinite(novoValor) || novoValor < 0) {
-            mostrarMensagem("Valor inválido!", true);
-            return;
-        }
-
-        produtos[indice].valor = novoValor;
-
-        mostrarMensagem("Valor alterado com sucesso!");
-
-        listarProdutos();
+    header h1 {
+        font-size: 26px;
     }
 
-    // Alterar quantidade
-    function alterarQuantidade(indice) {
-
-        let novaQuantidade = prompt("Digite a nova quantidade:");
-
-        if (novaQuantidade === null || novaQuantidade.trim() === "") return;
-
-        novaQuantidade = Number(novaQuantidade);
-
-        if (!Number.isInteger(novaQuantidade) || novaQuantidade < 0) {
-            mostrarMensagem("Quantidade inválida!", true);
-            return;
-        }
-
-        produtos[indice].quantidade = novaQuantidade;
-
-        mostrarMensagem("Quantidade alterada com sucesso!");
-
-        listarProdutos();
+    .card {
+        padding: 20px;
     }
 
-    // Mostrar mensagens
-    function mostrarMensagem(texto, erro = false) {
-
-        let mensagem = document.getElementById("mensagem");
-
-        mensagem.textContent = texto;
-
-        mensagem.style.color = erro ? "#dc2626" : "#15803d";
-
+    .formulario {
+        grid-template-columns: 1fr;
     }
 
-</script>
+    .botoes {
+        flex-direction: column;
+    }
 
-</body>
-</html>
+    .produto {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .titulo-lista {
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        gap: 10px;
+    }
+}
