@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog da Kauanne</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f4f4f9;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        header {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .post {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: transform 0.2s;
+        }
+
+        .post:hover {
+            transform: translateY(-3px);
+        }
+
+        .post h2 {
+            color: #2575fc;
+            margin-bottom: 8px;
+        }
+
+        .post .date {
+            font-size: 0.85rem;
+            color: #888;
+            margin-bottom: 15px;
+        }
+
+        .post p {
+            margin-bottom: 15px;
+        }
+
+        .btn {
+            display: inline-block;
+            background: #2575fc;
+            color: white;
+            padding: 8px 18px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: background 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background: #6a11cb;
+        }
+
+        .like-btn {
+            background: #ff4d6d;
+        }
+
+        .like-btn:hover {
+            background: #e63950;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        /* Formulário */
+        .form-box {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin-bottom: 25px;
+        }
+
+        .form-box h2 {
+            color: #6a11cb;
+            margin-bottom: 15px;
+        }
+
+        .form-box input,
+        .form-box textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 0.95rem;
+        }
+
+        .form-box textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+    <header>
+        <h1>🌸 Blog da Kauanne</h1>
+        <p>Compartilhando ideias, histórias e momentos</p>
+    </header>
+
+    <div class="container">
+
+        <!-- Formulário para novo post -->
+        <div class="form-box">
+            <h2>✍️ Novo Post</h2>
+            <input type="text" id="titulo" placeholder="Título do post">
+            <textarea id="conteudo" placeholder="Escreva seu texto..."></textarea>
+            <button class="btn" onclick="adicionarPost()">Publicar</button>
+        </div>
+
+        <!-- Área onde os posts aparecem -->
+        <div id="posts"></div>
+
+    </div>
+
+    <footer>
+        &copy; 2025 Blog da Kauanne — Feito com 💜
+    </footer>
+
+    <script>
+        // Posts iniciais
+        let posts = [
+            {
+                titulo: "Bem-vindo ao meu blog!",
+                conteudo: "Olá! Meu nome é Kauanne e este é o meu espaço para compartilhar pensamentos, dicas e histórias do dia a dia. Fique à vontade!",
+                data: "24/11/2026",
+                likes: 0
+            },
+            {
+                titulo: "Minha paixão por programação",
+                conteudo: "Desde que descobri o mundo da programação, tudo mudou. Adoro criar projetos e ver as ideias ganhando vida na tela. Aqui vou compartilhar um pouco dessa jornada!",
+                data: "23/11/2026",
+                likes: 0
+            }
+        ];
+
+        // Função para renderizar posts na tela
+        function renderizarPosts() {
+            const container = document.getElementById("posts");
+            container.innerHTML = "";
+
+            posts.forEach((post, index) => {
+                const div = document.createElement("div");
+                div.className = "post";
+                div.innerHTML = `
+                    <h2>${post.titulo}</h2>
+                    <div class="date">📅 ${post.data}</div>
+                    <p>${post.conteudo}</p>
+                    <button class="btn like-btn" onclick="curtir(${index})">
+                        ❤️ Curtir (${post.likes})
+                    </button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // Função para adicionar novo post
+        function adicionarPost() {
+            const titulo = document.getElementById("titulo").value.trim();
+            const conteudo = document.getElementById("conteudo").value.trim();
+
+            if (!titulo || !conteudo) {
+                alert("Preencha o título e o conteúdo do post!");
+                return;
+            }
+
+            const hoje = new Date().toLocaleDateString("pt-BR");
+
+            posts.unshift({
+                titulo: titulo,
+                conteudo: conteudo,
+                data: hoje,
+                likes: 0
+            });
+
+            document.getElementById("titulo").value = "";
+            document.getElementById("conteudo").value = "";
+            renderizarPosts();
+        }
+
+        // Função para curtir um post
+        function curtir(index) {
+            posts[index].likes++;
+            renderizarPosts();
+        }
+
+        // Renderiza ao carregar
+        renderizarPosts();
+    </script>
+
+</body>
+</html>
