@@ -1,0 +1,304 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistema de Estoque</title>
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f1f5f9;
+  color: #1e293b;
+}
+header {
+  background: #123b63;
+  color: white;
+  padding: 22px;
+  text-align: center;
+}
+.container {
+  max-width: 1100px;
+  margin: 25px auto;
+  padding: 15px;
+}
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(180px,1fr));
+  gap: 15px;
+}
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px #0001;
+}
+.card h3 { color: #64748b; font-size: 14px; }
+.card strong { font-size: 28px; color: #123b63; }
+.panel {
+  background: white;
+  padding: 20px;
+  margin-top: 22px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px #0001;
+}
+form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(150px,1fr));
+  gap: 12px;
+}
+input, select, button {
+  padding: 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 14px;
+}
+button {
+  background: #1769aa;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+}
+button:hover { opacity: .85; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+th,td {
+  padding: 12px;
+  border-bottom: 1px solid #e2e8f0;
+  text-align: left;
+}
+th { background: #f1f5f9; }
+.baixo { color: #dc2626; font-weight: bold; }
+.excluir { background: #dc2626; padding: 7px; }
+@media(max-width:600px) {
+  table { font-size: 12px; }
+  th,td { padding: 7px; }
+}
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<header>
+  <h1>📦 Sistema de Controle de Estoque</h1>
+  <p>Gerenciamento de produtos, entradas e saídas</p>
+</header>
+
+<div class="container">
+
+<div class="cards">
+  <div class="card">
+    <h3>Total de produtos cadastrados</h3>
+    <strong id="totalProdutos">0</strong>
+  </div>
+  <div class="card">
+    <h3>Unidades em estoque</h3>
+    <strong id="totalUnidades">0</strong>
+  </div>
+  <div class="card">
+    <h3>Estoque baixo</h3>
+    <strong id="estoqueBaixo">0</strong>
+  </div>
+  <div class="card">
+    <h3>Valor do estoque</h3>
+    <strong id="valorEstoque">R$ 0,00</strong>
+  </div>
+</div>
+
+<div class="panel">
+  <h2>➕ Cadastrar Produto</h2>
+  <form id="formProduto">
+    <input id="nome" placeholder="Nome do produto" required>
+    <input id="codigo" placeholder="Código" required>
+    <input id="categoria" placeholder="Categoria" required>
+    <input id="quantidade" type="number" min="0" placeholder="Quantidade" required>
+    <input id="preco" type="number" min="0" step="0.01" placeholder="Preço unitário" required>
+    <button type="submit">Cadastrar Produto</button>
+  </form>
+</div>
+
+<div class="panel">
+  <h2>📋 Lista de Produtos</h2>
+  <input id="pesquisa" placeholder="Pesquisar produto..." style="width:100%">
+  <div style="overflow-x:auto">
+    <table>
+      <thead>
+        <tr>
+          <th>Código</th>
+          <th>Produto</th>
+          <th>Categoria</th>
+          <th>Quantidade</th>
+          <th>Preço</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody id="listaProdutos"></tbody>
+    </table>
+  </div>
+</div>
+
+<div class="panel">
+  <h2>🔄 Movimentação de Estoque</h2>
+  <form id="formMovimento">
+    <select id="produtoMovimento" required>
+      <option value="">Selecione o produto</option>
+    </select>
+    <select id="tipoMovimento">
+      <option value="entrada">Entrada</option>
+      <option value="saida">Saída</option>
+    </select>
+    <input id="quantidadeMovimento" type="number" min="1" placeholder="Quantidade" required>
+    <button type="submit">Registrar Movimentação</button>
+  </form>
+</div>
+
+<div class="panel">
+  <h2>📊 Histórico de Movimentações</h2>
+  <div style="overflow-x:auto">
+    <table>
+      <thead>
+        <tr>
+          <th>Data</th>
+          <th>Produto</th>
+          <th>Tipo</th>
+          <th>Quantidade</th>
+        </tr>
+      </thead>
+      <tbody id="historico"></tbody>
+    </table>
+  </div>
+</div>
+
+</div>
+
+<script>
+let produtos = JSON.parse(localStorage.getItem("produtos")) || [];
+let historico = JSON.parse(localStorage.getItem("historico")) || [];
+
+const moeda = valor => valor.toLocaleString("pt-BR", {
+  style: "currency", currency: "BRL"
+});
+
+function salvar() {
+  localStorage.setItem("produtos", JSON.stringify(produtos));
+  localStorage.setItem("historico", JSON.stringify(historico));
+}
+
+function atualizar() {
+  document.getElementById("totalProdutos").textContent = produtos.length;
+
+  document.getElementById("totalUnidades").textContent =
+    produtos.reduce((s,p) => s + p.quantidade, 0);
+
+  document.getElementById("estoqueBaixo").textContent =
+    produtos.filter(p => p.quantidade <= 5).length;
+
+  document.getElementById("valorEstoque").textContent =
+    moeda(produtos.reduce((s,p) => s + p.quantidade*p.preco, 0));
+
+  const busca = document.getElementById("pesquisa").value.toLowerCase();
+
+  document.getElementById("listaProdutos").innerHTML =
+    produtos.filter(p => (p.nome + p.codigo + p.categoria).toLowerCase().includes(busca))
+    .map(p => `
+      <tr>
+        <td>${p.codigo}</td>
+        <td>${p.nome}</td>
+        <td>${p.categoria}</td>
+        <td class="${p.quantidade <= 5 ? 'baixo' : ''}">${p.quantidade}</td>
+        <td>${moeda(p.preco)}</td>
+        <td><button class="excluir" onclick="excluir(${p.id})">Excluir</button></td>
+      </tr>
+    `).join("");
+
+  document.getElementById("produtoMovimento").innerHTML =
+    '<option value="">Selecione o produto</option>' +
+    produtos.map(p => `<option value="${p.id}">${p.nome}</option>`).join("");
+
+  document.getElementById("historico").innerHTML =
+    historico.slice().reverse().map(h => `
+      <tr>
+        <td>${h.data}</td>
+        <td>${h.nome}</td>
+        <td>${h.tipo}</td>
+        <td>${h.quantidade}</td>
+      </tr>
+    `).join("");
+}
+
+document.getElementById("formProduto").addEventListener("submit", e => {
+  e.preventDefault();
+
+  const codigo = document.getElementById("codigo").value.trim();
+
+  if (produtos.some(p => p.codigo.toLowerCase() === codigo.toLowerCase())) {
+    alert("Este código já está cadastrado!");
+    return;
+  }
+
+  produtos.push({
+    id: Date.now(),
+    nome: document.getElementById("nome").value.trim(),
+    codigo,
+    categoria: document.getElementById("categoria").value.trim(),
+    quantidade: Number(document.getElementById("quantidade").value),
+    preco: Number(document.getElementById("preco").value)
+  });
+
+  salvar();
+  atualizar();
+  e.target.reset();
+  alert("Produto cadastrado com sucesso!");
+});
+
+function excluir(id) {
+  if (!confirm("Deseja excluir este produto?")) return;
+  produtos = produtos.filter(p => p.id !== id);
+  salvar();
+  atualizar();
+}
+
+document.getElementById("formMovimento").addEventListener("submit", e => {
+  e.preventDefault();
+
+  const id = Number(document.getElementById("produtoMovimento").value);
+  const tipo = document.getElementById("tipoMovimento").value;
+  const quantidade = Number(document.getElementById("quantidadeMovimento").value);
+
+  const produto = produtos.find(p => p.id === id);
+
+  if (!produto) return alert("Selecione um produto!");
+
+  if (tipo === "saida" && produto.quantidade < quantidade) {
+    return alert("Estoque insuficiente!");
+  }
+
+  produto.quantidade += tipo === "entrada" ? quantidade : -quantidade;
+
+  historico.push({
+    data: new Date().toLocaleString("pt-BR"),
+    nome: produto.nome,
+    tipo: tipo === "entrada" ? "Entrada" : "Saída",
+    quantidade
+  });
+
+  salvar();
+  atualizar();
+  e.target.reset();
+  alert("Movimentação registrada!");
+});
+
+document.getElementById("pesquisa").addEventListener("input", atualizar);
+
+atualizar();
+</script>
+
+</body>
+</html>
