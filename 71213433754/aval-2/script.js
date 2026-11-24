@@ -1,140 +1,257 @@
 
-const htmlEditor = document.getElementById("html-code");
-const cssEditor = document.getElementById("css-code");
-const jsEditor = document.getElementById("js-code");
+// GERENCIADOR DE TAREFAS - JAVASCRIPT
 
-const preview = document.getElementById("preview");
+document.body.innerHTML = "";
 
-// ATUALIZAR PRÉ-VISUALIZAÇÃO
+const estilo = document.createElement("style");
 
-function atualizarPreview() {
-
-    const html = htmlEditor.value;
-    const css = cssEditor.value;
-    const js = jsEditor.value;
-
-    const codigoCompleto = `
-        <!DOCTYPE html>
-        <html lang="pt-BR">
-        <head>
-            <meta charset="UTF-8">
-            <style>
-                ${css}
-            </style>
-        </head>
-        <body>
-
-            ${html}
-
-            <script>
-                ${js}
-            <\/script>
-
-        </body>
-        </html>
-    `;
-
-    preview.srcdoc = codigoCompleto;
+estilo.textContent = `
+* {
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
 }
 
-// ATUALIZA AUTOMATICAMENTE AO DIGITAR
-
-htmlEditor.addEventListener("input", atualizarPreview);
-cssEditor.addEventListener("input", atualizarPreview);
-jsEditor.addEventListener("input", atualizarPreview);
-
-// MAXIMIZAR EDITOR
-
-function maximizar(id) {
-
-    const editor = document.getElementById(id);
-
-    editor.classList.toggle("maximizado");
-
-    const botao = editor.querySelector("button");
-
-    if (editor.classList.contains("maximizado")) {
-        botao.textContent = "Restaurar";
-    } else {
-        botao.textContent = "Maximizar";
-    }
+body {
+    background: #f1f5f9;
+    margin: 0;
+    padding: 40px 15px;
 }
 
-// LIMPAR CÓDIGOS
+.container {
+    max-width: 600px;
+    margin: auto;
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px #0001;
+}
 
-function limparCodigo() {
+h1 {
+    text-align: center;
+    color: #1e293b;
+}
 
-    const confirmar = confirm(
-        "Tem certeza que deseja apagar todos os códigos?"
+.form {
+    display: flex;
+    gap: 10px;
+}
+
+input {
+    flex: 1;
+    padding: 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    outline: none;
+}
+
+button {
+    border: none;
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.adicionar {
+    background: #2563eb;
+    color: white;
+}
+
+.filtros {
+    display: flex;
+    gap: 8px;
+    margin: 20px 0;
+}
+
+.filtros button {
+    background: #e2e8f0;
+}
+
+.filtros button.ativo {
+    background: #2563eb;
+    color: white;
+}
+
+li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 12px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+li span {
+    flex: 1;
+    overflow-wrap: anywhere;
+}
+
+.concluida {
+    text-decoration: line-through;
+    color: #94a3b8;
+}
+
+.excluir {
+    background: #ef4444;
+    color: white;
+}
+
+.info {
+    color: #64748b;
+    text-align: center;
+    margin-top: 20px;
+}
+`;
+
+document.head.appendChild(estilo);
+
+const container = document.createElement("div");
+container.className = "container";
+
+container.innerHTML = `
+    <h1>📝 Gerenciador de Tarefas</h1>
+
+    <div class="form">
+        <input id="tarefaInput"
+            placeholder="Digite uma tarefa...">
+        <button class="adicionar" id="adicionar">
+            Adicionar
+        </button>
+    </div>
+
+    <div class="filtros">
+        <button class="ativo" data-filtro="todas">Todas</button>
+        <button data-filtro="pendentes">Pendentes</button>
+        <button data-filtro="concluidas">Concluídas</button>
+    </div>
+
+    <ul id="lista"></ul>
+
+    <p class="info" id="contador"></p>
+`;
+
+document.body.appendChild(container);
+
+// Dados
+let tarefas = JSON.parse(
+    localStorage.getItem("tarefas") || "[]"
+);
+
+let filtroAtual = "todas";
+
+// Salvar tarefas
+function salvar() {
+    localStorage.setItem(
+        "tarefas",
+        JSON.stringify(tarefas)
     );
-
-    if (confirmar) {
-
-        htmlEditor.value = "";
-        cssEditor.value = "";
-        jsEditor.value = "";
-
-        atualizarPreview();
-
-    }
 }
 
-// PUBLICAR / EXPORTAR AVALIAÇÃO
+// Renderizar tarefas
+function renderizar() {
+    const lista = document.getElementById("lista");
+    const contador = document.getElementById("contador");
 
-function publicarCodigo() {
+    lista.innerHTML = "";
 
-    const html = htmlEditor.value;
-    const css = cssEditor.value;
-    const js = jsEditor.value;
+    let filtradas = tarefas.filter(tarefa => {
+        if (filtroAtual === "pendentes")
+            return !tarefa.concluida;
 
-    if (
-        html.trim() === "" &&
-        css.trim() === "" &&
-        js.trim() === ""
-    ) {
-        alert("Digite algum código antes de publicar!");
+        if (filtroAtual === "concluidas")
+            return tarefa.concluida;
+
+        return true;
+    });
+
+    filtradas.forEach(tarefa => {
+        const li = document.createElement("li");
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.checked = tarefa.concluida;
+
+        checkbox.addEventListener("change", () => {
+            tarefa.concluida = checkbox.checked;
+            salvar();
+            renderizar();
+        });
+
+        const texto = document.createElement("span");
+        texto.textContent = tarefa.nome;
+
+        if (tarefa.concluida) {
+            texto.classList.add("concluida");
+        }
+
+        const excluir = document.createElement("button");
+        excluir.textContent = "Excluir";
+        excluir.className = "excluir";
+
+        excluir.addEventListener("click", () => {
+            tarefas = tarefas.filter(t => t.id !== tarefa.id);
+            salvar();
+            renderizar();
+        });
+
+        li.append(checkbox, texto, excluir);
+        lista.appendChild(li);
+    });
+
+    const pendentes = tarefas.filter(t => !t.concluida).length;
+    const concluidas = tarefas.filter(t => t.concluida).length;
+
+    contador.textContent =
+        `Total: ${tarefas.length} | Pendentes: ${pendentes} | Concluídas: ${concluidas}`;
+}
+
+// Adicionar tarefa
+function adicionarTarefa() {
+    const input = document.getElementById("tarefaInput");
+    const nome = input.value.trim();
+
+    if (!nome) {
+        alert("Digite uma tarefa!");
         return;
     }
 
-    const codigoFinal = `
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<title>Minha Avaliação</title>
-<style>
-${css}
-</style>
-</head>
-<body>
+    tarefas.push({
+        id: Date.now(),
+        nome: nome,
+        concluida: false
+    });
 
-${html}
+    input.value = "";
 
-<script>
-${js}
-<\/script>
-
-</body>
-</html>
-`;
-
-    const arquivo = new Blob(
-        [codigoFinal],
-        { type: "text/html" }
-    );
-
-    const link = document.createElement("a");
-
-    link.href = URL.createObjectURL(arquivo);
-    link.download = "minha-avaliacao.html";
-
-    link.click();
-
-    URL.revokeObjectURL(link.href);
-
-    alert("Avaliação exportada com sucesso!");
+    salvar();
+    renderizar();
 }
 
-// PRÉ-VISUALIZAÇÃO INICIAL
+// Botão adicionar
+document.getElementById("adicionar")
+    .addEventListener("click", adicionarTarefa);
 
-atualizarPreview();
+// Adicionar com Enter
+document.getElementById("tarefaInput")
+    .addEventListener("keydown", evento => {
+        if (evento.key === "Enter") {
+            adicionarTarefa();
+        }
+    });
+
+// Filtros
+document.querySelectorAll("[data-filtro]")
+    .forEach(botao => {
+        botao.addEventListener("click", () => {
+            filtroAtual = botao.dataset.filtro;
+
+            document.querySelectorAll("[data-filtro]")
+                .forEach(b => b.classList.remove("ativo"));
+
+            botao.classList.add("ativo");
+
+            renderizar();
+        });
+    });
+
+// Inicializar
+renderizar();

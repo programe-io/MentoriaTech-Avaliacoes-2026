@@ -1,109 +1,272 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Área de Entrega - Avaliações</title>
-    <link rel="stylesheet" href="style.css">
-<link href="style.css" rel="stylesheet"></head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Código JavaScript</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <style>body{margin:0;background:#0d1117}pre{margin:0}code.hljs{padding:1.5rem;min-height:100vh;box-sizing:border-box}</style>
+</head>
 <body>
+  <pre><code class="language-javascript">
+// GERENCIADOR DE TAREFAS - JAVASCRIPT
 
-    <a href="index.html" class="voltar">Voltar para o início</a>
+document.body.innerHTML = "";
 
-    <header>
-        <h1>Área de Entrega - Avaliações</h1>
+const estilo = document.createElement("style");
 
-        <p>
-            Aqui você envia seus códigos para correção.
-            Revise antes de publicar e garanta que sua avaliação esteja completa.
-        </p>
+estilo.textContent = `
+* {
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
 
-        <p>
-            Finalize seu trabalho, publique seu código e compartilhe sua solução
-            com o professor para ser avaliada.
-        </p>
-    </header>
+body {
+    background: #f1f5f9;
+    margin: 0;
+    padding: 40px 15px;
+}
 
-    <main>
+.container {
+    max-width: 600px;
+    margin: auto;
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px #0001;
+}
 
-        <section class="editores">
+h1 {
+    text-align: center;
+    color: #1e293b;
+}
 
-            <!-- EDITOR HTML -->
-            <div class="editor" id="editor-html">
-                <div class="editor-topo">
-                    <h2>HTML</h2>
-                    <button onclick="maximizar('editor-html')">
-                        Maximizar
-                    </button>
-                </div>
+.form {
+    display: flex;
+    gap: 10px;
+}
 
-                <textarea id="html-code"
-                    placeholder="Digite seu código HTML aqui..."
-                    spellcheck="false"></textarea>
-            </div>
+input {
+    flex: 1;
+    padding: 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    outline: none;
+}
 
-            <!-- EDITOR CSS -->
-            <div class="editor" id="editor-css">
-                <div class="editor-topo">
-                    <h2>CSS</h2>
-                    <button onclick="maximizar('editor-css')">
-                        Maximizar
-                    </button>
-                </div>
+button {
+    border: none;
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+}
 
-                <textarea id="css-code"
-                    placeholder="Digite seu código CSS aqui..."
-                    spellcheck="false"></textarea>
-            </div>
+.adicionar {
+    background: #2563eb;
+    color: white;
+}
 
-            <!-- EDITOR JAVASCRIPT -->
-            <div class="editor" id="editor-js">
-                <div class="editor-topo">
-                    <h2>JavaScript</h2>
-                    <button onclick="maximizar('editor-js')">
-                        Maximizar
-                    </button>
-                </div>
+.filtros {
+    display: flex;
+    gap: 8px;
+    margin: 20px 0;
+}
 
-                <textarea id="js-code"
-                    placeholder="Digite seu código JavaScript aqui..."
-                    spellcheck="false"></textarea>
-            </div>
+.filtros button {
+    background: #e2e8f0;
+}
 
-        </section>
+.filtros button.ativo {
+    background: #2563eb;
+    color: white;
+}
 
-        <!-- PRÉ-VISUALIZAÇÃO -->
-        <section class="preview-section">
+li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 12px;
+    border-bottom: 1px solid #e2e8f0;
+}
 
-            <div class="preview-topo">
-                <h2>Pré-visualização do Código</h2>
+li span {
+    flex: 1;
+    overflow-wrap: anywhere;
+}
 
-                <button onclick="atualizarPreview()">
-                    Executar código
-                </button>
-            </div>
+.concluida {
+    text-decoration: line-through;
+    color: #94a3b8;
+}
 
-            <iframe id="preview"
-                title="Pré-visualização do código">
-            </iframe>
+.excluir {
+    background: #ef4444;
+    color: white;
+}
 
-        </section>
+.info {
+    color: #64748b;
+    text-align: center;
+    margin-top: 20px;
+}
+`;
 
-        <!-- BOTÕES -->
-        <section class="acoes">
-            <button class="limpar" onclick="limparCodigo()">
-                Limpar códigos
-            </button>
+document.head.appendChild(estilo);
 
-            <button class="publicar" onclick="publicarCodigo()">
-                Publicar avaliação
-            </button>
-        </section>
+const container = document.createElement("div");
+container.className = "container";
 
-    </main>
+container.innerHTML = `
+    &lt;h1&gt;📝 Gerenciador de Tarefas&lt;/h1&gt;
 
-    <script src="script.js"></script>
+    &lt;div class="form"&gt;
+        &lt;input id="tarefaInput"
+            placeholder="Digite uma tarefa..."&gt;
+        &lt;button class="adicionar" id="adicionar"&gt;
+            Adicionar
+        &lt;/button&gt;
+    &lt;/div&gt;
 
-<script src="script.js"></script></body>
+    &lt;div class="filtros"&gt;
+        &lt;button class="ativo" data-filtro="todas"&gt;Todas&lt;/button&gt;
+        &lt;button data-filtro="pendentes"&gt;Pendentes&lt;/button&gt;
+        &lt;button data-filtro="concluidas"&gt;Concluídas&lt;/button&gt;
+    &lt;/div&gt;
+
+    &lt;ul id="lista"&gt;&lt;/ul&gt;
+
+    &lt;p class="info" id="contador"&gt;&lt;/p&gt;
+`;
+
+document.body.appendChild(container);
+
+// Dados
+let tarefas = JSON.parse(
+    localStorage.getItem("tarefas") || "[]"
+);
+
+let filtroAtual = "todas";
+
+// Salvar tarefas
+function salvar() {
+    localStorage.setItem(
+        "tarefas",
+        JSON.stringify(tarefas)
+    );
+}
+
+// Renderizar tarefas
+function renderizar() {
+    const lista = document.getElementById("lista");
+    const contador = document.getElementById("contador");
+
+    lista.innerHTML = "";
+
+    let filtradas = tarefas.filter(tarefa =&gt; {
+        if (filtroAtual === "pendentes")
+            return !tarefa.concluida;
+
+        if (filtroAtual === "concluidas")
+            return tarefa.concluida;
+
+        return true;
+    });
+
+    filtradas.forEach(tarefa =&gt; {
+        const li = document.createElement("li");
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.checked = tarefa.concluida;
+
+        checkbox.addEventListener("change", () =&gt; {
+            tarefa.concluida = checkbox.checked;
+            salvar();
+            renderizar();
+        });
+
+        const texto = document.createElement("span");
+        texto.textContent = tarefa.nome;
+
+        if (tarefa.concluida) {
+            texto.classList.add("concluida");
+        }
+
+        const excluir = document.createElement("button");
+        excluir.textContent = "Excluir";
+        excluir.className = "excluir";
+
+        excluir.addEventListener("click", () =&gt; {
+            tarefas = tarefas.filter(t =&gt; t.id !== tarefa.id);
+            salvar();
+            renderizar();
+        });
+
+        li.append(checkbox, texto, excluir);
+        lista.appendChild(li);
+    });
+
+    const pendentes = tarefas.filter(t =&gt; !t.concluida).length;
+    const concluidas = tarefas.filter(t =&gt; t.concluida).length;
+
+    contador.textContent =
+        `Total: ${tarefas.length} | Pendentes: ${pendentes} | Concluídas: ${concluidas}`;
+}
+
+// Adicionar tarefa
+function adicionarTarefa() {
+    const input = document.getElementById("tarefaInput");
+    const nome = input.value.trim();
+
+    if (!nome) {
+        alert("Digite uma tarefa!");
+        return;
+    }
+
+    tarefas.push({
+        id: Date.now(),
+        nome: nome,
+        concluida: false
+    });
+
+    input.value = "";
+
+    salvar();
+    renderizar();
+}
+
+// Botão adicionar
+document.getElementById("adicionar")
+    .addEventListener("click", adicionarTarefa);
+
+// Adicionar com Enter
+document.getElementById("tarefaInput")
+    .addEventListener("keydown", evento =&gt; {
+        if (evento.key === "Enter") {
+            adicionarTarefa();
+        }
+    });
+
+// Filtros
+document.querySelectorAll("[data-filtro]")
+    .forEach(botao =&gt; {
+        botao.addEventListener("click", () =&gt; {
+            filtroAtual = botao.dataset.filtro;
+
+            document.querySelectorAll("[data-filtro]")
+                .forEach(b =&gt; b.classList.remove("ativo"));
+
+            botao.classList.add("ativo");
+
+            renderizar();
+        });
+    });
+
+// Inicializar
+renderizar();
+</code></pre>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+</body>
 </html>
