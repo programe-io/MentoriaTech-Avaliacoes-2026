@@ -16,23 +16,21 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const limparDestaqueTabela = () => {
-    linhasTabela.forEach((tr) => {
-      tr.style.backgroundColor = '';
-      tr.style.fontWeight = '';
+    linhasTabela.forEach(linha => {
+      linha.style.backgroundColor = '';
+      linha.style.fontWeight = '';
     });
   };
 
-  const calcularIMC = (e) => {
+  form.addEventListener('submit', (e) => {
     e.preventDefault();
 
     const peso = parseFloat(inputPeso.value);
     const altura = parseFloat(inputAltura.value);
 
-    if (isNaN(peso) || isNaN(altura) || peso <= 0 || altura <= 0) {
+    if (!peso || !altura || peso <= 0 || altura <= 0) {
       valorImcEl.textContent = '--';
-      classificacaoImcEl.textContent = 'Insira valores válidos para peso e altura.';
-      classificacaoImcEl.style.color = '#dc2626';
-      limparDestaqueTabela();
+      classificacaoImcEl.textContent = 'Insira valores válidos';
       return;
     }
 
@@ -41,7 +39,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     valorImcEl.textContent = imc.toFixed(2).replace('.', ',');
     valorImcEl.style.color = resultado.cor;
-
     classificacaoImcEl.textContent = resultado.texto;
     classificacaoImcEl.style.color = resultado.cor;
 
@@ -50,17 +47,13 @@ document.addEventListener('DOMContentLoaded', () => {
       linhasTabela[resultado.indice].style.backgroundColor = '#eff6ff';
       linhasTabela[resultado.indice].style.fontWeight = '600';
     }
-  };
+  });
 
-  const limparFormulario = () => {
+  form.addEventListener('reset', () => {
     valorImcEl.textContent = '--';
     valorImcEl.style.color = '';
-    classificacaoImcEl.textContent = 'Aguardando cálculo...';
+    classificacaoImcEl.textContent = 'Preencha os dados acima';
     classificacaoImcEl.style.color = '';
     limparDestaqueTabela();
-    inputPeso.focus();
-  };
-
-  form.addEventListener('submit', calcularIMC);
-  form.addEventListener('reset', limparFormulario);
+  });
 });
