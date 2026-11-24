@@ -1,0 +1,376 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistema de Estoque</title>
+<style>
+* {
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: #f1f5f9;
+  color: #1e293b;
+}
+
+header {
+  background: #0f172a;
+  color: white;
+  padding: 22px;
+  text-align: center;
+}
+
+.container {
+  max-width: 1100px;
+  margin: 25px auto;
+  padding: 15px;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(180px,1fr));
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px #0001;
+}
+
+.card h3 {
+  margin: 0;
+  color: #64748b;
+}
+
+.card p {
+  font-size: 26px;
+  font-weight: bold;
+  margin-bottom: 0;
+}
+
+.panel {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+input {
+  padding: 11px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  margin: 5px;
+  min-width: 150px;
+}
+
+button {
+  padding: 11px 15px;
+  border: none;
+  border-radius: 6px;
+  background: #2563eb;
+  color: white;
+  cursor: pointer;
+  margin: 5px;
+}
+
+button:hover {
+  opacity: .85;
+}
+
+.excluir { background: #dc2626; }
+.entrada { background: #16a34a; }
+.saida { background: #ea580c; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+th, td {
+  padding: 12px;
+  border-bottom: 1px solid #e2e8f0;
+  text-align: left;
+}
+
+th { background: #f8fafc; }
+
+.baixo {
+  color: #dc2626;
+  font-weight: bold;
+}
+
+.normal {
+  color: #16a34a;
+  font-weight: bold;
+}
+
+.tabela {
+  overflow-x: auto;
+}
+
+@media(max-width:600px) {
+  input { width: 100%; margin: 5px 0; }
+  button { margin: 4px 0; }
+}
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<header>
+  <h1>📦 Sistema de Estoque</h1>
+  <p>Controle de produtos e mercadorias</p>
+</header>
+
+<div class="container">
+
+<div class="cards">
+  <div class="card">
+    <h3>Total de produtos</h3>
+    <p id="totalProdutos">0</p>
+  </div>
+  <div class="card">
+    <h3>Itens em estoque</h3>
+    <p id="totalItens">0</p>
+  </div>
+  <div class="card">
+    <h3>Estoque baixo</h3>
+    <p id="estoqueBaixo">0</p>
+  </div>
+  <div class="card">
+    <h3>Valor do estoque</h3>
+    <p id="valorEstoque">R$ 0,00</p>
+  </div>
+</div>
+
+<div class="panel">
+  <h2>Cadastrar produto</h2>
+
+  <input id="nome" placeholder="Nome do produto">
+  <input id="codigo" placeholder="Código">
+  <input id="preco" type="number" step="0.01" placeholder="Preço">
+  <input id="quantidade" type="number" placeholder="Quantidade">
+  <input id="minimo" type="number" placeholder="Estoque mínimo">
+
+  <button onclick="cadastrar()">Cadastrar produto</button>
+</div>
+
+<div class="panel">
+  <h2>Lista de produtos</h2>
+
+  <input id="pesquisa" placeholder="Pesquisar produto..."
+  oninput="listar()">
+
+  <div class="tabela">
+  <table>
+    <thead>
+      <tr>
+        <th>Código</th>
+        <th>Produto</th>
+        <th>Preço</th>
+        <th>Quantidade</th>
+        <th>Status</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody id="lista"></tbody>
+  </table>
+  </div>
+</div>
+
+</div>
+
+<script>
+let produtos = JSON.parse(
+  localStorage.getItem("estoque")
+) || [];
+
+function salvar() {
+  localStorage.setItem("estoque", JSON.stringify(produtos));
+}
+
+function cadastrar() {
+  const nome = document.getElementById("nome").value.trim();
+  const codigo = document.getElementById("codigo").value.trim();
+  const preco = Number(document.getElementById("preco").value);
+  const quantidade = Number(document.getElementById("quantidade").value);
+  const minimo = Number(document.getElementById("minimo").value);
+
+  if (!nome || !codigo ||
+      document.getElementById("preco").value === "" ||
+      document.getElementById("quantidade").value === "" ||
+      document.getElementById("minimo").value === "" ||
+      preco < 0 || quantidade < 0 || minimo < 0) {
+    alert("Preencha os campos corretamente!");
+    return;
+  }
+
+  if (produtos.some(p => p.codigo === codigo)) {
+    alert("Este código já está cadastrado!");
+    return;
+  }
+
+  produtos.push({
+    nome,
+    codigo,
+    preco,
+    quantidade,
+    minimo
+  });
+
+  salvar();
+  limpar();
+  listar();
+}
+
+function limpar() {
+  ["nome","codigo","preco","quantidade","minimo"]
+    .forEach(id => document.getElementById(id).value = "");
+}
+
+function entrada(index) {
+  const qtd = Number(prompt("Quantidade de entrada:"));
+
+  if (!Number.isInteger(qtd) || qtd <= 0) {
+    alert("Informe uma quantidade inteira válida!");
+    return;
+  }
+
+  produtos[index].quantidade += qtd;
+  salvar();
+  listar();
+}
+
+function saida(index) {
+  const qtd = Number(prompt("Quantidade de saída:"));
+
+  if (!Number.isInteger(qtd) || qtd <= 0) {
+    alert("Informe uma quantidade inteira válida!");
+    return;
+  }
+
+  if (qtd > produtos[index].quantidade) {
+    alert("Estoque insuficiente!");
+    return;
+  }
+
+  produtos[index].quantidade -= qtd;
+  salvar();
+  listar();
+}
+
+function excluir(index) {
+  if (confirm("Deseja excluir este produto?")) {
+    produtos.splice(index, 1);
+    salvar();
+    listar();
+  }
+}
+
+function editar(index) {
+  const p = produtos[index];
+
+  const nome = prompt("Nome do produto:", p.nome);
+  if (nome === null || !nome.trim()) return;
+
+  const precoTexto = prompt("Preço:", p.preco);
+  if (precoTexto === null) return;
+
+  const preco = Number(precoTexto);
+  if (!Number.isFinite(preco) || preco < 0) {
+    alert("Preço inválido!");
+    return;
+  }
+
+  const minimoTexto = prompt("Estoque mínimo:", p.minimo);
+  if (minimoTexto === null) return;
+
+  const minimo = Number(minimoTexto);
+  if (!Number.isInteger(minimo) || minimo < 0) {
+    alert("Estoque mínimo inválido!");
+    return;
+  }
+
+  p.nome = nome.trim();
+  p.preco = preco;
+  p.minimo = minimo;
+
+  salvar();
+  listar();
+}
+
+function listar() {
+  const busca = document.getElementById("pesquisa")
+    .value.toLowerCase();
+
+  const lista = document.getElementById("lista");
+  lista.innerHTML = "";
+
+  produtos.forEach((p, i) => {
+    if (
+      !p.nome.toLowerCase().includes(busca) &&
+      !p.codigo.toLowerCase().includes(busca)
+    ) return;
+
+    const status = p.quantidade <= p.minimo
+      ? '<span class="baixo">Estoque baixo</span>'
+      : '<span class="normal">Normal</span>';
+
+    lista.innerHTML += `
+      <tr>
+        <td>${p.codigo}</td>
+        <td>${p.nome}</td>
+        <td>${p.preco.toLocaleString("pt-BR", {
+          style:"currency", currency:"BRL"
+        })}</td>
+        <td>${p.quantidade}</td>
+        <td>${status}</td>
+        <td>
+          <button class="entrada"
+          onclick="entrada(${i})">+ Entrada</button>
+
+          <button class="saida"
+          onclick="saida(${i})">- Saída</button>
+
+          <button onclick="editar(${i})">Editar</button>
+
+          <button class="excluir"
+          onclick="excluir(${i})">Excluir</button>
+        </td>
+      </tr>
+    `;
+  });
+
+  document.getElementById("totalProdutos").textContent =
+    produtos.length;
+
+  document.getElementById("totalItens").textContent =
+    produtos.reduce((s,p) => s + p.quantidade, 0);
+
+  document.getElementById("estoqueBaixo").textContent =
+    produtos.filter(p => p.quantidade <= p.minimo).length;
+
+  const valor = produtos.reduce(
+    (s,p) => s + p.preco * p.quantidade, 0
+  );
+
+  document.getElementById("valorEstoque").textContent =
+    valor.toLocaleString("pt-BR", {
+      style:"currency", currency:"BRL"
+    });
+}
+
+listar();
+</script>
+
+</body>
+</html>
