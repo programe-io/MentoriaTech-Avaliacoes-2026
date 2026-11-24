@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Music Galaxy 🎵</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+\}
+
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #090019, #160039, #31005c);
+    color: white;
+    min-height: 100vh;
+    padding: 30px;
+\}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 50px;
+\}
+
+.logo {
+    font-size: 28px;
+    font-weight: bold;
+    color: #e879ff;
+    text-shadow: 0 0 15px #d000ff;
+\}
+
+header span {
+    color: #aaa;
+\}
+
+.container {
+    max-width: 950px;
+    margin: auto;
+    text-align: center;
+\}
+
+h1 {
+    font-size: 45px;
+    margin-bottom: 12px;
+    background: linear-gradient(90deg, #ff4dff, #7b61ff);
+    background-clip: text;
+    color: transparent;
+\}
+
+.subtitle {
+    color: #bbb;
+    margin-bottom: 35px;
+\}
+
+.player {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 25px;
+    padding: 30px;
+    max-width: 430px;
+    margin: auto;
+    box-shadow: 0 0 40px rgba(183,0,255,0.2);
+\}
+
+.album {
+    width: 220px;
+    height: 220px;
+    margin: auto;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ff00cc, #3333ff, #00eaff);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 90px;
+    box-shadow: 0 0 35px #b000ff;
+    animation: glow 3s infinite alternate;
+\}
+
+@keyframes glow {
+    from { box-shadow: 0 0 15px #b000ff; \}
+    to { box-shadow: 0 0 45px #ff00cc; \}
+\}
+
+.song-title {
+    font-size: 24px;
+    margin-top: 25px;
+\}
+
+.artist {
+    color: #aaa;
+    margin-top: 8px;
+\}
+
+.controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 25px;
+    margin: 25px 0;
+\}
+
+button {
+    border: none;
+    cursor: pointer;
+    color: white;
+    background: transparent;
+    font-size: 25px;
+\}
+
+.play {
+    background: linear-gradient(135deg, #ff00cc, #7928ca);
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    font-size: 27px;
+    box-shadow: 0 0 20px #d000ff;
+\}
+
+.progress {
+    width: 100%;
+    accent-color: #ed49ff;
+    cursor: pointer;
+\}
+
+.playlist {
+    margin-top: 45px;
+    text-align: left;
+\}
+
+.playlist h2 {
+    margin-bottom: 20px;
+\}
+
+.music {
+    background: rgba(255,255,255,0.07);
+    padding: 17px;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    transition: 0.3s;
+\}
+
+.music:hover {
+    background: rgba(200,0,255,0.25);
+    transform: translateX(5px);
+\}
+
+footer {
+    text-align: center;
+    margin-top: 50px;
+    color: #888;
+\}
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+<header>
+    <div class="logo">🎵 MUSIC GALAXY</div>
+    <span>Seu universo musical</span>
+</header>
+
+<div class="container">
+
+    <h1>SINTA A MÚSICA!</h1>
+    <p class="subtitle">
+        Entre no seu universo de sons e emoções.
+    </p>
+
+    <div class="player">
+
+        <div class="album">🎧</div>
+
+        <div class="song-title" id="title">
+            Minha Música
+        </div>
+
+        <div class="artist" id="artist">
+            Music Galaxy
+        </div>
+
+        <br>
+
+        <audio id="audio"></audio>
+
+        <input type="range" class="progress"
+        id="progress" value="0" min="0" max="100">
+
+        <div class="controls">
+            <button onclick="previous()">⏮</button>
+            <button class="play" onclick="togglePlay()" id="playBtn">▶</button>
+            <button onclick="next()">⏭</button>
+        </div>
+
+    </div>
+
+    <div class="playlist">
+        <h2>🎶 Minha Playlist</h2>
+
+        <div class="music" onclick="selectSong(0)">
+            🎵 Música 1 — Noite Estrelada
+        </div>
+
+        <div class="music" onclick="selectSong(1)">
+            🎵 Música 2 — Universo
+        </div>
+
+        <div class="music" onclick="selectSong(2)">
+            🎵 Música 3 — Sonhos
+        </div>
+    </div>
+
+</div>
+
+<footer>
+    © 2026 Music Galaxy | Feito com ❤️ e música
+</footer>
+
+<script>
+const songs = [
+    {
+        title: "Noite Estrelada",
+        artist: "Artista 1",
+        src: "musica1.mp3"
+    \},
+    {
+        title: "Universo",
+        artist: "Artista 2",
+        src: "musica2.mp3"
+    \},
+    {
+        title: "Sonhos",
+        artist: "Artista 3",
+        src: "musica3.mp3"
+    \}
+];
+
+let current = 0;
+
+const audio = document.getElementById("audio");
+const title = document.getElementById("title");
+const artist = document.getElementById("artist");
+const playBtn = document.getElementById("playBtn");
+const progress = document.getElementById("progress");
+
+function selectSong(index) {
+    current = index;
+    audio.src = songs[current].src;
+    title.textContent = songs[current].title;
+    artist.textContent = songs[current].artist;
+    audio.play();
+    playBtn.textContent = "⏸";
+\}
+
+function togglePlay() {
+    if (!audio.src) {
+        selectSong(current);
+        return;
+    \}
+
+    if (audio.paused) {
+        audio.play();
+        playBtn.textContent = "⏸";
+    \} else {
+        audio.pause();
+        playBtn.textContent = "▶";
+    \}
+\}
+
+function next() {
+    selectSong((current + 1) % songs.length);
+\}
+
+function previous() {
+    selectSong((current - 1 + songs.length) % songs.length);
+\}
+
+audio.addEventListener("timeupdate", () => {
+    if (audio.duration) {
+        progress.value =
+        (audio.currentTime / audio.duration) * 100;
+    \}
+\});
+
+progress.addEventListener("input", () => {
+    if (audio.duration) {
+        audio.currentTime =
+        (progress.value / 100) * audio.duration;
+    \}
+\});
+
+audio.addEventListener("ended", next);
+
+audio.addEventListener("pause", () => {
+    playBtn.textContent = "▶";
+\});
+
+audio.addEventListener("play", () => {
+    playBtn.textContent = "⏸";
+\});
+</script>
+
+<script src="script.js"></script></body>
+</html>$0
