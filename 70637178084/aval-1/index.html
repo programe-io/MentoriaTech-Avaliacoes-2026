@@ -1,257 +1,105 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Estoque</title>
-
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f0f2f5;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 700px;
-            margin: auto;
-            background: white;
-            padding: 25px;
-            border-radius: 10px;
-        }
-
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-
-        input, button {
-            width: 100%;
-            padding: 10px;
-            margin: 7px 0;
-            box-sizing: border-box;
-        }
-
-        button {
-            background: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background: #0056b3;
-        }
-
-        table {
-            width: 100%;
-            margin-top: 20px;
-            border-collapse: collapse;
-        }
-
-        th, td {
-            border: 1px solid #ddd;
-            padding: 10px;
-            text-align: center;
-        }
-
-        th {
-            background: #007bff;
-            color: white;
-        }
-
-        .excluir {
-            background: #dc3545;
-        }
-    </style>
-<script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Controle de IMC do Paciente</title>
+  <link rel="stylesheet" href="style.css" />
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="style.css" rel="stylesheet"></head>
-
 <body>
+  <main class="container">
+    <header class="header">
+      <h1>Controle de IMC do Paciente</h1>
+      <p>Informe os dados do paciente para calcular o Índice de Massa Corporal e visualizar a classificação.</p>
+    </header>
 
-<div class="container">
+    <form id="form-imc" class="form-imc" novalidate>
+      <div class="campo">
+        <label for="nome">Nome do paciente</label>
+        <input
+          type="text"
+          id="nome"
+          name="nome"
+          placeholder="Ex.: Maria Clara Silva"
+          autocomplete="name"
+        />
+      </div>
 
-    <h1>Sistema de Estoque</h1>
+      <div class="form-grid">
+        <div class="campo">
+          <label for="peso">Peso (kg)</label>
+          <input
+            type="number"
+            id="peso"
+            name="peso"
+            placeholder="Ex.: 68.5"
+            step="0.1"
+            min="0.5"
+            max="500"
+            inputmode="decimal"
+            required
+          />
+        </div>
 
-    <h3>Cadastrar Produto</h3>
+        <div class="campo">
+          <label for="altura">Altura (m)</label>
+          <input
+            type="number"
+            id="altura"
+            name="altura"
+            placeholder="Ex.: 1.68"
+            step="0.01"
+            min="0.3"
+            max="3"
+            inputmode="decimal"
+            required
+          />
+        </div>
+      </div>
 
-    <input type="number" id="codigo" placeholder="Código do produto">
+      <div class="acoes">
+        <button type="submit" class="btn btn-primario">Calcular IMC</button>
+        <button type="reset" id="btn-limpar" class="btn btn-secundario">Limpar</button>
+      </div>
+    </form>
 
-    <input type="text" id="descricao" placeholder="Descrição do produto">
+    <section id="resultado" class="resultado" aria-live="polite" hidden>
+      <div class="resultado-topo">
+        <span id="paciente-nome" class="paciente-nome">Paciente</span>
+        <span id="classificacao-badge" class="badge badge--normal">Peso normal</span>
+      </div>
 
-    <input type="number" id="quantidade" placeholder="Quantidade">
+      <div class="imc-destaque">
+        <span id="imc-valor" class="imc-valor">0.00</span>
+        <span class="imc-unidade">kg/m²</span>
+      </div>
 
-    <input type="number" id="valor" placeholder="Valor do produto" step="0.01">
+      <div class="metricas">
+        <div class="metrica-item">
+          <span class="metrica-label">Peso informado</span>
+          <span id="peso-exibido" class="metrica-valor">-- kg</span>
+        </div>
 
-    <button onclick="cadastrar()">Cadastrar Produto</button>
+        <div class="metrica-item">
+          <span class="metrica-label">Altura informada</span>
+          <span id="altura-exibida" class="metrica-valor">-- m</span>
+        </div>
 
-    <h3>Produtos Cadastrados</h3>
+        <div class="metrica-item">
+          <span class="metrica-label">Peso ideal (18,5–24,9)</span>
+          <span id="faixa-peso-ideal" class="metrica-valor">-- a -- kg</span>
+        </div>
+      </div>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Código</th>
-                <th>Descrição</th>
-                <th>Quantidade</th>
-                <th>Valor</th>
-                <th>Ações</th>
-            </tr>
-        </thead>
+      <p id="observacao-imc" class="observacao"></p>
 
-        <tbody id="listaProdutos">
-        </tbody>
-    </table>
+      <p class="nota-rodape">
+        Nota: O IMC avalia a relação entre peso e altura e não distingue massa muscular, gordura corporal ou distribuição abdominal. Em crianças, gestantes e idosos, utilize critérios específicos.
+      </p>
+    </section>
+  </main>
 
-</div>
-
-<script>
-
-    let produtos = [];
-
-    // Cadastrar produto
-    function cadastrar() {
-
-        let codigo = Number(document.getElementById("codigo").value);
-        let descricao = document.getElementById("descricao").value.trim();
-        let quantidade = Number(document.getElementById("quantidade").value);
-        let valor = Number(document.getElementById("valor").value);
-
-        if (
-            document.getElementById("codigo").value === "" ||
-            !descricao ||
-            document.getElementById("quantidade").value === "" ||
-            document.getElementById("valor").value === "" ||
-            !Number.isFinite(codigo) ||
-            !Number.isFinite(quantidade) ||
-            !Number.isFinite(valor) ||
-            codigo <= 0 || quantidade < 0 || valor < 0
-        ) {
-            alert("Preencha todos os campos corretamente!");
-            return;
-        }
-
-        if (produtos.some(p => p.codigo === codigo)) {
-            alert("Esse código já está cadastrado!");
-            return;
-        }
-
-        let produto = {
-            codigo: codigo,
-            descricao: descricao,
-            quantidade: quantidade,
-            valor: valor
-        };
-
-        produtos.push(produto);
-
-        alert("Produto cadastrado com sucesso!");
-
-        limparCampos();
-        listar();
-    }
-
-    // Listar produtos
-    function listar() {
-
-        let tabela = document.getElementById("listaProdutos");
-
-        tabela.innerHTML = "";
-
-        produtos.forEach((produto, index) => {
-
-            tabela.innerHTML += `
-                <tr>
-                    <td>${produto.codigo}</td>
-                    <td>${produto.descricao}</td>
-                    <td>${produto.quantidade}</td>
-                    <td>R$ ${produto.valor.toFixed(2)}</td>
-                    <td>
-                        <button onclick="alterarValor(${index})">
-                            Alterar Valor
-                        </button>
-
-                        <button onclick="alterarQuantidade(${index})">
-                            Alterar Quantidade
-                        </button>
-
-                        <button class="excluir" onclick="excluir(${index})">
-                            Excluir
-                        </button>
-                    </td>
-                </tr>
-            `;
-
-        });
-    }
-
-    // Alterar valor
-    function alterarValor(index) {
-
-        let novoValor = prompt("Digite o novo valor:");
-
-        if (novoValor === null || novoValor.trim() === "") return;
-
-        novoValor = Number(novoValor);
-
-        if (!Number.isFinite(novoValor) || novoValor < 0) {
-            alert("Valor inválido!");
-            return;
-        }
-
-        produtos[index].valor = novoValor;
-
-        alert("Valor alterado com sucesso!");
-
-        listar();
-    }
-
-    // Alterar quantidade
-    function alterarQuantidade(index) {
-
-        let novaQuantidade = prompt("Digite a nova quantidade:");
-
-        if (novaQuantidade === null || novaQuantidade.trim() === "") return;
-
-        novaQuantidade = Number(novaQuantidade);
-
-        if (!Number.isFinite(novaQuantidade) || novaQuantidade < 0) {
-            alert("Quantidade inválida!");
-            return;
-        }
-
-        produtos[index].quantidade = novaQuantidade;
-
-        alert("Quantidade alterada com sucesso!");
-
-        listar();
-    }
-
-    // Excluir produto
-    function excluir(index) {
-
-        if (confirm("Deseja excluir este produto?")) {
-
-            produtos.splice(index, 1);
-
-            listar();
-
-        }
-    }
-
-    // Limpar campos
-    function limparCampos() {
-
-        document.getElementById("codigo").value = "";
-        document.getElementById("descricao").value = "";
-        document.getElementById("quantidade").value = "";
-        document.getElementById("valor").value = "";
-
-    }
-
-</script>
-
+  <script src="script.js" defer></script>
 <script src="script.js"></script></body>
 </html>
