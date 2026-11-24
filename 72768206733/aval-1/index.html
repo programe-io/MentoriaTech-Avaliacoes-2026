@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema de Controle de Estoque</title>
+  <style>
+    * { box-sizing: border-box; font-family: Arial, sans-serif; }
+    body { background: #f4f6f9; margin: 0; padding: 20px; color: #333; }
+    .container { max-width: 900px; margin: 0 auto; background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    h1 { margin-top: 0; color: #2c3e50; text-align: center; }
+
+    /* Cards de Resumo */
+    .resumo { display: flex; gap: 15px; margin-bottom: 20px; }
+    .card { flex: 1; background: #ecf0f1; padding: 15px; border-radius: 6px; text-align: center; }
+    .card h3 { margin: 0 0 5px 0; font-size: 14px; color: #7f8c8d; }
+    .card p { margin: 0; font-size: 22px; font-weight: bold; color: #2c3e50; }
+
+    /* Formulário */
+    form { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; background: #f9f9f9; padding: 15px; border-radius: 6px; border: 1px solid #ddd; }
+    input { flex: 1; min-width: 140px; padding: 10px; border: 1px solid #ccc; border-radius: 4px; }
+    button { padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+    .btn-add { background: #27ae60; color: white; }
+    .btn-add:hover { background: #219150; }
+
+    /* Busca */
+    .busca { width: 100%; margin-bottom: 15px; }
+
+    /* Tabela */
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+    th { background: #2c3e50; color: white; }
+    tr:hover { background: #f1f1f1; }
+
+    /* Botões de Ação */
+    .btn-acao { padding: 5px 10px; margin-right: 4px; color: white; font-size: 13px; }
+    .btn-mais { background: #2980b9; }
+    .btn-menos { background: #e67e22; }
+    .btn-del { background: #c0392b; }
+
+    /* Alerta de estoque baixo */
+    .baixo { color: #c0392b; font-weight: bold; }
+  </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+<div class="container">
+  <h1>📦 Controle de Estoque</h1>
+
+  <!-- Resumo -->
+  <div class="resumo">
+    <div class="card">
+      <h3>Total de Produtos</h3>
+      <p id="total-itens">0</p>
+    </div>
+    <div class="card">
+      <h3>Unidades em Estoque</h3>
+      <p id="total-qtd">0</p>
+    </div>
+    <div class="card">
+      <h3>Valor Total</h3>
+      <p id="total-valor">R$ 0,00</p>
+    </div>
+  </div>
+
+  <!-- Formulário de Cadastro -->
+  <form id="form-produto">
+    <input type="text" id="codigo" placeholder="Código (ex: P01)" required>
+    <input type="text" id="nome" placeholder="Nome do Produto" required>
+    <input type="number" id="quantidade" placeholder="Qtd" min="0" required>
+    <input type="number" id="preco" placeholder="Preço (R$)" step="0.01" min="0" required>
+    <button type="submit" class="btn-add">+ Adicionar</button>
+  </form>
+
+  <!-- Campo de Pesquisa -->
+  <input type="text" id="busca" class="busca" placeholder="🔍 Buscar por nome ou código...">
+
+  <!-- Tabela -->
+  <table>
+    <thead>
+      <tr>
+        <th>Código</th>
+        <th>Produto</th>
+        <th>Qtd</th>
+        <th>Preço Unit.</th>
+        <th>Total</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody id="tabela-corpo"></tbody>
+  </table>
+</div>
+
+<script>
+  // Carrega produtos salvos no navegador ou inicia lista vazia
+  let estoque = JSON.parse(localStorage.getItem('meu_estoque')) || [];
+
+  const form = document.getElementById('form-produto');
+  const tabelaCorpo = document.getElementById('tabela-corpo');
+  const campoBusca = document.getElementById('busca');
+
+  // Salva e atualiza a tela
+  function atualizarSistema() {
+    localStorage.setItem('meu_estoque', JSON.stringify(estoque));
+    renderizarTabela(campoBusca.value);
+    atualizarResumo();
+  }
+
+  // Adiciona produto
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const codigo = document.getElementById('codigo').value.trim();
+    const nome = document.getElementById('nome').value.trim();
+    const quantidade = parseInt(document.getElementById('quantidade').value);
+    const preco = parseFloat(document.getElementById('preco').value);
+
+    estoque.push({ id: Date.now(), codigo, nome, quantidade, preco });
+    form.reset();
+    atualizarSistema();
+  });
+
+  // Aumentar ou diminuir quantidade
+  function alterarQtd(id, delta) {
+    const item = estoque.find(p => p.id === id);
+    if (item && item.quantidade + delta >= 0) {
+      item.quantidade += delta;
+      atualizarSistema();
+    }
+  }
+
+  // Remover produto
+  function removerProduto(id) {
+    if (confirm('Deseja excluir este produto?')) {
+      estoque = estoque.filter(p => p.id !== id);
+      atualizarSistema();
+    }
+  }
+
+  // Atualiza os cards do topo
+  function atualizarResumo() {
+    const totalItens = estoque.length;
+    const totalQtd = estoque.reduce((soma, p) => soma + p.quantidade, 0);
+    const totalValor = estoque.reduce((soma, p) => soma + (p.quantidade * p.preco), 0);
+
+    document.getElementById('total-itens').textContent = totalItens;
+    document.getElementById('total-qtd').textContent = totalQtd;
+    document.getElementById('total-valor').textContent = totalValor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  }
+
+  // Desenha a tabela na tela
+  function renderizarTabela(filtro = '') {
+    tabelaCorpo.innerHTML = '';
+    const termo = filtro.toLowerCase();
+
+    const filtrados = estoque.filter(p =>
+      p.nome.toLowerCase().includes(termo) || p.codigo.toLowerCase().includes(termo)
+    );
+
+    filtrados.forEach(p => {
+      const subtotal = p.quantidade * p.preco;
+      const classeEstoque = p.quantidade <= 5 ? 'baixo' : '';
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${p.codigo}</td>
+        <td>${p.nome}</td>
+        <td class="${classeEstoque}">${p.quantidade} ${p.quantidade <= 5 ? '⚠️' : ''}</td>
+        <td>${p.preco.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+        <td>${subtotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+        <td>
+          <button class="btn-acao btn-mais" onclick="alterarQtd(${p.id}, 1)">+1</button>
+          <button class="btn-acao btn-menos" onclick="alterarQtd(${p.id}, -1)">-1</button>
+          <button class="btn-acao btn-del" onclick="removerProduto(${p.id})">Excluir</button>
+        </td>
+      `;
+      tabelaCorpo.appendChild(tr);
+    });
+  }
+
+  // Filtro de busca em tempo real
+  campoBusca.addEventListener('input', (e) => renderizarTabela(e.target.value));
+
+  // Inicia o sistema
+  atualizarSistema();
+</script>
+
+<script src="script.js"></script></body>
+</html>
