@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema de Ficha de Anamnese</title>
+  <link rel="stylesheet" href="style.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Ficha de Anamnese</h1>
+      <p>Avaliação Clínica e Histórico do Paciente</p>
+    </header>
+
+    <div class="actions-bar no-print">
+      <button type="button" id="btn-nova" class="btn btn-secondary">+ Nova Ficha</button>
+      <button type="button" id="btn-imprimir" class="btn btn-outline">Imprimir / Salvar PDF</button>
+    </div>
+
+    <form id="anamnese-form">
+      <input type="hidden" id="ficha-id">
+
+      <!-- Seção 1: Identificação -->
+      <fieldset>
+        <legend>1. Dados de Identificação</legend>
+        <div class="grid-2">
+          <div class="form-group">
+            <label for="nome">Nome Completo *</label>
+            <input type="text" id="nome" required placeholder="Ex: Maria Oliveira">
+          </div>
+          <div class="form-group">
+            <label for="nascimento">Data de Nascimento *</label>
+            <input type="date" id="nascimento" required>
+          </div>
+        </div>
+
+        <div class="grid-3">
+          <div class="form-group">
+            <label for="cpf">CPF</label>
+            <input type="text" id="cpf" placeholder="000.000.000-00" maxlength="14">
+          </div>
+          <div class="form-group">
+            <label for="telefone">Telefone / WhatsApp *</label>
+            <input type="tel" id="telefone" required placeholder="(00) 00000-0000">
+          </div>
+          <div class="form-group">
+            <label for="profissao">Profissão</label>
+            <input type="text" id="profissao" placeholder="Ex: Professora">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="endereco">Endereço Completo</label>
+          <input type="text" id="endereco" placeholder="Rua, número, bairro, cidade">
+        </div>
+      </fieldset>
+
+      <!-- Seção 2: Queixa Principal -->
+      <fieldset>
+        <legend>2. Queixa Principal e Objetivos</legend>
+        <div class="form-group">
+          <label for="queixa">Motivo da consulta / Procedimento desejado *</label>
+          <textarea id="queixa" rows="3" required placeholder="Descreva o que trouxe o paciente até aqui..."></textarea>
+        </div>
+      </fieldset>
+
+      <!-- Seção 3: Histórico de Saúde -->
+      <fieldset>
+        <legend>3. Histórico Clínico e Condições</legend>
+        <div class="checkbox-grid">
+          <label class="checkbox-item"><input type="checkbox" name="condicoes" value="Hipertensão"> Hipertensão</label>
+          <label class="checkbox-item"><input type="checkbox" name="condicoes" value="Diabetes"> Diabetes</label>
+          <label class="checkbox-item"><input type="checkbox" name="condicoes" value="Problemas Cardíacos"> Problemas Cardíacos</label>
+          <label class="checkbox-item"><input type="checkbox" name="condicoes" value="Alergias"> Alergias</label>
+          <label class="checkbox-item"><input type="checkbox" name="condicoes" value="Gestante / Lactante"> Gestante / Lactante</label>
+          <label class="checkbox-item"><input type="checkbox" name="condicoes" value="Uso de Marcapasso"> Uso de Marcapasso</label>
+          <label class="checkbox-item"><input type="checkbox" name="condicoes" value="Distúrbios Circulatórios"> Distúrbios Circulatórios</label>
+          <label class="checkbox-item"><input type="checkbox" name="condicoes" value="Epilepsia"> Epilepsia</label>
+        </div>
+
+        <div class="grid-2 mt-15">
+          <div class="form-group">
+            <label for="alergias-detalhe">Especificar Alergias (Medicamentos, cosméticos, alimentos)</label>
+            <input type="text" id="alergias-detalhe" placeholder="Nenhuma ou especifique">
+          </div>
+          <div class="form-group">
+            <label for="medicamentos">Medicamentos em uso contínuo</label>
+            <input type="text" id="medicamentos" placeholder="Nome e dosagem, se houver">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="cirurgias">Cirurgias prévias ou tratamentos recentes</label>
+          <textarea id="cirurgias" rows="2" placeholder="Informe cirurgias realizadas e datas aproximadas"></textarea>
+        </div>
+      </fieldset>
+
+      <!-- Seção 4: Hábitos de Vida -->
+      <fieldset>
+        <legend>4. Hábitos de Vida</legend>
+        <div class="grid-3">
+          <div class="form-group">
+            <label for="fumante">Tabagismo</label>
+            <select id="fumante">
+              <option value="Não">Não</option>
+              <option value="Sim">Sim</option>
+              <option value="Ex-fumante">Ex-fumante</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="etilismo">Consumo de Álcool</label>
+            <select id="etilismo">
+              <option value="Não">Não</option>
+              <option value="Socialmente">Socialmente</option>
+              <option value="Frequente">Frequente</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="atividade-fisica">Atividade Física</label>
+            <select id="atividade-fisica">
+              <option value="Sedentário">Sedentário</option>
+              <option value="1 a 2x na semana">1 a 2x na semana</option>
+              <option value="3x ou mais na semana">3x ou mais na semana</option>
+            </select>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- Seção 5: Termo e Observações -->
+      <fieldset>
+        <legend>5. Observações Profissionais e Declaração</legend>
+        <div class="form-group">
+          <label for="observacoes">Anotações do Avaliador</label>
+          <textarea id="observacoes" rows="3" placeholder="Observações técnicas, conduta indicada..."></textarea>
+        </div>
+
+        <div class="termo-box">
+          <label class="checkbox-item">
+            <input type="checkbox" id="aceite" required>
+            <span>Declaro que as informações acima são verdadeiras e estou ciente de que a omissão de dados pode interferir nos resultados e na segurança do atendimento.</span>
+          </label>
+        </div>
+
+        <div class="assinatura-area">
+          <div class="linha-assinatura">
+            <span>Assinatura do Paciente / Responsável</span>
+          </div>
+          <div class="linha-assinatura">
+            <span>Data: <span id="data-atual"></span></span>
+          </div>
+        </div>
+      </fieldset>
+
+      <div class="form-footer no-print">
+        <button type="submit" class="btn btn-primary">Salvar Ficha de Anamnese</button>
+      </div>
+    </form>
+
+    <!-- Lista de Fichas Salvas -->
+    <section class="historico-section no-print">
+      <h2>Fichas Salvas no Navegador</h2>
+      <div id="lista-fichas" class="lista-fichas">
+        <p class="empty-msg">Nenhuma ficha salva ainda.</p>
+      </div>
+    </section>
+  </div>
+
+  <script src="script.js"></script>
+<script src="script.js"></script></body>
+</html>
