@@ -1,321 +1,227 @@
 
 const feed = document.getElementById("feed");
 
-let videos = [];
-let activeCommentVideo = null;
-
-// Vídeos demonstrativos.
-// Substitua os endereços por vídeos de futebol em MP4.
-const initialVideos = [
+let players = [
     {
         id: 1,
-        user: "FutebolBrasil",
-        description: "⚽ Melhores momentos do futebol! #futebol #gols",
-        category: "gols",
-        url: "https://videos.pexels.com/video-files/3129671/3129671-hd_1080_1920_25fps.mp4"
+        name: "Lionel Messi",
+        country: "🇦🇷 Argentina",
+        team: "Inter Miami",
+        position: "atacante",
+        image: "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=900",
+        description: "O gênio argentino! 🐐⚽ #Messi",
+        likes: 0,
+        comments: [],
+        score: 0
     },
     {
         id: 2,
-        user: "CraqueDosDribles",
-        description: "🔥 Habilidade e muita velocidade! #dribles",
-        category: "dribles",
-        url: "https://videos.pexels.com/video-files/3195394/3195394-hd_1080_1920_25fps.mp4"
+        name: "Cristiano Ronaldo",
+        country: "🇵🇹 Portugal",
+        team: "Al-Nassr",
+        position: "atacante",
+        image: "https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=900",
+        description: "Mentalidade de campeão! 🔥 #CR7",
+        likes: 0,
+        comments: [],
+        score: 0
     },
     {
         id: 3,
-        user: "FutebolSkills",
-        description: "🎯 Treinando habilidades com a bola!",
-        category: "skills",
-        url: "https://videos.pexels.com/video-files/854058/854058-hd_1080_1920_25fps.mp4"
+        name: "Neymar Jr.",
+        country: "🇧🇷 Brasil",
+        team: "Santos",
+        position: "atacante",
+        image: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=900",
+        description: "Futebol arte brasileiro! 🇧🇷",
+        likes: 0,
+        comments: [],
+        score: 0
+    },
+    {
+        id: 4,
+        name: "Kylian Mbappé",
+        country: "🇫🇷 França",
+        team: "Real Madrid",
+        position: "atacante",
+        image: "https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=900",
+        description: "Velocidade e talento! 🚀",
+        likes: 0,
+        comments: [],
+        score: 0
+    },
+    {
+        id: 5,
+        name: "Vinícius Júnior",
+        country: "🇧🇷 Brasil",
+        team: "Real Madrid",
+        position: "atacante",
+        image: "https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=900",
+        description: "Alegria e dribles! ⚽🔥",
+        likes: 0,
+        comments: [],
+        score: 0
     }
 ];
 
-let nextId = 4;
+let activePlayer = null;
 
-// Criar objeto de vídeo
-function createVideo(data) {
-    return {
-        ...data,
-        likes: 0,
-        comments: [],
-        views: 0,
-        score: 0,
-        liked: false,
-        following: false
+// Criar publicação
+function createPost(player) {
+    const article = document.createElement("article");
+    article.className = "post";
+    article.dataset.id = player.id;
+
+    const img = document.createElement("img");
+    img.src = player.image;
+    img.alt = player.name;
+    img.loading = "lazy";
+
+    const info = document.createElement("div");
+    info.className = "info";
+
+    const name = document.createElement("h2");
+    name.textContent = player.name;
+
+    const details = document.createElement("p");
+    details.textContent =
+        `${player.country} | ${player.team} | ${player.position}`;
+
+    const description = document.createElement("p");
+    description.textContent = player.description;
+
+    info.append(name, details, description);
+
+    const actions = document.createElement("div");
+    actions.className = "actions";
+
+    const like = document.createElement("button");
+    like.innerHTML = `❤️ <span>${player.likes}</span>`;
+
+    like.onclick = () => {
+        player.liked = !player.liked;
+        player.likes += player.liked ? 1 : -1;
+        player.score += player.liked ? 5 : -2;
+
+        like.classList.toggle("liked", player.liked);
+        like.querySelector("span").textContent = player.likes;
+
+        recommend();
     };
-}
 
-videos = initialVideos.map(createVideo);
+    const comment = document.createElement("button");
+    comment.innerHTML = `💬 <span>${player.comments.length}</span>`;
 
-// Criar cartão
-function renderVideo(video) {
-    const card = document.createElement("article");
+    comment.onclick = () => openComments(player);
 
-    card.className = "video-card";
-    card.dataset.id = video.id;
+    const share = document.createElement("button");
+    share.textContent = "↗️";
 
-    card.innerHTML = `
-        <video src="${video.url}" loop playsinline
-            preload="metadata"></video>
-
-        <div class="video-overlay"></div>
-
-        <div class="video-info">
-            <h3>@${video.user}</h3>
-            <p></p>
-            <small>⚽ Som original - FutTok</small>
-        </div>
-
-        <div class="actions">
-            <button class="like">
-                ❤️ <span>${video.likes}</span>
-            </button>
-
-            <button class="comment">
-                💬 <span>${video.comments.length}</span>
-            </button>
-
-            <button class="share">↗️</button>
-
-            <button class="follow-btn">
-                ${video.following ? "Seguindo" : "+ Seguir"}
-            </button>
-        </div>
-    `;
-
-    card.querySelector(".video-info p").textContent =
-        video.description;
-
-    const videoElement = card.querySelector("video");
-
-    // Reproduzir e pausar
-    videoElement.addEventListener("click", () => {
-        if (videoElement.paused) {
-            videoElement.play().catch(() => {});
-        } else {
-            videoElement.pause();
-        }
-    });
-
-    // Curtir
-    card.querySelector(".like").addEventListener("click", event => {
-        video.liked = !video.liked;
-
-        video.likes += video.liked ? 1 : -1;
-        video.score += video.liked ? 5 : -3;
-
-        const button = event.currentTarget;
-        button.classList.toggle("liked", video.liked);
-        button.querySelector("span").textContent = video.likes;
-
-        recommendVideos();
-    });
-
-    // Comentários
-    card.querySelector(".comment").addEventListener("click", () => {
-        openComments(video.id);
-    });
-
-    // Compartilhar
-    card.querySelector(".share").addEventListener("click", async () => {
-        const shareData = {
-            title: "FutTok ⚽",
-            text: video.description,
-            url: location.href + "#video-" + video.id
-        };
+    share.onclick = async () => {
+        const url = location.href + "#jogador-" + player.id;
 
         try {
             if (navigator.share) {
-                await navigator.share(shareData);
+                await navigator.share({
+                    title: player.name,
+                    text: player.description,
+                    url
+                });
             } else {
-                await navigator.clipboard.writeText(shareData.url);
+                await navigator.clipboard.writeText(url);
                 alert("Link copiado!");
             }
         } catch (error) {
             console.log("Compartilhamento cancelado.");
         }
-    });
+    };
 
-    // Seguir criador
-    card.querySelector(".follow-btn").addEventListener("click", event => {
-        video.following = !video.following;
+    actions.append(like, comment, share);
+    article.append(img, info, actions);
 
-        event.currentTarget.textContent =
-            video.following ? "Seguindo" : "+ Seguir";
-    });
-
-    return card;
+    return article;
 }
 
 // Mostrar feed
-function showVideos(list = videos) {
-    document.querySelectorAll(".video-card video").forEach(video => {
-        video.pause();
-    });
-
+function renderFeed(list = players) {
     feed.innerHTML = "";
 
-    if (list.length === 0) {
-        feed.innerHTML =
-            "<p style='padding:30px'>Nenhum vídeo encontrado. ⚽</p>";
-        return;
-    }
-
-    list.forEach(video => {
-        feed.appendChild(renderVideo(video));
-    });
-
-    startAutoPlay();
-}
-
-// Reprodução automática
-let videoObserver;
-
-function startAutoPlay() {
-    if (videoObserver) {
-        videoObserver.disconnect();
-    }
-
-    videoObserver = new IntersectionObserver(entries => {
-        entries.forEach(entry => {
-            const element = entry.target;
-
-            if (entry.isIntersecting) {
-                element.play().catch(() => {});
-
-                const id = Number(
-                    element.closest(".video-card").dataset.id
-                );
-
-                const video = videos.find(v => v.id === id);
-
-                if (video) {
-                    video.views++;
-                    video.score += 1;
-                }
-            } else {
-                element.pause();
-            }
-        });
-    }, {
-        threshold: 0.7
-    });
-
-    document.querySelectorAll(".video-card video").forEach(video => {
-        videoObserver.observe(video);
+    list.forEach(player => {
+        feed.appendChild(createPost(player));
     });
 }
 
 // Algoritmo de recomendação
-function recommendVideos() {
-    videos.sort((a, b) => b.score - a.score);
-    showVideos();
+function recommend() {
+    players.sort((a, b) => b.score - a.score);
+    renderFeed();
 }
 
-// Filtro de categorias
-function filterFeed(category) {
-    const result = category === "todos"
-        ? videos
-        : videos.filter(video => video.category === category);
+// Filtrar jogadores
+function filterPlayers(position) {
+    const result = position === "todos"
+        ? players
+        : players.filter(p => p.position === position);
 
-    showVideos(result);
+    renderFeed(result);
 }
 
 // Pesquisa
 document.getElementById("search").addEventListener("input", event => {
-    const search = event.target.value.toLowerCase();
+    const term = event.target.value.toLowerCase();
 
-    const result = videos.filter(video =>
-        video.user.toLowerCase().includes(search) ||
-        video.description.toLowerCase().includes(search) ||
-        video.category.toLowerCase().includes(search)
+    const result = players.filter(player =>
+        player.name.toLowerCase().includes(term) ||
+        player.team.toLowerCase().includes(term) ||
+        player.country.toLowerCase().includes(term)
     );
 
-    showVideos(result);
+    renderFeed(result);
 });
 
-// Abrir comentários
-function openComments(id) {
-    activeCommentVideo = videos.find(v => v.id === id);
+// Comentários
+function openComments(player) {
+    activePlayer = player;
 
     document.getElementById("commentModal").style.display = "flex";
 
     renderComments();
 }
 
-// Mostrar comentários
 function renderComments() {
     const list = document.getElementById("commentsList");
-
     list.innerHTML = "";
 
-    if (!activeCommentVideo.comments.length) {
-        list.textContent = "Seja o primeiro a comentar! ⚽";
+    if (!activePlayer.comments.length) {
+        list.textContent = "Seja o primeiro a comentar!";
         return;
     }
 
-    activeCommentVideo.comments.forEach(comment => {
+    activePlayer.comments.forEach(text => {
         const p = document.createElement("p");
-        p.textContent = "💬 " + comment;
+        p.textContent = "💬 " + text;
         list.appendChild(p);
     });
 }
 
-// Enviar comentário
-document.getElementById("sendComment").addEventListener("click", () => {
+document.getElementById("sendComment").onclick = () => {
     const input = document.getElementById("commentInput");
     const text = input.value.trim();
 
-    if (!text || !activeCommentVideo) return;
+    if (!text || !activePlayer) return;
 
-    activeCommentVideo.comments.push(text);
-    activeCommentVideo.score += 3;
-
-    const card = document.querySelector(
-        `[data-id="${activeCommentVideo.id}"]`
-    );
-
-    if (card) {
-        card.querySelector(".comment span").textContent =
-            activeCommentVideo.comments.length;
-    }
+    activePlayer.comments.push(text);
+    activePlayer.score += 3;
 
     input.value = "";
-    renderComments();
-    recommendVideos();
-});
 
-function closeComments() {
+    renderComments();
+    recommend();
+};
+
+function closeModal() {
     document.getElementById("commentModal").style.display = "none";
 }
 
-// Upload de vídeos
-document.getElementById("uploadVideo").addEventListener("change", event => {
-    const file = event.target.files[0];
-
-    if (!file) return;
-
-    if (!file.type.startsWith("video/")) {
-        alert("Selecione um arquivo de vídeo válido.");
-        return;
-    }
-
-    const url = URL.createObjectURL(file);
-
-    const newVideo = createVideo({
-        id: nextId++,
-        user: "MeuPerfil",
-        description: "⚽ Meu novo vídeo de futebol! #futebol",
-        category: "gols",
-        url
-    });
-
-    videos.unshift(newVideo);
-
-    showVideos();
-
-    event.target.value = "";
-});
-
-// Inicialização
-showVideos();
+// Inicializar
+renderFeed();
