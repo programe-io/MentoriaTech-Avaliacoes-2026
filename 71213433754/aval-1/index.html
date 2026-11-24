@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gerenciador de Tarefas</title>
+<title>Sistema de Estoque</title>
 
 <style>
 * {
@@ -12,43 +12,70 @@
 }
 
 body {
+    margin: 0;
+    padding: 25px;
     font-family: Arial, sans-serif;
     background: #f1f5f9;
-    margin: 0;
-    padding: 30px 15px;
-}
-
-.container {
-    max-width: 600px;
-    margin: auto;
-    background: white;
-    padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px #0001;
-}
-
-h1 {
-    text-align: center;
     color: #1e293b;
 }
 
-.form {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
+.container {
+    max-width: 1100px;
+    margin: auto;
 }
 
-input {
-    flex: 1;
-    padding: 12px;
+h1 {
+    color: #1e293b;
+}
+
+.resumo {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px #0001;
+}
+
+.card h3 {
+    color: #64748b;
+    font-size: 14px;
+}
+
+.card p {
+    font-size: 26px;
+    font-weight: bold;
+    margin-bottom: 0;
+}
+
+.formulario, .tabela {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px #0001;
+}
+
+.campos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+}
+
+input, select {
+    width: 100%;
+    padding: 11px;
     border: 1px solid #cbd5e1;
     border-radius: 6px;
-    font-size: 15px;
-    min-width: 0;
 }
 
 button {
-    padding: 12px 15px;
+    padding: 11px 15px;
     border: none;
     border-radius: 6px;
     background: #2563eb;
@@ -57,28 +84,57 @@ button {
 }
 
 button:hover {
-    opacity: 0.85;
+    opacity: .85;
 }
 
-ul {
-    list-style: none;
-    padding: 0;
+.btn-adicionar {
+    margin-top: 15px;
 }
 
-li {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    padding: 12px;
+.btn-excluir {
+    background: #dc2626;
+}
+
+.btn-editar {
+    background: #d97706;
+}
+
+.btn-entrada {
+    background: #16a34a;
+}
+
+.btn-saida {
+    background: #7c3aed;
+}
+
+.tabela-container {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 650px;
+}
+
+th, td {
+    padding: 13px;
+    border-bottom: 1px solid #e2e8f0;
+    text-align: left;
+}
+
+th {
     background: #f8fafc;
-    border-radius: 7px;
-    margin-bottom: 10px;
 }
 
-li.concluida span {
-    text-decoration: line-through;
-    color: #94a3b8;
+.baixo {
+    color: #dc2626;
+    font-weight: bold;
+}
+
+.normal {
+    color: #16a34a;
+    font-weight: bold;
 }
 
 .acoes {
@@ -86,17 +142,18 @@ li.concluida span {
     gap: 5px;
 }
 
-.concluir {
-    background: #16a34a;
+.acoes button {
+    padding: 8px;
 }
 
-.excluir {
-    background: #dc2626;
+#pesquisa {
+    margin-bottom: 15px;
 }
 
-.contador {
-    color: #64748b;
-    text-align: center;
+@media(max-width: 500px) {
+    body {
+        padding: 12px;
+    }
 }
 </style>
 <script src="https://cdn.tailwindcss.com"></script>
@@ -106,131 +163,340 @@ li.concluida span {
 <body>
 
 <div class="container">
-    <h1>📝 Gerenciador de Tarefas</h1>
 
-    <div class="form">
-        <input
-            type="text"
-            id="tarefa"
-            placeholder="Digite uma tarefa..."
-        >
-        <button onclick="adicionarTarefa()">Adicionar</button>
+<h1>📦 Sistema de Estoque</h1>
+<p>Controle de produtos, entradas e saídas.</p>
+
+<div class="resumo">
+
+    <div class="card">
+        <h3>Total de produtos</h3>
+        <p id="totalProdutos">0</p>
     </div>
 
-    <ul id="lista"></ul>
+    <div class="card">
+        <h3>Unidades em estoque</h3>
+        <p id="totalUnidades">0</p>
+    </div>
 
-    <p class="contador" id="contador">
-        Nenhuma tarefa cadastrada
-    </p>
+    <div class="card">
+        <h3>Valor do estoque</h3>
+        <p id="valorEstoque">R$ 0,00</p>
+    </div>
+
+    <div class="card">
+        <h3>Estoque baixo</h3>
+        <p id="estoqueBaixo">0</p>
+    </div>
+
+</div>
+
+<div class="formulario">
+
+<h2 id="tituloFormulario">Cadastrar Produto</h2>
+
+<div class="campos">
+
+    <input id="nome" placeholder="Nome do produto">
+
+    <input id="categoria" placeholder="Categoria">
+
+    <input id="quantidade" type="number" min="0" placeholder="Quantidade">
+
+    <input id="preco" type="number" min="0" step="0.01" placeholder="Preço (R$)">
+
+    <input id="minimo" type="number" min="0" placeholder="Estoque mínimo">
+
+</div>
+
+<button class="btn-adicionar" onclick="salvarProduto()">
+    Salvar Produto
+</button>
+
+<button onclick="cancelarEdicao()" id="cancelar" style="display:none;background:#64748b">
+    Cancelar
+</button>
+
+</div>
+
+<div class="tabela">
+
+<h2>Lista de Produtos</h2>
+
+<input
+    id="pesquisa"
+    placeholder="🔎 Pesquisar produto..."
+    oninput="renderizar()"
+>
+
+<div class="tabela-container">
+
+<table>
+<thead>
+<tr>
+    <th>Produto</th>
+    <th>Categoria</th>
+    <th>Quantidade</th>
+    <th>Preço</th>
+    <th>Status</th>
+    <th>Ações</th>
+</tr>
+</thead>
+
+<tbody id="listaProdutos"></tbody>
+</table>
+
+</div>
+
+</div>
 </div>
 
 <script>
-let tarefas = JSON.parse(
-    localStorage.getItem("tarefas")
+
+let produtos = JSON.parse(
+    localStorage.getItem("estoque")
 ) || [];
 
-function salvar() {
+let editando = null;
+
+function salvarDados() {
     localStorage.setItem(
-        "tarefas",
-        JSON.stringify(tarefas)
+        "estoque",
+        JSON.stringify(produtos)
     );
 }
 
-function adicionarTarefa() {
-    const input = document.getElementById("tarefa");
-    const texto = input.value.trim();
+function salvarProduto() {
 
-    if (texto === "") {
-        alert("Digite uma tarefa!");
+    const nome = document.getElementById("nome").value.trim();
+    const categoria = document.getElementById("categoria").value.trim();
+    const quantidade = Number(document.getElementById("quantidade").value);
+    const preco = Number(document.getElementById("preco").value);
+    const minimo = Number(document.getElementById("minimo").value);
+
+    if (!nome || !categoria ||
+        document.getElementById("quantidade").value === "" ||
+        document.getElementById("preco").value === "" ||
+        document.getElementById("minimo").value === "") {
+        alert("Preencha todos os campos!");
         return;
     }
 
-    tarefas.push({
-        id: Date.now(),
-        texto: texto,
-        concluida: false
-    });
+    if (
+        !Number.isFinite(quantidade) ||
+        !Number.isFinite(preco) ||
+        !Number.isFinite(minimo) ||
+        quantidade < 0 ||
+        preco < 0 ||
+        minimo < 0 ||
+        !Number.isInteger(quantidade) ||
+        !Number.isInteger(minimo)
+    ) {
+        alert("Informe valores válidos!");
+        return;
+    }
 
-    input.value = "";
-    salvar();
+    if (editando !== null) {
+
+        const produto = produtos.find(p => p.id === editando);
+
+        produto.nome = nome;
+        produto.categoria = categoria;
+        produto.quantidade = quantidade;
+        produto.preco = preco;
+        produto.minimo = minimo;
+
+        editando = null;
+
+    } else {
+
+        produtos.push({
+            id: Date.now(),
+            nome,
+            categoria,
+            quantidade,
+            preco,
+            minimo
+        });
+
+    }
+
+    limparFormulario();
+    salvarDados();
     renderizar();
 }
 
-function concluirTarefa(id) {
-    tarefas = tarefas.map(tarefa => {
-        if (tarefa.id === id) {
-            tarefa.concluida = !tarefa.concluida;
-        }
-        return tarefa;
-    });
+function editarProduto(id) {
 
-    salvar();
+    const produto = produtos.find(p => p.id === id);
+
+    document.getElementById("nome").value = produto.nome;
+    document.getElementById("categoria").value = produto.categoria;
+    document.getElementById("quantidade").value = produto.quantidade;
+    document.getElementById("preco").value = produto.preco;
+    document.getElementById("minimo").value = produto.minimo;
+
+    editando = id;
+
+    document.getElementById("tituloFormulario").textContent =
+        "Editar Produto";
+
+    document.getElementById("cancelar").style.display = "inline-block";
+}
+
+function cancelarEdicao() {
+    editando = null;
+    limparFormulario();
+}
+
+function excluirProduto(id) {
+
+    if (!confirm("Deseja excluir este produto?")) return;
+
+    produtos = produtos.filter(p => p.id !== id);
+
+    salvarDados();
     renderizar();
 }
 
-function excluirTarefa(id) {
-    tarefas = tarefas.filter(
-        tarefa => tarefa.id !== id
+function movimentar(id, tipo) {
+
+    const produto = produtos.find(p => p.id === id);
+
+    const quantidade = Number(
+        prompt("Informe a quantidade:")
     );
 
-    salvar();
+    if (
+        !Number.isInteger(quantidade) ||
+        quantidade <= 0
+    ) {
+        alert("Quantidade inválida!");
+        return;
+    }
+
+    if (tipo === "entrada") {
+
+        produto.quantidade += quantidade;
+
+    } else {
+
+        if (quantidade > produto.quantidade) {
+            alert("Estoque insuficiente!");
+            return;
+        }
+
+        produto.quantidade -= quantidade;
+    }
+
+    salvarDados();
     renderizar();
+}
+
+function limparFormulario() {
+
+    document.getElementById("nome").value = "";
+    document.getElementById("categoria").value = "";
+    document.getElementById("quantidade").value = "";
+    document.getElementById("preco").value = "";
+    document.getElementById("minimo").value = "";
+
+    document.getElementById("tituloFormulario").textContent =
+        "Cadastrar Produto";
+
+    document.getElementById("cancelar").style.display = "none";
 }
 
 function renderizar() {
-    const lista = document.getElementById("lista");
-    const contador = document.getElementById("contador");
+
+    const lista = document.getElementById("listaProdutos");
+
+    const pesquisa = document.getElementById("pesquisa")
+        .value.toLowerCase();
 
     lista.innerHTML = "";
 
-    tarefas.forEach(tarefa => {
-        const li = document.createElement("li");
+    const filtrados = produtos.filter(p =>
+        p.nome.toLowerCase().includes(pesquisa) ||
+        p.categoria.toLowerCase().includes(pesquisa)
+    );
 
-        if (tarefa.concluida) {
-            li.classList.add("concluida");
-        }
+    filtrados.forEach(p => {
 
-        const span = document.createElement("span");
-        span.textContent = tarefa.texto;
+        const status = p.quantidade <= p.minimo
+            ? '<span class="baixo">Estoque baixo</span>'
+            : '<span class="normal">Normal</span>';
 
+        const linha = document.createElement("tr");
+
+        const valores = [
+            p.nome,
+            p.categoria,
+            p.quantidade,
+            p.preco.toLocaleString("pt-BR", {
+                style: "currency",
+                currency: "BRL"
+            })
+        ];
+
+        valores.forEach(valor => {
+            const td = document.createElement("td");
+            td.textContent = valor;
+            linha.appendChild(td);
+        });
+
+        const tdStatus = document.createElement("td");
+        tdStatus.innerHTML = status;
+        linha.appendChild(tdStatus);
+
+        const tdAcoes = document.createElement("td");
         const acoes = document.createElement("div");
         acoes.className = "acoes";
 
-        const concluir = document.createElement("button");
-        concluir.textContent = tarefa.concluida
-            ? "Desfazer"
-            : "Concluir";
-        concluir.className = "concluir";
-        concluir.onclick = () => concluirTarefa(tarefa.id);
+        const botoes = [
+            ["Editar", "btn-editar", () => editarProduto(p.id)],
+            ["Entrada", "btn-entrada", () => movimentar(p.id, "entrada")],
+            ["Saída", "btn-saida", () => movimentar(p.id, "saida")],
+            ["Excluir", "btn-excluir", () => excluirProduto(p.id)]
+        ];
 
-        const excluir = document.createElement("button");
-        excluir.textContent = "Excluir";
-        excluir.className = "excluir";
-        excluir.onclick = () => excluirTarefa(tarefa.id);
+        botoes.forEach(([texto, classe, funcao]) => {
+            const botao = document.createElement("button");
+            botao.textContent = texto;
+            botao.className = classe;
+            botao.onclick = funcao;
+            acoes.appendChild(botao);
+        });
 
-        acoes.append(concluir, excluir);
-        li.append(span, acoes);
-        lista.appendChild(li);
+        tdAcoes.appendChild(acoes);
+        linha.appendChild(tdAcoes);
+
+        lista.appendChild(linha);
+
     });
 
-    const concluidas = tarefas.filter(
-        t => t.concluida
-    ).length;
+    document.getElementById("totalProdutos").textContent =
+        produtos.length;
 
-    contador.textContent =
-        `${tarefas.length} tarefas | ${concluidas} concluídas | ${tarefas.length - concluidas} pendentes`;
+    document.getElementById("totalUnidades").textContent =
+        produtos.reduce((soma, p) => soma + p.quantidade, 0);
+
+    const valor = produtos.reduce(
+        (soma, p) => soma + p.quantidade * p.preco, 0
+    );
+
+    document.getElementById("valorEstoque").textContent =
+        valor.toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL"
+        });
+
+    document.getElementById("estoqueBaixo").textContent =
+        produtos.filter(p => p.quantidade <= p.minimo).length;
 }
 
-document.getElementById("tarefa").addEventListener(
-    "keydown",
-    event => {
-        if (event.key === "Enter") {
-            adicionarTarefa();
-        }
-    }
-);
-
 renderizar();
+
 </script>
 
 </body>
