@@ -99,3 +99,41 @@ async function menu() {
 4 - Altera prioridade
 0 - Sair
       );
+       
+       opcao = await perguntar("Esolha");
+
+       tentar {
+           switch (opcao) {
+            caso "1";
+                  const titulo = await perguntar("Titulo");
+                  const prioridade = Numero{
+                    await perguntar "Prioridade" (1-Alta, 2-Media, 3-Baixa);
+                   (;
+                   cadastrar(titulo, prioridade);
+                   quebra;
+
+                   caso "2";
+                      listar();
+                      quebra;
+
+                   caso "3:
+
+                        concluir(Number)await perguntar("Codigo da tarefa:")")));
+                        quebrar;
+                    caso "4";
+                           const cod= Number)(await perguntar"Codigo da tarefa;)"));
+                           const novaPrioriade = Numero(
+                            await perguntar Numero(
+                           );
+                           alterar()
+                           );
+
+                            caso "0";
+                                 console.log("Sistema encerrado!");
+                                 querar;
+
+                                 pradrao:
+                                        console,log(Opcao invalido!);
+                  }
+           } catch (erro) (
+            console.log(Error) erro mensagem
