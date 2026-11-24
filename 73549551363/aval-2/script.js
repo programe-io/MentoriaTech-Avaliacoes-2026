@@ -1,401 +1,190 @@
-// Estado inicial da aplicação
-let tasks = JSON.parse(localStorage.getItem('taskflow_tasks')) || [
-  {
-    id: crypto.randomUUID(),
-    title: 'Revisar planejamento semanal',
-    description: 'Definir prioridades e metas principais da semana.',
-    priority: 'alta',
-    category: 'Trabalho',
-    dueDate: new Date().toISOString().split('T')[0],
-    status: 'pendente'
-  },
-  {
-    id: crypto.randomUUID(),
-    title: 'Estudar JavaScript moderno',
-    description: 'Praticar manipulação de DOM e LocalStorage.',
-    priority: 'media',
-    category: 'Estudos',
-    dueDate: '',
-    status: 'andamento'
-  }
-];
+// Lista principal de tarefas
+let tarefas = [];
 
-let currentView = 'list'; // 'list' ou 'kanban'
-let deletedTaskCache = null;
-let toastTimeout = null;
+// ==========================================
+// FUNÇÕES DE REGRA DE NEGÓCIO
+// ==========================================
 
-// Elementos do DOM
-const tasksContainer = document.getElementById('tasks-container');
-const quickAddForm = document.getElementById('quick-add-form');
-const searchInput = document.getElementById('search-input');
-const filterStatus = document.getElementById('filter-status');
-const filterPriority = document.getElementById('filter-priority');
-const viewListBtn = document.getElementById('view-list-btn');
-const viewKanbanBtn = document.getElementById('view-kanban-btn');
-
-// Modal
-const modal = document.getElementById('task-modal');
-const taskForm = document.getElementById('task-form');
-const openModalBtn = document.getElementById('open-modal-btn');
-const closeModalBtn = document.getElementById('close-modal-btn');
-const cancelModalBtn = document.getElementById('cancel-modal-btn');
-
-// Tema
-const themeToggle = document.getElementById('theme-toggle');
-const themeIcon = document.getElementById('theme-icon');
-
-// Inicialização
-function init() {
-  loadTheme();
-  render();
-  lucide.createIcons();
-}
-
-function saveTasks() {
-  localStorage.setItem('taskflow_tasks', JSON.stringify(tasks));
-}
-
-// Tema Claro / Escuro
-function loadTheme() {
-  const savedTheme = localStorage.getItem('taskflow_theme');
-  if (savedTheme === 'dark') {
-    document.body.classList.add('dark');
-    themeIcon.setAttribute('data-lucide', 'sun');
+function validarTitulo(titulo) {
+  if (!titulo || titulo.trim().length < 5) {
+    throw new Error("O título deve ter, no mínimo, 5 caracteres.");
   }
 }
 
-themeToggle.addEventListener('click', () => {
-  document.body.classList.toggle('dark');
-  const isDark = document.body.classList.contains('dark');
-  localStorage.setItem('taskflow_theme', isDark ? 'dark' : 'light');
-  themeIcon.setAttribute('data-lucide', isDark ? 'sun' : 'moon');
-  lucide.createIcons();
-});
-
-// Verificar se tarefa está atrasada
-function isOverdue(task) {
-  if (!task.dueDate || task.status === 'concluida') return false;
-  const today = new Date().toISOString().split('T')[0];
-  return task.dueDate < today;
+function validarPrioridade(prioridade) {
+  if (isNaN(prioridade) || prioridade < 1 || prioridade > 3) {
+    throw new Error("A prioridade deve ser um valor entre 1 (alta) e 3 (baixa).");
+  }
 }
 
-// Atualizar Dashboard e Barra de Progresso
-function updateStats() {
-  const total = tasks.length;
-  const done = tasks.filter(t => t.status === 'concluida').length;
-  const open = total - done;
-  const overdue = tasks.filter(t => isOverdue(t)).length;
-  const percent = total === 0 ? 0 : Math.round((done / total) * 100);
-
-  document.getElementById('stat-total').textContent = total;
-  document.getElementById('stat-open').textContent = open;
-  document.getElementById('stat-done').textContent = done;
-  document.getElementById('stat-overdue').textContent = overdue;
-
-  document.getElementById('progress-text').textContent = `${percent}%`;
-  document.getElementById('progress-bar-fill').style.width = `${percent}%`;
+function buscarTarefaPorCodigo(codigoTarefa) {
+  return tarefas.find((tarefa) => tarefa.codigo === codigoTarefa);
 }
 
-// Filtrar Tarefas
-function getFilteredTasks() {
-  const query = searchInput.value.toLowerCase();
-  const statusVal = filterStatus.value;
-  const priorityVal = filterPriority.value;
+// 1. Cadastrar nova tarefa
+function cadastrarTarefa(titulo, prioridade) {
+  validarTitulo(titulo);
+  validarPrioridade(prioridade);
 
-  return tasks.filter(task => {
-    const matchesSearch =
-      task.title.toLowerCase().includes(query) ||
-      (task.description && task.description.toLowerCase().includes(query));
+  const novaTarefa = {
+    codigo: tarefas.length + 1,
+    titulo: titulo.trim(),
+    prioridade: prioridade,
+    concluida: false
+  };
 
-    const matchesStatus =
-      statusVal === 'todas' ||
-      (statusVal === 'concluidas' && task.status === 'concluida') ||
-      (statusVal === 'abertas' && task.status !== 'concluida');
-
-    const matchesPriority =
-      priorityVal === 'todas' || task.priority === priorityVal;
-
-    return matchesSearch && matchesStatus && matchesPriority;
-  });
+  tarefas.push(novaTarefa);
 }
 
-// Renderização Principal
-function render() {
-  updateStats();
-  const filtered = getFilteredTasks();
+// 2. Marcar uma tarefa como concluída
+function concluirTarefa(codigoTarefa) {
+  const tarefa = buscarTarefaPorCodigo(codigoTarefa);
 
-  if (currentView === 'list') {
-    renderList(filtered);
-  } else {
-    renderKanban(filtered);
+  if (!tarefa) {
+    throw new Error("Tarefa não encontrada.");
   }
 
-  lucide.createIcons();
+  if (tarefa.concluida) {
+    throw new Error(`A tarefa #${codigoTarefa} já está concluída.`);
+  }
+
+  tarefa.concluida = true;
 }
 
-// Renderizar em Lista
-function renderList(list) {
-  if (list.length === 0) {
-    tasksContainer.innerHTML = `<div class="empty-state">Nenhuma tarefa encontrada. Crie uma nova acima!</div>`;
+// 3. Alterar a prioridade de uma tarefa
+function alterarPrioridade(codigoTarefa, novaPrioridade) {
+  validarPrioridade(novaPrioridade);
+
+  const tarefa = buscarTarefaPorCodigo(codigoTarefa);
+
+  if (!tarefa) {
+    throw new Error("Tarefa não encontrada.");
+  }
+
+  tarefa.prioridade = novaPrioridade;
+}
+
+// ==========================================
+// MANIPULAÇÃO DO DOM E EVENTOS DA INTERFACE
+// ==========================================
+
+function exibirMensagem(texto, tipo) {
+  const box = document.getElementById("mensagem");
+  box.textContent = texto;
+  box.className = `mensagem ${tipo}`;
+}
+
+function formatarPrioridade(valor) {
+  const mapa = {
+    1: "1 - Alta",
+    2: "2 - Média",
+    3: "3 - Baixa"
+  };
+  return mapa[valor] || valor;
+}
+
+// 4. Listar as tarefas cadastradas
+function listarTarefas() {
+  console.log(tarefas);
+
+  const tbody = document.getElementById("lista-tarefas");
+  const avisoVazio = document.getElementById("aviso-vazio");
+  tbody.innerHTML = "";
+
+  if (tarefas.length === 0) {
+    avisoVazio.style.display = "block";
     return;
   }
 
-  tasksContainer.innerHTML = `<div class="task-list">
-    ${list.map(task => {
-      const done = task.status === 'concluida';
-      const overdue = isOverdue(task);
-      return `
-        <div class="task-card ${done ? 'completed' : ''}">
-          <div class="task-left">
-            <input type="checkbox" class="task-checkbox" ${done ? 'checked' : ''} onchange="toggleComplete('${task.id}')" />
-            <div>
-              <div class="task-title">${escapeHTML(task.title)}</div>
-              ${task.description ? `<div class="task-desc">${escapeHTML(task.description)}</div>` : ''}
-              <div class="task-meta">
-                <span class="badge badge-${task.priority}">${task.priority.toUpperCase()}</span>
-                <span class="badge badge-cat">${escapeHTML(task.category)}</span>
-                ${task.dueDate ? `<span class="badge ${overdue ? 'badge-overdue' : 'badge-cat'}">📅 ${formatDate(task.dueDate)}</span>` : ''}
-              </div>
-            </div>
-          </div>
-          <div class="task-actions">
-            <button class="icon-action" onclick="openEditModal('${task.id}')" title="Editar">
-              <i data-lucide="edit-2"></i>
-            </button>
-            <button class="icon-action" onclick="deleteTask('${task.id}')" title="Excluir">
-              <i data-lucide="trash-2"></i>
-            </button>
-          </div>
-        </div>
-      `;
-    }).join('')}
-  </div>`;
-}
+  avisoVazio.style.display = "none";
 
-// Renderizar em Kanban com Drag & Drop
-function renderKanban(list) {
-  const columns = [
-    { id: 'pendente', title: 'A Fazer' },
-    { id: 'andamento', title: 'Em Andamento' },
-    { id: 'concluida', title: 'Concluída' }
-  ];
+  tarefas.forEach((tarefa) => {
+    const tr = document.createElement("tr");
+    if (tarefa.concluida) {
+      tr.classList.add("tarefa-concluida");
+    }
 
-  tasksContainer.innerHTML = `<div class="kanban-board">
-    ${columns.map(col => {
-      const colTasks = list.filter(t => t.status === col.id);
-      return `
-        <div class="kanban-column" ondragover="allowDrop(event)" ondrop="dropTask(event, '${col.id}')">
-          <div class="kanban-header">
-            <span>${col.title}</span>
-            <span class="kanban-count">${colTasks.length}</span>
-          </div>
-          <div class="kanban-list">
-            ${colTasks.map(task => `
-              <div class="kanban-card" draggable="true" ondragstart="dragTask(event, '${task.id}')">
-                <div class="task-title">${escapeHTML(task.title)}</div>
-                ${task.description ? `<div class="task-desc">${escapeHTML(task.description)}</div>` : ''}
-                <div class="task-meta" style="margin-top:8px; justify-content: space-between;">
-                  <span class="badge badge-${task.priority}">${task.priority.toUpperCase()}</span>
-                  <div>
-                    <button class="icon-action" onclick="openEditModal('${task.id}')"><i data-lucide="edit-2"></i></button>
-                    <button class="icon-action" onclick="deleteTask('${task.id}')"><i data-lucide="trash-2"></i></button>
-                  </div>
-                </div>
-              </div>
-            `).join('')}
-          </div>
-        </div>
-      `;
-    }).join('')}
-  </div>`;
-}
+    const textoStatus = tarefa.concluida ? "Concluída" : "Pendente";
+    const classeStatus = tarefa.concluida ? "status-concluida" : "status-pendente";
 
-// Drag & Drop Kanban
-function dragTask(event, id) {
-  event.dataTransfer.setData('text/plain', id);
-}
+    tr.innerHTML = `
+      <td><strong>#${tarefa.codigo}</strong></td>
+      <td class="titulo-col">${tarefa.titulo}</td>
+      <td><span class="badge prio-${tarefa.prioridade}">${formatarPrioridade(tarefa.prioridade)}</span></td>
+      <td class="${classeStatus}">${textoStatus}</td>
+      <td>
+        ${
+          !tarefa.concluida
+            ? `<button type="button" class="btn-tabela" onclick="concluirPeloBotao(${tarefa.codigo})">Concluir</button>`
+            : "—"
+        }
+      </td>
+    `;
 
-function allowDrop(event) {
-  event.preventDefault();
-}
-
-function dropTask(event, newStatus) {
-  event.preventDefault();
-  const id = event.dataTransfer.getData('text/plain');
-  const task = tasks.find(t => t.id === id);
-  if (task) {
-    task.status = newStatus;
-    saveTasks();
-    render();
-  }
-}
-
-// Adição Rápida
-quickAddForm.addEventListener('submit', e => {
-  e.preventDefault();
-  const titleInput = document.getElementById('quick-title');
-  const priorityInput = document.getElementById('quick-priority');
-
-  tasks.unshift({
-    id: crypto.randomUUID(),
-    title: titleInput.value.trim(),
-    description: '',
-    priority: priorityInput.value,
-    category: 'Pessoal',
-    dueDate: '',
-    status: 'pendente'
+    tbody.appendChild(tr);
   });
+}
 
-  titleInput.value = '';
-  saveTasks();
-  render();
-});
-
-// Alternar Concluída
-function toggleComplete(id) {
-  const task = tasks.find(t => t.id === id);
-  if (task) {
-    task.status = task.status === 'concluida' ? 'pendente' : 'concluida';
-    saveTasks();
-    render();
+// Ação direta pelo botão da tabela
+function concluirPeloBotao(codigo) {
+  try {
+    concluirTarefa(codigo);
+    listarTarefas();
+    exibirMensagem(`Tarefa #${codigo} marcada como concluída!`, "sucesso");
+  } catch (erro) {
+    exibirMensagem(erro.message, "erro");
   }
 }
 
-// Excluir + Desfazer (Toast)
-function deleteTask(id) {
-  const index = tasks.findIndex(t => t.id === id);
-  if (index > -1) {
-    deletedTaskCache = { task: tasks[index], index };
-    tasks.splice(index, 1);
-    saveTasks();
-    render();
-    showToast();
-  }
-}
+// Evento: Cadastrar Tarefa
+document.getElementById("form-cadastro").addEventListener("submit", function (event) {
+  event.preventDefault();
 
-function showToast() {
-  const toast = document.getElementById('toast');
-  toast.classList.remove('hidden');
-  clearTimeout(toastTimeout);
-  toastTimeout = setTimeout(() => {
-    toast.classList.add('hidden');
-    deletedTaskCache = null;
-  }, 5000);
-}
+  const titulo = document.getElementById("titulo").value;
+  const prioridade = Number(document.getElementById("prioridade").value);
 
-document.getElementById('undo-btn').addEventListener('click', () => {
-  if (deletedTaskCache) {
-    tasks.splice(deletedTaskCache.index, 0, deletedTaskCache.task);
-    deletedTaskCache = null;
-    document.getElementById('toast').classList.add('hidden');
-    saveTasks();
-    render();
+  try {
+    cadastrarTarefa(titulo, prioridade);
+    listarTarefas();
+    exibirMensagem("Tarefa cadastrada com sucesso!", "sucesso");
+    event.target.reset();
+  } catch (erro) {
+    exibirMensagem(erro.message, "erro");
   }
 });
 
-// Controle do Modal (Criar / Editar)
-openModalBtn.addEventListener('click', () => {
-  document.getElementById('modal-title').textContent = 'Nova Tarefa';
-  taskForm.reset();
-  document.getElementById('task-id').value = '';
-  modal.classList.remove('hidden');
-});
+// Evento: Concluir Tarefa pelo formulário de código
+document.getElementById("form-concluir").addEventListener("submit", function (event) {
+  event.preventDefault();
 
-function openEditModal(id) {
-  const task = tasks.find(t => t.id === id);
-  if (!task) return;
+  const codigo = Number(document.getElementById("codigo-concluir").value);
 
-  document.getElementById('modal-title').textContent = 'Editar Tarefa';
-  document.getElementById('task-id').value = task.id;
-  document.getElementById('task-title').value = task.title;
-  document.getElementById('task-desc').value = task.description || '';
-  document.getElementById('task-priority').value = task.priority;
-  document.getElementById('task-category').value = task.category;
-  document.getElementById('task-date').value = task.dueDate || '';
-  document.getElementById('task-status').value = task.status;
-
-  modal.classList.remove('hidden');
-}
-
-function closeModal() {
-  modal.classList.add('hidden');
-}
-
-closeModalBtn.addEventListener('click', closeModal);
-cancelModalBtn.addEventListener('click', closeModal);
-
-taskForm.addEventListener('submit', e => {
-  e.preventDefault();
-  const id = document.getElementById('task-id').value;
-  const data = {
-    title: document.getElementById('task-title').value.trim(),
-    description: document.getElementById('task-desc').value.trim(),
-    priority: document.getElementById('task-priority').value,
-    category: document.getElementById('task-category').value,
-    dueDate: document.getElementById('task-date').value,
-    status: document.getElementById('task-status').value
-  };
-
-  if (id) {
-    const index = tasks.findIndex(t => t.id === id);
-    if (index > -1) tasks[index] = { ...tasks[index], ...data };
-  } else {
-    tasks.unshift({ id: crypto.randomUUID(), ...data });
+  try {
+    concluirTarefa(codigo);
+    listarTarefas();
+    exibirMensagem(`Tarefa #${codigo} marcada como concluída!`, "sucesso");
+    event.target.reset();
+  } catch (erro) {
+    exibirMensagem(erro.message, "erro");
   }
-
-  saveTasks();
-  closeModal();
-  render();
 });
 
-// Alternar Lista / Kanban
-viewListBtn.addEventListener('click', () => {
-  currentView = 'list';
-  viewListBtn.classList.add('active');
-  viewKanbanBtn.classList.remove('active');
-  render();
+// Evento: Alterar Prioridade
+document.getElementById("form-prioridade").addEventListener("submit", function (event) {
+  event.preventDefault();
+
+  const codigo = Number(document.getElementById("codigo-prioridade").value);
+  const novaPrioridade = Number(document.getElementById("nova-prioridade").value);
+
+  try {
+    alterarPrioridade(codigo, novaPrioridade);
+    listarTarefas();
+    exibirMensagem(`Prioridade da tarefa #${codigo} atualizada!`, "sucesso");
+    event.target.reset();
+  } catch (erro) {
+    exibirMensagem(erro.message, "erro");
+  }
 });
 
-viewKanbanBtn.addEventListener('click', () => {
-  currentView = 'kanban';
-  viewKanbanBtn.classList.add('active');
-  viewListBtn.classList.remove('active');
-  render();
-});
-
-// Eventos de Filtro
-searchInput.addEventListener('input', render);
-filterStatus.addEventListener('change', render);
-filterPriority.addEventListener('change', render);
-
-// Exportar JSON
-document.getElementById('export-btn').addEventListener('click', () => {
-  const blob = new Blob([JSON.stringify(tasks, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'minhas-tarefas.json';
-  a.click();
-  URL.revokeObjectURL(url);
-});
-
-// Utilitários
-function formatDate(dateStr) {
-  const [y, m, d] = dateStr.split('-');
-  return `${d}/${m}/${y}`;
-}
-
-function escapeHTML(str) {
-  return str.replace(/[&<>'"]/g, tag => ({
-    '&': '&',
-    '<': '<',
-    '>': '>',
-    "'": ''',
-    '"': '"'
-  }[tag]));
-}
-
-init();
-
-
-
+// Inicializa a listagem ao abrir a página
+listarTarefas();
