@@ -1,4 +1,3 @@
-
 const tarefas = [];
 let codigo = 0;
 
@@ -102,6 +101,7 @@ async function Menu() {
     
 do {
     console.log(`
+
     ===== GERENCIADOR DE TAREFAS =====
 
     1 - Cadastrar tarefas
@@ -109,4 +109,65 @@ do {
     3 - Concluir tarefas
     4 - Alterar prioridade
     0 - Sair
+
     `);
+
+opcao = await perguntar("Escolha");
+
+try {
+    switch (opcao) {
+
+        case "1": {
+            const titulo = await perguntar("Título:");
+            const prioridade = Number(
+                await perguntar("Prioridade (1-Alta, 2-Média, 3-Baixa):")
+            );
+
+            cadastrar(titulo, prioridade);
+            break;
+        }
+
+        case "2":
+            listar();
+            break;
+
+        case "3": {
+            const cod = Number(
+                await perguntar("Código da tarefa:")
+            );
+
+            concluir(cod);
+            break;
+        }
+
+        case "4": {
+            const cod = Number(
+                await perguntar("Código da tarefa:")
+            );
+
+            const novaPrioridade = Number(
+                await perguntar("Nova prioridade (1 a 3):")
+            );
+
+            alterar(cod, novaPrioridade);
+            break;
+        }
+
+        case "0":
+            console.log("Sistema encerrado!");
+            break;
+
+        default:
+            console.log("Opção inválida!");
+    }
+
+} catch (erro) {
+    console.log("Erro: " + erro.message);
+}
+
+} while (opcao !== "0");
+
+rl.close();
+}
+
+menu();
