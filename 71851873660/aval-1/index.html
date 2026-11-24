@@ -3,96 +3,135 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Controle de Estoque - Colares</title>
+  <title>Gerenciador de Estoque</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="style.css" rel="stylesheet"></head>
 <body>
 
   <header>
-    <h1>Controle de Estoque de Colares</h1>
-    <p>Gerenciamento de peças, materiais e quantidades disponíveis</p>
+    <h1>Gerenciador de Estoque</h1>
+    <p>Controle de produtos, entradas, saídas e valor em inventário</p>
   </header>
 
   <main>
-    <!-- Formulário para cadastrar novo colar no estoque -->
-    <section id="cadastro-colar">
-      <h2>Adicionar Novo Colar</h2>
-      <form id="form-estoque">
+    <!-- Painel de Resumo (Indicadores) -->
+    <section id="resumo-estoque">
+      <h2>Resumo Geral</h2>
+      <div class="cards-resumo">
+        <div class="card">
+          <span>Total de Produtos</span>
+          <strong id="total-produtos">3</strong>
+        </div>
+        <div class="card">
+          <span>Itens em Estoque</span>
+          <strong id="total-itens">42</strong>
+        </div>
+        <div class="card">
+          <span>Valor Total (R$)</span>
+          <strong id="valor-total">R$ 2.840,00</strong>
+        </div>
+      </div>
+    </section>
+
+    <!-- Formulário de Cadastro de Produto -->
+    <section id="cadastro-produto">
+      <h2>Cadastrar Novo Produto</h2>
+      <form id="form-produto">
         <div>
-          <label for="codigo">Código (SKU):</label>
-          <input type="text" id="codigo" name="codigo" placeholder="Ex: COL-001" required>
+          <label for="sku">Código / SKU:</label>
+          <input type="text" id="sku" name="sku" placeholder="Ex: PROD-004" required>
         </div>
 
         <div>
-          <label for="nome">Modelo do Colar:</label>
-          <input type="text" id="nome" name="nome" placeholder="Ex: Gargantilha Ponto de Luz" required>
+          <label for="produto">Nome do Produto:</label>
+          <input type="text" id="produto" name="produto" placeholder="Ex: Teclado Mecânico" required>
         </div>
 
         <div>
-          <label for="material">Material:</label>
-          <select id="material" name="material">
-            <option value="Prata 925">Prata 925</option>
-            <option value="Ouro 18k">Ouro 18k</option>
-            <option value="Folheado a Ouro">Folheado a Ouro</option>
-            <option value="Aço Inox">Aço Inox</option>
-            <option value="Miçangas / Artesanal">Miçangas / Artesanal</option>
+          <label for="categoria">Categoria:</label>
+          <select id="categoria" name="categoria">
+            <option value="Eletrônicos">Eletrônicos</option>
+            <option value="Acessórios">Acessórios</option>
+            <option value="Vestuário">Vestuário</option>
+            <option value="Alimentos">Alimentos</option>
+            <option value="Outros">Outros</option>
           </select>
         </div>
 
         <div>
-          <label for="quantidade">Quantidade em Estoque:</label>
+          <label for="quantidade">Quantidade:</label>
           <input type="number" id="quantidade" name="quantidade" min="0" value="1" required>
         </div>
 
         <div>
           <label for="preco">Preço Unitário (R$):</label>
-          <input type="number" id="preco" name="preco" step="0.01" min="0" placeholder="89.90" required>
+          <input type="number" id="preco" name="preco" step="0.01" min="0" placeholder="150.00" required>
         </div>
 
-        <button type="submit">Cadastrar no Estoque</button>
+        <button type="submit">Adicionar ao Estoque</button>
       </form>
     </section>
 
-    <hr>
+    <!-- Busca e Tabela de Inventário -->
+    <section id="inventario">
+      <h2>Produtos em Estoque</h2>
 
-    <!-- Tabela exibindo os colares cadastrados -->
-    <section id="lista-estoque">
-      <h2>Inventário Atual</h2>
+      <div class="barra-busca">
+        <label for="busca">Buscar produto:</label>
+        <input type="search" id="busca" placeholder="Digite o nome, código ou categoria...">
+      </div>
+
       <table border="1">
         <thead>
           <tr>
-            <th>Código</th>
-            <th>Modelo</th>
-            <th>Material</th>
+            <th>SKU</th>
+            <th>Produto</th>
+            <th>Categoria</th>
             <th>Qtd.</th>
-            <th>Preço (R$)</th>
+            <th>Preço Unit.</th>
             <th>Status</th>
+            <th>Ações</th>
           </tr>
         </thead>
-        <tbody id="tabela-corpo">
+        <tbody id="lista-produtos">
           <tr>
-            <td>COL-001</td>
-            <td>Colar Veneziana Coração</td>
-            <td>Prata 925</td>
-            <td>15</td>
-            <td>120,00</td>
-            <td>Disponível</td>
+            <td>PROD-001</td>
+            <td>Mouse Sem Fio</td>
+            <td>Eletrônicos</td>
+            <td>25</td>
+            <td>R$ 80,00</td>
+            <td>Em Estoque</td>
+            <td>
+              <button type="button" class="btn-mais">+1</button>
+              <button type="button" class="btn-menos">-1</button>
+              <button type="button" class="btn-excluir">Excluir</button>
+            </td>
           </tr>
           <tr>
-            <td>COL-002</td>
-            <td>Choker Elos Dourados</td>
-            <td>Folheado a Ouro</td>
-            <td>3</td>
-            <td>85,50</td>
+            <td>PROD-002</td>
+            <td>Garrafa Térmica 500ml</td>
+            <td>Acessórios</td>
+            <td>4</td>
+            <td>R$ 60,00</td>
             <td>Estoque Baixo</td>
+            <td>
+              <button type="button" class="btn-mais">+1</button>
+              <button type="button" class="btn-menos">-1</button>
+              <button type="button" class="btn-excluir">Excluir</button>
+            </td>
           </tr>
           <tr>
-            <td>COL-003</td>
-            <td>Escapulário São Bento</td>
-            <td>Aço Inox</td>
-            <td>0</td>
-            <td>65,00</td>
-            <td>Esgotado</td>
+            <td>PROD-003</td>
+            <td>Mochila Executiva</td>
+            <td>Vestuário</td>
+            <td>13</td>
+            <td>R$ 46,15</td>
+            <td>Em Estoque</td>
+            <td>
+              <button type="button" class="btn-mais">+1</button>
+              <button type="button" class="btn-menos">-1</button>
+              <button type="button" class="btn-excluir">Excluir</button>
+            </td>
           </tr>
         </tbody>
       </table>
@@ -100,7 +139,7 @@
   </main>
 
   <footer>
-    <p>Sistema de Controle de Estoque &copy; 2026</p>
+    <p>Sistema Gerenciador de Estoque &copy; 2026</p>
   </footer>
 
 <script src="script.js"></script></body>
