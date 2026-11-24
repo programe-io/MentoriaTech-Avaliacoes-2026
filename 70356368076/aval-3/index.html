@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"><link href="style.css" rel="stylesheet">
+</head>
+<body>
+  
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Futebol Mania</title>
+<style>
+* { box-sizing:border-box; }
+body {
+  margin:0;
+  background:#101820;
+  color:white;
+  font-family:Arial,sans-serif;
+  text-align:center;
+}
+h1 { color:#00ff88; }
+#placar {
+  font-size:25px;
+  margin:15px;
+}
+#campo {
+  width:min(95vw,700px);
+  height:400px;
+  background:#168b40;
+  border:5px solid white;
+  position:relative;
+  margin:auto;
+  overflow:hidden;
+  background-image:repeating-linear-gradient(
+    90deg,#168b40 0px,#168b40 70px,
+    #147d38 70px,#147d38 140px
+  );
+}
+.linha {
+  position:absolute;
+  left:50%;
+  top:0;
+  height:100%;
+  border-left:3px solid white;
+}
+.circulo {
+  position:absolute;
+  width:100px;
+  height:100px;
+  border:3px solid white;
+  border-radius:50%;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+}
+.jogador {
+  position:absolute;
+  font-size:35px;
+  left:45%;
+  top:70%;
+  z-index:2;
+}
+.bola {
+  position:absolute;
+  font-size:25px;
+  left:50%;
+  top:55%;
+  z-index:3;
+}
+.gol {
+  position:absolute;
+  left:35%;
+  top:0;
+  width:30%;
+  height:30px;
+  border:4px solid white;
+  border-top:0;
+}
+button {
+  background:#00dd78;
+  border:0;
+  padding:14px 22px;
+  margin:5px;
+  border-radius:10px;
+  font-size:17px;
+  font-weight:bold;
+}
+.controles { margin:15px; }
+</style>
+</head>
+<body>
+
+<h1>⚽ FUTEBOL MANIA</h1>
+<div id="placar">Gols: <span id="gols">0</span></div>
+
+<div id="campo">
+  <div class="gol"></div>
+  <div class="linha"></div>
+  <div class="circulo"></div>
+  <div class="jogador" id="jogador">🏃</div>
+  <div class="bola" id="bola">⚽</div>
+</div>
+
+<div class="controles">
+  <button onclick="mover(0,-15)">⬆️</button><br>
+  <button onclick="mover(-15,0)">⬅️</button>
+  <button onclick="chutar()">CHUTAR ⚽</button>
+  <button onclick="mover(15,0)">➡️</button><br>
+  <button onclick="mover(0,15)">⬇️</button>
+</div>
+
+<p>Use as setas do teclado para movimentar.</p>
+<p id="mensagem">Faça gols para vencer!</p>
+
+<script>
+const jogador = document.getElementById("jogador");
+const bola = document.getElementById("bola");
+const campo = document.getElementById("campo");
+let x=45, y=70, gols=0;
+let bx=50, by=55;
+
+function atualizar() {
+  jogador.style.left=x+"%";
+  jogador.style.top=y+"%";
+  bola.style.left=bx+"%";
+  bola.style.top=by+"%";
+}
+
+function mover(dx,dy) {
+  x=Math.max(2,Math.min(92,x+dx/7));
+  y=Math.max(10,Math.min(90,y+dy/7));
+  if(Math.abs(x-bx)<9 && Math.abs(y-by)<9){
+    bx=x+3;
+    by=y-3;
+  }
+  atualizar();
+}
+
+function chutar() {
+  if(Math.abs(x-bx)<12 && Math.abs(y-by)<15){
+    document.getElementById("mensagem").textContent="CHUTOU!!! ⚽";
+    by-=25;
+    bx=50;
+    if(by<8 && bx>35 && bx<65){
+      gols++;
+      document.getElementById("gols").textContent=gols;
+      document.getElementById("mensagem").textContent="GOOOOOOL!!! 🏆";
+    }
+    setTimeout(()=>{
+      bx=50; by=55;
+      atualizar();
+    },700);
+    atualizar();
+  } else {
+    document.getElementById("mensagem").textContent="Chegue perto da bola!";
+  }
+}
+
+document.addEventListener("keydown",e=>{
+  if(e.key==="ArrowUp") mover(0,-15);
+  if(e.key==="ArrowDown") mover(0,15);
+  if(e.key==="ArrowLeft") mover(-15,0);
+  if(e.key==="ArrowRight") mover(15,0);
+  if(e.code==="Space") chutar();
+});
+
+atualizar();
+</script>
+</body>
+  <script src="script.js"></script>
+  
+</body>
+</html>
