@@ -1,394 +1,448 @@
+let chatAtual = "Ana";
 
-const feed = document.querySelector("#videoFeed");
-const uploadModal = document.querySelector("#uploadModal");
-const commentsPanel = document.querySelector("#commentsPanel");
+const respostas = {
+    Ana: [
+        "Que legal! 😊",
+        "Entendi!",
+        "Também acho isso 😄",
+        "Depois me conta mais!",
+        "Hahaha 😂"
+    ],
 
-let selectedCard = null;
-let followedUsers = new Set();
-let favorites = new Set();
+    Lucas: [
+        "Sim, vou!",
+        "Pode deixar 👍",
+        "Beleza!",
+        "Nos vemos lá 😎"
+    ],
 
-// ABRIR PUBLICAÇÃO
-function openUpload() {
-    uploadModal.classList.add("open");
-}
+    Mariana: [
+        "Eu também adorei ❤️",
+        "Ficou muito legal!",
+        "Depois te mando mais fotos 😊"
+    ],
 
-document.querySelector("#openUpload").addEventListener("click", openUpload);
-document.querySelector("#mobileUpload").addEventListener("click", openUpload);
+    João: [
+        "Combinado!",
+        "Até amanhã 👋",
+        "Boa noite!"
+    ]
+};
 
-document.querySelector("#closeUpload").addEventListener("click", () => {
-    uploadModal.classList.remove("open");
-});
 
-// CURTIR
-document.addEventListener("click", event => {
-    const button = event.target.closest(".like");
-    if (!button) return;
+/* ABRIR CHAT */
 
-    button.classList.toggle("liked");
+function abrirChat(nome) {
 
-    const icon = button.querySelector("span");
-    const count = button.querySelector("small");
+    chatAtual = nome;
 
-    let number = Number(count.dataset.count || 0);
+    document.getElementById("contactName").textContent = nome;
 
-    if (button.classList.contains("liked")) {
-        icon.textContent = "♥";
-        number++;
-    } else {
-        icon.textContent = "♡";
-        number = Math.max(0, number - 1);
-    }
+    const status = document.getElementById("contactStatus");
 
-    count.dataset.count = number;
-    count.textContent = number.toLocaleString("pt-BR");
-});
+    status.textContent = "online";
 
-// FAVORITOS
-document.addEventListener("click", event => {
-    const button = event.target.closest(".favorite");
-    if (!button) return;
+    const chats = document.querySelectorAll(".chat");
 
-    const card = button.closest(".video-card");
-    button.classList.toggle("saved");
+    chats.forEach(chat => {
+        chat.classList.remove("active");
 
-    if (button.classList.contains("saved")) {
-        favorites.add(card);
-        button.querySelector("small").textContent = "Salvo";
-    } else {
-        favorites.delete(card);
-        button.querySelector("small").textContent = "Salvar";
-    }
-});
-
-// SEGUIR
-document.addEventListener("click", event => {
-    const button = event.target.closest(".follow");
-    if (!button) return;
-
-    const card = button.closest(".video-card");
-    const user = card.dataset.user;
-
-    if (followedUsers.has(user)) {
-        followedUsers.delete(user);
-        button.textContent = "+";
-        button.classList.remove("following");
-    } else {
-        followedUsers.add(user);
-        button.textContent = "✓";
-        button.classList.add("following");
-    }
-
-    document.querySelector("#followingCount").textContent =
-        120 + followedUsers.size;
-});
-
-// REPRODUÇÃO DOS VÍDEOS
-function setupVideo(card) {
-    const video = card.querySelector("video");
-    const playButton = card.querySelector(".video-play");
-
-    async function toggleVideo() {
-        if (video.paused) {
-            document.querySelectorAll(".video-container video").forEach(other => {
-                if (other !== video) {
-                    other.pause();
-                    other.closest(".video-container")
-                        .querySelector(".video-play").style.display = "block";
-                }
-            });
-
-            try {
-                await video.play();
-                playButton.style.display = "none";
-            } catch {
-                alert("Não foi possível reproduzir o vídeo.");
-            }
-        } else {
-            video.pause();
-            playButton.style.display = "block";
+        if (chat.innerText.includes(nome)) {
+            chat.classList.add("active");
         }
-    }
+    });
 
-    video.addEventListener("click", toggleVideo);
-    playButton.addEventListener("click", toggleVideo);
+    const messages = document.getElementById("messages");
+
+    messages.innerHTML = `
+        <div class="date">HOJE</div>
+        <div class="message received">
+            <span>${getMensagemInicial(nome)}</span>
+            <small>13:45</small>
+        </div>
+    `;
+
+    carregarMensagens();
+
+    document.getElementById("messageInput").focus();
 }
 
-document.querySelectorAll(".video-card").forEach(setupVideo);
 
-// COMENTÁRIOS
-document.addEventListener("click", event => {
-    const button = event.target.closest(".comments");
-    if (!button) return;
+/* MENSAGEM INICIAL */
 
-    selectedCard = button.closest(".video-card");
+function getMensagemInicial(nome) {
 
-    document.querySelector("#commentsList").replaceChildren();
+    const mensagens = {
+        Ana: "Oi! Tudo bem? 😊",
+        Lucas: "Você vai hoje?",
+        Mariana: "Amei essa foto! ❤️",
+        João: "Até amanhã!"
+    };
 
-    commentsPanel.classList.add("open");
-});
+    return mensagens[nome] || "Olá! 👋";
+}
 
-document.querySelector("#closeComments").addEventListener("click", () => {
-    commentsPanel.classList.remove("open");
-});
 
-// ADICIONAR COMENTÁRIO
-document.querySelector("#commentForm").addEventListener("submit", event => {
-    event.preventDefault();
+/* ENVIAR */
 
-    const input = document.querySelector("#commentInput");
-    const text = input.value.trim();
+function enviarMensagem() {
 
-    if (!text || !selectedCard) return;
+    const input = document.getElementById("messageInput");
 
-    const item = document.createElement("div");
-    item.className = "comment-item";
+    const texto = input.value.trim();
 
-    const username = document.createElement("strong");
-    username.textContent = "@seu_usuario";
+    if (texto === "") return;
 
-    const message = document.createElement("p");
-    message.textContent = text;
-
-    item.append(username, message);
-
-    const list = document.querySelector("#commentsList");
-
-    if (list.querySelector(".empty-message")) {
-        list.replaceChildren();
-    }
-
-    list.append(item);
-
-    const count = selectedCard.querySelector(".comments small");
-    const number = Number(count.dataset.count || 0) + 1;
-
-    count.dataset.count = number;
-    count.textContent = number.toLocaleString("pt-BR");
+    adicionarMensagem(texto, "sent");
 
     input.value = "";
+
+    atualizarPreview(texto);
+
+    salvarMensagens();
+
+    setTimeout(responderAutomaticamente, 1000);
+}
+
+
+/* ENTER */
+
+document.getElementById("messageInput").addEventListener("keydown", function(event) {
+
+    if (event.key === "Enter") {
+        enviarMensagem();
+    }
+
 });
 
-// COMPARTILHAR
-document.addEventListener("click", async event => {
-    const button = event.target.closest(".share");
-    if (!button) return;
 
-    const card = button.closest(".video-card");
-    const user = card.dataset.user;
+/* ADICIONAR MENSAGEM */
 
-    try {
-        if (navigator.share) {
-            await navigator.share({
-                title: "TikTok World",
-                text: "Confira este vídeo de @" + user,
-                url: window.location.href
-            });
-        } else if (navigator.clipboard) {
-            await navigator.clipboard.writeText(window.location.href);
-            alert("Link copiado!");
+function adicionarMensagem(texto, tipo) {
+
+    const messages = document.getElementById("messages");
+
+    const mensagem = document.createElement("div");
+
+    mensagem.className = "message " + tipo;
+
+    const hora = new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit"
+    });
+
+    mensagem.innerHTML = `
+        <span>${texto}</span>
+        <small>${hora}${tipo === "sent" ? " ✓✓" : ""}</small>
+    `;
+
+    messages.appendChild(mensagem);
+
+    messages.scrollTop = messages.scrollHeight;
+}
+
+
+/* RESPOSTA AUTOMÁTICA */
+
+function responderAutomaticamente() {
+
+    const lista = respostas[chatAtual] || ["Ok! 😊"];
+
+    const resposta =
+        lista[Math.floor(Math.random() * lista.length)];
+
+    adicionarMensagem(resposta, "received");
+
+    atualizarPreview(resposta);
+
+    salvarMensagens();
+}
+
+
+/* PREVIEW */
+
+function atualizarPreview(texto) {
+
+    const preview = document.getElementById("preview-" + chatAtual);
+
+    if (preview) {
+        preview.textContent = texto;
+    }
+}
+
+
+/* EMOJIS */
+
+function mostrarEmojis() {
+
+    const painel = document.getElementById("emojiPanel");
+
+    painel.style.display =
+        painel.style.display === "grid"
+            ? "none"
+            : "grid";
+}
+
+
+function adicionarEmoji(emoji) {
+
+    const input = document.getElementById("messageInput");
+
+    input.value += emoji;
+
+    input.focus();
+}
+
+
+/* ANEXAR */
+
+function anexarArquivo() {
+
+    const input = document.createElement("input");
+
+    input.type = "file";
+
+    input.accept = "image/*,.pdf,.doc,.docx";
+
+    input.click();
+
+    input.onchange = function() {
+
+        if (input.files.length > 0) {
+
+            const arquivo = input.files[0];
+
+            adicionarMensagem(
+                "📎 " + arquivo.name,
+                "sent"
+            );
+
+            salvarMensagens();
+        }
+    };
+}
+
+
+/* PESQUISA */
+
+function pesquisarConversas() {
+
+    const termo =
+        document
+            .getElementById("searchInput")
+            .value
+            .toLowerCase();
+
+    const chats = document.querySelectorAll(".chat");
+
+    chats.forEach(chat => {
+
+        const nome =
+            chat
+                .querySelector("strong")
+                .textContent
+                .toLowerCase();
+
+        chat.style.display =
+            nome.includes(termo)
+                ? "flex"
+                : "none";
+    });
+}
+
+
+/* MENU */
+
+function abrirMenu() {
+
+    const menu = document.getElementById("menu");
+
+    menu.style.display =
+        menu.style.display === "flex"
+            ? "none"
+            : "flex";
+}
+
+
+/* LIMPAR */
+
+function limparConversa() {
+
+    const confirmacao =
+        confirm("Deseja limpar esta conversa?");
+
+    if (!confirmacao) return;
+
+    document.getElementById("messages").innerHTML = `
+        <div class="date">HOJE</div>
+    `;
+
+    localStorage.removeItem("chat_" + chatAtual);
+
+    abrirMenu();
+}
+
+
+/* NOVO CHAT */
+
+function novoChat() {
+
+    const nome = prompt(
+        "Digite o nome do novo contato:"
+    );
+
+    if (!nome || nome.trim() === "") return;
+
+    const lista =
+        document.getElementById("chatList");
+
+    const div =
+        document.createElement("div");
+
+    div.className = "chat";
+
+    div.onclick = function() {
+        abrirChat(nome);
+    };
+
+    div.innerHTML = `
+        <div class="avatar purple">👤</div>
+
+        <div class="chat-info">
+
+            <div class="chat-top">
+                <strong>${nome}</strong>
+                <small>agora</small>
+            </div>
+
+            <p id="preview-${nome}">
+                Nova conversa
+            </p>
+
+        </div>
+    `;
+
+    lista.prepend(div);
+
+    abrirChat(nome);
+}
+
+
+/* CONFIGURAÇÕES */
+
+function abrirConfiguracoes() {
+
+    alert(
+        "⚙️ Configurações\n\n" +
+        "• Perfil\n" +
+        "• Privacidade\n" +
+        "• Notificações\n" +
+        "• Aparência\n" +
+        "• Conversas"
+    );
+}
+
+
+/* CONTATO */
+
+function verContato() {
+
+    alert(
+        "👤 " + chatAtual +
+        "\n\nStatus: online\n" +
+        "Conversa protegida"
+    );
+
+    abrirMenu();
+}
+
+
+/* PESQUISAR MENSAGEM */
+
+function pesquisarMensagem() {
+
+    const palavra =
+        prompt("Digite uma palavra para procurar:");
+
+    if (!palavra) return;
+
+    const mensagens =
+        document.querySelectorAll(".message");
+
+    let encontrou = false;
+
+    mensagens.forEach(msg => {
+
+        if (
+            msg.innerText
+                .toLowerCase()
+                .includes(palavra.toLowerCase())
+        ) {
+
+            msg.style.outline =
+                "3px solid #00a884";
+
+            encontrou = true;
+
         } else {
-            alert("Compartilhamento não disponível.");
+
+            msg.style.outline = "none";
         }
-    } catch (error) {
-        if (error.name !== "AbortError") {
-            alert("Não foi possível compartilhar.");
-        }
-    }
-});
-
-// PUBLICAR VÍDEO
-document.querySelector("#uploadForm").addEventListener("submit", event => {
-    event.preventDefault();
-
-    const urlText = document.querySelector("#videoUrl").value.trim();
-    const captionText = document.querySelector("#videoCaption").value.trim();
-    const category = document.querySelector("#videoCategory").value;
-
-    let url;
-
-    try {
-        url = new URL(urlText);
-    } catch {
-        alert("Digite um link válido.");
-        return;
-    }
-
-    if (!["https:", "http:"].includes(url.protocol)) {
-        alert("Use um endereço de vídeo válido.");
-        return;
-    }
-
-    const card = document.createElement("article");
-    card.className = "video-card";
-    card.dataset.user = "seu_usuario";
-    card.dataset.category = category;
-
-    const container = document.createElement("div");
-    container.className = "video-container";
-
-    const video = document.createElement("video");
-    video.src = url.href;
-    video.loop = true;
-    video.muted = true;
-    video.playsInline = true;
-
-    const gradient = document.createElement("div");
-    gradient.className = "video-gradient";
-
-    const text = document.createElement("div");
-    text.className = "video-text";
-
-    const username = document.createElement("strong");
-    username.textContent = "@seu_usuario";
-
-    const caption = document.createElement("p");
-    caption.textContent = captionText || "Novo vídeo!";
-
-    const music = document.createElement("span");
-    music.textContent = "♫ Som original - seu_usuario";
-
-    text.append(username, caption, music);
-
-    const play = document.createElement("button");
-    play.className = "video-play";
-    play.textContent = "▶";
-
-    container.append(video, gradient, text, play);
-
-    const actions = document.createElement("div");
-    actions.className = "actions";
-
-    const creator = document.createElement("div");
-    creator.className = "creator";
-
-    const avatar = document.createElement("img");
-    avatar.src = "https://i.pravatar.cc/100?img=12";
-    avatar.alt = "Seu perfil";
-
-    const follow = document.createElement("button");
-    follow.className = "follow";
-    follow.textContent = "+";
-
-    creator.append(avatar, follow);
-    actions.append(creator);
-
-    [
-        ["♡", "0", "like"],
-        ["💬", "0", "comments"],
-        ["★", "Salvar", "favorite"],
-        ["↗", "Compartilhar", "share"]
-    ].forEach(([icon, label, className]) => {
-        const button = document.createElement("button");
-        button.className = "action " + className;
-
-        const span = document.createElement("span");
-        span.textContent = icon;
-
-        const small = document.createElement("small");
-        small.textContent = label;
-
-        button.append(span, small);
-        actions.append(button);
     });
 
-    const disc = document.createElement("div");
-    disc.className = "music-disc";
-    disc.textContent = "♪";
-    actions.append(disc);
-
-    card.append(container, actions);
-    feed.prepend(card);
-
-    setupVideo(card);
-
-    uploadModal.classList.remove("open");
-    event.target.reset();
-
-    document.querySelectorAll(".video-card").forEach(item => {
-        item.style.display = "flex";
-    });
-
-    document.querySelector("#feedPage").classList.remove("hidden");
-    document.querySelector("#profilePage").classList.add("hidden");
-});
-
-// NAVEGAÇÃO
-function showPage(page) {
-    const feedPage = document.querySelector("#feedPage");
-    const profilePage = document.querySelector("#profilePage");
-
-    if (page === "profile") {
-        feedPage.classList.add("hidden");
-        profilePage.classList.remove("hidden");
-    } else {
-        profilePage.classList.add("hidden");
-        feedPage.classList.remove("hidden");
+    if (!encontrou) {
+        alert("Nenhuma mensagem encontrada.");
     }
-
-    document.querySelectorAll(".nav-item").forEach(button => {
-        button.classList.toggle("active", button.dataset.page === page);
-    });
 }
 
-document.querySelectorAll("[data-page]").forEach(button => {
-    button.addEventListener("click", () => {
-        showPage(button.dataset.page);
-    });
-});
 
-// ABA DO FEED
-document.querySelectorAll(".feed-tab").forEach(button => {
-    button.addEventListener("click", () => {
-        document.querySelectorAll(".feed-tab").forEach(tab => {
-            tab.classList.remove("active");
-        });
+/* SALVAR */
 
-        button.classList.add("active");
-    });
-});
+function salvarMensagens() {
 
-// PESQUISA
-function searchVideos() {
-    const query = document.querySelector("#searchInput")
-        .value.trim().toLowerCase();
+    const mensagens =
+        document.getElementById("messages").innerHTML;
 
-    showPage("home");
-
-    document.querySelectorAll(".video-card").forEach(card => {
-        const content = (
-            card.dataset.user + " " + card.textContent
-        ).toLowerCase();
-
-        card.style.display = content.includes(query) ? "flex" : "none";
-    });
+    localStorage.setItem(
+        "chat_" + chatAtual,
+        mensagens
+    );
 }
 
-document.querySelector("#searchButton").addEventListener("click", searchVideos);
 
-document.querySelector("#searchInput").addEventListener("keydown", event => {
-    if (event.key === "Enter") searchVideos();
-});
+/* CARREGAR */
 
-// GALERIA DO PERFIL
-function updateProfileGrid() {
-    const grid = document.querySelector("#profileGrid");
-    grid.replaceChildren();
+function carregarMensagens() {
 
-    document.querySelectorAll(".video-card").forEach(card => {
-        if (card.dataset.user !== "seu_usuario") return;
+    const mensagens =
+        localStorage.getItem(
+            "chat_" + chatAtual
+        );
 
-        const video = document.createElement("video");
-        video.src = card.querySelector("video").src;
-        video.muted = true;
-        video.playsInline = true;
+    if (mensagens) {
 
-        grid.append(video);
-    });
+        document.getElementById(
+            "messages"
+        ).innerHTML = mensagens;
+    }
 }
 
-// OBSERVAR PUBLICAÇÕES NO PERFIL
-const uploadForm = document.querySelector("#uploadForm");
 
-uploadForm.addEventListener("submit", () => {
-    setTimeout(updateProfileGrid, 0);
+/* FECHAR PAINÉIS */
+
+document.addEventListener("click", function(event) {
+
+    const emojiPanel =
+        document.getElementById("emojiPanel");
+
+    const emojiButton =
+        document.querySelector(".emoji-btn");
+
+    if (
+        !emojiPanel.contains(event.target) &&
+        !emojiButton.contains(event.target)
+    ) {
+        emojiPanel.style.display = "none";
+    }
+
 });
