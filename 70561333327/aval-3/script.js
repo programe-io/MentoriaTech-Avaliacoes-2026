@@ -1,25 +1,103 @@
-<html lang="pt-BR" translate="no">
+function calcularIMC() {
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-  <meta http-equiv="cache-control" content="no-cache">
-  <meta http-equiv="expires" content="0">
-  <meta http-equiv="pragma" content="no-cache">
-  <meta name="google" content="notranslate">
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
-    rel="stylesheet" />
-  <link rel="icon" type="image/png" href="/favicon.png">
-  <title>PROGRAMA DE MENTORIAS</title>
-  <script type="module" crossorigin src="/assets/index-YhfXmj8M.js"></script>
-</head>
+    // Receber os dados do paciente
+    let nome = document.getElementById("nome").value.trim();
+    let peso = parseFloat(document.getElementById("peso").value);
+    let altura = parseFloat(document.getElementById("altura").value);
 
-<body>
-  <div id="root"></div>
-<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v31edd6df95cf4e85bb4c19e7a9bdbcba1788362987495" integrity="sha512-iIg7k2xntmwu6/uSb5tpc/hySgZc4eoL31yB29W6tJFo2akwjPWcEqnCEdJvGexCL0KEQwVYv5BlowfhVz26hg==" data-cf-beacon='{"version":"2024.11.0","token":"cb746e2a1cce43b8bafb9943288eb7c8","r":1,"spa":2}' crossorigin="anonymous"></script>
-</body>
+    // Verificar se os campos foram preenchidos
+    if (nome === "") {
+        alert("Digite o nome do paciente.");
+        return;
+    }
 
-</html>
+    if (isNaN(peso) || peso <= 0) {
+        alert("Digite um peso válido.");
+        return;
+    }
+
+    if (isNaN(altura) || altura <= 0) {
+        alert("Digite uma altura válida.");
+        return;
+    }
+
+    // Calcular o IMC
+    let imc = peso / (altura * altura);
+
+    // Variáveis para classificação e informação
+    let classificacao;
+    let mensagem;
+
+    // Classificar o IMC
+    if (imc < 18.5) {
+
+        classificacao = "Abaixo do peso";
+
+        mensagem =
+            "O resultado indica que o IMC está abaixo da faixa considerada adequada. " +
+            "É importante avaliar a alimentação e os hábitos de saúde com um profissional.";
+
+    } else if (imc < 25) {
+
+        classificacao = "Peso normal";
+
+        mensagem =
+            "O resultado está dentro da faixa de peso considerada adequada para o IMC. " +
+            "Manter uma alimentação equilibrada e hábitos saudáveis é importante.";
+
+    } else if (imc < 30) {
+
+        classificacao = "Sobrepeso";
+
+        mensagem =
+            "O resultado indica sobrepeso. É recomendado manter uma alimentação equilibrada " +
+            "e praticar atividades físicas regularmente.";
+
+    } else if (imc < 35) {
+
+        classificacao = "Obesidade grau I";
+
+        mensagem =
+            "O resultado indica obesidade grau I. É importante buscar orientação de um " +
+            "profissional de saúde para avaliação individual.";
+
+    } else if (imc < 40) {
+
+        classificacao = "Obesidade grau II";
+
+        mensagem =
+            "O resultado indica obesidade grau II. Recomenda-se acompanhamento com " +
+            "profissionais de saúde para avaliação e orientação adequada.";
+
+    } else {
+
+        classificacao = "Obesidade grau III";
+
+        mensagem =
+            "O resultado indica obesidade grau III. É importante procurar orientação " +
+            "profissional para uma avaliação completa e acompanhamento adequado.";
+    }
+
+    // Exibir os dados do paciente
+    document.getElementById("resultadoNome").textContent = nome;
+
+    document.getElementById("resultadoPeso").textContent =
+        peso.toFixed(2) + " kg";
+
+    document.getElementById("resultadoAltura").textContent =
+        altura.toFixed(2) + " m";
+
+    document.getElementById("resultadoIMC").textContent =
+        imc.toFixed(2);
+
+    document.getElementById("classificacao").textContent =
+        classificacao;
+
+    document.getElementById("mensagem").textContent =
+        mensagem;
+
+    // Mostrar o resultado
+    document.getElementById("resultado").scrollIntoView({
+        behavior: "smooth"
+    });
+}
