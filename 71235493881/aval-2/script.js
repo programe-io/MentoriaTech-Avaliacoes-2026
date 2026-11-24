@@ -2,7 +2,7 @@ const tarefas =[];
 let codigo = 0;
 
 // validar dados 
-function validar(titulo,prioridade)
+function validar (titulo,prioridade)
      if (titulo.trim().length < 5) {
         throw new Error("O titulo deve ter no minimo 5 caracteres!";
      }
@@ -93,10 +93,61 @@ async function menu() {
      do {
           console.log(
  ===== GERENCIADOR DE TAREFA =====
- 1 - cadastrar tarefa
- 2 - listar tarefas 
- 3 - Concluir tarefa 
- 4 - Alterar prioridade
+ 1 - Cadastrar tarefa
+ 2 - Listar   tarefas 
+ 3 - Concluir  tarefa 
+ 4 - Alterar  prioridade
  0 - Sair 
  );
+
+   opcao = await perguntar ("Escolha:");
+
+   tentar {
+    switch (opcao) {
+        caso "1":
+         const titulo = await perguntar("Titulo: ");
+         const prioridade = numero(
+            await perguntar("Prioridade(1-Alta,2-Media, 3-Baixo)")
+         );
+         cadastrar(titulo, prioridade);
+         quebrar;
+    
+   Caso "2":
+       listar();
+       quebrar;
+
+   Caso "3":
+       concluir(Number(await perguntar("Codigo da tarefa:")));
+       quebrar;
+
+    Caso "4":
+        const cod - Number(await perguntar("Codigo da tarefa:"));
+        const novaPrioridade = Numero(
+            await perguntar("Nova prioridade (1 a 3):")
+        );
+        alterar(cod,novaPrioridade);
+        quebrar;
+
+    Caso "0":
+        console.log("Sistema encerrado!");
+        quebrar;
+
+    padrao:
+        console.log("Opçao invalida!");
+    }
+   } catch (Erro){
+    console.log("ERRO:"+ erro.mensagem);
+   }   
+
+ } enquanto (opcao !== "0");
+
+ rl.closse():
 }
+
+menu();
+
+
+            
+
+
+        
