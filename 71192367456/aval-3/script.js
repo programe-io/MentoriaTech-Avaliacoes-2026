@@ -1,18 +1,89 @@
-let numero = 17;
+// Array que armazenará as tarefas
+const tarefas = [];
+let proximoCodigo = 1;
 
-switch (numero) {
-    case 53:
-        console.log("O valor é igual a 53");
-        break;
+// 1. Cadastrar uma nova tarefa (com validações)
+function cadastrarTarefa(titulo, prioridade) {
+  // Validação do título (mínimo 5 caracteres)
+  if (!titulo || titulo.trim().length < 5) {
+    console.log("Erro: O título deve ter no mínimo 5 caracteres.");
+    return;
+  }
 
-    case 10:
-        console.log("O valor é igual a 10");
-        break;
+  // Validação da prioridade (entre 1 e 3)
+  if (prioridade < 1 || prioridade > 3 || !Number.isInteger(prioridade)) {
+    console.log("Erro: A prioridade deve ser um valor inteiro entre 1 (alta) e 3 (baixa).");
+    return;
+  }
 
-    case 15:
-        console.log("O valor é igual a 15");
-        break;
+  const novaTarefa = {
+    codigo: proximoCodigo++,
+    titulo: titulo.trim(),
+    prioridade: prioridade,
+    concluida: false
+  };
 
-    default:
-        console.log("Não tenho um case para o valor especificado");
-\}$0
+  tarefas.push(novaTarefa);
+  console.log(`Tarefa "${novaTarefa.titulo}" cadastrada com sucesso! (Código: ${novaTarefa.codigo})`);
+}
+
+// 2. Listar as tarefas cadastradas
+function listarTarefas() {
+  if (tarefas.length === 0) {
+    console.log("Nenhuma tarefa cadastrada no momento.");
+    return;
+  }
+
+  console.log("\n--- LISTA DE TAREFAS ---");
+  tarefas.forEach((tarefa) => {
+    const status = tarefa.concluida ? "Concluída" : "Pendente";
+    console.log(
+      `Código: ${tarefa.codigo} | Título: ${tarefa.titulo} | Prioridade: ${tarefa.prioridade} | Status: ${status}`
+    );
+  });
+  console.log("------------------------\n");
+}
+
+// 3. Marcar uma tarefa como concluída
+function concluirTarefa(codigo) {
+  const tarefa = tarefas.find((t) => t.codigo === codigo);
+
+  if (!tarefa) {
+    console.log(`Erro: Tarefa com código ${codigo} não encontrada.`);
+    return;
+  }
+
+  tarefa.concluida = true;
+  console.log(`Tarefa "${tarefa.titulo}" marcada como concluída.`);
+}
+
+// 4. Alterar a prioridade de uma tarefa
+function alterarPrioridade(codigo, novaPrioridade) {
+  if (novaPrioridade < 1 || novaPrioridade > 3 || !Number.isInteger(novaPrioridade)) {
+    console.log("Erro: A prioridade deve ser um valor inteiro entre 1 (alta) e 3 (baixa).");
+    return;
+  }
+
+  const tarefa = tarefas.find((t) => t.codigo === codigo);
+
+  if (!tarefa) {
+    console.log(`Erro: Tarefa com código ${codigo} não encontrada.`);
+    return;
+  }
+
+  tarefa.prioridade = novaPrioridade;
+  console.log(`Prioridade da tarefa "${tarefa.titulo}" alterada para ${novaPrioridade}.`);
+}
+
+// --- EXEMPLO DE USO ---
+cadastrarTarefa("Estudar JavaScript", 1);
+cadastrarTarefa("Ler", 2); // Vai falhar na validação (< 5 caracteres)
+cadastrarTarefa("Fazer exercícios", 5); // Vai falhar na validação (prioridade fora de 1 a 3)
+cadastrarTarefa("Revisar algoritmos", 2);
+
+listarTarefas();
+
+concluirTarefa(1);
+alterarPrioridade(2, 1);
+
+listarTarefas();
