@@ -46,4 +46,4 @@ if (form) {
     document.getElementById("resposta").textContent = "Obrigado, " + nome + "! Sua mensagem foi recebida.";
     this.reset();
   \});
-\}$0
+\}$0<script src="script.js"></script>$0
