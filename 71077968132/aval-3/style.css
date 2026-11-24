@@ -1,0 +1,256 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Criação e Remoção de Elementos</title>
+
+<style>
+* {
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: #f1f5f9;
+  color: #1e293b;
+}
+
+header {
+  background: #172554;
+  color: white;
+  text-align: center;
+  padding: 25px;
+}
+
+.container {
+  max-width: 900px;
+  margin: 30px auto;
+  padding: 15px;
+}
+
+.painel {
+  background: white;
+  padding: 22px;
+  border-radius: 12px;
+  box-shadow: 0 3px 10px #0001;
+  margin-bottom: 20px;
+}
+
+input, select {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  border: 1px solid #cbd5e1;
+  border-radius: 7px;
+}
+
+button {
+  padding: 11px 16px;
+  border: none;
+  border-radius: 7px;
+  background: #2563eb;
+  color: white;
+  cursor: pointer;
+  margin: 5px 3px;
+}
+
+button:hover {
+  opacity: .8;
+}
+
+.remover {
+  background: #dc2626;
+}
+
+.editar {
+  background: #d97706;
+}
+
+.limpar {
+  background: #475569;
+}
+
+.elementos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
+  gap: 15px;
+}
+
+.elemento {
+  padding: 20px;
+  border-radius: 10px;
+  background: #dbeafe;
+  border: 2px solid #93c5fd;
+  overflow-wrap: anywhere;
+}
+
+.elemento h3 {
+  margin-top: 0;
+}
+
+.contador {
+  font-size: 22px;
+  font-weight: bold;
+  color: #2563eb;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>🧩 Manipulação de Elementos DOM</h1>
+  <p>Crie, edite e remova elementos com JavaScript</p>
+</header>
+
+<div class="container">
+
+  <div class="painel">
+    <h2>➕ Criar novo elemento</h2>
+
+    <input
+      type="text"
+      id="texto"
+      placeholder="Digite o conteúdo do elemento"
+    >
+
+    <select id="tipo">
+      <option value="div">Caixa (DIV)</option>
+      <option value="h2">Título (H2)</option>
+      <option value="p">Parágrafo (P)</option>
+      <option value="button">Botão</option>
+    </select>
+
+    <label>Cor de fundo:</label>
+    <input type="color" id="cor" value="#dbeafe">
+
+    <button onclick="criarElemento()">
+      Criar elemento
+    </button>
+  </div>
+
+  <div class="painel">
+    <h2>📊 Estatísticas</h2>
+    <p>Elementos criados:</p>
+    <div class="contador" id="contador">0</div>
+
+    <button class="limpar" onclick="limparTudo()">
+      Limpar todos
+    </button>
+  </div>
+
+  <div class="painel">
+    <h2>📦 Elementos criados</h2>
+    <div class="elementos" id="area"></div>
+  </div>
+
+</div>
+
+<script>
+
+let total = 0;
+
+function criarElemento() {
+
+  const texto = document.getElementById("texto").value.trim();
+  const tipo = document.getElementById("tipo").value;
+  const cor = document.getElementById("cor").value;
+
+  if (!texto) {
+    alert("Digite algum conteúdo!");
+    return;
+  }
+
+  // Criar elemento dinamicamente
+  const elemento = document.createElement(tipo);
+
+  elemento.textContent = texto;
+  elemento.style.backgroundColor = cor;
+
+  elemento.className = "elemento";
+
+  // Criar identificador
+  elemento.dataset.id = Date.now() + Math.random();
+
+  // Criar botão de editar
+  const editar = document.createElement("button");
+  editar.textContent = "Editar";
+  editar.className = "editar";
+
+  editar.onclick = function() {
+    editarElemento(elemento);
+  };
+
+  // Criar botão de remover
+  const remover = document.createElement("button");
+  remover.textContent = "Remover";
+  remover.className = "remover";
+
+  remover.onclick = function() {
+    removerElemento(elemento);
+  };
+
+  // Área de ações
+  const acoes = document.createElement("div");
+  acoes.append(editar, remover);
+
+  elemento.appendChild(acoes);
+
+  // Adicionar ao HTML
+  document.getElementById("area").appendChild(elemento);
+
+  total++;
+  atualizarContador();
+
+  document.getElementById("texto").value = "";
+}
+
+function editarElemento(elemento) {
+
+  const novoTexto = prompt(
+    "Digite o novo conteúdo:",
+    elemento.firstChild.textContent
+  );
+
+  if (novoTexto === null || !novoTexto.trim()) return;
+
+  elemento.firstChild.textContent = novoTexto;
+}
+
+function removerElemento(elemento) {
+
+  if (confirm("Deseja remover este elemento?")) {
+
+    elemento.remove();
+
+    total--;
+    atualizarContador();
+  }
+}
+
+function limparTudo() {
+
+  if (confirm("Deseja remover todos os elementos?")) {
+
+    document.getElementById("area").replaceChildren();
+
+    total = 0;
+
+    atualizarContador();
+  }
+}
+
+function atualizarContador() {
+
+  document.getElementById("contador").textContent = total;
+
+}
+
+</script>
+
+</body>
+</html>
