@@ -1,122 +1,164 @@
-// Carrega produtos salvos no navegador ou inicia com exemplos
-let produtos = JSON.parse(localStorage.getItem('estoque_simples')) || [
-  { id: 1, nome: 'Teclado Mecânico', categoria: 'Periféricos', quantidade: 12, preco: 250.00 },
-  { id: 2, nome: 'Mouse Sem Fio', categoria: 'Periféricos', quantidade: 3, preco: 89.90 },
-  { id: 3, nome: 'Monitor 24"', categoria: 'Monitores', quantidade: 5, preco: 899.00 }
-];
+// 4. Criação da lista de produtos
+let produtos = [];
 
-const form = document.getElementById('form-produto');
-const listaEstoque = document.getElementById('lista-estoque');
-const campoBusca = document.getElementById('campo-busca');
+// ==========================================
+// FUNÇÕES DE REGRA DE NEGÓCIO (IGUAIS À AULA)
+// ==========================================
 
-// Salva no navegador
-function salvarDados() {
-  localStorage.setItem('estoque_simples', JSON.stringify(produtos));
-}
-
-// Formata número para Real (R$)
-function formatarMoeda(valor) {
-  return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-}
-
-// Atualiza os cards de resumo no topo
-function atualizarResumo() {
-  const totalProdutos = produtos.length;
-  const totalItens = produtos.reduce((soma, item) => soma + item.quantidade, 0);
-  const valorTotal = produtos.reduce((soma, item) => soma + (item.quantidade * item.preco), 0);
-
-  document.getElementById('total-produtos').textContent = totalProdutos;
-  document.getElementById('total-itens').textContent = totalItens;
-  document.getElementById('valor-total').textContent = formatarMoeda(valorTotal);
-}
-
-// Desenha a tabela na tela
-function renderizarTabela() {
-  const termo = campoBusca.value.toLowerCase();
-  listaEstoque.innerHTML = '';
-
-  const filtrados = produtos.filter(p =>
-    p.nome.toLowerCase().includes(termo) ||
-    p.categoria.toLowerCase().includes(termo)
-  );
-
-  if (filtrados.length === 0) {
-    listaEstoque.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#64748b;">Nenhum produto encontrado.</td></tr>`;
-    atualizarResumo();
-    return;
+// 6, 7, 8, 9. Função para validar produto
+function validarProduto(descricao, quantidade, valor) {
+  if (descricao.trim().length < 5) {
+    throw new Error("Descrição deve ter, no mínimo, cinco caracteres.");
   }
-
-  filtrados.forEach(produto => {
-    const subtotal = produto.quantidade * produto.preco;
-    const alertaBaixo = produto.quantidade < 5
-      ? `<span class="estoque-baixo">${produto.quantidade} un. (Baixo)</span>`
-      : `${produto.quantidade} un.`;
-
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td><strong>${produto.nome}</strong></td>
-      <td>${produto.categoria}</td>
-      <td>${formatarMoeda(produto.preco)}</td>
-      <td>${alertaBaixo}</td>
-      <td>${formatarMoeda(subtotal)}</td>
-      <td class="acoes">
-        <button class="btn-qtd btn-mais" onclick="alterarQuantidade(${produto.id}, 1)" title="Entrada (+1)">+</button>
-        <button class="btn-qtd btn-menos" onclick="alterarQuantidade(${produto.id}, -1)" title="Saída (-1)">-</button>
-        <button class="btn-excluir" onclick="removerProduto(${produto.id})">Excluir</button>
-      </td>
-    `;
-    listaEstoque.appendChild(tr);
-  });
-
-  atualizarResumo();
+  if (isNaN(quantidade) || quantidade < 1) {
+    throw new Error("Quantidade deve ser maior que zero.");
+  }
+  if (isNaN(valor) || valor < 0) {
+    throw new Error("Valor deve ser maior ou igual a zero.");
+  }
 }
 
-// Cadastrar novo produto
-form.addEventListener('submit', function (e) {
-  e.preventDefault();
+// 21. Melhoria sugerida: função específica de busca com find
+function buscarProdutoPorCodigo(codigoProduto) {
+  return produtos.find((prod) => prod.codigo === codigoProduto);
+}
 
-  const nome = document.getElementById('nome').value.trim();
-  const categoria = document.getElementById('categoria').value.trim();
-  const quantidade = parseInt(document.getElementById('quantidade').value);
-  const preco = parseFloat(document.getElementById('preco').value);
+// 10, 11, 12, 13. Função para cadastrar produto
+function cadastrarProduto(descricao, quantidade, valor) {
+  validarProduto(descricao, quantidade, valor);
 
-  const novoProduto = {
-    id: Date.now(),
-    nome,
-    categoria,
-    quantidade,
-    preco
+  let novoProduto = {
+    codigo: produtos.length + 1,
+    descricao: descricao.trim(),
+    quantidade: quantidade,
+    valor: valor
   };
 
   produtos.push(novoProduto);
-  salvarDados();
-  renderizarTabela();
-  form.reset();
+}
+
+// 16, 17, 18. Função para atualizar o valor do produto (substitui o valor)
+function atualizarValor(codigoProduto, novoValor) {
+  if (isNaN(novoValor) || novoValor < 0) {
+    throw new Error("Valor deve ser maior ou igual a zero.");
+  }
+
+  const produto = buscarProdutoPorCodigo(codigoProduto);
+
+  if (produto) {
+    produto.valor = novoValor;
+  } else {
+    throw new Error("Produto não encontrado.");
+  }
+}
+
+// 19, 20. Função para atualizar a quantidade (soma ao estoque existente)
+function atualizarQuantidade(codigoProduto, novaQuantidade) {
+  if (isNaN(novaQuantidade) || novaQuantidade < 1) {
+    throw new Error("Quantidade a adicionar deve ser maior que zero.");
+  }
+
+  const produto = buscarProdutoPorCodigo(codigoProduto);
+
+  if (produto) {
+    produto.quantidade = produto.quantidade + novaQuantidade;
+  } else {
+    throw new Error("Produto não encontrado.");
+  }
+}
+
+// ==========================================
+// MANIPULAÇÃO DO DOM E EVENTOS DA INTERFACE
+// ==========================================
+
+function exibirMensagem(texto, tipo) {
+  const box = document.getElementById("mensagem");
+  box.textContent = texto;
+  box.className = `mensagem ${tipo}`;
+}
+
+// 14. Função para listar produtos na tabela HTML (e no console)
+function listarProdutos() {
+  console.log(produtos);
+
+  const tbody = document.getElementById("lista-produtos");
+  const avisoVazio = document.getElementById("aviso-vazio");
+  tbody.innerHTML = "";
+
+  if (produtos.length === 0) {
+    avisoVazio.style.display = "block";
+    return;
+  }
+
+  avisoVazio.style.display = "none";
+
+  produtos.forEach((prod) => {
+    const tr = document.createElement("tr");
+    const subtotal = prod.quantidade * prod.valor;
+
+    tr.innerHTML = `
+      <td><strong>#${prod.codigo}</strong></td>
+      <td>${prod.descricao}</td>
+      <td>${prod.quantidade} un.</td>
+      <td>R$ ${prod.valor.toFixed(2)}</td>
+      <td>R$ ${subtotal.toFixed(2)}</td>
+    `;
+
+    tbody.appendChild(tr);
+  });
+}
+
+// Evento: Cadastrar Produto
+document.getElementById("form-cadastro").addEventListener("submit", function (event) {
+  event.preventDefault();
+
+  const descricao = document.getElementById("descricao").value;
+  const quantidade = Number(document.getElementById("quantidade").value);
+  const valor = Number(document.getElementById("valor").value);
+
+  try {
+    cadastrarProduto(descricao, quantidade, valor);
+    listarProdutos();
+    exibirMensagem("Produto cadastrado com sucesso!", "sucesso");
+    event.target.reset();
+  } catch (erro) {
+    exibirMensagem(erro.message, "erro");
+  }
 });
 
-// Aumentar ou diminuir estoque (+1 ou -1)
-function alterarQuantidade(id, delta) {
-  const produto = produtos.find(p => p.id === id);
-  if (!produto) return;
+// Evento: Atualizar Valor
+document.getElementById("form-valor").addEventListener("submit", function (event) {
+  event.preventDefault();
 
-  if (produto.quantidade + delta >= 0) {
-    produto.quantidade += delta;
-    salvarDados();
-    renderizarTabela();
+  const codigo = Number(document.getElementById("codigo-valor").value);
+  const novoValor = Number(document.getElementById("novo-valor").value);
+
+  try {
+    atualizarValor(codigo, novoValor);
+    listarProdutos();
+    exibirMensagem(`Valor do produto #${codigo} atualizado!`, "sucesso");
+    event.target.reset();
+  } catch (erro) {
+    exibirMensagem(erro.message, "erro");
   }
-}
+});
 
-// Remover produto
-function removerProduto(id) {
-  if (confirm('Deseja realmente excluir este produto?')) {
-    produtos = produtos.filter(p => p.id !== id);
-    salvarDados();
-    renderizarTabela();
+// Evento: Somar Quantidade
+document.getElementById("form-quantidade").addEventListener("submit", function (event) {
+  event.preventDefault();
+
+  const codigo = Number(document.getElementById("codigo-qtd").value);
+  const novaQuantidade = Number(document.getElementById("nova-qtd").value);
+
+  try {
+    atualizarQuantidade(codigo, novaQuantidade);
+    listarProdutos();
+    exibirMensagem(`Estoque do produto #${codigo} atualizado!`, "sucesso");
+    event.target.reset();
+  } catch (erro) {
+    exibirMensagem(erro.message, "erro");
   }
-}
+});
 
-// Busca em tempo real
-campoBusca.addEventListener('input', renderizarTabela);
-
-// Inicializa a tela
-renderizarTabela();
+// Inicializa a listagem ao abrir a página
+listarProdutos();
