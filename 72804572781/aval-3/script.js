@@ -1,273 +1,275 @@
 
-const resultado = document.getElementById("resultado");
-const operacao = document.getElementById("operacao");
-const listaHistorico = document.getElementById("listaHistorico");
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
 
-let valorAtual = "0";
-let valorAnterior = null;
-let operadorAtual = null;
-let reiniciarDisplay = false;
-let historico = [];
+const scoreElement = document.getElementById("score");
+const recordElement = document.getElementById("record");
+const startScreen = document.getElementById("start-screen");
+const gameOverScreen = document.getElementById("game-over");
 
-function atualizarDisplay() {
-    resultado.textContent = valorAtual;
+const box = 20;
+const total = canvas.width / box;
+
+let snake;
+let food;
+let direction;
+let nextDirection;
+let score = 0;
+let speed = 150;
+let gameLoop = null;
+let running = false;
+
+let record = Number(localStorage.getItem("snakeRecord")) || 0;
+
+recordElement.textContent = record;
+
+// Iniciar jogo
+function startGame() {
+
+    clearInterval(gameLoop);
+
+    snake = [
+        { x: 10, y: 10 },
+        { x: 9, y: 10 },
+        { x: 8, y: 10 }
+    ];
+
+    direction = "right";
+    nextDirection = "right";
+
+    score = 0;
+    speed = 150;
+
+    scoreElement.textContent = score;
+
+    startScreen.style.display = "none";
+    gameOverScreen.style.display = "none";
+
+    food = createFood();
+
+    running = true;
+
+    drawGame();
+
+    gameLoop = setInterval(updateGame, speed);
 }
 
-function adicionarNumero(numero) {
+// Criar comida
+function createFood() {
 
-    if (valorAtual === "Erro") {
-        valorAtual = "0";
-    }
+    let newFood;
 
-    if (reiniciarDisplay) {
-        valorAtual = "0";
-        reiniciarDisplay = false;
-    }
-
-    if (numero === "." && valorAtual.includes(".")) {
-        return;
-    }
-
-    if (valorAtual === "0" && numero !== ".") {
-        valorAtual = numero;
-    } else {
-        valorAtual += numero;
-    }
-
-    atualizarDisplay();
-}
-
-function adicionarOperador(operador) {
-
-    if (valorAtual === "Erro") return;
-
-    if (operadorAtual && !reiniciarDisplay) {
-        calcular();
-    }
-
-    valorAnterior = Number(valorAtual);
-    operadorAtual = operador;
-
-    operacao.textContent =
-        valorAtual + " " + simbolo(operador);
-
-    reiniciarDisplay = true;
-}
-
-function simbolo(operador) {
-    const simbolos = {
-        "+": "+",
-        "-": "−",
-        "*": "×",
-        "/": "÷"
-    };
-
-    return simbolos[operador];
-}
-
-function calcular() {
-
-    if (operadorAtual === null || valorAnterior === null) {
-        return;
-    }
-
-    const numero2 = Number(valorAtual);
-
-    let total;
-
-    switch (operadorAtual) {
-
-        case "+":
-            total = valorAnterior + numero2;
-            break;
-
-        case "-":
-            total = valorAnterior - numero2;
-            break;
-
-        case "*":
-            total = valorAnterior * numero2;
-            break;
-
-        case "/":
-            if (numero2 === 0) {
-                valorAtual = "Erro";
-                operacao.textContent = "Divisão por zero";
-                valorAnterior = null;
-                operadorAtual = null;
-                reiniciarDisplay = true;
-                atualizarDisplay();
-                return;
-            }
-
-            total = valorAnterior / numero2;
-            break;
-
-    }
-
-    const expressao =
-        valorAnterior + " " +
-        simbolo(operadorAtual) + " " +
-        numero2;
-
-    total = Number(total.toPrecision(12));
-
-    valorAtual = String(total);
-
-    operacao.textContent = expressao + " =";
-
-    adicionarHistorico(expressao, total);
-
-    valorAnterior = null;
-    operadorAtual = null;
-
-    reiniciarDisplay = true;
-
-    atualizarDisplay();
-}
-
-function limpar() {
-
-    valorAtual = "0";
-    valorAnterior = null;
-    operadorAtual = null;
-    reiniciarDisplay = false;
-
-    operacao.textContent = "";
-
-    atualizarDisplay();
-}
-
-function apagar() {
-
-    if (reiniciarDisplay || valorAtual === "Erro") {
-        valorAtual = "0";
-        reiniciarDisplay = false;
-    } else {
-        valorAtual = valorAtual.slice(0, -1);
-
-        if (valorAtual === "" || valorAtual === "-") {
-            valorAtual = "0";
-        }
-    }
-
-    atualizarDisplay();
-}
-
-function porcentagem() {
-
-    if (valorAtual === "Erro") return;
-
-    valorAtual = String(
-        Number(valorAtual) / 100
+    do {
+        newFood = {
+            x: Math.floor(Math.random() * total),
+            y: Math.floor(Math.random() * total)
+        };
+    } while (
+        snake.some(part =>
+            part.x === newFood.x &&
+            part.y === newFood.y
+        )
     );
 
-    atualizarDisplay();
-
+    return newFood;
 }
 
-function inverterSinal() {
+// Desenhar jogo
+function drawGame() {
 
-    if (valorAtual === "Erro") return;
+    ctx.fillStyle = "#0f172a";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    if (valorAtual !== "0") {
+    // Desenhar grade
+    ctx.strokeStyle = "#1e293b";
+    ctx.lineWidth = 1;
 
-        valorAtual = String(
-            Number(valorAtual) * -1
-        );
+    for (let i = 0; i < total; i++) {
+        ctx.beginPath();
+        ctx.moveTo(i * box, 0);
+        ctx.lineTo(i * box, canvas.height);
+        ctx.stroke();
 
+        ctx.beginPath();
+        ctx.moveTo(0, i * box);
+        ctx.lineTo(canvas.width, i * box);
+        ctx.stroke();
     }
 
-    atualizarDisplay();
+    // Desenhar comida
+    ctx.fillStyle = "#ef4444";
+    ctx.beginPath();
+    ctx.arc(
+        food.x * box + box / 2,
+        food.y * box + box / 2,
+        box / 2 - 3,
+        0,
+        Math.PI * 2
+    );
+    ctx.fill();
 
-}
+    // Desenhar cobrinha
+    snake.forEach((part, index) => {
 
-function adicionarHistorico(expressao, total) {
+        ctx.fillStyle = index === 0 ? "#86efac" : "#22c55e";
 
-    historico.unshift({
-        expressao,
-        total
+        ctx.fillRect(
+            part.x * box + 2,
+            part.y * box + 2,
+            box - 4,
+            box - 4
+        );
+
+        if (index === 0) {
+            ctx.fillStyle = "#052e16";
+
+            ctx.beginPath();
+            ctx.arc(
+                part.x * box + 14,
+                part.y * box + 7,
+                2,
+                0,
+                Math.PI * 2
+            );
+            ctx.fill();
+        }
     });
-
-    historico = historico.slice(0, 10);
-
-    mostrarHistorico();
-
 }
 
-function mostrarHistorico() {
+// Atualizar jogo
+function updateGame() {
 
-    listaHistorico.innerHTML = "";
+    if (!running) return;
 
-    if (historico.length === 0) {
+    direction = nextDirection;
 
-        listaHistorico.innerHTML =
-            '<p class="vazio">Nenhuma operação realizada.</p>';
+    const head = {
+        x: snake[0].x,
+        y: snake[0].y
+    };
 
+    if (direction === "right") head.x++;
+    if (direction === "left") head.x--;
+    if (direction === "up") head.y--;
+    if (direction === "down") head.y++;
+
+    const eating =
+        head.x === food.x && head.y === food.y;
+
+    // Verificar colisão com paredes
+    if (
+        head.x < 0 ||
+        head.x >= total ||
+        head.y < 0 ||
+        head.y >= total
+    ) {
+        endGame();
         return;
     }
 
-    historico.forEach(item => {
+    // Verificar colisão com o próprio corpo
+    const bodyToCheck = eating ? snake : snake.slice(0, -1);
 
-        const div = document.createElement("div");
+    if (bodyToCheck.some(part =>
+        part.x === head.x && part.y === head.y
+    )) {
+        endGame();
+        return;
+    }
 
-        div.className = "item-historico";
+    snake.unshift(head);
 
-        const expressao = document.createElement("span");
-        expressao.textContent = item.expressao;
+    // Comer comida
+    if (eating) {
 
-        const valor = document.createElement("span");
-        valor.textContent = item.total;
+        score += 10;
+        scoreElement.textContent = score;
 
-        div.append(expressao, valor);
+        if (score > record) {
+            record = score;
+            localStorage.setItem("snakeRecord", record);
+            recordElement.textContent = record;
+        }
 
-        listaHistorico.appendChild(div);
+        food = createFood();
 
-    });
+        // Aumentar velocidade
+        const newSpeed = Math.max(55, 150 - score);
 
+        if (newSpeed !== speed) {
+            speed = newSpeed;
+
+            clearInterval(gameLoop);
+            gameLoop = setInterval(updateGame, speed);
+        }
+
+    } else {
+        snake.pop();
+    }
+
+    drawGame();
 }
 
-function limparHistorico() {
+// Mudar direção
+function changeDirection(newDirection) {
 
-    historico = [];
+    if (!running) return;
 
-    mostrarHistorico();
+    const opposite = {
+        up: "down",
+        down: "up",
+        left: "right",
+        right: "left"
+    };
 
+    if (opposite[newDirection] === direction) {
+        return;
+    }
+
+    nextDirection = newDirection;
 }
 
-// Controle pelo teclado
-
+// Teclado
 document.addEventListener("keydown", function(event) {
 
-    const tecla = event.key;
+    const keys = {
+        ArrowUp: "up",
+        ArrowDown: "down",
+        ArrowLeft: "left",
+        ArrowRight: "right",
+        w: "up",
+        s: "down",
+        a: "left",
+        d: "right"
+    };
 
-    if (/^[0-9]$/.test(tecla)) {
-        adicionarNumero(tecla);
-    }
-
-    if (tecla === ".") {
-        adicionarNumero(".");
-    }
-
-    if (["+", "-", "*", "/"].includes(tecla)) {
-        adicionarOperador(tecla);
-    }
-
-    if (tecla === "Enter" || tecla === "=") {
+    if (keys[event.key]) {
         event.preventDefault();
-        calcular();
+        changeDirection(keys[event.key]);
     }
-
-    if (tecla === "Backspace") {
-        apagar();
-    }
-
-    if (tecla === "Escape") {
-        limpar();
-    }
-
-    if (tecla === "%") {
-        porcentagem();
-    }
-
 });
+
+// Finalizar jogo
+function endGame() {
+
+    running = false;
+
+    clearInterval(gameLoop);
+
+    document.getElementById("final-score").textContent = score;
+
+    gameOverScreen.style.display = "flex";
+}
+
+// Desenhar tela inicial
+snake = [
+    { x: 10, y: 10 },
+    { x: 9, y: 10 },
+    { x: 8, y: 10 }
+];
+
+food = { x: 15, y: 10 };
+
+direction = "right";
+
+drawGame();
