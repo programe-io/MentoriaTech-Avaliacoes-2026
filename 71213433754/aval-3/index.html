@@ -1,109 +1,467 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Área de Entrega - Avaliações</title>
-    <link rel="stylesheet" href="style.css">
-<link href="style.css" rel="stylesheet"></head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Código JavaScript</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <style>body{margin:0;background:#0d1117}pre{margin:0}code.hljs{padding:1.5rem;min-height:100vh;box-sizing:border-box}</style>
+</head>
 <body>
+  <pre><code class="language-javascript">
+document.body.innerHTML = "";
 
-    <a href="index.html" class="voltar">Voltar para o início</a>
+const style = document.createElement("style");
 
-    <header>
-        <h1>Área de Entrega - Avaliações</h1>
+style.textContent = `
+* {
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
 
-        <p>
-            Aqui você envia seus códigos para correção.
-            Revise antes de publicar e garanta que sua avaliação esteja completa.
-        </p>
+body {
+    background: #f1f5f9;
+    margin: 0;
+    padding: 25px 12px;
+    color: #1e293b;
+}
 
-        <p>
-            Finalize seu trabalho, publique seu código e compartilhe sua solução
-            com o professor para ser avaliada.
-        </p>
-    </header>
+.container {
+    max-width: 900px;
+    margin: auto;
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px #0001;
+}
 
-    <main>
+h1 {
+    text-align: center;
+    color: #0f766e;
+}
 
-        <section class="editores">
+h2 {
+    font-size: 18px;
+    color: #0f766e;
+    border-bottom: 1px solid #cbd5e1;
+    padding-bottom: 8px;
+    margin-top: 28px;
+}
 
-            <!-- EDITOR HTML -->
-            <div class="editor" id="editor-html">
-                <div class="editor-topo">
-                    <h2>HTML</h2>
-                    <button onclick="maximizar('editor-html')">
-                        Maximizar
-                    </button>
-                </div>
+.grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
 
-                <textarea id="html-code"
-                    placeholder="Digite seu código HTML aqui..."
-                    spellcheck="false"></textarea>
-            </div>
+.campo {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
 
-            <!-- EDITOR CSS -->
-            <div class="editor" id="editor-css">
-                <div class="editor-topo">
-                    <h2>CSS</h2>
-                    <button onclick="maximizar('editor-css')">
-                        Maximizar
-                    </button>
-                </div>
+.campo.completo {
+    grid-column: 1 / -1;
+}
 
-                <textarea id="css-code"
-                    placeholder="Digite seu código CSS aqui..."
-                    spellcheck="false"></textarea>
-            </div>
+label {
+    font-size: 14px;
+    font-weight: bold;
+}
 
-            <!-- EDITOR JAVASCRIPT -->
-            <div class="editor" id="editor-js">
-                <div class="editor-topo">
-                    <h2>JavaScript</h2>
-                    <button onclick="maximizar('editor-js')">
-                        Maximizar
-                    </button>
-                </div>
+input, select, textarea {
+    width: 100%;
+    padding: 11px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 14px;
+}
 
-                <textarea id="js-code"
-                    placeholder="Digite seu código JavaScript aqui..."
-                    spellcheck="false"></textarea>
-            </div>
+textarea {
+    min-height: 85px;
+    resize: vertical;
+}
 
-        </section>
+.botoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 25px;
+}
 
-        <!-- PRÉ-VISUALIZAÇÃO -->
-        <section class="preview-section">
+button {
+    border: none;
+    padding: 12px 17px;
+    border-radius: 6px;
+    cursor: pointer;
+    color: white;
+}
 
-            <div class="preview-topo">
-                <h2>Pré-visualização do Código</h2>
+.salvar { background: #0f766e; }
+.limpar { background: #64748b; }
+.imprimir { background: #2563eb; }
+.excluir { background: #dc2626; }
 
-                <button onclick="atualizarPreview()">
-                    Executar código
-                </button>
-            </div>
+.card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 12px;
+}
 
-            <iframe id="preview"
-                title="Pré-visualização do código">
-            </iframe>
+.card button {
+    margin-top: 10px;
+}
 
-        </section>
+@media(max-width: 600px) {
+    .grid {
+        grid-template-columns: 1fr;
+    }
 
-        <!-- BOTÕES -->
-        <section class="acoes">
-            <button class="limpar" onclick="limparCodigo()">
-                Limpar códigos
-            </button>
+    .campo.completo {
+        grid-column: auto;
+    }
+}
 
-            <button class="publicar" onclick="publicarCodigo()">
-                Publicar avaliação
-            </button>
-        </section>
+@media print {
+    body { background: white; padding: 0; }
+    .container { box-shadow: none; }
+    .botoes, #cadastros { display: none; }
+}
+`;
 
-    </main>
+document.head.appendChild(style);
 
-    <script src="script.js"></script>
+const app = document.createElement("div");
+app.className = "container";
 
-<script src="script.js"></script></body>
+app.innerHTML = `
+&lt;h1&gt;📋 Ficha de Anamnese&lt;/h1&gt;
+&lt;p style="text-align:center;color:#64748b"&gt;
+    Cadastro e histórico de saúde do paciente
+&lt;/p&gt;
+
+&lt;form id="formulario"&gt;
+
+&lt;h2&gt;1. Dados pessoais&lt;/h2&gt;
+
+&lt;div class="grid"&gt;
+    &lt;div class="campo completo"&gt;
+        &lt;label&gt;Nome completo *&lt;/label&gt;
+        &lt;input name="nome" required&gt;
+    &lt;/div&gt;
+
+    &lt;div class="campo"&gt;
+        &lt;label&gt;Data de nascimento&lt;/label&gt;
+        &lt;input type="date" name="nascimento"&gt;
+    &lt;/div&gt;
+
+    &lt;div class="campo"&gt;
+        &lt;label&gt;Sexo&lt;/label&gt;
+        &lt;select name="sexo"&gt;
+            &lt;option value=""&gt;Selecione&lt;/option&gt;
+            &lt;option&gt;Feminino&lt;/option&gt;
+            &lt;option&gt;Masculino&lt;/option&gt;
+            &lt;option&gt;Outro&lt;/option&gt;
+            &lt;option&gt;Prefere não informar&lt;/option&gt;
+        &lt;/select&gt;
+    &lt;/div&gt;
+
+    &lt;div class="campo"&gt;
+        &lt;label&gt;Telefone&lt;/label&gt;
+        &lt;input name="telefone" type="tel"&gt;
+    &lt;/div&gt;
+
+    &lt;div class="campo"&gt;
+        &lt;label&gt;E-mail&lt;/label&gt;
+        &lt;input name="email" type="email"&gt;
+    &lt;/div&gt;
+
+    &lt;div class="campo completo"&gt;
+        &lt;label&gt;Endereço&lt;/label&gt;
+        &lt;input name="endereco"&gt;
+    &lt;/div&gt;
+
+    &lt;div class="campo"&gt;
+        &lt;label&gt;Profissão&lt;/label&gt;
+        &lt;input name="profissao"&gt;
+    &lt;/div&gt;
+
+    &lt;div class="campo"&gt;
+        &lt;label&gt;Estado civil&lt;/label&gt;
+        &lt;select name="estadoCivil"&gt;
+            &lt;option value=""&gt;Selecione&lt;/option&gt;
+            &lt;option&gt;Solteiro(a)&lt;/option&gt;
+            &lt;option&gt;Casado(a)&lt;/option&gt;
+            &lt;option&gt;Divorciado(a)&lt;/option&gt;
+            &lt;option&gt;Viúvo(a)&lt;/option&gt;
+            &lt;option&gt;Outro&lt;/option&gt;
+        &lt;/select&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;h2&gt;2. Histórico de saúde&lt;/h2&gt;
+
+&lt;div class="grid"&gt;
+    &lt;div class="campo"&gt;
+        &lt;label&gt;Possui alguma doença?&lt;/label&gt;
+        &lt;select name="doenca"&gt;
+            &lt;option&gt;Não&lt;/option&gt;
+            &lt;option&gt;Sim&lt;/option&gt;
+            &lt;option&gt;Não informado&lt;/option&gt;
+        &lt;/select&gt;
+    &lt;/div&gt;
+
+    &lt;div class="campo"&gt;
+        &lt;label&gt;Possui alergias?&lt;/label&gt;
+        &lt;select name="alergia"&gt;
+            &lt;option&gt;Não&lt;/option&gt;
+            &lt;option&gt;Sim&lt;/option&gt;
+            &lt;option&gt;Não informado&lt;/option&gt;
+        &lt;/select&gt;
+    &lt;/div&gt;
+
+    &lt;div class="campo completo"&gt;
+        &lt;label&gt;Quais doenças ou condições?&lt;/label&gt;
+        &lt;textarea name="doencasDetalhes"&gt;&lt;/textarea&gt;
+    &lt;/div&gt;
+
+    &lt;div class="campo completo"&gt;
+        &lt;label&gt;Quais alergias?&lt;/label&gt;
+        &lt;textarea name="alergiasDetalhes"&gt;&lt;/textarea&gt;
+    &lt;/div&gt;
+
+    &lt;div class="campo"&gt;
+        &lt;label&gt;Faz uso de medicamentos?&lt;/label&gt;
+        &lt;select name="medicamento"&gt;
+            &lt;option&gt;Não&lt;/option&gt;
+            &lt;option&gt;Sim&lt;/option&gt;
+            &lt;option&gt;Não informado&lt;/option&gt;
+        &lt;/select&gt;
+    &lt;/div&gt;
+
+    &lt;div class="campo"&gt;
+        &lt;label&gt;Já realizou cirurgias?&lt;/label&gt;
+        &lt;select name="cirurgia"&gt;
+            &lt;option&gt;Não&lt;/option&gt;
+            &lt;option&gt;Sim&lt;/option&gt;
+            &lt;option&gt;Não informado&lt;/option&gt;
+        &lt;/select&gt;
+    &lt;/div&gt;
+
+    &lt;div class="campo completo"&gt;
+        &lt;label&gt;Medicamentos em uso&lt;/label&gt;
+        &lt;textarea name="medicamentosDetalhes"&gt;&lt;/textarea&gt;
+    &lt;/div&gt;
+
+    &lt;div class="campo completo"&gt;
+        &lt;label&gt;Histórico de cirurgias e internações&lt;/label&gt;
+        &lt;textarea name="cirurgiasDetalhes"&gt;&lt;/textarea&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;h2&gt;3. Histórico familiar&lt;/h2&gt;
+
+&lt;div class="grid"&gt;
+    &lt;div class="campo completo"&gt;
+        &lt;label&gt;Doenças na família&lt;/label&gt;
+        &lt;textarea name="historicoFamiliar"
+        placeholder="Ex.: diabetes, hipertensão, doenças cardíacas..."&gt;&lt;/textarea&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;h2&gt;4. Hábitos de vida&lt;/h2&gt;
+
+&lt;div class="grid"&gt;
+    &lt;div class="campo"&gt;
+        &lt;label&gt;Pratica atividade física?&lt;/label&gt;
+        &lt;select name="atividade"&gt;
+            &lt;option&gt;Não&lt;/option&gt;
+            &lt;option&gt;Sim, regularmente&lt;/option&gt;
+            &lt;option&gt;Às vezes&lt;/option&gt;
+        &lt;/select&gt;
+    &lt;/div&gt;
+
+    &lt;div class="campo"&gt;
+        &lt;label&gt;Fuma?&lt;/label&gt;
+        &lt;select name="fumante"&gt;
+            &lt;option&gt;Não&lt;/option&gt;
+            &lt;option&gt;Sim&lt;/option&gt;
+            &lt;option&gt;Ex-fumante&lt;/option&gt;
+            &lt;option&gt;Não informado&lt;/option&gt;
+        &lt;/select&gt;
+    &lt;/div&gt;
+
+    &lt;div class="campo"&gt;
+        &lt;label&gt;Consome bebidas alcoólicas?&lt;/label&gt;
+        &lt;select name="alcool"&gt;
+            &lt;option&gt;Não&lt;/option&gt;
+            &lt;option&gt;Sim&lt;/option&gt;
+            &lt;option&gt;Socialmente&lt;/option&gt;
+            &lt;option&gt;Não informado&lt;/option&gt;
+        &lt;/select&gt;
+    &lt;/div&gt;
+
+    &lt;div class="campo"&gt;
+        &lt;label&gt;Qualidade do sono&lt;/label&gt;
+        &lt;select name="sono"&gt;
+            &lt;option&gt;Boa&lt;/option&gt;
+            &lt;option&gt;Regular&lt;/option&gt;
+            &lt;option&gt;Ruim&lt;/option&gt;
+            &lt;option&gt;Não informado&lt;/option&gt;
+        &lt;/select&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;h2&gt;5. Queixa principal e sintomas&lt;/h2&gt;
+
+&lt;div class="grid"&gt;
+    &lt;div class="campo completo"&gt;
+        &lt;label&gt;Queixa principal&lt;/label&gt;
+        &lt;textarea name="queixa"
+        placeholder="Descreva o motivo da consulta..."&gt;&lt;/textarea&gt;
+    &lt;/div&gt;
+
+    &lt;div class="campo completo"&gt;
+        &lt;label&gt;Sintomas apresentados&lt;/label&gt;
+        &lt;textarea name="sintomas"&gt;&lt;/textarea&gt;
+    &lt;/div&gt;
+
+    &lt;div class="campo completo"&gt;
+        &lt;label&gt;Observações adicionais&lt;/label&gt;
+        &lt;textarea name="observacoes"&gt;&lt;/textarea&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;h2&gt;6. Responsável pelo atendimento&lt;/h2&gt;
+
+&lt;div class="grid"&gt;
+    &lt;div class="campo"&gt;
+        &lt;label&gt;Nome do profissional&lt;/label&gt;
+        &lt;input name="profissional"&gt;
+    &lt;/div&gt;
+
+    &lt;div class="campo"&gt;
+        &lt;label&gt;Registro profissional&lt;/label&gt;
+        &lt;input name="registro"&gt;
+    &lt;/div&gt;
+
+    &lt;div class="campo"&gt;
+        &lt;label&gt;Data do atendimento&lt;/label&gt;
+        &lt;input type="date" name="dataAtendimento"&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div class="botoes"&gt;
+    &lt;button class="salvar" type="submit"&gt;
+        Salvar ficha
+    &lt;/button&gt;
+
+    &lt;button class="limpar" type="reset"&gt;
+        Limpar formulário
+    &lt;/button&gt;
+
+    &lt;button class="imprimir" type="button" id="imprimir"&gt;
+        Imprimir ficha
+    &lt;/button&gt;
+&lt;/div&gt;
+
+&lt;/form&gt;
+
+&lt;h2&gt;📁 Pacientes cadastrados&lt;/h2&gt;
+&lt;div id="cadastros"&gt;&lt;/div&gt;
+`;
+
+document.body.appendChild(app);
+
+// Banco de dados local
+let fichas = JSON.parse(
+    localStorage.getItem("fichasAnamnese") || "[]"
+);
+
+const formulario = document.getElementById("formulario");
+
+// Salvar ficha
+formulario.addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    const dados = Object.fromEntries(
+        new FormData(formulario).entries()
+    );
+
+    dados.id = Date.now();
+    dados.criadoEm = new Date().toLocaleDateString("pt-BR");
+
+    fichas.push(dados);
+
+    localStorage.setItem(
+        "fichasAnamnese",
+        JSON.stringify(fichas)
+    );
+
+    alert("Ficha cadastrada com sucesso!");
+
+    formulario.reset();
+    mostrarFichas();
+});
+
+// Listar fichas
+function mostrarFichas() {
+    const area = document.getElementById("cadastros");
+
+    area.innerHTML = "";
+
+    if (fichas.length === 0) {
+        area.textContent = "Nenhum paciente cadastrado.";
+        return;
+    }
+
+    fichas.forEach(ficha =&gt; {
+        const card = document.createElement("div");
+        card.className = "card";
+
+        const nome = document.createElement("strong");
+        nome.textContent = ficha.nome;
+
+        const data = document.createElement("p");
+        data.textContent =
+            "Cadastro: " + ficha.criadoEm;
+
+        const excluir = document.createElement("button");
+        excluir.className = "excluir";
+        excluir.textContent = "Excluir";
+
+        excluir.addEventListener("click", () =&gt; {
+            if (confirm("Deseja excluir esta ficha?")) {
+                fichas = fichas.filter(
+                    item =&gt; item.id !== ficha.id
+                );
+
+                localStorage.setItem(
+                    "fichasAnamnese",
+                    JSON.stringify(fichas)
+                );
+
+                mostrarFichas();
+            }
+        });
+
+        card.append(nome, data, excluir);
+        area.appendChild(card);
+    });
+}
+
+// Imprimir ficha
+document.getElementById("imprimir")
+    .addEventListener("click", () =&gt; {
+        window.print();
+    });
+
+// Inicializar
+mostrarFichas();
+</code></pre>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+</body>
 </html>
