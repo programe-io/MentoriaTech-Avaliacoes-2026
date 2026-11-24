@@ -1,54 +1,48 @@
 
 function curtir(botao) {
-    let post = botao.closest(".post");
-        let likes = post.querySelector(".likes");
+  botao.textContent =
+      botao.textContent.includes("Curtido")
+          ? "👍 Curtir"
+              : "❤️ Curtido";
+              }
 
-            let quantidade = parseInt(likes.textContent);
+              function comentar(botao) {
+                let msg = prompt("Escreva seu comentário:");
+                  if (msg && msg.trim()) {
+                      botao.nextElementSibling.textContent += "💬 " + msg;
+                        }
+                        }
 
-                if (botao.textContent === "♡") {
-                        botao.textContent = "❤️";
-                                quantidade++;
-                                    } else {
-                                            botao.textContent = "♡";
-                                                    quantidade--;
-                                                        }
+                        function postar() {
+                          let campo = document.getElementById("texto");
+                            let msg = campo.value.trim();
 
-                                                            likes.textContent = quantidade + " curtidas";
-                                                            }
+                              if (!msg) return;
 
-                                                            function comentar(botao) {
-                                                                let post = botao.closest(".post");
-                                                                    let comentarios = post.querySelector(".comentarios");
+                                let post = document.createElement("section");
+                                  post.className = "post";
 
-                                                                        let texto = prompt("Digite seu comentário:");
+                                    let usuario = document.createElement("b");
+                                      usuario.textContent = "XAVIER";
 
-                                                                            if (texto && texto.trim()) {
-                                                                                    let p = document.createElement("p");
-                                                                                            p.textContent = "Você: " + texto;
-                                                                                                    comentarios.appendChild(p);
-                                                                                                        }
-                                                                                                        }
+                                        let texto = document.createElement("p");
+                                          texto.textContent = msg;
 
-                                                                                                        function novaPostagem() {
-                                                                                                            let texto = prompt("Digite a legenda da publicação:");
+                                            post.append(usuario, texto);
 
-                                                                                                                if (texto) {
-                                                                                                                        let post = document.createElement("article");
-                                                                                                                                post.className = "post";
+                                              let curtirBtn = document.createElement("button");
+                                                curtirBtn.textContent = "👍 Curtir";
+                                                  curtirBtn.onclick = () => curtir(curtirBtn);
 
-                                                                                                                                        post.innerHTML = `
-                                                                                                                                                    <h3>👤 voce</h3>
-                                                                                                                                                                <p>${texto}</p>
-                                                                                                                                                                            <div class="acoes">
-                                                                                                                                                                                            <button onclick="curtir(this)">♡</button>
-                                                                                                                                                                                                            <button onclick="comentar(this)">💬</button>
-                                                                                                                                                                                                                        </div>
-                                                                                                                                                                                                                                    <p><b class="likes">0 curtidas</b></p>
-                                                                                                                                                                                                                                                <div class="comentarios"></div>
-                                                                                                                                                                                                                                                        `;
+                                                    let comentarBtn = document.createElement("button");
+                                                      comentarBtn.textContent = "💬 Comentar";
+                                                        comentarBtn.onclick = () => comentar(comentarBtn);
 
-                                                                                                                                                                                                                                                                document.getElementById("publicacoes")
-                                                                                                                                                                                                                                                                            .prepend(post);
-                                                                                                                                                                                                                                                                                }
-                                                                                                                                                                                                                                                                                }
-                                                                                                                                                                                                                                                                                
+                                                          let comentarios = document.createElement("p");
+
+                                                            post.append(curtirBtn, comentarBtn, comentarios);
+                                                              document.getElementById("feed").prepend(post);
+
+                                                                campo.value = "";
+                                                                }
+                                                                
