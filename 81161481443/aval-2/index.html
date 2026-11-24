@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet">
+</head>
+<body>
+  
+<!-- Feed Social -->
+<section class="feed" id="feed">
+    <h2>Comunidade MangaWorld</h2>
+    <p class="subtitulo">Compartilhe suas opiniões sobre mangás!</p>
+
+    <div class="publicar">
+        <h3>Nova publicação</h3>
+        <textarea id="textoPost" placeholder="O que você está lendo hoje?"></textarea>
+        <button onclick="publicar()">Publicar</button>
+    </div>
+
+    <div id="listaPosts">
+
+        <div class="post">
+            <h3>Otaku123</h3>
+            <p>One Piece está cada vez melhor! Qual é o arco favorito de vocês?</p>
+            <button onclick="curtir(this)">♡ Curtir <span>0</span></button>
+        </div>
+
+        <div class="post">
+            <h3>MangaFan</h3>
+            <p>Comecei a ler Chainsaw Man e estou adorando a história!</p>
+            <button onclick="curtir(this)">♡ Curtir <span>0</span></button>
+        </div>
+
+    </div>
+</section>
+
+<script>
+    function publicar() {
+        let texto = document.getElementById("textoPost").value;
+
+        if (texto.trim() === "") {
+            alert("Digite algo antes de publicar!");
+            return;
+        }
+
+        let post = document.createElement("div");
+        post.className = "post";
+
+        let nome = document.createElement("h3");
+        nome.textContent = "Visitante";
+
+        let mensagem = document.createElement("p");
+        mensagem.textContent = texto;
+
+        let botao = document.createElement("button");
+        botao.textContent = "♡ Curtir ";
+
+        let contador = document.createElement("span");
+        contador.textContent = "0";
+
+        botao.appendChild(contador);
+        botao.onclick = function() {
+            curtir(botao);
+        };
+
+        post.append(nome, mensagem, botao);
+
+        document.getElementById("listaPosts").prepend(post);
+        document.getElementById("textoPost").value = "";
+    }
+
+    function curtir(botao) {
+        let contador = botao.querySelector("span");
+        let numero = Number(contador.textContent);
+
+        contador.textContent = numero + 1;
+        botao.classList.add("curtido");
+    }
+</script>
+
+  
+  
+</body>
+</html>
