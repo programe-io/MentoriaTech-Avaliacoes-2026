@@ -1,88 +1,97 @@
-const tela = document.getElementById('tela');
-const historico = document.getElementById('historico');
-let expressao = '';
+// Carrega as tarefas salvas no navegador ou inicia uma lista vazia
+let tarefas = JSON.parse(localStorage.getItem('minhas_tarefas')) || [];
+let filtroAtual = 'todas';
 
-// Adiciona números ou operadores na tela
-function adicionar(valor) {
-  if (tela.textContent === 'Erro') {
-    expressao = '';
-  }
+// Seleciona os elementos do HTML
+const form = document.getElementById('form-tarefa');
+const lista = document.getElementById('lista-tarefas');
+const contador = document.getElementById('contador');
 
-  // Evita dois operadores seguidos (ex: ++ ou *+)
-  const operadores = ['+', '-', '*', '/', '%'];
-  const ultimoCaractere = expressao.slice(-1);
-
-  if (operadores.includes(valor) && operadores.includes(ultimoCaractere)) {
-    expressao = expressao.slice(0, -1) + valor;
-  } else {
-    expressao += valor;
-  }
-
-  atualizarTela();
+// Salva no navegador e atualiza a tela
+function salvarERenderizar() {
+  localStorage.setItem('minhas_tarefas', JSON.stringify(tarefas));
+  renderizar();
 }
 
-// Limpa todo o visor e o histórico
-function limparTudo() {
-  expressao = '';
-  historico.textContent = '';
-  tela.textContent = '0';
-}
+// Adiciona uma nova tarefa
+form.addEventListener('submit', function (event) {
+  event.preventDefault();
 
-// Apaga o último dígito digitado
-function apagarUltimo() {
-  if (tela.textContent === 'Erro') {
-    limparTudo();
-    return;
-  }
-  expressao = expressao.slice(0, -1);
-  atualizarTela();
-}
+  const texto = document.getElementById('input-tarefa').value.trim();
+  const prioridade = document.getElementById('prioridade').value;
 
-// Exibe a expressão formatada no visor
-function atualizarTela() {
-  if (expressao === '') {
-    tela.textContent = '0';
-  } else {
-    tela.textContent = expressao.replace(/\*/g, '×').replace(/\//g, '÷');
-  }
-}
+  if (!texto) return;
 
-// Calcula o resultado final
-function calcular() {
-  if (expressao === '') return;
+  tarefas.push({
+    id: Date.now(),
+    texto,
+    prioridade,
+    concluida: false
+  });
 
-  try {
-    historico.textContent = expressao.replace(/\*/g, '×').replace(/\//g, '÷') + ' =';
-    
-    // Converte porcentagem simples (ex: 50% -> (50/100)) antes de calcular
-    const contaFormatada = expressao.replace(/(\d+(\.\d+)?)%/g, '($1/100)');
-    const resultado = eval(contaFormatada);
-
-    if (!isFinite(resultado)) {
-      tela.textContent = 'Erro';
-      expressao = '';
-    } else {
-      expressao = String(Number(resultado.toFixed(8)));
-      tela.textContent = expressao;
-    }
-  } catch {
-    tela.textContent = 'Erro';
-    expressao = '';
-  }
-}
-
-// Suporte para digitar direto pelo teclado físico
-document.addEventListener('keydown', function (event) {
-  const tecla = event.key;
-
-  if ((tecla >= '0' && tecla <= '9') || ['+', '-', '*', '/', '.', '%'].includes(tecla)) {
-    adicionar(tecla);
-  } else if (tecla === 'Enter' || tecla === '=') {
-    event.preventDefault();
-    calcular();
-  } else if (tecla === 'Backspace') {
-    apagarUltimo();
-  } else if (tecla === 'Escape') {
-    limparTudo();
-  }
+  form.reset();
+  salvarERenderizar();
 });
+
+// Marca ou desmarca a tarefa como concluída
+function alternarStatus(id) {
+  const tarefa = tarefas.find(t => t.id === id);
+
+  if (tarefa) {
+    tarefa.concluida = !tarefa.concluida;
+    salvarERenderizar();
+  }
+}
+
+// Exclui uma tarefa da lista
+function removerTarefa(id) {
+  tarefas = tarefas.filter(t => t.id !== id);
+  salvarERenderizar();
+}
+
+// Altera o filtro ativo (Todas, Pendentes ou Concluídas)
+function mudarFiltro(filtro, botao) {
+  filtroAtual = filtro;
+
+  document.querySelectorAll('.filtros button').forEach(btn => {
+    btn.classList.remove('ativo');
+  });
+
+  botao.classList.add('ativo');
+  renderizar();
+}
+
+// Desenha a lista de tarefas na tela
+function renderizar() {
+  lista.innerHTML = '';
+
+  const pendentes = tarefas.filter(t => !t.concluida).length;
+  contador.textContent = `${pendentes} ${pendentes === 1 ? 'pendente' : 'pendentes'}`;
+
+  const filtradas = tarefas.filter(t => {
+    if (filtroAtual === 'pendentes') return !t.concluida;
+    if (filtroAtual === 'concluidas') return t.concluida;
+    return true;
+  });
+
+  filtradas.forEach(tarefa => {
+    const li = document.createElement('li');
+    if (tarefa.concluida) {
+      li.classList.add('concluida');
+    }
+
+    li.innerHTML = `
+      <label class="tarefa-info">
+        <input type="checkbox" ${tarefa.concluida ? 'checked' : ''} onchange="alternarStatus(${tarefa.id})">
+        <span class="texto">${tarefa.texto}</span>
+      </label>
+      <span class="badge ${tarefa.prioridade}">${tarefa.prioridade}</span>
+      <button class="btn-del" onclick="removerTarefa(${tarefa.id})">Excluir</button>
+    `;
+
+    lista.appendChild(li);
+  });
+}
+
+// Inicia a lista ao abrir a página
+renderizar();
