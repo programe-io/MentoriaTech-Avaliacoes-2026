@@ -1,378 +1,162 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Slide - Aplicações em Interfaces</title>
+// ==========================================
+// PROJETO PRÁTICO - CONTROLE DE IMC
+// ==========================================
 
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+
+// Função responsável por calcular o IMC
+function calcularIMC() {
+
+    // ==========================================
+    // 1. RECEBER OS DADOS DO PACIENTE
+    // ==========================================
+
+    const nome = document.getElementById("nome").value.trim();
+
+    const peso = parseFloat(
+        document.getElementById("peso").value
+    );
+
+    const altura = parseFloat(
+        document.getElementById("altura").value
+    );
+
+
+    // ==========================================
+    // 2. VALIDAR OS DADOS
+    // ==========================================
+
+    if (nome === "") {
+        alert("Por favor, informe o nome do paciente.");
+        return;
     }
 
-    body {
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: #111827;
-      font-family: Arial, sans-serif;
+    if (isNaN(peso) || peso <= 0) {
+        alert("Por favor, informe um peso válido.");
+        return;
     }
 
-    .slide {
-      width: 1280px;
-      height: 720px;
-      padding: 55px 70px;
-      position: relative;
-      overflow: hidden;
-      color: white;
-
-      background:
-        radial-gradient(circle at 85% 15%, #06b6d455, transparent 30%),
-        radial-gradient(circle at 10% 90%, #3b82f655, transparent 25%),
-        linear-gradient(135deg, #0f172a, #082f49);
+    if (isNaN(altura) || altura <= 0) {
+        alert("Por favor, informe uma altura válida.");
+        return;
     }
 
-    /* CABEÇALHO */
-    .header {
-      border-left: 6px solid #22d3ee;
-      padding-left: 20px;
-      margin-bottom: 32px;
+
+    // ==========================================
+    // 3. CALCULAR O IMC
+    // ==========================================
+
+    // Fórmula:
+    // IMC = peso / (altura × altura)
+
+    const imc = peso / (altura * altura);
+
+
+    // ==========================================
+    // 4. DEFINIR A CLASSIFICAÇÃO
+    // ==========================================
+
+    let classificacao;
+    let mensagem;
+
+
+    if (imc < 18.5) {
+
+        classificacao = "Abaixo do peso";
+
+        mensagem =
+            "O IMC está abaixo de 18,5. " +
+            "Esse resultado pode indicar baixo peso. " +
+            "Uma avaliação profissional pode ajudar a entender melhor a situação.";
+
     }
 
-    .header h1 {
-      font-size: 52px;
-      color: #67e8f9;
-      letter-spacing: 2px;
+    else if (imc < 25) {
+
+        classificacao = "Peso normal";
+
+        mensagem =
+            "O IMC está entre 18,5 e 24,9. " +
+            "Essa faixa é considerada adequada para o IMC. " +
+            "É importante manter hábitos de vida saudáveis.";
+
     }
 
-    .header p {
-      font-size: 22px;
-      color: #cbd5e1;
-      margin-top: 5px;
+    else if (imc < 30) {
+
+        classificacao = "Sobrepeso";
+
+        mensagem =
+            "O IMC está entre 25 e 29,9. " +
+            "Esse resultado é classificado como sobrepeso. " +
+            "Uma alimentação equilibrada e atividade física podem contribuir para a saúde.";
+
     }
 
-    /* CONTEÚDO */
-    .content {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 25px;
+    else if (imc < 35) {
+
+        classificacao = "Obesidade grau I";
+
+        mensagem =
+            "O IMC está entre 30 e 34,9. " +
+            "Esse resultado é classificado como obesidade grau I. " +
+            "É recomendado buscar orientação de um profissional de saúde.";
+
     }
 
-    .card {
-      background: #ffffff0d;
-      border: 1px solid #ffffff1c;
-      border-radius: 20px;
-      padding: 25px;
-      backdrop-filter: blur(8px);
+    else if (imc < 40) {
+
+        classificacao = "Obesidade grau II";
+
+        mensagem =
+            "O IMC está entre 35 e 39,9. " +
+            "Esse resultado é classificado como obesidade grau II. " +
+            "É importante procurar orientação profissional para uma avaliação adequada.";
+
     }
 
-    .card h2 {
-      font-size: 27px;
-      color: #67e8f9;
-      margin-bottom: 15px;
+    else {
+
+        classificacao = "Obesidade grau III";
+
+        mensagem =
+            "O IMC é igual ou superior a 40. " +
+            "Esse resultado é classificado como obesidade grau III. " +
+            "Recomenda-se acompanhamento com profissionais de saúde.";
+
     }
 
-    .card p {
-      font-size: 19px;
-      line-height: 1.5;
-      color: #e2e8f0;
-    }
 
-    /* INTERFACE ILUSTRATIVA */
-    .interface {
-      height: 230px;
-      margin-top: 10px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
+    // ==========================================
+    // 5. EXIBIR OS DADOS DO PACIENTE
+    // ==========================================
 
-    .screen {
-      width: 360px;
-      height: 210px;
-      background: #0f172a;
-      border: 3px solid #22d3ee;
-      border-radius: 14px;
-      overflow: hidden;
-      box-shadow: 0 0 30px #22d3ee44;
-    }
+    document.getElementById("resultadoNome").textContent = nome;
 
-    .topbar {
-      height: 35px;
-      background: #164e63;
-      display: flex;
-      align-items: center;
-      padding-left: 12px;
-      gap: 7px;
-    }
+    document.getElementById("resultadoPeso").textContent =
+        peso.toFixed(2) + " kg";
 
-    .circle {
-      width: 9px;
-      height: 9px;
-      border-radius: 50%;
-    }
+    document.getElementById("resultadoAltura").textContent =
+        altura.toFixed(2) + " m";
 
-    .red {
-      background: #f87171;
-    }
+    document.getElementById("resultadoIMC").textContent =
+        imc.toFixed(2);
 
-    .yellow {
-      background: #facc15;
-    }
+    document.getElementById("classificacao").textContent =
+        classificacao;
 
-    .green {
-      background: #4ade80;
-    }
+    document.getElementById("mensagem").textContent =
+        mensagem;
 
-    .menu {
-      display: flex;
-      gap: 8px;
-      padding: 12px;
-    }
 
-    .menu-item {
-      height: 10px;
-      width: 55px;
-      border-radius: 5px;
-      background: #334155;
-    }
+    // ==========================================
+    // 6. MOSTRAR O RESULTADO
+    // ==========================================
 
-    .main-ui {
-      display: grid;
-      grid-template-columns: 80px 1fr;
-      gap: 12px;
-      padding: 10px;
-    }
+    document.getElementById("resultado").style.display = "block";
 
-    .sidebar {
-      height: 120px;
-      border-radius: 8px;
-      background: #1e293b;
-    }
 
-    .ui-content {
-      display: grid;
-      gap: 8px;
-    }
-
-    .box {
-      height: 30px;
-      border-radius: 6px;
-      background: #164e63;
-    }
-
-    .button {
-      width: 90px;
-      height: 25px;
-      border-radius: 6px;
-      background: #06b6d4;
-    }
-
-    /* APLICAÇÕES */
-    .applications {
-      grid-column: 1 / 3;
-    }
-
-    .apps {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 13px;
-    }
-
-    .app {
-      padding: 16px 10px;
-      text-align: center;
-      background: #0f172acc;
-      border-radius: 14px;
-      border: 1px solid #ffffff12;
-      transition: 0.3s;
-    }
-
-    .app:hover {
-      transform: translateY(-5px);
-      border-color: #22d3ee;
-    }
-
-    .app .icon {
-      font-size: 30px;
-      margin-bottom: 8px;
-    }
-
-    .app h3 {
-      font-size: 16px;
-      color: #67e8f9;
-      margin-bottom: 5px;
-    }
-
-    .app p {
-      font-size: 13px;
-      color: #94a3b8;
-    }
-
-    /* OBJETIVO */
-    .objective {
-      grid-column: 1 / 3;
-      padding: 16px 25px;
-      border-radius: 14px;
-      text-align: center;
-
-      background: linear-gradient(
-        90deg,
-        #0891b233,
-        #2563eb22
-      );
-
-      border: 1px solid #22d3ee44;
-      color: #cffafe;
-      font-size: 19px;
-    }
-
-    .footer {
-      position: absolute;
-      bottom: 20px;
-      right: 45px;
-      color: #64748b;
-      font-size: 14px;
-    }
-  </style>
-</head>
-
-<body>
-
-  <main class="slide">
-
-    <!-- CABEÇALHO -->
-    <header class="header">
-      <h1>APLICAÇÕES EM INTERFACES</h1>
-      <p>Como as interfaces facilitam a interação com sistemas</p>
-    </header>
-
-
-    <section class="content">
-
-      <!-- O QUE SÃO INTERFACES -->
-      <div class="card">
-
-        <h2>🖥️ O que são interfaces?</h2>
-
-        <p>
-          Uma <strong>interface</strong> é o meio pelo qual
-          uma pessoa interage com um sistema, aplicativo
-          ou dispositivo.
-        </p>
-
-        <br>
-
-        <p>
-          Ela permite realizar ações de maneira
-          <strong>visual, simples e intuitiva</strong>.
-        </p>
-
-      </div>
-
-
-      <!-- ILUSTRAÇÃO -->
-      <div class="card">
-
-        <h2>💻 Exemplo de Interface</h2>
-
-        <div class="interface">
-
-          <div class="screen">
-
-            <div class="topbar">
-              <div class="circle red"></div>
-              <div class="circle yellow"></div>
-              <div class="circle green"></div>
-            </div>
-
-            <div class="menu">
-              <div class="menu-item"></div>
-              <div class="menu-item"></div>
-              <div class="menu-item"></div>
-              <div class="menu-item"></div>
-            </div>
-
-            <div class="main-ui">
-
-              <div class="sidebar"></div>
-
-              <div class="ui-content">
-                <div class="box"></div>
-                <div class="box"></div>
-                <div class="box"></div>
-                <div class="button"></div>
-              </div>
-
-            </div>
-
-          </div>
-
-        </div>
-
-      </div>
-
-
-      <!-- APLICAÇÕES -->
-      <div class="card applications">
-
-        <h2>🔧 Principais aplicações</h2>
-
-        <div class="apps">
-
-          <div class="app">
-            <div class="icon">🖱️</div>
-            <h3>GUI</h3>
-            <p>Janelas, menus e botões</p>
-          </div>
-
-          <div class="app">
-            <div class="icon">📱</div>
-            <h3>Aplicativos</h3>
-            <p>Smartphones e tablets</p>
-          </div>
-
-          <div class="app">
-            <div class="icon">🌐</div>
-            <h3>Web</h3>
-            <p>Sites e sistemas online</p>
-          </div>
-
-          <div class="app">
-            <div class="icon">🎮</div>
-            <h3>Jogos</h3>
-            <p>Menus e controles</p>
-          </div>
-
-          <div class="app">
-            <div class="icon">🤖</div>
-            <h3>Assistentes</h3>
-            <p>Voz e texto</p>
-          </div>
-
-        </div>
-
-      </div>
-
-
-      <!-- OBJETIVO -->
-      <div class="objective">
-        🎯 Uma boa interface deve ser
-        <strong>fácil, rápida, intuitiva e acessível</strong>,
-        proporcionando uma melhor experiência ao usuário.
-      </div>
-
-    </section>
-
-
-    <div class="footer">
-      Tecnologia • Interfaces
-    </div>
-
-  </main>
-
-</body>
-</html>
+    // Rolar automaticamente até o resultado
+    document.getElementById("resultado").scrollIntoView({
+        behavior: "smooth"
+    });
+}
