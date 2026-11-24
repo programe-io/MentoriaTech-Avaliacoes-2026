@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Código JavaScript</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <style>body{margin:0;background:#0d1117}pre{margin:0}code.hljs{padding:1.5rem;min-height:100vh;box-sizing:border-box}</style>
+</head>
+<body>
+  <pre><code class="language-javascript">
+// =====================================
+// SISTEMA DE FICHA DE ANAMNESE
+// 100% JAVASCRIPT
+// =====================================
+
+document.body.innerHTML = "";
+
+const style = document.createElement("style");
+
+style.textContent = `
+* {
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  margin: 0;
+  padding: 25px 15px;
+  background: #eef2f7;
+  color: #334155;
+}
+
+.container {
+  max-width: 950px;
+  margin: auto;
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 5px 20px #0001;
+}
+
+header {
+  text-align: center;
+  border-bottom: 3px solid #0d9488;
+  padding-bottom: 20px;
+}
+
+header h1 {
+  color: #0f766e;
+}
+
+h2 {
+  color: #0f766e;
+  font-size: 18px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+  margin-top: 30px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.full {
+  grid-column: 1 / -1;
+}
+
+label {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+input, textarea, select {
+  padding: 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 7px;
+  width: 100%;
+  outline: none;
+}
+
+textarea {
+  min-height: 85px;
+  resize: vertical;
+}
+
+input:focus, textarea:focus, select:focus {
+  border-color: #0d9488;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 25px;
+}
+
+button {
+  padding: 12px 18px;
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.save { background: #0d9488; color: white; }
+.print { background: #2563eb; color: white; }
+.clear { background: #e2e8f0; }
+
+.paciente {
+  background: #f1f5f9;
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+#mensagem {
+  color: #0f766e;
+  font-weight: bold;
+  margin-top: 15px;
+}
+
+@media(max-width: 600px) {
+  .grid { grid-template-columns: 1fr; }
+  .full { grid-column: auto; }
+  .container { padding: 18px; }
+}
+
+@media print {
+  body { background: white; padding: 0; }
+  .container { box-shadow: none; }
+  .actions, #lista, #mensagem { display: none; }
+}
+`;
+
+document.head.appendChild(style);
+
+// =====================================
+// CRIAR ESTRUTURA
+// =====================================
+
+const container = document.createElement("main");
+container.className = "container";
+
+document.body.appendChild(container);
+
+container.innerHTML = `
+&lt;header&gt;
+  &lt;h1&gt;📋 Ficha de Anamnese&lt;/h1&gt;
+  &lt;p&gt;Cadastro e avaliação do paciente&lt;/p&gt;
+&lt;/header&gt;
+
+&lt;form id="form"&gt;
+
+&lt;h2&gt;1. Dados pessoais&lt;/h2&gt;
+
+&lt;div class="grid"&gt;
+
+  &lt;div class="field"&gt;
+    &lt;label&gt;Nome completo *&lt;/label&gt;
+    &lt;input name="nome" required&gt;
+  &lt;/div&gt;
+
+  &lt;div class="field"&gt;
+    &lt;label&gt;Data de nascimento&lt;/label&gt;
+    &lt;input type="date" name="nascimento"&gt;
+  &lt;/div&gt;
+
+  &lt;div class="field"&gt;
+    &lt;label&gt;CPF&lt;/label&gt;
+    &lt;input name="cpf"&gt;
+  &lt;/div&gt;
+
+  &lt;div class="field"&gt;
+    &lt;label&gt;Telefone&lt;/label&gt;
+    &lt;input type="tel" name="telefone"&gt;
+  &lt;/div&gt;
+
+  &lt;div class="field"&gt;
+    &lt;label&gt;E-mail&lt;/label&gt;
+    &lt;input type="email" name="email"&gt;
+  &lt;/div&gt;
+
+  &lt;div class="field"&gt;
+    &lt;label&gt;Profissão&lt;/label&gt;
+    &lt;input name="profissao"&gt;
+  &lt;/div&gt;
+
+  &lt;div class="field full"&gt;
+    &lt;label&gt;Endereço&lt;/label&gt;
+    &lt;input name="endereco"&gt;
+  &lt;/div&gt;
+
+&lt;/div&gt;
+
+&lt;h2&gt;2. Histórico médico&lt;/h2&gt;
+
+&lt;div class="grid"&gt;
+
+  &lt;div class="field full"&gt;
+    &lt;label&gt;Possui doenças?&lt;/label&gt;
+    &lt;textarea name="doencas"&gt;&lt;/textarea&gt;
+  &lt;/div&gt;
+
+  &lt;div class="field full"&gt;
+    &lt;label&gt;Possui alergias?&lt;/label&gt;
+    &lt;textarea name="alergias"&gt;&lt;/textarea&gt;
+  &lt;/div&gt;
+
+  &lt;div class="field full"&gt;
+    &lt;label&gt;Utiliza medicamentos?&lt;/label&gt;
+    &lt;textarea name="medicamentos"&gt;&lt;/textarea&gt;
+  &lt;/div&gt;
+
+  &lt;div class="field full"&gt;
+    &lt;label&gt;Já realizou cirurgias?&lt;/label&gt;
+    &lt;textarea name="cirurgias"&gt;&lt;/textarea&gt;
+  &lt;/div&gt;
+
+  &lt;div class="field full"&gt;
+    &lt;label&gt;Histórico familiar&lt;/label&gt;
+    &lt;textarea name="historico"&gt;&lt;/textarea&gt;
+  &lt;/div&gt;
+
+&lt;/div&gt;
+
+&lt;h2&gt;3. Hábitos de vida&lt;/h2&gt;
+
+&lt;div class="grid"&gt;
+
+  &lt;div class="field"&gt;
+    &lt;label&gt;Atividade física&lt;/label&gt;
+    &lt;select name="atividade"&gt;
+      &lt;option value=""&gt;Selecione&lt;/option&gt;
+      &lt;option&gt;Sim&lt;/option&gt;
+      &lt;option&gt;Não&lt;/option&gt;
+      &lt;option&gt;Ocasionalmente&lt;/option&gt;
+    &lt;/select&gt;
+  &lt;/div&gt;
+
+  &lt;div class="field"&gt;
+    &lt;label&gt;Tabagismo&lt;/label&gt;
+    &lt;select name="fumante"&gt;
+      &lt;option value=""&gt;Selecione&lt;/option&gt;
+      &lt;option&gt;Sim&lt;/option&gt;
+      &lt;option&gt;Não&lt;/option&gt;
+      &lt;option&gt;Ex-fumante&lt;/option&gt;
+    &lt;/select&gt;
+  &lt;/div&gt;
+
+  &lt;div class="field"&gt;
+    &lt;label&gt;Consome álcool?&lt;/label&gt;
+    &lt;select name="alcool"&gt;
+      &lt;option value=""&gt;Selecione&lt;/option&gt;
+      &lt;option&gt;Sim&lt;/option&gt;
+      &lt;option&gt;Não&lt;/option&gt;
+      &lt;option&gt;Ocasionalmente&lt;/option&gt;
+    &lt;/select&gt;
+  &lt;/div&gt;
+
+  &lt;div class="field"&gt;
+    &lt;label&gt;Qualidade do sono&lt;/label&gt;
+    &lt;select name="sono"&gt;
+      &lt;option value=""&gt;Selecione&lt;/option&gt;
+      &lt;option&gt;Boa&lt;/option&gt;
+      &lt;option&gt;Regular&lt;/option&gt;
+      &lt;option&gt;Ruim&lt;/option&gt;
+    &lt;/select&gt;
+  &lt;/div&gt;
+
+&lt;/div&gt;
+
+&lt;h2&gt;4. Avaliação complementar&lt;/h2&gt;
+
+&lt;div class="grid"&gt;
+
+  &lt;div class="field"&gt;
+    &lt;label&gt;Peso (kg)&lt;/label&gt;
+    &lt;input type="number" name="peso" step="0.1"&gt;
+  &lt;/div&gt;
+
+  &lt;div class="field"&gt;
+    &lt;label&gt;Altura (cm)&lt;/label&gt;
+    &lt;input type="number" name="altura" step="0.1"&gt;
+  &lt;/div&gt;
+
+  &lt;div class="field full"&gt;
+    &lt;label&gt;Queixa principal&lt;/label&gt;
+    &lt;textarea name="queixa"&gt;&lt;/textarea&gt;
+  &lt;/div&gt;
+
+  &lt;div class="field full"&gt;
+    &lt;label&gt;Observações profissionais&lt;/label&gt;
+    &lt;textarea name="observacoes"&gt;&lt;/textarea&gt;
+  &lt;/div&gt;
+
+&lt;/div&gt;
+
+&lt;h2&gt;5. Responsável pelo atendimento&lt;/h2&gt;
+
+&lt;div class="grid"&gt;
+
+  &lt;div class="field"&gt;
+    &lt;label&gt;Nome do profissional&lt;/label&gt;
+    &lt;input name="profissional"&gt;
+  &lt;/div&gt;
+
+  &lt;div class="field"&gt;
+    &lt;label&gt;Data do atendimento&lt;/label&gt;
+    &lt;input type="date" name="data"&gt;
+  &lt;/div&gt;
+
+&lt;/div&gt;
+
+&lt;div class="field" style="margin-top:20px"&gt;
+  &lt;label&gt;
+    &lt;input type="checkbox" name="declaracao" required
+      style="width:auto"&gt;
+    Confirmo que as informações fornecidas são verdadeiras.
+  &lt;/label&gt;
+&lt;/div&gt;
+
+&lt;div class="actions"&gt;
+  &lt;button class="save" type="submit"&gt;💾 Salvar ficha&lt;/button&gt;
+  &lt;button class="print" type="button" id="imprimir"&gt;🖨 Imprimir&lt;/button&gt;
+  &lt;button class="clear" type="reset"&gt;Limpar&lt;/button&gt;
+&lt;/div&gt;
+
+&lt;p id="mensagem"&gt;&lt;/p&gt;
+
+&lt;/form&gt;
+
+&lt;h2&gt;📁 Pacientes cadastrados&lt;/h2&gt;
+&lt;div id="lista"&gt;&lt;/div&gt;
+`;
+
+// =====================================
+// ELEMENTOS
+// =====================================
+
+const form = document.querySelector("#form");
+const lista = document.querySelector("#lista");
+const mensagem = document.querySelector("#mensagem");
+
+let pacientes = JSON.parse(
+  localStorage.getItem("anamnese") || "[]"
+);
+
+// =====================================
+// SALVAR
+// =====================================
+
+function salvarDados() {
+  localStorage.setItem(
+    "anamnese",
+    JSON.stringify(pacientes)
+  );
+}
+
+// =====================================
+// CADASTRAR PACIENTE
+// =====================================
+
+form.addEventListener("submit", function(event) {
+
+  event.preventDefault();
+
+  const dados = Object.fromEntries(
+    new FormData(form).entries()
+  );
+
+  dados.id = crypto.randomUUID();
+
+  pacientes.push(dados);
+
+  salvarDados();
+  renderizar();
+
+  mensagem.textContent =
+    "Ficha cadastrada com sucesso!";
+
+  form.reset();
+
+});
+
+// =====================================
+// LISTAR PACIENTES
+// =====================================
+
+function renderizar() {
+
+  lista.innerHTML = "";
+
+  pacientes.forEach((paciente) =&gt; {
+
+    const div = document.createElement("div");
+    div.className = "paciente";
+
+    const nome = document.createElement("strong");
+    nome.textContent = paciente.nome;
+
+    const botoes = document.createElement("div");
+
+    const visualizar = document.createElement("button");
+    visualizar.textContent = "Visualizar";
+    visualizar.style.background = "#bfdbfe";
+
+    visualizar.onclick = () =&gt; visualizarFicha(paciente.id);
+
+    const excluir = document.createElement("button");
+    excluir.textContent = "Excluir";
+    excluir.style.background = "#fecaca";
+
+    excluir.onclick = () =&gt; excluirFicha(paciente.id);
+
+    botoes.append(visualizar, excluir);
+    div.append(nome, botoes);
+
+    lista.appendChild(div);
+
+  });
+
+}
+
+// =====================================
+// VISUALIZAR FICHA
+// =====================================
+
+function visualizarFicha(id) {
+
+  const paciente = pacientes.find(p =&gt; p.id === id);
+
+  const janela = window.open("", "_blank");
+
+  if (!janela) {
+    alert("Permita a abertura de janelas pop-up.");
+    return;
+  }
+
+  const conteudo = Object.entries(paciente)
+    .filter(([chave]) =&gt; chave !== "id")
+    .map(([chave, valor]) =&gt; `
+      &lt;p&gt;
+        &lt;strong&gt;${chave.toUpperCase()}:&lt;/strong&gt;
+        ${valor || "Não informado"}
+      &lt;/p&gt;
+    `).join("");
+
+  const titulo = document.createElement("h1");
+  titulo.textContent = "Ficha de Anamnese";
+
+  const dados = document.createElement("div");
+  dados.innerHTML = conteudo;
+
+  janela.document.body.style.fontFamily = "Arial";
+  janela.document.body.style.padding = "25px";
+  janela.document.body.append(titulo, dados);
+
+}
+
+// =====================================
+// EXCLUIR FICHA
+// =====================================
+
+function excluirFicha(id) {
+
+  if (!confirm("Deseja excluir esta ficha?")) return;
+
+  pacientes = pacientes.filter(p =&gt; p.id !== id);
+
+  salvarDados();
+  renderizar();
+
+}
+
+// =====================================
+// IMPRIMIR
+// =====================================
+
+document.querySelector("#imprimir").onclick = () =&gt; {
+  window.print();
+};
+
+// =====================================
+// INICIALIZAR
+// =====================================
+
+renderizar();
+</code></pre>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+</body>
+</html>
