@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: #1e272e;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .calculadora {
+      background-color: #2f3640;
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+      width: 320px;
+    }
+
+    /* Visor da Calculadora */
+    .visor {
+      background-color: #1e272e;
+      color: #f5f6fa;
+      padding: 15px;
+      border-radius: 10px;
+      text-align: right;
+      margin-bottom: 15px;
+      word-wrap: break-word;
+      min-height: 85px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    #historico {
+      font-size: 14px;
+      color: #a4b0be;
+      min-height: 20px;
+    }
+
+    #tela {
+      font-size: 32px;
+      font-weight: bold;
+    }
+
+    /* Grade de Botões */
+    .botoes {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    button {
+      padding: 18px;
+      font-size: 18px;
+      font-weight: bold;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      background-color: #353b48;
+      color: #f5f6fa;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    button:hover {
+      background-color: #404756;
+    }
+
+    button:active {
+      transform: scale(0.95);
+    }
+
+    /* Cores Especiais */
+    .btn-operador {
+      background-color: #e67e22;
+      color: white;
+    }
+
+    .btn-operador:hover {
+      background-color: #d35400;
+    }
+
+    .btn-limpar {
+      background-color: #c0392b;
+      color: white;
+    }
+
+    .btn-limpar:hover {
+      background-color: #a93226;
+    }
+
+    .btn-igual {
+      background-color: #27ae60;
+      color: white;
+      grid-column: span 2;
+    }
+
+    .btn-igual:hover {
+      background-color: #219150;
+    }
+
+    .btn-zero {
+      grid-column: span 2;
+    }
+  </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+  <div class="calculadora">
+    <div class="visor">
+      <div id="historico"></div>
+      <div id="tela">0</div>
+    </div>
+
+    <div class="botoes">
+      <button class="btn-limpar" onclick="limparTudo()">C</button>
+      <button onclick="apagarUltimo()">⌫</button>
+      <button class="btn-operador" onclick="adicionar('%')">%</button>
+      <button class="btn-operador" onclick="adicionar('/')">÷</button>
+
+      <button onclick="adicionar('7')">7</button>
+      <button onclick="adicionar('8')">8</button>
+      <button onclick="adicionar('9')">9</button>
+      <button class="btn-operador" onclick="adicionar('*')">×</button>
+
+      <button onclick="adicionar('4')">4</button>
+      <button onclick="adicionar('5')">5</button>
+      <button onclick="adicionar('6')">6</button>
+      <button class="btn-operador" onclick="adicionar('-')">−</button>
+
+      <button onclick="adicionar('1')">1</button>
+      <button onclick="adicionar('2')">2</button>
+      <button onclick="adicionar('3')">3</button>
+      <button class="btn-operador" onclick="adicionar('+')">+</button>
+
+      <button class="btn-zero" onclick="adicionar('0')">0</button>
+      <button onclick="adicionar('.')">.</button>
+      <button class="btn-igual" onclick="calcular()">=</button>
+    </div>
+  </div>
+
+  <script>
+    const tela = document.getElementById('tela');
+    const historico = document.getElementById('historico');
+    let expressao = '';
+
+    // Adiciona números ou operadores na tela
+    function adicionar(valor) {
+      if (tela.textContent === 'Erro') {
+        expressao = '';
+      }
+
+      // Evita dois operadores seguidos
+      const operadores = ['+', '-', '*', '/', '%'];
+      const ultimoCaractere = expressao.slice(-1);
+
+      if (operadores.includes(valor) && operadores.includes(ultimoCaractere)) {
+        expressao = expressao.slice(0, -1) + valor;
+      } else {
+        expressao += valor;
+      }
+
+      atualizarTela();
+    }
+
+    // Limpa todo o visor
+    function limparTudo() {
+      expressao = '';
+      historico.textContent = '';
+      tela.textContent = '0';
+    }
+
+    // Apaga o último dígito digitado
+    function apagarUltimo() {
+      if (tela.textContent === 'Erro') {
+        limparTudo();
+        return;
+      }
+      expressao = expressao.slice(0, -1);
+      atualizarTela();
+    }
+
+    // Exibe a expressão formatada no visor
+    function atualizarTela() {
+      if (expressao === '') {
+        tela.textContent = '0';
+      } else {
+        tela.textContent = expressao.replace(/\*/g, '×').replace(/\//g, '÷');
+      }
+    }
+
+    // Calcula o resultado
+    function calcular() {
+      if (expressao === '') return;
+
+      try {
+        historico.textContent = expressao.replace(/\*/g, '×').replace(/\//g, '÷') + ' =';
+        // Converte porcentagem simples (ex: 50% -> 50/100) antes de calcular
+        const contaFormatada = expressao.replace(/(\d+(\.\d+)?)%/g, '($1/100)');
+        const resultado = eval(contaFormatada);
+
+        if (!isFinite(resultado)) {
+          tela.textContent = 'Erro';
+          expressao = '';
+        } else {
+          expressao = String(Number(resultado.toFixed(8)));
+          tela.textContent = expressao;
+        }
+      } catch {
+        tela.textContent = 'Erro';
+        expressao = '';
+      }
+    }
+
+    // Suporte para digitar direto pelo teclado físico
+    document.addEventListener('keydown', function (event) {
+      const tecla = event.key;
+
+      if ((tecla >= '0' && tecla <= '9') || ['+', '-', '*', '/', '.', '%'].includes(tecla)) {
+        adicionar(tecla);
+      } else if (tecla === 'Enter' || tecla === '=') {
+        event.preventDefault();
+        calcular();
+      } else if (tecla === 'Backspace') {
+        apagarUltimo();
+      } else if (tecla === 'Escape') {
+        limparTudo();
+      }
+    });
+  </script>
+
+<script src="script.js"></script></body>
+</html>
