@@ -1,68 +1,76 @@
-let tarefas = [];
-let geradorCodigo = 0;
+let produtos = [];
 
-function validarDadosTarefas(titulo, prioridade) {
-    if (titulo.length < 5) {
-        throw new Error('O título deve ter no mínimo 5 caracteres');
+function validarProduto(descricao, quantidade, valor) {
+    if (typeof descricao !== "string" || descricao.trim().length < 5) {
+        throw new Error("Descrição deve ter no mínimo cinco caracteres");
     }
 
-    if (prioridade < 1 || prioridade > 3) {
-        throw new Error('Informe uma prioridade entre 1 e 3');
+    if (!Number.isInteger(quantidade) || quantidade < 1) {
+        throw new Error("Quantidade deve ser maior que zero");
+    }
+
+    if (typeof valor !== "number" || valor < 0) {
+        throw new Error("Valor deve ser maior ou igual a zero");
     }
 }
 
-function buscarTarefa(codigoTarefa) {
-    const tarefaBuscada = tarefas.find(t => t.codigo === codigoTarefa);
+function cadastrarProduto(descricao, quantidade, valor) {
+    validarProduto(descricao, quantidade, valor);
 
-    if (!tarefaBuscada) {
-        throw new Error('Código de tarefa não encontrado');
-    }
-
-    return tarefaBuscada;
-}
-
-function cadastrarTarefa(titulo, prioridade) {
-    validarDadosTarefas(titulo, prioridade);
-
-    let novaTarefa = {
-        codigo: ++geradorCodigo,
-        titulo: titulo,
-        prioridade: prioridade,
-        status: true
+    let novoProduto = {
+        codigo: produtos.length + 1,
+        descricao: descricao,
+        quantidade: quantidade,
+        valor: valor
     };
 
-    tarefas.push(novaTarefa);
+    produtos.push(novoProduto);
+
+    console.log("Produto cadastrado com sucesso!");
 }
 
-function listarTarefas() {
-    return tarefas;
+function listarProdutos() {
+    console.log(produtos);
 }
 
-function concluirTarefa(codigo) {
-    let tarefa = buscarTarefa(codigo);
-
-    if (tarefa.status === false) {
-        throw new Error('Tarefa já estava como concluída');
+function atualizarValor(codigoProduto, novoValor) {
+    if (typeof novoValor !== "number" || novoValor < 0) {
+        throw new Error("Valor deve ser maior ou igual a zero");
     }
 
-    tarefa.status = false;
+    const produto = produtos.find(prod => prod.codigo === codigoProduto);
+
+    if (produto) {
+        produto.valor = novoValor;
+        console.log("Valor atualizado com sucesso!");
+    } else {
+        throw new Error("Produto não encontrado");
+    }
 }
 
-function alterarPrioridade(codigo, novaPrioridade) {
-    let tarefa = buscarTarefa(codigo);
+function atualizarQuantidade(codigoProduto, novaQuantidade) {
+    if (!Number.isInteger(novaQuantidade) || novaQuantidade < 1) {
+        throw new Error("Quantidade deve ser maior que zero");
+    }
 
-    validarDadosTarefas(tarefa.titulo, novaPrioridade);
+    const produto = produtos.find(prod => prod.codigo === codigoProduto);
 
-    tarefa.prioridade = novaPrioridade;
+    if (produto) {
+        produto.quantidade = novaQuantidade;
+        console.log("Quantidade atualizada com sucesso!");
+    } else {
+        throw new Error("Produto não encontrado");
+    }
 }
 
 // TESTANDO O PROGRAMA
 
-cadastrarTarefa('Estudar JavaScript', 1);
-cadastrarTarefa('Fazer atividade', 2);
+cadastrarProduto("Notebook", 5, 2500);
+cadastrarProduto("Teclado Gamer", 10, 150);
 
-concluirTarefa(1);
+listarProdutos();
 
-alterarPrioridade(2, 3);
+atualizarValor(1, 2300);
+atualizarQuantidade(2, 15);
 
-console.log(listarTarefas());
+listarProdutos();
