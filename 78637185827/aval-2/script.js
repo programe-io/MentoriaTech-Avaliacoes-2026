@@ -1,327 +1,191 @@
+let currentMode="all";
 
-/* NAVEGAÇÃO */
-
-function changeView(view, button) {
-    document.getElementById('feedView').style.display =
-        view === 'feed' ? 'block' : 'none';
-
-    ['explore', 'saved', 'profile'].forEach(id => {
-        document.getElementById(id + 'View')
-            .classList.toggle('visible', view === id);
-    });
-
-    document.querySelectorAll('.nav button').forEach(btn =>
-        btn.classList.remove('active')
-    );
-
-    if (button) button.classList.add('active');
-
-    const titles = {
-        feed: ['Seu universo hoje.', 'Ideias, pessoas e descobertas em um só lugar.'],
-        explore: ['Explore novas ideias.', 'Descubra conteúdo além do seu círculo.'],
-        saved: ['Suas descobertas.', 'Tudo que você decidiu guardar.'],
-        profile: ['Seu espaço.', 'Um pouco de quem você é.']
-    };
-
-    document.getElementById('viewTitle').textContent = titles[view][0];
-    document.getElementById('viewSubtitle').textContent = titles[view][1];
-
-    if(view === 'saved') renderSaved();
-    if(view === 'profile') renderProfile();
-    if(view === 'explore') renderExplore();
+function toast(message){
+  const t=document.getElementById("toast");
+  t.textContent=message;
+  t.style.display="block";
+  clearTimeout(window.toastTimer);
+  window.toastTimer=setTimeout(()=>t.style.display="none",2500);
 }
 
-function mobileView(view, key) {
-    changeView(view);
-
-    document.querySelectorAll('.mobile-bottom button')
-        .forEach(btn => btn.classList.remove('active'));
-
-    const map = {
-        home: 0,
-        search: 1,
-        saved: 3,
-        profile: 4
-    };
-
-    document.querySelectorAll('.mobile-bottom button')[map[key]]
-        .classList.add('active');
+function likePost(button){
+  button.classList.toggle("liked");
+  const count=button.querySelector("span");
+  let value=parseInt(count.textContent);
+  count.textContent=button.classList.contains("liked")?value+1:value-1;
+  button.innerHTML=button.classList.contains("liked")
+    ?"♥ <span>"+count.textContent+"</span>"
+    :"♡ <span>"+count.textContent+"</span>";
 }
 
-/* CURTIDAS */
-
-function likePost(button) {
-    button.classList.toggle('liked');
-
-    if(button.classList.contains('liked')) {
-        button.innerHTML = '♥ <span>Curtido</span>';
-    } else {
-        button.innerHTML = '♡ <span>Curtir</span>';
-    }
+function savePost(button){
+  button.classList.toggle("saved");
+  toast(button.classList.contains("saved")
+    ?"Publicação salva!"
+    :"Publicação removida dos salvos");
 }
 
-/* SALVAR */
-
-function savePost(button) {
-    const post = button.closest('.post');
-    const saved = post.dataset.saved === 'true';
-
-    post.dataset.saved = saved ? 'false' : 'true';
-
-    button.innerHTML = saved ? '◇' : '◆';
-    button.classList.toggle('saved', !saved);
-
-    showMessage(saved
-        ? 'Publicação removida dos salvos.'
-        : 'Publicação salva!'
-    );
-
-    renderSaved();
+function toggleFollow(button){
+  button.classList.toggle("following");
+  button.textContent=button.classList.contains("following")
+    ?"Seguindo"
+    :"Seguir";
 }
 
-/* COMENTÁRIOS */
-
-function focusComment(button) {
-    const input = button.closest('.post')
-        .querySelector('.comment-box input');
-
-    input.focus();
+function suggestFollow(button){
+  button.textContent=button.textContent==="＋"?"✓":"＋";
+  toast(button.textContent==="✓"?"Você começou a seguir!":"");
 }
 
-function commentEnter(event, input) {
-    if(event.key === 'Enter') {
-        addComment(input.nextElementSibling);
-    }
+function commentFocus(button){
+  button.closest(".post").querySelector(".comment-area input").focus();
 }
 
-function addComment(button) {
-    const box = button.closest('.comment-box');
-    const input = box.querySelector('input');
-    const post = button.closest('.post');
+function addComment(input){
+  const text=input.value.trim();
+  if(!text)return;
 
-    const text = input.value.trim();
+  const comments=input.closest(".post").querySelector(".comments");
 
-    if(!text) return;
+  const div=document.createElement("div");
+  div.style.padding="5px 0";
+  div.innerHTML="<strong>Você:</strong> ";
+  div.appendChild(document.createTextNode(text));
 
-    const comment = document.createElement('div');
-    comment.className = 'comments-preview';
-    comment.textContent = 'Você: ' + text;
-
-    box.before(comment);
-    input.value = '';
-
-    const preview = post.querySelector('.comments-preview');
-
-    if(preview) {
-        preview.textContent = 'Comentários atualizados';
-    }
+  comments.appendChild(div);
+  input.value="";
 }
 
-/* SEGUIR */
+function sharePost(button){
+  const post=button.closest(".post");
+  const text=post.querySelector(".post-text").innerText;
 
-function followPerson(button) {
-    const following = button.classList.toggle('following');
-
-    button.textContent = following ? 'Seguindo' : 'Seguir';
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(text)
+      .then(()=>toast("Texto copiado para compartilhar!"))
+      .catch(()=>toast("Não foi possível copiar."));
+  }else{
+    toast("Compartilhamento indisponível.");
+  }
 }
 
-/* PUBLICAÇÃO */
-
-function openModal() {
-    document.getElementById('postModal').classList.add('show');
+function showAll(){
+  currentMode="all";
+  document.getElementById("feedTitle").textContent="Explore o VYRO";
+  filterPosts();
 }
 
-function closeModal() {
-    document.getElementById('postModal').classList.remove('show');
+function showLiked(){
+  currentMode="liked";
+  document.getElementById("feedTitle").textContent="Suas curtidas";
+  filterPosts();
 }
 
-function publishPost() {
-    const text = document.getElementById('postText').value.trim();
-
-    const category =
-        document.getElementById('postCategory').value.trim() || 'Geral';
-
-    if(!text) {
-        showMessage('Escreva algo antes de publicar.');
-        return;
-    }
-
-    const post = document.createElement('article');
-
-    post.className = 'post';
-    post.dataset.search = text.toLowerCase() + ' ' + category.toLowerCase();
-    post.dataset.own = 'true';
-
-    post.innerHTML = `
-        <div class="post-header">
-            <div class="post-user">
-                <div class="avatar">🪐</div>
-                <div>
-                    <strong>Alex Morgan</strong>
-                    <small>agora · ${escapeHTML(category)}</small>
-                </div>
-            </div>
-            <button class="more">•••</button>
-        </div>
-
-        <p class="post-text"></p>
-
-        <div class="post-actions">
-            <button class="action like-action" onclick="likePost(this)">♡ <span>Curtir</span></button>
-            <button class="action" onclick="focusComment(this)">◯ <span>Comentar</span></button>
-            <button class="action save-action" onclick="savePost(this)">◇</button>
-        </div>
-
-        <div class="likes">0 curtidas</div>
-
-        <div class="comment-box">
-            <input placeholder="Escreva um comentário..." onkeydown="commentEnter(event,this)">
-            <button onclick="addComment(this)">Enviar</button>
-        </div>
-    `;
-
-    post.querySelector('.post-text').textContent = text;
-
-    document.getElementById('posts').prepend(post);
-
-    document.getElementById('postText').value = '';
-    document.getElementById('postCategory').value = '';
-
-    closeModal();
-    changeView('feed');
-
-    showMessage('Publicação criada com sucesso!');
+function showSaved(){
+  currentMode="saved";
+  document.getElementById("feedTitle").textContent="Publicações salvas";
+  filterPosts();
 }
 
-/* PERFIL */
+function filterPosts(){
+  const search=document.getElementById("search").value.toLowerCase();
 
-function renderProfile() {
-    const target = document.getElementById('profilePosts');
+  document.querySelectorAll(".post").forEach(post=>{
+    let show=true;
 
-    target.innerHTML = '';
+    if(currentMode==="liked"&&!post.querySelector(".action.liked"))
+      show=false;
 
-    const ownPosts = document.querySelectorAll('.post[data-own="true"]');
+    if(currentMode==="saved"&&!post.querySelector(".action.save.saved"))
+      show=false;
 
-    ownPosts.forEach(post => {
-        target.appendChild(post.cloneNode(true));
-    });
+    const content=post.innerText.toLowerCase();
 
-    document.getElementById('profileStats').textContent =
-        ownPosts.length + ' publicações';
+    if(search&&!content.includes(search))
+      show=false;
+
+    post.style.display=show?"block":"none";
+  });
 }
 
-/* SALVOS */
+document.getElementById("search").addEventListener("input",filterPosts);
 
-function renderSaved() {
-    const target = document.getElementById('savedPosts');
-
-    target.innerHTML = '';
-
-    document.querySelectorAll('.post[data-saved="true"]').forEach(post => {
-        target.appendChild(post.cloneNode(true));
-    });
-
-    if(!target.children.length) {
-        target.innerHTML = `
-            <div class="empty-state">
-                <h2>Nada por aqui ainda.</h2>
-                <p>Salve publicações que você deseja rever mais tarde.</p>
-            </div>
-        `;
-    }
+function openModal(){
+  document.getElementById("modal").classList.add("open");
 }
 
-/* EXPLORAR */
-
-function renderExplore() {
-    const target = document.getElementById('explorePosts');
-
-    target.innerHTML = '';
-
-    document.querySelectorAll('#posts .post').forEach(post => {
-        target.appendChild(post.cloneNode(true));
-    });
+function closeModal(){
+  document.getElementById("modal").classList.remove("open");
 }
 
-/* PESQUISA */
+function createPost(){
+  const name=document.getElementById("newName").value.trim()||"Você";
+  const text=document.getElementById("newText").value.trim();
+  const tags=document.getElementById("newTags").value.trim();
 
-document.getElementById('searchInput').addEventListener('input', function() {
-    const query = this.value.toLowerCase().trim();
+  if(!text){
+    toast("Escreva algo antes de publicar.");
+    return;
+  }
 
-    if(query) changeView('explore');
+  const post=document.createElement("article");
+  post.className="post";
+  post.dataset.tags=tags;
 
-    const posts = document.querySelectorAll('#posts .post');
+  post.innerHTML=`
+    <div class="post-header">
+      <div class="avatar">👤</div>
+      <div class="user-info">
+        <strong>${escapeHTML(name)}</strong>
+        <small>Agora</small>
+      </div>
+    </div>
 
-    posts.forEach(post => {
-        const text = (post.dataset.search || post.innerText).toLowerCase();
+    <div style="padding:30px 20px;background:#eeedff;color:#46416e;font-size:17px;line-height:1.7;min-height:150px">
+      ${escapeHTML(text)}
+    </div>
 
-        post.style.display = text.includes(query) ? '' : 'none';
-    });
+    <div class="post-text">
+      <strong>${escapeHTML(name)}</strong>
+      ${escapeHTML(text)}
+    </div>
 
-    if(!query) {
-        posts.forEach(post => post.style.display = '');
-        changeView('feed');
-    }
-});
+    <div class="tags">${escapeHTML(tags.split(" ").map(t=>t.startsWith("#")?t:"#"+t).join(" "))}</div>
 
-/* SEGURANÇA DE TEXTO */
+    <div class="post-actions">
+      <button class="action" onclick="likePost(this)">♡ <span>0</span></button>
+      <button class="action" onclick="commentFocus(this)">◯ <span>0</span></button>
+      <button class="action" onclick="sharePost(this)">↗</button>
+      <button class="action save" onclick="savePost(this)" style="margin-left:auto">▣</button>
+    </div>
 
-function escapeHTML(text) {
-    return text.replace(/[&<>"']/g, function(char) {
-        const map = {
-            '&':'&amp;',
-            '<':'&lt;',
-            '>':'&gt;',
-            '"':'&quot;',
-            "'":'&#039;'
-        };
+    <div class="comments"></div>
 
-        return map[char];
-    });
+    <div class="comment-area">
+      <input placeholder="Escreva um comentário..." onkeydown="if(event.key==='Enter')addComment(this)">
+      <button onclick="addComment(this.previousElementSibling)">Enviar</button>
+    </div>
+  `;
+
+  document.getElementById("feed").prepend(post);
+
+  document.getElementById("newName").value="";
+  document.getElementById("newText").value="";
+  document.getElementById("newTags").value="";
+
+  closeModal();
+  showAll();
+  toast("Publicação criada com sucesso!");
 }
 
-/* MENSAGENS */
-
-function showMessage(message) {
-    let toast = document.getElementById('toast');
-
-    if(!toast) {
-        toast = document.createElement('div');
-        toast.id = 'toast';
-
-        toast.style.cssText = `
-            position:fixed;
-            bottom:85px;
-            left:50%;
-            transform:translateX(-50%);
-            background:#142e31;
-            color:white;
-            padding:14px 20px;
-            border-radius:12px;
-            font-size:13px;
-            z-index:999;
-            box-shadow:0 5px 25px rgba(0,0,0,.15);
-        `;
-
-        document.body.appendChild(toast);
-    }
-
-    toast.textContent = message;
-    toast.style.display = 'block';
-
-    clearTimeout(window.toastTimeout);
-
-    window.toastTimeout = setTimeout(() => {
-        toast.style.display = 'none';
-    }, 2500);
+function escapeHTML(str){
+  return str.replace(/[&<>"']/g,function(match){
+    return {
+      "&":"&amp;",
+      "<":"&lt;",
+      ">":"&gt;",
+      '"':"&quot;",
+      "'":"&#039;"
+    }[match];
+  });
 }
-
-/* MODAL */
-
-document.getElementById('postModal').addEventListener('click', function(event) {
-    if(event.target === this) closeModal();
-});
-
-/* INICIALIZAÇÃO */
-
-renderSaved();
