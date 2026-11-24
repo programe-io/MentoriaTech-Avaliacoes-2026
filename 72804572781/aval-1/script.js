@@ -1,86 +1,115 @@
 
-const produtos = [
+const products = [
     {
         id: 1,
-        nome: "Fone Bluetooth",
-        preco: 129.90,
-        categoria: "Eletrônicos",
-        imagem: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500"
+        name: "Fone Bluetooth",
+        category: "Eletrônicos",
+        price: 129.90,
+        image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500"
     },
     {
         id: 2,
-        nome: "Smartwatch",
-        preco: 199.90,
-        categoria: "Eletrônicos",
-        imagem: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500"
+        name: "Relógio Moderno",
+        category: "Acessórios",
+        price: 189.90,
+        image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500"
     },
     {
         id: 3,
-        nome: "Tênis Casual",
-        preco: 159.90,
-        categoria: "Moda",
-        imagem: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500"
+        name: "Tênis Casual",
+        category: "Moda",
+        price: 219.90,
+        image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500"
     },
     {
         id: 4,
-        nome: "Mochila",
-        preco: 89.90,
-        categoria: "Acessórios",
-        imagem: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500"
+        name: "Óculos de Sol",
+        category: "Acessórios",
+        price: 89.90,
+        image: "https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=500"
     },
     {
         id: 5,
-        nome: "Óculos de Sol",
-        preco: 79.90,
-        categoria: "Acessórios",
-        imagem: "https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=500"
+        name: "Smartphone",
+        category: "Eletrônicos",
+        price: 1299.90,
+        image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=500"
     },
     {
         id: 6,
-        nome: "Camiseta",
-        preco: 59.90,
-        categoria: "Moda",
-        imagem: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500"
+        name: "Jaqueta Fashion",
+        category: "Moda",
+        price: 249.90,
+        image: "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=500"
+    },
+    {
+        id: 7,
+        name: "Bolsa Feminina",
+        category: "Acessórios",
+        price: 159.90,
+        image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=500"
+    },
+    {
+        id: 8,
+        name: "Câmera Digital",
+        category: "Eletrônicos",
+        price: 899.90,
+        image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=500"
     }
 ];
 
-let carrinho = [];
-let categoriaAtual = "Todos";
+let cart = [];
+let currentCategory = "Todos";
 
-function formatar(valor) {
-    return valor.toLocaleString("pt-BR", {
+const grid = document.getElementById("products-grid");
+const search = document.getElementById("search");
+
+function formatPrice(value) {
+    return value.toLocaleString("pt-BR", {
         style: "currency",
         currency: "BRL"
     });
 }
 
-function mostrarProdutos(lista = produtos) {
-    const container = document.getElementById("listaProdutos");
+// Mostrar produtos
+function renderProducts() {
+    const term = search.value.toLowerCase();
 
-    container.innerHTML = "";
+    const filtered = products.filter(product => {
+        const matchesCategory =
+            currentCategory === "Todos" ||
+            product.category === currentCategory;
 
-    if (lista.length === 0) {
-        container.innerHTML = "<p>Nenhum produto encontrado.</p>";
+        const matchesSearch =
+            product.name.toLowerCase().includes(term);
+
+        return matchesCategory && matchesSearch;
+    });
+
+    grid.innerHTML = "";
+
+    if (filtered.length === 0) {
+        grid.innerHTML = "<p>Nenhum produto encontrado.</p>";
         return;
     }
 
-    lista.forEach(produto => {
-        container.innerHTML += `
-            <div class="produto">
-                <img src="${produto.imagem}"
-                     alt="${produto.nome}"
-                     loading="lazy">
+    filtered.forEach(product => {
+        grid.innerHTML += `
+            <div class="product-card">
+                <img src="${product.image}" alt="${product.name}">
+                <div class="product-info">
+                    <span class="product-category">
+                        ${product.category}
+                    </span>
 
-                <div class="info">
-                    <h3>${produto.nome}</h3>
-                    <p>${produto.categoria}</p>
+                    <h3>${product.name}</h3>
 
-                    <div class="preco">
-                        ${formatar(produto.preco)}
+                    <div class="price">
+                        ${formatPrice(product.price)}
                     </div>
 
-                    <button class="adicionar"
-                        onclick="adicionarCarrinho(${produto.id})">
+                    <button class="add-button"
+                        onclick="addToCart(${product.id})">
                         Adicionar ao carrinho
                     </button>
                 </div>
@@ -89,134 +118,123 @@ function mostrarProdutos(lista = produtos) {
     });
 }
 
-function adicionarCarrinho(id) {
-    const produto = produtos.find(p => p.id === id);
+// Filtrar categorias
+function filterProducts(category, button) {
+    currentCategory = category;
 
-    const item = carrinho.find(p => p.id === id);
+    document.querySelectorAll(".category").forEach(btn => {
+        btn.classList.remove("active");
+    });
 
-    if (item) {
-        item.quantidade++;
+    button.classList.add("active");
+
+    renderProducts();
+}
+
+// Pesquisar
+search.addEventListener("input", renderProducts);
+
+// Adicionar ao carrinho
+function addToCart(id) {
+    const product = products.find(item => item.id === id);
+
+    const existing = cart.find(item => item.id === id);
+
+    if (existing) {
+        existing.quantity++;
     } else {
-        carrinho.push({
-            ...produto,
-            quantidade: 1
+        cart.push({
+            ...product,
+            quantity: 1
         });
     }
 
-    atualizarCarrinho();
-    alert("Produto adicionado ao carrinho!");
+    updateCart();
+
+    alert(product.name + " adicionado ao carrinho!");
 }
 
-function atualizarCarrinho() {
-    const container = document.getElementById("itensCarrinho");
+// Remover produto
+function removeFromCart(id) {
+    cart = cart.filter(item => item.id !== id);
+    updateCart();
+}
 
-    container.innerHTML = "";
+// Atualizar carrinho
+function updateCart() {
+    const cartItems = document.getElementById("cart-items");
 
-    let total = 0;
-    let quantidadeTotal = 0;
+    const totalItems = cart.reduce(
+        (sum, item) => sum + item.quantity, 0
+    );
 
-    carrinho.forEach(item => {
-        total += item.preco * item.quantidade;
-        quantidadeTotal += item.quantidade;
+    document.getElementById("cart-count").textContent = totalItems;
 
-        container.innerHTML += `
-            <div class="item-carrinho">
+    cartItems.innerHTML = "";
+
+    if (cart.length === 0) {
+        cartItems.innerHTML = "<p>Seu carrinho está vazio.</p>";
+    }
+
+    cart.forEach(item => {
+        cartItems.innerHTML += `
+            <div class="cart-item">
                 <div>
-                    <strong>${item.nome}</strong><br>
-                    ${formatar(item.preco)}
-                    <br>
-                    Quantidade: ${item.quantidade}
+                    <h4>${item.name}</h4>
+                    <p>${formatPrice(item.price)} x ${item.quantity}</p>
                 </div>
 
-                <div>
-                    <button onclick="alterarQuantidade(${item.id}, -1)">−</button>
-                    <button onclick="alterarQuantidade(${item.id}, 1)">+</button>
-                    <button onclick="removerItem(${item.id})">🗑️</button>
-                </div>
+                <button class="remove-button"
+                    onclick="removeFromCart(${item.id})">
+                    Remover
+                </button>
             </div>
         `;
     });
 
-    document.getElementById("total").textContent = formatar(total);
-    document.getElementById("contador").textContent = quantidadeTotal;
+    const total = cart.reduce(
+        (sum, item) => sum + item.price * item.quantity, 0
+    );
+
+    document.getElementById("cart-total").textContent =
+        formatPrice(total);
 }
 
-function alterarQuantidade(id, valor) {
-    const item = carrinho.find(p => p.id === id);
+// Abrir e fechar carrinho
+function toggleCart() {
+    document.getElementById("cart").classList.toggle("open");
 
-    if (!item) return;
-
-    item.quantidade += valor;
-
-    if (item.quantidade <= 0) {
-        removerItem(id);
-    } else {
-        atualizarCarrinho();
-    }
+    document.getElementById("cart-overlay")
+        .classList.toggle("open");
 }
 
-function removerItem(id) {
-    carrinho = carrinho.filter(p => p.id !== id);
-    atualizarCarrinho();
-}
-
-function abrirCarrinho() {
-    document.getElementById("modalCarrinho").style.display = "flex";
-}
-
-function fecharCarrinho() {
-    document.getElementById("modalCarrinho").style.display = "none";
-}
-
-function filtrarCategoria(categoria) {
-    categoriaAtual = categoria;
-    filtrarProdutos();
-}
-
-function filtrarProdutos() {
-    const pesquisa = document
-        .getElementById("pesquisa")
-        .value.toLowerCase();
-
-    const filtrados = produtos.filter(produto => {
-        const combinaNome = produto.nome.toLowerCase().includes(pesquisa);
-
-        const combinaCategoria =
-            categoriaAtual === "Todos" ||
-            produto.categoria === categoriaAtual;
-
-        return combinaNome && combinaCategoria;
-    });
-
-    mostrarProdutos(filtrados);
-}
-
-function finalizarCompra() {
-    if (carrinho.length === 0) {
+// Finalizar pedido no WhatsApp
+function checkout() {
+    if (cart.length === 0) {
         alert("Seu carrinho está vazio!");
         return;
     }
 
-    const numeroWhatsApp = "5511999999999";
+    const telefone = "5511999999999";
 
-    let mensagem = "Olá! Quero fazer um pedido:\n\n";
+    let mensagem = "Olá! Gostaria de fazer um pedido:\n\n";
 
-    carrinho.forEach(item => {
-        mensagem += `${item.nome} - Quantidade: ${item.quantidade}\n`;
-        mensagem += `Subtotal: ${formatar(item.preco * item.quantidade)}\n\n`;
+    cart.forEach(item => {
+        mensagem += `${item.name} - Quantidade: ${item.quantity}\n`;
+        mensagem += `Preço: ${formatPrice(item.price * item.quantity)}\n\n`;
     });
 
-    const total = carrinho.reduce(
-        (soma, item) => soma + item.preco * item.quantidade,
-        0
+    const total = cart.reduce(
+        (sum, item) => sum + item.price * item.quantity, 0
     );
 
-    mensagem += `TOTAL: ${formatar(total)}`;
+    mensagem += `Total do pedido: ${formatPrice(total)}`;
 
-    const link = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensagem)}`;
+    const url = `https://wa.me/${telefone}?text=${encodeURIComponent(mensagem)}`;
 
-    window.open(link, "_blank");
+    window.open(url, "_blank");
 }
 
-mostrarProdutos();
-atualizarCarrinho();
+// Inicializar
+renderProducts();
+updateCart();
