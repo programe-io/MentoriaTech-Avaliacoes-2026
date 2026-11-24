@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Controle de IMC</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      background: #142f49;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      color: #203247;
+    }
+    .container {
+      width: 100%;
+      max-width: 440px;
+      background: #fff;
+      border-radius: 14px;
+      padding: 28px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.22);
+    }
+    h1 {
+      margin: 0 0 8px;
+      text-align: center;
+      color: #08a987;
+      font-size: 26px;
+    }
+    .subtitle {
+      margin: 0 0 24px;
+      text-align: center;
+      color: #536273;
+    }
+    label {
+      display: block;
+      margin: 14px 0 6px;
+      font-weight: bold;
+    }
+    input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #cbd5df;
+      border-radius: 7px;
+      font-size: 16px;
+    }
+    input:focus {
+      outline: 2px solid #08a987;
+      border-color: #08a987;
+    }
+    button {
+      width: 100%;
+      margin-top: 22px;
+      padding: 13px;
+      border: 0;
+      border-radius: 7px;
+      background: #08a987;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover { background: #078d72; }
+    #resultado {
+      display: none;
+      margin-top: 22px;
+      padding: 16px;
+      border-left: 4px solid #08a987;
+      border-radius: 6px;
+      background: #eefaf7;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+    }
+    #resultado h2 {
+      margin: 0 0 8px;
+      font-size: 20px;
+      color: #087d67;
+    }
+    .aviso {
+      margin: 12px 0 0;
+      font-size: 13px;
+      color: #526273;
+    }
+  </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <main class="container">
+    <h1>Controle de IMC</h1>
+    <p class="subtitle">Projeto prático com HTML e JavaScript</p>
+
+    <form id="formulario">
+      <label for="nome">Nome do paciente:</label>
+      <input type="text" id="nome" placeholder="Digite o nome" required>
+
+      <label for="peso">Peso (kg):</label>
+      <input type="number" id="peso" placeholder="Ex.: 65,5"
+             min="0.1" step="any" required>
+
+      <label for="altura">Altura (m):</label>
+      <input type="number" id="altura" placeholder="Ex.: 1,70"
+             min="0.1" step="any" required>
+
+      <button type="submit">Calcular IMC</button>
+    </form>
+
+    <section id="resultado" aria-live="polite"></section>
+  </main>
+
+  <script>
+    const formulario = document.getElementById("formulario");
+    const resultado = document.getElementById("resultado");
+
+    formulario.addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      const nome = document.getElementById("nome").value.trim();
+      const peso = Number(document.getElementById("peso").value);
+      const altura = Number(document.getElementById("altura").value);
+
+      if (!nome || !Number.isFinite(peso) || !Number.isFinite(altura)
+          || peso <= 0 || altura <= 0) {
+        resultado.style.display = "block";
+        resultado.textContent = "Preencha todos os campos com valores válidos.";
+        return;
+      }
+
+      const imc = peso / (altura * altura);
+
+      resultado.style.display = "block";
+      resultado.innerHTML = `
+        <h2>Resultado do paciente</h2>
+        <p><strong>Nome:</strong> ${escapeHTML(nome)}</p>
+        <p><strong>IMC calculado:</strong> ${imc.toFixed(2).replace(".", ",")}</p>
+        <p>O IMC é calculado dividindo o peso pela altura ao quadrado.</p>
+        <p class="aviso">A interpretação do IMC depende da idade e de outros fatores.
+        Em crianças e adolescentes, a avaliação deve considerar a idade e o sexo;
+        o número sozinho não define a saúde de uma pessoa.</p>
+      `;
+    });
+
+    function escapeHTML(texto) {
+      return texto.replace(/[&<>"']/g, function(caractere) {
+        const entidades = {
+          "&": "&amp;", "<": "&lt;", ">": "&gt;",
+          '"': "&quot;", "'": "&#039;"
+        };
+        return entidades[caractere];
+      });
+    }
+  </script>
+</body>
+</html>
