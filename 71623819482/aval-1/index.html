@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Controle de Estoque</title>
+  <link rel="stylesheet" href="style.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+  <header class="topo">
+    <div class="container topo-conteudo">
+      <h1>📦 Controle de Estoque</h1>
+      <div class="acoes-topo">
+        <button id="btnExportar" class="btn btn-secundario">Exportar CSV</button>
+        <button id="btnNovoProduto" class="btn btn-primario">+ Novo Produto</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Cards de Resumo -->
+    <section class="cards-resumo">
+      <div class="card">
+        <span>Total de Produtos</span>
+        <strong id="resumoTotalProdutos">0</strong>
+      </div>
+      <div class="card">
+        <span>Unidades em Estoque</span>
+        <strong id="resumoTotalUnidades">0</strong>
+      </div>
+      <div class="card">
+        <span>Valor Total</span>
+        <strong id="resumoValorTotal">R$ 0,00</strong>
+      </div>
+      <div class="card card-alerta">
+        <span>Estoque Baixo / Esgotado</span>
+        <strong id="resumoAlertas">0</strong>
+      </div>
+    </section>
+
+    <!-- Filtros -->
+    <section class="filtros">
+      <input type="text" id="inputBusca" placeholder="Buscar por nome ou SKU...">
+      <select id="filtroCategoria">
+        <option value="">Todas as categorias</option>
+      </select>
+      <select id="filtroStatus">
+        <option value="">Todos os status</option>
+        <option value="normal">Normal</option>
+        <option value="baixo">Estoque Baixo</option>
+        <option value="esgotado">Esgotado</option>
+      </select>
+    </section>
+
+    <!-- Tabela de Produtos -->
+    <section class="tabela-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>SKU</th>
+            <th>Produto</th>
+            <th>Categoria</th>
+            <th>Preço Unit.</th>
+            <th>Qtd. Atual</th>
+            <th>Status</th>
+            <th>Movimentar</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="tabelaProdutos">
+          <!-- Preenchido via JavaScript -->
+        </tbody>
+      </table>
+      <p id="mensagemVazia" class="mensagem-vazia oculto">Nenhum produto encontrado.</p>
+    </section>
+
+    <!-- Histórico de Movimentações -->
+    <section class="historico-secao">
+      <div class="historico-topo">
+        <h2>Histórico de Movimentações</h2>
+        <button id="btnLimparHistorico" class="btn btn-texto">Limpar histórico</button>
+      </div>
+      <ul id="listaHistorico" class="lista-historico">
+        <!-- Preenchido via JavaScript -->
+      </ul>
+    </section>
+  </main>
+
+  <!-- Modal Cadastrar / Editar Produto -->
+  <div id="modalProduto" class="modal-fundo oculto">
+    <div class="modal">
+      <div class="modal-cabecalho">
+        <h3 id="modalTitulo">Novo Produto</h3>
+        <button class="btn-fechar" onclick="fecharModal('modalProduto')">&times;</button>
+      </div>
+      <form id="formProduto">
+        <input type="hidden" id="produtoId">
+        <div class="campo">
+          <label for="produtoNome">Nome do Produto *</label>
+          <input type="text" id="produtoNome" required placeholder="Ex: Teclado Mecânico">
+        </div>
+        <div class="campo-duplo">
+          <div class="campo">
+            <label for="produtoSku">Código / SKU *</label>
+            <input type="text" id="produtoSku" required placeholder="Ex: TEC-001">
+          </div>
+          <div class="campo">
+            <label for="produtoCategoria">Categoria *</label>
+            <input type="text" id="produtoCategoria" required placeholder="Ex: Periféricos">
+          </div>
+        </div>
+        <div class="campo-triplo">
+          <div class="campo">
+            <label for="produtoPreco">Preço (R$) *</label>
+            <input type="number" id="produtoPreco" step="0.01" min="0" required placeholder="0.00">
+          </div>
+          <div class="campo">
+            <label for="produtoQtd">Qtd. Inicial *</label>
+            <input type="number" id="produtoQtd" min="0" required placeholder="0">
+          </div>
+          <div class="campo">
+            <label for="produtoMinimo">Estoque Mín. *</label>
+            <input type="number" id="produtoMinimo" min="0" required placeholder="5">
+          </div>
+        </div>
+        <div class="modal-rodape">
+          <button type="button" class="btn btn-secundario" onclick="fecharModal('modalProduto')">Cancelar</button>
+          <button type="submit" class="btn btn-primario">Salvar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Movimentação (Entrada/Saída em lote) -->
+  <div id="modalMovimentacao" class="modal-fundo oculto">
+    <div class="modal">
+      <div class="modal-cabecalho">
+        <h3 id="movTitulo">Registrar Movimentação</h3>
+        <button class="btn-fechar" onclick="fecharModal('modalMovimentacao')">&times;</button>
+      </div>
+      <form id="formMovimentacao">
+        <input type="hidden" id="movProdutoId">
+        <p id="movProdutoNome" class="destaque-produto"></p>
+        <div class="campo-duplo">
+          <div class="campo">
+            <label for="movTipo">Tipo</label>
+            <select id="movTipo">
+              <option value="entrada">Entrada (+)</option>
+              <option value="saida">Saída (-)</option>
+            </select>
+          </div>
+          <div class="campo">
+            <label for="movQuantidade">Quantidade *</label>
+            <input type="number" id="movQuantidade" min="1" required value="1">
+          </div>
+        </div>
+        <div class="campo">
+          <label for="movMotivo">Observação / Motivo</label>
+          <input type="text" id="movMotivo" placeholder="Ex: Compra fornecedor, Venda #102...">
+        </div>
+        <div class="modal-rodape">
+          <button type="button" class="btn btn-secundario" onclick="fecharModal('modalMovimentacao')">Cancelar</button>
+          <button type="submit" class="btn btn-primario">Confirmar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+<script src="script.js"></script></body>
+</html>
