@@ -1,14 +1,28 @@
 
-function mensagem() {
-    alert("Bem-vindo ao universo do ORUAM! 🔥");
+function curtir(botao) {
+    const post = botao.closest(".post");
+    const likes = post.querySelector(".likes");
+
+    let quantidade = Number(likes.dataset.count || 0);
+
+    if (botao.dataset.liked === "true") {
+        quantidade--;
+        botao.dataset.liked = "false";
+        botao.style.color = "black";
+    } else {
+        quantidade++;
+        botao.dataset.liked = "true";
+        botao.style.color = "red";
+    }
+
+    likes.dataset.count = quantidade;
+    likes.innerText = quantidade + " curtidas";
 }
 
-window.addEventListener("scroll", () => {
-    const header = document.querySelector("header");
+function comentar() {
+    const comentario = prompt("Digite seu comentário:");
 
-    if (window.scrollY > 50) {
-        header.style.borderBottom = "2px solid red";
-    } else {
-        header.style.borderBottom = "none";
+    if (comentario) {
+        alert("Comentário publicado: " + comentario);
     }
-});
+}
