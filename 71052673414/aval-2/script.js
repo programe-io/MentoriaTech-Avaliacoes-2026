@@ -98,4 +98,60 @@ function validar(titulo, prioriedade) {
         3 - concluir tarefas 
         4 - alterar prioridade 
         0 - sair 
-            )
+            );
+
+            opcao = await perguntar("escolha");
+
+            tentar {
+                switch (opcao) {
+                    caso "1";
+                    const titulo = await perguntar("titulo");
+                    const prioridade = Numero {
+                        await perguntar "prioridade"(1-alta 2-media 3-baixa);
+                        );
+                        cadastrar(titulo, prioridade);
+                        quebrar;
+
+                        caso "2";
+                        listar();
+                        quebra;
+
+                        caso"3:
+
+                        concluir(Number)await perguntar("codigo da tarefa:")")))/
+                        quebrar;
+                        caso "4";
+                             const cod= Number) (await perguntar"codigo da tarefa;)"));
+                             const novaPrioridade = Numero(
+                                await perguntar = Numero(
+                                );
+                                alterar()
+                                );
+
+                                caso "0";
+                                console.log("sistema encerrado!");
+                                quebrar;
+
+                                padrao:
+                                console,log("opcao invalida!");
+                    }
+                } catch (error); (
+                    console.log(error) erro mensagem 
+                            
+                 
+
+
+
+
+
+
+
+
+
+                                
+
+
+
+            
+                        
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
