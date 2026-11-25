@@ -1,196 +1,139 @@
 
-let tarefas = JSON.parse(localStorage.getItem("tarefas")) || [];
+const formulario = document.getElementById("formPaciente");
+const lista = document.getElementById("listaPacientes");
+const pesquisa = document.getElementById("pesquisa");
 
-let filtroAtual = "todas";
-
-const hoje = new Date();
-
-document.getElementById("dataAtual").textContent =
-    hoje.toLocaleDateString("pt-BR", {
-        weekday: "long",
-        day: "numeric",
-        month: "long",
-        year: "numeric"
-    });
+let pacientes = JSON.parse(localStorage.getItem("pacientes")) || [];
 
 function salvarDados() {
-    localStorage.setItem("tarefas", JSON.stringify(tarefas));
+  localStorage.setItem("pacientes", JSON.stringify(pacientes));
 }
 
-function abrirFormulario() {
-    document.getElementById("modal").classList.add("ativo");
-}
+function mostrarPacientes(filtro = "") {
+  lista.innerHTML = "";
 
-function fecharFormulario() {
-    document.getElementById("modal").classList.remove("ativo");
-}
+  const encontrados = pacientes.filter(p =>
+    p.nome.toLowerCase().includes(filtro.toLowerCase())
+  );
 
-function adicionarTarefa() {
-    const nome = document.getElementById("nomeTarefa").value.trim();
-    const descricao = document.getElementById("descricao").value.trim();
-    const categoria = document.getElementById("categoria").value;
-    const prioridade = document.getElementById("prioridade").value;
-    const prazo = document.getElementById("prazo").value;
+  encontrados.forEach((p, index) => {
+    const card = document.createElement("div");
+    card.className = "card-paciente";
 
-    if (!nome) {
-        alert("Digite o nome da tarefa!");
-        return;
-    }
+    const titulo = document.createElement("h3");
+    titulo.textContent = p.nome;
 
-    tarefas.push({
-        id: Date.now(),
-        nome,
-        descricao,
-        categoria,
-        prioridade,
-        prazo,
-        concluida: false
+    const campos = [
+      `Idade: ${p.idade}`,
+      `Sexo: ${p.sexo}`,
+      `Tipo sanguíneo: ${p.sangue}`,
+      `Telefone: ${p.telefone || "Não informado"}`,
+      `Alergias: ${p.alergias || "Não informado"}`,
+      `Sintomas: ${p.sintomas}`,
+      `Histórico: ${p.historico || "Não informado"}`,
+      `Diagnóstico: ${p.diagnostico || "Não informado"}`,
+      `Prescrição: ${p.prescricao || "Não informado"}`
+    ];
+
+    card.appendChild(titulo);
+
+    campos.forEach(texto => {
+      const paragrafo = document.createElement("p");
+      paragrafo.textContent = texto;
+      card.appendChild(paragrafo);
     });
 
-    salvarDados();
-    atualizar();
+    const acoes = document.createElement("div");
+    acoes.className = "acoes";
 
-    document.getElementById("nomeTarefa").value = "";
-    document.getElementById("descricao").value = "";
-    document.getElementById("prazo").value = "";
+    const imprimir = document.createElement("button");
+    imprimir.textContent = "Imprimir";
+    imprimir.onclick = () => imprimirFicha(p);
 
-    fecharFormulario();
-}
-
-function concluir(id) {
-    tarefas = tarefas.map(t => {
-        if (t.id === id) {
-            t.concluida = !t.concluida;
-        }
-        return t;
-    });
-
-    salvarDados();
-    atualizar();
-}
-
-function excluir(id) {
-    if (confirm("Deseja realmente excluir esta tarefa?")) {
-        tarefas = tarefas.filter(t => t.id !== id);
+    const excluir = document.createElement("button");
+    excluir.textContent = "Excluir";
+    excluir.className = "excluir";
+    excluir.onclick = () => {
+      if (confirm("Deseja excluir esta ficha?")) {
+        pacientes.splice(pacientes.indexOf(p), 1);
         salvarDados();
-        atualizar();
-    }
-}
-
-function filtrar(filtro, botao) {
-    filtroAtual = filtro;
-
-    document.querySelectorAll(".menu").forEach(b => {
-        b.classList.remove("ativo");
-    });
-
-    botao.classList.add("ativo");
-
-    const titulos = {
-        todas: "Minhas tarefas",
-        pendente: "Tarefas pendentes",
-        concluida: "Tarefas concluídas",
-        Estudos: "Tarefas de estudos",
-        Trabalho: "Tarefas de trabalho",
-        Pessoal: "Tarefas pessoais"
+        mostrarPacientes(pesquisa.value);
+      }
     };
 
-    document.getElementById("tituloLista").textContent = titulos[filtro];
+    acoes.append(imprimir, excluir);
+    card.appendChild(acoes);
+    lista.appendChild(card);
+  });
 
-    atualizar();
+  if (encontrados.length === 0) {
+    lista.textContent = "Nenhum paciente encontrado.";
+  }
 }
 
-function atualizar() {
-    const total = tarefas.length;
-    const concluidas = tarefas.filter(t => t.concluida).length;
-    const pendentes = total - concluidas;
+formulario.addEventListener("submit", function(event) {
+  event.preventDefault();
 
-    const porcentagem = total === 0
-        ? 0
-        : Math.round((concluidas / total) * 100);
+  const paciente = {
+    nome: document.getElementById("nome").value.trim(),
+    idade: document.getElementById("idade").value,
+    sexo: document.getElementById("sexo").value,
+    sangue: document.getElementById("sangue").value,
+    telefone: document.getElementById("telefone").value,
+    alergias: document.getElementById("alergias").value,
+    sintomas: document.getElementById("sintomas").value,
+    historico: document.getElementById("historico").value,
+    diagnostico: document.getElementById("diagnostico").value,
+    prescricao: document.getElementById("prescricao").value
+  };
 
-    document.getElementById("total").textContent = total;
-    document.getElementById("pendentes").textContent = pendentes;
-    document.getElementById("concluidas").textContent = concluidas;
-    document.getElementById("porcentagem").textContent = porcentagem + "%";
+  pacientes.push(paciente);
+  salvarDados();
+  formulario.reset();
+  mostrarPacientes();
 
-    document.getElementById("progressoTexto").textContent = porcentagem + "%";
-    document.getElementById("barraInterna").style.width = porcentagem + "%";
+  alert("Ficha cadastrada com sucesso!");
+});
 
-    let lista = tarefas;
+pesquisa.addEventListener("input", () => {
+  mostrarPacientes(pesquisa.value);
+});
 
-    if (filtroAtual === "pendente") {
-        lista = tarefas.filter(t => !t.concluida);
-    } else if (filtroAtual === "concluida") {
-        lista = tarefas.filter(t => t.concluida);
-    } else if (["Estudos", "Trabalho", "Pessoal"].includes(filtroAtual)) {
-        lista = tarefas.filter(t => t.categoria === filtroAtual);
-    }
+function imprimirFicha(p) {
+  const janela = window.open("", "_blank");
 
-    const area = document.getElementById("listaTarefas");
+  janela.document.write(`
+    <html>
+    <head>
+      <title>Ficha Médica</title>
+      <style>
+        body { font-family: Arial; padding: 30px; }
+        h1 { color: #9b7920; }
+        p { margin: 12px 0; }
+      </style>
+    </head>
+    <body>
+      <h1>MediCare Pro - Ficha Médica</h1>
+      <h2>${escapar(p.nome)}</h2>
+      ${Object.entries(p).map(([chave, valor]) =>
+        `<p><strong>${escapar(chave)}:</strong> ${escapar(valor)}</p>`
+      ).join("")}
+    </body>
+    </html>
+  `);
 
-    if (lista.length === 0) {
-        area.innerHTML = `
-            <div class="vazio">
-                <h2>📭</h2>
-                <h3>Nenhuma tarefa encontrada</h3>
-                <p>Adicione uma nova tarefa para começar!</p>
-            </div>
-        `;
-        return;
-    }
-
-    area.innerHTML = lista.map(t => {
-        const prioridadeClasse =
-            t.prioridade === "Alta" ? "alta" :
-            t.prioridade === "Média" ? "media" : "";
-
-        return `
-            <div class="tarefa ${t.concluida ? "concluida" : ""}">
-
-                <input class="check"
-                    type="checkbox"
-                    ${t.concluida ? "checked" : ""}
-                    onchange="concluir(${t.id})">
-
-                <div class="info">
-                    <h3>${escapar(t.nome)}</h3>
-                    <p>${escapar(t.descricao || "Sem descrição")}</p>
-                    <small>
-                        ${t.categoria} 
-                        ${t.prazo ? " • Prazo: " + formatarData(t.prazo) : ""}
-                    </small>
-                </div>
-
-                <span class="prioridade ${prioridadeClasse}">
-                    ${t.prioridade}
-                </span>
-
-                <div class="acoes">
-                    <button class="excluir"
-                        onclick="excluir(${t.id})">
-                        🗑
-                    </button>
-                </div>
-
-            </div>
-        `;
-    }).join("");
+  janela.document.close();
+  janela.print();
 }
 
-function formatarData(data) {
-    const [ano, mes, dia] = data.split("-");
-    return `${dia}/${mes}/${ano}`;
+function escapar(valor) {
+  return String(valor).replace(/[&<>"']/g, caractere => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[caractere]);
 }
 
-function escapar(texto) {
-    return String(texto).replace(/[&<>"']/g, letra => ({
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#39;"
-    })[letra]);
-}
-
-atualizar();
+mostrarPacientes();
