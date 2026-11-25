@@ -1,33 +1,17 @@
-let contadorCodigo = 0;
 
-let tarefas = [
-    {
-        id: gerarCodigo(),
-        titulo: "Estudar JavaScript",
-        concluida: false
-    },
-    {
-        id: gerarCodigo(),
-        titulo: "Montar o Slide de Apresentação do Trabalho",
-        concluida: true
+const formulario = document.getElementById("ficha");
+
+formulario.addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    if (!formulario.checkValidity()) {
+        formulario.reportValidity();
+        return;
     }
-];
 
-function gerarCodigo() {
-    return ++contadorCodigo;
-}
+    alert("Ficha médica preenchida com sucesso! Agora você pode imprimir.");
 
-// Mapeamento dos elementos do DOM
-const formTarefa = document.getElementById("form-tarefa");
-const inputTitulo = document.getElementById("input-titulo");
-const listaTarefas = document.getElementById("lista-tarefas");
+});
 
-function render() {
-    listaTarefas.innerHTML = "";
-
-    tarefas.forEach((tarefa) => {
-        const li = document.createElement("li");
-
-        li.textContent = tarefa.titulo;
-
-        if (tarefa.concluida) {
+document.getElementById("dataConsulta").value =
+    new Date().toISOString().split("T")[0];
