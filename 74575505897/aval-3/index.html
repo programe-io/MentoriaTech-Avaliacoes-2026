@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Código JavaScript</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <style>body{margin:0;background:#0d1117}pre{margin:0}code.hljs{padding:1.5rem;min-height:100vh;box-sizing:border-box}</style>
+</head>
+<body>
+  <pre><code class="language-javascript">let tarefas = [];
+
+function adicionarTarefa(titulo) {
+    let tarefa = {
+        id: Date.now(),
+        titulo: titulo,
+        concluida: false
+    };
+
+    tarefas.push(tarefa);
+    console.log("Tarefa adicionada!");
+}
+
+function listarTarefas() {
+    console.log("\n=== GERENCIADOR DE TAREFAS ===");
+
+    tarefas.forEach(tarefa =&gt; {
+        console.log(
+            `${tarefa.id} - ${tarefa.titulo} - ${
+                tarefa.concluida ? "Concluída" : "Pendente"
+            }`
+        );
+    });
+}
+
+function concluirTarefa(id) {
+    let tarefa = tarefas.find(t =&gt; t.id === id);
+
+    if (tarefa) {
+        tarefa.concluida = !tarefa.concluida;
+        console.log("Tarefa atualizada!");
+    } else {
+        console.log("Tarefa não encontrada!");
+    }
+}
+
+function editarTarefa(id, novoTitulo) {
+    let tarefa = tarefas.find(t =&gt; t.id === id);
+
+    if (tarefa) {
+        tarefa.titulo = novoTitulo;
+        console.log("Tarefa editada!");
+    } else {
+        console.log("Tarefa não encontrada!");
+    }
+}
+
+function excluirTarefa(id) {
+    tarefas = tarefas.filter(t =&gt; t.id !== id);
+    console.log("Tarefa excluída!");
+}
+
+function buscarTarefa(nome) {
+    let resultado = tarefas.filter(t =&gt;
+        t.titulo.toLowerCase().includes(nome.toLowerCase())
+    );
+
+    console.log("Resultado:", resultado);
+}
+
+// TESTES
+
+adicionarTarefa("Estudar JavaScript");
+adicionarTarefa("Fazer atividades");
+adicionarTarefa("Revisar programação");
+
+listarTarefas();
+
+let primeiroId = tarefas[0].id;
+
+concluirTarefa(primeiroId);
+
+editarTarefa(primeiroId, "Estudar JavaScript avançado");
+
+buscarTarefa("JavaScript");
+
+listarTarefas();
+
+excluirTarefa(tarefas[1].id);
+
+listarTarefas();</code></pre>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+</body>
+</html>
