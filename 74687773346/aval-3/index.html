@@ -1,0 +1,102 @@
+
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de IMC</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e6f2ff;
+            text-align: center;
+            padding: 30px;
+        }
+
+        .container {
+            background-color: white;
+            padding: 25px;
+            border-radius: 12px;
+            max-width: 350px;
+            margin: auto;
+        }
+
+        input, button {
+            width: 90%;
+            padding: 10px;
+            margin: 8px;
+        }
+
+        button {
+            background-color: #2878c7;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        #resultado {
+            margin-top: 20px;
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+    <div class="container">
+        <h1>Calculadora de IMC</h1>
+
+        <input type="text" id="nome" placeholder="Nome do paciente">
+
+        <input type="number" id="peso" placeholder="Peso (kg)" step="0.1">
+
+        <input type="number" id="altura" placeholder="Altura (m)" step="0.01">
+
+        <button onclick="calcularIMC()">Calcular IMC</button>
+
+        <div id="resultado"></div>
+    </div>
+
+    <script>
+        function calcularIMC() {
+            let nome = document.getElementById("nome").value;
+            let peso = Number(document.getElementById("peso").value);
+            let altura = Number(document.getElementById("altura").value);
+
+            if (nome === "" || peso <= 0 || altura <= 0) {
+                alert("Preencha todos os campos corretamente!");
+                return;
+            }
+
+            let imc = peso / (altura * altura);
+            let classificacao;
+
+            if (imc < 18.5) {
+                classificacao = "Abaixo do peso";
+            } else if (imc < 25) {
+                classificacao = "Peso normal";
+            } else if (imc < 30) {
+                classificacao = "Sobrepeso";
+            } else if (imc < 35) {
+                classificacao = "Obesidade grau I";
+            } else if (imc < 40) {
+                classificacao = "Obesidade grau II";
+            } else {
+                classificacao = "Obesidade grau III";
+            }
+
+            document.getElementById("resultado").innerHTML =
+                "<h2>Resultado do Paciente</h2>" +
+                "<p>Nome: " + nome + "</p>" +
+                "<p>Peso: " + peso + " kg</p>" +
+                "<p>Altura: " + altura + " m</p>" +
+                "<p>IMC: " + imc.toFixed(2) + "</p>" +
+                "<p>Classificação: " + classificacao + "</p>";
+        }
+    </script>
+
+<script src="script.js"></script></body>
+</html>
