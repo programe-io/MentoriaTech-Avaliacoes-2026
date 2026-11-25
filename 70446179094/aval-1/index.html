@@ -1,115 +1,69 @@
-```html
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <title>Gerenciador de Tarefas</title>
-    <style>
-        body {
-            font-family: Arial;
-            background: #121212;
-            color: #fff;
-            padding: 20px;
-        }
-        input, button {
-            margin: 5px;
-            padding: 8px;
-        }
-        .tarefa {
-            border: 1px solid #444;
-            padding: 10px;
-            margin-top: 10px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora de IMC do Paciente</title>
+  <link rel="stylesheet" href="style.css">
+<script src="https://cdn.tailwindcss.com"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
+<link href="style.css" rel="stylesheet"></head>
 <body>
 
-<h1>Gerenciador de Tarefas</h1>
+  <main class="container">
+    <header>
+      <h1>Avaliação de IMC</h1>
+      <p class="subtitle">Preencha os dados do paciente para calcular o Índice de Massa Corporal</p>
+    </header>
 
-<h3>Cadastrar Tarefa</h3>
-<input type="number" id="codigo" placeholder="Código">
-<input type="text" id="titulo" placeholder="Título">
-<input type="number" id="prioridade" placeholder="Prioridade (1-3)">
-<button onclick="cadastrarTarefa()">Cadastrar</button>
+    <form id="form-imc" novalidate>
+      <div class="form-group">
+        <label for="nome">Nome do Paciente</label>
+        <input type="text" id="nome" placeholder="Ex: Maria Oliveira" required>
+      </div>
 
-<h3>Lista de Tarefas</h3>
-<button onclick="listarTarefas()">Atualizar Lista</button>
-<div id="lista"></div>
+      <div class="row">
+        <div class="form-group">
+          <label for="peso">Peso (kg)</label>
+          <input type="text" id="peso" placeholder="Ex: 70,5" inputmode="decimal" required>
+        </div>
 
-<script>
-let tarefas = [];
+        <div class="form-group">
+          <label for="altura">Altura (m ou cm)</label>
+          <input type="text" id="altura" placeholder="Ex: 1,75 ou 175" inputmode="decimal" required>
+        </div>
+      </div>
 
-function cadastrarTarefa() {
-    let codigo = document.getElementById("codigo").value;
-    let titulo = document.getElementById("titulo").value;
-    let prioridade = Number(document.getElementById("prioridade").value);
+      <p id="mensagem-erro" class="erro">Por favor, preencha o nome e insira valores válidos maiores que zero.</p>
 
-    if (titulo.length < 5) {
-        alert("Título deve ter no mínimo 5 caracteres");
-        return;
-    }
+      <div class="buttons">
+        <button type="submit" class="btn-calc">Calcular IMC</button>
+        <button type="button" class="btn-clear" id="btn-limpar">Limpar</button>
+      </div>
+    </form>
 
-    if (prioridade < 1 || prioridade > 3) {
-        alert("Prioridade deve ser entre 1 (alta) e 3 (baixa)");
-        return;
-    }
+    <section id="box-resultado" class="resultado" aria-live="polite">
+      <div class="resultado-header">
+        <div>
+          <span class="label-pequeno">Paciente</span>
+          <div class="paciente-nome" id="res-nome"></div>
+        </div>
+        <div class="text-right">
+          <span class="label-pequeno">IMC Calculado</span>
+          <div class="imc-valor" id="res-imc"></div>
+        </div>
+      </div>
 
-    tarefas.push({
-        codigo,
-        titulo,
-        prioridade,
-        concluida: false
-    });
+      <div id="res-badge" class="badge"></div>
 
-    alert("Tarefa cadastrada!");
-    listarTarefas();
-}
+      <ul class="info-lista">
+        <li><strong>Dados informados:</strong> <span id="res-dados"></span></li>
+        <li><strong>Faixa de peso ideal estimada:</strong> <span id="res-ideal"></span></li>
+        <li><strong>Orientação clínica:</strong> <span id="res-orientacao"></span></li>
+      </ul>
+    </section>
+  </main>
 
-function listarTarefas() {
-    let lista = document.getElementById("lista");
-    lista.innerHTML = "";
-
-    tarefas.forEach(t => {
-        lista.innerHTML += `
-            <div class="tarefa">
-                <strong>${t.titulo}</strong><br>
-                Código: ${t.codigo}<br>
-                Prioridade: ${t.prioridade}<br>
-                Status: ${t.concluida ? "Concluída" : "Pendente"}<br><br>
-                
-                <button onclick="concluirTarefa(${t.codigo})">Concluir</button>
-                <button onclick="alterarPrioridade(${t.codigo})">Alterar Prioridade</button>
-            </div>
-        `;
-    });
-}
-
-function concluirTarefa(codigo) {
-    let tarefa = tarefas.find(t => t.codigo == codigo);
-    if (tarefa) {
-        tarefa.concluida = true;
-        listarTarefas();
-    }
-}
-
-function alterarPrioridade(codigo) {
-    let nova = prompt("Nova prioridade (1-3):");
-    nova = Number(nova);
-
-    if (nova < 1 || nova > 3) {
-        alert("Valor inválido");
-        return;
-    }
-
-    let tarefa = tarefas.find(t => t.codigo == codigo);
-    if (tarefa) {
-        tarefa.prioridade = nova;
-        listarTarefas();
-    }
-}
-</script>
-
-</body>
+  <script src="script.js"></script>
+<script src="script.js"></script></body>
 </html>
-```
