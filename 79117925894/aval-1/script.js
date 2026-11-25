@@ -151,4 +151,3 @@ setTimeout(function () {
 // 6. ANO ATUAL NO RODAPÉ
 // =========================================================
 document.getElementById("ano").textContent = new Date().getFullYear();
-.
