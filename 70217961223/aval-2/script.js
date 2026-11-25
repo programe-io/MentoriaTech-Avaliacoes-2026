@@ -1,246 +1,264 @@
-// ===============================
-// MODO ESCURO
-// ===============================
 
-const themeButton = document.getElementById("themeButton");
+// Recuperar tarefas salvas no navegador
+let tarefas = JSON.parse(localStorage.getItem("tarefas")) || [];
 
-themeButton.addEventListener("click", function () {
+// Elementos HTML
+const form = document.getElementById("formTarefa");
+const titulo = document.getElementById("titulo");
+const prioridade = document.getElementById("prioridade");
+const listaTarefas = document.getElementById("listaTarefas");
+const pesquisa = document.getElementById("pesquisa");
 
-    document.body.classList.toggle("dark");
+// Salvar tarefas no LocalStorage
+function salvarTarefas() {
+    localStorage.setItem("tarefas", JSON.stringify(tarefas));
+}
 
-    if (document.body.classList.contains("dark")) {
-        themeButton.textContent = "☀️";
-    } else {
-        themeButton.textContent = "🌙";
-    }
+// Retornar nome da prioridade
+function nomePrioridade(valor) {
+    if (valor === 1) return "Alta";
+    if (valor === 2) return "Média";
+    return "Baixa";
+}
 
-});
+// Retornar classe CSS da prioridade
+function classePrioridade(valor) {
+    if (valor === 1) return "alta";
+    if (valor === 2) return "media";
+    return "baixa";
+}
 
+// Atualizar os indicadores
+function atualizarResumo() {
 
-// ===============================
-// CURTIDAS
-// ===============================
+    const total = tarefas.length;
 
-const likeButtons = document.querySelectorAll(".like-button");
+    const totalConcluidas = tarefas.filter(
+        tarefa => tarefa.concluida
+    ).length;
 
-likeButtons.forEach(button => {
+    const totalPendentes = total - totalConcluidas;
 
-    button.addEventListener("click", function () {
+    document.getElementById("totalTarefas").textContent = total;
 
-        const post = button.closest(".post");
-        const likes = post.querySelector(".likes-count");
+    document.getElementById("concluidas").textContent =
+        totalConcluidas;
 
-        let quantidade = Number(likes.textContent);
+    document.getElementById("pendentes").textContent =
+        totalPendentes;
+}
 
-        if (button.classList.contains("liked")) {
+// Cadastrar uma nova tarefa
+form.addEventListener("submit", function(event) {
 
-            quantidade--;
+    event.preventDefault();
 
-            button.classList.remove("liked");
-            button.innerHTML = "♡ Curtir";
+    const novoTitulo = titulo.value.trim();
+    const novaPrioridade = Number(prioridade.value);
 
-        } else {
-
-            quantidade++;
-
-            button.classList.add("liked");
-            button.innerHTML = "♥ Curtido";
-
-        }
-
-        likes.textContent = quantidade;
-
-    });
-
-});
-
-
-// ===============================
-// MOSTRAR COMENTÁRIOS
-// ===============================
-
-const commentButtons =
-    document.querySelectorAll(".comment-button");
-
-commentButtons.forEach(button => {
-
-    button.addEventListener("click", function () {
-
-        const post = button.closest(".post");
-
-        const commentArea =
-            post.querySelector(".comment-area");
-
-        commentArea.classList.toggle("show");
-
-    });
-
-});
-
-
-// ===============================
-// ENVIAR COMENTÁRIO
-// ===============================
-
-const commentAreas =
-    document.querySelectorAll(".comment-area");
-
-commentAreas.forEach(area => {
-
-    const input = area.querySelector("input");
-    const button = area.querySelector("button");
-
-    button.addEventListener("click", function () {
-
-        const comentario = input.value.trim();
-
-        if (comentario === "") {
-
-            alert("Digite um comentário!");
-
-            return;
-        }
-
-        alert(
-            "Comentário publicado! 💬"
-        );
-
-        input.value = "";
-
-    });
-
-});
-
-
-// ===============================
-// COMPARTILHAR
-// ===============================
-
-const shareButtons =
-    document.querySelectorAll(".share-button");
-
-shareButtons.forEach(button => {
-
-    button.addEventListener("click", function () {
-
-        navigator.clipboard.writeText(
-            window.location.href
-        );
-
-        alert(
-            "Publicação compartilhada! 🔗"
-        );
-
-    });
-
-});
-
-
-// ===============================
-// CRIAR NOVA PUBLICAÇÃO
-// ===============================
-
-const postInput =
-    document.getElementById("postInput");
-
-const postButton =
-    document.getElementById("postButton");
-
-postButton.addEventListener("click", function () {
-
-    const texto = postInput.value.trim();
-
-    if (texto === "") {
-
-        alert("Escreva alguma coisa antes de publicar!");
-
+    // REGRA 1: título com no mínimo 5 caracteres
+    if (novoTitulo.length < 5) {
+        alert("O título deve ter no mínimo 5 caracteres!");
+        titulo.focus();
         return;
     }
 
-    const feed = document.querySelector(".feed");
+    // REGRA 2: prioridade entre 1 e 3
+    if (
+        !Number.isInteger(novaPrioridade) ||
+        novaPrioridade < 1 ||
+        novaPrioridade > 3
+    ) {
+        alert("A prioridade deve ser um valor entre 1 e 3!");
+        return;
+    }
 
-    const novoPost = document.createElement("article");
+    // Criar objeto da tarefa
+    const novaTarefa = {
+        id: Date.now(),
+        titulo: novoTitulo,
+        prioridade: novaPrioridade,
+        concluida: false
+    };
 
-    novoPost.classList.add("post");
+    // Adicionar tarefa ao array
+    tarefas.push(novaTarefa);
 
-    novoPost.innerHTML = `
+    // Salvar e atualizar a tela
+    salvarTarefas();
+    renderizarTarefas();
 
-        <div class="post-header">
+    // Limpar formulário
+    form.reset();
 
-            <div class="profile-photo">
-                R
-            </div>
-
-            <div>
-                <h3>Raquel</h3>
-                <span>Agora mesmo</span>
-            </div>
-
-        </div>
-
-        <p class="post-text">
-            ${texto}
-        </p>
-
-        <div class="post-info">
-
-            <span>
-                ❤️ <span class="likes-count">0</span> curtidas
-            </span>
-
-            <span>
-                0 comentários
-            </span>
-
-        </div>
-
-        <div class="post-actions">
-
-            <button class="like-button">
-                ♡ Curtir
-            </button>
-
-            <button class="comment-button">
-                💬 Comentar
-            </button>
-
-            <button class="share-button">
-                ↗️ Compartilhar
-            </button>
-
-        </div>
-
-        <div class="comment-area">
-
-            <input
-                type="text"
-                placeholder="Escreva um comentário..."
-            >
-
-            <button>
-                Enviar
-            </button>
-
-        </div>
-
-    `;
-
-    feed.insertBefore(
-        novoPost,
-        feed.children[1]
-    );
-
-    postInput.value = "";
-
-    alert("Publicação criada com sucesso! 🎉");
+    alert("Tarefa cadastrada com sucesso!");
 
 });
 
+// Listar tarefas
+function renderizarTarefas(filtro = "") {
 
-// ===============================
-// CONSOLE
-// ===============================
+    listaTarefas.innerHTML = "";
 
-console.log(
-    "BlueSocial iniciado. Desenvolvido por Raquel 💙"
-);
+    const tarefasFiltradas = tarefas.filter(tarefa =>
+        tarefa.titulo.toLowerCase().includes(filtro.toLowerCase())
+    );
+
+    document.getElementById("mensagemVazia").hidden =
+        tarefasFiltradas.length > 0;
+
+    tarefasFiltradas.forEach(tarefa => {
+
+        const div = document.createElement("div");
+        div.className = "tarefa";
+
+        // Informações
+        const info = document.createElement("div");
+        info.className = "info";
+
+        if (tarefa.concluida) {
+            info.classList.add("concluida");
+        }
+
+        const h3 = document.createElement("h3");
+        h3.textContent = tarefa.titulo;
+
+        const p = document.createElement("p");
+        p.className = classePrioridade(tarefa.prioridade);
+
+        p.textContent =
+            "Prioridade: " +
+            tarefa.prioridade +
+            " - " +
+            nomePrioridade(tarefa.prioridade);
+
+        const status = document.createElement("p");
+        status.className = "status";
+
+        status.textContent = tarefa.concluida
+            ? "Concluída"
+            : "Pendente";
+
+        info.append(h3, p, status);
+
+        // Botões de ações
+        const acoes = document.createElement("div");
+        acoes.className = "acoes";
+
+        const btnConcluir = document.createElement("button");
+        btnConcluir.className = "btnConcluir";
+
+        btnConcluir.textContent = tarefa.concluida
+            ? "Reabrir"
+            : "Concluir";
+
+        btnConcluir.addEventListener("click", function() {
+            marcarConcluida(tarefa.id);
+        });
+
+        const btnPrioridade = document.createElement("button");
+        btnPrioridade.className = "btnPrioridade";
+        btnPrioridade.textContent = "Prioridade";
+
+        btnPrioridade.addEventListener("click", function() {
+            alterarPrioridade(tarefa.id);
+        });
+
+        const btnExcluir = document.createElement("button");
+        btnExcluir.className = "btnExcluir";
+        btnExcluir.textContent = "Excluir";
+
+        btnExcluir.addEventListener("click", function() {
+            excluirTarefa(tarefa.id);
+        });
+
+        acoes.append(
+            btnConcluir,
+            btnPrioridade,
+            btnExcluir
+        );
+
+        div.append(info, acoes);
+
+        listaTarefas.appendChild(div);
+
+    });
+
+    atualizarResumo();
+}
+
+// Marcar tarefa como concluída
+function marcarConcluida(id) {
+
+    const tarefa = tarefas.find(t => t.id === id);
+
+    if (tarefa) {
+        tarefa.concluida = !tarefa.concluida;
+
+        salvarTarefas();
+        renderizarTarefas(pesquisa.value);
+    }
+
+}
+
+// Alterar prioridade
+function alterarPrioridade(id) {
+
+    const tarefa = tarefas.find(t => t.id === id);
+
+    if (!tarefa) return;
+
+    const novaPrioridade = prompt(
+        "Digite a nova prioridade:\n" +
+        "1 - Alta\n" +
+        "2 - Média\n" +
+        "3 - Baixa"
+    );
+
+    if (novaPrioridade === null) return;
+
+    const valor = Number(novaPrioridade.trim());
+
+    if (
+        !["1", "2", "3"].includes(novaPrioridade.trim()) ||
+        !Number.isInteger(valor)
+    ) {
+        alert("Prioridade inválida! Digite 1, 2 ou 3.");
+        return;
+    }
+
+    tarefa.prioridade = valor;
+
+    salvarTarefas();
+    renderizarTarefas(pesquisa.value);
+
+    alert("Prioridade alterada com sucesso!");
+
+}
+
+// Excluir tarefa
+function excluirTarefa(id) {
+
+    const confirmar = confirm(
+        "Deseja realmente excluir esta tarefa?"
+    );
+
+    if (confirmar) {
+
+        tarefas = tarefas.filter(tarefa => tarefa.id !== id);
+
+        salvarTarefas();
+        renderizarTarefas(pesquisa.value);
+
+        alert("Tarefa excluída com sucesso!");
+    }
+
+}
+
+// Pesquisar tarefas
+pesquisa.addEventListener("input", function() {
+    renderizarTarefas(pesquisa.value);
+});
+
+// Inicializar sistema
+renderizarTarefas();
