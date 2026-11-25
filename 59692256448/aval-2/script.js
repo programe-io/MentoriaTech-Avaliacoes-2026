@@ -37,9 +37,9 @@ function litar() {
 
     tarefas.forEach(t => {
         console.log(
-            Codigo: ${t.codigo} |
-            Titulo: ${t.titulo} |
-           Prioriddade: ${t.prioridade} |
+           Codigo: ${t.codigo} |
+           Titulo: ${t.titulo} |
+           Prioriddade: ${t.Prioridade} |
            Status: ${t.status ? "Em andamento" : "Concluída"}
         );
    });
@@ -96,3 +96,13 @@ async function Menu() {
 do {
     console.log(
     ===== GERENCIADOR DE TAREFAS =====
+
+    1 - Casdastrar Tarefas
+    2 - Listar Tarefas
+    3 - Concluir Tarefas
+    4 - Alterar Prioridades 
+    0 -
+
+    );
+
+    opcao = await perguntar("Escolha")
