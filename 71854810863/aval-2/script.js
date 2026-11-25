@@ -1,20 +1,43 @@
 
-function mostrarMensagem() {
-    alert("Bem-vindo ao Mundo dos Jogos! 🎮");
+function publicar() {
+    const nome = document.getElementById("nome").value.trim();
+    const texto = document.getElementById("texto").value.trim();
+
+    if (nome === "" || texto === "") {
+        alert("Preencha seu nome e sua publicação!");
+        return;
+    }
+
+    const feed = document.getElementById("feed");
+
+    const post = document.createElement("article");
+    post.className = "post";
+
+    const titulo = document.createElement("h3");
+    titulo.textContent = "👤 " + nome;
+
+    const mensagem = document.createElement("p");
+    mensagem.textContent = texto;
+
+    const botao = document.createElement("button");
+    botao.innerHTML = '❤️ Curtir <span>0</span>';
+    botao.onclick = function() {
+        curtir(botao);
+    };
+
+    post.appendChild(titulo);
+    post.appendChild(mensagem);
+    post.appendChild(botao);
+
+    feed.prepend(post);
+
+    document.getElementById("nome").value = "";
+    document.getElementById("texto").value = "";
+
+    alert("Publicação criada com sucesso! 💗");
 }
 
-const links = document.querySelectorAll("nav a");
-
-links.forEach(function(link) {
-    link.addEventListener("click", function() {
-        console.log("Você acessou: " + link.textContent);
-    });
-});
-
-const jogos = document.querySelectorAll(".jogo");
-
-jogos.forEach(function(jogo) {
-    jogo.addEventListener("click", function() {
-        alert("Você escolheu: " + jogo.querySelector("h3").textContent);
-    });
-});
+function curtir(botao) {
+    const contador = botao.querySelector("span");
+    contador.textContent = Number(contador.textContent) + 1;
+}
