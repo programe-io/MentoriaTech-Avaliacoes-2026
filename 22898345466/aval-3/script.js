@@ -1,98 +1,74 @@
 
-// LISTA DE NOTÍCIAS
-const noticias = [
-    {
-            titulo: "🔥 Novidades do Free Fire",
-                    categoria: "Battle Royale",
-                            descricao: "Confira as novidades, eventos e atualizações do Free Fire!",
-                                    link: "https://ff.garena.com/"
-                                        },
-                                            {
-                                                    titulo: "🎮 Minecraft",
-                                                            categoria: "Aventura",
-                                                                    descricao: "Explore mundos, construa casas e viva grandes aventuras!",
-                                                                            link: "https://www.minecraft.net/"
-                                                                                },
-                                                                                    {
-                                                                                            titulo: "⚡ Fortnite",
-                                                                                                    categoria: "Battle Royale",
-                                                                                                            descricao: "Confira as novidades e atualizações do Fortnite!",
-                                                                                                                    link: "https://www.fortnite.com/"
-                                                                                                                        },
-                                                                                                                            {
-                                                                                                                                    titulo: "🎯 GTA V",
-                                                                                                                                            categoria: "Ação",
-                                                                                                                                                    descricao: "Descubra novidades e informações sobre GTA V!",
-                                                                                                                                                            link: "https://www.rockstargames.com/"
-                                                                                                                                                                },
-                                                                                                                                                                    {
-                                                                                                                                                                            titulo: "🏆 Roblox",
-                                                                                                                                                                                    categoria: "Diversos",
-                                                                                                                                                                                            descricao: "Conheça experiências e jogos incríveis dentro do Roblox!",
-                                                                                                                                                                                                    link: "https://www.roblox.com/"
-                                                                                                                                                                                                        }
-                                                                                                                                                                                                        ];
+function curtir(botao) {
+  const post = botao.closest(".post");
+    const likes = post.querySelector(".likes");
 
-                                                                                                                                                                                                        // ELEMENTO PRINCIPAL
-                                                                                                                                                                                                        const site = document.getElementById("noticias");
+      let quantidade = Number(
+          likes.dataset.quantidade || 0
+            );
 
-                                                                                                                                                                                                        // FUNÇÃO PARA MOSTRAR NOTÍCIAS
-                                                                                                                                                                                                        function mostrarNoticias(lista) {
+              if (botao.classList.contains("liked")) {
+                  quantidade--;
+                      botao.classList.remove("liked");
+                          botao.style.color = "black";
+                              botao.innerHTML = "♡";
+                                } else {
+                                    quantidade++;
+                                        botao.classList.add("liked");
+                                            botao.style.color = "red";
+                                                botao.innerHTML = "♥";
+                                                  }
 
-                                                                                                                                                                                                            site.innerHTML = "";
+                                                    likes.dataset.quantidade = quantidade;
+                                                      likes.innerText = quantidade + " curtidas";
+                                                      }
 
-                                                                                                                                                                                                                if (lista.length === 0) {
-                                                                                                                                                                                                                        site.innerHTML = "<p>Nenhuma notícia encontrada!</p>";
-                                                                                                                                                                                                                                return;
-                                                                                                                                                                                                                                    }
+                                                      function comentar(botao) {
+                                                        const post = botao.closest(".post");
+                                                          post.querySelector(".comment-input").focus();
+                                                          }
 
-                                                                                                                                                                                                                                        lista.forEach((noticia) => {
+                                                          function enviarComentario(event, input) {
+                                                            if (event.key === "Enter" && input.value.trim() !== "") {
+                                                                const post = input.closest(".post");
+                                                                    const comentarios = post.querySelector(".comments");
 
-                                                                                                                                                                                                                                                const card = document.createElement("div");
+                                                                        const novoComentario = document.createElement("p");
+                                                                            novoComentario.innerHTML = "";
 
-                                                                                                                                                                                                                                                        card.className = "card";
+                                                                                const nome = document.createElement("strong");
+                                                                                    nome.textContent = "Você ";
 
-                                                                                                                                                                                                                                                                card.innerHTML = `
-                                                                                                                                                                                                                                                                            <h3>${noticia.titulo}</h3>
+                                                                                        const texto = document.createTextNode(input.value);
 
-                                                                                                                                                                                                                                                                                        <span>${noticia.categoria}</span>
+                                                                                            novoComentario.append(nome, texto);
+                                                                                                comentarios.appendChild(novoComentario);
 
-                                                                                                                                                                                                                                                                                                    <p>${noticia.descricao}</p>
+                                                                                                    input.value = "";
+                                                                                                      }
+                                                                                                      }
 
-                                                                                                                                                                                                                                                                                                                <a href="${noticia.link}"
-                                                                                                                                                                                                                                                                                                                               target="_blank"
-                                                                                                                                                                                                                                                                                                                                              rel="noopener noreferrer">
-                                                                                                                                                                                                                                                                                                                                                             Saiba mais →
-                                                                                                                                                                                                                                                                                                                                                                         </a>
-                                                                                                                                                                                                                                                                                                                                                                                 `;
+                                                                                                      function novaPublicacao() {
+                                                                                                        const url = prompt("Cole o link de uma imagem:");
 
-                                                                                                                                                                                                                                                                                                                                                                                         site.appendChild(card);
+                                                                                                          if (!url) return;
 
-                                                                                                                                                                                                                                                                                                                                                                                             });
-                                                                                                                                                                                                                                                                                                                                                                                             }
+                                                                                                            const post = document.createElement("article");
+                                                                                                              post.className = "post";
 
-                                                                                                                                                                                                                                                                                                                                                                                             // FUNÇÃO DE PESQUISA
-                                                                                                                                                                                                                                                                                                                                                                                             function pesquisarNoticias() {
+                                                                                                                const imagem = document.createElement("img");
+                                                                                                                  imagem.className = "post-image";
+                                                                                                                    imagem.src = url;
+                                                                                                                      imagem.alt = "Nova publicação";
 
-                                                                                                                                                                                                                                                                                                                                                                                                 const pesquisa = document
-                                                                                                                                                                                                                                                                                                                                                                                                         .getElementById("pesquisa")
-                                                                                                                                                                                                                                                                                                                                                                                                                 .value.toLowerCase();
+                                                                                                                        const usuario = document.createElement("div");
+                                                                                                                          usuario.className = "post-user";
+                                                                                                                            usuario.textContent = "jhonatas.g";
 
-                                                                                                                                                                                                                                                                                                                                                                                                                     const resultado = noticias.filter((noticia) => {
+                                                                                                                              const legenda = document.createElement("p");
+                                                                                                                                legenda.textContent = "Nova publicação! 🔥";
 
-                                                                                                                                                                                                                                                                                                                                                                                                                             return noticia.titulo.toLowerCase().includes(pesquisa) ||
-                                                                                                                                                                                                                                                                                                                                                                                                                                            noticia.categoria.toLowerCase().includes(pesquisa);
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                });
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                    mostrarNoticias(resultado);
-                                                                                                                                                                                                                                                                                                                                                                                                                                                    }
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                    // MENSAGEM DE BOAS-VINDAS
-                                                                                                                                                                                                                                                                                                                                                                                                                                                    function boasVindas() {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                        alert("🎮 Bem-vindo ao GAMER NEWS!");
-                                                                                                                                                                                                                                                                                                                                                                                                                                                        }
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                        // INICIALIZAR SITE
-                                                                                                                                                                                                                                                                                                                                                                                                                                                        mostrarNoticias(noticias);
-                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+                                                                                                                                  post.append(usuario, imagem, legenda);
+                                                                                                                                    document.getElementById("feed").prepend(post);
+                                                                                                                                    }
+                                                                                                                                    
