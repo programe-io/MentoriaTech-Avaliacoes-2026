@@ -1,81 +1,169 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gerenciador de Estoque</title>
+<style>
+    * { box-sizing: border-box; font-family: Arial, sans-serif; }
+  body { background: #f2f2f2; margin: 0; padding: 20px; }
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    background: #fffdf5;
+    padding: 30px 40px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  }
+  h1 { text-align: center; margin: 0; font-weight: normal; }
+  p.sub { text-align: center; color: #555; font-size: 14px; margin-top: 5px; }
+  h2 { color: #1a5fb4; font-weight: normal; margin-bottom: 10px; }
+
+  /* Formulário */
+  .form { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+  .form input {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    flex: 1;
+    min-width: 150px;
+  }
+  .btn-cadastrar {
+    background: #0b5cad;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .btn-cadastrar:hover { background: #084a8a; }
+
+  /* Tabela */
+  table { width: 100%; border-collapse: collapse; }
+  th {
+    background: #0b5cad;
+    color: white;
+    padding: 12px;
+    font-weight: bold;
+  }
+  td {
+    padding: 12px;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+  }
+  .btn-valor {
+    background: #1a7a4a;
+    color: white;
+    border: none;
+    padding: 8px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 5px;
+  }
+  .btn-qtd {
+    background: #d2691e;
+    color: white;
+    border: none;
+    padding: 8px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-  // Lista (Array) de Produtos
-let produtos = [];
 
-function validarProduto(descricao, quantidade, valor){
-    if(descricao.length < 5){
-        throw new Error("Descricao deve ter no minimo cinco caracteres");
+<div class="container">
+  <h1>Gerenciador de Estoque</h1>
+  <p class="sub">Controle de produtos cadastrados</p>
+
+  <h2>Cadastrar Produto</h2>
+  <div class="form">
+    <input type="text" id="descricao" placeholder="Descrição do produto">
+    <input type="number" id="quantidade" placeholder="Quantidade">
+    <input type="number" id="valor" placeholder="Valor" step="0.01">
+    <button class="btn-cadastrar" onclick="cadastrar()">Cadastrar Produto</button>
+  </div>
+
+  <h2>Produtos Cadastrados</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Código</th>
+        <th>Descrição</th>
+        <th>Quantidade</th>
+        <th>Valor</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody id="tabela"></tbody>
+  </table>
+</div>
+
+<script>
+  let produtos = [
+    { codigo: 1, descricao: "Cadeira gamer", quantidade: 12, valor: 699 },
+    { codigo: 2, descricao: "Mouse 【entity-Logitech¦canonical_name=Logitech】", quantidade: 38, valor: 99 },
+    { codigo: 3, descricao: "Teclado gamer", quantidade: 15, valor: 150 },
+    { codigo: 4, descricao: "celular", quantidade: 1, valor: 1500 },
+  ];
+  let proximoCodigo = 5;
+
+  function renderizar() {
+    const tbody = document.getElementById("tabela");
+    tbody.innerHTML = "";
+    produtos.forEach(p => {
+      tbody.innerHTML += `
+        <tr>
+          <td>${p.codigo}</td>
+          <td>${p.descricao}</td>
+          <td>${p.quantidade}</td>
+          <td>R$ ${p.valor.toFixed(2)}</td>
+          <td>
+            <button class="btn-valor" onclick="atualizarValor(${p.codigo})">Atualizar Valor</button>
+            <button class="btn-qtd" onclick="adicionarQuantidade(${p.codigo})">Adicionar Quantidade</button>
+          </td>
+        </tr>
+      `;
+    });
+  }
+
+  function cadastrar() {
+    const descricao = document.getElementById("descricao").value.trim();
+    const quantidade = parseInt(document.getElementById("quantidade").value);
+    const valor = parseFloat(document.getElementById("valor").value);
+
+    if (!descricao || isNaN(quantidade) || isNaN(valor)) {
+      alert("Preencha todos os campos!");
+      return;
     }
-    if(quantidade < 1){
-        throw new Error("Quantidade deve ser maior que zero");
-    }
-    if(valor < 0){
-        throw new Error("Valor deve maior igual a zero");
-    }
-}
 
-function cadastrarProduto(descricao, quantidade, valor){
-    validarProduto(descricao, quantidade, valor);
+    produtos.push({ codigo: proximoCodigo++, descricao, quantidade, valor });
+    document.getElementById("descricao").value = "";
+    document.getElementById("quantidade").value = "";
+    document.getElementById("valor").value = "";
+    renderizar();
+  }
 
-    let novoProduto = {
-        "codigo": produtos.length + 1,
-        "descricao": descricao,
-        "quantidade": quantidade,
-        "valor": valor
-    };
+  function atualizarValor(codigo) {
+    const novoValor = parseFloat(prompt("Digite o novo valor:"));
+    if (isNaN(novoValor)) return;
+    const produto = produtos.find(p => p.codigo === codigo);
+    produto.valor = novoValor;
+    renderizar();
+  }
 
-    produtos.push(novoProduto);
-}
+  function adicionarQuantidade(codigo) {
+    const qtd = parseInt(prompt("Quantas unidades deseja adicionar?"));
+    if (isNaN(qtd)) return;
+    const produto = produtos.find(p => p.codigo === codigo);
+    produto.quantidade += qtd;
+    renderizar();
+  }
 
-function listarProdutos(){
-    console.log(produtos);
-}
+  renderizar();
+</script>
 
-function atualizarValor(codigoProduto, novoValor){
-    if(novoValor < 0){
-        throw new Error("Valor deve maior igual a zero");
-    }
-
-    const produto = produtos.find(prod => prod.codigo === codigoProduto);
-    if(produto){
-        produto.valor = novoValor;
-    } else {
-        throw new Error("Produto nao encontrado");
-    }
-}
-
-function atualizarQuantidade(codigoProduto, novaQuantidade){
-    if(novaQuantidade < 1){
-        throw new Error("Quantidade deve ser maior que zero");
-    }
-
-    const produto = produtos.find(prod => prod.codigo === codigoProduto);
-    if(produto){
-        produto.quantidade = novaQuantidade;
-    } else {
-        throw new Error("Produto nao encontrado");
-    }
-}
-
-// Teste
-listarProdutos();
-
-cadastrarProduto("Cadeira Gamer", 12, 699.00);
-cadastrarProduto("Mouse Logi", 38, 99.00);
-
-listarProdutos();
-
-atualizarValor(2, 97.00);
-
-listarProdutos();
-  
-  
 </body>
 </html>
