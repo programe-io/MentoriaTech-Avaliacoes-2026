@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculadora de IMC</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #101827, #183b50);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    background: #ffffff;
+    color: #222;
+    width: 100%;
+    max-width: 430px;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px #0005;
+}
+
+h1 {
+    text-align: center;
+    color: #087b83;
+}
+
+.descricao {
+    text-align: center;
+    color: #666;
+    margin-bottom: 25px;
+}
+
+label {
+    display: block;
+    margin-top: 15px;
+    font-weight: bold;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    margin-top: 7px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+button {
+    width: 100%;
+    padding: 14px;
+    margin-top: 22px;
+    background: #087b83;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #065e64;
+}
+
+#resultado {
+    display: none;
+    margin-top: 25px;
+    padding: 18px;
+    background: #eaf7f7;
+    border-radius: 10px;
+    line-height: 1.6;
+}
+
+#resultado h2 {
+    color: #087b83;
+    text-align: center;
+}
+
+.imc {
+    font-size: 30px;
+    font-weight: bold;
+    text-align: center;
+    color: #087b83;
+}
+
+.aviso {
+    font-size: 12px;
+    color: #666;
+    margin-top: 15px;
+}
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+<div class="container">
+
+    <h1>Calculadora de IMC</h1>
+
+    <p class="descricao">
+        Sistema de avaliação do Índice de Massa Corporal
+    </p>
+
+    <label for="nome">Nome do paciente:</label>
+    <input type="text" id="nome" placeholder="Digite o nome">
+
+    <label for="peso">Peso (kg):</label>
+    <input type="number" id="peso" placeholder="Ex: 65" step="0.1">
+
+    <label for="altura">Altura (metros):</label>
+    <input type="number" id="altura" placeholder="Ex: 1.70" step="0.01">
+
+    <button onclick="calcularIMC()">CALCULAR IMC</button>
+
+    <div id="resultado"></div>
+
+</div>
+
+<script>
+function calcularIMC() {
+
+    const nome = document.getElementById("nome").value.trim();
+    const peso = parseFloat(document.getElementById("peso").value);
+    const altura = parseFloat(document.getElementById("altura").value);
+
+    if (!nome || !peso || !altura || peso <= 0 || altura <= 0) {
+        alert("Preencha todos os campos corretamente!");
+        return;
+    }
+
+    const imc = peso / (altura * altura);
+
+    let classificacao;
+    let informacao;
+
+    if (imc < 18.5) {
+        classificacao = "Abaixo do peso";
+        informacao = "O resultado está abaixo da faixa de referência para adultos. É importante considerar a idade e outros fatores.";
+    } 
+    else if (imc < 25) {
+        classificacao = "Faixa de peso adequada";
+        informacao = "O resultado está dentro da faixa de referência para adultos.";
+    } 
+    else if (imc < 30) {
+        classificacao = "Sobrepeso";
+        informacao = "O resultado está acima da faixa de referência para adultos. Uma avaliação profissional pode ajudar a compreender melhor esse resultado.";
+    } 
+    else {
+        classificacao = "Obesidade";
+        informacao = "O resultado está na faixa de obesidade segundo a classificação de IMC para adultos. Recomenda-se avaliação por um profissional de saúde.";
+    }
+
+    const resultado = document.getElementById("resultado");
+
+    resultado.style.display = "block";
+
+    resultado.innerHTML = `
+        <h2>Resultado do Paciente</h2>
+
+        <p><strong>Nome:</strong> ${nome.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</p>
+        <p><strong>Peso:</strong> ${peso} kg</p>
+        <p><strong>Altura:</strong> ${altura} m</p>
+
+        <div class="imc">${imc.toFixed(2)}</div>
+
+        <p><strong>Classificação:</strong> ${classificacao}</p>
+
+        <p><strong>Informações:</strong> ${informacao}</p>
+
+        <p class="aviso">
+        O IMC é apenas um indicador. Para crianças e adolescentes,
+        a interpretação depende da idade e do sexo. Para adultos,
+        também é necessário considerar outros aspectos da saúde.
+        </p>
+    `;
+}
+</script>
+
+<script src="script.js"></script></body>
+</html>
