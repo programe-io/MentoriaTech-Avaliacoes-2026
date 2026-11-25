@@ -1,71 +1,209 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <link href="style.css" rel="stylesheet">
-</head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gerenciador de Tarefas</title>
+<style>
+    * { box-sizing: border-box; font-family: Arial, sans-serif; }
+  body { margin: 0; background: #f2f4f8; }
+  
+  /* Topo azul */
+  header {
+    background: #2743a8;
+    color: white;
+    padding: 35px 20px 60px;
+  }
+  .topo { max-width: 900px; margin: 0 auto; }
+  .topo small { letter-spacing: 2px; font-size: 11px; opacity: 0.8; }
+  .topo h1 { margin: 5px 0; font-size: 38px; }
+  .topo p { margin: 0; opacity: 0.9; }
+
+  .container { max-width: 900px; margin: -30px auto 30px; padding: 0 20px; }
+
+  /* Cards */
+  .cards { display: flex; gap: 15px; }
+  .card {
+    background: white;
+    flex: 1;
+    padding: 18px;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  }
+  .card small { color: #666; }
+  .card b { display: block; font-size: 28px; margin-top: 5px; }
+
+  /* Caixas */
+  .box {
+    background: white;
+    border-radius: 12px;
+    padding: 22px;
+    margin-top: 18px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  }
+  .box small { letter-spacing: 2px; color: #888; font-size: 11px; font-weight: bold; }
+  .box h2 { margin: 5px 0 15px; font-size: 20px; }
+
+  .form { display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; }
+  .campo { flex: 1; min-width: 200px; }
+  .campo label { display: block; font-size: 13px; margin-bottom: 5px; }
+  .campo input, .campo select {
+    width: 100%;
+    padding: 11px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    outline: none;
+  }
+  .btn-add {
+    background: #2743a8;
+    color: white;
+    border: none;
+    padding: 12px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    white-space: nowrap;
+  }
+  .btn-add:hover { background: #1e3590; }
+
+  /* Lista */
+  .tarefa {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px;
+    border: 1px solid #eee;
+    border-radius: 10px;
+    margin-bottom: 10px;
+  }
+  .tarefa.concluida span.titulo { text-decoration: line-through; color: #999; }
+  .badge {
+    font-size: 12px;
+    padding: 4px 8px;
+    border-radius: 20px;
+    margin-left: 8px;
+  }
+  .alta { background: #ffe0e0; color: #c00; }
+  .media { background: #fff3cd; color: #8a6d00; }
+  .baixa { background: #d4edda; color: #155724; }
+  .btn-concluir {
+    background: #28a745; color: white; border: none;
+    padding: 7px 10px; border-radius: 6px; cursor: pointer; margin-right: 5px;
+  }
+  .btn-excluir {
+    background: #dc3545; color: white; border: none;
+    padding: 7px 10px; border-radius: 6px; cursor: pointer;
+  }
+  .vazio { color: #888; text-align: center; padding: 15px; }
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
 <body>
-  /* Array que vai guardar o conjunto de todas as tarefas */
-let tarefas = [];
 
-function validarDadosTarefa(titulo, prioridade){
-    if(titulo.length < 5){
-        throw new Error("O titulo deve ter no minimo 5 caracteres");
+<header>
+  <div class="topo">
+    <small>MEU ORGANIZADOR</small>
+    <h1>Gerenciador de Tarefas</h1>
+    <p>Organize suas atividades, acompanhe prioridades e marque o que já foi concluído.</p>
+  </div>
+</header>
+
+<div class="container">
+  <div class="cards">
+    <div class="card"><small>Total de tarefas</small><b id="total">0</b></div>
+    <div class="card"><small>Em andamento</small><b id="andamento">0</b></div>
+    <div class="card"><small>Concluídas</small><b id="concluidas">0</b></div>
+  </div>
+
+  <div class="box">
+    <small>NOVA ATIVIDADE</small>
+    <h2>Cadastrar tarefa</h2>
+    <div class="form">
+      <div class="campo">
+        <label>Título da tarefa</label>
+        <input type="text" id="titulo" placeholder="Ex.: Estudar JavaScript">
+      </div>
+      <div class="campo" style="flex: 0.4;">
+        <label>Prioridade</label>
+        <select id="prioridade">
+          <option value="1 - Alta">1 - Alta</option>
+          <option value="2 - Média" selected>2 - Média</option>
+          <option value="3 - Baixa">3 - Baixa</option>
+        </select>
+      </div>
+      <button class="btn-add" onclick="adicionar()">+ Adicionar tarefa</button>
+    </div>
+  </div>
+
+  <div class="box">
+    <small>SUAS ATIVIDADES</small>
+    <h2>Lista de tarefas</h2>
+    <div id="lista"></div>
+  </div>
+</div>
+
+<script>
+  let tarefas = [
+    { titulo: "limpar a casa", prioridade: "2 - Média", concluida: false }
+  ];
+
+  function renderizar() {
+    const lista = document.getElementById("lista");
+    lista.innerHTML = "";
+
+    if (tarefas.length === 0) {
+      lista.innerHTML = '<div class="vazio">Nenhuma tarefa ainda. Adicione uma acima!</div>';
     }
-    if(prioridade < 1 || prioridade > 3){
-        throw new Error("Informe uma prioridade entre 1 e 3");
-    }
-}
 
-function cadastrarTarefa(titulo, prioridade){
-    validarDadosTarefa(titulo, prioridade);
+    tarefas.forEach((t, i) => {
+      let classe = t.prioridade.includes("Alta") ? "alta" : t.prioridade.includes("Média") ? "media" : "baixa";
+      lista.innerHTML += `
+        <div class="tarefa ${t.concluida ? 'concluida' : ''}">
+          <span>
+            <span class="titulo">${t.titulo}</span>
+            <span class="badge ${classe}">${t.prioridade}</span>
+          </span>
+          <span>
+            <button class="btn-concluir" onclick="concluir(${i})">${t.concluida ? 'Desfazer' : 'Concluir'}</button>
+            <button class="btn-excluir" onclick="excluir(${i})">Excluir</button>
+          </span>
+        </div>
+      `;
+    });
 
-    let tarefa = {
-        'codigo': tarefas.length + 1,
-        'titulo': titulo,
-        'prioridade': prioridade,
-        'status': 'pendente'
-    };
+    const concluidas = tarefas.filter(t => t.concluida).length;
+    document.getElementById("total").innerText = tarefas.length;
+    document.getElementById("concluidas").innerText = concluidas;
+    document.getElementById("andamento").innerText = tarefas.length - concluidas;
+  }
 
-    tarefas.push(tarefa);
-}
+  function adicionar() {
+    const titulo = document.getElementById("titulo").value.trim();
+    const prioridade = document.getElementById("prioridade").value;
+    if (!titulo) { alert("Digite o título da tarefa!"); return; }
+    tarefas.push({ titulo, prioridade, concluida: false });
+    document.getElementById("titulo").value = "";
+    renderizar();
+  }
 
-function listarTarefas(){
-    console.log(tarefas);
-}
+  function concluir(i) {
+    tarefas[i].concluida = !tarefas[i].concluida;
+    renderizar();
+  }
 
-function concluirTarefa(codigoTarefa){
-    const tarefa = tarefas.find(t => t.codigo === codigoTarefa);
-    if(tarefa){
-        tarefa.status = 'concluida';
-    } else {
-        throw new Error("Tarefa nao encontrada");
-    }
-}
+  function excluir(i) {
+    tarefas.splice(i, 1);
+    renderizar();
+  }
 
-function removerTarefa(codigoTarefa){
-    const indice = tarefas.findIndex(t => t.codigo === codigoTarefa);
-    if(indice !== -1){
-        tarefas.splice(indice, 1);
-    } else {
-        throw new Error("Tarefa nao encontrada");
-    }
-}
+  // Enter também adiciona
+  document.getElementById("titulo").addEventListener("keydown", e => {
+    if (e.key === "Enter") adicionar();
+  });
 
-// Teste
-listarTarefas();
+  renderizar();
+</script>
 
-cadastrarTarefa("Estudar JavaScript", 1);
-cadastrarTarefa("Fazer revisao", 2);
-cadastrarTarefa("Fazer exercicios", 3);
-
-listarTarefas();
-
-concluirTarefa(1);
-
-listarTarefas();
-  
-  
 </body>
 </html>
