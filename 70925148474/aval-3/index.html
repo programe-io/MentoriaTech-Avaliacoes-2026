@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Instagram • toim_009</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"><link href="style.css" rel="stylesheet"></head>
+<body>
+
+  <!-- Barra Lateral de Navegação -->
+  <aside class="sidebar">
+    <div class="logo">
+      <i class="fa-brands fa-instagram logo-icon"></i>
+      <span class="logo-text">Instagram</span>
+    </div>
+
+    <nav class="nav-menu">
+      <a href="#" class="nav-item active" data-view="feed">
+        <i class="fa-solid fa-house"></i>
+        <span>Página inicial</span>
+      </a>
+      <a href="#" class="nav-item">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <span>Pesquisa</span>
+      </a>
+      <a href="#" class="nav-item">
+        <i class="fa-regular fa-compass"></i>
+        <span>Explorar</span>
+      </a>
+      <a href="#" class="nav-item">
+        <i class="fa-solid fa-clapperboard"></i>
+        <span>Reels</span>
+      </a>
+      <a href="#" class="nav-item">
+        <i class="fa-regular fa-paper-plane"></i>
+        <span>Mensagens</span>
+      </a>
+      <a href="#" class="nav-item">
+        <i class="fa-regular fa-heart"></i>
+        <span>Notificações</span>
+      </a>
+      <a href="#" class="nav-item" id="btn-open-create">
+        <i class="fa-regular fa-square-plus"></i>
+        <span>Criar</span>
+      </a>
+      <a href="#" class="nav-item" data-view="profile">
+        <img class="avatar-nav main-user-avatar" alt="toim_009">
+        <span>Perfil</span>
+      </a>
+    </nav>
+  </aside>
+
+  <!-- Conteúdo Principal -->
+  <main class="main-container">
+
+    <!-- VISUALIZAÇÃO DO FEED -->
+    <div id="feed-view" class="feed-layout">
+      <div class="feed-center">
+        <!-- Barra de Stories -->
+        <section class="stories-bar" id="stories-bar"></section>
+
+        <!-- Lista de Publicações -->
+        <section class="posts-feed" id="posts-feed"></section>
+      </div>
+
+      <!-- Barra Lateral Direita (Sugestões) -->
+      <aside class="right-panel">
+        <div class="user-switch-row">
+          <div class="user-info-left" data-view="profile">
+            <img class="avatar-md main-user-avatar" alt="toim_009">
+            <div>
+              <strong class="username-link">toim_009</strong>
+              <span class="subtext">Toim</span>
+            </div>
+          </div>
+          <button class="text-btn">Mudar</button>
+        </div>
+
+        <div class="suggestions-header">
+          <span>Sugestões para você</span>
+          <button class="text-btn-white">Ver tudo</button>
+        </div>
+
+        <div id="suggestions-list"></div>
+
+        <footer class="footer-links">
+          Sobre • Ajuda • Imprensa • API • Carreiras • Privacidade • Termos<br><br>
+          © 2026 INSTAGRAM CLONE
+        </footer>
+      </aside>
+    </div>
+
+    <!-- VISUALIZAÇÃO DO PERFIL (toim_009) -->
+    <div id="profile-view" class="profile-layout hidden">
+      <header class="profile-header">
+        <div class="profile-avatar-wrapper">
+          <img class="avatar-xl main-user-avatar" alt="toim_009">
+        </div>
+        <div class="profile-details">
+          <div class="profile-top-row">
+            <h2>toim_009</h2>
+            <button class="btn-secondary">Editar perfil</button>
+            <button class="btn-secondary">Itens arquivados</button>
+            <i class="fa-solid fa-gear settings-icon"></i>
+          </div>
+          <ul class="profile-stats">
+            <li><strong id="profile-posts-count">3</strong> publicações</li>
+            <li><strong>1.420</strong> seguidores</li>
+            <li><strong>318</strong> seguindo</li>
+          </ul>
+          <div class="profile-bio">
+            <strong>Toim</strong>
+            <p>Colecionador de conchas, estética oceânica e código limpo 🐚✨</p>
+          </div>
+        </div>
+      </header>
+
+      <div class="profile-tabs">
+        <span class="tab active"><i class="fa-solid fa-table-cells"></i> PUBLICAÇÕES</span>
+        <span class="tab"><i class="fa-regular fa-bookmark"></i> SALVOS</span>
+        <span class="tab"><i class="fa-regular fa-id-badge"></i> MARCADOS</span>
+      </div>
+
+      <div class="profile-grid" id="profile-grid"></div>
+    </div>
+
+  </main>
+
+  <!-- MODAL: CRIAR NOVA PUBLICAÇÃO -->
+  <div id="create-modal" class="modal hidden">
+    <div class="modal-box">
+      <div class="modal-header">
+        <span>Criar nova publicação</span>
+        <button id="btn-close-create" class="close-btn">&times;</button>
+      </div>
+      <form id="create-post-form" class="modal-body">
+        <label>URL da Imagem (ou deixe vazio para imagem aleatória)</label>
+        <input type="url" id="new-post-image" placeholder="https://images.unsplash.com/...">
+
+        <label>Legenda</label>
+        <textarea id="new-post-caption" rows="3" placeholder="Escreva uma legenda..." required></textarea>
+
+        <button type="submit" class="btn-primary">Compartilhar</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: VISUALIZADOR DE STORY -->
+  <div id="story-modal" class="modal hidden">
+    <div class="story-viewer">
+      <div class="story-progress-bar"><div id="story-progress"></div></div>
+      <div class="story-top">
+        <div class="story-user">
+          <img id="story-avatar" class="avatar-sm" alt="">
+          <span id="story-username"></span>
+        </div>
+        <button id="btn-close-story" class="close-btn">&times;</button>
+      </div>
+      <img id="story-image" class="story-content-img" alt="Story">
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+<script src="script.js"></script></body>
+</html>
