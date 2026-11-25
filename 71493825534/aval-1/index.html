@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Battle Royale 3D — Arena Gigante</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+  <div id="gameCanvasContainer"></div>
+
+  <!-- =========================================================================
+       TELA 1 — LOBBY TÁTICO DEDICADO
+       ========================================================================= -->
+  <div id="lobbyScreen">
+    <div class="lobby-stage-area" id="lobbyStageArea">
+      <div class="lobby-brand-header">
+        <span class="lobby-pill">Hangar Tático • 3D Primeira Pessoa</span>
+        <h1 class="lobby-main-title">BATTLE ROYALE 3D — ARENA GIGANTE</h1>
+        <p class="lobby-sub-caption">Arraste sobre o personagem ou use os botões abaixo para girar 360°</p>
+      </div>
+
+      <div class="pedestal-controls">
+        <button type="button" class="rotate-btn" id="rotateLeftBtn" title="Girar à Esquerda">◀</button>
+        <span class="pedestal-label" id="activeSkinPedestalLabel">OPERADOR URBANO</span>
+        <button type="button" class="rotate-btn" id="rotateRightBtn" title="Girar à Direita">▶</button>
+      </div>
+    </div>
+
+    <div class="lobby-sidebar">
+      <!-- 1. Seletor de Skins -->
+      <div class="lobby-block">
+        <div class="lobby-block-header">
+          <span>Skins do Personagem</span>
+          <span class="lobby-block-value" id="selectedSkinTitle">Operador Urbano</span>
+        </div>
+        <div class="skins-grid" id="skinsGrid">
+          <button type="button" class="skin-card active" data-skin="urbano">
+            <span class="skin-swatch" style="background: linear-gradient(135deg, #334155 50%, #157d87 50%);"></span>
+            <span class="skin-name">Operador Urbano</span>
+          </button>
+          <button type="button" class="skin-card" data-skin="artico">
+            <span class="skin-swatch" style="background: linear-gradient(135deg, #e2e8f0 50%, #38bdf8 50%);"></span>
+            <span class="skin-name">Fantasma Ártico</span>
+          </button>
+          <button type="button" class="skin-card" data-skin="sombra">
+            <span class="skin-swatch" style="background: linear-gradient(135deg, #18181b 50%, #dc2626 50%);"></span>
+            <span class="skin-name">Sombra Noturna</span>
+          </button>
+          <button type="button" class="skin-card" data-skin="deserto">
+            <span class="skin-swatch" style="background: linear-gradient(135deg, #b45309 50%, #fbbf24 50%);"></span>
+            <span class="skin-name">Vanguarda Deserto</span>
+          </button>
+          <button type="button" class="skin-card" data-skin="ouro">
+            <span class="skin-swatch" style="background: linear-gradient(135deg, #d97706 50%, #0f172a 50%);"></span>
+            <span class="skin-name">Comando Ouro</span>
+          </button>
+          <button type="button" class="skin-card" data-skin="ciber">
+            <span class="skin-swatch" style="background: linear-gradient(135deg, #312e81 50%, #22d3ee 50%);"></span>
+            <span class="skin-name">Sentinela Ciber</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 2. Nível da Partida -->
+      <div class="lobby-block">
+        <div class="lobby-block-header">
+          <span>Nível da Partida</span>
+          <span class="lobby-block-value" id="lobbyLevelLabel">Soldado (Médio)</span>
+        </div>
+        <div class="level-grid">
+          <button type="button" class="level-btn" data-level="recruta">
+            <span class="level-btn-name">Recruta</span>
+            <span class="level-btn-tag">Fácil</span>
+          </button>
+          <button type="button" class="level-btn active" data-level="soldado">
+            <span class="level-btn-name">Soldado</span>
+            <span class="level-btn-tag">Médio</span>
+          </button>
+          <button type="button" class="level-btn" data-level="veterano">
+            <span class="level-btn-name">Veterano</span>
+            <span class="level-btn-tag">Difícil</span>
+          </button>
+          <button type="button" class="level-btn" data-level="elite">
+            <span class="level-btn-name">Elite</span>
+            <span class="level-btn-tag">Extremo</span>
+          </button>
+        </div>
+        <div class="level-desc-box" id="lobbyLevelDesc">
+          Equilíbrio tático padrão: oponentes patrulham, buscam a zona segura e mantêm precisão intermediária.
+        </div>
+      </div>
+
+      <!-- 3. Quantidade de Oponentes -->
+      <div class="lobby-block">
+        <div class="opp-box">
+          <div class="lobby-block-header">
+            <span>Quantidade de Oponentes</span>
+            <span class="lobby-block-value" id="oppTotalReadout">98 oponentes • 99 vivos na arena</span>
+          </div>
+          <input type="range" id="oppSlider" class="opp-slider" min="5" max="98" step="1" value="98" />
+          <div class="opp-presets">
+            <button type="button" class="preset-btn" data-opp="10">10 Bots</button>
+            <button type="button" class="preset-btn" data-opp="25">25 Bots</button>
+            <button type="button" class="preset-btn" data-opp="50">50 Bots</button>
+            <button type="button" class="preset-btn active" data-opp="98">98 Bots</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. Tamanho da Sala (Arena) -->
+      <div class="lobby-block">
+        <div class="opp-box">
+          <div class="lobby-block-header">
+            <span>Tamanho da Sala (Arena)</span>
+            <span class="lobby-block-value" id="arenaSizeReadout">720m × 720m (Gigante)</span>
+          </div>
+          <input type="range" id="arenaSizeSlider" class="opp-slider" min="320" max="1000" step="20" value="720" />
+          <div class="opp-presets">
+            <button type="button" class="size-preset-btn" data-size="360">Pequena</button>
+            <button type="button" class="size-preset-btn" data-size="540">Média</button>
+            <button type="button" class="size-preset-btn active" data-size="720">Gigante</button>
+            <button type="button" class="size-preset-btn" data-size="960">Colossal</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. Criar Nova Sala (Código 777) e Digitar Código de Convite -->
+      <div class="lobby-block">
+        <div class="room-box">
+          <div class="lobby-block-header">
+            <span>Sala com Código / Convite</span>
+            <span class="lobby-block-value" id="roomBadgeHeader">PADRÃO</span>
+          </div>
+          <div class="room-row">
+            <button type="button" class="room-btn" id="createRoomCodeBtn">Criar Nova Sala</button>
+            <div class="room-code-pill" id="roomCodeDisplay">SEM CÓDIGO</div>
+            <button type="button" class="room-btn" id="copyRoomCodeBtn">Copiar</button>
+          </div>
+          <div class="room-row">
+            <input
+              type="text"
+              class="room-invite-input"
+              id="inviteCodeInput"
+              maxlength="10"
+              placeholder="Digitar código de convite"
+            />
+            <button type="button" class="room-btn" id="joinInviteCodeBtn">Entrar Código</button>
+          </div>
+          <div class="room-status-line" id="roomStatusFeedback">
+            Crie uma sala para gerar o código 777 ou digite um código de convite (sala sem oponentes bots).
+          </div>
+        </div>
+      </div>
+
+      <div class="lobby-controls-hint">
+        <b>WASD:</b> Mover • <b>Shift:</b> Correr • <b>Espaço:</b> Pular • <b>Mouse / Q-E:</b> Mirar 360°<br />
+        <b>Clique Esq:</b> Atirar • <b>R:</b> Recarregar • <b>1-4:</b> Armas • <b>F:</b> Coletar Loot
+      </div>
+
+      <button type="button" id="enterMatchBtn" class="btn-enter-match">ENTRAR NA PARTIDA</button>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       TELA 2 — HUD DE JOGATINA
+       ========================================================================= -->
+  <div id="gameplayHud">
+    <div class="minimap-wrapper">
+      <canvas id="minimapCanvas" width="146" height="146"></canvas>
+      <div class="minimap-label" id="sectorBadge">SETOR CENTRAL</div>
+    </div>
+
+    <div class="reference-hud-cluster">
+      <div class="br-top-bar">
+        <div class="br-alive-trapezoid">
+          <span>ALIVE</span>
+          <span id="hudAliveCount">99</span>
+        </div>
+        <div class="br-kills-area">
+          <div class="br-kills-text">
+            <span>Abates</span>
+            <span id="hudKillsCount">0</span>
+          </div>
+          <button type="button" id="openSettingsBtn" class="br-gear-btn" title="Configurações e Pausa">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="br-main-weapon active" id="mainWeaponBox" data-weapon="ak" title="[1] Fuzil AK-47">
+        <div class="br-main-top">
+          <div class="br-ammo-readout">
+            <span class="br-ammo-mag" id="akMagText">20</span>
+            <span class="br-ammo-res" id="akResText">/100</span>
+          </div>
+          <svg class="br-main-rifle-svg" viewBox="0 0 260 76">
+            <path d="M8 28 L54 24 L62 19 L98 19 L102 15 L118 15 L121 19 L174 19 L178 13 L184 13 L186 19 L246 21 L246 25 L254 25 L254 29 L244 29 L244 32 L182 32 L176 36 L146 36 L142 32 L134 32 C136 45 142 57 150 67 L135 72 C126 60 120 46 118 32 L106 32 L103 42 L95 42 L92 32 L85 32 L80 54 L67 52 L73 32 L54 34 L12 48 L6 44 Z"/>
+          </svg>
+        </div>
+        <div class="br-progress-track">
+          <div class="br-progress-fill" id="akBarFill"></div>
+        </div>
+      </div>
+
+      <div class="br-sub-slots">
+        <div class="br-slot" id="slotCarbine" data-weapon="carbine" title="[2] Carabina">
+          <div class="br-slot-icon-wrap">
+            <svg class="br-slot-svg" viewBox="0 0 120 56">
+              <path d="M8 22 L34 18 L40 14 L76 14 L80 11 L85 11 L87 14 L114 15 L114 21 L86 21 L82 25 L66 25 L69 39 L60 41 L56 25 L48 25 L44 40 L36 39 L40 25 L32 26 L10 36 L6 33 Z"/>
+            </svg>
+          </div>
+          <div class="br-slot-bottom">
+            <span class="br-slot-num" id="carbineAmmoText">80</span>
+            <div class="br-slot-bar">
+              <div class="br-slot-bar-fill" id="carbineBarFill"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="br-slot" id="slotPistol" data-weapon="pistol" title="[3] Pistola">
+          <div class="br-slot-icon-wrap">
+            <svg class="br-slot-svg" viewBox="0 0 90 56">
+              <path d="M18 12 L72 12 L74 16 L70 24 L50 24 L48 31 L40 31 L36 48 L21 46 L26 24 L16 24 L15 17 Z"/>
+            </svg>
+          </div>
+          <div class="br-slot-bottom">
+            <span class="br-slot-num" id="pistolAmmoText">50</span>
+            <div class="br-slot-bar">
+              <div class="br-slot-bar-fill" id="pistolBarFill"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="br-slot" id="slotFist" data-weapon="fist" title="[4] Punho">
+          <div class="br-slot-icon-wrap">
+            <svg class="br-slot-svg" viewBox="0 0 80 56">
+              <path d="M22 24 C22 14 28 10 34 11 C36 9 42 9 45 11 C48 10 54 11 56 15 C60 16 62 21 60 27 L56 38 C54 44 48 47 40 47 L31 47 C24 47 20 41 21 33 Z M27 23 L33 23 L33 29 L27 29 Z M36 22 L42 22 L42 29 L36 29 Z M45 22 L51 22 L51 29 L45 29 Z"/>
+            </svg>
+          </div>
+          <div class="br-slot-bottom">
+            <span class="br-slot-infinity">∞</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="crosshair"></div>
+    <div id="hitmarker"></div>
+
+    <div class="bottom-left-hud">
+      <div class="status-stack">
+        <div class="hud-banner" id="killFeedBanner">ABATE CONFIRMADO!</div>
+        <div class="hud-banner" id="lootPromptBanner">PRESSIONE [F] OU ANDE SOBRE PARA COLETAR LOOT</div>
+        <div class="hud-banner" id="reloadBanner">RECARREGANDO ARMA...</div>
+        <div class="hud-banner" id="zoneWarningBanner">FORA DA ZONA SEGURA! VOLTE PARA O CÍRCULO CIANO!</div>
+        <div id="cameraControlHint">Clique na tela para travar mira 360° (ou arraste o mouse / use Q e E)</div>
+      </div>
+
+      <div class="hp-box">
+        <div class="hp-top-row">
+          <span id="hpText">VIDA: 100 / 100</span>
+          <span id="weaponTitleText">[1] FUZIL AK-47</span>
+        </div>
+        <div class="hp-bar-track">
+          <div class="hp-bar-fill" id="hpBarFill"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Configurações e Pausa -->
+  <div class="modal-overlay" id="settingsModal">
+    <div class="modal-card">
+      <div class="modal-title">Configurações da Partida</div>
+
+      <div class="setting-row">
+        <div style="display:flex; justify-content:space-between;">
+          <span>Sensibilidade da Mira</span>
+          <span id="sensLabel">1.0x</span>
+        </div>
+        <input type="range" id="sensSlider" min="0.3" max="2.5" step="0.1" value="1.0" style="accent-color:#157d87;" />
+      </div>
+
+      <label class="setting-row-inline">
+        <span>Efeitos Sonoros (Web Audio)</span>
+        <input type="checkbox" id="soundToggleCheckbox" checked style="width:18px; height:18px; accent-color:#157d87;" />
+      </label>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-modal primary" id="resumeMatchBtn">Continuar Partida</button>
+        <button type="button" class="btn-modal" id="restartFromPauseBtn">Reiniciar Partida</button>
+        <button type="button" class="btn-modal" id="returnLobbyFromPauseBtn">Voltar ao Lobby</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Fim de Partida -->
+  <div class="modal-overlay" id="endMatchModal">
+    <div class="modal-card">
+      <div class="modal-title" id="endMatchTitle">VITÓRIA ROYALE!</div>
+      <div class="modal-body-text" id="endMatchStats"></div>
+      <div class="modal-actions">
+        <button type="button" class="btn-modal primary" id="playAgainBtn">Jogar Novamente</button>
+        <button type="button" class="btn-modal" id="endToLobbyBtn">Voltar ao Lobby</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="script.js"></script>
+<script src="script.js"></script></body>
+</html>
