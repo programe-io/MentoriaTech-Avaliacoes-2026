@@ -1,114 +1,112 @@
 let tarefas = [];
-let opcao;
-let codigo = 1;
 
-do {
-    opcao = Number(prompt(
-        "===== SISTEMA DE TAREFAS =====\n" +
-        "1 - Cadastrar nova tarefa\n" +
-        "2 - Listar tarefas cadastradas\n" +
-        "3 - Marcar tarefa como concluída\n" +
-        "4 - Alterar prioridade de uma tarefa\n" +
-        "5 - Sair"
-    ));
+function cadastrarTarefa() {
 
-    switch (opcao) {
+    let codigo = document.getElementById("codigo").value.trim();
+    let titulo = document.getElementById("titulo").value.trim();
+    let prioridade = Number(document.getElementById("prioridade").value);
 
-        case 1:
-            let titulo = prompt("Digite o título da tarefa:");
-
-            if (titulo.length < 5) {
-                alert("O título deve ter no mínimo 5 caracteres!");
-                break;
-            }
-
-            let prioridade = Number(prompt(
-                "Digite a prioridade:\n" +
-                "1 - Alta\n" +
-                "2 - Média\n" +
-                "3 - Baixa"
-            ));
-
-            if (prioridade < 1 || prioridade > 3 || !Number.isInteger(prioridade)) {
-                alert("Prioridade inválida! Digite um valor entre 1 e 3.");
-                break;
-            }
-
-            let tarefa = {
-                codigo: codigo,
-                titulo: titulo,
-                prioridade: prioridade,
-                concluida: false
-            };
-
-            tarefas.push(tarefa);
-            codigo++;
-
-            alert("Tarefa cadastrada com sucesso!");
-            break;
-
-        case 2:
-            if (tarefas.length === 0) {
-                alert("Nenhuma tarefa cadastrada!");
-            } else {
-                let lista = "===== TAREFAS CADASTRADAS =====\n";
-
-                for (let i = 0; i < tarefas.length; i++) {
-                    lista +=
-                        "\nCódigo: " + tarefas[i].codigo +
-                        "\nTítulo: " + tarefas[i].titulo +
-                        "\nPrioridade: " + tarefas[i].prioridade +
-                        "\nStatus: " + (tarefas[i].concluida ? "Concluída" : "Pendente") +
-                        "\n-------------------------";
-                }
-
-                alert(lista);
-            }
-            break;
-
-        case 3:
-            let codConclusao = Number(prompt("Digite o código da tarefa:"));
-
-            let tarefaConclusao = tarefas.find(t => t.codigo === codConclusao);
-
-            if (tarefaConclusao) {
-                tarefaConclusao.concluida = true;
-                alert("Tarefa marcada como concluída!");
-            } else {
-                alert("Tarefa não encontrada!");
-            }
-            break;
-
-        case 4:
-            let codAlteracao = Number(prompt("Digite o código da tarefa:"));
-
-            let tarefaAlteracao = tarefas.find(t => t.codigo === codAlteracao);
-
-            if (tarefaAlteracao) {
-                let novaPrioridade = Number(prompt(
-                    "Digite a nova prioridade:\n" +
-                    "1 - Alta\n" +
-                    "2 - Média\n" +
-                    "3 - Baixa"
-                ));
-
-                if (novaPrioridade >= 1 && novaPrioridade <= 3 && Number.isInteger(novaPrioridade)) {
-                    tarefaAlteracao.prioridade = novaPrioridade;
-                    alert("Prioridade alterada com sucesso!");
-                } else {
-                    alert("Prioridade inválida!");
-                }
-            } else {
-                alert("Tarefa não encontrada!");
-            }
-            break;
-
-        case 5:
-            alert("Sistema encerrado!");
-            break;
-
-        default:
-            alert("Opção inválida!");
+    if (codigo === "" || titulo === "" || !prioridade) {
+        alert("Preencha todos os campos!");
+        return;
     }
 
-} while (opcao !== 5);
+    if (titulo.length < 5) {
+        alert("O título deve ter no mínimo 5 caracteres!");
+        return;
+    }
+
+    if (prioridade < 1 || prioridade > 3) {
+        alert("A prioridade deve ser entre 1 e 3!");
+        return;
+    }
+
+    if (tarefas.some(t => t.codigo === codigo)) {
+        alert("Esse código já está cadastrado!");
+        return;
+    }
+
+    tarefas.push({
+        codigo: codigo,
+        titulo: titulo,
+        prioridade: prioridade,
+        concluida: false
+    });
+
+    listarTarefas();
+
+    document.getElementById("codigo").value = "";
+    document.getElementById("titulo").value = "";
+    document.getElementById("prioridade").value = "";
+}
+
+function listarTarefas() {
+
+    let lista = document.getElementById("listaTarefas");
+
+    lista.innerHTML = "";
+
+    tarefas.forEach((tarefa, index) => {
+
+        let linha = document.createElement("tr");
+
+        let dados = [
+            tarefa.codigo,
+            tarefa.titulo,
+            tarefa.prioridade == 1 ? "Alta" :
+            tarefa.prioridade == 2 ? "Média" : "Baixa",
+            tarefa.concluida ? "Concluída" : "Pendente"
+        ];
+
+        dados.forEach(dado => {
+            let celula = document.createElement("td");
+            celula.textContent = dado;
+            linha.appendChild(celula);
+        });
+
+        let acoes = document.createElement("td");
+
+        let concluir = document.createElement("button");
+        concluir.textContent = "Concluir";
+        concluir.disabled = tarefa.concluida;
+        concluir.onclick = () => marcarConcluida(index);
+
+        let alterar = document.createElement("button");
+        alterar.textContent = "Alterar prioridade";
+        alterar.onclick = () => alterarPrioridade(index);
+
+        acoes.appendChild(concluir);
+        acoes.appendChild(alterar);
+
+        linha.appendChild(acoes);
+
+        lista.appendChild(linha);
+    });
+}
+
+function marcarConcluida(index) {
+
+    tarefas[index].concluida = true;
+
+    listarTarefas();
+
+    alert("Tarefa concluída!");
+}
+
+function alterarPrioridade(index) {
+
+    let novaPrioridade = Number(
+        prompt("Digite a nova prioridade:\n1 - Alta\n2 - Média\n3 - Baixa")
+    );
+
+    if (![1, 2, 3].includes(novaPrioridade)) {
+        alert("Digite uma prioridade válida!");
+        return;
+    }
+
+    tarefas[index].prioridade = novaPrioridade;
+
+    listarTarefas();
+
+    alert("Prioridade alterada!");
+}
