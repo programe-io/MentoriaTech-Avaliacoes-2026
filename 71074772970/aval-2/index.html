@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Gerenciamento de Tarefas</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: auto; }
+    .tarefa { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; }
+    .concluida { text-decoration: line-through; color: gray; }
+    label, input, select, button { display: block; margin: 5px 0; }
+    button { padding: 5px 10px; }
+  </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+  <h1>Gerenciador de Tarefas</h1>
+
+  <form id="formTarefa">
+    <label for="titulo">Título da Tarefa:</label>
+    <input type="text" id="titulo" required minlength="5" />
+    
+    <label for="prioridade">Prioridade:</label>
+    <select id="prioridade" required>
+      <option value="">Selecione</option>
+      <option value="1">1 - Alta</option>
+      <option value="2">2 - Média</option>
+      <option value="3">3 - Baixa</option>
+    </select>
+    
+    <button type="submit">Cadastrar Tarefa</button>
+  </form>
+
+  <h2>Tarefas Cadastradas</h2>
+  <div id="listaTarefas"></div>
+
+  <script>
+    let tarefas = [];
+    let codigoAtual = 1;
+
+    const form = document.getElementById('formTarefa');
+    const listaTarefas = document.getElementById('listaTarefas');
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const titulo = form.titulo.value.trim();
+      const prioridade = parseInt(form.prioridade.value);
+
+      // Validações extras
+      if (titulo.length < 5) {
+        alert('O título deve ter no mínimo 5 caracteres.');
+        return;
+      }
+      if (!(prioridade >=1 && prioridade <=3)) {
+        alert('A prioridade deve ser um valor entre 1 e 3.');
+        return;
+      }
+
+      tarefas.push({ codigo: codigoAtual++, titulo, prioridade, concluida: false });
+      form.reset();
+      renderizarTarefas();
+    });
+
+    function renderizarTarefas() {
+      listaTarefas.innerHTML = '';
+
+      if (tarefas.length === 0) {
+        listaTarefas.innerHTML = '<p>Nenhuma tarefa cadastrada.</p>';
+        return;
+      }
+
+      tarefas.forEach(tarefa => {
+        const div = document.createElement('div');
+        div.className = 'tarefa' + (tarefa.concluida ? ' concluida' : '');
+
+        div.innerHTML = `
+          <strong>[${tarefa.codigo}] ${tarefa.titulo}</strong><br />
+          Prioridade: ${tarefa.prioridade} <br />
+          Status: ${tarefa.concluida ? 'Concluída' : 'Pendente'}<br /><br />
+          <button onclick="marcarConcluida(${tarefa.codigo})">Marcar como Concluída</button>
+          <label for="prio-${tarefa.codigo}">Alterar Prioridade:</label>
+          <select id="prio-${tarefa.codigo}" onchange="alterarPrioridade(${tarefa.codigo}, this.value)">
+            <option value="1" ${tarefa.prioridade == 1 ? 'selected' : ''}>1 - Alta</option>
+            <option value="2" ${tarefa.prioridade == 2 ? 'selected' : ''}>2 - Média</option>
+            <option value="3" ${tarefa.prioridade == 3 ? 'selected' : ''}>3 - Baixa</option>
+          </select>
+        `;
+
+        listaTarefas.appendChild(div);
+      });
+    }
+
+    function marcarConcluida(codigo) {
+      const tarefa = tarefas.find(t => t.codigo === codigo);
+      if (tarefa) {
+        tarefa.concluida = true;
+        renderizarTarefas();
+      }
+    }
+
+    function alterarPrioridade(codigo, novaPrioridade) {
+      const prioridadeNum = parseInt(novaPrioridade);
+      if (prioridadeNum >= 1 && prioridadeNum <= 3) {
+        const tarefa = tarefas.find(t => t.codigo === codigo);
+        if (tarefa) {
+          tarefa.prioridade = prioridadeNum;
+          renderizarTarefas();
+        }
+      } else {
+        alert('Prioridade inválida, deve ser entre 1 e 3.');
+      }
+    }
+
+    renderizarTarefas();
+  </script>
+<script src="script.js"></script></body>
+</html>
