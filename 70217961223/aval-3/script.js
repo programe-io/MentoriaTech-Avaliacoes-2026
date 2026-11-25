@@ -1,171 +1,282 @@
-// DADOS DOS ARTIGOS (MOCK)
-const articles = [
-    {
-        id: 1,
-        title: "Elden Ring: Dicas Essenciais de Sobrevivência",
-        category: "pc",
-        categoryLabel: "PC / Console",
-        badgeColor: "badge-purple",
-        image: "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=600&q=80",
-        excerpt: "Guia definitivo para iniciantes e veteranos dominarem as Terras Intermédias com a build perfeita de Raquel.",
-        date: "25 de Setembro",
-        readTime: "6 min",
-        content: `
-            <h2>Como dominar as Terras Intermédias</h2>
-            <p>Elden Ring é um jogo colossal que exige paciência, observação e um bom planejamento de atributos. Neste guia preparado pela Raquel, vamos abordar as melhores estratégias iniciais.</p>
-            <h3>1. Escolha de Classe Inicial</h3>
-            <p>Se você prefere combate à distância com alto dano de magia, o Astrólogo é uma excelente escolha. Para combate corpo a corpo puro, o Miserável oferece distribuição totalmente livre de pontos.</p>
-            <h3>2. A Importância da Exploração</h3>
-            <p>Não siga apenas a luz da Graça. As áreas secundárias contêm frascos de cura adicionais, materiais de upgrade de arma e cinzas de invocação essenciais para chefes difíceis.</p>
-        `
-    },
-    {
-        id: 2,
-        title: "PS5 Pro: Vale a Pena o Upgrade?",
-        category: "ps5",
-        categoryLabel: "PS5",
-        badgeColor: "badge-purple",
-        image: "https://images.unsplash.com/photo-1606813907291-d86efa9b94db?auto=format&fit=crop&w=600&q=80",
-        excerpt: "Testamos a nova versão do console da Sony com Ray Tracing avançado e tecnologia PSSR.",
-        date: "22 de Setembro",
-        readTime: "4 min",
-        content: `
-            <h2>Análise de Desempenho e Gráficos</h2>
-            <p>O PS5 Pro chegou com a promessa de entregar 60 FPS com gráficos na qualidade do modo Fidelidade. Mas será que a diferença justifica a atualização?</p>
-            <p>Em nossos testes com jogos pesados, a tecnologia PSSR (upscaling por IA) mostrou resultados impressionantes, mantendo a nitidez sem perda acentuada de quadros por segundo.</p>
-        `
-    },
-    {
-        id: 3,
-        title: "Os Melhores RPGs Indie de 2026",
-        category: "switch",
-        categoryLabel: "Switch / PC",
-        badgeColor: "badge-purple",
-        image: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=600&q=80",
-        excerpt: "Uma seleção especial feita por Raquel com jogos independentes imperdíveis deste ano.",
-        date: "18 de Setembro",
-        readTime: "8 min",
-        content: `
-            <h2>A Era Ouro dos Jogos Independentes</h2>
-            <p>O mercado de jogos indie continua surpreendendo com narrativas emocionantes e mecânicas inovadoras que grandes estúdios muitas vezes hesitam em tentar.</p>
-            <p>Confira a lista com mais de 5 títulos com pixel art deslumbrante e trilha sonora inesquecível selecionados a dedo neste artigo.</p>
-        `
-    },
-    {
-        id: 4,
-        title: "Xbox Game Pass: Novidades do Mês",
-        category: "xbox",
-        categoryLabel: "Xbox",
-        badgeColor: "badge-purple",
-        image: "https://images.unsplash.com/photo-1621252179027-94459d278660?auto=format&fit=crop&w=600&q=80",
-        excerpt: "Descubra quais títulos estão chegando ao catálogo no serviço por assinatura da Microsoft.",
-        date: "15 de Setembro",
-        readTime: "3 min",
-        content: `
-            <h2>Lançamentos Day One</h2>
-            <p>Este mês o serviço conta com grandes estreias disponíveis desde o primeiro dia de lançamento, incluindo novos jogos de corrida e grandes aventuras cooperativas.</p>
-        `
-    }
-];
+// Elementos do DOM
+const imcForm = document.getElementById('imcForm');
+const nomeInput = document.getElementById('nomePaciente');
+const pesoInput = document.getElementById('pesoPaciente');
+const alturaInput = document.getElementById('alturaPaciente');
+const unidadeAltura = document.getElementById('unidadeAltura');
+const btnLimpar = document.getElementById('btnLimpar');
 
-// INICIALIZAR RENDERIZAÇÃO
-document.addEventListener("DOMContentLoaded", () => {
-    renderArticles(articles);
+// Mensagens de erro
+const erroNome = document.getElementById('erroNome');
+const erroPeso = document.getElementById('erroPeso');
+const erroAltura = document.getElementById('erroAltura');
+
+// Elementos de Resultado
+const emptyState = document.getElementById('emptyState');
+const resultContent = document.getElementById('resultContent');
+const resNome = document.getElementById('resNome');
+const resPeso = document.getElementById('resPeso');
+const resAltura = document.getElementById('resAltura');
+const resImcValor = document.getElementById('resImcValor');
+const resClassificacao = document.getElementById('resClassificacao');
+const resRisco = document.getElementById('resRisco');
+const resPesoIdeal = document.getElementById('resPesoIdeal');
+const resOrientacao = document.getElementById('resOrientacao');
+const imcBox = document.getElementById('imcBox');
+const scalePointer = document.getElementById('scalePointer');
+
+// Histórico e Estatísticas
+const historicoLista = document.getElementById('historicoLista');
+const btnLimparHistorico = document.getElementById('btnLimparHistorico');
+const totalPacientesEl = document.getElementById('totalPacientes');
+
+let historicoPacientes = [];
+
+// Atualiza visualmente a unidade da altura (m ou cm) conforme o usuário digita
+alturaInput.addEventListener('input', () => {
+  const val = parseFloat(alturaInput.value);
+  if (!isNaN(val) && val > 3) {
+    unidadeAltura.textContent = 'cm';
+  } else {
+    unidadeAltura.textContent = 'm';
+  }
 });
 
-// FUNÇÃO PARA RENDERIZAR OS CARDS DOS ARTIGOS
-function renderArticles(data) {
-    const grid = document.getElementById("articlesGrid");
-    grid.innerHTML = "";
+// Função principal de classificação do IMC segundo a OMS
+function obterInformacoesIMC(imc) {
+  if (imc < 18.5) {
+    return {
+      faixa: 'abaixo',
+      classificacao: 'Abaixo do peso',
+      risco: 'Risco de comorbidades: Baixo (atenção a carências nutricionais)',
+      cor: '#0284C7',
+      orientacao:
+        'O índice indica magreza. Recomenda-se avaliação nutricional para investigar causas metabólicas e estruturar um plano alimentar hipercalórico saudável.'
+    };
+  } else if (imc < 25) {
+    return {
+      faixa: 'normal',
+      classificacao: 'Peso normal',
+      risco: 'Risco de comorbidades: Normal / Ideal',
+      cor: '#00B87C',
+      orientacao:
+        'Parabéns! O paciente encontra-se na faixa considerada saudável pela Organização Mundial da Saúde. Manter alimentação equilibrada e prática regular de atividade física.'
+    };
+  } else if (imc < 30) {
+    return {
+      faixa: 'sobrepeso',
+      classificacao: 'Sobrepeso',
+      risco: 'Risco de comorbidades: Levemente aumentado',
+      cor: '#D97706',
+      orientacao:
+        'Faixa de pré-obesidade. Ajustes na rotina alimentar e aumento do gasto calórico semanal ajudam a prevenir a progressão para obesidade e alterações metabólicas.'
+    };
+  } else if (imc < 35) {
+    return {
+      faixa: 'obesidade1',
+      classificacao: 'Obesidade Grau I',
+      risco: 'Risco de comorbidades: Moderado',
+      cor: '#EA580C',
+      orientacao:
+        'Sinal de alerta clínico. É recomendado acompanhamento multidisciplinar (médico e nutricionista) para controle de peso e monitoramento de pressão arterial e glicemia.'
+    };
+  } else if (imc < 40) {
+    return {
+      faixa: 'obesidade2',
+      classificacao: 'Obesidade Grau II',
+      risco: 'Risco de comorbidades: Grave',
+      cor: '#DC2626',
+      orientacao:
+        'Obesidade severa com risco elevado para doenças cardiovasculares e diabetes tipo 2. Acompanhamento médico estruturado é fundamental.'
+    };
+  } else {
+    return {
+      faixa: 'obesidade3',
+      classificacao: 'Obesidade Grau III',
+      risco: 'Risco de comorbidades: Muito grave',
+      cor: '#991B1B',
+      orientacao:
+        'Obesidade mórbida. Necessita de acompanhamento médico especializado contínuo para redução segura de peso e prevenção de complicações severas.'
+    };
+  }
+}
 
-    if (data.length === 0) {
-        grid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: var(--text-muted);">Nenhum artigo encontrado.</p>`;
-        return;
+// Calcula a posição percentual do marcador na barra de escala (15 a 40 kg/m²)
+function calcularPosicaoEscala(imc) {
+  const min = 15;
+  const max = 40;
+  const clamped = Math.max(min, Math.min(max, imc));
+  return ((clamped - min) / (max - min)) * 100;
+}
+
+// Validação dos campos de entrada
+function validarFormulario() {
+  let valido = true;
+
+  const nome = nomeInput.value.trim();
+  const peso = parseFloat(pesoInput.value);
+  const altura = parseFloat(alturaInput.value);
+
+  // Limpa erros anteriores
+  erroNome.textContent = '';
+  erroPeso.textContent = '';
+  erroAltura.textContent = '';
+  nomeInput.classList.remove('input-error');
+  pesoInput.classList.remove('input-error');
+  alturaInput.classList.remove('input-error');
+
+  if (nome.length < 2) {
+    erroNome.textContent = 'Informe o nome completo do paciente.';
+    nomeInput.classList.add('input-error');
+    valido = false;
+  }
+
+  if (isNaN(peso) || peso <= 0 || peso > 500) {
+    erroPeso.textContent = 'Informe um peso válido (ex.: 70.5).';
+    pesoInput.classList.add('input-error');
+    valido = false;
+  }
+
+  if (isNaN(altura) || altura <= 0 || altura > 300) {
+    erroAltura.textContent = 'Informe uma altura válida (ex.: 1.75 ou 175).';
+    alturaInput.classList.add('input-error');
+    valido = false;
+  }
+
+  return valido;
+}
+
+// Exibe os dados do paciente na tela
+function exibirResultado(registro) {
+  emptyState.classList.add('hidden');
+  resultContent.classList.remove('hidden');
+
+  resNome.textContent = registro.nome;
+  resPeso.textContent = `${registro.peso.toFixed(1).replace('.', ',')} kg`;
+  resAltura.textContent = `${registro.alturaMetros.toFixed(2).replace('.', ',')} m`;
+  resImcValor.textContent = registro.imc.toFixed(1).replace('.', ',');
+
+  resClassificacao.textContent = registro.info.classificacao;
+  resClassificacao.style.backgroundColor = registro.info.cor;
+  imcBox.style.borderLeftColor = registro.info.cor;
+  resRisco.textContent = registro.info.risco;
+
+  // Cálculo da faixa de peso ideal (IMC entre 18,5 e 24,9)
+  const pesoMinIdeal = 18.5 * (registro.alturaMetros * registro.alturaMetros);
+  const pesoMaxIdeal = 24.9 * (registro.alturaMetros * registro.alturaMetros);
+
+  let diferencaTexto = '';
+  if (registro.peso < pesoMinIdeal) {
+    const falta = pesoMinIdeal - registro.peso;
+    diferencaTexto = ` (${falta.toFixed(1).replace('.', ',')} kg abaixo do mínimo ideal)`;
+  } else if (registro.peso > pesoMaxIdeal) {
+    const excesso = registro.peso - pesoMaxIdeal;
+    diferencaTexto = ` (${excesso.toFixed(1).replace('.', ',')} kg acima do máximo ideal)`;
+  } else {
+    diferencaTexto = ' (Dentro da faixa ideal!)';
+  }
+
+  resPesoIdeal.textContent = `Entre ${pesoMinIdeal.toFixed(1).replace('.', ',')} kg e ${pesoMaxIdeal.toFixed(1).replace('.', ',')} kg${diferencaTexto}`;
+  resOrientacao.textContent = registro.info.orientacao;
+
+  // Atualiza ponteiro na barra
+  scalePointer.style.left = `${calcularPosicaoEscala(registro.imc)}%`;
+
+  // Destaca a linha correspondente na tabela de referência
+  document.querySelectorAll('#tabelaReferencia tr').forEach((row) => {
+    row.classList.remove('active-row');
+    if (row.dataset.faixa === registro.info.faixa) {
+      row.classList.add('active-row');
     }
-
-    data.forEach(article => {
-        const cardHTML = `
-            <article class="card">
-                <div class="card-img-wrap">
-                    <img src="${article.image}" alt="${article.title}" class="card-img">
-                </div>
-                <div class="card-body">
-                    <span class="badge ${article.badgeColor}">${article.categoryLabel}</span>
-                    <h3 class="card-title">${article.title}</h3>
-                    <p class="card-excerpt">${article.excerpt}</p>
-                    <div class="card-footer">
-                        <span><i class="fa-regular fa-clock"></i> ${article.readTime}</span>
-                        <button class="btn-read" onclick="openModal(${article.id})">Ler Artigo <i class="fa-solid fa-arrow-right"></i></button>
-                    </div>
-                </div>
-            </article>
-        `;
-        grid.innerHTML += cardHTML;
-    });
+  });
 }
 
-// FILTRAR POR CATEGORIA
-function filterCategory(category, btnElement) {
-    // Atualiza botões ativos
-    document.querySelectorAll(".cat-btn").forEach(btn => btn.classList.remove("active"));
-    btnElement.classList.add("active");
+// Renderiza a lista de histórico
+function atualizarHistorico() {
+  totalPacientesEl.textContent = historicoPacientes.length;
 
-    if (category === "all") {
-        renderArticles(articles);
-    } else {
-        const filtered = articles.filter(item => item.category === category);
-        renderArticles(filtered);
-    }
-}
+  if (historicoPacientes.length === 0) {
+    btnLimparHistorico.classList.add('hidden');
+    historicoLista.innerHTML =
+      '<p class="history-empty">Nenhum paciente registrado nesta sessão ainda.</p>';
+    return;
+  }
 
-// BUSCA EM TEMPO REAL
-function handleSearch() {
-    const query = document.getElementById("searchInput").value.toLowerCase();
-    const filtered = articles.filter(article => 
-        article.title.toLowerCase().includes(query) || 
-        article.excerpt.toLowerCase().includes(query)
-    );
-    renderArticles(filtered);
-}
+  btnLimparHistorico.classList.remove('hidden');
+  historicoLista.innerHTML = '';
 
-// ABRIR MODAL
-function openModal(articleId) {
-    const article = articles.find(a => a.id === articleId);
-    if (!article) return;
-
-    const modalBody = document.getElementById("modalBody");
-    modalBody.innerHTML = `
-        <span class="badge ${article.badgeColor} mb-2">${article.categoryLabel}</span>
-        <h1 style="font-family: var(--font-heading); font-size: 2rem; margin-bottom: 15px;">${article.title}</h1>
-        <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px; display: flex; gap: 15px;">
-            <span><i class="fa-solid fa-user text-purple"></i> Por Raquel</span>
-            <span><i class="fa-regular fa-calendar text-purple"></i> ${article.date}</span>
-        </div>
-        <img src="${article.image}" alt="${article.title}" style="width: 100%; height: 250px; object-fit: cover; border-radius: 8px; margin-bottom: 20px;">
-        <div style="line-height: 1.8; font-size: 0.95rem;">
-            ${article.content}
-        </div>
+  historicoPacientes.forEach((item, index) => {
+    const div = document.createElement('div');
+    div.className = 'history-item';
+    div.title = 'Clique para rever os detalhes deste paciente';
+    div.innerHTML = `
+      <div class="history-info">
+        <strong>${item.nome}</strong>
+        <span>${item.peso.toFixed(1).replace('.', ',')} kg • ${item.alturaMetros.toFixed(2).replace('.', ',')} m • ${item.hora}</span>
+      </div>
+      <div class="history-badge">
+        <span class="imc-val">${item.imc.toFixed(1).replace('.', ',')} kg/m²</span>
+        <span class="imc-cat" style="color: ${item.info.cor}">${item.info.classificacao}</span>
+      </div>
     `;
 
-    document.getElementById("articleModal").classList.add("active");
+    div.addEventListener('click', () => exibirResultado(historicoPacientes[index]));
+    historicoLista.appendChild(div);
+  });
 }
 
-// FECHAR MODAL
-function closeModal() {
-    document.getElementById("articleModal").classList.remove("active");
-}
+// Evento de envio do formulário
+imcForm.addEventListener('submit', (e) => {
+  e.preventDefault();
 
-// FECHAR MODAL AO CLICAR FORA
-window.onclick = function(event) {
-    const modal = document.getElementById("articleModal");
-    if (event.target === modal) {
-        closeModal();
-    }
-};
+  if (!validarFormulario()) return;
 
-// FORMULÁRIO DE NEWSLETTER
-function handleSubscribe(event) {
-    event.preventDefault();
-    alert("Obrigado por se inscrever no blog da Raquel Gaming!");
-    event.target.reset();
-}
+  const nome = nomeInput.value.trim();
+  const peso = parseFloat(pesoInput.value);
+  let altura = parseFloat(alturaInput.value);
+
+  // Converte automaticamente centímetros para metros se usuário digitar ex: 175
+  if (altura > 3) {
+    altura = altura / 100;
+  }
+
+  const imc = peso / (altura * altura);
+  const info = obterInformacoesIMC(imc);
+  const agora = new Date();
+  const hora = agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+
+  const registro = {
+    nome,
+    peso,
+    alturaMetros: altura,
+    imc,
+    info,
+    hora
+  };
+
+  historicoPacientes.unshift(registro);
+  exibirResultado(registro);
+  atualizarHistorico();
+});
+
+// Limpar campos do formulário
+btnLimpar.addEventListener('click', () => {
+  imcForm.reset();
+  unidadeAltura.textContent = 'm';
+  erroNome.textContent = '';
+  erroPeso.textContent = '';
+  erroAltura.textContent = '';
+  nomeInput.classList.remove('input-error');
+  pesoInput.classList.remove('input-error');
+  alturaInput.classList.remove('input-error');
+  nomeInput.focus();
+});
+
+// Limpar histórico
+btnLimparHistorico.addEventListener('click', () => {
+  historicoPacientes = [];
+  atualizarHistorico();
+  emptyState.classList.remove('hidden');
+  resultContent.classList.add('hidden');
+  document.querySelectorAll('#tabelaReferencia tr').forEach((row) => row.classList.remove('active-row'));
+});
