@@ -1,0 +1,182 @@
+// PROJETO: SISTEMA DE ESTOQUE EM JAVASCRIPT
+// Requisitos baseados na Aula 14 - Projeto CRUD e Estoque.
+// Execute com Node.js (por exemplo, no terminal do VS Code).
+
+const readline = require("readline/promises");
+const { stdin: input, stdout: output } = require("process");
+
+const rl = readline.createInterface({ input, output });
+
+let produtos = [];
+
+// Valida os dados antes de cadastrar um produto.
+function validarProduto(descricao, quantidade, valor) {
+    if (typeof descricao !== "string" || descricao.trim().length < 5) {
+        throw new Error("A descrição deve ter, no mínimo, cinco caracteres.");
+    }
+
+    if (!Number.isFinite(quantidade) || quantidade < 1) {
+        throw new Error("A quantidade deve ser maior que zero.");
+    }
+
+    if (!Number.isFinite(valor) || valor < 0) {
+        throw new Error("O valor deve ser maior ou igual a zero.");
+    }
+}
+
+// Cadastra um novo produto.
+function cadastrarProduto(descricao, quantidade, valor) {
+    validarProduto(descricao, quantidade, valor);
+
+    const novoProduto = {
+        codigo: produtos.length + 1,
+        descricao: descricao.trim(),
+        quantidade: quantidade,
+        valor: valor
+    };
+
+    produtos.push(novoProduto);
+    return novoProduto;
+}
+
+// Exibe todos os produtos cadastrados.
+function listarProdutos() {
+    if (produtos.length === 0) {
+        console.log("\nNenhum produto cadastrado.");
+        return;
+    }
+
+    console.log("\n========== PRODUTOS EM ESTOQUE ==========");
+    produtos.forEach((produto) => {
+        console.log(
+            `Código: ${produto.codigo} | ` +
+            `Descrição: ${produto.descricao} | ` +
+            `Quantidade: ${produto.quantidade} | ` +
+            `Valor: R$ ${produto.valor.toFixed(2)}`
+        );
+    });
+    console.log("=========================================");
+}
+
+// Procura um produto pelo código.
+function buscarProdutoPorCodigo(codigoProduto) {
+    return produtos.find((produto) => produto.codigo === codigoProduto);
+}
+
+// Atualiza (substitui) o valor do produto.
+function atualizarValor(codigoProduto, novoValor) {
+    if (!Number.isFinite(novoValor) || novoValor < 0) {
+        throw new Error("O valor deve ser maior ou igual a zero.");
+    }
+
+    const produto = buscarProdutoPorCodigo(codigoProduto);
+
+    if (produto) {
+        produto.valor = novoValor;
+        return produto;
+    }
+
+    throw new Error("Produto não encontrado.");
+}
+
+// Soma a nova quantidade à quantidade que já existe no estoque.
+function atualizarQuantidade(codigoProduto, novaQuantidade) {
+    if (!Number.isFinite(novaQuantidade) || novaQuantidade < 1) {
+        throw new Error("A quantidade a adicionar deve ser maior que zero.");
+    }
+
+    const produto = buscarProdutoPorCodigo(codigoProduto);
+
+    if (produto) {
+        produto.quantidade = produto.quantidade + novaQuantidade;
+        return produto;
+    }
+
+    throw new Error("Produto não encontrado.");
+}
+
+async function perguntarNumero(mensagem) {
+    const resposta = await rl.question(mensagem);
+    const numero = Number(resposta);
+
+    if (resposta.trim() === "" || !Number.isFinite(numero)) {
+        throw new Error("Digite um número válido.");
+    }
+
+    return numero;
+}
+
+async function executarMenu() {
+    let continuar = true;
+
+    console.log("==================================");
+    console.log("       SISTEMA DE ESTOQUE");
+    console.log("==================================");
+
+    while (continuar) {
+        console.log("\nEscolha uma opção:");
+        console.log("1 - Cadastrar produto");
+        console.log("2 - Listar produtos");
+        console.log("3 - Atualizar valor");
+        console.log("4 - Adicionar quantidade ao estoque");
+        console.log("5 - Sair");
+
+        const opcao = (await rl.question("Opção: ")).trim();
+
+        try {
+            switch (opcao) {
+                case "1": {
+                    const descricao = await rl.question("Descrição do produto: ");
+                    const quantidade = await perguntarNumero("Quantidade inicial: ");
+                    const valor = await perguntarNumero("Valor do produto (R$): ");
+
+                    const produto = cadastrarProduto(descricao, quantidade, valor);
+                    console.log(`Produto cadastrado com sucesso! Código: ${produto.codigo}`);
+                    break;
+                }
+
+                case "2":
+                    listarProdutos();
+                    break;
+
+                case "3": {
+                    const codigo = await perguntarNumero("Código do produto: ");
+                    const novoValor = await perguntarNumero("Novo valor (R$): ");
+
+                    atualizarValor(codigo, novoValor);
+                    console.log("Valor atualizado com sucesso!");
+                    break;
+                }
+
+                case "4": {
+                    const codigo = await perguntarNumero("Código do produto: ");
+                    const quantidade = await perguntarNumero("Quantidade que chegou: ");
+
+                    const produto = atualizarQuantidade(codigo, quantidade);
+                    console.log(
+                        `Estoque atualizado! ${produto.descricao}: ` +
+                        `${produto.quantidade} unidade(s).`
+                    );
+                    break;
+                }
+
+                case "5":
+                    continuar = false;
+                    console.log("Sistema encerrado. Até mais!");
+                    break;
+
+                default:
+                    console.log("Opção inválida. Escolha uma opção de 1 a 5.");
+            }
+        } catch (erro) {
+            console.log(`Erro: ${erro.message}`);
+        }
+    }
+
+    rl.close();
+}
+
+executarMenu().catch((erro) => {
+    console.error("Ocorreu um erro no sistema:", erro.message);
+    rl.close();
+});
