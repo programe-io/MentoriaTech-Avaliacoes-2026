@@ -1,0 +1,1311 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Instagram - Meu Clone</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #fafafa;
+    color: #262626;
+}
+
+button, input, textarea {
+    font-family: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+/* CABEÇALHO */
+header {
+    height: 65px;
+    background: white;
+    border-bottom: 1px solid #ddd;
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 0 20px;
+}
+
+.logo {
+    font-family: cursive;
+    font-size: 29px;
+}
+
+.search {
+    background: #efefef;
+    border: none;
+    padding: 11px 15px;
+    border-radius: 8px;
+    width: 250px;
+    outline: none;
+}
+
+.header-icons {
+    display: flex;
+    gap: 20px;
+}
+
+.header-icons button {
+    border: none;
+    background: none;
+    font-size: 23px;
+}
+
+/* LAYOUT */
+.layout {
+    display: flex;
+    max-width: 1200px;
+    margin: auto;
+    gap: 35px;
+}
+
+.sidebar {
+    width: 230px;
+    padding: 30px 15px;
+    position: sticky;
+    top: 65px;
+    height: calc(100vh - 65px);
+}
+
+.sidebar button {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    padding: 15px 8px;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+.sidebar button:hover {
+    background: #eee;
+}
+
+.sidebar button.active {
+    font-weight: bold;
+}
+
+.main {
+    width: 470px;
+    padding: 25px 0;
+    min-height: 90vh;
+}
+
+.rightbar {
+    width: 280px;
+    padding: 35px 10px;
+}
+
+/* STORIES */
+.stories {
+    display: flex;
+    gap: 16px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 18px;
+    overflow-x: auto;
+    margin-bottom: 25px;
+}
+
+.story {
+    min-width: 65px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.story img {
+    width: 62px;
+    height: 62px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 3px solid #e1306c;
+    padding: 2px;
+}
+
+.story p {
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+/* POSTS */
+.post {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 25px;
+    overflow: hidden;
+}
+
+.post-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 13px;
+}
+
+.avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.post-header strong {
+    font-size: 14px;
+}
+
+.post-header .more {
+    margin-left: auto;
+    border: none;
+    background: none;
+    font-size: 22px;
+}
+
+.post-image {
+    width: 100%;
+    max-height: 520px;
+    object-fit: cover;
+    display: block;
+    cursor: pointer;
+}
+
+.post-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 12px;
+}
+
+.action {
+    border: none;
+    background: none;
+    font-size: 25px;
+}
+
+.action:hover {
+    opacity: .65;
+}
+
+.action.liked {
+    color: #ed4956;
+}
+
+.save {
+    margin-left: auto;
+}
+
+.post-info {
+    padding: 0 13px 15px;
+    font-size: 14px;
+}
+
+.post-info p {
+    margin-top: 8px;
+}
+
+.post-info .muted {
+    color: #888;
+    cursor: pointer;
+}
+
+.comment-list {
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+.comment {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.delete-comment {
+    border: none;
+    background: none;
+    color: #aaa;
+}
+
+.comment-form {
+    display: flex;
+    border-top: 1px solid #eee;
+    padding: 12px;
+}
+
+.comment-form input {
+    border: none;
+    outline: none;
+    flex: 1;
+}
+
+.comment-form button {
+    border: none;
+    background: none;
+    color: #0095f6;
+    font-weight: bold;
+}
+
+/* PERFIS E SUGESTÕES */
+.profile-mini {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.profile-mini img {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.profile-mini div {
+    flex: 1;
+}
+
+.profile-mini small {
+    color: #888;
+}
+
+.follow {
+    border: none;
+    background: none;
+    color: #0095f6;
+    font-weight: bold;
+}
+
+/* MODAIS */
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: rgba(0,0,0,.75);
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+}
+
+.modal.open {
+    display: flex;
+}
+
+.modal-box {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    width: 400px;
+    max-width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+}
+
+.modal-box h2 {
+    text-align: center;
+    font-size: 19px;
+    margin-bottom: 20px;
+}
+
+.close {
+    position: absolute;
+    right: 15px;
+    top: 12px;
+    border: none;
+    background: none;
+    font-size: 22px;
+}
+
+.modal-box input,
+.modal-box textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 7px;
+    margin-bottom: 12px;
+}
+
+.primary {
+    background: #0095f6;
+    color: white;
+    border: none;
+    border-radius: 7px;
+    width: 100%;
+    padding: 12px;
+    font-weight: bold;
+}
+
+/* STORY VISUALIZADOR */
+.story-viewer {
+    width: 370px;
+    max-width: 100%;
+    height: 600px;
+    max-height: 85vh;
+    background: #222;
+    border-radius: 12px;
+    position: relative;
+    overflow: hidden;
+}
+
+.story-viewer img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.story-top {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    right: 15px;
+    color: white;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-shadow: 0 1px 5px black;
+}
+
+.story-top button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+}
+
+.story-controls {
+    position: absolute;
+    inset: 60px 0 0;
+    display: flex;
+}
+
+.story-controls button {
+    width: 50%;
+    border: none;
+    background: transparent;
+}
+
+/* PÁGINAS */
+.page-title {
+    margin: 15px 0 25px;
+}
+
+.profile-page {
+    text-align: center;
+    padding: 20px;
+}
+
+.profile-page > img {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 15px;
+}
+
+.stats {
+    display: flex;
+    justify-content: space-around;
+    margin: 25px 0;
+}
+
+.profile-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+}
+
+.profile-grid img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    cursor: pointer;
+}
+
+.notification {
+    padding: 16px;
+    border-bottom: 1px solid #eee;
+}
+
+.notification button {
+    color: #0095f6;
+    border: none;
+    background: none;
+}
+
+.message {
+    background: #efefef;
+    padding: 12px;
+    border-radius: 15px;
+    margin: 10px 0;
+}
+
+.my-message {
+    background: #dceeff;
+    text-align: right;
+}
+
+.empty {
+    text-align: center;
+    padding: 40px 10px;
+    color: #888;
+}
+
+/* MOBILE */
+@media(max-width: 950px) {
+    .rightbar, .sidebar {
+        display: none;
+    }
+
+    .layout {
+        justify-content: center;
+    }
+
+    .main {
+        width: 470px;
+        max-width: 100%;
+    }
+}
+
+@media(max-width: 550px) {
+    header {
+        justify-content: space-between;
+        padding: 0 12px;
+    }
+
+    .search {
+        width: 120px;
+    }
+
+    .header-icons {
+        gap: 8px;
+    }
+
+    .main {
+        padding-top: 10px;
+    }
+
+    .post {
+        border-radius: 0;
+    }
+
+    .stories {
+        border-radius: 0;
+    }
+}
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+<header>
+    <h1 class="logo">Instagram</h1>
+
+    <input class="search" id="search"
+    placeholder="Pesquisar..." autocomplete="off">
+
+    <div class="header-icons">
+        <button data-page="home">🏠</button>
+        <button data-page="messages">💬</button>
+        <button id="header-create">➕</button>
+        <button data-page="notifications">❤️</button>
+        <button data-page="profile">👤</button>
+    </div>
+</header>
+
+<div class="layout">
+
+    <aside class="sidebar">
+        <button class="active" data-page="home">🏠 Página inicial</button>
+        <button data-page="explore">🔍 Explorar</button>
+        <button data-page="reels">🎬 Reels</button>
+        <button data-page="messages">💬 Mensagens</button>
+        <button data-page="notifications">❤️ Notificações</button>
+        <button id="menu-create">➕ Criar publicação</button>
+        <button data-page="saved">🔖 Salvos</button>
+        <button data-page="profile">👤 Perfil</button>
+    </aside>
+
+    <main class="main" id="main"></main>
+
+    <aside class="rightbar">
+        <div id="suggestions"></div>
+    </aside>
+
+</div>
+
+<!-- MODAL DE CRIAÇÃO -->
+<div class="modal" id="create-modal">
+    <div class="modal-box">
+        <button class="close" data-close="create-modal">✖</button>
+        <h2>Criar publicação</h2>
+
+        <form id="create-form">
+            <input id="post-image" type="file"
+            accept="image/*" required>
+
+            <textarea id="post-caption"
+            placeholder="Escreva uma legenda..."
+            rows="4"></textarea>
+
+            <button class="primary" type="submit">
+                Compartilhar publicação
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- MODAL DE STORIES -->
+<div class="modal" id="story-modal">
+    <div class="story-viewer">
+        <div class="story-top">
+            <strong id="story-name"></strong>
+            <button id="close-story">✖</button>
+        </div>
+
+        <img id="story-image" src="" alt="Story">
+
+        <div class="story-controls">
+            <button id="story-prev" aria-label="Story anterior"></button>
+            <button id="story-next" aria-label="Próximo story"></button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL DE MENSAGENS -->
+<div class="modal" id="message-modal">
+    <div class="modal-box">
+        <button class="close" data-close="message-modal">✖</button>
+        <h2>Conversa</h2>
+        <div id="chat-content"></div>
+
+        <form id="chat-form" class="comment-form">
+            <input id="chat-input" placeholder="Escreva uma mensagem...">
+            <button>Enviar</button>
+        </form>
+    </div>
+</div>
+
+<script>
+// ========================================
+// DADOS E ARMAZENAMENTO
+// ========================================
+
+const me = "meu_perfil";
+
+const defaultPosts = [
+    {
+        id: 1,
+        user: "mariana.fotos",
+        avatar: "https://i.pravatar.cc/100?img=6",
+        image: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=800",
+        caption: "A natureza é maravilhosa! 🌿",
+        likes: 1245,
+        liked: false,
+        saved: false,
+        comments: [
+            {user: "ana.estilo", text: "Que lugar lindo! ❤️"},
+            {user: "pedro.fotos", text: "Adorei a foto!"}
+        ]
+    },
+    {
+        id: 2,
+        user: "lucas.viagens",
+        avatar: "https://i.pravatar.cc/100?img=7",
+        image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800",
+        caption: "Um dia perfeito na praia! 🌊",
+        likes: 856,
+        liked: false,
+        saved: false,
+        comments: [
+            {user: "mariana.fotos", text: "Que sonho!"}
+        ]
+    },
+    {
+        id: 3,
+        user: "ana.estilo",
+        avatar: "https://i.pravatar.cc/100?img=13",
+        image: "https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=800",
+        caption: "Flores deixam tudo mais bonito! 🌸",
+        likes: 450,
+        liked: false,
+        saved: false,
+        comments: []
+    }
+];
+
+const users = [
+    {name:"mariana.fotos", avatar:"https://i.pravatar.cc/100?img=6"},
+    {name:"lucas.viagens", avatar:"https://i.pravatar.cc/100?img=7"},
+    {name:"ana.estilo", avatar:"https://i.pravatar.cc/100?img=13"},
+    {name:"pedro.fotos", avatar:"https://i.pravatar.cc/100?img=14"},
+    {name:"camila", avatar:"https://i.pravatar.cc/100?img=4"}
+];
+
+const defaultStories = users.map((u,i)=>({
+    ...u,
+    image:[
+        "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=700",
+        "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=700",
+        "https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=700",
+        "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=700",
+        "https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=700"
+    ][i]
+}));
+
+function load(key, fallback) {
+    try {
+        const value = JSON.parse(localStorage.getItem(key));
+        return value ?? fallback;
+    } catch {
+        return fallback;
+    }
+}
+
+let posts = load("insta_posts", defaultPosts);
+let following = load("insta_following", []);
+let messages = load("insta_messages", []);
+let notifications = load("insta_notifications", []);
+let stories = load("insta_stories", defaultStories);
+let currentPage = "home";
+let currentStory = 0;
+let activeChat = "mariana.fotos";
+
+function saveData() {
+    localStorage.setItem("insta_posts", JSON.stringify(posts));
+    localStorage.setItem("insta_following", JSON.stringify(following));
+    localStorage.setItem("insta_messages", JSON.stringify(messages));
+    localStorage.setItem("insta_notifications", JSON.stringify(notifications));
+    localStorage.setItem("insta_stories", JSON.stringify(stories));
+}
+
+function escapeHTML(value) {
+    return String(value).replace(/[&<>"']/g, char => ({
+        "&":"&amp;",
+        "<":"&lt;",
+        ">":"&gt;",
+        '"':"&quot;",
+        "'":"&#39;"
+    })[char]);
+}
+
+function notify(text) {
+    notifications.unshift({
+        text,
+        date: new Date().toLocaleString("pt-BR")
+    });
+    saveData();
+}
+
+// ========================================
+// NAVEGAÇÃO
+// ========================================
+
+function navigate(page) {
+    currentPage = page;
+
+    document.querySelectorAll("[data-page]").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.page === page);
+    });
+
+    render();
+}
+
+document.querySelectorAll("[data-page]").forEach(btn => {
+    btn.addEventListener("click", () => navigate(btn.dataset.page));
+});
+
+document.getElementById("menu-create").onclick = openCreate;
+document.getElementById("header-create").onclick = openCreate;
+
+// ========================================
+// STORIES
+// ========================================
+
+function renderStories() {
+    return `
+    <section class="stories">
+        ${stories.map((s,i)=>`
+            <div class="story" data-story="${i}">
+                <img src="${escapeHTML(s.avatar)}" alt="">
+                <p>${escapeHTML(s.name)}</p>
+            </div>
+        `).join("")}
+    </section>`;
+}
+
+function openStory(index) {
+    if (!stories.length) return;
+
+    currentStory = (index + stories.length) % stories.length;
+
+    const story = stories[currentStory];
+
+    document.getElementById("story-name").textContent = story.name;
+    document.getElementById("story-image").src = story.image;
+
+    document.getElementById("story-modal").classList.add("open");
+}
+
+document.getElementById("close-story").onclick = () => {
+    document.getElementById("story-modal").classList.remove("open");
+};
+
+document.getElementById("story-prev").onclick = () => {
+    openStory(currentStory - 1);
+};
+
+document.getElementById("story-next").onclick = () => {
+    openStory(currentStory + 1);
+};
+
+// ========================================
+// PUBLICAÇÕES
+// ========================================
+
+function postHTML(post) {
+    return `
+    <article class="post" data-id="${post.id}">
+
+        <div class="post-header">
+            <img class="avatar" src="${escapeHTML(post.avatar)}">
+            <strong>${escapeHTML(post.user)}</strong>
+            <button class="more" data-delete="${post.id}">•••</button>
+        </div>
+
+        <img class="post-image"
+        src="${escapeHTML(post.image)}"
+        alt="Publicação de ${escapeHTML(post.user)}"
+        data-image-like="${post.id}">
+
+        <div class="post-actions">
+            <button class="action ${post.liked ? "liked" : ""}"
+            data-like="${post.id}">
+                ${post.liked ? "❤️" : "🤍"}
+            </button>
+
+            <button class="action" data-focus="${post.id}">💬</button>
+            <button class="action" data-share="${post.id}">📤</button>
+
+            <button class="action save" data-save="${post.id}">
+                ${post.saved ? "🔖" : "♧"}
+            </button>
+        </div>
+
+        <div class="post-info">
+            <strong>${post.likes.toLocaleString("pt-BR")} curtidas</strong>
+
+            <p>
+                <strong>${escapeHTML(post.user)}</strong>
+                ${escapeHTML(post.caption)}
+            </p>
+
+            <div class="comment-list">
+                ${post.comments.map((c,i)=>`
+                    <p class="comment">
+                        <span><strong>${escapeHTML(c.user)}</strong>
+                        ${escapeHTML(c.text)}</span>
+                        ${c.user === me ? `<button class="delete-comment" data-delete-comment="${post.id}" data-index="${i}">✖</button>` : ""}
+                    </p>
+                `).join("")}
+            </div>
+        </div>
+
+        <form class="comment-form" data-comment="${post.id}">
+            <input name="comment" placeholder="Adicione um comentário..." required>
+            <button>Publicar</button>
+        </form>
+    </article>`;
+}
+
+function renderFeed(list = posts) {
+    return list.map(postHTML).join("") ||
+        `<div class="empty">Nenhuma publicação encontrada.</div>`;
+}
+
+// ========================================
+// PÁGINA PRINCIPAL
+// ========================================
+
+function renderHome() {
+    return `
+        ${renderStories()}
+        <div id="feed">${renderFeed()}</div>
+    `;
+}
+
+// ========================================
+// EXPLORAR
+// ========================================
+
+function renderExplore() {
+    return `
+        <h2 class="page-title">Explorar</h2>
+        <div class="profile-grid">
+            ${posts.map(p=>`
+                <img src="${escapeHTML(p.image)}"
+                data-explore="${p.id}">
+            `).join("")}
+        </div>
+    `;
+}
+
+// ========================================
+// PERFIL
+// ========================================
+
+function renderProfile() {
+    const mine = posts.filter(p => p.user === me);
+
+    return `
+    <section class="profile-page">
+        <img src="https://i.pravatar.cc/150?img=12">
+        <h2>Meu Perfil</h2>
+        <p>@${me}</p>
+
+        <div class="stats">
+            <div><strong>${mine.length}</strong><p>Publicações</p></div>
+            <div><strong>${following.length}</strong><p>Seguindo</p></div>
+            <div><strong>${users.length + 12}</strong><p>Seguidores</p></div>
+        </div>
+
+        <button class="primary" id="edit-profile">Editar perfil</button>
+
+        <h3 style="margin:30px 0 15px">Minhas publicações</h3>
+
+        <div class="profile-grid">
+            ${mine.map(p=>`
+                <img src="${escapeHTML(p.image)}" data-explore="${p.id}">
+            `).join("")}
+        </div>
+    </section>`;
+}
+
+// ========================================
+// SALVOS
+// ========================================
+
+function renderSaved() {
+    return `
+        <h2 class="page-title">Publicações salvas 🔖</h2>
+        ${renderFeed(posts.filter(p=>p.saved))}
+    `;
+}
+
+// ========================================
+// NOTIFICAÇÕES
+// ========================================
+
+function renderNotifications() {
+    return `
+        <h2 class="page-title">Notificações ❤️</h2>
+
+        ${notifications.map(n=>`
+            <div class="notification">
+                <p>${escapeHTML(n.text)}</p>
+                <small>${escapeHTML(n.date)}</small>
+            </div>
+        `).join("") || `<div class="empty">Nenhuma notificação ainda.</div>`}
+    `;
+}
+
+// ========================================
+// REELS
+// ========================================
+
+function renderReels() {
+    return `
+        <h2 class="page-title">Reels 🎬</h2>
+        <p>Conheça publicações da comunidade.</p>
+        ${renderFeed([...posts].reverse())}
+    `;
+}
+
+// ========================================
+// MENSAGENS
+// ========================================
+
+function renderMessages() {
+    return `
+        <h2 class="page-title">Mensagens 💬</h2>
+        ${users.map(u=>`
+            <div class="profile-mini">
+                <img src="${u.avatar}">
+                <div><strong>${u.name}</strong><br><small>Conversa privada</small></div>
+                <button class="follow" data-chat="${u.name}">Abrir</button>
+            </div>
+        `).join("")}
+    `;
+}
+
+function openChat(user) {
+    activeChat = user;
+    renderChat();
+    document.getElementById("message-modal").classList.add("open");
+}
+
+function renderChat() {
+    const chat = messages.filter(m=>m.user === activeChat);
+
+    document.getElementById("chat-content").innerHTML = `
+        <h3>${escapeHTML(activeChat)}</h3>
+        ${chat.map(m=>`
+            <div class="message ${m.mine ? "my-message" : ""}">
+                ${escapeHTML(m.text)}
+            </div>
+        `).join("")}
+    `;
+}
+
+document.getElementById("chat-form").addEventListener("submit", e=>{
+    e.preventDefault();
+
+    const input = document.getElementById("chat-input");
+    const text = input.value.trim();
+
+    if (!text) return;
+
+    messages.push({
+        user: activeChat,
+        text,
+        mine: true
+    });
+
+    input.value = "";
+    saveData();
+    renderChat();
+});
+
+document.querySelectorAll('[data-close="message-modal"]').forEach(btn=>{
+    btn.onclick = () => document.getElementById("message-modal").classList.remove("open");
+});
+
+// ========================================
+// RENDERIZAÇÃO
+// ========================================
+
+function render() {
+    const main = document.getElementById("main");
+
+    const pages = {
+        home: renderHome,
+        explore: renderExplore,
+        profile: renderProfile,
+        saved: renderSaved,
+        notifications: renderNotifications,
+        reels: renderReels,
+        messages: renderMessages
+    };
+
+    main.innerHTML = (pages[currentPage] || renderHome)();
+}
+
+// ========================================
+// CLIQUES E INTERAÇÕES
+// ========================================
+
+document.addEventListener("click", async e => {
+
+    // Abrir Stories
+    const story = e.target.closest("[data-story]");
+    if (story) {
+        openStory(Number(story.dataset.story));
+    }
+
+    // Curtir
+    const like = e.target.closest("[data-like]");
+    if (like) {
+        const post = posts.find(p=>p.id == like.dataset.like);
+        if (!post) return;
+
+        post.liked = !post.liked;
+        post.likes += post.liked ? 1 : -1;
+
+        if (post.liked) notify(`Você curtiu uma publicação de ${post.user}.`);
+
+        saveData();
+        render();
+    }
+
+    // Curtir clicando duas vezes na imagem
+    const image = e.target.closest("[data-image-like]");
+    if (image && e.detail === 2) {
+        const post = posts.find(p=>p.id == image.dataset.imageLike);
+        if (post && !post.liked) {
+            post.liked = true;
+            post.likes++;
+            notify(`Você curtiu uma publicação de ${post.user}.`);
+            saveData();
+            render();
+        }
+    }
+
+    // Salvar
+    const save = e.target.closest("[data-save]");
+    if (save) {
+        const post = posts.find(p=>p.id == save.dataset.save);
+        if (!post) return;
+
+        post.saved = !post.saved;
+        saveData();
+        render();
+    }
+
+    // Abrir comentários
+    const focus = e.target.closest("[data-focus]");
+    if (focus) {
+        const form = document.querySelector(
+            `[data-comment="${focus.dataset.focus}"] input`
+        );
+        if (form) form.focus();
+    }
+
+    // Excluir comentário
+    const deleteComment = e.target.closest("[data-delete-comment]");
+    if (deleteComment) {
+        const post = posts.find(p=>p.id == deleteComment.dataset.deleteComment);
+        if (!post) return;
+
+        post.comments.splice(Number(deleteComment.dataset.index),1);
+        saveData();
+        render();
+    }
+
+    // Compartilhar
+    const share = e.target.closest("[data-share]");
+    if (share) {
+        const post = posts.find(p=>p.id == share.dataset.share);
+        if (!post) return;
+
+        try {
+            await navigator.clipboard.writeText(post.image);
+            alert("Link da imagem copiado!");
+        } catch {
+            prompt("Copie o endereço da imagem:", post.image);
+        }
+    }
+
+    // Abrir conversa
+    const chat = e.target.closest("[data-chat]");
+    if (chat) openChat(chat.dataset.chat);
+
+    // Abrir post pela exploração
+    const explore = e.target.closest("[data-explore]");
+    if (explore) {
+        const post = posts.find(p=>p.id == explore.dataset.explore);
+        if (post) {
+            currentPage = "home";
+            render();
+            const element = document.querySelector(`[data-id="${post.id}"]`);
+            element?.scrollIntoView({behavior:"smooth"});
+        }
+    }
+
+    // Excluir publicação própria
+    const remove = e.target.closest("[data-delete]");
+    if (remove) {
+        const post = posts.find(p=>p.id == remove.dataset.delete);
+        if (!post || post.user !== me) {
+            alert("Você só pode excluir suas próprias publicações.");
+            return;
+        }
+
+        if (confirm("Deseja excluir esta publicação?")) {
+            posts = posts.filter(p=>p.id != post.id);
+            saveData();
+            render();
+        }
+    }
+
+    // Editar perfil
+    if (e.target.id === "edit-profile") {
+        const newName = prompt("Digite seu novo nome de usuário:", me);
+        if (newName && newName.trim()) {
+            alert("Este exemplo mantém o usuário de demonstração. Para alterar o perfil permanentemente, seria necessário atualizar os dados da conta.");
+        }
+    }
+});
+
+// ========================================
+// COMENTÁRIOS
+// ========================================
+
+document.addEventListener("submit", e=>{
+    if (!e.target.matches("[data-comment]")) return;
+
+    e.preventDefault();
+
+    const id = e.target.dataset.comment;
+    const post = posts.find(p=>p.id == id);
+    const input = e.target.elements.comment;
+    const text = input.value.trim();
+
+    if (!post || !text) return;
+
+    post.comments.push({
+        user: me,
+        text
+    });
+
+    notify("Você comentou uma publicação.");
+    saveData();
+    render();
+});
+
+// ========================================
+// SEGUIR PERFIS
+// ========================================
+
+function renderSuggestions() {
+    document.getElementById("suggestions").innerHTML = `
+        <div class="profile-mini">
+            <img src="https://i.pravatar.cc/100?img=12">
+            <div><strong>${me}</strong><br><small>Meu perfil</small></div>
+        </div>
+
+        <h4>Sugestões para você</h4>
+
+        ${users.map(u=>`
+            <div class="profile-mini">
+                <img src="${u.avatar}">
+                <div><strong>${u.name}</strong><br><small>Sugestão</small></div>
+                <button class="follow" data-follow="${u.name}">
+                    ${following.includes(u.name) ? "Seguindo" : "Seguir"}
+                </button>
+            </div>
+        `).join("")}
+    `;
+}
+
+document.addEventListener("click", e=>{
+    const button = e.target.closest("[data-follow]");
+    if (!button) return;
+
+    const name = button.dataset.follow;
+
+    if (following.includes(name)) {
+        following = following.filter(u=>u !== name);
+    } else {
+        following.push(name);
+        notify(`Você começou a seguir ${name}.`);
+    }
+
+    saveData();
+    renderSuggestions();
+    if (currentPage === "profile") render();
+});
+
+// ========================================
+// CRIAR PUBLICAÇÃO
+// ========================================
+
+function openCreate() {
+    document.getElementById("create-modal").classList.add("open");
+}
+
+document.querySelectorAll('[data-close="create-modal"]').forEach(btn=>{
+    btn.onclick = () => document.getElementById("create-modal").classList.remove("open");
+});
+
+document.getElementById("create-form").addEventListener("submit", e=>{
+    e.preventDefault();
+
+    const file = document.getElementById("post-image").files[0];
+    const caption = document.getElementById("post-caption").value.trim();
+
+    if (!file || !file.type.startsWith("image/")) {
+        alert("Selecione uma imagem válida.");
+        return;
+    }
+
+    if (file.size > 2 * 1024 * 1024) {
+        alert("A imagem deve ter no máximo 2 MB.");
+        return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = () => {
+        posts.unshift({
+            id: Date.now(),
+            user: me,
+            avatar: "https://i.pravatar.cc/100?img=12",
+            image: reader.result,
+            caption,
+            likes: 0,
+            liked: false,
+            saved: false,
+            comments: []
+        });
+
+        saveData();
+
+        document.getElementById("create-form").reset();
+        document.getElementById("create-modal").classList.remove("open");
+
+        navigate("home");
+        alert("Publicação criada com sucesso!");
+    };
+
+    reader.readAsDataURL(file);
+});
+
+// ========================================
+// PESQUISA
+// ========================================
+
+document.getElementById("search").addEventListener("input", e=>{
+    const query = e.target.value.toLowerCase().trim();
+
+    if (!query) {
+        navigate("home");
+        return;
+    }
+
+    currentPage = "home";
+
+    const result = posts.filter(p=>
+        p.user.toLowerCase().includes(query) ||
+        p.caption.toLowerCase().includes(query) ||
+        p.comments.some(c=>c.text.toLowerCase().includes(query))
+    );
+
+    document.querySelectorAll("[data-page]").forEach(btn=>{
+        btn.classList.toggle("active",btn.dataset.page === "home");
+    });
+
+    document.getElementById("main").innerHTML = `
+        <h2 class="page-title">Resultados da pesquisa</h2>
+        ${renderFeed(result)}
+    `;
+});
+
+// ========================================
+// INICIALIZAÇÃO
+// ========================================
+
+render();
+renderSuggestions();
+</script>
+
+<script src="script.js"></script></body>
+</html>
