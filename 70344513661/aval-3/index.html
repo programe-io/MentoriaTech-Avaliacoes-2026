@@ -1,0 +1,130 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle de IMC</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #e8f0ff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            width: 320px;
+            box-shadow: 0 4px 12px #999;
+            text-align: center;
+        }
+
+        h1 {
+            color: #2457a7;
+        }
+
+        input {
+            width: 90%;
+            padding: 12px;
+            margin: 8px 0;
+            border: 1px solid #aaa;
+            border-radius: 8px;
+        }
+
+        button {
+            background: #2457a7;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 12px;
+        }
+
+        button:hover {
+            background: #173c78;
+        }
+
+        #resultado {
+            margin-top: 20px;
+            color: #2457a7;
+            font-weight: bold;
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>Controle de IMC</h1>
+
+        <p>Informe os dados do paciente:</p>
+
+        <input type="text" id="nome" placeholder="Nome do paciente">
+
+        <input type="number" id="peso" placeholder="Peso em kg" step="any">
+
+        <input type="number" id="altura" placeholder="Altura em metros" step="any">
+
+        <button onclick="calcularIMC()">Calcular IMC</button>
+
+        <div id="resultado"></div>
+
+    </div>
+
+    <script>
+        function calcularIMC() {
+
+            let nome = document.getElementById("nome").value;
+            let peso = Number(document.getElementById("peso").value);
+            let altura = Number(document.getElementById("altura").value);
+
+            if (nome.trim() === "" || peso <= 0 || altura <= 0 ||
+                !Number.isFinite(peso) || !Number.isFinite(altura)) {
+
+                document.getElementById("resultado").innerHTML =
+                    "Preencha todos os campos corretamente!";
+
+                return;
+            }
+
+            let imc = peso / (altura * altura);
+
+            let classificacao = "";
+
+            if (imc < 18.5) {
+                classificacao = "Abaixo do peso";
+            } else if (imc < 25) {
+                classificacao = "Peso normal";
+            } else if (imc < 30) {
+                classificacao = "Sobrepeso";
+            } else if (imc < 35) {
+                classificacao = "Obesidade grau I";
+            } else if (imc < 40) {
+                classificacao = "Obesidade grau II";
+            } else {
+                classificacao = "Obesidade grau III";
+            }
+
+            document.getElementById("resultado").innerHTML =
+                "<h3>Resultado do paciente</h3>" +
+                "Nome: " + nome + "<br>" +
+                "Peso: " + peso + " kg<br>" +
+                "Altura: " + altura + " m<br>" +
+                "IMC: " + imc.toFixed(2) + "<br>" +
+                "Classificação: " + classificacao;
+        }
+    </script>
+
+</body>
+</html>
