@@ -1,174 +1,233 @@
-// ===== Dados dos produtos =====
-const PRODUTOS = [
-  { id: 1, nome: 'Camiseta Básica Algodão', categoria: 'Camisetas', preco: 59.90, cor: '#2f4b7c', desc: 'Algodão penteado, caimento reto.' },
-  { id: 2, nome: 'Camiseta Oversized', categoria: 'Camisetas', preco: 79.90, cor: '#c9b79c', desc: 'Modelagem ampla, 100% algodão.' },
-  { id: 3, nome: 'Camisa de Linho Manga Longa', categoria: 'Camisas', preco: 149.90, cor: '#8aa39b', desc: 'Leve e fresca para o calor.' },
-  { id: 4, nome: 'Camisa Social Slim', categoria: 'Camisas', preco: 129.90, cor: '#dfe6f0', desc: 'Tricoline com elastano.' },
-  { id: 5, nome: 'Calça Jeans Reta', categoria: 'Calças', preco: 199.90, cor: '#1f2f52', desc: 'Jeans médio, cintura alta.' },
-  { id: 6, nome: 'Calça de Alfaiataria', categoria: 'Calças', preco: 229.90, cor: '#3b3b3b', desc: 'Corte reto, acabamento fino.' },
-  { id: 7, nome: 'Vestido Midi Linho', categoria: 'Vestidos', preco: 189.90, cor: '#b5532f', desc: 'Comprimento midi, forro leve.' },
-  { id: 8, nome: 'Jaqueta Jeans Clássica', categoria: 'Jaquetas', preco: 259.90, cor: '#4f6d9a', desc: 'Lavagem clara, bolsos frontais.' }
+
+const produtos = [
+    {
+        id: 1,
+        nome: "Mochila Escolar",
+        preco: 89.90,
+        estoque: 50,
+        imagem: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400"
+    },
+    {
+        id: 2,
+        nome: "Caderno 10 Matérias",
+        preco: 25.90,
+        estoque: 100,
+        imagem: "https://images.unsplash.com/photo-1531346878377-a5be20888e57?w=400"
+    },
+    {
+        id: 3,
+        nome: "Estojo Escolar",
+        preco: 19.90,
+        estoque: 70,
+        imagem: "https://images.unsplash.com/photo-1583485088034-697b5bc54ccd?w=400"
+    },
+    {
+        id: 4,
+        nome: "Lápis de Escrever",
+        preco: 2.50,
+        estoque: 300,
+        imagem: "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=400"
+    },
+    {
+        id: 5,
+        nome: "Canetas Coloridas",
+        preco: 15.90,
+        estoque: 120,
+        imagem: "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=400"
+    },
+    {
+        id: 6,
+        nome: "Kit de Réguas",
+        preco: 12.90,
+        estoque: 80,
+        imagem: "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=400"
+    },
+    {
+        id: 7,
+        nome: "Borracha",
+        preco: 3.50,
+        estoque: 200,
+        imagem: "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=400"
+    },
+    {
+        id: 8,
+        nome: "Calculadora",
+        preco: 39.90,
+        estoque: 40,
+        imagem: "https://images.unsplash.com/photo-1574607383476-f517f260d30b?w=400"
+    }
 ];
 
-const DESCONTO_PIX = 0.05;
-const CHAVE = 'linhareta-carrinho';
+let carrinho = [];
 
-// ===== Estado =====
-let carrinho = carregar();           // { idProduto: quantidade }
-let qtdEscolhida = {};               // quantidade selecionada nos cards
-let categoriaAtiva = 'Todos';
-
-// ===== Utilitários =====
-const $ = (id) => document.getElementById(id);
-const reais = (v) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-const produto = (id) => PRODUTOS.find((p) => p.id === Number(id));
-
-function carregar() {
-  try { return JSON.parse(localStorage.getItem(CHAVE)) || {}; } catch { return {}; }
-}
-function salvar() {
-  try { localStorage.setItem(CHAVE, JSON.stringify(carrinho)); } catch {}
-}
-function avisar(msg) {
-  const el = $('aviso');
-  el.textContent = msg;
-  el.classList.add('ativo');
-  clearTimeout(avisar.t);
-  avisar.t = setTimeout(() => el.classList.remove('ativo'), 1800);
+function dinheiro(valor) {
+    return valor.toFixed(2).replace(".", ",");
 }
 
-// ===== Vitrine =====
-function renderFiltros() {
-  const cats = ['Todos', ...new Set(PRODUTOS.map((p) => p.categoria))];
-  $('filtros').innerHTML = cats
-    .map((c) => `<button data-cat="${c}" aria-pressed="${c === categoriaAtiva}">${c}</button>`)
-    .join('');
-}
+function mostrarProdutos() {
+    const area = document.getElementById("produtos");
 
-function renderProdutos() {
-  const lista = PRODUTOS.filter((p) => categoriaAtiva === 'Todos' || p.categoria === categoriaAtiva);
-  $('produtos').innerHTML = lista.map((p) => {
-    const q = qtdEscolhida[p.id] || 1;
-    return `
-    <article class="produto">
-      <div class="amostra" style="background:${p.cor}"><span>${p.categoria}</span></div>
-      <div class="corpo">
-        <h3>${p.nome}</h3>
-        <p class="desc">${p.desc}</p>
-        <p class="preco">${reais(p.preco)}</p>
-        <div class="acoes">
-          <div class="qtd">
-            <button data-acao="menos" data-id="${p.id}" aria-label="Diminuir quantidade">−</button>
-            <output>${q}</output>
-            <button data-acao="mais" data-id="${p.id}" aria-label="Aumentar quantidade">+</button>
-          </div>
-          <button class="add" data-acao="add" data-id="${p.id}">Adicionar</button>
+    area.innerHTML = produtos.map(p => `
+        <div class="produto">
+            <img src="${p.imagem}" alt="${p.nome}">
+            <h3>${p.nome}</h3>
+            <p class="preco">R$ ${dinheiro(p.preco)}</p>
+            <p class="estoque">
+                Estoque disponível: ${p.estoque} unidades
+            </p>
+            <button onclick="adicionar(${p.id})">
+                Adicionar ao carrinho
+            </button>
         </div>
-      </div>
-    </article>`;
-  }).join('');
+    `).join("");
 }
 
-// ===== Carrinho =====
-function calcularTotais() {
-  const subtotal = Object.entries(carrinho)
-    .reduce((soma, [id, q]) => soma + produto(id).preco * q, 0);
-  const desconto = $('pix').checked ? subtotal * DESCONTO_PIX : 0;
-  return { subtotal, desconto, total: subtotal - desconto };
+function adicionar(id) {
+    const produto = produtos.find(p => p.id === id);
+    const item = carrinho.find(p => p.id === id);
+
+    if (produto.estoque <= 0) {
+        alert("Produto sem estoque!");
+        return;
+    }
+
+    produto.estoque--;
+
+    if (item) {
+        item.quantidade++;
+    } else {
+        carrinho.push({
+            ...produto,
+            quantidade: 1
+        });
+    }
+
+    atualizarCarrinho();
+    mostrarProdutos();
 }
 
-function renderCarrinho() {
-  const ids = Object.keys(carrinho);
-  const totalItens = ids.reduce((s, id) => s + carrinho[id], 0);
-  $('contador').textContent = totalItens;
+function alterarQuantidade(id, valor) {
+    const item = carrinho.find(p => p.id === id);
+    const produto = produtos.find(p => p.id === id);
 
-  $('itens').innerHTML = ids.length
-    ? ids.map((id) => {
-        const p = produto(id), q = carrinho[id];
-        return `
-        <div class="item">
-          <div class="mini" style="background:${p.cor}"></div>
-          <div>
-            <h4>${p.nome}</h4>
-            <span class="un">${reais(p.preco)} cada</span>
-            <div class="linha-qtd">
-              <div class="qtd">
-                <button data-c="menos" data-id="${id}" aria-label="Diminuir">−</button>
-                <output>${q}</output>
-                <button data-c="mais" data-id="${id}" aria-label="Aumentar">+</button>
-              </div>
-              <button class="rm" data-c="remover" data-id="${id}">Remover</button>
+    if (!item) return;
+
+    if (valor > 0) {
+        if (produto.estoque <= 0) {
+            alert("Não temos mais unidades disponíveis!");
+            return;
+        }
+
+        item.quantidade++;
+        produto.estoque--;
+    } else {
+        item.quantidade--;
+        produto.estoque++;
+
+        if (item.quantidade <= 0) {
+            carrinho = carrinho.filter(p => p.id !== id);
+        }
+    }
+
+    atualizarCarrinho();
+    mostrarProdutos();
+}
+
+function remover(id) {
+    const item = carrinho.find(p => p.id === id);
+    const produto = produtos.find(p => p.id === id);
+
+    if (item) {
+        produto.estoque += item.quantidade;
+    }
+
+    carrinho = carrinho.filter(p => p.id !== id);
+
+    atualizarCarrinho();
+    mostrarProdutos();
+}
+
+function atualizarCarrinho() {
+    const area = document.getElementById("itensCarrinho");
+
+    area.innerHTML = "";
+
+    carrinho.forEach(item => {
+        area.innerHTML += `
+            <div class="item">
+                <img src="${item.imagem}">
+                <div class="item-info">
+                    <strong>${item.nome}</strong>
+                    <p>R$ ${dinheiro(item.preco)}</p>
+
+                    <div class="quantidade">
+                        <button onclick="alterarQuantidade(${item.id}, -1)">-</button>
+                        <strong>${item.quantidade}</strong>
+                        <button onclick="alterarQuantidade(${item.id}, 1)">+</button>
+                    </div>
+
+                    <p>Subtotal: R$ ${dinheiro(item.preco * item.quantidade)}</p>
+
+                    <button class="remover" onclick="remover(${item.id})">
+                        Remover produto
+                    </button>
+                </div>
             </div>
-          </div>
-          <div class="sub">${reais(p.preco * q)}</div>
-        </div>`;
-      }).join('')
-    : '<p class="vazio">Seu carrinho está vazio.<br>Escolha uma peça para começar.</p>';
+        `;
+    });
 
-  const t = calcularTotais();
-  $('subtotal').textContent = reais(t.subtotal);
-  $('desconto').textContent = '− ' + reais(t.desconto);
-  $('linhaDesconto').hidden = t.desconto === 0;
-  $('total').textContent = reais(t.total);
-  $('finalizar').disabled = ids.length === 0;
-  $('limpar').hidden = ids.length === 0;
-  salvar();
+    if (carrinho.length === 0) {
+        area.innerHTML = "<p>Seu carrinho está vazio!</p>";
+    }
+
+    const quantidade = carrinho.reduce(
+        (soma, item) => soma + item.quantidade, 0
+    );
+
+    const total = carrinho.reduce(
+        (soma, item) => soma + item.preco * item.quantidade, 0
+    );
+
+    document.getElementById("contador").textContent = quantidade;
+    document.getElementById("totalItens").textContent = quantidade;
+    document.getElementById("total").textContent = dinheiro(total);
 }
 
-function alterar(id, delta) {
-  const nova = (carrinho[id] || 0) + delta;
-  if (nova <= 0) delete carrinho[id]; else carrinho[id] = nova;
-  renderCarrinho();
+function abrirCarrinho() {
+    document.getElementById("carrinho").classList.add("ativo");
+    document.getElementById("fundo").classList.add("ativo");
 }
 
-function abrir(abrirTudo) {
-  $('carrinho').classList.toggle('aberto', abrirTudo);
-  $('fundo').classList.toggle('ativo', abrirTudo);
+function fecharCarrinho() {
+    document.getElementById("carrinho").classList.remove("ativo");
+    document.getElementById("fundo").classList.remove("ativo");
 }
 
-// ===== Eventos =====
-$('filtros').addEventListener('click', (e) => {
-  const b = e.target.closest('button'); if (!b) return;
-  categoriaAtiva = b.dataset.cat;
-  renderFiltros(); renderProdutos();
-});
+function finalizarCompra() {
+    if (carrinho.length === 0) {
+        alert("Adicione produtos antes de finalizar!");
+        return;
+    }
 
-$('produtos').addEventListener('click', (e) => {
-  const b = e.target.closest('button'); if (!b) return;
-  const id = Number(b.dataset.id);
-  const atual = qtdEscolhida[id] || 1;
-  if (b.dataset.acao === 'mais') qtdEscolhida[id] = Math.min(atual + 1, 99);
-  if (b.dataset.acao === 'menos') qtdEscolhida[id] = Math.max(atual - 1, 1);
-  if (b.dataset.acao === 'add') {
-    alterar(id, atual);
-    avisar(`${atual}× ${produto(id).nome} no carrinho`);
-    qtdEscolhida[id] = 1;
-  }
-  renderProdutos();
-});
+    const total = carrinho.reduce(
+        (soma, item) => soma + item.preco * item.quantidade, 0
+    );
 
-$('itens').addEventListener('click', (e) => {
-  const b = e.target.closest('button'); if (!b) return;
-  const id = b.dataset.id;
-  if (b.dataset.c === 'mais') alterar(id, 1);
-  if (b.dataset.c === 'menos') alterar(id, -1);
-  if (b.dataset.c === 'remover') alterar(id, -carrinho[id]);
-});
+    alert(
+        "Compra realizada com sucesso!\n" +
+        "Quantidade de produtos: " +
+        carrinho.reduce((soma, item) => soma + item.quantidade, 0) +
+        "\nTotal: R$ " + dinheiro(total)
+    );
 
-$('pix').addEventListener('change', renderCarrinho);
-$('abrirCarrinho').addEventListener('click', () => abrir(true));
-$('fecharCarrinho').addEventListener('click', () => abrir(false));
-$('fundo').addEventListener('click', () => abrir(false));
-document.addEventListener('keydown', (e) => { if (e.key === 'Escape') abrir(false); });
+    carrinho.forEach(item => {
+        item.quantidade = 0;
+    });
 
-$('limpar').addEventListener('click', () => { carrinho = {}; renderCarrinho(); });
-$('finalizar').addEventListener('click', () => {
-  const { total } = calcularTotais();
-  avisar(`Pedido de ${reais(total)} recebido. Obrigado pela compra!`);
-  carrinho = {}; renderCarrinho(); abrir(false);
-});
+    carrinho = [];
+    atualizarCarrinho();
+    fecharCarrinho();
+}
 
-// ===== Início =====
-renderFiltros();
-renderProdutos();
-renderCarrinho();
+mostrarProdutos();
+atualizarCarrinho();
