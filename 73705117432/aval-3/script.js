@@ -1,139 +1,159 @@
 
-const formulario = document.getElementById("formPaciente");
-const lista = document.getElementById("listaPacientes");
-const pesquisa = document.getElementById("pesquisa");
-
 let pacientes = JSON.parse(localStorage.getItem("pacientes")) || [];
 
-function salvarDados() {
-  localStorage.setItem("pacientes", JSON.stringify(pacientes));
-}
-
-function mostrarPacientes(filtro = "") {
-  lista.innerHTML = "";
-
-  const encontrados = pacientes.filter(p =>
-    p.nome.toLowerCase().includes(filtro.toLowerCase())
-  );
-
-  encontrados.forEach((p, index) => {
-    const card = document.createElement("div");
-    card.className = "card-paciente";
-
-    const titulo = document.createElement("h3");
-    titulo.textContent = p.nome;
-
-    const campos = [
-      `Idade: ${p.idade}`,
-      `Sexo: ${p.sexo}`,
-      `Tipo sanguíneo: ${p.sangue}`,
-      `Telefone: ${p.telefone || "Não informado"}`,
-      `Alergias: ${p.alergias || "Não informado"}`,
-      `Sintomas: ${p.sintomas}`,
-      `Histórico: ${p.historico || "Não informado"}`,
-      `Diagnóstico: ${p.diagnostico || "Não informado"}`,
-      `Prescrição: ${p.prescricao || "Não informado"}`
-    ];
-
-    card.appendChild(titulo);
-
-    campos.forEach(texto => {
-      const paragrafo = document.createElement("p");
-      paragrafo.textContent = texto;
-      card.appendChild(paragrafo);
+document.getElementById("data").textContent =
+    new Date().toLocaleDateString("pt-BR", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric"
     });
 
-    const acoes = document.createElement("div");
-    acoes.className = "acoes";
+function salvarDados() {
+    localStorage.setItem("pacientes", JSON.stringify(pacientes));
+}
 
-    const imprimir = document.createElement("button");
-    imprimir.textContent = "Imprimir";
-    imprimir.onclick = () => imprimirFicha(p);
+function atualizarPainel() {
+    document.getElementById("total").textContent = pacientes.length;
+    document.getElementById("consultas").textContent = pacientes.length;
+    document.getElementById("fichas").textContent = pacientes.length;
+}
 
-    const excluir = document.createElement("button");
-    excluir.textContent = "Excluir";
-    excluir.className = "excluir";
-    excluir.onclick = () => {
-      if (confirm("Deseja excluir esta ficha?")) {
-        pacientes.splice(pacientes.indexOf(p), 1);
-        salvarDados();
-        mostrarPacientes(pesquisa.value);
-      }
+document.getElementById("formulario").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    const paciente = {
+        id: Date.now(),
+        nome: valor("nome"),
+        cpf: valor("cpf"),
+        nascimento: valor("nascimento"),
+        sexo: valor("sexo"),
+        telefone: valor("telefone"),
+        email: valor("email"),
+        sangue: valor("sangue"),
+        alergias: valor("alergias"),
+        medicamentos: valor("medicamentos"),
+        emergencia: valor("emergencia"),
+        medico: valor("medico"),
+        especialidade: valor("especialidade"),
+        pressao: valor("pressao"),
+        temperatura: valor("temperatura"),
+        sintomas: valor("sintomas"),
+        historico: valor("historico"),
+        diagnostico: valor("diagnostico"),
+        prescricao: valor("prescricao"),
+        dataCadastro: new Date().toLocaleDateString("pt-BR")
     };
 
-    acoes.append(imprimir, excluir);
-    card.appendChild(acoes);
-    lista.appendChild(card);
-  });
+    pacientes.push(paciente);
 
-  if (encontrados.length === 0) {
-    lista.textContent = "Nenhum paciente encontrado.";
-  }
-}
+    salvarDados();
+    atualizarPainel();
+    mostrarPacientes();
 
-formulario.addEventListener("submit", function(event) {
-  event.preventDefault();
+    alert("Ficha médica cadastrada com sucesso!");
 
-  const paciente = {
-    nome: document.getElementById("nome").value.trim(),
-    idade: document.getElementById("idade").value,
-    sexo: document.getElementById("sexo").value,
-    sangue: document.getElementById("sangue").value,
-    telefone: document.getElementById("telefone").value,
-    alergias: document.getElementById("alergias").value,
-    sintomas: document.getElementById("sintomas").value,
-    historico: document.getElementById("historico").value,
-    diagnostico: document.getElementById("diagnostico").value,
-    prescricao: document.getElementById("prescricao").value
-  };
-
-  pacientes.push(paciente);
-  salvarDados();
-  formulario.reset();
-  mostrarPacientes();
-
-  alert("Ficha cadastrada com sucesso!");
+    this.reset();
 });
 
-pesquisa.addEventListener("input", () => {
-  mostrarPacientes(pesquisa.value);
-});
-
-function imprimirFicha(p) {
-  const janela = window.open("", "_blank");
-
-  janela.document.write(`
-    <html>
-    <head>
-      <title>Ficha Médica</title>
-      <style>
-        body { font-family: Arial; padding: 30px; }
-        h1 { color: #9b7920; }
-        p { margin: 12px 0; }
-      </style>
-    </head>
-    <body>
-      <h1>MediCare Pro - Ficha Médica</h1>
-      <h2>${escapar(p.nome)}</h2>
-      ${Object.entries(p).map(([chave, valor]) =>
-        `<p><strong>${escapar(chave)}:</strong> ${escapar(valor)}</p>`
-      ).join("")}
-    </body>
-    </html>
-  `);
-
-  janela.document.close();
-  janela.print();
+function valor(id) {
+    return document.getElementById(id).value.trim();
 }
 
-function escapar(valor) {
-  return String(valor).replace(/[&<>"']/g, caractere => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#39;"
-  })[caractere]);
+function textoSeguro(texto) {
+    return String(texto || "Não informado").replace(/[&<>"']/g, c => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+    })[c]);
 }
 
+function mostrarPacientes() {
+    const busca = document.getElementById("pesquisa").value.toLowerCase();
+
+    const filtrados = pacientes.filter(p =>
+        p.nome.toLowerCase().includes(busca) ||
+        p.cpf.toLowerCase().includes(busca)
+    );
+
+    const lista = document.getElementById("lista");
+
+    if (!filtrados.length) {
+        lista.innerHTML = "<p>Nenhum paciente encontrado.</p>";
+        return;
+    }
+
+    lista.innerHTML = filtrados.map(p => `
+        <div class="registro">
+            <div>
+                <strong>${textoSeguro(p.nome)}</strong>
+                <p>${textoSeguro(p.especialidade)} • ${p.dataCadastro}</p>
+            </div>
+            <button onclick="verFicha(${p.id})">Ver ficha</button>
+        </div>
+    `).join("");
+}
+
+function verFicha(id) {
+    const p = pacientes.find(p => p.id === id);
+    if (!p) return;
+
+    document.getElementById("documento").innerHTML = `
+        <h1>✚ MediCare Pro</h1>
+        <p>FICHA DE REGISTRO MÉDICO</p>
+        <hr>
+
+        <h3>Informações pessoais</h3>
+        <p><strong>Nome:</strong> ${textoSeguro(p.nome)}</p>
+        <p><strong>CPF:</strong> ${textoSeguro(p.cpf)}</p>
+        <p><strong>Nascimento:</strong> ${textoSeguro(p.nascimento)}</p>
+        <p><strong>Sexo:</strong> ${textoSeguro(p.sexo)}</p>
+        <p><strong>Telefone:</strong> ${textoSeguro(p.telefone)}</p>
+        <p><strong>E-mail:</strong> ${textoSeguro(p.email)}</p>
+
+        <h3>Informações clínicas</h3>
+        <p><strong>Tipo sanguíneo:</strong> ${textoSeguro(p.sangue)}</p>
+        <p><strong>Alergias:</strong> ${textoSeguro(p.alergias)}</p>
+        <p><strong>Medicamentos:</strong> ${textoSeguro(p.medicamentos)}</p>
+        <p><strong>Emergência:</strong> ${textoSeguro(p.emergencia)}</p>
+
+        <h3>Atendimento</h3>
+        <p><strong>Médico:</strong> ${textoSeguro(p.medico)}</p>
+        <p><strong>Especialidade:</strong> ${textoSeguro(p.especialidade)}</p>
+        <p><strong>Pressão:</strong> ${textoSeguro(p.pressao)}</p>
+        <p><strong>Temperatura:</strong> ${textoSeguro(p.temperatura)}</p>
+
+        <h3>Relatório clínico</h3>
+        <p><strong>Sintomas:</strong> ${textoSeguro(p.sintomas)}</p>
+        <p><strong>Histórico:</strong> ${textoSeguro(p.historico)}</p>
+        <p><strong>Diagnóstico:</strong> ${textoSeguro(p.diagnostico)}</p>
+        <p><strong>Prescrição:</strong> ${textoSeguro(p.prescricao)}</p>
+
+        <hr>
+        <p>Data de cadastro: ${textoSeguro(p.dataCadastro)}</p>
+        <p>Registro demonstrativo — requer validação do profissional responsável.</p>
+    `;
+
+    document.getElementById("visualizacao").classList.add("ativo");
+}
+
+function fecharFicha() {
+    document.getElementById("visualizacao").classList.remove("ativo");
+}
+
+function mostrarFicha() {
+    document.getElementById("formulario").scrollIntoView({
+        behavior: "smooth"
+    });
+}
+
+function mostrarHistorico() {
+    document.querySelector(".pacientes").scrollIntoView({
+        behavior: "smooth"
+    });
+}
+
+atualizarPainel();
 mostrarPacientes();

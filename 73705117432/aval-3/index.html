@@ -1,89 +1,224 @@
 
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MediCare Pro - Ficha Médica</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediCare Pro | Gestão Médica</title>
+    <link rel="stylesheet" href="style.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="style.css" rel="stylesheet"></head>
 <body>
 
-  <header>
-    <h1>✚ MediCare Pro</h1>
-    <p>Sistema de cadastro e gerenciamento médico</p>
-  </header>
+<div class="sidebar">
+    <h2>✚ MediCare</h2>
+    <p class="sub">GESTÃO HOSPITALAR</p>
 
-  <main>
-    <section class="formulario">
-      <h2>Cadastro de paciente</h2>
+    <button class="menu ativo">▣ Painel médico</button>
+    <button class="menu" onclick="mostrarFicha()">＋ Nova ficha</button>
+    <button class="menu" onclick="mostrarPacientes()">♙ Pacientes</button>
+    <button class="menu" onclick="mostrarHistorico()">◷ Histórico</button>
 
-      <form id="formPaciente">
-        <label>Nome completo</label>
-        <input type="text" id="nome" required>
+    <div class="usuario">
+        <div class="avatar">MD</div>
+        <div>
+            <strong>Área médica</strong>
+            <small>Sistema administrativo</small>
+        </div>
+    </div>
+</div>
 
-        <div class="linha">
-          <div>
-            <label>Idade</label>
-            <input type="number" id="idade" min="0" required>
-          </div>
-          <div>
-            <label>Sexo</label>
-            <select id="sexo" required>
-              <option value="">Selecione</option>
-              <option>Masculino</option>
-              <option>Feminino</option>
-              <option>Outro</option>
-            </select>
-          </div>
+<main>
+    <header>
+        <div>
+            <span class="data" id="data"></span>
+            <h1>Painel de atendimento</h1>
+            <p>Gerenciamento de fichas e informações dos pacientes.</p>
+        </div>
+        <button class="botao-principal" onclick="mostrarFicha()">
+            + Novo paciente
+        </button>
+    </header>
+
+    <section class="cards">
+        <div class="card">
+            <span>Total de pacientes</span>
+            <h2 id="total">0</h2>
+            <small>Pacientes cadastrados</small>
         </div>
 
-        <label>Tipo sanguíneo</label>
-        <select id="sangue">
-          <option>Não informado</option>
-          <option>A+</option>
-          <option>A-</option>
-          <option>B+</option>
-          <option>B-</option>
-          <option>AB+</option>
-          <option>AB-</option>
-          <option>O+</option>
-          <option>O-</option>
-        </select>
+        <div class="card">
+            <span>Consultas registradas</span>
+            <h2 id="consultas">0</h2>
+            <small>Atendimentos cadastrados</small>
+        </div>
 
-        <label>Telefone</label>
-        <input type="tel" id="telefone">
-
-        <label>Alergias</label>
-        <input type="text" id="alergias" placeholder="Ex: nenhuma ou alergias conhecidas">
-
-        <label>Sintomas</label>
-        <textarea id="sintomas" required></textarea>
-
-        <label>Histórico médico</label>
-        <textarea id="historico"></textarea>
-
-        <label>Diagnóstico</label>
-        <textarea id="diagnostico"></textarea>
-
-        <label>Prescrição / Orientações</label>
-        <textarea id="prescricao"></textarea>
-
-        <button type="submit">Salvar ficha médica</button>
-      </form>
+        <div class="card">
+            <span>Fichas médicas</span>
+            <h2 id="fichas">0</h2>
+            <small>Registros no sistema</small>
+        </div>
     </section>
 
-    <section class="pacientes">
-      <h2>Pacientes cadastrados</h2>
-      <input type="search" id="pesquisa" placeholder="Pesquisar paciente...">
-      <div id="listaPacientes"></div>
+    <section class="painel">
+        <div class="titulo">
+            <div>
+                <h2>Cadastro de paciente</h2>
+                <p>Preencha os dados para registrar um atendimento.</p>
+            </div>
+        </div>
+
+        <form id="formulario">
+
+            <h3>01. Informações pessoais</h3>
+
+            <div class="grade">
+                <div class="campo">
+                    <label>Nome completo *</label>
+                    <input id="nome" required placeholder="Nome do paciente">
+                </div>
+
+                <div class="campo">
+                    <label>CPF</label>
+                    <input id="cpf" placeholder="000.000.000-00">
+                </div>
+
+                <div class="campo">
+                    <label>Data de nascimento *</label>
+                    <input id="nascimento" type="date" required>
+                </div>
+
+                <div class="campo">
+                    <label>Sexo</label>
+                    <select id="sexo">
+                        <option value="">Selecione</option>
+                        <option>Feminino</option>
+                        <option>Masculino</option>
+                        <option>Outro</option>
+                        <option>Não informado</option>
+                    </select>
+                </div>
+
+                <div class="campo">
+                    <label>Telefone</label>
+                    <input id="telefone" placeholder="(00) 00000-0000">
+                </div>
+
+                <div class="campo">
+                    <label>E-mail</label>
+                    <input id="email" type="email" placeholder="email@exemplo.com">
+                </div>
+            </div>
+
+            <h3>02. Informações clínicas</h3>
+
+            <div class="grade">
+                <div class="campo">
+                    <label>Tipo sanguíneo</label>
+                    <select id="sangue">
+                        <option>Não informado</option>
+                        <option>A+</option>
+                        <option>A-</option>
+                        <option>B+</option>
+                        <option>B-</option>
+                        <option>AB+</option>
+                        <option>AB-</option>
+                        <option>O+</option>
+                        <option>O-</option>
+                    </select>
+                </div>
+
+                <div class="campo">
+                    <label>Alergias conhecidas</label>
+                    <input id="alergias" placeholder="Descreva ou informe não conhecidas">
+                </div>
+
+                <div class="campo">
+                    <label>Medicamentos em uso</label>
+                    <input id="medicamentos" placeholder="Medicamentos atuais">
+                </div>
+
+                <div class="campo">
+                    <label>Contato de emergência</label>
+                    <input id="emergencia" placeholder="Nome e telefone">
+                </div>
+            </div>
+
+            <h3>03. Atendimento médico</h3>
+
+            <div class="grade">
+                <div class="campo">
+                    <label>Médico responsável</label>
+                    <input id="medico" placeholder="Nome do profissional">
+                </div>
+
+                <div class="campo">
+                    <label>Especialidade</label>
+                    <select id="especialidade">
+                        <option>Clínica geral</option>
+                        <option>Cardiologia</option>
+                        <option>Pediatria</option>
+                        <option>Dermatologia</option>
+                        <option>Ortopedia</option>
+                        <option>Neurologia</option>
+                        <option>Outra</option>
+                    </select>
+                </div>
+
+                <div class="campo">
+                    <label>Pressão arterial</label>
+                    <input id="pressao" placeholder="Ex: 120/80">
+                </div>
+
+                <div class="campo">
+                    <label>Temperatura (°C)</label>
+                    <input id="temperatura" type="number" step="0.1" placeholder="Ex: 36.5">
+                </div>
+            </div>
+
+            <div class="campo completo">
+                <label>Queixa principal e sintomas</label>
+                <textarea id="sintomas" placeholder="Relato do paciente..."></textarea>
+            </div>
+
+            <div class="campo completo">
+                <label>Histórico médico</label>
+                <textarea id="historico" placeholder="Doenças anteriores, cirurgias e observações..."></textarea>
+            </div>
+
+            <div class="campo completo">
+                <label>Diagnóstico / avaliação profissional</label>
+                <textarea id="diagnostico" placeholder="Registro do profissional responsável..."></textarea>
+            </div>
+
+            <div class="campo completo">
+                <label>Prescrição / orientações</label>
+                <textarea id="prescricao" placeholder="Orientações e prescrições registradas pelo profissional..."></textarea>
+            </div>
+
+            <div class="botoes">
+                <button type="reset" class="limpar">Limpar formulário</button>
+                <button type="submit" class="salvar">Salvar ficha médica</button>
+            </div>
+        </form>
     </section>
-  </main>
 
-  <footer>
-    <p>© 2026 MediCare Pro - Projeto demonstrativo</p>
-  </footer>
+    <section class="painel pacientes">
+        <h2>Pacientes cadastrados</h2>
+        <input id="pesquisa" placeholder="🔎 Pesquisar paciente..." oninput="mostrarPacientes()">
+        <div id="lista"></div>
+    </section>
 
-  <script src="script.js"></script>
+</main>
+
+<div id="visualizacao" class="visualizacao">
+    <div class="documento" id="documento"></div>
+    <div class="acoes">
+        <button onclick="window.print()">Imprimir ficha</button>
+        <button onclick="fecharFicha()">Fechar</button>
+    </div>
+</div>
+
+<script src="script.js"></script>
 <script src="script.js"></script></body>
 </html>
