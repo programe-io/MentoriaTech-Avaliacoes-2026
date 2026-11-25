@@ -1,30 +1,74 @@
 let tarefas = [];
-let opcao;
-let codigo = 1;
+let proximoCodigo = 1;
 
-do {
-    opcao = Number(prompt(
-        "===== SISTEMA DE TAREFAS =====\n" +
-        "1 - Cadastrar nova tarefa\n" +
-        "2 - Listar tarefas cadastradas\n" +
-        "3 - Marcar tarefa como concluída\n" +
-        "4 - Alterar prioridade de uma tarefa\n" +
-        "5 - Sair"
-    ));
+function cadastrar() {
+    let titulo = document.getElementById("titulo").value;
+    let prioridade = Number(document.getElementById("prioridade").value);
 
-    switch (opcao) {
+    if (titulo.trim().length < 5) {
+        alert("O título deve ter no mínimo 5 caracteres!");
+        return;
+    }
 
-        case 1:
-            let titulo = prompt("Digite o título da tarefa:");
+    if (prioridade < 1 || prioridade > 3) {
+        alert("A prioridade deve ser entre 1 e 3!");
+        return;
+    }
 
-            if (titulo.length < 5) {
-                alert("O título deve ter no mínimo 5 caracteres!");
-                break;
-            }
+    tarefas.push({
+        codigo: proximoCodigo++,
+        titulo: titulo,
+        prioridade: prioridade,
+        status: "Pendente"
+    });
 
-            let prioridade = Number(prompt(
-                "Digite a prioridade:\n" +
-                "1 - Alta\n" +
-                "2 - Média\n" +
-                "3 - Baixa"
-           …
+    alert("Tarefa cadastrada!");
+}
+
+function listar() {
+    let lista = document.getElementById("lista");
+    lista.innerHTML = "";
+
+    tarefas.forEach(tarefa => {
+        let item = document.createElement("li");
+
+        item.textContent = `Código: ${tarefa.codigo} | 
+        Título: ${tarefa.titulo} | 
+        Prioridade: ${tarefa.prioridade} | 
+        Status: ${tarefa.status}`;
+
+        lista.appendChild(item);
+    });
+}
+
+function concluir() {
+    let codigo = Number(document.getElementById("codigo").value);
+
+    let tarefa = tarefas.find(t => t.codigo === codigo);
+
+    if (tarefa) {
+        tarefa.status = "Concluída";
+        alert("Tarefa concluída!");
+    } else {
+        alert("Tarefa não encontrada!");
+    }
+}
+
+function alterarPrioridade() {
+    let codigo = Number(document.getElementById("codigo").value);
+    let prioridade = Number(document.getElementById("novaPrioridade").value);
+
+    if (prioridade < 1 || prioridade > 3) {
+        alert("A prioridade deve ser entre 1 e 3!");
+        return;
+    }
+
+    let tarefa = tarefas.find(t => t.codigo === codigo);
+
+    if (tarefa) {
+        tarefa.prioridade = prioridade;
+        alert("Prioridade alterada!");
+    } else {
+        alert("Tarefa não encontrada!");
+    }
+}
