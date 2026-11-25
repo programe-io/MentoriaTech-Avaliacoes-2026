@@ -1,0 +1,206 @@
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FarmaStock | Controle de Estoque</title>
+    <link rel="stylesheet" href="style.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+<header>
+    <div class="logo">✚ FARMA<span>STOCK</span></div>
+    <p>SISTEMA DE CONTROLE DE ESTOQUE FARMACÊUTICO</p>
+</header>
+
+<main class="container">
+
+    <section class="boas-vindas">
+        <div>
+            <h1>Painel de Controle</h1>
+            <p>Gerencie os medicamentos da sua farmácia.</p>
+        </div>
+        <span class="data" id="dataAtual"></span>
+    </section>
+
+    <!-- INDICADORES -->
+    <section class="dashboard">
+
+        <div class="card">
+            <span>💊</span>
+            <h3>Total de medicamentos</h3>
+            <p id="totalProdutos">0</p>
+        </div>
+
+        <div class="card">
+            <span>📦</span>
+            <h3>Unidades em estoque</h3>
+            <p id="totalUnidades">0</p>
+        </div>
+
+        <div class="card alerta">
+            <span>⚠️</span>
+            <h3>Estoque baixo</h3>
+            <p id="estoqueBaixo">0</p>
+        </div>
+
+        <div class="card vencimento">
+            <span>📅</span>
+            <h3>Vencidos ou próximos</h3>
+            <p id="vencimentos">0</p>
+        </div>
+
+        <div class="card">
+            <span>💰</span>
+            <h3>Valor do estoque</h3>
+            <p id="valorEstoque">R$ 0,00</p>
+        </div>
+
+    </section>
+
+    <!-- CADASTRO -->
+    <section class="secao">
+        <h2>➕ Cadastrar medicamento</h2>
+
+        <form id="formProduto">
+
+            <div class="grid">
+
+                <div class="campo">
+                    <label>Nome do medicamento *</label>
+                    <input type="text" id="nome"
+                        placeholder="Ex: Paracetamol" required>
+                </div>
+
+                <div class="campo">
+                    <label>Categoria *</label>
+                    <select id="categoria" required>
+                        <option value="">Selecione</option>
+                        <option>Genérico</option>
+                        <option>Similar</option>
+                        <option>Referência</option>
+                        <option>Vitaminas</option>
+                        <option>Higiene e cuidados</option>
+                        <option>Outros</option>
+                    </select>
+                </div>
+
+                <div class="campo">
+                    <label>Fabricante</label>
+                    <input type="text" id="fabricante"
+                        placeholder="Nome do fabricante">
+                </div>
+
+                <div class="campo">
+                    <label>Código do produto</label>
+                    <input type="text" id="codigo"
+                        placeholder="Código ou referência">
+                </div>
+
+                <div class="campo">
+                    <label>Preço de compra (R$) *</label>
+                    <input type="number" id="compra"
+                        min="0.01" step="0.01" required>
+                </div>
+
+                <div class="campo">
+                    <label>Preço de venda (R$) *</label>
+                    <input type="number" id="venda"
+                        min="0.01" step="0.01" required>
+                </div>
+
+                <div class="campo">
+                    <label>Quantidade *</label>
+                    <input type="number" id="quantidade"
+                        min="0" step="1" required>
+                </div>
+
+                <div class="campo">
+                    <label>Estoque mínimo *</label>
+                    <input type="number" id="minimo"
+                        min="0" step="1" value="5" required>
+                </div>
+
+                <div class="campo">
+                    <label>Data de validade *</label>
+                    <input type="date" id="validade" required>
+                </div>
+
+            </div>
+
+            <button type="submit" id="btnSalvar">
+                Cadastrar medicamento
+            </button>
+
+        </form>
+    </section>
+
+    <!-- LISTA DE MEDICAMENTOS -->
+    <section class="secao">
+        <div class="titulo-lista">
+            <h2>📋 Medicamentos cadastrados</h2>
+            <span id="contador">0 produtos</span>
+        </div>
+
+        <div class="filtros">
+            <input type="text" id="pesquisa"
+                placeholder="Pesquisar medicamento...">
+
+            <select id="filtroCategoria">
+                <option value="">Todas as categorias</option>
+                <option>Genérico</option>
+                <option>Similar</option>
+                <option>Referência</option>
+                <option>Vitaminas</option>
+                <option>Higiene e cuidados</option>
+                <option>Outros</option>
+            </select>
+
+            <select id="filtroStatus">
+                <option value="">Todos os status</option>
+                <option value="normal">Estoque normal</option>
+                <option value="baixo">Estoque baixo</option>
+                <option value="vencido">Vencidos</option>
+                <option value="proximo">Próximos do vencimento</option>
+            </select>
+        </div>
+
+        <div class="tabela-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Medicamento</th>
+                        <th>Categoria</th>
+                        <th>Preço</th>
+                        <th>Quantidade</th>
+                        <th>Validade</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+
+                <tbody id="listaProdutos"></tbody>
+            </table>
+        </div>
+
+        <p id="mensagemVazia" hidden>
+            Nenhum medicamento encontrado.
+        </p>
+    </section>
+
+</main>
+
+<footer>
+    <p>FARMASTOCK © 2026 - Sistema de Controle de Estoque</p>
+    <small>Controle e organização para sua farmácia.</small>
+</footer>
+
+<script src="script.js"></script>
+<script src="script.js"></script></body>
+</html>
