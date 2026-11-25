@@ -1,0 +1,1360 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de IMC</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f4f8;
+            margin: 0;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 450px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2563eb;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-top: 6px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 13px;
+            margin-top: 20px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        #resultado {
+            display: none;
+            margin-top: 25px;
+            padding: 18px;
+            background: #eff6ff;
+            border-radius: 8px;
+            line-height: 1.7;
+        }
+
+        .imc {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2563eb;
+        }
+
+        .classificacao {
+            font-size: 20px;
+            font-weight: bold;
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+<div class="container">
+
+    <h1>Calculadora de IMC</h1>
+
+    <form id="formIMC">
+
+        <label for="nome">Nome do Paciente:</label>
+        <input type="text" id="nome"
+               placeholder="Digite o nome do paciente"
+               required>
+
+        <label for="peso">Peso (kg):</label>
+        <input type="number" id="peso"
+               placeholder="Ex: 70"
+               min="0.1" step="any" required>
+
+        <label for="altura">Altura (metros):</label>
+        <input type="number" id="altura"
+               placeholder="Ex: 1.70"
+               min="0.1" step="any" required>
+
+        <button type="submit">Calcular IMC</button>
+
+    </form>
+
+    <div id="resultado">
+        <h2>Resultado do Paciente</h2>
+
+        <p><strong>Nome:</strong> <span id="resNome"></span></p>
+        <p><strong>Peso:</strong> <span id="resPeso"></span> kg</p>
+        <p><strong>Altura:</strong> <span id="resAltura"></span> m</p>
+
+        <p>Índice de Massa Corporal:</p>
+        <div class="imc" id="resIMC"></div>
+
+        <p>Classificação:</p>
+        <div class="classificacao" id="resClassificacao"></div>
+
+        <p id="orientacao"></p>
+    </div>
+
+</div>
+
+<script>
+
+document.getElementById("formIMC").addEventListener("submit", function(event) {
+
+    event.preventDefault();
+
+    // Receber dados do paciente
+    const nome = document.getElementById("nome").value.trim();
+    const peso = parseFloat(document.getElementById("peso").value);
+    const altura = parseFloat(document.getElementById("altura").value);
+
+    if (!nome || !Number.isFinite(peso) ||
+        !Number.isFinite(altura) || peso <= 0 || altura <= 0) {
+        alert("Informe dados válidos!");
+        return;
+    }
+
+    // Calcular IMC
+    const imc = peso / (altura * altura);
+
+    let classificacao = "";
+    let orientacao = "";
+
+    // Classificação do IMC para adultos
+    if (imc < 18.5) {
+        classificacao = "Abaixo do peso";
+        orientacao = "O paciente está abaixo do peso recomendado. Recomenda-se avaliação nutricional.";
+    }
+    else if (imc < 25) {
+        classificacao = "Peso normal";
+        orientacao = "O paciente está dentro da faixa de peso considerada adequada.";
+    }
+    else if (imc < 30) {
+        classificacao = "Sobrepeso";
+        orientacao = "O paciente apresenta sobrepeso. Recomenda-se atenção aos hábitos alimentares e atividade física.";
+    }
+    else if (imc < 35) {
+        classificacao = "Obesidade grau I";
+        orientacao = "Recomenda-se acompanhamento profissional e avaliação da saúde.";
+    }
+    else if (imc < 40) {
+        classificacao = "Obesidade grau II";
+        orientacao = "Recomenda-se acompanhamento médico e nutricional.";
+    }
+    else {
+        classificacao = "Obesidade grau III";
+        orientacao = "É importante procurar acompanhamento médico especializado.";
+    }
+
+    // Exibir resultados
+    document.getElementById("resNome").textContent = nome;
+    document.getElementById("resPeso").textContent = peso.toFixed(2);
+    document.getElementById("resAltura").textContent = altura.toFixed(2);
+    document.getElementById("resIMC").textContent = imc.toFixed(2);
+    document.getElementById("resClassificacao").textContent = classificacao;
+    document.getElementById("orientacao").textContent = orientacao;
+
+    document.getElementById("resultado").style.display = "block";
+
+});
+
+</script>
+
+<script src="script.js"></script></body>
+</html>
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de IMC</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f4f8;
+            margin: 0;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 450px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2563eb;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-top: 6px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 13px;
+            margin-top: 20px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        #resultado {
+            display: none;
+            margin-top: 25px;
+            padding: 18px;
+            background: #eff6ff;
+            border-radius: 8px;
+            line-height: 1.7;
+        }
+
+        .imc {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2563eb;
+        }
+
+        .classificacao {
+            font-size: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Calculadora de IMC</h1>
+
+    <form id="formIMC">
+
+        <label for="nome">Nome do Paciente:</label>
+        <input type="text" id="nome"
+               placeholder="Digite o nome do paciente"
+               required>
+
+        <label for="peso">Peso (kg):</label>
+        <input type="number" id="peso"
+               placeholder="Ex: 70"
+               min="0.1" step="any" required>
+
+        <label for="altura">Altura (metros):</label>
+        <input type="number" id="altura"
+               placeholder="Ex: 1.70"
+               min="0.1" step="any" required>
+
+        <button type="submit">Calcular IMC</button>
+
+    </form>
+
+    <div id="resultado">
+        <h2>Resultado do Paciente</h2>
+
+        <p><strong>Nome:</strong> <span id="resNome"></span></p>
+        <p><strong>Peso:</strong> <span id="resPeso"></span> kg</p>
+        <p><strong>Altura:</strong> <span id="resAltura"></span> m</p>
+
+        <p>Índice de Massa Corporal:</p>
+        <div class="imc" id="resIMC"></div>
+
+        <p>Classificação:</p>
+        <div class="classificacao" id="resClassificacao"></div>
+
+        <p id="orientacao"></p>
+    </div>
+
+</div>
+
+<script>
+
+document.getElementById("formIMC").addEventListener("submit", function(event) {
+
+    event.preventDefault();
+
+    // Receber dados do paciente
+    const nome = document.getElementById("nome").value.trim();
+    const peso = parseFloat(document.getElementById("peso").value);
+    const altura = parseFloat(document.getElementById("altura").value);
+
+    if (!nome || !Number.isFinite(peso) ||
+        !Number.isFinite(altura) || peso <= 0 || altura <= 0) {
+        alert("Informe dados válidos!");
+        return;
+    }
+
+    // Calcular IMC
+    const imc = peso / (altura * altura);
+
+    let classificacao = "";
+    let orientacao = "";
+
+    // Classificação do IMC para adultos
+    if (imc < 18.5) {
+        classificacao = "Abaixo do peso";
+        orientacao = "O paciente está abaixo do peso recomendado. Recomenda-se avaliação nutricional.";
+    }
+    else if (imc < 25) {
+        classificacao = "Peso normal";
+        orientacao = "O paciente está dentro da faixa de peso considerada adequada.";
+    }
+    else if (imc < 30) {
+        classificacao = "Sobrepeso";
+        orientacao = "O paciente apresenta sobrepeso. Recomenda-se atenção aos hábitos alimentares e atividade física.";
+    }
+    else if (imc < 35) {
+        classificacao = "Obesidade grau I";
+        orientacao = "Recomenda-se acompanhamento profissional e avaliação da saúde.";
+    }
+    else if (imc < 40) {
+        classificacao = "Obesidade grau II";
+        orientacao = "Recomenda-se acompanhamento médico e nutricional.";
+    }
+    else {
+        classificacao = "Obesidade grau III";
+        orientacao = "É importante procurar acompanhamento médico especializado.";
+    }
+
+    // Exibir resultados
+    document.getElementById("resNome").textContent = nome;
+    document.getElementById("resPeso").textContent = peso.toFixed(2);
+    document.getElementById("resAltura").textContent = altura.toFixed(2);
+    document.getElementById("resIMC").textContent = imc.toFixed(2);
+    document.getElementById("resClassificacao").textContent = classificacao;
+    document.getElementById("orientacao").textContent = orientacao;
+
+    document.getElementById("resultado").style.display = "block";
+
+});
+
+</script>
+
+</body>
+</html>
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de IMC</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f4f8;
+            margin: 0;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 450px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2563eb;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-top: 6px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 13px;
+            margin-top: 20px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        #resultado {
+            display: none;
+            margin-top: 25px;
+            padding: 18px;
+            background: #eff6ff;
+            border-radius: 8px;
+            line-height: 1.7;
+        }
+
+        .imc {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2563eb;
+        }
+
+        .classificacao {
+            font-size: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Calculadora de IMC</h1>
+
+    <form id="formIMC">
+
+        <label for="nome">Nome do Paciente:</label>
+        <input type="text" id="nome"
+               placeholder="Digite o nome do paciente"
+               required>
+
+        <label for="peso">Peso (kg):</label>
+        <input type="number" id="peso"
+               placeholder="Ex: 70"
+               min="0.1" step="any" required>
+
+        <label for="altura">Altura (metros):</label>
+        <input type="number" id="altura"
+               placeholder="Ex: 1.70"
+               min="0.1" step="any" required>
+
+        <button type="submit">Calcular IMC</button>
+
+    </form>
+
+    <div id="resultado">
+        <h2>Resultado do Paciente</h2>
+
+        <p><strong>Nome:</strong> <span id="resNome"></span></p>
+        <p><strong>Peso:</strong> <span id="resPeso"></span> kg</p>
+        <p><strong>Altura:</strong> <span id="resAltura"></span> m</p>
+
+        <p>Índice de Massa Corporal:</p>
+        <div class="imc" id="resIMC"></div>
+
+        <p>Classificação:</p>
+        <div class="classificacao" id="resClassificacao"></div>
+
+        <p id="orientacao"></p>
+    </div>
+
+</div>
+
+<script>
+
+document.getElementById("formIMC").addEventListener("submit", function(event) {
+
+    event.preventDefault();
+
+    // Receber dados do paciente
+    const nome = document.getElementById("nome").value.trim();
+    const peso = parseFloat(document.getElementById("peso").value);
+    const altura = parseFloat(document.getElementById("altura").value);
+
+    if (!nome || !Number.isFinite(peso) ||
+        !Number.isFinite(altura) || peso <= 0 || altura <= 0) {
+        alert("Informe dados válidos!");
+        return;
+    }
+
+    // Calcular IMC
+    const imc = peso / (altura * altura);
+
+    let classificacao = "";
+    let orientacao = "";
+
+    // Classificação do IMC para adultos
+    if (imc < 18.5) {
+        classificacao = "Abaixo do peso";
+        orientacao = "O paciente está abaixo do peso recomendado. Recomenda-se avaliação nutricional.";
+    }
+    else if (imc < 25) {
+        classificacao = "Peso normal";
+        orientacao = "O paciente está dentro da faixa de peso considerada adequada.";
+    }
+    else if (imc < 30) {
+        classificacao = "Sobrepeso";
+        orientacao = "O paciente apresenta sobrepeso. Recomenda-se atenção aos hábitos alimentares e atividade física.";
+    }
+    else if (imc < 35) {
+        classificacao = "Obesidade grau I";
+        orientacao = "Recomenda-se acompanhamento profissional e avaliação da saúde.";
+    }
+    else if (imc < 40) {
+        classificacao = "Obesidade grau II";
+        orientacao = "Recomenda-se acompanhamento médico e nutricional.";
+    }
+    else {
+        classificacao = "Obesidade grau III";
+        orientacao = "É importante procurar acompanhamento médico especializado.";
+    }
+
+    // Exibir resultados
+    document.getElementById("resNome").textContent = nome;
+    document.getElementById("resPeso").textContent = peso.toFixed(2);
+    document.getElementById("resAltura").textContent = altura.toFixed(2);
+    document.getElementById("resIMC").textContent = imc.toFixed(2);
+    document.getElementById("resClassificacao").textContent = classificacao;
+    document.getElementById("orientacao").textContent = orientacao;
+
+    document.getElementById("resultado").style.display = "block";
+
+});
+
+</script>
+
+</body>
+</html>
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de IMC</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f4f8;
+            margin: 0;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 450px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2563eb;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-top: 6px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 13px;
+            margin-top: 20px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        #resultado {
+            display: none;
+            margin-top: 25px;
+            padding: 18px;
+            background: #eff6ff;
+            border-radius: 8px;
+            line-height: 1.7;
+        }
+
+        .imc {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2563eb;
+        }
+
+        .classificacao {
+            font-size: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Calculadora de IMC</h1>
+
+    <form id="formIMC">
+
+        <label for="nome">Nome do Paciente:</label>
+        <input type="text" id="nome"
+               placeholder="Digite o nome do paciente"
+               required>
+
+        <label for="peso">Peso (kg):</label>
+        <input type="number" id="peso"
+               placeholder="Ex: 70"
+               min="0.1" step="any" required>
+
+        <label for="altura">Altura (metros):</label>
+        <input type="number" id="altura"
+               placeholder="Ex: 1.70"
+               min="0.1" step="any" required>
+
+        <button type="submit">Calcular IMC</button>
+
+    </form>
+
+    <div id="resultado">
+        <h2>Resultado do Paciente</h2>
+
+        <p><strong>Nome:</strong> <span id="resNome"></span></p>
+        <p><strong>Peso:</strong> <span id="resPeso"></span> kg</p>
+        <p><strong>Altura:</strong> <span id="resAltura"></span> m</p>
+
+        <p>Índice de Massa Corporal:</p>
+        <div class="imc" id="resIMC"></div>
+
+        <p>Classificação:</p>
+        <div class="classificacao" id="resClassificacao"></div>
+
+        <p id="orientacao"></p>
+    </div>
+
+</div>
+
+<script>
+
+document.getElementById("formIMC").addEventListener("submit", function(event) {
+
+    event.preventDefault();
+
+    // Receber dados do paciente
+    const nome = document.getElementById("nome").value.trim();
+    const peso = parseFloat(document.getElementById("peso").value);
+    const altura = parseFloat(document.getElementById("altura").value);
+
+    if (!nome || !Number.isFinite(peso) ||
+        !Number.isFinite(altura) || peso <= 0 || altura <= 0) {
+        alert("Informe dados válidos!");
+        return;
+    }
+
+    // Calcular IMC
+    const imc = peso / (altura * altura);
+
+    let classificacao = "";
+    let orientacao = "";
+
+    // Classificação do IMC para adultos
+    if (imc < 18.5) {
+        classificacao = "Abaixo do peso";
+        orientacao = "O paciente está abaixo do peso recomendado. Recomenda-se avaliação nutricional.";
+    }
+    else if (imc < 25) {
+        classificacao = "Peso normal";
+        orientacao = "O paciente está dentro da faixa de peso considerada adequada.";
+    }
+    else if (imc < 30) {
+        classificacao = "Sobrepeso";
+        orientacao = "O paciente apresenta sobrepeso. Recomenda-se atenção aos hábitos alimentares e atividade física.";
+    }
+    else if (imc < 35) {
+        classificacao = "Obesidade grau I";
+        orientacao = "Recomenda-se acompanhamento profissional e avaliação da saúde.";
+    }
+    else if (imc < 40) {
+        classificacao = "Obesidade grau II";
+        orientacao = "Recomenda-se acompanhamento médico e nutricional.";
+    }
+    else {
+        classificacao = "Obesidade grau III";
+        orientacao = "É importante procurar acompanhamento médico especializado.";
+    }
+
+    // Exibir resultados
+    document.getElementById("resNome").textContent = nome;
+    document.getElementById("resPeso").textContent = peso.toFixed(2);
+    document.getElementById("resAltura").textContent = altura.toFixed(2);
+    document.getElementById("resIMC").textContent = imc.toFixed(2);
+    document.getElementById("resClassificacao").textContent = classificacao;
+    document.getElementById("orientacao").textContent = orientacao;
+
+    document.getElementById("resultado").style.display = "block";
+
+});
+
+</script>
+
+</body>
+</html>
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de IMC</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f4f8;
+            margin: 0;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 450px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2563eb;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-top: 6px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 13px;
+            margin-top: 20px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        #resultado {
+            display: none;
+            margin-top: 25px;
+            padding: 18px;
+            background: #eff6ff;
+            border-radius: 8px;
+            line-height: 1.7;
+        }
+
+        .imc {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2563eb;
+        }
+
+        .classificacao {
+            font-size: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Calculadora de IMC</h1>
+
+    <form id="formIMC">
+
+        <label for="nome">Nome do Paciente:</label>
+        <input type="text" id="nome"
+               placeholder="Digite o nome do paciente"
+               required>
+
+        <label for="peso">Peso (kg):</label>
+        <input type="number" id="peso"
+               placeholder="Ex: 70"
+               min="0.1" step="any" required>
+
+        <label for="altura">Altura (metros):</label>
+        <input type="number" id="altura"
+               placeholder="Ex: 1.70"
+               min="0.1" step="any" required>
+
+        <button type="submit">Calcular IMC</button>
+
+    </form>
+
+    <div id="resultado">
+        <h2>Resultado do Paciente</h2>
+
+        <p><strong>Nome:</strong> <span id="resNome"></span></p>
+        <p><strong>Peso:</strong> <span id="resPeso"></span> kg</p>
+        <p><strong>Altura:</strong> <span id="resAltura"></span> m</p>
+
+        <p>Índice de Massa Corporal:</p>
+        <div class="imc" id="resIMC"></div>
+
+        <p>Classificação:</p>
+        <div class="classificacao" id="resClassificacao"></div>
+
+        <p id="orientacao"></p>
+    </div>
+
+</div>
+
+<script>
+
+document.getElementById("formIMC").addEventListener("submit", function(event) {
+
+    event.preventDefault();
+
+    // Receber dados do paciente
+    const nome = document.getElementById("nome").value.trim();
+    const peso = parseFloat(document.getElementById("peso").value);
+    const altura = parseFloat(document.getElementById("altura").value);
+
+    if (!nome || !Number.isFinite(peso) ||
+        !Number.isFinite(altura) || peso <= 0 || altura <= 0) {
+        alert("Informe dados válidos!");
+        return;
+    }
+
+    // Calcular IMC
+    const imc = peso / (altura * altura);
+
+    let classificacao = "";
+    let orientacao = "";
+
+    // Classificação do IMC para adultos
+    if (imc < 18.5) {
+        classificacao = "Abaixo do peso";
+        orientacao = "O paciente está abaixo do peso recomendado. Recomenda-se avaliação nutricional.";
+    }
+    else if (imc < 25) {
+        classificacao = "Peso normal";
+        orientacao = "O paciente está dentro da faixa de peso considerada adequada.";
+    }
+    else if (imc < 30) {
+        classificacao = "Sobrepeso";
+        orientacao = "O paciente apresenta sobrepeso. Recomenda-se atenção aos hábitos alimentares e atividade física.";
+    }
+    else if (imc < 35) {
+        classificacao = "Obesidade grau I";
+        orientacao = "Recomenda-se acompanhamento profissional e avaliação da saúde.";
+    }
+    else if (imc < 40) {
+        classificacao = "Obesidade grau II";
+        orientacao = "Recomenda-se acompanhamento médico e nutricional.";
+    }
+    else {
+        classificacao = "Obesidade grau III";
+        orientacao = "É importante procurar acompanhamento médico especializado.";
+    }
+
+    // Exibir resultados
+    document.getElementById("resNome").textContent = nome;
+    document.getElementById("resPeso").textContent = peso.toFixed(2);
+    document.getElementById("resAltura").textContent = altura.toFixed(2);
+    document.getElementById("resIMC").textContent = imc.toFixed(2);
+    document.getElementById("resClassificacao").textContent = classificacao;
+    document.getElementById("orientacao").textContent = orientacao;
+
+    document.getElementById("resultado").style.display = "block";
+
+});
+
+</script>
+
+</body>
+</html>
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de IMC</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f4f8;
+            margin: 0;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 450px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2563eb;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-top: 6px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 13px;
+            margin-top: 20px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        #resultado {
+            display: none;
+            margin-top: 25px;
+            padding: 18px;
+            background: #eff6ff;
+            border-radius: 8px;
+            line-height: 1.7;
+        }
+
+        .imc {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2563eb;
+        }
+
+        .classificacao {
+            font-size: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Calculadora de IMC</h1>
+
+    <form id="formIMC">
+
+        <label for="nome">Nome do Paciente:</label>
+        <input type="text" id="nome"
+               placeholder="Digite o nome do paciente"
+               required>
+
+        <label for="peso">Peso (kg):</label>
+        <input type="number" id="peso"
+               placeholder="Ex: 70"
+               min="0.1" step="any" required>
+
+        <label for="altura">Altura (metros):</label>
+        <input type="number" id="altura"
+               placeholder="Ex: 1.70"
+               min="0.1" step="any" required>
+
+        <button type="submit">Calcular IMC</button>
+
+    </form>
+
+    <div id="resultado">
+        <h2>Resultado do Paciente</h2>
+
+        <p><strong>Nome:</strong> <span id="resNome"></span></p>
+        <p><strong>Peso:</strong> <span id="resPeso"></span> kg</p>
+        <p><strong>Altura:</strong> <span id="resAltura"></span> m</p>
+
+        <p>Índice de Massa Corporal:</p>
+        <div class="imc" id="resIMC"></div>
+
+        <p>Classificação:</p>
+        <div class="classificacao" id="resClassificacao"></div>
+
+        <p id="orientacao"></p>
+    </div>
+
+</div>
+
+<script>
+
+document.getElementById("formIMC").addEventListener("submit", function(event) {
+
+    event.preventDefault();
+
+    // Receber dados do paciente
+    const nome = document.getElementById("nome").value.trim();
+    const peso = parseFloat(document.getElementById("peso").value);
+    const altura = parseFloat(document.getElementById("altura").value);
+
+    if (!nome || !Number.isFinite(peso) ||
+        !Number.isFinite(altura) || peso <= 0 || altura <= 0) {
+        alert("Informe dados válidos!");
+        return;
+    }
+
+    // Calcular IMC
+    const imc = peso / (altura * altura);
+
+    let classificacao = "";
+    let orientacao = "";
+
+    // Classificação do IMC para adultos
+    if (imc < 18.5) {
+        classificacao = "Abaixo do peso";
+        orientacao = "O paciente está abaixo do peso recomendado. Recomenda-se avaliação nutricional.";
+    }
+    else if (imc < 25) {
+        classificacao = "Peso normal";
+        orientacao = "O paciente está dentro da faixa de peso considerada adequada.";
+    }
+    else if (imc < 30) {
+        classificacao = "Sobrepeso";
+        orientacao = "O paciente apresenta sobrepeso. Recomenda-se atenção aos hábitos alimentares e atividade física.";
+    }
+    else if (imc < 35) {
+        classificacao = "Obesidade grau I";
+        orientacao = "Recomenda-se acompanhamento profissional e avaliação da saúde.";
+    }
+    else if (imc < 40) {
+        classificacao = "Obesidade grau II";
+        orientacao = "Recomenda-se acompanhamento médico e nutricional.";
+    }
+    else {
+        classificacao = "Obesidade grau III";
+        orientacao = "É importante procurar acompanhamento médico especializado.";
+    }
+
+    // Exibir resultados
+    document.getElementById("resNome").textContent = nome;
+    document.getElementById("resPeso").textContent = peso.toFixed(2);
+    document.getElementById("resAltura").textContent = altura.toFixed(2);
+    document.getElementById("resIMC").textContent = imc.toFixed(2);
+    document.getElementById("resClassificacao").textContent = classificacao;
+    document.getElementById("orientacao").textContent = orientacao;
+
+    document.getElementById("resultado").style.display = "block";
+
+});
+
+</script>
+
+</body>
+</html>
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de IMC</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f4f8;
+            margin: 0;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 450px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2563eb;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-top: 6px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 13px;
+            margin-top: 20px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        #resultado {
+            display: none;
+            margin-top: 25px;
+            padding: 18px;
+            background: #eff6ff;
+            border-radius: 8px;
+            line-height: 1.7;
+        }
+
+        .imc {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2563eb;
+        }
+
+        .classificacao {
+            font-size: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Calculadora de IMC</h1>
+
+    <form id="formIMC">
+
+        <label for="nome">Nome do Paciente:</label>
+        <input type="text" id="nome"
+               placeholder="Digite o nome do paciente"
+               required>
+
+        <label for="peso">Peso (kg):</label>
+        <input type="number" id="peso"
+               placeholder="Ex: 70"
+               min="0.1" step="any" required>
+
+        <label for="altura">Altura (metros):</label>
+        <input type="number" id="altura"
+               placeholder="Ex: 1.70"
+               min="0.1" step="any" required>
+
+        <button type="submit">Calcular IMC</button>
+
+    </form>
+
+    <div id="resultado">
+        <h2>Resultado do Paciente</h2>
+
+        <p><strong>Nome:</strong> <span id="resNome"></span></p>
+        <p><strong>Peso:</strong> <span id="resPeso"></span> kg</p>
+        <p><strong>Altura:</strong> <span id="resAltura"></span> m</p>
+
+        <p>Índice de Massa Corporal:</p>
+        <div class="imc" id="resIMC"></div>
+
+        <p>Classificação:</p>
+        <div class="classificacao" id="resClassificacao"></div>
+
+        <p id="orientacao"></p>
+    </div>
+
+</div>
+
+<script>
+
+document.getElementById("formIMC").addEventListener("submit", function(event) {
+
+    event.preventDefault();
+
+    // Receber dados do paciente
+    const nome = document.getElementById("nome").value.trim();
+    const peso = parseFloat(document.getElementById("peso").value);
+    const altura = parseFloat(document.getElementById("altura").value);
+
+    if (!nome || !Number.isFinite(peso) ||
+        !Number.isFinite(altura) || peso <= 0 || altura <= 0) {
+        alert("Informe dados válidos!");
+        return;
+    }
+
+    // Calcular IMC
+    const imc = peso / (altura * altura);
+
+    let classificacao = "";
+    let orientacao = "";
+
+    // Classificação do IMC para adultos
+    if (imc < 18.5) {
+        classificacao = "Abaixo do peso";
+        orientacao = "O paciente está abaixo do peso recomendado. Recomenda-se avaliação nutricional.";
+    }
+    else if (imc < 25) {
+        classificacao = "Peso normal";
+        orientacao = "O paciente está dentro da faixa de peso considerada adequada.";
+    }
+    else if (imc < 30) {
+        classificacao = "Sobrepeso";
+        orientacao = "O paciente apresenta sobrepeso. Recomenda-se atenção aos hábitos alimentares e atividade física.";
+    }
+    else if (imc < 35) {
+        classificacao = "Obesidade grau I";
+        orientacao = "Recomenda-se acompanhamento profissional e avaliação da saúde.";
+    }
+    else if (imc < 40) {
+        classificacao = "Obesidade grau II";
+        orientacao = "Recomenda-se acompanhamento médico e nutricional.";
+    }
+    else {
+        classificacao = "Obesidade grau III";
+        orientacao = "É importante procurar acompanhamento médico especializado.";
+    }
+
+    // Exibir resultados
+    document.getElementById("resNome").textContent = nome;
+    document.getElementById("resPeso").textContent = peso.toFixed(2);
+    document.getElementById("resAltura").textContent = altura.toFixed(2);
+    document.getElementById("resIMC").textContent = imc.toFixed(2);
+    document.getElementById("resClassificacao").textContent = classificacao;
+    document.getElementById("orientacao").textContent = orientacao;
+
+    document.getElementById("resultado").style.display = "block";
+
+});
+
+</script>
+
+</body>
+</html>
