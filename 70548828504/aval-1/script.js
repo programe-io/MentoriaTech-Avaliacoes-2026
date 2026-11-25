@@ -1,54 +1,51 @@
-let tarefas = [];
-let codigo = 1;
+let produtos = [];
 
 function cadastrar() {
-    let titulo = document.getElementById("titulo").value;
-    let prioridade = Number(document.getElementById("prioridade").value);
+    let codigo = prompt("Código do produto:");
+    let descricao = prompt("Descrição:");
+    let quantidade = Number(prompt("Quantidade:"));
+    let valor = Number(prompt("Valor:"));
 
-    if (titulo.trim().length < 5) {
-        alert("Título deve ter no mínimo 5 caracteres!");
-        return;
-    }
+    produtos.push({ codigo, descricao, quantidade, valor });
 
-    tarefas.push({
-        codigo: codigo++,
-        titulo: titulo,
-        prioridade: prioridade,
-        concluida: false
-    });
-
-    listar();
+    alert("Produto cadastrado!");
 }
 
 function listar() {
-    let lista = document.getElementById("lista");
-    lista.innerHTML = "";
+    let resultado = document.getElementById("resultado");
 
-    tarefas.forEach((t, i) => {
-        lista.innerHTML += `
-            <li>
-                ${t.codigo} - ${t.titulo}
-                Prioridade: ${t.prioridade}
-                Status: ${t.concluida ? "Concluída" : "Pendente"}
-                <button onclick="concluir(${i})">Concluir</button>
-                <button onclick="alterar(${i})">Alterar prioridade</button>
-            </li>
+    resultado.innerHTML = "";
+
+    produtos.forEach(p => {
+        resultado.innerHTML += `
+            Código: ${p.codigo}<br>
+            Descrição: ${p.descricao}<br>
+            Quantidade: ${p.quantidade}<br>
+            Valor: R$ ${p.valor.toFixed(2)}<br><br>
         `;
     });
 }
 
-function concluir(i) {
-    tarefas[i].concluida = true;
-    listar();
+function alterarValor() {
+    let codigo = prompt("Digite o código do produto:");
+    let produto = produtos.find(p => p.codigo === codigo);
+
+    if (produto) {
+        produto.valor = Number(prompt("Novo valor:"));
+        alert("Valor alterado!");
+    } else {
+        alert("Produto não encontrado!");
+    }
 }
 
-function alterar(i) {
-    let nova = Number(prompt("Nova prioridade (1 a 3):"));
+function alterarQuantidade() {
+    let codigo = prompt("Digite o código do produto:");
+    let produto = produtos.find(p => p.codigo === codigo);
 
-    if (nova >= 1 && nova <= 3) {
-        tarefas[i].prioridade = nova;
-        listar();
+    if (produto) {
+        produto.quantidade = Number(prompt("Nova quantidade:"));
+        alert("Quantidade alterada!");
     } else {
-        alert("Prioridade inválida!");
+        alert("Produto não encontrado!");
     }
 }
