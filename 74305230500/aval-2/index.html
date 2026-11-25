@@ -1,0 +1,153 @@
+from pathlib import Path
+import zipfile, textwrap
+
+base = Path("/mnt/data/TaskMaster-Pro")
+base.mkdir(exist_ok=True)
+
+html = r'''<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#111827">
+  <meta name="description" content="TaskMaster Pro - gerenciamento inteligente de tarefas.">
+  <title>TaskMaster Pro | Gestão inteligente</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="#" aria-label="TaskMaster Pro início">
+        <span class="brand-mark">T</span>
+        <span>TaskMaster<span class="brand-light"> Pro</span></span>
+      </a>
+
+      <div class="workspace">
+        <span class="workspace-avatar">TM</span>
+        <span class="workspace-copy"><strong>Meu espaço</strong><small>Área pessoal</small></span>
+        <span class="workspace-chevron">⌄</span>
+      </div>
+
+      <nav class="main-nav" aria-label="Navegação principal">
+        <p class="nav-label">MENU PRINCIPAL</p>
+        <button class="nav-item active" data-view="dashboard"><span class="nav-icon">▦</span> Visão geral</button>
+        <button class="nav-item" data-view="tasks"><span class="nav-icon">☷</span> Minhas tarefas <span class="nav-count" id="sidebarTaskCount">0</span></button>
+        <button class="nav-item" data-view="kanban"><span class="nav-icon">▤</span> Quadro Kanban</button>
+        <button class="nav-item" data-view="calendar"><span class="nav-icon">▦</span> Calendário</button>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <div class="sidebar-tip">
+          <span class="tip-spark">✦</span>
+          <strong>Pequenos passos,<br>grandes resultados.</strong>
+          <p>Organize seu dia e avance nos seus objetivos.</p>
+        </div>
+        <button class="nav-item" id="themeToggle"><span class="nav-icon" id="themeIcon">☾</span> Alternar tema</button>
+        <button class="nav-item" id="backupButton"><span class="nav-icon">⇧</span> Exportar backup</button>
+        <button class="nav-item" id="importButton"><span class="nav-icon">⇩</span> Importar backup</button>
+        <input type="file" id="importFile" accept="application/json,.json" hidden>
+        <div class="sidebar-footer"><span class="online-dot"></span> Seus dados ficam neste dispositivo</div>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <button class="mobile-menu" id="mobileMenu" aria-label="Abrir menu">☰</button>
+        <div class="breadcrumb"><span>Workspace</span><b>/</b><strong id="breadcrumbTitle">Visão geral</strong></div>
+        <div class="topbar-actions">
+          <label class="search-box" for="globalSearch"><span>⌕</span><input id="globalSearch" type="search" placeholder="Buscar tarefas..." autocomplete="off"><kbd>⌘ K</kbd></label>
+          <button class="icon-button" id="todayButton" title="Ir para hoje" aria-label="Ir para hoje">◷</button>
+          <button class="avatar-button" title="Meu perfil">TM</button>
+        </div>
+      </header>
+
+      <div class="page-wrap">
+        <section class="page-view active" id="dashboardView">
+          <div class="welcome-row">
+            <div><p class="eyebrow" id="currentDate">SEU PAINEL DE CONTROLE</p><h1>Bom trabalho! <span class="wave">✦</span></h1><p class="page-subtitle">Aqui está o resumo da sua produtividade.</p></div>
+            <button class="primary-button" id="newTaskTop">＋ Nova tarefa</button>
+          </div>
+
+          <div class="stats-grid">
+            <article class="stat-card"><div class="stat-top"><span class="stat-label">Total de tarefas</span><span class="stat-icon purple">▤</span></div><strong class="stat-value" id="statTotal">0</strong><span class="stat-foot">Tarefas cadastradas</span></article>
+            <article class="stat-card"><div class="stat-top"><span class="stat-label">Em andamento</span><span class="stat-icon blue">◷</span></div><strong class="stat-value" id="statProgress">0</strong><span class="stat-foot">Em execução</span></article>
+            <article class="stat-card"><div class="stat-top"><span class="stat-label">Concluídas</span><span class="stat-icon green">✓</span></div><strong class="stat-value" id="statDone">0</strong><span class="stat-foot" id="completionRate">0% de conclusão</span></article>
+            <article class="stat-card"><div class="stat-top"><span class="stat-label">Atrasadas</span><span class="stat-icon orange">!</span></div><strong class="stat-value" id="statOverdue">0</strong><span class="stat-foot">Precisam de atenção</span></article>
+          </div>
+
+          <div class="dashboard-grid">
+            <section class="panel productivity-panel">
+              <div class="panel-heading"><div><h2>Visão de produtividade</h2><p>Acompanhe a distribuição das suas tarefas</p></div><span class="period-pill">Resumo geral</span></div>
+              <div class="chart-area"><div class="donut-wrap"><div class="donut" id="donutChart"><div class="donut-center"><strong id="donutPercent">0%</strong><span>concluído</span></div></div></div><div class="chart-legend"><div><i class="legend-dot dot-done"></i><span>Concluídas</span><strong id="legendDone">0</strong></div><div><i class="legend-dot dot-progress"></i><span>Em andamento</span><strong id="legendProgress">0</strong></div><div><i class="legend-dot dot-pending"></i><span>Pendentes</span><strong id="legendPending">0</strong></div></div></div>
+            </section>
+            <section class="panel priority-panel">
+              <div class="panel-heading"><div><h2>Prioridades</h2><p>Distribuição por nível de urgência</p></div></div>
+              <div class="priority-bars" id="priorityBars"></div>
+            </section>
+          </div>
+
+          <section class="panel recent-panel">
+            <div class="panel-heading"><div><h2>Tarefas recentes</h2><p>Continue de onde você parou</p></div><button class="text-button" data-go="tasks">Ver todas <span>→</span></button></div>
+            <div class="table-wrap"><table><thead><tr><th>TAREFA</th><th>CATEGORIA</th><th>PRIORIDADE</th><th>STATUS</th><th>PRAZO</th><th></th></tr></thead><tbody id="recentTasks"></tbody></table></div>
+            <div class="empty-state compact" id="recentEmpty"><span>✦</span><strong>Nenhuma tarefa por aqui</strong><p>Adicione sua primeira tarefa para começar.</p><button class="primary-button small" data-new-task>＋ Criar tarefa</button></div>
+          </section>
+        </section>
+
+        <section class="page-view" id="tasksView">
+          <div class="page-heading"><div><p class="eyebrow">ORGANIZAÇÃO</p><h1>Minhas tarefas</h1><p class="page-subtitle">Gerencie todas as suas atividades em um só lugar.</p></div><button class="primary-button" data-new-task>＋ Nova tarefa</button></div>
+          <div class="panel task-toolbar">
+            <label class="toolbar-search"><span>⌕</span><input id="taskSearch" type="search" placeholder="Buscar por título ou descrição..."></label>
+            <select id="statusFilter" aria-label="Filtrar por status"><option value="all">Todos os status</option><option value="pending">Pendente</option><option value="progress">Em andamento</option><option value="done">Concluída</option></select>
+            <select id="priorityFilter" aria-label="Filtrar por prioridade"><option value="all">Todas prioridades</option><option value="high">Alta</option><option value="medium">Média</option><option value="low">Baixa</option></select>
+            <select id="categoryFilter" aria-label="Filtrar por categoria"><option value="all">Todas categorias</option></select>
+            <button class="secondary-button" id="clearFilters">Limpar</button>
+          </div>
+          <div class="list-summary"><span id="taskResults">0 tarefas</span><span>Ordenadas por prazo</span></div>
+          <section class="panel task-list-panel"><div id="taskList" class="task-list"></div><div class="empty-state" id="tasksEmpty"><span>☷</span><strong>Nenhuma tarefa encontrada</strong><p>Experimente mudar os filtros ou criar uma nova tarefa.</p><button class="primary-button small" data-new-task>＋ Nova tarefa</button></div></section>
+        </section>
+
+        <section class="page-view" id="kanbanView">
+          <div class="page-heading"><div><p class="eyebrow">FLUXO DE TRABALHO</p><h1>Quadro Kanban</h1><p class="page-subtitle">Visualize o progresso das suas atividades.</p></div><button class="primary-button" data-new-task>＋ Nova tarefa</button></div>
+          <div class="kanban-board">
+            <section class="kanban-column"><div class="kanban-heading"><span class="status-indicator pending-indicator"></span><strong>A fazer</strong><span id="kanbanPendingCount">0</span></div><div class="kanban-cards" id="kanbanPending"></div></section>
+            <section class="kanban-column"><div class="kanban-heading"><span class="status-indicator progress-indicator"></span><strong>Em andamento</strong><span id="kanbanProgressCount">0</span></div><div class="kanban-cards" id="kanbanProgress"></div></section>
+            <section class="kanban-column"><div class="kanban-heading"><span class="status-indicator done-indicator"></span><strong>Concluídas</strong><span id="kanbanDoneCount">0</span></div><div class="kanban-cards" id="kanbanDone"></div></section>
+          </div>
+        </section>
+
+        <section class="page-view" id="calendarView">
+          <div class="page-heading"><div><p class="eyebrow">PLANEJAMENTO</p><h1>Calendário</h1><p class="page-subtitle">Organize suas entregas ao longo do mês.</p></div><button class="primary-button" data-new-task>＋ Nova tarefa</button></div>
+          <section class="panel calendar-panel">
+            <div class="calendar-toolbar"><button class="icon-button" id="prevMonth" aria-label="Mês anterior">‹</button><h2 id="calendarTitle"></h2><button class="icon-button" id="nextMonth" aria-label="Próximo mês">›</button><button class="secondary-button" id="currentMonth">Hoje</button></div>
+            <div class="calendar-grid" id="calendarGrid"></div>
+          </section>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <div class="modal-backdrop" id="taskModal" aria-hidden="true">
+    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-header"><div><p class="eyebrow">TASKMASTER PRO</p><h2 id="modalTitle">Criar nova tarefa</h2><p>Preencha os detalhes da sua atividade.</p></div><button class="modal-close" id="closeModal" aria-label="Fechar">×</button></div>
+      <form id="taskForm">
+        <input type="hidden" id="editTaskId">
+        <div class="form-field"><label for="taskTitle">Título <span>*</span></label><input id="taskTitle" name="title" maxlength="100" placeholder="Ex.: Finalizar apresentação" required></div>
+        <div class="form-field"><label for="taskDescription">Descrição</label><textarea id="taskDescription" name="description" rows="3" maxlength="500" placeholder="Adicione detalhes sobre esta tarefa..."></textarea></div>
+        <div class="form-two"><div class="form-field"><label for="taskCategory">Categoria</label><select id="taskCategory"><option>Trabalho</option><option>Estudos</option><option>Pessoal</option><option>Saúde</option><option>Projetos</option><option>Outros</option></select></div><div class="form-field"><label for="taskPriority">Prioridade</label><select id="taskPriority"><option value="medium">Média</option><option value="high">Alta</option><option value="low">Baixa</option></select></div></div>
+        <div class="form-two"><div class="form-field"><label for="taskStatus">Status</label><select id="taskStatus"><option value="pending">Pendente</option><option value="progress">Em andamento</option><option value="done">Concluída</option></select></div><div class="form-field"><label for="taskDueDate">Data de entrega</label><input id="taskDueDate" type="date"></div></div>
+        <div class="modal-actions"><button type="button" class="secondary-button" id="cancelModal">Cancelar</button><button type="submit" class="primary-button" id="saveTaskButton">Salvar tarefa <span>→</span></button></div>
+      </form>
+    </section>
+  </div>
+
+  <div class="toast-region" id="toastRegion" aria-live="polite"></div>
+  <div class="mobile-overlay" id="mobileOverlay"></div>
+<script src="script.js"></script></body>
+</html>
+'''
