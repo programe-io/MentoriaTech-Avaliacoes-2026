@@ -1,54 +1,33 @@
-?variant="standard" id="58321" title="Código app.js"}
-```javascript
-// Lista de pessoas cadastradas
 let pessoas = [];
 let pessoaEditando = null;
 
-// Elementos do HTML
 const formulario = document.getElementById("form-pessoa");
 const inputNome = document.getElementById("input-nome");
 const inputIdade = document.getElementById("input-idade");
 const inputAltura = document.getElementById("input-altura");
 const inputPeso = document.getElementById("input-peso");
-
 const tabela = document.getElementById("tabela-pessoas");
-const mensagemErro = document.getElementById("erro");
-
+const erro = document.getElementById("erro");
 const tituloForm = document.getElementById("titulo-form");
 const botaoSalvar = document.getElementById("btn-salvar");
 const botaoCancelar = document.getElementById("btn-cancelar");
 
-// Calcular IMC
 function calcularIMC(peso, altura) {
     return peso / (altura * altura);
 }
 
-// Classificar IMC
 function classificarIMC(imc) {
     if (imc < 18.5) {
-        return {
-            texto: "Abaixo do peso",
-            classe: "abaixo"
-        };
+        return { texto: "Abaixo do peso", classe: "abaixo" };
     } else if (imc < 25) {
-        return {
-            texto: "Peso normal",
-            classe: "normal"
-        };
+        return { texto: "Peso normal", classe: "normal" };
     } else if (imc < 30) {
-        return {
-            texto: "Sobrepeso",
-            classe: "sobrepeso"
-        };
+        return { texto: "Sobrepeso", classe: "sobrepeso" };
     } else {
-        return {
-            texto: "Obesidade",
-            classe: "obesidade"
-        };
+        return { texto: "Obesidade", classe: "obesidade" };
     }
 }
 
-// Mostrar pessoas na tabela
 function mostrarPessoas() {
     tabela.innerHTML = "";
 
@@ -81,13 +60,8 @@ function mostrarPessoas() {
                 </span>
             </td>
             <td class="acoes">
-                <button onclick="editarPessoa(${indice})">
-                    Editar
-                </button>
-
-                <button class="remover" onclick="excluirPessoa(${indice})">
-                    Excluir
-                </button>
+                <button onclick="editarPessoa(${indice})">Editar</button>
+                <button class="remover" onclick="excluirPessoa(${indice})">Excluir</button>
             </td>
         `;
 
@@ -95,34 +69,27 @@ function mostrarPessoas() {
     });
 }
 
-// Exibir erro
 function mostrarErro(mensagem) {
-    mensagemErro.textContent = mensagem;
-    mensagemErro.hidden = false;
+    erro.textContent = mensagem;
+    erro.hidden = false;
 }
 
-// Limpar erro
 function limparErro() {
-    mensagemErro.textContent = "";
-    mensagemErro.hidden = true;
+    erro.textContent = "";
+    erro.hidden = true;
 }
 
-// Limpar formulário
 function limparFormulario() {
     formulario.reset();
     pessoaEditando = null;
-
     tituloForm.textContent = "Nova pessoa";
     botaoSalvar.textContent = "Salvar";
     botaoCancelar.hidden = true;
-
     limparErro();
 }
 
-// Cadastrar ou atualizar pessoa
 formulario.addEventListener("submit", function(evento) {
     evento.preventDefault();
-
     limparErro();
 
     const nome = inputNome.value.trim();
@@ -130,32 +97,31 @@ formulario.addEventListener("submit", function(evento) {
     const altura = Number(inputAltura.value);
     const peso = Number(inputPeso.value);
 
-    // Validar informações
     if (!nome || !inputIdade.value || !inputAltura.value || !inputPeso.value) {
         mostrarErro("Preencha todos os campos!");
         return;
     }
 
-    if (idade < 1 || idade > 120 || !Number.isInteger(idade)) {
-        mostrarErro("Informe uma idade válida.");
+    if (!Number.isInteger(idade) || idade < 1 || idade > 120) {
+        mostrarErro("Informe uma idade válida!");
         return;
     }
 
     if (altura < 0.5 || altura > 2.5) {
-        mostrarErro("Informe uma altura válida.");
+        mostrarErro("Informe uma altura válida!");
         return;
     }
 
     if (peso < 2 || peso > 500) {
-        mostrarErro("Informe um peso válido.");
+        mostrarErro("Informe um peso válido!");
         return;
     }
 
     const pessoa = {
-        nome,
-        idade,
-        altura,
-        peso
+        nome: nome,
+        idade: idade,
+        altura: altura,
+        peso: peso
     };
 
     if (pessoaEditando === null) {
@@ -168,7 +134,6 @@ formulario.addEventListener("submit", function(evento) {
     limparFormulario();
 });
 
-// Editar pessoa
 function editarPessoa(indice) {
     const pessoa = pessoas[indice];
 
@@ -182,28 +147,16 @@ function editarPessoa(indice) {
     tituloForm.textContent = "Editar pessoa";
     botaoSalvar.textContent = "Atualizar";
     botaoCancelar.hidden = false;
-
-    limparErro();
 }
 
-// Excluir pessoa
 function excluirPessoa(indice) {
-    if (confirm("Deseja realmente excluir esta pessoa?")) {
+    if (confirm("Deseja excluir esta pessoa?")) {
         pessoas.splice(indice, 1);
-
-        if (pessoaEditando === indice) {
-            limparFormulario();
-        }
-
         mostrarPessoas();
+        limparFormulario();
     }
 }
 
-// Botão cancelar
-botaoCancelar.addEventListener("click", function() {
-    limparFormulario();
-});
+botaoCancelar.addEventListener("click", limparFormulario);
 
-// Mostrar tabela inicialmente
 mostrarPessoas();
-```
