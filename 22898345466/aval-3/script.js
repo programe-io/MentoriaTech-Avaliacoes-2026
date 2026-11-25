@@ -1,0 +1,98 @@
+
+// LISTA DE NOTÍCIAS
+const noticias = [
+    {
+            titulo: "🔥 Novidades do Free Fire",
+                    categoria: "Battle Royale",
+                            descricao: "Confira as novidades, eventos e atualizações do Free Fire!",
+                                    link: "https://ff.garena.com/"
+                                        },
+                                            {
+                                                    titulo: "🎮 Minecraft",
+                                                            categoria: "Aventura",
+                                                                    descricao: "Explore mundos, construa casas e viva grandes aventuras!",
+                                                                            link: "https://www.minecraft.net/"
+                                                                                },
+                                                                                    {
+                                                                                            titulo: "⚡ Fortnite",
+                                                                                                    categoria: "Battle Royale",
+                                                                                                            descricao: "Confira as novidades e atualizações do Fortnite!",
+                                                                                                                    link: "https://www.fortnite.com/"
+                                                                                                                        },
+                                                                                                                            {
+                                                                                                                                    titulo: "🎯 GTA V",
+                                                                                                                                            categoria: "Ação",
+                                                                                                                                                    descricao: "Descubra novidades e informações sobre GTA V!",
+                                                                                                                                                            link: "https://www.rockstargames.com/"
+                                                                                                                                                                },
+                                                                                                                                                                    {
+                                                                                                                                                                            titulo: "🏆 Roblox",
+                                                                                                                                                                                    categoria: "Diversos",
+                                                                                                                                                                                            descricao: "Conheça experiências e jogos incríveis dentro do Roblox!",
+                                                                                                                                                                                                    link: "https://www.roblox.com/"
+                                                                                                                                                                                                        }
+                                                                                                                                                                                                        ];
+
+                                                                                                                                                                                                        // ELEMENTO PRINCIPAL
+                                                                                                                                                                                                        const site = document.getElementById("noticias");
+
+                                                                                                                                                                                                        // FUNÇÃO PARA MOSTRAR NOTÍCIAS
+                                                                                                                                                                                                        function mostrarNoticias(lista) {
+
+                                                                                                                                                                                                            site.innerHTML = "";
+
+                                                                                                                                                                                                                if (lista.length === 0) {
+                                                                                                                                                                                                                        site.innerHTML = "<p>Nenhuma notícia encontrada!</p>";
+                                                                                                                                                                                                                                return;
+                                                                                                                                                                                                                                    }
+
+                                                                                                                                                                                                                                        lista.forEach((noticia) => {
+
+                                                                                                                                                                                                                                                const card = document.createElement("div");
+
+                                                                                                                                                                                                                                                        card.className = "card";
+
+                                                                                                                                                                                                                                                                card.innerHTML = `
+                                                                                                                                                                                                                                                                            <h3>${noticia.titulo}</h3>
+
+                                                                                                                                                                                                                                                                                        <span>${noticia.categoria}</span>
+
+                                                                                                                                                                                                                                                                                                    <p>${noticia.descricao}</p>
+
+                                                                                                                                                                                                                                                                                                                <a href="${noticia.link}"
+                                                                                                                                                                                                                                                                                                                               target="_blank"
+                                                                                                                                                                                                                                                                                                                                              rel="noopener noreferrer">
+                                                                                                                                                                                                                                                                                                                                                             Saiba mais →
+                                                                                                                                                                                                                                                                                                                                                                         </a>
+                                                                                                                                                                                                                                                                                                                                                                                 `;
+
+                                                                                                                                                                                                                                                                                                                                                                                         site.appendChild(card);
+
+                                                                                                                                                                                                                                                                                                                                                                                             });
+                                                                                                                                                                                                                                                                                                                                                                                             }
+
+                                                                                                                                                                                                                                                                                                                                                                                             // FUNÇÃO DE PESQUISA
+                                                                                                                                                                                                                                                                                                                                                                                             function pesquisarNoticias() {
+
+                                                                                                                                                                                                                                                                                                                                                                                                 const pesquisa = document
+                                                                                                                                                                                                                                                                                                                                                                                                         .getElementById("pesquisa")
+                                                                                                                                                                                                                                                                                                                                                                                                                 .value.toLowerCase();
+
+                                                                                                                                                                                                                                                                                                                                                                                                                     const resultado = noticias.filter((noticia) => {
+
+                                                                                                                                                                                                                                                                                                                                                                                                                             return noticia.titulo.toLowerCase().includes(pesquisa) ||
+                                                                                                                                                                                                                                                                                                                                                                                                                                            noticia.categoria.toLowerCase().includes(pesquisa);
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                });
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                    mostrarNoticias(resultado);
+                                                                                                                                                                                                                                                                                                                                                                                                                                                    }
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                    // MENSAGEM DE BOAS-VINDAS
+                                                                                                                                                                                                                                                                                                                                                                                                                                                    function boasVindas() {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        alert("🎮 Bem-vindo ao GAMER NEWS!");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        }
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        // INICIALIZAR SITE
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        mostrarNoticias(noticias);
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        
