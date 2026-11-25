@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de IMC</title>
+    <link rel="stylesheet" href="style.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+    <div class="container">
+        <h1>Calculadora de IMC</h1>
+        <p>Avaliação do paciente</p>
+
+        <form id="formulario">
+            <label>Nome do paciente:</label>
+            <input type="text" id="nome" required>
+
+            <label>Peso (kg):</label>
+            <input type="number" id="peso" step="any" min="0.1" required>
+
+            <label>Altura (metros):</label>
+            <input type="number" id="altura" step="any" min="0.1" required>
+
+            <button type="submit">Calcular IMC</button>
+        </form>
+
+        <div id="resultado" class="resultado">
+            <h2>Resultado</h2>
+            <p>Paciente: <span id="resNome"></span></p>
+            <h3 id="resIMC"></h3>
+            <h3 id="classificacao"></h3>
+            <p id="informacao"></p>
+            <button onclick="novaConsulta()">Nova avaliação</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+<script src="script.js"></script></body>
+</html>
+Copiado
+2. style.css
+
+css
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background: #eef3f7;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.container {
+    background: white;
+    width: 100%;
+    max-width: 450px;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+}
+
+h1 {
+    color: #176b87;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.container > p {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #666;
+}
+
+label {
+    display: block;
+    margin-bottom: 7px;
+    font-weight: bold;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 18px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+button {
+    width: 100%;
+    padding: 13px;
+    background: #176b87;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+button:hover {
+    background: #104e65;
+}
+
+.resultado {
+    display: none;
+    background: #eaf5f8;
+    margin-top: 25px;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.resultado h2 {
+    color: #176b87;
+    margin-bottom: 15px;
+}
+
+.resultado h3 {
+    margin: 12px 0;
+    color: #176b87;
+}
+
+#resIMC {
+    font-size: 30px;
+}
+
+#informacao {
+    line-height: 1.5;
+    margin-top: 15px;
+}
+3. script.js
+
+javascript
+
+const formulario = document.getElementById("formulario");
+
+formulario.addEventListener("submit", function(event) {
+
+    event.preventDefault();
+
+    // Receber dados do paciente
+    const nome = document.getElementById("nome").value.trim();
+    const peso = Number(document.getElementById("peso").value);
+    const altura = Number(document.getElementById("altura").value);
+
+    // Validar dados
+    if (!nome || !Number.isFinite(peso) ||
+        !Number.isFinite(altura) || peso <= 0 || altura <= 0) {
+        alert("Informe corretamente todos os dados!");
+        return;
+    }
+
+    // Calcular IMC
+    const imc = peso / (altura * altura);
+
+    let classificacao = "";
+    let informacao = "";
+
+    // Classificação do IMC para adultos
+    if (imc < 18.5) {
+        classificacao = "Abaixo do peso";
+        informacao = "IMC abaixo da faixa adequada. Recomenda-se avaliação nutricional.";
+
+    } else if (imc < 25) {
+        classificacao = "Peso adequado";
+        informacao = "IMC dentro da faixa adequada para adultos. Mantenha hábitos saudáveis.";
+
+    } else if (imc < 30) {
+        classificacao = "Sobrepeso";
+        informacao = "Indica excesso de peso. Recomenda-se atenção à alimentação e exercícios.";
+
+    } else if (imc < 35) {
+        classificacao = "Obesidade grau I";
+        informacao = "Recomenda-se acompanhamento de profissionais de saúde.";
+
+    } else if (imc < 40) {
+        classificacao = "Obesidade grau II";
+        informacao = "Recomenda-se acompanhamento médico e nutricional.";
+
+    } else {
+        classificacao = "Obesidade grau III";
+        informacao = "Recomenda-se acompanhamento multiprofissional.";
+    }
+
+    // Exibir resultados
+    document.getElementById("resNome").textContent = nome;
+
+    document.getElementById("resIMC").textContent =
+        "IMC: " + imc.toFixed(2) + " kg/m²";
+
+    document.getElementById("classificacao").textContent =
+        classificacao;
+
+    document.getElementById("informacao").textContent =
+        informacao;
+
+    document.getElementById("resultado").style.display = "block";
+});
+
+// Nova avaliação
+function novaConsulta() {
+    formulario.reset();
+
+    document.getElementById("resultado").style.display = "none";
+}
+Como executar
+Crie uma pasta chamada calculadora-imc.
+
+Crie os três arquivos dentro dela.
+
+Copie cada código para seu respectivo arquivo.
+
+Abra o arquivo index.html no navegador.
+
+Pronto! Você terá uma aplicação funcional para cadastrar os dados do paciente e calcular o IMC.
+
+
+
+ChatGPT é uma IA e pode cometer erros.
+
+Novo chat
+Imagens
+Plugins
+Confira planos e preços
+Ajuda
+
+Pesquisa aprofundada
+Configurações
+
+Receba respostas personalizadas para você
+Entre para receber respostas com base em chats salvos, além de criar imagens e carregar arquivos.
+
+
+Entrar
