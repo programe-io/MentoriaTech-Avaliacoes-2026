@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Connect - Mini Feed</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f5f9;
+    color: #262626;
+}
+
+header {
+    background: white;
+    padding: 15px 8%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.logo {
+    font-size: 27px;
+    font-weight: bold;
+    color: #6655dd;
+}
+
+.search {
+    padding: 11px 18px;
+    border: none;
+    background: #f1f1f5;
+    border-radius: 20px;
+    width: 250px;
+    outline: none;
+}
+
+.profile-small {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 30px auto;
+    display: grid;
+    grid-template-columns: 270px 1fr;
+    gap: 25px;
+    padding: 0 15px;
+}
+
+.sidebar, .post, .profile-card {
+    background: white;
+    border-radius: 14px;
+    padding: 20px;
+}
+
+.sidebar {
+    height: fit-content;
+}
+
+.sidebar h3 {
+    margin-bottom: 20px;
+    color: #6655dd;
+}
+
+.menu-item {
+    padding: 14px 10px;
+    cursor: pointer;
+    border-radius: 8px;
+    margin-bottom: 5px;
+}
+
+.menu-item:hover {
+    background: #f0edff;
+    color: #6655dd;
+}
+
+.profile-card {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.profile-card img {
+    width: 85px;
+    height: 85px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 10px;
+}
+
+.profile-card p {
+    color: #888;
+    font-size: 13px;
+    margin-top: 7px;
+}
+
+.stats {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 18px;
+    font-size: 13px;
+}
+
+.post {
+    margin-bottom: 22px;
+    padding: 0;
+    overflow: hidden;
+    box-shadow: 0 3px 12px #00000008;
+}
+
+.post-header {
+    display: flex;
+    align-items: center;
+    padding: 17px;
+    gap: 12px;
+}
+
+.post-header img {
+    width: 43px;
+    height: 43px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.post-header small {
+    color: #999;
+    display: block;
+    margin-top: 4px;
+}
+
+.post-image {
+    width: 100%;
+    max-height: 470px;
+    object-fit: cover;
+    display: block;
+}
+
+.post-content {
+    padding: 17px;
+}
+
+.actions {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 12px;
+}
+
+.actions button {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.actions button:hover {
+    transform: scale(1.2);
+}
+
+.like-count {
+    font-weight: bold;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.description {
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.comments {
+    color: #888;
+    font-size: 13px;
+    margin-top: 10px;
+}
+
+.comment-area {
+    display: flex;
+    padding: 12px 17px;
+    border-top: 1px solid #eee;
+}
+
+.comment-area input {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 8px;
+}
+
+.comment-area button {
+    border: none;
+    background: none;
+    color: #6655dd;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.comment-list {
+    padding: 0 17px 12px;
+    font-size: 13px;
+}
+
+.stories {
+    background: white;
+    border-radius: 14px;
+    padding: 17px;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 18px;
+    overflow-x: auto;
+}
+
+.story {
+    text-align: center;
+    min-width: 65px;
+    font-size: 12px;
+}
+
+.story img {
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    object-fit: cover;
+    padding: 3px;
+    border: 3px solid #8c63ed;
+    margin-bottom: 5px;
+}
+
+footer {
+    text-align: center;
+    color: #999;
+    padding: 25px;
+    font-size: 12px;
+}
+
+@media(max-width: 750px) {
+    .container {
+        grid-template-columns: 1fr;
+    }
+
+    .sidebar {
+        display: none;
+    }
+
+    header {
+        padding: 13px 15px;
+    }
+
+    .search {
+        width: 130px;
+    }
+}
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+<header>
+    <div class="logo">connect.</div>
+    <input class="search" type="text" placeholder="Pesquisar...">
+    <img class="profile-small"
+    src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100"
+    alt="Perfil">
+</header>
+
+<div class="container">
+
+<aside class="sidebar">
+
+    <div class="profile-card">
+        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200" alt="Minha foto">
+        <h3>Mariana Costa</h3>
+        <p>Vivendo momentos especiais ✨</p>
+
+        <div class="stats">
+            <div><b>128</b><br>Posts</div>
+            <div><b>2,5k</b><br>Seguidores</div>
+            <div><b>890</b><br>Seguindo</div>
+        </div>
+    </div>
+
+    <h3>Menu principal</h3>
+    <div class="menu-item">🏠 Início</div>
+    <div class="menu-item">🔍 Explorar</div>
+    <div class="menu-item">💬 Mensagens</div>
+    <div class="menu-item">❤️ Curtidas</div>
+    <div class="menu-item">⚙️ Configurações</div>
+
+</aside>
+
+<main>
+
+    <div class="stories">
+        <div class="story">
+            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100">
+            <p>Seu story</p>
+        </div>
+
+        <div class="story">
+            <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100">
+            <p>Lucas</p>
+        </div>
+
+        <div class="story">
+            <img src="https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=100">
+            <p>Ana</p>
+        </div>
+
+        <div class="story">
+            <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100">
+            <p>Pedro</p>
+        </div>
+
+        <div class="story">
+            <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=100">
+            <p>Julia</p>
+        </div>
+    </div>
+
+    <div id="feed"></div>
+
+</main>
+</div>
+
+<footer>
+    Connect © 2026 - Projeto acadêmico de desenvolvimento web.
+</footer>
+
+<script>
+
+const posts = [
+    {
+        nome: "Lucas Almeida",
+        usuario: "@lucasalmeida",
+        foto: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100",
+        imagem: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=900",
+        legenda: "A vida fica melhor quando aprendemos a aproveitar cada momento! 🌎✨",
+        curtidas: 248,
+        tempo: "Há 2 horas"
+    },
+    {
+        nome: "Ana Oliveira",
+        usuario: "@anaoliveira",
+        foto: "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=100",
+        imagem: "https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=900",
+        legenda: "Um lugar incrível para recarregar as energias. ☀️🌊",
+        curtidas: 512,
+        tempo: "Há 5 horas"
+    },
+    {
+        nome: "Pedro Santos",
+        usuario: "@pedrosantos",
+        foto: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100",
+        imagem: "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=900",
+        legenda: "Colecionando momentos, não coisas. 📸",
+        curtidas: 189,
+        tempo: "Ontem"
+    }
+];
+
+const feed = document.getElementById("feed");
+
+posts.forEach((post, index) => {
+
+    const card = document.createElement("article");
+    card.className = "post";
+
+    card.innerHTML = `
+        <div class="post-header">
+            <img src="${post.foto}" alt="Foto de perfil">
+            <div>
+                <b>${post.nome}</b>
+                <small>${post.usuario} · ${post.tempo}</small>
+            </div>
+        </div>
+
+        <img class="post-image" src="${post.imagem}" alt="Foto da publicação">
+
+        <div class="post-content">
+            <div class="actions">
+                <button class="like-btn">♡</button>
+                <button class="comment-btn">💬</button>
+                <button class="share-btn">↗</button>
+            </div>
+
+            <div class="like-count">${post.curtidas} curtidas</div>
+
+            <div class="description">
+                <b>${post.nome}</b> ${post.legenda}
+            </div>
+
+            <div class="comments">Ver comentários</div>
+        </div>
+
+        <div class="comment-list"></div>
+
+        <div class="comment-area">
+            <input type="text" placeholder="Adicione um comentário...">
+            <button>Publicar</button>
+        </div>
+    `;
+
+    feed.appendChild(card);
+
+    const likeButton = card.querySelector(".like-btn");
+    const likeCount = card.querySelector(".like-count");
+    let liked = false;
+    let totalLikes = post.curtidas;
+
+    likeButton.addEventListener("click", () => {
+        liked = !liked;
+        totalLikes += liked ? 1 : -1;
+        likeButton.innerHTML = liked ? "♥" : "♡";
+        likeButton.style.color = liked ? "#e84368" : "#262626";
+        likeCount.textContent = totalLikes + " curtidas";
+    });
+
+    const input = card.querySelector(".comment-area input");
+    const publish = card.querySelector(".comment-area button");
+    const commentList = card.querySelector(".comment-list");
+
+    publish.addEventListener("click", () => {
+        if (input.value.trim() !== "") {
+            const comment = document.createElement("p");
+            const author = document.createElement("b");
+            author.textContent = "Você ";
+            comment.appendChild(author);
+            comment.appendChild(document.createTextNode(input.value));
+            commentList.appendChild(comment);
+            input.value = "";
+        }
+    });
+
+    input.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+            publish.click();
+        }
+    });
+
+});
+
+</script>
+
+</body>
+</html>
