@@ -1,0 +1,426 @@
+
+// CARREGAR DADOS
+
+let tarefas = JSON.parse(
+    localStorage.getItem("tarefas")
+) || [];
+
+let filtroAtual = "todas";
+
+// ELEMENTOS
+
+const form = document.getElementById("formTarefa");
+
+const lista = document.getElementById("listaTarefas");
+
+// SALVAR DADOS
+
+function salvarDados() {
+
+    localStorage.setItem(
+        "tarefas",
+        JSON.stringify(tarefas)
+    );
+
+}
+
+// VERIFICAR SE ESTÁ ATRASADA
+
+function estaAtrasada(tarefa) {
+
+    if (!tarefa.dataEntrega || tarefa.concluida) {
+        return false;
+    }
+
+    const [ano, mes, dia] = tarefa.dataEntrega.split("-").map(Number);
+
+    const prazo = new Date(ano, mes - 1, dia);
+
+    const hoje = new Date();
+
+    hoje.setHours(0, 0, 0, 0);
+
+    return prazo < hoje;
+
+}
+
+// FORMATAR DATA
+
+function formatarData(data) {
+
+    if (!data) return "Sem prazo";
+
+    const [ano, mes, dia] = data.split("-");
+
+    return `${dia}/${mes}/${ano}`;
+
+}
+
+// CADASTRAR OU EDITAR
+
+form.addEventListener("submit", function(event) {
+
+    event.preventDefault();
+
+    const id = document.getElementById("idTarefa").value;
+
+    const titulo = document.getElementById("titulo").value.trim();
+
+    const descricao = document.getElementById("descricao").value.trim();
+
+    const categoria = document.getElementById("categoria").value;
+
+    const prioridade = document.getElementById("prioridade").value;
+
+    const dataEntrega = document.getElementById("dataEntrega").value;
+
+    if (!titulo) {
+        alert("Informe o título da tarefa.");
+        return;
+    }
+
+    if (id) {
+
+        const tarefa = tarefas.find(item => item.id === id);
+
+        if (tarefa) {
+            tarefa.titulo = titulo;
+            tarefa.descricao = descricao;
+            tarefa.categoria = categoria;
+            tarefa.prioridade = prioridade;
+            tarefa.dataEntrega = dataEntrega;
+        }
+
+        alert("Tarefa atualizada!");
+
+    } else {
+
+        tarefas.push({
+
+            id: crypto.randomUUID(),
+
+            titulo,
+
+            descricao,
+
+            categoria,
+
+            prioridade,
+
+            dataEntrega,
+
+            concluida: false,
+
+            criadaEm: new Date().toISOString()
+
+        });
+
+        alert("Tarefa cadastrada com sucesso!");
+
+    }
+
+    salvarDados();
+
+    limparFormulario();
+
+    atualizarSistema();
+
+});
+
+// LIMPAR FORMULÁRIO
+
+function limparFormulario() {
+
+    form.reset();
+
+    document.getElementById("idTarefa").value = "";
+
+    document.getElementById("btnSalvar").textContent =
+        "Cadastrar Tarefa";
+
+    document.getElementById("tituloFormulario").textContent =
+        "Cadastrar Nova Tarefa";
+
+    document.getElementById("btnCancelar").classList.add("hidden");
+
+}
+
+// CANCELAR EDIÇÃO
+
+document.getElementById("btnCancelar").addEventListener("click", limparFormulario);
+
+// LISTAR TAREFAS
+
+function listarTarefas() {
+
+    lista.innerHTML = "";
+
+    const termo = document.getElementById("pesquisa")
+        .value.toLowerCase();
+
+    let resultado = tarefas.filter(tarefa =>
+
+        tarefa.titulo.toLowerCase().includes(termo) ||
+
+        tarefa.descricao.toLowerCase().includes(termo) ||
+
+        tarefa.categoria.toLowerCase().includes(termo)
+
+    );
+
+    if (filtroAtual === "pendentes") {
+        resultado = resultado.filter(tarefa => !tarefa.concluida);
+    }
+
+    if (filtroAtual === "concluidas") {
+        resultado = resultado.filter(tarefa => tarefa.concluida);
+    }
+
+    if (filtroAtual === "atrasadas") {
+        resultado = resultado.filter(estaAtrasada);
+    }
+
+    resultado.sort((a, b) =>
+        new Date(b.criadaEm) - new Date(a.criadaEm)
+    );
+
+    resultado.forEach(tarefa => {
+
+        const card = document.createElement("article");
+
+        card.className = "task";
+
+        if (tarefa.concluida) {
+            card.classList.add("done");
+        }
+
+        // INFORMAÇÕES
+
+        const info = document.createElement("div");
+
+        info.className = "task-info";
+
+        const titulo = document.createElement("h3");
+
+        titulo.className = "task-title";
+
+        titulo.textContent = tarefa.titulo;
+
+        const descricao = document.createElement("p");
+
+        descricao.className = "task-description";
+
+        descricao.textContent = tarefa.descricao || "Sem descrição";
+
+        const detalhes = document.createElement("div");
+
+        detalhes.className = "task-details";
+
+        const prioridade = document.createElement("span");
+
+        prioridade.className = "priority " +
+            tarefa.prioridade.toLowerCase().replace("é", "e");
+
+        prioridade.textContent = "Prioridade: " + tarefa.prioridade;
+
+        const categoria = document.createElement("span");
+
+        categoria.textContent = "Categoria: " + tarefa.categoria;
+
+        const prazo = document.createElement("span");
+
+        prazo.textContent = "Entrega: " + formatarData(tarefa.dataEntrega);
+
+        if (estaAtrasada(tarefa)) {
+            prazo.classList.add("overdue");
+            prazo.textContent += " (Atrasada)";
+        }
+
+        detalhes.append(prioridade, categoria, prazo);
+
+        info.append(titulo, descricao, detalhes);
+
+        // BOTÕES
+
+        const actions = document.createElement("div");
+
+        actions.className = "task-actions";
+
+        const concluir = document.createElement("button");
+
+        concluir.className = "btn-done";
+
+        concluir.textContent = tarefa.concluida
+            ? "Reabrir"
+            : "Concluir";
+
+        concluir.addEventListener("click", () => {
+            concluirTarefa(tarefa.id);
+        });
+
+        const editar = document.createElement("button");
+
+        editar.className = "btn-edit";
+
+        editar.textContent = "Editar";
+
+        editar.addEventListener("click", () => {
+            editarTarefa(tarefa.id);
+        });
+
+        const excluir = document.createElement("button");
+
+        excluir.className = "btn-delete";
+
+        excluir.textContent = "Excluir";
+
+        excluir.addEventListener("click", () => {
+            excluirTarefa(tarefa.id);
+        });
+
+        actions.append(concluir, editar, excluir);
+
+        card.append(info, actions);
+
+        lista.appendChild(card);
+
+    });
+
+    document.getElementById("vazio")
+        .classList.toggle("hidden", resultado.length > 0);
+
+}
+
+// CONCLUIR TAREFA
+
+function concluirTarefa(id) {
+
+    const tarefa = tarefas.find(item => item.id === id);
+
+    if (!tarefa) return;
+
+    tarefa.concluida = !tarefa.concluida;
+
+    salvarDados();
+
+    atualizarSistema();
+
+}
+
+// EDITAR TAREFA
+
+function editarTarefa(id) {
+
+    const tarefa = tarefas.find(item => item.id === id);
+
+    if (!tarefa) return;
+
+    document.getElementById("idTarefa").value = tarefa.id;
+
+    document.getElementById("titulo").value = tarefa.titulo;
+
+    document.getElementById("descricao").value = tarefa.descricao;
+
+    document.getElementById("categoria").value = tarefa.categoria;
+
+    document.getElementById("prioridade").value = tarefa.prioridade;
+
+    document.getElementById("dataEntrega").value = tarefa.dataEntrega;
+
+    document.getElementById("btnSalvar").textContent =
+        "Salvar Alterações";
+
+    document.getElementById("tituloFormulario").textContent =
+        "Editar Tarefa";
+
+    document.getElementById("btnCancelar")
+        .classList.remove("hidden");
+
+    document.getElementById("cadastro").scrollIntoView({
+        behavior: "smooth"
+    });
+
+}
+
+// EXCLUIR TAREFA
+
+function excluirTarefa(id) {
+
+    if (!confirm("Deseja realmente excluir esta tarefa?")) {
+        return;
+    }
+
+    tarefas = tarefas.filter(item => item.id !== id);
+
+    salvarDados();
+
+    atualizarSistema();
+
+}
+
+// FILTROS
+
+document.querySelectorAll(".filter").forEach(botao => {
+
+    botao.addEventListener("click", function() {
+
+        document.querySelectorAll(".filter").forEach(item => {
+            item.classList.remove("active");
+        });
+
+        this.classList.add("active");
+
+        filtroAtual = this.dataset.filter;
+
+        listarTarefas();
+
+    });
+
+});
+
+// PESQUISA
+
+document.getElementById("pesquisa")
+    .addEventListener("input", listarTarefas);
+
+// DASHBOARD
+
+function atualizarDashboard() {
+
+    const total = tarefas.length;
+
+    const concluidas = tarefas.filter(
+        tarefa => tarefa.concluida
+    ).length;
+
+    const pendentes = tarefas.filter(
+        tarefa => !tarefa.concluida
+    ).length;
+
+    const atrasadas = tarefas.filter(
+        estaAtrasada
+    ).length;
+
+    document.getElementById("total").textContent = total;
+
+    document.getElementById("pendentes").textContent = pendentes;
+
+    document.getElementById("concluidas").textContent = concluidas;
+
+    document.getElementById("atrasadas").textContent = atrasadas;
+
+}
+
+// ATUALIZAR SISTEMA
+
+function atualizarSistema() {
+
+    listarTarefas();
+
+    atualizarDashboard();
+
+}
+
+// INICIALIZAR
+
+atualizarSistema();
