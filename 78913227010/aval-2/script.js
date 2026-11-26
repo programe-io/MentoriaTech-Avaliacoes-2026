@@ -1,103 +1,102 @@
 
-const posts = [
-    {
-        user: "clara",
-        avatar: "https://i.pravatar.cc/100?img=45",
-        photo: "https://picsum.photos/id/1011/600/600",
-        caption: "Vivendo momentos incríveis! ✨❤️",
-        likes: 128
-    },
-    {
-        user: "isadora",
-        avatar: "https://i.pravatar.cc/100?img=32",
-        photo: "https://picsum.photos/id/1027/600/600",
-        caption: "A vida fica mais bonita assim 🌸",
-        likes: 245
-    },
-    {
-        user: "marlos",
-        avatar: "https://i.pravatar.cc/100?img=12",
-        photo: "https://picsum.photos/id/1005/600/600",
-        caption: "Só agradece! 🙏🔥",
-        likes: 89
-    },
-    {
-        user: "fielpzs",
-        avatar: "https://i.pravatar.cc/100?img=15",
-        photo: "https://picsum.photos/id/1012/600/600",
-        caption: "Mais um dia para fazer história! 🚀",
-        likes: 356
+// =================================
+// MUSIC NEWS BY CLARA BEATRIZ
+// =================================
+
+
+// 1. SISTEMA DE CURTIDAS
+
+function like(button) {
+
+    if (button.classList.contains("liked")) {
+
+        button.classList.remove("liked");
+        button.innerHTML = "♡ Curtir";
+        button.style.background = "#e83e8c";
+
+    } else {
+
+        button.classList.add("liked");
+        button.innerHTML = "♥ Curtido";
+        button.style.background = "#9b3bd1";
+
     }
-];
 
-const feed = document.getElementById("feed");
+}
 
-posts.forEach((post, index) => {
-    const article = document.createElement("div");
-    article.className = "post";
 
-    article.innerHTML = `
-        <div class="post-header">
-            <img src="${post.avatar}">
-            <b>${post.user}</b>
-        </div>
+// 2. SISTEMA DE PESQUISA DE NOTÍCIAS
 
-        <img class="post-photo" src="${post.photo}">
+const search = document.getElementById("search");
 
-        <div class="actions">
-            <span onclick="likePost(${index}, this)">♡</span>
-            <span onclick="focusComment(${index})">💬</span>
-            <span>➤</span>
-        </div>
+const cards = document.querySelectorAll(".card");
 
-        <div class="caption">
-            <b><span id="likes-${index}">${post.likes}</span> curtidas</b>
-            <p><b>${post.user}</b> ${post.caption}</p>
-        </div>
+search.addEventListener("input", function() {
 
-        <div class="comments" id="comments-${index}">
-            Comentários
-        </div>
+    const value = search.value.toLowerCase();
 
-        <div class="comment-input">
-            <input id="input-${index}"
-            placeholder="Adicione um comentário...">
-            <button onclick="addComment(${index})">
-                Publicar
-            </button>
-        </div>
-    `;
+    cards.forEach(card => {
 
-    feed.appendChild(article);
+        const content = card.innerText.toLowerCase();
+
+        if (content.includes(value)) {
+
+            card.style.display = "block";
+
+        } else {
+
+            card.style.display = "none";
+
+        }
+
+    });
+
 });
 
-function likePost(index, element) {
-    const likes = document.getElementById(`likes-${index}`);
 
-    if (element.classList.contains("like")) {
-        element.classList.remove("like");
-        element.innerText = "♡";
-        likes.innerText = Number(likes.innerText) - 1;
-    } else {
-        element.classList.add("like");
-        element.innerText = "♥";
-        likes.innerText = Number(likes.innerText) + 1;
+// 3. MENSAGEM DE BOAS-VINDAS
+
+console.log(
+    "🎵 Bem-vindo ao Music News by Clara Beatriz!"
+);
+
+
+// 4. ANIMAÇÃO DOS CARDS
+
+cards.forEach(card => {
+
+    card.addEventListener("mouseenter", function() {
+
+        card.style.transition = "0.3s";
+
+    });
+
+});
+
+
+// 5. VOLTAR AO TOPO
+
+window.addEventListener("scroll", function() {
+
+    const topButton = document.getElementById("backTop");
+
+    if (topButton) {
+
+        if (window.scrollY > 300) {
+            topButton.style.display = "block";
+        } else {
+            topButton.style.display = "none";
+        }
+
     }
-}
 
-function focusComment(index) {
-    document.getElementById(`input-${index}`).focus();
-}
+});
 
-function addComment(index) {
-    const input = document.getElementById(`input-${index}`);
-    const comments = document.getElementById(`comments-${index}`);
+function backToTop() {
 
-    if (!input.value.trim()) return;
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
 
-    const comment = document.createElement("p");
-    comment.textContent = "Você: " + input.value;
-
-    comments.appendChild(comment);
-    input.value = "";
 }
