@@ -1,74 +1,141 @@
 
-// FEED DE NOTÍCIAS MARVEL
+// =================================
+// MARVEL NEWS - FRANCISQUIM
+// =================================
 
-const pesquisa = document.getElementById('pesquisa');
+const campoPesquisa = document.getElementById('pesquisa');
 
 const botoesFiltro = document.querySelectorAll('.filtro');
 
-const noticiasFeed = document.querySelectorAll('.feed-card');
+const filmes = document.querySelectorAll('.feed-card');
 
 const semResultados = document.getElementById('semResultados');
 
-let filtroAtual = 'todos';
+let categoriaAtual = 'todos';
 
-// Função para pesquisar e filtrar notícias
-function filtrarNoticias() {
+// FUNÇÃO DE PESQUISA E FILTRO
 
-    const texto = pesquisa.value.toLowerCase();
+function atualizarFeed() {
 
-    let quantidade = 0;
+    const texto = campoPesquisa.value.toLowerCase();
 
-    noticiasFeed.forEach((noticia) => {
+    let encontrados = 0;
 
-        const conteudo = noticia.innerText.toLowerCase();
+    filmes.forEach((filme) => {
 
-        const categoria = noticia.dataset.categoria;
+        const conteudo = filme.innerText.toLowerCase();
 
-        const correspondeTexto = conteudo.includes(texto);
+        const categorias = filme.dataset.categoria.split(' ');
 
-        const correspondeFiltro =
-            filtroAtual === 'todos' ||
-            categoria === filtroAtual;
+        const encontrouTexto = conteudo.includes(texto);
 
-        if (correspondeTexto && correspondeFiltro) {
+        const encontrouCategoria =
+            categoriaAtual === 'todos' ||
+            categorias.includes(categoriaAtual);
 
-            noticia.style.display = 'block';
+        if (encontrouTexto && encontrouCategoria) {
 
-            quantidade++;
+            filme.style.display = 'block';
+
+            encontrados++;
 
         } else {
 
-            noticia.style.display = 'none';
+            filme.style.display = 'none';
 
         }
 
     });
 
     semResultados.style.display =
-        quantidade === 0 ? 'block' : 'none';
+        encontrados === 0 ? 'block' : 'none';
 
 }
 
-// Pesquisa enquanto digita
-pesquisa.addEventListener('input', filtrarNoticias);
+// PESQUISA EM TEMPO REAL
 
-// Botões de categorias
+campoPesquisa.addEventListener('input', atualizarFeed);
+
+// FILTROS
+
 botoesFiltro.forEach((botao) => {
 
     botao.addEventListener('click', () => {
 
-        botoesFiltro.forEach((b) => {
-            b.classList.remove('ativo');
+        botoesFiltro.forEach((item) => {
+            item.classList.remove('ativo');
         });
 
         botao.classList.add('ativo');
 
-        filtroAtual = botao.dataset.filtro;
+        categoriaAtual = botao.dataset.filtro;
 
-        filtrarNoticias();
+        atualizarFeed();
 
     });
 
 });
 
-console.log("Feed Marvel carregado com sucesso!");
+// ANIMAÇÃO DOS CARDS
+
+const observador = new IntersectionObserver((entradas) => {
+
+    entradas.forEach((entrada) => {
+
+        if (entrada.isIntersecting) {
+
+            entrada.target.style.opacity = '1';
+
+            entrada.target.style.transform = 'translateY(0)';
+
+            observador.unobserve(entrada.target);
+
+        }
+
+    });
+
+}, { threshold: 0.1 });
+
+filmes.forEach((filme) => {
+
+    filme.style.opacity = '0';
+
+    filme.style.transform = 'translateY(25px)';
+
+    filme.style.transition = 'opacity .6s, transform .6s';
+
+    observador.observe(filme);
+
+});
+
+// AVISO SE ALGUM POSTER NÃO CARREGAR
+
+document.querySelectorAll('.poster-container img').forEach((imagem) => {
+
+    imagem.addEventListener('error', () => {
+
+        imagem.style.display = 'none';
+
+        const aviso = document.createElement('div');
+
+        aviso.textContent = 'POSTER INDISPONÍVEL';
+
+        aviso.style.cssText = `
+            color: white;
+            font-family: Orbitron, sans-serif;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            width: 100%;
+            background: #251014;
+        `;
+
+        imagem.parentElement.appendChild(aviso);
+
+    });
+
+});
+
+console.log('MARVEL NEWS - Francisquim carregado!');
