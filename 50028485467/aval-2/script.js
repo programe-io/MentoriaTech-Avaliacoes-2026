@@ -26,5 +26,4 @@ document.querySelector('#publish').addEventListener('submit', event => {
 
                                 // Identificação local do projeto; não envia dados.
                                 const aluno = "Édria Pereira Machado";
-
                                 
