@@ -1,121 +1,98 @@
-// Armazena as tarefas
-let tarefas = [];
-let proximoCodigo = 1;
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Meu Perfil</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-// ==========================================
-// 1. Cadastrar uma nova tarefa
-// ==========================================
-function cadastrarTarefa(titulo, prioridade) {
-  // Validação: título com no mínimo 5 caracteres
-  if (titulo.length < 5) {
-    console.log("❌ Erro: O título deve ter no mínimo 5 caracteres.");
-    return;
-  }
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
 
-  // Validação: prioridade entre 1 e 3
-  if (prioridade < 1 || prioridade > 3) {
-    console.log("❌ Erro: A prioridade deve ser um valor entre 1 (alta) e 3 (baixa).");
-    return;
-  }
+        header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            text-align: center;
+            padding: 50px 20px;
+        }
 
-  // Cria a nova tarefa
-  const novaTarefa = {
-    codigo: proximoCodigo++,
-    titulo: titulo,
-    prioridade: prioridade,
-    concluida: false
-  };
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
 
-  tarefas.push(novaTarefa);
-  console.log(`✅ Tarefa "${titulo}" cadastrada com sucesso!`);
-}
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
 
-// ==========================================
-// 2. Listar todas as tarefas cadastradas
-// ==========================================
-function listarTarefas() {
-  if (tarefas.length === 0) {
-    console.log("📋 Nenhuma tarefa cadastrada.");
-    return;
-  }
+        section {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
 
-  console.log("\n══════════════════ LISTA DE TAREFAS ══════════════════");
-  tarefas.forEach(tarefa => {
-    const status = tarefa.concluida ? "✅ Concluída" : "⏳ Pendente";
-    let nivelPrioridade;
-    if (tarefa.prioridade === 1) nivelPrioridade = "🔴 Alta";
-    else if (tarefa.prioridade === 2) nivelPrioridade = "🟡 Média";
-    else nivelPrioridade = "🟢 Baixa";
+        h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 8px;
+        }
 
-    console.log(
-      `Código: ${tarefa.codigo} | ` +
-      `Título: ${tarefa.titulo} | ` +
-      `Prioridade: ${nivelPrioridade} | ` +
-      `Status: ${status}`
-    );
-  });
-  console.log("═══════════════════════════════════════════════════════\n");
-}
+        .habilidades {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
 
-// ==========================================
-// 3. Marcar tarefa como concluída
-// ==========================================
-function marcarComoConcluida(codigo) {
-  const tarefa = tarefas.find(t => t.codigo === codigo);
-  
-  if (!tarefa) {
-    console.log(`❌ Tarefa com código ${codigo} não encontrada.`);
-    return;
-  }
+        .tag {
+            background: #667eea;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
 
-  tarefa.concluida = true;
-  console.log(`✅ Tarefa "${tarefa.titulo}" marcada como concluída!`);
-}
+        footer {
+            background: #333;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🎓 Olá, eu sou Ana!</h1>
+        <p>Estudante de Tecnologia | Desenvolvedora em formação</p>
+    </header>
 
-// ==========================================
-// 4. Alterar prioridade de uma tarefa
-// ==========================================
-function alterarPrioridade(codigo, novaPrioridade) {
-  const tarefa = tarefas.find(t => t.codigo === codigo);
-  
-  if (!tarefa) {
-    console.log(`❌ Tarefa com código ${codigo} não encontrada.`);
-    return;
-  }
+    <section>
+        <h2>Sobre Mim</h2>
+        <p>Sou apaixonada por tecnologia e estou aprendendo desenvolvimento web. Gosto de resolver problemas e criar coisas novas. Estou sempre em busca de novos conhecimentos!</p>
+    </section>
 
-  if (novaPrioridade < 1 || novaPrioridade > 3) {
-    console.log("❌ Erro: A prioridade deve ser um valor entre 1 e 3.");
-    return;
-  }
+    <section>
+        <h2>Minhas Habilidades</h2>
+        <div class="habilidades">
+            <span class="tag">HTML5</span>
+            <span class="tag">CSS3</span>
+            <span class="tag">JavaScript</span>
+            <span class="tag">Lógica de Programação</span>
+        </div>
+    </section>
 
-  tarefa.prioridade = novaPrioridade;
-  console.log(`✅ Prioridade da tarefa "${tarefa.titulo}" alterada com sucesso!`);
-}
-
-// ==========================================
-// 📌 Exemplos de uso
-// ==========================================
-console.log("===== 🚀 INICIANDO SISTEMA DE TAREFAS =====\n");
-
-// Cadastrando tarefas
-cadastrarTarefa("Estudar JavaScript", 1);
-cadastrarTarefa("Fazer exercícios", 2);
-cadastrarTarefa("Organizar quarto", 3);
-
-// Tentando cadastrar com título curto (erro esperado)
-cadastrarTarefa("Teste", 1);
-
-// Tentando cadastrar com prioridade inválida (erro esperado)
-cadastrarTarefa("Ler um livro", 5);
-
-// Listando todas as tarefas
-listarTarefas();
-
-// Marcando tarefa como concluída
-marcarComoConcluida(1);
-
-// Alterando prioridade
-alterarPrioridade(2, 1);
-
-// Listando novamente para ver as alterações
-listarTarefas();
+    <footer>
+        <p>📧 ana@email.com | 📱 (89) 99999-0000</p>
+    </footer>
+</body>
+</html>
