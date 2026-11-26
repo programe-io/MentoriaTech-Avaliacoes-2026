@@ -1,0 +1,206 @@
+// Postagens iniciais do feed de pets
+const petPosts = [
+    {
+        id: 1,
+        petName: "Thor, o Golden",
+        tutor: "@familia_thor",
+        avatar: "https://unsplash.com",
+        type: "Cachorro",
+        location: "Parque da Cidade",
+        image: "https://unsplash.com",
+        caption: "Depois de correr atrás da bolinha por uma hora, a cara de quem merece um petisco! 🎾🐶",
+        likes: 38,
+        liked: false,
+        saved: false,
+        comments: [
+            { user: "@mia_gatinha", text: "Que sorrisão mais lindo!" },
+            { user: "@max_beagle", text: "Bora marcar um passeio no parque!" }
+        ]
+    },
+    {
+        id: 2,
+        petName: "Mia & Luna",
+        tutor: "@gateiros_oficial",
+        avatar: "https://unsplash.com",
+        type: "Gato",
+        location: "Varanda Ensolarada",
+        image: "https://unsplash.com",
+        caption: "Flagra da soneca da tarde no raio de sol favorito da casa. ☀️🐱",
+        likes: 54,
+        liked: true,
+        saved: false,
+        comments: [
+            { user: "@bolinha_pug", text: "Dormir é o melhor esporte do mundo." }
+        ]
+    }
+];
+
+let activeFilter = "Todos";
+
+const feedContainer = document.getElementById("feed-container");
+const postForm = document.getElementById("post-form");
+const filterButtons = document.querySelectorAll(".filter-btn");
+
+// Renderiza os cards no feed
+function renderFeed() {
+    const filtered = petPosts.filter(post => {
+        if (activeFilter === "Todos") return true;
+        if (activeFilter === "Salvos") return post.saved;
+        return post.type === activeFilter;
+    });
+
+    feedContainer.innerHTML = "";
+
+    if (filtered.length === 0) {
+        feedContainer.innerHTML = `
+            <div class="new-post-card" style="text-align: center; color: #777;">
+                <p>Nenhuma postagem encontrada nesta categoria ainda. 🐾</p>
+            </div>
+        `;
+        return;
+    }
+
+    filtered.forEach(post => {
+        const card = document.createElement("article");
+        card.className = "post-card";
+
+        const commentsHTML = post.comments
+            .map(c => `<div class="comment-line"><strong>${c.user}</strong> ${c.text}</div>`)
+            .join("");
+
+        card.innerHTML = `
+            <div class="post-top">
+                <div class="post-user">
+                    <img src="${post.avatar}" alt="${post.petName}" class="avatar">
+                    <div>
+                        <strong>${post.petName}</strong>
+                        <small>${post.tutor} • ${post.location}</small>
+                    </div>
+                </div>
+                <span class="pet-tag">${post.type}</span>
+            </div>
+
+            <img src="${post.image}" alt="${post.caption}" class="post-photo">
+
+            <div class="post-footer">
+                <div class="post-buttons">
+                    <div class="left-buttons">
+                        <button class="icon-btn like-btn ${post.liked ? 'liked' : ''}" data-id="${post.id}">
+                            ${post.liked ? '❤️' : '🤍'} ${post.likes}
+                        </button>
+                        <button class="icon-btn comment-focus-btn">
+                            💬 ${post.comments.length}
+                        </button>
+                    </div>
+                    <button class="icon-btn save-btn ${post.saved ? 'saved' : ''}" data-id="${post.id}">
+                        ${post.saved ? '🔖 Salvo' : '📑 Salvar'}
+                    </button>
+                </div>
+
+                <p class="post-caption"><strong>${post.tutor}</strong> ${post.caption}</p>
+
+                <div class="comments-list">
+                    ${commentsHTML}
+                </div>
+
+                <form class="comment-form" data-id="${post.id}">
+                    <input type="text" placeholder="Adicione um comentário carinhoso..." required>
+                    <button type="submit">Publicar</button>
+                </form>
+            </div>
+        `;
+
+        feedContainer.appendChild(card);
+    });
+}
+
+// Publicar nova foto no feed
+postForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    const caption = document.getElementById("post-caption").value.trim();
+    const type = document.getElementById("post-pet-type").value;
+    const imageUrl = document.getElementById("post-image").value.trim();
+
+    const fallbackImages = {
+        Cachorro: "https://unsplash.com",
+        Gato: "https://unsplash.com",
+        Outros: "https://unsplash.com"
+    };
+
+    const newPost = {
+        id: Date.now(),
+        petName: "Thor, o Golden",
+        tutor: "@familia_thor",
+        avatar: "https://unsplash.com",
+        type,
+        location: "Agora mesmo",
+        image: imageUrl || fallbackImages[type],
+        caption,
+        likes: 0,
+        liked: false,
+        saved: false,
+        comments: []
+    };
+
+    petPosts.unshift(newPost);
+    postForm.reset();
+    renderFeed();
+});
+
+// Interações de curtir, salvar e focar comentário
+feedContainer.addEventListener("click", (event) => {
+    const likeBtn = event.target.closest(".like-btn");
+    if (likeBtn) {
+        const post = petPosts.find(p => p.id === Number(likeBtn.dataset.id));
+        if (post) {
+            post.liked = !post.liked;
+            post.likes += post.liked ? 1 : -1;
+            renderFeed();
+        }
+    }
+
+    const saveBtn = event.target.closest(".save-btn");
+    if (saveBtn) {
+        const post = petPosts.find(p => p.id === Number(saveBtn.dataset.id));
+        if (post) {
+            post.saved = !post.saved;
+            renderFeed();
+        }
+    }
+
+    const commentBtn = event.target.closest(".comment-focus-btn");
+    if (commentBtn) {
+        const input = commentBtn.closest(".post-card").querySelector(".comment-form input");
+        input.focus();
+    }
+});
+
+// Enviar novo comentário
+feedContainer.addEventListener("submit", (event) => {
+    if (event.target.classList.contains("comment-form")) {
+        event.preventDefault();
+        const postId = Number(event.target.dataset.id);
+        const input = event.target.querySelector("input");
+        const text = input.value.trim();
+
+        if (text) {
+            const post = petPosts.find(p => p.id === postId);
+            post.comments.push({ user: "@familia_thor", text });
+            renderFeed();
+        }
+    }
+});
+
+// Filtros do cabeçalho
+filterButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+        filterButtons.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        activeFilter = btn.dataset.filter;
+        renderFeed();
+    });
+});
+
+// Inicia o feed
+renderFeed();
